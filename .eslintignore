@@ -1,0 +1,8 @@
+# Common
+node_modules
+dist
+.nuxt
+coverage
+
+# Plugin
+lib/templates/

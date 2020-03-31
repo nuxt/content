@@ -1,0 +1,52 @@
+{
+  "name": "@nuxtjs/content",
+  "version": "0.0.0",
+  "description": "Write your content inside your Nuxt app",
+  "repository": "nuxt-company/content-module",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "NuxtJS Company"
+    }
+  ],
+  "files": [
+    "lib"
+  ],
+  "main": "lib/",
+  "scripts": {
+    "dev": "nuxt example",
+    "lint": "eslint --ext .js,.vue example lib test",
+    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
+    "test": "yarn lint && jest"
+  },
+  "dependencies": {
+    "@nuxt/markdown": "^0.0.21",
+    "chokidar": "^3.3.1",
+    "consola": "^2.11.3",
+    "fs-extra": "^9.0.0",
+    "get-port": "^5.1.1",
+    "gray-matter": "^4.0.2",
+    "micro": "^9.3.4",
+    "node-req": "^2.1.2",
+    "node-res": "^5.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@babel/preset-env": "latest",
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@nuxtjs/eslint-config": "latest",
+    "@nuxtjs/module-test-utils": "latest",
+    "babel-eslint": "latest",
+    "babel-jest": "latest",
+    "codecov": "latest",
+    "eslint": "latest",
+    "husky": "latest",
+    "jest": "latest",
+    "nuxt-edge": "latest",
+    "standard-version": "latest"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
