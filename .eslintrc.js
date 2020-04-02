@@ -6,5 +6,8 @@ module.exports = {
   },
   extends: [
     '@nuxtjs'
-  ]
+  ],
+  rules: {
+    'vue/singleline-html-element-content-newline': 0
+  },
 }
