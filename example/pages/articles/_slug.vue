@@ -9,8 +9,8 @@
 export default {
   async asyncData ({ $content, params, error }) {
     try {
-      const article = await $content('articles', params.slug).data()
-      // Or const article = await $content(`articles/${params.slug}`).data()
+      const article = await $content('articles', params.slug).fetch()
+      // OR const article = await $content(`articles/${params.slug}`).fetch()
 
       return { article }
     } catch (err) {
