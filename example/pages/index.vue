@@ -8,7 +8,7 @@
 <script>
 export default {
   async asyncData ({ $content }) {
-    const page = await $content('hello')
+    const page = await $content('home').data()
 
     return { page }
   }
