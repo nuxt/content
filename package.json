@@ -20,12 +20,14 @@
     "test": "yarn lint && jest"
   },
   "dependencies": {
+    "@dimerapp/markdown": "3.2.2",
     "@nuxt/markdown": "^0.0.21",
     "chokidar": "^3.3.1",
     "consola": "^2.11.3",
     "fs-extra": "^9.0.0",
     "get-port": "^5.1.1",
     "gray-matter": "^4.0.2",
+    "lokijs": "1.5.8",
     "micro": "^9.3.4",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1"
