@@ -48,7 +48,7 @@ content/
 
 ### Example
 
-`content/hello.md`
+`content/home.md`
 
 ```md
 ----
@@ -60,13 +60,13 @@ title: Home page
 > Welcome to my *home page*!
 ```
 
-`$content('hello').fetch()`
+`$content('home').fetch()`
 
 ```json
 {
   "dir": "",
-  "slug": "hello",
-  "path": "/hello",
+  "slug": "home",
+  "path": "/home",
   "updatedAt": "2017-11-07T12:21:34Z",
   "metadata": {
     "title": "Home page"
