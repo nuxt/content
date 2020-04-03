@@ -1,6 +1,7 @@
 <template>
   <div v-if="article">
-    <h1>{{ article.metadata.title }}</h1>
+    <h1>{{ article.title }}</h1>
+    <nuxt-link to="/articles">Articles</nuxt-link>
     <pre>{{ article.body }}</pre>
   </div>
 </template>
