@@ -214,7 +214,8 @@ export default {
   content: {
     dir: 'content',
     i18n: 'auto', // true or false
-    apiPrefix: '__content', // http://localhost:3000/__content
+    apiPrefix: '__content', // http://localhost:3000/__content,
+    fullTextSearchFields: ['title']
   }
 }
 ```
