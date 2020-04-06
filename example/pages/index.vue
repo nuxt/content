@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>{{ page.title }}</h1>
-    <nuxt-link to="/articles">Articles</nuxt-link>
-    <pre>{{ page.body }}</pre>
+    <nuxt-link :to="{ name: 'articles' }">Articles</nuxt-link>
+
+    <md-content :body="page.body" />
   </div>
 </template>
 
@@ -11,7 +11,9 @@ export default {
   async asyncData ({ $content }) {
     const page = await $content('home').fields(['title', 'body']).fetch()
 
-    return { page }
+    return {
+      page
+    }
   }
 }
 </script>

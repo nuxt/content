@@ -6,5 +6,9 @@ module.exports = {
   srcDir: __dirname,
   modules: [
     require('../')
+  ],
+  buildModules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/moment'
   ]
 }
