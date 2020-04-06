@@ -12,6 +12,7 @@ tags:
   - Fetch
   - Asynchronous Data Fetching
   - API
+time: 15
 ---
 
 Nuxt introduces a new `fetch` with the latest release of version 2.12. Fetch provides a brand new way to bring data into Nuxt applications.

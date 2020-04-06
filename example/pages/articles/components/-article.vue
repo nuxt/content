@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col rounded-lg shadow-lg overflow-hidden">
+  <div class="flex flex-col rounded-lg shadow overflow-hidden">
     <div class="flex-shrink-0">
       <img class="h-48 w-full object-cover" :src="`https://nuxtjs.org/${article.imgUrl}`" alt />
     </div>
@@ -26,7 +26,7 @@
           <div class="flex text-sm leading-5 text-gray-500">
             <time datetime="2020-03-16">{{ $moment(article.date).format('LL') }}</time>
             <span class="mx-1">&middot;</span>
-            <span>6 min read</span>
+            <span>{{ article.time }} min read</span>
           </div>
         </div>
       </div>

@@ -10,7 +10,9 @@ authors:
 tags:
     - webpack
     - DX
+time: 3
 ---
+
 How we changed the developer experience to stop switching between the terminal and browser.
 
 > Nuxt.js is a Vue.js framework to create different kind of web applications with the **same directory structure & conventions**: Universal, Single Page, PWA or Static Generated.
