@@ -20,17 +20,19 @@
     "test": "yarn lint && jest"
   },
   "dependencies": {
-    "@dimerapp/markdown": "3.2.2",
-    "@nuxt/markdown": "^0.0.21",
+    "@lokidb/full-text-search": "2.0.0-beta.9",
+    "@lokidb/loki": "2.0.0-beta.9",
     "chokidar": "^3.3.1",
     "consola": "^2.11.3",
     "defu": "1.0.0",
     "fs-extra": "^9.0.0",
     "get-port": "^5.1.1",
     "gray-matter": "^4.0.2",
-    "lokijs": "1.5.8",
     "node-req": "^2.1.2",
-    "node-res": "^5.0.1"
+    "node-res": "^5.0.1",
+    "remark-parse": "8.0.0",
+    "remark-rehype": "6.0.0",
+    "unified": "9.0.0"
   },
   "devDependencies": {
     "@babel/core": "latest",
@@ -39,6 +41,9 @@
     "@commitlint/config-conventional": "latest",
     "@nuxtjs/eslint-config": "latest",
     "@nuxtjs/module-test-utils": "latest",
+    "@nuxtjs/moment": "1.6.0",
+    "@nuxtjs/tailwindcss": "1.4.0",
+    "@tailwindcss/ui": "0.1.3",
     "babel-eslint": "latest",
     "babel-jest": "latest",
     "codecov": "latest",
