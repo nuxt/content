@@ -10,5 +10,8 @@ module.exports = {
   buildModules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/moment'
+  ],
+  plugins: [
+    '@/plugins/vue-prism.client'
   ]
 }

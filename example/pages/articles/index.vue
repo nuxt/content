@@ -1,8 +1,5 @@
 <template>
   <div class="relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8 min-h-screen">
-    <div class="fixed inset-0">
-      <div class="bg-white h-1/2"></div>
-    </div>
     <div class="relative max-w-7xl mx-auto">
       <nav class="flex items-center justify-center text-sm leading-5 font-medium">
         <nuxt-link
@@ -50,7 +47,8 @@ export default {
       .sortBy('date', 'desc')
 
     if (q) {
-      query = query.search(`title:${q}`)
+      query = query.search(q)
+      // OR: query = query.search('title', q)
     }
 
     const articles = await query.fetch()
@@ -62,7 +60,12 @@ export default {
   },
   watch: {
     q () {
-      this.$router.replace({ query: { q: this.q } })
+      this.$router.replace({ query: this.q ? { q: this.q } : undefined }).catch(() => { })
+    }
+  },
+  head () {
+    return {
+      title: 'Blog'
     }
   }
 }
