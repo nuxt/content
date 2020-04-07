@@ -128,27 +128,10 @@ const articles = await this.$content('articles')
   .where({
 		tags: 'testing',
     isArchived: false,
-		date: { $gt: new Date(2020) }, // v2
-    rating: { $gte: 3 }, // v2
+		date: { $gt: new Date(2020) },
+    rating: { $gte: 3 },
 	})
-  .search('slug:2019*') // Based on lunrjs.com/guides/searching.html#fields
-	.fetch()
-```
-
-```js
-// Listing
-const articles = await this.$content('articles')
-	.fields(['title', 'date', 'authors'])
-	.sortBy('date', 'asc')
-	.limit(5)
-  .skip(10)
-  .where({
-		tags: 'testing',
-    isArchived: false,
-		date: { $gt: new Date(2020) }, // v2
-    rating: { $gte: 3 }, // v2
-	})
-  .search('slug:2019*') // Based on lunrjs.com/guides/searching.html#fields
+  .search('welcome')
 	.fetch()
 ```
 
