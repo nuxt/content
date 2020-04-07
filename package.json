@@ -28,11 +28,21 @@
     "fs-extra": "^9.0.0",
     "get-port": "^5.1.1",
     "gray-matter": "^4.0.2",
+    "mdast-util-definitions": "2.0.1",
+    "mdast-util-toc": "5.0.2",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
+    "rehype-minify-whitespace": "4.0.1",
+    "rehype-sort-attribute-values": "3.0.1",
+    "rehype-sort-attributes": "3.0.1",
+    "remark-autolink-headings": "6.0.0",
+    "remark-external-links": "6.0.0",
     "remark-parse": "8.0.0",
     "remark-rehype": "6.0.0",
-    "unified": "9.0.0"
+    "remark-slug": "6.0.0",
+    "remark-squeeze-paragraphs": "4.0.0",
+    "unified": "9.0.0",
+    "unist-util-visit": "2.0.2"
   },
   "devDependencies": {
     "@babel/core": "latest",
@@ -50,8 +60,11 @@
     "eslint": "latest",
     "husky": "latest",
     "jest": "latest",
+    "node-sass": "4.13.1",
     "nuxt-edge": "latest",
-    "standard-version": "latest"
+    "sass-loader": "8.0.2",
+    "standard-version": "latest",
+    "vue-prism": "1.0.5"
   },
   "publishConfig": {
     "access": "public"
