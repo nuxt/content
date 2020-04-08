@@ -32,6 +32,7 @@
     "mdast-util-toc": "5.0.2",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
+    "reading-time": "1.2.0",
     "rehype-minify-whitespace": "4.0.1",
     "rehype-sort-attribute-values": "3.0.1",
     "rehype-sort-attributes": "3.0.1",
@@ -42,7 +43,8 @@
     "remark-slug": "6.0.0",
     "remark-squeeze-paragraphs": "4.0.0",
     "unified": "9.0.0",
-    "unist-util-visit": "2.0.2"
+    "unist-util-visit": "2.0.2",
+    "vue-scrollactive": "0.8.0"
   },
   "devDependencies": {
     "@babel/core": "latest",
