@@ -5,8 +5,12 @@
     </div>
     <div class="flex-1 bg-white p-6 flex flex-col justify-between">
       <div class="flex-1">
-        <p class="text-sm leading-5 font-medium text-indigo-600">
-          <a v-for="tag of article.tags" :key="tag" href="#" class="hover:underline mr-2">{{ tag }}</a>
+        <p class="leading-none">
+          <span
+            v-for="tag of article.tags"
+            :key="tag"
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-green-100 text-green-800 mr-2"
+          >{{ tag }}</span>
         </p>
         <nuxt-link :to="{ name: 'articles-slug', params: { slug: article.slug } }" class="block">
           <h3 class="mt-2 text-xl leading-7 font-semibold text-gray-900">{{ article.title }}</h3>
@@ -26,7 +30,7 @@
           <div class="flex text-sm leading-5 text-gray-500">
             <time datetime="2020-03-16">{{ $moment(article.date).format('LL') }}</time>
             <span class="mx-1">&middot;</span>
-            <span>{{ article.time }} min read</span>
+            <span>{{ readingTime }} min read</span>
           </div>
         </div>
       </div>
@@ -40,6 +44,11 @@ export default {
     article: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    readingTime () {
+      return Math.ceil(this.$moment.duration(this.article.readingTime).asMinutes())
     }
   }
 }

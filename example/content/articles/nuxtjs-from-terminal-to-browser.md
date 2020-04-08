@@ -10,7 +10,6 @@ authors:
 tags:
     - webpack
     - DX
-time: 3
 ---
 
 How we changed the developer experience to stop switching between the terminal and browser.
@@ -19,12 +18,12 @@ How we changed the developer experience to stop switching between the terminal a
 
 _ℹ️ These features are all available with [v2.8.0 release](https://github.com/nuxt/nuxt.js/releases/tag/v2.8.0)._
 
-## [](#problems)Problems
+## Problems
 
 1.  Developing JavaScript applications with Webpack or any bundler requires to switch between your browser and terminal for debugging purpose.
 2.  Using `console.log` to debug when the app is server rendered requires to remember that logs will be displayed on the terminal when refreshing the page.
 
-## [](#solutions)Solutions
+## Solutions
 
 1.  Forwarding Webpack build state right in the browser and display them in a fancy manner.
 
@@ -38,7 +37,7 @@ _ℹ️ These features are all available with [v2.8.0 release](https://github.co
 
 [![nuxt-ssr-logs-forwarding](https://res.cloudinary.com/practicaldev/image/fetch/s--bwQ8iEq2--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_66%2Cw_880/https://user-images.githubusercontent.com/904724/58566291-a3396700-8230-11e9-9dd6-09c3ff8578d2.gif)](https://res.cloudinary.com/practicaldev/image/fetch/s--bwQ8iEq2--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_66%2Cw_880/https://user-images.githubusercontent.com/904724/58566291-a3396700-8230-11e9-9dd6-09c3ff8578d2.gif)
 
-## [](#nuxtjs-vision)NuxtJS Vision
+## NuxtJS Vision
 
 The purpose to these changes is to use the terminal for commands only.
 

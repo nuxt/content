@@ -1,33 +1,31 @@
 <template>
-  <div class="relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8 min-h-screen">
-    <div class="relative max-w-7xl mx-auto">
-      <nav class="flex items-center justify-center text-sm leading-5 font-medium">
-        <nuxt-link
-          to="/"
-          class="text-gray-500 hover:text-gray-700 focus:outline-none focus:underline transition duration-150 ease-in-out"
-        >Home</nuxt-link>
-      </nav>
-      <div class="mt-2 text-center">
-        <h2
-          class="text-3xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10"
-        >Nuxt.js Blog</h2>
-        <p
-          class="mt-3 max-w-2xl mx-auto text-xl leading-7 text-gray-500 sm:mt-4"
-        >Discover articles from the core team and contributors about NuxtJS, tips and tricks included!</p>
+  <div>
+    <nav class="flex items-center justify-center text-sm leading-5 font-medium">
+      <nuxt-link
+        to="/"
+        class="text-gray-500 hover:text-gray-700 focus:outline-none focus:underline transition duration-150 ease-in-out"
+      >Home</nuxt-link>
+    </nav>
+    <div class="mt-2 text-center">
+      <h2
+        class="text-3xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10"
+      >Nuxt.js Blog</h2>
+      <p
+        class="mt-3 max-w-2xl mx-auto text-xl leading-7 text-gray-500 sm:mt-4"
+      >Discover articles from the core team and contributors about NuxtJS, tips and tricks included!</p>
+    </div>
+    <div class="mt-3">
+      <div class="relative rounded-md shadow-sm">
+        <input
+          id="search"
+          v-model="q"
+          class="form-input block w-full sm:text-sm sm:leading-5"
+          placeholder="Search..."
+        />
       </div>
-      <div class="mt-3">
-        <div class="relative rounded-md shadow-sm">
-          <input
-            id="search"
-            v-model="q"
-            class="form-input block w-full sm:text-sm sm:leading-5"
-            placeholder="Search..."
-          />
-        </div>
-      </div>
-      <div class="mt-12 grid gap-5 max-w-lg mx-auto lg:grid-cols-3 lg:max-w-none">
-        <article-list v-for="article in articles" :key="article.slug" :article="article" />
-      </div>
+    </div>
+    <div class="mt-12 grid gap-5 max-w-lg mx-auto lg:grid-cols-3 lg:max-w-none">
+      <article-list v-for="article in articles" :key="article.slug" :article="article" />
     </div>
   </div>
 </template>
@@ -48,7 +46,7 @@ export default {
 
     if (q) {
       query = query.search(q)
-      // OR: query = query.search('title', q)
+      // OR query = query.search('title', q)
     }
 
     const articles = await query.fetch()

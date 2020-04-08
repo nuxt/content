@@ -11,7 +11,6 @@ tags:
     - framework
     - feature
     - performance
-time: 1
 ---
 
 ## Introducing Smart prefetching ⚡️
