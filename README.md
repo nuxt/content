@@ -194,11 +194,17 @@ Using global Vue component in Markdown is supported (see how [nuxt press does](h
 // nuxt.config.js
 export default {
   modules: ['@nuxtjs/content'],
+  // Default options
   content: {
+    apiPrefix: '_content', // http://localhost:3000/_content,
     dir: 'content',
-    i18n: 'auto', // true or false
-    apiPrefix: '__content', // http://localhost:3000/__content,
-    fullTextSearchFields: ['title']
+    fullTextSearchFields: ['title', 'description', 'slug'],
+    markdown: {
+      externalLinks: {
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }
+    }
   }
 }
 ```

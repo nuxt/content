@@ -11,3 +11,7 @@ title: Home
 <a href="/syntax">Html Link To Syntax</a>
 
 [Markdown Link To Syntax](/syntax)
+
+<a href="https://nuxtjs.org">External link html</a>
+
+[External Link markdown](https://nuxtjs.org)
