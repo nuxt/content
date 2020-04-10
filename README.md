@@ -200,10 +200,8 @@ export default {
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug'],
     markdown: {
-      externalLinks: {
-        target: '_blank',
-        rel: 'noopener noreferrer'
-      }
+      // See https://github.com/remarkjs/remark-external-links#api
+      externalLinks: {}
     }
   }
 }
