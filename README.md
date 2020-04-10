@@ -139,8 +139,8 @@ const articles = await this.$content('articles')
 // Get previous and next article
 const [ prev1, prev2, next1, next2, next3 ] = await this.$content('articles')
 	.fields(['title', 'path'])
-	.sortBy('date')  // desc (default 2nd params value)
-  .surround('article-2', { before: 2, after: 3 }) // array.slice(start (indexOf(my-article) - before), end (1 + before + start))
+	.sortBy('date')
+  .surround('article-2', { before: 2, after: 3 })
   .where({ isArchived: false })
 	.fetch()
 
