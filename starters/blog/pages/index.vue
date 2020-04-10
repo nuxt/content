@@ -3,12 +3,12 @@
     <header
       class="px-8 flex items-center justify-between sticky top-0 h-20 border-b border-gray-300 lg:border-b-0 bg-gray-100 lg:bg-transparent"
     >
-      <input
+      <!-- <input
         id="search"
         v-model="q"
         class="bg-white dark:bg-gray-700 w-full lg:w-64 focus:outline-none border border-gray-300 dark:border-gray-800 dark:text-white rounded py-2 px-4 block appearance-none leading-normal"
         placeholder="Search..."
-      />
+      />-->
 
       <div class="ml-8">
         <button

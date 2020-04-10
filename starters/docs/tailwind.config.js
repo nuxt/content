@@ -10,7 +10,8 @@ module.exports = {
     margin: ['responsive', 'last'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover'],
-    borderColor: ['responsive', 'hover', 'focus', 'dark']
+    borderColor: ['responsive', 'hover', 'focus', 'dark'],
+    borderWidth: ['responsive', 'first', 'last']
   },
   plugins: [
     require('tailwindcss-dark-mode')()

@@ -61,12 +61,5 @@ export default {
   },
   purgeCSS: {
     whitelist: ['mode-dark']
-  },
-  hooks: {
-    'content:file:beforeInsert': (item) => {
-      const { time } = require('reading-time')(item.text)
-
-      item.readingTime = time
-    }
   }
 }

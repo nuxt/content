@@ -3,22 +3,12 @@
     <main>
       <nuxt />
     </main>
-
-    <footer class="flex items-center justify-center py-8 px-4 text-gray-800 dark:text-gray-200">
-      Copyright © {{ new Date().getFullYear() }}. Powered by&nbsp;
-      <a
-        href="https://nuxtjs.org"
-        target="_blank"
-        class="underline hover:text-gray-700"
-      >Nuxt.js</a>
-    </footer>
   </div>
 </template>
 
 <script>
 export default {
   head () {
-    console.log('this.$store.state', this.$store.state)
     return {
       title: '',
       titleTemplate: (chunk) => {
@@ -29,7 +19,7 @@ export default {
         return 'NuxtJS'
       },
       bodyAttrs: {
-        class: ['bg-gray-100 dark:bg-gray-800']
+        class: ['bg-white dark:bg-gray-800 text-gray-700 dark:text-white antialiased']
       },
       htmlAttrs: {
         class: this.$store.state.theme === 'dark' ? ['mode-dark'] : []
