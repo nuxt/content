@@ -13,6 +13,6 @@ describe('module', () => {
 
   test('render', async () => {
     const html = await get('/')
-    expect(html).toContain('Home page')
+    expect(html).toContain('Home')
   })
 })
