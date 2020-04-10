@@ -33,6 +33,7 @@
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
     "rehype-minify-whitespace": "4.0.1",
+    "rehype-raw": "4.0.2",
     "rehype-sort-attribute-values": "3.0.1",
     "rehype-sort-attributes": "3.0.1",
     "remark-autolink-headings": "6.0.0",
