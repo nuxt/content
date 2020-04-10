@@ -6,5 +6,8 @@ module.exports = {
   srcDir: __dirname,
   modules: [
     require('../')
+  ],
+  plugins: [
+    '~/plugins/components'
   ]
 }

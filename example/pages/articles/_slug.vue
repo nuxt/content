@@ -4,7 +4,7 @@
     <h2>{{ article.title }}</h2>
     <p>{{ article.description }}</p>
 
-    <n-content :body="article.body" />
+    <nuxt-content :body="article.body" />
 
     <nuxt-link
       v-if="prev"

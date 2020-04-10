@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-link to="/articles">Articles</nuxt-link>
+    <nuxt-link to="/">Home</nuxt-link>
     <h2 v-html="page.title" />
     <nuxt-content :body="page.body" />
   </div>
@@ -10,7 +10,7 @@
 
 export default {
   async asyncData ({ $content }) {
-    const page = await $content('home').fetch()
+    const page = await $content('syntax').fetch()
 
     return {
       page

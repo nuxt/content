@@ -1,4 +1,13 @@
 ---
-title: The Progressive<br><span class="text-nuxt-lightgreen">Vue.js</span> Builder<br>
+title: Home
 ---
-Build your next Vue.js application with confidence using NuxtJS. An <span title="Under MIT license">open source</span> framework making web development simple and powerful.
+
+<p><span class="note">A mix of <em>Markdown</em> and <em>HTML</em>.</span></p>
+
+<hello name="Custom Component"></hello>
+
+<nuxt-link to="/syntax">Nuxt Link to Syntax</nuxt-link>
+
+<a href="/syntax">Html Link To Syntax</a>
+
+[Markdown Link To Syntax](/syntax)
