@@ -1,13 +1,20 @@
 <template>
   <div>
-    <main>
+    <navbar />
+
+    <main class="container mx-auto px-4 lg:px-8">
       <nuxt />
     </main>
   </div>
 </template>
 
 <script>
+import Navbar from '~/components/navbar'
+
 export default {
+  components: {
+    Navbar
+  },
   head () {
     return {
       title: '',
@@ -19,7 +26,7 @@ export default {
         return 'NuxtJS'
       },
       bodyAttrs: {
-        class: ['bg-white dark:bg-gray-800 text-gray-700 dark:text-white antialiased']
+        class: ['bg-white dark:bg-gray-900 text-gray-700 dark:text-white antialiased pt-16']
       },
       htmlAttrs: {
         class: this.$store.state.theme === 'dark' ? ['mode-dark'] : []

@@ -1,15 +1,17 @@
 <template>
-  <div class="flex flex-wrap -mx-8">
-    <div class="w-full lg:w-3/4 px-8 lg:px-12 lg:py-8">
-      <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
+  <div class="flex flex-wrap -mx-4 lg:-mx-8">
+    <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
+      <article>
+        <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
 
-      <nuxt-content :body="doc.body" />
+        <nuxt-content :body="doc.body" />
+      </article>
 
       <div class="flex justify-between items-center mt-8">
         <nuxt-link
           v-if="prev"
           :to="`/${prev.slug}`"
-          class="text-green-500 font-bold hover:underline flex items-center transition ease-in-out duration-150"
+          class="text-green-500 font-bold hover:underline flex items-center"
         >
           <svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 mr-1">
             <path
@@ -25,7 +27,7 @@
         <nuxt-link
           v-if="next"
           :to="`/${next.slug}`"
-          class="text-green-500 font-bold hover:underline flex items-center transition ease-in-out duration-150"
+          class="text-green-500 font-bold hover:underline flex items-center"
         >
           {{ next.title }}
           <svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 ml-1">
@@ -40,27 +42,31 @@
       </div>
     </div>
 
-    <div class="w-full lg:w-1/4 p-8 border-l lg:sticky lg:top-0 lg:h-screen">
-      <h3 class="text-sm tracking-wide uppercase font-black mb-2">On this page</h3>
+    <div class="w-full lg:w-1/4 p-4 lg:p-8">
+      <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
+        <h3 class="text-sm tracking-wide uppercase font-black mb-2">On this page</h3>
 
-      <scrollactive highlight-first-item active-class="text-green-500" tag="ul">
-        <li
-          v-for="link of doc.toc"
-          :key="link.id"
-          :class="{
-            'border-t border-dashed first:border-t-0 font-semibold': link.depth === 2
-          }"
-        >
-          <a
-            :href="`#${link.id}`"
-            class="block text-sm scrollactive-item transition ease-in-out duration-150 transform hover:translate-x-1"
-            :class="{
-              'py-2': link.depth === 2,
-              'ml-4 pb-2': link.depth === 3
-            }"
-          >{{ link.text }}</a>
-        </li>
-      </scrollactive>
+        <nav>
+          <scrollactive highlight-first-item active-class="text-green-500" tag="ul">
+            <li
+              v-for="link of doc.toc"
+              :key="link.id"
+              :class="{
+                'border-t border-dashed dark:border-gray-800 first:border-t-0 font-semibold': link.depth === 2
+              }"
+            >
+              <a
+                :href="`#${link.id}`"
+                class="block text-sm scrollactive-item transition-transform ease-in-out duration-300 transform hover:translate-x-1"
+                :class="{
+                  'py-2': link.depth === 2,
+                  'ml-4 pb-2': link.depth === 3
+                }"
+              >{{ link.text }}</a>
+            </li>
+          </scrollactive>
+        </nav>
+      </div>
     </div>
   </div>
 </template>
@@ -99,25 +105,29 @@ export default {
 </script>
 
 <style lang="scss">
-// .mode-dark {
-//   .nuxt-content {
-//     @apply text-white;
+.mode-dark {
+  .nuxt-content {
+    h2,
+    h3,
+    blockquote {
+      @apply border-gray-800;
+    }
 
-//     pre,
-//     code {
-//       @apply bg-gray-800 text-white;
-//     }
-//   }
-// }
+    > code,
+    p > code {
+      @apply bg-gray-800;
+    }
+  }
+}
 
 .nuxt-content {
   h2 {
-    @apply text-2xl font-black mb-2 mt-6 py-1 border-b;
+    @apply text-2xl font-black mb-2 py-1 border-b -mt-16 pt-16;
 
     > a {
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-6 pr-2 absolute opacity-0;
+        @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-0;
       }
     }
 
@@ -129,12 +139,12 @@ export default {
   }
 
   h3 {
-    @apply text-xl font-extrabold mb-2 mt-6 py-1 border-b;
+    @apply text-xl font-extrabold mb-2 py-1 border-b -mt-16 pt-16;
 
     > a {
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-5 pr-2 absolute opacity-0;
+        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
       }
     }
 
@@ -147,7 +157,7 @@ export default {
 
   > code,
   p > code {
-    @apply bg-gray-100 p-1 text-sm border rounded;
+    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
   }
 
   pre {
@@ -156,6 +166,11 @@ export default {
     code {
       text-shadow: none;
     }
+  }
+
+  pre,
+  pre > code {
+    @apply bg-gray-800;
   }
 
   ol {
@@ -167,11 +182,7 @@ export default {
   }
 
   a {
-    @apply text-green-500;
-
-    &:hover {
-      @apply underline;
-    }
+    @apply underline;
   }
 
   p {
@@ -179,7 +190,7 @@ export default {
   }
 
   blockquote {
-    @apply py-2 pl-4 mb-4 border-l-4 border-gray-200;
+    @apply py-2 pl-4 mb-4 border-l-4;
 
     > p:last-child {
       @apply mb-0;

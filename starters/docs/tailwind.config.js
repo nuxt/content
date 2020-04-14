@@ -8,9 +8,9 @@ module.exports = {
   theme: {},
   variants: {
     margin: ['responsive', 'last'],
-    backgroundColor: ['responsive', 'hover', 'focus', 'dark'],
+    backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover'],
-    borderColor: ['responsive', 'hover', 'focus', 'dark'],
+    borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     borderWidth: ['responsive', 'first', 'last']
   },
   plugins: [

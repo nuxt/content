@@ -28,7 +28,6 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/theme.client',
     '@/plugins/vue-prism.client',
     '@/plugins/vue-scrollactive'
   ],
@@ -60,6 +59,7 @@ export default {
     }
   },
   purgeCSS: {
-    whitelist: ['mode-dark']
+    whitelist: ['mode-dark'],
+    whitelistPatternsChildren: [/token$/]
   }
 }
