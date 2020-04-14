@@ -185,9 +185,9 @@ export default {
   .nuxt-content {
     @apply text-white;
 
-    pre,
-    code {
-      @apply bg-gray-800 text-white;
+    > code,
+    p > code {
+      @apply bg-gray-800;
     }
   }
 }
@@ -206,7 +206,7 @@ export default {
     > a {
       &::before {
         content: "#";
-        @apply text-green-500 -ml-5 pr-1 absolute opacity-0;
+        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
       }
     }
 
@@ -228,7 +228,7 @@ export default {
     > a {
       &::before {
         content: "#";
-        @apply text-gray-500 -ml-5 pr-1 absolute opacity-0;
+        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
       }
     }
 
@@ -239,17 +239,22 @@ export default {
     }
   }
 
-  code {
-    @apply bg-gray-100 p-1 text-xs text-orange-500 rounded;
+  > code,
+  p > code {
+    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
   }
 
   pre {
-    @apply bg-gray-100 p-3 rounded;
+    @apply rounded mt-0 mb-4;
 
     code {
-      @apply bg-transparent p-0 text-sm text-black;
       text-shadow: none;
     }
+  }
+
+  pre,
+  pre > code {
+    @apply bg-gray-800;
   }
 
   ol {
@@ -261,11 +266,7 @@ export default {
   }
 
   a {
-    @apply text-green-500;
-
-    &:hover {
-      @apply underline;
-    }
+    @apply underline;
   }
 }
 </style>

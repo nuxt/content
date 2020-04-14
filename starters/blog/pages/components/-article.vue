@@ -1,8 +1,8 @@
 <template>
   <article class="flex flex-col rounded shadow overflow-hidden mb-16 last:mb-0">
-    <div class="flex-shrink-0">
+    <nuxt-link :to="`/${article.slug}`" class="flex-shrink-0">
       <img class="w-full object-cover" :src="`https://nuxtjs.org/${article.imgUrl}`" alt />
-    </div>
+    </nuxt-link>
 
     <div class="flex-1 bg-white dark:bg-gray-700 p-8 flex flex-col justify-between">
       <div class="flex-1">
