@@ -40,7 +40,9 @@ export default {
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
     // Doc: https://github.com/nuxt-community/moment-module
-    '@nuxtjs/moment'
+    '@nuxtjs/moment',
+    // Doc: https://github.com/nuxt-community/color-mode-module
+    '@nuxtjs/color-mode'
   ],
   /*
   ** Nuxt.js modules

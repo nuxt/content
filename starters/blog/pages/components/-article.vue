@@ -24,13 +24,17 @@
       </div>
       <div class="mt-6 flex items-center">
         <div class="flex-shrink-0">
-          <a :href="article.authors[0].link">
+          <a :href="article.authors[0].link" target="_blank">
             <img class="h-10 w-10 rounded-full" :src="article.authors[0].avatarUrl" alt />
           </a>
         </div>
         <div class="ml-3">
           <p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">
-            <a :href="article.authors[0].link" class="hover:underline">{{ article.authors[0].name }}</a>
+            <a
+              :href="article.authors[0].link"
+              target="_blank"
+              class="hover:underline"
+            >{{ article.authors[0].name }}</a>
           </p>
           <div class="flex text-sm leading-5 text-gray-500">
             <time datetime="2020-03-16">{{ $moment(article.date).format('LL') }}</time>

@@ -9,7 +9,7 @@
       <a
         href="https://nuxtjs.org"
         target="_blank"
-        class="underline hover:text-gray-700"
+        class="underline hover:text-gray-700 dark-hover:text-gray-400"
       >Nuxt.js</a>
     </footer>
   </div>
@@ -29,9 +29,6 @@ export default {
       },
       bodyAttrs: {
         class: ['bg-gray-100 dark:bg-gray-800 antialiased']
-      },
-      htmlAttrs: {
-        class: this.$store.state.theme === 'dark' ? ['mode-dark'] : []
       }
     }
   }

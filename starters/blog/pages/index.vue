@@ -5,7 +5,7 @@
     >
       <button
         class="text-gray-800 hover:text-gray-600 dark:text-white dark-hover:text-gray-400 focus:outline-none"
-        @click="theme === 'dark' ? theme = 'light' : theme = 'dark'"
+        @click="$colorMode.value === 'dark' ? $colorMode.preference = 'light' : $colorMode.preference = 'dark'"
       >
         <svg
           fill="none"
@@ -17,7 +17,7 @@
           class="w-6 h-6"
         >
           <path
-            v-if="theme === 'dark'"
+            v-if="$colorMode.value === 'dark'"
             d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
           />
           <path
@@ -30,7 +30,7 @@
 
     <div class="max-w-4xl mx-auto py-16 px-4">
       <div class="text-center mb-16 max-w-xl mx-auto">
-        <img :src="`/img/logo-${theme}.svg`" class="w-24 h-24 mx-auto mb-4" />
+        <img :src="`/img/logo-${$colorMode.value}.svg`" class="w-24 h-24 mx-auto mb-4" />
         <h2 class="text-3xl font-extrabold mb-2 dark:text-white">Nuxt.js Blog Starter</h2>
         <p class="text-xl font-light text-gray-700 dark:text-gray-400 mb-4">
           A simple, hackable & minimalistic starter for
@@ -81,16 +81,6 @@ export default {
     return {
       q,
       articles
-    }
-  },
-  computed: {
-    theme: {
-      get () {
-        return this.$store.state.theme
-      },
-      set (theme) {
-        this.$store.commit('setTheme', theme)
-      }
     }
   },
   watch: {
