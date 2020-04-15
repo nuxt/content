@@ -51,14 +51,10 @@ export default {
     '@nuxtjs/content'
   ],
   /*
-  ** Build configuration
+  ** Modules configuration
   */
-  build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
-    }
+  colorMode: {
+    preference: 'light'
   },
   purgeCSS: {
     whitelist: ['mode-dark'],
