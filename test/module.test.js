@@ -1,18 +1,486 @@
+const { StatusCodeError } = require('request-promise-native/errors')
 const { setup, loadConfig, get } = require('@nuxtjs/module-test-utils')
 
 describe('module', () => {
   let nuxt
 
   beforeAll(async () => {
-    ({ nuxt } = (await setup(loadConfig(__dirname, '../../example'))))
+    ({ nuxt } = (await setup(loadConfig(__dirname))))
   }, 60000)
 
   afterAll(async () => {
     await nuxt.close()
   })
 
-  test('render', async () => {
-    const html = await get('/')
-    expect(html).toContain('Home')
+  test('GET /_content', async () => {
+    const items = await get('/_content', { json: true })
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'Home',
+        dir: '/',
+        path: '/home',
+        slug: 'home'
+      }),
+      expect.objectContaining({
+        title: 'About',
+        dir: '/',
+        path: '/about',
+        slug: 'about'
+      })
+    ]))
+  })
+
+  test('GET /_content with fields', async () => {
+    const items = await get('/_content', {
+      json: true,
+      qs: {
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      { title: 'Home' },
+      { title: 'About' }
+    ]))
+  })
+
+  test('GET /_content/home', async () => {
+    const page = await get('/_content/home', { json: true })
+
+    expect(page).toEqual(expect.objectContaining({
+      title: 'Home',
+      dir: '/',
+      path: '/home',
+      slug: 'home'
+    }))
+  })
+
+  test('GET /_content/home with fields', async () => {
+    const page = await get('/_content/home', {
+      json: true,
+      qs: {
+        fields: ['title']
+      }
+    })
+
+    expect(page).toEqual({
+      title: 'Home'
+    })
+  })
+
+  test('GET /_content/404', async () => {
+    await expect(get('/_content/404', { json: true })).rejects.toThrow(new StatusCodeError(404, { message: 'Not found' }))
+  })
+
+  test('POST /_content/articles without body', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST'
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ]))
+  })
+
+  test('POST /_content/articles with sortBy (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with sortBy (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with sortBy (array)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: [{
+          date: 'desc'
+        }],
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ])
+  })
+
+  test('GET /_content/articles with sortBy (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      qs: {
+        sortBy: 'date:desc',
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with limit (number)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        limit: 1,
+        sortBy: [{
+          date: 'desc'
+        }],
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with limit (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        limit: '1',
+        sortBy: [{
+          date: 'desc'
+        }],
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with skip (number)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        skip: 1,
+        limit: 1,
+        sortBy: [{
+          date: 'desc'
+        }],
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with skip (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        skip: '1',
+        limit: '1',
+        sortBy: [{
+          date: 'desc'
+        }],
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      })
+    ])
+  })
+
+  test('GET /_content/articles with search (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      qs: {
+        search: 'browser',
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with search (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        search: {
+          query: 'browser'
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with search in field (string)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        search: {
+          query: 'title',
+          value: 'browser'
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with search (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        search: {
+          query: {
+            query: {
+              type: 'match',
+              field: 'title',
+              value: 'browser',
+              prefix_length: 1,
+              fuzziness: 1,
+              extended: true,
+              minimum_should_match: 1
+            }
+          }
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with where (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        where: {
+          tags: {
+            $contains: 'webpack'
+          }
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with surround (object) of 404 slug', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        surround: {
+          slug: '404',
+          options: {
+            before: 1,
+            after: 1
+          }
+        },
+        fields: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      null,
+      null
+    ])
+  })
+
+  test('POST /_content/articles with surround (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        surround: {
+          slug: 'understanding-how-fetch-works-in-nuxt-2-12'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with surround as first (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        surround: {
+          slug: 'build-dev-to-clone-with-nuxt-new-fetch'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      null,
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      })
+    ])
+  })
+
+  test('POST /_content/articles with surround as last (object)', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        surround: {
+          slug: 'introducing-smart-prefetching'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      null
+    ])
   })
 })
