@@ -17,7 +17,8 @@
     "dev": "nuxt example",
     "lint": "eslint --ext .js,.vue example lib test",
     "release": "yarn test && standard-version && git push --follow-tags && npm publish",
-    "test": "yarn lint && jest"
+    "test": "yarn lint && jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@lokidb/full-text-search": "2.0.0-beta.9",
