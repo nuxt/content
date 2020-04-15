@@ -67,7 +67,7 @@
                       v-for="link of article.toc"
                       :key="link.id"
                       :href="`#${link.id}`"
-                      class="block mb-1 last:mb-0 text-sm font-light scrollactive-item"
+                      class="block mb-1 last:mb-0 text-sm scrollactive-item"
                       :class="`ml-${link.depth * 4}`"
                     >{{ link.text }}</a>
                   </scrollactive>
