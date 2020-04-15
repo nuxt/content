@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { groupBy } from 'lodash'
+import groupBy from 'lodash.groupby'
 
 export default {
   async asyncData ({ $content, route }) {

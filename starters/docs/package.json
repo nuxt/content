@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+    "lodash.groupby": "^4.6.0",
     "nuxt-edge": "latest",
     "prism-themes": "^1.4.0",
     "vue-prism": "^1.0.5",
