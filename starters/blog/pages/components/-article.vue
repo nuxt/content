@@ -10,7 +10,7 @@
           <span
             v-for="tag of article.tags"
             :key="tag"
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium leading-4 bg-green-100 dark:bg-green-500 text-green-500 dark:text-white mr-2"
+            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium leading-4 bg-green-100 dark:bg-nuxt-lightgreen text-nuxt-lightgreen dark:text-white mr-2"
           >{{ tag }}</span>
         </p>
         <nuxt-link :to="`/${article.slug}`" class="block">

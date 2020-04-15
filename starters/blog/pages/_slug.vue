@@ -45,7 +45,7 @@
       <div class="text-center mb-16 max-w-2xl mx-auto">
         <h2 class="text-3xl font-extrabold dark:text-white mb-2">{{ article.title }}</h2>
         <p
-          class="text-xl font-light text-gray-700 dark:text-gray-400 mb-4"
+          class="text-xl text-gray-700 dark:text-gray-400 mb-4"
         >{{ article.description }}</p>
         <div class="flex justify-center text-gray-500">
           <time datetime="2020-03-16">{{ $moment(article.date).format('LL') }}</time>
@@ -62,7 +62,7 @@
                 <p class="font-bold mb-2">Table of Contents</p>
 
                 <div class="-ml-8">
-                  <scrollactive highlight-first-item active-class="text-green-500">
+                  <scrollactive highlight-first-item active-class="text-nuxt-lightgreen">
                     <a
                       v-for="link of article.toc"
                       :key="link.id"
@@ -92,7 +92,7 @@
         <nuxt-link
           v-if="prev"
           :to="`/${prev.slug}`"
-          class="text-green-500 hover:underline flex items-center"
+          class="text-nuxt-lightgreen hover:underline flex items-center"
         >
           <svg fill="currentColor" viewBox="0 0 20 20" class="w-5 h-5 mr-2">
             <path
@@ -108,7 +108,7 @@
         <nuxt-link
           v-if="next"
           :to="`/${next.slug}`"
-          class="text-green-500 hover:underline flex items-center"
+          class="text-nuxt-lightgreen hover:underline flex items-center"
         >
           {{ next.title }}
           <svg fill="currentColor" viewBox="0 0 20 20" class="w-5 h-5 ml-2">
@@ -128,7 +128,7 @@
         <a
           :href="article.authors[0].link"
           target="_blank"
-          class="text-lg font-medium hover:underline text-green-500"
+          class="text-lg font-medium hover:underline text-nuxt-lightgreen"
         >Twitter</a>
       </div>
     </div>
@@ -198,7 +198,7 @@ export default {
     > a {
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
+        @apply text-nuxt-lightgreen font-normal -ml-4 pr-1 absolute opacity-0;
       }
     }
 
@@ -220,7 +220,7 @@ export default {
     > a {
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
+        @apply text-nuxt-lightgreen font-normal -ml-4 pr-1 absolute opacity-0;
       }
     }
 

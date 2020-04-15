@@ -6,7 +6,16 @@
 */
 module.exports = {
   theme: {
-    darkSelector: '.dark-mode'
+    darkSelector: '.dark-mode',
+    extend: {
+      colors: {
+        nuxt: {
+          gray: '#243746',
+          lightgreen: '#41B38A',
+          green: '#158876'
+        }
+      }
+    }
   },
   variants: {
     margin: ['responsive', 'last'],

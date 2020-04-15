@@ -29,26 +29,31 @@
     </header>
 
     <div class="max-w-4xl mx-auto py-16 px-4">
-      <div class="text-center mb-16 max-w-xl mx-auto">
+      <div class="text-center text-nuxt-gray dark:text-white mb-16 max-w-xl mx-auto">
         <img :src="`/img/logo-${$colorMode.value}.svg`" class="w-24 h-24 mx-auto mb-4" />
         <h2 class="text-3xl font-extrabold mb-2 dark:text-white">Nuxt.js Blog Starter</h2>
-        <p class="text-xl font-light text-gray-700 dark:text-gray-400 mb-4">
+        <p class="text-xl text-gray-700 dark:text-gray-400 mb-4">
           A simple, hackable & minimalistic starter for
           <a
             href="https://nuxtjs.org"
             target="_blank"
-            class="text-lg hover:underline text-green-500"
+            class="text-lg hover:underline text-nuxt-lightgreen"
           >Nuxt.js</a> that uses Markdown for content and
           <a
             href="https://tailwindcss.com"
             target="_blank"
-            class="text-lg hover:underline text-green-500"
+            class="text-lg hover:underline text-nuxt-lightgreen"
           >TailwindCSS</a>.
         </p>
         <a
+          href="https://twitter.com/nuxt_js"
+          target="_blank"
+          class="text-lg font-medium hover:underline text-nuxt-lightgreen mr-2"
+        >Twitter</a> ·
+        <a
           href="https://github.com/nuxt-company/content-module"
           target="_blank"
-          class="text-lg font-medium hover:underline text-green-500"
+          class="text-lg font-medium hover:underline text-nuxt-lightgreen ml-2"
         >GitHub</a>
       </div>
 
