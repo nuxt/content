@@ -4,7 +4,7 @@ position: 1
 category: Getting started
 ---
 
-Docc is a starter theme for [Gridsome](https://gridsome.org/) which is a static site generator powered by Vue. It allows you to quickly start writing your technical documentation for any kind of project.
+Docc is a starter theme for [Gridsome](https://gridsome.org/) which is a static site generator powered by Vue. It allows you to quickly start writing your technical documentation for any kind of project.2
 
 ## Fast by default
 
@@ -36,7 +36,7 @@ This starter uses [TailwindCSS](https://tailwindcss.com/) for layout and styling
 
 The most inportant colors are defined in the `src/layouts/Default.vue` file at the top of the `style` block via CSS variables. If you want to change the primary color to orange for example, you would simply touch that value there.
 
-```css
+```css{2}{test.css}
 :rrot {
   --color-ui-primary: theme('colors.orange.600');
 }

@@ -5,7 +5,9 @@
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
 module.exports = {
-  theme: {},
+  theme: {
+    darkSelector: '.dark-mode'
+  },
   variants: {
     margin: ['responsive', 'last'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],

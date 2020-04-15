@@ -105,7 +105,7 @@ export default {
 </script>
 
 <style lang="scss">
-.mode-dark {
+.dark-mode {
   .nuxt-content {
     h2,
     h3,
@@ -155,24 +155,6 @@ export default {
     }
   }
 
-  > code,
-  p > code {
-    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
-  }
-
-  pre {
-    @apply rounded mt-0 mb-4;
-
-    code {
-      text-shadow: none;
-    }
-  }
-
-  pre,
-  pre > code {
-    @apply bg-gray-800;
-  }
-
   ol {
     @apply list-decimal list-inside;
 
@@ -194,6 +176,54 @@ export default {
 
     > p:last-child {
       @apply mb-0;
+    }
+  }
+
+  > code,
+  p > code {
+    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
+  }
+
+  &-highlight {
+    @apply relative;
+
+    > .filename {
+      @apply absolute right-0 text-gray-600 z-10 mr-2 text-sm;
+    }
+
+    pre[class*="language-"] {
+      @apply rounded mt-0 mb-4 bg-gray-800 relative p-5;
+
+      > code {
+        @apply bg-gray-800 relative;
+        text-shadow: none;
+      }
+
+      &.line-numbers {
+        @apply relative pl-12;
+        counter-reset: linenumber;
+
+        > code {
+          > .line-numbers-rows {
+            @apply absolute pointer-events-none top-0 tracking-tighter select-none w-4 -ml-6 -mt-1;
+
+            > span {
+              @apply pointer-events-none block leading-6;
+              counter-increment: linenumber;
+
+              &::before {
+                content: counter(linenumber);
+                @apply text-gray-400;
+                display: block;
+              }
+            }
+          }
+        }
+      }
+
+      > .line-highlight {
+        @apply bg-gray-700 opacity-50 absolute left-0 right-0 pointer-events-none mt-5;
+      }
     }
   }
 }
