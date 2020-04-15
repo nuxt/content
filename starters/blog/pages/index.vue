@@ -1,7 +1,7 @@
 <template>
   <div>
     <header
-      class="px-8 flex items-center justify-end sticky top-0 h-20 border-b border-gray-300 lg:border-b-0 bg-gray-100 lg:bg-transparent"
+      class="px-8 flex items-center justify-end sticky top-0 h-20"
     >
       <button
         class="text-gray-800 hover:text-gray-600 dark:text-white dark-hover:text-gray-400 focus:outline-none"
