@@ -20,7 +20,7 @@ tags:
 *Let’s build a blazing fast articles and tutorials app using Nuxt, Dev.to API, with lazy loading, placeholders, caching and trendy neumorphic design UI.*
 
 
-<video src="/blog/build-dev-to-clone-with-nuxt-new-fetch/dev-clone-nuxt.mp4" autoplay loop playsinline controls></video>
+<video src="https://nuxtjs.org/blog/build-dev-to-clone-with-nuxt-new-fetch/dev-clone-nuxt.mp4" autoplay loop playsinline controls></video>
 
 <p align="center">
   <a href="https://boyps.sse.codesandbox.io" target="_blank" rel="noopener nofollow">View demo</a> /

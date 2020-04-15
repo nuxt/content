@@ -1,11 +1,12 @@
 const { resolve } = require('path')
+const contentModule = require('..')
 
 module.exports = {
   rootDir: resolve(__dirname, '..'),
   buildDir: resolve(__dirname, '.nuxt'),
   srcDir: __dirname,
   modules: [
-    require('../')
+    contentModule
   ],
   plugins: [
     '~/plugins/components'
