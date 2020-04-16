@@ -1,16 +1,16 @@
 ---
-title: Home
+title: Markdown
 ---
 
 <p><span class="note">A mix of <em>Markdown</em> and <em>HTML</em>.</span></p>
 
 <hello name="Custom Component"></hello>
 
-<nuxt-link to="/syntax">Nuxt Link to Syntax</nuxt-link>
+<nuxt-link to="/articles">Nuxt Link to Blog</nuxt-link>
 
-<a href="/syntax">Html Link To Syntax</a>
+<a href="/articles">Html Link to Blog</a>
 
-[Markdown Link To Syntax](/syntax)
+[Markdown Link to Blog](/articles)
 
 <a href="https://nuxtjs.org">External link html</a>
 
