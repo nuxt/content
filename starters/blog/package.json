@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "nuxt-edge": "latest",
+    "prismjs": "^1.20.0",
     "prism-themes": "^1.4.0",
     "reading-time": "^1.2.0",
-    "vue-prism": "^1.0.5",
     "vue-scrollactive": "^0.8.0"
   },
   "devDependencies": {

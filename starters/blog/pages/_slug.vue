@@ -44,9 +44,7 @@
     <div class="max-w-4xl mx-auto py-16 px-4">
       <div class="text-center mb-16 max-w-2xl mx-auto">
         <h2 class="text-3xl font-extrabold dark:text-white mb-2">{{ article.title }}</h2>
-        <p
-          class="text-xl text-gray-700 dark:text-gray-400 mb-4"
-        >{{ article.description }}</p>
+        <p class="text-xl text-gray-700 dark:text-gray-400 mb-4">{{ article.description }}</p>
         <div class="flex justify-center text-gray-500">
           <time datetime="2020-03-16">{{ $moment(article.date).format('LL') }}</time>
           <span class="mx-1">&middot;</span>
@@ -83,7 +81,7 @@
           </div>
 
           <div class="flex-1 bg-white dark:bg-gray-700 p-8 flex flex-col justify-between">
-            <n-content :body="article.body" />
+            <nuxt-content :body="article.body" />
           </div>
         </div>
       </div>
@@ -136,6 +134,18 @@
 </template>
 
 <script>
+import Prism from 'prismjs'
+import 'prism-themes/themes/prism-material-oceanic.css'
+import 'prismjs/components/prism-bash'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-markup'
+import 'prismjs/plugins/autolinker/prism-autolinker'
+import 'prismjs/plugins/autolinker/prism-autolinker.css'
+import 'prismjs/plugins/line-numbers/prism-line-numbers'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
+import 'prismjs/plugins/line-highlight/prism-line-highlight'
+import 'prismjs/plugins/line-highlight/prism-line-highlight.css'
+
 export default {
   async asyncData ({ $content, params, error }) {
     let article
@@ -164,6 +174,9 @@ export default {
       return Math.ceil(this.$moment.duration(this.article.readingTime).asMinutes())
     }
   },
+  mounted () {
+    Prism.highlightAll()
+  },
   head () {
     return {
       title: this.article.title
@@ -177,7 +190,12 @@ export default {
   .nuxt-content {
     @apply text-white;
 
+    blockquote {
+      @apply border-gray-800;
+    }
+
     > code,
+    li > code,
     p > code {
       @apply bg-gray-800;
     }
@@ -185,8 +203,6 @@ export default {
 }
 
 .nuxt-content {
-  @apply leading-loose;
-
   h2 {
     @apply text-xl font-bold my-6 table;
 
@@ -231,34 +247,59 @@ export default {
     }
   }
 
-  > code,
-  p > code {
-    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
-  }
+  ul {
+    @apply list-disc list-inside;
 
-  pre {
-    @apply rounded mt-0 mb-4;
-
-    code {
-      text-shadow: none;
+    > li {
+      @apply mb-1;
     }
-  }
-
-  pre,
-  pre > code {
-    @apply bg-gray-800;
   }
 
   ol {
     @apply list-decimal list-inside;
 
     > li {
-      @apply py-2;
+      @apply mb-1;
     }
   }
 
   a {
     @apply underline;
+  }
+
+  p {
+    @apply mb-4;
+  }
+
+  blockquote {
+    @apply py-2 pl-4 mb-4 border-l-4;
+
+    > p:last-child {
+      @apply mb-0;
+    }
+  }
+
+  > code,
+  li > code,
+  p > code {
+    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
+  }
+
+  &-highlight {
+    @apply relative;
+
+    > .filename {
+      @apply absolute right-0 text-gray-600 font-semibold z-10 mr-2 text-sm;
+    }
+
+    pre[class*="language-"] {
+      @apply rounded mt-0 mb-4 bg-gray-800 relative;
+
+      > code {
+        @apply bg-gray-800 relative;
+        text-shadow: none;
+      }
+    }
   }
 }
 </style>

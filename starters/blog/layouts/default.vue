@@ -11,7 +11,9 @@
         class="underline hover:text-gray-700 dark-hover:text-gray-400"
       >Nuxt.js</a>.
     </footer>
-    <footer class="flex items-center justify-center pt-2 pb-8 px-4 text-gray-600 dark:text-gray-200">
+    <footer
+      class="flex items-center justify-center pt-2 pb-8 px-4 text-gray-600 dark:text-gray-200"
+    >
       Starter inspired by&nbsp;
       <a
         href="https://github.com/gridsome/gridsome-starter-blog"
