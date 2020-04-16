@@ -134,18 +134,6 @@
 </template>
 
 <script>
-import Prism from 'prismjs'
-import 'prism-themes/themes/prism-material-oceanic.css'
-import 'prismjs/components/prism-bash'
-import 'prismjs/components/prism-json'
-import 'prismjs/components/prism-markup'
-import 'prismjs/plugins/autolinker/prism-autolinker'
-import 'prismjs/plugins/autolinker/prism-autolinker.css'
-import 'prismjs/plugins/line-numbers/prism-line-numbers'
-import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
-import 'prismjs/plugins/line-highlight/prism-line-highlight'
-import 'prismjs/plugins/line-highlight/prism-line-highlight.css'
-
 export default {
   async asyncData ({ $content, params, error }) {
     let article
@@ -173,9 +161,6 @@ export default {
     readingTime () {
       return Math.ceil(this.$moment.duration(this.article.readingTime).asMinutes())
     }
-  },
-  mounted () {
-    Prism.highlightAll()
   },
   head () {
     return {
