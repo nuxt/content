@@ -17,14 +17,14 @@
     "vue-scrollactive": "^0.8.0"
   },
   "devDependencies": {
-    "@nuxtjs/color-mode": "^0.0.2",
-    "@nuxtjs/eslint-config": "^2.0.0",
-    "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/color-mode": "^1.0.0",
+    "@nuxtjs/eslint-config": "^2.0.2",
+    "@nuxtjs/eslint-module": "^1.1.0",
     "@nuxtjs/moment": "^1.6.0",
-    "@nuxtjs/tailwindcss": "^1.0.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^6.1.0",
-    "eslint-plugin-nuxt": ">=0.4.2",
+    "@nuxtjs/tailwindcss": "^1.4.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-nuxt": ">=0.5.2",
     "node-sass": "^4.13.1",
     "sass-loader": "^8.0.2",
     "tailwindcss-dark-mode": "^1.1.3"
