@@ -2,7 +2,7 @@
   <div class="flex flex-wrap -mx-4 lg:-mx-8">
     <aside class="w-full lg:w-1/5 p-4 lg:p-8">
       <ul class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
-        <li v-for="(docs, category) in categories" :key="category">
+        <li v-for="(docs, category) in categories" :key="category" class="mb-4 last:mb-0">
           <h3 class="text-sm tracking-wide uppercase font-black mb-2">{{ category }}</h3>
 
           <ul class="pl-2">

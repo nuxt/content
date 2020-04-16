@@ -28,8 +28,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/vue-prism.client',
-    '@/plugins/vue-scrollactive'
+    '~/plugins/vue-scrollactive'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -60,8 +59,14 @@ export default {
     extend (config, ctx) {
     }
   },
+  /*
+  ** Modules configuration
+  */
+  colorMode: {
+    preference: 'light'
+  },
   purgeCSS: {
-    whitelist: ['mode-dark'],
+    whitelist: ['dark-mode'],
     whitelistPatternsChildren: [/token$/]
   }
 }

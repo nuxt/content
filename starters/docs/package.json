@@ -11,10 +11,10 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "lodash.groupby": "^4.6.0",
     "nuxt-edge": "latest",
+    "lodash.groupby": "^4.6.0",
+    "prismjs": "^1.20.0",
     "prism-themes": "^1.4.0",
-    "vue-prism": "^1.0.5",
     "vue-scrollactive": "^0.8.0"
   },
   "devDependencies": {

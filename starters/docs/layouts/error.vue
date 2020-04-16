@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <nuxt-link to="/">Home</nuxt-link>
-    <h1>{{ error.message }}</h1>
+  <div class="p-4 lg:p-8 text-center">
+    <h1 class="text-4xl font-black leading-none">{{ error.message }}</h1>
   </div>
 </template>
 

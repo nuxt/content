@@ -72,6 +72,18 @@
 </template>
 
 <script>
+import Prism from 'prismjs'
+import 'prism-themes/themes/prism-material-oceanic.css'
+import 'prismjs/components/prism-bash'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-markup'
+import 'prismjs/plugins/autolinker/prism-autolinker'
+import 'prismjs/plugins/autolinker/prism-autolinker.css'
+import 'prismjs/plugins/line-numbers/prism-line-numbers'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
+import 'prismjs/plugins/line-highlight/prism-line-highlight'
+import 'prismjs/plugins/line-highlight/prism-line-highlight.css'
+
 export default {
   scrollToTop: true,
   async asyncData ({ $content, params, error }) {
@@ -96,6 +108,9 @@ export default {
       next
     }
   },
+  mounted () {
+    Prism.highlightAll()
+  },
   head () {
     return {
       title: this.doc.title
@@ -114,6 +129,7 @@ export default {
     }
 
     > code,
+    li > code,
     p > code {
       @apply bg-gray-800;
     }
@@ -155,11 +171,19 @@ export default {
     }
   }
 
+  ul {
+    @apply list-disc list-inside;
+
+    > li {
+      @apply pb-1;
+    }
+  }
+
   ol {
     @apply list-decimal list-inside;
 
     > li {
-      @apply py-2;
+      @apply pb-1;
     }
   }
 
@@ -180,6 +204,7 @@ export default {
   }
 
   > code,
+  li > code,
   p > code {
     @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
   }
@@ -188,41 +213,15 @@ export default {
     @apply relative;
 
     > .filename {
-      @apply absolute right-0 text-gray-600 z-10 mr-2 text-sm;
+      @apply absolute right-0 text-gray-600 font-semibold z-10 mr-2 text-sm;
     }
 
     pre[class*="language-"] {
-      @apply rounded mt-0 mb-4 bg-gray-800 relative p-5;
+      @apply rounded mt-0 mb-4 bg-gray-800 relative;
 
       > code {
         @apply bg-gray-800 relative;
         text-shadow: none;
-      }
-
-      &.line-numbers {
-        @apply relative pl-12;
-        counter-reset: linenumber;
-
-        > code {
-          > .line-numbers-rows {
-            @apply absolute pointer-events-none top-0 tracking-tighter select-none w-4 -ml-6 -mt-1;
-
-            > span {
-              @apply pointer-events-none block leading-6;
-              counter-increment: linenumber;
-
-              &::before {
-                content: counter(linenumber);
-                @apply text-gray-400;
-                display: block;
-              }
-            }
-          }
-        }
-      }
-
-      > .line-highlight {
-        @apply bg-gray-700 opacity-50 absolute left-0 right-0 pointer-events-none mt-5;
       }
     }
   }
