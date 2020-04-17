@@ -58,8 +58,8 @@
     "husky": "latest",
     "jest": "latest",
     "nuxt-edge": "latest",
-    "standard-version": "latest",
     "puppeteer": "latest",
+    "standard-version": "latest",
     "tib": "latest"
   },
   "publishConfig": {
