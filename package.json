@@ -58,7 +58,7 @@
     "husky": "latest",
     "jest": "latest",
     "nuxt-edge": "latest",
-    "puppeteer": "latest",
+    "puppeteer": "^2.1.1",
     "standard-version": "latest",
     "tib": "latest"
   },
