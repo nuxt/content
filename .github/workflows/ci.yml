@@ -39,7 +39,7 @@ jobs:
         run: yarn lint
 
       - name: Test
-        run: yarn test
+        run: yarn jest -i
 
       - name: Coverage
         run: yarn codecov
