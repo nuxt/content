@@ -58,7 +58,9 @@
     "husky": "latest",
     "jest": "latest",
     "nuxt-edge": "latest",
-    "standard-version": "latest"
+    "standard-version": "latest",
+    "puppeteer": "latest",
+    "tib": "latest"
   },
   "publishConfig": {
     "access": "public"
