@@ -24,14 +24,11 @@
     "@lokidb/full-text-search": "^2.0.0-beta.9",
     "@lokidb/loki": "^2.0.0-beta.9",
     "chokidar": "^3.3.1",
-    "consola": "^2.11.3",
     "csvtojson": "^2.0.10",
     "defu": "^1.0.0",
     "fs-extra": "^9.0.0",
-    "get-port": "^5.1.1",
     "gray-matter": "^4.0.2",
-    "mdast-util-definitions": "^2.0.1",
-    "mdast-util-toc": "^5.0.3",
+    "js-yaml": "3.13.1",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
     "prismjs": "^1.20.0",
@@ -45,8 +42,7 @@
     "remark-rehype": "^6.0.0",
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
-    "unified": "^9.0.0",
-    "unist-util-visit": "^2.0.2"
+    "unified": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "latest",
