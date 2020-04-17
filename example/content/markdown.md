@@ -1,10 +1,17 @@
 ---
 title: Markdown
+description: This is a .md file
 ---
+
+## HTML
 
 <p><span class="note">A mix of <em>Markdown</em> and <em>HTML</em>.</span></p>
 
+## Custom components
+
 <hello name="Custom Component"></hello>
+
+## Links
 
 <nuxt-link to="/articles">Nuxt Link to Blog</nuxt-link>
 
