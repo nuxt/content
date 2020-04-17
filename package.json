@@ -59,7 +59,7 @@
     "jest": "latest",
     "nuxt-edge": "latest",
     "standard-version": "latest",
-    "puppeteer": "latest",
+    "puppeteer": "^2.1.1",
     "tib": "latest"
   },
   "publishConfig": {
