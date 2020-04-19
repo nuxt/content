@@ -145,7 +145,7 @@ Vue.use(VueObserveVisibility)
 
 `vue-placeholders.js`:
 
-```js{4}{vue-placeholders.js}
+```js{4}[vue-placeholders.js]
 import Vue from 'vue'
 import VueContentPlaceholders from 'vue-content-placeholders'
 
@@ -196,7 +196,7 @@ That’s all. Pretty simple, right?
 
 One of the coolest practical features of the new `fetch` is its ability to work with `keep-alive` directive to save `fetch` calls on pages you have already visited. Let’s apply this feature in `layouts/default.vue` layout like this.
 
-```html
+```vue
 <template>
   <nuxt keep-alive />
 </template>
