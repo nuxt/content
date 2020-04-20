@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-wrap -mx-4 lg:-mx-8">
+  <div class="flex flex-wrap -mx-4 lg:-mx-8 h-full">
     <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
       <article>
-        <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
+        <h1 class="text-4xl font-black mb-8 leading-none">{{ doc.title }}</h1>
 
         <nuxt-content :body="doc.body" />
       </article>
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="w-full lg:w-1/4 p-4 lg:p-8">
+    <div v-if="doc.toc && doc.toc.length" class="w-full lg:w-1/4 p-4 lg:p-8">
       <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
         <h3 class="text-sm tracking-wide uppercase font-black mb-2">On this page</h3>
 
@@ -86,7 +86,7 @@ export default {
 
     const [prev, next] = await $content()
       .fields(['title', 'slug'])
-      .sortBy('position')
+      .sortBy('position', 'asc')
       .surround(slug, { before: 1, after: 1 })
       .fetch()
 
@@ -123,7 +123,7 @@ export default {
 
 .nuxt-content {
   h2 {
-    @apply text-2xl font-black mb-2 py-1 border-b -mt-16 pt-16;
+    @apply text-2xl font-black mb-4 py-1 border-b -mt-16 pt-16;
 
     > a {
       &::before {
@@ -157,7 +157,7 @@ export default {
   }
 
   ul {
-    @apply list-disc list-inside;
+    @apply list-disc list-inside mb-4;
 
     > li {
       @apply pb-1;
@@ -165,7 +165,7 @@ export default {
   }
 
   ol {
-    @apply list-decimal list-inside;
+    @apply list-decimal list-inside mb-4;
 
     > li {
       @apply pb-1;
