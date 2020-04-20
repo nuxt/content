@@ -70,7 +70,7 @@ describe('module', () => {
   })
 
   test('GET /_content/404', async () => {
-    await expect(get('/_content/404', { json: true })).rejects.toThrow(new StatusCodeError(404, { message: 'Not found' }))
+    await expect(get('/_content/404', { json: true })).rejects.toThrow(new StatusCodeError(404, { message: '/404 not found' }))
   })
 
   test('POST /_content/articles without body', async () => {
