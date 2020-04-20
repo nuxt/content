@@ -8,6 +8,8 @@
     <hr />
     <h2>JSON</h2>
     <pre>{{ json }}</pre>
+    <h2>JSON5</h2>
+    <pre>{{ json5 }}</pre>
     <h2>CSV</h2>
     <pre>{{ csv }}</pre>
     <h2>YAML</h2>
@@ -21,12 +23,14 @@ export default {
   async asyncData ({ $content }) {
     const markdown = await $content('markdown').fetch()
     const json = await $content('json').fetch()
+    const json5 = await $content('json5').fetch()
     const csv = await $content('csv').fetch()
     const yaml = await $content('yaml').fetch()
 
     return {
       markdown,
       json,
+      json5,
       csv,
       yaml
     }
