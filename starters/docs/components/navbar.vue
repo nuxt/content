@@ -29,7 +29,7 @@
                 v-model="q"
                 class="block w-full pl-10 pr-3 py-2 leading-5 border-2 border-transparent focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-700"
                 :class="{ 'rounded-b-none': focus && results.length }"
-                placeholder="Search"
+                placeholder="Search..."
                 type="search"
                 autocomplete="off"
                 @focus="focus = true"
@@ -185,7 +185,7 @@ export default {
         return
       }
 
-      this.results = await this.$content().sortBy('position').limit(12).search(q).fetch()
+      this.results = await this.$content().sortBy('position', 'asc').limit(12).search(q).fetch()
     }
   },
   methods: {

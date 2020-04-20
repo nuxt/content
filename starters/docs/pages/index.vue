@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap -mx-4 lg:-mx-8">
+  <div class="flex flex-wrap -mx-4 lg:-mx-8 relative" style="height: calc(100vh - 4rem)">
     <aside class="w-full lg:w-1/5 p-4 lg:p-8">
       <ul class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
         <li v-for="(docs, category) in categories" :key="category" class="mb-4 last:mb-0">
@@ -9,7 +9,7 @@
             <li v-for="doc of docs" :key="doc.slug">
               <nuxt-link
                 :to="`/${doc.slug !== 'index' ? doc.slug : ''}`"
-                class="font-semibold py-1 block"
+                class="font-medium py-1 block"
                 exact-active-class="text-green-500"
               >{{ doc.title }}</nuxt-link>
             </li>
@@ -29,7 +29,7 @@ import groupBy from 'lodash.groupby'
 
 export default {
   async asyncData ({ $content, route }) {
-    const docs = await $content().sortBy('position').fetch()
+    const docs = await $content().sortBy('position', 'asc').fetch()
 
     const categories = groupBy(docs, 'category')
 
