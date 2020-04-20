@@ -4,37 +4,50 @@ position: 4
 category: Getting started
 ---
 
-The module automatically injects **$content** inside your Nuxt.js application, so you can access it inside your pages:
+This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, fetch, nuxtServerInit and Middleware, you can access it from `context.$content`.
+
+## Methods
+
+### `$content(path)`
+
+- Returns a chain sequence
+
+`path` can be a file or a directory. Defaults to `/`. All the methods below can be chained and return a chain sequence (except `fetch`).
+
+### `fields()`
+
+Select a subset of fields:
 
 ```js
-export default {
-  async asyncData ({ $content }) {
-    const articles = await $content('articles').fetch()
-
-    return {
-      articles
-    }
-  },
-  methods: {
-    async search () {
-      await this.$content('articles').search('content')
-    }
-  }
-}
+await $content().fields(['title']).fetch()
 ```
 
-## .fields()
+### `where(query)`
 
-## .where()
+Filter a query:
 
-## .sortBy()
+```js
+await $content().where({ title: 'Home' })
+```
 
-## .limit()
+`@nuxtjs/content` uses LokiJS under the hood, you can check for [query examples](http://techfort.github.io/LokiJS/tutorial-Query%20Examples.html).
 
-## .skip()
+### `sortBy()`
 
-## .search()
+### `limit(n)`
 
-## .surround()
+Limit number of results. `n` can be a string or a number.
 
-## .fetch()
+### `skip(n)`
+
+Skip results. `n` can be a string or a number.
+
+### `search(field, value)`
+
+### `surround(slug, options)`
+
+### `fetch()`
+
+- Returns: `Promise`
+
+You need to call `fetch` in order to get data.

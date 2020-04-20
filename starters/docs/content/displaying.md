@@ -4,7 +4,7 @@ position: 5
 category: Getting started
 ---
 
-You can use `nuxt-content` component directly in your templates to display markdown content:
+You can use `nuxt-content` component directly in your template to display **Markdown** content:
 
 ```vue
 <template>

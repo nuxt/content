@@ -20,12 +20,10 @@ A file `content/home.md`:
 
 ```md
 ----
-title: Home page
+title: Home
 ---
 
-# Home page
-
-> Welcome to my *home page*!
+## Welcome!
 ```
 
 Will be transformed into:
@@ -35,47 +33,49 @@ Will be transformed into:
   "dir": "",
   "slug": "home",
   "path": "/home",
-  "updatedAt": "2017-11-07T12:21:34Z",
-  "metadata": {
-    "title": "Home page"
-  },
+  "title": "Home",
+  "toc": [
+    {
+      "id": "welcome",
+      "depth": 2,
+      "text": "Welcome!"
+    }
+  ],
   "body": {
     "type": "root",
     "children": [
       {
-        "type": "heading",
-        "depth": 1,
+        "type": "element",
+        "tag": "h2",
+        "props": {
+          "id": "welcome"
+        },
         "children": [
           {
-            "type": "text",
-            "value": "Home page"
-          }
-        ]
-      },
-      {
-        "type": "blockquote",
-        "children": [
-          {
-            "type": "paragraph",
+            "type": "element",
+            "tag": "a",
+            "props": {
+              "ariaHidden": "true",
+              "href": "#welcome",
+              "tabIndex": -1
+            },
             "children": [
               {
-                "type": "text",
-                "value": "Welcome to my ",
-              },
-              {
-                "type": "emphasis",
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "home page",
-                  }
-                ]
-              },
-              {
-                "type": "text",
-                "value": "!"
+                "type": "element",
+                "tag": "span",
+                "props": {
+                  "className": [
+                    "icon",
+                    "icon-link"
+                  ]
+                },
+                "children": []
               }
             ]
+          },
+          {
+            "type": "text",
+            "value": "Welcome!"
           }
         ]
       }

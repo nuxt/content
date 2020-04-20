@@ -4,6 +4,8 @@ category: Getting started
 position: 6
 ---
 
+## Default configuration
+
 ```js
 // nuxt.config.js
 export default {

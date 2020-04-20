@@ -2,7 +2,7 @@
   <div class="flex flex-wrap -mx-4 lg:-mx-8 h-full">
     <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
       <article>
-        <h1 class="text-4xl font-black mb-8 leading-none">{{ doc.title }}</h1>
+        <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
 
         <nuxt-content :body="doc.body" />
       </article>
@@ -177,7 +177,7 @@ export default {
   }
 
   p {
-    @apply mb-4;
+    @apply mb-4 leading-7;
   }
 
   blockquote {
@@ -192,6 +192,10 @@ export default {
   li > code,
   p > code {
     @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
+  }
+
+  h3 > code {
+    @apply bg-gray-100 p-1 text-base shadow-xs rounded;
   }
 
   &-highlight {
