@@ -33,6 +33,7 @@
     "gray-matter": "^4.0.2",
     "html-tags": "^3.1.0",
     "js-yaml": "3.13.1",
+    "json5": "2.1.3",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
     "prismjs": "^1.20.0",
