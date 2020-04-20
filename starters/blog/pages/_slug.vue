@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="px-8 flex items-center justify-between sticky top-0 h-20">
+    <header class="px-8 flex items-center justify-between lg:sticky top-0 h-20">
       <nuxt-link
         to="/"
         class="text-gray-800 hover:text-gray-600 dark:text-white dark-hover:text-gray-400 focus:outline-none focus:underline flex items-center transition duration-150 ease-in-out"
