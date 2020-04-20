@@ -166,7 +166,7 @@ const [ prev1, prev2, next1, next2, next3 ] = await this.$content('articles')
 <template>
   <article>
     <h1>{{ page.title }}</h1>
-    <md-content :body="page.body"/>
+    <nuxt-content :body="page.body" />
   </article>
 </template>
 
@@ -201,7 +201,16 @@ export default {
     fullTextSearchFields: ['title', 'description', 'slug'],
     markdown: {
       // See https://github.com/remarkjs/remark-external-links#api
-      externalLinks: {}
+      externalLinks: {},
+      prism: {
+        theme: 'prismjs/themes/prism.css'
+      }
+    },
+    yaml: {
+      // See https://github.com/nodeca/js-yaml
+    },
+    csv: {
+      // See https://github.com/Keyang/node-csvtojson
     }
   }
 }
