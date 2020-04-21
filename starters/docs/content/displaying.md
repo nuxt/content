@@ -8,7 +8,10 @@ You can use `nuxt-content` component directly in your template to display **Mark
 
 ```vue
 <template>
-  <nuxt-content :body="page.body" />
+  <article>
+    <h1>{{ page.title }}</h1>
+    <nuxt-content :body="page.body" />
+  </article>
 </template>
 
 <script>

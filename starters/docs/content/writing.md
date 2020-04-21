@@ -14,6 +14,12 @@ content/
   home.md
 ```
 
+This module will parse files and store them with these properties:
+
+- `dir`
+- `path`
+- `slug`
+
 ## Markdown
 
 A file `content/home.md`:
@@ -30,7 +36,7 @@ Will be transformed into:
 
 ```json
 {
-  "dir": "",
+  "dir": "/",
   "slug": "home",
   "path": "/home",
   "title": "Home",
@@ -86,8 +92,70 @@ Will be transformed into:
 
 ## CSV
 
+A file `content/home.csv`:
+
+```csv
+title, description
+Home, Welcome!
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "body": [
+    {
+      "title": "Home",
+      "description": "Welcome!"
+    }
+  ]
+}
+```
+
 ## YAML
 
-## JSON
+A file `content/home.yaml`:
 
-## JSON5
+```yaml
+title: Home
+description: Welcome!
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "title": "Home",
+  "description": "Welcome!"
+}
+```
+
+## JSON / JSON5
+
+A file `content/home.json`:
+
+```json
+{
+  "title": "Home",
+  "description": "Welcome!"
+}
+
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "title": "Home",
+  "description": "Welcome!"
+}
+```
