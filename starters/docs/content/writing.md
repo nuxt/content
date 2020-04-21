@@ -22,10 +22,12 @@ This module will parse files and store them with these properties:
 
 ## Markdown
 
+> All the data you define in the header will be injected into the document.
+
 A file `content/home.md`:
 
 ```md
-----
+---
 title: Home
 ---
 
@@ -92,6 +94,8 @@ Will be transformed into:
 
 ## CSV
 
+> Rows will be assigned to body variable.
+
 A file `content/home.csv`:
 
 ```csv
@@ -117,6 +121,8 @@ Will be transformed into:
 
 ## YAML
 
+> All variables defined will be injected into the document. WARNING: No body will be generated.
+
 A file `content/home.yaml`:
 
 ```yaml
@@ -137,6 +143,8 @@ Will be transformed into:
 ```
 
 ## JSON / JSON5
+
+> All variables defined will be injected into the document. WARNING: No body will be generated.
 
 A file `content/home.json`:
 

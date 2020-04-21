@@ -1,7 +1,7 @@
 ---
-title: Blog
+title: Slides
 category: Starters
-position: 10
+position: 9
 ---
 
 You can find a showcase here.

@@ -9,6 +9,7 @@ category: Getting started
 - Hot reload
 - Full-text search
 - Handles static site generation
+- Powerful QueryBuilder API
 - Syntax highlighting to code blocks in markdown files using [PrismJS](https://prismjs.com).
 - Markdown to JSON AST
 - Table of contents generation

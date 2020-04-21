@@ -34,7 +34,7 @@ This module uses LokiJS under the hood, you can check for [query examples](http:
 
 ### `sortBy(field, direction)`
 
-Sort results by field. `direction` defaults to ascending order. Can be chained multiple times to sort on multiple fields.
+Sort results by field. `direction` defaults to `asc` (ascending order). Can be chained multiple times to sort on multiple fields.
 
 ```js
 await this.$content().sortBy('title').fetch()

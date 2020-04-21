@@ -20,7 +20,7 @@ Fields that needs to be indexed to be searchable. Defaults to `['title', 'descri
 
 ### `markdown.externalLinks`
 
-
+This module uses `remark` under the hood to compile markdown files. You can control the behaviour of links via this option. You can check here for [options](https://github.com/remarkjs/remark-external-links#api).
 
 ### `markdown.prism.theme`
 
@@ -36,6 +36,8 @@ markdown: {
 }
 ```
 
+Defaults to `prismjs/themes/prism.css`.
+
 ### `yaml`
 
 This module uses `js-yaml` to parse csv files, you can check here for [options](https://github.com/nodeca/js-yaml#api).
@@ -44,10 +46,9 @@ This module uses `js-yaml` to parse csv files, you can check here for [options](
 
 This module uses `node-csvtojson` to parse csv files, you can check here for [options](https://github.com/Keyang/node-csvtojson#parameters).
 
-## Default
+## Example
 
-```js
-// nuxt.config.js
+```js{}[nuxt.config.js]
 export default {
   modules: ['@nuxtjs/content'],
   content: {
@@ -55,7 +56,6 @@ export default {
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug'],
     markdown: {
-      // See https://github.com/remarkjs/remark-external-links#api
       externalLinks: {},
       prism: {
         theme: 'prismjs/themes/prism.css'

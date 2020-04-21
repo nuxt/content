@@ -115,7 +115,8 @@ export default {
 
     > code,
     li > code,
-    p > code {
+    p > code,
+    h3 > code {
       @apply bg-gray-800;
     }
   }
@@ -195,14 +196,14 @@ export default {
   }
 
   h3 > code {
-    @apply bg-gray-100 p-1 text-base shadow-xs rounded;
+    @apply bg-gray-100 p-1 text-lg shadow-xs rounded;
   }
 
   &-highlight {
     @apply relative;
 
     > .filename {
-      @apply absolute right-0 text-gray-600 font-semibold z-10 mr-2 text-sm;
+      @apply absolute right-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
     }
 
     pre[class*="language-"] {

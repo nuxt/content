@@ -1,18 +1,37 @@
 ---
 title: Docs
 category: Starters
-position: 7
+position: 8
 ---
 
-This starter is a [Nuxt.js](https://nuxtjs.org) app using **@nuxtjs/content**.
+This starter is a [Nuxt.js](https://nuxtjs.org) app using **@nuxtjs/content**. It allows to quickly start writing a technical documentation for any kind of project.
 
 Want a showcase? You're looking at it!
-
-It allows to quickly start writing a technical documentation for any kind of project.
 
 Inspired by [docc](https://github.com/mrcrmn/docc).
 
 ## Usage
+
+The easiest way to use this starter is to download directly the subdirectory of the Github repository.
+
+You can do so with `degit`:
+
+```bash
+npx degit https://github.com/nuxt-company/content-module/tree/master/starters/docs docs
+```
+
+Go into the created folder and install it:
+
+```base
+cd docs
+yarn
+```
+
+Start the Nuxt.js app:
+
+```bash
+yarn dev
+```
 
 You can then start writing in the `content` folder, you have nothing to configure.
 
