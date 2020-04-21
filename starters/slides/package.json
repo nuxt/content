@@ -1,0 +1,32 @@
+{
+  "name": "@nuxtjs/content-slides-starter",
+  "version": "1.0.0",
+  "description": "Slides starter for @nuxtjs/content",
+  "author": "NuxtJS Company",
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "nuxt-edge": "latest",
+    "lodash.groupby": "^4.6.0",
+    "prism-themes": "^1.4.0",
+    "vue-scrollactive": "^0.8.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/color-mode": "^1.0.0",
+    "@nuxtjs/eslint-config": "^2.0.2",
+    "@nuxtjs/eslint-module": "^1.1.0",
+    "@nuxtjs/moment": "^1.6.0",
+    "@nuxtjs/tailwindcss": "^1.4.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-nuxt": ">=0.5.2",
+    "node-sass": "^4.13.1",
+    "sass-loader": "^8.0.2",
+    "tailwindcss-dark-mode": "^1.1.3"
+  }
+}
