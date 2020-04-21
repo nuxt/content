@@ -1,5 +1,10 @@
 <template>
-  <div class="flex justify-center items-center w-full h-full" :style="style" @click.left="forward" @click.right.prevent="previous">
+  <div
+    class="flex justify-center items-center w-full h-full"
+    :style="style"
+    @click.left="forward"
+    @click.right.prevent="previous"
+  >
     <nuxt-content :body="slide.body" />
   </div>
 </template>
@@ -9,11 +14,13 @@ export default {
   async asyncData ({ $content, params }) {
     const name = params.slide || 'index'
     const slide = await $content(name).fetch()
+
     const [prev, next] = await $content()
       .fields(['title', 'slug'])
       .sortBy('position')
       .surround(name, { before: 1, after: 1 })
       .fetch()
+
     return {
       slide,
       prev,
@@ -28,17 +35,40 @@ export default {
       }
     }
   },
+  mounted () {
+    window.addEventListener('keyup', this.keypress)
+  },
+  beforeDestroy () {
+    window.removeEventListener('keyup', this.keypress)
+  },
   methods: {
     previous () {
       if (this.prev) {
-        this.$router.push(this.prev.slug === 'index' ? '/' : this.prev.slug)
+        const slide = this.prev.slug === 'index' ? undefined : this.prev.slug
+
+        this.$router.push({ name: 'slide', params: { slide, transition: 'slide-right' } })
       }
     },
     forward () {
       if (this.next) {
-        this.$router.push(this.next.slug)
+        this.$router.push({ name: 'slide', params: { slide: this.next.slug, transition: 'slide-left' } })
+      }
+    },
+    keypress (e) {
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          this.forward()
+          break
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          this.previous()
+          break
       }
     }
+  },
+  transition (to) {
+    return to.params.transition
   }
 }
 </script>
