@@ -75,5 +75,13 @@ export default {
   purgeCSS: {
     whitelist: ['dark-mode'],
     whitelistPatternsChildren: [/token$/]
+  },
+  generate: {
+    async routes () {
+      const { $content } = require('@nuxtjs/content')
+      const files = await $content().fields(['path']).fetch()
+
+      return files.map(file => file.path === '/index' ? '/' : file.path)
+    }
   }
 }

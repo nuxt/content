@@ -35,11 +35,9 @@ export default {
 
 Allows you to update the raw data of a file before it is parsed disregarding it's extension.
 
-## Programmatic usage
+## Programmatic Usage
 
-`$content` is accessible from **nuxtjs/content**.
-
-**Example**
+`$content` is accessible from **@nuxtjs/content**.
 
 ```js
 export default {
@@ -51,6 +49,28 @@ export default {
       const { $content } = require('@nuxtjs/content')
       const files = await $content().fields(['slug']).fetch()
       console.log(files)
+    }
+  }
+}
+```
+
+### Static Site Generation
+
+When using `nuxt generate`, you need to specify the dynamic routes as stated [here](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
+
+**Example**
+
+```js
+export default {
+  modules: [,
+    '@nuxtjs/content'
+  ],
+  generate: {
+    async routes () {
+      const { $content } = require('@nuxtjs/content')
+      const files = await $content().fields(['path']).fetch()
+
+      return files.map(file => file.path === '/index' ? '/' : file.path)
     }
   }
 }
