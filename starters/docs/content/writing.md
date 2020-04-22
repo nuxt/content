@@ -96,6 +96,10 @@ Will be transformed into:
 }
 ```
 
+We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](http://localhost:3000/advanced#contentfilebeforeinsert) it.
+
+You can see how to display your markdown in your application in the [displaying content](/displaying) section.
+
 ## CSV
 
 > Rows will be assigned to body variable.
