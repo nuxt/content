@@ -38,6 +38,15 @@ markdown: {
 
 Defaults to `prismjs/themes/prism.css`.
 
+To disable the inclusion of the theme, set prism to `false`:
+```js
+markdown: {
+  prism: {
+    theme: false
+  }
+}
+```
+
 ### `yaml`
 
 This module uses `js-yaml` to parse csv files, you can check here for [options](https://github.com/nodeca/js-yaml#api).
