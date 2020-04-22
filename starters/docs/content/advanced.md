@@ -59,7 +59,7 @@ Allows you to add data to a document before it is stored.
 
 Taking the example of the blog starter, we use `file:beforeInsert` to add `readingTime` to a document using [reading-time](https://github.com/ngryman/reading-time).
 
-> NOTE: `text` is the body content of a markdown file before it is transformed to JSON AST, you can use at this point but it is not returned by the API.
+> `text` is the body content of a markdown file before it is transformed to JSON AST, you can use at this point but it is not returned by the API.
 
 ```js
 export default {

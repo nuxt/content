@@ -10,85 +10,132 @@ This module globally injects `$content` instance, meaning that you can access it
 
 ### `$content(path)`
 
+- `path`
+  - Type: `String`
+  - Default: `/`
+  - `required`
 - Returns a chain sequence
 
-`path` can be a file or a directory. Defaults to `/`. All the methods below can be chained and return a chain sequence (except `fetch`).
+> You can also give multiple arguments: `$content('articles', params.slug)` will be translated to `/articles/${params.slug}`
+
+`path` can be a file or a directory. If path is a file, `fetch()` will return an `Object`, if it's a directory it will return an `Array`.
+
+All the methods below can be chained and return a chain sequence, except `fetch` which returns a `Promise`.
 
 ### `only(keys)`
+
+- `keys`
+  - Type: `Array`
+  - `required`
 
 Select a subset of fields.
 
 ```js
-await this.$content().only(['title']).fetch()
+const { title } = await this.$content('article-1').only(['title']).fetch()
 ```
 
 ### `where(query)`
 
+- `query`
+  - Type: `Object`
+  - `required`
+
 Filter results by query.
 
+Where queries are based on subset of mongo query syntax, it handles for example: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, ...
+
 ```js
-await this.$content().where({ title: 'Home' }).fetch()
+// implicit (assumes $eq operator)
+const articles = await this.$content('articles').where({ title: 'Home' }).fetch()
+// explicit $eq
+const articles = await this.$content('articles').where({ title: { $eq: 'Home' } }).fetch()
+
+// $gt
+const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fetch()
+// $in
+const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
 ```
 
 This module uses LokiJS under the hood, you can check for [query examples](http://techfort.github.io/LokiJS/tutorial-Query%20Examples.html).
 
-### `sortBy(field, direction)`
+### `sortBy(key, direction)`
 
-Sort results by field. `direction` defaults to `asc` (ascending order). Can be chained multiple times to sort on multiple fields.
+- `key`
+  - Type: `String`
+  - `required`
+- `direction`
+  - Type: `String`
+  - Value: `'asc'` or `'desc'`
+  - Default: `'asc'`
+
+Sort results by key.
+
+> Can be chained multiple times to sort on multiple fields.
 
 ```js
-await this.$content().sortBy('title').fetch()
+const articles = await this.$content('articles').sortBy('title').fetch()
 ```
 
 ### `limit(n)`
 
-Limit number of results. `n` can be a string or a number.
+- `n`
+  - Type: `String` | `Number`
+  - `required`
+
+Limit number of results.
+
+```js
+const articles = await this.$content('articles').limit(12).fetch()
+```
 
 ### `skip(n)`
 
-Skip results. `n` can be a string or a number.
+- `n`
+  - Type: `String` | `Number`
+  - `required`
+
+Skip results.
+
+```js
+const articles = await this.$content('articles').skip(12).limit(12).fetch()
+```
 
 ### `search(field, value)`
 
-Performs a full-text search on a field. `value` is optional, in this case `field` is the `value` and search will be performed on all full-text search fields.
+- `field`
+  - Type: `String`
+  - `required`
+- `value`
+  - Type: `String`
+
+Performs a full-text search on a field. `value` is optional, in this case `field` is the `value` and search will be performed on all defined full-text search fields.
 
 The fields you want to search on must be defined in options in order to be indexed, see [configuration](/configuration#fulltextsearchfields).
 
 ```js
 // Search on field title
-await this.$content('articles').search('title', 'welcome').fetch()
+const articles = await this.$content('articles').search('title', 'welcome').fetch()
 // Search on all pre-defined fields
-await this.$content('articles').search('welcome').fetch()
-```
-
-You can also pass a full Query DSL object as first parameter:
-
-```js
-const articles = await this.$content('articles')
-  .search({
-    query: {
-      type: 'match',
-      field: 'title',
-      value: 'welcome',
-      prefix_length: 1,
-      fuzziness: 1,
-      extended: true,
-      minimum_should_match: 1
-    }
-  })
-  .fetch()
+const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
 ### `surround(slug, options)`
 
-Get prev and next results arround a specific slug. `options` defaults to `{ before: 1, after: 1}`.
+- `slug`
+  - Type: `String`
+  - `required`
+- `options`
+  - Type: `Object`
+  - Default: `{ before: 1, after: 1}`
+
+Get prev and next results arround a specific slug.
 
 You will always obtain an array of fixed length filled with null values.
 
 > `only`, `limit` and `skip` are ineffective when using this method.
 
 ```js
-const [ prev, next ] = await this.$content('articles')
+const [prev, next] = await this.$content('articles')
   .only(['title', 'path'])
   .sortBy('date')
   .surround('article-2')
@@ -107,7 +154,7 @@ const [ prev, next ] = await this.$content('articles')
 
 ### `fetch()`
 
-- Returns: `Promise`
+- Returns: `Promise<Object>` | `Promise<Array>`
 
 Ends the chain sequence and collects data.
 

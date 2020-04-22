@@ -27,6 +27,8 @@ This module will parse `.md`, `.yml`, `.csv`, `.json`, `.json5` files and genera
 - Table of Contents is generated from headings
 - Code blocks are highlighted
 - Headings are auto-linked
+- Mixing html and markdown
+- Handles Vue.js components
 
 A file `content/home.md`:
 
