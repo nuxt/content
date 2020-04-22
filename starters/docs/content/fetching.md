@@ -24,7 +24,7 @@ await this.$content().only(['title']).fetch()
 
 ### `where(query)`
 
-Filter a query.
+Filter results by query.
 
 ```js
 await this.$content().where({ title: 'Home' }).fetch()

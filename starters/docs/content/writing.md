@@ -4,7 +4,7 @@ position: 3
 category: Getting started
 ---
 
-First of all, create a `content/` directory in your Nuxt project:
+First of all, create a `content/` directory in your project:
 
 ```bash
 content/
@@ -14,7 +14,7 @@ content/
   home.md
 ```
 
-This module will parse files and store them with these properties:
+This module will parse `.md`, `.yml`, `.csv`, `.json`, `.json5` files and generate the following properties:
 
 - `dir`
 - `path`
@@ -22,7 +22,11 @@ This module will parse files and store them with these properties:
 
 ## Markdown
 
-> All the data you define in the header will be injected into the document.
+- Data defined in the header will be injected into the document
+- Body is converted to JSON AST
+- Table of Contents is generated from headings
+- Code blocks are highlighted
+- Headings are auto-linked
 
 A file `content/home.md`:
 
@@ -121,7 +125,7 @@ Will be transformed into:
 
 ## YAML
 
-> All variables defined will be injected into the document. WARNING: No body will be generated.
+> Data defined will be injected into the document. WARNING: No body will be generated.
 
 A file `content/home.yaml`:
 
@@ -144,7 +148,7 @@ Will be transformed into:
 
 ## JSON / JSON5
 
-> All variables defined will be injected into the document. WARNING: No body will be generated.
+> Data defined will be injected into the document. WARNING: No body will be generated.
 
 A file `content/home.json`:
 

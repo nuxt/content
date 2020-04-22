@@ -26,7 +26,7 @@ This module uses `remark` under the hood to compile markdown files. You can cont
 
 This module handles code highlighting in markdown content using [PrismJS](https://prismjs.com).
 
-It automatically pushes the desired PrismJS css theme in your Nuxt.js config, so if you want to use a different theme than the default one, for example [prism-themes](https://github.com/PrismJS/prism-themes):
+It automatically pushes the desired PrismJS theme in your Nuxt.js config, so if you want to use a different theme than the default one, for example [prism-themes](https://github.com/PrismJS/prism-themes):
 
 ```js
 markdown: {
