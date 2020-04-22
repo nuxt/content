@@ -14,12 +14,12 @@ This module globally injects `$content` instance, meaning that you can access it
 
 `path` can be a file or a directory. Defaults to `/`. All the methods below can be chained and return a chain sequence (except `fetch`).
 
-### `fields(keys)`
+### `only(keys)`
 
 Select a subset of fields.
 
 ```js
-await this.$content().fields(['title']).fetch()
+await this.$content().only(['title']).fetch()
 ```
 
 ### `where(query)`
@@ -85,11 +85,11 @@ Get prev and next results arround a specific slug. `options` defaults to `{ befo
 
 You will always obtain an array of fixed length filled with null values.
 
-> `fields`, `limit` and `skip` are ineffective when using this method.
+> `only`, `limit` and `skip` are ineffective when using this method.
 
 ```js
 const [ prev, next ] = await this.$content('articles')
-  .fields(['title', 'path'])
+  .only(['title', 'path'])
   .sortBy('date')
   .surround('article-2')
   .where({ isArchived: false })
@@ -115,7 +115,7 @@ Ends the chain sequence and collects data.
 
 ```js
 const articles = await this.$content('articles')
-  .fields(['title', 'date', 'authors'])
+  .only(['title', 'date', 'authors'])
   .sortBy('date', 'asc')
   .limit(5)
   .skip(10)

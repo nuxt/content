@@ -51,7 +51,7 @@ These links are automatically generated from calling the `surround` method:
 
 ```js
 const [prev, next] = await $content()
-  .fields(['title', 'slug'])
+  .only(['title', 'slug'])
   .sortBy('position', 'asc')
   .surround(slug, { before: 1, after: 1 })
   .fetch()

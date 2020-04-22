@@ -121,7 +121,7 @@ You can now use `this.$content(path)` in your Vue components:
 ```js
 // Listing
 const articles = await this.$content('articles')
-	.fields(['title', 'date', 'authors'])
+	.only(['title', 'date', 'authors'])
 	.sortBy('date', 'asc')
 	.limit(5)
   .skip(10)
@@ -138,7 +138,7 @@ const articles = await this.$content('articles')
 ```js
 // Get previous and next article
 const [ prev1, prev2, next1, next2, next3 ] = await this.$content('articles')
-	.fields(['title', 'path'])
+	.only(['title', 'path'])
 	.sortBy('date')
   .surround('article-2', { before: 2, after: 3 })
   .where({ isArchived: false })
@@ -179,7 +179,7 @@ export default {
   fetch () {
     this.page = await this.$content(`${this.i18n.locale}/guide/installation`).fetch()
     this.learnSection = await this.$content(`${this.i18n.locale}/learn`)
-      .fields(['title', 'metadata'])
+      .only(['title', 'metadata'])
       .sortBy('updatedAt', 'desc')
   }
 }

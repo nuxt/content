@@ -85,7 +85,7 @@ export default {
     }
 
     const [prev, next] = await $content()
-      .fields(['title', 'slug'])
+      .only(['title', 'slug'])
       .sortBy('position', 'asc')
       .surround(slug, { before: 1, after: 1 })
       .fetch()

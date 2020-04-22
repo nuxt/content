@@ -31,11 +31,11 @@ describe('module', () => {
     ]))
   })
 
-  test('GET /_content with fields', async () => {
+  test('GET /_content with only', async () => {
     const items = await get('/_content', {
       json: true,
       qs: {
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -56,11 +56,11 @@ describe('module', () => {
     }))
   })
 
-  test('GET /_content/home with fields', async () => {
+  test('GET /_content/home with only', async () => {
     const page = await get('/_content/home', {
       json: true,
       qs: {
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -103,7 +103,7 @@ describe('module', () => {
         sortBy: {
           date: 'desc'
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -131,7 +131,7 @@ describe('module', () => {
         sortBy: {
           date: 'desc'
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -159,7 +159,7 @@ describe('module', () => {
         sortBy: [{
           date: 'desc'
         }],
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -184,7 +184,7 @@ describe('module', () => {
       json: true,
       qs: {
         sortBy: 'date:desc',
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -213,7 +213,7 @@ describe('module', () => {
         sortBy: [{
           date: 'desc'
         }],
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -233,7 +233,7 @@ describe('module', () => {
         sortBy: [{
           date: 'desc'
         }],
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -254,7 +254,7 @@ describe('module', () => {
         sortBy: [{
           date: 'desc'
         }],
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -275,7 +275,7 @@ describe('module', () => {
         sortBy: [{
           date: 'desc'
         }],
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -291,7 +291,7 @@ describe('module', () => {
       json: true,
       qs: {
         search: 'browser',
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -310,7 +310,7 @@ describe('module', () => {
         search: {
           query: 'browser'
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -330,7 +330,7 @@ describe('module', () => {
           query: 'title',
           value: 'browser'
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -359,7 +359,7 @@ describe('module', () => {
             }
           }
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -380,7 +380,7 @@ describe('module', () => {
             $contains: 'webpack'
           }
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 
@@ -406,7 +406,7 @@ describe('module', () => {
             after: 1
           }
         },
-        fields: ['title']
+        only: ['title']
       }
     })
 

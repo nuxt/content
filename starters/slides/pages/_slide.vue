@@ -16,7 +16,7 @@ export default {
     const slide = await $content(name).fetch()
 
     const [prev, next] = await $content()
-      .fields(['title', 'slug'])
+      .only(['title', 'slug'])
       .sortBy('position')
       .surround(name, { before: 1, after: 1 })
       .fetch()

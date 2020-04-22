@@ -146,7 +146,7 @@ export default {
     }
 
     const [prev, next] = await $content('articles')
-      .fields(['title', 'slug'])
+      .only(['title', 'slug'])
       .sortBy('date', 'desc')
       .surround(params.slug, { before: 1, after: 1 })
       .fetch()
