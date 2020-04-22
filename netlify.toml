@@ -1,0 +1,4 @@
+[build]
+  base = "starters/docs/"
+  publish = "starters/docs/dist/"
+  command = "nuxt generate"
