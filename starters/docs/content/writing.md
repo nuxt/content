@@ -154,8 +154,10 @@ title: Home
 
 ## Custom components
 
-<hello :name="name"></hello>
+<hello name="John"></hello>
 ```
+
+> These components will be rendered using `nuxt-content` component, see [displaying content](/displaying#component).
 
 ### Table of contents
 
