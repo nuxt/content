@@ -8,7 +8,7 @@ This module globally injects `$content` instance, meaning that you can access it
 
 ## Methods
 
-### `$content(path)`
+### $content(path)
 
 - `path`
   - Type: `String`
@@ -22,7 +22,7 @@ This module globally injects `$content` instance, meaning that you can access it
 
 All the methods below can be chained and return a chain sequence, except `fetch` which returns a `Promise`.
 
-### `only(keys)`
+### only(keys)
 
 - `keys`
   - Type: `Array` | `String`
@@ -34,7 +34,7 @@ Select a subset of fields.
 const { title } = await this.$content('article-1').only(['title']).fetch()
 ```
 
-### `where(query)`
+### where(query)
 
 - `query`
   - Type: `Object`
@@ -58,7 +58,7 @@ const articles = await this.$content('articles').where({ name: { $in: ['odin', '
 
 This module uses LokiJS under the hood, you can check for [query examples](http://techfort.github.io/LokiJS/tutorial-Query%20Examples.html).
 
-### `sortBy(key, direction)`
+### sortBy(key, direction)
 
 - `key`
   - Type: `String`
@@ -70,13 +70,13 @@ This module uses LokiJS under the hood, you can check for [query examples](http:
 
 Sort results by key.
 
-> Can be chained multiple times to sort on multiple fields.
-
 ```js
 const articles = await this.$content('articles').sortBy('title').fetch()
 ```
 
-### `limit(n)`
+> Can be chained multiple times to sort on multiple fields.
+
+### limit(n)
 
 - `n`
   - Type: `String` | `Number`
@@ -89,7 +89,7 @@ Limit number of results.
 const articles = await this.$content('articles').limit(5).fetch()
 ```
 
-### `skip(n)`
+### skip(n)
 
 - `n`
   - Type: `String` | `Number`
@@ -102,7 +102,7 @@ Skip results.
 const articles = await this.$content('articles').skip(5).limit(5).fetch()
 ```
 
-### `search(field, value)`
+### search(field, value)
 
 - `field`
   - Type: `String`
@@ -121,7 +121,7 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
-### `surround(slug, options)`
+### surround(slug, options)
 
 - `slug`
   - Type: `String`
@@ -133,8 +133,6 @@ const articles = await this.$content('articles').search('welcome').fetch()
 Get prev and next results arround a specific slug.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
-
-> `search`, `limit` and `skip` are ineffective when using this method.
 
 ```js
 const [prev, next] = await this.$content('articles')
@@ -154,7 +152,9 @@ const [prev, next] = await this.$content('articles')
 ]
 ```
 
-### `fetch()`
+> `search`, `limit` and `skip` are ineffective when using this method.
+
+### fetch()
 
 - Returns: `Promise<Object>` | `Promise<Array>`
 

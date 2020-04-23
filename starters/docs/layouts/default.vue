@@ -20,10 +20,10 @@ export default {
       title: '',
       titleTemplate: (chunk) => {
         if (chunk) {
-          return `${chunk} - NuxtJS`
+          return `${chunk} - Nuxt Content`
         }
 
-        return 'NuxtJS'
+        return 'Nuxt Content'
       },
       bodyAttrs: {
         class: ['bg-white dark:bg-gray-900 text-gray-700 dark:text-white antialiased pt-16']
