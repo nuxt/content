@@ -161,7 +161,11 @@ export default {
     @apply list-disc list-inside mb-4;
 
     > li {
-      @apply pb-1;
+      @apply leading-7;
+
+      > ul {
+        @apply pl-4;
+      }
     }
   }
 
@@ -169,7 +173,11 @@ export default {
     @apply list-decimal list-inside mb-4;
 
     > li {
-      @apply pb-1;
+      @apply leading-7;
+
+      > ol {
+        @apply pl-4;
+      }
     }
   }
 
