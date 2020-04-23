@@ -10,8 +10,8 @@ module.exports = {
   },
   variants: {
     margin: ['responsive', 'last'],
-    backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
-    textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover'],
+    backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus', 'dark-hover'],
+    textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     borderWidth: ['responsive', 'first', 'last']
   },

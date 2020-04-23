@@ -26,7 +26,7 @@ export default {
         return 'Nuxt Content'
       },
       bodyAttrs: {
-        class: ['bg-white dark:bg-gray-900 text-gray-700 dark:text-white antialiased pt-16']
+        class: ['bg-white dark:bg-gray-900 text-gray-700 dark:text-white antialiased lg:pt-16']
       }
     }
   }
