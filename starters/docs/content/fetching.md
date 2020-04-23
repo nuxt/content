@@ -25,7 +25,7 @@ All the methods below can be chained and return a chain sequence, except `fetch`
 ### `only(keys)`
 
 - `keys`
-  - Type: `Array`
+  - Type: `Array` | `String`
   - `required`
 
 Select a subset of fields.
@@ -85,7 +85,8 @@ const articles = await this.$content('articles').sortBy('title').fetch()
 Limit number of results.
 
 ```js
-const articles = await this.$content('articles').limit(12).fetch()
+// fetch only 5 articles
+const articles = await this.$content('articles').limit(5).fetch()
 ```
 
 ### `skip(n)`
@@ -97,7 +98,8 @@ const articles = await this.$content('articles').limit(12).fetch()
 Skip results.
 
 ```js
-const articles = await this.$content('articles').skip(12).limit(12).fetch()
+// fetch the next 5 articles
+const articles = await this.$content('articles').skip(5).limit(5).fetch()
 ```
 
 ### `search(field, value)`
@@ -130,16 +132,16 @@ const articles = await this.$content('articles').search('welcome').fetch()
 
 Get prev and next results arround a specific slug.
 
-You will always obtain an array of fixed length filled with null values.
+You will always obtain an array of fixed length filled with the maching document or `null`.
 
-> `only`, `limit` and `skip` are ineffective when using this method.
+> `search`, `limit` and `skip` are ineffective when using this method.
 
 ```js
 const [prev, next] = await this.$content('articles')
   .only(['title', 'path'])
   .sortBy('date')
-  .surround('article-2')
   .where({ isArchived: false })
+  .surround('article-2')
   .fetch()
 
 // Returns
