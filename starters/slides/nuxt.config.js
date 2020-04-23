@@ -74,10 +74,6 @@ export default {
   },
   purgeCSS: {
     whitelist: ['dark-mode'],
-    whitelistPatternsChildren: [/token$/]
-  },
-  pageTransition: {
-    name: 'fade',
-    mode: 'out-in'
+    whitelistPatternsChildren: [/^token/, /^pre/, /^code/, /^nuxt-content/]
   }
 }

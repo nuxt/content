@@ -75,7 +75,7 @@ export default {
   },
   purgeCSS: {
     whitelist: ['dark-mode'],
-    whitelistPatternsChildren: [/token$/]
+    whitelistPatternsChildren: [/^token/, /^pre/, /^code/, /^nuxt-content/]
   },
   generate: {
     async routes () {
