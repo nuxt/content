@@ -36,10 +36,10 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('keyup', this.keypress)
+    window.addEventListener('keyup', this.keyup)
   },
   beforeDestroy () {
-    window.removeEventListener('keyup', this.keypress)
+    window.removeEventListener('keyup', this.keyup)
   },
   methods: {
     previous () {
@@ -54,7 +54,7 @@ export default {
         this.$router.push({ name: 'slide', params: { slide: this.next.slug, transition: 'slide-left' } })
       }
     },
-    keypress (e) {
+    keyup (e) {
       switch (e.key) {
         case 'ArrowRight':
         case 'ArrowDown':
