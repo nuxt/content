@@ -207,20 +207,20 @@ export default {
     @apply bg-gray-100 p-1 text-lg shadow-xs rounded;
   }
 
+  pre[class*="language-"] {
+    @apply rounded mt-0 mb-4 bg-gray-800 relative;
+
+    > code {
+      @apply bg-gray-800 relative;
+      text-shadow: none;
+    }
+  }
+
   &-highlight {
     @apply relative;
 
     > .filename {
       @apply absolute right-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
-    }
-
-    pre[class*="language-"] {
-      @apply rounded mt-0 mb-4 bg-gray-800 relative;
-
-      > code {
-        @apply bg-gray-800 relative;
-        text-shadow: none;
-      }
     }
   }
 }
