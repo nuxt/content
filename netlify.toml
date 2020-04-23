@@ -1,4 +1,5 @@
 [build]
+  ignore="git diff --quiet HEAD^ HEAD ./starters/docs/"
   base = "starters/docs/"
   publish = "starters/docs/dist/"
   command = "nuxt generate"
