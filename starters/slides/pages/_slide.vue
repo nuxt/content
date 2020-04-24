@@ -5,7 +5,7 @@
     @click.left="forward"
     @click.right.prevent="previous"
   >
-    <nuxt-content :body="slide.body" />
+    <nuxt-content :document="slide" />
   </div>
 </template>
 

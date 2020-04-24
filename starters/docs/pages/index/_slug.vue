@@ -3,7 +3,7 @@
     <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
-        <nuxt-content :body="doc.body" />
+        <nuxt-content :document="doc" />
       </article>
       <div class="flex justify-between items-center mt-8">
         <NuxtLink

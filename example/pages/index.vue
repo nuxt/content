@@ -4,7 +4,7 @@
     <h2>Markdown</h2>
     <pre>{{ markdown }}</pre>
     <h3>Content</h3>
-    <nuxt-content :body="markdown.body" />
+    <nuxt-content :document="markdown" />
     <hr />
     <h2>JSON</h2>
     <pre>{{ json }}</pre>

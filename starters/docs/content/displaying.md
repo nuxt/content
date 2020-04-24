@@ -8,13 +8,13 @@ This section is only for Markdown content files.
 
 ## Component
 
-You can use `nuxt-content` component directly in your template to display the body:
+You can use `nuxt-content` component directly in your template to display the page body:
 
 ```vue
 <template>
   <article>
     <h1>{{ page.title }}</h1>
-    <nuxt-content :body="page.body" />
+    <nuxt-content :document="page" />
   </article>
 </template>
 

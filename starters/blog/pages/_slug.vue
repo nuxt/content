@@ -81,7 +81,7 @@
           </div>
 
           <div class="flex-1 bg-white dark:bg-gray-700 p-8 flex flex-col justify-between">
-            <nuxt-content :body="article.body" />
+            <nuxt-content :document="article" />
           </div>
         </div>
       </div>

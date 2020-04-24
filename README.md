@@ -166,7 +166,7 @@ const [ prev1, prev2, next1, next2, next3 ] = await this.$content('articles')
 <template>
   <article>
     <h1>{{ page.title }}</h1>
-    <nuxt-content :body="page.body" />
+    <nuxt-content :document="page" />
   </article>
 </template>
 

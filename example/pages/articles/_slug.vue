@@ -3,9 +3,7 @@
     <nuxt-link to="/articles">Articles</nuxt-link>
     <h2>{{ article.title }}</h2>
     <p>{{ article.description }}</p>
-
-    <nuxt-content :body="article.body" />
-
+    <nuxt-content :document="article" />
     <nuxt-link
       v-if="prev"
       :to="{ name: 'articles-slug', params: { slug: prev.slug } }"

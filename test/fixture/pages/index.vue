@@ -1,8 +1,7 @@
 <template>
   <div>
     <h1>{{ page.title }}</h1>
-
-    <nuxt-content :body="page.body" />
+    <nuxt-content :document="page" />
   </div>
 </template>
 
