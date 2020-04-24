@@ -41,9 +41,9 @@
 
             <ul
               v-show="focus && results.length"
-              class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border-2 border-gray-300 dark:border-gray-700"
+              class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700"
               :class="{ 'rounded-t-none': focus && results.length }"
-              style="margin-top: 38px;"
+              style="margin-top: 37px;"
             >
               <li v-for="result of results" :key="result.slug" class="px-4 py-2">
                 <nuxt-link
