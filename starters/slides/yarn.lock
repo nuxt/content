@@ -1076,10 +1076,10 @@
     defu "^1.0.0"
     lodash.template "^4.5.0"
 
-"@nuxtjs/content@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/content/-/content-0.0.3.tgz#05aabe77ef5547cb7b8e6e8c6edf29dd6f188f13"
-  integrity sha512-AZ6AHm4KnqguMHYcgzXAjKFY9PSQ2fflu/xTjdsnqymjUSQy6stUmWj1PWeGIK+gbCy2ME8+eGZUAWoW1lOAPg==
+"@nuxtjs/content@latest":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/content/-/content-0.0.6.tgz#3ccbc2643b5aa29ec4d82e4dc7d710e90fbd0d80"
+  integrity sha512-/zXkVzCAq2kvFUTmKAhBC9pvFYcqbMOZsuYBerny1kYcIoHKs8cVgQN5OnvDjFL0AMZADDP1IJR6OW7GuNf3MA==
   dependencies:
     "@lokidb/full-text-search" "^2.0.0-beta.9"
     "@lokidb/loki" "^2.0.0-beta.9"
@@ -5531,11 +5531,6 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
-
-lodash.groupby@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.groupby/-/lodash.groupby-4.6.0.tgz#0b08a1dcf68397c397855c3239783832df7403d1"
-  integrity sha1-Cwih3PaDl8OXhVwyOXg4Mt90A9E=
 
 lodash.kebabcase@^4.1.1:
   version "4.1.1"
