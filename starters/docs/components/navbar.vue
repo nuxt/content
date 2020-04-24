@@ -4,8 +4,7 @@
   >
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <nuxt-link to="/" class="text-xl font-bold tracking-tight">Nuxt Content</nuxt-link>
-
+        <NuxtLink to="/" class="text-xl font-bold tracking-tight">Nuxt Content</NuxtLink>
         <div class="flex-1 flex justify-center mx-4 lg:mx-16">
           <div class="w-full relative flex flex-col justify-between">
             <div class="w-full relative">
@@ -47,7 +46,7 @@
             >
               <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
               <li v-for="result of results" :key="result.slug" class="px-4 py-2">
-                <nuxt-link
+                <NuxtLink
                   :to="`/${result.slug !== 'index' ? result.slug : ''}`"
                   class="flex items-center leading-5 hover:text-green-500 transition ease-in-out duration-150"
                   @click="close"
@@ -65,12 +64,11 @@
                     <path d="M9 5l7 7-7 7" />
                   </svg>
                   {{ result.title }}
-                </nuxt-link>
+                </NuxtLink>
               </li>
             </ul>
           </div>
         </div>
-
         <div class="flex items-center">
           <a
             href="https://nuxtjs.org"
@@ -202,12 +200,12 @@
 
         <ul>
           <li v-for="doc of docs" :key="doc.slug" class="text-gray-600">
-            <nuxt-link
+            <NuxtLink
               :to="`/${doc.slug !== 'index' ? doc.slug : ''}`"
               class="mt-1 block px-3 py-2 rounded-md font-medium hover:text-gray-700 dark-hover:text-white hover:bg-gray-200 dark-hover:bg-gray-700 focus:outline-none dark-focus:text-white dark-focus:bg-gray-700 transition duration-150 ease-in-out"
               exact-active-class="text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-800 dark-hover:bg-gray-800"
               @click.native="open = false"
-            >{{ doc.title }}</nuxt-link>
+            >{{ doc.title }}</NuxtLink>
           </li>
         </ul>
       </li>
@@ -258,6 +256,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
