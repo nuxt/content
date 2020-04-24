@@ -40,11 +40,12 @@
             </div>
 
             <ul
-              v-show="focus && results.length"
+              v-show="focus && (searching || results.length)"
               class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700"
               :class="{ 'rounded-t-none': focus && results.length }"
               style="margin-top: 37px;"
             >
+              <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
               <li v-for="result of results" :key="result.slug" class="px-4 py-2">
                 <nuxt-link
                   :to="`/${result.slug !== 'index' ? result.slug : ''}`"
@@ -221,17 +222,20 @@ export default {
       q: '',
       focus: false,
       open: false,
+      searching: false,
       results: []
     }
   },
   watch: {
     async q (q) {
       if (!q) {
+        this.searching = false
         this.results = []
         return
       }
-
+      this.searching = true
       this.results = await this.$content().sortBy('position', 'asc').limit(12).search(q).fetch()
+      this.searching = false
     }
   },
   mounted () {
