@@ -19,4 +19,4 @@ category: Getting started
 
 ## Demo
 
-<iframe src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></iframe>
+<code-sandbox src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></code-sandbox>
