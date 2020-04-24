@@ -9,9 +9,6 @@
       "name": "NuxtJS Company"
     }
   ],
-  "engines": {
-    "node": ">=12"
-  },
   "files": [
     "lib"
   ],
