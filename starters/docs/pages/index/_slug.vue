@@ -3,12 +3,10 @@
     <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
-
         <nuxt-content :body="doc.body" />
       </article>
-
       <div class="flex justify-between items-center mt-8">
-        <nuxt-link
+        <NuxtLink
           v-if="prev"
           :to="`/${prev.slug}`"
           class="text-green-500 font-bold hover:underline flex items-center"
@@ -21,10 +19,9 @@
             />
           </svg>
           {{ prev.title }}
-        </nuxt-link>
+        </NuxtLink>
         <span v-else>&nbsp;</span>
-
-        <nuxt-link
+        <NuxtLink
           v-if="next"
           :to="`/${next.slug}`"
           class="text-green-500 font-bold hover:underline flex items-center"
@@ -37,15 +34,13 @@
               clip-rule="evenodd"
             />
           </svg>
-        </nuxt-link>
+        </NuxtLink>
         <span v-else>&nbsp;</span>
       </div>
     </div>
-
     <div v-if="doc.toc && doc.toc.length" class="w-full lg:w-1/4 p-4 lg:p-8">
       <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
         <h3 class="text-sm tracking-wide uppercase font-black mb-2">On this page</h3>
-
         <nav>
           <scrollactive highlight-first-item active-class="text-green-500" tag="ul">
             <li

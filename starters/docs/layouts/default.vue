@@ -1,15 +1,14 @@
 <template>
   <div>
-    <navbar />
-
+    <Navbar />
     <main class="container mx-auto px-4 lg:px-8">
-      <nuxt />
+      <Nuxt />
     </main>
   </div>
 </template>
 
 <script>
-import Navbar from '~/components/navbar'
+import Navbar from '~/components/Navbar'
 
 export default {
   components: {

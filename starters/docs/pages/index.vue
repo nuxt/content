@@ -9,26 +9,21 @@
             class="mb-4 last:mb-0"
           >
             <h3 class="text-sm tracking-wide uppercase font-black mb-2">{{ category }}</h3>
-
             <ul class="pl-2">
               <li v-for="doc of docs" :key="doc.slug">
-                <nuxt-link
+                <NuxtLink
                   :to="`/${doc.slug !== 'index' ? doc.slug : ''}`"
                   class="font-medium py-1 block text-gray-600 dark:text-gray-300 hover:text-gray-700 dark-hover:text-white"
                   exact-active-class="text-green-500 hover:text-green-500 dark:text-green-500 dark-hover:text-green-500"
-                >{{ doc.title }}</nuxt-link>
+                >{{ doc.title }}</NuxtLink>
               </li>
             </ul>
           </li>
         </ul>
       </aside>
-
       <div class="w-full lg:w-4/5 px-4 lg:px-8">
-        <nuxt-child />
+        <NuxtChild />
       </div>
     </div>
   </div>
 </template>
-
-<script>
-</script>
