@@ -38,8 +38,6 @@ export default {
     '@nuxtjs/eslint-module',
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
-    // Doc: https://github.com/nuxt-community/moment-module
-    '@nuxtjs/moment',
     // Doc: https://github.com/nuxt-community/color-mode-module
     '@nuxtjs/color-mode'
   ],

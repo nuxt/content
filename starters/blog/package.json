@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@nuxtjs/content": "0.0.3",
     "nuxt-edge": "latest",
     "prism-themes": "^1.4.0",
     "reading-time": "^1.2.0",
