@@ -223,5 +223,10 @@ export default {
       @apply absolute right-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
     }
   }
+
+  iframe {
+    @apply w-full rounded-md overflow-hidden h-64;
+    height: 500px;
+  }
 }
 </style>

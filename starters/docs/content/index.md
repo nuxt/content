@@ -16,3 +16,7 @@ category: Getting started
   <li class="mt-3 flex"><icon-check></icon-check> Generation of table of contents</li>
   <li class="mt-3 flex"><icon-check></icon-check> Handles Markdown, CSV, YAML, JSON(5)</li>
 </ul>
+
+## Demo
+
+<iframe src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></iframe>
