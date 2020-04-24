@@ -11,8 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxtjs/content": "0.0.3",
-    "lodash.groupby": "^4.6.0",
+    "@nuxtjs/content": "latest",
     "nuxt-edge": "latest",
     "prism-themes": "^1.4.0",
     "vue-scrollactive": "^0.8.0"
