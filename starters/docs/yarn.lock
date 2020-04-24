@@ -1076,7 +1076,11 @@
     defu "^1.0.0"
     lodash.template "^4.5.0"
 
+<<<<<<< HEAD
 "@nuxtjs/content@^0.0.7":
+=======
+"@nuxtjs/content@latest":
+>>>>>>> chore(starters): update locks
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/@nuxtjs/content/-/content-0.0.7.tgz#efeb8596512be320c284cd5a189d307480b3a992"
   integrity sha512-K8THEN5OscOD5m5rVcQYFGuH6o83CmHt8awgeirp8UHvRt9dD0cQiSIh3XJoalgM9s5g7bkGdqPeXsvEjwQonA==
