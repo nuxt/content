@@ -47,7 +47,7 @@ export default {
 <style scoped>
 .codesandbox,
 .codesandbox iframe {
-  max-width: 1400px;
-  height: 700px;
+  @apply w-full rounded-md overflow-hidden h-64;
+  height: 500px;
 }
 </style>
