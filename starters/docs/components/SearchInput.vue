@@ -1,20 +1,15 @@
 <template>
   <div class="w-full relative flex flex-col justify-between">
-    <div class="w-full relative">
+    <div
+      class="w-full relative"
+      @keydown.down="increment"
+      @keydown.up="decrement"
+      @keydown.enter="go"
+    >
       <label for="search" class="sr-only">Search</label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            class="h-5 w-5 text-gray-500"
-          >
-            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <icon-search />
         </div>
         <input
           id="search"
@@ -26,7 +21,7 @@
           type="search"
           autocomplete="off"
           @focus="focus = true"
-          @blur="close"
+          @blur="focus = false"
         />
       </div>
     </div>
@@ -37,24 +32,17 @@
       style="margin-top: 37px;"
     >
       <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
-      <li v-for="result of results" :key="result.slug" class="px-4 py-2">
+      <li v-for="(result, index) of results" :key="result.slug" @mouseenter="focusIndex = index" @mousedown="go">
         <NuxtLink
           :to="`/${result.slug !== 'index' ? result.slug : ''}`"
-          class="flex items-center leading-5 hover:text-green-500 transition ease-in-out duration-150"
-          @click="close"
+          class="flex px-4 py-2 items-center leading-5 hover:text-green-500 transition ease-in-out duration-150"
+          :class="{
+            'text-green-500 bg-gray-200 dark:bg-gray-800': focusIndex === index
+          }"
+          @click="focus = false"
         >
           <span class="font-bold hidden sm:block">{{ result.category }}</span>
-          <svg
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            class="w-3 h-3 mx-1 hidden sm:block"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
+          <icon-chevron-right />
           {{ result.title }}
         </NuxtLink>
       </li>
@@ -68,6 +56,7 @@ export default {
     return {
       q: '',
       focus: false,
+      focusIndex: -1,
       open: false,
       searchPlaceholder: 'Search the docs (Press "/" to focus)',
       searching: false,
@@ -76,6 +65,7 @@ export default {
   },
   watch: {
     async q (q) {
+      this.focusIndex = -1
       if (!q) {
         this.searching = false
         this.results = []
@@ -98,10 +88,26 @@ export default {
         this.$refs.search.focus()
       }
     },
-    close () {
-      setTimeout(() => {
-        this.focus = false
-      }, 200)
+    increment () {
+      if (this.focusIndex < this.results.length - 1) {
+        this.focusIndex++
+      }
+    },
+    decrement () {
+      if (this.focusIndex >= 0) {
+        this.focusIndex--
+      }
+    },
+    go () {
+      if (this.results.length === 0) {
+        return
+      }
+      const result = this.focusIndex === -1 ? this.results[0] : this.results[this.focusIndex]
+      const path = `/${result.slug !== 'index' ? result.slug : ''}`
+      this.$router.push(path)
+      // Unfocus the input and reset the query.
+      this.$refs.search.blur()
+      this.q = ''
     }
   }
 }
