@@ -67,6 +67,7 @@ Links are transformed to add valid `target` and `rel` attributes. You can change
 
 Here is an exemple using external, relative, markdown and html links:
 
+<pre class="language-md">
 ```md
 ---
 title: Home
@@ -84,6 +85,7 @@ title: Home
 
 [External Link markdown](https://nuxtjs.org)
 ```
+</pre>
 
 ### Codeblocks
 
