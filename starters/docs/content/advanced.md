@@ -55,6 +55,13 @@ The module adds some hooks you can use:
 
 Allows you to add data to a document before it is stored.
 
+Arguments:
+- `document`
+  - Type: `Object`
+  - Properties:
+    - See [writing content](/writing)
+
+
 **Example**
 
 Taking the example of the blog starter, we use `file:beforeInsert` to add `readingTime` to a document using [reading-time](https://github.com/ngryman/reading-time).
@@ -68,14 +75,12 @@ export default {
   ],
   hooks: {
     'content:file:beforeInsert': (document) => {
-      const { time } = require('reading-time')(document.text)
+      if (document.extension === '.md') {
+        const { time } = require('reading-time')(document.text)
 
-      document.readingTime = time
+        document.readingTime = time
+      }
     }
   }
 }
 ```
-
-### `content:file:beforeParsing`
-
-Allows you to update the raw data of a file before it is parsed disregarding it's extension.
