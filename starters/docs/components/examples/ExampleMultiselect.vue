@@ -21,4 +21,8 @@ export default {
 }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style>
+/* purgecss start ignore */
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
+/* purgecss end ignore */
+</style>
