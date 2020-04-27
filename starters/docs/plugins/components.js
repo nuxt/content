@@ -16,3 +16,4 @@ function importComponents (r) {
 
 importComponents(require.context('@/components/bases', true, /\.(vue|js)$/))
 importComponents(require.context('@/components/icons', true, /\.(vue|js)$/))
+importComponents(require.context('@/components/examples', true, /\.(vue|js)$/))

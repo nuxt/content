@@ -27,6 +27,7 @@
     "eslint-plugin-nuxt": ">=0.5.2",
     "node-sass": "^4.13.1",
     "sass-loader": "^8.0.2",
-    "tailwindcss-dark-mode": "^1.1.4"
+    "tailwindcss-dark-mode": "^1.1.4",
+    "vue-multiselect": "^2.1.6"
   }
 }

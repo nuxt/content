@@ -2,6 +2,10 @@
 title: Writing content
 position: 3
 category: Getting started
+multiselectOptions: 
+  - VuePress
+  - Gridsome
+  - Nuxt
 ---
 
 First of all, create a `content/` directory in your project:
@@ -14,11 +18,12 @@ content/
   home.md
 ```
 
-This module will parse `.md`, `.yml`, `.csv`, `.json`, `.json5` files and generate the following properties:
+This module will parse `.md`, `.yaml`, `.csv`, `.json`, `.json5` files and generate the following properties:
 
 - `dir`
 - `path`
 - `slug`
+- `extension` (ex: `.md`)
 
 ## Markdown
 
@@ -36,15 +41,13 @@ This module automatically adds an `id` and a `link` to each heading.
 
 Say we have the following markdown file:
 
-<pre class="language-md">
-```md
+```md[home.md]
 # Lorem ipsum 😪
 ## dolor—sit—amet
 ### consectetur &amp; adipisicing
 #### elit
 ##### elit
 ```
-</pre>
 
 It will be transformed to it's JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
 
@@ -64,7 +67,6 @@ Links are transformed to add valid `target` and `rel` attributes. You can change
 
 Here is an exemple using external, relative, markdown and html links:
 
-<pre class="language-md">
 ```md
 ---
 title: Home
@@ -82,7 +84,6 @@ title: Home
 
 [External Link markdown](https://nuxtjs.org)
 ```
-</pre>
 
 ### Codeblocks
 
@@ -143,19 +144,85 @@ title: Home
 <p><span class="note">A mix of <em>Markdown</em> and <em>HTML</em>.</span></p>
 ```
 
-### Custom components
+Beware that when placing Markdown inside a component, it must be preceded and followed by an empty line, otherwise the whole block is treated as custom HTML.
 
-You can use Vue.js components direclty in your markdown files:
+**This won't work:**
+
+```html
+<div class="note">
+  *Markdown* and <em>HTML</em>.
+</div>
+```
+
+**But this will:**
+
+```html
+<div class="note">
+
+  *Markdown* and <em>HTML</em>.
+
+</div>
+```
+
+As will **this**:
+
+```html
+<span class="note">*Markdown* and <em>HTML</em>.</span>
+```
+
+### Vue components
+
+You can use global Vue components or locally registered in the page your are displaying your markdown.
+
+Since `@nuxtjs/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
+
+1. You cannot use self-closing tags, i.e., **this won't work**:
+
+```html
+<my-component/>
+```
+
+But **this will**:
+
+```html
+<my-component></my-component>
+```
+
+**Example:**
+
+We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt-company/content-module/blob/master/starters/docs/components/examples/ExampleMultiselect.vue):
+
+```md[home.md]
+Please chose a *framework*:
+
+<example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
+```
+
+**Result:**
+
+<div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
+
+Please chose a *framework*:
+
+<example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
+
+</div>
+
+You can also define the options in your front matter:
+
 
 ```md[home.md]
 ---
-title: Home
+multiselectOptions: 
+  - VuePress
+  - Gridsome
+  - Nuxt
 ---
 
-## Custom components
-
-<hello name="John"></hello>
+<example-multiselect :options="multiselectOptions"></example-multiselect>
 ```
+
+<example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
 > These components will be rendered using `nuxt-content` component, see [displaying content](/displaying#component).
 
@@ -184,6 +251,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
+  "extension": ".md",
   "title": "Home",
   "toc": [
     {
@@ -259,6 +327,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
+  "extension": ".json",
   "body": [
     {
       "title": "Home",
@@ -290,6 +359,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
+  "extension": ".yaml",
   "title": "Home",
   "description": "Welcome!"
 }
@@ -320,6 +390,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
+  "extension": ".json",
   "title": "Home",
   "description": "Welcome!"
 }
