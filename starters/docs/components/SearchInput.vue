@@ -15,7 +15,7 @@
           id="search"
           ref="search"
           v-model="q"
-          class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"
+          class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"
           :class="{ 'rounded-b-none': focus && results.length }"
           :placeholder="searchPlaceholder"
           type="search"
@@ -27,15 +27,20 @@
     </div>
     <ul
       v-show="focus && (searching || results.length)"
-      class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700"
+      class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 overflow-hidden"
       :class="{ 'rounded-t-none': focus && results.length }"
       style="margin-top: 37px;"
     >
       <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
-      <li v-for="(result, index) of results" :key="result.slug" @mouseenter="focusIndex = index" @mousedown="go">
+      <li
+        v-for="(result, index) of results"
+        :key="result.slug"
+        @mouseenter="focusIndex = index"
+        @mousedown="go"
+      >
         <NuxtLink
           :to="`/${result.slug !== 'index' ? result.slug : ''}`"
-          class="flex px-4 py-2 items-center leading-5 hover:text-green-500 transition ease-in-out duration-150"
+          class="flex px-4 py-2 items-center leading-5 transition ease-in-out duration-150"
           :class="{
             'text-green-500 bg-gray-200 dark:bg-gray-800': focusIndex === index
           }"
@@ -114,5 +119,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
