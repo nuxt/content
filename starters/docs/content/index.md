@@ -3,14 +3,15 @@ title: Introduction
 position: 1
 category: Getting started
 features:
-  - Hot reload when writing your content
-  - Vue components in Markdown.
+  - Blazing fast hot reload when writing your content
+  - Vue components in Markdown
   - Full-text search
-  - Static site generation with `nuxt generate`
+  - Support static site generation with `nuxt generate`
   - Powerful QueryBuilder API (MongoDB like)
   - Syntax highlighting to code blocks in markdown files using PrismJS.
-  - Generation of table of contents
+  - Table of contents generation
   - Handles Markdown, CSV, YAML, JSON(5)
+  - Extend with hooks
 csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
