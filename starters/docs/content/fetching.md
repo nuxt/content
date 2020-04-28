@@ -56,7 +56,7 @@ const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fet
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
 ```
 
-This module uses LokiJS under the hood, you can check for [query examples](http://techfort.github.io/LokiJS/tutorial-Query%20Examples.html).
+This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
 ### sortBy(key, direction)
 
