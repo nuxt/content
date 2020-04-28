@@ -1,4 +1,3 @@
-
 export default {
   mode: 'universal',
   /*
@@ -20,17 +19,23 @@ export default {
   */
   loading: { color: '#48bb78' },
   /*
-  ** Global CSS
-  */
-  css: [
-  ],
-  /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     '@/plugins/vue-scrollactive',
     '@/plugins/components'
   ],
+  /*
+  ** Give routes to static generation
+  */
+  generate: {
+    async routes () {
+      const { $content } = require('@nuxtjs/content')
+      const files = await $content().only(['path']).fetch()
+
+      return files.map(file => file.path === '/index' ? '/' : file.path)
+    }
+  },
   /*
   ** Nuxt.js dev-modules
   */
@@ -49,16 +54,6 @@ export default {
     '@nuxtjs/content'
   ],
   /*
-  ** Build configuration
-  */
-  build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
-    }
-  },
-  /*
   ** Modules configuration
   */
   colorMode: {
@@ -74,13 +69,5 @@ export default {
   purgeCSS: {
     whitelist: ['dark-mode'],
     whitelistPatternsChildren: [/^token/, /^pre/, /^code/, /^nuxt-content/]
-  },
-  generate: {
-    async routes () {
-      const { $content } = require('@nuxtjs/content')
-      const files = await $content().only(['path']).fetch()
-
-      return files.map(file => file.path === '/index' ? '/' : file.path)
-    }
   }
 }
