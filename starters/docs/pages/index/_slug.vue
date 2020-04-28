@@ -5,26 +5,7 @@
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
-      <div class="flex justify-between items-center mt-8">
-        <NuxtLink
-          v-if="prev"
-          :to="`/${prev.slug}`"
-          class="text-green-500 font-bold hover:underline flex items-center"
-        >
-          <icon-arrow-left />
-          {{ prev.title }}
-        </NuxtLink>
-        <span v-else>&nbsp;</span>
-        <NuxtLink
-          v-if="next"
-          :to="`/${next.slug}`"
-          class="text-green-500 font-bold hover:underline flex items-center"
-        >
-          {{ next.title }}
-          <icon-arrow-right />
-        </NuxtLink>
-        <span v-else>&nbsp;</span>
-      </div>
+      <article-prev-next :prev="prev" :next="next" />
     </div>
     <article-toc v-if="doc.toc.length" :toc="doc.toc" />
   </div>
@@ -32,10 +13,12 @@
 
 <script>
 import ArticleToc from '@/components/ArticleToc'
+import ArticlePrevNext from '@/components/ArticlePrevNext'
 
 export default {
   components: {
-    ArticleToc
+    ArticleToc,
+    ArticlePrevNext
   },
   scrollToTop: true,
   async asyncData ({ $content, params, error }) {
