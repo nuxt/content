@@ -40,7 +40,7 @@
     </div>
     <div v-if="doc.toc && doc.toc.length" class="w-full lg:w-1/4 p-4 lg:p-8">
       <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
-        <h3 class="text-sm tracking-wide uppercase font-black mb-2">On this page</h3>
+        <h3 class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wide font-bold text-sm lg:text-xs">On this page</h3>
         <nav>
           <scrollactive highlight-first-item active-class="text-green-500" tag="ul">
             <li
@@ -52,10 +52,10 @@
             >
               <a
                 :href="`#${link.id}`"
-                class="block text-sm scrollactive-item transition-transform ease-in-out duration-300 transform hover:translate-x-1"
+                class="block text-sm scrollactive-item text-gray-600 dark:text-gray-500 transition-transform ease-in-out duration-300 transform hover:translate-x-1"
                 :class="{
                   'py-2': link.depth === 2,
-                  'ml-4 pb-2': link.depth === 3
+                  'ml-2 pb-2': link.depth === 3
                 }"
               >{{ link.text }}</a>
             </li>
@@ -119,12 +119,12 @@ export default {
 
 .nuxt-content {
   h2 {
-    @apply text-2xl font-black mb-4 py-1 border-b -mt-16 pt-16;
+    @apply text-3xl font-black mb-4 pb-1 border-b -mt-16 pt-24;
 
     > a {
       &::before {
-        content: "#";
-        @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-0;
+        content: '#';
+        @apply text-green-500 font-normal -ml-6 pr-1 absolute opacity-0;
       }
     }
 
@@ -136,12 +136,12 @@ export default {
   }
 
   h3 {
-    @apply text-xl font-extrabold mb-2 py-1 border-b -mt-16 pt-16;
+    @apply text-2xl font-extrabold mb-2 pb-1 border-b -mt-16 pt-20;
 
     > a {
       &::before {
-        content: "#";
-        @apply text-green-500 font-normal -ml-4 pr-1 absolute opacity-0;
+        content: '#';
+        @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-0;
       }
     }
 
@@ -203,7 +203,7 @@ export default {
   }
 
   pre[class*="language-"] {
-    @apply rounded mt-0 mb-4 bg-gray-800 relative;
+    @apply rounded mt-0 mb-4 bg-gray-800 text-sm relative;
 
     > code {
       @apply bg-gray-800 relative;

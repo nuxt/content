@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pt-16">
     <Navbar />
     <main class="container mx-auto px-4 lg:px-8">
       <Nuxt />
@@ -25,7 +25,7 @@ export default {
         return 'Nuxt Content'
       },
       bodyAttrs: {
-        class: ['bg-white dark:bg-gray-900 text-gray-700 dark:text-white antialiased lg:pt-16']
+        class: ['antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       }
     }
   }
