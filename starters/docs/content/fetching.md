@@ -177,3 +177,28 @@ const articles = await this.$content('articles')
   .search('welcome')
   .fetch()
 ```
+
+## API
+
+This module exposes an API in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `/_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
+
+Example:
+
+```bash
+-| content/
+---| articles/
+------| hello-world.md
+---| index.md
+---| settings.json
+```
+
+Will expose on `localhost:3000`:
+- `/_content/articles`: list the files in `content/articles/`
+- `/_content/articles/hello-world`: get `hello-world.md` as JSON
+- `/_content/index`: get `index.md` as JSON
+- `/_content/settings`: get `settings.json` as JSON
+- `/_content`: list `index` and `settings`
+
+The endpoint is accessible on `GET` and `POST` request, so you can use query params: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
+
+You can learn more about the enpoint on [lib/middleware.js](https://github.com/nuxt-company/content-module/blob/master/lib/middleware.js).
