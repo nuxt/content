@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-wrap-reverse -mx-4 lg:-mx-8 h-full">
-    <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l lg:border-r dark:border-gray-800">
+    <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l dark:border-gray-800" :class="{ 'lg:border-r': doc.toc.length }">
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
@@ -11,13 +11,7 @@
           :to="`/${prev.slug}`"
           class="text-green-500 font-bold hover:underline flex items-center"
         >
-          <svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 mr-1">
-            <path
-              fill-rule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          <icon-arrow-left />
           {{ prev.title }}
         </NuxtLink>
         <span v-else>&nbsp;</span>
@@ -27,48 +21,22 @@
           class="text-green-500 font-bold hover:underline flex items-center"
         >
           {{ next.title }}
-          <svg fill="currentColor" viewBox="0 0 20 20" class="w-4 h-4 ml-1">
-            <path
-              fill-rule="evenodd"
-              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          <icon-arrow-right />
         </NuxtLink>
         <span v-else>&nbsp;</span>
       </div>
     </div>
-    <div v-if="doc.toc && doc.toc.length" class="w-full lg:w-1/4 p-4 lg:p-8">
-      <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
-        <h3 class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs">On this page</h3>
-        <nav>
-          <scrollactive highlight-first-item active-class="text-green-500" tag="ul">
-            <li
-              v-for="link of doc.toc"
-              :key="link.id"
-              class="text-gray-600 dark:text-gray-500"
-              :class="{
-                'border-t border-dashed dark:border-gray-800 first:border-t-0 font-semibold': link.depth === 2
-              }"
-            >
-              <a
-                :href="`#${link.id}`"
-                class="block text-sm scrollactive-item transition-transform ease-in-out duration-300 transform hover:translate-x-1"
-                :class="{
-                  'py-2': link.depth === 2,
-                  'ml-2 pb-2': link.depth === 3
-                }"
-              >{{ link.text }}</a>
-            </li>
-          </scrollactive>
-        </nav>
-      </div>
-    </div>
+    <article-toc v-if="doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
 
 <script>
+import ArticleToc from '@/components/ArticleToc'
+
 export default {
+  components: {
+    ArticleToc
+  },
   scrollToTop: true,
   async asyncData ({ $content, params, error }) {
     const slug = params.slug || 'index'
