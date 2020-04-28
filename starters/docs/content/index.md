@@ -21,6 +21,12 @@ csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme
 
 <BaseList :items="features"></BaseList>
 
-## Demo
+## Videos
+
+Demonstration of using `$content` and `<nuxt-content>` to display Markdown pages:
+
+<video src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content_wxnjje.mp4" loop playsinline controls></video>
+
+## Online playground
 
 <code-sandbox :src="csb_link"></code-sandbox>

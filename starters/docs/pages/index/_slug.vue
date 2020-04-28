@@ -163,6 +163,10 @@ export default {
     }
   }
 
+  video {
+    @apply w-full border rounded shadow-md;
+  }
+
   &-highlight {
     @apply relative;
 
