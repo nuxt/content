@@ -28,7 +28,7 @@ Route that will be used for client-side API calls and SSE.
 ```js{}[nuxt.config.js]
 content: {
   // $content api will be served on localhost:3000/content-api
-  apiPrefix: '/content-api'
+  apiPrefix: 'content-api'
 }
 ```
 

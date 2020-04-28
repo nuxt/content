@@ -15,7 +15,7 @@ features:
 csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
-`@nuxtjs/content` lets you write in a `content/` directory, acting as **flat file headless CMS**, supporting:
+`@nuxtjs/content` lets you write in a `content/` directory, acting as **flat file headless CMS**.
 
 ## Features
 

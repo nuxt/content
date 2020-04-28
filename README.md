@@ -6,7 +6,7 @@
 [![Codecov][codecov-src]][codecov-href]
 [![License][license-src]][license-href]
 
-> @nuxtjs/content lets you write in a content/ directory, acting as flat file headless CMS, supporting:
+> @nuxtjs/content lets you write in a content/ directory, acting as flat file headless CMS
 
 ## Features
 

@@ -180,7 +180,7 @@ const articles = await this.$content('articles')
 
 ## API
 
-This module exposes an API in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `/_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
+This module exposes an API in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
 
 Example:
 
