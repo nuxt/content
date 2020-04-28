@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap-reverse -mx-4 lg:-mx-8 h-full">
+  <div class="flex flex-wrap-reverse -mx-4 lg:-mx-8">
     <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l dark:border-gray-800" :class="{ 'lg:border-r': doc.toc.length }">
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
