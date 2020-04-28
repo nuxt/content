@@ -2,7 +2,7 @@
 title: Writing content
 position: 3
 category: Getting started
-multiselectOptions: 
+multiselectOptions:
   - VuePress
   - Gridsome
   - Nuxt
@@ -43,7 +43,7 @@ This module automatically adds an `id` and a `link` to each heading.
 Say we have the following markdown file:
 
 ```md[home.md]
-# Lorem ipsum 😪
+# Lorem ipsum
 ## dolor—sit—amet
 ### consectetur &amp; adipisicing
 #### elit
@@ -53,7 +53,7 @@ Say we have the following markdown file:
 It will be transformed to it's JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
 
 ```html
-<h1 id="lorem-ipsum-"><a href="#lorem-ipsum-" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>Lorem ipsum 😪</h1>
+<h1 id="lorem-ipsum-"><a href="#lorem-ipsum-" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>Lorem ipsum</h1>
 <h2 id="dolorsitamet"><a href="#dolorsitamet" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>dolor—sit—amet</h2>
 <h3 id="consectetur--adipisicing"><a href="#consectetur--adipisicing" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>consectetur &#x26; adipisicing</h3>
 <h4 id="elit"><a href="#elit" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>elit</h4>
@@ -68,7 +68,6 @@ Links are transformed to add valid `target` and `rel` attributes. You can change
 
 Here is an exemple using external, relative, markdown and html links:
 
-<pre class="language-md">
 ```md
 ---
 title: Home
@@ -86,7 +85,6 @@ title: Home
 
 [External Link markdown](https://nuxtjs.org)
 ```
-</pre>
 
 ### Codeblocks
 
@@ -216,7 +214,7 @@ You can also define the options in your front matter:
 
 ```md[home.md]
 ---
-multiselectOptions: 
+multiselectOptions:
   - VuePress
   - Gridsome
   - Nuxt
