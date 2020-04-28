@@ -8,7 +8,11 @@ category: Getting started
 
 `$content` is accessible from **@nuxtjs/content**.
 
-⚠️ Beware that you can access it only after the modules as been loaded by Nuxt, so `require('@nuxtjs/content')` should happens in hooks or internal Nuxt methods.
+<base-alert>
+
+  Beware that you can access it only **after the modules as been loaded** by Nuxt. `require('@nuxtjs/content')` should happens in hooks or internal Nuxt methods.
+
+</base-alert>
 
 ```js
 export default {
