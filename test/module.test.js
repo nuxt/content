@@ -20,13 +20,15 @@ describe('module', () => {
         title: 'Home',
         dir: '/',
         path: '/home',
-        slug: 'home'
+        slug: 'home',
+        extension: '.md'
       }),
       expect.objectContaining({
         title: 'About',
         dir: '/',
         path: '/about',
-        slug: 'about'
+        slug: 'about',
+        extension: '.md'
       })
     ]))
   })
