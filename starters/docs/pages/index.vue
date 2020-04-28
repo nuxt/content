@@ -8,7 +8,7 @@
             :key="category"
             class="mb-6 last:mb-0"
           >
-            <h3 class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wide font-bold text-sm lg:text-xs">{{ category }}</h3>
+            <h3 class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600  uppercase tracking-wide font-bold text-sm lg:text-xs">{{ category }}</h3>
             <ul>
               <li v-for="doc of docs" :key="doc.slug">
                 <NuxtLink
