@@ -6,10 +6,20 @@
     >
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
+
         <nuxt-content :document="doc" />
       </article>
+
+      <div class="pt-8 flex">
+        <a :href="githubLink" target="_blank" class="font-medium hover:underline flex items-center">
+          {{ $t('article.github') }}
+          <icon-external-link class="w-5 h-5 ml-2" />
+        </a>
+      </div>
+
       <article-prev-next :prev="prev" :next="next" />
     </div>
+
     <article-toc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
@@ -44,6 +54,11 @@ export default {
       doc,
       prev,
       next
+    }
+  },
+  computed: {
+    githubLink () {
+      return `https://github.com/nuxt-company/content-module/edit/master/starters/docs/content${this.doc.path}${this.doc.extension}`
     }
   },
   head () {
