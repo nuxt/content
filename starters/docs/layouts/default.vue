@@ -15,6 +15,8 @@ export default {
     Navbar
   },
   head () {
+    const i18nSeo = this.$nuxtI18nSeo()
+
     return {
       title: '',
       titleTemplate: (chunk) => {
@@ -26,7 +28,8 @@ export default {
       },
       bodyAttrs: {
         class: ['antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
-      }
+      },
+      ...i18nSeo
     }
   }
 }
