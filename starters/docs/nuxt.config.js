@@ -51,6 +51,7 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    'nuxt-i18n',
     '@nuxtjs/content'
   ],
   /*
@@ -69,5 +70,23 @@ export default {
   purgeCSS: {
     whitelist: ['dark-mode'],
     whitelistPatternsChildren: [/^token/, /^pre/, /^code/, /^nuxt-content/]
+  },
+  i18n: {
+    locales: [{
+      code: 'fr',
+      iso: 'fr-FR',
+      file: 'fr-FR.js',
+      name: 'Français'
+    }, {
+      code: 'en',
+      iso: 'en-US',
+      file: 'en-US.js',
+      name: 'English'
+    }],
+    defaultLocale: 'en',
+    parsePages: false,
+    lazy: true,
+    seo: false,
+    langDir: 'i18n/'
   }
 }
