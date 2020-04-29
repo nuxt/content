@@ -3,7 +3,7 @@ title: Introduction
 position: 1
 category: Getting started
 features:
-  - Blazing fast hot reload when writing your content
+  - Blazing fast hot reload in development
   - Vue components in Markdown
   - Full-text search
   - Support static site generation with `nuxt generate`
