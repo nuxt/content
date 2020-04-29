@@ -140,7 +140,7 @@
         <ul>
           <li v-for="doc of docs" :key="doc.slug" class="text-gray-600">
             <NuxtLink
-              :to="`/${doc.slug !== 'index' ? doc.slug : ''}`"
+              :to="localePath({ name: 'index-slug', params: { slug: doc.slug !== 'index' ? doc.slug : undefined } })"
               class="mt-1 block px-3 py-2 rounded-md font-medium hover:text-gray-700 dark-hover:text-white hover:bg-gray-200 dark-hover:bg-gray-700 focus:outline-none dark-focus:text-white dark-focus:bg-gray-700 transition duration-150 ease-in-out"
               exact-active-class="text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-800 dark-hover:bg-gray-800"
               @click.native="open = false"

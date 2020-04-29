@@ -2,7 +2,7 @@
   <div class="flex justify-between items-center mt-8">
     <NuxtLink
       v-if="prev"
-      :to="`/${prev.slug}`"
+      :to="localePath({ name: 'index-slug', params: { slug: prev.slug !== 'index' ? prev.slug : undefined } })"
       class="text-green-500 font-bold hover:underline flex items-center"
     >
       <icon-arrow-left />
@@ -11,7 +11,7 @@
     <span v-else>&nbsp;</span>
     <NuxtLink
       v-if="next"
-      :to="`/${next.slug}`"
+      :to="localePath({ name: 'index-slug', params: { slug: next.slug !== 'index' ? next.slug : undefined } })"
       class="text-green-500 font-bold hover:underline flex items-center"
     >
       {{ next.title }}

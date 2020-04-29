@@ -8,11 +8,13 @@
             :key="category"
             class="mb-6 last:mb-0"
           >
-            <h3 class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600  uppercase tracking-wide font-bold text-sm lg:text-xs">{{ category }}</h3>
+            <h3
+              class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+            >{{ category }}</h3>
             <ul>
               <li v-for="doc of docs" :key="doc.slug">
                 <NuxtLink
-                  :to="`/${doc.slug !== 'index' ? doc.slug : ''}`"
+                  :to="localePath({ name: 'index-slug', params: { slug: doc.slug !== 'index' ? doc.slug : undefined } })"
                   class="px-2 -mx-2 rounded font-medium py-1 block text-gray-600 dark:text-gray-500 hover:text-gray-800 dark-hover:text-gray-100"
                   exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-green-200 dark:bg-green-900 dark-hover:text-green-200"
                 >{{ doc.title }}</NuxtLink>
