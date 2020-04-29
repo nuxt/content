@@ -75,7 +75,7 @@ export default {
 
     > a {
       &::before {
-        content: '#';
+        content: "#";
         @apply text-green-500 font-normal -ml-6 pr-1 absolute opacity-0;
       }
     }
@@ -85,6 +85,16 @@ export default {
         @apply opacity-100;
       }
     }
+
+    @media (max-width: 640px) {
+      @apply ml-6;
+
+      > a {
+        &::before {
+          @apply opacity-100;
+        }
+      }
+    }
   }
 
   h3 {
@@ -92,7 +102,7 @@ export default {
 
     > a {
       &::before {
-        content: '#';
+        content: "#";
         @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-0;
       }
     }
@@ -100,6 +110,16 @@ export default {
     &:hover {
       > a::before {
         @apply opacity-100;
+      }
+    }
+
+    @media (max-width: 640px) {
+      @apply ml-6;
+
+      > a {
+        &::before {
+          @apply opacity-100;
+        }
       }
     }
   }
