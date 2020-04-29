@@ -169,7 +169,7 @@
 
     <ul v-if="menuOpen" class="px-4 py-4 lg:hidden">
       <li
-        v-for="(docs, category) in $store.state.categories"
+        v-for="(docs, category) in $store.state.categories[$i18n.locale]"
         :key="category"
         class="mb-4 last:mb-0"
       >

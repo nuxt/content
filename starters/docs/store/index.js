@@ -1,20 +1,27 @@
 import groupBy from 'lodash.groupby'
 
 export const state = () => ({
-  categories: []
+  categories: {}
 })
 
 export const mutations = {
   setCategories (state, categories) {
-    state.categories = categories
+    state.categories[this.$i18n.locale] = categories
   }
 }
 
 export const actions = {
-  async nuxtServerInit ({ commit }, { $content, app }) {
-    const docs = await $content(app.i18n.locale).sortBy('position', 'asc').fetch()
+  async fetchCategories ({ commit, state }) {
+    if (state.categories[this.$i18n.locale]) {
+      return
+    }
+
+    const docs = await this.$content(this.$i18n.locale).sortBy('position', 'asc').fetch()
     const categories = groupBy(docs, 'category')
 
     commit('setCategories', categories)
+  },
+  async nuxtServerInit ({ dispatch }) {
+    await dispatch('fetchCategories')
   }
 }

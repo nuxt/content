@@ -4,7 +4,7 @@
       <aside class="w-full lg:w-1/5 p-4 lg:p-8 hidden md:block">
         <ul class="md:sticky md:top-0 md:pt-24 md:-mt-24">
           <li
-            v-for="(docs, category) in $store.state.categories"
+            v-for="(docs, category) in $store.state.categories[$i18n.locale]"
             :key="category"
             class="mb-6 last:mb-0"
           >
