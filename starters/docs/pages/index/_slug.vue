@@ -1,13 +1,16 @@
 <template>
   <div class="flex flex-wrap-reverse -mx-4 lg:-mx-8">
-    <div class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l dark:border-gray-800" :class="{ 'lg:border-r': doc.toc.length }">
+    <div
+      class="w-full lg:w-3/4 p-4 lg:p-8 lg:border-l dark:border-gray-800"
+      :class="{ 'lg:border-r': doc.toc && doc.toc.length }"
+    >
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
       <article-prev-next :prev="prev" :next="next" />
     </div>
-    <article-toc v-if="doc.toc.length" :toc="doc.toc" />
+    <article-toc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
 
