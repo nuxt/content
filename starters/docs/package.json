@@ -14,6 +14,7 @@
     "@nuxtjs/content": "latest",
     "lodash.groupby": "^4.6.0",
     "nuxt-edge": "latest",
+    "nuxt-i18n": "6.10.1",
     "prism-themes": "^1.4.0",
     "vue-scrollactive": "^0.8.0"
   },
