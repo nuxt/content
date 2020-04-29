@@ -1,12 +1,10 @@
 <template>
-  <nav
-    class="fixed top-0 z-10 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900"
-  >
+  <nav class="fixed top-0 z-10 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <NuxtLink to="/" class="text-xl font-bold tracking-tight">Nuxt Content</NuxtLink>
-        <div class="flex-1 flex justify-center mx-4 lg:mx-16">
-          <SearchInput />
+        <NuxtLink :to="localePath('index')" class="text-xl font-bold tracking-tight">Nuxt Content</NuxtLink>
+        <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8">
+          <SearchInput @focus="focus => searchFocus = focus" />
         </div>
         <div class="flex items-center">
           <a
@@ -80,7 +78,41 @@
             </svg>
           </a>
 
+          <Dropdown :class="{ 'hidden lg:block': searchFocus }">
+            <template #trigger="{ open }">
+              <button
+                class="p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
+                :class="{ 'text-green-500': open }"
+              >
+                <svg
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  class="w-6 h-6"
+                >
+                  <path
+                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                  />
+                </svg>
+              </button>
+            </template>
+
+            <ul class="py-2">
+              <li v-for="locale in availableLocales" :key="locale.code">
+                <nuxt-link
+                  v-if="$i18n.locale !== locale.code"
+                  :to="switchLocalePath(locale.code)"
+                  class="flex px-4 items-center hover:text-green-500 leading-7 transition ease-in-out duration-150"
+                >{{ locale.name }}</nuxt-link>
+              </li>
+            </ul>
+          </Dropdown>
+
           <button
+            :class="{ 'hidden lg:block': searchFocus }"
             class="p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
             @click="$colorMode.value === 'dark' ? $colorMode.preference = 'light' : $colorMode.preference = 'dark'"
           >
@@ -106,9 +138,15 @@
 
           <button
             class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
-            @click="open = !open"
+            @click="menuOpen = !menuOpen"
           >
-            <svg v-if="open" class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+            <svg
+              v-if="menuOpen"
+              class="h-6 w-6"
+              stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -129,7 +167,7 @@
       </div>
     </div>
 
-    <ul v-if="open" class="px-4 py-4 lg:hidden">
+    <ul v-if="menuOpen" class="px-4 py-4 lg:hidden">
       <li
         v-for="(docs, category) in $store.state.categories"
         :key="category"
@@ -143,7 +181,7 @@
               :to="localePath({ name: 'index-slug', params: { slug: doc.slug !== 'index' ? doc.slug : undefined } })"
               class="mt-1 block px-3 py-2 rounded-md font-medium hover:text-gray-700 dark-hover:text-white hover:bg-gray-200 dark-hover:bg-gray-700 focus:outline-none dark-focus:text-white dark-focus:bg-gray-700 transition duration-150 ease-in-out"
               exact-active-class="text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-800 dark-hover:bg-gray-800"
-              @click.native="open = false"
+              @click.native="menuOpen = false"
             >{{ doc.title }}</NuxtLink>
           </li>
         </ul>
@@ -161,7 +199,13 @@ export default {
   },
   data () {
     return {
-      open: false
+      menuOpen: false,
+      searchFocus: false
+    }
+  },
+  computed: {
+    availableLocales () {
+      return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
     }
   }
 }

@@ -20,8 +20,8 @@
           :placeholder="$t('search.placeholder')"
           type="search"
           autocomplete="off"
-          @focus="focus = true"
-          @blur="focus = false"
+          @focus="onFocus"
+          @blur="onBlur"
         />
       </div>
     </div>
@@ -87,6 +87,14 @@ export default {
     window.removeEventListener('keyup', this.keyup)
   },
   methods: {
+    onFocus () {
+      this.focus = true
+      this.$emit('focus', true)
+    },
+    onBlur () {
+      this.focus = false
+      this.$emit('focus', false)
+    },
     keyup (e) {
       if (e.key === '/') {
         this.$refs.search.focus()
