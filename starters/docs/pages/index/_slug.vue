@@ -24,17 +24,17 @@ export default {
     ArticlePrevNext
   },
   scrollToTop: true,
-  async asyncData ({ $content, params, error }) {
+  async asyncData ({ $content, app, params, error }) {
     const slug = params.slug || 'index'
 
     let doc
     try {
-      doc = await $content(slug).fetch()
+      doc = await $content(app.i18n.locale, slug).fetch()
     } catch (e) {
       error({ message: 'Page not found' })
     }
 
-    const [prev, next] = await $content()
+    const [prev, next] = await $content(app.i18n.locale)
       .only(['title', 'slug'])
       .sortBy('position', 'asc')
       .surround(slug, { before: 1, after: 1 })

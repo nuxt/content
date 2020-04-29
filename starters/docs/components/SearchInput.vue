@@ -77,7 +77,7 @@ export default {
         return
       }
       this.searching = true
-      this.results = await this.$content().sortBy('position', 'asc').limit(12).search(q).fetch()
+      this.results = await this.$content(this.$i18n.locale).sortBy('position', 'asc').limit(12).search(q).fetch()
       this.searching = false
     }
   },
