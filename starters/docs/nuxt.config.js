@@ -38,7 +38,9 @@ export default {
         return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, ''))
       })
 
-      return (await Promise.all(promises)).flat()
+      const [en, fr] = await Promise.all(promises)
+
+      return [...en, ...fr]
     }
   },
   /*
