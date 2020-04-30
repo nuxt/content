@@ -69,9 +69,6 @@ export default {
   /*
   ** Modules configuration
   */
-  colorMode: {
-    preference: 'light'
-  },
   content: {
     markdown: {
       prism: {
