@@ -76,10 +76,6 @@ export default {
       }
     }
   },
-  purgeCSS: {
-    whitelist: ['dark-mode'],
-    whitelistPatternsChildren: [/^token/, /^pre/, /^code/, /^nuxt-content/]
-  },
   i18n: {
     locales: [{
       code: 'fr',
