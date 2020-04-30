@@ -9,7 +9,7 @@
       <label for="search" class="sr-only">Search</label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <icon-search />
+          <icon-search class="h-5 w-5 text-gray-500" />
         </div>
         <input
           id="search"
@@ -47,7 +47,7 @@
           @click="focus = false"
         >
           <span class="font-bold hidden sm:block">{{ result.category }}</span>
-          <icon-chevron-right />
+          <icon-chevron-right class="w-3 h-3 mx-1 hidden sm:block" />
           {{ result.title }}
         </NuxtLink>
       </li>

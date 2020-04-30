@@ -5,7 +5,7 @@
       :to="localePath({ name: 'index-slug', params: { slug: prev.slug !== 'index' ? prev.slug : undefined } })"
       class="text-green-500 font-bold hover:underline flex items-center"
     >
-      <icon-arrow-left />
+      <icon-arrow-left class="w-4 h-4 mr-1" />
       {{ prev.title }}
     </NuxtLink>
     <span v-else>&nbsp;</span>
@@ -15,7 +15,7 @@
       class="text-green-500 font-bold hover:underline flex items-center"
     >
       {{ next.title }}
-      <icon-arrow-right />
+      <icon-arrow-right class="w-4 h-4 ml-1" />
     </NuxtLink>
     <span v-else>&nbsp;</span>
   </div>
