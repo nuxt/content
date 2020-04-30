@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     bodyClass () {
-      return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : ''
+      return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : []
     }
   },
   head () {
@@ -31,11 +31,8 @@ export default {
 
         return 'Nuxt Content'
       },
-      htmlAttrs: {
-        class: ['antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
-      },
       bodyAttrs: {
-        class: this.bodyClass
+        class: [...this.bodyClass, 'antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       },
       ...i18nSeo
     }
