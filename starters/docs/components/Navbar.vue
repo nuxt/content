@@ -2,7 +2,12 @@
   <nav class="fixed top-0 z-10 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <NuxtLink :to="localePath('index')" class="text-xl font-bold tracking-tight">Nuxt Content</NuxtLink>
+        <NuxtLink
+          :to="localePath('index')"
+          class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
+        >
+          <img class="h-8 w-auto" src="/logo.svg" alt />
+        </NuxtLink>
         <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8">
           <SearchInput @focus="focus => searchFocus = focus" />
         </div>
