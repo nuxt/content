@@ -13,7 +13,7 @@ export default {
       { hid: 'og:description', name: 'og:description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' }
     ]
   },
   /*
@@ -63,12 +63,15 @@ export default {
   */
   modules: [
     'nuxt-i18n',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     '@nuxtjs/content'
   ],
   /*
   ** Modules configuration
   */
+  colorMode: {
+    preference: 'light'
+  },
   content: {
     markdown: {
       prism: {

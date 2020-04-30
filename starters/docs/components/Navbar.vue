@@ -5,8 +5,13 @@
         <NuxtLink
           :to="localePath('index')"
           class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
+          style="width: 104px;"
         >
-          <img class="h-8 w-auto" src="/logo.svg" alt />
+          <ClientOnly>
+            <img slot="placeholder" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
+            <img v-if="$colorMode.value === 'light'" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
+            <img v-else class="h-8 w-auto" src="/logo-dark.svg" alt="Nuxt Content" />
+          </ClientOnly>
         </NuxtLink>
         <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8">
           <SearchInput @focus="focus => searchFocus = focus" />
@@ -68,13 +73,14 @@
 
           <button
             :class="{ 'hidden lg:block': searchFocus }"
-            class="p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
+            class="w-10 p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
             @click="$colorMode.value === 'dark' ? $colorMode.preference = 'light' : $colorMode.preference = 'dark'"
           >
-            <client-only placeholder=" ">
+            <ClientOnly>
+              <icon-sun slot="placeholder" class="w-6 h-6" />
               <icon-sun v-if="$colorMode.value === 'light'" class="w-6 h-6" />
               <icon-moon v-else class="w-6 h-6" />
-            </client-only>
+            </ClientOnly>
           </button>
 
           <button
