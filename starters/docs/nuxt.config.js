@@ -26,7 +26,8 @@ export default {
   plugins: [
     '@/plugins/i18n',
     '@/plugins/vue-scrollactive',
-    '@/plugins/components'
+    '@/plugins/components',
+    '@/plugins/menu.client'
   ],
   /*
   ** Give routes to static generation
