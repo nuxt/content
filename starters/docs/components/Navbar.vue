@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed top-0 z-10 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
+  <nav class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
         <NuxtLink
@@ -77,7 +77,7 @@
 
           <button
             class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
-            @click="menuOpen = !menuOpen"
+            @click="menu = !menu"
           >
             <icon-x v-if="menu" class="w-6 h-6" />
             <icon-menu v-else class="w-6 h-6" />
@@ -85,27 +85,6 @@
         </div>
       </div>
     </div>
-
-    <ul v-if="menuOpen" class="px-4 py-4 lg:hidden">
-      <li
-        v-for="(docs, category) in $store.state.categories[$i18n.locale]"
-        :key="category"
-        class="mb-4 last:mb-0"
-      >
-        <h3 class="text-sm tracking-wide uppercase font-black mb-2">{{ category }}</h3>
-
-        <ul>
-          <li v-for="doc of docs" :key="doc.slug" class="text-gray-600">
-            <NuxtLink
-              :to="localePath({ name: 'index-slug', params: { slug: doc.slug !== 'index' ? doc.slug : undefined } })"
-              class="mt-1 block px-3 py-2 rounded-md font-medium hover:text-gray-700 dark-hover:text-white hover:bg-gray-200 dark-hover:bg-gray-700 focus:outline-none dark-focus:text-white dark-focus:bg-gray-700 transition duration-150 ease-in-out"
-              exact-active-class="text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-800 dark-hover:bg-gray-800"
-              @click.native="menuOpen = false"
-            >{{ doc.title }}</NuxtLink>
-          </li>
-        </ul>
-      </li>
-    </ul>
   </nav>
 </template>
 
@@ -118,11 +97,18 @@ export default {
   },
   data () {
     return {
-      menuOpen: false,
       searchFocus: false
     }
   },
   computed: {
+    menu: {
+      get () {
+        return this.$store.state.menu.open
+      },
+      set (val) {
+        this.$store.commit('menu/toggle', val)
+      }
+    },
     availableLocales () {
       return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
     }

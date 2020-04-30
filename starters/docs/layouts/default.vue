@@ -14,6 +14,11 @@ export default {
   components: {
     Navbar
   },
+  computed: {
+    bodyClass () {
+      return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : ''
+    }
+  },
   head () {
     const i18nSeo = this.$nuxtI18nSeo()
 
@@ -26,8 +31,11 @@ export default {
 
         return 'Nuxt Content'
       },
-      bodyAttrs: {
+      htmlAttrs: {
         class: ['antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
+      },
+      bodyAttrs: {
+        class: this.bodyClass
       },
       ...i18nSeo
     }
