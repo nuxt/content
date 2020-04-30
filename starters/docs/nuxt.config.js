@@ -62,6 +62,7 @@ export default {
   */
   modules: [
     'nuxt-i18n',
+    '@nuxtjs/pwa',
     '@nuxtjs/content'
   ],
   /*
