@@ -1,4 +1,6 @@
-# @nuxtjs/content
+![nuxt-content](https://user-images.githubusercontent.com/904724/80693053-bf91f380-8ad2-11ea-94f7-a4aa9cf02776.png)
+
+# @nuxt/content
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -6,7 +8,8 @@
 [![Codecov][codecov-src]][codecov-href]
 [![License][license-src]][license-href]
 
-> @nuxtjs/content lets you write in a content/ directory, acting as flat file headless CMS
+> @nuxt/content lets you write in a content/ directory, acting as flat file headless CMS
+
 
 ## Features
 
