@@ -38,7 +38,7 @@ export default {
       const promises = ['en', 'fr'].map(async (locale) => {
         const files = await $content(locale).only(['path']).fetch()
 
-        return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, ''))
+        return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, '')).filter(path => !!path)
       })
 
       const [en, fr] = await Promise.all(promises)
