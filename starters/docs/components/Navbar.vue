@@ -2,31 +2,23 @@
   <nav class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <NuxtLink
-          :to="localePath('index')"
-          class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
-          style="width: 104px;"
-        >
-          <ClientOnly>
-            <img slot="placeholder" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
-            <img v-if="$colorMode.value === 'light'" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
-            <img v-else class="h-8 w-auto" src="/logo-dark.svg" alt="Nuxt Content" />
-          </ClientOnly>
-        </NuxtLink>
-        <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8">
+        <div class="w-1/6">
+          <NuxtLink
+            :to="localePath('index')"
+            class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
+            style="width: 104px;"
+          >
+            <ClientOnly>
+              <img slot="placeholder" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
+              <img v-if="$colorMode.value === 'light'" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
+              <img v-else class="h-8 w-auto" src="/logo-dark.svg" alt="Nuxt Content" />
+            </ClientOnly>
+          </NuxtLink>
+        </div>
+        <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
           <SearchInput @focus="focus => searchFocus = focus" />
         </div>
-        <div class="flex items-center">
-          <a
-            href="https://nuxtjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Website"
-            name="Website"
-            class="hidden lg:block hover:text-green-500 transition ease-in-out duration-150 mr-2"
-          >
-            <icon-website class="w-6 h-6" />
-          </a>
+        <div class="flex items-center w-1/6">
 
           <a
             href="https://twitter.com/nuxt_js"
