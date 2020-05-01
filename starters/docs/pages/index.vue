@@ -2,7 +2,7 @@
   <div>
     <div class="flex flex-wrap -mx-4 lg:-mx-8 relative">
       <aside
-        class="h-screen w-full lg:w-1/5 fixed lg:sticky top-0 bottom-0 pt-16 lg:-mt-16 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30"
+        class="h-screen w-full lg:w-1/5 fixed lg:sticky top-0 bottom-0 pt-16 lg:-mt-16 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30 lg:border-r dark:border-gray-800"
         :class="{ 'block': menu, 'hidden': !menu }"
       >
         <ul class="overflow-auto h-full p-4 lg:p-8">
@@ -47,9 +47,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* aside {
-  height: calc(100vh - 4rem);
-} */
-</style>

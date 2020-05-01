@@ -4,15 +4,18 @@
     <main class="container mx-auto px-4 lg:px-8">
       <Nuxt />
     </main>
+    <TheFooter />
   </div>
 </template>
 
 <script>
 import Navbar from '~/components/Navbar'
+import TheFooter from '~/components/TheFooter'
 
 export default {
   components: {
-    Navbar
+    Navbar,
+    TheFooter
   },
   computed: {
     bodyClass () {
