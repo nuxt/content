@@ -2,10 +2,10 @@
   <div>
     <div class="flex flex-wrap -mx-4 lg:-mx-8 relative">
       <aside
-        class="w-full lg:w-1/5 fixed lg:sticky top-0 bottom-0 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30 pt-16 lg:-mt-16 lg:h-full"
+        class="h-screen w-full lg:w-1/5 fixed lg:sticky top-0 bottom-0 pt-16 lg:-mt-16 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30"
         :class="{ 'block': menu, 'hidden': !menu }"
       >
-        <ul class="overflow-y-scroll h-full p-4 lg:p-8">
+        <ul class="overflow-auto h-full p-4 lg:p-8">
           <li
             v-for="(docs, category) in $store.state.categories[$i18n.locale]"
             :key="category"
@@ -47,3 +47,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* aside {
+  height: calc(100vh - 4rem);
+} */
+</style>
