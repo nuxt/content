@@ -30,26 +30,9 @@ export default {
   directives: {
     'click-away': ClickAway
   },
-  props: {
-    position: {
-      type: String,
-      default: 'left',
-      validator (value) {
-        return ['left', 'right'].includes(value)
-      }
-    }
-  },
   data () {
     return {
       open: false
-    }
-  },
-  computed: {
-    dropdownClass () {
-      return ({
-        right: 'origin-top-right absolute right-0',
-        left: 'origin-top-left absolute left-0'
-      })[this.position]
     }
   },
   methods: {
@@ -66,7 +49,7 @@ export default {
 <style lang="scss" scoped>
 .dropdown-enter-active, .dropdown-leave-active {
   transform: translateY(0) translateX(-50%) !important;
-  transition: opacity 250ms linear, transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
+  transition: opacity 150ms linear, transform 150ms cubic-bezier(0.4, 0, 0.6, 1);
 }
 .dropdown-enter, .dropdown-leave-to {
   opacity: 0;
