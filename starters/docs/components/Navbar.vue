@@ -15,7 +15,7 @@
             </ClientOnly>
           </NuxtLink>
         </div>
-        <div class="flex-1 flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
+        <div class="hidden flex-1 lg:flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
           <SearchInput />
         </div>
         <div class="flex items-center justify-end w-1/6">
