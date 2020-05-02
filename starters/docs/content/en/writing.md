@@ -32,7 +32,7 @@ This module converts your `.md` files into a JSON AST tree structure, stored in 
 
 Data defined in the header will be injected into the document.
 
-Make sure to use the `nuxt-content` component to display the `body` of your markdown content, see [displaying content](/displaying).
+Make sure to use the `<nuxt-content>` component to display the `body` of your markdown content, see [displaying content](/displaying).
 
 > You can check [GitHub syntax guide](https://guides.github.com/features/mastering-markdown/) to help you master Markdown
 

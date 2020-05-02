@@ -5,17 +5,20 @@
       handler: 'close'
     }"
     class="relative"
-    @mouseover="open = true"
-    @mouseout="open = false"
+    @mouseenter="open = true"
+    @mouseleave="open = false"
     @keydown.escape="open = false"
   >
     <slot name="trigger" :toggle="toggle" :open="open" />
 
-    <div v-show="open" :class="dropdownClass" class="rounded-md shadow-lg z-50">
-      <div class="rounded-md bg-white dark:bg-gray-800 shadow-xs overflow-hidden">
-        <slot />
+    <transition name="dropdown">
+      <div v-if="open" class="dropdown-wrapper absolute z-50">
+        <div class="rounded-md shadow-lg bg-white dark:bg-gray-800 overflow-hidden">
+          <slot />
+        </div>
       </div>
-    </div>
+    </transition>
+
   </div>
 </template>
 
@@ -27,26 +30,9 @@ export default {
   directives: {
     'click-away': ClickAway
   },
-  props: {
-    position: {
-      type: String,
-      default: 'left',
-      validator (value) {
-        return ['left', 'right'].includes(value)
-      }
-    }
-  },
   data () {
     return {
       open: false
-    }
-  },
-  computed: {
-    dropdownClass () {
-      return ({
-        right: 'origin-top-right absolute right-0',
-        left: 'origin-top-left absolute left-0'
-      })[this.position]
     }
   },
   methods: {
@@ -61,4 +47,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.dropdown-enter-active, .dropdown-leave-active {
+  transform: translateY(0) translateX(-50%) !important;
+  transition: opacity 150ms linear, transform 150ms cubic-bezier(0.4, 0, 0.6, 1);
+}
+.dropdown-enter, .dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(5px) translateX(-50%) !important;
+}
+
+.dropdown-wrapper {
+  top: -100%;
+  left: 50%;
+  transform: translateY(0) translateX(-50%);
+}
+
 </style>

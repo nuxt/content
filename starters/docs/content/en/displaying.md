@@ -4,11 +4,11 @@ position: 5
 category: Getting started
 ---
 
-This section is only for Markdown content files.
+<br><base-alert type="info">This section is only for Markdown files.</base-alert>
 
 ## Component
 
-You can use `nuxt-content` component directly in your template to display the page body:
+You can use `<nuxt-content>` component directly in your template to display the page body:
 
 ```vue
 <template>
@@ -31,9 +31,13 @@ export default {
 </script>
 ```
 
-All the props passed to `nuxt-content` will be forwarded to your custom Vue.js components.
 
-> Make sure to register your Vue.js components globally
+**Props:**
+- document:
+  - Type: `Object`
+  - `required`
+
+Learn more about what you can write in your markdown file in the [writing content](/writing#markdown) section.
 
 ## Style
 
