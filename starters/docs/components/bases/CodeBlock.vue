@@ -1,5 +1,5 @@
 <template>
-  <div class="code-block">
+  <div class="code-block" :class="[active && 'active']">
     <slot />
   </div>
 </template>
@@ -10,11 +10,10 @@ export default {
     label: {
       type: String,
       required: true
-    }
-  },
-  data () {
-    return {
-      active: false
+    },
+    active: {
+      type: Boolean,
+      default: false
     }
   }
 }

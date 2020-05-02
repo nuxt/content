@@ -1,6 +1,18 @@
 <template>
   <div class="code-group">
-    <button v-for="{ label } in tabs" :key="label" @click="currentTab = label">{{ label }}</button>
+    <div class="rounded-t border-b-2 border-gray-700 px-2 bg-gray-800 text-sm text-white relative ">
+      <button
+        v-for="({ label }, i) in tabs"
+        ref="tabs"
+        :key="label"
+        class="px-4 py-3 text-gray-400 font-bold font-mono"
+        :class="[activeTabIndex === i && 'active']"
+        @click="updateTabs(i)"
+      >
+        {{ label }}
+      </button>
+      <span ref="highlight-underline" class="highlight-underline" />
+    </div>
     <slot />
   </div>
 </template>
@@ -10,11 +22,11 @@ export default {
   data () {
     return {
       tabs: [],
-      currentTab: ''
+      activeTabIndex: 0
     }
   },
   watch: {
-    currentTab (newValue, oldValue) {
+    activeTabIndex (newValue, oldValue) {
       this.switchTab(newValue)
     }
   },
@@ -25,7 +37,7 @@ export default {
         elm: null
       })
     })
-    // this.currentTab = this.tabs[0].label
+    this.activeTabIndex = 0
   },
   mounted () {
     this.tabs = this.$slots.default.map((slot) => {
@@ -34,21 +46,47 @@ export default {
         elm: slot.elm
       }
     })
-    this.$slots.default[0].elm.classList.add('active')
+    this.updateHighlighteUnderlinePosition()
   },
   methods: {
-    switchTab (label) {
+    switchTab (i) {
       this.tabs.map((tab) => {
         tab.elm.classList.remove('active')
       })
-      this.tabs.find(tab => tab.label === label).elm.classList.add('active')
+      this.tabs[i].elm.classList.add('active')
+    },
+    updateTabs (i) {
+      this.activeTabIndex = i
+      this.updateHighlighteUnderlinePosition()
+    },
+    updateHighlighteUnderlinePosition () {
+      const activeTab = this.$refs.tabs[this.activeTabIndex]
+      if (!activeTab) {
+        return
+      }
+      const highlightUnderline = this.$refs['highlight-underline']
+      highlightUnderline.style.left = `${activeTab.offsetLeft}px`
+      highlightUnderline.style.width = `${activeTab.clientWidth}px`
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 button {
-  padding: 0.5rem;
+  outline: none;
+}
+
+.highlight-underline {
+  @apply bg-purple-600 absolute;
+  bottom: -2px;
+  height: 2px;
+  transition: left 150ms, width 150ms;
+}
+
+.code-group ::v-deep {
+  pre[class*="language-"] {
+    @apply rounded-t-none;
+  }
 }
 </style>
