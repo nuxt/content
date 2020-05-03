@@ -8,11 +8,8 @@
             class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
             style="width: 104px;"
           >
-            <ClientOnly>
-              <img slot="placeholder" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
-              <img v-if="$colorMode.value === 'light'" class="h-8 w-auto" src="/logo.svg" alt="Nuxt Content" />
-              <img v-else class="h-8 w-auto" src="/logo-dark.svg" alt="Nuxt Content" />
-            </ClientOnly>
+            <IconLogo v-if="$colorMode.value === 'light'" class="h-8 w-auto" />
+            <IconLogoDark v-else class="h-8 w-auto" />
           </NuxtLink>
         </div>
         <div class="hidden flex-1 lg:flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
