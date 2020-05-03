@@ -1,4 +1,4 @@
-![nuxt-content](https://user-images.githubusercontent.com/904724/80693053-bf91f380-8ad2-11ea-94f7-a4aa9cf02776.png)
+![nuxt-content](https://user-images.githubusercontent.com/904724/80923202-7a93e880-8d82-11ea-8ae1-044ebdc80aac.png)
 
 # @nuxt/content
 
