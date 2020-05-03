@@ -37,13 +37,13 @@
             rel="noopener noreferrer"
             title="Github"
             name="Github"
-            class="hidden lg:block hover:text-green-500 mr-4 transition ease-in-out duration-150"
+            class="hidden lg:block hover:text-green-500 mr-4"
           >
             <icon-github class="w-6 h-6" />
           </a>
 
           <button
-            class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
+            class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
             @click="menu = !menu"
           >
             <icon-x v-if="menu" class="w-6 h-6" />
