@@ -175,7 +175,7 @@ As will **this**:
 
 You can use global Vue components or locally registered in the page your are displaying your markdown.
 
-Since `@nuxtjs/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
+Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
 1. You need to use your components as kebak case:
 
@@ -197,7 +197,7 @@ But **this will**:
 
 **Example:**
 
-We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt-company/content-module/blob/master/starters/docs/components/examples/ExampleMultiselect.vue):
+We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/starters/docs/components/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
 Please chose a *framework*:

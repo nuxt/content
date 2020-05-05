@@ -4,31 +4,31 @@ category: Getting started
 position: 2
 ---
 
-Add `@nuxtjs/content` dependency to your project:
+Add `@nuxt/content` dependency to your project:
 
 <code-group>
   <code-block label="Yarn" active>
 
   ```bash
-  yarn add @nuxtjs/content
+  yarn add @nuxt/content
   ```
 
   </code-block>
   <code-block label="NPM">
 
   ```bash
-  npm install @nuxtjs/content
+  npm install @nuxt/content
   ```
 
   </code-block>
 </code-group>
 
-Then, add `@nuxtjs/content` to the `modules` section of `nuxt.config.js`:
+Then, add `@nuxt/content` to the `modules` section of `nuxt.config.js`:
 
 ```js
 {
   modules: [
-    '@nuxtjs/content'
+    '@nuxt/content'
   ],
   content: {
     // Options

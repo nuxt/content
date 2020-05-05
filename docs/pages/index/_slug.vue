@@ -58,7 +58,7 @@ export default {
   },
   computed: {
     githubLink () {
-      return `https://github.com/nuxt-company/content-module/edit/master/starters/docs/content${this.doc.path}${this.doc.extension}`
+      return `https://github.com/nuxt/content/edit/master/starters/docs/content${this.doc.path}${this.doc.extension}`
     }
   },
   head () {

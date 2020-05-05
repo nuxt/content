@@ -38,17 +38,17 @@
 Copyright (c) NuxtJS
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/@nuxtjs/content/latest.svg
-[npm-version-href]: https://npmjs.com/package/@nuxtjs/content
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg
+[npm-version-href]: https://npmjs.com/package/@nuxt/content
 
-[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxtjs/content.svg
-[npm-downloads-href]: https://npmjs.com/package/@nuxtjs/content
+[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxt/content.svg
+[npm-downloads-href]: https://npmjs.com/package/@nuxt/content
 
-[github-actions-ci-src]: https://github.com/nuxt-company/content-module/workflows/ci/badge.svg
-[github-actions-ci-href]: https://github.com/nuxt-company/content-module/actions?query=workflow%3Aci
+[github-actions-ci-src]: https://github.com/nuxt/content/workflows/ci/badge.svg
+[github-actions-ci-href]: https://github.com/nuxt/content/actions?query=workflow%3Aci
 
-[codecov-src]: https://img.shields.io/codecov/c/github/nuxt-company/content-module.svg
-[codecov-href]: https://codecov.io/gh/nuxt-company/content-module
+[codecov-src]: https://img.shields.io/codecov/c/github/nuxt/content.svg
+[codecov-href]: https://codecov.io/gh/nuxt/content
 
-[license-src]: https://img.shields.io/npm/l/@nuxtjs/content.svg
-[license-href]: https://npmjs.com/package/@nuxtjs/content
+[license-src]: https://img.shields.io/npm/l/@nuxt/content.svg
+[license-href]: https://npmjs.com/package/@nuxt/content

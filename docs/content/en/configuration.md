@@ -4,7 +4,7 @@ category: Getting started
 position: 6
 ---
 
-You can configure `@nuxtjs/content` with the `content` property in your `nuxt.config.js`.
+You can configure `@nuxt/content` with the `content` property in your `nuxt.config.js`.
 
 ```js{}[nuxt.config.js]
 export default {

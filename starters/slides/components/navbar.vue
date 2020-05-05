@@ -119,7 +119,7 @@
         </a>
 
         <a
-          href="https://github.com/nuxt-company/content-module"
+          href="https://github.com/nuxt/content"
           target="_blank"
           rel="noopener noreferrer"
           title="Github"

@@ -52,4 +52,4 @@ Depending on what you're using to design your app, you may need to write some st
 }
 ```
 
-You can check for an exemple in the [docs starter](https://github.com/nuxt-company/content-module/blob/master/starters/docs/pages/index/_slug.vue).
+You can check for an exemple in the [docs starter](https://github.com/nuxt/content/blob/master/starters/docs/pages/index/_slug.vue).

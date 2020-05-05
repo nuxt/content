@@ -1,8 +1,8 @@
 {
-  "name": "@nuxtjs/content",
+  "name": "@nuxt/content",
   "version": "0.3.0",
   "description": "Write your content inside your Nuxt app",
-  "repository": "nuxt-company/content-module",
+  "repository": "nuxt/content",
   "license": "MIT",
   "contributors": [
     {

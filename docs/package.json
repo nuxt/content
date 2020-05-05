@@ -1,7 +1,7 @@
 {
   "name": "nuxt-content-docs",
   "version": "1.0.0",
-  "description": "Docs for @nuxtjs/content",
+  "description": "Docs for @nuxt/content",
   "author": "NuxtJS",
   "scripts": {
     "dev": "nuxt",
@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxtjs/content": "latest",
+    "@nuxt/content": "latest",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
     "nuxt-edge": "latest",

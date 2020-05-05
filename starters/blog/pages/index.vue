@@ -51,7 +51,7 @@
           class="text-lg font-medium hover:underline text-nuxt-lightgreen mr-2"
         >Twitter</a> ·
         <a
-          href="https://github.com/nuxt-company/content-module"
+          href="https://github.com/nuxt/content"
           target="_blank"
           class="text-lg font-medium hover:underline text-nuxt-lightgreen ml-2"
         >GitHub</a>

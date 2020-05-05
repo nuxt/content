@@ -6,22 +6,22 @@ category: Getting started
 
 ## Programmatic Usage
 
-`$content` is accessible from **@nuxtjs/content**.
+`$content` is accessible from **@nuxt/content**.
 
 <base-alert>
 
-  Beware that you can access it only **after the modules as been loaded** by Nuxt. `require('@nuxtjs/content')` should happens in hooks or internal Nuxt methods.
+  Beware that you can access it only **after the modules as been loaded** by Nuxt. `require('@nuxt/content')` should happens in hooks or internal Nuxt methods.
 
 </base-alert>
 
 ```js
 export default {
   modules: [,
-    '@nuxtjs/content'
+    '@nuxt/content'
   ],
   generate: {
     async ready () {
-      const { $content } = require('@nuxtjs/content')
+      const { $content } = require('@nuxt/content')
       const files = await $content().only(['slug']).fetch()
       console.log(files)
     }
@@ -38,11 +38,11 @@ When using `nuxt generate`, you need to specify the dynamic routes with [`genera
 ```js
 export default {
   modules: [,
-    '@nuxtjs/content'
+    '@nuxt/content'
   ],
   generate: {
     async routes () {
-      const { $content } = require('@nuxtjs/content')
+      const { $content } = require('@nuxt/content')
       const files = await $content().only(['path']).fetch()
 
       return files.map(file => file.path === '/index' ? '/' : file.path)
@@ -75,7 +75,7 @@ Taking the example of the blog starter, we use `file:beforeInsert` to add `readi
 ```js
 export default {
   modules: [,
-    '@nuxtjs/content'
+    '@nuxt/content'
   ],
   hooks: {
     'content:file:beforeInsert': (document) => {

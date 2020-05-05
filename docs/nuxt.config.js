@@ -34,7 +34,7 @@ export default {
   */
   generate: {
     async routes () {
-      const { $content } = require('@nuxtjs/content')
+      const { $content } = require('@nuxt/content')
 
       const promises = ['en'].map(async (locale) => {
         const files = await $content(locale).only(['path']).fetch()
@@ -66,7 +66,7 @@ export default {
   modules: [
     'nuxt-i18n',
     '@nuxtjs/pwa',
-    '@nuxtjs/content'
+    '@nuxt/content'
   ],
   /*
   ** Modules configuration
