@@ -22,7 +22,7 @@
     "@nuxtjs/eslint-config": "^2.0.2",
     "@nuxtjs/eslint-module": "^1.2.0",
     "@nuxtjs/moment": "^1.6.0",
-    "@nuxtjs/tailwindcss": "^1.4.1",
+    "@nuxtjs/tailwindcss": "^2.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-nuxt": ">=0.5.2",
