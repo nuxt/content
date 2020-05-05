@@ -36,15 +36,15 @@ export default {
     async routes () {
       const { $content } = require('@nuxtjs/content')
 
-      const promises = ['en', 'fr'].map(async (locale) => {
+      const promises = ['en'].map(async (locale) => {
         const files = await $content(locale).only(['path']).fetch()
 
         return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, '')).filter(path => !!path)
       })
 
-      const [en, fr] = await Promise.all(promises)
+      const [en] = await Promise.all(promises)
 
-      return [...en, ...fr]
+      return [...en]
     }
   },
   /*
