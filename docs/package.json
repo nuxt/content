@@ -17,7 +17,7 @@
     "nuxt-edge": "latest",
     "nuxt-i18n": "^6.11.0",
     "prism-themes": "^1.4.0",
-    "tailwindcss": "^1.4.1",
+    "tailwindcss": "^1.4.4",
     "vue-scrollactive": "^0.8.0"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-nuxt": ">=0.5.2",
-    "node-sass": "^4.14.0",
+    "node-sass": "^4.14.1",
     "nuxt-ackee": "^1.0.0",
     "sass-loader": "^8.0.2",
     "tailwindcss-dark-mode": "^1.1.4",
