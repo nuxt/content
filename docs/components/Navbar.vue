@@ -7,6 +7,7 @@
             :to="localePath('slug')"
             class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
             style="width: 104px;"
+            aria-label="Nuxt Content Logo"
           >
             <IconLogo v-if="$colorMode.value === 'light'" class="h-8 w-auto" />
             <IconLogoDark v-else class="h-8 w-auto" />
@@ -41,6 +42,7 @@
 
           <button
             class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
+            aria-label="Hamburger Menu"
             @click="menu = !menu"
           >
             <icon-x v-if="menu" class="w-6 h-6" />

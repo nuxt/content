@@ -9,7 +9,7 @@
         <nuxt-content :document="doc" />
       </article>
       <div class="pt-4 flex">
-        <a :href="githubLink" target="_blank" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
+        <a :href="githubLink" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
           {{ $t('article.github') }}
           <icon-external-link class="w-4 h-4 ml-1" />
         </a>

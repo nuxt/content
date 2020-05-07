@@ -24,7 +24,7 @@
                   <li v-for="doc of docs" :key="doc.slug">
                     <NuxtLink
                       :to="toLink(doc.slug)"
-                      class="px-2 lg:-mx-2 rounded font-medium py-1 block text-gray-600 dark:text-gray-500 hover:text-gray-800 dark-hover:text-gray-100"
+                      class="px-2 rounded font-medium py-1 block text-gray-600 dark:text-gray-500 hover:text-gray-800 dark-hover:text-gray-100"
                       exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-green-200 dark:bg-green-900 dark-hover:text-green-200"
                     >{{ doc.title }}</NuxtLink>
                   </li>

@@ -3,7 +3,7 @@
     <div class="h-full w-full container mx-auto px-4 lg:px-8 flex items-center justify-between">
       <div class="flex items-end">
         <span class="mr-2 text-sm leading-none">© {{ new Date().getFullYear() }}</span>
-        <a href="https://nuxtjs.org" target="_blank">
+        <a href="https://nuxtjs.org" target="_blank" rel="noopener">
           <IconNuxt class="h-4" />
         </a>
       </div>
@@ -31,6 +31,7 @@
 
         <button
           class="w-10 p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
+          aria-label="Color Mode"
           @click="$colorMode.value === 'dark' ? $colorMode.preference = 'light' : $colorMode.preference = 'dark'"
         >
           <icon-sun v-if="$colorMode.value === 'light'" class="w-6 h-6" />
