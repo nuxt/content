@@ -1,5 +1,6 @@
 ---
 title: Installation
+description: 'Installating @nuxt/content in only two steps in your Nuxt project.'
 category: Getting started
 position: 2
 ---

@@ -1,16 +1,32 @@
+const URL = 'https://content.nuxtjs.org'
+
 export default {
   mode: 'universal',
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    titleTemplate: (chunk) => {
+      if (chunk) {
+        return `${chunk} - Nuxt Content`
+      }
+
+      return 'Nuxt Content'
+    },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' },
-      { hid: 'og:title', name: 'og:title', content: 'Nuxt Content' },
-      { hid: 'og:description', name: 'og:description', content: process.env.npm_package_description || '' }
+      // Open Graph
+      { hid: 'og:site_name', property: 'og:site_name', content: 'Nuxt Content' },
+      { hid: 'og:type', property: 'og:type', content: 'website' },
+      { hid: 'og:url', property: 'og:url', content: URL },
+      { hid: 'og:image', property: 'og:image', content: `${URL}/card.png` },
+      // Twitter Card
+      { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
+      { hid: 'twitter:site', name: 'twitter:site', content: '@nuxt_js' },
+      { hid: 'twitter:title', name: 'twitter:title', content: 'Nuxt Content' },
+      { hid: 'twitter:image', name: 'twitter:image', content: `${URL}/card.png` },
+      { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: 'The NuxtJS Framework' }
     ],
     link: [
       { rel: 'icon', type: 'image/png', href: '/favicon.png' }
@@ -39,7 +55,7 @@ export default {
       const promises = ['en'].map(async (locale) => {
         const files = await $content(locale).only(['path']).fetch()
 
-        return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, '')).filter(path => !!path)
+        return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, '/')).filter(path => !!path)
       })
 
       const [en] = await Promise.all(promises)

@@ -1,5 +1,6 @@
 ---
 title: Fetching content
+description: 'Learn how to fetch your static content with $content in your Nuxt.js project.'
 position: 4
 category: Getting started
 ---

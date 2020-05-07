@@ -1,5 +1,6 @@
 ---
 title: Introduction
+description: '@nuxt/content lets you write in a content/ directory, acting as Git-based Headless CMS.'
 position: 1
 category: Getting started
 features:

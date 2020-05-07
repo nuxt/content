@@ -79,14 +79,6 @@ export default {
     const i18nSeo = this.$nuxtI18nSeo()
 
     return {
-      title: '',
-      titleTemplate: (chunk) => {
-        if (chunk) {
-          return `${chunk} - Nuxt Content`
-        }
-
-        return 'Nuxt Content'
-      },
       bodyAttrs: {
         class: [...this.bodyClass, 'antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       },

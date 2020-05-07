@@ -1,5 +1,6 @@
 ---
 title: Displaying content
+description: 'You can use `<nuxt-content>` component directly in your template to display your Markdown.'
 position: 5
 category: Getting started
 ---

@@ -1,5 +1,6 @@
 ---
 title: Writing content
+description: 'Learn how to write your content/, supporting Markdown, YAML, CSV and JSON.'
 position: 3
 category: Getting started
 multiselectOptions:
