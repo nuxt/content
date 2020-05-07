@@ -49,6 +49,7 @@ export default {
   ** Give routes to static generation
   */
   generate: {
+    fallback: '404.html', // for Netlify
     async routes () {
       const { $content } = require('@nuxt/content')
 
