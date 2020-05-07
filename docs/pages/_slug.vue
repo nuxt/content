@@ -42,7 +42,7 @@ export default {
     try {
       doc = await $content(app.i18n.locale, slug).fetch()
     } catch (e) {
-      error({ statusCode: 404, message: 'Page not found' })
+      return error({ statusCode: 404, message: 'Page not found' })
     }
 
     const [prev, next] = await $content(app.i18n.locale)

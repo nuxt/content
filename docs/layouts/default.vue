@@ -32,10 +32,9 @@
               </li>
             </ul>
           </div>
-
         </aside>
         <div class="w-full lg:w-4/5 px-4 lg:px-8">
-          <NuxtChild />
+          <Nuxt />
         </div>
       </div>
     </main>
