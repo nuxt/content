@@ -24,7 +24,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/i18n',
+    '@/plugins/i18n.client',
     '@/plugins/vue-scrollactive',
     '@/plugins/components',
     '@/plugins/menu.client'

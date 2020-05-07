@@ -30,6 +30,11 @@ export default {
     ArticlePrevNext
   },
   scrollToTop: true,
+  middleware ({ params, redirect }) {
+    if (params.slug === 'index') {
+      redirect('/')
+    }
+  },
   async asyncData ({ $content, app, params, error }) {
     const slug = params.slug || 'index'
 

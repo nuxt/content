@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between h-16">
         <div class="w-1/6">
           <NuxtLink
-            :to="localePath('index')"
+            :to="localePath('slug')"
             class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
             style="width: 104px;"
           >
