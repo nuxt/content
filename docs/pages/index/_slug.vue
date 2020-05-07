@@ -6,20 +6,16 @@
     >
       <article>
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
-
         <nuxt-content :document="doc" />
       </article>
-
       <div class="pt-4 flex">
         <a :href="githubLink" target="_blank" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
           {{ $t('article.github') }}
           <icon-external-link class="w-4 h-4 ml-1" />
         </a>
       </div>
-
       <article-prev-next :prev="prev" :next="next" />
     </div>
-
     <article-toc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>

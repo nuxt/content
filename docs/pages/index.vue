@@ -9,7 +9,7 @@
           <div class="lg:hidden flex-1 flex justify-center px-4 mt-8 mb-4 w-full">
             <SearchInput />
           </div>
-          <ul class=" p-4 lg:py-8 lg:pr-8">
+          <ul class="pl-0 p-4 lg:py-8 lg:pr-8">
             <li
               v-for="(docs, category) in $store.state.categories[$i18n.locale]"
               :key="category"
