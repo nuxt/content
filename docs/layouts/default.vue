@@ -13,7 +13,7 @@
             </div>
             <ul class="lg:pl-0 p-4 lg:py-8 lg:pr-8">
               <li
-                v-for="(docs, category) in $store.state.categories[$i18n.locale]"
+                v-for="(docs, category) in categories"
                 :key="category"
                 class="mb-6 last:mb-0"
               >
@@ -62,6 +62,9 @@ export default {
       set (val) {
         this.$store.commit('menu/toggle', val)
       }
+    },
+    categories () {
+      return this.$store.state.categories[this.$i18n.locale]
     }
   },
   methods: {

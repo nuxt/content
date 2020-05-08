@@ -1,3 +1,8 @@
 export default ({ app, store }) => {
-  app.router.afterEach(() => store.commit('menu/close'))
+  // For mobile navigation when clicking on a menu link
+  app.router.afterEach(() => {
+    if (store.state.menu.open) {
+      setTimeout(() => store.commit('menu/close'), 10)
+    }
+  })
 }

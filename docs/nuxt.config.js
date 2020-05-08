@@ -41,6 +41,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/categories',
     '@/plugins/i18n.client',
     '@/plugins/vue-scrollactive',
     '@/plugins/components',
@@ -88,17 +89,17 @@ export default {
     }
   },
   i18n: {
-    // locales: [{
-    //   code: 'fr',
-    //   iso: 'fr-FR',
-    //   file: 'fr-FR.js',
-    //   name: 'Français'
-    // }, {
-    //   code: 'en',
-    //   iso: 'en-US',
-    //   file: 'en-US.js',
-    //   name: 'English'
-    // }],
+  //   locales: [{
+  //     code: 'fr',
+  //     iso: 'fr-FR',
+  //     file: 'fr-FR.js',
+  //     name: 'Français'
+  //   }, {
+  //     code: 'en',
+  //     iso: 'en-US',
+  //     file: 'en-US.js',
+  //     name: 'English'
+  //   }],
     locales: [{
       code: 'en',
       iso: 'en-US',

@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import groupBy from 'lodash.groupby'
 
 export const state = () => ({
@@ -6,21 +7,20 @@ export const state = () => ({
 
 export const mutations = {
   setCategories (state, categories) {
-    state.categories[this.$i18n.locale] = categories
+    // Vue Reactivity rules since we add a nested object
+    Vue.set(state.categories, this.$i18n.locale, categories)
   }
 }
 
 export const actions = {
   async fetchCategories ({ commit, state }) {
-    if (process.env.NODE_ENV === 'production' && state.categories[this.$i18n.locale]) {
+    // Avoid re-fetching in production
+    if (process.dev === false && state.categories[this.$i18n.locale]) {
       return
     }
-    const docs = await this.$content(this.$i18n.locale).sortBy('position', 'asc').fetch()
+    const docs = await this.$content(this.$i18n.locale).only(['category', 'title', 'slug']).sortBy('position', 'asc').fetch()
     const categories = groupBy(docs, 'category')
 
     commit('setCategories', categories)
-  },
-  async nuxtServerInit ({ dispatch }) {
-    await dispatch('fetchCategories')
   }
 }
