@@ -905,10 +905,10 @@
     esm "^3.2.25"
     std-env "^2.2.1"
 
-"@nuxt/content@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-0.4.1.tgz#ea6adee5e86e775b50d7968657879409c9bdc1e5"
-  integrity sha512-LgFjtjcU5MPFBrtYkVe0PFsyH8EZ9H45pDy3wSIz/k4MxsLHJsfA2fzRQkpHnHvZ4iMyFugYDxXB0d8w+N81ZA==
+"@nuxt/content@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-0.4.2.tgz#b3967976b2a84b717f5f1dde30ea84af2b881d3a"
+  integrity sha512-g5b7jchvjVOdvJk4EaEt9P7vKy9NHuZgb+4m15n6H1vAi3ZCRKECAfy87XWGTgNaBMzVwsjBMYlp/txYS1Kzjw==
   dependencies:
     "@lokidb/full-text-search" "^2.0.0-beta.9"
     "@lokidb/loki" "^2.0.0-beta.9"
