@@ -1,7 +1,8 @@
 const URL = 'https://content.nuxtjs.org'
 
 export default {
-  mode: 'universal',
+  target: 'static',
+  ssr: true, // similar to mode: 'universal'
   /*
   ** Headers of the page
   */
