@@ -32,6 +32,12 @@ export default {
 
 ### Static Site Generation
 
+<base-alert type="info">
+
+If you are using Nuxt 2.13+, `nuxt export` has a crawler feature integrated, so you may not need to use `generate.routes`.
+
+</base-alert>
+
 When using `nuxt generate`, you need to specify the dynamic routes with [`generate.routes`](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
 
 **Example**

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center mt-4 pt-3 border-t">
+  <div class="flex justify-between items-center mt-4 pt-3 border-t dark:border-gray-800">
     <NuxtLink
       v-if="prev"
       :to="toLink(prev.slug)"

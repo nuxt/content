@@ -26,7 +26,7 @@ Add `@nuxt/content` dependency to your project:
 
 Then, add `@nuxt/content` to the `modules` section of `nuxt.config.js`:
 
-```js
+```js[nuxt.config.js]
 {
   modules: [
     '@nuxt/content'

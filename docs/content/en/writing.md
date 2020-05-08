@@ -232,7 +232,11 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-> These components will be rendered using `nuxt-content` component, see [displaying content](/displaying#component).
+<base-alert type="info">
+
+These components will be rendered using `<nuxt-content>` component, see [displaying content](/displaying#component).
+
+</base-alert>
 
 ### Table of contents
 

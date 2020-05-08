@@ -33,9 +33,7 @@
             </ul>
           </div>
         </aside>
-        <div class="w-full lg:w-4/5 px-4 lg:px-8">
-          <Nuxt />
-        </div>
+        <Nuxt class="w-full lg:w-4/5 px-4 lg:px-8" />
       </div>
     </main>
     <TheFooter />
