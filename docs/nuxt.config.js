@@ -51,19 +51,7 @@ export default {
   */
   generate: {
     fallback: '404.html', // for Netlify
-    async routes () {
-      const { $content } = require('@nuxt/content')
-
-      const promises = ['en'].map(async (locale) => {
-        const files = await $content(locale).only(['path']).fetch()
-
-        return files.map(file => file.path.replace(/\/en/, '').replace(/\/index/, '/')).filter(path => !!path)
-      })
-
-      const [en] = await Promise.all(promises)
-
-      return [...en]
-    }
+    routes: ['/'] // give the first url to start crawling
   },
   /*
   ** Nuxt.js dev-modules
