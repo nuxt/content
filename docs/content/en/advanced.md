@@ -95,3 +95,40 @@ export default {
   }
 }
 ```
+
+## Handling Hot Reload
+
+<base-alert type="info">
+
+When you are in development mode, the module will automatically call `nuxtServerInit` store action (if defined) and `$nuxt.refresh()` to refresh the current page.
+
+</base-alert>
+
+In case you want to listen to the event do something more, you can listen on `content:update` event on client-side using `$nuxt.$on('content:update')`:
+
+```js{}[plugins/update.client.js
+export default function ({ store }) {
+  // Only in development
+  if (process.dev) {
+    window.onNuxtReady(($nuxt) => {
+      $nuxt.$on('content:update', ({ event, path }) => {
+        // Refresh the store categories
+        store.dispatch('fetchCategories')
+      })
+    })
+  }
+}
+```
+
+And then add your plugin in your `nuxt.config.js`:
+
+```js{}[nuxt.config.js]
+export default {
+  plugins: [
+    '@/plugins/update.client.js'
+  ]
+}
+```
+
+Now everytime you will update a file in your `content/` directory, it will also dispatch the `fetchCategories` method.
+This documentation use it actually, you can learn more by looking at [plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
