@@ -198,7 +198,7 @@ But **this will**:
 
 **Example:**
 
-We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/starters/docs/components/examples/ExampleMultiselect.vue):
+We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
 Please chose a *framework*:
