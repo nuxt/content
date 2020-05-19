@@ -47,7 +47,7 @@
     "remark-autolink-headings": "^6.0.0",
     "remark-external-links": "^6.0.0",
     "remark-parse": "^8.0.2",
-    "remark-rehype": "^6.0.0",
+    "remark-rehype": "^7.0.0",
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
     "unified": "^9.0.0",
