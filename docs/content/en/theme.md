@@ -39,4 +39,4 @@ export default {
 }
 ```
 
-Finally you can start writing inside the `content/` directoty and enjoy a beautiful documentation website, blog, portolio, and more!
+Finally you can start writing inside the `content/` directory and enjoy a beautiful documentation website, blog, portolio, and more!

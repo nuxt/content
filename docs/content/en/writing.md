@@ -238,6 +238,8 @@ These components will be rendered using `<nuxt-content>` component, see [display
 
 </base-alert>
 
+Also note that you **cannot use** `<template>` tags in your markdown (eg: when using with `v-slot`).
+
 ### Table of contents
 
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link them.
