@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxt/content": "^0.5.0",
+    "@nuxt/content": "^0.5.1",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
     "nuxt-edge": "^2.13.0-26499940.1e53e38f",
