@@ -12,23 +12,23 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxt/content": "^0.4.2",
+    "@nuxt/content": "^0.5.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26481622.917adc06",
-    "nuxt-i18n": "^6.11.0",
+    "nuxt-edge": "^2.13.0-26499940.1e53e38f",
+    "nuxt-i18n": "^6.11.1",
     "prism-themes": "^1.4.0",
-    "tailwindcss": "^1.4.5",
-    "vue-scrollactive": "^0.8.0"
+    "tailwindcss": "^1.4.6",
+    "vue-scrollactive": "^0.9.2"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^1.0.0",
-    "@nuxtjs/eslint-config": "^2.0.2",
+    "@nuxtjs/eslint-config": "^3.0.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/tailwindcss": "^2.0.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-nuxt": ">=0.5.2",
+    "eslint": "^7.0.0",
+    "eslint-plugin-nuxt": ">=1.0.0",
     "nuxt-ackee": "^1.0.1",
     "tailwindcss-dark-mode": "^1.1.4",
     "vue-multiselect": "^2.1.6"
