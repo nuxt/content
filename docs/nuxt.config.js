@@ -76,6 +76,15 @@ export default {
     '@nuxt/content'
   ],
   /*
+  ** Components auto import
+  ** See https://github.com/nuxt/components
+  */
+  components: {
+    dirs: [
+      { path: '@/components', pattern: '*.vue' }
+    ]
+  },
+  /*
   ** Modules configuration
   */
   colorMode: {

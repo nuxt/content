@@ -14,22 +14,14 @@
           <icon-external-link class="w-4 h-4 ml-1" />
         </a>
       </div>
-      <article-prev-next :prev="prev" :next="next" />
+      <ArticlePrevNext :prev="prev" :next="next" />
     </div>
-    <article-toc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
+    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
 
 <script>
-import ArticleToc from '@/components/ArticleToc'
-import ArticlePrevNext from '@/components/ArticlePrevNext'
-
 export default {
-  components: {
-    ArticleToc,
-    ArticlePrevNext
-  },
-  scrollToTop: true,
   middleware ({ params, redirect }) {
     if (params.slug === 'index') {
       redirect('/')

@@ -18,7 +18,7 @@
                 class="mb-6 last:mb-0"
               >
                 <h3
-                  class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+                  class="aside-title"
                 >{{ category }}</h3>
                 <ul>
                   <li v-for="doc of docs" :key="doc.slug">
@@ -31,6 +31,31 @@
                 </ul>
               </li>
             </ul>
+            <h3 class="aside-title px-4">More</h3>
+            <div class="flex items-center px-4">
+              <a
+                href="https://twitter.com/nuxt_js"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Twitter"
+                name="Twitter"
+                class="hover:text-green-500 mr-4 ml-2"
+              >
+                <icon-twitter class="w-6 h-6" />
+              </a>
+
+              <a
+                href="https://github.com/nuxt/content"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Github"
+                name="Github"
+                class="hover:text-green-500 mr-4"
+              >
+                <icon-github class="w-6 h-6" />
+              </a>
+              <ColorSwitcher />
+            </div>
           </div>
         </aside>
         <Nuxt class="w-full lg:w-4/5 px-4 lg:px-8" />
@@ -87,3 +112,17 @@ export default {
   }
 }
 </script>
+
+<style type="postcss">
+.aside-title {
+  @apply mb-3 text-gray-500 uppercase tracking-wide font-bold text-sm;
+}
+.dark-mode .aside-title {
+  @apply text-gray-600;
+}
+@screen lg {
+  .aside-title {
+    @apply mb-2 text-xs;
+  }
+}
+</style>

@@ -5,8 +5,8 @@
   >
     <div class="flex">
       <div class="flex-shrink-0 self-start pt-1">
-        <icon-info v-if="type === 'info'" class="alert-icon" />
-        <icon-alert v-else class="alert-icon" />
+        <IconInfo v-if="type === 'info'" class="alert-icon" />
+        <IconAlert v-else class="alert-icon" />
       </div>
       <div class="ml-2 alert-content text-sm">
         <slot />

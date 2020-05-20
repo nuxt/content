@@ -26,7 +26,7 @@
             name="Twitter"
             class="hidden lg:block hover:text-green-500 mr-2"
           >
-            <icon-twitter class="w-6 h-6" />
+            <IconTwitter class="w-6 h-6" />
           </a>
 
           <a
@@ -37,7 +37,7 @@
             name="Github"
             class="hidden lg:block hover:text-green-500 mr-4"
           >
-            <icon-github class="w-6 h-6" />
+            <IconGithub class="w-6 h-6" />
           </a>
 
           <button
@@ -45,8 +45,8 @@
             aria-label="Hamburger Menu"
             @click="menu = !menu"
           >
-            <icon-x v-if="menu" class="w-6 h-6" />
-            <icon-menu v-else class="w-6 h-6" />
+            <IconX v-if="menu" class="w-6 h-6" />
+            <IconMenu v-else class="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -55,12 +55,7 @@
 </template>
 
 <script>
-import SearchInput from '@/components/SearchInput'
-
 export default {
-  components: {
-    SearchInput
-  },
   computed: {
     menu: {
       get () {

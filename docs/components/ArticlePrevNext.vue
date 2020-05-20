@@ -5,7 +5,7 @@
       :to="toLink(prev.slug)"
       class="text-green-500 font-bold hover:underline flex items-center p-2 pl-0"
     >
-      <icon-arrow-left class="w-4 h-4 mr-1" />
+      <IconArrowLeft class="w-4 h-4 mr-1" />
       {{ prev.title }}
     </NuxtLink>
     <span v-else>&nbsp;</span>
@@ -15,7 +15,7 @@
       class="text-green-500 font-bold hover:underline flex items-center p-2 pr-0"
     >
       {{ next.title }}
-      <icon-arrow-right class="w-4 h-4 ml-1" />
+      <IconArrowRight class="w-4 h-4 ml-1" />
     </NuxtLink>
     <span v-else>&nbsp;</span>
   </div>

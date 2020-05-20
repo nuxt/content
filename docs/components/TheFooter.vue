@@ -28,15 +28,7 @@
             </li>
           </ul>
         </Dropdown>
-
-        <button
-          class="w-10 p-2 rounded-md hover:text-green-500 focus:outline-none transition ease-in-out duration-150 focus:outline-none"
-          aria-label="Color Mode"
-          @click="$colorMode.value === 'dark' ? $colorMode.preference = 'light' : $colorMode.preference = 'dark'"
-        >
-          <icon-sun v-if="$colorMode.value === 'light'" class="w-6 h-6" />
-          <icon-moon v-else class="w-6 h-6" />
-        </button>
+        <ColorSwitcher class="p-2" />
       </div>
     </div>
   </footer>
