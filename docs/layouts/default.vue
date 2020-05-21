@@ -31,8 +31,8 @@
                 </ul>
               </li>
             </ul>
-            <h3 class="aside-title px-4">More</h3>
-            <div class="flex items-center px-4">
+            <h3 class="lg:hidden aside-title px-4">More</h3>
+            <div class="lg:hidden flex items-center px-4">
               <a
                 href="https://twitter.com/nuxt_js"
                 target="_blank"
