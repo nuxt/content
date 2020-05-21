@@ -15,11 +15,11 @@
     "@nuxt/content": "^0.5.1",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26499940.1e53e38f",
+    "nuxt-edge": "^2.13.0-26500336.1e53e38f",
     "nuxt-i18n": "^6.11.1",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",
-    "vue-scrollactive": "^0.9.2"
+    "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^1.0.0",

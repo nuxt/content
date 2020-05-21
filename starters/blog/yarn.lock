@@ -1132,15 +1132,15 @@
     consola "^2.11.3"
     eslint-loader "^4.0.2"
 
-"@nuxtjs/moment@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/moment/-/moment-1.6.0.tgz#d0e981ece640f9bf9bc2e75adf722f705a245d66"
-  integrity sha512-bg3E530sfQWZD2fDUICSLGjROZ1auqo/QQYOdDus4a3QVTHZwIiMvwebWw4ITMc1ld4Cb6VGFuQd1AV0mHm3AA==
+"@nuxtjs/moment@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/moment/-/moment-1.6.1.tgz#a4e98a861c9d21e34f983046143f4c9bb92bdb7c"
+  integrity sha512-Mo2/3NQB0XryMQuNCTVnAclrDvt9I9sr6dwVm56KhYCoiWTKgQ78tDV9tmrxw7lahw1IBwyPGhw+3pwkM4phAA==
   dependencies:
-    moment "^2.24.0"
-    moment-locales-webpack-plugin "^1.1.2"
-    moment-timezone "^0.5.27"
-    moment-timezone-data-webpack-plugin "^1.1.0"
+    moment "^2.25.3"
+    moment-locales-webpack-plugin "^1.2.0"
+    moment-timezone "^0.5.28"
+    moment-timezone-data-webpack-plugin "^1.3.0"
 
 "@nuxtjs/tailwindcss@^1.4.1":
   version "1.4.1"
@@ -5912,32 +5912,37 @@ mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-moment-locales-webpack-plugin@^1.1.2:
+moment-locales-webpack-plugin@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/moment-locales-webpack-plugin/-/moment-locales-webpack-plugin-1.2.0.tgz#9af83876a44053706b868ceece5119584d10d7aa"
   integrity sha512-QAi5v0OlPUP7GXviKMtxnpBAo8WmTHrUNN7iciAhNOEAd9evCOvuN0g1N7ThIg3q11GLCkjY1zQ2saRcf/43nQ==
   dependencies:
     lodash.difference "^4.5.0"
 
-moment-timezone-data-webpack-plugin@^1.1.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.2.0.tgz#360f369a02350a82b6cd5738ccc5c1a12745902a"
-  integrity sha512-QVDeHUS0MX5opy3tfg+5tehj8YedWksc0BnJsUcn7CvA5twQObxDtxVuHbJo1Unx8caSkCh0QoeEyDRBLnfDag==
+moment-timezone-data-webpack-plugin@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/moment-timezone-data-webpack-plugin/-/moment-timezone-data-webpack-plugin-1.3.0.tgz#8d5b7ffe42f0506933195779063a74cfff11aab1"
+  integrity sha512-0V0xnHZpdHLsSerIQ2yNEPBC3uJWfU/zNT3nB0PO+tjmGHuNeUWqNDiw7ZpLo54uER6/OAE75EJ7ThmlwkGuZw==
   dependencies:
     find-cache-dir "^3.0.0"
     make-dir "^3.0.0"
 
-moment-timezone@^0.5.27:
-  version "0.5.28"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.28.tgz#f093d789d091ed7b055d82aa81a82467f72e4338"
-  integrity sha512-TDJkZvAyKIVWg5EtVqRzU97w0Rb0YVbfpqyjgu6GwXCAohVRqwZjf4fOzDE6p1Ch98Sro/8hQQi65WDXW5STPw==
+moment-timezone@^0.5.28:
+  version "0.5.31"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.31.tgz#9c40d8c5026f0c7ab46eda3d63e49c155148de05"
+  integrity sha512-+GgHNg8xRhMXfEbv81iDtrVeTcWt0kWmTEY1XQK14dICTXnWJnT0dxdlPspwqF3keKMVPXwayEsk1DI0AA/jdA==
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@^2.24.0:
+"moment@>= 2.9.0":
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+
+moment@^2.25.3:
+  version "2.26.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.26.0.tgz#5e1f82c6bafca6e83e808b30c8705eed0dcbd39a"
+  integrity sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -9682,10 +9687,10 @@ vue-router@^3.1.6:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.6.tgz#45f5a3a3843e31702c061dd829393554e4328f89"
   integrity sha512-GYhn2ynaZlysZMkFE5oCHRUTqE8BWs/a9YbKpNLi0i7xD6KG1EzDqpHQmv1F5gXjr8kL5iIVS8EOtRaVUEXTqA==
 
-vue-scrollactive@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/vue-scrollactive/-/vue-scrollactive-0.8.0.tgz#0f1b741018d7deee9fe3d120feb3ad23a8253629"
-  integrity sha512-WHD7aGXt2nW6qOaunTkyWryKdi4gB0N5jXxCgNRsg7HEJHXm3PHR9VbDNOIakWj+/NP1euGhM71AB+0aXUltrA==
+vue-scrollactive@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/vue-scrollactive/-/vue-scrollactive-0.9.3.tgz#c191c6d90f6f2e572b27d9e0ab17bf8fd6da2bcd"
+  integrity sha512-W7Z2EQGDjnvgZ4h+/bpRVjiVU3bKWQDmT9f0bUL+zq3C/VSZaQiQ+qzWlMYDEpJbm13wJ6KIE6ry3HKLVyU4cQ==
   dependencies:
     bezier-easing "^2.0.3"
 

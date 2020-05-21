@@ -15,13 +15,13 @@
     "nuxt-edge": "latest",
     "prism-themes": "^1.4.0",
     "reading-time": "^1.2.0",
-    "vue-scrollactive": "^0.8.0"
+    "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^1.0.0",
     "@nuxtjs/eslint-config": "^2.0.2",
     "@nuxtjs/eslint-module": "^1.2.0",
-    "@nuxtjs/moment": "^1.6.0",
+    "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/tailwindcss": "^1.4.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
