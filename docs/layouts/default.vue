@@ -58,7 +58,7 @@
             </div>
           </div>
         </aside>
-        <Nuxt class="w-full lg:w-4/5 px-4 lg:px-8" />
+        <Nuxt class="w-full lg:w-4/5" />
       </div>
     </main>
     <TheFooter />

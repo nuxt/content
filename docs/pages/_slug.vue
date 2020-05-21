@@ -1,22 +1,22 @@
 <template>
-  <div class="flex flex-wrap-reverse -mx-4 lg:-mx-8">
+  <div class="flex flex-wrap-reverse suka">
     <div
-      class="w-full lg:w-3/4 p-4 lg:p-8 dark:border-gray-800"
+      class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
       :class="{ 'lg:border-r': doc.toc && doc.toc.length }"
     >
-      <article>
+      <article class="px-4 lg:px-8 ">
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
-      <div class="pt-4 flex">
+      <div class="pt-4 pb-4 px-8 flex border-b dark:border-gray-800">
         <a :href="githubLink" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
           {{ $t('article.github') }}
           <icon-external-link class="w-4 h-4 ml-1" />
         </a>
       </div>
-      <ArticlePrevNext :prev="prev" :next="next" />
+      <ArticlePrevNext :prev="prev" :next="next" class="px-8 mt-4" />
     </div>
-    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
+    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" class="w-full lg:w-1/4 p-4 lg:p-8" />
   </div>
 </template>
 
