@@ -14,7 +14,7 @@
     "@nuxt/content": "latest",
     "nuxt-edge": "latest",
     "prism-themes": "^1.4.0",
-    "vue-scrollactive": "^0.8.0"
+    "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^1.0.0",
