@@ -12,7 +12,7 @@
 
 - [🎲 Play on CodeSandbox](https://codesandbox.io/s/nuxtcontent-demo-l164h?)
 - [🎬 Demonstration videos](https://content.nuxtjs.org/#videos)
-- [✨ Release Notes](./CHANGELOG.md)
+- [✨ Release Notes](https://github.com/nuxt/content/releases)
 - [📖 Read the documentation](https://content.nuxtjs.org)
 
 ## Features
