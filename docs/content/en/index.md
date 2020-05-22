@@ -22,7 +22,7 @@ csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme
 
 <base-list :items="features"></base-list>
 
-<p class="flex items-center">Enjoy a documentation with light and dark mode: <color-switcher :class="'p-2'"></color-switcher></p>
+<p class="flex items-center">Enjoy light and dark mode: <color-switcher class="p-2"></color-switcher></p>
 
 ## Videos
 
