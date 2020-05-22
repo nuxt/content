@@ -53,4 +53,4 @@ Depending on what you're using to design your app, you may need to write some st
 }
 ```
 
-You can check for an exemple in the [docs directory](https://github.com/nuxt/content/blob/master/docs/pages/index/_slug.vue).
+You can check for an exemple in the [docs directory](https://github.com/nuxt/content/blob/master/docs/pages/_slug.vue).
