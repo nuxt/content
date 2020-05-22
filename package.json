@@ -27,7 +27,7 @@
     "chokidar": "^3.4.0",
     "consola": "^2.12.1",
     "csvtojson": "^2.0.10",
-    "defu": "^2.0.2",
+    "defu": "^2.0.3",
     "escape-html": "^1.0.3",
     "etag": "^1.8.1",
     "fresh": "^0.5.2",
