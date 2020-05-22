@@ -28,7 +28,7 @@
             </li>
           </ul>
         </Dropdown>
-        <ColorSwitcher class="p-2" />
+        <ColorSwitcher class="p-2 pr-0" />
       </div>
     </div>
   </footer>

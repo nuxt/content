@@ -1,8 +1,8 @@
 <template>
-  <nav class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
+  <nav class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900" @click="scrollToTop">
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <div class="w-1/6">
+        <div class="w-1/6" @click.stop="noop">
           <NuxtLink
             :to="localePath('slug')"
             class="text-xl font-bold tracking-tight flex items-center flex-shrink-0"
@@ -17,7 +17,6 @@
           <SearchInput />
         </div>
         <div class="flex items-center justify-end w-1/6">
-
           <a
             href="https://twitter.com/nuxt_js"
             target="_blank"
@@ -28,7 +27,6 @@
           >
             <IconTwitter class="w-6 h-6" />
           </a>
-
           <a
             href="https://github.com/nuxt/content"
             target="_blank"
@@ -39,11 +37,10 @@
           >
             <IconGithub class="w-6 h-6" />
           </a>
-
           <button
-            class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
+            class="lg:hidden p-2 pr-0 rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
             aria-label="Hamburger Menu"
-            @click="menu = !menu"
+            @click.stop="menu = !menu"
           >
             <IconX v-if="menu" class="w-6 h-6" />
             <IconMenu v-else class="w-6 h-6" />
@@ -65,6 +62,15 @@ export default {
         this.$store.commit('menu/toggle', val)
       }
     }
+  },
+  methods: {
+    scrollToTop () {
+      if (window.innerWidth >= 1280) {
+        return
+      }
+      window.scrollTo(0, 0)
+    },
+    noop () {}
   }
 }
 </script>

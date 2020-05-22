@@ -4,30 +4,26 @@
       class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
       :class="{ 'lg:border-r': doc.toc && doc.toc.length }"
     >
-      <article class="px-4 lg:px-8 ">
+      <article class="lg:px-8 ">
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
-      <div class="pt-4 pb-4 px-8 flex border-b dark:border-gray-800">
-        <a :href="githubLink" target="_blank" rel="noopener" class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center">
-          {{ $t('article.github') }}
-          <icon-external-link class="w-4 h-4 ml-1" />
-        </a>
-      </div>
-      <ArticlePrevNext :prev="prev" :next="next" class="px-8 mt-4" />
+      <EditOnGithub :document="doc" />
+      <ArticlePrevNext :prev="prev" :next="next" class="lg:px-8 mt-4" />
     </div>
-    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" class="w-full lg:w-1/4 p-4 lg:p-8" />
+    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
 
 <script>
 export default {
+  name: 'PageSlug',
   middleware ({ params, redirect }) {
     if (params.slug === 'index') {
       redirect('/')
     }
   },
-  async asyncData ({ $content, app, params, error }) {
+  async asyncData ({ $content, store, app, params, error }) {
     const slug = params.slug || 'index'
 
     let doc
@@ -47,11 +43,6 @@ export default {
       doc,
       prev,
       next
-    }
-  },
-  computed: {
-    githubLink () {
-      return `https://github.com/nuxt/content/edit/master/docs/content${this.doc.path}${this.doc.extension}`
     }
   },
   head () {
