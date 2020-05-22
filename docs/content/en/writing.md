@@ -178,7 +178,7 @@ You can use global Vue components or locally registered in the page your are dis
 
 Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
-1. You need to use your components as kebak case:
+1. You need to use your components as kebab case:
 
 ```html
 Use <my-component> instead of <MyComponent>
