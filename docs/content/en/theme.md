@@ -8,7 +8,7 @@ position: 8
 <br>
 <base-alert type="info">
 
-  **Themes are coming soon** to [NuxtJS](https://nuxtjs.org), stay up to date on our [Twitter](https://nuxtjs.org/nuxt_js) or [GitHub](https://github.com/nuxt/nuxt.js).
+  **Themes are coming soon** to [NuxtJS](https://nuxtjs.org), stay up to date on our [Twitter](https://twitter.com/nuxt_js) or [GitHub](https://github.com/nuxt/nuxt.js).
 
 </base-alert>
 
