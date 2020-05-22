@@ -11,7 +11,7 @@ category: Getting started
 
 <base-alert>
 
-  Beware that you can access it only **after the modules as been loaded** by Nuxt. `require('@nuxt/content')` should happens in hooks or internal Nuxt methods.
+  Beware that you can access it only **after the module has been loaded** by Nuxt. `require('@nuxt/content')` should happen in hooks or internal Nuxt methods.
 
 </base-alert>
 
