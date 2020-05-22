@@ -39,8 +39,6 @@
 
 [MIT License](./LICENSE)
 
-Copyright (c) NuxtJS
-
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
