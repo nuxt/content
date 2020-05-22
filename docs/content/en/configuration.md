@@ -117,7 +117,7 @@ content: {
 - Type: `Object`
 - Default: `{}`
 
-This module uses `js-yaml` to parse csv files, you can check here for [options](https://github.com/nodeca/js-yaml#api).
+This module uses `js-yaml` to parse yaml files, you can check here for [options](https://github.com/nodeca/js-yaml#api).
 
 Note that we force `json: true` option.
 

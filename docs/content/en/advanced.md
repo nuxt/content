@@ -104,7 +104,7 @@ When you are in development mode, the module will automatically call `nuxtServer
 
 </base-alert>
 
-In case you want to listen to the event do something more, you can listen on `content:update` event on client-side using `$nuxt.$on('content:update')`:
+In case you want to listen to the event to do something more, you can listen on `content:update` event on client-side using `$nuxt.$on('content:update')`:
 
 ```js{}[plugins/update.client.js
 export default function ({ store }) {
