@@ -1,21 +1,4 @@
-import Vue from 'vue'
 import './vuex'
-
-interface Toc {
-  id: String
-  depth: Number
-  text: String
-}
-
-interface Result {
-  body: Object
-  dir: String
-  extension: String
-  path: String
-  slug: String
-  toc: Toc[]
-  updatedAt: Date
-}
 
 interface NuxtContentInstance {
   only(keys: String | String[]): NuxtContentInstance
@@ -27,6 +10,10 @@ interface NuxtContentInstance {
   skip(n: Number | String): NuxtContentInstance
   fetch(): Result | Result[]
 }
+
+type Result = (Object[] & {
+  0: ('parallel' | 'sequential');
+});
 
 declare module '@nuxt/vue-app' {
   interface Context {
