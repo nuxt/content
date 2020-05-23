@@ -1,6 +1,22 @@
 import Vue from 'vue'
 import './vuex'
 
+interface Toc {
+  id: String
+  depth: Number
+  text: String
+}
+
+interface Result {
+  body: Object
+  dir: String
+  extension: String
+  path: String
+  slug: String
+  toc: Toc[]
+  updatedAt: Date
+}
+
 interface NuxtContentInstance {
   only(keys: String | String[]): NuxtContentInstance
   sortBy(field: String, direction?: String): NuxtContentInstance
@@ -9,7 +25,7 @@ interface NuxtContentInstance {
   surround(slug: String, options?: Object): NuxtContentInstance
   limit(n: Number | String): NuxtContentInstance
   skip(n: Number | String): NuxtContentInstance
-  fetch(): Object | Object[]
+  fetch(): Result | Result[]
 }
 
 declare module '@nuxt/vue-app' {
