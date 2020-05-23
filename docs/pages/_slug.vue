@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-wrap-reverse suka">
+  <div class="flex flex-wrap-reverse">
     <div
       class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
       :class="{ 'lg:border-r': doc.toc && doc.toc.length }"
     >
-      <article class="lg:px-8 ">
+      <article class="lg:px-8">
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
@@ -84,7 +84,7 @@ export default {
   & > a {
     @apply ml-6;
     &::before {
-      content: '#';
+      content: "#";
       @apply text-green-500 font-normal -ml-6 pr-1 absolute opacity-100;
     }
   }
