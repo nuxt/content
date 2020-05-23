@@ -9,8 +9,10 @@
       "name": "NuxtJS Team"
     }
   ],
+  "types": "types/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "types/*.d.ts"
   ],
   "main": "lib/",
   "scripts": {
