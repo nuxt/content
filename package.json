@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Write your content inside your Nuxt app",
   "repository": "nuxt/content",
   "license": "MIT",
