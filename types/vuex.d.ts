@@ -1,7 +1,7 @@
 import { NuxtContentInstance } from '.'
 
-declare module 'vuex' {
+declare module 'vuex/types/index' {
   interface Store<S> {
-    $http: NuxtContentInstance
+    $content: NuxtContentInstance
   }
 }
