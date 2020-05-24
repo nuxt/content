@@ -71,6 +71,9 @@ describe('plugin', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
+        title: 'Markdown example'
+      }),
+      expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
       expect.objectContaining({
@@ -90,7 +93,7 @@ describe('plugin', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Build a DEV.TO clone with Nuxt new fetch'
+        title: 'Markdown example'
       })
     ])
   })
@@ -100,7 +103,7 @@ describe('plugin', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Build a DEV.TO clone with Nuxt new fetch'
+        title: 'Markdown example'
       })
     ])
   })
@@ -110,7 +113,7 @@ describe('plugin', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })
@@ -120,7 +123,7 @@ describe('plugin', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })
@@ -202,12 +205,12 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with surround as first', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('build-dev-to-clone-with-nuxt-new-fetch').sortBy('date', 'desc').fetch())
+    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('markdown-example').sortBy('date', 'desc').fetch())
 
     expect(items).toEqual([
       null,
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })

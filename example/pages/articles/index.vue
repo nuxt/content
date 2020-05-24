@@ -8,7 +8,7 @@
     <ul>
       <li v-for="article in articles" :key="article.slug">
         <nuxt-link
-          :to="{ name: 'articles-slug', params: { slug: article.slug } }"
+          :to="`${article.dir}/${article.slug}`"
         >{{ article.title }}</nuxt-link>
       </li>
     </ul>

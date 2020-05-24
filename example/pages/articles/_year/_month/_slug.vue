@@ -20,9 +20,11 @@ export default {
   async asyncData ({ $content, params, error }) {
     let article
 
+    const { year, month, slug } = params
+
     try {
-      article = await $content('articles', params.slug).fetch()
-      // OR const article = await $content(`articles/${params.slug}`).fetch()
+      article = await $content('articles', year, month, slug).fetch()
+      // OR const article = await $content(`articles/${year}/${month}/${slug}`).fetch()
     } catch (e) {
       error({ message: 'Article not found' })
     }
