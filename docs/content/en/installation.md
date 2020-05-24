@@ -39,7 +39,7 @@ Then, add `@nuxt/content` to the `modules` section of `nuxt.config.js`:
 
 ## TypeScript
 
-Add the types to your "types" array in tsconfig.json after the `@nuxt/types` (Nuxt 2.9.0+) or `@nuxt/vue-app` entry
+Add the types to your "types" array in tsconfig.json after the `@nuxt/types` (Nuxt 2.9.0+) or `@nuxt/vue-app` entry.
 
 **tsconfig.json**
 
