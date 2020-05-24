@@ -83,6 +83,9 @@ describe('module', () => {
 
     expect(items).toEqual(expect.arrayContaining([
       expect.objectContaining({
+        title: 'Markdown example'
+      }),
+      expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
       expect.objectContaining({
@@ -111,6 +114,9 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
+        title: 'Markdown example'
+      }),
+      expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
       expect.objectContaining({
@@ -138,6 +144,9 @@ describe('module', () => {
     })
 
     expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Markdown example'
+      }),
       expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
@@ -167,6 +176,9 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
+        title: 'Markdown example'
+      }),
+      expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
       expect.objectContaining({
@@ -191,6 +203,9 @@ describe('module', () => {
     })
 
     expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Markdown example'
+      }),
       expect.objectContaining({
         title: 'Build a DEV.TO clone with Nuxt new fetch'
       }),
@@ -221,7 +236,7 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Build a DEV.TO clone with Nuxt new fetch'
+        title: 'Markdown example'
       })
     ])
   })
@@ -241,7 +256,7 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Build a DEV.TO clone with Nuxt new fetch'
+        title: 'Markdown example'
       })
     ])
   })
@@ -262,7 +277,7 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })
@@ -283,7 +298,7 @@ describe('module', () => {
 
     expect(items).toEqual([
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })
@@ -451,7 +466,7 @@ describe('module', () => {
           date: 'desc'
         },
         surround: {
-          slug: 'build-dev-to-clone-with-nuxt-new-fetch'
+          slug: 'markdown-example'
         }
       }
     })
@@ -459,7 +474,7 @@ describe('module', () => {
     expect(items).toEqual([
       null,
       expect.objectContaining({
-        title: 'Understanding how fetch works in Nuxt 2.12'
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
       })
     ])
   })
