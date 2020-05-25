@@ -35,7 +35,7 @@ Data defined in the header will be injected into the document.
 
 Make sure to use the `<nuxt-content>` component to display the `body` of your markdown content, see [displaying content](/displaying).
 
-> You can check [GitHub syntax guide](https://guides.github.com/features/mastering-markdown/) to help you master Markdown
+> You can check the [basic syntax guide](https://www.markdownguide.org/basic-syntax) to help you master Markdown
 
 ### Headings
 
@@ -86,6 +86,28 @@ title: Home
 
 [External Link markdown](https://nuxtjs.org)
 ```
+
+### Footnotes
+
+This module supports extended markdown syntax for footnotes.
+
+Here is an example using footnotes:
+
+```md
+Here's a simple footnote,[^1] and here's a longer one.[^bignote]
+
+[^1]: This is the first footnote.
+
+[^bignote]: Here's one with multiple paragraphs and code.
+
+    Indent paragraphs to include them in the footnote.
+
+    `{ my code }`
+
+    Add as many paragraphs as you like.
+```
+
+> You can check [extented syntax guide](https://www.markdownguide.org/extended-syntax/#footnotes) on footnotes
 
 ### Codeblocks
 
@@ -245,6 +267,7 @@ Also note that you **cannot use** `<template>` tags in your markdown (eg: when u
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link them.
 
 > Take a look at the right side of this page for an example.
+
 
 ### Example
 
