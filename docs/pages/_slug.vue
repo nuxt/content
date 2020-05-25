@@ -149,10 +149,10 @@ export default {
     @apply mb-4 leading-7;
   }
 
-  & blockquote {
+  & > blockquote {
     @apply py-2 pl-4 mb-4 border-l-4;
 
-    > p:last-child {
+    & p:last-child {
       @apply mb-0;
     }
   }
