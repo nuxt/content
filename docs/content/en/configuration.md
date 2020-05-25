@@ -163,6 +163,8 @@ export default {
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
     markdown: {
       externalLinks: {},
+      basePlugins: ['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes'],
+      plugins: [],
       prism: {
         theme: 'prismjs/themes/prism.css'
       }
