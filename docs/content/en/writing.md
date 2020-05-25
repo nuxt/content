@@ -25,6 +25,7 @@ This module will parse `.md`, `.yaml`, `.csv`, `.json`, `.json5` files and gener
 - `path`
 - `slug`
 - `extension` (ex: `.md`)
+- `createdAt`
 - `updatedAt`
 
 ## Markdown
