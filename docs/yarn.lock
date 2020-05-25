@@ -915,10 +915,10 @@
     esm "^3.2.25"
     std-env "^2.2.1"
 
-"@nuxt/content@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-1.0.2.tgz#f97f688545139941f22aa3d2791d551ad282e288"
-  integrity sha512-garS7VcWRUEN7kO7C+fP/tjosCuQpoHFyrf8rIGrcs8VbOWO/PRofPQy0Bdv8HuPb0GZTU1SEq+0qmDuQmA6rQ==
+"@nuxt/content@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-1.1.0.tgz#70bb4fcf7ac49c8bad0c8902c33681ef60dfa9d5"
+  integrity sha512-Cp2Y9hHo7H+Ppts/OHO0Pz/yzuWenh3wYkgny64sBbx2EDda3GHLrz7jOv+yN0UdOER/sfZpQFlRwUP7TGMdWA==
   dependencies:
     "@lokidb/full-text-search" "^2.0.0-beta.9"
     "@lokidb/loki" "^2.0.0-beta.9"
@@ -926,14 +926,14 @@
     chokidar "^3.4.0"
     consola "^2.12.1"
     csvtojson "^2.0.10"
-    defu "^2.0.3"
+    defu "^2.0.4"
     escape-html "^1.0.3"
     etag "^1.8.1"
     fresh "^0.5.2"
     gray-matter "^4.0.2"
     hookable "^4.1.1"
     html-tags "^3.1.0"
-    js-yaml "3.13.1"
+    js-yaml "3.14.0"
     json5 "2.1.3"
     mkdirp "^1.0.4"
     node-req "^2.1.2"
@@ -945,6 +945,7 @@
     rehype-sort-attributes "^3.0.1"
     remark-autolink-headings "^6.0.0"
     remark-external-links "^6.0.0"
+    remark-footnotes "^1.0.0"
     remark-parse "^8.0.2"
     remark-rehype "^7.0.0"
     remark-slug "^6.0.0"
@@ -3115,7 +3116,7 @@ defu@^2.0.2:
   resolved "https://registry.yarnpkg.com/defu/-/defu-2.0.2.tgz#9a3d4c1330d60c0ed4812e51864b948c51f7ad45"
   integrity sha512-E5dO3ji0TmVcZaB/2G6Ovu5zNHbWkgCU7v+EoE/Jj1Lbwv1BB6hNNKLkio2ZLI3/e3avlO634QUhQl4iCpm3Bg==
 
-defu@^2.0.3, defu@^2.0.4:
+defu@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/defu/-/defu-2.0.4.tgz#09659a6e87a8fd7178be13bd43e9357ebf6d1c46"
   integrity sha512-G9pEH1UUMxShy6syWk01VQSRVs3CDWtlxtZu7A+NyqjxaCA4gSlWAKDBx6QiUEKezqS8+DUlXLI14Fp05Hmpwg==
@@ -5141,7 +5142,15 @@ js-cookie@^2.2.1:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@3.13.1, js-yaml@^3.11.0, js-yaml@^3.13.1:
+js-yaml@3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
+  integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
+
+js-yaml@^3.11.0, js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
   integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
@@ -7674,6 +7683,11 @@ remark-external-links@^6.0.0:
     mdast-util-definitions "^2.0.0"
     space-separated-tokens "^1.1.2"
     unist-util-visit "^2.0.0"
+
+remark-footnotes@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/remark-footnotes/-/remark-footnotes-1.0.0.tgz#9c7a97f9a89397858a50033373020b1ea2aad011"
+  integrity sha512-X9Ncj4cj3/CIvLI2Z9IobHtVi8FVdUrdJkCNaL9kdX8ohfsi18DXHsCVd/A7ssARBdccdDb5ODnt62WuEWaM/g==
 
 remark-parse@^8.0.2:
   version "8.0.2"
