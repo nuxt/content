@@ -202,4 +202,4 @@ Will expose on `localhost:3000`:
 
 The endpoint is accessible on `GET` and `POST` request, so you can use query params: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
 
-You can learn more about the enpoint on [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
