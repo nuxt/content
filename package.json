@@ -69,7 +69,7 @@
     "eslint": "^7.1.0",
     "husky": "latest",
     "jest": "^26.0.1",
-    "nuxt-edge": "^2.13.0-26506104.f13b3752",
+    "nuxt-edge": "^2.13.0-26507542.c831e00c",
     "puppeteer": "^3.1.0",
     "standard-version": "^8.0.0",
     "tib": "latest"
