@@ -27,7 +27,7 @@
     "@lokidb/loki": "^2.0.0-beta.9",
     "change-case": "^4.1.1",
     "chokidar": "^3.4.0",
-    "consola": "^2.12.1",
+    "consola": "^2.12.2",
     "csvtojson": "^2.0.10",
     "defu": "^2.0.4",
     "escape-html": "^1.0.3",
@@ -57,8 +57,8 @@
     "ws": "^7.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
+    "@babel/core": "^7.10.1",
+    "@babel/preset-env": "^7.10.1",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@nuxtjs/eslint-config": "^3.0.0",
@@ -69,7 +69,7 @@
     "eslint": "^7.1.0",
     "husky": "latest",
     "jest": "^26.0.1",
-    "nuxt-edge": "^2.13.0-26507542.c831e00c",
+    "nuxt-edge": "^2.13.0-26511579.a544fc72",
     "puppeteer": "^3.1.0",
     "standard-version": "^8.0.0",
     "tib": "latest"
