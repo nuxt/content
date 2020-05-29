@@ -6224,10 +6224,10 @@ nuxt-edge@^2.13.0-26511862.a544fc72:
     "@nuxt/telemetry" "^0.0.4"
     "@nuxt/webpack-edge" "2.13.0-26511862.a544fc72"
 
-nuxt-i18n@^6.12.0:
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.12.0.tgz#d56a500dec6d3028790a8971dac32fbf625c1031"
-  integrity sha512-d4bn8J13XVyCIbt2ARq7tk+9yiN4rrWAkCe/UA/pvhkJGAxUbrO56xL4xIPzSlT5fZ66lqTssxKq/F7H9MTMdA==
+nuxt-i18n@^6.12.1:
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.12.1.tgz#e92710bcc7d85a46687f3bb06c263100349e718c"
+  integrity sha512-IkdYTnwREM+cuds2w3bqTnCB52wK2Sbs4VwXQgRyXzLpHGUn0TN9vuQ4OhQzw3VP+xWNNPke+bzMkjIKw8YlNQ==
   dependencies:
     "@babel/parser" "^7.5.5"
     "@babel/traverse" "^7.5.5"
@@ -6236,7 +6236,7 @@ nuxt-i18n@^6.12.0:
     cookie "^0.4.0"
     is-https "^1.0.0"
     js-cookie "^2.2.1"
-    vue-i18n "^8.17.3"
+    vue-i18n "^8.18.1"
 
 object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
@@ -9407,10 +9407,10 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-i18n@^8.17.3:
-  version "8.17.6"
-  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.17.6.tgz#eb894dc1db7f69f505a8df5fed37f8d10aa10980"
-  integrity sha512-SsKL5D9Ii3zJPsFhUSllY754XuZvP8uCouUm+Mbylu95h3OwenV09uzIIEjkT7EtWyDQuWSMWObrNaD4ukBGZw==
+vue-i18n@^8.18.1:
+  version "8.18.1"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.18.1.tgz#2e683ac93a15617bdcd210f99359d6034e8425dd"
+  integrity sha512-K+hFQJksF8Ph23pnhbwSyoQx+4Y1q/rh2o7GiXI/3rLCCrwanUbzudC8+trp0Mb8rn9y83DYF6RXNrMd+VsuCw==
 
 vue-loader@^15.9.2:
   version "15.9.2"
