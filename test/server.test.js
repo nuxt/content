@@ -1,41 +1,42 @@
-const { createBrowser } = require('tib')
-const { setup, loadConfig, url } = require('@nuxtjs/module-test-utils')
+const { setup, loadConfig } = require('@nuxtjs/module-test-utils')
 
-describe('plugin', () => {
-  let nuxt, browser, page
+describe('module', () => {
+  let nuxt
+  let $content
 
   beforeAll(async () => {
     ({ nuxt } = (await setup(loadConfig(__dirname))))
-    browser = await createBrowser('puppeteer')
-    page = await browser.page(url('/'))
+    const module = require('..')
+    $content = module.$content
   }, 60000)
 
   afterAll(async () => {
     await nuxt.close()
-    await browser.close()
   })
 
   test('$content() on root directory', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content().fetch())
+    const items = await $content().fetch()
 
     expect(items).toEqual(expect.arrayContaining([
       expect.objectContaining({
         title: 'Home',
         dir: '/',
         path: '/home',
-        slug: 'home'
+        slug: 'home',
+        extension: '.md'
       }),
       expect.objectContaining({
         title: 'About',
         dir: '/',
         path: '/about',
-        slug: 'about'
+        slug: 'about',
+        extension: '.md'
       })
     ]))
   })
 
   test('$content() on root directory with only', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content().only(['title']).fetch())
+    const items = await $content().only(['title']).fetch()
 
     expect(items).toEqual(expect.arrayContaining([
       { title: 'Home' },
@@ -44,7 +45,7 @@ describe('plugin', () => {
   })
 
   test('$content() on file', async () => {
-    const item = await page.runScript(() => window.$nuxt.$content('home').fetch())
+    const item = await $content('home').fetch()
 
     expect(item).toEqual(expect.objectContaining({
       title: 'Home',
@@ -55,7 +56,7 @@ describe('plugin', () => {
   })
 
   test('$content() on file with only', async () => {
-    const item = await page.runScript(() => window.$nuxt.$content('home').only(['title']).fetch())
+    const item = await $content('home').only(['title']).fetch()
 
     expect(item).toEqual({
       title: 'Home'
@@ -63,11 +64,11 @@ describe('plugin', () => {
   })
 
   test('$content() on 404', async () => {
-    await expect(page.runScript(() => window.$nuxt.$content('404').fetch())).rejects.toThrow(Error)
+    await expect($content('404').fetch()).rejects.toThrow(Error)
   })
 
   test('$content() on directory with sortBy', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').only(['title']).fetch())
+    const items = await $content('articles').sortBy('date', 'desc').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -86,7 +87,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with limit (number)', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').limit(1).only(['title']).fetch())
+    const items = await $content('articles').sortBy('date', 'desc').limit(1).only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -96,7 +97,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with limit (string)', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').limit('1').only(['title']).fetch())
+    const items = await $content('articles').sortBy('date', 'desc').limit('1').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -106,7 +107,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with skip (number)', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').skip(1).limit(1).only(['title']).fetch())
+    const items = await $content('articles').sortBy('date', 'desc').skip(1).limit(1).only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -116,7 +117,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with skip (string)', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').skip('1').limit('1').only(['title']).fetch())
+    const items = await $content('articles').sortBy('date', 'desc').skip('1').limit('1').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -126,7 +127,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with search', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').search('browser').only(['title']).fetch())
+    const items = await $content('articles').search('browser').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -136,7 +137,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with search in field', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').search('title', 'browser').only(['title']).fetch())
+    const items = await $content('articles').search('title', 'browser').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -146,7 +147,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with search (object)', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').search({
+    const items = await $content('articles').search({
       query: {
         type: 'match',
         field: 'title',
@@ -156,7 +157,7 @@ describe('plugin', () => {
         extended: true,
         minimum_should_match: 1
       }
-    }).only(['title']).fetch())
+    }).only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -166,11 +167,11 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with where', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').where({
+    const items = await $content('articles').where({
       tags: {
         $contains: 'webpack'
       }
-    }).only(['title']).fetch())
+    }).only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -180,7 +181,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with surround of 404 slug', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('404').sortBy('date', 'desc').only(['title']).fetch())
+    const items = await $content('articles').surround('404').sortBy('date', 'desc').only(['title']).fetch()
 
     expect(items).toEqual([
       null,
@@ -189,7 +190,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with surround', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('understanding-how-fetch-works-in-nuxt-2-12').sortBy('date', 'desc').fetch())
+    const items = await $content('articles').surround('understanding-how-fetch-works-in-nuxt-2-12').sortBy('date', 'desc').fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -202,7 +203,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with surround as first', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('build-dev-to-clone-with-nuxt-new-fetch').sortBy('date', 'desc').fetch())
+    const items = await $content('articles').surround('build-dev-to-clone-with-nuxt-new-fetch').sortBy('date', 'desc').fetch()
 
     expect(items).toEqual([
       null,
@@ -213,7 +214,7 @@ describe('plugin', () => {
   })
 
   test('$content() on directory with surround as last', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles').surround('introducing-smart-prefetching').sortBy('date', 'desc').fetch())
+    const items = await $content('articles').surround('introducing-smart-prefetching').sortBy('date', 'desc').fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -224,7 +225,7 @@ describe('plugin', () => {
   })
 
   test('$content() on subdirectory', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles', '2020', '04').only(['title']).fetch())
+    const items = await $content('articles', '2020', '04').only(['title']).fetch()
 
     expect(items).toEqual([
       expect.objectContaining({
@@ -234,13 +235,13 @@ describe('plugin', () => {
   })
 
   test('$content() on empty subdirectory', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles', '2020').only(['title']).fetch())
+    const items = await $content('articles', '2020').only(['title']).fetch()
 
     expect(items).toEqual([])
   })
 
   test('$content() on directory with deep', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles', { deep: true }).only(['title']).fetch())
+    const items = await $content('articles', { deep: true }).only(['title']).fetch()
 
     expect(items).toEqual(expect.arrayContaining([
       expect.objectContaining({
@@ -265,7 +266,7 @@ describe('plugin', () => {
   })
 
   test('$content() on subdirectory with deep', async () => {
-    const items = await page.runScript(() => window.$nuxt.$content('articles', '2020', { deep: true }).only(['title']).fetch())
+    const items = await $content('articles', '2020', { deep: true }).only(['title']).fetch()
 
     expect(items).toEqual(expect.arrayContaining([
       expect.objectContaining({
