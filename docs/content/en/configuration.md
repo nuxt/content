@@ -67,6 +67,7 @@ content: {
 
 - Type `Array`
 - Default: `[]`
+- Version: **v2.0.0**
 
 Register nested properties to handle dot-notation and deep filtering.
 
