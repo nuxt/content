@@ -57,6 +57,14 @@ const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fet
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
 ```
 
+In order to filter in objects and array you need to enable nestedProperties, see [configuration](/configuration#nestedproperties).
+
+```js
+const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+
+const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
+```
+
 This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
 ### sortBy(key, direction)
