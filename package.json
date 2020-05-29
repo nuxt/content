@@ -70,7 +70,7 @@
     "husky": "latest",
     "jest": "^26.0.1",
     "nuxt-edge": "^2.13.0-26511862.a544fc72",
-    "puppeteer": "^3.1.0",
+    "puppeteer": "^3.2.0",
     "standard-version": "^8.0.0",
     "tib": "latest"
   },
