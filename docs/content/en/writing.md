@@ -32,11 +32,37 @@ This module will parse `.md`, `.yaml`, `.csv`, `.json`, `.json5` files and gener
 
 This module converts your `.md` files into a JSON AST tree structure, stored in a `body` variable.
 
-Data defined in the header will be injected into the document.
-
 Make sure to use the `<nuxt-content>` component to display the `body` of your markdown content, see [displaying content](/displaying).
 
 > You can check the [basic syntax guide](https://www.markdownguide.org/basic-syntax) to help you master Markdown
+
+### Front Matter
+
+You can add a YAML front matter block to your markdown files. The front matter must be the first thing in the file and must take the form of valid YAML set between triple-dashed lines. Here is a basic example:
+
+```md
+---
+title: Introduction
+description: Learn how to @nuxtjs/content.
+---
+```
+
+These variables will be injected into the document:
+
+```json
+{
+  body: Object
+  title: "Introduction"
+  description: "Learn how to @nuxtjs/content."
+  dir: "/"
+  extension: ".md"
+  path: "/index"
+  slug: "index"
+  toc: Array
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
 
 ### Headings
 

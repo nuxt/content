@@ -15,8 +15,8 @@
     "@nuxt/content": "^1.2.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26506104.f13b3752",
-    "nuxt-i18n": "^6.12.0",
+    "nuxt-edge": "^2.13.0-26511862.a544fc72",
+    "nuxt-i18n": "^6.12.1",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",
     "vue-scrollactive": "^0.9.3"
