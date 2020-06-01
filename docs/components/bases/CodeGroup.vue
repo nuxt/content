@@ -1,6 +1,6 @@
 <template>
   <div class="code-group">
-    <div class="rounded-t border-b-2 border-gray-700 px-2 bg-gray-800 text-sm text-white relative ">
+    <div class="rounded-t border-b-2 border-gray-700 px-2 bg-gray-800 text-sm text-white relative">
       <button
         v-for="({ label }, i) in tabs"
         ref="tabs"
@@ -8,9 +8,7 @@
         class="px-4 py-3 text-gray-400 font-bold font-mono"
         :class="[activeTabIndex === i && 'active']"
         @click="updateTabs(i)"
-      >
-        {{ label }}
-      </button>
+      >{{ label }}</button>
       <span ref="highlight-underline" class="highlight-underline" />
     </div>
     <slot />
@@ -31,7 +29,7 @@ export default {
     }
   },
   created () {
-    this.$slots.default.map((slot) => {
+    this.$slots.default.filter(slot => !!slot.componentOptions).map((slot) => {
       this.tabs.push({
         label: slot.componentOptions.propsData.label,
         elm: null
@@ -40,7 +38,7 @@ export default {
     this.activeTabIndex = 0
   },
   mounted () {
-    this.tabs = this.$slots.default.map((slot) => {
+    this.tabs = this.$slots.default.filter(slot => !!slot.componentOptions).map((slot) => {
       return {
         label: slot.componentOptions.propsData.label,
         elm: slot.elm
