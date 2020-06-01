@@ -74,19 +74,112 @@ content: {
 
 ### `markdown`
 
-This module uses [remark](https://github.com/remarkjs/remark) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
+This module uses [remark](https://github.com/remarkjs/remark) and [rehype](https://github.com/rehypejs/rehype) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
 
-By default, this module uses plugins to improve markdown parsing. Each plugin is configured using its name in camelCase: `remark-external-links` => `remarkExternalLinks`.
+<base-alert type="info">
+The following explanation is valid for both `remarkPlugins` and `rehypePlugins`
+</base-alert>
 
-> You check for remark plugins [here](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins)
+To configure how the module will parse Markdown, you can:
 
-### `markdown.basePlugins`
+- Override the default plugins:
 
-<base-alert>**Deprecated**</base-alert>
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: () => ['remark-emoji']
+    }
+  }
+}
+```
 
-### `markdown.plugins`
+- Add a new plugin to the defaults:
 
-<base-alert>**Deprecated** => `markdown.remarkPlugins`</base-alert>
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: ['remark-emoji']
+    }
+  }
+}
+```
+
+- Use local plugins
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: [
+        '~/plugins/my-custom-remark-plugin.js'
+      ]
+    }
+  }
+}
+```
+
+- Provide options directly in the definition
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: [
+        ['remark-emoji', { emoticon: true }]
+      ]
+    }
+  }
+}
+```
+
+- Use the name of the plugin in `camelCase`
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      // https://github.com/remarkjs/remark-external-links#options
+      remarkExternalLinks: {
+        target: '_self',
+        rel: 'nofollow'
+      }
+    }
+  }
+}
+```
+
+<base-alert>
+When adding a new plugin, make sure to install it in your dependencies:
+</base-alert>
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn add remark-emoji
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  npm install remark-emoji
+  ```
+
+  </code-block>
+</code-group>
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: ['remark-emoji']
+    }
+  }
+}
+```
 
 ### `markdown.remarkPlugins`
 
@@ -94,46 +187,15 @@ By default, this module uses plugins to improve markdown parsing. Each plugin is
 - Default: `['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes']`
 - Version: **v2.0.0**
 
+> You can take a look at the list of [remark plugins](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins).
+
 ### `markdown.rehypePlugins`
 
 - Type: `Array`
 - Default: `['rehype-minify-whitespace', 'rehype-sort-attribute-values', 'rehype-sort-attributes', 'rehype-raw']`
 - Version: **v2.0.0**
 
-### `markdown.externalLinks`
-
-<base-alert>**Deprecated** => `markdown.remarkExternalLinks`</base-alert>
-
-### `markdown.remarkExternalLinks`
-
-- Type: `Object`
-- Default: `{}`
-- Version: **v2.0.0**
-
-You can control the behaviour of links via this option. You can check here for [options](https://github.com/remarkjs/remark-external-links#api).
-
-```js{}[nuxt.config.js]
-content: {
-  markdown: {
-    remarkExternalLinks: {
-      target: '_self' // disable target="_blank"
-      rel: false // disable rel="nofollow noopener"
-    }
-  }
-}
-```
-
-### `markdown.footnotes`
-
-<base-alert>**Deprecated** => `markdown.remarkFootnotes`</base-alert>
-
-### `markdown.remarkFootnotes`
-
-- Type: `Object`
-- Default: `{ inlineNotes: true }`
-- Version: **v2.0.0**
-
-You can control the behaviour of footnotes via this option. You can check here for [options](https://github.com/remarkjs/remark-footnotes#remarkusefootnotes-options).
+> You can take a look at the list of [rehype plugins](https://github.com/rehypejs/rehype/blob/master/doc/plugins.md#list-of-plugins).
 
 ### `markdown.prism.theme`
 
@@ -204,10 +266,6 @@ export default {
         'rehype-sort-attributes',
         'rehype-raw'
       ],
-      remarkExternalLinks: {},
-      remarkFootnotes: {
-        inlineNotes: true
-      },
       prism: {
         theme: 'prismjs/themes/prism.css'
       }
