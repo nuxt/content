@@ -82,18 +82,6 @@ The following explanation is valid for both `remarkPlugins` and `rehypePlugins`
 
 To configure how the module will parse Markdown, you can:
 
-- Override the default plugins:
-
-```js{}[nuxt.config.js]
-export default {
-  content: {
-    markdown: {
-      remarkPlugins: () => ['remark-emoji']
-    }
-  }
-}
-```
-
 - Add a new plugin to the defaults:
 
 ```js{}[nuxt.config.js]
@@ -101,6 +89,18 @@ export default {
   content: {
     markdown: {
       remarkPlugins: ['remark-emoji']
+    }
+  }
+}
+```
+
+- Override the default plugins:
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: () => ['remark-emoji']
     }
   }
 }
@@ -134,7 +134,7 @@ export default {
 }
 ```
 
-- Use the name of the plugin in `camelCase`
+- Provide options using the name of the plugin in `camelCase`
 
 ```js{}[nuxt.config.js]
 export default {
