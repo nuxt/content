@@ -25,7 +25,7 @@ This module globally injects `$content` instance, meaning that you can access it
 
 `path` can be a file or a directory. If path is a file, `fetch()` will return an `Object`, if it's a directory it will return an `Array`.
 
-You can pass `{ deep: true }` as a second argument in order to fetch all subdirectories.
+You can pass `{ deep: true }` as a second argument in order to fetch files from subdirectories.
 
 All the methods below can be chained and return a chain sequence, except `fetch` which returns a `Promise`.
 
