@@ -485,4 +485,104 @@ describe('module', () => {
       null
     ])
   })
+
+  test('POST /_content/articles/2020/04', async () => {
+    const items = await get('/_content/articles/2020/04', {
+      json: true,
+      method: 'POST',
+      body: {
+        only: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'April Newsletter'
+      })
+    ])
+  })
+
+  test('POST /_content/articles/2020', async () => {
+    const items = await get('/_content/articles/2020', {
+      json: true,
+      method: 'POST',
+      body: {
+        only: ['title']
+      }
+    })
+
+    expect(items).toEqual([])
+  })
+
+  test('POST /_content/articles with deep', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        only: ['title'],
+        deep: true
+      }
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'April Newsletter'
+      }),
+      expect.objectContaining({
+        title: 'May Newsletter'
+      })
+    ]))
+  })
+
+  test('POST /_content/articles/2020 with deep', async () => {
+    const items = await get('/_content/articles/2020', {
+      json: true,
+      method: 'POST',
+      body: {
+        only: ['title'],
+        deep: true
+      }
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'April Newsletter'
+      }),
+      expect.objectContaining({
+        title: 'May Newsletter'
+      })
+    ]))
+  })
+
+  test('GET /_content/articles/2020 with deep', async () => {
+    const items = await get('/_content/articles/2020', {
+      json: true,
+      method: 'GET',
+      qs: {
+        only: ['title'],
+        deep: true
+      }
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'April Newsletter'
+      }),
+      expect.objectContaining({
+        title: 'May Newsletter'
+      })
+    ]))
+  })
 })
