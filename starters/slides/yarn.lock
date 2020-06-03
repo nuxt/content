@@ -1124,10 +1124,10 @@
     eslint-plugin-unicorn "^19.0.1"
     eslint-plugin-vue "^6.2.2"
 
-"@nuxtjs/eslint-module@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-module/-/eslint-module-1.2.0.tgz#a1d014690d505309c16ced2ded3b729cbc479306"
-  integrity sha512-ZVweM95atKQIqKPmrYS532SyO0/Uqi5wXc1uUiPZVy2MTVjqlC/7uHJ/XSxpvnt78kBW9z64Fxgf5pZggSNXgA==
+"@nuxtjs/eslint-module@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-module/-/eslint-module-2.0.0.tgz#4a4875f5b3dd625bfe0e73fc4d8c8deec133d634"
+  integrity sha512-uL3prMRwSBcxy583O11nMiUtfA2fxF7lZgCCUCsq4FNCqv320euJ7XE3KNZT6IVs/QJ1vaUNLC8tL4SZS99Tjw==
   dependencies:
     consola "^2.11.3"
     eslint-loader "^4.0.2"
