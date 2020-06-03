@@ -132,3 +132,64 @@ export default {
 
 Now everytime you will update a file in your `content/` directory, it will also dispatch the `fetchCategories` method.
 This documentation use it actually, you can learn more by looking at [plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
+
+## Integration with @nuxtjs/feed module
+
+In the case of articles, the content can be used to generate news feeds
+using the Nuxt.js [feed-module](https://github.com/nuxt-community/feed-module).
+
+**Example**
+
+```js
+const contentArticles = async () => {
+  const { $content } = require('@nuxt/content')
+  return await $content('articles').fetch()
+}
+
+export default {
+  modules: [,
+    '@nuxt/content',
+    '@nuxtjs/feed',
+  ],
+
+  feed: () => {
+    const baseUrlArticles = 'https://mywebsite.com/articles'
+    const baseLinkFeedArticles = '/feed/articles'
+    const feedFormats = {
+      rss: { type: 'rss2', file: 'rss.xml' },
+      atom: { type: 'atom1', file: 'atom.xml' },
+      json: { type: 'json1', file: 'feed.json' },
+    }
+
+    async function feedCreateArticles(feed) {
+      feed.options = {
+        title: 'My Blog',
+        description: 'I write about technology',
+        link: baseUrlArticles,
+      }
+
+      const articles = await contentArticles()
+
+      articles.forEach((article) => {
+        const url = `${baseUrlArticles}/${article.slug}`
+
+        feed.addItem({
+          title: article.title,
+          id: url,
+          link: url,
+          date: article.published,
+          description: article.summary,
+          content: article.summary,
+          author: article.authors,
+        })
+      })
+    }
+
+    return Object.values(feedFormats).map((f) => ({
+      path: `${baseLinkFeedArticles}/${f.file}`,
+      type: f.type,
+      create: feedCreateArticles,
+    }))
+  },
+}
+```
