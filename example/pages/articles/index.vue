@@ -7,9 +7,7 @@
 
     <ul>
       <li v-for="article in articles" :key="article.slug">
-        <nuxt-link
-          :to="{ name: 'articles-slug', params: { slug: article.slug } }"
-        >{{ article.title }}</nuxt-link>
+        <nuxt-link :to="article.path">{{ article.title }}</nuxt-link>
       </li>
     </ul>
   </div>
@@ -21,7 +19,7 @@ export default {
   async asyncData ({ $content, route }) {
     const q = route.query.q
 
-    let query = $content('articles')
+    let query = $content('articles', { deep: true })
       .sortBy('date', 'desc')
 
     if (q) {
