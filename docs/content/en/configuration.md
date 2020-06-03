@@ -63,6 +63,20 @@ content: {
 }
 ```
 
+### `nestedProperties`
+
+- Type `Array`
+- Default: `[]`
+- Version: **v2.0.0**
+
+Register nested properties to handle dot-notation and deep filtering.
+
+```js{}[nuxt.config.js]
+content: {
+  nestedProperties: ['categories.slug']
+}
+```
+
 ### `markdown`
 
 This module uses [remark](https://github.com/remarkjs/remark) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
@@ -161,8 +175,12 @@ export default {
     apiPrefix: '_content',
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
+    nestedProperties: [],
     markdown: {
       externalLinks: {},
+      footnotes: {
+        inlineNotes: true
+      },
       basePlugins: ['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes'],
       plugins: [],
       prism: {

@@ -1,0 +1,14 @@
+{
+  "title": "Jean",
+  "categories": [
+    {
+      "slug": "man"
+    },
+    {
+      "slug": "woman"
+    },
+    {
+      "slug": "bottom"
+    }
+  ]
+}
