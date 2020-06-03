@@ -29,7 +29,7 @@ export default {
     }
   },
   created () {
-    this.$slots.default.filter(slot => !!slot.componentOptions).map((slot) => {
+    this.$slots.default.filter(slot => Boolean(slot.componentOptions)).map((slot) => {
       this.tabs.push({
         label: slot.componentOptions.propsData.label,
         elm: null
@@ -38,7 +38,7 @@ export default {
     this.activeTabIndex = 0
   },
   mounted () {
-    this.tabs = this.$slots.default.filter(slot => !!slot.componentOptions).map((slot) => {
+    this.tabs = this.$slots.default.filter(slot => Boolean(slot.componentOptions)).map((slot) => {
       return {
         label: slot.componentOptions.propsData.label,
         elm: slot.elm

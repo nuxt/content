@@ -94,7 +94,7 @@ It will be transformed to it's JSON AST structure, and by using the `nuxt-conten
 
 Links are transformed to add valid `target` and `rel` attributes using [remark-external-links](https://github.com/remarkjs/remark-external-links). You can check [here](/configuration#markdown) to learn how to configure this plugin.
 
-Relative links are also automatically transformed to `nuxt-link` to provide navigations between page components and enhance performances with smart prefetching.
+Relative links are also automatically transformed to [nuxt-link](https://nuxtjs.org/api/components-nuxt-link/) to provide navigations between page components and enhance performances with smart prefetching.
 
 Here is an exemple using external, relative, markdown and html links:
 
