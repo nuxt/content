@@ -140,7 +140,7 @@ using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
 
 <base-alert type="info">
 
-Note that in order to use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
+To use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
 
 </base-alert>
 
