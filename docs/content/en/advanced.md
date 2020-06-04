@@ -133,26 +133,28 @@ export default {
 Now everytime you will update a file in your `content/` directory, it will also dispatch the `fetchCategories` method.
 This documentation use it actually, you can learn more by looking at [plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
 
-## Integration with @nuxtjs/feed module
+## Integration with @nuxtjs/feed
 
 In the case of articles, the content can be used to generate news feeds
-using the Nuxt.js [feed-module](https://github.com/nuxt-community/feed-module).
+using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
+
+
+<base-alert type="info">
+
+Note that in order to use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
+
+</base-alert>
 
 **Example**
 
 ```js
-const contentArticles = async () => {
-  const { $content } = require('@nuxt/content')
-  return await $content('articles').fetch()
-}
-
 export default {
-  modules: [,
+  modules: [
     '@nuxt/content',
-    '@nuxtjs/feed',
+    '@nuxtjs/feed'
   ],
 
-  feed: () => {
+  feed () {
     const baseUrlArticles = 'https://mywebsite.com/articles'
     const baseLinkFeedArticles = '/feed/articles'
     const feedFormats = {
@@ -160,15 +162,15 @@ export default {
       atom: { type: 'atom1', file: 'atom.xml' },
       json: { type: 'json1', file: 'feed.json' },
     }
+    const { $content } = require('@nuxt/content')
 
-    async function feedCreateArticles(feed) {
+    const createFeedArticles = async function (feed) {
       feed.options = {
         title: 'My Blog',
         description: 'I write about technology',
         link: baseUrlArticles,
       }
-
-      const articles = await contentArticles()
+      const articles = await $content('articles').fetch()
 
       articles.forEach((article) => {
         const url = `${baseUrlArticles}/${article.slug}`
@@ -185,11 +187,11 @@ export default {
       })
     }
 
-    return Object.values(feedFormats).map((f) => ({
-      path: `${baseLinkFeedArticles}/${f.file}`,
-      type: f.type,
+    return Object.values(feedFormats).map(({ file, type }) => ({
+      path: `${baseLinkFeedArticles}/${file}`,
+      type: type,
       create: feedCreateArticles,
     }))
-  },
+  }
 }
 ```
