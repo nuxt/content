@@ -17,19 +17,19 @@ type Result = (Object[] & {
 
 declare module '@nuxt/vue-app' {
   interface Context {
-    $content(...args: String[], options?: Object): NuxtContentInstance
+    $content(...args: Array<String | Object>): NuxtContentInstance
   }
 }
 
 // Nuxt 2.9+
 declare module '@nuxt/types' {
   interface Context {
-    $content(...args: String[], options?: Object): NuxtContentInstance
+    $content(...args: Array<String | Object>): NuxtContentInstance
   }
 }
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $content(...args: String[], options?: Object): NuxtContentInstance
+    $content(...args: Array<String | Object>): NuxtContentInstance
   }
 }
