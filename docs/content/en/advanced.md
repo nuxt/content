@@ -138,7 +138,6 @@ This documentation use it actually, you can learn more by looking at [plugins/ca
 In the case of articles, the content can be used to generate news feeds
 using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
 
-
 <base-alert type="info">
 
 Note that in order to use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
