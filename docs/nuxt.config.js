@@ -98,30 +98,28 @@ export default {
     }
   },
   i18n: {
-  //   locales: [{
-  //     code: 'fr',
-  //     iso: 'fr-FR',
-  //     file: 'fr-FR.js',
-  //     name: 'Français'
-  //   }, {
-  //     code: 'en',
-  //     iso: 'en-US',
-  //     file: 'en-US.js',
-  //     name: 'English'
-  //   }],
+    //   locales: [{
+    //     code: 'fr',
+    //     iso: 'fr-FR',
+    //     file: 'fr-FR.js',
+    //     name: 'Français'
+    //   }, {
+    //     code: 'en',
+    //     iso: 'en-US',
+    //     file: 'en-US.js',
+    //     name: 'English'
+    //   }],
     locales: [{
-      code: 'en',
-      iso: 'en-US',
-      file: 'en-US.js',
-      name: 'English'
-    },
-    {
       code: 'ru',
       iso: 'ru-RU',
       file: 'ru-RU.js',
       name: 'Русский'
-    }
-  ],
+    }, {
+      code: 'en',
+      iso: 'en-US',
+      file: 'en-US.js',
+      name: 'English'
+    }],
     defaultLocale: 'en',
     parsePages: false,
     lazy: true,
