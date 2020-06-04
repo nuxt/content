@@ -18,7 +18,7 @@ This module globally injects `$content` instance, meaning that you can access it
 - `options`
   - Type: `Object`
   - Default: `{ deep: false }`
-  - Version: **v2.0.0**
+  - Version: **v1.3.0**
 - Returns a chain sequence
 
 > You can also give multiple arguments: `$content('articles', params.slug)` will be translated to `/articles/${params.slug}`
