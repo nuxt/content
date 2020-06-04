@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/nuxt/content/compare/v1.3.0...v1.3.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* **types:** args can be string or object ([b2c2c13](https://github.com/nuxt/content/commit/b2c2c13fe5b2377ac68c905579e99ce18b8c1c5f))
+
 ## [1.3.0](https://github.com/nuxt/content/compare/v1.2.0...v1.3.0) (2020-06-04)
 
 
