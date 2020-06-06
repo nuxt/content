@@ -9,17 +9,23 @@ This module globally injects `$content` instance, meaning that you can access it
 
 ## Methods
 
-### $content(path)
+### $content(path, options?)
 
 - `path`
   - Type: `String`
   - Default: `/`
   - `required`
+- `options`
+  - Type: `Object`
+  - Default: `{ deep: false }`
+  - Version: **v1.3.0**
 - Returns a chain sequence
 
 > You can also give multiple arguments: `$content('articles', params.slug)` will be translated to `/articles/${params.slug}`
 
 `path` can be a file or a directory. If path is a file, `fetch()` will return an `Object`, if it's a directory it will return an `Array`.
+
+You can pass `{ deep: true }` as a second argument in order to fetch files from subdirectories.
 
 All the methods below can be chained and return a chain sequence, except `fetch` which returns a `Promise`.
 
@@ -55,6 +61,14 @@ const articles = await this.$content('articles').where({ title: { $eq: 'Home' } 
 const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fetch()
 // $in
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
+```
+
+In order to filter in objects and array you need to enable nestedProperties, see [configuration](/configuration#nestedproperties).
+
+```js
+const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+
+const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
 This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).

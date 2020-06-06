@@ -1,0 +1,14 @@
+{
+  "title": "T-Shirt",
+  "categories": [
+    {
+      "slug": "man"
+    },
+    {
+      "slug": "woman"
+    },
+    {
+      "slug": "top"
+    }
+  ]
+}

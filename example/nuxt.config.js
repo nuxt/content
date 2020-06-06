@@ -10,5 +10,10 @@ module.exports = {
   ],
   plugins: [
     '~/plugins/components'
-  ]
+  ],
+  content: {
+    nestedProperties: [
+      'categories.slug'
+    ]
+  }
 }

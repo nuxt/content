@@ -1,0 +1,11 @@
+{
+  "title": "Shirt",
+  "categories": [
+    {
+      "slug": "woman"
+    },
+    {
+      "slug": "top"
+    }
+  ]
+}
