@@ -62,6 +62,19 @@ content: {
   fullTextSearchFields: ['title', 'description']
 }
 ```
+### `nestedProperties`
+
+- Тип `Array`
+- По умолчанию: `[]`
+- Версия: **v2.0.0**
+
+Зарегистрируйте вложенные свойства для обработки обращения через точку и глубокой фильтрации.
+
+```js{}[nuxt.config.js]
+content: {
+  nestedProperties: ['categories.slug']
+}
+```
 
 ### `markdown`
 
@@ -161,8 +174,12 @@ export default {
     apiPrefix: '_content',
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
+    nestedProperties: [],
     markdown: {
       externalLinks: {},
+      footnotes: {
+        inlineNotes: true
+      },
       basePlugins: ['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes'],
       plugins: [],
       prism: {
