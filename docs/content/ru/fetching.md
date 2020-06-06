@@ -56,6 +56,12 @@ const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fet
 // $in
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
 ```
+Для фильтрации в объектах и массивах вам нужно включить nestedProperties, взгляните на [конфигурацию](/configuration#nestedproperties).
+
+```js
+const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
+```
 
 Этот модуль использует LokiJS под капотом, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
