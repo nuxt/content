@@ -113,7 +113,7 @@ export default {
 }
 </script>
 
-<style type="postcss">
+<style lang="postcss">
 .aside-title {
   @apply mb-3 text-gray-500 uppercase tracking-wide font-bold text-sm;
 }
