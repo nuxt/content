@@ -9,12 +9,16 @@ category: Начало
 
 ## Методы
 
-### $content(путь)
+### $content(путь, параметры?)
 
 - `путь`
   - Тип: `String`
   - По умолчанию: `/`
   - `обязательное`
+- `параметры`
+  - Тип: `Object`
+  - По умолчанию: `{ deep: false }`
+  - Версия: **v2.0.0**
 - Возвращает последовательность цепочек
 
 > Вы можете передать несколько аргументов: `$content('articles', params.slug)` будет преобразовано в `/articles/${params.slug}`
@@ -55,6 +59,12 @@ const articles = await this.$content('articles').where({ title: { $eq: 'Home' } 
 const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fetch()
 // $in
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
+```
+Для фильтрации в объектах и массивах вам нужно включить nestedProperties, взгляните на [конфигурацию](/configuration#nestedproperties).
+
+```js
+const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
 Этот модуль использует LokiJS под капотом, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
