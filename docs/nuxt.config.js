@@ -119,6 +119,11 @@ export default {
       iso: 'en-US',
       file: 'en-US.js',
       name: 'English'
+    }, {
+      code: 'fr',
+      iso: 'fr-FR',
+      file: 'fr-FR.js',
+      name: 'Français'
     }],
     defaultLocale: 'en',
     parsePages: false,
