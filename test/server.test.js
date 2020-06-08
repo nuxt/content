@@ -277,4 +277,11 @@ describe('module', () => {
       })
     ]))
   })
+
+  test('$content() should have valid dates', async () => {
+    const item = await $content('home').fetch()
+
+    expect(typeof item.createdAt).toBe('string')
+    expect(typeof item.updatedAt).toBe('string')
+  })
 })
