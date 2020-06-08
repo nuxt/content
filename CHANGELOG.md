@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/nuxt/content/compare/v1.3.0...v1.3.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* **types:** args can be string or object ([b2c2c13](https://github.com/nuxt/content/commit/b2c2c13fe5b2377ac68c905579e99ce18b8c1c5f))
+
+## [1.3.0](https://github.com/nuxt/content/compare/v1.2.0...v1.3.0) (2020-06-04)
+
+
+### Features
+
+* support custom return types by the fetch method ([#42](https://github.com/nuxt/content/issues/42)) ([9c11915](https://github.com/nuxt/content/commit/9c11915e99c4ee0934739bc25c1ecdd5d05b3e07))
+
+
+### Bug Fixes
+
+* decodeURI before searching query ([#55](https://github.com/nuxt/content/issues/55)) ([66781a8](https://github.com/nuxt/content/commit/66781a8728c1d486081bc3554e60b99d91ca408e))
+
 ## [1.2.0](https://github.com/nuxt/content/compare/v1.1.0...v1.2.0) (2020-05-25)
 
 

@@ -43,7 +43,7 @@ You can add a YAML front matter block to your markdown files. The front matter m
 ```md
 ---
 title: Introduction
-description: Learn how to @nuxtjs/content.
+description: Learn how to use @nuxtjs/content.
 ---
 ```
 
@@ -53,7 +53,7 @@ These variables will be injected into the document:
 {
   body: Object
   title: "Introduction"
-  description: "Learn how to @nuxtjs/content."
+  description: "Learn how to use @nuxtjs/content."
   dir: "/"
   extension: ".md"
   path: "/index"
@@ -88,15 +88,15 @@ It will be transformed to it's JSON AST structure, and by using the `nuxt-conten
 <h5 id="elit-1"><a href="#elit-1" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>elit</h5>
 ```
 
-> The links in headings are empty and so hidden, it's up to you to style them. Take a look at this documentation when you hover a heading.
+> The links in headings are empty and therefore hidden, so it's up to you to style them. For an example, try hovering one of the headers in these docs.
 
 ### Links
 
 Links are transformed to add valid `target` and `rel` attributes using [remark-external-links](https://github.com/remarkjs/remark-external-links). You can check [here](/configuration#markdown) to learn how to configure this plugin.
 
-Relative links are also automatically transformed to [nuxt-link](https://nuxtjs.org/api/components-nuxt-link/) to provide navigations between page components and enhance performances with smart prefetching.
+Relative links are also automatically transformed to [nuxt-link](https://nuxtjs.org/api/components-nuxt-link/) to provide navigation between page components with enhanced performance through smart prefetching.
 
-Here is an exemple using external, relative, markdown and html links:
+Here is an example using external, relative, markdown and html links:
 
 ```md
 ---
@@ -136,17 +136,17 @@ Here's a simple footnote,[^1] and here's a longer one.[^bignote]
     Add as many paragraphs as you like.
 ```
 
-> You can check [extented syntax guide](https://www.markdownguide.org/extended-syntax/#footnotes) on footnotes
+> You can check the [extended syntax guide](https://www.markdownguide.org/extended-syntax/#footnotes) for more information about footnotes.
 
 ### Codeblocks
 
-This module automatically wraps codeblocks and apply [PrismJS](https://prismjs.com) classes (see [syntax highlighting](/writing#syntax-highlighting)).
+This module automatically wraps codeblocks and applies [PrismJS](https://prismjs.com) classes (see [syntax highlighting](/writing#syntax-highlighting)).
 
-Codeblocks in Markdown are wrapped inside 3 backticks. Optionally, you can define a language of codeblock to enable syntax highlighting.
+Codeblocks in Markdown are wrapped inside 3 backticks. Optionally, you can define the language of the codeblock to enable specific syntax highlighting.
 
-Orginally markdown does not support highlighting lines inside codeblock nor filenames. However, this module allows it with it's own custom syntax:
+Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with it's own custom syntax:
 
-- Line numbers inside curly braces
+- Highlighted line numbers inside curly braces
 - Filename inside square brackets
 
 <pre class="language-js">
@@ -162,7 +162,7 @@ http.createServer((req, res) => {
 ```
 </pre>
 
-After render with the `nuxt-content` component, it will look like:
+After rendering with the `nuxt-content` component, it will look like this:
 
 ```html
 <div class="nuxt-content-highlight">
@@ -217,7 +217,7 @@ Beware that when placing Markdown inside a component, it must be preceded and fo
 </div>
 ```
 
-As will **this**:
+**As will this**:
 
 ```html
 <span class="note">*Markdown* and <em>HTML</em>.</span>
@@ -225,11 +225,11 @@ As will **this**:
 
 ### Vue components
 
-You can use global Vue components or locally registered in the page your are displaying your markdown.
+You can use global Vue components or locally registered in the page you're displaying your markdown.
 
 Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
-1. You need to use your components as kebab case:
+1. You need to refer to your components by kebab case naming:
 
 ```html
 Use <my-component> instead of <MyComponent>
@@ -249,10 +249,10 @@ But **this will**:
 
 **Example:**
 
-We are defining a component [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
+Say we have a Vue component called [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
-Please chose a *framework*:
+Please choose a *framework*:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 ```
@@ -261,14 +261,13 @@ Please chose a *framework*:
 
 <div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
 
-Please chose a *framework*:
+Please choose a *framework*:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 
 </div>
 
-You can also define the options in your front matter:
-
+You can also define the options for components in your front matter:
 
 ```md[home.md]
 ---
@@ -285,7 +284,7 @@ multiselectOptions:
 
 <base-alert type="info">
 
-These components will be rendered using `<nuxt-content>` component, see [displaying content](/displaying#component).
+These components will be rendered using the `<nuxt-content>` component, see [displaying content](/displaying#component).
 
 </base-alert>
 
@@ -293,7 +292,7 @@ Also note that you **cannot use** `<template>` tags in your markdown (eg: when u
 
 ### Table of contents
 
-A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link them.
+A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
 
 > Take a look at the right side of this page for an example.
 
@@ -369,7 +368,7 @@ Will be transformed into:
 }
 ```
 
-We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](http://localhost:3000/advanced#contentfilebeforeinsert) it.
+We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](/advanced#contentfilebeforeinsert) it.
 
 You can see how to display your markdown in your application in the [displaying content](/displaying) section.
 
