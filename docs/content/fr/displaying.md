@@ -1,6 +1,6 @@
 ---
 title: Afficher du contenu
-description: 'Vous pouvez utiliser le composant `<nuxt-content>` directement dans vos template afin d\'afficher votre Markdown.'
+description: Vous pouvez utiliser le composant `<nuxt-content>` directement dans vos template afin d'afficher votre Markdown.
 position: 5
 category: Pour commencer
 ---
@@ -15,7 +15,7 @@ Vous pouvez utiliser le composant `<nuxt-content>` directement dans votre templa
 ```vue
 <template>
   <article>
-    <h1>{{ page.titre }}</h1>
+    <h1>{{ page.title }}</h1>
     <nuxt-content :document="page" />
   </article>
 </template>

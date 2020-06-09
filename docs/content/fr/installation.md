@@ -1,6 +1,5 @@
 ---
 title: Installation
-description: 'Install @nuxt/content in only two steps in your Nuxt project.'
 description: 'Intégrez @nuxt/content au sein de votre projet Nuxt en seulement deux étapes.'
 category: Pour commencer
 position: 2
@@ -11,18 +10,18 @@ Ajoutez `@nuxt/content` en tant que dépendence à votre projet:
 <code-group>
   <code-block label="Yarn" active>
 
-```bash
+  ```bash
   yarn add @nuxt/content
-```
+  ```
 
-</code-block>
+  </code-block>
   <code-block label="NPM">
 
-```bash
+  ```bash
   npm install @nuxt/content
-```
+  ```
 
-</code-block>
+  </code-block>
 </code-group>
 
 Ensuite, ajoutez `@nuxt/content` au sein de la section `modules` de votre fichier `nuxt.config.js`:
@@ -56,5 +55,5 @@ Dans le fichier `tsconfig.json`, ajoutez les types à votre tableau de "types"  
 ```
 
 > **Pourquoi?**
-> 
+>
 > En raison de la manière dont nuxt fonctionne, la propriété `$content` doit être fusionnée dans l'interface `Context` de nuxt via [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html). Ajouter `@nuxt/content` à vos types permettra d'importer ces types depuis le package et informera typescript des ajouts apportés à l'interface `Context`.

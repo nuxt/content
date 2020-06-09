@@ -1,6 +1,6 @@
 ---
 title: Utilisation avancée
-description: 'Apprenez l'utilisation avancée du module @nuxt/content'
+description: Apprenez l'utilisation avancée du module @nuxt/content
 position: 7
 category: Pour commencer
 ---
