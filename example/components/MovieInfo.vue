@@ -1,10 +1,15 @@
 <template>
-  <span>Hello {{ name }}</span>
+  <section>
+    <strong>{{ name }}</strong>
+    <slot name="summary">
+      <p>No info available.</p>
+    </slot>
+  </section>
 </template>
 
 <script>
 export default {
-  name: 'Hello',
+  name: 'MovieInfo',
   props: {
     name: {
       type: String,

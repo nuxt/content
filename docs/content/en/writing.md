@@ -288,7 +288,30 @@ These components will be rendered using the `<nuxt-content>` component, see [dis
 
 </base-alert>
 
-Also note that you **cannot use** `<template>` tags in your markdown (eg: when using with `v-slot`).
+#### Templates
+
+You can use `template` tags for content distribution inside your Vue.js components:
+
+```html
+<my-component>
+  <template #named-slot>
+    <p>Named slot content.</p>
+  </template>
+</my-component>
+```
+
+However, you cannot render
+[dynamic content](https://vuejs.org/v2/guide/syntax.html) nor use
+[slot props](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots). I.e.,
+**this wont work**:
+
+```html
+<my-component>
+  <template #named-slot="slotProps">
+    <p>{{ slotProps.someProperty }}</p>
+  </template>
+</my-component>
+```
 
 ### Table of contents
 
