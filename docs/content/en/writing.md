@@ -89,10 +89,12 @@ It will be transformed to it's JSON AST structure, and by using the `nuxt-conten
 ```
 
 > The links in headings are empty and therefore hidden, so it's up to you to style them. For an example, try hovering one of the headers in these docs.
-  
+
 ### Links
 
-Links are transformed to add valid `target` and `rel` attributes. You can change this behaviour, see [configuration](/configuration#markdownexternallinks). Relative links are also automatically transformed to `nuxt-link` to provide navigation between page components with enhanced performance through smart prefetching.
+Links are transformed to add valid `target` and `rel` attributes using [remark-external-links](https://github.com/remarkjs/remark-external-links). You can check [here](/configuration#markdown) to learn how to configure this plugin.
+
+Relative links are also automatically transformed to [nuxt-link](https://nuxtjs.org/api/components-nuxt-link/) to provide navigation between page components with enhanced performance through smart prefetching.
 
 Here is an example using external, relative, markdown and html links:
 
@@ -116,7 +118,7 @@ title: Home
 
 ### Footnotes
 
-This module supports extended markdown syntax for footnotes.
+This module supports extended markdown syntax for footnotes using [remark-footnotes](https://github.com/remarkjs/remark-footnotes). You can check [here](/configuration#markdown) to learn how to configure this plugin.
 
 Here is an example using footnotes:
 
