@@ -189,7 +189,7 @@ export default {
     return Object.values(feedFormats).map(({ file, type }) => ({
       path: `${baseLinkFeedArticles}/${file}`,
       type: type,
-      create: feedCreateArticles,
+      create: createFeedArticles,
     }))
   }
 }
