@@ -24,7 +24,6 @@ describe('options', () => {
         'remark-footnotes'
       ]
       const rehypePlugins = [
-        'rehype-minify-whitespace',
         'rehype-sort-attribute-values',
         'rehype-sort-attributes',
         'rehype-raw'
