@@ -1,9 +1,10 @@
 <template>
   <Dropdown v-if="availableLocales.length" class="flex">
-    <template #trigger="{ open }">
+    <template #trigger="{ open, toggle }">
       <button
         class="rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
         :class="{ 'text-green-500': open }"
+        @touchstart.stop.prevent="toggle"
       >
         <icon-translate class="w-6 h-6" />
       </button>
