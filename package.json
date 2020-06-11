@@ -42,7 +42,6 @@
     "node-req": "^2.1.2",
     "p-queue": "6.4.0",
     "prismjs": "^1.20.0",
-    "rehype-minify-whitespace": "^4.0.1",
     "rehype-raw": "^4.0.2",
     "rehype-sort-attribute-values": "^3.0.1",
     "rehype-sort-attributes": "^3.0.1",
