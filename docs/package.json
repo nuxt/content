@@ -15,7 +15,7 @@
     "@nuxt/content": "^1.3.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26532943.8cf3961e",
+    "nuxt-edge": "^2.13.0-26533461.7d0da3ff",
     "nuxt-i18n": "^6.12.2",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",
