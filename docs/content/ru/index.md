@@ -16,7 +16,7 @@ features:
 csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
-Прокачайте ваше NuxtJS приложение с модулем `@nuxtjs/content`: пишите в директории `content/` и получайте ваши Markdown, JSON, YAML и CSV файлы через MongoDB подобное API, работает как **базирующаяся на Git безголовая CMS**.
+Прокачайте ваше NuxtJS приложение с модулем `@nuxt/content`: пишите в директории `content/` и получайте ваши Markdown, JSON, YAML и CSV файлы через MongoDB подобное API, работает как **базирующаяся на Git безголовая CMS**.
 
 ## Особенности
 

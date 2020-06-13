@@ -16,7 +16,7 @@ features:
 csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
-Renforcez votre application NuxtJS avec le module `@nuxtjs/content` : écrivez dans un répertoire `content/` et récupérez vos fichiers Markdown, JSON, YAML et CSV à travers une API de type MongoDB, agissant comme un **Headless CMS basé sur Git**.
+Renforcez votre application NuxtJS avec le module `@nuxt/content` : écrivez dans un répertoire `content/` et récupérez vos fichiers Markdown, JSON, YAML et CSV à travers une API de type MongoDB, agissant comme un **Headless CMS basé sur Git**.
 
 ## Fonctionnalités
 

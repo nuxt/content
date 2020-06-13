@@ -43,7 +43,7 @@ You can add a YAML front matter block to your markdown files. The front matter m
 ```md
 ---
 title: Introduction
-description: Learn how to use @nuxtjs/content.
+description: Learn how to use @nuxt/content.
 ---
 ```
 
@@ -53,7 +53,7 @@ These variables will be injected into the document:
 {
   body: Object
   title: "Introduction"
-  description: "Learn how to use @nuxtjs/content."
+  description: "Learn how to use @nuxt/content."
   dir: "/"
   extension: ".md"
   path: "/index"
