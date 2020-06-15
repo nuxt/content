@@ -14,18 +14,25 @@ This module globally injects `$content` instance, meaning that you can access it
 - `path`
   - Type: `String`
   - Default: `/`
-  - `required`
 - `options`
   - Type: `Object`
-  - Default: `{ deep: false }`
+  - Default: `{}`
   - Version: **v1.3.0**
+- `options.deep`
+  - Type: `Boolean`
+  - Default: `false`
+  - Version: **v1.3.0**
+  - *Fetch files from subdirectories*
+- `options.text`
+  - Type: `Boolean`
+  - Default: `false`
+  - Version: **v2.0.0**
+  - *Returns the original markdown content in a `text` variable*
 - Returns a chain sequence
 
 > You can also give multiple arguments: `$content('articles', params.slug)` will be translated to `/articles/${params.slug}`
 
-`path` can be a file or a directory. If path is a file, `fetch()` will return an `Object`, if it's a directory it will return an `Array`.
-
-You can pass `{ deep: true }` as a second argument in order to fetch files from subdirectories.
+`path` can be a file or a directory. If `path` is a file, `fetch()` will return an `Object`, if it's a directory it will return an `Array`.
 
 All the methods below can be chained and return a chain sequence, except `fetch` which returns a `Promise`.
 
