@@ -1,5 +1,5 @@
 import Vue from 'vue'
 
-import Hello from '~/components/hello'
+import MovieInfo from '~/components/MovieInfo'
 
-Vue.component(Hello.name, Hello)
+Vue.component(MovieInfo.name, MovieInfo)
