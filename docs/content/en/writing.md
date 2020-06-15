@@ -36,6 +36,10 @@ Make sure to use the `<nuxt-content>` component to display the `body` of your ma
 
 > You can check the [basic syntax guide](https://www.markdownguide.org/basic-syntax) to help you master Markdown
 
+<base-alert type="info">
+In development you can live edit your content by double-clicking on the `nuxt-content` component. A textarea will allow you to edit the content of the current file and will save it on the file-system.
+</base-alert>
+
 ### Front Matter
 
 You can add a YAML front matter block to your markdown files. The front matter must be the first thing in the file and must take the form of valid YAML set between triple-dashed lines. Here is a basic example:
@@ -295,7 +299,6 @@ Also note that you **cannot use** `<template>` tags in your markdown (eg: when u
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
 
 > Take a look at the right side of this page for an example.
-
 
 ### Example
 
