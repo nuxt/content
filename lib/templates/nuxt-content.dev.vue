@@ -34,24 +34,20 @@ export default {
   },
   methods: {
     async toggleEdit () {
-      if (!this.file) {
-        this.fetchFile()
-      }
-
       this.isEditing = !this.isEditing
-      if (!this.isEditing) {
-        await this.saveFile()
-      }
+
       if (this.isEditing) {
+        await this.fetchFile()
+
         const actualScrollY = window.scrollY
         setTimeout(() => {
           this.$refs.textarea.focus()
           this.onType()
           window.scrollTo(window.scrollX, actualScrollY)
         }, 100)
+      } else {
+        await this.saveFile()
       }
-      // Refresh file in case of multiple tabs open
-      await this.fetchFile()
     },
     async fetchFile () {
       this.file = await fetch(this.fileUrl).then(res => res.text())
