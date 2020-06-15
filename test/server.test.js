@@ -284,4 +284,10 @@ describe('module', () => {
     expect(typeof item.createdAt).toBe('string')
     expect(typeof item.updatedAt).toBe('string')
   })
+
+  test('$content() on file with text', async () => {
+    const item = await $content('home', { text: true }).fetch()
+
+    expect(item).toHaveProperty('text')
+  })
 })
