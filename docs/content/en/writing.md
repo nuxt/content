@@ -319,7 +319,6 @@ A `toc` array property will be injected into your document, listing all the `h2`
 
 > Take a look at the right side of this page for an example.
 
-
 ### Example
 
 A file `content/home.md`:

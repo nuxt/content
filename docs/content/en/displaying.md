@@ -54,3 +54,15 @@ Depending on what you're using to design your app, you may need to write some st
 ```
 
 You can find an example in the [docs directory](https://github.com/nuxt/content/blob/master/docs/pages/_slug.vue).
+
+## Live Editing
+
+> Available since v2.0
+
+**In development**, you can edit your content by **double-clicking** on the `<nuxt-content>` component. A textarea will allow you to edit the content of the current file and will save it on the file-system.
+
+<video poster="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.jpg" loop playsinline controls>
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.webm" type="video/webm" />
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1592314331/nuxt-content-ui_otfj5y.mp4" type="video/mp4" />
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.ogv" type="video/ogg" />
+</video>
