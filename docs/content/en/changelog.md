@@ -19,4 +19,4 @@ category: Getting started
 - You can use local plugins using `~/plugins/remark-plugin.js`.
 - You can register and configure plugins on the same line like `['remark-plugin', { option: 1 }]`.
 
-Everything is documented in [this section](/configuration#markdown)./
+Everything is documented in [this section](/configuration#markdown).
