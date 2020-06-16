@@ -26,7 +26,7 @@
               </li>
             </ul>
             <h3 class="lg:hidden aside-title px-4">More</h3>
-            <div class="lg:hidden flex items-center px-4">
+            <div class="lg:hidden flex items-center px-4 mb-8">
               <a
                 href="https://twitter.com/nuxt_js"
                 target="_blank"
