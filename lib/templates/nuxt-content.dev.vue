@@ -4,11 +4,10 @@
       v-show="isEditing"
       v-model="file"
       ref="textarea"
-      @keydown="onType"
-      @keyup.esc="toggleEdit"
+      @keyup="onType"
       @blur="toggleEdit"
     />
-    <nuxt-content-dev v-show="!isEditing" :document="document" @dblclick="toggleEdit" />
+    <nuxt-content-dev ref="content" v-show="!isEditing" :document="document" @dblclick="toggleEdit" />
   </div>
 </template>
 
@@ -34,20 +33,23 @@ export default {
   },
   methods: {
     async toggleEdit () {
-      this.isEditing = !this.isEditing
-
       if (this.isEditing) {
-        await this.fetchFile()
-
-        const actualScrollY = window.scrollY
-        setTimeout(() => {
-          this.$refs.textarea.focus()
-          this.onType()
-          window.scrollTo(window.scrollX, actualScrollY)
-        }, 100)
-      } else {
         await this.saveFile()
+        this.isEditing = false
+        return
       }
+      // Start editing mode
+      const contentHeight = this.$refs.content.offsetHeight
+      const actualScrollY = window.scrollY
+      // Fetch file content
+      await this.fetchFile()
+      this.isEditing = true
+      this.$refs.textarea.style.minHeight = `${contentHeight}px`
+      await this.waitFor(10)
+      this.$refs.textarea.focus()
+      this.onType()
+      await this.waitFor(10)
+      window.scrollTo(window.scrollX, actualScrollY)
     },
     async fetchFile () {
       this.file = await fetch(this.fileUrl).then(res => res.text())
@@ -55,12 +57,13 @@ export default {
     async saveFile () {
       await fetch(this.fileUrl, { method: 'PUT', body: JSON.stringify({ file: this.file }) }).then(res => res.json())
     },
+    waitFor(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    },
     onType () {
       const el = this.$refs.textarea
 
-      if (el) {
-        el.style.height = el.scrollHeight + 'px';
-      }
+      el.style.height = el.scrollHeight + 'px';
     }
   }
 }
