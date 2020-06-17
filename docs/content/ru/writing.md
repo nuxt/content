@@ -261,7 +261,30 @@ multiselectOptions:
 
 </base-alert>
 
-Обратите внимание, что вы **не можете использовать** теги `<template>`  в вашем markdown (например: при использовании с `v-slot`).
+#### Шаблоны
+
+ВЫ можете использовать теги `template` для доставки контента внутри вашего Vue.js компонента:
+
+```html
+<my-component>
+  <template #named-slot>
+    <p>Контент именованного слота.</p>
+  </template>
+</my-component>
+```
+
+Однако, вы не можете использовать
+[динамический контент](https://vuejs.org/v2/guide/syntax.html) не используйте
+[входные параметры слота](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots). например,
+**это не будет работать**:
+
+```html
+<my-component>
+  <template #named-slot="slotProps">
+    <p>{{ slotProps.someProperty }}</p>
+  </template>
+</my-component>
+```
 
 ### Оглавление
 
