@@ -263,7 +263,7 @@ multiselectOptions:
 
 #### Шаблоны
 
-ВЫ можете использовать теги `template` для доставки контента внутри вашего Vue.js компонента:
+Вы можете использовать теги `template` для отрисовки контента внутри вашего Vue.js компонента:
 
 ```html
 <my-component>
@@ -274,7 +274,7 @@ multiselectOptions:
 ```
 
 Однако, вы не можете использовать
-[динамический контент](https://vuejs.org/v2/guide/syntax.html) не используйте
+[динамический контент](https://vuejs.org/v2/guide/syntax.html), не используйте
 [входные параметры слота](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots). например,
 **это не будет работать**:
 
