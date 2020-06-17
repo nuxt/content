@@ -132,3 +132,64 @@ export default {
 
 Теперь, каждый раз, когда вы будете обновлять файл в вашей директории `content/`, будет выполняться метод `fetchCategories`.
 Эта документация использует его и вы можете узнать больше, взглянув на[plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
+
+## Интеграция с @nuxtjs/feed
+
+С случае со статьями, контент может использоваться для генерации новостной ленты с использованием модуля [@nuxtjs/feed](https://github.com/nuxt-community/feed-module).
+
+<base-alert type="info">
+
+Для использования `$content` внутри параметра `feed`, вам нужно добавить `@nuxt/content` перед `@nuxtjs/feed` в `modules` вашего файла конфигурации.
+
+</base-alert>
+
+**Пример**
+
+```js
+export default {
+  modules: [
+    '@nuxt/content',
+    '@nuxtjs/feed'
+  ],
+
+  feed () {
+    const baseUrlArticles = 'https://mywebsite.com/articles'
+    const baseLinkFeedArticles = '/feed/articles'
+    const feedFormats = {
+      rss: { type: 'rss2', file: 'rss.xml' },
+      atom: { type: 'atom1', file: 'atom.xml' },
+      json: { type: 'json1', file: 'feed.json' },
+    }
+    const { $content } = require('@nuxt/content')
+
+    const createFeedArticles = async function (feed) {
+      feed.options = {
+        title: 'Мой блог',
+        description: 'Я пишу про технологии',
+        link: baseUrlArticles,
+      }
+      const articles = await $content('articles').fetch()
+
+      articles.forEach((article) => {
+        const url = `${baseUrlArticles}/${article.slug}`
+
+        feed.addItem({
+          title: article.title,
+          id: url,
+          link: url,
+          date: article.published,
+          description: article.summary,
+          content: article.summary,
+          author: article.authors,
+        })
+      })
+    }
+
+    return Object.values(feedFormats).map(({ file, type }) => ({
+      path: `${baseLinkFeedArticles}/${file}`,
+      type: type,
+      create: createFeedArticles,
+    }))
+  }
+}
+```

@@ -8,7 +8,7 @@ interface NuxtContentInstance {
   surround(slug: String, options?: Object): NuxtContentInstance
   limit(n: Number | String): NuxtContentInstance
   skip(n: Number | String): NuxtContentInstance
-  fetch<T = Result | Result[]>(): T
+  fetch<T = Result | Result[]>(): Promise<T>
 }
 
 type Result = (Object[] & {

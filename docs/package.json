@@ -12,10 +12,10 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxt/content": "^1.3.0",
+    "@nuxt/content": "^1.3.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26519060.8933d375",
+    "nuxt-edge": "^2.13.0-26537781.68d498b2",
     "nuxt-i18n": "^6.12.2",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",
@@ -27,7 +27,7 @@
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/tailwindcss": "^2.0.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.1.0",
+    "eslint": "^7.2.0",
     "eslint-plugin-nuxt": ">=1.0.0",
     "nuxt-ackee": "^1.0.1",
     "tailwindcss-dark-mode": "^1.1.4",

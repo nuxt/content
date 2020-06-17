@@ -585,4 +585,26 @@ describe('module', () => {
       })
     ]))
   })
+
+  test('GET /_content/home should have valid dates', async () => {
+    const item = await get('/_content/home', {
+      json: true,
+      method: 'GET'
+    })
+
+    expect(typeof item.createdAt).toBe('string')
+    expect(typeof item.updatedAt).toBe('string')
+  })
+
+  test('GET /_content/home with text', async () => {
+    const item = await get('/_content/home', {
+      json: true,
+      method: 'GET',
+      qs: {
+        text: true
+      }
+    })
+
+    expect(item).toHaveProperty('text')
+  })
 })

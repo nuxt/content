@@ -98,22 +98,21 @@ export default {
     }
   },
   i18n: {
-    //   locales: [{
-    //     code: 'fr',
-    //     iso: 'fr-FR',
-    //     file: 'fr-FR.js',
-    //     name: 'Français'
-    //   }, {
-    //     code: 'en',
-    //     iso: 'en-US',
-    //     file: 'en-US.js',
-    //     name: 'English'
-    //   }],
     locales: [{
       code: 'ru',
       iso: 'ru-RU',
       file: 'ru-RU.js',
       name: 'Русский'
+    }, {
+      code: 'fr',
+      iso: 'fr-FR',
+      file: 'fr-FR.js',
+      name: 'Français'
+    }, {
+      code: 'ja',
+      iso: 'ja_JP',
+      file: 'ja_JP.js',
+      name: '日本語'
     }, {
       code: 'en',
       iso: 'en-US',

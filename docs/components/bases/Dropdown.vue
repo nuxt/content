@@ -1,9 +1,6 @@
 <template>
   <div
-    v-click-away="{
-      exclude: [],
-      handler: 'close'
-    }"
+    v-click-away="'close'"
     class="relative"
     @mouseenter="open = true"
     @mouseleave="open = false"
@@ -18,7 +15,6 @@
         </div>
       </div>
     </transition>
-
   </div>
 </template>
 

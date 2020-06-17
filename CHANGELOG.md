@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.2](https://github.com/nuxt/content/compare/v1.3.1...v1.3.2) (2020-06-10)
+
+
+### Bug Fixes
+
+* avoid date mismatch with API ([#119](https://github.com/nuxt/content/issues/119)) ([b3346cc](https://github.com/nuxt/content/commit/b3346cc6b3554cfcc0f1ae7da974c3401326593c))
+* **docs:** correct css attr ([#116](https://github.com/nuxt/content/issues/116)) ([70c70dc](https://github.com/nuxt/content/commit/70c70dc6eb5f8705f92d62d915666065fd8e2047))
+
 ### [1.3.1](https://github.com/nuxt/content/compare/v1.3.0...v1.3.1) (2020-06-04)
 
 

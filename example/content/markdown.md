@@ -9,7 +9,18 @@ description: This is a .md file
 
 ## Custom components
 
-<hello name="Custom Component"></hello>
+<movie-info name="Porco Rosso">
+  <template #summary>
+
+Porco Rosso (Japanese: 紅の豚, Hepburn: _Kurenai no Buta_, lit. _Crimson Pig_) is a
+1992 Japanese animated comedy-adventure film written and directed by
+[Hayao Miyazaki]. It is based on _Hikōtei Jidai_ ("The Age of the Flying Boat"), a
+three-part 1989 watercolor manga by Miyazaki.
+
+[Hayao Miyazaki]: https://en.wikipedia.org/wiki/Hayao_Miyazaki
+
+  </template>
+</movie-info>
 
 ## Links
 

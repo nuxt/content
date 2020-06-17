@@ -8,26 +8,7 @@
         </a>
       </div>
       <div class="flex">
-        <Dropdown v-if="availableLocales.length">
-          <template #trigger="{ open }">
-            <button
-              class="p-2 rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
-              :class="{ 'text-green-500': open }"
-            >
-              <icon-translate class="w-6 h-6" />
-            </button>
-          </template>
-
-          <ul class="py-2">
-            <li v-for="locale in availableLocales" :key="locale.code">
-              <nuxt-link
-                v-if="$i18n.locale !== locale.code"
-                :to="switchLocalePath(locale.code)"
-                class="flex px-4 items-center hover:text-green-500 leading-7"
-              >{{ locale.name }}</nuxt-link>
-            </li>
-          </ul>
-        </Dropdown>
+        <LangSwitcher class="p-2" />
         <ColorSwitcher class="p-2 pr-0" />
       </div>
     </div>
@@ -43,7 +24,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

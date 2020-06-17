@@ -7,19 +7,13 @@
           class="h-screen w-full lg:w-1/5 fixed lg:sticky top-0 left-0 bottom-0 pt-16 lg:-mt-16 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30 lg:border-r dark:border-gray-800"
           :class="{ 'block': menu, 'hidden': !menu }"
         >
-          <div class="container mx-auto overflow-auto h-full ">
+          <div class="container mx-auto overflow-auto h-full">
             <div class="lg:hidden flex-1 flex justify-center px-4 mt-8 mb-4 w-full">
               <SearchInput />
             </div>
             <ul class="lg:pl-0 p-4 lg:py-8 lg:pr-8">
-              <li
-                v-for="(docs, category) in categories"
-                :key="category"
-                class="mb-6 last:mb-0"
-              >
-                <h3
-                  class="aside-title"
-                >{{ category }}</h3>
+              <li v-for="(docs, category) in categories" :key="category" class="mb-6 last:mb-0">
+                <h3 class="aside-title">{{ category }}</h3>
                 <ul>
                   <li v-for="doc of docs" :key="doc.slug">
                     <NuxtLink
@@ -32,7 +26,7 @@
               </li>
             </ul>
             <h3 class="lg:hidden aside-title px-4">More</h3>
-            <div class="lg:hidden flex items-center px-4">
+            <div class="lg:hidden flex items-center px-4 mb-8">
               <a
                 href="https://twitter.com/nuxt_js"
                 target="_blank"
@@ -54,6 +48,7 @@
               >
                 <icon-github class="w-6 h-6" />
               </a>
+              <LangSwitcher class="mr-4" />
               <ColorSwitcher />
             </div>
           </div>
@@ -113,7 +108,7 @@ export default {
 }
 </script>
 
-<style type="postcss">
+<style lang="postcss">
 .aside-title {
   @apply mb-3 text-gray-500 uppercase tracking-wide font-bold text-sm;
 }

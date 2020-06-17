@@ -43,7 +43,7 @@ You can add a YAML front matter block to your markdown files. The front matter m
 ```md
 ---
 title: Introduction
-description: Learn how to use @nuxtjs/content.
+description: Learn how to use @nuxt/content.
 ---
 ```
 
@@ -53,7 +53,7 @@ These variables will be injected into the document:
 {
   body: Object
   title: "Introduction"
-  description: "Learn how to use @nuxtjs/content."
+  description: "Learn how to use @nuxt/content."
   dir: "/"
   extension: ".md"
   path: "/index"
@@ -89,10 +89,12 @@ It will be transformed to it's JSON AST structure, and by using the `nuxt-conten
 ```
 
 > The links in headings are empty and therefore hidden, so it's up to you to style them. For an example, try hovering one of the headers in these docs.
-  
+
 ### Links
 
-Links are transformed to add valid `target` and `rel` attributes. You can change this behaviour, see [configuration](/configuration#markdownexternallinks). Relative links are also automatically transformed to `nuxt-link` to provide navigation between page components with enhanced performance through smart prefetching.
+Links are transformed to add valid `target` and `rel` attributes using [remark-external-links](https://github.com/remarkjs/remark-external-links). You can check [here](/configuration#markdown) to learn how to configure this plugin.
+
+Relative links are also automatically transformed to [nuxt-link](https://nuxtjs.org/api/components-nuxt-link/) to provide navigation between page components with enhanced performance through smart prefetching.
 
 Here is an example using external, relative, markdown and html links:
 
@@ -116,7 +118,7 @@ title: Home
 
 ### Footnotes
 
-This module supports extended markdown syntax for footnotes.
+This module supports extended markdown syntax for footnotes using [remark-footnotes](https://github.com/remarkjs/remark-footnotes). You can check [here](/configuration#markdown) to learn how to configure this plugin.
 
 Here is an example using footnotes:
 
@@ -286,14 +288,36 @@ These components will be rendered using the `<nuxt-content>` component, see [dis
 
 </base-alert>
 
-Also note that you **cannot use** `<template>` tags in your markdown (eg: when using with `v-slot`).
+#### Templates
+
+You can use `template` tags for content distribution inside your Vue.js components:
+
+```html
+<my-component>
+  <template #named-slot>
+    <p>Named slot content.</p>
+  </template>
+</my-component>
+```
+
+However, you cannot render
+[dynamic content](https://vuejs.org/v2/guide/syntax.html) nor use
+[slot props](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots). I.e.,
+**this wont work**:
+
+```html
+<my-component>
+  <template #named-slot="slotProps">
+    <p>{{ slotProps.someProperty }}</p>
+  </template>
+</my-component>
+```
 
 ### Table of contents
 
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
 
 > Take a look at the right side of this page for an example.
-
 
 ### Example
 

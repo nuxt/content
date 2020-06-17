@@ -9,17 +9,33 @@ category: Начало
 
 ## Методы
 
-### $content(путь)
+### $content(путь, параметры?)
 
 - `путь`
   - Тип: `String`
   - По умолчанию: `/`
   - `обязательное`
+- `параметры`
+  - Тип: `Object`
+  - По умолчанию: `{}`
+  - Версия: **v1.3.0**
+- `параметры.deep`
+  - Тип: `Boolean`
+  - По умолчанию: `false`
+  - Версия: **v1.3.0**
+  - *Получение файлов из поддиректорий*
+- `параметры.text`
+  - Тип: `Boolean`
+  - По умолчанию: `false`
+  - Версия: **v2.0.0**
+  - *Возвращает оригинальное содержание markdown в переменной `text`*
 - Возвращает последовательность цепочек
 
 > Вы можете передать несколько аргументов: `$content('articles', params.slug)` будет преобразовано в `/articles/${params.slug}`
 
-`путь` может быть файлом или директорией. Если это файл, то `fetch()` вернет `Object`, если директория, то вернет `Array`.
+`путь` может быть файлом или директорией. Если `путь` это файл, то `fetch()` вернет `Object`, если директория, то вернет `Array`.
+
+Вы можете использовать `{ deep: true }` как второй аргумент, чтобы получить файлы из поддиректорий.
 
 Все приведенные ниже методы могут быть объединены в цепочку и возвращать последовательность цепочек, кроме `fetch`, который возвращает `Promise`.
 
@@ -55,6 +71,13 @@ const articles = await this.$content('articles').where({ title: { $eq: 'Home' } 
 const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fetch()
 // $in
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
+```
+
+Для фильтрации в объектах и массивах вам нужно включить nestedProperties, взгляните на [конфигурацию](/configuration#nestedproperties).
+
+```js
+const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
 Этот модуль использует LokiJS под капотом, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
