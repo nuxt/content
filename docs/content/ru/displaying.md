@@ -54,3 +54,15 @@ export default {
 ```
 
 Вы можете найти примеры в [директории документации](https://github.com/nuxt/content/blob/master/docs/pages/_slug.vue).
+
+## Редактирование контента в реальном времени
+
+> Доступно начиная с v2.0
+
+**В режиме разработки** вы можете редактировать контент **дважды кликнув** на компонент `<nuxt-content>`. В области текста вы сможете редактировать контент текущего файла и изменения будут сохранены на диске.
+
+<video poster="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.jpg" loop playsinline controls>
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.webm" type="video/webm" />
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1592314331/nuxt-content-ui_otfj5y.mp4" type="video/mp4" />
+  <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content-ui_otfj5y.ogv" type="video/ogg" />
+</video>
