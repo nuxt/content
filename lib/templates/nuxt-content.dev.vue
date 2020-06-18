@@ -4,10 +4,15 @@
       v-show="isEditing"
       v-model="file"
       ref="textarea"
-      @keyup="onType"
+      @keyup.stop="onType"
       @blur="toggleEdit"
     />
-    <nuxt-content-dev ref="content" v-show="!isEditing" :document="document" @dblclick="toggleEdit" />
+    <nuxt-content-dev
+      ref="content"
+      v-show="!isEditing"
+      :document="document"
+      @dblclick="toggleEdit"
+    />
   </div>
 </template>
 
@@ -57,7 +62,7 @@ export default {
     async saveFile () {
       await fetch(this.fileUrl, { method: 'PUT', body: JSON.stringify({ file: this.file }) }).then(res => res.json())
     },
-    waitFor(ms) {
+    waitFor (ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
     },
     onType () {
@@ -75,5 +80,6 @@ export default {
 }
 .nuxt-content-container textarea {
   width: 100%;
+  padding: 8px;
 }
 </style>
