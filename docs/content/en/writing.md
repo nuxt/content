@@ -313,6 +313,14 @@ However, you cannot render
 </my-component>
 ```
 
+#### Global components
+
+Since **v2.0.0**, you can now put your components in the `components/global` directory so you don't have to import them in your pages.
+
+In Nuxt.js `>= 2.13`, `@nuxt/components` is included by default, however if you use a previous version you have to manually install and add `@nuxt/components` to buildModules inside `nuxt.config.js`.
+
+> Take a look at [@nuxt/components documentation](https://github.com/nuxt/components#usage).
+
 ### Table of contents
 
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
