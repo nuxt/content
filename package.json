@@ -64,10 +64,10 @@
     "babel-eslint": "latest",
     "babel-jest": "^26.0.1",
     "codecov": "^3.7.0",
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.0",
     "husky": "latest",
     "jest": "^26.0.1",
-    "nuxt-edge": "^2.13.0-26537781.68d498b2",
+    "nuxt-edge": "^2.13.0-26541346.39dd866b",
     "puppeteer": "^4.0.0",
     "standard-version": "^8.0.0",
     "tib": "latest"
