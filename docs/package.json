@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-content-docs",
+  "name": "@nuxt/content-docs",
   "version": "1.0.0",
   "description": "Docs for @nuxt/content",
   "author": "NuxtJS",
@@ -15,7 +15,7 @@
     "@nuxt/content": "^1.3.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26537781.68d498b2",
+    "nuxt": "^2.13.0",
     "nuxt-i18n": "^6.12.2",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",
