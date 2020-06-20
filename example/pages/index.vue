@@ -14,6 +14,8 @@
     <pre>{{ csv }}</pre>
     <h2>YAML</h2>
     <pre>{{ yaml }}</pre>
+    <h2>YML</h2>
+    <pre>{{ yml }}</pre>
   </div>
 </template>
 
@@ -26,13 +28,15 @@ export default {
     const json5 = await $content('json5').fetch()
     const csv = await $content('csv').fetch()
     const yaml = await $content('yaml').fetch()
+    const yml = await $content('yml').fetch()
 
     return {
       markdown,
       json,
       json5,
       csv,
-      yaml
+      yaml,
+      yml
     }
   }
 }
