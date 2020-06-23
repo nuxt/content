@@ -19,7 +19,7 @@ content/
   home.md
 ```
 
-This module will parse `.md`, `.yaml`, `.csv`, `.json`, `.json5` files and generate the following properties:
+This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5` files and generate the following properties:
 
 - `dir`
 - `path`
@@ -424,7 +424,7 @@ Will be transformed into:
 }
 ```
 
-## YAML
+## YAML / YML
 
 Data defined will be injected into the document.
 
