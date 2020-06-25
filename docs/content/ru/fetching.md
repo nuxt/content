@@ -51,6 +51,18 @@ category: Начало
 const { title } = await this.$content('article-1').only(['title']).fetch()
 ```
 
+### without(keys)
+
+- `keys`
+  - Type: `Array` | `String`
+  - `required`
+
+Remove a subset of fields.
+
+```js
+const { title, ...propsWithoutBody } = await this.$content('article-1').without(['body']).fetch()
+```
+
 ### where(запрос)
 
 - `запрос`
