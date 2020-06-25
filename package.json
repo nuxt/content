@@ -57,20 +57,18 @@
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
-    "@commitlint/cli": "latest",
-    "@commitlint/config-conventional": "latest",
     "@nuxtjs/eslint-config": "^3.0.0",
-    "@nuxtjs/module-test-utils": "latest",
-    "babel-eslint": "latest",
+    "@nuxtjs/module-test-utils": "^1.6.1",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
     "codecov": "^3.7.0",
     "eslint": "^7.3.1",
-    "husky": "latest",
+    "husky": "^4.2.5",
+    "nuxt": "^2.13.1",
     "jest": "^26.1.0",
-    "nuxt-edge": "^2.13.0-26541346.39dd866b",
     "puppeteer": "^4.0.1",
     "standard-version": "^8.0.0",
-    "tib": "latest"
+    "tib": "^0.7.4"
   },
   "publishConfig": {
     "access": "public"

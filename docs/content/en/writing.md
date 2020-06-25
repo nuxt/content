@@ -313,6 +313,20 @@ However, you cannot render
 </my-component>
 ```
 
+#### Global components
+
+Since **v2.0.0** and Nuxt **v2.13.0**, you can now put your components in `components/global/` directory so you don't have to import them in your pages.
+
+```bash
+components/
+  global/
+    Hello.vue
+content/
+  home.md
+```
+
+Then in `content/home.md`, you can use `<hello></hello>` component without having to worry about importing it in your page.
+
 ### Table of contents
 
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
