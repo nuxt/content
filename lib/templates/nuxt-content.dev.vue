@@ -9,6 +9,7 @@
     />
     <nuxt-content-dev
       ref="content"
+      :class="staticClass"
       v-show="!isEditing"
       :document="document"
       @dblclick="toggleEdit"
@@ -27,8 +28,20 @@ export default {
   props: NuxtContent.props,
   data () {
     return {
+      staticClass: [],
       isEditing: false,
       file: null
+    }
+  },
+  mounted () {
+    if (this.$vnode.data.class) {
+      this.staticClass = this.staticClass.concat(this.$vnode.data.class)
+      delete this.$vnode.data.class
+    }
+
+    if (this.$vnode.data.staticClass) {
+      this.staticClass = this.staticClass.concat(this.$vnode.data.staticClass)
+      delete this.$vnode.data.staticClass
     }
   },
   computed: {
