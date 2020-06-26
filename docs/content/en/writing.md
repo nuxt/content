@@ -465,12 +465,19 @@ Will be transformed into:
   "extension": ".xml",
   "body": {
     "xml": {
-      "item": {
-        "prop": "abc",
-        "title": "Title",
-        "description": "Hello World"
+      "item": [
+        {
+          "$": {
+            "prop": "abc"
+          },
+          "title": [
+            "Title"
+          ],
+          "description": [
+            "Hello World"
+          ]
       }
-    }
+    ]
   }
 }
 ```
