@@ -449,9 +449,15 @@ Will be transformed into:
   "slug": "home",
   "path": "/home",
   "extension": ".xml",
-  "body": [
-    // TODO:
-  ]
+  "body": {
+    "xml": {
+      "item": {
+        "prop": "abc",
+        "title": "Title",
+        "description": "Hello World"
+      }
+    }
+  }
 }
 ```
 
