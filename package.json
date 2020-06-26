@@ -52,7 +52,8 @@
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
     "unified": "^9.0.0",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "xml2json": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.3",
