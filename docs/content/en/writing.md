@@ -19,7 +19,7 @@ content/
   home.md
 ```
 
-This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5` files and generate the following properties:
+This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml` files and generate the following properties:
 
 - `dir`
 - `path`
@@ -423,6 +423,38 @@ Will be transformed into:
   ]
 }
 ```
+
+## XML
+
+XML will be parsed
+
+### Example
+
+A file `content/home.xml`:
+
+```xml
+<xml>
+  <item prop="abc">
+    <title>Title</title>
+    <description>Hello World</description>
+  </item>
+</xml>
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".xml",
+  "body": [
+    // TODO:
+  ]
+}
+```
+
 
 ## YAML / YML
 
