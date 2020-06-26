@@ -57,7 +57,7 @@ You can find an example in the [docs directory](https://github.com/nuxt/content/
 
 ## Live Editing
 
-> Available since v2.0
+> Available in version **>= v1.4.0**
 
 **In development**, you can edit your content by **double-clicking** on the `<nuxt-content>` component. A textarea will allow you to edit the content of the current file and will save it on the file-system.
 
