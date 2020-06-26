@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="alert border-l-4 p-4 mb-4"
-    :class="`alert-${type}`"
-  >
+  <div class="alert border-l-4 p-4 mb-4" :class="`alert-${type}`">
     <div class="flex">
       <div class="flex-shrink-0 self-start pt-1">
         <IconInfo v-if="type === 'info'" class="alert-icon" />
