@@ -17,16 +17,16 @@ This module globally injects `$content` instance, meaning that you can access it
 - `options`
   - Type: `Object`
   - Default: `{}`
-  - Version: **v1.3.0**
+  - Version: **>= v1.3.0**
 - `options.deep`
   - Type: `Boolean`
   - Default: `false`
-  - Version: **v1.3.0**
+  - Version: **>= v1.3.0**
   - *Fetch files from subdirectories*
 - `options.text`
   - Type: `Boolean`
   - Default: `false`
-  - Version: **v2.0.0**
+  - Version: **>= v1.4.0**
   - *Returns the original markdown content in a `text` variable*
 - Returns a chain sequence
 
