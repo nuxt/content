@@ -263,6 +263,14 @@ This module uses `js-yaml` to parse `.yaml`, `.yml` files, you can check here fo
 
 Note that we force `json: true` option.
 
+
+### `xml`
+
+- Type: `Object`
+- Default: `{}`
+
+This module uses `xml2js` to parse `.xml` files, you can check here for [options](https://www.npmjs.com/package/xml2js#options).
+
 ### `csv`
 
 - Type: `Object`
@@ -298,7 +306,8 @@ export default {
       }
     },
     yaml: {},
-    csv: {}
+    csv: {},
+    xml: {}
   }
 }
 ```
