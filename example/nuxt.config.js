@@ -8,6 +8,7 @@ module.exports = {
   modules: [
     contentModule
   ],
+  components: true,
   content: {
     nestedProperties: [
       'categories.slug'

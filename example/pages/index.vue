@@ -1,5 +1,7 @@
 <template>
   <div>
+    <nuxt-link to="/articles">Articles</nuxt-link>
+    <nuxt-link to="/products">Products</nuxt-link>
     <h1>Home</h1>
     <h2>Markdown</h2>
     <pre>{{ markdown }}</pre>
