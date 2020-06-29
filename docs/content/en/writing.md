@@ -164,7 +164,7 @@ http.createServer((req, res) => {
 
 After rendering with the `nuxt-content` component, it will look like this:
 
-```html
+```html[server.js]
 <div class="nuxt-content-highlight">
   <span class="filename">server.js</span>
   <pre class="language-js" data-line="1,3-5">
@@ -177,7 +177,7 @@ After rendering with the `nuxt-content` component, it will look like this:
 
 > Line numbers are added to the `pre` tag in `data-line` attribute.
 
-> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right on code blocks.
+> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right of code blocks.
 
 ### Syntax highlighting
 
