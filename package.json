@@ -56,8 +56,8 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
-    "@babel/preset-env": "^7.10.3",
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
     "@nuxtjs/eslint-config": "^3.0.0",
     "@nuxtjs/module-test-utils": "^1.6.1",
     "babel-eslint": "^10.1.0",
