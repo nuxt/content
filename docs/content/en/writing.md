@@ -428,7 +428,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
-  "extension": ".json",
+  "extension": ".csv",
   "body": [
     {
       "title": "Home",
