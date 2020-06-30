@@ -44,9 +44,9 @@ export default {
     '@/plugins/categories',
     '@/plugins/i18n.client',
     '@/plugins/vue-scrollactive',
-    '@/plugins/components',
     '@/plugins/menu.client'
   ],
+  components: true,
   /*
   ** Give routes to static generation
   */
@@ -75,15 +75,6 @@ export default {
     '@nuxtjs/pwa',
     '@nuxt/content'
   ],
-  /*
-  ** Components auto import
-  ** See https://github.com/nuxt/components
-  */
-  components: {
-    dirs: [
-      { path: '@/components', pattern: '*.vue' }
-    ]
-  },
   /*
   ** Modules configuration
   */

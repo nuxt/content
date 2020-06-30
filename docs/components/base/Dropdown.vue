@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import ClickAway from '../directives/click-away'
+import ClickAway from '~/directives/click-away'
 
 export default {
   name: 'Dropdown',

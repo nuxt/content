@@ -76,7 +76,7 @@ content: {
 
 - Type `Array`
 - Default: `[]`
-- Version: **v1.3.0**
+- Version: **>= v1.3.0**
 
 Register nested properties to handle dot-notation and deep filtering.
 
@@ -199,7 +199,7 @@ export default {
 
 - Type: `Array`
 - Default: `['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes']`
-- Version: **v2.0.0**
+- Version: **>= v1.4.0**
 
 > You can take a look at the list of [remark plugins](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins).
 
@@ -207,9 +207,21 @@ export default {
 
 - Type: `Array`
 - Default: `['rehype-minify-whitespace', 'rehype-sort-attribute-values', 'rehype-sort-attributes', 'rehype-raw']`
-- Version: **v2.0.0**
+- Version: **>= v1.4.0**
 
 > You can take a look at the list of [rehype plugins](https://github.com/rehypejs/rehype/blob/master/doc/plugins.md#list-of-plugins).
+
+### `markdown.basePlugins`
+
+<base-alert>
+Deprecated. Use `markdown.remarkPlugins` as a function instead.
+</base-alert>
+
+### `markdown.plugins`
+
+<base-alert>
+Deprecated. Use `markdown.remarkPlugins` as an array instead.
+</base-alert>
 
 ### `markdown.prism.theme`
 
@@ -251,6 +263,14 @@ This module uses `js-yaml` to parse `.yaml`, `.yml` files, you can check here fo
 
 Note that we force `json: true` option.
 
+
+### `xml`
+
+- Type: `Object`
+- Default: `{}`
+
+This module uses `xml2js` to parse `.xml` files, you can check here for [options](https://www.npmjs.com/package/xml2js#options).
+
 ### `csv`
 
 - Type: `Object`
@@ -286,7 +306,8 @@ export default {
       }
     },
     yaml: {},
-    csv: {}
+    csv: {},
+    xml: {}
   }
 }
 ```

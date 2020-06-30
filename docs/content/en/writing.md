@@ -19,7 +19,7 @@ content/
   home.md
 ```
 
-This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5` files and generate the following properties:
+This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml` files and generate the following properties:
 
 - `dir`
 - `path`
@@ -164,7 +164,7 @@ http.createServer((req, res) => {
 
 After rendering with the `nuxt-content` component, it will look like this:
 
-```html
+```html[server.js]
 <div class="nuxt-content-highlight">
   <span class="filename">server.js</span>
   <pre class="language-js" data-line="1,3-5">
@@ -177,7 +177,7 @@ After rendering with the `nuxt-content` component, it will look like this:
 
 > Line numbers are added to the `pre` tag in `data-line` attribute.
 
-> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right on code blocks.
+> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right of code blocks.
 
 ### Syntax highlighting
 
@@ -313,6 +313,20 @@ However, you cannot render
 </my-component>
 ```
 
+#### Global components
+
+Since **v1.4.0** and Nuxt **v2.13.0**, you can now put your components in `components/global/` directory so you don't have to import them in your pages.
+
+```bash
+components/
+  global/
+    Hello.vue
+content/
+  home.md
+```
+
+Then in `content/home.md`, you can use `<hello></hello>` component without having to worry about importing it in your page.
+
 ### Table of contents
 
 A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
@@ -423,6 +437,51 @@ Will be transformed into:
   ]
 }
 ```
+
+## XML
+
+XML will be parsed
+
+### Example
+
+A file `content/home.xml`:
+
+```xml
+<xml>
+  <item prop="abc">
+    <title>Title</title>
+    <description>Hello World</description>
+  </item>
+</xml>
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".xml",
+  "body": {
+    "xml": {
+      "item": [
+        {
+          "$": {
+            "prop": "abc"
+          },
+          "title": [
+            "Title"
+          ],
+          "description": [
+            "Hello World"
+          ]
+      }
+    ]
+  }
+}
+```
+
 
 ## YAML / YML
 

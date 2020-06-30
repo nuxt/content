@@ -12,10 +12,10 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxt/content": "^1.3.2",
+    "@nuxt/content": "nuxt/content#dev",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "lodash.groupby": "^4.6.0",
-    "nuxt-edge": "^2.13.0-26541346.39dd866b",
+    "nuxt": "^2.13.2",
     "nuxt-i18n": "^6.12.2",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.4.6",

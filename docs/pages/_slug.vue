@@ -113,6 +113,10 @@ export default {
   }
 }
 
+.nuxt-content h4 {
+  @apply text-xl font-semibold mb-2 pb-1 border-b -mt-16 pt-20;
+}
+
 @screen lg {
   .nuxt-content h2 a,
   .nuxt-content h3 a {

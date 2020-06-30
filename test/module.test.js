@@ -403,6 +403,23 @@ describe('module', () => {
     ])
   })
 
+  test('GET /_content/articles with where', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'GET',
+      qs: {
+        tags_contains: 'webpack',
+        only: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
   test('POST /_content/articles with where (object)', async () => {
     const items = await get('/_content/articles', {
       json: true,

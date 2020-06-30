@@ -1,5 +1,7 @@
 <template>
   <div>
+    <nuxt-link to="/articles">Articles</nuxt-link>
+    <nuxt-link to="/products">Products</nuxt-link>
     <h1>Home</h1>
     <h2>Markdown</h2>
     <pre>{{ markdown }}</pre>
@@ -16,6 +18,8 @@
     <pre>{{ yaml }}</pre>
     <h2>YML</h2>
     <pre>{{ yml }}</pre>
+    <h2>XML</h2>
+    <pre>{{ xml }}</pre>
   </div>
 </template>
 
@@ -29,6 +33,7 @@ export default {
     const csv = await $content('csv').fetch()
     const yaml = await $content('yaml').fetch()
     const yml = await $content('yml').fetch()
+    const xml = await $content('xml').fetch()
 
     return {
       markdown,
@@ -36,7 +41,8 @@ export default {
       json5,
       csv,
       yaml,
-      yml
+      yml,
+      xml
     }
   }
 }
