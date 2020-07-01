@@ -155,6 +155,13 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
+<base-alert type="info">
+
+Check out [this example](/examples#search) on how to implement search into your app
+
+</base-alert>
+
+
 ### surround(slug, options)
 
 - `slug`

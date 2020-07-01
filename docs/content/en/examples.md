@@ -25,6 +25,52 @@ export default {
 
 ## Features
 
+### Search
+
+Add a search input component by using watch:
+
+```vue
+<template>
+  <div>
+    <input v-model="query" type="search" autocomplete="off" />
+
+    <ul v-if="articles.length">
+      <li v-for="article of articles" :key="article.slug">
+        <NuxtLink :to="{ name: 'blog-slug', params: { slug: article.slug } }">{{ article.title }}</NuxtLink>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      query: '',
+      articles: []
+    }
+  },
+  watch: {
+    async query (query) {
+      if (!query) {
+        this.articles = []
+        return
+      }
+
+      this.articles = await this.$content('articles')
+        .only(['title', 'slug'])
+        .sortBy('createdAt', 'asc')
+        .limit(12)
+        .search(query)
+        .fetch()
+    }
+  }
+}
+</script>
+```
+
+> Check out the [search documentation](/fetching#searchfield-value)
+
 ### Pagination
 
 Add previous and next links using the `surround` method:
@@ -62,7 +108,7 @@ export default {
 
 > Check out the [surround documentation](/fetching#surroundslug-options)
 
-### Table of contents
+### Table of Contents
 
 Add a table of contents by looping over our array of toc and use the `id` to link to it and the `text` to show the title. We can use the `depth` to style the titles differently:
 
@@ -82,7 +128,8 @@ Add a table of contents by looping over our array of toc and use the `id` to lin
 <script>
 export default {
   async asyncData({ $content, params }) {
-    const article = await $content('articles', params.slug).fetch()
+    const article = await $content('articles', params.slug)
+      .fetch()
 
     return {
       article
@@ -92,4 +139,4 @@ export default {
 </script>
 ```
 
-> Check out the [TOC documentation](/writing#table-of-contents)
+> Check out the [Table of Contents documentation](/writing#table-of-contents)
