@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <div
-      class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-r"
+      class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r"
       :class="{ '': doc.toc && doc.toc.length, 'lg:w-3/4': !doc.fullscreen }"
     >
       <article class="lg:px-8">

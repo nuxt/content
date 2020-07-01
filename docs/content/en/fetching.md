@@ -188,31 +188,11 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` and `skip` are ineffective when using this method.
 
-### Example of Previous and Next
+<base-alert type="info">
 
-```js
-async asyncData({ $content, params }) {
-    const [prev, next] = await $content('articles')
-      .only(['title', 'slug'])
-      .sortBy('createdAt', 'asc')
-      .surround(params.slug)
-      .fetch()
+Check out [this example](/examples#pagination) on how to implement prev and next links into your app
 
-    return {
-      prev,
-      next
-    }
-  },
-```
-
-```html
-<NuxtLink v-if="prev" :to="{ name: 'blog-slug', params: { slug: prev.slug } }">
-  {{ prev.title }}
-</NuxtLink>
-<NuxtLink v-if="next" :to="{ name: 'blog-slug', params: { slug: next.slug } }">
-  {{ next.title }}
-</NuxtLink>
-```
+</base-alert>
 
 ### fetch()
 

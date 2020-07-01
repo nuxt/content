@@ -4,55 +4,69 @@
     <main class="container mx-auto px-4 lg:px-8">
       <div class="flex flex-wrap relative">
         <aside
-          class="h-screen w-full lg:w-1/5 fixed lg:sticky top-0 left-0 bottom-0 pt-16 lg:-mt-16 lg:block bg-white dark:bg-gray-900 lg:bg-transparent z-30 lg:border-r dark:border-gray-800"
+          class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent"
           :class="{ 'block': menu, 'hidden': !menu }"
         >
-          <div class="container mx-auto overflow-auto h-full">
-            <div class="lg:hidden flex-1 flex justify-center px-4 mt-8 mb-4 w-full">
-              <SearchInput />
-            </div>
-            <ul class="lg:pl-0 p-4 lg:py-8 lg:pr-8">
-              <li v-for="(docs, category) in categories" :key="category" class="mb-6 last:mb-0 p-1">
-                <h3 class="aside-title">{{ category }}</h3>
+          <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24 overflow-y-scroll h-full lg:h-auto">
+            <ul class="lg:pl-0 p-4 lg:py-0 lg:pr-8">
+              <li class="mb-4 lg:hidden">
+                <SearchInput />
+              </li>
+              <li v-for="(docs, category) in categories" :key="category" class="mb-4">
+                <h3
+                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+                >{{ category }}</h3>
                 <ul>
-                  <li v-for="doc of docs" :key="doc.slug">
+                  <li v-for="doc of docs" :key="doc.slug" class="text-gray-600 dark:text-gray-500">
                     <NuxtLink
                       :to="toLink(doc.slug)"
-                      class="px-2 rounded font-medium py-1 block text-gray-600 dark:text-gray-500 hover:text-gray-800 dark-hover:text-gray-100"
-                      exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-green-200 dark:bg-green-900 dark-hover:text-green-200"
+                      class="px-2 rounded font-medium py-1 block hover:text-gray-800 dark-hover:text-gray-100"
+                      exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-white dark:bg-green-800 dark-hover:text-white"
                     >{{ doc.title }}</NuxtLink>
                   </li>
                 </ul>
               </li>
+              <li class="mb-4 lg:hidden">
+                <h3
+                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+                >More</h3>
+                <ul class="flex items-center ml-2">
+                  <li class="mr-4">
+                    <a
+                      href="https://twitter.com/nuxt_js"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Twitter"
+                      name="Twitter"
+                      class="hover:text-green-500"
+                    >
+                      <icon-twitter class="w-6 h-6" />
+                    </a>
+                  </li>
+                  <li class="mr-4">
+                    <a
+                      href="https://github.com/nuxt/content"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Github"
+                      name="Github"
+                      class="hover:text-green-500"
+                    >
+                      <icon-github class="w-6 h-6" />
+                    </a>
+                  </li>
+                  <li class="mr-4">
+                    <LangSwitcher />
+                  </li>
+                  <li>
+                    <ColorSwitcher />
+                  </li>
+                </ul>
+              </li>
             </ul>
-            <h3 class="lg:hidden aside-title px-4">More</h3>
-            <div class="lg:hidden flex items-center px-4 mb-8">
-              <a
-                href="https://twitter.com/nuxt_js"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Twitter"
-                name="Twitter"
-                class="hover:text-green-500 mr-4 ml-2"
-              >
-                <icon-twitter class="w-6 h-6" />
-              </a>
-
-              <a
-                href="https://github.com/nuxt/content"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Github"
-                name="Github"
-                class="hover:text-green-500 mr-4"
-              >
-                <icon-github class="w-6 h-6" />
-              </a>
-              <LangSwitcher class="mr-4" />
-              <ColorSwitcher />
-            </div>
           </div>
         </aside>
+
         <Nuxt class="w-full lg:w-4/5" />
       </div>
     </main>
@@ -107,17 +121,3 @@ export default {
   }
 }
 </script>
-
-<style lang="postcss">
-.aside-title {
-  @apply mb-3 text-gray-500 uppercase tracking-wide font-bold text-sm;
-}
-.dark-mode .aside-title {
-  @apply text-gray-600;
-}
-@screen lg {
-  .aside-title {
-    @apply mb-2 text-xs;
-  }
-}
-</style>

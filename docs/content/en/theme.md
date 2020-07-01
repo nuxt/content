@@ -2,7 +2,7 @@
 title: Themes (WIP)
 description: 'Add a theme and accelerate your development with Nuxt and @nuxt/content.'
 category: Community
-position: 10
+position: 12
 ---
 
 <br>

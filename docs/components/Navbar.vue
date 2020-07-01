@@ -14,7 +14,7 @@
             <IconLogo v-if="$colorMode.value === 'light'" class="h-8 w-auto" />
             <IconLogoDark v-else class="h-8 w-auto" />
             <div
-              class="rounded text-green-500 bg-green-100 border border-green-200 p-1 text-xs font-bold leading-none flex items-center justify-center ml-1 mb-4"
+              class="rounded text-green-500 dark:text-white bg-green-100 dark:bg-green-700 border border-green-200 dark:border-transparent p-1 text-xs font-bold leading-none flex items-center justify-center ml-1 mb-4"
             >{{ lastRelease.name }}</div>
           </NuxtLink>
         </div>

@@ -7,6 +7,24 @@ category: Community
 
 Check out these examples that can be copied directly into your application.
 
+## Usage
+
+### asyncData
+
+```js
+export default {
+  async asyncData({ $content, params }) {
+    const article = await $content('articles', params.slug).fetch()
+
+    return {
+      article
+    }
+  }
+}
+```
+
+## Features
+
 ### Pagination
 
 Add previous and next links using the `surround` method:
