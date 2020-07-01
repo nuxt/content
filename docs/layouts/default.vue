@@ -7,8 +7,8 @@
           class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent"
           :class="{ 'block': menu, 'hidden': !menu }"
         >
-          <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24 overflow-y-scroll h-full lg:h-auto">
-            <ul class="lg:pl-0 p-4 lg:py-0 lg:pr-8">
+          <div class="lg:sticky lg:top-0 lg:pt-16 lg:-mt-16 overflow-y-scroll h-full lg:h-auto">
+            <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
               <li class="mb-4 lg:hidden">
                 <SearchInput />
               </li>
