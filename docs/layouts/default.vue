@@ -12,7 +12,7 @@
               <SearchInput />
             </div>
             <ul class="lg:pl-0 p-4 lg:py-8 lg:pr-8">
-              <li v-for="(docs, category) in categories" :key="category" class="mb-6 last:mb-0">
+              <li v-for="(docs, category) in categories" :key="category" class="mb-6 last:mb-0 p-1">
                 <h3 class="aside-title">{{ category }}</h3>
                 <ul>
                   <li v-for="doc of docs" :key="doc.slug">
