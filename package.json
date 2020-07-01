@@ -39,7 +39,7 @@
     "mkdirp": "^1.0.4",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
-    "p-queue": "6.4.0",
+    "p-queue": "6.5.0",
     "prismjs": "^1.20.0",
     "rehype-raw": "^4.0.2",
     "rehype-sort-attribute-values": "^3.0.1",
