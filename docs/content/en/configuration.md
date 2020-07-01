@@ -232,6 +232,23 @@ This module handles code highlighting in markdown content using [PrismJS](https:
 
 It automatically pushes the desired PrismJS theme in your Nuxt.js config, so if you want to use a different theme than the default one, for example [prism-themes](https://github.com/PrismJS/prism-themes):
 
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn add prism-themes
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  npm install prism-themes
+  ```
+
+  </code-block>
+</code-group>
+
 ```js{}[nuxt.config.js]
 content: {
   markdown: {
