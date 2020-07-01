@@ -17,7 +17,7 @@ export default {
 
 Voir les [options par défaut](#configuration-par-défaut).
 
-## Prorpiétés
+## Propriétés
 
 ### `apiPrefix`
 
