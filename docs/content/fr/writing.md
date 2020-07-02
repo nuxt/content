@@ -144,9 +144,8 @@ Dans du Markdown, les blocs de code sont entourés de 3 backticks. Vous pouvez �
 
 Par défaut, le Markdown ne prend pas en charge les noms de fichiers ou la coloration de lignes particulières au sein des blocs de code. Toutefois, ce module le permet à l'aide de sa propre syntaxe personalisée:
 
-* Coloration des numéros de ligne entre accolades
-
-* Noms de fichiers entre crochets
+- Coloration des numéros de ligne entre accolades
+- Noms de fichiers entre crochets
 
 <pre class="language-js">
 ```js{1,3-5}[server.js]
