@@ -329,9 +329,25 @@ Then in `content/home.md`, you can use `<hello></hello>` component without havin
 
 ### Table of contents
 
-A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
+When fetching a document, we have access to a toc property which is an array of all the titles. Each title has an `id` so that it is possible to link to, a depth which is the type of heading it is. Only h2 and h3 titles are used for the toc. There is also a text property which is the text of the title.
+
+```json
+{
+  "toc": [{
+    "id": "welcome",
+    "depth": 2,
+    "text": "Welcome!"
+  }]
+}
+```
 
 > Take a look at the right side of this page for an example.
+
+<base-alert type="info">
+
+Check out [this example](/examples#table-of-contents) on how to implement a table of contents into your app
+
+</base-alert>
 
 ### Example
 
@@ -405,30 +421,6 @@ Will be transformed into:
 ```
 
 We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](/advanced#contentfilebeforeinsert) it.
-
-### Example
-
-As you can see we have access to a toc which is an array of all the titles. Each title has an `id` so that it is possible to link to, a depth which is the type of heading it is. Only h2 and h3 titles are used for the toc. There is also a text property which is the text of the title. 
-```
-"toc": [
-    {
-      "id": "welcome",
-      "depth": 2,
-      "text": "Welcome!"
-    }
-  ],
-```
-We can now use these properties above by looping over our array of toc and use the `id` to link to it and the `text` to show the title. We can use the `depth` to style the titles different
-
-```html
-<ul>
-  <li v-for="link of article.toc" :key="link.id" 
-      :class="{ 'toc2': link.depth === 2, 'toc3': link.depth === 3 }"
-  >
-    <NuxtLink :to="`#${link.id}`">{{ link.text }}</NuxtLink>
-  </li>
-</ul>
-```
 
 ## CSV
 
