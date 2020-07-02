@@ -27,6 +27,9 @@ export default {
 .alert p {
   @apply m-0 !important;
 }
+.alert a {
+  @apply text-gray-800 !important;
+}
 .alert-warning {
   @apply bg-orange-100 border-orange-400;
 }
@@ -38,6 +41,9 @@ export default {
 }
 .alert-warning .alert-content {
   @apply text-orange-700;
+}
+.dark-mode .alert a {
+  @apply text-white !important;
 }
 .dark-mode .alert-warning {
   @apply bg-yellow-900 border-yellow-700;
