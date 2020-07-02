@@ -7,7 +7,7 @@ export default async function ({ store, app }) {
   if (process.client && !store.state.categories[app.i18n.locale]) {
     await store.dispatch('fetchCategories')
   }
-  if (process.client && !store.state.releases) {
+  if (process.client && !store.state.releases.length) {
     await store.dispatch('fetchReleases')
   }
   // Hot reload on development
