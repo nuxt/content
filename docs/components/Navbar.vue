@@ -5,19 +5,15 @@
   >
     <div class="container mx-auto px-4 lg:px-8 flex-1">
       <div class="flex items-center justify-between h-16">
-        <div class="w-1/2 lg:w-1/6" @click.stop="noop">
-          <NuxtLink
-            :to="localePath('slug')"
-            class="flex items-center flex-shrink-0 w-full"
-            aria-label="Nuxt Content Logo"
-          >
+        <div class="w-1/2 lg:w-1/6 flex items-center" @click.stop="noop">
+          <NuxtLink :to="localePath('slug')" class="flex-shrink-0" aria-label="Nuxt Content Logo">
             <IconLogo v-if="$colorMode.value === 'light'" class="h-8 w-auto" />
             <IconLogoDark v-else class="h-8 w-auto" />
-            <NuxtLink
-              to="/releases"
-              class="rounded text-green-500 dark:text-white bg-green-100 dark:bg-green-700 border border-green-200 dark:border-transparent p-1 text-xs font-bold leading-none flex items-center justify-center ml-1"
-            >{{ lastRelease.name }}</NuxtLink>
           </NuxtLink>
+          <NuxtLink
+            to="/releases"
+            class="rounded text-green-500 dark:text-white bg-green-100 dark:bg-green-700 border border-green-200 dark:border-transparent p-1 text-xs font-bold leading-none flex items-center justify-center ml-1"
+          >{{ lastRelease.name }}</NuxtLink>
         </div>
         <div class="hidden flex-1 lg:flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
           <SearchInput />
