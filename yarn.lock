@@ -2103,10 +2103,10 @@
     eslint-plugin-unicorn "^19.0.1"
     eslint-plugin-vue "^6.2.2"
 
-"@nuxtjs/module-test-utils@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/module-test-utils/-/module-test-utils-1.6.2.tgz#5ec3858f008557761f77c0b010fc18868a51df82"
-  integrity sha512-CvOhMN3VKEEcclS04cWSYHcfom7L0RYN1/zEh6rL2SjoLjDQ2+g5qLrGJuQi3Vl7qkRg2q/l/zUmh7W34BqcPA==
+"@nuxtjs/module-test-utils@^1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/module-test-utils/-/module-test-utils-1.6.3.tgz#478de4d98591c4f8ff654a3eeab83b457c473534"
+  integrity sha512-xvA76WP+A96rmsfNlBO4m548vob0sy9Tjp3/pXLLm/l1fMGCGrqoqoyEd5ioJ+69QiWjVoSv5iBw5Ff4K16y3Q==
   dependencies:
     clone-deep "^4.0.1"
     deepmerge "^4.2.2"
