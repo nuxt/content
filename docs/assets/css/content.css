@@ -128,6 +128,26 @@
   @apply relative;
 
   & > .filename {
-    @apply absolute right-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
+    @apply absolute right-0 top-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
+  }
+
+  & > pre {
+    & > .copy {
+      @apply hidden absolute right-0 bottom-0 shadow-lg px-2 py-1 text-white text-sm uppercase font-sans rounded-md bg-green-700 tracking-wide font-bold mr-3 mb-3;
+
+      &:hover {
+        @apply bg-green-600;
+      }
+
+      &:focus {
+        @apply outline-none bg-green-500;
+      }
+    }
+
+    &:hover {
+      & > .copy {
+        @apply block;
+      }
+    }
   }
 }
