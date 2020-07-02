@@ -10438,19 +10438,19 @@ rehype-raw@^4.0.2:
   dependencies:
     hast-util-raw "^5.0.0"
 
-rehype-sort-attribute-values@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/rehype-sort-attribute-values/-/rehype-sort-attribute-values-3.0.1.tgz#1a519ef057c0075fbb228c1cb947b978c2ac62f8"
-  integrity sha512-YWu3nOVc+PAup6Mo9LvUYrsm2U/0DkTvNlZqZzEnfgTn8f/dUUqfc697/W7Ckj9hEDmJA+Bg/g0sWtjBhVCPJg==
+rehype-sort-attribute-values@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/rehype-sort-attribute-values/-/rehype-sort-attribute-values-3.0.2.tgz#7f4b41c2dc46a67c26d42bc9fd872ab76fece194"
+  integrity sha512-6QGua2vM3DytGRJcL11UTYLP5w5ItRgaQI2PhS3zLhvgKFkO/sb+JgcYsLCnkli9MCTkSvuEYArkiA1txtAtPA==
   dependencies:
     hast-util-is-element "^1.0.0"
     unist-util-visit "^2.0.0"
     x-is-array "^0.1.0"
 
-rehype-sort-attributes@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/rehype-sort-attributes/-/rehype-sort-attributes-3.0.1.tgz#e20d35304a47e7118703ed31d97fbbbaf53968c2"
-  integrity sha512-6axA4MHGDMioNRUSVnPDa029JInAxqFhMDZrEhFESugOIKrMKuRbnQWKka96oeuGA2YHSuA7TtkLVtsBpmzvMg==
+rehype-sort-attributes@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/rehype-sort-attributes/-/rehype-sort-attributes-3.0.2.tgz#18c7e86b34de4b0222d0d54412e860333bd74b7e"
+  integrity sha512-roPtOHX6BfLXge161TnxOh+jr8JhZwUDVdqYI/qobYpfAkXgBfnftpWlwcShdsExa+nbUd5zU7z9A0nHBi35+A==
   dependencies:
     unist-util-visit "^2.0.0"
 
