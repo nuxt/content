@@ -1,8 +1,8 @@
 ---
-title: Use a theme (WIP)
+title: Themes (WIP)
 description: 'Add a theme and accelerate your development with Nuxt and @nuxt/content.'
-category: Themes
-position: 8
+category: Community
+position: 12
 ---
 
 <br>

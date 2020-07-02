@@ -13,7 +13,6 @@ features:
   - Table of contents generation
   - Handles Markdown, CSV, YAML, JSON(5), XML
   - Extend with hooks
-csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
 Empower your NuxtJS application with `@nuxt/content` module: write in a `content/` directory and fetch your Markdown, JSON, YAML, XML and CSV files through a MongoDB like API, acting as a **Git-based Headless CMS**.
@@ -43,7 +42,3 @@ Using `$content()` on a directory to list, filter and search content:
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.mp4" type="video/mp4" />
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.ogv" type="video/ogg" />
 </video>
-
-## Online playground
-
-<code-sandbox :src="csb_link"></code-sandbox>

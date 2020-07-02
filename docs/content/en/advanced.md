@@ -34,7 +34,7 @@ export default {
 
 <base-alert type="info">
 
-If you are using Nuxt 2.13+, `nuxt export` has a crawler feature integrated, so you may not need to use `generate.routes`.
+Since Nuxt 2.13+, `nuxt export` has a crawler feature integrated which will crawl all your links and generate your routes based on those links. Therefore you do not need to do anything in order for your dynamic routes to be crawled.
 
 </base-alert>
 
@@ -131,66 +131,46 @@ export default {
 ```
 
 Now everytime you will update a file in your `content/` directory, it will also dispatch the `fetchCategories` method.
-This documentation use it actually, you can learn more by looking at [plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
+This documentation use it actually, you can learn more by looking at [plugins/init.js](https://github.com/nuxt/content/blob/master/docs/plugins/init.js).
 
-## Integration with @nuxtjs/feed
+## API Endpoint
 
-In the case of articles, the content can be used to generate news feeds
-using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
 
-<base-alert type="info">
+This module exposes an API endpoint in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
 
-To use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
+Example:
 
-</base-alert>
-
-**Example**
-
-```js
-export default {
-  modules: [
-    '@nuxt/content',
-    '@nuxtjs/feed'
-  ],
-
-  feed () {
-    const baseUrlArticles = 'https://mywebsite.com/articles'
-    const baseLinkFeedArticles = '/feed/articles'
-    const feedFormats = {
-      rss: { type: 'rss2', file: 'rss.xml' },
-      atom: { type: 'atom1', file: 'atom.xml' },
-      json: { type: 'json1', file: 'feed.json' },
-    }
-    const { $content } = require('@nuxt/content')
-
-    const createFeedArticles = async function (feed) {
-      feed.options = {
-        title: 'My Blog',
-        description: 'I write about technology',
-        link: baseUrlArticles,
-      }
-      const articles = await $content('articles').fetch()
-
-      articles.forEach((article) => {
-        const url = `${baseUrlArticles}/${article.slug}`
-
-        feed.addItem({
-          title: article.title,
-          id: url,
-          link: url,
-          date: article.published,
-          description: article.summary,
-          content: article.summary,
-          author: article.authors,
-        })
-      })
-    }
-
-    return Object.values(feedFormats).map(({ file, type }) => ({
-      path: `${baseLinkFeedArticles}/${file}`,
-      type: type,
-      create: createFeedArticles,
-    }))
-  }
-}
+```bash
+-| content/
+---| articles/
+------| hello-world.md
+---| index.md
+---| settings.json
 ```
+
+Will expose on `localhost:3000`:
+- `/_content/articles`: list the files in `content/articles/`
+- `/_content/articles/hello-world`: get `hello-world.md` as JSON
+- `/_content/index`: get `index.md` as JSON
+- `/_content/settings`: get `settings.json` as JSON
+- `/_content`: list `index` and `settings`
+
+The endpoint is accessible on `GET` and `POST` request, so you can use query params: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
+
+Since **v1.4.0**, this endpoint also support `where` in query params:
+
+- All the keys that doesn't belong to any of the default ones will be applied to `where`
+
+`http://localhost:3000/_content/articles?author=...`
+
+- You can use `$operators` with `_`:
+
+`http://localhost:3000/_content/articles?author_regex=...`
+
+> This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
+
+- You can use [nested properties](/configuration#nestedproperties):
+
+`http://localhost:3000/_content/products?categories.slug_contains=top`
+
+> You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
