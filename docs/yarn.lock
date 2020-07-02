@@ -974,7 +974,6 @@
 
 "@nuxt/content@nuxt/content#dev":
   version "1.3.2"
-  uid "030cdad39369d43da126d6161c26d6806b44bf82"
   resolved "https://codeload.github.com/nuxt/content/tar.gz/030cdad39369d43da126d6161c26d6806b44bf82"
   dependencies:
     "@lokidb/full-text-search" "^2.0.0-beta.9"
@@ -1098,6 +1097,17 @@
     serve-placeholder "^1.2.2"
     serve-static "^1.14.1"
     server-destroy "^1.0.1"
+
+"@nuxt/static@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@nuxt/static/-/static-0.0.9.tgz#6b7569fafe448545403cf7f480ea8bd4e339688e"
+  integrity sha512-1FgtbNUwPuMuj/vfa+ykBBULM87PeaxFk4eQZMaJdSMnuUrLc66l4UWD2xvi/E7i7Iz1uTWiFHiUKEw2WK+03g==
+  dependencies:
+    consola "^2.14.0"
+    crc "^3.8.0"
+    defu "^2.0.4"
+    destr "^1.0.0"
+    globby "^11.0.1"
 
 "@nuxt/telemetry@^1.2.0":
   version "1.2.0"
@@ -2194,6 +2204,14 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
+buffer@^5.1.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.6.0.tgz#a31749dc7d81d84db08abf937b6b8c4033f62786"
+  integrity sha512-/gDYp/UtU0eA1ys8bOs9J6a+E/KWIY+DZ+Q2WESNUA0jFRsJOc0SNUO6xJ5SGA1xueg3NL65W6s+NY5l9cunuw==
+  dependencies:
+    base64-js "^1.0.2"
+    ieee754 "^1.1.4"
+
 builtin-status-codes@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
@@ -2824,6 +2842,13 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
+
+crc@^3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/crc/-/crc-3.8.0.tgz#ad60269c2c856f8c299e2c4cc0de4556914056c6"
+  integrity sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==
+  dependencies:
+    buffer "^5.1.0"
 
 create-ecdh@^4.0.0:
   version "4.0.3"
