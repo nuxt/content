@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/nuxt/content/compare/v1.4.0...v1.4.1) (2020-07-02)
+
+
+### Features
+
+* add XML support ([#182](https://github.com/nuxt/content/issues/182)) ([0a6806e](https://github.com/nuxt/content/commit/0a6806ee1e538a36e89d11bbbdef9658cb7deb94))
+* global components ([#164](https://github.com/nuxt/content/issues/164)) ([0177a1d](https://github.com/nuxt/content/commit/0177a1db896e85c7bca5cc412d35eb68fc449912))
+
 ## [1.4.0](https://github.com/nuxt/content/compare/v1.3.2...v1.4.0) (2020-06-30)
 
 
