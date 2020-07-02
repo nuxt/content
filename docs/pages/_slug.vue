@@ -67,7 +67,7 @@ export default {
 
     copyCode.on('success', function (event) {
       event.clearSelection()
-      event.trigger.textContent = 'Copied'
+      event.trigger.textContent = 'Copied!'
       window.setTimeout(function () {
         event.trigger.textContent = 'Copy'
       }, 2000)
