@@ -59,7 +59,7 @@
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "@nuxtjs/eslint-config": "^3.0.0",
-    "@nuxtjs/module-test-utils": "^1.6.2",
+    "@nuxtjs/module-test-utils": "^1.6.3",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
     "codecov": "^3.7.0",
