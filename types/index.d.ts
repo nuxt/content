@@ -2,6 +2,7 @@ import './vuex'
 
 interface NuxtContentInstance {
   only(keys: String | String[]): NuxtContentInstance
+  without(keys: String | String[]): NuxtContentInstance
   sortBy(field: String, direction?: String): NuxtContentInstance
   where(query: Object): NuxtContentInstance
   search(query: Object | String, value?: String): NuxtContentInstance
