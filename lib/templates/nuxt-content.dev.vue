@@ -9,7 +9,8 @@
     />
     <nuxt-content-dev
       ref="content"
-      :class="staticClass"
+      :id="id"
+      :class="classes"
       v-show="!isEditing"
       :document="document"
       @dblclick="toggleEdit"
@@ -28,19 +29,32 @@ export default {
   props: NuxtContent.props,
   data () {
     return {
-      staticClass: [],
+      classes: [],
       isEditing: false,
-      file: null
+      file: null,
+      id: null
     }
   },
   mounted () {
+    if (this.$vnode.data.attrs && this.$vnode.data.attrs.id) {
+      this.id = this.$vnode.data.attrs.id
+    }
     if (this.$vnode.data.class) {
-      this.staticClass = this.staticClass.concat(this.$vnode.data.class)
+      let classes
+      if (Array.isArray(this.$vnode.data.class)) {
+        classes = this.$vnode.data.class
+      } else if (typeof this.$vnode.data.class === 'object') {
+        const keys = Object.keys(this.$vnode.data.class)
+        classes = keys.filter(key => this.$vnode.data.class[key])
+      } else {
+        classes = this.$vnode.data.class
+      }
+      this.classes = this.classes.concat(classes)
       delete this.$vnode.data.class
     }
 
     if (this.$vnode.data.staticClass) {
-      this.staticClass = this.staticClass.concat(this.$vnode.data.staticClass)
+      this.classes = this.classes.concat(this.$vnode.data.staticClass)
       delete this.$vnode.data.staticClass
     }
   },
