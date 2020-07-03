@@ -6370,10 +6370,10 @@ nuxt-ackee@^1.0.1:
     ackee-tracker "^3.2.3"
     defu "^1.0.0"
 
-nuxt-i18n@^6.13.0:
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.0.tgz#ac839261363907c4b0df0174188e4d3e3d7fedce"
-  integrity sha512-TuCPKbzYxcSYZbJ5d5EccCVKfDjb7mpMkqtxiC0Ypgb0ycwwwCNSnwFQOigk/l1xlDSrSXToX6Q+eCYm+fhC0g==
+nuxt-i18n@^6.13.1:
+  version "6.13.1"
+  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.1.tgz#ad622354c5c8420deb5c3e021374e520bcb97a9b"
+  integrity sha512-75ZmwNBQ+NmsubvntWBWbzRMbv0GojKFmzLA1trN/x7aio7q5t4dGbrAgkLumD6ZKiNW+q3L2vx+LNlDCAj6sA==
   dependencies:
     "@babel/parser" "^7.5.5"
     "@babel/traverse" "^7.5.5"
