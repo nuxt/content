@@ -11,9 +11,8 @@ features:
   - Мощный API конструктора запросов (MongoDB подобный)
   - Подсветка синтаксиса для блоков кода в файлах markdown с помощью PrismJS.
   - Генерация оглавления
-  - работает с Markdown, CSV, YAML, JSON(5)
+  - работает с Markdown, CSV, YAML, JSON(5), XML
   - Расширяется с помощью хуков
-csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark
 ---
 
 Прокачайте ваше NuxtJS приложение с модулем `@nuxt/content`: пишите в директории `content/` и получайте ваши Markdown, JSON, YAML и CSV файлы через MongoDB подобное API, работает как **базирующаяся на Git безголовая CMS**.
@@ -43,7 +42,3 @@ csb_link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.mp4" type="video/mp4" />
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.ogv" type="video/ogg" />
 </video>
-
-## Онлайн песочница
-
-<code-sandbox :src="csb_link"></code-sandbox>
