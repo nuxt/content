@@ -15,7 +15,15 @@ export default {
 }
 ```
 
-Смотрите [Настройки по умолчанию](#defaults).
+Прежде чем погрузиться в отдельные атрибуты, взгляните на [Настройки по умолчанию](#defaults).
+
+### Слияние со значениями по умолчанию
+
+Вы можете задать каждый параметр как функцию или статическое значение (примитивы, объекты, массивы и т.д.)
+Если вы используете функцию, то стандартное значение будет передано как первый аргумент.
+
+Если вы *не* используете функцию для определения ваших параметров, модуль попытается объединить их со стандартными значениями. Это может быть удобно для `markdown.remarkPlugins`, `markdown.rehypePlugins` и так далее, потому что
+значения по умолчанию довольно правильные. Если вы не хотите включать значения по умолчанию, просто используйте функцию.
 
 ## Параметры
 
@@ -80,44 +88,138 @@ content: {
 
 Этот модуль использует [remark](https://github.com/remarkjs/remark) «под капотом» для компиляции markdown файлов в JSON AST, который будет храниться в переменной `body`.
 
-По умолчанию этот модуль использует плагины для улучшения чтения markdown. Вы можете добавить собственные в `plugins` или переопределить плагины по умолчанию с помощью `basePlugins`. Каждый плагин настраивается с использованием его имени в camelCase: `remark-external-links` => `externalLinks`.
+<base-alert type="info">
+Следующий пример работает и для `remarkPlugins`, и для `rehypePlugins`
+</base-alert>
 
-> Вы можете посмотреть плагины для remark [здесь](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins)
+Чтобы настроить, как модуль будет анализировать Markdown, вы можете:
 
-### `markdown.basePlugins`
-
-- Тип: `Array`
-- По умолчанию: `['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes']`
-
-### `markdown.plugins`
-
-- Тип: `Array`
-- По умолчанию: `[]`
-
-### `markdown.externalLinks`
-
-- Тип: `Object`
-- По умолчанию: `{}`
-
-Вы можете контролировать поведение ссылок с помощью этой опции. Вы можете посмотреть список настроек [здесь](https://github.com/remarkjs/remark-external-links#api).
+- Добавить новый плагин к плагинам по умолчанию:
 
 ```js{}[nuxt.config.js]
-content: {
-  markdown: {
-    externalLinks: {
-      target: '_self' // отключить target="_blank"
-      rel: false // отключить rel="nofollow noopener"
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: ['remark-emoji']
     }
   }
 }
 ```
 
-### `markdown.footnotes`
+- Перезаписать плагины по умолчанию:
 
-- Тип: `Object`
-- По умолчанию: `{ inlineNotes: true }`
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: () => ['remark-emoji']
+    }
+  }
+}
+```
 
-Вы можете контролировать поведение сносок с помощью этой опции. Вы можете посмотреть список настроек [здесь](https://github.com/remarkjs/remark-footnotes#remarkusefootnotes-options).
+- Использовать локальные плагины
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: [
+        '~/plugins/my-custom-remark-plugin.js'
+      ]
+    }
+  }
+}
+```
+
+- Задать параметры в определении плагина
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: [
+        ['remark-emoji', { emoticon: true }]
+      ]
+    }
+  }
+}
+```
+
+- Задать параметры используя имя плагина в `camelCase`
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      // https://github.com/remarkjs/remark-external-links#options
+      remarkExternalLinks: {
+        target: '_self',
+        rel: 'nofollow'
+      }
+    }
+  }
+}
+```
+
+<base-alert>
+При добавлении нового плагина обязательно установите его в ваших зависимостях:
+</base-alert>
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn add remark-emoji
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  npm install remark-emoji
+  ```
+
+  </code-block>
+</code-group>
+
+```js{}[nuxt.config.js]
+export default {
+  content: {
+    markdown: {
+      remarkPlugins: ['remark-emoji']
+    }
+  }
+}
+```
+
+### `markdown.remarkPlugins`
+
+- Тип: `Array`
+- По умолчанию: `['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes']`
+- Версия: **>= v1.4.0**
+
+> Вы можете посмотреть плагины для [remark](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins).
+
+### `markdown.rehypePlugins`
+
+- Тип: `Array`
+- По умолчанию: `['rehype-minify-whitespace', 'rehype-sort-attribute-values', 'rehype-sort-attributes', 'rehype-raw']`
+- Версия: **>= v1.4.0**
+
+> Вы можете посмотреть плагины для [rehype](https://github.com/rehypejs/rehype/blob/master/doc/plugins.md#list-of-plugins).
+
+### `markdown.basePlugins`
+
+<base-alert>
+Устаревшее. Используйте `markdown.remarkPlugins`.
+</base-alert>
+
+### `markdown.plugins`
+
+<base-alert>
+Устаревшее. Используйте `markdown.remarkPlugins`.
+</base-alert>
 
 ### `markdown.prism.theme`
 
@@ -127,6 +229,23 @@ content: {
 Этот модуль добавляет подсветку синтаксиса кода в markdown используя [PrismJS](https://prismjs.com).
 
 Автоматически ставит тему PrismJS из вашего файла конфигурации Nuxt.js config, поэтому вы можете использовать различные темы, список [тем для prism](https://github.com/PrismJS/prism-themes):
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn add prism-themes
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  npm install prism-themes
+  ```
+
+  </code-block>
+</code-group>
 
 ```js{}[nuxt.config.js]
 content: {
@@ -159,6 +278,13 @@ content: {
 
 Обратите внимание, что мы выставляем параметр `json: true`.
 
+### `xml`
+
+- Тип: `Object`
+- По умолчанию: `{}`
+
+Этот модуль использует `xml2js` для чтения `.xml` файлов, вы можете посмотреть список настроек [здесь](https://www.npmjs.com/package/xml2js#options).
+
 ### `csv`
 
 - Тип: `Object`
@@ -176,18 +302,26 @@ export default {
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
     nestedProperties: [],
     markdown: {
-      externalLinks: {},
-      footnotes: {
-        inlineNotes: true
-      },
-      basePlugins: ['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes'],
-      plugins: [],
+      remarkPlugins: [
+        'remark-squeeze-paragraphs',
+        'remark-slug',
+        'remark-autolink-headings',
+        'remark-external-links',
+        'remark-footnotes'
+      ],
+      rehypePlugins: [
+        'rehype-minify-whitespace',
+        'rehype-sort-attribute-values',
+        'rehype-sort-attributes',
+        'rehype-raw'
+      ],
       prism: {
         theme: 'prismjs/themes/prism.css'
       }
     },
     yaml: {},
-    csv: {}
+    csv: {},
+    xml: {}
   }
 }
 ```
