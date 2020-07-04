@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="alert border-l-4 p-4 mb-4"
-    :class="`alert-${type}`"
-  >
+  <div class="alert border-l-4 p-4 mb-4" :class="`alert-${type}`">
     <div class="flex">
       <div class="flex-shrink-0 self-start pt-1">
         <IconInfo v-if="type === 'info'" class="alert-icon" />
@@ -30,6 +27,9 @@ export default {
 .alert p {
   @apply m-0 !important;
 }
+.alert a {
+  @apply text-gray-800 !important;
+}
 .alert-warning {
   @apply bg-orange-100 border-orange-400;
 }
@@ -41,6 +41,9 @@ export default {
 }
 .alert-warning .alert-content {
   @apply text-orange-700;
+}
+.dark-mode .alert a {
+  @apply text-white !important;
 }
 .dark-mode .alert-warning {
   @apply bg-yellow-900 border-yellow-700;

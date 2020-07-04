@@ -10,10 +10,10 @@
 
 > @nuxt/content lets you write in a content/ directory, acting as Git-based Headless CMS
 
-- [🎲 Play on CodeSandbox](https://codesandbox.io/s/nuxtcontent-demo-l164h?)
-- [🎬 Demonstration videos](https://content.nuxtjs.org/#videos)
-- [✨ Release Notes](https://github.com/nuxt/content/releases)
-- [📖 Read the documentation](https://content.nuxtjs.org)
+- [🎲 &nbsp;Play on CodeSandbox](https://codesandbox.io/s/nuxtcontent-demo-l164h?)
+- [🎬 &nbsp;Demonstration videos](https://content.nuxtjs.org/#videos)
+- [✨ &nbsp;Release Notes](https://github.com/nuxt/content/releases)
+- [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
 
 ## Features
 

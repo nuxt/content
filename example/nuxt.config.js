@@ -8,9 +8,7 @@ module.exports = {
   modules: [
     contentModule
   ],
-  plugins: [
-    '~/plugins/components'
-  ],
+  components: true,
   content: {
     nestedProperties: [
       'categories.slug'

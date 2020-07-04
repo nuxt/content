@@ -33,6 +33,12 @@ export default {
       { rel: 'icon', type: 'image/png', href: '/favicon.png' }
     ]
   },
+  env: {
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN
+  },
+  css: [
+    '~/assets/css/content.css'
+  ],
   /*
   ** Customize the progress-bar color
   */
@@ -41,12 +47,13 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/categories',
+    '@/plugins/markdown',
+    '@/plugins/init',
     '@/plugins/i18n.client',
     '@/plugins/vue-scrollactive',
-    '@/plugins/components',
     '@/plugins/menu.client'
   ],
+  components: true,
   /*
   ** Give routes to static generation
   */
@@ -64,6 +71,8 @@ export default {
     '@nuxtjs/tailwindcss',
     // Doc: https://github.com/nuxt-community/color-mode-module
     '@nuxtjs/color-mode',
+    // Doc: https://github.com/nuxt-community/moment-module
+    '@nuxtjs/moment',
     // https://github.com/bdrtsky/nuxt-ackee
     'nuxt-ackee'
   ],
@@ -75,15 +84,6 @@ export default {
     '@nuxtjs/pwa',
     '@nuxt/content'
   ],
-  /*
-  ** Components auto import
-  ** See https://github.com/nuxt/components
-  */
-  components: {
-    dirs: [
-      { path: '@/components', pattern: '*.vue' }
-    ]
-  },
   /*
   ** Modules configuration
   */

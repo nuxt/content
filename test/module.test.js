@@ -47,6 +47,20 @@ describe('module', () => {
     ]))
   })
 
+  test('GET /_content with without', async () => {
+    const items = await get('/_content', {
+      json: true,
+      qs: {
+        without: ['body', 'createdAt', 'updatedAt', 'toc']
+      }
+    })
+
+    expect(items).toEqual(expect.arrayContaining([
+      { title: 'Home', dir: '/', extension: '.md', path: '/home', slug: 'home' },
+      { title: 'About', dir: '/', extension: '.md', path: '/about', slug: 'about' }
+    ]))
+  })
+
   test('GET /_content/home', async () => {
     const page = await get('/_content/home', { json: true })
 
@@ -68,6 +82,23 @@ describe('module', () => {
 
     expect(page).toEqual({
       title: 'Home'
+    })
+  })
+
+  test('GET /_content/home with without', async () => {
+    const page = await get('/_content/home', {
+      json: true,
+      qs: {
+        without: ['body', 'createdAt', 'updatedAt', 'toc']
+      }
+    })
+
+    expect(page).toEqual({
+      title: 'Home',
+      dir: '/',
+      extension: '.md',
+      path: '/home',
+      slug: 'home'
     })
   })
 
@@ -361,6 +392,23 @@ describe('module', () => {
             }
           }
         },
+        only: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      })
+    ])
+  })
+
+  test('GET /_content/articles with where', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'GET',
+      qs: {
+        tags_contains: 'webpack',
         only: ['title']
       }
     })

@@ -19,7 +19,7 @@ content/
   home.md
 ```
 
-This module will parse `.md`, `.yaml`, `.csv`, `.json`, `.json5` files and generate the following properties:
+This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml` files and generate the following properties:
 
 - `dir`
 - `path`
@@ -164,7 +164,7 @@ http.createServer((req, res) => {
 
 After rendering with the `nuxt-content` component, it will look like this:
 
-```html
+```html[server.js]
 <div class="nuxt-content-highlight">
   <span class="filename">server.js</span>
   <pre class="language-js" data-line="1,3-5">
@@ -177,7 +177,7 @@ After rendering with the `nuxt-content` component, it will look like this:
 
 > Line numbers are added to the `pre` tag in `data-line` attribute.
 
-> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right on code blocks.
+> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right of code blocks.
 
 ### Syntax highlighting
 
@@ -313,11 +313,41 @@ However, you cannot render
 </my-component>
 ```
 
+#### Global components
+
+Since **v1.4.0** and Nuxt **v2.13.0**, you can now put your components in `components/global/` directory so you don't have to import them in your pages.
+
+```bash
+components/
+  global/
+    Hello.vue
+content/
+  home.md
+```
+
+Then in `content/home.md`, you can use `<hello></hello>` component without having to worry about importing it in your page.
+
 ### Table of contents
 
-A `toc` array property will be injected into your document, listing all the `h2` and `h3` with their titles and ids, so you can link to them.
+When fetching a document, we have access to a toc property which is an array of all the titles. Each title has an `id` so that it is possible to link to, a depth which is the type of heading it is. Only h2 and h3 titles are used for the toc. There is also a text property which is the text of the title.
+
+```json
+{
+  "toc": [{
+    "id": "welcome",
+    "depth": 2,
+    "text": "Welcome!"
+  }]
+}
+```
 
 > Take a look at the right side of this page for an example.
+
+<base-alert type="info">
+
+Check out [this example](/examples#table-of-contents) on how to implement a table of contents into your app
+
+</base-alert>
 
 ### Example
 
@@ -392,8 +422,6 @@ Will be transformed into:
 
 We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](/advanced#contentfilebeforeinsert) it.
 
-You can see how to display your markdown in your application in the [displaying content](/displaying) section.
-
 ## CSV
 
 Rows will be assigned to body variable.
@@ -414,7 +442,7 @@ Will be transformed into:
   "dir": "/",
   "slug": "home",
   "path": "/home",
-  "extension": ".json",
+  "extension": ".csv",
   "body": [
     {
       "title": "Home",
@@ -424,7 +452,52 @@ Will be transformed into:
 }
 ```
 
-## YAML
+## XML
+
+XML will be parsed
+
+### Example
+
+A file `content/home.xml`:
+
+```xml
+<xml>
+  <item prop="abc">
+    <title>Title</title>
+    <description>Hello World</description>
+  </item>
+</xml>
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".xml",
+  "body": {
+    "xml": {
+      "item": [
+        {
+          "$": {
+            "prop": "abc"
+          },
+          "title": [
+            "Title"
+          ],
+          "description": [
+            "Hello World"
+          ]
+      }
+    ]
+  }
+}
+```
+
+
+## YAML / YML
 
 Data defined will be injected into the document.
 

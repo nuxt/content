@@ -41,6 +41,18 @@ Sélectionne un sous-ensemble de champs.
 const { titre } = await this.$content('article-1').only(['titre']).fetch()
 ```
 
+### without(keys)
+
+- `keys`
+  - Type: `Array` | `String`
+  - `required`
+
+Retire un sous-ensemble de champs.
+
+```js
+const { title, ...propsWithoutBody } = await this.$content('article-1').without(['body']).fetch()
+```
+
 ### where(query)
 
 - `query`
@@ -71,9 +83,7 @@ const produits = await this.$content('produits').where({ 'categories.slug': { $c
 const produits = await this.$content('produits').where({ 'categories.slug': { $contains: ['haut', 'femme'] } }).fetch()
 ```
 
-This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
-
-Sous le capot, ce module a recours à LokiJS, vous pouvez allez voir des [exemples de requêtes](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
+Ce module utilise en interne LokiJS, vous pouvez allez voir des [exemples de requêtes](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
 ### sortBy(key, direction)
 
@@ -127,7 +137,7 @@ const articles = await this.$content('articles').skip(5).limit(5).fetch()
 - `value`
   - Type: `String`
 
-Effectue une recherche plein texte sur un champ. Le paramètre `value` est optionnel, dans ce cas `field` devient la `value`  et la recheche est alors effectuée sur tous les champs définis en tant que champ de recherche plein texte.
+Effectue une recherche plein texte sur un champ. Le paramètre `value` est optionnel, dans ce cas `field` devient la `value`  et la recherche est alors effectuée sur tous les champs définis en tant que champ de recherche plein texte.
 
 Le champ sur lequel vous voulez effectuer la recherche doit être défini dans les options afin d'être indexé, voir [configuration](/configuration#fulltextsearchfields).
 

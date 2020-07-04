@@ -17,16 +17,16 @@ This module globally injects `$content` instance, meaning that you can access it
 - `options`
   - Type: `Object`
   - Default: `{}`
-  - Version: **v1.3.0**
+  - Version: **>= v1.3.0**
 - `options.deep`
   - Type: `Boolean`
   - Default: `false`
-  - Version: **v1.3.0**
+  - Version: **>= v1.3.0**
   - *Fetch files from subdirectories*
 - `options.text`
   - Type: `Boolean`
   - Default: `false`
-  - Version: **v2.0.0**
+  - Version: **>= v1.4.0**
   - *Returns the original markdown content in a `text` variable*
 - Returns a chain sequence
 
@@ -46,6 +46,18 @@ Select a subset of fields.
 
 ```js
 const { title } = await this.$content('article-1').only(['title']).fetch()
+```
+
+### without(keys)
+
+- `keys`
+  - Type: `Array` | `String`
+  - `required`
+
+Remove a subset of fields.
+
+```js
+const { title, ...propsWithoutBody } = await this.$content('article-1').without(['body']).fetch()
 ```
 
 ### where(query)
@@ -78,7 +90,7 @@ const products = await this.$content('products').where({ 'categories.slug': { $c
 const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
-This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
+> This module uses LokiJS under the hood, you can check for [query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
 ### sortBy(key, direction)
 
@@ -143,6 +155,13 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
+<base-alert type="info">
+
+Check out [this example](/examples#search) on how to implement search into your app
+
+</base-alert>
+
+
 ### surround(slug, options)
 
 - `slug`
@@ -176,6 +195,12 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` and `skip` are ineffective when using this method.
 
+<base-alert type="info">
+
+Check out [this example](/examples#pagination) on how to implement prev and next links into your app
+
+</base-alert>
+
 ### fetch()
 
 - Returns: `Promise<Object>` | `Promise<Array>`
@@ -200,27 +225,4 @@ const articles = await this.$content('articles')
   .fetch()
 ```
 
-## API
-
-This module exposes an API in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
-
-Example:
-
-```bash
--| content/
----| articles/
-------| hello-world.md
----| index.md
----| settings.json
-```
-
-Will expose on `localhost:3000`:
-- `/_content/articles`: list the files in `content/articles/`
-- `/_content/articles/hello-world`: get `hello-world.md` as JSON
-- `/_content/index`: get `index.md` as JSON
-- `/_content/settings`: get `settings.json` as JSON
-- `/_content`: list `index` and `settings`
-
-The endpoint is accessible on `GET` and `POST` request, so you can use query params: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
-
-You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+> You can check how to use the [Content API](/api) in development.

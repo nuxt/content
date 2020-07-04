@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <div
-      class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
-      :class="{ 'lg:border-r': doc.toc && doc.toc.length }"
+      class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r"
+      :class="{ '': doc.toc && doc.toc.length, 'lg:w-3/4': !doc.fullscreen }"
     >
       <article class="lg:px-8">
         <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import Clipboard from 'clipboard'
+
 export default {
   name: 'PageSlug',
   middleware ({ params, redirect }) {
@@ -45,6 +47,32 @@ export default {
       next
     }
   },
+  mounted () {
+    const blocks = document.getElementsByClassName('nuxt-content-highlight')
+
+    for (const block of blocks) {
+      const pre = block.getElementsByTagName('pre')[0]
+      const button = document.createElement('button')
+      button.className = 'copy'
+      button.textContent = 'Copy'
+
+      pre.appendChild(button)
+    }
+
+    const copyCode = new Clipboard('.copy', {
+      target (trigger) {
+        return trigger.previousElementSibling
+      }
+    })
+
+    copyCode.on('success', function (event) {
+      event.clearSelection()
+      event.trigger.textContent = 'Copied!'
+      window.setTimeout(function () {
+        event.trigger.textContent = 'Copy'
+      }, 2000)
+    })
+  },
   head () {
     return {
       title: this.doc.title,
@@ -61,131 +89,3 @@ export default {
   }
 }
 </script>
-
-<style lang="postcss">
-.dark-mode .nuxt-content {
-  & h2,
-  & h3,
-  & blockquote {
-    @apply border-gray-800;
-  }
-
-  & > code,
-  & li > code,
-  & p > code,
-  & h3 > code {
-    @apply bg-gray-800;
-  }
-}
-
-.nuxt-content h2 {
-  @apply text-3xl font-black mb-4 pb-1 border-b -mt-16 pt-24;
-
-  & > a {
-    @apply ml-6;
-    &::before {
-      content: "#";
-      @apply text-green-500 font-normal -ml-6 pr-1 absolute opacity-100;
-    }
-  }
-
-  &:hover {
-    & > a::before {
-      @apply opacity-100;
-    }
-  }
-}
-.nuxt-content h3 {
-  @apply text-2xl font-extrabold mb-2 pb-1 border-b -mt-16 pt-20;
-
-  & > a {
-    @apply ml-6;
-    &::before {
-      content: "#";
-      @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-100;
-    }
-  }
-
-  &:hover {
-    & > a::before {
-      @apply opacity-100;
-    }
-  }
-}
-
-@screen lg {
-  .nuxt-content h2 a,
-  .nuxt-content h3 a {
-    @apply ml-0;
-    &::before {
-      @apply opacity-0;
-    }
-  }
-}
-
-.nuxt-content ul,
-.nuxt-content ol {
-  @apply list-disc list-inside mb-4;
-
-  & > li {
-    @apply leading-7;
-
-    & > ul {
-      @apply pl-4;
-    }
-  }
-}
-
-.nuxt-content ol {
-  @apply list-decimal;
-}
-
-.nuxt-content {
-  & a {
-    @apply underline;
-  }
-
-  & p {
-    @apply mb-4 leading-7;
-  }
-
-  & > blockquote {
-    @apply py-2 pl-4 mb-4 border-l-4;
-
-    & p:last-child {
-      @apply mb-0;
-    }
-  }
-
-  & > code,
-  & li > code,
-  & p > code {
-    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
-  }
-
-  & h3 > code {
-    @apply bg-gray-100 p-1 text-lg shadow-xs rounded;
-  }
-
-  & pre[class*="language-"] {
-    @apply rounded mt-0 mb-4 bg-gray-800 text-sm relative;
-
-    > code {
-      @apply bg-gray-800 relative;
-      text-shadow: none;
-    }
-  }
-
-  & video {
-    @apply w-full border rounded shadow-md;
-  }
-}
-
-.nuxt-content-highlight {
-  @apply relative;
-
-  & > .filename {
-    @apply absolute right-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
-  }
-}
-</style>

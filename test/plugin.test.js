@@ -43,6 +43,15 @@ describe('plugin', () => {
     ]))
   })
 
+  test('$content() on root directory with without', async () => {
+    const items = await page.runScript(() => window.$nuxt.$content().without(['body', 'createdAt', 'updatedAt', 'toc']).fetch())
+
+    expect(items).toEqual(expect.arrayContaining([
+      { title: 'Home', dir: '/', extension: '.md', path: '/home', slug: 'home' },
+      { title: 'About', dir: '/', extension: '.md', path: '/about', slug: 'about' }
+    ]))
+  })
+
   test('$content() on file', async () => {
     const item = await page.runScript(() => window.$nuxt.$content('home').fetch())
 
@@ -59,6 +68,18 @@ describe('plugin', () => {
 
     expect(item).toEqual({
       title: 'Home'
+    })
+  })
+
+  test('$content() on file with without', async () => {
+    const items = await page.runScript(() => window.$nuxt.$content('home').without(['body', 'createdAt', 'updatedAt', 'toc']).fetch())
+
+    expect(items).toEqual({
+      title: 'Home',
+      dir: '/',
+      extension: '.md',
+      path: '/home',
+      slug: 'home'
     })
   })
 
