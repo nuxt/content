@@ -14,7 +14,6 @@ category: Начало
 - `путь`
   - Тип: `String`
   - По умолчанию: `/`
-  - `обязательное`
 - `параметры`
   - Тип: `Object`
   - По умолчанию: `{}`
@@ -35,8 +34,6 @@ category: Начало
 
 `путь` может быть файлом или директорией. Если `путь` это файл, то `fetch()` вернет `Object`, если директория, то вернет `Array`.
 
-Вы можете использовать `{ deep: true }` как второй аргумент, чтобы получить файлы из поддиректорий.
-
 Все приведенные ниже методы могут быть объединены в цепочку и возвращать последовательность цепочек, кроме `fetch`, который возвращает `Promise`.
 
 ### only(ключи)
@@ -51,13 +48,13 @@ category: Начало
 const { title } = await this.$content('article-1').only(['title']).fetch()
 ```
 
-### without(keys)
+### without(ключи)
 
 - `keys`
-  - Type: `Array` | `String`
-  - `required`
+  - Тип: `Array` | `String`
+  - `обязательное`
 
-Remove a subset of fields.
+Исключите подмножество полей.
 
 ```js
 const { title, ...propsWithoutBody } = await this.$content('article-1').without(['body']).fetch()
@@ -89,10 +86,11 @@ const articles = await this.$content('articles').where({ name: { $in: ['odin', '
 
 ```js
 const products = await this.$content('products').where({ 'categories.slug': { $contains: 'top' } }).fetch()
+
 const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
-Этот модуль использует LokiJS под капотом, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
+> Этот модуль использует LokiJS под капотом, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
 
 ### sortBy(ключ, направление)
 
@@ -157,6 +155,13 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
+<base-alert type="info">
+
+Посмотрите [пример](/examples#search) о том, как реализовать поиск в вашем приложении
+
+</base-alert>
+
+
 ### surround(ярлык, настройки)
 
 - `ярлык`
@@ -190,6 +195,12 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` и `skip` неэффективны при использовании этого метода.
 
+<base-alert type="info">
+
+Посмотрите [пример](/examples#pagination) как реализовать ссылки вперед и назад в вашем приложении
+
+</base-alert>
+
 ### fetch()
 
 - Возвращает: `Promise<Object>` | `Promise<Array>`
@@ -214,27 +225,4 @@ const articles = await this.$content('articles')
   .fetch()
 ```
 
-## API
-
-Этот модуль предоставляет API в разработке, поэтому вы можете легко увидеть JSON каждого каталога или файла, доступные на [http://localhost:3000/_content/](http://localhost:3000/_content/). Префикс `_content` установлен по умолчанию и может быть изменен в параметре  [apiPrefix](/configuration#apiprefix).
-
-Пример:
-
-```bash
--| content/
----| articles/
-------| hello-world.md
----| index.md
----| settings.json
-```
-
-На `localhost:3000` будет выглядеть так:
-- `/_content/articles`: список файлов в `content/articles/`
-- `/_content/articles/hello-world`: вернет `hello-world.md` как JSON
-- `/_content/index`: вернет `index.md` как JSON
-- `/_content/settings`: вернет `settings.json` как JSON
-- `/_content`: список `index` и `settings`
-
-Конечная точка доступна для `GET` и `POST` запросов, так что вы можете использовать параметры запроса: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
-
-Вы можете узнать больше о конечных точках на [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+> Вы можете проверить, как использовать [API контента](/api) в разработке.
