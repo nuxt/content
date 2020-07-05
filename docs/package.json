@@ -32,7 +32,7 @@
     "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/tailwindcss": "^2.0.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-plugin-nuxt": ">=1.0.0",
     "nuxt-ackee": "^1.0.1",
     "tailwindcss-dark-mode": "^1.1.4",

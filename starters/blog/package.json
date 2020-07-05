@@ -24,7 +24,7 @@
     "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/tailwindcss": "^2.0.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-plugin-nuxt": ">=1.0.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^9.0.1",
