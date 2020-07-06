@@ -133,63 +133,44 @@ export default {
 Теперь, каждый раз, когда вы будете обновлять файл в вашей директории `content/`, будет выполняться метод `fetchCategories`.
 Эта документация использует его и вы можете узнать больше, взглянув на[plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js).
 
-## Интеграция с @nuxtjs/feed
+## API
 
-С случае со статьями, контент может использоваться для генерации новостной ленты с использованием модуля [@nuxtjs/feed](https://github.com/nuxt-community/feed-module).
 
-<base-alert type="info">
+Этот модуль предоставляет API в разработке, поэтому вы можете легко увидеть JSON каждого каталога или файла, доступные на [http://localhost:3000/_content/](http://localhost:3000/_content/). Префикс `_content` установлен по умолчанию и может быть изменен в параметре  [apiPrefix](/configuration#apiprefix).
 
-Для использования `$content` внутри параметра `feed`, вам нужно добавить `@nuxt/content` перед `@nuxtjs/feed` в `modules` вашего файла конфигурации.
+Пример:
 
-</base-alert>
-
-**Пример**
-
-```js
-export default {
-  modules: [
-    '@nuxt/content',
-    '@nuxtjs/feed'
-  ],
-
-  feed () {
-    const baseUrlArticles = 'https://mywebsite.com/articles'
-    const baseLinkFeedArticles = '/feed/articles'
-    const feedFormats = {
-      rss: { type: 'rss2', file: 'rss.xml' },
-      atom: { type: 'atom1', file: 'atom.xml' },
-      json: { type: 'json1', file: 'feed.json' },
-    }
-    const { $content } = require('@nuxt/content')
-
-    const createFeedArticles = async function (feed) {
-      feed.options = {
-        title: 'Мой блог',
-        description: 'Я пишу про технологии',
-        link: baseUrlArticles,
-      }
-      const articles = await $content('articles').fetch()
-
-      articles.forEach((article) => {
-        const url = `${baseUrlArticles}/${article.slug}`
-
-        feed.addItem({
-          title: article.title,
-          id: url,
-          link: url,
-          date: article.published,
-          description: article.summary,
-          content: article.summary,
-          author: article.authors,
-        })
-      })
-    }
-
-    return Object.values(feedFormats).map(({ file, type }) => ({
-      path: `${baseLinkFeedArticles}/${file}`,
-      type: type,
-      create: createFeedArticles,
-    }))
-  }
-}
+```bash
+-| content/
+---| articles/
+------| hello-world.md
+---| index.md
+---| settings.json
 ```
+
+На `localhost:3000` будет выглядеть так:
+- `/_content/articles`: список файлов в `content/articles/`
+- `/_content/articles/hello-world`: вернет `hello-world.md` как JSON
+- `/_content/index`: вернет `index.md` как JSON
+- `/_content/settings`: вернет `settings.json` как JSON
+- `/_content`: список `index` и `settings`
+
+Endpoint доступен для `GET` и `POST` запросов, так что вы можете использовать параметры запроса: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
+
+Начиная с **v1.4.0**, этот endpoint также поддерживает `where` в параметрах запроса:
+
+- Все ключи, которые не принадлежат ни одному из ключей по умолчанию, будут применены к `where`
+
+`http://localhost:3000/_content/articles?author=...`
+
+- Вы можете использовать `$operators` с `_`:
+
+`http://localhost:3000/_content/articles?author_regex=...`
+
+> Под капотом этот модуль использует LokiJS, вы можете взглянуть на [примеры запросов](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries).
+
+- Вы можете использовать [вложенные параметры](/configuration#nestedproperties):
+
+`http://localhost:3000/_content/products?categories.slug_contains=top`
+
+Вы можете узнать больше о конечных точках на [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
