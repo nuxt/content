@@ -225,4 +225,4 @@ const articles = await this.$content('articles')
   .fetch()
 ```
 
-> Вы можете проверить, как использовать [API контента](/api) в разработке.
+> Вы можете проверить, как использовать [API контента](/advanced#api-endpoint) в разработке.
