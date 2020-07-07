@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@nuxt/content": "nuxt/content#dev",
-    "@nuxt/static": "^0.0.11",
+    "@nuxt/static": "^0.0.12",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "clipboard": "^2.0.6",
     "lodash.groupby": "^4.6.0",
