@@ -1248,10 +1248,10 @@
     serve-static "^1.14.1"
     server-destroy "^1.0.1"
 
-"@nuxt/static@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@nuxt/static/-/static-0.0.11.tgz#84847bf16fd2b3ef1a229123cbe01278f36cf86b"
-  integrity sha512-GyZ1KyzYQGuqfAJWQoYHo4402yBvgG5SNwxrfggqizucYc7Jpp5I11xTOmiXZTsPNe71NcmNXYm6SMUKK1CmAA==
+"@nuxt/static@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@nuxt/static/-/static-0.0.12.tgz#21911adda84999efe2a09dbba48dedf43fa51db5"
+  integrity sha512-gZ7PfgU3DIz4N8uOrNLEEbTeN19hS0UBvhquSO5t4N6KfjWDYhvVVetRVisiTNbkcpeUg8uSXOzIN7KzCPyaqg==
   dependencies:
     consola "^2.14.0"
     crc "^3.8.0"
