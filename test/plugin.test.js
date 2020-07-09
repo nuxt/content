@@ -106,6 +106,29 @@ describe('plugin', () => {
     ])
   })
 
+  test('$content() on directory with multiple sortBy', async () => {
+    const items = await page.runScript(() => window.$nuxt.$content('articles')
+      .sortBy('position')
+      .sortBy('title')
+      .only(['title'])
+      .fetch())
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Build a DEV.TO clone with Nuxt new fetch'
+      }),
+      expect.objectContaining({
+        title: 'NuxtJS: From Terminal to Browser'
+      }),
+      expect.objectContaining({
+        title: 'Understanding how fetch works in Nuxt 2.12'
+      }),
+      expect.objectContaining({
+        title: 'Introducing Smart Prefeching'
+      })
+    ])
+  })
+
   test('$content() on directory with limit (number)', async () => {
     const items = await page.runScript(() => window.$nuxt.$content('articles').sortBy('date', 'desc').limit(1).only(['title']).fetch())
 

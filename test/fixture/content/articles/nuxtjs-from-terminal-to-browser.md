@@ -3,6 +3,7 @@ title: "NuxtJS: From Terminal to Browser"
 description: How we changed the developer experience to stop switching between the terminal and browser.
 imgUrl: blog/nuxtjs-from-terminal-to-browser/main.png
 date: 2019-06-04
+position: 2
 authors:
   - name: Sébastien Chopin
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
