@@ -3,6 +3,7 @@ title: Introducing Smart Prefeching
 description: "Starting from Nuxt v2.4.0, Nuxt.js will automagically prefetch the code-splitted pages linked with a nuxt-link when visible in the viewport by default."
 imgUrl: blog/introducing-smart-prefetching/main.png
 date: 2019-01-28
+position: 4
 authors:
   - name: Sébastien Chopin
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
