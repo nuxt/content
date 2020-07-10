@@ -22,13 +22,13 @@ category: 入門
   - Type: `Boolean`
   - Default: `false`
   - Version: **>= v1.3.0**
-  - *Fetch files from subdirectories*
+  - *サブディレクトリからのファイルの取得*
 - `options.text`
   - Type: `Boolean`
   - Default: `false`
   - Version: **>= v1.4.0**
-  - *Returns the original markdown content in a `text` variable*
-- Returns a chain sequence
+  - *元のマークダウンの内容を`text`変数で返します*
+- チェーンシーケンスを返します
 
 > 引数を複数与えることもできます。`$content('article', params.slug)` は `/articles/${params.slug}` に変換されます。
 
