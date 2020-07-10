@@ -2,7 +2,7 @@
 title: 実装例
 description: 'これらの例を参考にして、@nuxt/content をアプリに実装する方法を学びましょう。'
 position: 10
-category: コミュニティ
+category: Community
 ---
 
 アプリケーションに直接コピーできるこれらの実装例をみていきましょう。

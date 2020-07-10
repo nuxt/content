@@ -6,7 +6,7 @@ category: 入門
 ---
 
 <br>
-<base-alert type="info">This section is only for Markdown files.</base-alert>
+<base-alert type="info">ここではMarkdownファイルのみを対象としています。</base-alert>
 
 ## Component
 
@@ -39,7 +39,7 @@ export default {
   - Type: `Object`
   - `required`
 
-Markdonwファイルに書句ことができる内容についての詳細はこちらをご覧ください。[コンテンツを作成する](/ja/writing#markdown)
+Markdonwファイルに書くことができる内容についての詳細はこちらをご覧ください。[コンテンツを作成する](/ja/writing#markdown)
 
 ## Style
 

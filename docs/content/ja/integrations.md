@@ -1,8 +1,8 @@
 ---
-title: 統合
+title: 他のモジュールとの統合
 description: '他のモジュールと@nuxt/contentの使い方をご紹介します。'
 position: 11
-category: コミュニティ
+category: Community
 ---
 
 ## @nuxtjs/feed
