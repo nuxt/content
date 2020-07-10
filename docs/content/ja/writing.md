@@ -19,7 +19,7 @@ content/
   home.md
 ```
 
-このモジュールは `.md`, `.yaml`, `.csv`, `.json`, `.json5` ファイルを解析し、以下のプロパティを生成します。
+このモジュールは `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml` ファイルを解析し、以下のプロパティを生成します。
 
 - `dir`
 - `path`
@@ -164,7 +164,7 @@ http.createServer((req, res) => {
 
 `nuxt-content` コンポーネントでレンダリングすると、以下のようになります。
 
-```html
+```html[server.js]
 <div class="nuxt-content-highlight">
   <span class="filename">server.js</span>
   <pre class="language-js" data-line="1,3-5">
@@ -290,12 +290,41 @@ multiselectOptions:
 
 また Markdownの中で`<template>` タグを***使用できない***ことにも注意してください　(例: `v-slot` と使用する)
 
+#### グローバルコンポーネント
+
+**v1.4.0** と **v2.13.0** から、コンポーネントを `components/global/` ディレクトリに置くことができるようになり、ページ内でコンポーネントをインポートする必要がなくなりました。
+
+```bash
+components/
+  global/
+    Hello.vue
+content/
+  home.md
+```
+
+これだけで、`content/home.md`の中で`<hello></hello>`コンポーネントを使用できます。インポートし忘れることはありません。
+
 ### 目次
 
-`toc`配列の値がドキュメントに注入されます。 すべての `h2` と `h3` のタイトルとIDが一覧表示され、それらにリンクできます。
+ドキュメントを取得する際には、すべてのタイトルの配列である tocプロパティにアクセスできます。それぞれのタイトルにはリンクが可能なように `id` があり、見出しの種類である深さが設定されています。tocにはh2とh3のタイトルのみが使われます。タイトルのテキストであるtextプロパティもあります。
+
+```json
+{
+  "toc": [{
+    "id": "welcome",
+    "depth": 2,
+    "text": "Welcome!"
+  }]
+}
+```
 
 > このページの右側に表示されている目次を例に見てみましょう。
 
+<base-alert type="info">
+
+アプリに目次を実装する方法について、[この実装例](/ja/examples#目次)を参照してください
+
+</base-alert>
 
 ### 用例
 
@@ -370,8 +399,6 @@ title: Home
 
 [検索](/ja/fetching#searchfield-value)や[Hooksによる拡張](/ja/advanced#contentfilebeforeinsert)を使用するために、Markdownボディへ内部的に`text`キーを追加します。
 
-アプリケーションでMarkdownを表示する方法は、[コンテンツを表示する](/ja/displaying)セクションで見ることができます。
-
 ## CSV
 
 変数bodyに行が代入されます。
@@ -392,7 +419,7 @@ Home, Welcome!
   "dir": "/",
   "slug": "home",
   "path": "/home",
-  "extension": ".json",
+  "extension": ".csv",
   "body": [
     {
       "title": "Home",
@@ -402,7 +429,51 @@ Home, Welcome!
 }
 ```
 
-## YAML
+## XML
+
+XMLも解析できます。
+
+### 用例
+
+`content/home.xml`ファイル
+
+```xml
+<xml>
+  <item prop="abc">
+    <title>Title</title>
+    <description>Hello World</description>
+  </item>
+</xml>
+```
+
+以下のように変換されます。
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".xml",
+  "body": {
+    "xml": {
+      "item": [
+        {
+          "$": {
+            "prop": "abc"
+          },
+          "title": [
+            "Title"
+          ],
+          "description": [
+            "Hello World"
+          ]
+      }
+    ]
+  }
+}
+```
+
+## YAML / YML
 
 定義したデータがドキュメント自体に注入されます。
 

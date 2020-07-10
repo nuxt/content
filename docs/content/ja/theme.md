@@ -1,8 +1,8 @@
 ---
-title: テーマを利用する (実装中)
+title: テーマ (実装中)
 description: 'テーマを追加して、Nuxtと@nuxt/contentで開発を加速させましょう。'
-category: テーマ
-position: 8
+category: Community
+position: 12
 ---
 
 <br>
