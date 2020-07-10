@@ -34,7 +34,7 @@ export default {
 
 <base-alert type="info">
 
-Nuxt 2.13+を使用している場合、`nuxt export`にはクローラー機能が統合されているので、`generate.routes`を使用する必要はないかもしれません。
+Nuxt 2.13+ 以降、`nuxt export` にはクローラー機能が統合されており、すべてのリンクをクロールし、それらのリンクに基づいてルートを生成します。したがって、動的なルートをクロールさせるためには何もする必要はありません。
 
 </base-alert>
 
@@ -132,66 +132,46 @@ export default {
 ```
 
 これで、`content/`ディレクトリ内のファイルを更新するたびに、`fetchCategories`メソッドもディスパッチされます。
-このドキュメントサイトでは実際にそれを使用しています。[plugins/categories.js](https://github.com/nuxt/content/blob/master/docs/plugins/categories.js)を見れば、より多くのことを学ぶことができます。
+このドキュメントサイトでは実際にそれを使用しています。[plugins/init.js](https://github.com/nuxt/content/blob/master/docs/plugins/init.js)を見れば、より多くのことを学ぶことができます。
 
-## @nuxtjs/feed との統合
+## APIエンドポイント
 
-contentはニュースフィードを生成できます。  
-[@nuxtjs/feed](https://github.com/nuxt-community/feed-module)モジュールを使用します。
+このモジュールは開発中のAPIエンドポイントを公開し、各ディレクトリやファイルのJSONを簡単に見ることができるようにします。[http://localhost:3000/_content/](http://localhost:3000/_content/)で利用可能です。プレフィックスはデフォルトでは `_content`で、[apiPrefix](ja/configuration#apiprefix)プロパティで設定できます。
 
-<base-alert type="info">
+例：
 
-`feed` オプションの中で `$content` を使うには、`modules`で `@nuxtjs/feed` の前に `@nuxt/content` を追加する必要があります。
-
-</base-alert>
-
-**Example**
-
-```js
-export default {
-  modules: [
-    '@nuxt/content',
-    '@nuxtjs/feed'
-  ],
-
-  feed () {
-    const baseUrlArticles = 'https://mywebsite.com/articles'
-    const baseLinkFeedArticles = '/feed/articles'
-    const feedFormats = {
-      rss: { type: 'rss2', file: 'rss.xml' },
-      atom: { type: 'atom1', file: 'atom.xml' },
-      json: { type: 'json1', file: 'feed.json' },
-    }
-    const { $content } = require('@nuxt/content')
-
-    const createFeedArticles = async function (feed) {
-      feed.options = {
-        title: 'My Blog',
-        description: 'I write about technology',
-        link: baseUrlArticles,
-      }
-      const articles = await $content('articles').fetch()
-
-      articles.forEach((article) => {
-        const url = `${baseUrlArticles}/${article.slug}`
-
-        feed.addItem({
-          title: article.title,
-          id: url,
-          link: url,
-          date: article.published,
-          description: article.summary,
-          content: article.summary,
-          author: article.authors,
-        })
-      })
-    }
-
-    return Object.values(feedFormats).map(({ file, type }) => ({
-      path: `${baseLinkFeedArticles}/${file}`,
-      type: type,
-      create: createFeedArticles,
-    }))
-  }
-}
+```bash
+-| content/
+---| articles/
+------| hello-world.md
+---| index.md
+---| settings.json
 ```
+
+`localhost:3000`で公開されます:
+- `/_content/articles`: `content/articles/`のファイルのリスト
+- `/_content/articles/hello-world`: `hello-world.md` をJSONで取得
+- `/_content/index`: `index.md` をJSONで取得
+- `/_content/settings`:`settings.json` をJSONで取得
+- `/_content`: `index` と `settings`のリスト
+
+
+ エンドポイントは `GET` や `POST` リクエストでアクセスできるので、クエリのパラメーターを利用できます。: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
+
+**v1.4.0**以降、このエンドポイントはクエリパラメータの `where`もサポートしています。
+
+- デフォルトのキーに属さないすべてのキーが `where`に適用されます。
+
+`http://localhost:3000/_content/articles?author=...`
+
+- `$operators`は`_`と一緒に使うことができます。
+
+`http://localhost:3000/_content/articles?author_regex=...`
+
+> このモジュールは 、内部的にLokiJSを使用しています。、あなたは[クエリの例]（https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries）をチェックすることができます。
+
+- [nested properties](/ja/configuration#nestedproperties)も利用できます
+
+`http://localhost:3000/_content/products?categories.slug_contains=top`
+
+> このエンドポイントについての詳細は [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js)を参照してください。
