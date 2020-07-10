@@ -41,6 +41,7 @@
     "node-res": "^5.0.1",
     "p-queue": "6.5.0",
     "prismjs": "^1.20.0",
+    "graceful-fs": "^4.2.4",
     "rehype-raw": "^4.0.2",
     "rehype-sort-attribute-values": "^3.0.2",
     "rehype-sort-attributes": "^3.0.2",
