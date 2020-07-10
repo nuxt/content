@@ -14,12 +14,21 @@ category: 入門
 - `path`
   - Type: `String`
   - Default: `/`
-  - `required`
 - `options`
   - Type: `Object`
-  - Default: `{ deep: false }`
-  - Version: **v1.3.0**
-- Returns a chain sequence
+  - Default: `{}`
+  - Version: **>= v1.3.0**
+- `options.deep`
+  - Type: `Boolean`
+  - Default: `false`
+  - Version: **>= v1.3.0**
+  - *サブディレクトリからのファイルの取得*
+- `options.text`
+  - Type: `Boolean`
+  - Default: `false`
+  - Version: **>= v1.4.0**
+  - *元のマークダウンの内容を`text`変数で返します*
+- チェーンシーケンスを返します
 
 > 引数を複数与えることもできます。`$content('article', params.slug)` は `/articles/${params.slug}` に変換されます。
 
@@ -27,7 +36,7 @@ category: 入門
 
 第二引数に `{ deep: true }` を渡すことでサブディレクトリからファイルを取得できます。
 
-以下で紹介するメソッドはすべて`$content`の後につなげて使います。`Promise` を返す`fetch`以外は、メソッドチェーンを返します。
+以下で紹介するメソッドはすべて`$content`の後につなげて使います。`Promise` を返す`fetch`以外は、チェーンシーケンスを返します。
 
 
 ### only(keys)
@@ -48,7 +57,7 @@ const { title } = await this.$content('article-1').only(['title']).fetch()
   - Type: `Array` | `String`
   - `required`
 
-Remove a subset of fields.
+フィールドのサブセットを削除します。
 
 ```js
 const { title, ...propsWithoutBody } = await this.$content('article-1').without(['body']).fetch()
@@ -84,7 +93,7 @@ const products = await this.$content('products').where({ 'categories.slug': { $c
 const products = await this.$content('products').where({ 'categories.slug': { $contains: ['top', 'woman'] } }).fetch()
 ```
 
-内部的にLokiJSを使用しています。[query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries)をチェックしてください。
+> 内部的にLokiJSを使用しています。[query examples](https://github.com/techfort/LokiJS/wiki/Query-Examples#find-queries)をチェックしてください。
 
 ### sortBy(key, direction)
 
@@ -149,6 +158,12 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
+<base-alert type="info">
+
+アプリに検索を実装する方法について[この実装例](/ja/examples#検索)を参考にしてください
+
+</base-alert>
+
 ### surround(slug, options)
 
 - `slug`
@@ -186,11 +201,17 @@ const [prev, next] = await this.$content('articles')
 
 > `surround`を利用する場合、`search`、`limit`、`skip`は考慮されません。
 
+<base-alert type="info">
+
+アプリに前後の記事へのリンクを実装する方法について[この実装例](/ja/examples#ページネーション)を参考にしてください
+
+</base-alert>
+
 ### fetch()
 
 - Returns: `Promise<Object>` | `Promise<Array>`
 
-メソッドチェーンを終了し、データを収集します。
+チェーンシーケンスを終了し、データを収集します。
 
 ## 用例
 
@@ -210,28 +231,4 @@ const articles = await this.$content('articles')
   .fetch()
 ```
 
-## API
-
-各ディレクトリやファイルのJSONを簡単に見ることができるように、開発中のAPIを公開しています。[http://localhost:3000/_content/](http://localhost:3000/_content/) で利用可能です。接頭辞はデフォルトでは `_content` です。[apiPrefix](/ja/configuration#apiprefix)プロパティで変更できます。
-
-例:
-
-```bash
--| content/
----| articles/
-------| hello-world.md
----| index.md
----| settings.json
-```
-
-`localhost:3000`で公開されます:
-- `/_content/articles`: `content/articles/`のファイルのリスト
-- `/_content/articles/hello-world`: `hello-world.md` をJSONで取得
-- `/_content/index`: `index.md` をJSONで取得
-- `/_content/settings`:`settings.json` をJSONで取得
-- `/_content`: `index` と `settings`のリスト
-
-
- エンドポイントは `GET` や `POST` リクエストでアクセスできるので、クエリのパラメーターを利用できます。: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
-
-[lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js)で詳しく知ることができます。
+> 開発をスムーズにするために、[Content API](/ja/advanced#api-endpoint)の使い方をチェックしてください。

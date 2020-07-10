@@ -75,7 +75,7 @@ content: {
 
 - Type `Array`
 - Default: `[]`
-- Version: **v1.3.0**
+- Version: **>= v1.3.0**
 
 ドット表記やディープフィルタリングを処理するために、入れ子になったプロパティを登録します。
 
@@ -198,7 +198,7 @@ export default {
 
 - Type: `Array`
 - Default: `['remark-squeeze-paragraphs', 'remark-slug', 'remark-autolink-headings', 'remark-external-links', 'remark-footnotes']`
-- Version: **v2.0.0**
+- Version: **>= v1.4.0**
 
 > [remark plugins](https://github.com/remarkjs/remark/blob/master/doc/plugins.md#list-of-plugins)を参照してください。
 
@@ -206,9 +206,21 @@ export default {
 
 - Type: `Array`
 - Default: `['rehype-minify-whitespace', 'rehype-sort-attribute-values', 'rehype-sort-attributes', 'rehype-raw']`
-- Version: **v2.0.0**
+- Version: **>= v1.4.0**
 
 > [rehype plugins](https://github.com/rehypejs/rehype/blob/master/doc/plugins.md#list-of-plugins)を参照してください。
+
+### `markdown.basePlugins`
+
+<base-alert>
+非推奨です。代わりに `markdown.remarkPlugins`を関数として使用してください。
+</base-alert>
+
+### `markdown.plugins`
+
+<base-alert>
+非推奨です。代わりに `markdown. remarkPlugins`を配列として使用してください。
+</base-alert>
 
 ### `markdown.prism.theme`
 
@@ -218,6 +230,23 @@ export default {
 [PrismJS](https://prismjs.com)を使用してMarkdownコンテンツのコードのシンタックスハイライトを処理します。
 
 これは、Nuxt.jsの設定で希望するPrismJSテーマを自動的にプッシュします。デフォルトのテーマとは異なるテーマを使用したい場合は、[prism-themes](https://github.com/PrismJS/prism-themes)から選んで変更します。
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn add prism-themes
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  npm install prism-themes
+  ```
+
+  </code-block>
+</code-group>
 
 ```js{}[nuxt.config.js]
 content: {
@@ -246,9 +275,16 @@ content: {
 - Type: `Object`
 - Default: `{}`
 
-このモジュールは、`js-yaml`を使用してyamlファイルを解析します。ここで[options](https://github.com/nodeca/js-yaml#api)を確認できます。
+このモジュールは、`js-yaml`を使用して`.yaml`と`.yml`ファイルを解析します。ここで[options](https://github.com/nodeca/js-yaml#api)を確認できます。
 
 `json：true`オプションを強制することに注意してください。 
+
+### `xml`
+
+- Type: `Object`
+- Default: `{}`
+
+このモジュールは `xml2js` を用いて `.xml` ファイルを解析します。[options](https://www.npmjs.com/package/xml2js#options)はこちらで確認できます。
 
 ### `csv`
 
@@ -286,7 +322,8 @@ export default {
       }
     },
     yaml: {},
-    csv: {}
+    csv: {},
+    xml: {}
   }
 }
 ```
