@@ -68,7 +68,7 @@
     "nuxt": "^2.13.3",
     "jest": "^26.1.0",
     "puppeteer": "^5.0.0",
-    "standard-version": "^8.0.0",
+    "standard-version": "^8.0.1",
     "tib": "^0.7.4"
   },
   "publishConfig": {
