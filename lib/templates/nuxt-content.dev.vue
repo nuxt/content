@@ -1,9 +1,10 @@
 <template>
-  <div class="nuxt-content-container">
+  <div :class="['nuxt-content-container', { 'author': isEditing}]">
     <textarea
       v-show="isEditing"
       v-model="file"
       ref="textarea"
+      class="nuxt-content-editor"
       @keyup.stop="onType"
       @blur="toggleEdit"
     />
@@ -91,7 +92,7 @@ export default {
 .nuxt-content-container {
   position: relative;
 }
-.nuxt-content-container textarea {
+.nuxt-content-editor {
   width: 100%;
   padding: 8px;
 }
