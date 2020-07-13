@@ -92,6 +92,7 @@ export default {
 .nuxt-content-container {
   position: relative;
 }
+
 .nuxt-content-editor {
   width: 100%;
   padding: 8px;
