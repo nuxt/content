@@ -12,6 +12,7 @@ features:
   - Syntax highlighting to code blocks in markdown files using PrismJS.
   - Table of contents generation
   - Handles Markdown, CSV, YAML, JSON(5), XML
+  - Extend with custom parsers
   - Extend with hooks
 ---
 
