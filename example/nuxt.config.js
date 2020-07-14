@@ -14,7 +14,7 @@ module.exports = {
       'categories.slug'
     ],
     userParser: {
-      '.txt': file => file.split('\n').map(line => line.trim())
+      '.custom': file => file.split('\n').map(line => line.trim())
     }
   }
 }
