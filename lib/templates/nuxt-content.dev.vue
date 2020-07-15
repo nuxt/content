@@ -1,5 +1,5 @@
 <template>
-  <div :class="['nuxt-content-container', { 'author': isEditing}]">
+  <div :class="['nuxt-content-container', { 'is-editing': isEditing}]">
     <textarea
       v-show="isEditing"
       v-model="file"
