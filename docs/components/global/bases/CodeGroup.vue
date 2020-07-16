@@ -1,6 +1,8 @@
 <template>
   <div class="code-group">
-    <div class="rounded-t border-b-2 border-gray-700 px-2 bg-gray-800 text-sm text-white relative">
+    <div
+      class="rounded-t-md border-b-2 border-gray-700 px-2 bg-gray-800 text-sm text-white relative"
+    >
       <button
         v-for="({ label }, i) in tabs"
         ref="tabs"
@@ -28,15 +30,6 @@ export default {
       this.switchTab(newValue)
     }
   },
-  created () {
-    this.$slots.default.filter(slot => Boolean(slot.componentOptions)).map((slot) => {
-      this.tabs.push({
-        label: slot.componentOptions.propsData.label,
-        elm: null
-      })
-    })
-    this.activeTabIndex = 0
-  },
   mounted () {
     this.tabs = this.$slots.default.filter(slot => Boolean(slot.componentOptions)).map((slot) => {
       return {
@@ -44,7 +37,7 @@ export default {
         elm: slot.elm
       }
     })
-    this.updateHighlighteUnderlinePosition()
+    this.$nextTick(this.updateHighlighteUnderlinePosition)
   },
   methods: {
     switchTab (i) {
@@ -84,7 +77,7 @@ button {
 
 .code-group ::v-deep {
   & pre[class*="language-"] {
-    @apply rounded-t-none;
+    @apply rounded-t-none mt-0;
   }
 }
 </style>
