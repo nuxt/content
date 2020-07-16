@@ -295,7 +295,7 @@ This module uses `xml2js` to parse `.xml` files, you can check here for [options
 
 This module uses `node-csvtojson` to parse csv files, you can check here for [options](https://github.com/Keyang/node-csvtojson#parameters).
 
-### `userParser`
+### `extendParser`
 
 - Type: `Object`
 - Default `{}`
@@ -312,7 +312,7 @@ const parseTxt = file => file.split('\n').map(line => line.trim())
 // in Config:
 
 {
-  userParser: {
+  extendParser: {
     '.txt': parseTxt
   }
 }
@@ -348,7 +348,7 @@ export default {
     yaml: {},
     csv: {},
     xml: {},
-    userParser: {}
+    extendParser: {}
   }
 }
 ```
