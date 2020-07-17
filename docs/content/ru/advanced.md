@@ -38,7 +38,7 @@ export default {
 
 </base-alert>
 
-При использовании `nuxt generate`, вам нужно указать динамические маршруты в [`generate.routes`](https://nuxtjs.org/api/configuration-generate/#routes), потому что Nuxt не знает какие маршруты нужно генерировать.
+При использовании `nuxt generate`, вам нужно указать динамические маршруты в [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), потому что Nuxt не знает какие маршруты нужно генерировать.
 
 **Пример**
 

@@ -5,7 +5,6 @@ position: 5
 category: 入門
 ---
 
-<br>
 <base-alert type="info">ここではMarkdownファイルのみを対象としています。</base-alert>
 
 ## Component
