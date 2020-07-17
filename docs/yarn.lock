@@ -8890,14 +8890,14 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tailwindcss-dark-mode@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/tailwindcss-dark-mode/-/tailwindcss-dark-mode-1.1.4.tgz#730f03022dc132c56d5716170520520bf4b1b2cc"
-  integrity sha512-e0zgg6V5wc+pUHLdjc7oxnbetcPv0hqvUPMfK3tvugwyEZtG8n8FhDu3kkPbu7KwAqB7NQ8aONITv+jB2TVpRA==
+tailwindcss-dark-mode@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/tailwindcss-dark-mode/-/tailwindcss-dark-mode-1.1.5.tgz#3e6ed526b6970a21a7f1ba810e727aba6a74576c"
+  integrity sha512-wbzwCR4GNoXA8Vk0dja0Tecp3yNZdqIjFv2YIt/unXz9yl42bbliMiTfbdnzo8RSM5qSWcoaq6mGlQRxjfxIlg==
   dependencies:
-    tailwindcss "^1.2.0"
+    tailwindcss "^1.5.1"
 
-tailwindcss@^1.2.0, tailwindcss@^1.4.0:
+tailwindcss@^1.4.0:
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.4.6.tgz#17b37166ccda08d7e7f9ca995ea48ce1e0089700"
   integrity sha512-qV0qInUq1FWih39Bc5CWECdgObSzRrbjGD4ke4kAPSIq6WXrPhv0wwOcUWJgJ66ltT9j+XnSRYikG8WNRU/fTQ==
