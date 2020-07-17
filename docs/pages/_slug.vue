@@ -54,12 +54,11 @@ export default {
     const blocks = document.getElementsByClassName('nuxt-content-highlight')
 
     for (const block of blocks) {
-      const pre = block.getElementsByTagName('pre')[0]
       const button = document.createElement('button')
       button.className = 'copy'
       button.textContent = 'Copy'
 
-      pre.appendChild(button)
+      block.appendChild(button)
     }
 
     const copyCode = new Clipboard('.copy', {
