@@ -28,6 +28,8 @@ This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml`
 - `createdAt`
 - `updatedAt`
 
+The `createdAt` and `updatedAt` properties are based on the file's actual created & updated datetime, but you can override them by defining your own `createdAt` and `updatedAt` values. This is especially useful if you are migrating your past blog posts where the `createdAt` can be months or years ago.
+
 ## Markdown
 
 This module converts your `.md` files into a JSON AST tree structure, stored in a `body` variable.
