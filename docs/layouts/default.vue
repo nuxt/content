@@ -21,7 +21,7 @@
                     <NuxtLink
                       :to="toLink(doc.slug)"
                       class="px-2 rounded font-medium py-1 block hover:text-gray-700 dark-hover:text-gray-100"
-                      exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-white dark:bg-green-800 dark-hover:text-white"
+                      exact-active-class="text-green-500 bg-green-100 hover:text-green-500 dark:text-white dark:bg-green-700 dark-hover:text-white"
                     >{{ doc.title }}</NuxtLink>
                   </li>
                 </ul>

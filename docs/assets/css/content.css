@@ -1,5 +1,6 @@
 .nuxt-content {
   & h2, & h3 {
+    /* Fix anchor scrollTo */
     &::before {
       display: block;
       content: " ";
@@ -9,6 +10,7 @@
       pointer-events: none;
     }
 
+    /* Style anchor links on headings added by @nuxt/content */
     & > a {
       @apply ml-5;
 
@@ -25,7 +27,6 @@
         }
       }
     }
-
     &:hover {
       & > a::before {
         @apply opacity-100;
@@ -33,34 +34,36 @@
     }
   }
 
-
   & .nuxt-content-highlight {
-    @apply relative whitespace-pre-wrap;
+    @apply relative;
 
+    /* Style filename span added by @nuxt/content */
     & > .filename {
-      @apply absolute right-0 top-0 text-gray-500 z-10 mr-3 mt-1;
+      @apply absolute right-0 top-0 text-gray-100 z-10 italic leading-none mr-3 mt-3;
     }
-  }
 
-  & pre[class*="language-"] {
-    @apply bg-gray-800 static;
-
+    /* Style copy button added in `pages/_slug.vue` */
     & > .copy {
-      @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-3 py-2 text-white bg-gray-800 text-sm uppercase font-sans rounded-md border border-white tracking-wide font-semibold mr-3 mb-3;
+      @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-3 py-2 text-white bg-gray-800 text-sm uppercase rounded-md border border-white font-semibold mr-3 mb-3;
 
       &:hover {
         @apply bg-gray-700;
       }
 
       &:focus {
-        @apply outline-none bg-gray-900;
+        @apply outline-none bg-gray-600;
       }
     }
-
     &:hover {
       & > .copy {
         @apply block;
       }
     }
+  }
+
+  /* Force style on pre elements */
+  & pre[class*="language-"] {
+    /* Make pre static so the relative goes to the parent (.nuxt-content-highlight) */
+    @apply bg-gray-800 static;
   }
 }

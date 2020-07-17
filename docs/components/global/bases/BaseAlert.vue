@@ -30,11 +30,14 @@ export default {
 .alert a {
   @apply text-gray-700 !important;
 }
+.alert strong {
+  @apply text-current;
+}
 .alert-warning {
   @apply bg-orange-100 border-orange-400;
 }
 .alert-warning code {
-  @apply bg-orange-200 shadow-none;
+  @apply bg-orange-200 shadow-none border-0 text-current;
 }
 .alert-warning .alert-icon {
   @apply text-orange-400;
@@ -58,7 +61,7 @@ export default {
   @apply bg-blue-100 border-blue-400;
 }
 .alert-info code {
-  @apply bg-blue-200 shadow-none;
+  @apply bg-blue-200 shadow-none border-0 text-current;
 }
 .alert-info .alert-icon {
   @apply text-blue-400;

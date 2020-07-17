@@ -27,6 +27,38 @@ module.exports = {
       })
     },
     typography: theme => ({
+      default: {
+        css: {
+          a: {
+            color: theme('colors.green.500')
+          },
+          blockquote: {
+            fontWeight: '400',
+            fontStyle: 'normal',
+            quotes: '"\\201C""\\201D""\\2018""\\2019"'
+          },
+          'blockquote p:first-of-type::before': {
+            content: ''
+          },
+          'blockquote p:last-of-type::after': {
+            content: ''
+          },
+          code: {
+            fontWeight: '600',
+            backgroundColor: theme('colors.gray.100'),
+            padding: theme('padding.1'),
+            borderWidth: 1,
+            borderColor: theme('colors.gray.200'),
+            borderRadius: theme('borderRadius.default')
+          },
+          'code::before': {
+            content: ''
+          },
+          'code::after': {
+            content: ''
+          }
+        }
+      },
       dark: {
         css: {
           color: theme('colors.gray.300'),
@@ -34,7 +66,7 @@ module.exports = {
             color: theme('colors.gray.300')
           },
           a: {
-            color: theme('colors.gray.100')
+            color: theme('colors.green.500')
           },
           strong: {
             color: theme('colors.gray.100')
@@ -68,11 +100,9 @@ module.exports = {
             color: theme('colors.gray.400')
           },
           code: {
-            color: theme('colors.gray.100')
-          },
-          pre: {
-            color: theme('colors.gray.700'),
-            backgroundColor: theme('colors.gray.200')
+            color: theme('colors.gray.100'),
+            backgroundColor: theme('colors.gray.800'),
+            borderWidth: 0
           }
         }
       }
