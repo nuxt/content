@@ -32,6 +32,11 @@ module.exports = {
           a: {
             color: theme('colors.green.500')
           },
+          h2: {
+            paddingBottom: theme('padding.2'),
+            borderBottomWidth: '1px',
+            borderBottomColor: theme('colors.gray.200')
+          },
           blockquote: {
             fontWeight: '400',
             fontStyle: 'normal',
@@ -88,7 +93,8 @@ module.exports = {
             color: theme('colors.gray.100')
           },
           h2: {
-            color: theme('colors.gray.100')
+            color: theme('colors.gray.100'),
+            borderBottomColor: theme('colors.gray.800')
           },
           h3: {
             color: theme('colors.gray.100')
