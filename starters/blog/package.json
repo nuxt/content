@@ -28,6 +28,6 @@
     "eslint-plugin-nuxt": ">=1.0.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^9.0.2",
-    "tailwindcss-dark-mode": "^1.1.4"
+    "tailwindcss-dark-mode": "^1.1.5"
   }
 }
