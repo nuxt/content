@@ -49,7 +49,7 @@ module.exports = {
             content: ''
           },
           code: {
-            fontWeight: '600',
+            fontWeight: '400',
             backgroundColor: theme('colors.gray.100'),
             padding: theme('padding.1'),
             borderWidth: 1,
