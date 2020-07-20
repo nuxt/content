@@ -78,7 +78,7 @@ Say we have the following markdown file:
 ##### elit
 ```
 
-It will be transformed to it's JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
+It will be transformed to its JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
 
 ```html
 <h1 id="lorem-ipsum-"><a href="#lorem-ipsum-" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>Lorem ipsum</h1>
@@ -144,7 +144,7 @@ This module automatically wraps codeblocks and applies [PrismJS](https://prismjs
 
 Codeblocks in Markdown are wrapped inside 3 backticks. Optionally, you can define the language of the codeblock to enable specific syntax highlighting.
 
-Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with it's own custom syntax:
+Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with its own custom syntax:
 
 - Highlighted line numbers inside curly braces
 - Filename inside square brackets
