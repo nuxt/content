@@ -34,8 +34,6 @@ Demonstration of using `$content` and `<nuxt-content>` to display Markdown pages
   <source src="https://res.cloudinary.com/nuxt/video/upload/q_auto/v1588091670/nuxt-content_wxnjje.ogv" type="video/ogg" />
 </video>
 
-<br>
-
 Using `$content()` on a directory to list, filter and search content:
 
 <video poster="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.jpg" loop playsinline controls>

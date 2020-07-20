@@ -92,7 +92,7 @@ description: Изучите как использовать @nuxt/content.
 
 ### Ссылки
 
-Ссылки преобразуются для добавления корректных `target` и `rel` атрибутов используя [remark-external-links](https://github.com/remarkjs/remark-external-links). Взгляните [сюда](/configuration#markdown) чтобы изучить как настроить это плагин. 
+Ссылки преобразуются для добавления корректных `target` и `rel` атрибутов используя [remark-external-links](https://github.com/remarkjs/remark-external-links). Взгляните [сюда](/configuration#markdown) чтобы изучить как настроить это плагин.
 
 Относительные ссылки будут также преобразованы в `nuxt-link`, чтобы обеспечить навигацию между компонентами страниц и улучшит производительность используя умную предзагрузку.
 
@@ -260,8 +260,7 @@ title: Главная
 **Результат:**
 
 <div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
-
-Выберите *фреймворк*:
+Выберите <i>фреймворк</i>:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 

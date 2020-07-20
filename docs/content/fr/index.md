@@ -34,8 +34,6 @@ Une démonstration de l'utilisation de `$content` et `<nuxt-content>` pour affic
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content_wxnjje.ogv" type="video/ogg" />
 </video>
 
-<br>
-
 Utilisez `$content()` sur un répertoire afin de lister, filtrer et rechercher du contenu:
 
 <video poster="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.jpg" loop playsinline controls>

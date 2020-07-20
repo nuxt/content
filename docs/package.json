@@ -18,11 +18,11 @@
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "clipboard": "^2.0.6",
     "lodash.groupby": "^4.6.0",
-    "marked": "^1.1.0",
+    "marked": "^1.1.1",
     "nuxt": "^2.13.3",
     "nuxt-i18n": "^6.13.1",
     "prism-themes": "^1.4.0",
-    "tailwindcss": "^1.4.6",
+    "tailwindcss": "^1.5.1",
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
@@ -30,12 +30,13 @@
     "@nuxtjs/eslint-config": "^3.0.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/moment": "^1.6.1",
-    "@nuxtjs/tailwindcss": "^2.0.0",
+    "@nuxtjs/tailwindcss": "^2.1.0",
+    "@tailwindcss/typography": "^0.2.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.5.0",
     "eslint-plugin-nuxt": ">=1.0.0",
     "nuxt-ackee": "^1.0.1",
-    "tailwindcss-dark-mode": "^1.1.4",
+    "tailwindcss-dark-mode": "^1.1.5",
     "vue-multiselect": "^2.1.6"
   }
 }

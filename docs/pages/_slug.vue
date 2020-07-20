@@ -4,8 +4,11 @@
       class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r"
       :class="{ '': doc.toc && doc.toc.length, 'lg:w-3/4': !doc.fullscreen }"
     >
-      <article class="lg:px-8">
-        <h1 class="text-4xl font-black mb-4 leading-none">{{ doc.title }}</h1>
+      <article
+        class="prose max-w-none lg:px-8"
+        :class="{ 'prose-dark': $colorMode.value === 'dark' }"
+      >
+        <h1>{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
       <EditOnGithub :document="doc" />
@@ -51,12 +54,11 @@ export default {
     const blocks = document.getElementsByClassName('nuxt-content-highlight')
 
     for (const block of blocks) {
-      const pre = block.getElementsByTagName('pre')[0]
       const button = document.createElement('button')
       button.className = 'copy'
       button.textContent = 'Copy'
 
-      pre.appendChild(button)
+      block.appendChild(button)
     }
 
     const copyCode = new Clipboard('.copy', {

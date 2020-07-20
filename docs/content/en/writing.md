@@ -28,6 +28,8 @@ This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml`
 - `createdAt`
 - `updatedAt`
 
+The `createdAt` and `updatedAt` properties are based on the file's actual created & updated datetime, but you can override them by defining your own `createdAt` and `updatedAt` values. This is especially useful if you are migrating your past blog posts where the `createdAt` can be months or years ago.
+
 ## Markdown
 
 This module converts your `.md` files into a JSON AST tree structure, stored in a `body` variable.
@@ -78,7 +80,7 @@ Say we have the following markdown file:
 ##### elit
 ```
 
-It will be transformed to it's JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
+It will be transformed to its JSON AST structure, and by using the `nuxt-content` component, it will render HTML like:
 
 ```html
 <h1 id="lorem-ipsum-"><a href="#lorem-ipsum-" aria-hidden="true" tabindex="-1"><span class="icon icon-link"></span></a>Lorem ipsum</h1>
@@ -144,7 +146,7 @@ This module automatically wraps codeblocks and applies [PrismJS](https://prismjs
 
 Codeblocks in Markdown are wrapped inside 3 backticks. Optionally, you can define the language of the codeblock to enable specific syntax highlighting.
 
-Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with it's own custom syntax:
+Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with its own custom syntax:
 
 - Highlighted line numbers inside curly braces
 - Filename inside square brackets
@@ -259,9 +261,8 @@ Please choose a *framework*:
 
 **Result:**
 
-<div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
-
-Please choose a *framework*:
+<div class="border rounded-md p-2 mb-2 bg-gray-200 dark:bg-gray-800">
+Please choose a <i>framework</i>:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 
