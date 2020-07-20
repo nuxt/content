@@ -38,7 +38,7 @@ Nuxt 2.13+ 以降、`nuxt export` にはクローラー機能が統合されて�
 
 </base-alert>
 
-`nuxt generate` を利用する場合は、[`generate.routes`](https://nuxtjs.org/api/configuration-generate/#routes) で動的ルートを指定する必要があります。
+`nuxt generate` を利用する場合は、[generate.routes](https://nuxtjs.org/api/configuration-generate/#routes) で動的ルートを指定する必要があります。
 なぜなら、Nuxtはこれらのルートが何になるかわからないので、ルートを生成できないからです。
 
 **例**

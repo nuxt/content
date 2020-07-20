@@ -33,8 +33,6 @@ features:
   <source src="https://res.cloudinary.com/nuxt/video/upload/v1588091670/nuxt-content_wxnjje.ogv" type="video/ogg" />
 </video>
 
-<br>
-
 Использование `$content()` для получения списка, фильтрации и поиска контента:
 
 <video poster="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.jpg" loop playsinline controls>

@@ -38,7 +38,7 @@ Since Nuxt 2.13+, `nuxt export` has a crawler feature integrated which will craw
 
 </base-alert>
 
-When using `nuxt generate`, you need to specify the dynamic routes with [`generate.routes`](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
+When using `nuxt generate`, you need to specify the dynamic routes with [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
 
 **Example**
 

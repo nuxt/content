@@ -1,153 +1,69 @@
-.dark-mode .nuxt-content {
-  & h2,
-  & h3,
-  & blockquote {
-    @apply border-gray-800;
-  }
-
-  & > code,
-  & li > code,
-  & p > code,
-  & h3 > code {
-    @apply bg-gray-800;
-  }
-}
-
-.nuxt-content h2 {
-  @apply text-3xl font-black mb-4 pb-1 border-b -mt-12 pt-16;
-
-  & > a {
-    @apply ml-6;
-    &::before {
-      content: "#";
-      @apply text-green-500 font-normal -ml-6 pr-1 absolute opacity-100;
-    }
-  }
-
-  &:hover {
-    & > a::before {
-      @apply opacity-100;
-    }
-  }
-}
-.nuxt-content h3 {
-  @apply text-2xl font-extrabold mb-2 pb-1 border-b -mt-12 pt-16;
-
-  & > a {
-    @apply ml-6;
-    &::before {
-      content: "#";
-      @apply text-green-500 font-normal -ml-5 pr-1 absolute opacity-100;
-    }
-  }
-
-  &:hover {
-    & > a::before {
-      @apply opacity-100;
-    }
-  }
-}
-
-.nuxt-content h4 {
-  @apply text-xl font-semibold mb-2 pb-1 border-b -mt-16 pt-20;
-}
-
-@screen lg {
-  .nuxt-content h2 a,
-  .nuxt-content h3 a {
-    @apply ml-0;
-    &::before {
-      @apply opacity-0;
-    }
-  }
-}
-
-.nuxt-content ul,
-.nuxt-content ol {
-  @apply list-disc list-inside mb-4 pl-2;
-
-  & > li {
-    @apply leading-7;
-
-    & > ul {
-      @apply pl-4;
-    }
-  }
-}
-
-.nuxt-content ol {
-  @apply list-decimal;
-}
-
 .nuxt-content {
-  & a {
-    @apply text-green-500;
+  & h2, & h3 {
+    /* Fix anchor scrollTo */
+    &::before {
+      display: block;
+      content: " ";
+      margin-top: -85px;
+      height: 85px;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
+    /* Style anchor links on headings added by @nuxt/content */
+    & > a {
+      @apply ml-5;
+
+      &::before {
+        content: "#";
+        @apply text-green-500 font-normal -ml-5 pr-2 absolute opacity-100;
+      }
+
+      @screen lg {
+        @apply ml-0;
+
+        &::before {
+          @apply opacity-0;
+        }
+      }
+    }
     &:hover {
-      @apply underline;
+      & > a::before {
+        @apply opacity-100;
+      }
     }
   }
 
-  & p {
-    @apply mb-4 leading-7;
-  }
+  & .nuxt-content-highlight {
+    @apply relative;
 
-  & > blockquote {
-    @apply py-2 pl-4 mb-4 border-l-4;
-
-    & p:last-child {
-      @apply mb-0;
+    /* Style filename span added by @nuxt/content */
+    & > .filename {
+      @apply absolute right-0 top-0 text-gray-100 z-10 italic leading-none mr-3 mt-3;
     }
-  }
 
-  & > code,
-  & li > code,
-  & p > code {
-    @apply bg-gray-100 p-1 text-sm shadow-xs rounded;
-  }
-
-  & h3 > code {
-    @apply bg-gray-100 p-1 text-lg shadow-xs rounded;
-  }
-
-  & pre[class*="language-"] {
-    @apply rounded mt-0 mb-4 bg-gray-800 text-sm relative;
-
-    > code {
-      @apply bg-gray-800 relative;
-      text-shadow: none;
-    }
-  }
-
-  & video {
-    @apply w-full border rounded shadow-md;
-  }
-}
-
-.nuxt-content-highlight {
-  @apply relative;
-
-  & > .filename {
-    @apply absolute right-0 top-0 text-gray-600 font-light z-10 mr-2 mt-1 text-sm;
-  }
-
-  & > pre {
+    /* Style copy button added in `pages/_slug.vue` */
     & > .copy {
-      @apply hidden absolute right-0 bottom-0 shadow-lg px-3 py-1 text-white text-sm uppercase font-sans rounded-md bg-transparent border border-white tracking-wide font-semibold mr-3 mb-3;
+      @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-3 py-2 text-white bg-gray-800 text-sm uppercase rounded-md border border-white font-semibold mr-3 mb-3;
 
       &:hover {
         @apply bg-gray-700;
       }
 
       &:focus {
-        @apply outline-none bg-gray-900;
+        @apply outline-none bg-gray-600;
       }
     }
-
     &:hover {
       & > .copy {
         @apply block;
       }
     }
+  }
+
+  /* Force style on pre elements */
+  & pre[class*="language-"] {
+    /* Make pre static so the relative goes to the parent (.nuxt-content-highlight) */
+    @apply bg-gray-800 static;
   }
 }

@@ -255,9 +255,8 @@ Veuillez choisir un *framework*:
 
 **Résultat:**
 
-<div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
-
-Veuillez choisir un *framework*:
+<div class="border rounded-md p-2 mb-2 bg-gray-200 dark:bg-gray-800">
+Veuillez choisir un <i>framework</i>:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 
@@ -288,7 +287,7 @@ Notez également que vous **ne pouvez pas utiliser** de balises `<template>` dan
 
 ### Table des matières
 
-Une propritété tabulaire `toc` (pour *Table of Content*) sera injectée au sein de votre document, listant toutes les balises `h2` et `h3` avec leurs titres et ids, afin que vous puissiez créer des liens vers eux. 
+Une propritété tabulaire `toc` (pour *Table of Content*) sera injectée au sein de votre document, listant toutes les balises `h2` et `h3` avec leurs titres et ids, afin que vous puissiez créer des liens vers eux.
 
 > Jetez un coup d'oeil sur le côté droit de cette page par exemple.
 
@@ -380,7 +379,7 @@ titre, description
 Accueil, Bienvenue!
 ```
 
-Sera transformé en: 
+Sera transformé en:
 
 ```json
 {

@@ -261,9 +261,8 @@ Please choose a *framework*:
 
 **Result:**
 
-<div class="border rounded p-2 mb-2 bg-gray-200 dark:bg-gray-800">
-
-Please choose a *framework*:
+<div class="border rounded-md p-2 mb-2 bg-gray-200 dark:bg-gray-800">
+Please choose a <i>framework</i>:
 
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 
