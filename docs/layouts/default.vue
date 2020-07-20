@@ -20,8 +20,8 @@
                   <li v-for="doc of docs" :key="doc.slug" class="text-gray-600 dark:text-gray-500">
                     <NuxtLink
                       :to="toLink(doc.slug)"
-                      class="px-2 rounded font-medium py-1 block hover:text-gray-800 dark-hover:text-gray-100"
-                      exact-active-class="text-green-600 bg-green-100 hover:text-green-600 dark:text-white dark:bg-green-800 dark-hover:text-white"
+                      class="px-2 rounded font-medium py-1 block hover:text-gray-700 dark-hover:text-gray-100"
+                      exact-active-class="text-green-500 bg-green-100 hover:text-green-500 dark:text-white dark:bg-green-700 dark-hover:text-white"
                     >{{ doc.title }}</NuxtLink>
                   </li>
                 </ul>
@@ -114,7 +114,7 @@ export default {
 
     return {
       bodyAttrs: {
-        class: [...this.bodyClass, 'antialiased text-gray-800 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
+        class: [...this.bodyClass, 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       },
       ...i18nSeo
     }

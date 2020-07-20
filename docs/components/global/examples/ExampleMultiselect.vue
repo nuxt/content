@@ -23,6 +23,20 @@ export default {
 
 <style>
 /* purgecss start ignore */
-@import 'vue-multiselect/dist/vue-multiselect.min.css';
+@import "vue-multiselect/dist/vue-multiselect.min.css";
 /* purgecss end ignore */
+
+.multiselect {
+  & ul {
+    @apply m-0 p-0;
+
+    & li {
+      @apply m-0 p-0;
+
+      &::before {
+        @apply hidden;
+      }
+    }
+  }
+}
 </style>

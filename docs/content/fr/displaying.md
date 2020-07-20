@@ -5,7 +5,6 @@ position: 5
 category: Pour commencer
 ---
 
-<br>
 <base-alert type="info">Cette section est dédiée uniquement aux fichiers Markdown</base-alert>
 
 ## Composant

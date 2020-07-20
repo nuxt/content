@@ -33,8 +33,6 @@ Markdownページを表示するために `$content` と `<nuxt-content>` を使
   <source src="https://res.cloudinary.com/nuxt/video/upload/q_auto/v1588091670/nuxt-content_wxnjje.ogv" type="video/ogg" />
 </video>
 
-<br>
-
 ディレクトリ上で `$content()` を使うと、コンテンツの一覧表示、フィルタリング、検索を行うことができます。
 
 <video poster="https://res.cloudinary.com/nuxt/video/upload/v1588095794/nuxt-content-movies_c0cq9p.jpg" loop playsinline controls>
