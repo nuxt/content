@@ -295,6 +295,29 @@ This module uses `xml2js` to parse `.xml` files, you can check here for [options
 
 This module uses `node-csvtojson` to parse csv files, you can check here for [options](https://github.com/Keyang/node-csvtojson#parameters).
 
+### `extendParser`
+
+- Type: `Object`
+- Default `{}`
+
+With this option you can define your own parsers for other file types. Also you can **overwrite** the default parser!
+
+To add your custom parser write a function that gets as an argument the content of the file and returns the extracted data. 
+
+### Example:
+
+```
+const parseTxt = file => file.split('\n').map(line => line.trim())
+
+// in Config:
+
+{
+  extendParser: {
+    '.txt': parseTxt
+  }
+}
+```
+
 ## Defaults
 
 ```js{}[nuxt.config.js]
@@ -324,7 +347,8 @@ export default {
     },
     yaml: {},
     csv: {},
-    xml: {}
+    xml: {},
+    extendParser: {}
   }
 }
 ```

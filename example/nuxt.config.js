@@ -12,6 +12,9 @@ module.exports = {
   content: {
     nestedProperties: [
       'categories.slug'
-    ]
+    ],
+    extendParser: {
+      '.custom': file => file.split('\n').map(line => line.trim())
+    }
   }
 }
