@@ -139,4 +139,41 @@ describe('options', () => {
       }))
     })
   })
+
+  describe('adding extend parser', () => {
+    let nuxt
+    let $content
+
+    const config = {
+      content: {
+        extendParser: {
+          '.txt': file => body => ({ body })
+        }
+      }
+    }
+
+    beforeAll(async () => {
+      ({ nuxt } = (await setup({ ...loadConfig(__dirname), ...config })))
+      const module = require('..')
+      $content = module.$content
+    }, 60000)
+
+    afterAll(async () => {
+      await nuxt.close()
+    })
+
+    test('$content() on not-parsed.txt file', async () => {
+      const item = await $content('not-parsed').fetch()
+
+      expect(item).toEqual(
+        expect.objectContaining({
+          dir: '/',
+          path: '/not-parsed',
+          slug: 'not-parsed',
+          extension: '.txt',
+          body: 'Not parsed without a custom parser'
+        })
+      )
+    })
+  })
 })
