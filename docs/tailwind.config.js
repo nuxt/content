@@ -61,6 +61,9 @@ module.exports = {
           },
           'code::after': {
             content: ''
+          },
+          'h3 code': {
+            fontWeight: '600'
           }
         }
       },
