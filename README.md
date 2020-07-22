@@ -24,7 +24,7 @@
 - Powerful QueryBuilder API (MongoDB like)
 - Syntax highlighting to code blocks in markdown files using PrismJS.
 - Table of contents generation
-- Handles Markdown, CSV, YAML, JSON(5)
+- Handles Markdown, CSV, YAML, JSON(5), XML
 - Extend with hooks
 
 [📖 Read the documentation](https://content.nuxtjs.org)
