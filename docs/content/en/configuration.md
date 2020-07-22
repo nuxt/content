@@ -302,9 +302,9 @@ This module uses `node-csvtojson` to parse csv files, you can check here for [op
 
 With this option you can define your own parsers for other file types. Also you can **overwrite** the default parser!
 
-To add your custom parser write a function that gets as an argument the content of the file and returns the extracted data. 
+To add your custom parser write a function that gets as an argument the content of the file and returns the extracted data.
 
-### Example:
+**Example**
 
 ```
 const parseTxt = file => file.split('\n').map(line => line.trim())
