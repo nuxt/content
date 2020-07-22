@@ -86,6 +86,20 @@ content: {
 }
 ```
 
+### `liveEdit`
+
+- Type `Boolean`
+- Default: `true`
+- Version: **>= v1.5.0**
+
+Disable live edit mode in development:
+
+```js{}[nuxt.config.js]
+content: {
+  liveEdit: false
+}
+```
+
 ### `markdown`
 
 This module uses [remark](https://github.com/remarkjs/remark) and [rehype](https://github.com/rehypejs/rehype) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
@@ -302,7 +316,7 @@ This module uses `node-csvtojson` to parse csv files, you can check here for [op
 
 With this option you can define your own parsers for other file types. Also you can **overwrite** the default parser!
 
-To add your custom parser write a function that gets as an argument the content of the file and returns the extracted data. 
+To add your custom parser write a function that gets as an argument the content of the file and returns the extracted data.
 
 ### Example:
 
@@ -327,6 +341,7 @@ export default {
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
     nestedProperties: [],
+    liveEdit: true,
     markdown: {
       remarkPlugins: [
         'remark-squeeze-paragraphs',
