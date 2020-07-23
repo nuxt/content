@@ -11650,10 +11650,10 @@ unicode-property-aliases-ecmascript@^1.0.4:
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-1.1.0.tgz#dd57a99f6207bedff4628abefb94c50db941c8f4"
   integrity sha512-PqSoPh/pWetQ2phoj5RLiaqIk4kCNwoV3CI+LfGmWLKI3rE3kl1h59XpX2BjgDrmbxD9ARtQobPGU1SguCYuQg==
 
-unified@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/unified/-/unified-9.0.0.tgz#12b099f97ee8b36792dbad13d278ee2f696eed1d"
-  integrity sha512-ssFo33gljU3PdlWLjNp15Inqb77d6JnJSfyplGJPT/a+fNRNyCBeveBAYJdO5khKdF6WVHa/yYCC7Xl6BDwZUQ==
+unified@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/unified/-/unified-9.1.0.tgz#7ba82e5db4740c47a04e688a9ca8335980547410"
+  integrity sha512-VXOv7Ic6twsKGJDeZQ2wwPqXs2hM0KNu5Hkg9WgAZbSD1pxhZ7p8swqg583nw1Je2fhwHy6U8aEjiI79x1gvag==
   dependencies:
     bail "^1.0.0"
     extend "^3.0.0"
