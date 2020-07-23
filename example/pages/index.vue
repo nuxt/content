@@ -20,6 +20,8 @@
     <pre>{{ yml }}</pre>
     <h2>XML</h2>
     <pre>{{ xml }}</pre>
+    <h2>custom</h2>
+    <pre>{{ custom }}</pre>
   </div>
 </template>
 
@@ -34,6 +36,7 @@ export default {
     const yaml = await $content('yaml').fetch()
     const yml = await $content('yml').fetch()
     const xml = await $content('xml').fetch()
+    const custom = await $content('custom').fetch()
 
     return {
       markdown,
@@ -42,7 +45,8 @@ export default {
       csv,
       yaml,
       yml,
-      xml
+      xml,
+      custom
     }
   }
 }
