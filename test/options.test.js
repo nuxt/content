@@ -147,7 +147,7 @@ describe('options', () => {
     const config = {
       content: {
         extendParser: {
-          '.txt': file => body => ({ body })
+          '.txt': file => ({ body: file })
         }
       }
     }
