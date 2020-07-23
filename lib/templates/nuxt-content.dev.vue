@@ -1,11 +1,13 @@
 <template>
-  <div :class="['nuxt-content-container', { 'is-editing': isEditing}]">
+  <div :class="['nuxt-content-container', { 'is-editing': isEditing }]">
     <textarea
       v-show="isEditing"
       v-model="file"
       ref="textarea"
       class="nuxt-content-editor"
       @keyup.stop="onType"
+      @keydown.tab.exact.prevent="onTabRight"
+      @keydown.tab.shift.prevent="onTabLeft"
       @blur="toggleEdit"
     />
     <nuxt-content-dev
@@ -82,7 +84,27 @@ export default {
     onType () {
       const el = this.$refs.textarea
 
-      el.style.height = el.scrollHeight + 'px';
+      el.style.height = el.scrollHeight + 'px'
+    },
+    onTabRight (event) {
+      let text = this.file,
+        originalSelectionStart = event.target.selectionStart,
+        textStart = text.slice(0, originalSelectionStart),
+        textEnd = text.slice(originalSelectionStart)
+
+      this.file = `${textStart}\t${textEnd}`
+      event.target.value = this.file // required to make the cursor stay in place.
+      event.target.selectionEnd = event.target.selectionStart = originalSelectionStart + 1
+    },
+    onTabLeft (event) {
+      let text = this.file,
+        originalSelectionStart = event.target.selectionStart,
+        textStart = text.slice(0, originalSelectionStart),
+        textEnd = text.slice(originalSelectionStart)
+
+      this.file = `${textStart.replace(/\t$/, '')}${textEnd}`
+      event.target.value = this.file // required to make the cursor stay in place.
+      event.target.selectionEnd = event.target.selectionStart = originalSelectionStart - 1
     }
   }
 }
