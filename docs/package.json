@@ -19,7 +19,7 @@
     "clipboard": "^2.0.6",
     "lodash.groupby": "^4.6.0",
     "marked": "^1.1.1",
-    "nuxt": "^2.13.3",
+    "nuxt": "^2.14.0",
     "nuxt-i18n": "^6.13.1",
     "prism-themes": "^1.4.0",
     "tailwindcss": "^1.5.2",
