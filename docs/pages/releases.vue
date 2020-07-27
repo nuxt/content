@@ -1,10 +1,7 @@
 <template>
   <div class="flex flex-wrap-reverse">
     <div class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r">
-      <article
-        class="prose max-w-none lg:px-8"
-        :class="{ 'prose-dark': $colorMode.value === 'dark' }"
-      >
+      <article class="prose dark:prose-dark max-w-none lg:px-8">
         <h1>Releases</h1>
 
         <div v-for="release of releases" :key="release.name">

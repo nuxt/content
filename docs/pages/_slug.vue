@@ -4,10 +4,7 @@
       class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r"
       :class="{ '': doc.toc && doc.toc.length, 'lg:w-3/4': !doc.fullscreen }"
     >
-      <article
-        class="prose max-w-none lg:px-8"
-        :class="{ 'prose-dark': $colorMode.value === 'dark' }"
-      >
+      <article class="prose dark:prose-dark max-w-none lg:px-8">
         <h1>{{ doc.title }}</h1>
         <nuxt-content :document="doc" />
       </article>
@@ -51,29 +48,31 @@ export default {
     }
   },
   mounted () {
-    const blocks = document.getElementsByClassName('nuxt-content-highlight')
+    setTimeout(() => {
+      const blocks = document.getElementsByClassName('nuxt-content-highlight')
 
-    for (const block of blocks) {
-      const button = document.createElement('button')
-      button.className = 'copy'
-      button.textContent = 'Copy'
+      for (const block of blocks) {
+        const button = document.createElement('button')
+        button.className = 'copy'
+        button.textContent = 'Copy'
 
-      block.appendChild(button)
-    }
-
-    const copyCode = new Clipboard('.copy', {
-      target (trigger) {
-        return trigger.previousElementSibling
+        block.appendChild(button)
       }
-    })
 
-    copyCode.on('success', function (event) {
-      event.clearSelection()
-      event.trigger.textContent = 'Copied!'
-      window.setTimeout(function () {
-        event.trigger.textContent = 'Copy'
-      }, 2000)
-    })
+      const copyCode = new Clipboard('.copy', {
+        target (trigger) {
+          return trigger.previousElementSibling
+        }
+      })
+
+      copyCode.on('success', function (event) {
+        event.clearSelection()
+        event.trigger.textContent = 'Copied!'
+        window.setTimeout(function () {
+          event.trigger.textContent = 'Copy'
+        }, 2000)
+      })
+    }, 100)
   },
   head () {
     return {

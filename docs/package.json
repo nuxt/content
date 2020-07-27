@@ -36,7 +36,6 @@
     "eslint": "^7.5.0",
     "eslint-plugin-nuxt": ">=1.0.0",
     "nuxt-ackee": "^1.0.1",
-    "tailwindcss-dark-mode": "^1.1.5",
     "vue-multiselect": "^2.1.6"
   }
 }

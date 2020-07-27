@@ -4,9 +4,11 @@
 ** Docs: https://tailwindcss.com/docs/configuration
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
+const plugin = require('tailwindcss/plugin')
+const selectorParser = require('postcss-selector-parser')
+
 module.exports = {
   theme: {
-    darkSelector: '.dark-mode',
     extend: {
       colors: {
         nuxt: {
@@ -119,14 +121,38 @@ module.exports = {
   },
   variants: {
     margin: ['responsive', 'last'],
-    backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus', 'dark-hover'],
+    backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
-    borderWidth: ['responsive', 'first', 'last']
+    borderWidth: ['responsive', 'first', 'last'],
+    typography: ['responsive', 'dark']
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('tailwindcss-dark-mode')()
+    plugin(function ({ addVariant, prefix, e }) {
+      addVariant('dark', ({ modifySelectors, separator }) => {
+        modifySelectors(({ selector }) => {
+          return selectorParser((selectors) => {
+            selectors.walkClasses((sel) => {
+              sel.value = `dark${separator}${sel.value}`
+              sel.parent.insertBefore(sel, selectorParser().astSync(prefix('.dark-mode ')))
+            })
+          }).processSync(selector)
+        })
+      })
+
+      addVariant('dark-hover', ({ modifySelectors, separator }) => {
+        modifySelectors(({ className }) => {
+          return `.dark-mode .${e(`dark-hover${separator}${className}`)}:hover`
+        })
+      })
+
+      addVariant('dark-focus', ({ modifySelectors, separator }) => {
+        modifySelectors(({ className }) => {
+          return `.dark-mode .${e(`dark-focus${separator}${className}`)}:focus`
+        })
+      })
+    }),
+    require('@tailwindcss/typography')
   ],
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
