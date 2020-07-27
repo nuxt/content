@@ -6,12 +6,12 @@
     >
       <article class="prose dark:prose-dark max-w-none lg:px-8">
         <h1>{{ doc.title }}</h1>
-        <nuxt-content :document="doc" />
+        <NuxtContent :document="doc" />
       </article>
-      <EditOnGithub :document="doc" />
-      <ArticlePrevNext :prev="prev" :next="next" class="lg:px-8 mt-4" />
+      <AppGithubLink :document="doc" />
+      <AppPrevNext :prev="prev" :next="next" class="lg:px-8 mt-4" />
     </div>
-    <ArticleToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
+    <AppToc v-if="doc.toc && doc.toc.length" :toc="doc.toc" />
   </div>
 </template>
 

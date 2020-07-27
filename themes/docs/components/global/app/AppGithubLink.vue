@@ -7,7 +7,7 @@
       class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center"
     >
       {{ $t('article.github') }}
-      <icon-external-link class="w-4 h-4 ml-1" />
+      <IconExternalLink class="w-4 h-4 ml-1" />
     </a>
   </div>
 </template>

@@ -3,8 +3,21 @@ import groupBy from 'lodash.groupby'
 
 export const state = () => ({
   categories: {},
-  releases: []
+  releases: [],
+  settings: null
 })
+
+export const getters = {
+  settings (state) {
+    return state.settings
+  },
+  releases (state) {
+    return state.releases
+  },
+  lastRelease (state) {
+    return state.releases[0]
+  }
+}
 
 export const mutations = {
   SET_CATEGORIES (state, categories) {
@@ -13,6 +26,9 @@ export const mutations = {
   },
   SET_RELEASES (state, releases) {
     state.releases = releases
+  },
+  SET_SETTINGS (state, settings) {
+    state.settings = settings
   }
 }
 
@@ -28,14 +44,19 @@ export const actions = {
 
     commit('SET_CATEGORIES', categories)
   },
-  async fetchReleases ({ commit }) {
+  async fetchReleases ({ commit, state }) {
     const options = {}
     if (process.env.GITHUB_TOKEN) {
       options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
     }
-    let releases
+    let releases = []
     try {
-      const data = await fetch('https://api.github.com/repos/nuxt/content/releases', options).then(res => res.json())
+      const data = await fetch(`https://api.github.com/repos/${state.settings.repo}/releases`, options).then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText)
+        }
+        return res
+      }).then(res => res.json())
       releases = data.filter(r => !r.draft).map((release) => {
         return {
           name: release.name || release.tag_name,
@@ -43,8 +64,7 @@ export const actions = {
           body: this.$markdown(release.body)
         }
       })
-    } catch (e) {
-    }
+    } catch (e) { }
 
     const getMajorVersion = r => r.name && Number(r.name.substring(1, 2))
     releases.sort((a, b) => {
@@ -57,5 +77,10 @@ export const actions = {
     })
 
     commit('SET_RELEASES', releases)
+  },
+  async fetchSettings ({ commit }) {
+    const settings = await this.$content('settings').fetch()
+
+    commit('SET_SETTINGS', settings)
   }
 }

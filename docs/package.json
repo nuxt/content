@@ -12,27 +12,8 @@
   },
   "dependencies": {
     "@nuxt/content": "nuxt/content#dev",
-    "@nuxtjs/pwa": "^3.0.0-beta.20",
-    "clipboard": "^2.0.6",
-    "lodash.groupby": "^4.6.0",
-    "marked": "^1.1.1",
     "nuxt": "^2.14.0",
-    "nuxt-i18n": "^6.13.1",
-    "prism-themes": "^1.4.0",
-    "tailwindcss": "^1.6.0",
-    "vue-scrollactive": "^0.9.3"
+    "nuxt-ackee": "^1.0.1"
   },
-  "devDependencies": {
-    "@nuxtjs/color-mode": "^1.0.2",
-    "@nuxtjs/eslint-config": "^3.1.0",
-    "@nuxtjs/eslint-module": "^2.0.0",
-    "@nuxtjs/moment": "^1.6.1",
-    "@nuxtjs/tailwindcss": "^2.1.1",
-    "@tailwindcss/typography": "^0.2.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.5.0",
-    "eslint-plugin-nuxt": ">=1.0.0",
-    "nuxt-ackee": "^1.0.1",
-    "vue-multiselect": "^2.1.6"
-  }
+  "devDependencies": {}
 }

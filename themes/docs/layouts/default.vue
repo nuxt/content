@@ -1,6 +1,6 @@
 <template>
   <div class="pt-16">
-    <Navbar />
+    <AppHeader />
     <main class="container mx-auto px-4 lg:px-8">
       <div class="flex flex-wrap relative">
         <aside
@@ -10,7 +10,7 @@
           <div class="lg:sticky lg:top-0 lg:pt-16 lg:-mt-16 overflow-y-scroll h-full lg:h-auto">
             <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
               <li class="mb-4 lg:hidden">
-                <SearchInput />
+                <AppSearch />
               </li>
               <li v-for="(docs, category) in categories" :key="category" class="mb-4">
                 <h3
@@ -40,7 +40,7 @@
                       name="Twitter"
                       class="hover:text-green-500"
                     >
-                      <icon-twitter class="w-6 h-6" />
+                      <IconTwitter class="w-6 h-6" />
                     </a>
                   </li>
                   <li class="mr-4">
@@ -52,14 +52,14 @@
                       name="Github"
                       class="hover:text-green-500"
                     >
-                      <icon-github class="w-6 h-6" />
+                      <IconGithub class="w-6 h-6" />
                     </a>
                   </li>
                   <li class="mr-4">
-                    <LangSwitcher />
+                    <AppLangSwitcher />
                   </li>
                   <li>
-                    <ColorSwitcher />
+                    <AppColorSwitcher />
                   </li>
                 </ul>
               </li>
@@ -70,22 +70,18 @@
         <Nuxt class="w-full lg:w-4/5" />
       </div>
     </main>
-    <TheFooter />
+    <AppFooter />
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar'
-import TheFooter from '@/components/TheFooter'
-import SearchInput from '@/components/SearchInput'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    Navbar,
-    TheFooter,
-    SearchInput
-  },
   computed: {
+    ...mapGetters([
+      'settings'
+    ]),
     bodyClass () {
       return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : []
     },
@@ -113,6 +109,29 @@ export default {
     const i18nSeo = this.$nuxtI18nSeo()
 
     return {
+      titleTemplate: (chunk) => {
+        if (chunk) {
+          return `${chunk} - ${this.settings.title}`
+        }
+
+        return this.settings.title
+      },
+      meta: [
+        // Open Graph
+        { hid: 'og:site_name', property: 'og:site_name', content: this.settings.title },
+        { hid: 'og:type', property: 'og:type', content: 'website' },
+        { hid: 'og:url', property: 'og:url', content: this.settings.url },
+        { hid: 'og:image', property: 'og:image', content: `${this.settings.url}/card.png` },
+        // Twitter Card
+        { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
+        { hid: 'twitter:site', name: 'twitter:site', content: this.settings.twitter },
+        { hid: 'twitter:title', name: 'twitter:title', content: this.settings.title },
+        { hid: 'twitter:image', name: 'twitter:image', content: `${this.settings.url}/card.png` }
+        // { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: 'The NuxtJS Framework' }
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' }
+      ],
       bodyAttrs: {
         class: [...this.bodyClass, 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       },

@@ -8,8 +8,8 @@
         </a>
       </div>
       <div class="flex">
-        <LangSwitcher class="p-2" />
-        <ColorSwitcher class="p-2 pr-0" />
+        <AppLangSwitcher class="p-2" />
+        <AppColorSwitcher class="p-2 pr-0" />
       </div>
     </div>
   </footer>

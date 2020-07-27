@@ -16,7 +16,7 @@
         </div>
       </article>
     </div>
-    <ArticleToc :toc="toc" />
+    <AppToc :toc="toc" />
   </div>
 </template>
 

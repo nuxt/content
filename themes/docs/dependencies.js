@@ -1,0 +1,19 @@
+import ora from 'ora'
+import LMIFY from 'lmify'
+import { dependencies } from './package.json'
+
+export default async function ({ rootDir }) {
+  const lmify = new LMIFY({ stdout: null, stderr: null, rootDir: __dirname })
+  const spinner = ora('Installing @nuxt/content/themes/docs dependencies...').start()
+
+  for (const [name, version] of Object.entries(dependencies)) {
+    try {
+      // TODO: Check if version changed
+      require.resolve(name)
+    } catch (e) {
+      await lmify.install(`${name}@${version}`)
+    }
+  }
+
+  spinner.stop()
+}

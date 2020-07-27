@@ -22,7 +22,7 @@ features:
 
 <base-list :items="features"></base-list>
 
-<p class="flex items-center">Попробуйте светлую и темную темы: <color-switcher class="p-2"></color-switcher></p>
+<p class="flex items-center">Попробуйте светлую и темную темы: <app-color-switcher class="p-2"></app-color-switcher></p>
 
 ## Видео
 
