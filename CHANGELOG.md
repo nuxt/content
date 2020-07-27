@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/nuxt/content/compare/v1.4.1...v1.5.0) (2020-07-27)
+
+
+### Features
+
+* **lib:** handle textarea tab / shift tab events ([#289](https://github.com/nuxt/content/issues/289)) ([67b0da7](https://github.com/nuxt/content/commit/67b0da722bb7d41ed9a4ec7eef99e146062eaaee))
+* add classes for live editing ([#258](https://github.com/nuxt/content/issues/258)) ([ebc6123](https://github.com/nuxt/content/commit/ebc6123d924bf89c0c4dfbde833bf6fbdd46b675))
+* add option to disable live edit ([#285](https://github.com/nuxt/content/issues/285)) ([d46daaf](https://github.com/nuxt/content/commit/d46daaf07a2bf5667e265b9af133842d03948fa9))
+* add user defined parsers ([#256](https://github.com/nuxt/content/issues/256)) ([502bd26](https://github.com/nuxt/content/commit/502bd2647fbe09b61da6a63c848a926abaca179a)), closes [#230](https://github.com/nuxt/content/issues/230) [#234](https://github.com/nuxt/content/issues/234) [#235](https://github.com/nuxt/content/issues/235) [#238](https://github.com/nuxt/content/issues/238) [#242](https://github.com/nuxt/content/issues/242) [#243](https://github.com/nuxt/content/issues/243) [#245](https://github.com/nuxt/content/issues/245) [#230](https://github.com/nuxt/content/issues/230) [#234](https://github.com/nuxt/content/issues/234) [#235](https://github.com/nuxt/content/issues/235) [#238](https://github.com/nuxt/content/issues/238) [#242](https://github.com/nuxt/content/issues/242) [#243](https://github.com/nuxt/content/issues/243)
+
+
+### Bug Fixes
+
+* improve nuxt-content attrs handling ([#223](https://github.com/nuxt/content/issues/223)) ([02ad923](https://github.com/nuxt/content/commit/02ad923712a8054cad3162f0a0d77723cfca4862))
+* prevent options merging fn exec without default value ([#287](https://github.com/nuxt/content/issues/287)) ([3252f39](https://github.com/nuxt/content/commit/3252f3989577838d30029c037ac3889eac16b93f))
+* **lib:** ensure `path` and `extension` on dev mode ([#280](https://github.com/nuxt/content/issues/280)) ([81a151f](https://github.com/nuxt/content/commit/81a151f51bb362ffbfa231c15ede09af1e9eb1a1))
+* **lib:** improve toc heading parse ([#279](https://github.com/nuxt/content/issues/279)) ([d6a5920](https://github.com/nuxt/content/commit/d6a59204fcb145384c2003b63fd0a8ba8fa6cb9a))
+* 244 pass globalName to plugin client to make sure it works ([#251](https://github.com/nuxt/content/issues/251)) ([7f14a90](https://github.com/nuxt/content/commit/7f14a90a83d535884636e9453fe041eec422d14e))
+* **lib:** join array props ([#248](https://github.com/nuxt/content/issues/248)) ([ee26e05](https://github.com/nuxt/content/commit/ee26e05f7f4cf88681a70b944d11067d243ba191))
+* use compound sort ([#238](https://github.com/nuxt/content/issues/238)) ([e7647ef](https://github.com/nuxt/content/commit/e7647efc2b4967bd368cd2e02cac333d32fba395))
+
 ### [1.4.1](https://github.com/nuxt/content/compare/v1.4.0...v1.4.1) (2020-07-02)
 
 
