@@ -229,6 +229,12 @@ Beware that when placing Markdown inside a component, it must be preceded and fo
 
 You can use global Vue components or locally registered in the page you're displaying your markdown.
 
+<base-alert>
+
+An issue exists with locally registered components and live edit in development, since **v1.5.0** you can disable it by setting `liveEdit: false` (see [configuration](/configuration#liveedit)).
+
+</base-alert>
+
 Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
 1. You need to refer to your components by kebab case naming:

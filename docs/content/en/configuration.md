@@ -86,6 +86,20 @@ content: {
 }
 ```
 
+### `liveEdit`
+
+- Type `Boolean`
+- Default: `true`
+- Version: **>= v1.5.0**
+
+Disable live edit mode in development:
+
+```js{}[nuxt.config.js]
+content: {
+  liveEdit: false
+}
+```
+
 ### `markdown`
 
 This module uses [remark](https://github.com/remarkjs/remark) and [rehype](https://github.com/rehypejs/rehype) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
@@ -327,6 +341,7 @@ export default {
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
     nestedProperties: [],
+    liveEdit: true,
     markdown: {
       remarkPlugins: [
         'remark-squeeze-paragraphs',
