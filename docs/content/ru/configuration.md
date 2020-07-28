@@ -83,6 +83,19 @@ content: {
   nestedProperties: ['categories.slug']
 }
 ```
+### `liveEdit`
+
+- Тип `Boolean`
+- По умолчанию: `true`
+- Версия: **>= v1.5.0**
+
+Отключает редактирование в реальном времени в режиме разработки:
+
+```js{}[nuxt.config.js]
+content: {
+  liveEdit: false
+}
+```
 
 ### `markdown`
 
