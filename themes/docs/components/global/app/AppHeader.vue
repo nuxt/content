@@ -11,8 +11,10 @@
             class="flex-shrink-0 font-bold text-xl mr-1"
             :aria-label="`${settings.title} Logo`"
           >
-            <AppImage v-if="logo" :url="logo" class="h-8 w-auto" :alt="settings.title" />
-            <span v-else>{{ settings.title }}</span>
+            <span v-if="!logo">{{ settings.title }}</span>
+
+            <img v-if="logo" :src="logo.light" class="h-8 w-auto light-img" :alt="settings.title" />
+            <img v-if="logo" :src="logo.dark" class="h-8 w-auto dark-img" :alt="settings.title" />
           </NuxtLink>
           <NuxtLink
             v-if="lastRelease"
@@ -80,14 +82,14 @@ export default {
         return
       }
 
-      let url = this.settings.logo || ''
-
-      // Color mode
       if (typeof this.settings.logo === 'object') {
-        url = this.settings.logo[this.$colorMode.value]
+        return this.settings.logo
       }
 
-      return url
+      return {
+        light: this.settings.logo,
+        dark: this.settings.logo
+      }
     }
   },
   methods: {

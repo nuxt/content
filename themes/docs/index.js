@@ -18,7 +18,7 @@ export default userConfig => defu(userConfig, {
     ]
   },
   css: [
-    '~/assets/css/content.css'
+    '~/assets/css/main.css'
   ],
   plugins: [
     '@/plugins/markdown',

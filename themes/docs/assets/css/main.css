@@ -1,3 +1,16 @@
+.dark-mode .light-img {
+  display: none;
+}
+.dark-mode .dark-img {
+  display: block;
+}
+.dark-img {
+  display: none;
+}
+.light-img {
+  display: block;
+}
+
 .nuxt-content {
   & h2, & h3 {
     /* Fix anchor scrollTo */
