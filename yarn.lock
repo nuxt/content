@@ -4321,6 +4321,11 @@ defu@^2.0.4:
   resolved "https://registry.yarnpkg.com/defu/-/defu-2.0.4.tgz#09659a6e87a8fd7178be13bd43e9357ebf6d1c46"
   integrity sha512-G9pEH1UUMxShy6syWk01VQSRVs3CDWtlxtZu7A+NyqjxaCA4gSlWAKDBx6QiUEKezqS8+DUlXLI14Fp05Hmpwg==
 
+defu@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/defu/-/defu-3.0.0.tgz#9c855f8f17c94136c3f478929ed66b1d2b59d5c6"
+  integrity sha512-n14vjTjn4inH34myKVMkAujLSZtT1awXxPZdRR14hFbwNLgJ1/WO+4zW60lwwSPdjKtyXHDEB8JlPnjJWBWBMA==
+
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
