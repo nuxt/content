@@ -7,7 +7,9 @@ export default userConfig => defu(userConfig, {
   target: 'static',
   ssr: true,
   srcDir: __dirname,
-  modulesDir: path.join(__dirname, 'mode_modules'),
+  modulesDir: [
+    path.join(__dirname, 'mode_modules')
+  ],
   buildDir: path.join(__dirname, '.nuxt'),
   head: {
     meta: [
@@ -28,7 +30,8 @@ export default userConfig => defu(userConfig, {
   buildModules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    '@nuxtjs/moment'
+    '@nuxtjs/moment',
+    'nuxt-ackee'
   ],
   modules: [
     'nuxt-i18n',
@@ -43,6 +46,8 @@ export default userConfig => defu(userConfig, {
       nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
       // Configure static dir
       nuxt.options.dir.static = `${nuxt.options.rootDir}/static`
+      // Configure
+      nuxt.options.modulesDir.push(path.join(nuxt.options.rootDir, 'node_modules'))
     }
   },
   colorMode: {

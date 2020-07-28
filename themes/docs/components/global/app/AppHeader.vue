@@ -8,10 +8,10 @@
         <div class="w-1/2 lg:w-1/6 flex items-center" @click.stop="noop">
           <NuxtLink
             :to="localePath('slug')"
-            class="flex-shrink-0 font-bold text-xl"
+            class="flex-shrink-0 font-bold text-xl mr-1"
             :aria-label="`${settings.title} Logo`"
           >
-            <img v-if="logo" :src="`/${logo}`" class="h-8 w-auto" />
+            <AppImage v-if="logo" :url="logo" class="h-8 w-auto" :alt="settings.title" />
             <span v-else>{{ settings.title }}</span>
           </NuxtLink>
           <NuxtLink
@@ -80,16 +80,14 @@ export default {
         return
       }
 
+      let url = this.settings.logo || ''
+
       // Color mode
       if (typeof this.settings.logo === 'object') {
-        if (this.$colorMode.value === 'light') {
-          return this.settings.logo.light
-        } else {
-          return this.settings.logo.dark
-        }
+        url = this.settings.logo[this.$colorMode.value]
       }
 
-      return this.settings.logo
+      return url
     }
   },
   methods: {
