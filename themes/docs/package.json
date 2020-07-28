@@ -13,8 +13,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxtjs/color-mode": "^1.0.0",
-    "@nuxtjs/moment": "^1.6.1",
+    "@nuxtjs/color-mode": "^1.0.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/tailwindcss": "^2.1.0",
     "@tailwindcss/typography": "^0.2.0",

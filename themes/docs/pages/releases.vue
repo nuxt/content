@@ -9,7 +9,7 @@
             {{ release.name }}
             <span
               class="text-base font-normal text-gray-500"
-            >{{ $moment(release.date).format('L') }}</span>
+            >{{ formatDate(release) }}</span>
           </h2>
 
           <div class="nuxt-content" v-html="release.body" />
@@ -28,6 +28,13 @@ export default {
     },
     toc () {
       return this.releases.map(release => ({ id: release.name, depth: 2, text: release.name }))
+    }
+  },
+  methods: {
+    formatDate (release) {
+      const date = new Date(release.date)
+
+      return date.toLocaleDateString(this.$i18n.locale)
     }
   },
   head () {

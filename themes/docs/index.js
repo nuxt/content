@@ -30,7 +30,6 @@ export default userConfig => defu(userConfig, {
   buildModules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    '@nuxtjs/moment',
     'nuxt-ackee'
   ],
   modules: [
