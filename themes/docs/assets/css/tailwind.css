@@ -1,5 +1,5 @@
 /* purgecss start ignore */
-@import 'node_modules/@nuxt/content/themes/docs/node_modules/tailwindcss/base';
-@import 'node_modules/@nuxt/content/themes/docs/node_modules/tailwindcss/components';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
 /* purgecss end ignore */
-@import 'node_modules/@nuxt/content/themes/docs/node_modules/tailwindcss/utilities';
+@import 'tailwindcss/utilities';

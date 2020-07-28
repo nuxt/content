@@ -23,7 +23,7 @@ export default {
 
 <style>
 /* purgecss start ignore */
-@import "node_modules/@nuxt/content/themes/docs/node_modules/vue-multiselect/dist/vue-multiselect.min.css";
+@import "vue-multiselect/dist/vue-multiselect.min.css";
 /* purgecss end ignore */
 
 .multiselect {

@@ -4,6 +4,7 @@
 ** Docs: https://tailwindcss.com/docs/configuration
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
+const path = require('path')
 const plugin = require('tailwindcss/plugin')
 const selectorParser = require('postcss-selector-parser')
 
@@ -159,10 +160,10 @@ module.exports = {
     enabled: process.env.NODE_ENV === 'production',
     content: [
       'content/**/*.md',
-      'components/**/*.vue',
-      'layouts/**/*.vue',
-      'pages/**/*.vue',
-      'plugins/**/*.js',
+      path.join(__dirname, 'components/**/*.vue'),
+      path.join(__dirname, 'layouts/**/*.vue'),
+      path.join(__dirname, 'pages/**/*.vue'),
+      path.join(__dirname, 'plugins/**/*.js'),
       'nuxt.config.js'
     ],
     options: {
