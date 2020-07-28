@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@nuxt/content": "nuxt/content#dev",
+    "@nuxt/content": "nuxt/content#feat/themes",
     "nuxt": "^2.14.0",
     "nuxt-ackee": "^1.0.1"
   },
