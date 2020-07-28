@@ -19,7 +19,7 @@
     "nuxt": "^2.14.0",
     "nuxt-i18n": "^6.13.1",
     "prism-themes": "^1.4.0",
-    "tailwindcss": "^1.5.2",
+    "tailwindcss": "^1.6.0",
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
