@@ -953,7 +953,7 @@
 
 "@nuxt/content@nuxt/content#feat/themes":
   version "1.5.0"
-  resolved "https://codeload.github.com/nuxt/content/tar.gz/d8fc9a3b31ee68093246f7d89ab65597557d0491"
+  resolved "https://codeload.github.com/nuxt/content/tar.gz/1c94e191fd6460221b5096e61e576ea3d85f5eda"
   dependencies:
     "@lokidb/full-text-search" "^2.0.0-beta.9"
     "@lokidb/loki" "^2.0.0-beta.9"
