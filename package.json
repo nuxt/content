@@ -66,7 +66,7 @@
     "codecov": "^3.7.2",
     "eslint": "^7.5.0",
     "husky": "^4.2.5",
-    "nuxt": "^2.13.3",
+    "nuxt": "^2.14.0",
     "jest": "^26.1.0",
     "puppeteer": "^5.2.1",
     "standard-version": "^8.0.2",
