@@ -26,6 +26,9 @@ export default {
     isEditing() {
       this.onType();
       this.$refs.textarea.focus()
+    },
+    file() {
+      this.$emit('input', this.file)
     }
   },
   methods: {

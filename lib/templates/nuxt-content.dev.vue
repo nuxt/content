@@ -21,83 +21,83 @@
 </template>
 
 <script>
-import NuxtContent from './nuxt-content'
-import Editor from '<%= options.editor %>'
+import NuxtContent from "./nuxt-content";
+import Editor from "<%= options.editor %>";
 
 export default {
-  name: 'NuxtContent',
+  name: "NuxtContent",
   components: {
     NuxtContentDev: NuxtContent,
     Editor
   },
   props: NuxtContent.props,
-  data () {
+  data() {
     return {
       classes: [],
       isEditing: false,
       file: null,
       id: null
-    }
+    };
   },
-  mounted () {
+  mounted() {
     if (this.$vnode.data.attrs && this.$vnode.data.attrs.id) {
-      this.id = this.$vnode.data.attrs.id
+      this.id = this.$vnode.data.attrs.id;
     }
     if (this.$vnode.data.class) {
-      let classes
+      let classes;
       if (Array.isArray(this.$vnode.data.class)) {
-        classes = this.$vnode.data.class
-      } else if (typeof this.$vnode.data.class === 'object') {
-        const keys = Object.keys(this.$vnode.data.class)
-        classes = keys.filter(key => this.$vnode.data.class[key])
+        classes = this.$vnode.data.class;
+      } else if (typeof this.$vnode.data.class === "object") {
+        const keys = Object.keys(this.$vnode.data.class);
+        classes = keys.filter(key => this.$vnode.data.class[key]);
       } else {
-        classes = this.$vnode.data.class
+        classes = this.$vnode.data.class;
       }
-      this.classes = this.classes.concat(classes)
-      delete this.$vnode.data.class
+      this.classes = this.classes.concat(classes);
+      delete this.$vnode.data.class;
     }
 
     if (this.$vnode.data.staticClass) {
-      this.classes = this.classes.concat(this.$vnode.data.staticClass)
-      delete this.$vnode.data.staticClass
+      this.classes = this.classes.concat(this.$vnode.data.staticClass);
+      delete this.$vnode.data.staticClass;
     }
   },
   computed: {
-    fileUrl () {
-      return `/<%= options.apiPrefix %>${this.document.path}${this.document.extension}`
+    fileUrl() {
+      return `/<%= options.apiPrefix %>${this.document.path}${this.document.extension}`;
     }
   },
   methods: {
-    async toggleEdit () {
+    async toggleEdit() {
       if (this.isEditing) {
-        await this.saveFile()
-        this.isEditing = false
-        return
+        await this.saveFile();
+        this.isEditing = false;
+        return;
       }
       // Start editing mode
-      const contentHeight = this.$refs.content.offsetHeight
-      const actualScrollY = window.scrollY
+      const contentHeight = this.$refs.content.offsetHeight;
+      const actualScrollY = window.scrollY;
       // Fetch file content
-      await this.fetchFile()
-      // this.isEditing = true
+      await this.fetchFile();
+      this.isEditing = true;
       // this.$refs.textarea.style.minHeight = `${contentHeight}px`
-      // await this.waitFor(10)
-      // this.$refs.textarea.focus()
-      // this.onType()
-      await this.waitFor(10)
-      window.scrollTo(window.scrollX, actualScrollY)
+      await this.waitFor(10);
+      window.scrollTo(window.scrollX, actualScrollY);
     },
-    async fetchFile () {
-      this.file = await fetch(this.fileUrl).then(res => res.text())
+    async fetchFile() {
+      this.file = await fetch(this.fileUrl).then(res => res.text());
     },
-    async saveFile () {
-      await fetch(this.fileUrl, { method: 'PUT', body: JSON.stringify({ file: this.file }) }).then(res => res.json())
+    async saveFile() {
+      await fetch(this.fileUrl, {
+        method: "PUT",
+        body: JSON.stringify({ file: this.file })
+      }).then(res => res.json());
     },
-    waitFor (ms) {
-      return new Promise(resolve => setTimeout(resolve, ms))
+    waitFor(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
   }
-}
+};
 </script>
 
 <style scoped>
