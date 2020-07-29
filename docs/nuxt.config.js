@@ -1,6 +1,6 @@
-import contentDocsTheme from '@nuxt/content/themes/docs'
+import theme from '@nuxt/theme-docs'
 
-export default contentDocsTheme({
+export default theme({
   env: {
     GITHUB_TOKEN: process.env.GITHUB_TOKEN
   },
@@ -10,7 +10,7 @@ export default contentDocsTheme({
     routes: ['/'] // give the first url to start crawling
   },
   i18n: {
-    locales: [{
+    locales: () => [{
       code: 'ru',
       iso: 'ru-RU',
       file: 'ru-RU.js',
@@ -32,14 +32,13 @@ export default contentDocsTheme({
       name: 'English'
     }],
     defaultLocale: 'en'
+  },
+  buildModules: [
+    'nuxt-ackee'
+  ],
+  ackee: {
+    server: 'https://ackee.nuxtjs.com',
+    domainId: '7b3c9779-442c-40c6-9931-ea71977c52a8',
+    detailed: true
   }
-  // TODO: Put back with defu release
-  // buildModules: [
-  //   'nuxt-ackee'
-  // ],
-  // ackee: {
-  //   server: 'https://ackee.nuxtjs.com',
-  //   domainId: '7b3c9779-442c-40c6-9931-ea71977c52a8',
-  //   detailed: true
-  // }
 })
