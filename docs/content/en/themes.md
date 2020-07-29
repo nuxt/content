@@ -1,16 +1,9 @@
 ---
-title: Themes (WIP)
-description: 'Add a theme and accelerate your development with Nuxt and @nuxt/content.'
+title: Themes
+description: 'Use a theme and accelerate your development with Nuxt and @nuxt/content.'
 category: Community
 position: 12
 ---
-
-<br>
-<base-alert type="info">
-
-  **Themes are coming soon** to [NuxtJS](https://nuxtjs.org), stay up to date on our [Twitter](https://twitter.com/nuxt_js) or [GitHub](https://github.com/nuxt/nuxt.js).
-
-</base-alert>
 
 The setup will look like this:
 
