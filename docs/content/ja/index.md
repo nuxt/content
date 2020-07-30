@@ -21,7 +21,7 @@ features:
 
 <base-list :items="features"></base-list>
 
-<p class="flex items-center">ライトテーマとダークテーマを試してみる: <color-switcher class="p-2"></color-switcher></p>
+<p class="flex items-center">ライトテーマとダークテーマを試してみる: <app-color-switcher class="p-2"></app-color-switcher></p>
 
 ## 動画
 

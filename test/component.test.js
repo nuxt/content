@@ -1,3 +1,4 @@
+const path = require('path')
 const { createBrowser } = require('tib')
 const { setup, loadConfig, url } = require('@nuxtjs/module-test-utils')
 
@@ -48,7 +49,11 @@ describe('component', () => {
 
   describe('in dev mode', () => {
     beforeAll(async () => {
-      ({ nuxt } = (await setup({ ...loadConfig(__dirname), content: { watch: true } })))
+      ({ nuxt } = (await setup({
+        ...loadConfig(__dirname),
+        buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
+        content: { watch: true }
+      })))
       browser = await createBrowser('puppeteer')
     }, 60000)
 

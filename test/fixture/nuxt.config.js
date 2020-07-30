@@ -1,9 +1,8 @@
 const { resolve } = require('path')
-const contentModule = require('../..')
+const contentModule = require('@nuxt/content')
 
 module.exports = {
   rootDir: resolve(__dirname, '../..'),
-  buildDir: resolve(__dirname, '.nuxt'),
   srcDir: __dirname,
   modules: [
     contentModule

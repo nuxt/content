@@ -4,5 +4,5 @@ dist
 .nuxt
 coverage
 
-# Plugin
-lib/templates/
+# Packages
+packages/content/templates

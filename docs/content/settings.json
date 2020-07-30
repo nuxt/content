@@ -1,0 +1,10 @@
+{
+  "title": "Nuxt Content",
+  "url": "https://content.nuxtjs.org",
+  "logo": {
+    "light": "/logo-light.svg",
+    "dark": "/logo-dark.svg"
+  },
+  "repo": "nuxt/content",
+  "twitter": "@nuxt_js"
+}

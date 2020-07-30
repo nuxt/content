@@ -6,7 +6,7 @@ describe('module', () => {
 
   beforeAll(async () => {
     ({ nuxt } = (await setup(loadConfig(__dirname))))
-    const module = require('..')
+    const module = require('@nuxt/content')
     $content = module.$content
   }, 60000)
 
