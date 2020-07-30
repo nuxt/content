@@ -974,6 +974,25 @@
     rc9 "^1.0.0"
     std-env "^2.2.1"
 
+"@nuxt/content-theme-docs@https://github.com/benjamincanac/nuxt-content-theme-docs":
+  version "0.0.1"
+  resolved "https://github.com/benjamincanac/nuxt-content-theme-docs#556384a923580de140200a7cfa569f50f8fddeaa"
+  dependencies:
+    "@nuxt/content" "^1.5.0"
+    "@nuxtjs/color-mode" "^1.0.2"
+    "@nuxtjs/pwa" "^3.0.0-beta.20"
+    "@nuxtjs/tailwindcss" "^2.1.0"
+    "@tailwindcss/typography" "^0.2.0"
+    clipboard "^2.0.6"
+    defu "^3.0.1"
+    lodash.groupby "^4.6.0"
+    marked "^1.1.1"
+    nuxt "^2.14.0"
+    nuxt-i18n "^6.13.1"
+    prism-themes "^1.4.0"
+    vue-multiselect "^2.1.6"
+    vue-scrollactive "^0.9.3"
+
 "@nuxt/content@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-1.5.0.tgz#4244a14b3b3b3aa08672dad5df82d2ee4f221a48"
@@ -1136,25 +1155,6 @@
     parse-git-config "^3.0.0"
     rc9 "^1.0.0"
     std-env "^2.2.1"
-
-"@nuxt/theme-docs@https://github.com/benjamincanac/nuxt-theme-docs":
-  version "0.0.1"
-  resolved "https://github.com/benjamincanac/nuxt-theme-docs#aac4c78461832dc8f1439e96d0358a1ec07f48a4"
-  dependencies:
-    "@nuxt/content" "^1.5.0"
-    "@nuxtjs/color-mode" "^1.0.2"
-    "@nuxtjs/pwa" "^3.0.0-beta.20"
-    "@nuxtjs/tailwindcss" "^2.1.0"
-    "@tailwindcss/typography" "^0.2.0"
-    clipboard "^2.0.6"
-    defu "^3.0.1"
-    lodash.groupby "^4.6.0"
-    marked "^1.1.1"
-    nuxt "^2.14.0"
-    nuxt-i18n "^6.13.1"
-    prism-themes "^1.4.0"
-    vue-multiselect "^2.1.6"
-    vue-scrollactive "^0.9.3"
 
 "@nuxt/utils@2.14.0":
   version "2.14.0"

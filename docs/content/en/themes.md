@@ -5,6 +5,14 @@ category: Community
 position: 12
 ---
 
+## Docs
+
+Create a beautiful documentation like this website in seconds.
+
+### Setup
+
+In the `docs` folder of you project, you need:
+
 The setup will look like this:
 
 <code-group>
