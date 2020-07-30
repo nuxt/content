@@ -129,7 +129,7 @@ module.exports = async function (moduleOptions) {
   // Add server plugin
   this.addPlugin({
     fileName: 'content/plugin.server.js',
-    src: join(__dirname, 'templates/plugin.server.js'),
+    src: join(__dirname, '../templates/plugin.server.js'),
     options: {
       watch: options.watch,
       liveEdit: options.liveEdit
@@ -149,7 +149,7 @@ module.exports = async function (moduleOptions) {
     // Add client plugin
     this.addTemplate({
       fileName: 'content/plugin.client.lazy.js',
-      src: join(__dirname, 'templates/plugin.static.lazy.js'),
+      src: join(__dirname, '../templates/plugin.static.lazy.js'),
       options: {
         fullTextSearchFields: options.fullTextSearchFields,
         dirs: database.dirs
@@ -168,7 +168,7 @@ module.exports = async function (moduleOptions) {
 
     this.addPlugin({
       fileName: 'content/plugin.client.js',
-      src: join(__dirname, 'templates/plugin.static.js'),
+      src: join(__dirname, '../templates/plugin.static.js'),
       options: {
         // if publicPath is an URL, use public path, if not, add basepath before it
         dbPath: isUrl(publicPath) ? `${publicPath}content/db.json` : `${routerBasePath}${publicPath}content/db.json`
@@ -177,7 +177,7 @@ module.exports = async function (moduleOptions) {
   } else {
     this.addPlugin({
       fileName: 'content/plugin.client.js',
-      src: join(__dirname, 'templates/plugin.client.js'),
+      src: join(__dirname, '../templates/plugin.client.js'),
       options: {
         apiPrefix: options.apiPrefixWithBase,
         watch: options.watch,
@@ -192,20 +192,20 @@ module.exports = async function (moduleOptions) {
     fileName: 'content/query-builder.js',
     src: join(
       __dirname,
-      isSSG ? 'query-builder.js' : 'templates/query-builder.js'
+      isSSG ? 'query-builder.js' : '../templates/query-builder.js'
     )
   })
 
   // Add client plugin component
   this.addTemplate({
     fileName: 'content/nuxt-content.js',
-    src: join(__dirname, 'templates/nuxt-content.js')
+    src: join(__dirname, '../templates/nuxt-content.js')
   })
   if (options.watch && options.liveEdit) {
     // Add dev client plugin component
     this.addTemplate({
       fileName: 'content/nuxt-content.dev.vue',
-      src: join(__dirname, 'templates/nuxt-content.dev.vue'),
+      src: join(__dirname, '../templates/nuxt-content.dev.vue'),
       options: {
         apiPrefix: options.apiPrefixWithBase
       }

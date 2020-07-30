@@ -7,11 +7,8 @@ const Loki = require('@lokidb/loki').default
 const LokiFullTextSearch = require('@lokidb/full-text-search').default
 const logger = require('consola').withScope('@nuxt/content')
 const { default: PQueue } = require('p-queue')
+const { Markdown, YAML, CSV, XML } = require('../parsers')
 
-const Markdown = require('./parsers/markdown')
-const Yaml = require('./parsers/yaml')
-const Csv = require('./parsers/csv')
-const XML = require('./parsers/xml')
 const QueryBuilder = require('./query-builder')
 const EXTENSIONS = ['.md', '.json', '.json5', '.yaml', '.yml', '.csv', '.xml']
 
@@ -23,8 +20,8 @@ class Database extends Hookable {
     this.dir = options.dir || process.cwd()
     this.cwd = options.cwd || process.cwd()
     this.markdown = new Markdown(options.markdown)
-    this.yaml = new Yaml(options.yaml)
-    this.csv = new Csv(options.csv)
+    this.yaml = new YAML(options.yaml)
+    this.csv = new CSV(options.csv)
     this.xml = new XML(options.xml)
     // Create Loki database
     this.db = new Loki('content.db')

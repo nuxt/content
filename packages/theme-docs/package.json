@@ -1,0 +1,25 @@
+{
+  "name": "@nuxt/content-theme-docs",
+  "version": "0.0.1",
+  "repository": "nuxt/content",
+  "license": "MIT",
+  "files": [
+    "src"
+  ],
+  "main": "src/",
+  "dependencies": {
+    "@nuxtjs/color-mode": "^1.0.2",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "@nuxtjs/tailwindcss": "^2.1.0",
+    "@tailwindcss/typography": "^0.2.0",
+    "clipboard": "^2.0.6",
+    "defu": "^3.0.1",
+    "lodash.groupby": "^4.6.0",
+    "marked": "^1.1.1",
+    "nuxt": "^2.14.0",
+    "nuxt-i18n": "^6.13.1",
+    "prism-themes": "^1.4.0",
+    "vue-multiselect": "^2.1.6",
+    "vue-scrollactive": "^0.9.3"
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "@nuxt/content",
-  "version": "1.5.0",
+  "name": "nuxt-content",
+  "private": true,
   "description": "Write your content inside your Nuxt app",
   "repository": "nuxt/content",
   "license": "MIT",
@@ -9,52 +9,16 @@
       "name": "NuxtJS Team"
     }
   ],
-  "types": "types/index.d.ts",
-  "files": [
-    "lib",
-    "types/*.d.ts"
+  "workspaces": [
+    "packages/*",
+    "docs"
   ],
-  "main": "lib/",
   "scripts": {
     "dev": "nuxt example",
-    "lint": "eslint --ext .js,.vue example lib test",
-    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
+    "lint": "eslint --ext .js,.vue .",
+    "release": "yarn test && lerna release",
     "test": "yarn lint && jest -i",
     "test:watch": "jest --watch"
-  },
-  "dependencies": {
-    "@lokidb/full-text-search": "^2.0.0-beta.9",
-    "@lokidb/loki": "^2.0.0-beta.9",
-    "change-case": "^4.1.1",
-    "chokidar": "^3.4.1",
-    "consola": "^2.14.0",
-    "csvtojson": "^2.0.10",
-    "defu": "^3.0.1",
-    "escape-html": "^1.0.3",
-    "graceful-fs": "^4.2.4",
-    "gray-matter": "^4.0.2",
-    "hookable": "^4.1.1",
-    "html-tags": "^3.1.0",
-    "js-yaml": "3.14.0",
-    "json5": "2.1.3",
-    "mkdirp": "^1.0.4",
-    "node-req": "^2.1.2",
-    "node-res": "^5.0.1",
-    "p-queue": "6.6.0",
-    "prismjs": "^1.20.0",
-    "rehype-raw": "^4.0.2",
-    "rehype-sort-attribute-values": "^3.0.2",
-    "rehype-sort-attributes": "^3.0.2",
-    "remark-autolink-headings": "^6.0.1",
-    "remark-external-links": "^6.1.0",
-    "remark-footnotes": "^1.0.0",
-    "remark-parse": "^8.0.3",
-    "remark-rehype": "^7.0.0",
-    "remark-slug": "^6.0.0",
-    "remark-squeeze-paragraphs": "^4.0.0",
-    "unified": "^9.1.0",
-    "ws": "^7.3.1",
-    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
@@ -66,13 +30,10 @@
     "codecov": "^3.7.2",
     "eslint": "^7.5.0",
     "husky": "^4.2.5",
-    "nuxt": "^2.14.0",
     "jest": "^26.1.0",
+    "lerna": "^3.22.1",
+    "nuxt": "^2.14.0",
     "puppeteer": "^5.2.1",
-    "standard-version": "^8.0.2",
     "tib": "^0.7.4"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

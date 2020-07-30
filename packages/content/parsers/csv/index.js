@@ -1,6 +1,6 @@
 const csv = require('csvtojson')
 
-class Csv {
+class CSV {
   constructor (options = {}) {
     this.options = options
   }
@@ -19,4 +19,4 @@ class Csv {
   }
 }
 
-module.exports = Csv
+module.exports = CSV

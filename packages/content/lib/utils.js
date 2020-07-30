@@ -68,7 +68,7 @@ const processMarkdownPlugins = (type, markdown, resolvePath) => {
     try {
       instance = require(resolvePath(name))
 
-      plugins.push({ name, instance, options })
+      plugins.push({ instance, name, options })
     } catch (e) {
       logger.error(e.toString())
     }

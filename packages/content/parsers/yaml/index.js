@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 
-class Yaml {
+class YAML {
   constructor (options = {}) {
     this.options = options
   }
@@ -15,4 +15,4 @@ class Yaml {
   }
 }
 
-module.exports = Yaml
+module.exports = YAML
