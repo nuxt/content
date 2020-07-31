@@ -139,7 +139,7 @@ class Database extends Hookable {
 
     logger.info(`Updated ${path.replace(this.cwd, '.')}`)
     if (document) {
-      this.items.update({ ...document, ...item })
+      this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
       return
     }
     this.items.insert(item)
