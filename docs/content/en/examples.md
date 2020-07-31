@@ -1,7 +1,7 @@
 ---
 title: Examples
 description: 'Learn how to implement @nuxt/content into your app with these examples.'
-position: 10
+position: 9
 category: Community
 ---
 

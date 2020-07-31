@@ -1,24 +1,20 @@
 ---
-title: Themes
+title: Docs
 description: 'Use a theme and accelerate your development with Nuxt and @nuxt/content.'
-category: Community
-position: 9
+category: Themes
+position: 8
 version: 1.6
 ---
 
 <alert type="info">
 
-Discover the first @nuxt/content theme for documentation
+Discover the first @nuxt/content theme for documentation. Create a beautiful documentation like this website in seconds.
 
 </alert>
 
-## Docs
-
-> Create a beautiful documentation like this website in seconds.
-
 Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
-### Setup
+## Setup
 
 The theme is like a classic NuxtJS app, you need:
 
@@ -154,7 +150,7 @@ nuxt.config.js
 package.json
 ```
 
-### Content
+## Content
 
 Each markdown page in the `content/` directory will become a page and will be listed in the left navigation.
 
@@ -196,7 +192,7 @@ fullscreen: false
 ---
 ```
 
-### Settings
+## Settings
 
 You can create a `content/settings.json` file to configure the theme:
 
@@ -231,15 +227,18 @@ You can create a `content/settings.json` file to configure the theme:
 }
 ```
 
-### Components
+## Components
 
 The theme comes with some Vue.js components you can use directly in your markdown content:
 
-- `<alert>`
-  - `type`
-    - Type: `String`
-    - Default: `'warning'`
-    - Values: `['warning', 'info']`
+### `<alert>`
+
+**Props**
+
+- `type`
+  - Type: `String`
+  - Default: `'warning'`
+  - Values: `['warning', 'info']`
 
 **Example**
 
@@ -264,7 +263,7 @@ Check out a warning alert with a `codeblock`!
 ```md
 <alert type="info">
 
-Check out an info alert with a [link](/themes).
+Check out an info alert with a [link](/themes-docs).
 
 </alert>
 ```
@@ -273,14 +272,17 @@ Check out an info alert with a [link](/themes).
 
 <alert type="info">
 
-Check out an info alert with a [link](/themes).
+Check out an info alert with a [link](/themes-docs).
 
 </alert>
 
-- `<list>`
-  - `items`
-    - Type: `Array`
-    - Default: `[]`
+### `<list>`
+
+**Props**
+
+- `items`
+  - Type: `Array`
+  - Default: `[]`
 
 **Example**
 
@@ -299,15 +301,20 @@ items:
 
 <list :items="['Item1', 'Item2', 'Item3']"></list>
 
-- `<code-group>`
-- `<code-block>`
-  - `label`
-    - Type: `String`
-    - `required`
-  - `active`
-    - Type: `Boolean`
-    - Default: `false`
+### `<code-group>`
 
+This component uses `slots`, refer to `code-block` below.
+
+### `<code-block>`
+
+**Props**
+
+- `label`
+  - Type: `String`
+  - `required`
+- `active`
+  - Type: `Boolean`
+  - Default: `false`
 
 **Example**
 
@@ -351,10 +358,13 @@ items:
   </code-block>
 </code-group>
 
-- `<code-sandbox>`
-  - `src`
-    - Type: `String`
-    - `required`
+### `<code-sandbox>`
+
+**Props**
+
+- `src`
+  - Type: `String`
+  - `required`
 
 **Example**
 
@@ -370,7 +380,7 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 
 <code-sandbox src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></code-sandbox>
 
-### Images
+## Images
 
 You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
 
