@@ -144,12 +144,12 @@ export default {
         { hid: 'og:site_name', property: 'og:site_name', content: this.settings.title },
         { hid: 'og:type', property: 'og:type', content: 'website' },
         { hid: 'og:url', property: 'og:url', content: this.settings.url },
-        { hid: 'og:image', property: 'og:image', content: `${this.settings.url}/card.png` },
+        { hid: 'og:image', property: 'og:image', content: `${this.settings.url}/preview.png` },
         // Twitter Card
         { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
         { hid: 'twitter:site', name: 'twitter:site', content: this.settings.twitter },
         { hid: 'twitter:title', name: 'twitter:title', content: this.settings.title },
-        { hid: 'twitter:image', name: 'twitter:image', content: `${this.settings.url}/card.png` },
+        { hid: 'twitter:image', name: 'twitter:image', content: `${this.settings.url}/preview.png` },
         { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: this.settings.title }
       ],
       bodyAttrs: {
