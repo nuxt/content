@@ -2,8 +2,7 @@ node_modules
 *.iml
 .idea
 *.log*
-.nuxt
-.nuxt-dev
+.nuxt*
 .vscode
 .DS_Store
 coverage
