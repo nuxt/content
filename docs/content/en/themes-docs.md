@@ -8,7 +8,7 @@ version: 1.6
 
 <alert type="info">
 
-Discover the first @nuxt/content theme for documentation. Create a beautiful documentation like this website in seconds.
+Discover the first `@nuxt/content` theme for documentation. Create a beautiful documentation like this website in seconds.
 
 </alert>
 
@@ -18,7 +18,9 @@ Let's say we're creating the documentation of an open-source project in the `doc
 
 The theme is like a classic NuxtJS app, you need:
 
-- a `package.json` file (can be created with `npm init`).
+### `package.json`
+
+> This file can be created with `npm init`.
 
 Install `nuxt` and `@nuxt/content-theme-docs`:
 
@@ -58,7 +60,7 @@ Install `nuxt` and `@nuxt/content-theme-docs`:
 }
 ```
 
-- a `nuxt.config.js` file
+### `nuxt.config.js`
 
 Import the theme function from `@nuxt/content-theme-docs`:
 
@@ -114,11 +116,11 @@ Don't forget to install the dependencies of the modules you add in your `nuxt.co
 
 </alert>
 
-- a `content/` directory
+### `content/`
 
 You need to create a `content/en/` subdirectory since the theme uses [nuxt-i18n](https://github.com/nuxt-community/i18n-module) and defaults to `en` locale. You can then start writing your markdown files.
 
-- a `static/` directory
+### `static/`
 
 This is where you put your static assets like the logo.
 
