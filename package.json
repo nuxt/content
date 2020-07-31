@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "dev": "nuxt example",
+    "docs": "nuxt docs",
     "lint": "eslint --ext .js,.vue .",
     "release": "yarn test && lerna publish",
     "test": "yarn lint && jest -i",
