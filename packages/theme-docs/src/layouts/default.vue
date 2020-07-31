@@ -20,9 +20,17 @@
                   <li v-for="doc of docs" :key="doc.slug" class="text-gray-600 dark:text-gray-500">
                     <NuxtLink
                       :to="toLink(doc.slug)"
-                      class="px-2 rounded font-medium py-1 block hover:text-gray-700 dark-hover:text-gray-100"
+                      class="px-2 rounded font-medium py-1 block hover:text-gray-700 dark-hover:text-gray-100 flex items-center justify-between"
                       exact-active-class="text-green-500 bg-green-100 hover:text-green-500 dark:text-white dark:bg-green-700 dark-hover:text-white"
-                    >{{ doc.title }}</NuxtLink>
+                    >
+                      {{ doc.title }}
+                      <client-only>
+                        <span
+                          v-if="isNew(doc)"
+                          class="animate-pulse rounded-full bg-green-500 dark:bg-white opacity-75 h-2 w-2"
+                        />
+                      </client-only>
+                    </NuxtLink>
                   </li>
                 </ul>
               </li>
@@ -31,34 +39,34 @@
                   class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
                 >More</h3>
                 <ul class="flex items-center ml-2">
-                  <li class="mr-4">
+                  <li class="flex items-center mr-4">
                     <a
                       href="https://twitter.com/nuxt_js"
                       target="_blank"
                       rel="noopener noreferrer"
                       title="Twitter"
                       name="Twitter"
-                      class="hover:text-green-500"
+                      class="inline-flex hover:text-green-500"
                     >
                       <IconTwitter class="w-6 h-6" />
                     </a>
                   </li>
-                  <li class="mr-4">
+                  <li class="flex items-center mr-4">
                     <a
                       href="https://github.com/nuxt/content"
                       target="_blank"
                       rel="noopener noreferrer"
                       title="Github"
                       name="Github"
-                      class="hover:text-green-500"
+                      class="inline-flex hover:text-green-500"
                     >
                       <IconGithub class="w-6 h-6" />
                     </a>
                   </li>
-                  <li class="mr-4">
+                  <li class="flex items-center mr-4">
                     <AppLangSwitcher />
                   </li>
-                  <li>
+                  <li class="flex items-center">
                     <AppColorSwitcher />
                   </li>
                 </ul>
@@ -98,6 +106,21 @@ export default {
     }
   },
   methods: {
+    isNew (document) {
+      if (process.server) {
+        return
+      }
+      if (!document.version || document.version <= 0) {
+        return
+      }
+
+      const version = localStorage.getItem(`document-${document.slug}-version`)
+      if (document.version > Number(version)) {
+        return true
+      }
+
+      return false
+    },
     toLink (slug) {
       if (slug === 'index') {
         return this.localePath('slug')

@@ -40,8 +40,14 @@ module.exports = {
             borderBottomWidth: '1px',
             borderBottomColor: theme('colors.gray.200')
           },
+          h3: {
+            paddingBottom: theme('padding.2'),
+            borderBottomWidth: '1px',
+            borderBottomColor: theme('colors.gray.200')
+          },
           blockquote: {
             fontWeight: '400',
+            color: theme('colors.gray.600'),
             fontStyle: 'normal',
             quotes: '"\\201C""\\201D""\\2018""\\2019"'
           },
@@ -92,7 +98,7 @@ module.exports = {
             borderColor: theme('colors.gray.700')
           },
           blockquote: {
-            color: theme('colors.gray.100'),
+            color: theme('colors.gray.400'),
             borderLeftColor: theme('colors.gray.700')
           },
           h1: {
@@ -103,7 +109,8 @@ module.exports = {
             borderBottomColor: theme('colors.gray.800')
           },
           h3: {
-            color: theme('colors.gray.100')
+            color: theme('colors.gray.100'),
+            borderBottomColor: theme('colors.gray.800')
           },
           h4: {
             color: theme('colors.gray.100')

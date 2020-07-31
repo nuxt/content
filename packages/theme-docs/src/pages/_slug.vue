@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import Clipboard from 'clipboard'
+import Vue from 'vue'
+import AppCopyButton from '~/components/global/app/AppCopyButton'
 
 export default {
   name: 'PageSlug',
@@ -48,30 +49,18 @@ export default {
     }
   },
   mounted () {
+    if (this.document.version) {
+      localStorage.setItem(`document-${this.document.slug}-version`, this.document.version)
+    }
+
     setTimeout(() => {
       const blocks = document.getElementsByClassName('nuxt-content-highlight')
 
       for (const block of blocks) {
-        const button = document.createElement('button')
-        button.className = 'copy'
-        button.textContent = 'Copy'
-
-        block.appendChild(button)
+        const CopyButton = Vue.extend(AppCopyButton)
+        const component = new CopyButton().$mount()
+        block.appendChild(component.$el)
       }
-
-      const copyCode = new Clipboard('.copy', {
-        target (trigger) {
-          return trigger.previousElementSibling
-        }
-      })
-
-      copyCode.on('success', function (event) {
-        event.clearSelection()
-        event.trigger.textContent = 'Copied!'
-        window.setTimeout(function () {
-          event.trigger.textContent = 'Copy'
-        }, 2000)
-      })
     }, 100)
   },
   head () {

@@ -28,11 +28,11 @@ export default {
       'lastRelease'
     ]),
     link () {
-      if (!this.settings.repo) {
+      if (!this.settings.github) {
         return
       }
 
-      return `https://github.com/${this.settings.repo}/edit/dev/docs/content${this.document.path}${this.document.extension}`
+      return `https://github.com/${this.settings.github}/edit/dev/docs/content${this.document.path}${this.document.extension}`
     }
   }
 }

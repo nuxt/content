@@ -1,59 +1,70 @@
 <template>
   <nav
     class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900"
+    :class="{ 'shadow border-transparent': scrolled }"
     @click="scrollToTop"
   >
-    <div class="container mx-auto px-4 lg:px-8 flex-1">
+    <div class="container mx-auto flex-1 px-4 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <div class="w-1/2 lg:w-1/6 flex items-center" @click.stop="noop">
+        <div class="lg:w-1/5 flex items-center pr-4" @click.stop="noop">
           <NuxtLink
             :to="localePath('slug')"
-            class="flex-shrink-0 font-bold text-xl mr-1"
+            class="flex-shrink-0 flex-1 font-bold text-xl"
             :aria-label="`${settings.title} Logo`"
           >
             <span v-if="!logo">{{ settings.title }}</span>
 
-            <img v-if="logo" :src="logo.light" class="h-8 w-auto light-img" :alt="settings.title" />
-            <img v-if="logo" :src="logo.dark" class="h-8 w-auto dark-img" :alt="settings.title" />
+            <img
+              v-if="logo"
+              :src="logo.light"
+              class="h-8 max-w-full light-img"
+              :alt="settings.title"
+            />
+            <img v-if="logo" :src="logo.dark" class="h-8 max-w-full dark-img" :alt="settings.title" />
           </NuxtLink>
+        </div>
+        <div class="hidden flex-1 lg:flex justify-center w-4/6">
+          <AppSearch />
+        </div>
+        <div class="lg:w-1/5 flex items-center justify-between pl-8">
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
-            class="rounded text-green-500 dark:text-white bg-green-100 dark:bg-green-700 border border-green-200 dark:border-transparent p-1 text-xs font-bold leading-none flex items-center justify-center ml-1"
+            class="font-semibold leading-none text-gray-500 hover:text-green-500 font-medium text-base mr-4"
+            exact-active-class="text-green-500"
           >{{ lastRelease.name }}</NuxtLink>
-        </div>
-        <div class="hidden flex-1 lg:flex justify-center ml-4 mr-2 lg:mx-8 w-4/6">
-          <AppSearch />
-        </div>
-        <div class="flex items-center justify-end w-1/6">
-          <a
-            :href="`https://twitter.com/${settings.twitter}` || 'https://twitter.com/nuxt_js'"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Twitter"
-            name="Twitter"
-            class="hidden lg:block hover:text-green-500 mr-2"
-          >
-            <IconTwitter class="w-6 h-6" />
-          </a>
-          <a
-            :href="`https://github.com/${settings.repo}` || 'https://github.com/nuxt/content'"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Github"
-            name="Github"
-            class="hidden lg:block hover:text-green-500 mr-4"
-          >
-            <IconGithub class="w-6 h-6" />
-          </a>
-          <button
-            class="lg:hidden p-2 rounded-md hover:text-green-500 focus:outline-none focus:outline-none -mr-2"
-            aria-label="Hamburger Menu"
-            @click.stop="menu = !menu"
-          >
-            <IconX v-if="menu" class="w-6 h-6" />
-            <IconMenu v-else class="w-6 h-6" />
-          </button>
+          <div class="flex items-center">
+            <a
+              v-if="settings.twitter"
+              :href="`https://twitter.com/${settings.twitter}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Twitter"
+              name="Twitter"
+              class="hidden lg:block text-gray-500 hover:text-green-500 mr-4"
+            >
+              <IconTwitter class="w-5 h-5" />
+            </a>
+            <a
+              v-if="settings.github"
+              :href="`https://github.com/${settings.github}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Github"
+              name="Github"
+              class="hidden lg:block text-gray-500 hover:text-green-500 mr-4"
+            >
+              <IconGithub class="w-5 h-5" />
+            </a>
+            <button
+              class="lg:hidden p-2 rounded-md text-gray-500 hover:text-green-500 focus:outline-none focus:outline-none -mr-2"
+              aria-label="Menu"
+              @click.stop="menu = !menu"
+            >
+              <IconX v-if="menu" class="w-6 h-6" />
+              <IconMenu v-else class="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -64,6 +75,11 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  data () {
+    return {
+      scrolled: 0
+    }
+  },
   computed: {
     ...mapGetters([
       'settings',
@@ -92,7 +108,16 @@ export default {
       }
     }
   },
+  beforeMount () {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  beforeDestroy () {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
   methods: {
+    handleScroll () {
+      this.scrolled = window.scrollY > 0
+    },
     scrollToTop () {
       if (window.innerWidth >= 1280) {
         return

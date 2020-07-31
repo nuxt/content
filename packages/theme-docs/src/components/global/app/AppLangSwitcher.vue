@@ -1,5 +1,5 @@
 <template>
-  <AppDropdown v-if="availableLocales.length" class="flex">
+  <AppDropdown v-if="availableLocales.length" class="inline-flex">
     <template #trigger="{ open, toggle }">
       <button
         class="rounded-md hover:text-green-500 focus:outline-none focus:outline-none"

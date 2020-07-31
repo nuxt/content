@@ -8,6 +8,7 @@
   ],
   "main": "src/",
   "dependencies": {
+    "@nuxt/content": "^1.5.0",
     "@nuxtjs/color-mode": "^1.0.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/tailwindcss": "^2.1.1",

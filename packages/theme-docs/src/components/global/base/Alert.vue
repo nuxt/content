@@ -1,9 +1,9 @@
 <template>
-  <div class="alert border-l-4 rounded-r-md p-4 mb-4 mt-4" :class="`alert-${type}`">
-    <div class="flex">
+  <div class="alert border-l-4 p-4 mb-4 mt-4" :class="`alert-${type}`">
+    <div class="flex items-start leading-7">
       <div class="flex-shrink-0 self-start pt-1">
-        <IconInfo v-if="type === 'info'" class="alert-icon" />
-        <IconAlert v-else class="alert-icon" />
+        <IconInformationCircle v-if="type === 'info'" class="alert-icon w-6 h-6" />
+        <IconExclamation v-else class="alert-icon w-6 h-6" />
       </div>
       <div class="ml-2 alert-content">
         <slot />
