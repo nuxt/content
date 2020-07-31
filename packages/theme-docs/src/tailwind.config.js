@@ -17,7 +17,7 @@ module.exports = {
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        malachite: {
+        primary: {
           100: '#E6FAF2',
           200: '#BFF3E0',
           300: '#99EBCD',
@@ -34,7 +34,7 @@ module.exports = {
       default: {
         css: {
           a: {
-            color: theme('colors.malachite.500')
+            color: theme('colors.primary.500')
           },
           h2: {
             paddingBottom: theme('padding.2'),

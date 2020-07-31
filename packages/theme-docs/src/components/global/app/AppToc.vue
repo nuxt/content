@@ -2,16 +2,16 @@
   <div v-if="toc.length" class="w-full lg:w-1/4 py-4 lg:py-8 lg:pl-8 lg:pr-0">
     <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
       <h3
-        class="mb-3 lg:mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wider font-bold text-sm lg:text-xs"
+        class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
       >{{ $t('toc.title') }}</h3>
       <nav>
-        <scrollactive highlight-first-item active-class="text-malachite-500" :offset="0" tag="ul">
+        <scrollactive highlight-first-item active-class="text-primary-500" :offset="0" tag="ul">
           <li
             v-for="link of toc"
             :key="link.id"
-            class="text-gray-600 dark:text-gray-500"
+            class="text-gray-700 dark:text-gray-300"
             :class="{
-              'border-t border-dashed dark:border-gray-800 first:border-t-0 font-semibold': link.depth === 2
+              'border-t border-dashed dark:border-gray-800 first:border-t-0': link.depth === 2
             }"
           >
             <a

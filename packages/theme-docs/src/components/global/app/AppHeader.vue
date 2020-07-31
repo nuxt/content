@@ -30,8 +30,8 @@
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
-            class="font-semibold leading-none text-gray-500 hover:text-malachite-500 font-medium text-base mr-4"
-            exact-active-class="text-malachite-500"
+            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 font-medium text-base mr-4"
+            exact-active-class="text-primary-500"
           >{{ lastRelease.name }}</NuxtLink>
           <div class="flex items-center">
             <a
@@ -41,7 +41,7 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="hidden lg:block text-gray-500 hover:text-malachite-500 mr-4"
+              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
@@ -52,17 +52,17 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="hidden lg:block text-gray-500 hover:text-malachite-500 mr-4"
+              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
             >
               <IconGithub class="w-5 h-5" />
             </a>
             <button
-              class="lg:hidden p-2 rounded-md text-gray-500 hover:text-malachite-500 focus:outline-none focus:outline-none -mr-2"
+              class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none -mr-2"
               aria-label="Menu"
               @click.stop="menu = !menu"
             >
-              <IconX v-if="menu" class="w-6 h-6" />
-              <IconMenu v-else class="w-6 h-6" />
+              <IconX v-if="menu" class="w-5 h-5" />
+              <IconMenu v-else class="w-5 h-5" />
             </button>
           </div>
         </div>
