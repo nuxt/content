@@ -29,7 +29,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.2.2",
     "codecov": "^3.7.2",
-    "eslint": "^7.5.0",
+    "eslint": "^7.6.0",
     "husky": "^4.2.5",
     "jest": "^26.2.2",
     "lerna": "^3.22.1",
