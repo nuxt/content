@@ -1,6 +1,6 @@
 {
   "name": "nuxt-content-docs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Docs for @nuxt/content",
   "author": "NuxtJS",
   "scripts": {
@@ -10,9 +10,8 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.0.1",
+    "@nuxt/content-theme-docs": "^0.1.0",
     "nuxt": "^2.14.0",
     "nuxt-ackee": "^1.0.1"
-  },
-  "devDependencies": {}
+  }
 }

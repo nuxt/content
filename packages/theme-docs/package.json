@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content-theme-docs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": "nuxt/content",
   "license": "MIT",
   "files": [
@@ -8,11 +8,11 @@
   ],
   "main": "src/",
   "dependencies": {
-    "@nuxt/content": "^1.5.0",
+    "@nuxt/content": "^1.5.1",
     "@nuxtjs/color-mode": "^1.0.2",
+    "@nuxtjs/google-fonts": "^1.0.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/tailwindcss": "^2.1.1",
-    "@nuxtjs/google-fonts": "^1.0.0",
     "@tailwindcss/typography": "^0.2.0",
     "clipboard": "^2.0.6",
     "defu": "^3.0.1",
