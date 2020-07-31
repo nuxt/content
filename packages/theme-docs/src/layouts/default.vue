@@ -152,9 +152,6 @@ export default {
         { hid: 'twitter:image', name: 'twitter:image', content: `${this.settings.url}/card.png` },
         { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: this.settings.title }
       ],
-      link: [
-        { rel: 'icon', type: 'image/png', href: '/favicon.png' }
-      ],
       bodyAttrs: {
         class: [...this.bodyClass, 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-100']
       },
