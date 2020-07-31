@@ -139,7 +139,11 @@ export default {
 
         return this.settings.title
       },
-      meta: [
+      bodyAttrs: {
+        class: [...this.bodyClass, 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300']
+      },
+      ...i18nSeo,
+      meta: (i18nSeo.meta || []).concat([
         // Open Graph
         { hid: 'og:site_name', property: 'og:site_name', content: this.settings.title },
         { hid: 'og:type', property: 'og:type', content: 'website' },
@@ -151,11 +155,7 @@ export default {
         { hid: 'twitter:title', name: 'twitter:title', content: this.settings.title },
         { hid: 'twitter:image', name: 'twitter:image', content: `${this.settings.url}/preview.png` },
         { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: this.settings.title }
-      ],
-      bodyAttrs: {
-        class: [...this.bodyClass, 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300']
-      },
-      ...i18nSeo
+      ])
     }
   }
 }
