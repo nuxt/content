@@ -155,11 +155,11 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
-<base-alert type="info">
+<alert type="info">
 
 Посмотрите [пример](/examples#search) о том, как реализовать поиск в вашем приложении
 
-</base-alert>
+</alert>
 
 
 ### surround(ярлык, настройки)
@@ -195,11 +195,11 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` и `skip` неэффективны при использовании этого метода.
 
-<base-alert type="info">
+<alert type="info">
 
 Посмотрите [пример](/examples#pagination) как реализовать ссылки вперед и назад в вашем приложении
 
-</base-alert>
+</alert>
 
 ### fetch()
 

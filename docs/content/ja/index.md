@@ -19,9 +19,9 @@ features:
 
 ## 特徴
 
-<base-list :items="features"></base-list>
+<list :items="features"></list>
 
-<p class="flex items-center">ライトテーマとダークテーマを試してみる: <app-color-switcher class="p-2"></app-color-switcher></p>
+<p class="flex items-center">ライトテーマとダークテーマを試してみる: <app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
 
 ## 動画
 

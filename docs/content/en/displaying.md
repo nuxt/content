@@ -5,7 +5,7 @@ position: 5
 category: Getting started
 ---
 
-<base-alert type="info">This section is only for Markdown files.</base-alert>
+<alert type="info">This section is only for Markdown files.</alert>
 
 ## Component
 

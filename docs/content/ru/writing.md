@@ -227,11 +227,11 @@ title: Главная
 
 Вы можете использовать глобальные Vue компоненты или импортированные локально, на страницу, где отображается ваш markdown.
 
-<base-alert>
+<alert>
 
 Существует проблема с локально зарегистрированными компонентами и режимом редактирования в реальном времени, поэтому начиная с **v1.5.0** вы можете отключить его установив `liveEdit: false` (смотрите [конфигурацию](/configuration#liveedit)).
 
-</base-alert>
+</alert>
 
 Поскольку `@nuxt/content` предполагает, что весь Markdown предоставлен автором (а не с помощью сторонних пользователей), исходные тексты обрабатываются полностью (включая теги), с помощью [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
@@ -287,11 +287,11 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-<base-alert type="info">
+<alert type="info">
 
 Эти компоненты будут отрисованы используя компонент `<nuxt-content>`, взгляните на [отображение контента](/displaying#component).
 
-</base-alert>
+</alert>
 
 #### Шаблоны
 
@@ -348,11 +348,11 @@ content/
 
 > Взгляните на правую часть этой страницы для примера.
 
-<base-alert type="info">
+<alert type="info">
 
 Взгляните на [этот пример](/examples#table-of-contents) о том, как внедрить оглавление в ваше приложение
 
-</base-alert>
+</alert>
 
 ### Пример
 

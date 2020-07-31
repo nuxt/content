@@ -9,11 +9,11 @@ category: Getting started
 
 `$content` is accessible from **@nuxt/content**.
 
-<base-alert>
+<alert>
 
-  Beware that you can access it only **after the module has been loaded** by Nuxt. `require('@nuxt/content')` should happen in hooks or internal Nuxt methods.
+Beware that you can access it only **after the module has been loaded** by Nuxt. `require('@nuxt/content')` should happen in hooks or internal Nuxt methods.
 
-</base-alert>
+</alert>
 
 ```js
 export default {
@@ -32,11 +32,11 @@ export default {
 
 ### Static Site Generation
 
-<base-alert type="info">
+<alert type="info">
 
 Since Nuxt 2.13+, `nuxt export` has a crawler feature integrated which will crawl all your links and generate your routes based on those links. Therefore you do not need to do anything in order for your dynamic routes to be crawled.
 
-</base-alert>
+</alert>
 
 When using `nuxt generate`, you need to specify the dynamic routes with [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
 
@@ -98,11 +98,11 @@ export default {
 
 ## Handling Hot Reload
 
-<base-alert type="info">
+<alert type="info">
 
 When you are in development mode, the module will automatically call `nuxtServerInit` store action (if defined) and `$nuxt.refresh()` to refresh the current page.
 
-</base-alert>
+</alert>
 
 In case you want to listen to the event to do something more, you can listen on `content:update` event on client-side using `$nuxt.$on('content:update')`:
 
@@ -135,10 +135,9 @@ This documentation use it actually, you can learn more by looking at [plugins/in
 
 ## API Endpoint
 
-
 This module exposes an API endpoint in development so you can easily see the JSON of each directory or file, it is available on [http://localhost:3000/_content/](http://localhost:3000/_content/). The prefix is `_content` by default and can be configured with the [apiPrefix](/configuration#apiprefix) property.
 
-Example:
+**Example**
 
 ```bash
 -| content/

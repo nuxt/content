@@ -281,11 +281,11 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-<base-alert type="info">
+<alert type="info">
 
 これらのコンポーネントは `<nuxt-content>` コンポーネントを使ってレンダリングされます。[コンテンツを表示する](/ja/displaying#component)を参照してください。
 
-</base-alert>
+</alert>
 
 また Markdownの中で`<template>` タグを***使用できない***ことにも注意してください　(例: `v-slot` と使用する)
 
@@ -319,11 +319,11 @@ content/
 
 > このページの右側に表示されている目次を例に見てみましょう。
 
-<base-alert type="info">
+<alert type="info">
 
 アプリに目次を実装する方法について、[この実装例](/ja/examples#目次)を参照してください
 
-</base-alert>
+</alert>
 
 ### 用例
 

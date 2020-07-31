@@ -9,11 +9,11 @@ category: 入門
 
 `$content`は **@nuxt/content**からアクセスできます
 
-<base-alert>
+<alert>
 
-  **モジュールがNuxtによってロードされた後**でなければアクセスできないことに注意してください。`require('@nuxt/content')` は、フックや内部のNuxtメソッドで発生するはずです。
+**モジュールがNuxtによってロードされた後**でなければアクセスできないことに注意してください。`require('@nuxt/content')` は、フックや内部のNuxtメソッドで発生するはずです。
 
-</base-alert>
+</alert>
 
 ```js
 export default {
@@ -32,11 +32,11 @@ export default {
 
 ### 静的サイト生成
 
-<base-alert type="info">
+<alert type="info">
 
 Nuxt 2.13+ 以降、`nuxt export` にはクローラー機能が統合されており、すべてのリンクをクロールし、それらのリンクに基づいてルートを生成します。したがって、動的なルートをクロールさせるためには何もする必要はありません。
 
-</base-alert>
+</alert>
 
 `nuxt generate` を利用する場合は、[generate.routes](https://nuxtjs.org/api/configuration-generate/#routes) で動的ルートを指定する必要があります。
 なぜなら、Nuxtはこれらのルートが何になるかわからないので、ルートを生成できないからです。
@@ -99,11 +99,11 @@ export default {
 
 ## ホットリロードの取り扱い
 
-<base-alert type="info">
+<alert type="info">
 
 開発モードの場合、モジュールは自動的に `nuxtServerInit`ストアアクション （定義されている場合）と `$nuxt.refresh()` を呼び出して現在のページを更新します。
 
-</base-alert>
+</alert>
 
 イベントを待ち受けてさらに何かをしたい場合は、`$nuxt.$on('content:update')`を使ってクライアント側で `content:update` イベントを待ち受けることができます。
 

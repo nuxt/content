@@ -20,9 +20,9 @@ Renforcez votre application NuxtJS avec le module `@nuxt/content` : écrivez dan
 
 ## Fonctionnalités
 
-<base-list :items="features"></base-list>
+<list :items="features"></list>
 
-<p class="flex items-center">Profitez des thèmes lumineux et sombre: <app-color-switcher class="p-2"></app-color-switcher></p>
+<p class="flex items-center">Profitez des thèmes lumineux et sombre: <app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
 
 ## Vidéos
 

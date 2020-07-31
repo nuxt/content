@@ -9,11 +9,11 @@ category: Сообщество
 
 С случае со статьями, контент может использоваться для генерации новостной ленты с использованием модуля [@nuxtjs/feed](https://github.com/nuxt-community/feed-module).
 
-<base-alert type="info">
+<alert type="info">
 
 Для использования `$content` внутри параметра `feed`, вам нужно добавить `@nuxt/content` перед `@nuxtjs/feed` в `modules` вашего файла конфигурации.
 
-</base-alert>
+</alert>
 
 **Пример**
 

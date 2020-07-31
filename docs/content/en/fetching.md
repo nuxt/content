@@ -155,11 +155,11 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
-<base-alert type="info">
+<alert type="info">
 
 Check out [this example](/examples#search) on how to implement search into your app
 
-</base-alert>
+</alert>
 
 
 ### surround(slug, options)
@@ -195,11 +195,11 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` and `skip` are ineffective when using this method.
 
-<base-alert type="info">
+<alert type="info">
 
 Check out [this example](/examples#pagination) on how to implement prev and next links into your app
 
-</base-alert>
+</alert>
 
 ### fetch()
 

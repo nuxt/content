@@ -10,11 +10,11 @@ category: Community
 In the case of articles, the content can be used to generate news feeds
 using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
 
-<base-alert type="info">
+<alert type="info">
 
 To use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
 
-</base-alert>
+</alert>
 
 **Example**
 

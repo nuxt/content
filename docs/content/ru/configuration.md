@@ -101,9 +101,11 @@ content: {
 
 Этот модуль использует [remark](https://github.com/remarkjs/remark) «под капотом» для компиляции markdown файлов в JSON AST, который будет храниться в переменной `body`.
 
-<base-alert type="info">
+<alert type="info">
+
 Следующий пример работает и для `remarkPlugins`, и для `rehypePlugins`
-</base-alert>
+
+</alert>
 
 Чтобы настроить, как модуль будет анализировать Markdown, вы можете:
 
@@ -175,9 +177,11 @@ export default {
 }
 ```
 
-<base-alert>
+<alert>
+
 При добавлении нового плагина обязательно установите его в ваших зависимостях:
-</base-alert>
+
+</alert>
 
 <code-group>
   <code-block label="Yarn" active>
@@ -224,15 +228,19 @@ export default {
 
 ### `markdown.basePlugins`
 
-<base-alert>
+<alert>
+
 Устаревшее. Используйте `markdown.remarkPlugins`.
-</base-alert>
+
+</alert>
 
 ### `markdown.plugins`
 
-<base-alert>
+<alert>
+
 Устаревшее. Используйте `markdown.remarkPlugins`.
-</base-alert>
+
+</alert>
 
 ### `markdown.prism.theme`
 
