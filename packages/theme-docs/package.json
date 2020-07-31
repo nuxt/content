@@ -12,6 +12,7 @@
     "@nuxtjs/color-mode": "^1.0.2",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/tailwindcss": "^2.1.1",
+    "@nuxtjs/google-fonts": "^1.0.0",
     "@tailwindcss/typography": "^0.2.0",
     "clipboard": "^2.0.6",
     "defu": "^3.0.1",

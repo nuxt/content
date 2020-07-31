@@ -29,7 +29,7 @@
 
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-5 pr-2 absolute opacity-100;
+        @apply text-malachite-500 font-normal text-xl leading-8 -ml-5 pr-2 absolute opacity-100;
       }
 
       @screen lg {

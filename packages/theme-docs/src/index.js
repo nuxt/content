@@ -26,11 +26,12 @@ export default userConfig => defu.fn(userConfig, {
   ],
   buildModules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/color-mode'
+    '@nuxtjs/color-mode',
+    '@nuxtjs/pwa',
+    '@nuxtjs/google-fonts'
   ],
   modules: [
     'nuxt-i18n',
-    '@nuxtjs/pwa',
     '@nuxt/content'
   ],
   components: true,
@@ -61,5 +62,11 @@ export default userConfig => defu.fn(userConfig, {
     lazy: true,
     seo: false,
     langDir: 'i18n/'
+  },
+  googleFonts: {
+    families: {
+      'DM+Sans': true,
+      'DM+Mono': true
+    }
   }
 })

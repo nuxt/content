@@ -6,34 +6,35 @@
 */
 const path = require('path')
 const plugin = require('tailwindcss/plugin')
+const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
 
 module.exports = {
   theme: {
     extend: {
-      colors: {
-        nuxt: {
-          gray: '#243746',
-          lightgreen: '#41B38A',
-          green: '#158876'
-        }
+      fontFamily: {
+        sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+        mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
-      fill: theme => ({
-        'nuxt-gray': theme('colors.nuxt.gray'),
-        'nuxt-lightgreen': theme('colors.nuxt.lightgreen'),
-        'nuxt-green': theme('colors.nuxt.green')
-      }),
-      stroke: theme => ({
-        'nuxt-gray': theme('colors.nuxt.gray'),
-        'nuxt-lightgreen': theme('colors.nuxt.lightgreen'),
-        'nuxt-green': theme('colors.nuxt.green')
-      })
+      colors: {
+        malachite: {
+          100: '#E6FAF2',
+          200: '#BFF3E0',
+          300: '#99EBCD',
+          400: '#4DDCA7',
+          500: '#00CD81',
+          600: '#00B974',
+          700: '#007B4D',
+          800: '#005C3A',
+          900: '#003E27'
+        }
+      }
     },
     typography: theme => ({
       default: {
         css: {
           a: {
-            color: theme('colors.green.500')
+            color: theme('colors.malachite.500')
           },
           h2: {
             paddingBottom: theme('padding.2'),
@@ -73,6 +74,9 @@ module.exports = {
           },
           'h3 code': {
             fontWeight: '600'
+          },
+          'pre code': {
+            fontFamily: 'DM Mono'
           }
         }
       },

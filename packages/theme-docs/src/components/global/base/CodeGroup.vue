@@ -69,7 +69,7 @@ button {
 }
 
 .highlight-underline {
-  @apply bg-green-500 absolute;
+  @apply bg-malachite-500 absolute;
   bottom: -2px;
   height: 2px;
   transition: left 150ms, width 150ms;

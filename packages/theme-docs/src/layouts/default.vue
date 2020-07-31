@@ -14,20 +14,20 @@
               </li>
               <li v-for="(docs, category) in categories" :key="category" class="mb-4">
                 <h3
-                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wider font-bold text-sm lg:text-xs"
                 >{{ category }}</h3>
                 <ul>
                   <li v-for="doc of docs" :key="doc.slug" class="text-gray-600 dark:text-gray-500">
                     <NuxtLink
                       :to="toLink(doc.slug)"
                       class="px-2 rounded font-medium py-1 block hover:text-gray-700 dark-hover:text-gray-100 flex items-center justify-between"
-                      exact-active-class="text-green-500 bg-green-100 hover:text-green-500 dark:text-white dark:bg-green-700 dark-hover:text-white"
+                      exact-active-class="text-malachite-500 bg-malachite-100 hover:text-malachite-500 dark:text-white dark:bg-malachite-700 dark-hover:text-white"
                     >
                       {{ doc.title }}
                       <client-only>
                         <span
                           v-if="isNew(doc)"
-                          class="animate-pulse rounded-full bg-green-500 dark:bg-white opacity-75 h-2 w-2"
+                          class="animate-pulse rounded-full bg-malachite-500 dark:bg-white opacity-75 h-2 w-2"
                         />
                       </client-only>
                     </NuxtLink>
@@ -36,7 +36,7 @@
               </li>
               <li class="mb-4 lg:hidden">
                 <h3
-                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wide font-bold text-sm lg:text-xs"
+                  class="mb-2 text-gray-500 dark:text-gray-600 uppercase tracking-wider font-bold text-sm lg:text-xs"
                 >More</h3>
                 <ul class="flex items-center ml-2">
                   <li class="flex items-center mr-4">
@@ -46,7 +46,7 @@
                       rel="noopener noreferrer"
                       title="Twitter"
                       name="Twitter"
-                      class="inline-flex hover:text-green-500"
+                      class="inline-flex hover:text-malachite-500"
                     >
                       <IconTwitter class="w-6 h-6" />
                     </a>
@@ -58,7 +58,7 @@
                       rel="noopener noreferrer"
                       title="Github"
                       name="Github"
-                      class="inline-flex hover:text-green-500"
+                      class="inline-flex hover:text-malachite-500"
                     >
                       <IconGithub class="w-6 h-6" />
                     </a>

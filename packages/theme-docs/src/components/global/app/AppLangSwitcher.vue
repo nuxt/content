@@ -2,8 +2,8 @@
   <AppDropdown v-if="availableLocales.length" class="inline-flex">
     <template #trigger="{ open, toggle }">
       <button
-        class="rounded-md hover:text-green-500 focus:outline-none focus:outline-none"
-        :class="{ 'text-green-500': open }"
+        class="rounded-md hover:text-malachite-500 focus:outline-none focus:outline-none"
+        :class="{ 'text-malachite-500': open }"
         @touchstart.stop.prevent="toggle"
       >
         <IconTranslate class="w-6 h-6" />
@@ -15,7 +15,7 @@
         <nuxt-link
           v-if="$i18n.locale !== locale.code"
           :to="switchLocalePath(locale.code)"
-          class="flex px-4 items-center hover:text-green-500 leading-7"
+          class="flex px-4 items-center hover:text-malachite-500 leading-7"
         >{{ locale.name }}</nuxt-link>
       </li>
     </ul>
