@@ -33,7 +33,7 @@
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
-            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 font-medium text-base mr-4"
+            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 font-medium text-base mr-4"
             exact-active-class="text-primary-500"
           >{{ lastRelease.name }}</NuxtLink>
           <div class="flex items-center">
@@ -44,7 +44,7 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 mr-4"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
@@ -55,7 +55,7 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 mr-4"
             >
               <IconGithub class="w-5 h-5" />
             </a>
