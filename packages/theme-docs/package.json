@@ -17,7 +17,7 @@
     "lodash.groupby": "^4.6.0",
     "marked": "^1.1.1",
     "nuxt": "^2.14.0",
-    "nuxt-i18n": "^6.13.1",
+    "nuxt-i18n": "^6.13.2",
     "prism-themes": "^1.4.0",
     "vue-multiselect": "^2.1.6",
     "vue-scrollactive": "^0.9.3"
