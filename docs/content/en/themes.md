@@ -56,7 +56,7 @@ Install `nuxt` and `@nuxt/content-theme-docs`:
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.0.1",
+    "@nuxt/content-theme-docs": "^0.1.1",
     "nuxt": "^2.14.0"
   }
 }
@@ -125,6 +125,22 @@ You need to create a `content/en/` subdirectory since the theme uses [nuxt-i18n]
 - a `static/` directory
 
 This is where you put your static assets like the logo.
+
+<alert type="info">
+
+You can add a `static/icon.png` file to enable [nuxt-pwa](https://pwa.nuxtjs.org/) and generate a favicon automatically.
+
+*Icon should be a square of at least 512x512*
+
+</alert>
+
+<alert type="info">
+
+You can add a `static/preview.png` file to have a social preview image in your metas.
+
+*Image should be at least 640×320px (1280×640px for best display).*
+
+</alert>
 
 **Example**
 
@@ -350,6 +366,17 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 <code-sandbox :src="link"></code-sandbox>
 ```
 
-** Result
+**Result**
 
 <code-sandbox src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></code-sandbox>
+
+### Images
+
+You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
+
+**Example**
+
+```md
+<img src="/img-light.svg" class="light-img" alt="Image light" />
+<img src="/img-dark.svg" class="dark-img" alt="Image dark" />
+```
