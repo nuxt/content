@@ -26,7 +26,10 @@
         <div class="hidden flex-1 lg:flex justify-center w-4/6">
           <AppSearch />
         </div>
-        <div class="lg:w-1/5 flex items-center justify-between pl-8">
+        <div
+          class="lg:w-1/5 flex items-center pl-8"
+          :class="{ 'justify-between': lastRelease, 'justify-end': !lastRelease }"
+        >
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
