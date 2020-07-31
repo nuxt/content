@@ -8,7 +8,7 @@ version: 1.6
 
 <alert type="info">
 
-Discover the first `@nuxt/content` theme for documentation. Create a beautiful documentation like this website in seconds.
+Discover the first `@nuxt/content` theme. Create a beautiful documentation like this website in seconds.
 
 </alert>
 
