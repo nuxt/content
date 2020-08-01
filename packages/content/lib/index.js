@@ -208,7 +208,7 @@ module.exports = async function (moduleOptions) {
       src: join(__dirname, '../templates/nuxt-content.dev.vue'),
       options: {
         apiPrefix: options.apiPrefixWithBase,
-        editor: options.editor || './editor.vue'
+        editor: options.editor
       }
     })
     // Add dev editor component
