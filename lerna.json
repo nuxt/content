@@ -13,5 +13,10 @@
       "perf": "Performance",
       "refactor": "Code Refactoring"
     }
+  },
+  "command": {
+    "version": {
+      "allowBranch": "master"
+    }
   }
 }
