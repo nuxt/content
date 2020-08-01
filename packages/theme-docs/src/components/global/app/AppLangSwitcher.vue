@@ -2,7 +2,7 @@
   <AppDropdown v-if="availableLocales.length" class="inline-flex">
     <template #trigger="{ open, toggle }">
       <button
-        class="rounded-md hover:text-primary-500 focus:outline-none focus:outline-none"
+        class="rounded-md hover:text-primary-500 focus:outline-none"
         :class="{ 'text-primary-500': open }"
         @touchstart.stop.prevent="toggle"
       >
