@@ -110,7 +110,7 @@ export const actions = {
       defaultBranch = data.default_branch
     } catch (e) {}
 
-    commit('SET_DEFAULT_BRANCH', defaultBranch || 'dev')
+    commit('SET_DEFAULT_BRANCH', defaultBranch || 'main')
   },
   async fetchSettings ({ commit }) {
     try {
