@@ -13,6 +13,11 @@
                 <AppSearch />
               </li>
               <li v-for="(docs, category) in categories" :key="category" class="mb-4">
+                v-for="(docs, category, index) in categories"
+                :key="category"
+                class="mb-4"
+                :class="{ 'lg:mb-0': index === Object.keys(categories).length - 1 }"
+              >
                 <h3
                   class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
                 >{{ category }}</h3>
