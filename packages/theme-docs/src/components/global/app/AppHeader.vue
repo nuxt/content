@@ -33,7 +33,7 @@
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
-            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 font-medium text-base mr-4"
+            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-4"
             exact-active-class="text-primary-500"
           >{{ lastRelease.name }}</NuxtLink>
           <div class="flex items-center">
