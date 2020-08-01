@@ -1,14 +1,14 @@
 ---
 title: Docs
-description: 'Use a theme and accelerate your development with Nuxt and @nuxt/content.'
+description: 'Create your documentation with @nuxt/content docs theme in minutes.'
 category: Themes
 position: 8
-version: 1.6
+version: 1
 ---
 
 <alert type="info">
 
-Discover the first `@nuxt/content` theme. Create a beautiful documentation like this website in seconds.
+Discover the first `@nuxt/content` theme. Create a beautiful documentation like this website in minutes.
 
 </alert>
 
@@ -54,7 +54,7 @@ Install `nuxt` and `@nuxt/content-theme-docs`:
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.1.1",
+    "@nuxt/content-theme-docs": "^0.1.3",
     "nuxt": "^2.14.0"
   }
 }
@@ -147,7 +147,7 @@ content/
   en/
     index.md
 static/
-  favicon.ico
+  icon.png
 nuxt.config.js
 package.json
 ```
