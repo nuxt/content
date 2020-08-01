@@ -5,7 +5,8 @@ export const state = () => ({
   categories: {},
   releases: [],
   settings: {
-    title: 'Nuxt Content Docs'
+    title: 'Nuxt Content Docs',
+    defaultBranch: ''
   }
 })
 
@@ -28,6 +29,9 @@ export const mutations = {
   },
   SET_RELEASES (state, releases) {
     state.releases = releases
+  },
+  SET_DEFAULT_BRANCH (state, branch) {
+    state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
     state.settings = Object.assign({}, settings)
@@ -85,6 +89,28 @@ export const actions = {
     })
 
     commit('SET_RELEASES', releases)
+  },
+  async fetchDefaultBranch ({ commit, state }) {
+    if (!state.settings.github || state.settings.defaultBranch) {
+      return
+    }
+
+    const options = {}
+    if (process.env.GITHUB_TOKEN) {
+      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    }
+    let defaultBranch
+    try {
+      const data = await fetch(`https://api.github.com/repos/${state.settings.github}`, options).then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText)
+        }
+        return res
+      }).then(res => res.json())
+      defaultBranch = data.default_branch
+    } catch (e) {}
+
+    commit('SET_DEFAULT_BRANCH', defaultBranch || 'main')
   },
   async fetchSettings ({ commit }) {
     try {

@@ -3,6 +3,7 @@ export default async function ({ store, app }) {
     await store.dispatch('fetchSettings')
     await store.dispatch('fetchCategories')
     await store.dispatch('fetchReleases')
+    await store.dispatch('fetchDefaultBranch')
   }
   // Spa Fallback
   if (process.client && !store.state.settings) {
@@ -14,12 +15,16 @@ export default async function ({ store, app }) {
   if (process.client && !store.state.releases.length) {
     await store.dispatch('fetchReleases')
   }
+  if (process.client && !store.state.settings.defaultBranch) {
+    await store.dispatch('fetchDefaultBranch')
+  }
   // Hot reload on development
   if (process.client && process.dev) {
     window.onNuxtReady(() => {
       window.$nuxt.$on('content:update', async () => {
         await store.dispatch('fetchSettings')
         await store.dispatch('fetchReleases')
+        await store.dispatch('fetchDefaultBranch')
         await store.dispatch('fetchCategories')
       })
     })
