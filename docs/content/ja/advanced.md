@@ -101,7 +101,7 @@ export default {
 
 <alert type="info">
 
-開発モードの場合、モジュールは自動的に `nuxtServerInit`ストアアクション （定義されている場合）と `$nuxt.refresh()` を呼び出して現在のページを更新します。
+開発モードの場合、モジュールは自動的に `nuxtServerInit`ストアアクション（定義されている場合）と `$nuxt.refresh()` を呼び出して現在のページを更新します。
 
 </alert>
 
@@ -158,7 +158,7 @@ export default {
 
  エンドポイントは `GET` や `POST` リクエストでアクセスできるので、クエリのパラメーターを利用できます。: [http://localhost:3000/_content/articles?only=title&only=description&limit=10](http://localhost:3000/_content/articles?only=title&only=description&limit=10).
 
-**v1.4.0**以降、このエンドポイントはクエリパラメータの `where`もサポートしています。
+**v1.4.0**以降、このエンドポイントはクエリパラメーターの `where`もサポートしています。
 
 - デフォルトのキーに属さないすべてのキーが `where`に適用されます。
 
