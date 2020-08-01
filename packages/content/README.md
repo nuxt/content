@@ -1,5 +1,3 @@
-![nuxt-content](https://user-images.githubusercontent.com/904724/80923202-7a93e880-8d82-11ea-8ae1-044ebdc80aac.png)
-
 # @nuxt/content
 
 [![npm version][npm-version-src]][npm-version-href]
