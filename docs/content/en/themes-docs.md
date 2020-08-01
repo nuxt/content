@@ -212,7 +212,7 @@ You can create a `content/settings.json` file to configure the theme:
   - *The GitHub repository of your project `${org}/${name}` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page*
 - `defaultBranch`
   - Type: `String`
-  - *The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page.*
+  - *The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).*
 - `twitter`
   - Type: `String`
   - *The Twitter username you want to link*
