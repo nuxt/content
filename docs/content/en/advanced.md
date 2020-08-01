@@ -32,13 +32,13 @@ export default {
 
 ### Static Site Generation
 
-<alert type="info">
+Since Nuxt 2.14+, `nuxt generate` has a crawler feature integrated which will crawl all your links and generate your routes based on those links. Therefore you do not need to do anything in order for your dynamic routes to be crawled.
 
-Since Nuxt 2.13+, `nuxt export` has a crawler feature integrated which will crawl all your links and generate your routes based on those links. Therefore you do not need to do anything in order for your dynamic routes to be crawled.
+Also, `nuxt generate` will automagically skip webpack build step when no code has been changed and use the previous build using cache. The content module integrates with this feature to ignore changes inside the `content/` folder. In other terms, when changing the content of your site and deploying, the build will be skipped.
 
-</alert>
+> Learn more in [this article](https://nuxtjs.org/blog/nuxt-static-improvements).
 
-When using `nuxt generate`, you need to specify the dynamic routes with [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), because Nuxt does not know what these routes will be so it can't generate them.
+When using Nuxt <= 2.12, you might need to specify the dynamic routes with [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes)
 
 **Example**
 
@@ -57,6 +57,12 @@ export default {
   }
 }
 ```
+
+<alert>
+
+Recommended to use Nuxt 2.14+ with `nuxt generate` because it's awesome!
+
+</alert>
 
 ## Hooks
 

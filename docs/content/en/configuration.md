@@ -17,7 +17,7 @@ export default {
 
 Before diving into the individual attributes, please have a look [at the default settings](#defaults) of the module.
 
-### Merging defaults
+## Merging defaults
 
 You can define every option either as function or as static value (primitives, objects, arrays, ...).
 if you use a function, the default value will be provided as the first argument.
