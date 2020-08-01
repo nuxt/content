@@ -132,6 +132,13 @@ module.exports = {
             color: theme('colors.gray.100'),
             backgroundColor: theme('colors.gray.800'),
             borderWidth: 0
+          },
+          thead: {
+            color: theme('colors.gray.100'),
+            borderBottomColor: theme('colors.gray.600')
+          },
+          'tbody tr': {
+            borderBottomColor: theme('colors.gray.700')
           }
         }
       }
