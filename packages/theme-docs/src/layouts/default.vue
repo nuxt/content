@@ -38,38 +38,33 @@
                 <h3
                   class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
                 >More</h3>
-                <ul class="flex items-center ml-2">
-                  <li class="flex items-center mr-4">
-                    <a
-                      href="https://twitter.com/nuxt_js"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Twitter"
-                      name="Twitter"
-                      class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
-                    >
-                      <IconTwitter class="w-5 h-5" />
-                    </a>
-                  </li>
-                  <li class="flex items-center mr-4">
-                    <a
-                      href="https://github.com/nuxt/content"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Github"
-                      name="Github"
-                      class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
-                    >
-                      <IconGithub class="w-5 h-5" />
-                    </a>
-                  </li>
-                  <li class="flex items-center mr-4">
-                    <AppLangSwitcher />
-                  </li>
-                  <li class="flex items-center">
-                    <AppColorSwitcher />
-                  </li>
-                </ul>
+                <div class="flex items-center ml-2">
+                  <a
+                    v-if="settings.twitter"
+                    href="`https://twitter.com/${settings.twitter}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Twitter"
+                    name="Twitter"
+                    class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+                  >
+                    <IconTwitter class="w-5 h-5" />
+                  </a>
+                  <a
+                    v-if="settings.github"
+                    :href="`https://github.com/${settings.github}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Github"
+                    name="Github"
+                    class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+                  >
+                    <IconGithub class="w-5 h-5" />
+                  </a>
+
+                  <AppLangSwitcher class="mr-4" />
+                  <AppColorSwitcher />
+                </div>
               </li>
             </ul>
           </div>
