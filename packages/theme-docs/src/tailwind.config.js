@@ -28,6 +28,12 @@ module.exports = {
           800: '#005C3A',
           900: '#003E27'
         }
+      },
+      height: {
+        '(screen-16)': 'calc(100vh - 4rem)'
+      },
+      inset: {
+        16: '4rem'
       }
     },
     typography: theme => ({
