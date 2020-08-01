@@ -67,7 +67,7 @@ export const actions = {
       }).then(res => res.json())
       releases = data.filter(r => !r.draft).map((release) => {
         return {
-          name: release.name || release.tag_name,
+          name: (release.name || release.tag_name).replace('Release ', ''),
           date: release.published_at,
           body: this.$markdown(release.body)
         }
