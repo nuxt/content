@@ -41,7 +41,8 @@
                 <ul class="flex items-center ml-2">
                   <li class="flex items-center mr-4">
                     <a
-                      href="https://twitter.com/nuxt_js"
+                      v-if="settings.twitter"
+                      :href="`https://twitter.com/${settings.twitter}`"
                       target="_blank"
                       rel="noopener noreferrer"
                       title="Twitter"
@@ -53,7 +54,8 @@
                   </li>
                   <li class="flex items-center mr-4">
                     <a
-                      href="https://github.com/nuxt/content"
+                      v-if="settings.github"
+                      :href="`https://github.com/${settings.github}`"
                       target="_blank"
                       rel="noopener noreferrer"
                       title="Github"
