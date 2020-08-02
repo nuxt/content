@@ -11,7 +11,7 @@
       <AppGithubLink :document="document" />
       <AppPrevNext :prev="prev" :next="next" />
     </div>
-    <AppToc :toc="document.toc" />
+    <AppToc v-if="!document.fullscreen" :toc="document.toc" />
   </div>
 </template>
 
