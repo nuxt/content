@@ -6,18 +6,18 @@ import { OptionsV2 as xmlOptions } from 'xml2js'
 import { CSVParseParam as csvOptions } from "node-csvtojson/v2/Parameters";
 
 interface NuxtContentInstance {
-  only(keys: String | String[]): NuxtContentInstance
-  without(keys: String | String[]): NuxtContentInstance
-  sortBy(field: String, direction?: String): NuxtContentInstance
+  only(keys: string | string[]): NuxtContentInstance
+  without(keys: string | string[]): NuxtContentInstance
+  sortBy(field: string, direction?: string): NuxtContentInstance
   where(query: Object): NuxtContentInstance
-  search(query: Object | String, value?: String): NuxtContentInstance
-  surround(slug: String, options?: Object): NuxtContentInstance
-  limit(n: Number | String): NuxtContentInstance
-  skip(n: Number | String): NuxtContentInstance
+  search(query: Object | string, value?: string): NuxtContentInstance
+  surround(slug: string, options?: Object): NuxtContentInstance
+  limit(n: number | string): NuxtContentInstance
+  skip(n: number | string): NuxtContentInstance
   fetch<T = Result | Result[]>(): Promise<T>
 }
 
-type contentFunc = (...args: Array<String | Object>) => NuxtContentInstance
+type contentFunc = (...args: Array<string | Object>) => NuxtContentInstance
 
 type Result = (Object[] & {
   0: ('parallel' | 'sequential');
