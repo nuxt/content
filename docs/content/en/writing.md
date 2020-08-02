@@ -229,11 +229,11 @@ Beware that when placing Markdown inside a component, it must be preceded and fo
 
 You can use global Vue components or locally registered in the page you're displaying your markdown.
 
-<base-alert>
+<alert>
 
 An issue exists with locally registered components and live edit in development, since **v1.5.0** you can disable it by setting `liveEdit: false` (see [configuration](/configuration#liveedit)).
 
-</base-alert>
+</alert>
 
 Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
@@ -255,7 +255,7 @@ But **this will**:
 <my-component></my-component>
 ```
 
-**Example:**
+**Example**
 
 Say we have a Vue component called [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
 
@@ -265,7 +265,7 @@ Please choose a *framework*:
 <example-multiselect :options="['Vue', 'React', 'Angular', 'Svelte']"></example-multiselect>
 ```
 
-**Result:**
+**Result**
 
 <div class="border rounded-md p-2 mb-2 bg-gray-200 dark:bg-gray-800">
 Please choose a <i>framework</i>:
@@ -289,11 +289,11 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-<base-alert type="info">
+<alert type="info">
 
 These components will be rendered using the `<nuxt-content>` component, see [displaying content](/displaying#component).
 
-</base-alert>
+</alert>
 
 #### Templates
 
@@ -350,11 +350,11 @@ When fetching a document, we have access to a toc property which is an array of 
 
 > Take a look at the right side of this page for an example.
 
-<base-alert type="info">
+<alert type="info">
 
 Check out [this example](/examples#table-of-contents) on how to implement a table of contents into your app
 
-</base-alert>
+</alert>
 
 ### Example
 

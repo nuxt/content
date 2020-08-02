@@ -158,11 +158,11 @@ const articles = await this.$content('articles').search('title', 'welcome').fetc
 const articles = await this.$content('articles').search('welcome').fetch()
 ```
 
-<base-alert type="info">
+<alert type="info">
 
 アプリに検索を実装する方法について[この実装例](/ja/examples#検索)を参考にしてください
 
-</base-alert>
+</alert>
 
 ### surround(slug, options)
 
@@ -201,11 +201,11 @@ const [prev, next] = await this.$content('articles')
 
 > `surround`を利用する場合、`search`、`limit`、`skip`は考慮されません。
 
-<base-alert type="info">
+<alert type="info">
 
 アプリに前後の記事へのリンクを実装する方法について[この実装例](/ja/examples#ページネーション)を参考にしてください
 
-</base-alert>
+</alert>
 
 ### fetch()
 

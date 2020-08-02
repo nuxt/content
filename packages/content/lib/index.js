@@ -41,6 +41,7 @@ module.exports = async function (moduleOptions) {
 
   const mergedConfig = mergeConfig(content, defaults)
   const options = defu(mergedConfig, defaults)
+  const relativeDir = options.dir
   options.dir = resolve(this.options.srcDir, options.dir)
 
   // Load markdown plugins
@@ -64,7 +65,7 @@ module.exports = async function (moduleOptions) {
       global: true
     })
   })
-  this.nuxt.hook('generate:cache:ignore', ignore => ignore.push('content'))
+  this.nuxt.hook('generate:cache:ignore', ignore => ignore.push(relativeDir))
 
   const ws = new WS({
     apiPrefix: options.apiPrefixWithBase

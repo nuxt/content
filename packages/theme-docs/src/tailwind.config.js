@@ -6,42 +6,55 @@
 */
 const path = require('path')
 const plugin = require('tailwindcss/plugin')
+const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
 
 module.exports = {
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+        mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
+      },
       colors: {
-        nuxt: {
-          gray: '#243746',
-          lightgreen: '#41B38A',
-          green: '#158876'
+        primary: {
+          100: '#E6FAF2',
+          200: '#BFF3E0',
+          300: '#99EBCD',
+          400: '#4DDCA7',
+          500: '#00CD81',
+          600: '#00B974',
+          700: '#007B4D',
+          800: '#005C3A',
+          900: '#003E27'
         }
       },
-      fill: theme => ({
-        'nuxt-gray': theme('colors.nuxt.gray'),
-        'nuxt-lightgreen': theme('colors.nuxt.lightgreen'),
-        'nuxt-green': theme('colors.nuxt.green')
-      }),
-      stroke: theme => ({
-        'nuxt-gray': theme('colors.nuxt.gray'),
-        'nuxt-lightgreen': theme('colors.nuxt.lightgreen'),
-        'nuxt-green': theme('colors.nuxt.green')
-      })
+      height: {
+        '(screen-16)': 'calc(100vh - 4rem)'
+      },
+      inset: {
+        16: '4rem'
+      }
     },
     typography: theme => ({
       default: {
         css: {
           a: {
-            color: theme('colors.green.500')
+            color: theme('colors.primary.500')
           },
           h2: {
             paddingBottom: theme('padding.2'),
             borderBottomWidth: '1px',
             borderBottomColor: theme('colors.gray.200')
           },
+          h3: {
+            paddingBottom: theme('padding.2'),
+            borderBottomWidth: '1px',
+            borderBottomColor: theme('colors.gray.200')
+          },
           blockquote: {
             fontWeight: '400',
+            color: theme('colors.gray.600'),
             fontStyle: 'normal',
             quotes: '"\\201C""\\201D""\\2018""\\2019"'
           },
@@ -67,6 +80,9 @@ module.exports = {
           },
           'h3 code': {
             fontWeight: '600'
+          },
+          'pre code': {
+            fontFamily: 'DM Mono'
           }
         }
       },
@@ -92,7 +108,7 @@ module.exports = {
             borderColor: theme('colors.gray.700')
           },
           blockquote: {
-            color: theme('colors.gray.100'),
+            color: theme('colors.gray.400'),
             borderLeftColor: theme('colors.gray.700')
           },
           h1: {
@@ -103,7 +119,8 @@ module.exports = {
             borderBottomColor: theme('colors.gray.800')
           },
           h3: {
-            color: theme('colors.gray.100')
+            color: theme('colors.gray.100'),
+            borderBottomColor: theme('colors.gray.800')
           },
           h4: {
             color: theme('colors.gray.100')
@@ -115,6 +132,13 @@ module.exports = {
             color: theme('colors.gray.100'),
             backgroundColor: theme('colors.gray.800'),
             borderWidth: 0
+          },
+          thead: {
+            color: theme('colors.gray.100'),
+            borderBottomColor: theme('colors.gray.600')
+          },
+          'tbody tr': {
+            borderBottomColor: theme('colors.gray.700')
           }
         }
       }

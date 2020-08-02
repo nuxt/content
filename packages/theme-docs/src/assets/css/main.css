@@ -12,6 +12,8 @@
 }
 
 .nuxt-content {
+  @apply break-words;
+
   & h2, & h3 {
     /* Fix anchor scrollTo */
     &::before {
@@ -29,7 +31,7 @@
 
       &::before {
         content: "#";
-        @apply text-green-500 font-normal -ml-5 pr-2 absolute opacity-100;
+        @apply text-primary-500 font-normal text-xl leading-8 -ml-5 pr-2 absolute opacity-100;
       }
 
       @screen lg {
@@ -57,7 +59,7 @@
 
     /* Style copy button added in `pages/_slug.vue` */
     & > .copy {
-      @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-3 py-2 text-white bg-gray-800 text-sm uppercase rounded-md border border-white font-semibold mr-3 mb-3;
+      @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-2 py-2 text-white bg-gray-800 text-sm uppercase rounded-md border border-white font-semibold mr-3 mb-3;
 
       &:hover {
         @apply bg-gray-700;

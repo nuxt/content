@@ -225,9 +225,9 @@ title: Home
 
 ### Vueコンポーネント
 
-グローバルVueコンポーネントを使用することも、Markdownを表示しているページにローカルに登録されたコンポーネントを使用することもできます。
+グローバルVueコンポーネントを使用することも、Markdownを表示しているページに登録されたコンポーネントを使用することもできます。
 
-`nuxt/content`はすべてのMarkdownが著者によって提供される(サードパーティのユーザー投稿ではなく)という前提で動作するので、ソースは完全に(タグを含む)処理されます。この仕様に関して、[rehype-raw](https://github.com/rehypejs/rehype-raw)からいくつかの注意点があります。
+`nuxt/content`はすべてのMarkdownが著者によって提供される（サードパーティのユーザー投稿ではなく）という前提で動作するので、ソースは完全に（タグを含む）処理されます。この仕様に関して、[rehype-raw](https://github.com/rehypejs/rehype-raw)からいくつかの注意点があります。
 
 1. コンポーネントはケバブケースで参照する必要があります。
 
@@ -281,13 +281,13 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-<base-alert type="info">
+<alert type="info">
 
 これらのコンポーネントは `<nuxt-content>` コンポーネントを使ってレンダリングされます。[コンテンツを表示する](/ja/displaying#component)を参照してください。
 
-</base-alert>
+</alert>
 
-また Markdownの中で`<template>` タグを***使用できない***ことにも注意してください　(例: `v-slot` と使用する)
+またMarkdownの中で`<template>`タグを***使用できない***ことにも注意してください。（例: `v-slot`と使用する）
 
 #### グローバルコンポーネント
 
@@ -305,7 +305,7 @@ content/
 
 ### 目次
 
-ドキュメントを取得する際には、すべてのタイトルの配列である tocプロパティにアクセスできます。それぞれのタイトルにはリンクが可能なように `id` があり、見出しの種類である深さが設定されています。tocにはh2とh3のタイトルのみが使われます。タイトルのテキストであるtextプロパティもあります。
+ドキュメントを取得する際には、すべてのタイトルの配列であるtocプロパティにアクセスできます。それぞれのタイトルにはリンクが可能なように `id` があり、見出しの種類である深さが設定されています。tocにはh2とh3のタイトルのみが使われます。タイトルのテキストであるtextプロパティもあります。
 
 ```json
 {
@@ -319,11 +319,11 @@ content/
 
 > このページの右側に表示されている目次を例に見てみましょう。
 
-<base-alert type="info">
+<alert type="info">
 
 アプリに目次を実装する方法について、[この実装例](/ja/examples#目次)を参照してください
 
-</base-alert>
+</alert>
 
 ### 用例
 

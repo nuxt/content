@@ -20,9 +20,9 @@ Empower your NuxtJS application with `@nuxt/content` module: write in a `content
 
 ## Features
 
-<base-list :items="features"></base-list>
+<list :items="features"></list>
 
-<p class="flex items-center">Enjoy light and dark mode: <app-color-switcher class="p-2"></app-color-switcher></p>
+<p class="flex items-center">Enjoy light and dark mode:&nbsp;<app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
 
 ## Videos
 

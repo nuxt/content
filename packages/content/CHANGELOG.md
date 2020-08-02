@@ -1,3 +1,19 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [1.5.3](https://github.com/nuxt/content/compare/@nuxt/content@1.5.2...@nuxt/content@1.5.3) (2020-08-01)
+
+
+### Bug Fixes
+
+* **content:** remove cycle dependency ([7700762](https://github.com/nuxt/content/commit/77007624fe179b4c3e66da5b2cc257b13d19eda7))
+
+
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.

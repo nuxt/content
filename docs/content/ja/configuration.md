@@ -19,7 +19,7 @@ export default {
 
 ### デフォルト値とのマージ
 
-すべての設定のプロパティを関数または静的な値 (プリミティブ、オブジェクト、配列、...) として定義できます。  
+すべての設定のプロパティを関数または静的な値 (プリミティブ、オブジェクト、配列、...) として定義できます。
 関数で定義する場合、デフォルト値が第一引数として提供されます。
 
 もしプロパティを定義するのに関数を使わない場合、設定されていない値はデフォルト値とマージします。
@@ -89,9 +89,11 @@ content: {
 
 [remark](https://github.com/remarkjs/remark)と[rehype](https://github.com/rehypejs/rehype)を使って、MarkdownファイルをJSON ASTにコンパイルし、変数`body`に格納します。
 
-<base-alert type="info">
+<alert type="info">
+
 以下の説明は`remarkPlugins`と`rehypePlugins`の両方に当てはまります。
-</base-alert>
+
+</alert>
 
 どのようにMarkdownをパースするか設定するには、次のようにします。
 
@@ -163,9 +165,11 @@ export default {
 }
 ```
 
-<base-alert>
+<alert>
+
 新しいプラグインを追加するときは、必ずdependenciesにインストールしてください
-</base-alert>
+
+</alert>
 
 <code-group>
   <code-block label="Yarn" active>
@@ -212,15 +216,19 @@ export default {
 
 ### `markdown.basePlugins`
 
-<base-alert>
+<alert>
+
 非推奨です。代わりに `markdown.remarkPlugins`を関数として使用してください。
-</base-alert>
+
+</alert>
 
 ### `markdown.plugins`
 
-<base-alert>
+<alert>
+
 非推奨です。代わりに `markdown. remarkPlugins`を配列として使用してください。
-</base-alert>
+
+</alert>
 
 ### `markdown.prism.theme`
 
@@ -277,7 +285,7 @@ content: {
 
 このモジュールは、`js-yaml`を使用して`.yaml`と`.yml`ファイルを解析します。ここで[options](https://github.com/nodeca/js-yaml#api)を確認できます。
 
-`json：true`オプションを強制することに注意してください。 
+`json：true`オプションを強制することに注意してください。
 
 ### `xml`
 

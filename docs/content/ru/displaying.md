@@ -5,7 +5,7 @@ position: 5
 category: Начало
 ---
 
-<base-alert type="info">Этот раздел только для Markdown файлов.</base-alert>
+<alert type="info">Этот раздел только для Markdown файлов.</alert>
 
 ## Component
 

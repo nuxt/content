@@ -10,11 +10,11 @@ category: Community
 contentはニュースフィードを生成することもできます。
 [@nuxtjs/feed](https://github.com/nuxt-community/feed-module)モジュールを使用してみましょう。
 
-<base-alert type="info">
+<alert type="info">
 
 `feed`オプションの中で`$content`を使うには、`modules`で`@nuxtjs/feed`の前に`@nuxt/content`を追加する必要があります。
 
-</base-alert>
+</alert>
 
 **用例**
 

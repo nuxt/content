@@ -9,11 +9,11 @@ category: Начало
 
 `$content` доступен из **@nuxt/content**.
 
-<base-alert>
+<alert>
 
-  Обратите внимание, что вы можете получить к нему доступ только **после того, как модуль будет загружен** Nuxt'ом. `require('@nuxt/content')` должно произойти в хуках или внутренних методах Nuxt.
+Обратите внимание, что вы можете получить к нему доступ только **после того, как модуль будет загружен** Nuxt'ом. `require('@nuxt/content')` должно произойти в хуках или внутренних методах Nuxt.
 
-</base-alert>
+</alert>
 
 ```js
 export default {
@@ -32,11 +32,11 @@ export default {
 
 ### Статическая генерация сайта
 
-<base-alert type="info">
+<alert type="info">
 
 Если вы используете Nuxt 2.13+, `nuxt export` имеет встроенную функцию сканирования, поэтому вам не нужно использовать `generate.routes`.
 
-</base-alert>
+</alert>
 
 При использовании `nuxt generate`, вам нужно указать динамические маршруты в [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), потому что Nuxt не знает какие маршруты нужно генерировать.
 
@@ -98,11 +98,11 @@ export default {
 
 ## Обработка горячей перезагрузки
 
-<base-alert type="info">
+<alert type="info">
 
 В режиме разработке модуль автоматически вызывает действие стора(Vuex) `nuxtServerInit`(если задано) и `$nuxt.refresh()` для перезагрузки текущей страницы.
 
-</base-alert>
+</alert>
 
 В случае, если вам нужно слушать событие, чтобы выполнить что-то еще, вам нужно слушать событие `content:update` на стороне клиента, используя `$nuxt.$on('content:update')`:
 

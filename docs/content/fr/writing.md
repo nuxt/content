@@ -277,11 +277,11 @@ multiselectOptions:
 
 <example-multiselect :options="multiselectOptions"></example-multiselect><br>
 
-<base-alert type="info">
+<alert type="info">
 
-Ces composents seront rendus en utilisant le composant `<nuxt-conent>`, voir [afficher du contenu](/displaying#component).
+Ces composants seront rendus en utilisant le composant `<nuxt-conent>`, voir [afficher du contenu](/displaying#component).
 
-</base-alert>
+</alert>
 
 Notez également que vous **ne pouvez pas utiliser** de balises `<template>` dans votre Markdown (exemple: avec l'utilisation de `v-slot`).
 

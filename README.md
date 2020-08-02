@@ -1,4 +1,4 @@
-![nuxt-content](https://user-images.githubusercontent.com/904724/80923202-7a93e880-8d82-11ea-8ae1-044ebdc80aac.png)
+[![nuxt-content](https://content.nuxtjs.org/preview.png)](https://content.nuxtjs.org)
 
 # @nuxt/content
 
@@ -7,7 +7,7 @@
 [![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
 [![Codecov][codecov-src]][codecov-href]
 [![License][license-src]][license-href]
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![lerna][lerna-src]][lerna-href]
 
 > @nuxt/content lets you write in a content/ directory, acting as Git-based Headless CMS
 
@@ -55,3 +55,6 @@
 
 [license-src]: https://img.shields.io/npm/l/@nuxt/content.svg
 [license-href]: https://npmjs.com/package/@nuxt/content
+
+[lerna-src]: https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg
+[lerna-href]: https://lerna.js.org/

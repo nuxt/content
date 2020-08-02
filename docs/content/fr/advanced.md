@@ -9,11 +9,11 @@ category: Pour commencer
 
 `$content` est accessible depuis **@nuxt/content**.
 
-<base-alert>
+<alert>
 
 Notez que vous ne pouvez y accéder seulement **après que le module ait été chargé** par Nuxt. L'utilisation de `require(@nuxt/content)` devrait avoir lieu dans les hooks ou les méthodes internes de Nuxt.
 
-</base-alert>
+</alert>
 
 ```js
 export default {
@@ -32,11 +32,11 @@ export default {
 
 ### Génération de Site Statique
 
-<base-alert type="info">
+<alert type="info">
 
 Si vous utilisez Nuxt 2.13+, la commande `nuxt export` a une fonctionnalité de crawler intégrée, donc vous ne devriez pas avoir besoin de recourir à `generate.routes`.
 
-</base-alert>
+</alert>
 
 Lors de l'utilisation de `nuxt generate`, vous devez spécifier les routes dynamiques avec `generate.routes`, car Nuxt ne sait pas quelles seront ces routes donc il ne sera pas capable de les générer.
 
@@ -98,11 +98,11 @@ export default {
 
 ## Gérer le Rechargement à Chaud
 
-<base-alert type="info">
+<alert type="info">
 
 Lorsque vous développez, ce module appellera automatiquement l'action `nuxtServerInit` (si elle est définie) et `$nuxt.refresh()` afin de rafraîchir la page actuelle.
 
-</base-alert>
+</alert>
 
 Dans le cas où vous souhaiteriez écouter cet évènement et ajouter des instructions supplémentaires, vous pouvez écouter l'évènement `content:update` côté client en utilisant `$nuxt.$on('content:update')`:
 
@@ -136,11 +136,11 @@ Dès lors que vous opèrerez un changement sur un des fichiers au sein du réper
 
 Dans le cas d'articles, le contenu peut être utilisé pour générer des fils d'actualités en utilisant le module [@nuxtjs/feed](https://github.com/nuxt-community/feed-module).
 
-<base-alert type="info">
+<alert type="info">
 
 Pour utiliser `$content` au sein de l'option `feed`, vous devez ajouter `@nuxt/content` avant `@nuxtjs/feed` dans la propriété `modules`.
 
-</base-alert>
+</alert>
 
 **Exemple**
 

@@ -17,7 +17,7 @@ export default {
 
 Before diving into the individual attributes, please have a look [at the default settings](#defaults) of the module.
 
-### Merging defaults
+## Merging defaults
 
 You can define every option either as function or as static value (primitives, objects, arrays, ...).
 if you use a function, the default value will be provided as the first argument.
@@ -104,9 +104,11 @@ content: {
 
 This module uses [remark](https://github.com/remarkjs/remark) and [rehype](https://github.com/rehypejs/rehype) under the hood to compile markdown files into JSON AST that will be stored into the `body` variable.
 
-<base-alert type="info">
+<alert type="info">
+
 The following explanation is valid for both `remarkPlugins` and `rehypePlugins`
-</base-alert>
+
+</alert>
 
 To configure how the module will parse Markdown, you can:
 
@@ -178,9 +180,11 @@ export default {
 }
 ```
 
-<base-alert>
+<alert>
+
 When adding a new plugin, make sure to install it in your dependencies:
-</base-alert>
+
+</alert>
 
 <code-group>
   <code-block label="Yarn" active>
@@ -227,15 +231,19 @@ export default {
 
 ### `markdown.basePlugins`
 
-<base-alert>
+<alert>
+
 Deprecated. Use `markdown.remarkPlugins` as a function instead.
-</base-alert>
+
+</alert>
 
 ### `markdown.plugins`
 
-<base-alert>
+<alert>
+
 Deprecated. Use `markdown.remarkPlugins` as an array instead.
-</base-alert>
+
+</alert>
 
 ### `markdown.prism.theme`
 
