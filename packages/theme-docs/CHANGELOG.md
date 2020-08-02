@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.2.0...@nuxt/content-theme-docs@0.3.0) (2020-08-02)
+
+
+### Features
+
+* **theme-docs:** register root components dir ([5e16c2b](https://github.com/nuxt/content/commit/5e16c2bf55f895607f9e975ed7c44f421687b9eb))
+
+
+
+
+
 # [0.2.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.1.3...@nuxt/content-theme-docs@0.2.0) (2020-08-01)
 
 
