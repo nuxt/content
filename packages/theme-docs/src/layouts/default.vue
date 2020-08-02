@@ -28,7 +28,7 @@
                       class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between"
                       exact-active-class="text-primary-500 bg-primary-100 hover:text-primary-500 dark:bg-primary-900"
                     >
-                      {{ doc.title }}
+                      {{ doc.menuTitle || doc.title }}
                       <client-only>
                         <span
                           v-if="isNew(doc)"
