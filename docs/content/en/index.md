@@ -42,7 +42,6 @@ Using `$content()` on a directory to list, filter and search content:
   <source src="https://res.cloudinary.com/nuxt/video/upload/q_auto/v1588095794/nuxt-content-movies_c0cq9p.ogv" type="video/ogg" />
 </video>
 
-
 ## Testimonials
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Wanted to try out <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> new content theme doc, was a blast!<br><br>Managed to hack its interals to extend its Tailwind config with mine hihihi... <a href="https://t.co/fuXXOBKXYE">pic.twitter.com/fuXXOBKXYE</a></p>&mdash; lihbr (@li_hbr) <a href="https://twitter.com/li_hbr/status/1289536277897834497?ref_src=twsrc%5Etfw">August 1, 2020</a></blockquote>

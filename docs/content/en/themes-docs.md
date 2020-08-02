@@ -178,15 +178,15 @@ To make it work properly, make sure to include these properties in the front-mat
 #### Optional fields
 
 - `version` (`Float`)
-  - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it.
+  - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it
 - `fullscreen` (`Boolean`)
-  - Grows the page and to hide the table of contents
+  - Grows the page and hides the table of contents
 - `menuTitle` (`String`)
-  - Overwrites the title of the page that will be displayed to the left menu (default to `title`)
+  - Overwrites the title of the page that will be displayed in the left menu (defaults to `title`)
 
 ### Example
 
-```bash
+```bash[content/en/index.md]
 ---
 title: 'Introduction'
 description: 'Empower your NuxtJS application with this awesome module.'
@@ -204,7 +204,7 @@ Introducing my awesome Nuxt module!
 
 You can create a `content/settings.json` file to configure the theme.
 
-### Properties 
+### Properties
 
 - `title` (`String`)
   - The title of your documentation
@@ -217,11 +217,11 @@ You can create a `content/settings.json` file to configure the theme.
 - `defaultBranch` ( `String`)
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
 - `twitter` (`String`)
-  - The Twitter username you want to links
+  - The Twitter username you want to link
 
 ### Example
 
-```json
+```json[content/settings.json]
 {
   "title": "Nuxt Content",
   "url": "https://content.nuxtjs.org",
@@ -233,6 +233,24 @@ You can create a `content/settings.json` file to configure the theme.
   "twitter": "@nuxt_js"
 }
 ```
+
+## Images
+
+You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
+
+**Example**
+
+```md
+<img src="/logo-light.svg" class="light-img" alt="Logo light" />
+<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
+```
+
+**Result**
+
+<img src="/logo-light.svg" class="light-img" alt="Logo light" />
+<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
+
+<p class="flex items-center">Try switching between light and dark mode:&nbsp;<app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
 
 ## Components
 
@@ -388,21 +406,3 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 **Result**
 
 <code-sandbox src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></code-sandbox>
-
-## Images
-
-You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
-
-**Example**
-
-```md
-<img src="/logo-light.svg" class="light-img" alt="Logo light" />
-<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
-```
-
-**Result**
-
-<img src="/logo-light.svg" class="light-img" alt="Logo light" />
-<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
-
-<p class="flex items-center">Try switching between light and dark mode:&nbsp;<app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
