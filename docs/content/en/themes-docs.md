@@ -1,5 +1,6 @@
 ---
-title: Docs
+title: Docs Theme
+menuTitle: Docs
 description: 'Create your documentation with @nuxt/content docs theme in minutes.'
 category: Themes
 position: 8
@@ -14,7 +15,7 @@ Create a beautiful documentation like this website in minutes.
 
 </alert>
 
-> Check out the playground [live example](/playground#docs-theme)
+> Check out the playground [live example](/examples-docs-theme)
 
 Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
