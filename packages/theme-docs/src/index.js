@@ -37,10 +37,17 @@ export default userConfig => defu.fn(userConfig, {
   components: true,
   hooks: {
     'modules:before': ({ nuxt }) => {
-      // Configure @nuxt/content dir
+      // Configure `content/` dir
       nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
-      // Configure static dir
+      // Configure `static/ dir
       nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, 'static')
+      // Configure `components/` dir
+      nuxt.hook('components:dirs', (dirs) => {
+        dirs.push({
+          path: path.resolve(nuxt.options.rootDir, 'components/global'),
+          global: true
+        })
+      })
     }
   },
   content: {
