@@ -238,7 +238,7 @@ You can create a `content/settings.json` file to configure the theme:
 
 ## Components
 
-You can create your own components by putting them in the `components/global/` folder, check out [this section](http://localhost:3000/writing#vue-components).
+You can create your own components by putting them in the `components/global/` folder, check out [this section](https://content.nuxtjs.org/writing#vue-components).
 
 Also, the theme comes with some default Vue.js components you can use directly in your markdown content:
 
