@@ -75,15 +75,15 @@ export default {
         return
       }
       // Start editing mode
-      const contentHeight = this.$refs.content.offsetHeight
-      const actualScrollY = window.scrollY
+      // const contentHeight = this.$refs.content.offsetHeight
+      // const actualScrollY = window.scrollY
       // Fetch file content
       await this.fetchFile()
       this.isEditing = true
-      this.$refs.textarea.style.minHeight = `${contentHeight}px`
-      await this.waitFor(10)
-      this.$refs.textarea.focus()
-      this.onType()
+      // this.$refs.textarea.style.minHeight = `${contentHeight}px`
+      // await this.waitFor(10)
+      // this.$refs.textarea.focus()
+      // this.onType()
       await this.waitFor(10)
       window.scrollTo(window.scrollX, actualScrollY)
     },
