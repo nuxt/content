@@ -254,7 +254,7 @@ You can apply `dark-img` and `light-img` classes to your images when you have tw
 
 ## Components
 
-You can create your own components by putting them in the `components/global/` folder, check out [this section](http://localhost:3000/writing#vue-components).
+You can create your own components by putting them in the `components/global/` folder, check out [this section](/writing#vue-components).
 
 Also, the theme comes with some default Vue.js components you can use directly in your markdown content:
 
