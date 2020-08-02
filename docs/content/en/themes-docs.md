@@ -7,15 +7,14 @@ position: 8
 version: 1
 ---
 
+
+Create a beautiful documentation like this website in minutes ✨
+
 <alert type="info">
 
-Discover the first `@nuxt/content` theme.
-
-Create a beautiful documentation like this website in minutes.
+Checkout the [live example](/examples-docs-theme)
 
 </alert>
-
-> Check out the playground [live example](/examples-docs-theme)
 
 Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
@@ -161,68 +160,66 @@ package.json
 
 Each markdown page in the `content/` directory will become a page and will be listed in the left navigation.
 
-To make it work properly, make sure to include these properties in the front-matter section:
+### Front-matter
 
-- `title`
-  - Type: `String`
-  - `required`
-  - *The title of the page will be injected in metas*
-- `description`
-  - Type: `String`
-  - `required`
-  - *The description of the page will be injected in metas*
-- `position`
-  - Type: `Number`
-  - `required`
-  - *This will be used to sort the documents in the navigation*
-- `category`
-  - Type: `String`
-  - `required`
-  - *This will be used to group the documents in the navigation*
-- `version`
-  - Type: `Float`
-  - *This can used to alert users that this document is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it.*
-- `fullscreen`
-  - Type: `Boolean`
-  - *This can be used to grow a page and to hide `toc`*
+To make it work properly, make sure to include these properties in the front-matter section.
 
-**Example**
+#### Required fields
 
-```md
+- `title` (`String`)
+  - The title of the page will be injected in metas
+- `description` (`String`)
+  - The description of the page will be injected in metas
+- `position` (`Number`)
+  - This will be used to sort the documents in the navigation
+- `category` (`String`)
+  - This will be used to group the documents in the navigation
+
+#### Optional fields
+
+- `version` (`Float`)
+  - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it.
+- `fullscreen` (`Boolean`)
+  - Grows the page and to hide the table of contents
+- `menuTitle` (`String`)
+  - Overwrites the title of the page that will be displayed to the left menu (default to `title`)
+
+### Example
+
+```bash
 ---
-title: Introduction
-description: 'Empower your NuxtJS application with @nuxt/content module.'
+title: 'Introduction'
+description: 'Empower your NuxtJS application with this awesome module.'
 position: 1
-category: Getting started
+category: 'Getting started'
 version: 1.4
 fullscreen: false
+menuTitle: 'Intro'
 ---
+
+Introducing my awesome Nuxt module!
 ```
 
 ## Settings
 
-You can create a `content/settings.json` file to configure the theme:
+You can create a `content/settings.json` file to configure the theme.
 
-- `title`
-  - Type: `String`
-  - *The title of your documentation*
-- `url`
-  - Type: `String`
-  - *The url where your documentation will be deployed*
-- `logo`
-  - Type: `String` | `Object`
-  - *The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)*
-- `github`
-  - Type: `String`
-  - *The GitHub repository of your project `${org}/${name}` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page*
-- `defaultBranch`
-  - Type: `String`
-  - *The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).*
-- `twitter`
-  - Type: `String`
-  - *The Twitter username you want to link*
+### Properties 
 
-**Example**
+- `title` (`String`)
+  - The title of your documentation
+- `url` (`String`)
+  - The url where your documentation will be deployed
+- `logo` (`String` | `Object`)
+  - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
+- `github` (`String`)
+  - The GitHub repository of your project `${org}/${name}` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page
+- `defaultBranch` ( `String`)
+  - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
+- `twitter` (`String`)
+  - The Twitter username you want to links
+
+### Example
 
 ```json
 {
