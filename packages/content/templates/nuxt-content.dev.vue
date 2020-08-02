@@ -74,18 +74,10 @@ export default {
         this.isEditing = false
         return
       }
-      // Start editing mode
-      // const contentHeight = this.$refs.content.offsetHeight
-      // const actualScrollY = window.scrollY
       // Fetch file content
       await this.fetchFile()
+      // Start editing mode
       this.isEditing = true
-      // this.$refs.textarea.style.minHeight = `${contentHeight}px`
-      // await this.waitFor(10)
-      // this.$refs.textarea.focus()
-      // this.onType()
-      await this.waitFor(10)
-      window.scrollTo(window.scrollX, actualScrollY)
     },
     async fetchFile () {
       this.file = await fetch(this.fileUrl).then(res => res.text())
