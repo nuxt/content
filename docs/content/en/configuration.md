@@ -342,7 +342,7 @@ const parseTxt = file => file.split('\n').map(line => line.trim())
 
 ### `editor`
 
-You can provide a custom Editor for editing your markdownfiles in development mode. Just set the `editor` option to a path to your editor component. The code of the default editor you can find [here](https://github.com/nuxt/content/blob/dev/packages/master/templates/editor.vue).
+You can provide a custom Editor for editing your markdownfiles in development mode. Just set the `editor` option to a path to your editor component. The code of the default editor you can find [here](https://github.com/nuxt/content/blob/master/packages/content/templates/editor.vue).
 
 
 ```js{}[nuxt.config.js]
