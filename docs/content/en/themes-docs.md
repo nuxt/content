@@ -8,9 +8,13 @@ version: 1
 
 <alert type="info">
 
-Discover the first `@nuxt/content` theme. Create a beautiful documentation like this website in minutes.
+Discover the first `@nuxt/content` theme.
+
+Create a beautiful documentation like this website in minutes.
 
 </alert>
+
+> Check out the playground [live example](/playground#docs-theme)
 
 Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
@@ -179,7 +183,7 @@ To make it work properly, make sure to include these properties in the front-mat
   - *This can used to alert users that this document is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it.*
 - `fullscreen`
   - Type: `Boolean`
-  - *This can be used to grow a page when there is no `toc`*
+  - *This can be used to grow a page and to hide `toc`*
 
 **Example**
 
@@ -392,6 +396,13 @@ You can apply `dark-img` and `light-img` classes to your images when you have tw
 **Example**
 
 ```md
-<img src="/img-light.svg" class="light-img" alt="Image light" />
-<img src="/img-dark.svg" class="dark-img" alt="Image dark" />
+<img src="/logo-light.svg" class="light-img" alt="Logo light" />
+<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
 ```
+
+**Result**
+
+<img src="/logo-light.svg" class="light-img" alt="Logo light" />
+<img src="/logo-dark.svg" class="dark-img" alt="Logo dark" />
+
+<p class="flex items-center">Try switching between light and dark mode:&nbsp;<app-color-switcher class="inline-flex ml-2"></app-color-switcher></p>
