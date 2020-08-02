@@ -215,7 +215,7 @@ module.exports = async function (moduleOptions) {
     // Add dev editor component
     this.addTemplate({
       fileName: 'content/editor.vue',
-      src: join(__dirname, 'templates/editor.vue')
+      src: join(__dirname, '../templates/editor.vue')
     })
   }
 
