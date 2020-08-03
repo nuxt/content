@@ -1,20 +1,27 @@
 # <%= name %>
 
-## Usage
+## Setup
+
+Install dependencies:
 
 ```bash
-# install dependencies
-$ <%= pm %> install
-
-# serve with hot reload at localhost:3000
-$ <%= pmRun %> dev
-
-# build for production and launch server
-$ <%= pmRun %> build
-$ <%= pmRun %> start
-
-# generate static project
-$ <%= pmRun %> generate
+<%= pmRun %> install
 ```
 
-Check out [@nuxt/content theme docs](https://content.nuxtjs.org/themes-docs).
+## Development
+
+```bash
+<%= pmRun %> dev
+```
+
+## Static Generation
+
+This will create the `dist/` directory for publishing to static hosting:
+
+```bash
+<%= pmRun %> generate
+```
+
+To preview the static generated app, run `<%= pmRun %> start`
+
+For detailed explanation on how things work, checkout [nuxt/content](https://content.nuxtjs.org) and [@nuxt/content theme docs](https://content.nuxtjs.org/themes-docs).
