@@ -2,9 +2,6 @@
 <<<<<<< HEAD
 title: Тема документации
 menuTitle: Документация
-=======
-title: Документация
->>>>>>> docs:Translated theme documentation and removed old file
 description: 'Создайте собственную документацию вместе с темой документации @nuxt/content за несколько минут.'
 category: Темы
 position: 8
