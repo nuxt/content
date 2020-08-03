@@ -17,7 +17,7 @@ module.exports = {
       },
       {
         name: 'github',
-        message: 'GitHub repository:'
+        message: 'GitHub repository (owner/name):'
       },
       {
         name: 'twitter',
