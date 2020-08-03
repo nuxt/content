@@ -1,7 +1,7 @@
 ---
 title: Интеграции
 description: 'Изучите как использовать @nuxt/content с другими модулями.'
-position: 11
+position: 13
 category: Сообщество
 ---
 
