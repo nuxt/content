@@ -1,7 +1,7 @@
 ---
 title: Integrations
 description: 'Learn how to use @nuxt/content with other modules.'
-position: 11
+position: 13
 category: Community
 ---
 

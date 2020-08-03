@@ -7,7 +7,7 @@
           class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent"
           :class="{ 'block': menu, 'hidden': !menu }"
         >
-          <div class="lg:sticky lg:top-16 lg:-mb-16 overflow-y-auto h-full lg:h-(screen-16)">
+          <div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)">
             <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
               <li class="mb-4 lg:hidden">
                 <AppSearch />
@@ -28,7 +28,7 @@
                       class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between"
                       exact-active-class="text-primary-500 bg-primary-100 hover:text-primary-500 dark:bg-primary-900"
                     >
-                      {{ doc.title }}
+                      {{ doc.menuTitle || doc.title }}
                       <client-only>
                         <span
                           v-if="isNew(doc)"

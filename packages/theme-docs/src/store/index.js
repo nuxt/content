@@ -44,7 +44,7 @@ export const actions = {
     if (process.dev === false && state.categories[this.$i18n.locale]) {
       return
     }
-    const docs = await this.$content(this.$i18n.locale).only(['category', 'title', 'slug', 'version']).sortBy('position', 'asc').fetch()
+    const docs = await this.$content(this.$i18n.locale).only(['category', 'title', 'menuTitle', 'slug', 'version']).sortBy('position', 'asc').fetch()
     if (state.settings.github) {
       docs.push({ slug: 'releases', title: 'Releases', category: 'Community' })
     }
