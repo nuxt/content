@@ -18,8 +18,11 @@
     "docs": "nuxt docs",
     "lint": "eslint --ext .js,.vue .",
     "release": "yarn test && lerna publish",
-    "test": "yarn lint && jest -i",
-    "test:watch": "jest --watch"
+    "test": "yarn lint && yarn test:packages",
+    "test:packages": "jest packages -i",
+    "test:packages:watch": "jest packages --watch",
+    "test:packages:content": "jest packages/content -i",
+    "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
