@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         name: 'twitter',
-        message: 'Twitter username:'
+        message: 'Twitter username (@username):'
       },
       {
         name: 'pm',
