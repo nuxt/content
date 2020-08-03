@@ -1,11 +1,11 @@
 ---
-title: Examples
-description: 'Learn how to implement @nuxt/content into your app with these examples.'
-position: 9
+title: Snippets
+description: 'Learn how to implement @nuxt/content into your app with these code snippets.'
+position: 12
 category: Community
 ---
 
-Check out these examples that can be copied directly into your application.
+Check out these code snippets that can be copied directly into your application.
 
 ## Usage
 
