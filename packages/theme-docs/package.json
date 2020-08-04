@@ -18,7 +18,7 @@
     "defu": "^3.0.1",
     "lodash.groupby": "^4.6.0",
     "marked": "^1.1.1",
-    "nuxt-i18n": "^6.13.2",
+    "nuxt-i18n": "^6.13.4",
     "prism-themes": "^1.4.0",
     "vue-multiselect": "^2.1.6",
     "vue-scrollactive": "^0.9.3"

@@ -9762,10 +9762,10 @@ nuxt-ackee@^1.0.1:
     ackee-tracker "^3.2.3"
     defu "^1.0.0"
 
-nuxt-i18n@^6.13.2:
-  version "6.13.2"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.2.tgz#cab86cfc5f26347f998967306e2091b823695fa9"
-  integrity sha512-ceYk3Q3rFdqVMGMEwTCeXJbFfcRPX5TKI4+gY3sVm3T20hc5T7LLu3fD1QQijbybHc8SoTXlE7WmaWPX01Rb4g==
+nuxt-i18n@^6.13.4:
+  version "6.13.4"
+  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.4.tgz#07ec1c5c0d7c15abb282172386c6c2ea15fb7613"
+  integrity sha512-Xw30z0RXh+HFvdXoCHpoZuIvx9L+kJAkSfhKCNbMLtutI3RVFwmYYEKelfq74KV/lMlRZ0uF5ZjhxKmLhxzsMQ==
   dependencies:
     "@babel/parser" "^7.5.5"
     "@babel/traverse" "^7.5.5"
