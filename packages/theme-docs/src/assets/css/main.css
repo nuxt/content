@@ -57,7 +57,7 @@
       @apply absolute right-0 top-0 text-gray-100 z-10 italic leading-none mr-3 mt-3;
     }
 
-    /* Style copy button added in `pages/_slug.vue` */
+    /* Style copy button added in `pages/_.vue` */
     & > .copy {
       @apply hidden absolute right-0 bottom-0 leading-none shadow-lg px-2 py-2 text-white bg-gray-800 text-sm uppercase rounded-md border border-white font-semibold mr-3 mb-3;
 

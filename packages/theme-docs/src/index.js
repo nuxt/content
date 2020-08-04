@@ -1,7 +1,7 @@
 import path from 'path'
 import defu from 'defu'
 
-export default userConfig => defu.fn(userConfig, {
+const defaultConfig = {
   target: 'static',
   ssr: true,
   srcDir: __dirname,
@@ -76,4 +76,18 @@ export default userConfig => defu.fn(userConfig, {
       'DM+Mono': true
     }
   }
-})
+}
+
+export default (userConfig) => {
+  const config = defu.fn(userConfig, defaultConfig)
+
+  config.hooks['content:file:beforeInsert'] = (document) => {
+    const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
+    const dir = document.dir.replace(regexp, '')
+    const slug = document.slug.replace(/^index/, '')
+
+    document.to = `${dir}/${slug}`
+  }
+
+  return config
+}

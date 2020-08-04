@@ -5,7 +5,7 @@
   >
     <NuxtLink
       v-if="prev"
-      :to="toLink(prev.slug)"
+      :to="localePath(prev.to)"
       class="text-primary-500 font-bold hover:underline flex items-center p-2 pl-0"
     >
       <IconArrowLeft class="w-4 h-4 mr-1" />
@@ -14,7 +14,7 @@
     <span v-else>&nbsp;</span>
     <NuxtLink
       v-if="next"
-      :to="toLink(next.slug)"
+      :to="localePath(next.to)"
       class="text-primary-500 font-bold hover:underline flex items-center p-2 pr-0"
     >
       {{ next.title }}
@@ -34,14 +34,6 @@ export default {
     next: {
       type: Object,
       default: () => null
-    }
-  },
-  methods: {
-    toLink (slug) {
-      if (slug === 'index') {
-        return this.localePath('slug')
-      }
-      return this.localePath({ name: 'slug', params: { slug } })
     }
   }
 }
