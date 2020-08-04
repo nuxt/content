@@ -79,7 +79,7 @@ const defaultConfig = {
 }
 
 export default (userConfig) => {
-  const config = defu.fn(userConfig, defaultConfig)
+  const config = defu.arrayFn(userConfig, defaultConfig)
 
   config.hooks['content:file:beforeInsert'] = (document) => {
     const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
