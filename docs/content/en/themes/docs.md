@@ -76,7 +76,7 @@ export default theme()
 
 The theme exports a function to setup the `nuxt.config.js` and allows you to add / override the default config.
 
-> Check out the documentation of [defu.fn](https://github.com/nuxt-contrib/defu#function-merger) to see how the config is merged.
+> Check out the documentation of [defu](https://github.com/nuxt-contrib/defu) to see how the config is merged.
 
 **Example**
 
