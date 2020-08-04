@@ -255,7 +255,7 @@ title: Главная
 
 **Примеры:**
 
-Мы определили компонент [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
+Мы определили компонент [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/global/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
 Выберите *фреймворк*:
@@ -350,7 +350,7 @@ content/
 
 <alert type="info">
 
-Взгляните на [этот пример](/examples#table-of-contents) о том, как внедрить оглавление в ваше приложение
+Взгляните на [этот пример](/snippets#table-of-contents) о том, как внедрить оглавление в ваше приложение
 
 </alert>
 

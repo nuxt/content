@@ -157,7 +157,7 @@ const articles = await this.$content('articles').search('welcome').fetch()
 
 <alert type="info">
 
-Посмотрите [пример](/examples#search) о том, как реализовать поиск в вашем приложении
+Посмотрите [пример](/snippets#search) о том, как реализовать поиск в вашем приложении
 
 </alert>
 
@@ -197,7 +197,7 @@ const [prev, next] = await this.$content('articles')
 
 <alert type="info">
 
-Посмотрите [пример](/examples#pagination) как реализовать ссылки вперед и назад в вашем приложении
+Посмотрите [пример](/snippets#pagination) как реализовать ссылки вперед и назад в вашем приложении
 
 </alert>
 

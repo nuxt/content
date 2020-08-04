@@ -157,10 +157,9 @@ const articles = await this.$content('articles').search('welcome').fetch()
 
 <alert type="info">
 
-Check out [this example](/examples#search) on how to implement search into your app
+Check out [this snippet](/snippets#search) on how to implement search into your app
 
 </alert>
-
 
 ### surround(slug, options)
 
@@ -197,7 +196,7 @@ const [prev, next] = await this.$content('articles')
 
 <alert type="info">
 
-Check out [this example](/examples#pagination) on how to implement prev and next links into your app
+Check out [this snippet](/snippets#pagination) on how to implement prev and next links into your app
 
 </alert>
 

@@ -12,7 +12,7 @@ Create a beautiful documentation like this website in minutes ✨
 
 <alert type="info">
 
-Checkout the [live example](/examples-docs-theme)
+Checkout the [live example](/examples/docs-theme)
 
 </alert>
 
@@ -290,7 +290,7 @@ Check out a warning alert with a `codeblock`!
 ```md
 <alert type="info">
 
-Check out an info alert with a [link](/themes-docs).
+Check out an info alert with a [link](/themes/docs).
 
 </alert>
 ```
@@ -299,7 +299,7 @@ Check out an info alert with a [link](/themes-docs).
 
 <alert type="info">
 
-Check out an info alert with a [link](/themes-docs).
+Check out an info alert with a [link](/themes/docs).
 
 </alert>
 

@@ -245,7 +245,7 @@ Mais **ceci fonctionnera**:
 
 **Exemple:**
 
-Disons que nous avons un composant Vue nommé [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
+Disons que nous avons un composant Vue nommé [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/global/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
 Veuillez choisir un *framework*:
