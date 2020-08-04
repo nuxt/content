@@ -5223,10 +5223,10 @@ defu@^2.0.4:
   resolved "https://registry.yarnpkg.com/defu/-/defu-2.0.4.tgz#09659a6e87a8fd7178be13bd43e9357ebf6d1c46"
   integrity sha512-G9pEH1UUMxShy6syWk01VQSRVs3CDWtlxtZu7A+NyqjxaCA4gSlWAKDBx6QiUEKezqS8+DUlXLI14Fp05Hmpwg==
 
-defu@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/defu/-/defu-3.0.1.tgz#d563eefe433f37c02a73c4dd197cf443c125a9c7"
-  integrity sha512-z5ngYyhj1L8lMjlTK0x2MOCKdURJ8HrnXz75kD46G2mAKmmoufLFZ/qPbYQA4zJiZe4JJ7OkfGcelcJwRyLHkw==
+defu@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/defu/-/defu-3.1.0.tgz#a6b5104cacc06aa1efa01923becddbedd32505e8"
+  integrity sha512-pc7vS4wbYFtsRL+OaLHKD72VcpOz9eYgzZeoLz9pCs+R8htyPdZnD1CxKP9ttZuT90CLPYFTSaTyc3/7v4gG9A==
 
 delayed-stream@~1.0.0:
   version "1.0.0"
@@ -9762,10 +9762,10 @@ nuxt-ackee@^1.0.1:
     ackee-tracker "^3.2.3"
     defu "^1.0.0"
 
-nuxt-i18n@^6.13.4:
-  version "6.13.4"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.4.tgz#07ec1c5c0d7c15abb282172386c6c2ea15fb7613"
-  integrity sha512-Xw30z0RXh+HFvdXoCHpoZuIvx9L+kJAkSfhKCNbMLtutI3RVFwmYYEKelfq74KV/lMlRZ0uF5ZjhxKmLhxzsMQ==
+nuxt-i18n@^6.13.5:
+  version "6.13.5"
+  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.13.5.tgz#39ca7ae06e5f8371d61cf5450374d0f2151611a7"
+  integrity sha512-ireECOzuVYIdk6htzKz2M2LkJACvKpzmnAw/YOPcQZb0xMxwXr6aXI7K7qYQvy6cxddU3T4Lzu+ODcLzhQaFhw==
   dependencies:
     "@babel/parser" "^7.5.5"
     "@babel/traverse" "^7.5.5"
