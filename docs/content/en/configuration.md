@@ -346,9 +346,7 @@ You can provide a custom editor for editing your markdown files in development. 
 
 
 ```js{}[nuxt.config.js]
-// in Config
-
-{
+content: {
   editor: '~/path/to/editor/component.vue'
 }
 ```
