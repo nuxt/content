@@ -19,7 +19,7 @@
     "defu": "^3.1.0",
     "lodash.groupby": "^4.6.0",
     "marked": "^1.1.1",
-    "nuxt-i18n": "^6.13.6",
+    "nuxt-i18n": "^6.13.7",
     "prism-themes": "^1.4.0",
     "vue-scrollactive": "^0.9.3"
   },
