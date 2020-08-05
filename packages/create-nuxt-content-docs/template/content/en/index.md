@@ -16,7 +16,7 @@ features:
   - Extend with hooks
 ---
 
-<alert>
+<alert type="success">
 
 Your documentation has been created successfully!
 
