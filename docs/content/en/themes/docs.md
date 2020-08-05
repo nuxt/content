@@ -120,6 +120,36 @@ Don't forget to install the dependencies of the modules you add in your `nuxt.co
 
 </alert>
 
+### `tailwind.config.js`
+
+You can override the [default theme config](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/tailwind.config.js) by creating your own `tailwind.config.js`.
+
+The theme design is based on a `primary` color to make it easy to override.
+
+**Example**
+
+```js[tailwind.config.js]
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          100: '#FCEDEE',
+          200: '#F8D3D5',
+          300: '#F3B9BB',
+          400: '#EB8488',
+          500: '#E24F55',
+          600: '#CB474D',
+          700: '#882F33',
+          800: '#662426',
+          900: '#44181A'
+        }
+      }
+    }
+  }
+}
+```
+
 ### `content/`
 
 You need to create a `content/en/` subdirectory since the theme uses [nuxt-i18n](https://github.com/nuxt-community/i18n-module) and defaults to `en` locale. You can then start writing your markdown files.
