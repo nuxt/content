@@ -39,23 +39,23 @@ declare module '@nuxt/types' {
 
   interface Configuration {
     content: {
-      watch: boolean,
-      liveEdit: boolean,
-      apiPrefix: string,
-      dir: string,
-      fullTextSearchFields: extendOrOverwrite<Array<string>>,
-      nestedProperties: extendOrOverwrite<Array<string>>,
-      markdown: {
-        remarkPlugins: extendOrOverwrite<Array<string>>,
-        rehypePlugins: extendOrOverwrite<Array<string>>,
-        prism: {
-          theme: string | false
+      watch?: boolean,
+      liveEdit?: boolean,
+      apiPrefix?: string,
+      dir?: string,
+      fullTextSearchFields?: extendOrOverwrite<Array<string>>,
+      nestedProperties?: extendOrOverwrite<Array<string>>,
+      markdown?: {
+        remarkPlugins?: extendOrOverwrite<Array<string>>,
+        rehypePlugins?: extendOrOverwrite<Array<string>>,
+        prism?: {
+          theme?: string | false
         }
       },
-      yaml: yamlOptions,
-      csv: csvOptions,
-      xml: xmlOptions,
-      extendParser: {
+      yaml?: yamlOptions,
+      csv?: csvOptions,
+      xml?: xmlOptions,
+      extendParser?: {
         [extension: string]: (file: string) => any
       }
     }
