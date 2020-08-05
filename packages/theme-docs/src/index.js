@@ -14,6 +14,7 @@ const defaultConfig = {
     ]
   },
   generate: {
+    fallback: '404.html',
     routes: ['/']
   },
   transpile: [
