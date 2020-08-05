@@ -5,41 +5,19 @@
 [![License][license-src]][license-href]
 [![lerna][lerna-src]][lerna-href]
 
-> Create your documentation with @nuxt/content docs theme in minutes
+> Create your documentation with @nuxt/content docs theme in seconds!
 
-- [📖 &nbsp;Read the documentation](https://content.nuxtjs.org/themes/docs)
-
-## Setup
-
-1. Install `nuxt` and `@nuxt/content-theme-docs`:
+## Getting Started
 
 ```bash
-yarn add nuxt @nuxt/content-theme-docs # npm install nuxt @nuxt/content-theme-docs
+# Yarn
+yarn create nuxt-content-docs <project-name>
+
+# NPX
+npx create-nuxt-content-docs <project-name>
 ```
 
-2. Import `@nuxt/content-theme-docs` in your `nuxt.config.js`:
-
-```js
-import theme from '@nuxt/content-theme-docs'
-
-export default theme()
-```
-
-3. Create a `content/en/` directory
-
-4. Create a `static/` directory
-
-Your project should look like this:
-
-```bash
-content/
-  en/
-    index.md
-static/
-  icon.png
-nuxt.config.js
-package.json
-```
+It's as simple as that!
 
 [📖 Read more](https://content.nuxtjs.org/themes/docs)
 
