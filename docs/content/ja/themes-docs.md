@@ -265,7 +265,7 @@ Check out a warning alert with a `codeblock`!
 ```md
 <alert type="info">
 
-Check out an info alert with a [link](/themes-docs).
+Check out an info alert with a [link](/themes/docs).
 
 </alert>
 ```
@@ -274,7 +274,7 @@ Check out an info alert with a [link](/themes-docs).
 
 <alert type="info">
 
-Check out an info alert with a [link](/themes-docs).
+Check out an info alert with a [link](/themes/docs).
 
 </alert>
 

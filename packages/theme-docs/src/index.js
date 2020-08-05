@@ -1,7 +1,7 @@
 import path from 'path'
 import defu from 'defu'
 
-export default userConfig => defu.fn(userConfig, {
+const defaultConfig = {
   target: 'static',
   ssr: true,
   srcDir: __dirname,
@@ -37,10 +37,17 @@ export default userConfig => defu.fn(userConfig, {
   components: true,
   hooks: {
     'modules:before': ({ nuxt }) => {
-      // Configure @nuxt/content dir
+      // Configure `content/` dir
       nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
-      // Configure static dir
+      // Configure `static/ dir
       nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, 'static')
+      // Configure `components/` dir
+      nuxt.hook('components:dirs', (dirs) => {
+        dirs.push({
+          path: path.resolve(nuxt.options.rootDir, 'components/global'),
+          global: true
+        })
+      })
     }
   },
   content: {
@@ -69,4 +76,18 @@ export default userConfig => defu.fn(userConfig, {
       'DM+Mono': true
     }
   }
-})
+}
+
+export default (userConfig) => {
+  const config = defu.arrayFn(userConfig, defaultConfig)
+
+  config.hooks['content:file:beforeInsert'] = (document) => {
+    const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
+    const dir = document.dir.replace(regexp, '')
+    const slug = document.slug.replace(/^index/, '')
+
+    document.to = `${dir}/${slug}`
+  }
+
+  return config
+}

@@ -44,9 +44,9 @@ export const actions = {
     if (process.dev === false && state.categories[this.$i18n.locale]) {
       return
     }
-    const docs = await this.$content(this.$i18n.locale).only(['category', 'title', 'slug', 'version']).sortBy('position', 'asc').fetch()
+    const docs = await this.$content(this.$i18n.locale, { deep: true }).only(['title', 'menuTitle', 'category', 'slug', 'version', 'to']).sortBy('position', 'asc').fetch()
     if (state.settings.github) {
-      docs.push({ slug: 'releases', title: 'Releases', category: 'Community' })
+      docs.push({ slug: 'releases', title: 'Releases', category: 'Community', to: '/releases' })
     }
     const categories = groupBy(docs, 'category')
 
@@ -108,7 +108,7 @@ export const actions = {
         return res
       }).then(res => res.json())
       defaultBranch = data.default_branch
-    } catch (e) {}
+    } catch (e) { }
 
     commit('SET_DEFAULT_BRANCH', defaultBranch || 'main')
   },

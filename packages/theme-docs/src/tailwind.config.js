@@ -29,7 +29,7 @@ module.exports = {
           900: '#003E27'
         }
       },
-      height: {
+      maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'
       },
       inset: {

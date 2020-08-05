@@ -11,7 +11,7 @@
       <AppGithubLink :document="document" />
       <AppPrevNext :prev="prev" :next="next" />
     </div>
-    <AppToc :toc="document.toc" />
+    <AppToc v-if="!document.fullscreen" :toc="document.toc" />
   </div>
 </template>
 
@@ -22,24 +22,22 @@ import AppCopyButton from '~/components/global/app/AppCopyButton'
 export default {
   name: 'PageSlug',
   middleware ({ params, redirect }) {
-    if (params.slug === 'index') {
+    if (params.pathMatch === 'index') {
       redirect('/')
     }
   },
   async asyncData ({ $content, store, app, params, error }) {
-    const slug = params.slug || 'index'
-
     let document
     try {
-      document = await $content(app.i18n.locale, slug).fetch()
+      document = await $content(app.i18n.locale, params.pathMatch || 'index').fetch()
     } catch (e) {
       return error({ statusCode: 404, message: 'Page not found' })
     }
 
-    const [prev, next] = await $content(app.i18n.locale)
-      .only(['title', 'slug'])
+    const [prev, next] = await $content(app.i18n.locale, { deep: true })
+      .only(['title', 'slug', 'to'])
       .sortBy('position', 'asc')
-      .surround(slug, { before: 1, after: 1 })
+      .surround(document.slug, { before: 1, after: 1 })
       .fetch()
 
     return {

@@ -249,7 +249,7 @@ Use <my-component> instead of <MyComponent>
 
 **実例：**
 
-[ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue)というVueコンポーネントがあるとします:
+[ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/global/ExampleMultiselect.vue)というVueコンポーネントがあるとします:
 
 ```md[home.md]
 Please choose a *framework*:

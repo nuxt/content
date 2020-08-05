@@ -257,7 +257,7 @@ But **this will**:
 
 **Example**
 
-Say we have a Vue component called [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/examples/ExampleMultiselect.vue):
+Say we have a Vue component called [ExampleMultiselect.vue](https://github.com/nuxt/content/blob/master/docs/components/global/examples/ExampleMultiselect.vue):
 
 ```md[home.md]
 Please choose a *framework*:
@@ -352,7 +352,7 @@ When fetching a document, we have access to a toc property which is an array of 
 
 <alert type="info">
 
-Check out [this example](/examples#table-of-contents) on how to implement a table of contents into your app
+Check out [this snippet](/snippets#table-of-contents) on how to implement a table of contents into your app
 
 </alert>
 

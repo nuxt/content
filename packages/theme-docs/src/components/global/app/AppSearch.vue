@@ -39,7 +39,7 @@
         @mousedown="go"
       >
         <NuxtLink
-          :to="localePath({ name: 'slug', params: { slug: result.slug !== 'index' ? result.slug : undefined } })"
+          :to="localePath(result.to)"
           class="flex px-4 py-2 items-center leading-5 transition ease-in-out duration-150"
           :class="{
             'text-primary-500 bg-gray-200 dark:bg-gray-800': focusIndex === index
@@ -76,7 +76,7 @@ export default {
         return
       }
       this.searching = true
-      this.results = await this.$content(this.$i18n.locale).sortBy('position', 'asc').limit(12).search(q).fetch()
+      this.results = await this.$content(this.$i18n.locale, { deep: true }).sortBy('position', 'asc').only(['title', 'slug', 'category', 'to']).limit(12).search(q).fetch()
       this.searching = false
     }
   },
@@ -115,8 +115,7 @@ export default {
         return
       }
       const result = this.focusIndex === -1 ? this.results[0] : this.results[this.focusIndex]
-      const to = { name: 'slug', params: { slug: result.slug !== 'index' ? result.slug : undefined } }
-      this.$router.push(this.localePath(to))
+      this.$router.push(this.localePath(result.to))
       // Unfocus the input and reset the query.
       this.$refs.search.blur()
       this.q = ''

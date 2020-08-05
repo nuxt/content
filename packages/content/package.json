@@ -21,7 +21,7 @@
     "chokidar": "^3.4.1",
     "consola": "^2.14.0",
     "csvtojson": "^2.0.10",
-    "defu": "^3.0.1",
+    "defu": "^3.1.0",
     "escape-html": "^1.0.3",
     "graceful-fs": "^4.2.4",
     "gray-matter": "^4.0.2",

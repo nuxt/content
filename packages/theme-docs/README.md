@@ -7,7 +7,7 @@
 
 > Create your documentation with @nuxt/content docs theme in minutes
 
-- [📖 &nbsp;Read the documentation](https://content.nuxtjs.org/themes-docs)
+- [📖 &nbsp;Read the documentation](https://content.nuxtjs.org/themes/docs)
 
 ## Setup
 
@@ -41,7 +41,7 @@ nuxt.config.js
 package.json
 ```
 
-[📖 Read more](https://content.nuxtjs.org/themes-docs)
+[📖 Read more](https://content.nuxtjs.org/themes/docs)
 
 ## License
 
