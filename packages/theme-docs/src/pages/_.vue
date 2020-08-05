@@ -1,8 +1,16 @@
 <template>
-  <div class="flex flex-wrap-reverse">
+  <div
+    class="flex flex-wrap-reverse"
+    :class="{
+      'lg:-mx-8': settings.layout === 'single'
+    }"
+  >
     <div
-      class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r"
-      :class="{ 'lg:w-3/4': !document.fullscreen }"
+      class="w-full py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
+      :class="{
+        'lg:w-3/4': !document.fullscreen,
+        'lg:border-l lg:border-r': settings.layout !== 'single'
+      }"
     >
       <article class="prose dark:prose-dark max-w-none lg:px-8">
         <h1>{{ document.title }}</h1>
@@ -17,10 +25,15 @@
 
 <script>
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
+
 import AppCopyButton from '~/components/global/app/AppCopyButton'
 
 export default {
   name: 'PageSlug',
+  layout ({ store }) {
+    return store.state.settings.layout || 'default'
+  },
   middleware ({ params, redirect }) {
     if (params.pathMatch === 'index') {
       redirect('/')
@@ -45,6 +58,11 @@ export default {
       prev,
       next
     }
+  },
+  computed: {
+    ...mapGetters([
+      'settings'
+    ])
   },
   mounted () {
     if (this.document.version) {

@@ -23,12 +23,12 @@
             <img v-if="logo" :src="logo.dark" class="h-8 max-w-full dark-img" :alt="settings.title" />
           </NuxtLink>
         </div>
-        <div class="hidden flex-1 lg:flex justify-center w-4/6">
+        <div v-if="settings.layout !== 'single'" class="hidden flex-1 lg:flex justify-center w-4/6">
           <AppSearch />
         </div>
         <div
           class="lg:w-1/5 flex items-center pl-8"
-          :class="{ 'justify-between': lastRelease, 'justify-end': !lastRelease }"
+          :class="{ 'justify-between': lastRelease && settings.layout !== 'single', 'justify-end': !lastRelease || settings.layout === 'single' }"
         >
           <NuxtLink
             v-if="lastRelease"
@@ -44,7 +44,10 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 mr-4"
+              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ml-4"
+              :class="{
+                'hidden lg:block': settings.layout !== 'single'
+              }"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
@@ -55,11 +58,15 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="hidden lg:block text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 mr-4"
+              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ml-4"
+              :class="{
+                'hidden lg:block': settings.layout !== 'single'
+              }"
             >
               <IconGithub class="w-5 h-5" />
             </a>
             <button
+              v-if="settings.layout !== 'single'"
               class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none -mr-2"
               aria-label="Menu"
               @click.stop="menu = !menu"
