@@ -305,6 +305,8 @@ You can create a `content/settings.json` file to configure the theme.
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
 - `twitter` (`String`)
   - The Twitter username you want to link
+- `layout` (`String`)
+  - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
 ### Example
 
