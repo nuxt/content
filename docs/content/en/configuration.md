@@ -353,7 +353,7 @@ You can provide a custom editor for editing your markdown files in development. 
 }
 ```
 
-Your component should implement the following 3 things:
+Your component should implement the following:
 
 1. `v-model` for getting the markdown code.
 2. prop `isEditing` is a boolean with the information if the editing is started and the component is shown. (this is optional)
