@@ -1,13 +1,13 @@
 ---
 title: Docs Theme
 menuTitle: Docs
-description: 'Create your documentation with @nuxt/content docs theme in minutes.'
+description: 'Create your documentation with @nuxt/content docs theme in seconds!'
 category: Themes
 position: 8
 version: 1
 ---
 
-Create a beautiful documentation like this website in minutes ✨
+Create a beautiful documentation like this website in seconds ✨
 
 <alert type="info">
 
@@ -15,9 +15,62 @@ Checkout the [live example](/examples/docs-theme)
 
 </alert>
 
-Let's say we're creating the documentation of an open-source project in the `docs/` directory.
+## Getting Started
 
-## Directory Structure
+To get started quickly you can use the [create-nuxt-content-docs](https://github.com/nuxt/content/tree/dev/packages/create-nuxt-content-docs) package.
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  yarn create nuxt-content-docs <project-name>
+  ```
+
+  </code-block>
+  <code-block label="NPX">
+
+  ```bash
+  # Make sure you have npx installed (npx is shipped by default since NPM 5.2.0) or npm v6.1 or yarn.
+  npx create-nuxt-content-docs <project-name>
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  # Starting with npm v6.1 you can do:
+  npm init nuxt-content-docs <project-name>
+  ```
+
+  </code-block>
+</code-group>
+
+It will ask you some questions (name, title, url, repository, etc.), when answered the dependencies will be installed. The next step is to navigate to the project folder and launch it:
+
+<code-group>
+  <code-block label="Yarn" active>
+
+  ```bash
+  cd <project-name>
+  yarn dev
+  ```
+
+  </code-block>
+  <code-block label="NPM">
+
+  ```bash
+  cd <project-name>
+  npm run dev
+  ```
+
+  </code-block>
+</code-group>
+
+The application is now running on [http://localhost:3000](http://localhost:3000). Well done!
+
+## Manual Setup
+
+Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
 The theme is a classic NuxtJS app, you need:
 
@@ -189,7 +242,7 @@ Once you've setup your documentation, you can directly start writing your conten
 
 ### Locales
 
-The first level of directories in the `content/` folder will be the locales you defined in your `nuxt.config.js`. By default there is only the default `en` locale defined, you have to create a `content/en/` directory to make it work.
+The first level of directories in the `content/` folder are the locales used with [nuxt-i18n](https://github.com/nuxt-community/i18n-module) defined in your `nuxt.config.js`. By default there is only the default `en` locale defined, you have to create a `content/en/` directory to make it work.
 
 You can override the locales in your `nuxt.config.js`:
 
@@ -219,8 +272,6 @@ export default theme({
 As explained in [nuxt.config.js](/themes/docs#nuxtconfigjs) section, we use `defu.arrayFn` to merge your config. You can override the `i18n.locales` array by using a function, or you can pass an array to concat with the default one (which has only the `en` locale).
 
 </alert>
-
-> Check out the [nuxt-i18n](https://github.com/nuxt-community/i18n-module) documentation
 
 ### Routing
 
