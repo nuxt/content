@@ -7,7 +7,6 @@ position: 8
 version: 1
 ---
 
-
 Create a beautiful documentation like this website in minutes ✨
 
 <alert type="info">
@@ -18,9 +17,9 @@ Checkout the [live example](/examples/docs-theme)
 
 Let's say we're creating the documentation of an open-source project in the `docs/` directory.
 
-## Setup
+## Directory Structure
 
-The theme is like a classic NuxtJS app, you need:
+The theme is a classic NuxtJS app, you need:
 
 ### `package.json`
 
@@ -87,11 +86,7 @@ export default theme({
   env: {
     GITHUB_TOKEN: process.env.GITHUB_TOKEN
   },
-  loading: { color: '#48bb78' },
-  generate: {
-    fallback: '404.html', // for Netlify
-    routes: ['/'] // give the first url to start crawling
-  },
+  loading: { color: '#00CD81' },
   i18n: {
     locales: () => [{
       code: 'fr',
@@ -152,7 +147,7 @@ module.exports = {
 
 ### `content/`
 
-You need to create a `content/en/` subdirectory since the theme uses [nuxt-i18n](https://github.com/nuxt-community/i18n-module) and defaults to `en` locale. You can then start writing your markdown files.
+This is where you put your markdown content files. You can learn more in the following section.
 
 ### `static/`
 
@@ -188,11 +183,73 @@ package.json
 
 ## Content
 
-Each markdown page in the `content/` directory will become a page and will be listed in the left navigation.
+Once you've setup your documentation, you can directly start writing your content.
+
+> Check out the documentation on [writing markdown content](/writing#markdown)
+
+### Locales
+
+The first level of directories in the `content/` folder will be the locales you defined in your `nuxt.config.js`. By default there is only the default `en` locale defined, you have to create a `content/en/` directory to make it work.
+
+You can override the locales in your `nuxt.config.js`:
+
+```js[nuxt.config.js]
+import theme from '@nuxt/content-theme-docs'
+
+export default theme({
+  i18n: {
+    locales: () => [{
+      code: 'fr',
+      iso: 'fr-FR',
+      file: 'fr-FR.js',
+      name: 'Français'
+    }, {
+      code: 'en',
+      iso: 'en-US',
+      file: 'en-US.js',
+      name: 'English'
+    }],
+    defaultLocale: 'en'
+  }
+})
+```
+
+<alert type="warning">
+
+As explained in [nuxt.config.js](/themes/docs#nuxtconfigjs) section, we use `defu.arrayFn` to merge your config. You can override the `i18n.locales` array by using a function, or you can pass an array to concat with the default one (which has only the `en` locale).
+
+</alert>
+
+> Check out the [nuxt-i18n](https://github.com/nuxt-community/i18n-module) documentation
+
+### Routing
+
+Each markdown page in the `content/{locale}/` directory will become a page and will be listed in the left navigation.
+
+You can also put your markdown files in subdirectories to generate sub-routes:
+
+**Example**
+
+```
+content/
+  en/
+    examples/
+      basic-usage.md
+    setup.md
+```
+
+**Result**
+
+```
+/examples/basic-usage
+/setup
+```
+
+> You can take a look at our [docs content folder](https://github.com/nuxt/content/tree/dev/docs/content/en) to have an example
 
 ### Front-matter
 
-To make it work properly, make sure to include these properties in the front-matter section.
+To make it work properly, make sure to include these properties in the front-matter section of your markdown files.
 
 #### Required fields
 
@@ -202,11 +259,11 @@ To make it work properly, make sure to include these properties in the front-mat
   - The description of the page will be injected in metas
 - `position` (`Number`)
   - This will be used to sort the documents in the navigation
-- `category` (`String`)
-  - This will be used to group the documents in the navigation
 
 #### Optional fields
 
+- `category` (`String`)
+  - This will be used to group the documents in the navigation
 - `version` (`Float`)
   - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it
 - `fullscreen` (`Boolean`)
