@@ -180,7 +180,7 @@ export default {
 }
 ```
 
-<alert>
+<alert type="warning">
 
 When adding a new plugin, make sure to install it in your dependencies:
 
@@ -231,7 +231,7 @@ export default {
 
 ### `markdown.basePlugins`
 
-<alert>
+<alert type="warning">
 
 Deprecated. Use `markdown.remarkPlugins` as a function instead.
 
@@ -239,7 +239,7 @@ Deprecated. Use `markdown.remarkPlugins` as a function instead.
 
 ### `markdown.plugins`
 
-<alert>
+<alert type="warning">
 
 Deprecated. Use `markdown.remarkPlugins` as an array instead.
 

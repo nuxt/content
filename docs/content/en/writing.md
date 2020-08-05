@@ -229,7 +229,7 @@ Beware that when placing Markdown inside a component, it must be preceded and fo
 
 You can use global Vue components or locally registered in the page you're displaying your markdown.
 
-<alert>
+<alert type="warning">
 
 An issue exists with locally registered components and live edit in development, since **v1.5.0** you can disable it by setting `liveEdit: false` (see [configuration](/configuration#liveedit)).
 
