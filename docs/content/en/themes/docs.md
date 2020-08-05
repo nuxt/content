@@ -114,7 +114,7 @@ export default theme({
 })
 ```
 
-<alert>
+<alert type="warning">
 
 Don't forget to install the dependencies of the modules you add in your `nuxt.config.js`
 
@@ -264,15 +264,15 @@ Also, the theme comes with some default Vue.js components you can use directly i
 
 - `type`
   - Type: `String`
-  - Default: `'warning'`
-  - Values: `['warning', 'info']`
+  - Default: `'info'`
+  - Values: `['info', 'success', 'warning', 'error']`
 
 **Example**
 
 ```md
 <alert>
 
-Check out a warning alert with a `codeblock`!
+Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 
 </alert>
 ```
@@ -281,25 +281,7 @@ Check out a warning alert with a `codeblock`!
 
 <alert>
 
-Check out a warning alert with a `codeblock`!
-
-</alert>
-
-**Example**
-
-```md
-<alert type="info">
-
-Check out an info alert with a [link](/themes/docs).
-
-</alert>
-```
-
-**Result**
-
-<alert type="info">
-
-Check out an info alert with a [link](/themes/docs).
+Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 
 </alert>
 

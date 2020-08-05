@@ -9,7 +9,7 @@ category: Getting started
 
 `$content` is accessible from **@nuxt/content**.
 
-<alert>
+<alert type="warning">
 
 Beware that you can access it only **after the module has been loaded** by Nuxt. `require('@nuxt/content')` should happen in hooks or internal Nuxt methods.
 
@@ -58,7 +58,7 @@ export default {
 }
 ```
 
-<alert>
+<alert type="warning">
 
 Recommended to use Nuxt 2.14+ with `nuxt generate` because it's awesome!
 
