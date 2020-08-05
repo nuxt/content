@@ -13,6 +13,10 @@ const defaultConfig = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ]
   },
+  generate: {
+    fallback: '404.html',
+    routes: ['/']
+  },
   transpile: [
     __dirname // transpile node_modules/@nuxt/content-theme-docs
   ],
