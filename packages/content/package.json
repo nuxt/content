@@ -19,7 +19,7 @@
     "@types/xml2js": "^0.4.5",
     "change-case": "^4.1.1",
     "chokidar": "^3.4.1",
-    "consola": "^2.14.0",
+    "consola": "^2.15.0",
     "csvtojson": "^2.0.10",
     "defu": "^3.1.0",
     "escape-html": "^1.0.3",
