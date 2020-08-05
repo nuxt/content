@@ -18,16 +18,20 @@ const $content = function () {
     }
   })
 
+  const { text = false, deep = false } = options
+
   const path = `/${paths.join('/').replace(/\/+/g, '/')}`
   const isDir = !path || !!dirs.find(dir => dir === path)
   // Look for dir or path
-  const query = isDir ? { dir: options.deep ? { $regex: path } : path } : { path }
+  const query = isDir ? { dir: deep ? { $regex: new RegExp(`^${path}`) } : path } : { path }
   // Postprocess to get only first result (findOne)
   const postprocess = isDir ? [] : [data => data[0]]
 
   return new QueryBuilder({
     query: items.chain().find(query, !isDir),
-    postprocess
+    path,
+    postprocess,
+    text
   }, {
     fullTextSearchFields: <%= JSON.stringify(options.fullTextSearchFields) %>
   })

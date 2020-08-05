@@ -8,7 +8,7 @@ Vue.component(NuxtContent.name, NuxtContent)
 export default (ctx, inject) => {
   let $$content = null
 
-  let $content = (...contentArgs) => {
+  const $content = (...contentArgs) => {
     if ($$content) {
       return $$content(...contentArgs)
     }
@@ -23,7 +23,7 @@ export default (ctx, inject) => {
       'surround'
     ]
     const mock = {}
-    let toCall = []
+    const toCall = []
     for (const key of keys) {
       mock[key] = (...args) => {
         toCall.push({ key, args })
