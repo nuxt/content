@@ -528,3 +528,32 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 **Result**
 
 <code-sandbox src="https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dark"></code-sandbox>
+
+## Showcases
+
+<div class="grid grid-cols-2 gap-4">
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://content.nuxtjs.org" target="_blank">
+      <img src="https://content.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://content.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://strapi.nuxtjs.org" target="_blank">
+      <img src="https://strapi.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://strapi.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://tailwindcss.nuxtjs.org" target="_blank">
+      <img src="https://tailwindcss.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://tailwindcss.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://storybook.nuxtjs.org" target="_blank">
+      <img src="https://storybook.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://storybook.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
+</div>
