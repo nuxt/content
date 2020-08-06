@@ -93,7 +93,7 @@ module.exports = {
             color: theme('colors.gray.300')
           },
           a: {
-            color: theme('colors.green.500')
+            color: theme('colors.primary.500')
           },
           strong: {
             color: theme('colors.gray.100')
