@@ -1,26 +1,15 @@
-const rootKeys = ['class-name', 'class', 'style']
+const info = require('property-information')
 
-const cached = (fn) => {
-  const cache = Object.create(null)
-  return (function cachedFn (str) {
-    const hit = cache[str]
-    return hit || (cache[str] = fn(str))
-  })
-}
-const hyphenate = cached((str) => {
-  return str.replace(/\B([A-Z])/g, '-$1').toLowerCase()
-})
+const rootKeys = ['class-name', 'class', 'style']
 
 function propsToData (props, doc) {
   return Object.keys(props).reduce(function (data, key) {
     const k = key.replace(/.*:/, '')
     const obj = rootKeys.includes(k) ? data : data.attrs
     const value = props[key]
-    if (key === 'className') {
-      obj.class = props.className.join(' ')
-    } else if (key.indexOf('data') === 0) {
-      obj[key.replace(/[A-Z]/g, (g) => `-${g.toLowerCase()}`)] = value
-    } else if (key === 'v-bind') {
+    const { attribute } = info.find(info.html, key)
+
+    if (key === 'v-bind') {
       let val = doc[value]
       if (!val) {
         val = eval(`(${value})`)
@@ -34,9 +23,9 @@ function propsToData (props, doc) {
         obj[key] = eval(`(${value})`)
       }
     } else if (Array.isArray(value)) {
-      obj[hyphenate(key)] = value.join(' ')
+      obj[attribute] = value.join(' ')
     } else {
-      obj[hyphenate(key)] = value
+      obj[attribute] = value
     }
     return data
   }, { attrs: {} })
@@ -50,7 +39,7 @@ function slotsToData (node, h, doc) {
   const data = {}
   const children = node.children || []
 
-  children.forEach(child => {
+  children.forEach((child) => {
     // Regular children and default templates are processed inside `processNode`.
     if (!isTemplate(child) || isDefaultTemplate(child)) { return }
 
@@ -86,7 +75,7 @@ function processNode (node, h, doc) {
     if (isTemplate(child) && !isDefaultTemplate(child)) { continue }
 
     const processQueue = isDefaultTemplate(child) ? child.content : [child]
-    children.push(...processQueue.map((node) => processNode(node, h, doc)))
+    children.push(...processQueue.map(node => processNode(node, h, doc)))
   }
 
   return h(node.tag, data, children)
@@ -137,6 +126,6 @@ export default {
     }
     data.class = classes.concat('nuxt-content')
     data.props = Object.assign({ ...body.props }, data.props)
-    return h('div', data, body.children.map((child) => processNode(child, h, document)))
+    return h('div', data, body.children.map(child => processNode(child, h, document)))
   }
 }
