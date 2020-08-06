@@ -12878,7 +12878,7 @@ sane@^4.0.3:
     minimist "^1.1.1"
     walker "~1.0.5"
 
-sao@^1.0.0:
+sao@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/sao/-/sao-1.7.1.tgz#d45bb34c0d539e71b2e70a0f5999cf4953002dc4"
   integrity sha512-g4VGkyvpZ+n+k7Pp+Qc9Yoy2wGFi7FstLZoLxwiMhjn4n4gCStQJ873weCITAD1ocKbKL7HyKDNnC4yTqievsw==
