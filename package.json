@@ -19,8 +19,8 @@
     "lint": "eslint --ext .js,.vue .",
     "release": "yarn test && lerna publish",
     "test": "yarn lint && yarn test:packages",
+    "test:watch": "jest packages --watch",
     "test:packages": "jest packages -i",
-    "test:packages:watch": "jest packages --watch",
     "test:packages:content": "jest packages/content -i",
     "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
   },
