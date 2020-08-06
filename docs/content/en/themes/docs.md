@@ -531,7 +531,7 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 
 ## Showcases
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid lg:grid-cols-2 gap-4">
   <div class="border dark:border-gray-800 rounded-md">
     <a href="https://content.nuxtjs.org" target="_blank">
       <img src="https://content.nuxtjs.org/preview.png" class="light-img" />
