@@ -3,11 +3,7 @@
     <AppHeader />
 
     <main class="container mx-auto px-4 lg:px-8">
-      <div class="flex flex-wrap relative">
-        <AppNav />
-
-        <Nuxt class="w-full lg:w-4/5" />
-      </div>
+      <Nuxt />
     </main>
 
     <AppFooter />
