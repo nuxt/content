@@ -36,7 +36,7 @@
 
 ## License
 
-[MIT License](./LICENSE)
+[MIT License](../../LICENSE)
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg

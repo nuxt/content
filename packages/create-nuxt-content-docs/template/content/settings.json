@@ -1,0 +1,10 @@
+{
+  "title": "<%= title %>",
+  "url": "<%= url %>",
+  "logo": {
+    "light": "/logo-light.svg",
+    "dark": "/logo-dark.svg"
+  },
+  "github": "<%= github %>",
+  "twitter": "<%= twitter %>"
+}

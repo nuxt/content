@@ -1,0 +1,16 @@
+{
+  "name": "create-nuxt-content-docs",
+  "version": "0.0.0",
+  "files": [
+    "src",
+    "template"
+  ],
+  "bin": "src/cli.js",
+  "dependencies": {
+    "cac": "^6.6.1",
+    "sao": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
