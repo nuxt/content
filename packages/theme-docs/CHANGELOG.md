@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.4.0...@nuxt/content-theme-docs@0.4.1) (2020-08-06)
+
+
+### Bug Fixes
+
+* **theme-docs:** dark mode link color ([0e9575f](https://github.com/nuxt/content/commit/0e9575f6ffe9bd4ca55380789277aebb02aeabf7))
+
+
+
+
+
 # [0.4.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.3.1...@nuxt/content-theme-docs@0.4.0) (2020-08-06)
 
 
