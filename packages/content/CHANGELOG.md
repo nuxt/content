@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/nuxt/content/compare/@nuxt/content@1.5.3...@nuxt/content@1.6.0) (2020-08-06)
+
+
+### Bug Fixes
+
+* **content:** options were not forwarded in plugin static lazy ([#350](https://github.com/nuxt/content/issues/350)) ([36ef2e3](https://github.com/nuxt/content/commit/36ef2e39a14ce8f71d9d5ea5fcd22c91c2268f83))
+* **content:** use `property-information` to convert hast attributes ([#359](https://github.com/nuxt/content/issues/359)) ([58061e0](https://github.com/nuxt/content/commit/58061e02369e3d48419b83886c02d6f29f968945))
+
+
+### Features
+
+* better typescript typings ([#327](https://github.com/nuxt/content/issues/327)) ([8d9f47c](https://github.com/nuxt/content/commit/8d9f47c38e92d8d0348d3aed6eb30d65356885b3))
+* new create-nuxt-content-docs package ([#336](https://github.com/nuxt/content/issues/336)) ([34439eb](https://github.com/nuxt/content/commit/34439eb1c339c47e00280a139f8fe5725841751f))
+
+
+
+
+
 ## [1.5.3](https://github.com/nuxt/content/compare/@nuxt/content@1.5.2...@nuxt/content@1.5.3) (2020-08-01)
 
 
