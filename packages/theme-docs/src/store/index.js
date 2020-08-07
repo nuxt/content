@@ -58,7 +58,7 @@ export const actions = {
       .sortBy('position', 'asc')
       .fetch()
 
-    if (state.settings.github) {
+    if (state.releases.length > 0) {
       docs.push({ slug: 'releases', title: 'Releases', category: 'Community', to: '/releases' })
     }
 
