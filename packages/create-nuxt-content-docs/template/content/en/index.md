@@ -1,8 +1,8 @@
 ---
 title: Introduction
-description: 'Welcome to your new documentation!'
+description: ''
 position: 1
-category: Getting started
+category: ''
 features:
   - Feature 1
   - Feature 2
