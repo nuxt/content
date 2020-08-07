@@ -9,19 +9,23 @@ module.exports = {
       },
       {
         name: 'title',
-        message: 'Project title:'
+        message: 'Project title:',
+        default: 'Nuxt Content'
       },
       {
         name: 'url',
-        message: 'Documentation url:'
+        message: 'Documentation url:',
+        url: 'https://content.nuxtjs.org'
       },
       {
         name: 'github',
-        message: 'GitHub repository (owner/name):'
+        message: 'GitHub repository (owner/name):',
+        default: 'nuxt/content'
       },
       {
         name: 'twitter',
-        message: 'Twitter username (@username):'
+        message: 'Twitter username (@username):',
+        default: '@nuxt_js'
       },
       {
         name: 'pm',
