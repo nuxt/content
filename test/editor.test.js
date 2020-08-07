@@ -27,7 +27,7 @@ describe('editor option', () => {
       ({ nuxt } = (await setup({
         ...loadConfig(__dirname),
         buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
-        content: { watch: true, editor: '@nuxt/content/templates/editor.vue' },
+        content: { watch: true, editor: '@nuxt/content/templates/editor.vue' }
       })))
 
       browser = await createBrowser('puppeteer')
