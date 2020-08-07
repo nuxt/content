@@ -198,6 +198,8 @@ module.exports = {
 }
 ```
 
+> Check out this awesome [color shades generator](https://javisperez.github.io/tailwindcolorshades/#/) for TailwindCSS
+
 ### `content/`
 
 This is where you put your markdown content files. You can learn more in the following section.
@@ -351,11 +353,11 @@ You can create a `content/settings.json` file to configure the theme.
 - `logo` (`String` | `Object`)
   - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
-  - The GitHub repository of your project `${org}/${name}` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page
+  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page. Example: `nuxt/content`
 - `defaultBranch` ( `String`)
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
 - `twitter` (`String`)
-  - The Twitter username you want to link
+  - The Twitter username `@username` you want to link. Example: `@nuxt_js`
 - `layout` (`String`)
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
