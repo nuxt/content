@@ -53,7 +53,7 @@ describe('editor option', () => {
       page = await browser.page(url('/home'))
       const html = await page.getHtml()
 
-      expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><div class="editor.*><\/div>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/)
+      expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><div .*class="editor.*><\/div>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/)
 
       await nuxt.close()
       await browser.close()
