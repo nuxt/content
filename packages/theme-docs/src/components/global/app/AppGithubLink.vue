@@ -24,8 +24,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'settings',
-      'lastRelease'
+      'settings'
     ]),
     link () {
       if (!this.settings.github) {

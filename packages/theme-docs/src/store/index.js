@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
+import { fetchGithub, sortByVersion } from '../api/github'
 
 export const state = () => ({
   categories: {},
   releases: [],
+  tags: [],
   settings: {
     title: 'Nuxt Content Docs',
     defaultBranch: ''
@@ -19,6 +21,9 @@ export const getters = {
   },
   lastRelease (state) {
     return state.releases[0]
+  },
+  tags (state) {
+    return state.tags
   }
 }
 
@@ -29,6 +34,9 @@ export const mutations = {
   },
   SET_RELEASES (state, releases) {
     state.releases = releases
+  },
+  SET_TAGS (state, tags) {
+    state.tags = tags
   },
   SET_DEFAULT_BRANCH (state, branch) {
     state.settings.defaultBranch = branch
@@ -44,12 +52,21 @@ export const actions = {
     if (process.dev === false && state.categories[this.$i18n.locale]) {
       return
     }
-    const docs = await this.$content(this.$i18n.locale, { deep: true }).only(['title', 'menuTitle', 'category', 'slug', 'version', 'to']).sortBy('position', 'asc').fetch()
+
+    const docs = await this.$content(this.$i18n.locale, { deep: true })
+      .only(['title', 'menuTitle', 'category', 'slug', 'version', 'to'])
+      .sortBy('position', 'asc')
+      .fetch()
+
     if (state.settings.github) {
       docs.push({ slug: 'releases', title: 'Releases', category: 'Community', to: '/releases' })
     }
-    const categories = groupBy(docs, 'category')
 
+    if (state.tags.length > 0) {
+      docs.push({ slug: 'tags', title: 'Tags', category: 'Community', to: '/tags' })
+    }
+
+    const categories = groupBy(docs, 'category')
     commit('SET_CATEGORIES', categories)
   },
   async fetchReleases ({ commit, state }) {
@@ -57,60 +74,53 @@ export const actions = {
       return
     }
 
-    const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
-    }
-    let releases = []
-    try {
-      const data = await fetch(`https://api.github.com/repos/${state.settings.github}/releases`, options).then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText)
-        }
-        return res
-      }).then(res => res.json())
-      releases = data.filter(r => !r.draft).map((release) => {
-        return {
-          name: (release.name || release.tag_name).replace('Release ', ''),
-          date: release.published_at,
-          body: this.$markdown(release.body)
-        }
-      })
-    } catch (e) { }
-
-    const getMajorVersion = r => r.name && Number(r.name.substring(1, 2))
-    releases.sort((a, b) => {
-      const aMajorVersion = getMajorVersion(a)
-      const bMajorVersion = getMajorVersion(b)
-      if (aMajorVersion !== bMajorVersion) {
-        return bMajorVersion - aMajorVersion
+    const data = await fetchGithub(state.settings.github, 'releases') || []
+    const releases = data.filter(r => !r.draft).map((release) => {
+      return {
+        name: (release.name || release.tag_name).replace('Release ', ''),
+        date: release.published_at,
+        body: this.$markdown(release.body)
       }
-      return new Date(b.date) - new Date(a.date)
     })
 
+    releases.sort(sortByVersion)
     commit('SET_RELEASES', releases)
+  },
+  async fetchTags ({ commit, state }) {
+    if (!state.settings.github) {
+      return
+    }
+
+    const data = await fetchGithub(state.settings.github, 'tags') || []
+    const tags = await Promise.all(data.map(async (tag) => {
+      let date = null
+
+      if (tag.commit && tag.commit.sha) {
+        const { commit } = await fetchGithub(state.settings.github, `commits/${tag.commit.sha}`) || {}
+
+        if (commit && commit.committer) {
+          date = commit.committer.date
+        }
+      }
+
+      return {
+        name: tag.name,
+        zipball: tag.zipball_url,
+        tarball: tag.tarball_url,
+        date
+      }
+    }))
+
+    tags.sort(sortByVersion)
+    commit('SET_TAGS', tags)
   },
   async fetchDefaultBranch ({ commit, state }) {
     if (!state.settings.github || state.settings.defaultBranch) {
       return
     }
 
-    const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
-    }
-    let defaultBranch
-    try {
-      const data = await fetch(`https://api.github.com/repos/${state.settings.github}`, options).then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText)
-        }
-        return res
-      }).then(res => res.json())
-      defaultBranch = data.default_branch
-    } catch (e) { }
-
-    commit('SET_DEFAULT_BRANCH', defaultBranch || 'main')
+    const data = await fetchGithub(state.settings.github) || {}
+    commit('SET_DEFAULT_BRANCH', data.defaultDranch || 'main')
   },
   async fetchSettings ({ commit }) {
     try {
