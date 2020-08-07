@@ -31,7 +31,7 @@
       :class="{ 'rounded-t-none': focus && (searching || results.length) }"
       style="margin-top: 37px;"
     >
-      <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
+      <li v-if="searching && !results.length" class="px-4 py-2">{{$t('search.Searching')}}...</li>
       <li
         v-for="(result, index) of results"
         :key="result.slug"
