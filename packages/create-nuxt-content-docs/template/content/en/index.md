@@ -4,17 +4,15 @@ description: 'Welcome to your new documentation!'
 position: 1
 category: Getting started
 features:
-  - Blazing fast hot reload in development
-  - Vue components in Markdown
-  - Full-text search
-  - Support static site generation with `nuxt generate`
-  - Powerful QueryBuilder API (MongoDB like)
-  - Syntax highlighting to code blocks in markdown files using PrismJS.
-  - Table of contents generation
-  - Handles Markdown, CSV, YAML, JSON(5), XML
-  - Extend with custom parsers
-  - Extend with hooks
+  - Feature 1
+  - Feature 2
+  - Feature 3
 ---
+
+<img src="/preview.png" class="light-img" />
+<img src="/preview-dark.png" class="dark-img" />
+
+[Module]() for [NuxtJS](https://nuxtjs.org).
 
 <alert type="success">
 
