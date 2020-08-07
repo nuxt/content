@@ -1,8 +1,8 @@
 export default async function ({ store, app }) {
   if (process.server) {
     await store.dispatch('fetchSettings')
-    await store.dispatch('fetchCategories')
     await store.dispatch('fetchReleases')
+    await store.dispatch('fetchCategories')
     await store.dispatch('fetchDefaultBranch')
   }
   // Spa Fallback

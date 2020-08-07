@@ -45,7 +45,7 @@ export const actions = {
       return
     }
     const docs = await this.$content(this.$i18n.locale, { deep: true }).only(['title', 'menuTitle', 'category', 'slug', 'version', 'to']).sortBy('position', 'asc').fetch()
-    if (state.settings.github) {
+    if (state.releases.length > 0) {
       docs.push({ slug: 'releases', title: 'Releases', category: 'Community', to: '/releases' })
     }
     const categories = groupBy(docs, 'category')
