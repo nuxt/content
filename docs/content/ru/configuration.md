@@ -177,7 +177,7 @@ export default {
 }
 ```
 
-<alert>
+<alert type="warning">
 
 При добавлении нового плагина обязательно установите его в ваших зависимостях:
 
@@ -228,7 +228,7 @@ export default {
 
 ### `markdown.basePlugins`
 
-<alert>
+<alert type="warning">
 
 Устаревшее. Используйте `markdown.remarkPlugins`.
 
@@ -236,7 +236,7 @@ export default {
 
 ### `markdown.plugins`
 
-<alert>
+<alert type="warning">
 
 Устаревшее. Используйте `markdown.remarkPlugins`.
 
