@@ -13,7 +13,13 @@
       }"
     >
       <article class="prose dark:prose-dark max-w-none lg:px-8">
-        <h1>{{ document.title }}</h1>
+        <h1 class="flex items-center justify-between">
+          {{ document.title }}
+          <Badge v-if="document.badge">{{ document.badge }}</Badge>
+        </h1>
+        <div v-if="document.subtitle" class="-mt-4">
+          <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
+        </div>
         <NuxtContent :document="document" />
       </article>
       <AppGithubLink :document="document" />
