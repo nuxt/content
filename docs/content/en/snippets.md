@@ -4,6 +4,7 @@ description: 'Learn how to implement @nuxt/content into your app with these code
 position: 12
 category: Community
 subtitle: 'Check out these code snippets that can be copied directly into your application.'
+version: 1
 ---
 
 ## Usage
