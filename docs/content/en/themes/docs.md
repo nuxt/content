@@ -1,13 +1,13 @@
 ---
 title: Docs Theme
+subtitle: 'Create a beautiful documentation like this website in seconds ✨'
 menuTitle: Docs
 description: 'Create your documentation with @nuxt/content docs theme in seconds!'
 category: Themes
 position: 8
 version: 1
+badge: 'v0.4.1'
 ---
-
-Create a beautiful documentation like this website in seconds ✨
 
 <alert type="info">
 
@@ -170,6 +170,8 @@ Don't forget to install the dependencies of the modules you add in your `nuxt.co
 
 ### `tailwind.config.js`
 
+<badge>v0.4.0+</badge>
+
 You can override the [default theme config](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/tailwind.config.js) by creating your own `tailwind.config.js`.
 
 The theme design is based on a `primary` color to make it easy to override.
@@ -279,7 +281,7 @@ As explained in [nuxt.config.js](/themes/docs#nuxtconfigjs) section, we use `def
 
 Each markdown page in the `content/{locale}/` directory will become a page and will be listed in the left navigation.
 
-You can also put your markdown files in subdirectories to generate sub-routes:
+> You can also put your markdown files in subdirectories to generate sub-routes. <badge>v0.4.0+</badge>
 
 **Example**
 
@@ -321,8 +323,12 @@ To make it work properly, make sure to include these properties in the front-mat
   - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it
 - `fullscreen` (`Boolean`)
   - Grows the page and hides the table of contents
-- `menuTitle` (`String`)
+- `menuTitle` (`String`) <badge>v0.4.0+</badge>
   - Overwrites the title of the page that will be displayed in the left menu (defaults to `title`)
+- `subtitle` (`String`) <badge>v0.5.0+</badge>
+  - Adds a subtitle under the page title
+- `badge` (`String`) <badge>v0.5.0+</badge>
+  - Adds a badge next to the page title
 
 ### Example
 
@@ -354,11 +360,11 @@ You can create a `content/settings.json` file to configure the theme.
   - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
   - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page. Example: `nuxt/content`
-- `defaultBranch` ( `String`)
-  - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
 - `twitter` (`String`)
   - The Twitter username `@username` you want to link. Example: `@nuxt_js`
-- `layout` (`String`)
+- `defaultBranch` (`String`) <badge>v0.2.0+</badge>
+  - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
+- `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
 ### Example
@@ -396,9 +402,9 @@ You can apply `dark-img` and `light-img` classes to your images when you have tw
 
 ## Components
 
-You can create your own components by putting them in the `components/global/` folder, check out [this section](/writing#vue-components).
+The theme comes with some default Vue.js components you can use directly in your markdown content.
 
-Also, the theme comes with some default Vue.js components you can use directly in your markdown content:
+> You can create your own components in the `components/global/` folder, check out [this section](/writing#vue-components). <badge>v0.3.0+</badge>
 
 ### `<alert>`
 
@@ -451,6 +457,20 @@ items:
 **Result**
 
 <list :items="['Item1', 'Item2', 'Item3']"></list>
+
+### `<badge>`
+
+<badge>v0.5.0+</badge>
+
+**Example**
+
+```md
+<badge>v1.2+</badge>
+```
+
+**Result**
+
+<badge>v1.2+</badge>
 
 ### `<code-group>`
 
