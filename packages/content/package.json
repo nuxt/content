@@ -14,7 +14,7 @@
   "dependencies": {
     "@lokidb/full-text-search": "^2.0.0-beta.9",
     "@lokidb/loki": "^2.0.0-beta.9",
-    "@nuxt/types": "^2.14.1",
+    "@nuxt/types": "^2.14.3",
     "@types/js-yaml": "^3.12.5",
     "@types/xml2js": "^0.4.5",
     "change-case": "^4.1.1",
@@ -31,7 +31,7 @@
     "mkdirp": "^1.0.4",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
-    "p-queue": "6.6.0",
+    "p-queue": "6.6.1",
     "prismjs": "^1.21.0",
     "rehype-raw": "^4.0.2",
     "rehype-sort-attribute-values": "^3.0.2",
