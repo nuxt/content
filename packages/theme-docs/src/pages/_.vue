@@ -42,7 +42,7 @@ export default {
   async asyncData ({ $content, store, app, params, error }) {
     let document
     try {
-      document = await $content(app.i18n.locale, params.pathMatch || 'index').fetch()
+      [document] = await $content(app.i18n.locale, { deep: true }).where({ path: `/${app.i18n.locale}/${params.pathMatch || 'index'}` }).fetch()
     } catch (e) {
       return error({ statusCode: 404, message: 'Page not found' })
     }
