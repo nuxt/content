@@ -6,7 +6,7 @@ description: 'Create your documentation with @nuxt/content docs theme in seconds
 category: Themes
 position: 8
 version: 1
-badge: 'v0.4.1'
+badge: 'v0.5.0'
 ---
 
 <alert type="info">
