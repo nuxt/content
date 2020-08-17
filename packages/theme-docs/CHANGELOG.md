@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.4.1...@nuxt/content-theme-docs@0.5.0) (2020-08-17)
+
+
+### Bug Fixes
+
+* **theme-docs:** add scroll on toc ([95c69f4](https://github.com/nuxt/content/commit/95c69f41bbbd60f9c4db39b122b1a0b1ada7d26a))
+* **theme-docs:** improve dynamic routing ([af1a538](https://github.com/nuxt/content/commit/af1a538344c5d386c4e405f9690297ca3cf3713c))
+* hide releases if empty ([#365](https://github.com/nuxt/content/issues/365)) ([50dfc37](https://github.com/nuxt/content/commit/50dfc377e2e379cc00566a43923b79016cef08c7))
+
+
+### Features
+
+* **theme-docs:** add badge component ([71a7e29](https://github.com/nuxt/content/commit/71a7e29dff3db169e3e824c65bfbe8d8131d5df8))
+* **theme-docs:** handle badge and subtitle in main page ([27d9422](https://github.com/nuxt/content/commit/27d94224ea2ff1d3d79879e97bfaaa9519458129))
+
+
+
+
+
 ## [0.4.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.4.0...@nuxt/content-theme-docs@0.4.1) (2020-08-06)
 
 
