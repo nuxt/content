@@ -1,17 +1,16 @@
 <template>
-  <div
-    v-if="toc.length"
-    class="w-full lg:w-1/4 py-4 lg:py-8"
-    :class="{
-      'lg:pl-8 lg:pr-0': settings.layout !== 'single',
-      'lg:px-8': settings.layout === 'single'
-    }"
-  >
-    <div class="lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
-      <h3
-        class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-      >{{ $t('toc.title') }}</h3>
-      <nav>
+  <div v-if="toc.length" class="w-full lg:w-1/4 block relative">
+    <div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)">
+      <nav
+        class="py-4 lg:py-8"
+        :class="{
+          'lg:pl-8 lg:pr-2': settings.layout !== 'single',
+          'lg:px-8': settings.layout === 'single'
+        }"
+      >
+        <h3
+          class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
+        >{{ $t('toc.title') }}</h3>
         <scrollactive highlight-first-item active-class="text-primary-500" :offset="0" tag="ul">
           <li
             v-for="link of toc"
