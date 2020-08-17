@@ -23,6 +23,34 @@ export default {
 }
 ```
 
+### meta
+
+Add automatic meta generation based on title and description defined in [Front matter](https://content.nuxtjs.org/writing#front-matter). 
+
+```js
+export default {
+  async asyncData({ $content, params }) {
+    const article = await $content('articles', params.slug).fetch()
+
+    return {
+      article
+    }
+  },
+  head() {
+    return {
+      title: this.article.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.article.description,
+        },
+      ],
+    }
+  },
+}
+```
+
 ## Features
 
 ### Search
