@@ -3,9 +3,8 @@ title: Snippets
 description: 'Learn how to implement @nuxt/content into your app with these code snippets.'
 position: 12
 category: Community
+subtitle: 'Check out these code snippets that can be copied directly into your application.'
 ---
-
-Check out these code snippets that can be copied directly into your application.
 
 ## Usage
 
@@ -23,9 +22,9 @@ export default {
 }
 ```
 
-### meta
+### head
 
-Add automatic meta generation based on title and description defined in [Front matter](https://content.nuxtjs.org/writing#front-matter). 
+Add dynamic metas based on title and description defined in the [front-matter](https://content.nuxtjs.org/writing#front-matter):
 
 ```js
 export default {
@@ -40,14 +39,16 @@ export default {
     return {
       title: this.article.title,
       meta: [
-        {
-          hid: 'description',
-          name: 'description',
-          content: this.article.description,
-        },
-      ],
+        { hid: 'description', name: 'description', content: this.article.description },
+        // Open Graph
+        { hid: 'og:title', property: 'og:title', content: this.article.title },
+        { hid: 'og:description', property: 'og:description', content: this.article.description },
+        // Twitter Card
+        { hid: 'twitter:title', name: 'twitter:title', content: this.article.title },
+        { hid: 'twitter:description', name: 'twitter:description', content: this.article.description }
+      ]
     }
-  },
+  }
 }
 ```
 
@@ -136,7 +137,7 @@ export default {
 
 > Check out the [surround documentation](/fetching#surroundslug-options)
 
-### Table of Contents
+### Table of contents
 
 Add a table of contents by looping over our array of toc and use the `id` to link to it and the `text` to show the title. We can use the `depth` to style the titles differently:
 
@@ -167,4 +168,27 @@ export default {
 </script>
 ```
 
-> Check out the [Table of Contents documentation](/writing#table-of-contents)
+> Check out the [Table of contents documentation](/writing#table-of-contents)
+
+### Dynamic routing
+
+Let's say you want to create an app with routes following the `content/` file structure, you can do so by creating a `pages/_.vue` component:
+
+```vue[pages/_.vue]
+<script>
+export default {
+  async asyncData ({ $content, app, params, error }) {
+    let article
+    try {
+      [article] = await $content({ deep: true }).where({ path: `/${params.pathMatch || 'index'}` }).fetch()
+    } catch (e) {
+      return error({ statusCode: 404, message: 'Page not found' })
+    }
+
+    return {
+      article
+    }
+  }
+}
+</script>
+```
