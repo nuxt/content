@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.1.3...create-nuxt-content-docs@0.1.4) (2020-08-17)
+
+**Note:** Version bump only for package create-nuxt-content-docs
+
+
+
+
+
 ## [0.1.3](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.1.2...create-nuxt-content-docs@0.1.3) (2020-08-17)
 
 **Note:** Version bump only for package create-nuxt-content-docs
