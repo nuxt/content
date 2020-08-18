@@ -6,7 +6,8 @@ export const state = () => ({
   releases: [],
   settings: {
     title: 'Nuxt Content Docs',
-    defaultBranch: ''
+    defaultBranch: '',
+    filled: false
   }
 })
 
@@ -34,7 +35,7 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, settings)
+    state.settings = Object.assign({}, settings, { filled: true })
   }
 }
 
