@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.0...@nuxt/content-theme-docs@0.5.1) (2020-08-18)
+
+
+### Bug Fixes
+
+* **theme-docs:** handle not found ([51fa45c](https://github.com/nuxt/content/commit/51fa45c32ba6a0fac557ee2dac64c5ac4369891a))
+
+
+
+
+
 # [0.5.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.4.1...@nuxt/content-theme-docs@0.5.0) (2020-08-17)
 
 
