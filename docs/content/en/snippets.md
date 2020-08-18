@@ -178,18 +178,16 @@ Let's say you want to create an app with routes following the `content/` file st
 ```vue[pages/_.vue]
 <script>
 export default {
-  async asyncData ({ $content, app, params, error }) {
-    let article
-    try {
-      [article] = await $content({ deep: true }).where({ path: `/${params.pathMatch || 'index'}` }).fetch()
-    } catch (e) {
-      return error({ statusCode: 404, message: 'Page not found' })
-    }
+  async asyncData ({ $content, params, error }) {
+    const slug = params.pathMatch || 'index'
+    const page = await $content(slug).fetch()
+      .then(res => Array.isArray(res) ? res.find(({ slug }) => slug === 'index') : res)
+      .catch(e => error({ statusCode: 404, message: 'Page not found' }))
 
     return {
-      article
+      page
     }
-  }
+  },
 }
 </script>
 ```
