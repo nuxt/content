@@ -3,6 +3,7 @@ node_modules
 dist
 .nuxt
 coverage
+sw.js
 
 # Packages
 packages/content/templates
