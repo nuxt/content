@@ -4,7 +4,7 @@ description: 'Learn how to implement @nuxt/content into your app with these code
 position: 12
 category: Community
 subtitle: 'Check out these code snippets that can be copied directly into your application.'
-version: 1
+version: 1.1
 ---
 
 ## Usage
@@ -179,11 +179,11 @@ Let's say you want to create an app with routes following the `content/` file st
 <script>
 export default {
   async asyncData ({ $content, app, params, error }) {
-    let article
-    try {
-      [article] = await $content({ deep: true }).where({ path: `/${params.pathMatch || 'index'}` }).fetch()
-    } catch (e) {
-      return error({ statusCode: 404, message: 'Page not found' })
+    const path = `/${params.pathMatch || 'index'}`
+    const [article] = await $content({ deep: true }).where({ path }).fetch()
+
+    if (!article) {
+      return error({ statusCode: 404, message: 'Article not found' })
     }
 
     return {
@@ -193,3 +193,18 @@ export default {
 }
 </script>
 ```
+
+This way, if you go the `/themes/docs` route, it will display the `content/themes/docs.md` file. If you need an index page for your directories, you need to create a file with the same name as the directory:
+
+```bash
+content/
+  themes/
+    docs.md
+  themes.md
+```
+
+<alert type="warning">
+
+Don't forget to prefix your calls with the current locale if you're using `nuxt-i18n`.
+
+</alert>
