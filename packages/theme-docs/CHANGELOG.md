@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.1...@nuxt/content-theme-docs@0.5.2) (2020-08-18)
+
+
+### Bug Fixes
+
+* **theme-docs:** spa fallback settings ([05c2244](https://github.com/nuxt/content/commit/05c22447c3063593c0dbbc34eeee3e09bee51f90))
+
+
+
+
+
 ## [0.5.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.0...@nuxt/content-theme-docs@0.5.1) (2020-08-18)
 
 
