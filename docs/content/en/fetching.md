@@ -196,7 +196,7 @@ const [prev, next] = await this.$content('articles')
 
 <alert type="info">
 
-Check out [this snippet](/snippets#pagination) on how to implement prev and next links into your app
+Check out [this snippet](/snippets#prev-and-next) on how to implement prev and next links into your app
 
 </alert>
 

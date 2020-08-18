@@ -101,7 +101,7 @@ export default {
 
 > Check out the [search documentation](/fetching#searchfield-value)
 
-### Pagination
+### Prev and Next
 
 Add previous and next links using the `surround` method:
 
