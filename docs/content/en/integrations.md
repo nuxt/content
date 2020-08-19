@@ -12,9 +12,15 @@ using [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) module.
 
 <alert type="info">
 
-To use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property.
+To use `$content` inside the `feed` option, you need to add `@nuxt/content` before `@nuxtjs/feed` in the `modules` property. 
 
 </alert>
+
+You can access your feed on: `baseUrl + baseLinkFeedArticles + file`
+
+For RSS: ```https://mywebsite.com/feed/articles/rss.xml```
+
+For JSON: ```https://mywebsite.com/feed/articles/feed.json```
 
 **Example**
 
@@ -30,7 +36,6 @@ export default {
     const baseLinkFeedArticles = '/feed/articles'
     const feedFormats = {
       rss: { type: 'rss2', file: 'rss.xml' },
-      atom: { type: 'atom1', file: 'atom.xml' },
       json: { type: 'json1', file: 'feed.json' },
     }
     const { $content } = require('@nuxt/content')
