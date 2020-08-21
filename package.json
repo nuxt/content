@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-content",
+  "name": "@nuxt/content",
   "private": true,
   "description": "Write your content inside your Nuxt app",
   "repository": "nuxt/content",
