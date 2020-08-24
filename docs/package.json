@@ -13,7 +13,7 @@
   "dependencies": {
     "@nuxt/content-theme-docs": "^0.5.2",
     "nuxt": "^2.14.3",
-    "nuxt-ackee": "^1.0.1",
+    "nuxt-ackee": "^2.0.0",
     "vue-multiselect": "^2.1.6"
   }
 }
