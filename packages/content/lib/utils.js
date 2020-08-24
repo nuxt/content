@@ -32,25 +32,6 @@ const getDefaults = ({ dev = false } = {}) => ({
   extendParser: {}
 })
 
-const mergeConfig = (content, defaults, options = {}) => {
-  return Object.entries(content).reduce((options, [key, value]) => {
-    const defaultValue = defaults[key]
-    if (value && typeof value !== 'function' && Array.isArray(defaultValue)) {
-      // Merge value with default value if array
-      value = defaultValue.concat(value)
-    } else if (typeof value === 'function' && defaultValue) {
-      // Executed value functions and provide default value as param
-      value = value(defaultValue)
-    } else if (typeof value === 'object') {
-      value = mergeConfig(value, defaultValue || {}, options[key])
-    }
-
-    // Finally assign
-    options[key] = value
-    return options
-  }, options)
-}
-
 const processMarkdownPlugins = (type, markdown, resolvePath) => {
   const plugins = []
 
@@ -88,6 +69,5 @@ const processMarkdownOptions = (options, resolvePath) => {
 
 module.exports = {
   getDefaults,
-  mergeConfig,
   processMarkdownOptions
 }

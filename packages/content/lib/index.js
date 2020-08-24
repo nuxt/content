@@ -7,7 +7,7 @@ const logger = require('consola').withScope('@nuxt/content')
 const middleware = require('./middleware')
 const Database = require('./database')
 const WS = require('./ws')
-const { getDefaults, mergeConfig, processMarkdownOptions } = require('./utils')
+const { getDefaults, processMarkdownOptions } = require('./utils')
 
 module.exports = async function (moduleOptions) {
   const isSSG = this.options.dev === false && (this.options.target === 'static' || this.options._generate || this.options.mode === 'spa')
@@ -39,8 +39,7 @@ module.exports = async function (moduleOptions) {
 
   const defaults = getDefaults({ dev: this.options.dev })
 
-  const mergedConfig = mergeConfig(content, defaults)
-  const options = defu(mergedConfig, defaults)
+  const options = defu.arrayFn(content, defaults)
   const relativeDir = options.dir
   options.dir = resolve(this.options.srcDir, options.dir)
 
@@ -235,8 +234,7 @@ module.exports.Database = Database
 module.exports.middleware = middleware
 module.exports.getOptions = (userOptions = {}) => {
   const defaults = getDefaults({ dev: process.env.NODE_ENV !== 'production' })
-  const mergedConfig = mergeConfig(userOptions, defaults)
-  const options = defu(mergedConfig, defaults)
+  const options = defu.arrayFn(userOptions, defaults)
 
   processMarkdownOptions(options)
 
