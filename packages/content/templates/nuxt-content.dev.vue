@@ -1,15 +1,14 @@
 <template>
   <div :class="['nuxt-content-container', { 'is-editing': isEditing }]">
-    <textarea
-      v-show="isEditing"
-      v-model="file"
-      ref="textarea"
-      class="nuxt-content-editor"
-      @keyup.stop="onType"
-      @keydown.tab.exact.prevent="onTabRight"
-      @keydown.tab.shift.prevent="onTabLeft"
-      @blur="toggleEdit"
-    />
+    <client-only>
+      <editor
+        v-show="isEditing"
+        :isEditing="isEditing"
+        v-model="file"
+        class="nuxt-content-editor"
+        @endEdit="toggleEdit"
+      />
+    </client-only>
     <nuxt-content-dev
       ref="content"
       :id="id"
@@ -23,11 +22,13 @@
 
 <script>
 import NuxtContent from './nuxt-content'
+import Editor from '<%= options.editor %>';
 
 export default {
   name: 'NuxtContent',
   components: {
-    NuxtContentDev: NuxtContent
+    NuxtContentDev: NuxtContent,
+    Editor
   },
   props: NuxtContent.props,
   data () {
@@ -73,18 +74,10 @@ export default {
         this.isEditing = false
         return
       }
-      // Start editing mode
-      const contentHeight = this.$refs.content.offsetHeight
-      const actualScrollY = window.scrollY
       // Fetch file content
       await this.fetchFile()
+      // Start editing mode
       this.isEditing = true
-      this.$refs.textarea.style.minHeight = `${contentHeight}px`
-      await this.waitFor(10)
-      this.$refs.textarea.focus()
-      this.onType()
-      await this.waitFor(10)
-      window.scrollTo(window.scrollX, actualScrollY)
     },
     async fetchFile () {
       this.file = await fetch(this.fileUrl).then(res => res.text())
@@ -94,31 +87,6 @@ export default {
     },
     waitFor (ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
-    },
-    onType () {
-      const el = this.$refs.textarea
-
-      el.style.height = el.scrollHeight + 'px'
-    },
-    onTabRight (event) {
-      let text = this.file,
-        originalSelectionStart = event.target.selectionStart,
-        textStart = text.slice(0, originalSelectionStart),
-        textEnd = text.slice(originalSelectionStart)
-
-      this.file = `${textStart}\t${textEnd}`
-      event.target.value = this.file // required to make the cursor stay in place.
-      event.target.selectionEnd = event.target.selectionStart = originalSelectionStart + 1
-    },
-    onTabLeft (event) {
-      let text = this.file,
-        originalSelectionStart = event.target.selectionStart,
-        textStart = text.slice(0, originalSelectionStart),
-        textEnd = text.slice(originalSelectionStart)
-
-      this.file = `${textStart.replace(/\t$/, '')}${textEnd}`
-      event.target.value = this.file // required to make the cursor stay in place.
-      event.target.selectionEnd = event.target.selectionStart = originalSelectionStart - 1
     }
   }
 }

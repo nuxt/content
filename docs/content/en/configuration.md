@@ -328,7 +328,7 @@ To add your custom parser write a function that gets as an argument the content 
 
 **Example**
 
-```
+```js{}[nuxt.config.js]
 const parseTxt = file => file.split('\n').map(line => line.trim())
 
 // in Config:
@@ -340,11 +340,33 @@ const parseTxt = file => file.split('\n').map(line => line.trim())
 }
 ```
 
+### `editor`
+
+You can provide a custom editor for editing your markdown files in development. Set the `editor` option to a path to your editor component. The code of the default editor you can find [here](https://github.com/nuxt/content/blob/master/packages/content/templates/editor.vue).
+
+
+```js{}[nuxt.config.js]
+content: {
+  editor: '~/path/to/editor/component.vue'
+}
+```
+
+Your component should implement the following:
+
+1. `v-model` for getting the markdown code.
+2. prop `isEditing` is a boolean with the information if the editing is started and the component is shown. (this is optional)
+3. when finished editing your component has to emit `endEdit`
+
+
+You should be aware that you get the full markdown file content so this includes the front-matter. You can use `gray-matter` to split and join the markdown and the front-matter.
+
+
 ## Defaults
 
 ```js{}[nuxt.config.js]
 export default {
   content: {
+    editor: '~/.nuxt/content/editor.vue',
     apiPrefix: '_content',
     dir: 'content',
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],

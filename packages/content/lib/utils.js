@@ -2,6 +2,7 @@ const logger = require('consola').withScope('@nuxt/content')
 const { camelCase } = require('change-case')
 
 const getDefaults = ({ dev = false } = {}) => ({
+  editor: './editor.vue',
   watch: dev,
   liveEdit: true,
   apiPrefix: '_content',
