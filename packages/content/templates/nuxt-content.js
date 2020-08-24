@@ -5,7 +5,7 @@ const rootKeys = ['class-name', 'class', 'style']
 function propsToData (props, doc) {
   return Object.keys(props).reduce(function (data, key) {
     const k = key.replace(/.*:/, '')
-    const obj = rootKeys.includes(k) ? data : data.attrs
+    let obj = rootKeys.includes(k) ? data : data.attrs
     const value = props[key]
     const { attribute } = info.find(info.html, key)
 
