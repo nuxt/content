@@ -6,7 +6,7 @@ describe('editor option', () => {
   let nuxt, browser, page
 
   describe('alias works', () => {
-    test('lokal alias', async () => {
+    test('local alias', async () => {
       ({ nuxt } = (await setup({
         ...loadConfig(__dirname),
         buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
