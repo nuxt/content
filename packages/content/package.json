@@ -25,7 +25,7 @@
     "escape-html": "^1.0.3",
     "graceful-fs": "^4.2.4",
     "gray-matter": "^4.0.2",
-    "hookable": "^4.1.1",
+    "hookable": "^4.1.2",
     "html-tags": "^3.1.0",
     "js-yaml": "3.14.0",
     "mkdirp": "^1.0.4",
