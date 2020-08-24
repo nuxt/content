@@ -413,7 +413,7 @@ The theme comes with some default Vue.js components you can use directly in your
 - `type`
   - Type: `String`
   - Default: `'info'`
-  - Values: `['info', 'success', 'warning', 'error']`
+  - Values: `['info', 'success', 'warning', 'danger']`
 
 **Example**
 
