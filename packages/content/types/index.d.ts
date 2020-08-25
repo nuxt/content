@@ -1,9 +1,9 @@
 import '@nuxt/types'
 import './vuex'
 
-import { DumpOptions as yamlOptions } from "js-yaml";
+import { DumpOptions as yamlOptions } from 'js-yaml'
 import { OptionsV2 as xmlOptions } from 'xml2js'
-import { CSVParseParam as csvOptions } from "node-csvtojson/v2/Parameters";
+import { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters'
 
 interface NuxtContentInstance {
   only(keys: string | string[]): NuxtContentInstance
@@ -38,7 +38,7 @@ declare module '@nuxt/types' {
   }
 
   interface Configuration {
-    content: {
+    content?: {
       watch?: boolean,
       liveEdit?: boolean,
       apiPrefix?: string,
