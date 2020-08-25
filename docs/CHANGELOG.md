@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.6...nuxt-content-docs@1.4.0) (2020-08-25)
+
+
+### Features
+
+* add custom editor API ([#312](https://github.com/nuxt/content/issues/312)) ([78fbb92](https://github.com/nuxt/content/commit/78fbb92ace7934fc15781dc592dfd2722670897a))
+
+
+
+
+
 ## [1.3.6](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.5...nuxt-content-docs@1.3.6) (2020-08-18)
 
 **Note:** Version bump only for package nuxt-content-docs

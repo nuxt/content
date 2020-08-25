@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.3](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.2...@nuxt/content-theme-docs@0.5.3) (2020-08-25)
+
+
+### Bug Fixes
+
+* **theme-docs:** appLangSwitcher wrap every Chinese characters ([#395](https://github.com/nuxt/content/issues/395)) ([9e3eb0d](https://github.com/nuxt/content/commit/9e3eb0d8269687b3ee83eabdd80259b91d008321))
+* **theme-docs:** minor graphic updates ([ff2f62e](https://github.com/nuxt/content/commit/ff2f62e6b2d2b7864c79ec8f563f988eea91b7cb))
+
+
+
+
+
 ## [0.5.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.1...@nuxt/content-theme-docs@0.5.2) (2020-08-18)
 
 

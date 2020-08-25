@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/nuxt/content/compare/@nuxt/content@1.6.1...@nuxt/content@1.7.0) (2020-08-25)
+
+
+### Bug Fixes
+
+* **content:** use defu.arrayFn instead of custom merger ([#408](https://github.com/nuxt/content/issues/408)) ([9e5ba55](https://github.com/nuxt/content/commit/9e5ba558782a70269997576ed4c4242af3d0e87c))
+* **types:** fix typing error ([#409](https://github.com/nuxt/content/issues/409)) ([23a84f8](https://github.com/nuxt/content/commit/23a84f81f00fa6e3c09a26cbf97a5530c79f9576))
+
+
+### Features
+
+* add custom editor API ([#312](https://github.com/nuxt/content/issues/312)) ([78fbb92](https://github.com/nuxt/content/commit/78fbb92ace7934fc15781dc592dfd2722670897a))
+
+
+
+
+
 ## [1.6.1](https://github.com/nuxt/content/compare/@nuxt/content@1.6.0...@nuxt/content@1.6.1) (2020-08-17)
 
 **Note:** Version bump only for package @nuxt/content
