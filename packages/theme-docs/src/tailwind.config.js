@@ -10,6 +10,9 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
 
 module.exports = {
+  future: {
+    removeDeprecatedGapUtilities: true
+  },
   theme: {
     extend: {
       fontFamily: {
