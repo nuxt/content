@@ -78,10 +78,9 @@ Arguments:
   - Properties:
     - See [writing content](/writing)
 
-
 **Example**
 
-Taking the example of the blog starter, we use `file:beforeInsert` to add `readingTime` to a document using [reading-time](https://github.com/ngryman/reading-time).
+When building a blog, you can use `file:beforeInsert` to add `readingTime` to a document using [reading-time](https://github.com/ngryman/reading-time).
 
 > `text` is the body content of a markdown file before it is transformed to JSON AST, you can use at this point but it is not returned by the API.
 
@@ -96,6 +95,31 @@ export default {
         const { time } = require('reading-time')(document.text)
 
         document.readingTime = time
+      }
+    }
+  }
+}
+```
+
+**Example**
+
+You might want to parse markdown inside a `.json` file. This one is a bit tricky but has been requested a lot, so here is an example:
+
+```js
+export default {
+  modules: [,
+    '@nuxt/content'
+  ],
+  hooks: {
+    'content:file:beforeInsert': async (document) => {
+      const { Database, getOptions } = require('@nuxt/content')
+
+      const database = new Database(getOptions())
+
+      if (document.extension === '.json' && document.body) {
+        const data = await database.markdown.toJSON(document.body)
+
+        Object.assign(document, data)
       }
     }
   }
