@@ -26,6 +26,7 @@ const defaultConfig = {
   plugins: [
     '@/plugins/markdown',
     '@/plugins/init',
+    '@/plugins/global',
     '@/plugins/i18n.client',
     '@/plugins/vue-scrollactive',
     '@/plugins/menu.client'

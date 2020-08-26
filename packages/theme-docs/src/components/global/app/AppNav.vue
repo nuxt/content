@@ -20,7 +20,7 @@
           <ul>
             <li v-for="doc of docs" :key="doc.slug" class="text-gray-700 dark:text-gray-300">
               <NuxtLink
-                :to="localePath(doc.to).replace(/index$/, '')"
+                :to="localeTo(doc.to)"
                 class="px-2 rounded font-medium py-1 hover:text-primary-500 flex items-center justify-between"
                 exact-active-class="text-primary-500 bg-primary-100 hover:text-primary-500 dark:bg-primary-900"
               >
