@@ -96,9 +96,9 @@ export default (userConfig) => {
   config.hooks['content:file:beforeInsert'] = (document) => {
     const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
     const dir = document.dir.replace(regexp, '')
-    const slug = document.slug.replace(/^index/, '')
+    const slug = document.slug
 
-    document.to = `${dir}/${slug}`
+    document.to = [dir, slug].join('/') || '/'
   }
 
   return config

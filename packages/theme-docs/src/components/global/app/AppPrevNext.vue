@@ -8,7 +8,7 @@
   >
     <NuxtLink
       v-if="prev"
-      :to="localePath(prev.to)"
+      :to="localePath(prev.to).replace(/index$/, '')"
       class="text-primary-500 font-bold hover:underline flex items-center justify-start"
     >
       <IconArrowLeft class="w-4 h-4 mr-1 flex-shrink-0" />
@@ -18,7 +18,7 @@
 
     <NuxtLink
       v-if="next"
-      :to="localePath(next.to)"
+      :to="localePath(next.to).replace(/index$/, '')"
       class="text-primary-500 font-bold hover:underline flex items-center justify-end"
     >
       <span class="truncate">{{ next.title }}</span>
