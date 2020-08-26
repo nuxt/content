@@ -69,7 +69,7 @@ export default {
   @apply bg-blue-900 border-blue-700;
 }
 .dark-mode .alert-info .alert-content {
-  @apply text-blue-300 bg-blue-900 border-blue-700;
+  @apply text-blue-300;
 }
 .dark-mode .alert-info .alert-content code {
   @apply bg-blue-800 !important;
@@ -93,7 +93,7 @@ export default {
   @apply bg-green-900 border-green-700;
 }
 .dark-mode .alert-success .alert-content {
-  @apply text-green-300 bg-green-900 border-green-700;
+  @apply text-green-300;
 }
 .dark-mode .alert-success .alert-content code {
   @apply bg-green-800 !important;
@@ -117,7 +117,7 @@ export default {
   @apply bg-yellow-900 border-yellow-700;
 }
 .dark-mode .alert-warning .alert-content {
-  @apply text-orange-300 bg-yellow-900 border-yellow-700;
+  @apply text-orange-300;
 }
 .dark-mode .alert-warning .alert-content code {
   @apply bg-yellow-800 !important;
@@ -141,7 +141,7 @@ export default {
   @apply bg-red-900 border-red-700;
 }
 .dark-mode .alert-danger .alert-content {
-  @apply text-red-300 bg-red-900 border-red-700;
+  @apply text-red-300;
 }
 .dark-mode .alert-danger .alert-content code {
   @apply bg-red-800 !important;
