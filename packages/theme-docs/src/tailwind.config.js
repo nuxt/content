@@ -37,6 +37,9 @@ module.exports = {
       },
       inset: {
         16: '4rem'
+      },
+      transitionProperty: {
+        padding: 'padding'
       }
     },
     typography: theme => ({
@@ -149,6 +152,7 @@ module.exports = {
   },
   variants: {
     margin: ['responsive', 'last'],
+    padding: ['hover'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
