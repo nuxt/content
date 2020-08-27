@@ -57,6 +57,16 @@ const defaultConfig = {
       // Configure `tailwind.config.js` path
       nuxt.options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
       nuxt.options.tailwindcss.cssPath = nuxt.options.tailwindcss.cssPath || path.resolve(nuxt.options.rootDir, nuxt.options.dir.assets, 'css', 'tailwind.css')
+      // Extend `/` route
+      nuxt.hook('build:extendRoutes', (routes) => {
+        const allRoute = routes.find(route => route.name === 'all')
+
+        routes.push({
+          ...allRoute,
+          path: '/',
+          name: 'index'
+        })
+      })
     }
   },
   content: {
