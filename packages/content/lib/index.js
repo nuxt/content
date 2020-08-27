@@ -138,9 +138,11 @@ module.exports = async function (moduleOptions) {
 
   /* istanbul ignore if */
   if (isSSG) {
-    // Write db.json
+    // Create a hash to fetch the database
     const dbHash = hash(JSON.stringify(database.items._data)).substr(0, 8);
+    // Pass the hash to the publicRuntimeConfig to be used in client side
     this.options.publicRuntimeConfig._CONTENT_HASH_DB = dbHash;
+    // Write db.json
     this.nuxt.hook('generate:distRemoved', async () => {
       const dir = resolve(this.options.buildDir, 'dist', 'client', 'content')
 
