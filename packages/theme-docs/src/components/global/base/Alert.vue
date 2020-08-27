@@ -4,7 +4,7 @@
       <div class="flex-shrink-0">
         <component :is="icon" class="alert-icon mt-px w-6 h-6" />
       </div>
-      <div class="ml-2 alert-content">
+      <div class="flex-grow ml-2 overflow-auto alert-content">
         <slot />
       </div>
     </div>
