@@ -1,20 +1,6 @@
 import theme from '@nuxt/content-theme-docs'
 
-const script = []
-if (process.env.NODE_ENV === 'production') {
-  script.push({
-    hid: 'umami',
-    src: 'https://analytics.nuxtjs.app/umami.js',
-    'data-website-id': '97145a8a-228c-4f7b-86bc-a6af7bd9a7c0',
-    defer: true,
-    async: true
-  })
-}
-
 export default theme({
-  head: {
-    script
-  },
   env: {
     GITHUB_TOKEN: process.env.GITHUB_TOKEN
   },
