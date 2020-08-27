@@ -40,7 +40,7 @@
           <div class="flex items-center ml-2">
             <a
               v-if="settings.twitter"
-              href="`https://twitter.com/${settings.twitter}`"
+              :href="`https://twitter.com/${settings.twitter}`"
               target="_blank"
               rel="noopener noreferrer"
               title="Twitter"
