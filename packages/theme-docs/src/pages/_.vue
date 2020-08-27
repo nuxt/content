@@ -33,7 +33,7 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
-import AppCopyButton from '~/components/global/app/AppCopyButton'
+import AppCopyButton from '~/components/app/AppCopyButton'
 
 export default {
   name: 'PageSlug',
