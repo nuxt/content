@@ -40,9 +40,9 @@ export default {
   layout ({ store }) {
     return store.state.settings.layout || 'default'
   },
-  middleware ({ params, redirect }) {
+  middleware ({ app, params, redirect }) {
     if (params.pathMatch === 'index') {
-      redirect('/')
+      redirect(app.localePath('/'))
     }
   },
   async asyncData ({ $content, store, app, params, error }) {
