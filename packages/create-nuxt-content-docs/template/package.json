@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "@nuxt/content-theme-docs": "^0.5.3",
-    "nuxt": "^2.14.3"
+    "nuxt": "^2.14.4"
   }
 }
