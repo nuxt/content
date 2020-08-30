@@ -90,6 +90,10 @@ const defaultConfig = {
   }
 }
 
+if (process.env.NODE_ENV !== 'production') {
+  defaultConfig.css.push('~/assets/css/main.dev.css')
+}
+
 export default (userConfig) => {
   const config = defu.arrayFn(userConfig, defaultConfig)
 

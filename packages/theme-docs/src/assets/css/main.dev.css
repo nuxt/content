@@ -1,0 +1,7 @@
+.nuxt-content-editor {
+  @apply rounded-md bg-gray-200;
+}
+
+.dark-mode .nuxt-content-editor {
+  @apply bg-gray-800;
+}
