@@ -207,7 +207,7 @@ class Database extends Hookable {
       dir: dir || '/',
       path: normalizedPath,
       extension,
-      slug: split[split.length - 1],
+      slug: /\/+.*\/index$/.test(normalizedPath) ? split[split.length - 2] : split[split.length - 1],
       createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
       updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
     }
