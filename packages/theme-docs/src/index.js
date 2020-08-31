@@ -67,6 +67,10 @@ const defaultConfig = {
           name: 'index'
         })
       })
+      // Override editor style on dev mode
+      if (nuxt.options.dev) {
+        nuxt.options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
+      }
     }
   },
   content: {
@@ -98,10 +102,6 @@ const defaultConfig = {
   tailwindcss: {
     config: tailwindConfig
   }
-}
-
-if (process.env.NODE_ENV !== 'production') {
-  defaultConfig.css.push('~/assets/css/main.dev.css')
 }
 
 export default (userConfig) => {
