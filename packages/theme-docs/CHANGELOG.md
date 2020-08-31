@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.4](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.3...@nuxt/content-theme-docs@0.5.4) (2020-08-31)
+
+
+### Bug Fixes
+
+* **theme:** remove useless alert styles ([#413](https://github.com/nuxt/content/issues/413)) ([1dff4e9](https://github.com/nuxt/content/commit/1dff4e9e9c4bcff03396d711c37f5eee70b8690c))
+* **theme-docs:** extend `/` route ([#422](https://github.com/nuxt/content/issues/422)) ([19451b7](https://github.com/nuxt/content/commit/19451b7e4eb2e079656341716a781adf1894eb29))
+* **theme-docs:** fix aside background in dark mode ([#424](https://github.com/nuxt/content/issues/424)) ([6f0de2a](https://github.com/nuxt/content/commit/6f0de2adb4e6f671cbd0c6066e5a4c3b443edf1d))
+* **theme-docs:** fix code display inside alert ([#426](https://github.com/nuxt/content/issues/426)) ([a6f1974](https://github.com/nuxt/content/commit/a6f1974e92904f83e01ef0395c67b30b93688ac7))
+* **theme-docs:** fix syntax highlighting in alert ([#427](https://github.com/nuxt/content/issues/427)) ([7275487](https://github.com/nuxt/content/commit/72754870bc33de071df02f509b4e2296d271f5f5))
+* **theme-docs:** fix Twitter link ([#418](https://github.com/nuxt/content/issues/418)) ([f94291b](https://github.com/nuxt/content/commit/f94291b360d5e679bd07333f4f97143943bb8466))
+* **theme-docs:** improve live edit styles ([#428](https://github.com/nuxt/content/issues/428)) ([50bd5b1](https://github.com/nuxt/content/commit/50bd5b136acacc2c425d6535e0a2678783d5bc37))
+* **theme-docs:** improve TOC hover ([#420](https://github.com/nuxt/content/issues/420)) ([138f67c](https://github.com/nuxt/content/commit/138f67ccb002a8f52bdb081aac2764f61c8d72f9))
+* **theme-docs:** move unused global components ([#423](https://github.com/nuxt/content/issues/423)) ([162d54b](https://github.com/nuxt/content/commit/162d54b8074b4777434f213e90ddc47300b6b27a))
+* **theme-docs:** push dev css in modules:before hook ([83b13f5](https://github.com/nuxt/content/commit/83b13f58c435498ca57fc921e29b6b7d152e9587))
+
+
+
+
+
 ## [0.5.3](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.2...@nuxt/content-theme-docs@0.5.3) (2020-08-25)
 
 

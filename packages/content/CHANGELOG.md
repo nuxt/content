@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://github.com/nuxt/content/compare/@nuxt/content@1.7.0...@nuxt/content@1.7.1) (2020-08-31)
+
+
+### Bug Fixes
+
+* **content:** Offline mode ([#429](https://github.com/nuxt/content/issues/429)) ([277da7d](https://github.com/nuxt/content/commit/277da7d33deba4c2e5a6f6b9a25e2432d92c3b7a)), closes [#229](https://github.com/nuxt/content/issues/229)
+* **content:** write db.json with hash ([#438](https://github.com/nuxt/content/issues/438)) ([0a8ed35](https://github.com/nuxt/content/commit/0a8ed35ccb72193e755aa63feb35b258cd03e921))
+
+
+
+
+
 # [1.7.0](https://github.com/nuxt/content/compare/@nuxt/content@1.6.1...@nuxt/content@1.7.0) (2020-08-25)
 
 

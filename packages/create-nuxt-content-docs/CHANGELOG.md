@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.1.6...create-nuxt-content-docs@0.2.0) (2020-08-31)
+
+
+### Bug Fixes
+
+* use new docs link ([#414](https://github.com/nuxt/content/issues/414)) ([524b7e1](https://github.com/nuxt/content/commit/524b7e100f76a8a2910c047a2e5be1bf13eb8d59))
+
+
+### Features
+
+* reduce page jank ([#433](https://github.com/nuxt/content/issues/433)) ([b5b419f](https://github.com/nuxt/content/commit/b5b419f8af421c034b5207af321cdf266abedd64))
+
+
+
+
+
 ## [0.1.6](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.1.5...create-nuxt-content-docs@0.1.6) (2020-08-25)
 
 **Note:** Version bump only for package create-nuxt-content-docs
