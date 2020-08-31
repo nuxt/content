@@ -162,14 +162,20 @@ module.exports = async function (moduleOptions) {
     // Create a hash to fetch the database
     const dbHash = hash(JSON.stringify(database.items._data)).substr(0, 8)
     // Pass the hash to the publicRuntimeConfig to be used in client side
-    this.options.publicRuntimeConfig.content = { dbHash }
+    if (this.options.publicRuntimeConfig) {
+      this.options.publicRuntimeConfig.content = { dbHash }
+    } else {
+      this.nuxt.hook('vue-renderer:ssr:context', (renderContext) => {
+        renderContext.nuxt.content = { dbHash }
+      })
+    }
     // Write db.json
     this.nuxt.hook('generate:distRemoved', async () => {
       const dir = resolve(this.options.buildDir, 'dist', 'client', 'content')
 
       await mkdirp(dir)
       await fs.writeFile(
-        join(dir, 'db.json'),
+        join(dir, `db-${dbHash}.json`),
         database.db.serialize(),
         'utf-8'
       )
@@ -201,8 +207,8 @@ module.exports = async function (moduleOptions) {
       options: {
         // if publicPath is an URL, use public path, if not, add basepath before it
         dbPath: isUrl(publicPath)
-          ? `${publicPath}content/db.json`
-          : `${routerBasePath}${publicPath}content/db.json`
+          ? `${publicPath}content`
+          : `${routerBasePath}${publicPath}content`
       }
     })
   } else {
