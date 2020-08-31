@@ -31,7 +31,9 @@ export default (ctx, inject) => {
       }
     }
     mock.fetch = async () => {
-      const database = await fetch(`<%= options.dbPath %>?${Date.now()}`).then(res => res.json())
+      const database = await fetch(
+        `<%= options.dbPath %>?${ctx.$config.content.dbHash}`
+      ).then((res) => res.json());
       $$content = (await loadContent()).default(database)
       let query = $$content(...contentArgs)
       toCall.forEach(({ key, args }) => {

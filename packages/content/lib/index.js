@@ -3,6 +3,7 @@ const fs = require('graceful-fs').promises
 const mkdirp = require('mkdirp')
 const defu = require('defu')
 const logger = require('consola').withScope('@nuxt/content')
+const hash = require('hasha')
 
 const middleware = require('./middleware')
 const Database = require('./database')
@@ -10,26 +11,36 @@ const WS = require('./ws')
 const { getDefaults, processMarkdownOptions } = require('./utils')
 
 module.exports = async function (moduleOptions) {
-  const isSSG = this.options.dev === false && (this.options.target === 'static' || this.options._generate || this.options.mode === 'spa')
+  const isSSG =
+    this.options.dev === false &&
+    (this.options.target === 'static' ||
+      this.options._generate ||
+      this.options.mode === 'spa')
 
   const { content = {} } = Object.assign({}, this.options)
   Object.assign(content, moduleOptions)
 
   if (content.markdown && content.markdown.basePlugins) {
-    logger.warn('Using `markdown.basePlugins` is deprecated. Use `markdown.remarkPlugins` as a function instead.')
+    logger.warn(
+      'Using `markdown.basePlugins` is deprecated. Use `markdown.remarkPlugins` as a function instead.'
+    )
     const basePlugins = [...content.markdown.basePlugins]
     content.markdown.remarkPlugins = () => basePlugins
     delete content.markdown.basePlugins
   }
   if (content.markdown && content.markdown.plugins) {
-    logger.warn('Using `markdown.plugins` is deprecated. Use `markdown.remarkPlugins` as an array instead.')
+    logger.warn(
+      'Using `markdown.plugins` is deprecated. Use `markdown.remarkPlugins` as an array instead.'
+    )
     const plugins = [...content.markdown.plugins]
     if (content.markdown.remarkPlugins) {
       if (typeof content.markdown.remarkPlugins === 'function') {
         const oldPlugins = [...content.markdown.remarkPlugins()]
         content.markdown.remarkPlugins = () => oldPlugins.concat(plugins)
       } else {
-        content.markdown.remarkPlugins = content.markdown.remarkPlugins.concat(plugins)
+        content.markdown.remarkPlugins = content.markdown.remarkPlugins.concat(
+          plugins
+        )
       }
     } else {
       content.markdown.remarkPlugins = plugins
@@ -79,7 +90,9 @@ module.exports = async function (moduleOptions) {
   })
 
   // Database hooks
-  database.hook('file:beforeInsert', item => this.nuxt.callHook('content:file:beforeInsert', item))
+  database.hook('file:beforeInsert', item =>
+    this.nuxt.callHook('content:file:beforeInsert', item)
+  )
   database.hook('file:updated', event => ws.broadcast(event))
 
   // Initialize database from file system
@@ -100,7 +113,10 @@ module.exports = async function (moduleOptions) {
       }
     })
 
-    const path = paths.join('/').replace(/\/+/g, '/').replace(/^\//, '')
+    const path = paths
+      .join('/')
+      .replace(/\/+/g, '/')
+      .replace(/^\//, '')
 
     return database.query(`/${path}`, options)
   }
@@ -123,7 +139,12 @@ module.exports = async function (moduleOptions) {
   // Add content server middleware
   this.addServerMiddleware({
     path: options.apiPrefix,
-    handler: middleware({ ws, database, dir: options.dir, watch: options.watch })
+    handler: middleware({
+      ws,
+      database,
+      dir: options.dir,
+      watch: options.watch
+    })
   })
 
   // Add server plugin
@@ -138,12 +159,20 @@ module.exports = async function (moduleOptions) {
 
   /* istanbul ignore if */
   if (isSSG) {
+    // Create a hash to fetch the database
+    const dbHash = hash(JSON.stringify(database.items._data)).substr(0, 8)
+    // Pass the hash to the publicRuntimeConfig to be used in client side
+    this.options.publicRuntimeConfig.content = { dbHash }
     // Write db.json
     this.nuxt.hook('generate:distRemoved', async () => {
       const dir = resolve(this.options.buildDir, 'dist', 'client', 'content')
 
       await mkdirp(dir)
-      await fs.writeFile(join(dir, 'db.json'), database.db.serialize(), 'utf-8')
+      await fs.writeFile(
+        join(dir, 'db.json'),
+        database.db.serialize(),
+        'utf-8'
+      )
     })
 
     // Add client plugin
@@ -171,7 +200,9 @@ module.exports = async function (moduleOptions) {
       src: join(__dirname, '../templates/plugin.static.js'),
       options: {
         // if publicPath is an URL, use public path, if not, add basepath before it
-        dbPath: isUrl(publicPath) ? `${publicPath}content/db.json` : `${routerBasePath}${publicPath}content/db.json`
+        dbPath: isUrl(publicPath)
+          ? `${publicPath}content/db.json`
+          : `${routerBasePath}${publicPath}content/db.json`
       }
     })
   } else {
@@ -182,7 +213,9 @@ module.exports = async function (moduleOptions) {
         apiPrefix: options.apiPrefixWithBase,
         watch: options.watch,
         liveEdit: options.liveEdit,
-        readyCallbackName: this.options.globals.readyCallback(this.options.globalName)
+        readyCallbackName: this.options.globals.readyCallback(
+          this.options.globalName
+        )
       }
     })
   }
