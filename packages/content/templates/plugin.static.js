@@ -7,7 +7,7 @@ Vue.component(NuxtContent.name, NuxtContent)
 
 export default (ctx, inject) => {
   let $$content = null
-
+  const { dbHash } = ctx.$config ? ctx.$config.content : ctx.nuxtState.content
   const $content = (...contentArgs) => {
     if ($$content) {
       return $$content(...contentArgs)
@@ -32,7 +32,7 @@ export default (ctx, inject) => {
     }
     mock.fetch = async () => {
       const database = await fetch(
-        `<%= options.dbPath %>?${ctx.$config.content.dbHash}`
+        `<%= options.dbPath %>/db-${dbHash}.json`
       ).then(res => res.json())
       $$content = (await loadContent()).default(database)
       let query = $$content(...contentArgs)
