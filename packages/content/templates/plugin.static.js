@@ -33,7 +33,7 @@ export default (ctx, inject) => {
     mock.fetch = async () => {
       const database = await fetch(
         `<%= options.dbPath %>?${ctx.$config.content.dbHash}`
-      ).then((res) => res.json());
+      ).then(res => res.json())
       $$content = (await loadContent()).default(database)
       let query = $$content(...contentArgs)
       toCall.forEach(({ key, args }) => {

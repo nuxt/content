@@ -3,17 +3,17 @@
     <client-only>
       <editor
         v-show="isEditing"
-        :isEditing="isEditing"
         v-model="file"
+        :is-editing="isEditing"
         class="nuxt-content-editor"
         @endEdit="toggleEdit"
       />
     </client-only>
     <nuxt-content-dev
-      ref="content"
-      :id="id"
-      :class="classes"
       v-show="!isEditing"
+      :id="id"
+      ref="content"
+      :class="classes"
       :document="document"
       @dblclick="toggleEdit"
     />
@@ -22,7 +22,7 @@
 
 <script>
 import NuxtContent from './nuxt-content'
-import Editor from '<%= options.editor %>';
+import Editor from '<%= options.editor %>'
 
 export default {
   name: 'NuxtContent',
@@ -37,6 +37,11 @@ export default {
       isEditing: false,
       file: null,
       id: null
+    }
+  },
+  computed: {
+    fileUrl () {
+      return `/<%= options.apiPrefix %>${this.document.path}${this.document.extension}`
     }
   },
   mounted () {
@@ -60,11 +65,6 @@ export default {
     if (this.$vnode.data.staticClass) {
       this.classes = this.classes.concat(this.$vnode.data.staticClass)
       delete this.$vnode.data.staticClass
-    }
-  },
-  computed: {
-    fileUrl () {
-      return `/<%= options.apiPrefix %>${this.document.path}${this.document.extension}`
     }
   },
   methods: {
