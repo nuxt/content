@@ -6,7 +6,7 @@ export type contentFunc = (...args: Array<string | Object>) => QueryBuilder;
 export interface IContentDocument {
 	dir: string;
 	path: string;
-	extension: '.md' | '.json' | '.yaml' | '.xml' | '.csv';
+	extension: '.md' | '.json' | '.yaml' | '.xml' | '.csv' | string;
 	slug: string;
 	createdAt: Date;
 	updatedAt: Date;

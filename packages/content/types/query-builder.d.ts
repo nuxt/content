@@ -1,18 +1,14 @@
+interface QueryBuilderOptions {
+  query: any;
+  path: any;
+  init: any;
+  text: any;
+  postprocess?: any[];
+}
+
 export interface QueryBuilder {
   constructor(
-    {
-      query,
-      path,
-      init,
-      text,
-      postprocess
-    }: {
-      query: any;
-      path: any;
-      init: any;
-      text: any;
-      postprocess?: any[];
-    },
+    { query, path, init, text, postprocess }: QueryBuilderOptions,
     options: any
   );
   query: any;

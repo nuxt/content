@@ -11,7 +11,9 @@ class CSV {
    * @return {Object}
    */
   async toJSON (file) {
-    const body = await csv({ output: 'json', ...this.options }).fromString(file)
+    const body = await csv({ output: 'json', ...this.options }).fromString(
+      file
+    )
 
     return {
       body
