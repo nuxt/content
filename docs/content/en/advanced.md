@@ -103,7 +103,7 @@ export default {
 
 **Example**
 
-You might want to parse markdown inside a `.json` file. You can access the parsers from the `database` object::
+You might want to parse markdown inside a `.json` file. You can access the parsers from the `database` object:
 
 ```js
 export default {
