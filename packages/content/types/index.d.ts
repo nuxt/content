@@ -1,4 +1,5 @@
 import '@nuxt/types'
+import '@nuxt/types/config/hooks'
 import './vuex'
 
 import { DumpOptions as yamlOptions } from 'js-yaml'
@@ -67,3 +68,9 @@ declare module 'vue/types/vue' {
     $content: contentFunc
   }
 }
+
+declare module '@nuxt/types/config/hooks' {
+	interface NuxtOptionsHooks {
+		'content:file:beforeInsert': (document: any) => void;
+	}
+}        
