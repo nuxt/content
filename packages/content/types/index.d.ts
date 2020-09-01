@@ -69,8 +69,15 @@ declare module 'vue/types/vue' {
   }
 }
 
+type contentFileBeforeInstert = (document: any) => void
+        
 declare module '@nuxt/types/config/hooks' {
 	interface NuxtOptionsHooks {
-		'content:file:beforeInsert': (document: any) => void;
+		'content:file:beforeInsert'?: contentFileBeforeInstert
+    content?: {
+      file?: {
+         beforeInsert?: contentFileBeforeInstert
+      }
+    }
 	}
 }        
