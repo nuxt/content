@@ -1,6 +1,6 @@
 interface QueryBuilderOptions {
   query: any;
-  path: any;
+  path: string;
   init: any;
   text: any;
   postprocess?: any[];
@@ -12,7 +12,7 @@ export interface QueryBuilder {
     options: any
   );
   query: any;
-  path: any;
+  path: string;
   init: any;
   postprocess: any[];
   options: any;
@@ -26,20 +26,20 @@ export interface QueryBuilder {
    * @param {Array} keys - Array of fields to be picked.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  only(keys: any[]): QueryBuilder;
+  only(keys: string[] | string): QueryBuilder;
   /**
    * Remove a subset of fields
    * @param {Array} keys - Array of fields to be picked.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  without(keys: any[]): QueryBuilder;
+  without(keys: string[] | string): QueryBuilder;
   /**
    * Sort results
    * @param {string} field - Field key to sort on.
    * @param {string} direction - Direction of sort (asc / desc).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  sortBy(field: string, direction: string): QueryBuilder;
+  sortBy(field: string, direction?: "asc" | "desc"): QueryBuilder;
   /**
    * Filter results
    * @param {object} query - Where query.
@@ -52,7 +52,7 @@ export interface QueryBuilder {
    * @param {string} value - Value of search (means query equals to field).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  search(query: any | string, value: string): QueryBuilder;
+  search(query: any | string, value?: string): QueryBuilder;
   /**
    * Surround results
    * @param {string} slug - Slug of the file to surround.
@@ -65,13 +65,13 @@ export interface QueryBuilder {
    * @param {number} n - Limit number.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  limit(n: number): QueryBuilder;
+  limit(n: number | string): QueryBuilder;
   /**
    * Skip number of results
    * @param {number} n - Skip number.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  skip(n: number): QueryBuilder;
+  skip(n: number | string): QueryBuilder;
   /**
    * Collect data and apply process filters
    * @returns {(Object|Array)} Returns processed data
