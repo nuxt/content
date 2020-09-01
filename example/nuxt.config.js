@@ -4,11 +4,7 @@ export default {
   ],
   components: true,
   hooks: {
-    'content:file:beforeInsert': async (document) => {
-      const { Database, getOptions } = require('@nuxt/content')
-
-      const database = new Database(getOptions())
-
+    'content:file:beforeInsert': async (document, database) => {
       if (document.extension === '.json' && document.body) {
         const data = await database.markdown.toJSON(document.body)
 

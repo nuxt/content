@@ -91,7 +91,7 @@ module.exports = async function (moduleOptions) {
 
   // Database hooks
   database.hook('file:beforeInsert', item =>
-    this.nuxt.callHook('content:file:beforeInsert', item)
+    this.nuxt.callHook('content:file:beforeInsert', item, database)
   )
   database.hook('file:updated', event => ws.broadcast(event))
 
