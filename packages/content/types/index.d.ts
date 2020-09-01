@@ -4,20 +4,10 @@ import './vuex';
 import { DumpOptions as yamlOptions } from 'js-yaml';
 import { OptionsV2 as xmlOptions } from 'xml2js';
 import { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters';
+import type { Database from './lib/database';
+import type QueryBuilder from './lib/query-builder'
 
-export interface INuxtContentInstance {
-  only(keys: string | string[]): INuxtContentInstance;
-  without(keys: string | string[]): INuxtContentInstance;
-  sortBy(field: string, direction?: string): INuxtContentInstance;
-  where(query: Object): INuxtContentInstance;
-  search(query: Object | string, value?: string): INuxtContentInstance;
-  surround(slug: string, options?: Object): INuxtContentInstance;
-  limit(n: number | string): INuxtContentInstance;
-  skip(n: number | string): INuxtContentInstance;
-  fetch<T = Result | Result[]>(): Promise<T>;
-}
-
-type contentFunc = (...args: Array<string | Object>) => INuxtContentInstance;
+type contentFunc = (...args: Array<string | Object>) => QueryBuilder;
 
 type Result = Object[] & {
   0: 'parallel' | 'sequential';
@@ -78,7 +68,7 @@ export interface IContentDocument {
   [key: string]: any;
 }
 
-type contentFileBeforeInstert = (document: IContentDocument) => void;
+type contentFileBeforeInstert = (document: IContentDocument, database: Database ) => void;
 
 declare module '@nuxt/types/config/hooks' {
   interface NuxtOptionsHooks {
