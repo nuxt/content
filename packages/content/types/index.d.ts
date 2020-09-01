@@ -69,7 +69,17 @@ declare module 'vue/types/vue' {
   }
 }
 
-type contentFileBeforeInstert = (document: any) => void
+interface contentDocument {
+  dir: string
+  path: string
+  extension: string
+  slug: string
+  createdAt: Date
+  updatedAt: Date
+  [key: string]: any
+}
+        
+type contentFileBeforeInstert = (document: contentDocument) => void
         
 declare module '@nuxt/types/config/hooks' {
 	interface NuxtOptionsHooks {
