@@ -1,8 +1,9 @@
-import type { IMarkdown } from '../parsers/markdown';
-import type { IYAML } from '../parsers/yaml';
-import type { ICSV } from '../parsers/csv';
-import type { IXML } from '../parsers/xml';
+import type { IMarkdown } from './parsers/markdown';
+import type { IYAML } from './parsers/yaml';
+import type { ICSV } from './parsers/csv';
+import type { IXML } from './parsers/xml';
 import type { Loki, Collection } from '@lokidb/loki';
+import type { QueryBuilder } from './query-builder'
 
 export interface Database {
   constructor(options: any);
@@ -31,7 +32,7 @@ export interface Database {
       deep?: boolean;
       text?: boolean;
     }
-  ): import('./query-builder');
+  ): QueryBuilder;
   /**
    * Clear items in database and load files into collection
    */
