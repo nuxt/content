@@ -31,6 +31,8 @@ declare module '@nuxt/vue-app' {
 
 type extendOrOverwrite<T> = ((old: T) => T) | T
 
+type parsers = { [extension: string]: (file: string) => any }        
+        
 // Nuxt 2.9+
 declare module '@nuxt/types' {
   interface Context {
@@ -55,9 +57,7 @@ declare module '@nuxt/types' {
       yaml?: yamlOptions,
       csv?: csvOptions,
       xml?: xmlOptions,
-      extendParser?: {
-        [extension: string]: (file: string) => any
-      }
+      extendParser?: parsers | (defaultParsers: parsers) => parsers
     }
   }
 }
