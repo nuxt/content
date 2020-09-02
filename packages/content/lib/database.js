@@ -23,6 +23,15 @@ class Database extends Hookable {
     this.yaml = new YAML(options.yaml)
     this.csv = new CSV(options.csv)
     this.xml = new XML(options.xml)
+    this.defaultParsers = {
+      '.json': file => JSON.parse(file),
+      '.json5': file => JSON5.parse(file),
+      '.md': file => this.markdown.toJSON(file),
+      '.csv': file => this.csv.toJSON(file),
+      '.yaml': file => this.yaml.toJSON(file),
+      '.yml': file => this.yaml.toJSON(file),
+      '.xml': file => this.xml.toJSON(file)
+    }
     // Create Loki database
     this.db = new Loki('content.db')
     // Init collection
@@ -31,7 +40,11 @@ class Database extends Hookable {
       nestedProperties: options.nestedProperties
     })
     // User Parsers
-    this.extendParser = options.extendParser || {}
+    if(typeof options.extendParser === 'function') {
+      this.extendParser = options.extendParser(this.defaultParsers)
+    } else {
+      this.extendParser = options.extendParser || {}
+    }
     this.extendParserExtensions = Object.keys(this.extendParser)
     // Call chokidar watch if option if provided (dev only)
     options.watch && this.watch()
@@ -171,13 +184,7 @@ class Database extends Hookable {
 
     // Get parser depending on extension
     const parser = ({
-      '.json': file => JSON.parse(file),
-      '.json5': file => JSON5.parse(file),
-      '.md': file => this.markdown.toJSON(file),
-      '.csv': file => this.csv.toJSON(file),
-      '.yaml': file => this.yaml.toJSON(file),
-      '.yml': file => this.yaml.toJSON(file),
-      '.xml': file => this.xml.toJSON(file),
+      ...this.defaultParsers,
       ...this.extendParser
     })[extension]
     // Collect data from file
