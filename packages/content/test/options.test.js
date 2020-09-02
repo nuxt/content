@@ -140,7 +140,7 @@ describe('options', () => {
     })
   })
 
-  describe('adding extend parser', () => {
+  describe('adding extend parser with object', () => {
     let nuxt
     let $content
 
@@ -174,6 +174,51 @@ describe('options', () => {
           body: 'Not parsed without a custom parser'
         })
       )
+    })
+  })
+  
+  describe('adding extend parser with function', () => {
+    let nuxt
+    let $content
+    let dParsers
+
+    const config = {
+      content: {
+        extendParser: (defaultParsers) => {
+          dParsers = defaultParsers
+          return {
+            '.txt': file => ({ body: file })
+          }
+        }
+      }
+    }
+
+    beforeAll(async () => {
+      ({ nuxt } = (await setup({ ...loadConfig(__dirname), ...config })))
+      const module = require('@nuxt/content')
+      $content = module.$content
+    }, 60000)
+
+    afterAll(async () => {
+      await nuxt.close()
+    })
+
+    test('$content() on not-parsed.txt file', async () => {
+      const item = await $content('not-parsed').fetch()
+
+      expect(item).toEqual(
+        expect.objectContaining({
+          dir: '/',
+          path: '/not-parsed',
+          slug: 'not-parsed',
+          extension: '.txt',
+          body: 'Not parsed without a custom parser'
+        })
+      )
+    })
+    
+    text('function gets default parsers', () => {
+       expect(typeof dParsers[".md"]).toEqual("function")
     })
   })
 })
