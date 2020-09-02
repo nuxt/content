@@ -40,7 +40,7 @@ class Database extends Hookable {
       nestedProperties: options.nestedProperties
     })
     // User Parsers
-    if(typeof options.extendParser === 'function') {
+    if (typeof options.extendParser === 'function') {
       this.extendParser = options.extendParser(this.defaultParsers)
     } else {
       this.extendParser = options.extendParser || {}
