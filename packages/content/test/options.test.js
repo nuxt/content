@@ -217,7 +217,7 @@ describe('options', () => {
       )
     })
 
-    text('function gets default parsers', () => {
+    test('function gets default parsers', () => {
       expect(typeof dParsers['.md']).toEqual('function')
     })
   })
