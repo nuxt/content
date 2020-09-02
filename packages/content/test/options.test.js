@@ -176,7 +176,7 @@ describe('options', () => {
       )
     })
   })
-  
+
   describe('adding extend parser with function', () => {
     let nuxt
     let $content
@@ -216,9 +216,9 @@ describe('options', () => {
         })
       )
     })
-    
+
     text('function gets default parsers', () => {
-       expect(typeof dParsers[".md"]).toEqual("function")
+      expect(typeof dParsers['.md']).toEqual('function')
     })
   })
 })
