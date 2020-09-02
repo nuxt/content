@@ -319,7 +319,7 @@ This module uses `node-csvtojson` to parse csv files, you can check here for [op
 
 ### `extendParser`
 
-- Type: `Object`
+- Type: `Object | Function`
 - Default `{}`
 
 With this option you can define your own parsers for other file types. Also you can **overwrite** the default parser!
@@ -339,6 +339,25 @@ const parseTxt = file => file.split('\n').map(line => line.trim())
   }
 }
 ```
+
+#### Manipulating existing parsers
+You can change the default parsers! You get them when you provide a function:
+
+**Example**
+
+```js{}[nuxt.config.js]
+const parseTxt = file => file.split('\n').map(line => line.trim())
+
+// in Config:
+
+{
+  extendParser: (defaultParser) => ({
+	  ".md": file => postCompiler(defaultParser[".md"](preCompiler(file))),
+	})
+}
+```
+
+
 
 ### `editor`
 
