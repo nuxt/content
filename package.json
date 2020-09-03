@@ -25,7 +25,7 @@
     "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.5",
+    "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@nuxtjs/eslint-config": "^3.1.0",
     "@nuxtjs/module-test-utils": "^1.6.3",
