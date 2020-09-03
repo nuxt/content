@@ -166,14 +166,14 @@ class Database extends Hookable {
     if (!EXTENSIONS.includes(extension) && !this.extendParserExtensions.includes(extension)) {
       return
     }
-    
+
     const stats = await fs.stat(path)
     const parsingData = {
       path,
       extension,
       file: await fs.readFile(path, 'utf-8')
     }
-    
+
     await this.callHook('file:parsed:before', parsingData)
 
     // Get parser depending on extension
@@ -218,9 +218,9 @@ class Database extends Hookable {
       createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
       updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
     }
-    
+
     await this.callHook('file:parsed:after', parsedData)
-    
+
     return parsedData
   }
 
