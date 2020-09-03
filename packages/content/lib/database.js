@@ -174,7 +174,7 @@ class Database extends Hookable {
       file: await fs.readFile(path, 'utf-8')
     }
 
-    await this.callHook('file:parsed:before', parsingData)
+    await this.callHook('file:beforeParse', parsingData)
 
     // Get parser depending on extension
     const parser = ({
@@ -209,7 +209,7 @@ class Database extends Hookable {
       return date instanceof Date && !isNaN(date)
     }
 
-    const parsedData = {
+    return {
       ...data,
       dir: dir || '/',
       path: normalizedPath,
@@ -218,10 +218,6 @@ class Database extends Hookable {
       createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
       updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
     }
-
-    await this.callHook('file:parsed:after', parsedData)
-
-    return parsedData
   }
 
   /**
