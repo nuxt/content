@@ -57,7 +57,7 @@ declare module '@nuxt/types' {
       yaml?: yamlOptions,
       csv?: csvOptions,
       xml?: xmlOptions,
-      extendParser?: parsers<string> | (defaultParsers: parsers<'.md'|'.yml'|'.yaml'|'.json'|'.json5'|'.xml'>) => parsers<string>
+      extendParser?: parsers<string> | (defaultParsers: parsers<'.md'|'.yml'|'.yaml'|'.json'|'.json5'|'.xml'|'.csv'>) => parsers<string>
     }
   }
 }
