@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1](https://github.com/nuxt/content/compare/@nuxt/content@1.8.0...@nuxt/content@1.8.1) (2020-09-03)
+
+
+### Bug Fixes
+
+* add other missing dependencies ([39fd508](https://github.com/nuxt/content/commit/39fd5081e277dffd4f4aaff82207fb43e135c53f))
+
+
+
+
+
 # [1.8.0](https://github.com/nuxt/content/compare/@nuxt/content@1.7.1...@nuxt/content@1.8.0) (2020-09-03)
 
 
