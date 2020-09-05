@@ -359,7 +359,8 @@ You can create a `content/settings.json` file to configure the theme.
 - `logo` (`String` | `Object`)
   - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
-  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page. Example: `nuxt/content`
+  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page Example: `nuxt/content`.
+  - For GitHub Enterprise, you can assign full url of your project. Example: `https://domain/repos/owner/name`.
 - `twitter` (`String`)
   - The Twitter username `@username` you want to link. Example: `@nuxt_js`
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
