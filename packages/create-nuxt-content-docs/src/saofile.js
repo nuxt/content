@@ -19,7 +19,7 @@ module.exports = {
       },
       {
         name: 'github',
-        message: 'GitHub repository (owner/name):',
+        message: 'GitHub repository (owner/name) or GitHub Enterprise repository (https://domain/repos/owner/name):',
         default: 'nuxt/content'
       },
       {
