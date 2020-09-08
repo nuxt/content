@@ -75,16 +75,20 @@ Allows you to modify the contents of a file before it is handled by the parsers.
 Arguments:
 - `data`
  - Type: `Object`
+ - Properties:
+   - path: `String`
+   - extension: `String` (ex: `.md`)
+   - data: `String`
 
 **Example**
 
-Changing all appearances of `hello` to `world` in all markdownfiles:
+Changing all appearances of `react` to `vue` in all markdownfiles:
 
 ```js{nuxt.config.js}
 hooks: {
   'content:file:beforeParse': (file) => {
     if (file.extension !== '.md') return
-    file.data = file.data.split('hello').join('world')
+    file.data = file.data.replace(/react/g, 'vue')
   }
 }
 ```
