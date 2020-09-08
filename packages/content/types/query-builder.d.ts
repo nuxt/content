@@ -1,3 +1,4 @@
+import type { IContentDocument } from './content';
 interface QueryBuilderOptions {
   query: any;
   path: string;
@@ -6,7 +7,7 @@ interface QueryBuilderOptions {
   postprocess?: any[];
 }
 
-export interface QueryBuilder {
+export class QueryBuilder {
   constructor(
     { query, path, init, text, postprocess }: QueryBuilderOptions,
     options: any
@@ -23,58 +24,58 @@ export interface QueryBuilder {
   skipN: number;
   /**
    * Select a subset of fields
-   * @param {Array} keys - Array of fields to be picked.
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param keys - fields to be picked.
+   * @returns current instance to be chained
    */
   only(keys: string[] | string): QueryBuilder;
   /**
    * Remove a subset of fields
-   * @param {Array} keys - Array of fields to be picked.
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param keys - fields to be picked.
+   * @returns current instance to be chained
    */
   without(keys: string[] | string): QueryBuilder;
   /**
    * Sort results
-   * @param {string} field - Field key to sort on.
-   * @param {string} direction - Direction of sort (asc / desc).
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param field - Field key to sort on.
+   * @param direction - Direction of sort (asc / desc).
+   * @returns current instance to be chained
    */
-  sortBy(field: string, direction?: "asc" | "desc"): QueryBuilder;
+  sortBy(field: string, direction?: 'asc' | 'desc'): QueryBuilder;
   /**
    * Filter results
-   * @param {object} query - Where query.
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param query - Where query.
+   * @returns current instance to be chained
    */
   where(query: object): QueryBuilder;
   /**
    * Search results
-   * @param {(Object|string)} query - Search query object or field or search value.
-   * @param {string} value - Value of search (means query equals to field).
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param query - Search query object or field or search value.
+   * @param value - Value of search (means query equals to field).
+   * @returns current instance to be chained
    */
   search(query: any | string, value?: string): QueryBuilder;
   /**
    * Surround results
-   * @param {string} slug - Slug of the file to surround.
-   * @param {Object} options - Options to surround (before / after).
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param slug - Slug of the file to surround.
+   * @param options - Options to surround (before / after).
+   * @returns current instance to be chained
    */
   surround(slug: string, { before, after }?: any): QueryBuilder;
   /**
    * Limit number of results
-   * @param {number} n - Limit number.
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param n - Limit number.
+   * @returns current instance to be chained
    */
   limit(n: number | string): QueryBuilder;
   /**
    * Skip number of results
-   * @param {number} n - Skip number.
-   * @returns {QueryBuilder} Returns current instance to be chained
+   * @param n - Skip number.
+   * @returns current instance to be chained
    */
   skip(n: number | string): QueryBuilder;
   /**
    * Collect data and apply process filters
-   * @returns {(Object|Array)} Returns processed data
+   * @returns processed data
    */
-  fetch(): any | any[];
+  fetch<T extends IContentDocument>(): T | T[];
 }
