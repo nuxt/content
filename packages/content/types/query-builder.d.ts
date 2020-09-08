@@ -77,5 +77,6 @@ export class QueryBuilder {
    * Collect data and apply process filters
    * @returns processed data
    */
-  fetch<T extends IContentDocument>(): T | T[];
+  fetch(): IContentDocument | IContentDocument[];
+  fetch<T>(): T & IContentDocument | T[] & IContentDocument[];
 }
