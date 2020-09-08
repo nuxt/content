@@ -28,14 +28,14 @@
 <script lang="ts">
 export default {
   async asyncData ({ $content }) {
-    const markdown = await $content('markdown').fetch();
-    const json = await $content('json').fetch();
-    const json5 = await $content('json5').fetch();
-    const csv = await $content('csv').fetch();
-    const yaml = await $content('yaml').fetch();
-    const yml = await $content('yml').fetch();
-    const xml = await $content('xml').fetch();
-    const custom = await $content('custom').fetch();
+    const markdown = await $content('markdown').fetch()
+    const json = await $content('json').fetch()
+    const json5 = await $content('json5').fetch()
+    const csv = await $content('csv').fetch()
+    const yaml = await $content('yaml').fetch()
+    const yml = await $content('yml').fetch()
+    const xml = await $content('xml').fetch()
+    const custom = await $content('custom').fetch()
 
     return {
       markdown,
@@ -46,7 +46,7 @@ export default {
       yml,
       xml,
       custom
-    };
+    }
   }
-};
+}
 </script>
