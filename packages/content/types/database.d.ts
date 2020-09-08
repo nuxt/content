@@ -12,7 +12,7 @@ import type { ICSV } from './parsers/csv';
 import type { IXML } from './parsers/xml';
 import type { MarkdownOptions } from './parsers/markdown';
 import type { QueryBuilder } from './query-builder'
-import { IContentDocument } from './content';
+import type { IContentDocument } from './content';
 
 type Parser = (file: string) => any;
 
@@ -30,6 +30,11 @@ interface DatabaseOptions {
   editor: string;
 }
 
+interface QueryBuilderOptions {
+  deep?: boolean;
+  text?: boolean;
+}
+
 export class Database {
   constructor(options: DatabaseOptions);
   dir: string;
@@ -45,19 +50,10 @@ export class Database {
   options: DatabaseOptions;
   /**
    * Query items from collection
-   * @param {string} path - Requested path (path / directory).
-   * @returns {QueryBuilder} Instance of QueryBuilder to be chained
+   * @param path - Requested path (path / directory).
+   * @returns Instance of QueryBuilder to be chained
    */
-  query(
-    path: string,
-    {
-      deep,
-      text
-    }?: {
-      deep?: boolean;
-      text?: boolean;
-    }
-  ): QueryBuilder;
+  query(path: string, { deep, text }?: QueryBuilderOptions): QueryBuilder;
   /**
    * Clear items in database and load files into collection
    */
