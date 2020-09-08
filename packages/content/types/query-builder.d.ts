@@ -7,7 +7,7 @@ interface QueryBuilderOptions {
   postprocess?: any[];
 }
 
-export interface QueryBuilder {
+export class QueryBuilder {
   constructor(
     { query, path, init, text, postprocess }: QueryBuilderOptions,
     options: any
