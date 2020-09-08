@@ -82,7 +82,7 @@ Arguments:
 
 **Example**
 
-Changing all appearances of `react` to `vue` in all markdownfiles:
+Changing all appearances of `react` to `vue` in all Markdown files:
 
 ```js{}[nuxt.config.js]
 hooks: {
