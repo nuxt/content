@@ -1,12 +1,13 @@
+import type { Loki, Collection } from '@lokidb/loki';
+import type { Queue, DefaultAddOptions } from 'p-queue';
+import type { FSWatcher } from 'chokidar'
+import type PriorityQueue from 'p-queue/dist/priority-queue';
+
 import type { IMarkdown } from './parsers/markdown';
 import type { IYAML } from './parsers/yaml';
 import type { ICSV } from './parsers/csv';
 import type { IXML } from './parsers/xml';
-import type { Loki, Collection } from '@lokidb/loki';
 import type { QueryBuilder } from './query-builder'
-import type { Queue, DefaultAddOptions } from 'p-queue';
-import type PriorityQueue from 'p-queue/dist/priority-queue';
-import type { FSWatcher } from 'chokidar'
 
 type Parser = (file: string) => any;
 
