@@ -28,6 +28,9 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@nuxtjs/eslint-config": "^3.1.0",
+    "@nuxt/typescript-build": "^2.0.3",
+    "@nuxt/typescript-runtime": "^2.0.0",
+    "@nuxtjs/eslint-config-typescript": "^3.0.0",
     "@nuxtjs/module-test-utils": "^1.6.3",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.3.0",
@@ -39,10 +42,5 @@
     "nuxt": "^2.14.4",
     "puppeteer": "^5.2.1",
     "tib": "^0.7.4"
-  },
-  "dependencies": {
-    "@nuxt/typescript-build": "^2.0.3",
-    "@nuxt/typescript-runtime": "^2.0.0",
-    "@nuxtjs/eslint-config-typescript": "^3.0.0"
   }
 }
