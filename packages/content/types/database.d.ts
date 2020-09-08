@@ -2,22 +2,27 @@ import type { Loki, Collection } from '@lokidb/loki';
 import type { Queue, DefaultAddOptions } from 'p-queue';
 import type { FSWatcher } from 'chokidar'
 import type PriorityQueue from 'p-queue/dist/priority-queue';
+import type { State as YamlOptions } from 'js-yaml';
+import type { Options as XMLOptions } from 'xml2js';
+import type { CSVParseParam as CSVOptions } from 'csvtojson/v2/Parameters';
 
 import type { IMarkdown } from './parsers/markdown';
 import type { IYAML } from './parsers/yaml';
 import type { ICSV } from './parsers/csv';
 import type { IXML } from './parsers/xml';
+import type { MarkdownOptions } from './parsers/markdown';
 import type { QueryBuilder } from './query-builder'
+import { IContentDocument } from './content';
 
 type Parser = (file: string) => any;
 
 interface DatabaseOptions {
   dir: string;
   cwd: string;
-  markdown: any;
-  yaml: any;
-  csv: any;
-  xml: any;
+  markdown: MarkdownOptions;
+  yaml: YamlOptions;
+  xml: XMLOptions;
+  csv: CSVOptions;
   nestedProperties: string[];
   fullTextSearchFields: string[];
   liveEdit: boolean;
@@ -82,16 +87,7 @@ export class Database {
    * Read a file and transform it to be insert / updated in collection
    * @param {string} path - The path of the file.
    */
-  parseFile(
-    path: string
-  ): Promise<{
-    dir: string;
-    path: string;
-    extension: string;
-    slug: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }>;
+  parseFile(path: string): Promise<IContentDocument>;
   /**
    * Remove base dir and extension from file path
    * @param {string} path - The path of the file.

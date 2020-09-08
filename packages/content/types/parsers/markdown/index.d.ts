@@ -1,24 +1,35 @@
-export interface IMarkdown {
-  constructor(options?: {});
-  options: {};
+export interface MarkdownOptions {
+  remarkPlugins: () => string[] | string[]
+  remarkExternalLinks: () => string[] | string[]
+  rehypePlugins: () => string[] | string[]
+  basePlugins: () => string[] | string[]
+  plugins: () => string[] | string[]
+  prism: {
+    theme: string | boolean
+  }
+}
+
+export class IMarkdown {
+  constructor(options?: MarkdownOptions);
+  options: MarkdownOptions;
   processPluginsFor(type: any, stream: any): any;
   flattenNodeText(node: any): any;
   /**
    * Generate table of contents
-   * @param {object} body - JSON AST generated from markdown.
-   * @returns {array} List of headers
+   * @param body - JSON AST generated from markdown.
+   * @returns List of headers
    */
   generateToc(body: object): any[];
   /**
    * Generate json body
-   * @param {string} content - JSON AST generated from markdown.
-   * @returns {object} JSON AST body
+   * @param content - JSON AST generated from markdown.
+   * @returns JSON AST body
    */
   generateBody(content: string): object;
   /**
    * Converts markdown document to it's JSON structure.
-   * @param {string} file - Markdown file
-   * @return {Object}
+   * @param file - Markdown file
+   * @return JSON
    */
   toJSON(file: string): any;
 }
