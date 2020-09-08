@@ -78,5 +78,5 @@ export class QueryBuilder {
    * @returns processed data
    */
   fetch(): IContentDocument | IContentDocument[];
-  fetch<T>(): T & IContentDocument | T[] & IContentDocument[];
+  fetch<T>(): (T & IContentDocument) | (T & IContentDocument)[];
 }
