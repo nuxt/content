@@ -4,9 +4,28 @@ import type { ICSV } from './parsers/csv';
 import type { IXML } from './parsers/xml';
 import type { Loki, Collection } from '@lokidb/loki';
 import type { QueryBuilder } from './query-builder'
+import type { Queue, DefaultAddOptions } from 'p-queue';
+import type PriorityQueue from 'p-queue/dist/priority-queue';
+import type { FSWatcher } from 'chokidar'
 
-export interface Database {
-  constructor(options: any);
+type Parser = (file: string) => any;
+
+interface DatabaseOptions {
+  dir: string;
+  cwd: string;
+  markdown: any;
+  yaml: any;
+  csv: any;
+  xml: any;
+  nestedProperties: string[];
+  fullTextSearchFields: string[];
+  liveEdit: boolean;
+  watch: boolean;
+  editor: string;
+}
+
+export class Database {
+  constructor(options: DatabaseOptions);
   dir: any;
   cwd: any;
   markdown: IMarkdown;
@@ -15,9 +34,9 @@ export interface Database {
   xml: IXML;
   db: Loki;
   items: Collection<object, object, object>;
-  extendParser: any;
+  extendParser: Record<string, Parser>;
   extendParserExtensions: string[];
-  options: any;
+  options: DatabaseOptions;
   /**
    * Query items from collection
    * @param {string} path - Requested path (path / directory).
@@ -82,11 +101,8 @@ export interface Database {
    * Watch base dir for changes
    */
   watch(): void;
-  queue: import('p-queue').default<
-    import('p-queue/dist/priority-queue').default,
-    import('p-queue').DefaultAddOptions
-  >;
-  watcher: import('chokidar').FSWatcher;
+  queue: Queue<DefaultAddOptions, PriorityQueue>;
+  watcher: FSWatcher;
   /**
    * Init database and broadcast change through Websockets
    */

@@ -1,4 +1,6 @@
-export default {
+import type { NuxtConfig } from "@nuxt/types";
+
+const config: NuxtConfig = {
   modules: ['@nuxt/content'],
   components: true,
   hooks: {
@@ -17,3 +19,5 @@ export default {
     }
   }
 };
+
+export default config;

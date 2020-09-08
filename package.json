@@ -14,7 +14,7 @@
     "docs"
   ],
   "scripts": {
-    "dev": "nuxt example",
+    "dev": "nuxt-ts example",
     "docs": "nuxt docs",
     "lint": "eslint --ext .js,.vue .",
     "release": "yarn test && lerna publish",
@@ -39,5 +39,10 @@
     "nuxt": "^2.14.4",
     "puppeteer": "^5.2.1",
     "tib": "^0.7.4"
+  },
+  "dependencies": {
+    "@nuxt/typescript-build": "^2.0.3",
+    "@nuxt/typescript-runtime": "^2.0.0",
+    "@nuxtjs/eslint-config-typescript": "^3.0.0"
   }
 }

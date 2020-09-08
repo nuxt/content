@@ -1,8 +1,8 @@
 import '@nuxt/types';
 import './vuex';
-import { DumpOptions as yamlOptions } from 'js-yaml';
-import { OptionsV2 as xmlOptions } from 'xml2js';
-import { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters';
+import type { DumpOptions as yamlOptions } from 'js-yaml';
+import type { OptionsV2 as xmlOptions } from 'xml2js';
+import type { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters';
 import type { contentFunc, extendOrOverwrite, contentFileBeforeInstert } from './content'
 
 

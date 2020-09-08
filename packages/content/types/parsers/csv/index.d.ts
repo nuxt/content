@@ -1,4 +1,4 @@
-export interface ICSV {
+export class ICSV {
   constructor(options?: {});
   options: {};
   /**
