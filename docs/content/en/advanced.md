@@ -103,7 +103,7 @@ export default {
 
 **Example**
 
-You might want to parse markdown inside a `.json` file. This one is a bit tricky but has been requested a lot, so here is an example:
+You might want to parse markdown inside a `.json` file. You can access the parsers from the `database` object:
 
 ```js
 export default {
@@ -111,11 +111,7 @@ export default {
     '@nuxt/content'
   ],
   hooks: {
-    'content:file:beforeInsert': async (document) => {
-      const { Database, getOptions } = require('@nuxt/content')
-
-      const database = new Database(getOptions())
-
+    'content:file:beforeInsert': async (document, database) => {
       if (document.extension === '.json' && document.body) {
         const data = await database.markdown.toJSON(document.body)
 

@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1](https://github.com/nuxt/content/compare/@nuxt/content@1.8.0...@nuxt/content@1.8.1) (2020-09-03)
+
+
+### Bug Fixes
+
+* add other missing dependencies ([39fd508](https://github.com/nuxt/content/commit/39fd5081e277dffd4f4aaff82207fb43e135c53f))
+
+
+
+
+
+# [1.8.0](https://github.com/nuxt/content/compare/@nuxt/content@1.7.1...@nuxt/content@1.8.0) (2020-09-03)
+
+
+### Bug Fixes
+
+* missing package detab ([#449](https://github.com/nuxt/content/issues/449)) ([4cca0cb](https://github.com/nuxt/content/commit/4cca0cbac4405652d7aab454086a820404e2ec10))
+
+
+### Features
+
+* add database as second argument for beforeInsert ([#442](https://github.com/nuxt/content/issues/442)) ([90c638d](https://github.com/nuxt/content/commit/90c638d153394a284fa387f3ab868989b901b4f9))
+
+
+
+
+
 ## [1.7.1](https://github.com/nuxt/content/compare/@nuxt/content@1.7.0...@nuxt/content@1.7.1) (2020-08-31)
 
 

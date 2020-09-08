@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content-theme-docs",
-  "version": "0.5.4",
+  "version": "0.5.6",
   "repository": "nuxt/content",
   "license": "MIT",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "main": "src/",
   "dependencies": {
-    "@nuxt/content": "^1.7.1",
+    "@nuxt/content": "^1.8.1",
     "@nuxt/types": "^2.14.4",
     "@nuxtjs/color-mode": "^1.0.3",
     "@nuxtjs/google-fonts": "^1.0.0",

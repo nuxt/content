@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.6](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.5...@nuxt/content-theme-docs@0.5.6) (2020-09-03)
+
+**Note:** Version bump only for package @nuxt/content-theme-docs
+
+
+
+
+
+## [0.5.5](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.4...@nuxt/content-theme-docs@0.5.5) (2020-09-03)
+
+
+### Bug Fixes
+
+* **theme-docs:** fix empty title on links ([#447](https://github.com/nuxt/content/issues/447)) ([7b761e8](https://github.com/nuxt/content/commit/7b761e844d10e5b8b868da330d752a9e024a9d5c))
+
+
+
+
+
 ## [0.5.4](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.3...@nuxt/content-theme-docs@0.5.4) (2020-08-31)
 
 

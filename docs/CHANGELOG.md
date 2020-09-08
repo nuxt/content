@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/nuxt/content/compare/nuxt-content-docs@1.5.0...nuxt-content-docs@1.5.1) (2020-09-03)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+# [1.5.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.4.1...nuxt-content-docs@1.5.0) (2020-09-03)
+
+
+### Features
+
+* add database as second argument for beforeInsert ([#442](https://github.com/nuxt/content/issues/442)) ([90c638d](https://github.com/nuxt/content/commit/90c638d153394a284fa387f3ab868989b901b4f9))
+
+
+
+
+
 ## [1.4.1](https://github.com/nuxt/content/compare/nuxt-content-docs@1.4.0...nuxt-content-docs@1.4.1) (2020-08-31)
 
 **Note:** Version bump only for package nuxt-content-docs
