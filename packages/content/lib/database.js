@@ -168,29 +168,29 @@ class Database extends Hookable {
     }
 
     const stats = await fs.stat(path)
-    const parsingData = {
+    const file = {
       path,
       extension,
-      file: await fs.readFile(path, 'utf-8')
+      data: await fs.readFile(path, 'utf-8')
     }
 
-    await this.callHook('file:beforeParse', parsingData)
+    await this.callHook('file:beforeParse', file)
 
     // Get parser depending on extension
     const parser = ({
-      '.json': file => JSON.parse(file),
-      '.json5': file => JSON5.parse(file),
-      '.md': file => this.markdown.toJSON(file),
-      '.csv': file => this.csv.toJSON(file),
-      '.yaml': file => this.yaml.toJSON(file),
-      '.yml': file => this.yaml.toJSON(file),
-      '.xml': file => this.xml.toJSON(file),
+      '.json': data => JSON.parse(data),
+      '.json5': data => JSON5.parse(data),
+      '.md': data => this.markdown.toJSON(data),
+      '.csv': data => this.csv.toJSON(data),
+      '.yaml': data => this.yaml.toJSON(data),
+      '.yml': data => this.yaml.toJSON(data),
+      '.xml': data => this.xml.toJSON(data),
       ...this.extendParser
     })[extension]
     // Collect data from file
     let data = {}
     try {
-      data = await parser(parsingData.file)
+      data = await parser(file.data)
     } catch (err) {
       logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
