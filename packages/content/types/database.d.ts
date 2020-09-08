@@ -32,8 +32,8 @@ interface DatabaseOptions {
 
 export class Database {
   constructor(options: DatabaseOptions);
-  dir: any;
-  cwd: any;
+  dir: string;
+  cwd: string;
   markdown: IMarkdown;
   yaml: IYAML;
   csv: ICSV;
