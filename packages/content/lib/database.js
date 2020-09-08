@@ -204,7 +204,7 @@ class Database extends Hookable {
       '.yml': data => this.yaml.toJSON(data),
       '.xml': data => this.xml.toJSON(data),
       ...this.extendParser
-    }[extension]
+    })[extension];
     // Collect data from file
     let data = {}
     try {
