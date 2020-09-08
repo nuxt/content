@@ -93,6 +93,9 @@ module.exports = async function (moduleOptions) {
   database.hook('file:beforeInsert', item =>
     this.nuxt.callHook('content:file:beforeInsert', item, database)
   )
+  database.hook('file:beforeParse', file =>
+    this.nuxt.callHook('content:file:beforeParse', file)
+  )
   database.hook('file:updated', event => ws.broadcast(event))
 
   // Initialize database from file system
