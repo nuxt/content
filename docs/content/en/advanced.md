@@ -68,6 +68,27 @@ Recommended to use Nuxt 2.14+ with `nuxt generate` because it's awesome!
 
 The module adds some hooks you can use:
 
+### `content:file:beforeParse`
+
+Allows you to modify the contents of a file before it is handled by the parsers.
+
+Arguments:
+- `data`
+ - Type: `Object`
+
+**Example**
+
+Changing all appearances of `hello` to `world` in all markdownfiles:
+
+```js{nuxt.config.js}
+hooks: {
+  'content:file:beforeParse': (file) => {
+    if (file.extension !== '.md') return
+    file.data = file.data.split('hello').join('world')
+  }
+}
+```
+
 ### `content:file:beforeInsert`
 
 Allows you to add data to a document before it is stored.
