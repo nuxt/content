@@ -17,11 +17,27 @@ export const getters = {
     return state.settings
   },
   githubUrls (state) {
-    const { github } = state.settings
+    const { github = '', githubApi = '' } = state.settings
 
-    return github.startsWith('http')
-      ? { repo: github, releases: `${github}/releases` }
-      : { repo: `https://api.github.com/repos/${github}`, releases: `https://api.github.com/repos/${github}/releases` }
+    // GitHub Enterprise
+    if (github.startsWith('http') && githubApi.startsWith('http')) {
+      return {
+        repo: github,
+        api: {
+          repo: githubApi,
+          releases: `${githubApi}/releases`
+        }
+      }
+    }
+
+    // GitHub
+    return {
+      repo: `https://github.com/repos/${github}`,
+      api: {
+        repo: `https://api.github.com/repos/${github}`,
+        releases: `https://api.github.com/repos/${github}/releases`
+      }
+    }
   },
   releases (state) {
     return state.releases
@@ -72,7 +88,7 @@ export const actions = {
     }
     let releases = []
     try {
-      const data = await fetch(getters.githubUrls.releases, options).then((res) => {
+      const data = await fetch(getters.githubUrls.api.releases, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }
@@ -110,7 +126,7 @@ export const actions = {
     }
     let defaultBranch
     try {
-      const data = await fetch(getters.githubUrls.repo, options).then((res) => {
+      const data = await fetch(getters.githubUrls.api.repo, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }
