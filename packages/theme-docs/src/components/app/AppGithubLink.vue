@@ -25,6 +25,7 @@ export default {
   computed: {
     ...mapGetters([
       'settings',
+      'githubUrls',
       'lastRelease'
     ]),
     link () {
@@ -33,8 +34,7 @@ export default {
       }
 
       return [
-        'https://github.com',
-        this.settings.github,
+        this.githubUrls.repo,
         'edit',
         this.settings.defaultBranch,
         this.settings.defaultDir,
