@@ -46,21 +46,16 @@ class Database extends Hookable {
   query (path, { deep = false, text = false } = {}) {
     const isDir = !path || !!this.dirs.find(dir => dir === path)
     // Look for dir or path
-    const query = isDir
-      ? { dir: deep ? { $regex: new RegExp(`^${path}`) } : path }
-      : { path }
+    const query = isDir ? { dir: deep ? { $regex: new RegExp(`^${path}`) } : path } : { path }
     // Postprocess to get only first result (findOne)
     const postprocess = isDir ? [] : [data => data[0]]
 
-    return new QueryBuilder(
-      {
-        query: this.items.chain().find(query, !isDir),
-        path,
-        postprocess,
-        text
-      },
-      this.options
-    )
+    return new QueryBuilder({
+      query: this.items.chain().find(query, !isDir),
+      path,
+      postprocess,
+      text
+    }, this.options)
   }
 
   /**
@@ -73,11 +68,7 @@ class Database extends Hookable {
     const startTime = process.hrtime()
     await this.walk(this.dir)
     const [s, ns] = process.hrtime(startTime)
-    logger.info(
-      `Parsed ${this.items.count()} files in ${s},${Math.round(
-        ns / 1e8
-      )} seconds`
-    )
+    logger.info(`Parsed ${this.items.count()} files in ${s},${Math.round(ns / 1e8)} seconds`)
   }
 
   /**
@@ -92,29 +83,27 @@ class Database extends Hookable {
       logger.warn(`${dir} does not exist`)
     }
 
-    await Promise.all(
-      files.map(async (file) => {
-        const path = join(dir, file)
-        const stats = await fs.stat(path)
+    await Promise.all(files.map(async (file) => {
+      const path = join(dir, file)
+      const stats = await fs.stat(path)
 
-        // ignore node_modules or hidden file
-        /* istanbul ignore if */
-        if (file.includes('node_modules') || /(^|\/)\.[^/.]/g.test(file)) {
-          return
-        }
+      // ignore node_modules or hidden file
+      /* istanbul ignore if */
+      if (file.includes('node_modules') || (/(^|\/)\.[^/.]/g).test(file)) {
+        return
+      }
 
-        /* istanbul ignore else */
-        if (stats.isDirectory()) {
-          // Store directory in local variable to be checked later
-          this.dirs.push(this.normalizePath(path))
-          // Walk recursively subfolder
-          return this.walk(path)
-        } else if (stats.isFile()) {
-          // Add file to collection
-          return this.insertFile(path)
-        }
-      })
-    )
+      /* istanbul ignore else */
+      if (stats.isDirectory()) {
+        // Store directory in local variable to be checked later
+        this.dirs.push(this.normalizePath(path))
+        // Walk recursively subfolder
+        return this.walk(path)
+      } else if (stats.isFile()) {
+        // Add file to collection
+        return this.insertFile(path)
+      }
+    }))
   }
 
   /**
@@ -150,11 +139,7 @@ class Database extends Hookable {
 
     logger.info(`Updated ${path.replace(this.cwd, '.')}`)
     if (document) {
-      this.items.update({
-        $loki: document.$loki,
-        meta: document.meta,
-        ...item
-      })
+      this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
       return
     }
     this.items.insert(item)
@@ -178,10 +163,7 @@ class Database extends Hookable {
   async parseFile (path) {
     const extension = extname(path)
     // If unkown extension, skip
-    if (
-      !EXTENSIONS.includes(extension) &&
-      !this.extendParserExtensions.includes(extension)
-    ) {
+    if (!EXTENSIONS.includes(extension) && !this.extendParserExtensions.includes(extension)) {
       return
     }
 
@@ -210,10 +192,7 @@ class Database extends Hookable {
     try {
       data = await parser(file.data)
     } catch (err) {
-      logger.warn(
-        `Could not parse ${path.replace(this.cwd, '.')}:`,
-        err.message
-      )
+      logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
     }
     // Normalize path without dir and ext
@@ -236,12 +215,8 @@ class Database extends Hookable {
       path: normalizedPath,
       extension,
       slug: split[split.length - 1],
-      createdAt: isValidDate(existingCreatedAt)
-        ? existingCreatedAt
-        : stats.birthtime,
-      updatedAt: isValidDate(existingUpdatedAt)
-        ? existingUpdatedAt
-        : stats.mtime
+      createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
+      updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
     }
   }
 
@@ -251,10 +226,7 @@ class Database extends Hookable {
    * @returns {string} Normalized path
    */
   normalizePath (path) {
-    return path
-      .replace(this.dir, '')
-      .replace(/\.[^/.]+$/, '')
-      .replace(/\\/g, '/')
+    return path.replace(this.dir, '').replace(/\.[^/.]+$/, '').replace(/\\/g, '/')
   }
 
   /**
@@ -264,19 +236,14 @@ class Database extends Hookable {
   watch () {
     this.queue = new PQueue({ concurrency: 1 })
 
-    this.watcher = chokidar
-      .watch(['**/*'], {
-        cwd: this.dir,
-        ignoreInitial: true,
-        ignored: 'node_modules/**/*'
-      })
-      .on('change', path =>
-        this.queue.add(this.refresh.bind(this, 'change', path))
-      )
+    this.watcher = chokidar.watch(['**/*'], {
+      cwd: this.dir,
+      ignoreInitial: true,
+      ignored: 'node_modules/**/*'
+    })
+      .on('change', path => this.queue.add(this.refresh.bind(this, 'change', path)))
       .on('add', path => this.queue.add(this.refresh.bind(this, 'add', path)))
-      .on('unlink', path =>
-        this.queue.add(this.refresh.bind(this, 'unlink', path))
-      )
+      .on('unlink', path => this.queue.add(this.refresh.bind(this, 'unlink', path)))
   }
 
   /**
@@ -294,8 +261,8 @@ class Database extends Hookable {
   }
 
   /*
-   ** Stop database and watcher and clear pointers
-   */
+  ** Stop database and watcher and clear pointers
+  */
   async close () {
     await this.db.close()
     this.db = null
