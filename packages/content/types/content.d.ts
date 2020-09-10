@@ -12,6 +12,15 @@ export interface IContentDocument extends Record<string, any> {
   updatedAt: Date;
 }
 
+export type File = {
+  path: string;
+  extension: string;
+  data: any;
+}
+
 export type contentFileBeforeInstert = (document: IContentDocument, database: Database) => void;
 
 export type extendOrOverwrite<T> = ((old: T) => T) | T;
+
+export type contentFileBeforeParse = (file: File) => void;
+

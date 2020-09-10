@@ -1,10 +1,21 @@
-import '@nuxt/types';
-import './vuex';
-import type { DumpOptions as yamlOptions } from 'js-yaml';
-import type { OptionsV2 as xmlOptions } from 'xml2js';
-import type { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters';
-import type { contentFunc, extendOrOverwrite, contentFileBeforeInstert } from './content'
+import type { contentFunc, extendOrOverwrite, contentFileBeforeInstert, contentFileBeforeParse } from './content'
+import type { QueryBuilder } from './query-builder';
+import type { IXML } from './parsers/xml';
+import type { IMarkdown } from './parsers/markdown';
+import type { ICSV } from './parsers/csv';
+import type { IYAML } from './parsers/yaml';
 
+import '@nuxt/types';
+import type { DumpOptions as YamlOptions } from 'js-yaml';
+import type { OptionsV2 as XMLOptions } from 'xml2js';
+import type { CSVParseParam as CSVOptions } from 'csvtojson/v2/Parameters';
+
+
+declare module "vuex/types/index" {
+  interface Store<S> {
+    $content: QueryBuilder;
+  }
+}
 
 // Nuxt 2.9+
 declare module '@nuxt/types' {
@@ -27,9 +38,9 @@ declare module '@nuxt/types' {
           theme?: string | false;
         };
       };
-      yaml?: yamlOptions;
-      csv?: csvOptions;
-      xml?: xmlOptions;
+      yaml?: YamlOptions;
+      csv?: CSVOptions;
+      xml?: XMLOptions;
       extendParser?: {
         [extension: string]: (file: string) => any;
       };
@@ -52,10 +63,21 @@ declare module 'vue/types/vue' {
 declare module '@nuxt/types/config/hooks' {
   interface NuxtOptionsHooks {
     'content:file:beforeInsert'?: contentFileBeforeInstert;
+    'content:file:beforeParse'?: contentFileBeforeParse;
     content?: {
       file?: {
         beforeInsert?: contentFileBeforeInstert;
+        beforeParse?: contentFileBeforeParse;
       };
     };
+  }
+}
+
+declare module '@nuxt/content' {
+  export interface parsers {
+    xml: IXML;
+    markdown: IMarkdown;
+    csv: ICSV;
+    yaml: IYAML;
   }
 }
