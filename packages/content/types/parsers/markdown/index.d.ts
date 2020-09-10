@@ -1,3 +1,5 @@
+import type { baseParser } from '../base';
+
 export interface MarkdownOptions {
   remarkPlugins: () => string[] | string[]
   remarkExternalLinks: () => string[] | string[]
@@ -9,9 +11,7 @@ export interface MarkdownOptions {
   }
 }
 
-export class IMarkdown {
-  constructor(options?: MarkdownOptions);
-  options: MarkdownOptions;
+export class IMarkdown extends baseParser<MarkdownOptions> {
   processPluginsFor(type: any, stream: any): any;
   flattenNodeText(node: any): any;
   /**
