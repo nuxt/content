@@ -54,5 +54,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "highlight.js": "^10.2.0",
+    "shiki": "^0.2.3",
+    "shiki-twoslash": "^0.8.0"
   }
 }

@@ -6,11 +6,18 @@
 </template>
 
 <script>
+/* eslint-disable vue/no-unused-components */
 import AppLayout from '../components/AppLayout'
+
+// It is needed for rendering custom highlighter with shiki twoslash
+import DataLsp from '../components/DataLsp'
+import DataErr from '../components/DataErr'
 
 export default {
   components: {
-    AppLayout // eslint-disable-line vue/no-unused-components
+    AppLayout,
+    DataLsp,
+    DataErr
   },
   async asyncData ({ $content, params, query }) {
     const id = query.withId ? 'my-id' : undefined
