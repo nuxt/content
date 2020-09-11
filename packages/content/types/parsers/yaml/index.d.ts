@@ -1,7 +1,7 @@
-import type { State as YamlOptions } from 'js-yaml';
-export class IYAML {
-  constructor(options?: YamlOptions);
-  options: YamlOptions;
+import type { baseParser } from '../base';
+import type { DumpOptions as YamlOptions } from 'js-yaml';
+
+export class IYAML extends baseParser<YamlOptions>{
   /**
    * Converts yaml document to it's JSON structure.
    * @param file - Yaml file
