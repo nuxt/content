@@ -208,3 +208,101 @@ content/
 Don't forget to prefix your calls with the current locale if you're using `nuxt-i18n`.
 
 </alert>
+
+### Custom Highlighter
+
+#### Highlight.js
+
+```js{}[nuxt.config.js]
+import highlightjs from 'highlight.js'
+
+const wrap = (code, lang) => `<pre><code class="hljs ${lang}">${code}</code></pre>`
+
+export default {
+  // Complete themes: https://github.com/highlightjs/highlight.js/tree/master/src/styles
+  css: ['highlight.js/styles/nord.css'],
+
+  modules: ['@nuxt/content'],
+
+  content: {
+    markdown: {
+      highlighter(rawCode, lang) {
+        if (!lang) {
+          return wrap(highlightjs.highlightAuto(rawCode).value, lang)
+        }
+        return wrap(highlightjs.highlight(lang, rawCode).value, lang)
+      }
+    }
+  }
+}
+```
+
+#### Shiki
+
+[Shiki](https://github.com/shikijs/shiki) is syntax highlighter that uses TexMate grammar and colors the tokens with VS Code themes. It will generate HTML that looks like exactly your code in VS Code.
+
+You don't need to add custom styling, because Shiki will inlined it in the HTML.
+
+```js{}[nuxt.config.js]
+import shiki from 'shiki'
+
+export default {
+  modules: ['@nuxt/content'],
+
+  content: {
+    markdown: {
+      async highlighter() {
+        const highlighter = await shiki.getHighlighter({
+          // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
+          theme: 'nord'
+        })
+        return (rawCode, lang) => {
+          return highlighter.codeToHtml(rawCode, lang)
+        }
+      }
+    }
+  }
+}
+```
+
+#### Shiki Twoslash
+
+[Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/ts-twoslasher) is a markup format for TypeScript code. Internally, Twoslash uses TypeScript compiler to generate rich highlight info.
+
+To get better idea how Twoslash works, you can get over to the [Official TypeScript Documentation](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#type-aliases) and hover some code example there.
+
+You can achieve the same result by using [Shiki Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/shiki-twoslash). This package is also the one that power Official TypeScript Documentation.
+
+```js{}[nuxt.config.js]
+import {
+  createShikiHighlighter,
+  runTwoSlash,
+  renderCodeToHTML
+} from 'shiki-twoslash'
+
+export default {
+  modules: ['@nuxt/content'],
+
+  content: {
+    markdown: {
+      async highlighter() {
+        const highlighter = await createShikiHighlighter({
+          // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
+          theme: 'nord'
+        })
+        return (rawCode, lang) => {
+          const twoslashResults = runTwoSlash(rawCode, lang)
+          return renderCodeToHTML(
+            twoslashResults.code,
+            lang,
+            ['twoslash'],
+            {},
+            highlighter,
+            twoslashResults
+          )
+        }
+      }
+    }
+  }
+}
+```
