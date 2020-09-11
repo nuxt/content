@@ -135,7 +135,7 @@ module.exports = async function (moduleOptions) {
   })
 
   // Add prism theme
-  if (options.markdown.prism.theme) {
+  if (options.markdown.prism.theme && !options.markdown.highlighter) {
     this.nuxt.options.css.push(options.markdown.prism.theme)
   }
 
