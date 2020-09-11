@@ -2174,7 +2174,7 @@
     rc9 "^1.0.0"
     std-env "^2.2.1"
 
-"@nuxt/types@^2.14.4":
+"@nuxt/types@^2.14.5":
   version "2.14.5"
   resolved "https://registry.yarnpkg.com/@nuxt/types/-/types-2.14.5.tgz#426236eda1790f15c123110421c6d222c3d02c8f"
   integrity sha512-1gOiwv6K4eNJbrYb68jtmZup/0gw6dGeu6fhUykyCcJS3emt+tzf6V0Lvg7WblJ/1xkzQfnNfbrbCm1CJpRAHg==
@@ -2338,7 +2338,7 @@
     eslint-plugin-unicorn "^21.0.0"
     eslint-plugin-vue "^6.2.2"
 
-"@nuxtjs/google-fonts@^1.0.0":
+"@nuxtjs/google-fonts@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/google-fonts/-/google-fonts-1.0.2.tgz#37cd53cc0e8cff61310a3c34c9b9f432953c99c9"
   integrity sha512-ecyyFAwLyb3U9m9FS/bmP8BYBXqJpPg3xv322dn1xaxDyFoW25LJutRtHeORlgloYrjyHJLc0kSpi75yYpXOBg==
@@ -10625,7 +10625,7 @@ nuxt-ackee@^2.0.0:
     ackee-tracker "^4.0.0"
     defu "^3.1.0"
 
-nuxt-i18n@^6.14.1:
+nuxt-i18n@^6.15.0:
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.15.0.tgz#acbb4335246f331446a30ff7de523e8d28e8a957"
   integrity sha512-25ysCR5Lfp6dc4Ug79jb/4Spa8wXldB/diTqllaW2LZvSBNnp5Ts2KX96NeAKyOfwdpKag4aKuHck219FeN6kQ==
@@ -10640,7 +10640,7 @@ nuxt-i18n@^6.14.1:
     js-cookie "^2.2.1"
     vue-i18n "^8.18.1"
 
-nuxt@^2.14.4:
+nuxt@^2.14.5:
   version "2.14.5"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-2.14.5.tgz#d4da8ed7dd03cf199cf3981637377ab1fe682187"
   integrity sha512-VAOlQNfDdxxCdrkOAWO5ErkvhMAZHdRJVMWH+gwjIWT+yh9uAXoFxm/WZcxCnJ6jEoUgvOZ6/DFKC01T96+0pg==
