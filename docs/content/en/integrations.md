@@ -78,7 +78,7 @@ Or, if you want to include the body of the article as content, including any con
 
 One possible way to do this uses the [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) documented approach and will work well with `npm run generate` and will use the existing Nuxt process to include the content. Here's how to do it.
 
-First, use the array based approach for declaring your feeds as shown in the @nuxtjs/feed documentation. This approach is more declarative than the function based approach used above. The feed array consists of objects with 5 possible values.
+First, use the array based approach for declaring your feeds as shown in the @nuxtjs/feed documentation. The feed array consists of objects with 5 possible values.
 
 1. The `path` which is the path from your domain to the feed document.
 2. A function that will generate the feed content.
