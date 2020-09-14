@@ -364,6 +364,8 @@ You can create a `content/settings.json` file to configure the theme.
   - The Twitter username `@username` you want to link. Example: `@nuxt_js`
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
+- `defaultDir` (`String`) <badge>v0.6.0+</badge>
+  - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
