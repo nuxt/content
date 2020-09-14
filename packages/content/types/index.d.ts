@@ -6,6 +6,7 @@ import type { DumpOptions as YamlOptions } from 'js-yaml';
 import type { OptionsV2 as XMLOptions } from 'xml2js';
 import type { CSVParseParam as CSVOptions } from 'csvtojson/v2/Parameters';
 import type { Database  as Database_imp } from './database';
+import { Highlighter, PromisedHighlighter } from './highlighter';
 
 // Exports of index.js
 export const $content: contentFunc
@@ -32,6 +33,7 @@ interface IContentOptions {
     prism?: {
       theme?: string | false;
     };
+    highlighter?: Highlighter | PromisedHighlighter;
   };
   yaml?: YamlOptions;
   csv?: CSVOptions;

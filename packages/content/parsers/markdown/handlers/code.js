@@ -6,16 +6,15 @@ const { parseThematicBlock } = require('./utils')
 
 require('prismjs/components/index')()
 
-module.exports = function (h, node) {
-  const { language, lineHighlights, fileName } = parseThematicBlock(node.lang)
-  const value = node.value ? detab(node.value + '\n') : ''
+const prismHighlighter = (rawCode, language, { lineHighlights, fileName }, { h, node }) => {
   let lang = language === 'vue' ? 'html' : language
+
   // eslint-disable-next-line no-prototype-builtins
   const hasPrismHightlight = Prism.languages.hasOwnProperty(lang)
 
   let code = hasPrismHightlight
-    ? Prism.highlight(value, Prism.languages[lang], lang)
-    : value
+    ? Prism.highlight(rawCode, Prism.languages[lang], lang)
+    : rawCode
 
   if (!lang || !hasPrismHightlight) {
     lang = 'text'
@@ -47,4 +46,23 @@ module.exports = function (h, node) {
   ]))
 
   return h(node.position, 'div', { className: ['nuxt-content-highlight'] }, childs)
+}
+
+const toAst = (h, node) => (highlighted) => {
+  if (typeof highlighted === 'string') {
+    return h(node, 'div', { className: ['nuxt-content-highlight'] }, [u('raw', highlighted)])
+  }
+  return highlighted
+}
+
+module.exports = highlighter => (h, node) => {
+  const { language, lineHighlights, fileName } = parseThematicBlock(node.lang)
+  const code = node.value ? detab(node.value + '\n') : ''
+
+  if (!highlighter) {
+    return prismHighlighter(code, language, { lineHighlights, fileName }, { h, node })
+  }
+
+  const highlightedCode = highlighter(code, language, { lineHighlights, fileName }, { h, node, u })
+  return toAst(h, node)(highlightedCode)
 }

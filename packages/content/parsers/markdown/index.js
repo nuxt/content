@@ -59,12 +59,20 @@ class Markdown {
    * @param {string} content - JSON AST generated from markdown.
    * @returns {object} JSON AST body
    */
-  generateBody (content) {
+  async generateBody (content) {
+    let { highlighter } = this.options
+    if (typeof highlighter === 'function' && highlighter.length === 0) {
+      highlighter = await highlighter()
+    }
+
     return new Promise((resolve, reject) => {
       let stream = unified().use(parse)
 
       stream = this.processPluginsFor('remark', stream)
-      stream = stream.use(remark2rehype, { handlers, allowDangerousHtml: true })
+      stream = stream.use(remark2rehype, {
+        handlers: handlers(highlighter),
+        allowDangerousHtml: true
+      })
       stream = this.processPluginsFor('rehype', stream)
 
       stream
