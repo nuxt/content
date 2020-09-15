@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.2.2...create-nuxt-content-docs@0.3.0) (2020-09-15)
+
+
+### Features
+
+* support github custom domain ([#458](https://github.com/nuxt/content/issues/458)) ([d01e134](https://github.com/nuxt/content/commit/d01e1347f88006948929ced9dfa6dd97e3fa2008))
+
+
+
+
+
 ## [0.2.2](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.2.1...create-nuxt-content-docs@0.2.2) (2020-09-03)
 
 **Note:** Version bump only for package create-nuxt-content-docs
