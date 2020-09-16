@@ -4,9 +4,7 @@ description: "Starting from Nuxt v2.4.0, Nuxt.js will automagically prefetch the
 imgUrl: blog/introducing-smart-prefetching/main.png
 date: 2019-01-28
 authors:
-  - name: Sébastien Chopin
-    avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
-    link: https://twitter.com/atinux
+  - atinux
 tags:
     - framework
     - feature
