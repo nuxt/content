@@ -111,15 +111,18 @@ class Database extends Hookable {
    * @param {string} path - The path of the file.
    */
   async insertFile (path) {
-    const item = await this.parseFile(path)
+    const items = await this.parseFile(path)
 
-    if (!item) {
-      return
+    // Assume path is a directory if returning an array
+    if (items.length > 1) {
+      this.dirs.push(this.normalizePath(path))
     }
 
-    await this.callHook('file:beforeInsert', item)
+    for (const item of items) {
+      await this.callHook('file:beforeInsert', item)
 
-    this.items.insert(item)
+      this.items.insert(item)
+    }
   }
 
   /**
@@ -127,22 +130,20 @@ class Database extends Hookable {
    * @param {string} path - The path of the file.
    */
   async updateFile (path) {
-    const item = await this.parseFile(path)
+    const items = await this.parseFile(path)
 
-    if (!item) {
-      return
+    for (const item of items) {
+      await this.callHook('file:beforeInsert', item)
+
+      const document = this.items.findOne({ path: item.path })
+
+      logger.info(`Updated ${path.replace(this.cwd, '.')}`)
+      if (document) {
+        this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
+        return
+      }
+      this.items.insert(item)
     }
-
-    await this.callHook('file:beforeInsert', item)
-
-    const document = this.items.findOne({ path: item.path })
-
-    logger.info(`Updated ${path.replace(this.cwd, '.')}`)
-    if (document) {
-      this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
-      return
-    }
-    this.items.insert(item)
   }
 
   /**
@@ -188,9 +189,11 @@ class Database extends Hookable {
       ...this.extendParser
     })[extension]
     // Collect data from file
-    let data = {}
+    let data = []
     try {
       data = await parser(file.data)
+      // Force data to be an array
+      data = Array.isArray(data) ? data : [data]
     } catch (err) {
       logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
@@ -199,25 +202,28 @@ class Database extends Hookable {
     const normalizedPath = this.normalizePath(path)
     // Extract dir from path
     const split = normalizedPath.split('/')
-    const dir = split.slice(0, split.length - 1).join('/')
+    const dir = (data.length > 1 ? split : split.slice(0, split.length - 1)).join('/')
 
-    // Overrides createdAt & updatedAt if it exists in the document
-    const existingCreatedAt = data.createdAt && new Date(data.createdAt)
-    const existingUpdatedAt = data.updatedAt && new Date(data.updatedAt)
-    // validate the existing dates to avoid wrong date format or typo
+    // Validate the existing dates to avoid wrong date format or typo
     const isValidDate = (date) => {
       return date instanceof Date && !isNaN(date)
     }
 
-    return {
-      ...data,
-      dir: dir || '/',
-      path: normalizedPath,
-      extension,
-      slug: split[split.length - 1],
-      createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
-      updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
-    }
+    return data.map((item) => {
+      // Overrides createdAt & updatedAt if it exists in the document
+      const existingCreatedAt = item.createdAt && new Date(item.createdAt)
+      const existingUpdatedAt = item.updatedAt && new Date(item.updatedAt)
+
+      return {
+        slug: split[split.length - 1],
+        ...item,
+        dir: dir || '/',
+        path: normalizedPath,
+        extension,
+        createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
+        updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
+      }
+    })
   }
 
   /**
