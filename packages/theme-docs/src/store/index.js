@@ -32,7 +32,7 @@ export const getters = {
 
     // GitHub
     return {
-      repo: `https://github.com/repos/${github}`,
+      repo: `https://github.com/${github}`,
       api: {
         repo: `https://api.github.com/repos/${github}`,
         releases: `https://api.github.com/repos/${github}/releases`
