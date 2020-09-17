@@ -113,6 +113,10 @@ class Database extends Hookable {
   async insertFile (path) {
     const items = await this.parseFile(path)
 
+    if (!items) {
+      return
+    }
+
     // Assume path is a directory if returning an array
     if (items.length > 1) {
       this.dirs.push(this.normalizePath(path))
@@ -131,6 +135,10 @@ class Database extends Hookable {
    */
   async updateFile (path) {
     const items = await this.parseFile(path)
+
+    if (!items) {
+      return
+    }
 
     for (const item of items) {
       await this.callHook('file:beforeInsert', item)
@@ -188,6 +196,7 @@ class Database extends Hookable {
       '.xml': data => this.xml.toJSON(data),
       ...this.extendParser
     })[extension]
+
     // Collect data from file
     let data = []
     try {
@@ -198,11 +207,9 @@ class Database extends Hookable {
       logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
     }
+
     // Normalize path without dir and ext
     const normalizedPath = this.normalizePath(path)
-    // Extract dir from path
-    const split = normalizedPath.split('/')
-    const dir = (data.length > 1 ? split : split.slice(0, split.length - 1)).join('/')
 
     // Validate the existing dates to avoid wrong date format or typo
     const isValidDate = (date) => {
@@ -210,15 +217,28 @@ class Database extends Hookable {
     }
 
     return data.map((item) => {
+      const paths = normalizedPath.split('/')
+      // `item.slug` is necessary with JSON arrays since `slug` comes from filename by default
+      if (data.length > 1 && item.slug) {
+        paths.push(item.slug)
+      }
+      // Extract `dir` from paths
+      const dir = paths.slice(0, paths.length - 1).join('/') || '/'
+      // Extract `slug` from paths
+      const slug = paths[paths.length - 1]
+      // Construct full path
+      const path = paths.join('/')
+
       // Overrides createdAt & updatedAt if it exists in the document
       const existingCreatedAt = item.createdAt && new Date(item.createdAt)
       const existingUpdatedAt = item.updatedAt && new Date(item.updatedAt)
 
       return {
-        slug: split[split.length - 1],
+        slug,
+        // Allow slug override
         ...item,
-        dir: dir || '/',
-        path: normalizedPath,
+        dir,
+        path,
         extension,
         createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
         updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
