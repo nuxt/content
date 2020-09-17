@@ -13,7 +13,7 @@ export default {
     items: {
       type: Array,
       default: () => []
-    }
+    },
     type: {
       type: String,
       default: 'success',
