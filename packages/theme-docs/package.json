@@ -11,7 +11,7 @@
     "@nuxt/content": "^1.9.0",
     "@nuxt/types": "^2.14.5",
     "@nuxtjs/color-mode": "^1.1.1",
-    "@nuxtjs/google-fonts": "^1.0.2",
+    "@nuxtjs/google-fonts": "^1.0.3",
     "@nuxtjs/pwa": "^3.0.2",
     "@nuxtjs/tailwindcss": "^3.0.2",
     "@tailwindcss/typography": "^0.2.0",

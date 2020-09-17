@@ -2307,13 +2307,13 @@
     eslint-plugin-unicorn "^21.0.0"
     eslint-plugin-vue "^6.2.2"
 
-"@nuxtjs/google-fonts@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/google-fonts/-/google-fonts-1.0.2.tgz#37cd53cc0e8cff61310a3c34c9b9f432953c99c9"
-  integrity sha512-ecyyFAwLyb3U9m9FS/bmP8BYBXqJpPg3xv322dn1xaxDyFoW25LJutRtHeORlgloYrjyHJLc0kSpi75yYpXOBg==
+"@nuxtjs/google-fonts@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/google-fonts/-/google-fonts-1.0.3.tgz#1795c15aa1f32b0554f8494200c282e04712e9ef"
+  integrity sha512-H0gIeklyaGw9zMypqQkN7XHR8fdwEzxszU/xrr8FR2snZQzYzgBrVD4lLHUZHrIPzBg3/ucUWDskXTL3MpULfw==
   dependencies:
     consola "^2.15.0"
-    google-fonts-helper "^1.0.4"
+    google-fonts-helper "^1.0.5"
 
 "@nuxtjs/module-test-utils@^1.6.3":
   version "1.6.3"
@@ -7441,10 +7441,10 @@ good-listener@^1.2.2:
   dependencies:
     delegate "^3.1.2"
 
-google-fonts-helper@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/google-fonts-helper/-/google-fonts-helper-1.0.4.tgz#c64dbb49428cab14517804b15f7bb06491d6ec69"
-  integrity sha512-SSjbWUqygILiMjjubdhEME93BccRvzjtSOzfs6eBHhdYYn7jXVj1uRkL7ouuleDd/opbV2L2jhTDIN96oi2mWQ==
+google-fonts-helper@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/google-fonts-helper/-/google-fonts-helper-1.0.5.tgz#0321c05df0f1eb88d6e82e66f895cfe3393ef082"
+  integrity sha512-AX+rqzokRIB+0Q2enmiCZV37H/GXFW1c2kFINgfwRBkBzH939nDutbrNR2wVKA80ZBedIJl/tvLvO6G3XNjibg==
   dependencies:
     deepmerge "^4.2.2"
     fs-extra "^9.0.1"
@@ -13377,10 +13377,10 @@ shiki-languages@^0.1.6:
   dependencies:
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki-languages@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/shiki-languages/-/shiki-languages-0.2.4.tgz#7397dacff7894f41a8319e7b4cb8908eec2a0cc2"
-  integrity sha512-qvI1BNbmatp7UHuTNbI+9s9ugYz8XdDU3Mz++nUlUVtC8Y2PicRifXk5Wad2Ph1WQW5GTPy3pIZKqNlbM/IhVA==
+shiki-languages@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/shiki-languages/-/shiki-languages-0.2.5.tgz#5f25c7f37c592293b94796c18dbff6837b68a1f8"
+  integrity sha512-M3q1BFE2Qk/w72K9GM8kZaZ2yVSP4wd1gep9sYWaLJWQN4GhTuqC1oJrmX0JBX1PHECJqi39ZGYD39rQ6qrVvw==
   dependencies:
     vscode-textmate "^5.2.0"
 
@@ -13392,13 +13392,13 @@ shiki-themes@^0.1.7:
     json5 "^2.1.0"
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki-themes@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/shiki-themes/-/shiki-themes-0.2.4.tgz#7d40fd6a069ec70f65d359ca24cad3fde51697a6"
-  integrity sha512-gnMlNx4Fx62riETs+ElAX7+ol5cv3e1/SKxvKe7xL2J+6Q0u6TQlbDnhKMpheLW5dSMZ6xWsuGHkiJQV6h/cTg==
+shiki-themes@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/shiki-themes/-/shiki-themes-0.2.5.tgz#fc121ac2ba519d411cd2c016b7ea000eac22aa31"
+  integrity sha512-jL2IpczDT1B6vpmLvwq8PbIVgdWUZ+8C7A7sBDAH2dsoFEMSk4OxeGByaNKxFRZgx40wFDyCCriC2JIQDPnHBQ==
   dependencies:
     json5 "^2.1.0"
-    vscode-textmate "https://github.com/octref/vscode-textmate"
+    vscode-textmate "^5.2.0"
 
 shiki-twoslash@^0.8.0:
   version "0.8.0"
@@ -13421,14 +13421,14 @@ shiki@^0.1.6:
     shiki-themes "^0.1.7"
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/shiki/-/shiki-0.2.4.tgz#e43d90e1d49a9ca03021fcc6dfcb3b63bd136558"
-  integrity sha512-Dn924XZ563evpPGa1bVERLy0eJCxjNMcxmxqhyTjXY/4wgL6R2eS2vJyGM0GW7FMLcXetSTIqog+LaNCJiYFUw==
+shiki@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/shiki/-/shiki-0.2.5.tgz#3321a3f145092018c86c4cca281817d2992785f2"
+  integrity sha512-TwiRLuon4m+TMZ8Qdx8VgtIj4edzxmFjW+I7IjI7xyf2b7WjTXrynuk4iDMCjdsb8zVd9oFCxqhfyNC8LGeDNQ==
   dependencies:
     onigasm "^2.2.1"
-    shiki-languages "^0.2.4"
-    shiki-themes "^0.2.4"
+    shiki-languages "^0.2.5"
+    shiki-themes "^0.2.5"
     vscode-textmate "^5.2.0"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
