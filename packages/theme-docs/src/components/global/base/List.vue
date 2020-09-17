@@ -14,6 +14,23 @@ export default {
       type: Array,
       default: () => []
     }
+    type: {
+      type: String,
+      default: 'success',
+      validator (value) {
+        return ['info', 'success', 'warning', 'danger'].includes(value)
+      }
+    }
+  },
+  computed: {
+    icon () {
+      return ({
+        info: 'IconInformationCircle',
+        success: 'IconCheckCircle',
+        warning: 'IconExclamationCircle',
+        danger: 'IconXCircle'
+      })[this.type]
+    }
   }
 }
 </script>
