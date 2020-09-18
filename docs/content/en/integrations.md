@@ -272,3 +272,15 @@ export default {
 ...
 }
 ```
+
+## Forestry CMS
+
+You can integrate Nuxt Content with [Forestry](https://forestry.io) in a few steps.
+
+<alert>
+
+We recommend to take a look at this tutorial made by [Pascal Cauhépé](https://twitter.com/eQRoeil)
+
+👉 &nbsp;https://nuxt-content-and-forestry.netlify.app
+
+</alert>
