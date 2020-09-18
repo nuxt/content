@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.6.0...@nuxt/content-theme-docs@0.6.1) (2020-09-18)
+
+
+### Bug Fixes
+
+* **theme-docs:** fixed incorrect Github URL for navbar ([#489](https://github.com/nuxt/content/issues/489)) ([769c10a](https://github.com/nuxt/content/commit/769c10a07321e05820e8e4fe1f13ce0d2f721fb1))
+
+
+
+
+
 # [0.6.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.6...@nuxt/content-theme-docs@0.6.0) (2020-09-15)
 
 
