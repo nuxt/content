@@ -14,7 +14,7 @@
   "dependencies": {
     "@lokidb/full-text-search": "^2.1.0",
     "@lokidb/loki": "^2.1.0",
-    "@nuxt/types": "^2.14.5",
+    "@nuxt/types": "^2.14.6",
     "@types/js-yaml": "^3.12.5",
     "@types/xml2js": "^0.4.5",
     "change-case": "^4.1.1",
