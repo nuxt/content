@@ -9,7 +9,7 @@
   "main": "src/",
   "dependencies": {
     "@nuxt/content": "^1.9.0",
-    "@nuxt/types": "^2.14.5",
+    "@nuxt/types": "^2.14.6",
     "@nuxtjs/color-mode": "^1.1.1",
     "@nuxtjs/google-fonts": "^1.0.3",
     "@nuxtjs/pwa": "^3.0.2",
@@ -24,7 +24,7 @@
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
-    "nuxt": "^2.14.5"
+    "nuxt": "^2.14.6"
   },
   "types": "./src/index.d.ts"
 }
