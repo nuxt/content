@@ -446,6 +446,10 @@ Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 - `items`
   - Type: `Array`
   - Default: `[]`
+- `type`
+  - Type: `String`
+  - Default: `'success'`
+  - Values: `['info', 'success', 'warning', 'danger']`
 
 **Example**
 
@@ -463,6 +467,7 @@ items:
 **Result**
 
 <list :items="['Item1', 'Item2', 'Item3']"></list>
+
 
 ### `<badge>`
 
