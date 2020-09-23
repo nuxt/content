@@ -31,24 +31,44 @@ export default {
     }
   },
   mounted () {
-    this.tabs = this.$slots.default.filter(slot => Boolean(slot.componentOptions)).map((slot) => {
-      return {
-        label: slot.componentOptions.propsData.label,
-        elm: slot.elm
-      }
-    })
+    this.tabs = this.$slots.default
+      .filter(slot => Boolean(slot.componentOptions))
+      .map((slot) => {
+        return {
+          label: slot.componentOptions.propsData.label,
+          elm: slot.elm
+        }
+      })
     this.$nextTick(this.updateHighlighteUnderlinePosition)
   },
   methods: {
-    switchTab (i) {
-      this.tabs.map((tab) => {
-        tab.elm.classList.remove('active')
+    async switchTab (tabIndex) {
+      let currentActiveTabIndex = 0
+      const childNodes = this.$el.childNodes
+      await this.$nextTick(() => {
+        childNodes.forEach((node, index) => {
+          // Iterate through DOM Nodes to be certain
+          if (node && node.classList && node.classList.contains('code-block')) {
+            if (currentActiveTabIndex === tabIndex) {
+              // Sometimes reference to childNode is lost, instead iterate
+              childNodes[index].classList.add('active')
+            }
+            ++currentActiveTabIndex
+          }
+        })
       })
-      this.tabs[i].elm.classList.add('active')
     },
-    updateTabs (i) {
+    async updateTabs (i) {
       this.activeTabIndex = i
       this.updateHighlighteUnderlinePosition()
+      const childNodes = this.$el.childNodes
+      await this.$nextTick(() => {
+        childNodes.forEach((node) => {
+          if (node && node.classList && node.classList.contains('active')) {
+            node.classList.remove('active')
+          }
+        })
+      })
     },
     updateHighlighteUnderlinePosition () {
       const activeTab = this.$refs.tabs[this.activeTabIndex]
