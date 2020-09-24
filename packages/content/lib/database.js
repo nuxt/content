@@ -200,7 +200,12 @@ class Database extends Hookable {
     // Collect data from file
     let data = []
     try {
-      data = await parser(file.data)
+      const text = await file.data
+      data = await parser(text)
+      if (!Array.isArray(data)) {
+        // Add raw text, regardless of parsing engine
+        Object.assign(data, { text })
+      }
       // Force data to be an array
       data = Array.isArray(data) ? data : [data]
     } catch (err) {
