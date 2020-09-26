@@ -8,8 +8,9 @@ const path = require('path')
 const plugin = require('tailwindcss/plugin')
 const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
+const { getColors } = require('theme-colors')
 
-module.exports = {
+module.exports = docsOptions => ({
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true
@@ -21,17 +22,7 @@ module.exports = {
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        primary: {
-          100: '#E6FAF2',
-          200: '#BFF3E0',
-          300: '#99EBCD',
-          400: '#4DDCA7',
-          500: '#00CD81',
-          600: '#00B974',
-          700: '#007B4D',
-          800: '#005C3A',
-          900: '#003E27'
-        }
+        primary: getColors(docsOptions.primaryColor)
       },
       maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'
@@ -202,4 +193,4 @@ module.exports = {
       whitelist: ['dark-mode']
     }
   }
-}
+})
