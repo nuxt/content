@@ -206,6 +206,12 @@ Check out [this snippet](/snippets#prev-and-next) on how to implement prev and n
 
 Ends the chain sequence and collects data.
 
+## Catch()
+
+Checks if the `.md` file is exist in content directory or not.
+
+It should be inserted after the `fetch()`.
+
 ## Example
 
 ```js
@@ -222,6 +228,9 @@ const articles = await this.$content('articles')
   })
   .search('welcome')
   .fetch()
+  .catch((err) => {
+     error({ statusCode: 404, message: 'Page not found' })
+  })
 ```
 
 > You can check how to use the [Content API](/advanced#api-endpoint) in development.
