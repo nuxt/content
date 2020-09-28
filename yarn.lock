@@ -2338,16 +2338,16 @@
     jimp-compact "^0.12.1"
     workbox-cdn "^5.1.3"
 
-"@nuxtjs/tailwindcss@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-3.0.2.tgz#2763d5f9f8a002130437cec1653f0c15335d8d9b"
-  integrity sha512-jSudt1JaJQRE64r0Bx5PHVTYVIedlZtR00KtFYYUSpRLHD2BLkjHsvYOa/jtKcinSF3RWZy6dg+l0IMJqDoSLg==
+"@nuxtjs/tailwindcss@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-3.1.0.tgz#d70310d49cc714e15d2d76b5d388a812f7126f17"
+  integrity sha512-nxooAntKxQdaTHQRgRa7RE7Hk9fqly4n65+4F+O4uRS4mYeT/wZon8l60mubkUrlZgpO5X3gvUDf569Dd8BKmA==
   dependencies:
     clear-module "^4.1.1"
     consola "^2.15.0"
     defu "^3.1.0"
     fs-extra "^9.0.1"
-    tailwindcss "^1.7.3"
+    tailwindcss "^1.8.10"
 
 "@nuxtjs/youch@^4.2.3":
   version "4.2.3"
@@ -6413,7 +6413,7 @@ eslint-scope@^4.0.3:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-scope@^5.0.0, eslint-scope@^5.1.0:
+eslint-scope@^5.0.0, eslint-scope@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-5.1.1.tgz#e786e59a66cb92b3f6c1fb0d508aab174848f48c"
   integrity sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==
@@ -6443,10 +6443,10 @@ eslint-visitor-keys@^1.0.0, eslint-visitor-keys@^1.1.0, eslint-visitor-keys@^1.3
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.3.0.tgz#30ebd1ef7c2fdff01c3a4f151044af25fab0523e"
   integrity sha512-6J72N8UNa462wa/KFODt/PJ3IU60SDpC3QXC1Hjc1BXXpfL2C9R5+AU7jhe0F6GREqVMh4Juu+NY7xn+6dipUQ==
 
-eslint@^7.9.0:
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.9.0.tgz#522aeccc5c3a19017cf0cb46ebfd660a79acf337"
-  integrity sha512-V6QyhX21+uXp4T+3nrNfI3hQNBDa/P8ga7LoQOenwrlEFXrEnUEE+ok1dMtaS3b6rmLXhT1TkTIsG75HMLbknA==
+eslint@^7.10.0:
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.10.0.tgz#494edb3e4750fb791133ca379e786a8f648c72b9"
+  integrity sha512-BDVffmqWl7JJXqCjAK6lWtcQThZB/aP1HXSH1JKwGwv0LQEdvpR7qzNrUT487RM39B5goWuboFad5ovMBmD8yA==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@eslint/eslintrc" "^0.1.3"
@@ -6456,7 +6456,7 @@ eslint@^7.9.0:
     debug "^4.0.1"
     doctrine "^3.0.0"
     enquirer "^2.3.5"
-    eslint-scope "^5.1.0"
+    eslint-scope "^5.1.1"
     eslint-utils "^2.1.0"
     eslint-visitor-keys "^1.3.0"
     espree "^7.3.0"
@@ -7691,6 +7691,14 @@ hasha@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/hasha/-/hasha-5.2.0.tgz#33094d1f69c40a4a6ac7be53d5fe3ff95a269e0c"
   integrity sha512-2W+jKdQbAdSIrggA8Q35Br8qKadTrqCTC8+XZvBWepKDK6m9XkX6Iz1a2yh2KP01kzAR/dpuMeUnocoLYDcskw==
+  dependencies:
+    is-stream "^2.0.0"
+    type-fest "^0.8.0"
+
+hasha@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/hasha/-/hasha-5.2.1.tgz#0e5b492aa40de3819e80955f221d2fccef55b5aa"
+  integrity sha512-x15jnRSHTi3VmH+oHtVb9kgU/HuKOK8mjK8iCL3dPQXh4YJlUb9YSI8ZLiiqLAIvY2wuDIlZYZppy8vB2XISkQ==
   dependencies:
     is-stream "^2.0.0"
     type-fest "^0.8.0"
@@ -9827,10 +9835,10 @@ markdown-escapes@^1.0.0:
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.4.tgz#c95415ef451499d7602b91095f3c8e8975f78535"
   integrity sha512-8z4efJYk43E0upd0NbVXwgSTQs6cT3T06etieCMEg7dRbzCbxUCK/GHlX8mhHRDcp+OLlHkPKsvqQTCvsRl2cg==
 
-marked@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-1.1.1.tgz#e5d61b69842210d5df57b05856e0c91572703e6a"
-  integrity sha512-mJzT8D2yPxoPh7h0UXkB+dBj4FykPJ2OIfxAWeIHrvoHDkFxukV/29QxoFQoPM6RLEwhIFdJpmKBlqVM3s2ZIw==
+marked@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.0.tgz#7221ce2395fa6cf6d722e6f2871a32d3513c85ca"
+  integrity sha512-tiRxakgbNPBr301ihe/785NntvYyhxlqcL3YaC8CaxJQh7kiaEtrN9B/eK2I2943Yjkh5gw25chYFDQhOMCwMA==
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -10829,6 +10837,13 @@ onigasm@^2.2.1:
   dependencies:
     lru-cache "^5.1.1"
     tslint "^5.20.1"
+
+onigasm@^2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/onigasm/-/onigasm-2.2.5.tgz#cc4d2a79a0fa0b64caec1f4c7ea367585a676892"
+  integrity sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==
+  dependencies:
+    lru-cache "^5.1.1"
 
 opencollective-postinstall@^2.0.2:
   version "2.0.3"
@@ -13402,10 +13417,10 @@ shiki-languages@^0.1.6:
   dependencies:
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki-languages@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/shiki-languages/-/shiki-languages-0.2.5.tgz#5f25c7f37c592293b94796c18dbff6837b68a1f8"
-  integrity sha512-M3q1BFE2Qk/w72K9GM8kZaZ2yVSP4wd1gep9sYWaLJWQN4GhTuqC1oJrmX0JBX1PHECJqi39ZGYD39rQ6qrVvw==
+shiki-languages@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/shiki-languages/-/shiki-languages-0.2.6.tgz#4525241c8f41eb783485148b3761d41b3e4f72f3"
+  integrity sha512-k2p+bYTdQbbJZoWeJwOBY3hs4OC5A5wCP+/M8Ksovk1L30HyBpGsn/C2soGy+xKCjU/rm3ofaGyCSttfP3Ztjw==
   dependencies:
     vscode-textmate "^5.2.0"
 
@@ -13417,10 +13432,10 @@ shiki-themes@^0.1.7:
     json5 "^2.1.0"
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki-themes@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/shiki-themes/-/shiki-themes-0.2.5.tgz#fc121ac2ba519d411cd2c016b7ea000eac22aa31"
-  integrity sha512-jL2IpczDT1B6vpmLvwq8PbIVgdWUZ+8C7A7sBDAH2dsoFEMSk4OxeGByaNKxFRZgx40wFDyCCriC2JIQDPnHBQ==
+shiki-themes@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/shiki-themes/-/shiki-themes-0.2.6.tgz#4d271187c9ce3823d7cc8256d8f998d6c936f462"
+  integrity sha512-566UwtYR29zTBEQKbN9v10y+PVSmCsvosoiBoloNBLnTXi1bI7ZjDH+TKkc0+9n9QvJ3kj3IUvmvXL6six1Rhg==
   dependencies:
     json5 "^2.1.0"
     vscode-textmate "^5.2.0"
@@ -13446,14 +13461,14 @@ shiki@^0.1.6:
     shiki-themes "^0.1.7"
     vscode-textmate "https://github.com/octref/vscode-textmate"
 
-shiki@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/shiki/-/shiki-0.2.5.tgz#3321a3f145092018c86c4cca281817d2992785f2"
-  integrity sha512-TwiRLuon4m+TMZ8Qdx8VgtIj4edzxmFjW+I7IjI7xyf2b7WjTXrynuk4iDMCjdsb8zVd9oFCxqhfyNC8LGeDNQ==
+shiki@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/shiki/-/shiki-0.2.6.tgz#e766702ea6ec20b5ab37c7fcb54d927fc71231ce"
+  integrity sha512-QGpzkZN59bingo/h4uJ85gh3QWBZEU7ZB1xFaq4eh2UZUWpOReo3V/7ouVvsZ07E9vblixCyDSrtdyVpg6IZLQ==
   dependencies:
-    onigasm "^2.2.1"
-    shiki-languages "^0.2.5"
-    shiki-themes "^0.2.5"
+    onigasm "^2.2.5"
+    shiki-languages "^0.2.6"
+    shiki-themes "^0.2.6"
     vscode-textmate "^5.2.0"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
@@ -14091,10 +14106,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tailwindcss@^1.7.3:
-  version "1.8.9"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.8.9.tgz#86aa05f019b4975675d1c67a2c9962d9c833ea13"
-  integrity sha512-VgoBxIyF+Ipf+x3eDz3tPA8A5blGBPkswA2xM6fxCmAwAmhlIr9Zk3exft44BUf3q9mxorvjCRtxBrklfPDSoQ==
+tailwindcss@^1.8.10:
+  version "1.8.10"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.8.10.tgz#945ef151c401c04a1c95e6a6bc747387a8d1b9dc"
+  integrity sha512-7QkERG/cWCzsuMqHMwjOaLMVixOGLNBiXsrkssxlE1aWfkxVbGqiuMokR2162xRyaH2mBIHKxmlf1qb3DvIPqw==
   dependencies:
     "@fullhuman/postcss-purgecss" "^2.1.2"
     autoprefixer "^9.4.5"
