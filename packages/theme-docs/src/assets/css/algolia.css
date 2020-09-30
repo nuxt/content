@@ -1,0 +1,33 @@
+/*
+ TODO: Design clearly needs to be improved
+*/
+
+/* Algolia Input overwrites */
+.algolia-autocomplete {
+    width: 100%;
+}
+
+/* Algolia Search Results overwrites */
+.algolia-search-wrapper .algolia-autocomplete .ds-dropdown-menu [class*=ds-dataset-] {
+    border: none;
+    padding: 0;
+}
+.algolia-search-wrapper .algolia-autocomplete .ds-dropdown-menu .ds-suggestions {
+    margin-top: 0;
+}
+.algolia-search-wrapper .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
+    @apply text-primary-600;
+}
+.algolia-search-wrapper .algolia-autocomplete .algolia-docsearch-suggestion {
+    padding: 0;
+}
+.algolia-search-wrapper .algolia-autocomplete .algolia-docsearch-suggestion .algolia-docsearch-suggestion--category-header {
+    @apply bg-primary-600;
+    padding: 5px 10px;
+    margin-top: 0;
+    color: #fff;
+    font-weight: 600;
+}
+.algolia-docsearch-footer {
+    margin: 0 10px 5px 0
+}

@@ -8,24 +8,31 @@
     >
       <label for="search" class="sr-only">Search</label>
       <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div class="absolute z-10 inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <IconSearch class="h-5 w-5 text-gray-500" />
         </div>
-        <input
-          id="search"
-          ref="search"
-          v-model="q"
-          class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"
-          :class="{ 'rounded-b-none': focus && (searching || results.length) }"
-          :placeholder="$t('search.placeholder')"
-          type="search"
-          autocomplete="off"
-          @focus="onFocus"
-          @blur="onBlur"
-        />
+        <form
+          id="search-form"
+          class="algolia-search-wrapper search-box"
+          role="search"
+        >
+          <input
+            :id="algoliaSearchEnabled ? 'algolia-search-input' :'search'"
+            ref="search"
+            v-model="q"
+            class="block w-full pl-10 pr-3 py-2 truncate leading-5 placeholder-gray-500 border border-transparent text-gray-700 dark:text-white dark-focus:text-white focus:border-gray-300 dark-focus:border-gray-700 rounded-md focus:outline-none focus:bg-white dark-focus:bg-gray-900 bg-gray-200 dark:bg-gray-800"
+            :class="{ 'rounded-b-none': focus && (searching || results.length) }"
+            :placeholder="$t('search.placeholder')"
+            type="search"
+            autocomplete="off"
+            @focus="onFocus"
+            @blur="onBlur"
+          />
+        </form>
       </div>
     </div>
     <ul
+      v-if="!algoliaSearchEnabled"
       v-show="focus && (searching || results.length)"
       class="z-10 absolute w-full flex-1 top-0 bg-white dark:bg-gray-900 rounded-md border border-gray-300 dark:border-gray-700 overflow-hidden"
       :class="{ 'rounded-t-none': focus && (searching || results.length) }"
@@ -56,6 +63,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -65,6 +74,20 @@ export default {
       open: false,
       searching: false,
       results: []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'settings'
+    ]),
+    algoliaOptions () {
+      return this.settings.algolia || {}
+    },
+    locale () {
+      return this.$i18n.locale
+    },
+    algoliaSearchEnabled () {
+      return this.algoliaOptions && this.algoliaOptions.apiKey && this.algoliaOptions.indexName
     }
   },
   watch: {
@@ -78,10 +101,21 @@ export default {
       this.searching = true
       this.results = await this.$content(this.$i18n.locale, { deep: true }).sortBy('position', 'asc').only(['title', 'slug', 'category', 'to']).limit(12).search(q).fetch()
       this.searching = false
+    },
+    locale (newValue) {
+      // Updated algolia search when the language changes.
+      this.updateAlgolia(this.algoliaOptions, newValue)
+    },
+    algoliaOptions (newValue) {
+      // Updated algolia search when the algolia options are changed.
+      this.updateAlgolia(newValue, this.locale)
     }
   },
   mounted () {
     window.addEventListener('keyup', this.keyup)
+    if (this.algoliaSearchEnabled) {
+      this.initializeAlgolia(this.algoliaOptions, this.locale)
+    }
   },
   beforeDestroy () {
     window.removeEventListener('keyup', this.keyup)
@@ -119,6 +153,35 @@ export default {
       // Unfocus the input and reset the query.
       this.$refs.search.blur()
       this.q = ''
+    },
+    initializeAlgolia (userOptions, lang) {
+      Promise.all([
+        import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.js'),
+        import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.css')
+      ]).then(([docsearch]) => {
+        docsearch = docsearch.default
+        const { algoliaOptions = {} } = userOptions
+        docsearch(Object.assign(
+          {},
+          userOptions,
+          {
+            inputSelector: '#algolia-search-input',
+            algoliaOptions: Object.assign({
+              facetFilters: [`lang:${lang}`].concat(algoliaOptions.facetFilters || [])
+            }, algoliaOptions),
+            handleSelected: (input, event, suggestion) => {
+              const { pathname, hash } = new URL(suggestion.url)
+              const _hash = decodeURIComponent(hash)
+              this.$router.push(`${pathname}${_hash}`)
+            }
+          }
+        ))
+      })
+    },
+    updateAlgolia (options, lang) {
+      // TODO: Fix, works kinda but produces TWO search-dropdowns on language change
+      this.$refs.search = '<input id="algolia-search-input" class="search-query">'
+      this.initializeAlgolia(options, lang)
     }
   }
 }

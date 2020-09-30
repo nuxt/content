@@ -21,7 +21,8 @@ const defaultConfig = {
     __dirname // transpile node_modules/@nuxt/content-theme-docs
   ],
   css: [
-    '~/assets/css/main.css'
+    '~/assets/css/main.css',
+    '~/assets/css/algolia.css'
   ],
   plugins: [
     '@/plugins/markdown',
