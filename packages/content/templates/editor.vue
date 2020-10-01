@@ -5,6 +5,8 @@
     @keyup.stop="onType"
     @keydown.tab.exact.prevent="onTabRight"
     @keydown.tab.shift.prevent="onTabLeft"
+    @compositionstart.prevent="isInComposition = true"
+    @compositionend.prevent="isInComposition = false"
     @blur="$emit('endEdit')"
   />
 </template>
@@ -17,7 +19,8 @@ export default {
   },
   data () {
     return {
-      file: ''
+      file: '',
+      isInComposition: false
     }
   },
   watch: {
@@ -37,7 +40,10 @@ export default {
       const el = this.$refs.textarea
       el.style.height = el.scrollHeight + 'px'
     },
-    onTabRight (event) {
+    onTabRight(event) {
+      if (this.isInComposition) {
+        return
+      }
       const text = this.file
       const originalSelectionStart = event.target.selectionStart
       const textStart = text.slice(0, originalSelectionStart)
@@ -47,7 +53,10 @@ export default {
       event.target.selectionEnd = event.target.selectionStart =
         originalSelectionStart + 1
     },
-    onTabLeft (event) {
+    onTabLeft(event) {
+      if (this.isInComposition) {
+        return
+      }
       const text = this.file
       const originalSelectionStart = event.target.selectionStart
       const textStart = text.slice(0, originalSelectionStart)
