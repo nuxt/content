@@ -8,7 +8,7 @@
     "lib",
     "parsers",
     "templates",
-    "types/*.d.ts"
+    "types"
   ],
   "main": "lib/",
   "dependencies": {
