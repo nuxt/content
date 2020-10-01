@@ -12780,10 +12780,10 @@ remark-autolink-headings@^6.0.1:
     extend "^3.0.0"
     unist-util-visit "^2.0.0"
 
-remark-external-links@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/remark-external-links/-/remark-external-links-7.0.0.tgz#f9415a622e2d965c4017c0dde7e659a061bd8b5c"
-  integrity sha512-Iihlg28wFTWyGyTquKolM6nHLkgrRnRXp/QSwjbWGThwIFVKIMHZLAkCii26aTGDEiKr6p1QfMt4oltBIIngug==
+remark-external-links@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/remark-external-links/-/remark-external-links-7.0.1.tgz#c71ca81ea4cca48f067a9659645e4e87a94e54d5"
+  integrity sha512-a98JnTMRln8GseQq0buE4Aq6yYjYF4aRIlrPVxL9PT1pcy+yMJij24dEYAqvdluF9GHgNs/De+8y6kzqsjH1jQ==
   dependencies:
     extend "^3.0.0"
     is-absolute-url "^3.0.0"
