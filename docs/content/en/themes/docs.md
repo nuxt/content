@@ -589,4 +589,10 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
       <img src="https://storybook.nuxtjs.org/preview-dark.png" class="dark-img" />
     </a>
   </div>
+    <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://firebase.nuxtjs.org" target="_blank">
+      <img src="https://firebase.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://firebase.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
 </div>
