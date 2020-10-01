@@ -42,10 +42,6 @@ Using `$content()` on a directory to list, filter and search content:
   <source src="https://res.cloudinary.com/nuxt/video/upload/q_auto/v1588095794/nuxt-content-movies_c0cq9p.ogv" type="video/ogg" />
 </video>
 
-## Tutorial
-
-[Create a blog with Nuxt Content](https://nuxtjs.org/blog/creating-blog-with-nuxt-content)
-
 ## Testimonials
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Adding an FAQ to <a href="https://twitter.com/turnaudio?ref_src=twsrc%5Etfw">@TurnAudio</a> using <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> nuxt/content. Really great module for organizing a little bit of content within your static website <a href="https://t.co/o2uA9Lvmuu">https://t.co/o2uA9Lvmuu</a></p>&mdash; Lee Martin (@leemartin) <a href="https://twitter.com/leemartin/status/1290374428107341830?ref_src=twsrc%5Etfw">August 3, 2020</a></blockquote>

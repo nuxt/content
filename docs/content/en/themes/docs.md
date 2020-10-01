@@ -6,7 +6,7 @@ description: 'Create your documentation with @nuxt/content docs theme in seconds
 category: Themes
 position: 8
 version: 1.1
-badge: 'v0.6.0'
+badge: 'v0.5.6'
 ---
 
 <alert type="info">
@@ -359,17 +359,11 @@ You can create a `content/settings.json` file to configure the theme.
 - `logo` (`String` | `Object`)
   - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
-  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page Example: `nuxt/content`.
-  - For GitHub Enterprise, you have to assign a full url of your project without a trailing slash. Example: `https://hostname/repos/owner/name`. <badge>v0.6.0+</badge>
-- `githubApi` (`String`) <badge>v0.6.0+</badge>
-  - For GitHub Enterprise, in addition to `github`, you have to assign a API full url of your project without a trailing slash. Example: `https://hostname/api/v3/repos/owner/name`.
-  - Releases are fetched from `${githubApi}/releases`.
+  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page. Example: `nuxt/content`
 - `twitter` (`String`)
   - The Twitter username `@username` you want to link. Example: `@nuxt_js`
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
-- `defaultDir` (`String`) <badge>v0.6.0+</badge>
-  - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
@@ -446,10 +440,6 @@ Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 - `items`
   - Type: `Array`
   - Default: `[]`
-- `type`
-  - Type: `String`
-  - Default: `'success'`
-  - Values: `['info', 'success', 'warning', 'danger']`
 
 **Example**
 
@@ -467,7 +457,6 @@ items:
 **Result**
 
 <list :items="['Item1', 'Item2', 'Item3']"></list>
-
 
 ### `<badge>`
 

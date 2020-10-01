@@ -6,7 +6,6 @@ export const state = () => ({
   releases: [],
   settings: {
     title: 'Nuxt Content Docs',
-    defaultDir: 'docs',
     defaultBranch: '',
     filled: false
   }
@@ -15,29 +14,6 @@ export const state = () => ({
 export const getters = {
   settings (state) {
     return state.settings
-  },
-  githubUrls (state) {
-    const { github = '', githubApi = '' } = state.settings
-
-    // GitHub Enterprise
-    if (github.startsWith('http') && githubApi.startsWith('http')) {
-      return {
-        repo: github,
-        api: {
-          repo: githubApi,
-          releases: `${githubApi}/releases`
-        }
-      }
-    }
-
-    // GitHub
-    return {
-      repo: `https://github.com/${github}`,
-      api: {
-        repo: `https://api.github.com/repos/${github}`,
-        releases: `https://api.github.com/repos/${github}/releases`
-      }
-    }
   },
   releases (state) {
     return state.releases
@@ -59,7 +35,7 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, state.settings, settings, { filled: true })
+    state.settings = Object.assign({}, settings, { filled: true })
   }
 }
 
@@ -77,7 +53,7 @@ export const actions = {
 
     commit('SET_CATEGORIES', categories)
   },
-  async fetchReleases ({ commit, state, getters }) {
+  async fetchReleases ({ commit, state }) {
     if (!state.settings.github) {
       return
     }
@@ -88,7 +64,7 @@ export const actions = {
     }
     let releases = []
     try {
-      const data = await fetch(getters.githubUrls.api.releases, options).then((res) => {
+      const data = await fetch(`https://api.github.com/repos/${state.settings.github}/releases`, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }
@@ -115,7 +91,7 @@ export const actions = {
 
     commit('SET_RELEASES', releases)
   },
-  async fetchDefaultBranch ({ commit, state, getters }) {
+  async fetchDefaultBranch ({ commit, state }) {
     if (!state.settings.github || state.settings.defaultBranch) {
       return
     }
@@ -126,7 +102,7 @@ export const actions = {
     }
     let defaultBranch
     try {
-      const data = await fetch(getters.githubUrls.api.repo, options).then((res) => {
+      const data = await fetch(`https://api.github.com/repos/${state.settings.github}`, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }

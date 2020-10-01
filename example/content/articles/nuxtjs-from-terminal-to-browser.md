@@ -4,7 +4,9 @@ description: How we changed the developer experience to stop switching between t
 imgUrl: blog/nuxtjs-from-terminal-to-browser/main.png
 date: 2019-06-04
 authors:
-  - atinux
+  - name: Sébastien Chopin
+    avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
+    link: https://twitter.com/atinux
 tags:
     - webpack
     - DX

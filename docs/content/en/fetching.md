@@ -5,7 +5,7 @@ position: 4
 category: Getting started
 ---
 
-This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, nuxtServerInit and Middleware, you can access it from `context.$content`.
+This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, fetch, nuxtServerInit and Middleware, you can access it from `context.$content`.
 
 ## Methods
 

@@ -3,7 +3,7 @@ const sao = require('sao')
 
 const generator = path.join(__dirname, '../src')
 
-test('should write files with good answers (GitHub)', async () => {
+test('should write files with good answers', async () => {
   const answers = {
     name: 'nuxt-content-docs',
     title: 'Nuxt Content',

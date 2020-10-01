@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "1.9.0",
+  "version": "1.8.1",
   "repository": "nuxt/content",
   "license": "MIT",
   "types": "types/index.d.ts",
@@ -8,13 +8,13 @@
     "lib",
     "parsers",
     "templates",
-    "types/**/*.d.ts"
+    "types/*.d.ts"
   ],
   "main": "lib/",
   "dependencies": {
     "@lokidb/full-text-search": "^2.1.0",
     "@lokidb/loki": "^2.1.0",
-    "@nuxt/types": "^2.14.6",
+    "@nuxt/types": "^2.14.5",
     "@types/js-yaml": "^3.12.5",
     "@types/xml2js": "^0.4.5",
     "change-case": "^4.1.1",
@@ -26,11 +26,11 @@
     "escape-html": "^1.0.3",
     "graceful-fs": "^4.2.4",
     "gray-matter": "^4.0.2",
-    "hasha": "^5.2.1",
+    "hasha": "^5.2.0",
     "hookable": "^4.1.2",
     "html-tags": "^3.1.0",
     "js-yaml": "3.14.0",
-    "mdast-util-to-hast": "^9.1.2",
+    "mdast-util-to-hast": "^9.1.1",
     "mkdirp": "^1.0.4",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",

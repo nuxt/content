@@ -3,20 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.6.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.5.1...nuxt-content-docs@1.6.0) (2020-09-15)
-
-
-### Features
-
-* support github custom domain ([#458](https://github.com/nuxt/content/issues/458)) ([d01e134](https://github.com/nuxt/content/commit/d01e1347f88006948929ced9dfa6dd97e3fa2008))
-* **content:** add custom highlighter ([#467](https://github.com/nuxt/content/issues/467)) ([9e1d0bd](https://github.com/nuxt/content/commit/9e1d0bd85e2bef64a7a9d42dee9ffadc559e60c6))
-* **theme-docs:** add `defaultDir` options ([#468](https://github.com/nuxt/content/issues/468)) ([e4bae6c](https://github.com/nuxt/content/commit/e4bae6cf779e38e8238766d038d4febe2386b602))
-* add content:file:beforeParse hook ([#453](https://github.com/nuxt/content/issues/453)) ([f7ac58d](https://github.com/nuxt/content/commit/f7ac58de9b743cb58fe9b7a7ab81795c4dbf3e3b))
-
-
-
-
-
 ## [1.5.1](https://github.com/nuxt/content/compare/nuxt-content-docs@1.5.0...nuxt-content-docs@1.5.1) (2020-09-03)
 
 **Note:** Version bump only for package nuxt-content-docs

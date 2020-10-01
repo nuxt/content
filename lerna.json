@@ -7,9 +7,6 @@
     "packages/*"
   ],
   "command": {
-    "version": {
-      "private": false
-    },
     "publish": {
       "allowBranch": "master",
       "message": "chore: release"

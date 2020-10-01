@@ -1,5 +1,5 @@
-module.exports = highlighter => ({
-  code: require('./code')(highlighter),
+module.exports = {
+  code: require('./code'),
   paragraph: require('./paragraph'),
   html: require('./html')
-})
+}

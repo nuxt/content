@@ -1,6 +1,6 @@
 {
   "name": "nuxt-content-docs",
-  "version": "1.6.0",
+  "version": "1.5.1",
   "description": "Docs for @nuxt/content",
   "author": "NuxtJS",
   "private": true,
@@ -11,8 +11,8 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.6.1",
-    "nuxt": "^2.14.6",
+    "@nuxt/content-theme-docs": "^0.5.6",
+    "nuxt": "^2.14.5",
     "nuxt-ackee": "^2.0.0",
     "vue-multiselect": "^2.1.6"
   }

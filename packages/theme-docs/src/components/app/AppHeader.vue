@@ -53,7 +53,7 @@
             </a>
             <a
               v-if="settings.github"
-              :href="githubUrls.repo"
+              :href="`https://github.com/${settings.github}`"
               target="_blank"
               rel="noopener noreferrer"
               title="Github"
@@ -93,7 +93,6 @@ export default {
   computed: {
     ...mapGetters([
       'settings',
-      'githubUrls',
       'lastRelease'
     ]),
     menu: {

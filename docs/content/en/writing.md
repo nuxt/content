@@ -429,97 +429,6 @@ Will be transformed into:
 
 We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](/advanced#contentfilebeforeinsert) it.
 
-## JSON / JSON5
-
-Data defined will be injected into the document.
-
-> No body will be generated.
-
-### Arrays
-
-<badge>v0.10.0+</badge>
-
-You can now use arrays inside your `.json` files. Objects will be flattened and inserted into the collection. You can [fetch](/fetching) your content in the same way as your used to.
-
-<alert type="warning">
-
-Since the `slug` is by default taken from the path and missing in this case, you have to define it in your objects for this feature to work properly.
-
-</alert>
-
-> Check out our [example](https://github.com/nuxt/content/tree/dev/example) with articles and authors.
-
-### Example
-
-A file `content/home.json`:
-
-```json
-{
-  "title": "Home",
-  "description": "Welcome!"
-}
-```
-
-Will be transformed into:
-
-```json
-{
-  "dir": "/",
-  "slug": "home",
-  "path": "/home",
-  "extension": ".json",
-  "title": "Home",
-  "description": "Welcome!"
-}
-```
-
-A file `content/authors.json`:
-
-```json
-[
-  {
-    "name": "Sébastien Chopin",
-    "slug": "atinux"
-  },
-  {
-    "name": "Krutie Patel",
-    "slug": "krutiepatel"
-  },
-  {
-    "name": "Sergey Bedritsky",
-    "slug": "sergeybedritsky"
-  }
-]
-```
-
-Will be transformed into:
-
-```json
-[
-  {
-    "name": "Sébastien Chopin",
-    "slug": "atinux",
-    "dir": "/authors",
-    "path": "/authors/atinux",
-    "extension": ".json"
-  },
-  {
-    "name": "Krutie Patel",
-    "slug": "krutiepatel",
-    "dir": "/authors",
-    "path": "/authors/krutiepatel",
-    "extension": ".json"
-  },
-  {
-    "name": "Sergey Bedritsky",
-    "slug": "sergeybedritsky",
-    "dir": "/authors",
-    "path": "/authors/sergeybedritsky",
-    "extension": ".json"
-  }
-]
-```
-
 ## CSV
 
 Rows will be assigned to body variable.
@@ -594,6 +503,7 @@ Will be transformed into:
 }
 ```
 
+
 ## YAML / YML
 
 Data defined will be injected into the document.
@@ -617,6 +527,37 @@ Will be transformed into:
   "slug": "home",
   "path": "/home",
   "extension": ".yaml",
+  "title": "Home",
+  "description": "Welcome!"
+}
+```
+
+## JSON / JSON5
+
+Data defined will be injected into the document.
+
+> No body will be generated.
+
+### Example
+
+A file `content/home.json`:
+
+```json
+{
+  "title": "Home",
+  "description": "Welcome!"
+}
+
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".json",
   "title": "Home",
   "description": "Welcome!"
 }

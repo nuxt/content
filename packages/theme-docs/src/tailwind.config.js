@@ -11,8 +11,7 @@ const selectorParser = require('postcss-selector-parser')
 
 module.exports = {
   future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true
+    removeDeprecatedGapUtilities: true
   },
   theme: {
     extend: {
