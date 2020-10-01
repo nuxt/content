@@ -4,12 +4,8 @@ description: Let’s build a blazing fast articles and tutorials app using Nuxt,
 imgUrl: blog/build-dev-to-clone-with-nuxt-new-fetch/main.png
 date: 2020-04-08
 authors:
-  - name: Sergey Bedritsky
-    avatarUrl: https://pbs.twimg.com/profile_images/1244291720566669315/pGg6Xn-M_400x400.jpg
-    link: https://twitter.com/sergeybedritsky
-  - name: Sebastien Chopin
-    avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
-    link: https://twitter.com/Atinux
+  - sergeybedritsky
+  - atinux
 tags:
   - Nuxt
   - Fetch

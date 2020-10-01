@@ -334,4 +334,31 @@ describe('module', () => {
 
     expect(item).toHaveProperty('text')
   })
+
+  test('$content() on json array "directory"', async () => {
+    const items = await $content('authors').fetch()
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        slug: 'atinux'
+      }),
+      expect.objectContaining({
+        slug: 'krutiepatel'
+      }),
+      expect.objectContaining({
+        slug: 'sergeybedritsky'
+      })
+    ]))
+  })
+
+  test('$content() on json array "file"', async () => {
+    const item = await $content('authors', 'atinux').fetch()
+
+    expect(item).toEqual(expect.objectContaining({
+      name: 'Sébastien Chopin',
+      slug: 'atinux',
+      avatarUrl: 'https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg',
+      link: 'https://twitter.com/atinux'
+    }))
+  })
 })

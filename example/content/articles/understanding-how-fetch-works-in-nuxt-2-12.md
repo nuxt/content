@@ -4,9 +4,7 @@ description: Explore different features of the fetch hook and learn a brand new 
 imgUrl: blog/understanding-how-fetch-works-in-nuxt-2-12/main.png
 date: 2020-04-06
 authors:
-  - name: Krutie Patel
-    avatarUrl: https://pbs.twimg.com/profile_images/780651635932434432/YtbSkumD_400x400.jpg
-    link: https://twitter.com/KrutiePatel
+  - krutiepatel
 tags:
   - Nuxt
   - Fetch

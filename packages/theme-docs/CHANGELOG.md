@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.6.0...@nuxt/content-theme-docs@0.6.1) (2020-09-18)
+
+
+### Bug Fixes
+
+* **theme-docs:** fixed incorrect Github URL for navbar ([#489](https://github.com/nuxt/content/issues/489)) ([769c10a](https://github.com/nuxt/content/commit/769c10a07321e05820e8e4fe1f13ce0d2f721fb1))
+
+
+
+
+
+# [0.6.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.6...@nuxt/content-theme-docs@0.6.0) (2020-09-15)
+
+
+### Bug Fixes
+
+* **theme-docs:** fix code block's filename style ([#472](https://github.com/nuxt/content/issues/472)) ([afc3eb3](https://github.com/nuxt/content/commit/afc3eb34ff4788e0a345b55ceb08393d9cd5fa38))
+* **theme-docs:** handle single layout on releases ([#482](https://github.com/nuxt/content/issues/482)) ([6033987](https://github.com/nuxt/content/commit/60339876df6ba44e616a86711441e4e6a676bfe9))
+
+
+### Features
+
+* support github custom domain ([#458](https://github.com/nuxt/content/issues/458)) ([d01e134](https://github.com/nuxt/content/commit/d01e1347f88006948929ced9dfa6dd97e3fa2008))
+* **theme-docs:** add `defaultDir` options ([#468](https://github.com/nuxt/content/issues/468)) ([e4bae6c](https://github.com/nuxt/content/commit/e4bae6cf779e38e8238766d038d4febe2386b602))
+* **theme-docs:** add locale simplified chinese support ([#471](https://github.com/nuxt/content/issues/471)) ([17850f7](https://github.com/nuxt/content/commit/17850f77addd2e0046f62588dfc4a0cbcf7361e4))
+
+
+
+
+
 ## [0.5.6](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.5...@nuxt/content-theme-docs@0.5.6) (2020-09-03)
 
 **Note:** Version bump only for package @nuxt/content-theme-docs

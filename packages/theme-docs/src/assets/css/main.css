@@ -54,7 +54,12 @@
 
     /* Style filename span added by @nuxt/content */
     & > .filename {
-      @apply absolute right-0 top-0 text-gray-100 z-10 italic leading-none mr-3 mt-3;
+      @apply absolute right-0 top-0 text-gray-100 z-10 font-mono text-sm tracking-tight leading-none mr-4 mt-3;
+    }
+
+    /* Add top padding to code blocks with filename */
+    & > .filename + pre[class*="language-"] {
+      @apply pt-8;
     }
 
     /* Style copy button added in `pages/_.vue` */
