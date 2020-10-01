@@ -41,7 +41,7 @@
     "rehype-sort-attribute-values": "^3.0.2",
     "rehype-sort-attributes": "^3.0.2",
     "remark-autolink-headings": "^6.0.1",
-    "remark-external-links": "^7.0.0",
+    "remark-external-links": "^7.0.1",
     "remark-footnotes": "^2.0.0",
     "remark-parse": "^8.0.3",
     "remark-rehype": "^7.0.0",
