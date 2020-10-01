@@ -77,6 +77,6 @@ export class QueryBuilder {
    * Collect data and apply process filters
    * @returns processed data
    */
-  fetch(): IContentDocument | IContentDocument[];
-  fetch<T>(): (T & IContentDocument) | (T & IContentDocument)[];
+  fetch(): Promise<IContentDocument | IContentDocument[]>;
+  fetch<T>(): Promise<(T & IContentDocument) | (T & IContentDocument)[]>;
 }
