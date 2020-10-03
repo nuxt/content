@@ -1,4 +1,4 @@
-const { join, extname } = require('path')
+const { join, extname, sep } = require('path')
 const fs = require('graceful-fs').promises
 const Hookable = require('hookable')
 const chokidar = require('chokidar')
@@ -7,6 +7,7 @@ const Loki = require('@lokidb/loki').default
 const LokiFullTextSearch = require('@lokidb/full-text-search').default
 const logger = require('consola').withScope('@nuxt/content')
 const { default: PQueue } = require('p-queue')
+const simpleGit = require('simple-git')
 const { Markdown, YAML, CSV, XML } = require('../parsers')
 
 const QueryBuilder = require('./query-builder')
@@ -66,6 +67,12 @@ class Database extends Hookable {
     this.items.clear()
 
     const startTime = process.hrtime()
+
+    // Get git directory and initialize simple-git
+    const gitDir = this.dir.split(sep).slice(0, -1).join('/')
+    logger.info(`git repo ${gitDir}`)
+    this.git = simpleGit(gitDir)
+
     await this.walk(this.dir)
     const [s, ns] = process.hrtime(startTime)
     logger.info(`Parsed ${this.items.count()} files in ${s},${Math.round(ns / 1e8)} seconds`)
@@ -216,6 +223,11 @@ class Database extends Hookable {
       return date instanceof Date && !isNaN(date)
     }
 
+    // Get git metadata for files first commit and latest
+    const gitFileLog = await this.git.log({ file: path })
+    const gitCreatedAt = gitFileLog.all.pop().date
+    const gitUpdatedAt = gitFileLog.latest.date
+
     return data.map((item) => {
       const paths = normalizedPath.split('/')
       // `item.slug` is necessary with JSON arrays since `slug` comes from filename by default
@@ -241,7 +253,9 @@ class Database extends Hookable {
         path,
         extension,
         createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
-        updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
+        updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime,
+        gitCreatedAt: isValidDate(gitCreatedAt) ? gitCreatedAt : undefined,
+        gitUpdatedAt: isValidDate(gitUpdatedAt) ? gitUpdatedAt : undefined
       }
     })
   }
