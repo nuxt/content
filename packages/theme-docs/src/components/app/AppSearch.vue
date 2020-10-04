@@ -156,8 +156,6 @@ export default {
       this.q = ''
     },
     async initializeAlgolia (userOptions, lang) {
-      if (this.lang === this.initializedLang) { return }
-
       try {
         const [docsearchModule] = await Promise.all([
           import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.js'),
