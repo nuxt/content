@@ -73,7 +73,8 @@ export default {
       focusIndex: -1,
       open: false,
       searching: false,
-      results: []
+      results: [],
+      docsearch: null
     }
   },
   computed: {
@@ -154,34 +155,36 @@ export default {
       this.$refs.search.blur()
       this.q = ''
     },
-    initializeAlgolia (userOptions, lang) {
-      Promise.all([
-        import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.js'),
-        import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.css')
-      ]).then(([docsearch]) => {
-        docsearch = docsearch.default
+    async initializeAlgolia (userOptions, lang) {
+      if (this.lang === this.initializedLang) { return }
+
+      try {
+        const [docsearchModule] = await Promise.all([
+          import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.js'),
+          import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.css')
+        ])
+
         const { algoliaOptions = {} } = userOptions
-        docsearch(Object.assign(
-          {},
-          userOptions,
-          {
-            inputSelector: '#algolia-search-input',
-            algoliaOptions: Object.assign({
-              facetFilters: [`lang:${lang}`].concat(algoliaOptions.facetFilters || [])
-            }, algoliaOptions),
-            handleSelected: (input, event, suggestion) => {
-              const { pathname, hash } = new URL(suggestion.url)
-              const _hash = decodeURIComponent(hash)
-              this.$router.push(`${pathname}${_hash}`)
-            }
+
+        const docsearchOptions = {
+          ...userOptions,
+          inputSelector: '#algolia-search-input',
+          algoliaOptions: Object.assign({
+            facetFilters: [`lang:${lang}`].concat(algoliaOptions.facetFilters || [])
+          }, algoliaOptions),
+          handleSelected: (input, event, suggestion) => {
+            const { pathname, hash } = new URL(suggestion.url)
+            const _hash = decodeURIComponent(hash)
+            this.$router.push(`${pathname}${_hash}`)
           }
-        ))
-      })
+        }
+        this.docsearch = docsearchModule.default(docsearchOptions)
+      } catch (e) {
+        // Don't do anything.
+      }
     },
     updateAlgolia (options, lang) {
-      // TODO: Fix, works kinda but produces TWO search-dropdowns on language change
-      this.$refs.search = '<input id="algolia-search-input" class="search-query">'
-      this.initializeAlgolia(options, lang)
+      this.docsearch.algoliaOptions.facetFilters = [`lang:${lang}`]
     }
   }
 }
