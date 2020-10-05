@@ -372,7 +372,7 @@ You can create a `content/settings.json` file to configure the theme.
   - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`. Can be an empty string eg. `""`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
-- `algolia` (`Object`) <badge>v0.?.?+</badge>
+- `algolia` (`Object`) <badge>v0.7.0+</badge>
   - This option allows you to use [Algolia DocSearch](https://docsearch.algolia.com) to replace the simple built-in search. In order to enable it, you need to provide at least the apiKey and the indexName:
     ```json
     "algolia": {
