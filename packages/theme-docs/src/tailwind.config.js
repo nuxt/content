@@ -185,7 +185,32 @@ module.exports = {
         })
       })
     }),
-    require('@tailwindcss/typography')
+    require('@tailwindcss/typography'),
+    require('tailwind-css-variables')(
+      {
+        colors: 'color',
+        screens: false,
+        fontFamily: false,
+        fontSize: false,
+        fontWeight: false,
+        lineHeight: false,
+        letterSpacing: false,
+        backgroundSize: false,
+        borderWidth: false,
+        borderRadius: false,
+        width: false,
+        height: false,
+        minWidth: false,
+        minHeight: false,
+        maxWidth: false,
+        maxHeight: false,
+        padding: false,
+        margin: false,
+        boxShadow: false,
+        zIndex: false,
+        opacity: false
+      }
+    )
   ],
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
