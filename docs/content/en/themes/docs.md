@@ -601,4 +601,10 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
       <img src="https://pwa.nuxtjs.org/preview-dark.png" class="dark-img" />
     </a>
   </div>
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://image.nuxtjs.org" target="_blank">
+      <img src="https://image.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://image.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
 </div>
