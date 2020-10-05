@@ -30,7 +30,7 @@
     "hookable": "^4.1.2",
     "html-tags": "^3.1.0",
     "js-yaml": "3.14.0",
-    "mdast-util-to-hast": "^9.1.2",
+    "mdast-util-to-hast": "^10.0.0",
     "mkdirp": "^1.0.4",
     "node-req": "^2.1.2",
     "node-res": "^5.0.1",
