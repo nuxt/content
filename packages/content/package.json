@@ -37,7 +37,7 @@
     "p-queue": "6.6.1",
     "prismjs": "^1.21.0",
     "property-information": "^5.5.0",
-    "rehype-raw": "^4.0.2",
+    "rehype-raw": "^5.0.0",
     "rehype-sort-attribute-values": "^3.0.2",
     "rehype-sort-attributes": "^3.0.2",
     "remark-autolink-headings": "^6.0.1",
