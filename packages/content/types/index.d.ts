@@ -41,6 +41,7 @@ interface IContentOptions {
   extendParser?: {
     [extension: string]: (file: string) => any;
   };
+  useGit?: boolean;
 }
 
 // Nuxt 2.9+

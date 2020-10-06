@@ -27,8 +27,15 @@ This module will parse `.md`, `.yaml`, `.yml`, `.csv`, `.json`, `.json5`, `.xml`
 - `extension` (ex: `.md`)
 - `createdAt`
 - `updatedAt`
+- `gitCreateAt`
+- `gitUpdatedAt`
 
 The `createdAt` and `updatedAt` properties are based on the file's actual created & updated datetime, but you can override them by defining your own `createdAt` and `updatedAt` values. This is especially useful if you are migrating your past blog posts where the `createdAt` can be months or years ago.
+
+The `gitCreatedAt` and `gitUpdatedAt` properties are based on the file's git
+commit history. When a file is commited to a repo its `gitCreatedAt` variable is
+defined, then on any subsequent commits that file is included in will update
+it's `gitUpdatedAt` properties.
 
 ## Markdown
 

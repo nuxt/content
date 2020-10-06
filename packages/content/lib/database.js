@@ -68,10 +68,12 @@ class Database extends Hookable {
 
     const startTime = process.hrtime()
 
-    // Get git directory and initialize simple-git
-    const gitDir = this.dir.split(sep).slice(0, -1).join('/')
-    logger.info(`git repo ${gitDir}`)
-    this.git = simpleGit(gitDir)
+    if (this.options.useGit) {
+      // Get git directory and initialize simple-git
+      const gitDir = this.dir.split(sep).slice(0, -1).join('/')
+      // logger.info(`git repo ${gitDir}`)
+      this.git = simpleGit(gitDir)
+    }
 
     await this.walk(this.dir)
     const [s, ns] = process.hrtime(startTime)
@@ -224,9 +226,28 @@ class Database extends Hookable {
     }
 
     // Get git metadata for files first commit and latest
-    const gitFileLog = await this.git.log({ file: path })
-    const gitCreatedAt = gitFileLog.all.pop().date
-    const gitUpdatedAt = gitFileLog.latest.date
+    let gitCreatedAt = ''
+    let gitUpdatedAt = ''
+    let gitFileLog = ''
+    if (this.options.useGit) {
+      try {
+        gitFileLog = await this.git.log({ file: path })
+
+        if (gitFileLog.all.length !== 0 || gitFileLog.all !== undefined) {
+          const gitLogFirstObject = gitFileLog.all.pop()
+          if (gitLogFirstObject && gitLogFirstObject.total !== 0) {
+            gitCreatedAt = new Date(gitLogFirstObject.date)
+          }
+
+          const gitLogLatestObject = gitFileLog.all.pop()
+          if (gitLogLatestObject && gitLogLatestObject.total !== 0) {
+            gitUpdatedAt = new Date(gitFileLog.latest.date)
+          }
+        }
+      } catch {
+        logger.warn(`Unable to find a git directory within file path: ${path}`)
+      }
+    }
 
     return data.map((item) => {
       const paths = normalizedPath.split('/')
@@ -254,6 +275,7 @@ class Database extends Hookable {
         extension,
         createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
         updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime,
+        gitFileLog: gitFileLog !== '' ? gitFileLog : undefined,
         gitCreatedAt: isValidDate(gitCreatedAt) ? gitCreatedAt : undefined,
         gitUpdatedAt: isValidDate(gitUpdatedAt) ? gitUpdatedAt : undefined
       }

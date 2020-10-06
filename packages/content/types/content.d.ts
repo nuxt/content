@@ -10,6 +10,9 @@ export interface IContentDocument extends Record<string, any> {
   slug: string;
   createdAt: Date;
   updatedAt: Date;
+  gitFileLog: any;
+  gitCreateAt: Date;
+  gitUpdatedAt: Date;
 }
 
 export type File = {
