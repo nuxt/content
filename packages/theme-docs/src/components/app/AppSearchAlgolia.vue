@@ -158,6 +158,10 @@ export default {
   @apply px-3 !important;
 }
 
+.DocSearch-Screen-Icon > svg {
+  display: inline !important;
+}
+
 .dark-mode {
   & .DocSearch {
     --docsearch-text-color: var(--color-gray-300);
