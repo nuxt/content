@@ -20,12 +20,15 @@
         <div v-if="document.subtitle" class="-mt-4">
           <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
         </div>
+
         <NuxtContent :document="document" />
       </article>
-      <AppGithubLink :document="document" />
-      <AppPrevNext :prev="prev" :next="next" />
+
+      <component :is="settings.components.githubLink" v-if="settings.components.githubLink" :document="document" />
+      <component :is="settings.components.prevNext" v-if="settings.components.prevNext" :prev="prev" :next="next" />
     </div>
-    <AppToc v-if="!document.fullscreen" :toc="document.toc" />
+
+    <component :is="settings.components.toc" v-if="settings.components.toc && !document.fullscreen" :toc="document.toc" />
   </div>
 </template>
 
@@ -33,7 +36,7 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
-import AppCopyButton from '~/components/app/AppCopyButton'
+import AppCopyButton from '~/components/global/app/AppCopyButton'
 
 export default {
   name: 'PageSlug',

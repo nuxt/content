@@ -1,5 +1,5 @@
 <template>
-  <AppDropdown v-if="availableLocales.length" class="inline-flex">
+  <component :is="settings.components.dropdown" v-if="settings.components.dropdown && availableLocales.length" class="inline-flex">
     <template #trigger="{ open, toggle }">
       <button
         class="rounded-md hover:text-primary-500 focus:outline-none"
@@ -19,12 +19,17 @@
         >{{ locale.name }}</nuxt-link>
       </li>
     </ul>
-  </AppDropdown>
+  </component>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   computed: {
+    ...mapGetters([
+      'settings'
+    ]),
     availableLocales () {
       return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
     }

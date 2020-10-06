@@ -7,17 +7,22 @@
           <BuiltWithNuxtDark class="h-4 dark-img" />
         </a>
       </div>
-      <div class="flex">
-        <AppLangSwitcher />
-        <AppColorSwitcher class="ml-4" />
+      <div class="flex items-center space-x-4">
+        <component :is="settings.components.langSwitcher" v-if="settings.components.langSwitcher" />
+        <component :is="settings.components.colorSwitcher" v-if="settings.components.colorSwitcher" />
       </div>
     </div>
   </footer>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   computed: {
+    ...mapGetters([
+      'settings'
+    ]),
     availableLocales () {
       return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
     }

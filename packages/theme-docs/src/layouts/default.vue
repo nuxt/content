@@ -1,16 +1,16 @@
 <template>
   <div class="pt-16">
-    <AppHeader />
+    <component :is="settings.components.header" v-if="settings.components.header" />
 
     <main class="container mx-auto px-4 lg:px-8">
       <div class="flex flex-wrap relative">
-        <AppNav />
+        <component :is="settings.components.nav" v-if="settings.components.nav" />
 
         <Nuxt class="w-full lg:w-4/5" />
       </div>
     </main>
 
-    <AppFooter />
+    <component :is="settings.components.footer" v-if="settings.components.footer" />
   </div>
 </template>
 

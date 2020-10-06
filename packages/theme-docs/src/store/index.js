@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
+import defu from 'defu'
 
 export const state = () => ({
   categories: {},
@@ -8,7 +9,20 @@ export const state = () => ({
     title: 'Nuxt Content Docs',
     defaultDir: 'docs',
     defaultBranch: '',
-    filled: false
+    filled: false,
+    components: {
+      copyButton: 'AppCopyButton',
+      dropdown: 'AppDropdown',
+      footer: 'AppFooter',
+      githubLink: 'AppGithubLink',
+      header: 'AppHeader',
+      langSwitcher: 'AppLangSwitcher',
+      nav: 'AppNav',
+      prevNext: 'AppPrevNext',
+      search: 'AppSearch',
+      toc: 'AppToc',
+      colorSwitcher: 'AppColorSwitcher'
+    }
   }
 })
 
@@ -59,7 +73,7 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, state.settings, settings, { filled: true })
+    state.settings = defu({ filled: true }, settings, state.settings)
   }
 }
 
@@ -139,7 +153,8 @@ export const actions = {
   },
   async fetchSettings ({ commit }) {
     try {
-      const settings = await this.$content('settings').fetch()
+      const { dir, extension, path, slug, to, createdAt, updatedAt, ...settings } = await this.$content('settings').fetch()
+
       commit('SET_SETTINGS', settings)
     } catch (e) {
       // eslint-disable-next-line no-console
