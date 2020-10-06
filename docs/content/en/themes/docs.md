@@ -5,8 +5,8 @@ menuTitle: Docs
 description: 'Create your documentation with @nuxt/content docs theme in seconds!'
 category: Themes
 position: 8
-version: 1.1
-badge: 'v0.6.0'
+version: 1.2
+badge: 'v0.7.0'
 ---
 
 <alert type="info">
