@@ -5,8 +5,8 @@ menuTitle: Docs
 description: 'Create your documentation with @nuxt/content docs theme in seconds!'
 category: Themes
 position: 8
-version: 1.1
-badge: 'v0.6.0'
+version: 1.2
+badge: 'v0.7.0'
 ---
 
 <alert type="info">
@@ -369,7 +369,7 @@ You can create a `content/settings.json` file to configure the theme.
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
 - `defaultDir` (`String`) <badge>v0.6.0+</badge>
-  - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`).
+  - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`. Can be an empty string eg. `""`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
 
@@ -599,6 +599,12 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
     <a href="https://pwa.nuxtjs.org" target="_blank">
       <img src="https://pwa.nuxtjs.org/preview.png" class="light-img" />
       <img src="https://pwa.nuxtjs.org/preview-dark.png" class="dark-img" />
+    </a>
+  </div>
+  <div class="border dark:border-gray-800 rounded-md">
+    <a href="https://image.nuxtjs.org" target="_blank">
+      <img src="https://image.nuxtjs.org/preview.png" class="light-img" />
+      <img src="https://image.nuxtjs.org/preview-dark.png" class="dark-img" />
     </a>
   </div>
 </div>
