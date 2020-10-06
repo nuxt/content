@@ -375,6 +375,24 @@ You can create a `content/settings.json` file to configure the theme.
     ```
   - If you use `i18n`, make sure the `<langAttribute>` is the same as the html lang selector in the config (defaults to `language`).
   - Take a look at the [@nuxt/content](https://github.com/algolia/docsearch-configs/blob/master/configs/nuxtjs_content.json) docsearch config for an example.
+- `components` (`Object`) <badge>v0.7.0+</badge>
+  - This option allows you to override the components used by the docs theme. All you have to do is to create your own components inside `components/global/`, then override the desired key with the name of your component. (Don't prefix your components with `App`). Here is the defaults:
+
+    ```json
+    "components": {
+      "copyButton": "AppCopyButton",
+      "dropdown": "AppDropdown",
+      "footer": "AppFooter",
+      "githubLink": "AppGithubLink",
+      "header": "AppHeader",
+      "langSwitcher": "AppLangSwitcher",
+      "nav": "AppNav",
+      "prevNext": "AppPrevNext",
+      "search": "AppSearch",
+      "toc": "AppToc",
+      "colorSwitcher": "AppColorSwitcher"
+    }
+    ```
 
 ### Example
 
@@ -387,7 +405,10 @@ You can create a `content/settings.json` file to configure the theme.
     "dark": "/logo-dark.svg"
   },
   "github": "nuxt/content",
-  "twitter": "@nuxt_js"
+  "twitter": "@nuxt_js",
+  "components": {
+    "footer": "MyFooter"
+  }
 }
 ```
 
