@@ -34,7 +34,7 @@
     "@nuxtjs/module-test-utils": "^1.6.3",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.5.0",
-    "codecov": "^3.7.2",
+    "codecov": "^3.8.0",
     "eslint": "^7.10.0",
     "highlight.js": "^10.2.1",
     "husky": "^4.3.0",
