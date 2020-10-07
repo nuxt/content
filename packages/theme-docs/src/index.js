@@ -59,6 +59,9 @@ const defaultConfig = docsOptions => ({
       // Configure `components/` dir
       nuxt.hook('components:dirs', (dirs) => {
         dirs.push({
+          path: path.resolve(nuxt.options.rootDir, 'components')
+        })
+        dirs.push({
           path: path.resolve(nuxt.options.rootDir, 'components/global'),
           global: true
         })

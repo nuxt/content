@@ -64,8 +64,8 @@
               <IconGithub class="w-5 h-5" />
             </a>
 
-            <component :is="settings.components.langSwitcher" v-if="settings.components.langSwitcher" />
-            <component :is="settings.components.colorSwitcher" v-if="settings.components.colorSwitcher" />
+            <AppLangSwitcher />
+            <AppColorSwitcher />
           </div>
         </li>
       </ul>

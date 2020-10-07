@@ -9,20 +9,7 @@ export const state = () => ({
     title: 'Nuxt Content Docs',
     defaultDir: 'docs',
     defaultBranch: '',
-    filled: false,
-    components: {
-      copyButton: 'AppCopyButton',
-      dropdown: 'AppDropdown',
-      footer: 'AppFooter',
-      githubLink: 'AppGithubLink',
-      header: 'AppHeader',
-      langSwitcher: 'AppLangSwitcher',
-      nav: 'AppNav',
-      prevNext: 'AppPrevNext',
-      search: 'AppSearch',
-      toc: 'AppToc',
-      colorSwitcher: 'AppColorSwitcher'
-    }
+    filled: false
   }
 })
 

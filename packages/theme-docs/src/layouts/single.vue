@@ -1,12 +1,12 @@
 <template>
   <div class="pt-16">
-    <component :is="settings.components.header" v-if="settings.components.header" />
+    <AppHeader />
 
     <main class="container mx-auto px-4 lg:px-8">
       <Nuxt />
     </main>
 
-    <component :is="settings.components.footer" v-if="settings.components.footer" />
+    <AppFooter />
   </div>
 </template>
 

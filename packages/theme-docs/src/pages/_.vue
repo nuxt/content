@@ -24,11 +24,11 @@
         <NuxtContent :document="document" />
       </article>
 
-      <component :is="settings.components.githubLink" v-if="settings.components.githubLink" :document="document" />
-      <component :is="settings.components.prevNext" v-if="settings.components.prevNext" :prev="prev" :next="next" />
+      <AppGithubLink :document="document" />
+      <AppPrevNext :prev="prev" :next="next" />
     </div>
 
-    <component :is="settings.components.toc" v-if="settings.components.toc && !document.fullscreen" :toc="document.toc" />
+    <AppToc v-if="!document.fullscreen" :toc="document.toc" />
   </div>
 </template>
 
@@ -36,7 +36,7 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
-import AppCopyButton from '~/components/global/app/AppCopyButton'
+import AppCopyButton from '~/components/app/AppCopyButton'
 
 export default {
   name: 'PageSlug',

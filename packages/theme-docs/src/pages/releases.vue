@@ -27,7 +27,7 @@
       </article>
     </div>
 
-    <component :is="settings.components.toc" v-if="settings.components.toc" :toc="toc" />
+    <AppToc :toc="toc" />
   </div>
 </template>
 

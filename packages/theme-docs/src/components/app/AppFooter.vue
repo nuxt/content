@@ -8,8 +8,8 @@
         </a>
       </div>
       <div class="flex items-center space-x-4">
-        <component :is="settings.components.langSwitcher" v-if="settings.components.langSwitcher" />
-        <component :is="settings.components.colorSwitcher" v-if="settings.components.colorSwitcher" />
+        <AppLangSwitcher />
+        <AppColorSwitcher />
       </div>
     </div>
   </footer>

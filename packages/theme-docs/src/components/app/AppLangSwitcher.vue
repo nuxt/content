@@ -1,5 +1,5 @@
 <template>
-  <component :is="settings.components.dropdown" v-if="settings.components.dropdown && availableLocales.length" class="inline-flex">
+  <AppDropdown v-if="availableLocales.length" class="inline-flex">
     <template #trigger="{ open, toggle }">
       <button
         class="rounded-md hover:text-primary-500 focus:outline-none"
@@ -19,7 +19,7 @@
         >{{ locale.name }}</nuxt-link>
       </li>
     </ul>
-  </component>
+  </AppDropdown>
 </template>
 
 <script>
