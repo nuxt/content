@@ -15,5 +15,8 @@
     "nuxt": "^2.14.5",
     "nuxt-ackee": "^2.0.0",
     "vue-multiselect": "^2.1.6"
+  },
+  "devDependencies": {
+    "@nuxtjs/netlify-files": "^1.2.0"
   }
 }

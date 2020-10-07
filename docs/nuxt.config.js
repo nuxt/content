@@ -30,7 +30,8 @@ export default theme({
     defaultLocale: 'en'
   },
   buildModules: [
-    'nuxt-ackee'
+    'nuxt-ackee',
+    '@nuxtjs/netlify-files'
   ],
   ackee: {
     server: 'https://ackee.nuxtjs.com',
