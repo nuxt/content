@@ -16,13 +16,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   computed: {
-    ...mapGetters([
-      'settings'
-    ]),
     availableLocales () {
       return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
     }
