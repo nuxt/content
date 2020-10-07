@@ -39,9 +39,7 @@ export default theme({
     detailed: true
   },
   netlifyFiles: {
-    existingFilesDirectory: {
-      srcDir: __dirname
-    }
+    existingFilesDirectory: __dirname
   },
   pwa: {
     manifest: {
