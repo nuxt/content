@@ -30,16 +30,12 @@ export default theme({
     defaultLocale: 'en'
   },
   buildModules: [
-    'nuxt-ackee',
-    '@nuxtjs/netlify-files'
+    'nuxt-ackee'
   ],
   ackee: {
     server: 'https://ackee.nuxtjs.com',
     domainId: '7b3c9779-442c-40c6-9931-ea71977c52a8',
     detailed: true
-  },
-  netlifyFiles: {
-    existingFilesDirectory: __dirname
   },
   pwa: {
     manifest: {
