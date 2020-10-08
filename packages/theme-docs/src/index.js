@@ -7,6 +7,9 @@ const defaultConfig = {
   target: 'static',
   ssr: true,
   srcDir: __dirname,
+  privateRuntimeConfig: {
+    githubToken: process.env.GITHUB_TOKEN
+  },
   head: {
     meta: [
       { charset: 'utf-8' },
@@ -106,6 +109,13 @@ const defaultConfig = {
 
 export default (userConfig) => {
   const config = defu.arrayFn(userConfig, defaultConfig)
+
+  if (userConfig.env && userConfig.env.GITHUB_TOKEN) {
+    // eslint-disable-next-line no-console
+    console.warn('[security] Avoid passing `env.GITHUB_TOKEN` directly in `nuxt.config`. Use `.env` file instead!')
+    userConfig.privateRuntimeConfig.GITHUB_TOKEN = userConfig.env.GITHUB_TOKEN
+    delete userConfig.env.GITHUB_TOKEN
+  }
 
   config.hooks['content:file:beforeInsert'] = (document) => {
     const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
