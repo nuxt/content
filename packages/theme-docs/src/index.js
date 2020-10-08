@@ -112,7 +112,7 @@ const defaultConfig = docsOptions => ({
 
 export default (userConfig) => {
   const docsOptions = defu(userConfig.docs, {
-    primaryColor: '#00CD81'
+    primaryColor: undefined
   })
 
   const config = defu.arrayFn(userConfig, defaultConfig(docsOptions))

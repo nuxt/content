@@ -22,7 +22,7 @@ module.exports = docsOptions => ({
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        primary: getColors(docsOptions.primaryColor)
+        primary: getColors(docsOptions.primaryColor || '#00CD81')
       },
       maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'

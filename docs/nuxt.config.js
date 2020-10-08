@@ -4,7 +4,9 @@ export default theme({
   env: {
     GITHUB_TOKEN: process.env.GITHUB_TOKEN
   },
-  loading: { color: '#00CD81' },
+  docs: {
+    primaryColor: '#00CD81'
+  },
   i18n: {
     locales: () => [{
       code: 'ru',
