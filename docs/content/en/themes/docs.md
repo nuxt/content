@@ -123,7 +123,9 @@ Import the theme function from `@nuxt/content-theme-docs`:
 ```js[nuxt.config.js]
 import theme from '@nuxt/content-theme-docs'
 
-export default theme()
+export default theme({
+  // [additional nuxt configuration]
+})
 ```
 
 The theme exports a function to setup the `nuxt.config.js` and allows you to add / override the default config.
@@ -138,6 +140,9 @@ import theme from '@nuxt/content-theme-docs'
 export default theme({
   env: {
     GITHUB_TOKEN: process.env.GITHUB_TOKEN
+  },
+  docs: {
+    primaryColor: '#E24F55'
   },
   loading: { color: '#00CD81' },
   i18n: {
@@ -174,7 +179,7 @@ Don't forget to install the dependencies of the modules you add in your `nuxt.co
 
 You can override the [default theme config](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/tailwind.config.js) by creating your own `tailwind.config.js`.
 
-The theme design is based on a `primary` color to make it easy to override.
+The theme design is based on a `primary` color to make it easy to override. Default colors are generated using [theme-colors](https://github.com/nuxt-contrib/theme-colors) with `docs.primaryColor` as base.
 
 **Example**
 
@@ -184,23 +189,13 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          100: '#FCEDEE',
-          200: '#F8D3D5',
-          300: '#F3B9BB',
-          400: '#EB8488',
-          500: '#E24F55',
-          600: '#CB474D',
-          700: '#882F33',
-          800: '#662426',
-          900: '#44181A'
+          // ...
         }
       }
     }
   }
 }
 ```
-
-> Check out this awesome [color shades generator](https://javisperez.github.io/tailwindcolorshades/#/) for TailwindCSS
 
 ### `content/`
 
