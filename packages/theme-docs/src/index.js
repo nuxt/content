@@ -47,13 +47,6 @@ const defaultConfig = {
       nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
       // Configure `static/ dir
       nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, nuxt.options.dir.static || 'static')
-      // Configure `components/` dir
-      nuxt.hook('components:dirs', (dirs) => {
-        dirs.push({
-          path: path.resolve(nuxt.options.rootDir, 'components/global'),
-          global: true
-        })
-      })
       // Configure `tailwind.config.js` path
       nuxt.options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
       nuxt.options.tailwindcss.cssPath = nuxt.options.tailwindcss.cssPath || path.resolve(nuxt.options.rootDir, nuxt.options.dir.assets, 'css', 'tailwind.css')
