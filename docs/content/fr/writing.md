@@ -279,7 +279,7 @@ multiselectOptions:
 
 <alert type="info">
 
-Ces composants seront rendus en utilisant le composant `<nuxt-conent>`, voir [afficher du contenu](/displaying#component).
+Ces composants seront rendus en utilisant le composant `<nuxt-content>`, voir [afficher du contenu](/displaying#component).
 
 </alert>
 
