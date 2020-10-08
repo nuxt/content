@@ -57,7 +57,7 @@ export default {
               searchParameters: Object.assign(
                 {},
                 lang && {
-                  facetFilters: [`lang:${lang}`].concat(
+                  facetFilters: [`${userOptions.langAttribute || 'language'}:${lang}`].concat(
                     userOptions.facetFilters || []
                   )
                 }
