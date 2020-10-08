@@ -41,6 +41,12 @@ const defaultConfig = docsOptions => ({
     '@nuxt/content'
   ],
   components: true,
+  loading: {
+    color: docsOptions.primaryColor
+  },
+  meta: {
+    theme_color: docsOptions.primaryColor
+  },
   hooks: {
     'modules:before': ({ nuxt }) => {
       // Configure `content/` dir
