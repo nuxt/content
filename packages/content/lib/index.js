@@ -69,12 +69,16 @@ module.exports = async function (moduleOptions) {
   }
 
   // Nuxt hooks
-  this.nuxt.hook('components:dirs', (dirs) => {
-    dirs.push({
-      path: '~/components/global',
-      global: true
+  const globalComponents = resolve(this.options.srdDir, 'components/global')
+  if ((await fs.stat(globalComponents)).isDirectory()) {
+    this.nuxt.hook('components:dirs', (dirs) => {
+      dirs.push({
+        path: '~/components/global',
+        global: true
+      })
     })
-  })
+  }
+
   this.nuxt.hook('generate:cache:ignore', ignore => ignore.push(relativeDir))
 
   const ws = new WS({
