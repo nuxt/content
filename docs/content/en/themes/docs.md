@@ -377,10 +377,11 @@ You can create a `content/settings.json` file to configure the theme.
     ```json
     "algolia": {
         "apiKey": "<API_KEY>",
-        "indexName": "<INDEX_NAME>"
+        "indexName": "<INDEX_NAME>",
+        "langAttribute": "language"
     }
     ```
-  - If you use i18n, make sure the `code` attribute of your i18n locale is the same as your `lang` keys in Algolia's docsearch-config.
+  - If you use i18n, make sure the `code` attribute of your i18n locale is the same as your `langAttribute` keys in Algolia's docsearch-config.
 
 ### Example
 
