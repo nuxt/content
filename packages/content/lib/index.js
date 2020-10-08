@@ -69,7 +69,7 @@ module.exports = async function (moduleOptions) {
   }
 
   // Nuxt hooks
-  const globalComponents = resolve(this.options.srdDir, 'components/global')
+  const globalComponents = resolve(this.options.srcDir, 'components/global')
   if ((await fs.stat(globalComponents)).isDirectory()) {
     this.nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
