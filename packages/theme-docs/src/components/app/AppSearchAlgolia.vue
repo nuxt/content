@@ -44,7 +44,9 @@ export default {
       const url = pathname.replace(this.settings.url, '/') + hash
       return this.stripTrailingSlash(url)
     },
-    initialize (userOptions, lang) {
+    initialize (userOptions, code) {
+      const lang = this.$i18n.locales.find(locale => locale.code === code)
+
       Promise.all([
         import(/* webpackChunkName: "docsearch" */ '@docsearch/js'),
         import(/* webpackChunkName: "docsearch" */ '@docsearch/css')
@@ -60,7 +62,7 @@ export default {
               searchParameters: Object.assign(
                 {},
                 lang && {
-                  facetFilters: [`${userOptions.langAttribute || 'language'}:${lang}`].concat(
+                  facetFilters: [`${userOptions.langAttribute || 'language'}:${lang.iso}`].concat(
                     userOptions.facetFilters || []
                   )
                 }
