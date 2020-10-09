@@ -36,10 +36,13 @@ export default {
     this.initialize(this.options, this.$i18n.locale)
   },
   methods: {
+    stripTrailingSlash (url) {
+      return url.replace(/\/$|\/(?=\?)|\/(?=#)/g, '')
+    },
     getRelativePath (absoluteUrl) {
       const { pathname, hash } = new URL(absoluteUrl)
       const url = pathname.replace(this.settings.url, '/') + hash
-      return url
+      return this.stripTrailingSlash(url)
     },
     initialize (userOptions, lang) {
       Promise.all([
