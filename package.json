@@ -35,7 +35,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.5.2",
     "codecov": "^3.8.0",
-    "eslint": "^7.10.0",
+    "eslint": "^7.11.0",
     "highlight.js": "^10.2.1",
     "husky": "^4.3.0",
     "jest": "^26.5.2",
