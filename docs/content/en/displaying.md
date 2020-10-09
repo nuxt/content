@@ -52,7 +52,7 @@ Depending on what you're using to design your app, you may need to write some st
 }
 ```
 
-You can find an example in the [docs directory](https://github.com/nuxt/content/blob/master/docs/pages/_slug.vue).
+You can find an example in the [docs directory](https://github.com/nuxt/content/blob/master/docs/).
 
 ## Live Editing
 
