@@ -141,6 +141,9 @@ export default theme({
   docs: {
     primaryColor: '#E24F55'
   },
+  docs: {
+    primaryColor: '#E24F55'
+  },
   loading: { color: '#00CD81' },
   i18n: {
     locales: () => [{
