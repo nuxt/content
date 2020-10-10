@@ -3,7 +3,7 @@ import defu from 'defu'
 
 import tailwindConfig from './tailwind.config'
 
-const defaultConfig = {
+const defaultConfig = docsOptions => ({
   target: 'static',
   ssr: true,
   srcDir: __dirname,
@@ -41,6 +41,12 @@ const defaultConfig = {
     '@nuxt/content'
   ],
   components: true,
+  loading: {
+    color: docsOptions.primaryColor
+  },
+  meta: {
+    theme_color: docsOptions.primaryColor
+  },
   hooks: {
     'modules:before': ({ nuxt }) => {
       // Configure `content/` dir
@@ -100,12 +106,16 @@ const defaultConfig = {
     }
   },
   tailwindcss: {
-    config: tailwindConfig
+    config: tailwindConfig(docsOptions)
   }
-}
+})
 
 export default (userConfig) => {
-  const config = defu.arrayFn(userConfig, defaultConfig)
+  const docsOptions = defu(userConfig.docs, {
+    primaryColor: undefined
+  })
+
+  const config = defu.arrayFn(userConfig, defaultConfig(docsOptions))
 
   config.hooks['content:file:beforeInsert'] = (document) => {
     const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')

@@ -14371,6 +14371,11 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
+theme-colors@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/theme-colors/-/theme-colors-0.0.2.tgz#381d11829e0c1e189c61ede0685e0bb47c800913"
+  integrity sha512-qQ01EzSNO8ubKPJ3+ePdr4K3VihuI9eXOASzGjxXu61uWJGuaRVEeR7IlLdj5lJjc/AiOe61v1H0j6wC3zRbHQ==
+
 thenify-all@^1.0.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/thenify-all/-/thenify-all-1.6.0.tgz#1a1918d402d8fc3f98fbf234db0bcc8cc10e9726"
@@ -15248,7 +15253,6 @@ vscode-textmate@^5.2.0:
 
 "vscode-textmate@https://github.com/octref/vscode-textmate":
   version "4.0.1"
-  uid e65aabe2227febda7beaad31dd0fca1228c5ddf3
   resolved "https://github.com/octref/vscode-textmate#e65aabe2227febda7beaad31dd0fca1228c5ddf3"
 
 vue-client-only@^2.0.0:

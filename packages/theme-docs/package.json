@@ -21,6 +21,7 @@
     "marked": "^1.2.0",
     "nuxt-i18n": "^6.15.1",
     "prism-themes": "^1.4.1",
+    "theme-colors": "^0.0.2",
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
