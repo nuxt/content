@@ -448,8 +448,11 @@ Check out an info alert with a `codeblock` and a [link](/themes/docs)!
   - Default: `[]`
 - `type`
   - Type: `String`
-  - Default: `'success'`
-  - Values: `['info', 'success', 'warning', 'danger']`
+  - Default: `'primary'`
+  - Values: `['primary', 'info', 'success', 'warning', 'danger']`
+- `icon`
+  - Type: `String`
+  - *Can be used to override the default `type` icon, check out the [icons available](https://github.com/nuxt/content/tree/dev/packages/theme-docs/src/components/global/icons)*
 
 **Example**
 
