@@ -2,7 +2,7 @@
   <div>
     <div v-for="(item, i) in items" :key="i" class="mt-3 flex">
       <span :class="`list-${type}`" class="mt-px mr-3 flex-shrink-0">
-        <component :is="icon" class="h-6 w-6" />
+        <component :is="iconName" class="h-6 w-6" />
       </span>
       {{ item }}
     </div>
@@ -16,19 +16,24 @@ export default {
       type: Array,
       default: () => []
     },
+    icon: {
+      type: String,
+      default: null
+    },
     type: {
       type: String,
-      default: 'success',
+      default: 'primary',
       validator (value) {
-        return ['info', 'success', 'warning', 'danger'].includes(value)
+        return ['primary', 'info', 'success', 'warning', 'danger'].includes(value)
       }
     }
   },
   computed: {
-    icon () {
-      return ({
+    iconName () {
+      return this.icon || ({
+        primary: 'IconBadgeCheck',
         info: 'IconInformationCircle',
-        success: 'IconBadgeCheck',
+        success: 'IconCheckCircle',
         warning: 'IconExclamationCircle',
         danger: 'IconXCircle'
       })[this.type]
@@ -38,7 +43,10 @@ export default {
 </script>
 
 <style>
-
+/* Primary */
+.list-primary {
+  @apply text-primary-500;
+}
 /* Info */
 .list-info {
   @apply text-blue-500;
