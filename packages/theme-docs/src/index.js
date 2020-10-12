@@ -1,8 +1,10 @@
-import fs from 'fs'
 import path from 'path'
 import defu from 'defu'
+import gracefulFs from 'graceful-fs'
 
 import tailwindConfig from './tailwind.config'
+
+const fs = gracefulFs.promises
 
 const defaultConfig = docsOptions => ({
   target: 'static',
