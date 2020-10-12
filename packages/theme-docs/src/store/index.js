@@ -83,8 +83,8 @@ export const actions = {
     }
 
     const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    if (this.$config.githubToken) {
+      options.headers = { Authorization: `token ${this.$config.githubToken}` }
     }
     let releases = []
     try {
@@ -121,8 +121,8 @@ export const actions = {
     }
 
     const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    if (this.$config.githubToken) {
+      options.headers = { Authorization: `token ${this.$config.githubToken}` }
     }
     let defaultBranch
     try {

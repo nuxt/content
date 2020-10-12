@@ -138,9 +138,6 @@ The theme exports a function to setup the `nuxt.config.js` and allows you to add
 import theme from '@nuxt/content-theme-docs'
 
 export default theme({
-  env: {
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN
-  },
   docs: {
     primaryColor: '#E24F55'
   },
