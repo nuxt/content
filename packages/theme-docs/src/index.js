@@ -1,3 +1,4 @@
+import fs from 'fs'
 import path from 'path'
 import defu from 'defu'
 
@@ -57,14 +58,27 @@ const defaultConfig = docsOptions => ({
       // Configure `static/ dir
       nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, nuxt.options.dir.static || 'static')
       // Configure `components/` dir
-      nuxt.hook('components:dirs', (dirs) => {
-        dirs.push({
-          path: path.resolve(nuxt.options.rootDir, 'components')
-        })
-        dirs.push({
-          path: path.resolve(nuxt.options.rootDir, 'components/global'),
-          global: true
-        })
+      nuxt.hook('components:dirs', async (dirs) => {
+        const componentsDirPath = path.resolve(nuxt.options.rootDir, 'components')
+        const componentsDirStat = await fs.stat(componentsDirPath).catch(() => null)
+        if (componentsDirStat && componentsDirStat.isDirectory()) {
+          dirs.push({
+            path: componentsDirPath
+          })
+        } else {
+          nuxt.options.watch.push(componentsDirPath)
+        }
+
+        const globalComponentsDirPath = path.resolve(nuxt.options.rootDir, 'components/global')
+        const globalComponentsDirStat = await fs.stat(globalComponentsDirPath).catch(() => null)
+        if (globalComponentsDirStat && globalComponentsDirStat.isDirectory()) {
+          dirs.push({
+            path: globalComponentsDirPath,
+            global: true
+          })
+        } else {
+          nuxt.options.watch.push(globalComponentsDirPath)
+        }
       })
       // Configure `tailwind.config.js` path
       nuxt.options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
