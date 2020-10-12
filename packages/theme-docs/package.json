@@ -8,6 +8,8 @@
   ],
   "main": "src/",
   "dependencies": {
+    "@docsearch/css": "^1.0.0-alpha.28",
+    "@docsearch/js": "^1.0.0-alpha.28",
     "@nuxt/content": "^1.9.0",
     "@nuxt/types": "^2.14.6",
     "@nuxtjs/color-mode": "^1.1.1",
@@ -25,7 +27,8 @@
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
-    "nuxt": "^2.14.6"
+    "nuxt": "^2.14.6",
+    "tailwind-css-variables": "^2.0.3"
   },
   "types": "./src/index.d.ts"
 }

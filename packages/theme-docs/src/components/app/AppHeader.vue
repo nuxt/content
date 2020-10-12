@@ -23,11 +23,12 @@
             <img v-if="logo" :src="logo.dark" class="h-8 max-w-full dark-img" :alt="settings.title" />
           </NuxtLink>
         </div>
-        <div v-if="settings.layout !== 'single'" class="hidden flex-1 lg:flex justify-center w-4/6">
-          <AppSearch />
+        <div v-if="settings.layout !== 'single'" class="flex-1 flex justify-start w-4/6">
+          <AppSearchAlgolia v-if="settings.algolia" :options="settings.algolia" :settings="settings" />
+          <AppSearch v-else class="hidden lg:block" />
         </div>
         <div
-          class="lg:w-1/5 flex items-center pl-8"
+          class="lg:w-1/5 flex items-center pl-4 lg:pl-8"
           :class="{ 'justify-between': lastRelease && settings.layout !== 'single', 'justify-end': !lastRelease || settings.layout === 'single' }"
         >
           <NuxtLink
@@ -65,6 +66,7 @@
             >
               <IconGithub class="w-5 h-5" />
             </a>
+
             <button
               v-if="settings.layout !== 'single'"
               class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none -mr-2"
