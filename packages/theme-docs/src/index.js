@@ -80,6 +80,10 @@ const defaultConfig = docsOptions => ({
       if (nuxt.options.dev) {
         nuxt.options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
       }
+      // Configure TailwindCSS
+      nuxt.hook('tailwindcss:config', function (defaultTailwindConfig) {
+        Object.assign(defaultTailwindConfig, defu(defaultTailwindConfig, tailwindConfig({ docsOptions, nuxt })))
+      })
     }
   },
   content: {
@@ -108,9 +112,7 @@ const defaultConfig = docsOptions => ({
       'DM+Mono': true
     }
   },
-  tailwindcss: {
-    config: tailwindConfig(docsOptions)
-  }
+  tailwindcss: {}
 })
 
 export default (userConfig) => {
