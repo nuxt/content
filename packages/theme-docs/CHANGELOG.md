@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.0...@nuxt/content-theme-docs@0.7.1) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** missing dependency ([140bc07](https://github.com/nuxt/content/commit/140bc078cdd562316c9ac6bf595ecaeda94c5c66))
+
+
+
+
+
 # [0.7.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.6.1...@nuxt/content-theme-docs@0.7.0) (2020-10-12)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content-theme-docs",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "repository": "nuxt/content",
   "license": "MIT",
   "files": [
@@ -17,13 +17,13 @@
     "@nuxtjs/pwa": "^3.1.2",
     "@nuxtjs/tailwindcss": "^3.1.0",
     "@tailwindcss/typography": "^0.2.0",
-    "tailwind-css-variables": "^2.0.3",
     "clipboard": "^2.0.6",
     "defu": "^3.1.0",
     "lodash.groupby": "^4.6.0",
     "marked": "^1.2.0",
     "nuxt-i18n": "^6.15.1",
     "prism-themes": "^1.4.1",
+    "tailwind-css-variables": "^2.0.3",
     "theme-colors": "^0.0.2",
     "vue-scrollactive": "^0.9.3"
   },
