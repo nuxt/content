@@ -11,7 +11,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.6.1",
+    "@nuxt/content-theme-docs": "^0.7.0",
     "nuxt": "^2.14.6",
     "nuxt-ackee": "^2.0.0",
     "vue-multiselect": "^2.1.6"
