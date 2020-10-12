@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.3.1...create-nuxt-content-docs@0.4.0) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** avoid exposing `GITHUB_TOKEN` ([#549](https://github.com/nuxt/content/issues/549)) ([206e778](https://github.com/nuxt/content/commit/206e778fac72c67d8edf29b7ddfc273bd6b51bf5))
+
+
+### Features
+
+* **theme-docs:** support `docs.primaryColor` ([#507](https://github.com/nuxt/content/issues/507)) ([cefb24e](https://github.com/nuxt/content/commit/cefb24efeb8e8f05d91e1acd3528aa556296acd5))
+
+
+
+
+
 ## [0.3.1](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.3.0...create-nuxt-content-docs@0.3.1) (2020-09-16)
 
 **Note:** Version bump only for package create-nuxt-content-docs
