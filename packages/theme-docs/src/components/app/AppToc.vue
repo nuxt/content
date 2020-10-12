@@ -8,9 +8,9 @@
           'lg:px-8': settings.layout === 'single'
         }"
       >
-        <h3
+        <p
           class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-        >{{ $t('toc.title') }}</h3>
+        >{{ $t('toc.title') }}</p>
         <scrollactive highlight-first-item active-class="text-primary-500" :offset="0" tag="ul">
           <li
             v-for="link of toc"

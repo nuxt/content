@@ -12,11 +12,14 @@
           v-for="(docs, category, index) in categories"
           :key="category"
           class="mb-4"
-          :class="{ 'lg:mb-0': index === Object.keys(categories).length - 1 }"
+          :class="{
+            'active': isCategoryActive(docs),
+            'lg:mb-0': index === Object.keys(categories).length - 1
+          }"
         >
-          <h3
+          <p
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-          >{{ category }}</h3>
+          >{{ category }}</p>
           <ul>
             <li v-for="doc of docs" :key="doc.slug" class="text-gray-700 dark:text-gray-300">
               <NuxtLink
@@ -27,7 +30,7 @@
                 {{ doc.menuTitle || doc.title }}
                 <client-only>
                   <span
-                    v-if="isNew(doc)"
+                    v-if="isDocumentNew(doc)"
                     class="animate-pulse rounded-full bg-primary-500 opacity-75 h-2 w-2"
                   />
                 </client-only>
@@ -36,7 +39,7 @@
           </ul>
         </li>
         <li class="lg:hidden">
-          <h3 class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</h3>
+          <p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</p>
           <div class="flex items-center ml-2">
             <a
               v-if="settings.twitter"
@@ -92,7 +95,10 @@ export default {
     }
   },
   methods: {
-    isNew (document) {
+    isCategoryActive (documents) {
+      return documents.some(document => document.to === this.$route.fullPath)
+    },
+    isDocumentNew (document) {
       if (process.server) {
         return
       }
