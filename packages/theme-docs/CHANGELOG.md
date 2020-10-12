@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.1...@nuxt/content-theme-docs@0.7.2) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** handle purgecss in rootDir components ([#559](https://github.com/nuxt/content/issues/559)) ([08d3c75](https://github.com/nuxt/content/commit/08d3c75986b99ba13b8237753f5b3627d273c0dc))
+* **theme-docs:** pin @nuxtjs/google-fonts dependency ([74dbdc7](https://github.com/nuxt/content/commit/74dbdc72ae14a97af60884a77e5307f4a6efe22b))
+
+
+
+
+
 ## [0.7.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.0...@nuxt/content-theme-docs@0.7.1) (2020-10-12)
 
 
