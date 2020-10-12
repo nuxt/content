@@ -1,7 +1,9 @@
 import theme from '@nuxt/content-theme-docs'
 
 export default theme({
-  loading: { color: '#00CD81' },
+  docs: {
+    primaryColor: '#00CD81'
+  },
   i18n: {
     locales: () => [{
       code: 'ru',
