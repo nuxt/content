@@ -11,6 +11,7 @@ const WS = require('./ws')
 const { getDefaults, processMarkdownOptions } = require('./utils')
 
 module.exports = async function (moduleOptions) {
+  const { nuxt } = this
   const isSSG =
     this.options.dev === false &&
     (this.options.target === 'static' ||
@@ -70,13 +71,17 @@ module.exports = async function (moduleOptions) {
 
   // Nuxt hooks
   const globalComponents = resolve(this.options.srcDir, 'components/global')
-  if ((await fs.stat(globalComponents)).isDirectory()) {
-    this.nuxt.hook('components:dirs', (dirs) => {
+  const dirStat = await fs.stat(globalComponents).catch(() => null)
+  if (dirStat && dirStat.isDirectory()) {
+    nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
         path: '~/components/global',
         global: true
       })
     })
+  } else {
+    // restart Nuxt on first component creation inside the dir
+    nuxt.options.watch.push(globalComponents)
   }
 
   this.nuxt.hook('generate:cache:ignore', ignore => ignore.push(relativeDir))
