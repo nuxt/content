@@ -2463,10 +2463,10 @@
     request "^2.88.2"
     request-promise-native "^1.0.8"
 
-"@nuxtjs/pwa@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/pwa/-/pwa-3.2.1.tgz#4ec0a254482c829e3f4403cc66d3dc575124ffa5"
-  integrity sha512-4tRwZee6n8zzLELjdg3Wq4zMny0hTN8JbIb0rPv6ikmU3DEo8NLVzkv9Hmm/EoHYWNdIyKOh11xrHrAYOLkDcA==
+"@nuxtjs/pwa@^3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/pwa/-/pwa-3.2.2.tgz#e03c632e30f3df287a842d67323d945f36b97440"
+  integrity sha512-B+2VKwmaw40Wyds0hOKuN9R8ODHg7de8B7uQbzaZpLNuCinfKioQOk8jjaLDKRf4sndNG4AYI90Et4M+MRQetQ==
   dependencies:
     defu "^3.1.0"
     execa "^4.0.3"
@@ -10867,15 +10867,16 @@ nuxt-ackee@^2.0.0:
     ackee-tracker "^4.0.0"
     defu "^3.1.0"
 
-nuxt-i18n@^6.15.1:
-  version "6.15.1"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.15.1.tgz#01bccd4fe2181a0611d43392dd66e60341c04457"
-  integrity sha512-LWKfr1B6JWhXYEpM5iHXJ2kyXMyH7RiHLbAHTVWV6PoRFwHgaFAPC9juq6Uis/SLxKwojP2QOmwfZYep8Uk+Dw==
+nuxt-i18n@^6.15.2:
+  version "6.15.2"
+  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.15.2.tgz#2ea51486542746ae27d4d7aff19807262745686e"
+  integrity sha512-zXGHrFKydgalAPlQENNUdl0FUoA821HHi8NLpEN+EQHfsD6hBl0Q/PAD36QfEmH++hTXdmJQJ1k5iugws4sKrg==
   dependencies:
     "@babel/parser" "^7.5.5"
     "@babel/traverse" "^7.5.5"
     "@intlify/vue-i18n-extensions" "^1.0.1"
     "@intlify/vue-i18n-loader" "^1.0.0"
+    "@types/serve-static" "^1.13.5"
     cookie "^0.4.0"
     deepcopy "^2.1.0"
     is-https "^2.0.0"
@@ -14532,10 +14533,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-theme-colors@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/theme-colors/-/theme-colors-0.0.2.tgz#381d11829e0c1e189c61ede0685e0bb47c800913"
-  integrity sha512-qQ01EzSNO8ubKPJ3+ePdr4K3VihuI9eXOASzGjxXu61uWJGuaRVEeR7IlLdj5lJjc/AiOe61v1H0j6wC3zRbHQ==
+theme-colors@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/theme-colors/-/theme-colors-0.0.4.tgz#d365a54e3c5a753cd5be2d3069fb73a7cdd008e1"
+  integrity sha512-JsM4uL1llglArQ9jvH7aKetVUBvNgKNvliXEhLWQrTaMj9TRx7CK5NcCpi7pkZq2tcFOTIA3OECiKDoT686QNA==
 
 thenify-all@^1.0.0:
   version "1.6.0"
