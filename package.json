@@ -25,8 +25,8 @@
     "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
+    "@babel/core": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "@nuxtjs/eslint-config": "^3.1.0",
     "@nuxt/typescript-build": "^2.0.3",
     "@nuxt/typescript-runtime": "^2.0.0",
@@ -40,7 +40,7 @@
     "husky": "^4.3.0",
     "jest": "^26.5.3",
     "lerna": "^3.22.1",
-    "nuxt": "^2.14.6",
+    "nuxt": "^2.14.7",
     "puppeteer": "^5.3.1",
     "shiki": "^0.2.6",
     "shiki-twoslash": "^0.8.1",
