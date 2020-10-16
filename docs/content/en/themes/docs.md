@@ -14,10 +14,16 @@ showcases:
   - https://firebase.nuxtjs.org
   - https://pwa.nuxtjs.org
   - https://image.nuxtjs.org
-  - https://cloudinary.nuxtjs.org
   - https://http.nuxtjs.org
+  - https://cloudinary.nuxtjs.org
   - https://i18n.nuxtjs.org
+  - https://snipcart.nuxtjs.org
   - https://prismic.nuxtjs.org
+  - https://google-analytics.nuxtjs.org
+  - https://color-mode.nuxtjs.org
+  - https://mdx.nuxtjs.org
+  - https://sanity.nuxtjs.org
+  - https://speedcurve.nuxtjs.org
 ---
 
 <alert type="info">
