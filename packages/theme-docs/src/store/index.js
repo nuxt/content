@@ -6,6 +6,7 @@ export const state = () => ({
   releases: [],
   settings: {
     title: 'Nuxt Content Docs',
+    url: '',
     defaultDir: 'docs',
     defaultBranch: '',
     filled: false
@@ -60,6 +61,9 @@ export const mutations = {
   },
   SET_SETTINGS (state, settings) {
     state.settings = Object.assign({}, state.settings, settings, { filled: true })
+    if (!state.settings.url) {
+      console.warn('Please provide the `url` property in `content/setting.json`')
+    }
   }
 }
 
