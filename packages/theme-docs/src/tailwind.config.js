@@ -13,7 +13,9 @@ const { getColors } = require('theme-colors')
 module.exports = ({ docsOptions, nuxt }) => ({
   future: {
     removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true
+    purgeLayersByDefault: true,
+    defaultLineHeights: true,
+    standardFontWeights: true
   },
   theme: {
     extend: {
