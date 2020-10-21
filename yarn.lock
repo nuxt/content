@@ -2656,10 +2656,10 @@
     eslint-plugin-unicorn "^21.0.0"
     eslint-plugin-vue "^6.2.2"
 
-"@nuxtjs/google-fonts@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/google-fonts/-/google-fonts-1.1.0.tgz#0645f9f510ffb1c1b12d5f0c37d63a1ee1ec83f9"
-  integrity sha512-A2YAcMX9ns1iA5pRm5wQHVoM8VPqCM8DL61v1pXukXRe97LVI19mHmYwypVENJvl2+ROSnbzLq/vE4ktX4xqfQ==
+"@nuxtjs/google-fonts@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/google-fonts/-/google-fonts-1.1.2.tgz#ab96f0ceb4d80ec3534797cda2f3715e32d9f625"
+  integrity sha512-AY6uIb3DamcmPOHGdeMu5VJ6cV6l6Lj5wKFu7gXLtTig88qN76fU3At0lt50fe3l09JlredKj6lrzLwoniiXlg==
   dependencies:
     consola "^2.15.0"
     google-fonts-helper "^1.0.5"
