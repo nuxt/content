@@ -8,8 +8,8 @@ describe('editor option', () => {
   describe('alias works', () => {
     test('local alias', async () => {
       ({ nuxt } = (await setup({
-        ...loadConfig(__dirname),
-        buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
+        ...loadConfig(__dirname, 'default'),
+        buildDir: path.join(__dirname, 'fixture', 'default', '.nuxt-dev'),
         content: { watch: true, editor: '~/.nuxt-dev/content/editor.vue' }
       })))
 
@@ -25,8 +25,8 @@ describe('editor option', () => {
 
     test('module resolution', async () => {
       ({ nuxt } = (await setup({
-        ...loadConfig(__dirname),
-        buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
+        ...loadConfig(__dirname, 'default'),
+        buildDir: path.join(__dirname, 'fixture', 'default', '.nuxt-dev'),
         content: { watch: true, editor: '@nuxt/content/templates/editor.vue' }
       })))
 
@@ -44,8 +44,8 @@ describe('editor option', () => {
   describe('replacing works', () => {
     test('replacing', async () => {
       ({ nuxt } = (await setup({
-        ...loadConfig(__dirname),
-        buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
+        ...loadConfig(__dirname, 'default'),
+        buildDir: path.join(__dirname, 'fixture', 'default', '.nuxt-dev'),
         content: { watch: true, editor: '~/components/editor.vue' }
       })))
 

@@ -5,7 +5,7 @@ describe('plugin', () => {
   let nuxt, browser, page
 
   beforeAll(async () => {
-    ({ nuxt } = (await setup(loadConfig(__dirname))))
+    ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
     browser = await createBrowser('puppeteer')
     page = await browser.page(url('/'))
   }, 60000)

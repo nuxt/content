@@ -7,7 +7,7 @@ describe('component', () => {
 
   describe('', () => {
     beforeAll(async () => {
-      ({ nuxt } = (await setup(loadConfig(__dirname))))
+      ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
       browser = await createBrowser('puppeteer')
     }, 60000)
 
@@ -56,11 +56,11 @@ describe('component', () => {
     })
   })
 
-  describe('in dev mode', () => {
+  describe('in dev mode (default)', () => {
     beforeAll(async () => {
       ({ nuxt } = (await setup({
-        ...loadConfig(__dirname),
-        buildDir: path.join(__dirname, 'fixture', '.nuxt-dev'),
+        ...loadConfig(__dirname, 'default'),
+        buildDir: path.join(__dirname, 'fixture', 'default', '.nuxt-dev'),
         content: { watch: true }
       })))
       browser = await createBrowser('puppeteer')
@@ -92,4 +92,61 @@ describe('component', () => {
       expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="my-class nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/)
     })
   })
+
+  // describe('in dev mode (i18n)', () => {
+  //   beforeAll(async () => {
+  //     ({ nuxt } = (await setup({
+  //       ...loadConfig(__dirname, 'i18n'),
+  //       buildDir: path.join(__dirname, 'fixture', 'i18n', '.nuxt-dev'),
+  //       content: { watch: true }
+  //     })))
+  //     browser = await createBrowser('puppeteer')
+  //   }, 60000)
+
+  //   afterAll(async () => {
+  //     await nuxt.close()
+  //     await browser.close()
+  //   })
+
+  //   test('has generated html (en)', async () => {
+  //     page = await browser.page(url('/home'))
+  //     const html = await page.getHtml()
+
+  //     expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/)
+  //   })
+
+  //   test('has generated html (fr)', async () => {
+  //     page = await browser.page(url('/fr/home'))
+  //     const html = await page.getHtml()
+
+  //     expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page in French!<\/p><\/div><\/div><\/div>/)
+  //   })
+
+  //   test('switches locales and has generated html (en to/from fr)', async () => {
+  //     const enHtmlRegExp = /<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/
+
+  //     page = await browser.page(url('/home'))
+  //     const enHtml = await page.getHtml()
+
+  //     expect(enHtml).toMatch(enHtmlRegExp)
+
+  //     await Promise.all([
+  //       page.waitForNavigation(),
+  //       page.click('#lang-switcher')
+  //     ])
+
+  //     const frHtml = await page.getHtml()
+
+  //     expect(frHtml).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page in French!<\/p><\/div><\/div><\/div>/)
+
+  //     await Promise.all([
+  //       page.waitForNavigation(),
+  //       page.click('#lang-switcher')
+  //     ])
+
+  //     const enHtml2 = await page.getHtml()
+
+  //     expect(enHtml2).toMatch(enHtmlRegExp)
+  //   })
+  // })
 })

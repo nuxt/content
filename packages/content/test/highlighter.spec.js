@@ -14,7 +14,7 @@ describe("highlighter", () => {
     let nuxt, browser, page, html, nuxtContent
 
     beforeAll(async () => {
-      ({ nuxt } = await setup(loadConfig(__dirname)))
+      ({ nuxt } = await setup(loadConfig(__dirname, 'default')))
       browser = await createBrowser("puppeteer")
       page = await browser.page(url("/highlighter"))
       html = await page.getHtml()
@@ -52,7 +52,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             highlighter (rawCode, lang) {
@@ -111,7 +111,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             async highlighter () {
@@ -163,7 +163,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             async highlighter () {
@@ -227,7 +227,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             highlighter (
@@ -296,7 +296,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             async highlighter () {
@@ -362,7 +362,7 @@ describe("highlighter", () => {
 
     beforeAll(async () => {
       ({ nuxt } = await setup({
-        ...loadConfig(__dirname),
+        ...loadConfig(__dirname, "default"),
         content: {
           markdown: {
             async highlighter () {

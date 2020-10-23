@@ -6,7 +6,7 @@ describe('options', () => {
     let options
 
     beforeAll(async () => {
-      ({ nuxt } = (await setup(loadConfig(__dirname))))
+      ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
       const { getOptions } = require('@nuxt/content')
       options = getOptions()
     }, 60000)
@@ -58,7 +58,7 @@ describe('options', () => {
     }
 
     beforeAll(async () => {
-      ({ nuxt } = (await setup(loadConfig(__dirname))))
+      ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
       const { getOptions } = require('@nuxt/content')
       options = getOptions(config)
     }, 60000)
@@ -89,7 +89,7 @@ describe('options', () => {
     }
 
     beforeAll(async () => {
-      ({ nuxt } = (await setup(loadConfig(__dirname))))
+      ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
       const { getOptions } = require('@nuxt/content')
       options = getOptions(config)
     }, 60000)
@@ -120,7 +120,7 @@ describe('options', () => {
     }
 
     beforeAll(async () => {
-      ({ nuxt } = (await setup(loadConfig(__dirname))))
+      ({ nuxt } = (await setup(loadConfig(__dirname, 'default'))))
       const { getOptions } = require('@nuxt/content')
       options = getOptions(config)
     }, 60000)
@@ -153,7 +153,7 @@ describe('options', () => {
     }
 
     beforeAll(async () => {
-      ({ nuxt } = (await setup({ ...loadConfig(__dirname), ...config })))
+      ({ nuxt } = (await setup({ ...loadConfig(__dirname, 'default'), ...config })))
       const module = require('@nuxt/content')
       $content = module.$content
     }, 60000)
