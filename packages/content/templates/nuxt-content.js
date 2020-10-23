@@ -35,7 +35,7 @@ function propsToData (props, doc) {
  * Create the scoped slots from `node` template children. Templates for default
  * slots are processed as regular children in `processNode`.
  */
-function slotsToData (node, h, doc) {
+function slotsToData (node, h, doc, localePath) {
   const data = {}
   const children = node.children || []
 
@@ -47,14 +47,14 @@ function slotsToData (node, h, doc) {
     data.scopedSlots = data.scopedSlots || {}
     const template = child
     const name = getSlotName(template)
-    const vDomTree = template.content.map(tmplNode => processNode(tmplNode, h, doc))
+    const vDomTree = template.content.map(tmplNode => processNode(tmplNode, h, doc, localePath))
     data.scopedSlots[name] = function () { return vDomTree }
   })
 
   return data
 }
 
-function processNode (node, h, doc) {
+function processNode (node, h, doc, localePath) {
   /**
    * Return raw value as it is
    */
@@ -62,9 +62,15 @@ function processNode (node, h, doc) {
     return node.value
   }
 
-  const slotData = slotsToData(node || {}, h, doc)
+  const slotData = slotsToData(node || {}, h, doc, localePath)
   const propData = propsToData(node.props, doc)
   const data = Object.assign({}, slotData, propData)
+
+  if (node.tag === 'nuxt-link') {
+    if (data.attrs.to) {
+      data.attrs = Object.assign(data.attrs, { to: localePath(data.attrs.to) })
+    }
+  }
 
   /**
    * Process child nodes, flat-mapping templates pointing to default slots.
@@ -75,7 +81,7 @@ function processNode (node, h, doc) {
     if (isTemplate(child) && !isDefaultTemplate(child)) { continue }
 
     const processQueue = isDefaultTemplate(child) ? child.content : [child]
-    children.push(...processQueue.map(node => processNode(node, h, doc)))
+    children.push(...processQueue.map(node => processNode(node, h, doc, localePath)))
   }
 
   return h(node.tag, data, children)
@@ -109,7 +115,8 @@ export default {
       required: true
     }
   },
-  render (h, { data, props }) {
+  render (h, { data, props, parent }) {
+    const { localePath } = parent
     const { document } = props
     const { body } = document || {}
     if (!body || !body.children || !Array.isArray(body.children)) {
@@ -126,6 +133,6 @@ export default {
     }
     data.class = classes.concat('nuxt-content')
     data.props = Object.assign({ ...body.props }, data.props)
-    return h('div', data, body.children.map(child => processNode(child, h, document)))
+    return h('div', data, body.children.map(child => processNode(child, h, document, localePath)))
   }
 }
