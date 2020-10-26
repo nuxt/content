@@ -27,7 +27,7 @@
     "graceful-fs": "^4.2.4",
     "gray-matter": "^4.0.2",
     "hasha": "^5.2.2",
-    "hookable": "^4.1.2",
+    "hookable": "^4.2.0",
     "html-tags": "^3.1.0",
     "js-yaml": "3.14.0",
     "mdast-util-to-hast": "^10.0.0",
