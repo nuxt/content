@@ -213,6 +213,14 @@ export default {
 }
 ```
 
+### `markdown.tocDepth`
+
+- Type: `Number`
+- Default: `3`
+- Version: **>= v1.11.0**
+
+Define until which heading levels is included in table of contents.
+
 ### `markdown.remarkPlugins`
 
 - Type: `Array`

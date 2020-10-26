@@ -10,6 +10,7 @@ const getDefaults = ({ dev = false } = {}) => ({
   fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   nestedProperties: [],
   markdown: {
+    tocDepth: 3,
     remarkPlugins: [
       'remark-squeeze-paragraphs',
       'remark-slug',
@@ -31,6 +32,26 @@ const getDefaults = ({ dev = false } = {}) => ({
   xml: {},
   extendParser: {}
 })
+
+const processMarkdownTocDepth = (markdown) => {
+  const { tocDepth } = markdown
+  const tocTags = []
+
+  if (tocDepth === 1) {
+    logger.info('content.markdown.tocDepth is set as 1. Table of contents of markdown files will be empty.')
+    return tocTags
+  }
+
+  if (tocDepth > 6) {
+    logger.error(new Error('content.markdown.tocDepth must be less than or equal to 6.'))
+  }
+
+  for (let i = 2; i <= tocDepth; i++) {
+    tocTags.push(`h${i}`)
+  }
+
+  return tocTags
+}
 
 const processMarkdownPlugins = (type, markdown, resolvePath) => {
   const plugins = []
@@ -63,6 +84,7 @@ const processMarkdownOptions = (options, resolvePath) => {
   if (!resolvePath) {
     resolvePath = path => path
   }
+  options.markdown.tocTags = processMarkdownTocDepth(options.markdown)
   options.markdown.remarkPlugins = processMarkdownPlugins('remark', options.markdown, resolvePath)
   options.markdown.rehypePlugins = processMarkdownPlugins('rehype', options.markdown, resolvePath)
 }
