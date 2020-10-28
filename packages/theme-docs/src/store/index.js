@@ -7,6 +7,7 @@ export const state = () => ({
   releases: [],
   settings: {
     title: 'Nuxt Content Docs',
+    url: '',
     defaultDir: 'docs',
     defaultBranch: '',
     filled: false
@@ -61,6 +62,9 @@ export const mutations = {
   },
   SET_SETTINGS (state, settings) {
     state.settings = defu({ filled: true }, settings, state.settings)
+    if (!state.settings.url) {
+      console.warn('Please provide the `url` property in `content/setting.json`')
+    }
   }
 }
 

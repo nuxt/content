@@ -6,7 +6,24 @@ description: 'Create your documentation with @nuxt/content docs theme in seconds
 category: Themes
 position: 8
 version: 1.2
-badge: 'v0.7.0'
+badge: 'v0.7.1'
+showcases:
+  - https://strapi.nuxtjs.org
+  - https://tailwindcss.nuxtjs.org
+  - https://storybook.nuxtjs.org
+  - https://firebase.nuxtjs.org
+  - https://pwa.nuxtjs.org
+  - https://image.nuxtjs.org
+  - https://http.nuxtjs.org
+  - https://cloudinary.nuxtjs.org
+  - https://i18n.nuxtjs.org
+  - https://snipcart.nuxtjs.org
+  - https://prismic.nuxtjs.org
+  - https://google-analytics.nuxtjs.org
+  - https://color-mode.nuxtjs.org
+  - https://mdx.nuxtjs.org
+  - https://sanity.nuxtjs.org
+  - https://speedcurve.nuxtjs.org
 ---
 
 <alert type="info">
@@ -176,7 +193,9 @@ Don't forget to install the dependencies of the modules you add in your `nuxt.co
 
 You can override the [default theme config](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/tailwind.config.js) by creating your own `tailwind.config.js`.
 
-The theme design is based on a `primary` color to make it easy to override. Default colors are generated using [theme-colors](https://github.com/nuxt-contrib/theme-colors) with `docs.primaryColor` as base.
+The theme design is based on a `primary` color to make it easy to override.
+
+> Default colors are generated using [theme-colors](https://github.com/nuxt-contrib/theme-colors) with `docs.primaryColor` as base. <badge>v0.7.0+</badge>
 
 **Example**
 
@@ -494,11 +513,11 @@ Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 - `items`
   - Type: `Array`
   - Default: `[]`
-- `type`
+- `type` <badge>v0.7.0+</badge>
   - Type: `String`
   - Default: `'primary'`
   - Values: `['primary', 'info', 'success', 'warning', 'danger']`
-- `icon`
+- `icon` <badge>v0.7.0+</badge>
   - Type: `String`
   - *Can be used to override the default `type` icon, check out the [icons available](https://github.com/nuxt/content/tree/dev/packages/theme-docs/src/components/global/icons)*
 
@@ -615,47 +634,4 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 
 ## Showcases
 
-<div class="grid lg:grid-cols-2 gap-4">
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://content.nuxtjs.org" target="_blank">
-      <img src="https://content.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://content.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://strapi.nuxtjs.org" target="_blank">
-      <img src="https://strapi.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://strapi.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://tailwindcss.nuxtjs.org" target="_blank">
-      <img src="https://tailwindcss.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://tailwindcss.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://storybook.nuxtjs.org" target="_blank">
-      <img src="https://storybook.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://storybook.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://firebase.nuxtjs.org" target="_blank">
-      <img src="https://firebase.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://firebase.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://pwa.nuxtjs.org" target="_blank">
-      <img src="https://pwa.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://pwa.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://image.nuxtjs.org" target="_blank">
-      <img src="https://image.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://image.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-</div>
+<showcases :showcases="showcases"></showcases>
