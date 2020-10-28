@@ -64,6 +64,43 @@ description: Learn how to use @nuxt/content.
 }
 ```
 
+### 抜粋
+
+コンテンツの抜粋または要約は、`<!--more-->`を仕切りとして使用してコンテンツから抽出できます。
+
+```md
+---
+title: Introduction
+---
+
+@nuxt/contentの使用方法を学びます。
+<!--more-->
+より多くの仕切りを超えたコンテンツの全量。
+```
+
+Description プロパティには、フロントマター プロップ内で定義されていない限り、抜粋コンテンツが含まれます。
+
+
+<alert type="info">
+<code>&lt;!--more--&gt;</code> を正確に入力するように注意してください。 つまり、すべて小文字で、空白はありません。
+</alert>
+
+変数の例がドキュメントに挿入されます。
+```json
+{
+  body: Object
+  title: "Introduction"
+  description: "@nuxt/contentの使用方法を学びます。"
+  dir: "/"
+  extension: ".md"
+  path: "/index"
+  slug: "index"
+  toc: Array
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
 ### 見出し
 
 このモジュールは自動的に`id`と`link`を各見出しに追加します。

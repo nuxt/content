@@ -64,6 +64,43 @@ Ces variables seront injectées au sein du document:
 }
 ```
 
+### Extrait
+
+L'extrait ou le résumé du contenu peut être extrait du contenu en utilisant `<!--more-->` comme diviseur.
+
+```md
+---
+title: Introduction
+---
+
+Apprenez comment utiliser @nuxt/content.
+<!--more-->
+Quantité totale de contenu au-delà du plus diviseur.
+```
+
+La propriété Description contiendra le contenu de l'extrait à moins qu'elle ne soit définie dans les accessoires Front Matter.
+
+
+<alert type="info">
+Veillez à saisir exactement <code>&lt;!--more--&gt;</code>; c'est-à-dire, tout en minuscules et sans espace.
+</alert>
+
+Des exemples de variables seront injectés dans le document:
+```json
+{
+  body: Object
+  title: "Introduction"
+  description: "Apprenez comment utiliser @nuxt/content."
+  dir: "/"
+  extension: ".md"
+  path: "/index"
+  slug: "index"
+  toc: Array
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
 ### Titres
 
 Ce module associe automatiquement un `id` et un `lien` à chaque titre.
