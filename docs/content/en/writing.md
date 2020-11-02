@@ -69,7 +69,7 @@ These variables will be injected into the document:
 
 ### Excerpt
 
-Content excerpt or summary can be extracted from the content using `<!--more-->` as a divider. 
+Content excerpt or summary can be extracted from the content using `<!--more-->` as a divider.
 
 ```md
 ---
@@ -83,12 +83,14 @@ Full amount of content beyond the more divider.
 
 Description property will contain the excerpt content unless defined within the Front Matter props.
 
-
 <alert type="info">
+
 Be careful to enter <code>&lt;!--more--&gt;</code> exactly; i.e., all lowercase and with no whitespace.
+
 </alert>
 
 Example variables will be injected into the document:
+
 ```json
 {
   body: Object
