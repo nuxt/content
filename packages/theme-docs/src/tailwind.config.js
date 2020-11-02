@@ -145,12 +145,12 @@ module.exports = ({ docsOptions, nuxt }) => ({
     })
   },
   variants: {
-    margin: ['responsive', 'last'],
+    margin: ['responsive', 'last', 'direction'],
     padding: ['responsive', 'hover'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
-    borderWidth: ['responsive', 'first', 'last'],
+    borderWidth: ['responsive', 'first', 'last', 'direction'],
     typography: ['responsive', 'dark']
   },
   plugins: [
@@ -203,7 +203,8 @@ module.exports = ({ docsOptions, nuxt }) => ({
         zIndex: false,
         opacity: false
       }
-    )
+    ),
+    require('tailwindcss-dir')()
   ],
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
