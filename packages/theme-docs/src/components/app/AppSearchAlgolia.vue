@@ -152,6 +152,8 @@ export default {
   --docsearch-searchbox-focus-background: var(--color-gray-200);
   --docsearch-hit-color: var(--color-gray-700);
   --docsearch-muted-color: var(--color-gray-500);
+
+  direction: initial;
 }
 
 .DocSearch-Button {
