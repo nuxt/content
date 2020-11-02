@@ -54,6 +54,14 @@ describe('component', () => {
         new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<h2 id="header">\s*<a aria-hidden="true" href="#header" tabindex="-1">\s*<span class="icon icon-link">\s*<\/span>\s*<\/a>Header<\/h2>\s*<p>\s*<video autoplay="autoplay" loop="loop" playsinline="true" controls="controls"><\/video><\/p>\s*<\/div><\/div>/)
       )
     })
+
+    test('has renders html with excerpt', async () => {
+      page = await browser.page(url('/excerpt'))
+      const html = await page.getHtml()
+      expect(html).toContain('<meta data-n-head="ssr" name="description" content="this is the summary">')
+      expect(html).toContain('this is the summary')
+      expect(html).toContain('this is full content')
+    })
   })
 
   describe('in dev mode', () => {
