@@ -18,7 +18,7 @@
     >
       <div
         v-show="open"
-        class="mt-2 w-auto rounded-md shadow-lg z-50 origin-top-right absolute bottom-0 right-0"
+        class="mt-2 w-auto rounded-md shadow-lg z-50 origin-top-right absolute bottom-0 ltr:right-0 rtl:left-0"
       >
         <div class="rounded-md bg-white dark:bg-gray-800 shadow-xs">
           <slot />

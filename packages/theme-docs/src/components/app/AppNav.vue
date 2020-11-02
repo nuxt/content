@@ -4,7 +4,7 @@
     :class="{ 'block': menu, 'hidden': !menu }"
   >
     <div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)">
-      <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
+      <ul class="p-4 lg:py-8 lg:pl-0 lg:ltr:pr-8 lg:rtl:pl-8">
         <li v-if="!settings.algolia" class="mb-4 lg:hidden">
           <AppSearch />
         </li>
@@ -40,7 +40,7 @@
         </li>
         <li class="lg:hidden">
           <p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</p>
-          <div class="flex items-center ml-2">
+          <div class="flex items-center ltr:ml-2 rtl:mr-2">
             <a
               v-if="settings.twitter"
               :href="`https://twitter.com/${settings.twitter}`"
@@ -48,7 +48,7 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 ltr:mr-4 rtl:ml-4"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
@@ -59,12 +59,12 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 ltr:mr-4 rtl:ml-4"
             >
               <IconGithub class="w-5 h-5" />
             </a>
 
-            <AppLangSwitcher class="mr-4" />
+            <AppLangSwitcher class="ltr:mr-4 rtl:ml-4" />
             <AppColorSwitcher />
           </div>
         </li>

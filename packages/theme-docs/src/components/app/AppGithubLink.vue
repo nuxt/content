@@ -6,8 +6,9 @@
       rel="noopener"
       class="text-gray-600 dark:text-gray-400 text-sm font-medium hover:underline flex items-center"
     >
+      <IconExternalLink class="ltr:hidden w-4 h-4 ml-1" />
       {{ $t('article.github') }}
-      <IconExternalLink class="w-4 h-4 ml-1" />
+      <IconExternalLink class="rtl:hidden w-4 h-4 ml-1" />
     </a>
   </div>
 </template>

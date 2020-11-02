@@ -85,5 +85,25 @@
   & pre[class*="language-"] {
     /* Make pre static so the relative goes to the parent (.nuxt-content-highlight) */
     @apply bg-gray-800 static;
+
+    direction: initial;
+  }
+}
+
+body[dir="rtl"] {
+  & .nuxt-content {
+    & h2, & h3 {
+      & > a {
+        @apply ml-0 mr-5;
+
+        &::before {
+          @apply ml-0 pr-0 -mr-5 pl-2;
+        }
+
+        @screen lg {
+          @apply mr-0;
+        }
+      }
+    }
   }
 }

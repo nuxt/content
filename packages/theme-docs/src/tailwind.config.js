@@ -146,12 +146,14 @@ module.exports = ({ docsOptions, nuxt }) => ({
   },
   variants: {
     margin: ['responsive', 'last', 'direction'],
-    padding: ['responsive', 'hover'],
+    padding: ['responsive', 'hover', 'direction'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     borderWidth: ['responsive', 'first', 'last', 'direction'],
-    typography: ['responsive', 'dark']
+    typography: ['responsive', 'dark'],
+    inset: ['responsive', 'direction'],
+    display: ['responsive', 'direction']
   },
   plugins: [
     plugin(function ({ addVariant, prefix, e }) {

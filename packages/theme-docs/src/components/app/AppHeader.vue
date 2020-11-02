@@ -6,7 +6,7 @@
   >
     <div class="container mx-auto flex-1 px-4 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <div class="lg:w-1/5 flex items-center pr-4" @click.stop="noop">
+        <div class="lg:w-1/5 flex items-center ltr:pr-4 rtl:pl-4" @click.stop="noop">
           <NuxtLink
             :to="localePath('/')"
             class="flex-shrink-0 flex-1 font-bold text-xl"
@@ -28,13 +28,13 @@
           <AppSearch v-else class="hidden lg:block" />
         </div>
         <div
-          class="lg:w-1/5 flex items-center pl-4 lg:pl-8"
+          class="lg:w-1/5 flex items-center ltr:pl-4 rtl:pr-4 lg:ltr:pl-8 lg:rtl:pr-8"
           :class="{ 'justify-between': lastRelease && settings.layout !== 'single', 'justify-end': !lastRelease || settings.layout === 'single' }"
         >
           <NuxtLink
             v-if="lastRelease"
             to="/releases"
-            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base mr-4"
+            class="font-semibold leading-none text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 text-base ltr:mr-4 rtl:ml-4"
             exact-active-class="text-primary-500"
           >{{ lastRelease.name }}</NuxtLink>
           <div class="flex items-center">
@@ -45,7 +45,7 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ml-4"
+              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ltr:ml-4 rtl:mr-4"
               :class="{
                 'hidden lg:block': settings.layout !== 'single'
               }"
@@ -59,7 +59,7 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ml-4"
+              class="text-gray-700 dark:text-gray-300 hover:text-primary-500 dark-hover:text-primary-500 ltr:ml-4 rtl:mr-4"
               :class="{
                 'hidden lg:block': settings.layout !== 'single'
               }"
@@ -69,7 +69,7 @@
 
             <button
               v-if="settings.layout !== 'single'"
-              class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none -mr-2"
+              class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none ltr:-mr-2 rtl:-ml-2"
               aria-label="Menu"
               @click.stop="menu = !menu"
             >

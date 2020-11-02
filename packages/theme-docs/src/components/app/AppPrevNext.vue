@@ -11,7 +11,8 @@
       :to="localePath(prev.to)"
       class="text-primary-500 font-bold hover:underline flex items-center justify-start"
     >
-      <IconArrowLeft class="w-4 h-4 mr-1 flex-shrink-0" />
+      <IconArrowLeft class="rtl:hidden w-4 h-4 mr-1 flex-shrink-0" />
+      <IconArrowRight class="ltr:hidden w-4 h-4 ml-1 flex-shrink-0" />
       <span class="truncate">{{ prev.title }}</span>
     </NuxtLink>
     <span v-else>&nbsp;</span>
@@ -22,7 +23,8 @@
       class="text-primary-500 font-bold hover:underline flex items-center justify-end"
     >
       <span class="truncate">{{ next.title }}</span>
-      <IconArrowRight class="w-4 h-4 ml-1 flex-shrink-0" />
+      <IconArrowRight class="rtl:hidden w-4 h-4 ml-1 flex-shrink-0" />
+      <IconArrowLeft class="ltr:hidden w-4 h-4 mr-1 flex-shrink-0" />
     </NuxtLink>
     <span v-else>&nbsp;</span>
   </div>

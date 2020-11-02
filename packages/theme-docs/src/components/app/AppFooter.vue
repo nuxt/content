@@ -9,7 +9,7 @@
       </div>
       <div class="flex">
         <AppLangSwitcher />
-        <AppColorSwitcher class="ml-4" />
+        <AppColorSwitcher class="ltr:ml-4 rtl:mr-4" />
       </div>
     </div>
   </footer>
