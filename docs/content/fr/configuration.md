@@ -51,7 +51,7 @@ content: {
 - Type: `Array`
 - Défaut: `['title', 'description', 'slug', 'text']`
 
-Les champs qui ont besoin d'être indexés afin d'être recherchables, vous pouvez en apprendre plus sur les recherches [ici](/fetching#searchfield-value).
+Les champs qui ont besoin d'être indexés afin d'être recherchables, vous pouvez en apprendre plus sur les recherches [ici](/fr/fetching#searchfield-value).
 
 `text` est une propriété spéciale qui contient votre Markdown avant qu'il soit converti en AST.
 
