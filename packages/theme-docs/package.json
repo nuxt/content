@@ -28,7 +28,8 @@
     "vue-scrollactive": "^0.9.3"
   },
   "devDependencies": {
-    "nuxt": "^2.14.7"
+    "nuxt": "^2.14.7",
+    "tailwindcss-dir": "^4.0.0"
   },
   "types": "./src/index.d.ts"
 }
