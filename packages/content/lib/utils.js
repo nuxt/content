@@ -37,13 +37,13 @@ const processMarkdownTocDepth = (markdown) => {
   const { tocDepth } = markdown
   const tocTags = []
 
-  if (tocDepth === 1) {
-    logger.info('content.markdown.tocDepth is set as 1. Table of contents of markdown files will be empty.')
+  if (tocDepth < 1) {
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will be empty.`)
     return tocTags
   }
 
   if (tocDepth > 6) {
-    logger.error(new Error('content.markdown.tocDepth must be less than or equal to 6.'))
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will include all the headings.`)
   }
 
   for (let i = 2; i <= tocDepth; i++) {
