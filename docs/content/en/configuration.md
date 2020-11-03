@@ -219,7 +219,7 @@ export default {
 - Default: `3`
 - Version: **>= v1.11.0**
 
-Define until which heading levels is included in table of contents.
+You can change maximum heading depth to include in the table of contents.
 
 ### `markdown.remarkPlugins`
 
