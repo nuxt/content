@@ -176,4 +176,101 @@ describe('options', () => {
       )
     })
   })
+
+  describe('changing table of contents depth', () => {
+    let nuxt
+
+    afterEach(async () => {
+      await nuxt.close()
+    })
+
+    test('overriding content.markdown.tocDepth option', async () => {
+      const config = {
+        markdown: {
+          tocDepth: 0
+        }
+      }
+
+      ;({ nuxt } = (await setup(loadConfig(__dirname))))
+      const module = require('@nuxt/content')
+      const options = module.getOptions(config)
+
+      expect(options).toEqual(expect.objectContaining({
+        markdown: expect.objectContaining({
+          tocDepth: 0
+        })
+      }))
+    })
+
+    test('default table of contents', async () => {
+      ;({ nuxt } = (await setup(loadConfig(__dirname))))
+      const module = require('@nuxt/content')
+
+      const item = await module.$content('toc').fetch()
+
+      expect(item).toEqual(
+        expect.objectContaining({
+          toc: expect.arrayContaining([
+            expect.objectContaining({ depth: 2, id: 'heading-a-2', text: 'Heading A-2' }),
+            expect.objectContaining({ depth: 3, id: 'heading-a-3', text: 'Heading A-3' }),
+            expect.objectContaining({ depth: 2, id: 'heading-b-2', text: 'Heading B-2' }),
+            expect.objectContaining({ depth: 3, id: 'heading-b-3', text: 'Heading B-3' })
+          ])
+        })
+      )
+    })
+
+    test('table of contents with depth 1', async () => {
+      const config = {
+        content: {
+          markdown: {
+            tocDepth: 1
+          }
+        }
+      }
+
+      ;({ nuxt } = (await setup({ ...loadConfig(__dirname), ...config })))
+      const module = require('@nuxt/content')
+
+      const item = await module.$content('toc').fetch()
+
+      expect(item).toEqual(
+        expect.objectContaining({
+          toc: expect.arrayContaining([])
+        })
+      )
+    })
+
+    test('table of contents with depth 6', async () => {
+      const config = {
+        content: {
+          markdown: {
+            tocDepth: 6
+          }
+        }
+      }
+
+      ;({ nuxt } = (await setup({ ...loadConfig(__dirname), ...config })))
+      const module = require('@nuxt/content')
+
+      const item = await module.$content('toc').fetch()
+
+      expect(item).toEqual(
+        expect.objectContaining({
+          toc: expect.arrayContaining([
+            expect.objectContaining({ depth: 2, id: 'heading-a-2', text: 'Heading A-2' }),
+            expect.objectContaining({ depth: 3, id: 'heading-a-3', text: 'Heading A-3' }),
+            expect.objectContaining({ depth: 4, id: 'heading-a-4', text: 'Heading A-4' }),
+            expect.objectContaining({ depth: 5, id: 'heading-a-5', text: 'Heading A-5' }),
+            expect.objectContaining({ depth: 6, id: 'heading-a-6', text: 'Heading A-6' }),
+            expect.objectContaining({ depth: 2, id: 'heading-b-2', text: 'Heading B-2' }),
+            expect.objectContaining({ depth: 3, id: 'heading-b-3', text: 'Heading B-3' }),
+            expect.objectContaining({ depth: 4, id: 'heading-b-4', text: 'Heading B-4' }),
+            expect.objectContaining({ depth: 5, id: 'heading-b-5', text: 'Heading B-5' }),
+            expect.objectContaining({ depth: 6, id: 'heading-b-6', text: 'Heading B-6' })
+          ])
+        })
+      )
+    })
+  })
 })
