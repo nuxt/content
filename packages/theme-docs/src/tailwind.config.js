@@ -24,8 +24,7 @@ module.exports = ({ docsOptions, nuxt }) => ({
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        primary: getColors(docsOptions.primaryColor || '#00CD81'),
-        darkPrimary: getColors(docOptions.darkPrimaryColor || '#00CD81')
+        primary: getColors(docsOptions.primaryColor || '#00CD81')
       },
       maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'
@@ -94,7 +93,7 @@ module.exports = ({ docsOptions, nuxt }) => ({
             color: theme('colors.gray.300')
           },
           a: {
-            color: theme('colors.darkPrimary.500') || theme('colors.primary.400')
+            color: theme('colors.primary.400')
           },
           strong: {
             color: theme('colors.gray.100')
