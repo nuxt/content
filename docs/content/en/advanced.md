@@ -73,7 +73,7 @@ The module adds some hooks you can use:
 Allows you to modify the contents of a file before it is handled by the parsers.
 
 Arguments:
-- `data`
+- `file`
  - Type: `Object`
  - Properties:
    - path: `String`

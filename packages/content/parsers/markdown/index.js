@@ -92,23 +92,41 @@ class Markdown {
   }
 
   /**
+   * Generate text excerpt summary
+   * @param {string} excerptContent - JSON AST generated from excerpt markdown.
+   * @returns {string} concatinated excerpt
+   */
+  generateDescription (excerptContent) {
+    return this.flattenNodeText(excerptContent)
+  }
+
+  /**
    * Converts markdown document to it's JSON structure.
    * @param {string} file - Markdown file
    * @return {Object}
    */
   async toJSON (file) {
-    const { data, content } = matter(file)
+    const { data, content, ...rest } = matter(file, { excerpt: true, excerpt_separator: '<!--more-->' })
 
     // Compile markdown from file content to JSON
     const body = await this.generateBody(content)
     // Generate toc from body
     const toc = this.generateToc(body)
 
+    let excerpt
+    let description
+    if (rest.excerpt) {
+      excerpt = await this.generateBody(rest.excerpt)
+      description = this.generateDescription(excerpt)
+    }
+
     return {
+      description,
       ...data,
       toc,
       body,
-      text: content
+      text: content,
+      excerpt
     }
   }
 }

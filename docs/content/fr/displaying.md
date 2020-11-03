@@ -38,7 +38,7 @@ export default {
   - Type: `Object`
   - `requis`
 
-Vous pouvez en apprendre davantage au sujet de ce que vous pouvez écrire dans vos fichiers Markdown dans la section [écrire du contenu](/writing#markdown).
+Vous pouvez en apprendre davantage au sujet de ce que vous pouvez écrire dans vos fichiers Markdown dans la section [écrire du contenu](/fr/writing#markdown).
 
 ## Style
 
