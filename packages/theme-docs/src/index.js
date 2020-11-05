@@ -52,22 +52,28 @@ const defaultConfig = docsOptions => ({
   },
   hooks: {
     'modules:before': ({ nuxt }) => {
+      const { options, hook } = nuxt
       // Configure `content/` dir
-      nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
+      options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
       // Configure `static/ dir
-      nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, nuxt.options.dir.static || 'static')
+      options.dir.static = path.resolve(nuxt.options.rootDir, nuxt.options.dir.static || 'static')
       // Configure `components/` dir
-      nuxt.hook('components:dirs', (dirs) => {
+      hook('components:dirs', (dirs) => {
         dirs.push({
           path: path.resolve(nuxt.options.rootDir, 'components/global'),
           global: true
         })
       })
-      // Configure `tailwind.config.js` path
-      nuxt.options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
-      nuxt.options.tailwindcss.cssPath = nuxt.options.tailwindcss.cssPath || path.resolve(nuxt.options.rootDir, nuxt.options.dir.assets, 'css', 'tailwind.css')
+      // Configure content after each hook
+      hook('content:file:beforeInsert', (document) => {
+        const regexp = new RegExp(`^/(${options.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
+        const dir = document.dir.replace(regexp, '')
+        const slug = document.slug.replace(/^index/, '')
+
+        document.to = `${dir}/${slug}`
+      })
       // Extend `/` route
-      nuxt.hook('build:extendRoutes', (routes) => {
+      hook('build:extendRoutes', (routes) => {
         const allRoute = routes.find(route => route.name === 'all')
 
         routes.push({
@@ -77,11 +83,14 @@ const defaultConfig = docsOptions => ({
         })
       })
       // Override editor style on dev mode
-      if (nuxt.options.dev) {
-        nuxt.options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
+      if (options.dev) {
+        options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
       }
+      // Configure `tailwind.config.js` path
+      options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
+      options.tailwindcss.cssPath = nuxt.options.tailwindcss.cssPath || path.resolve(nuxt.options.rootDir, nuxt.options.dir.assets, 'css', 'tailwind.css')
       // Configure TailwindCSS
-      nuxt.hook('tailwindcss:config', function (defaultTailwindConfig) {
+      hook('tailwindcss:config', function (defaultTailwindConfig) {
         Object.assign(defaultTailwindConfig, defu(defaultTailwindConfig, tailwindConfig({ docsOptions, nuxt })))
       })
     }
@@ -127,14 +136,6 @@ export default (userConfig) => {
     console.warn('[security] Avoid passing `env.GITHUB_TOKEN` directly in `nuxt.config`. Use `.env` file instead!')
     userConfig.privateRuntimeConfig.GITHUB_TOKEN = userConfig.env.GITHUB_TOKEN
     delete userConfig.env.GITHUB_TOKEN
-  }
-
-  config.hooks['content:file:beforeInsert'] = (document) => {
-    const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
-    const dir = document.dir.replace(regexp, '')
-    const slug = document.slug.replace(/^index/, '')
-
-    document.to = `${dir}/${slug}`
   }
 
   return config
