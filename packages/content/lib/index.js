@@ -69,6 +69,8 @@ module.exports = async function (moduleOptions) {
     options.apiPrefixWithBase = baseRouter + options.apiPrefix
   }
 
+  nuxt.callHook('content:options', options)
+
   // Nuxt hooks
   const globalComponents = resolve(this.options.srcDir, 'components/global')
   const dirStat = await fs.stat(globalComponents).catch(() => null)
