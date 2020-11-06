@@ -35,13 +35,17 @@ class Markdown {
    * @returns {array} List of headers
    */
   generateToc (body) {
-    // Returns only h2 and h3 from body root children
-    return body.children.filter(node => ['h2', 'h3'].includes(node.tag)).map((node) => {
+    const { tocTags } = this.options
+
+    return body.children.filter(node => tocTags.includes(node.tag)).map((node) => {
       const id = node.props.id
 
       const depth = ({
         h2: 2,
-        h3: 3
+        h3: 3,
+        h4: 4,
+        h5: 5,
+        h6: 6
       })[node.tag]
 
       const text = this.flattenNodeText(node)
