@@ -135,6 +135,7 @@ export default (userConfig) => {
     const slug = document.slug.replace(/^index/, '')
 
     document.to = `${dir}/${slug}`
+    document.hiddenInMenu = document.hiddenInMenu || false
   }
 
   return config
