@@ -3,6 +3,53 @@ import defu from 'defu'
 
 import tailwindConfig from './tailwind.config'
 
+function themeModule () {
+  // wait for nuxt options to be normalized
+  const { nuxt } = this
+  const { options, hook } = this.nuxt
+
+  // Configure `content/` dir
+  options.content.dir = path.resolve(options.rootDir, options.content.dir || 'content')
+  // Configure `static/ dir
+  options.dir.static = path.resolve(options.rootDir, options.dir.static || 'static')
+  // Configure `components/` dir
+  hook('components:dirs', (dirs) => {
+    dirs.push({
+      path: path.resolve(options.rootDir, 'components/global'),
+      global: true
+    })
+  })
+  // Configure content after each hook
+  hook('content:file:beforeInsert', (document) => {
+    const regexp = new RegExp(`^/(${options.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
+    const dir = document.dir.replace(regexp, '')
+    const slug = document.slug.replace(/^index/, '')
+
+    document.to = `${dir}/${slug}`
+  })
+  // Extend `/` route
+  hook('build:extendRoutes', (routes) => {
+    const allRoute = routes.find(route => route.name === 'all')
+
+    routes.push({
+      ...allRoute,
+      path: '/',
+      name: 'index'
+    })
+  })
+  // Override editor style on dev mode
+  if (options.dev) {
+    options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
+  }
+  // Configure `tailwind.config.js` path
+  options.tailwindcss.configPath = options.tailwindcss.configPath || path.resolve(options.rootDir, 'tailwind.config.js')
+  options.tailwindcss.cssPath = options.tailwindcss.cssPath || path.resolve(options.rootDir, options.dir.assets, 'css', 'tailwind.css')
+  // Configure TailwindCSS
+  hook('tailwindcss:config', function (defaultTailwindConfig) {
+    Object.assign(defaultTailwindConfig, defu(defaultTailwindConfig, tailwindConfig({ nuxt })))
+  })
+}
+
 const defaultConfig = docsOptions => ({
   target: 'static',
   ssr: true,
@@ -34,6 +81,7 @@ const defaultConfig = docsOptions => ({
     '@/plugins/menu.client'
   ],
   buildModules: [
+    themeModule,
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     '@nuxtjs/pwa',
@@ -49,42 +97,6 @@ const defaultConfig = docsOptions => ({
   },
   meta: {
     theme_color: docsOptions.primaryColor
-  },
-  hooks: {
-    'modules:before': ({ nuxt }) => {
-      // Configure `content/` dir
-      nuxt.options.content.dir = path.resolve(nuxt.options.rootDir, nuxt.options.content.dir || 'content')
-      // Configure `static/ dir
-      nuxt.options.dir.static = path.resolve(nuxt.options.rootDir, nuxt.options.dir.static || 'static')
-      // Configure `components/` dir
-      nuxt.hook('components:dirs', (dirs) => {
-        dirs.push({
-          path: path.resolve(nuxt.options.rootDir, 'components/global'),
-          global: true
-        })
-      })
-      // Configure `tailwind.config.js` path
-      nuxt.options.tailwindcss.configPath = nuxt.options.tailwindcss.configPath || path.resolve(nuxt.options.rootDir, 'tailwind.config.js')
-      nuxt.options.tailwindcss.cssPath = nuxt.options.tailwindcss.cssPath || path.resolve(nuxt.options.rootDir, nuxt.options.dir.assets, 'css', 'tailwind.css')
-      // Extend `/` route
-      nuxt.hook('build:extendRoutes', (routes) => {
-        const allRoute = routes.find(route => route.name === 'all')
-
-        routes.push({
-          ...allRoute,
-          path: '/',
-          name: 'index'
-        })
-      })
-      // Override editor style on dev mode
-      if (nuxt.options.dev) {
-        nuxt.options.css.push(path.resolve(__dirname, 'assets/css/main.dev.css'))
-      }
-      // Configure TailwindCSS
-      nuxt.hook('tailwindcss:config', function (defaultTailwindConfig) {
-        Object.assign(defaultTailwindConfig, defu(defaultTailwindConfig, tailwindConfig({ docsOptions, nuxt })))
-      })
-    }
   },
   content: {
     markdown: {
@@ -116,25 +128,17 @@ const defaultConfig = docsOptions => ({
 })
 
 export default (userConfig) => {
-  const docsOptions = defu(userConfig.docs, {
-    primaryColor: undefined
+  userConfig.docs = defu(userConfig.docs, {
+    primaryColor: '#00CD81'
   })
 
-  const config = defu.arrayFn(userConfig, defaultConfig(docsOptions))
+  const config = defu.arrayFn(userConfig, defaultConfig(userConfig.docs))
 
   if (userConfig.env && userConfig.env.GITHUB_TOKEN) {
     // eslint-disable-next-line no-console
     console.warn('[security] Avoid passing `env.GITHUB_TOKEN` directly in `nuxt.config`. Use `.env` file instead!')
     userConfig.privateRuntimeConfig.GITHUB_TOKEN = userConfig.env.GITHUB_TOKEN
     delete userConfig.env.GITHUB_TOKEN
-  }
-
-  config.hooks['content:file:beforeInsert'] = (document) => {
-    const regexp = new RegExp(`^/(${config.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
-    const dir = document.dir.replace(regexp, '')
-    const slug = document.slug.replace(/^index/, '')
-
-    document.to = `${dir}/${slug}`
   }
 
   return config

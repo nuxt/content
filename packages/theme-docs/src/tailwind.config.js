@@ -10,7 +10,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
 const { getColors } = require('theme-colors')
 
-module.exports = ({ docsOptions, nuxt }) => ({
+module.exports = ({ nuxt }) => ({
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
@@ -24,7 +24,7 @@ module.exports = ({ docsOptions, nuxt }) => ({
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        primary: getColors(docsOptions.primaryColor || '#00CD81')
+        primary: getColors(nuxt.options.docs.primaryColor)
       },
       maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'
