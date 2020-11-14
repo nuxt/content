@@ -94,7 +94,7 @@ function isTemplate (node) {
 function getSlotName (node) {
   let name = ''
   for (const propName of Object.keys(node.props)) {
-    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) { return }
+    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) { continue }
     name = propName.split(/[:#]/, 2)[1]
     break
   }
