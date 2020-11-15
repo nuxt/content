@@ -52,11 +52,17 @@ export default {
       return error({ statusCode: 404, message: 'Page not found' })
     }
 
-    const [prev, next] = await $content(app.i18n.locale, { deep: true })
-      .only(['title', 'slug', 'to'])
-      .sortBy('position', 'asc')
-      .surround(document.slug, { before: 1, after: 1 })
-      .fetch()
+    let prev
+    let next
+
+    if (!document.hiddenInMenu) {
+      [prev, next] = await $content(app.i18n.locale, { deep: true })
+        .where({ hiddenInMenu: false })
+        .only(['title', 'slug', 'to'])
+        .sortBy('position', 'asc')
+        .surround(document.slug, { before: 1, after: 1 })
+        .fetch()
+    }
 
     return {
       document,
