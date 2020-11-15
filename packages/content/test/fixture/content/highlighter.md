@@ -2,7 +2,7 @@
 title: Highlighter
 ---
 
-```
+```js
 console.log('Highlighter')
 ```
 

@@ -36,7 +36,7 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"nuxt-content-highlight\\"><pre class=\\"line-numbers language-text\\"><code>console.log('Highlighter')
+        "<div class=\\"nuxt-content-highlight\\"><pre class=\\"line-numbers language-js\\"><code><span class=\\"token console class-name\\">console</span><span class=\\"token punctuation\\">.</span><span class=\\"token method function property-access\\">log</span><span class=\\"token punctuation\\">(</span><span class=\\"token string\\">'Highlighter'</span><span class=\\"token punctuation\\">)</span>
         </code></pre></div>
         <div class=\\"nuxt-content-highlight\\"><span class=\\"filename\\">index.ts</span><pre class=\\"line-numbers language-ts\\" data-line=\\"1\\"><code><span class=\\"token comment\\">// @errors: 2322</span>
         <span class=\\"token keyword\\">function</span> <span class=\\"token function\\">sum</span><span class=\\"token punctuation\\">(</span>a<span class=\\"token operator\\">:</span> <span class=\\"token builtin\\">number</span><span class=\\"token punctuation\\">,</span> b<span class=\\"token operator\\">:</span> <span class=\\"token builtin\\">number</span><span class=\\"token punctuation\\">)</span><span class=\\"token operator\\">:</span> <span class=\\"token builtin\\">string</span> <span class=\\"token punctuation\\">{</span>
@@ -95,7 +95,7 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs null\\">console.<span class=\\"hljs-built_in\\">log</span>('Highlighter')
+        "<div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs js\\"><span class=\\"hljs-built_in\\">console</span>.log(<span class=\\"hljs-string\\">'Highlighter'</span>)
         </code></pre></div>
         <div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs ts\\"><span class=\\"hljs-comment\\">// @errors: 2322</span>
         <span class=\\"hljs-function\\"><span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-title\\">string</span> </span>{
@@ -280,7 +280,7 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"highlighted-using-highlightjs\\"><pre><code class=\\"hljs undefined\\">console.<span class=\\"hljs-built_in\\">log</span>('Highlighter')
+        "<div class=\\"highlighted-using-highlightjs\\"><pre><code class=\\"hljs undefined\\"><span class=\\"hljs-built_in\\">console</span>.log(<span class=\\"hljs-string\\">'Highlighter'</span>)
         </code></pre></div>
         <div class=\\"highlighted-using-highlightjs index.ts\\" data-line=\\"1\\"><pre><code class=\\"hljs undefined\\"><span class=\\"hljs-comment\\">// @errors: 2322</span>
         <span class=\\"hljs-function\\"><span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-title\\">string</span> </span>{
