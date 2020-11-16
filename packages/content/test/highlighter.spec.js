@@ -60,7 +60,7 @@ describe("highlighter", () => {
                 lang = "html"
               }
               const highlightjs = require("highlight.js")
-              if (!lang) {
+              if (!lang || lang === 'null') {
                 return wrapHighlightjs(
                   highlightjs.highlightAuto(rawCode).value,
                   lang
