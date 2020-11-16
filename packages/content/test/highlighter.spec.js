@@ -119,7 +119,7 @@ describe("highlighter", () => {
                 theme: "nord"
               })
               return (rawCode, lang) => {
-                if (!lang) {
+                if (!lang || lang === 'null') {
                   lang = "typescript"
                 }
                 return highlighter.codeToHtml(rawCode, lang)
@@ -176,7 +176,7 @@ describe("highlighter", () => {
                 theme: "nord"
               })
               return (rawCode, lang) => {
-                if (!lang) {
+                if (!lang || lang === 'null') {
                   lang = "typescript"
                 }
                 const twoslashResults = runTwoSlash(rawCode, lang)
@@ -241,7 +241,7 @@ describe("highlighter", () => {
               }
               const highlightjs = require("highlight.js")
               let code
-              if (!lang) {
+              if (!lang || lang === 'null') {
                 code = highlightjs.highlightAuto(rawCode).value
               } else {
                 code = highlightjs.highlight(lang, rawCode).value
@@ -309,7 +309,7 @@ describe("highlighter", () => {
                 { lineHighlights, fileName },
                 { h, node, u }
               ) => {
-                if (!lang) {
+                if (!lang || lang === 'null') {
                   lang = "typescript"
                 }
                 const code = highlighter.codeToHtml(rawCode, lang)
@@ -380,7 +380,7 @@ describe("highlighter", () => {
                 { lineHighlights, fileName },
                 { h, node, u }
               ) => {
-                if (!lang) {
+                if (!lang || lang === 'null') {
                   lang = "typescript"
                 }
                 const twoslashResults = runTwoSlash(rawCode, lang)
