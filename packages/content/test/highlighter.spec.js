@@ -60,7 +60,7 @@ describe("highlighter", () => {
                 lang = "html"
               }
               const highlightjs = require("highlight.js")
-              if (!lang || lang === 'null') {
+              if (!lang || lang === "null") {
                 return wrapHighlightjs(
                   highlightjs.highlightAuto(rawCode).value,
                   lang
@@ -119,7 +119,7 @@ describe("highlighter", () => {
                 theme: "nord"
               })
               return (rawCode, lang) => {
-                if (!lang || lang === 'null') {
+                if (!lang || lang === "null") {
                   lang = "typescript"
                 }
                 return highlighter.codeToHtml(rawCode, lang)
@@ -149,11 +149,11 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"nuxt-content-highlight\\"><pre class=\\"shiki\\" style=\\"background-color:#2e3440;\\"><code><span class=\\"line\\"><span style=\\"color:#D8DEE9;\\">console</span><span style=\\"color:#ECEFF4;\\">.</span><span style=\\"color:#88C0D0;\\">log</span><span style=\\"color:#D8DEE9FF;\\">(</span><span style=\\"color:#ECEFF4;\\">'</span><span style=\\"color:#A3BE8C;\\">Highlighter</span><span style=\\"color:#ECEFF4;\\">'</span><span style=\\"color:#D8DEE9FF;\\">)</span></span></code></pre></div>
-        <div class=\\"nuxt-content-highlight\\"><pre class=\\"shiki\\" style=\\"background-color:#2e3440;\\"><code><span class=\\"line\\"><span style=\\"color:#616E88;\\">// @errors: 2322</span></span>
-        <span class=\\"line\\"><span style=\\"color:#81A1C1;\\">function</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#88C0D0;\\">sum</span><span style=\\"color:#ECEFF4;\\">(</span><span style=\\"color:#D8DEE9;\\">a</span><span style=\\"color:#81A1C1;\\">:</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#8FBCBB;\\">number</span><span style=\\"color:#ECEFF4;\\">,</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#D8DEE9;\\">b</span><span style=\\"color:#81A1C1;\\">:</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#8FBCBB;\\">number</span><span style=\\"color:#ECEFF4;\\">)</span><span style=\\"color:#81A1C1;\\">:</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#8FBCBB;\\">string</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#ECEFF4;\\">{</span></span>
-        <span class=\\"line\\"><span style=\\"color:#D8DEE9FF;\\">  </span><span style=\\"color:#81A1C1;\\">return</span><span style=\\"color:#D8DEE9FF;\\"> </span><span style=\\"color:#81A1C1;\\">true</span></span>
-        <span class=\\"line\\"><span style=\\"color:#ECEFF4;\\">}</span></span></code></pre></div>"
+        "<div class=\\"nuxt-content-highlight\\"><pre class=\\"shiki\\" style=\\"background-color:#2e3440ff;\\"><code><span class=\\"line\\"><span style=\\"color:#D8DEE9;\\">console</span><span style=\\"color:#ECEFF4;\\">.</span><span style=\\"color:#88C0D0;\\">log</span><span style=\\"color:#D8DEE9FF;\\">(</span><span style=\\"color:#ECEFF4;\\">'</span><span style=\\"color:#A3BE8C;\\">Highlighter</span><span style=\\"color:#ECEFF4;\\">'</span><span style=\\"color:#D8DEE9FF;\\">)</span></span></code></pre></div>
+        <div class=\\"nuxt-content-highlight\\"><pre class=\\"shiki\\" style=\\"background-color:#2e3440ff;\\"><code><span class=\\"line\\"><span style=\\"color:#D8DEE9FF;\\">// @errors: 2322</span></span>
+        <span class=\\"line\\"><span style=\\"color:#D8DEE9FF;\\">function sum(a: number, b: number): string {</span></span>
+        <span class=\\"line\\"><span style=\\"color:#D8DEE9FF;\\">  return true</span></span>
+        <span class=\\"line\\"><span style=\\"color:#D8DEE9FF;\\">}</span></span></code></pre></div>"
       `)
     })
   })
@@ -176,7 +176,7 @@ describe("highlighter", () => {
                 theme: "nord"
               })
               return (rawCode, lang) => {
-                if (!lang || lang === 'null') {
+                if (!lang || lang === "null") {
                   lang = "typescript"
                 }
                 const twoslashResults = runTwoSlash(rawCode, lang)
@@ -241,7 +241,7 @@ describe("highlighter", () => {
               }
               const highlightjs = require("highlight.js")
               let code
-              if (!lang || lang === 'null') {
+              if (!lang || lang === "null") {
                 code = highlightjs.highlightAuto(rawCode).value
               } else {
                 code = highlightjs.highlight(lang, rawCode).value
@@ -309,7 +309,7 @@ describe("highlighter", () => {
                 { lineHighlights, fileName },
                 { h, node, u }
               ) => {
-                if (!lang || lang === 'null') {
+                if (!lang || lang === "null") {
                   lang = "typescript"
                 }
                 const code = highlighter.codeToHtml(rawCode, lang)
@@ -380,7 +380,7 @@ describe("highlighter", () => {
                 { lineHighlights, fileName },
                 { h, node, u }
               ) => {
-                if (!lang || lang === 'null') {
+                if (!lang || lang === "null") {
                   lang = "typescript"
                 }
                 const twoslashResults = runTwoSlash(rawCode, lang)
