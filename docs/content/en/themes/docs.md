@@ -410,51 +410,6 @@ You can create a `content/settings.json` file to configure the theme.
 }
 ```
 
-## Customization
-
-<badge>v0.7.0+</badge>
-
-You can override the default components of the theme by creating your own in your `components/` folder.
-
-### Components
-
-Here is the list of all the components used by the docs theme:
-
-- [`AppHeader.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppHeader.vue)
-  - The header of the theme, it uses the `AppSearch` component
-- [`AppFooter.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppFooter.vue)
-  - The footer of the theme, it uses the `AppLangSwitcher` and `AppColorSwitcher` components
-- [`AppNav.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppNav.vue)
-  - The left navigation and the mobile menu, it uses the `AppSearch` component on mobile display only
-- [`AppSearch.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppSearch.vue)
-  - The search bar
-- [`AppToc.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppToc.vue)
-  - The right navigation displaying the table of contents
-- [`AppGithubLink.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppGithubLink.vue)
-  - The `Edit on GitHub` link at the bottom of the page
-- [`AppPrevNext.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppPrevNext.vue)
-  - The `prev` and `next` links at the bottom of the page
-- [`AppDropdown.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppDropdown.vue)
-  - The dropdown component used by the `AppLangSwitcher` component
-- [`AppLangSwitcher.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/app/AppLangSwitcher.vue)
-  - The dropdown to switch between the defined locales of [nuxt-i18n](https://github.com/nuxt-community/i18n-module)
-- [`AppColorSwitcher.vue`](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/components/global/app/AppColorSwitcher.vue)
-  - The `light` and `dark` mode switcher defined by [nuxt-color-mode](https://github.com/nuxt-community/color-mode-module)
-
-> The components links to the code on GitHub so you can override them easily
-
-### Example
-
-```vue[components/AppFooter.vue]
-<template>
-  <footer>
-    Copyright {{ new Date().getFullYear() }}
-  </footer>
-</template>
-```
-
-> Your `components/AppFooter.vue` component will replace the default `packages/theme-docs/src/components/app/AppFooter.vue`
-
 ## Images
 
 You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
