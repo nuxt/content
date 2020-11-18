@@ -42,6 +42,7 @@ describe('component', () => {
       const html = await page.getHtml()
 
       expect(html).toMatch(
+        // eslint-disable-next-line prefer-regex-literals
         new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<div>\s*<header>Header content<\/header>\s*<main>\s*Main content\s*<\/main>\s*<footer>Footer content<\/footer><\/div><\/div><\/div>/)
       )
     })
@@ -51,6 +52,7 @@ describe('component', () => {
       const html = await page.getHtml()
 
       expect(html).toMatch(
+        // eslint-disable-next-line prefer-regex-literals
         new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<h2 id="header">\s*<a aria-hidden="true" href="#header" tabindex="-1">\s*<span class="icon icon-link">\s*<\/span>\s*<\/a>Header<\/h2>\s*<p>\s*<video autoplay="autoplay" loop="loop" playsinline="true" controls="controls"><\/video><\/p>\s*<\/div><\/div>/)
       )
     })

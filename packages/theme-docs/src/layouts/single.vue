@@ -14,14 +14,6 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: {
-    ...mapGetters([
-      'settings'
-    ]),
-    bodyClass () {
-      return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : []
-    }
-  },
   head () {
     const i18nSeo = this.$nuxtI18nSeo()
     const previewUrl = this.settings.url.replace(/\/$/, '') + '/preview.png'
@@ -51,6 +43,14 @@ export default {
         { hid: 'twitter:image', name: 'twitter:image', content: previewUrl },
         { hid: 'twitter:image:alt', name: 'twitter:image:alt', content: this.settings.title }
       ])
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'settings'
+    ]),
+    bodyClass () {
+      return this.$store.state.menu.open ? ['h-screen lg:h-auto overflow-y-hidden lg:overflow-y-auto'] : []
     }
   }
 }

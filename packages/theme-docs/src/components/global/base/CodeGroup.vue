@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     switchTab (i) {
-      this.tabs.map((tab) => {
+      this.tabs.forEach((tab) => {
         tab.elm.classList.remove('active')
       })
       this.tabs[i].elm.classList.add('active')

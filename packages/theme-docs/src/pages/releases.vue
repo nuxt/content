@@ -38,6 +38,11 @@ export default {
   layout ({ store }) {
     return store.state.settings.layout || 'default'
   },
+  head () {
+    return {
+      title: 'Releases'
+    }
+  },
   computed: {
     ...mapGetters([
       'settings'
@@ -54,11 +59,6 @@ export default {
       const date = new Date(release.date)
 
       return date.toLocaleDateString(this.$i18n.locale)
-    }
-  },
-  head () {
-    return {
-      title: 'Releases'
     }
   }
 }
