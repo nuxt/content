@@ -30,6 +30,13 @@ export default {
       id,
       classes
     }
+  },
+  head () {
+    return {
+      meta: [
+        { name: 'description', content: this.page.description }
+      ]
+    }
   }
 }
 </script>

@@ -28,6 +28,8 @@ interface IContentOptions {
   fullTextSearchFields?: extendOrOverwrite<Array<string>>;
   nestedProperties?: extendOrOverwrite<Array<string>>;
   markdown?: {
+    tocDepth?: number;
+    tocTags?: extendOrOverwrite<Array<string>>;
     remarkPlugins?: extendOrOverwrite<Array<string | [string, Record<string, unknown>]>>;
     rehypePlugins?: extendOrOverwrite<Array<string | [string, Record<string, unknown>]>>;
     prism?: {

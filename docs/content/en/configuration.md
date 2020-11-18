@@ -213,6 +213,14 @@ export default {
 }
 ```
 
+### `markdown.tocDepth`
+
+- Type: `Number`
+- Default: `3`
+- Version: **>= v1.11.0**
+
+You can change maximum heading depth to include in the table of contents.
+
 ### `markdown.remarkPlugins`
 
 - Type: `Array`

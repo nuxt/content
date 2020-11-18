@@ -206,9 +206,9 @@ Check out [this snippet](/snippets#prev-and-next) on how to implement prev and n
 
 Ends the chain sequence and collects data.
 
-## Catch()
+### catch()
 
-Checks if the `.md` file is exist in content directory or not.
+Checks if the `.md` file exists in content directory or not.
 
 It should be inserted after the `fetch()`.
 

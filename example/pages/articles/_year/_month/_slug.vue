@@ -22,6 +22,13 @@ export default {
     return {
       article
     }
+  },
+  head () {
+    return {
+      meta: [
+        { name: 'description', content: this.article.description }
+      ]
+    }
   }
 }
 </script>

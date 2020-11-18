@@ -147,6 +147,31 @@ export default {
 }
 ```
 
+### `content:options`
+
+Extend the content options, useful for modules that wants to read content options when normalized and apply updated to it.
+
+Arguments:
+- `options`
+  - Type: `Object`
+  - Properties:
+    - See [configuration](/configuration#properties)
+
+**Example**
+
+```js{}[nuxt.config.js]
+export default {
+  modules: [,
+    '@nuxt/content'
+  ],
+  hooks: {
+    'content:options': (options) => {
+      console.log('Content options:', options)
+    }
+  }
+}
+```
+
 ## Handling Hot Reload
 
 <alert type="info">

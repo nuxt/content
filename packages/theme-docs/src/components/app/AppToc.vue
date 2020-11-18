@@ -25,7 +25,10 @@
               class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1"
               :class="{
                 'py-2': link.depth === 2,
-                'ml-2 pb-2': link.depth === 3
+                'ml-2 pb-2': link.depth === 3,
+                'ml-3 pb-2': link.depth === 4,
+                'ml-4 pb-2': link.depth === 5,
+                'ml-5 pb-2': link.depth === 6
               }"
             >{{ link.text }}</a>
           </li>

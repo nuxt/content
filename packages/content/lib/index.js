@@ -55,7 +55,6 @@ module.exports = async function (moduleOptions) {
   const relativeDir = options.dir
   options.dir = resolve(this.options.srcDir, options.dir)
 
-  // Load markdown plugins
   processMarkdownOptions(options, this.nuxt.resolver.resolvePath)
 
   options.apiPrefixWithBase = options.apiPrefix
@@ -68,6 +67,8 @@ module.exports = async function (moduleOptions) {
 
     options.apiPrefixWithBase = baseRouter + options.apiPrefix
   }
+
+  nuxt.callHook('content:options', options)
 
   // Nuxt hooks
   const globalComponents = resolve(this.options.srcDir, 'components/global')
