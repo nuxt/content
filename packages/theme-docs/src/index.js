@@ -5,6 +5,7 @@ import gracefulFs from 'graceful-fs'
 import tailwindConfig from './tailwind.config'
 
 const fs = gracefulFs.promises
+
 function themeModule () {
   // wait for nuxt options to be normalized
   const { nuxt } = this
