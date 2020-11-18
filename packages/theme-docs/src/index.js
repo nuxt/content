@@ -1,7 +1,10 @@
 import path from 'path'
 import defu from 'defu'
+import gracefulFs from 'graceful-fs'
 
 import tailwindConfig from './tailwind.config'
+
+const fs = gracefulFs.promises
 
 function themeModule () {
   // wait for nuxt options to be normalized
@@ -13,11 +16,27 @@ function themeModule () {
   // Configure `static/ dir
   options.dir.static = path.resolve(options.rootDir, options.dir.static || 'static')
   // Configure `components/` dir
-  hook('components:dirs', (dirs) => {
-    dirs.push({
-      path: path.resolve(options.rootDir, 'components/global'),
-      global: true
-    })
+  hook('components:dirs', async (dirs) => {
+    const componentsDirPath = path.resolve(nuxt.options.rootDir, 'components')
+    const componentsDirStat = await fs.stat(componentsDirPath).catch(() => null)
+    if (componentsDirStat && componentsDirStat.isDirectory()) {
+      dirs.push({
+        path: componentsDirPath
+      })
+    } else {
+      nuxt.options.watch.push(componentsDirPath)
+    }
+
+    const globalComponentsDirPath = path.resolve(nuxt.options.rootDir, 'components/global')
+    const globalComponentsDirStat = await fs.stat(globalComponentsDirPath).catch(() => null)
+    if (globalComponentsDirStat && globalComponentsDirStat.isDirectory()) {
+      dirs.push({
+        path: globalComponentsDirPath,
+        global: true
+      })
+    } else {
+      nuxt.options.watch.push(globalComponentsDirPath)
+    }
   })
   // Configure content after each hook
   hook('content:file:beforeInsert', (document) => {

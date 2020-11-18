@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
+import defu from 'defu'
 
 export const state = () => ({
   categories: {},
@@ -60,7 +61,7 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, state.settings, settings, { filled: true })
+    state.settings = defu({ filled: true }, settings, state.settings)
     if (!state.settings.url) {
       console.warn('Please provide the `url` property in `content/setting.json`')
     }
@@ -143,7 +144,8 @@ export const actions = {
   },
   async fetchSettings ({ commit }) {
     try {
-      const settings = await this.$content('settings').fetch()
+      const { dir, extension, path, slug, to, createdAt, updatedAt, ...settings } = await this.$content('settings').fetch()
+
       commit('SET_SETTINGS', settings)
     } catch (e) {
       // eslint-disable-next-line no-console

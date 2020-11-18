@@ -20,11 +20,14 @@
         <div v-if="document.subtitle" class="-mt-4">
           <p class="text-gray-600 dark:text-gray-400">{{ document.subtitle }}</p>
         </div>
+
         <NuxtContent :document="document" />
       </article>
+
       <AppGithubLink :document="document" />
       <AppPrevNext :prev="prev" :next="next" />
     </div>
+
     <AppToc v-if="!document.fullscreen" :toc="document.toc" />
   </div>
 </template>

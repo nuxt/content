@@ -7,9 +7,9 @@
           <BuiltWithNuxtDark class="h-4 dark-img" />
         </a>
       </div>
-      <div class="flex">
+      <div class="flex items-center space-x-4">
         <AppLangSwitcher />
-        <AppColorSwitcher class="ml-4" />
+        <AppColorSwitcher />
       </div>
     </div>
   </footer>

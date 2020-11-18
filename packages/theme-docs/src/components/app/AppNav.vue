@@ -38,9 +38,9 @@
             </li>
           </ul>
         </li>
-        <li class="lg:hidden">
+        <li class="lg:hidden space-x-2">
           <p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</p>
-          <div class="flex items-center ml-2">
+          <div class="flex items-center space-x-4">
             <a
               v-if="settings.twitter"
               :href="`https://twitter.com/${settings.twitter}`"
@@ -48,7 +48,7 @@
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
@@ -59,12 +59,12 @@
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
             >
               <IconGithub class="w-5 h-5" />
             </a>
 
-            <AppLangSwitcher class="mr-4" />
+            <AppLangSwitcher />
             <AppColorSwitcher />
           </div>
         </li>
