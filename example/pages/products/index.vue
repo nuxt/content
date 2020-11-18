@@ -14,7 +14,6 @@
 
 <script>
 export default {
-  watchQuery: true,
   async asyncData ({ $content, route }) {
     const products = await $content('products')
       .where({ 'categories.slug': { $contains: ['top', 'man'] } })
@@ -23,6 +22,7 @@ export default {
     return {
       products
     }
-  }
+  },
+  watchQuery: true
 }
 </script>

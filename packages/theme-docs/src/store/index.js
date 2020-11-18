@@ -63,6 +63,7 @@ export const mutations = {
   SET_SETTINGS (state, settings) {
     state.settings = defu({ filled: true }, settings, state.settings)
     if (!state.settings.url) {
+      // eslint-disable-next-line no-console
       console.warn('Please provide the `url` property in `content/setting.json`')
     }
   }

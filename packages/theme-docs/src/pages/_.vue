@@ -67,6 +67,20 @@ export default {
       next
     }
   },
+  head () {
+    return {
+      title: this.document.title,
+      meta: [
+        { hid: 'description', name: 'description', content: this.document.description },
+        // Open Graph
+        { hid: 'og:title', property: 'og:title', content: this.document.title },
+        { hid: 'og:description', property: 'og:description', content: this.document.description },
+        // Twitter Card
+        { hid: 'twitter:title', name: 'twitter:title', content: this.document.title },
+        { hid: 'twitter:description', name: 'twitter:description', content: this.document.description }
+      ]
+    }
+  },
   computed: {
     ...mapGetters([
       'settings'
@@ -86,20 +100,6 @@ export default {
         block.appendChild(component.$el)
       }
     }, 100)
-  },
-  head () {
-    return {
-      title: this.document.title,
-      meta: [
-        { hid: 'description', name: 'description', content: this.document.description },
-        // Open Graph
-        { hid: 'og:title', property: 'og:title', content: this.document.title },
-        { hid: 'og:description', property: 'og:description', content: this.document.description },
-        // Twitter Card
-        { hid: 'twitter:title', name: 'twitter:title', content: this.document.title },
-        { hid: 'twitter:description', name: 'twitter:description', content: this.document.description }
-      ]
-    }
   }
 }
 </script>
