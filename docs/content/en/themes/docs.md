@@ -6,7 +6,7 @@ description: 'Create your documentation with @nuxt/content docs theme in seconds
 category: Themes
 position: 8
 version: 1.2
-badge: 'v0.8.0'
+badge: 'v0.8.1'
 showcases:
   - https://strapi.nuxtjs.org
   - https://tailwindcss.nuxtjs.org
