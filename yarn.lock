@@ -2829,10 +2829,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tailwindcss/typography@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.2.0.tgz#b597c83502e3c3c6641a8aaabda223cd494ab349"
-  integrity sha512-aPgMH+CjQiScLZculoDNOQUrrK2ktkbl3D6uCLYp1jgYRlNDrMONu9nMu8LfwAeetYNpVNeIGx7WzHSu0kvECg==
+"@tailwindcss/typography@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.3.1.tgz#253ce580c8e06b6163d9a288edd24f25e1d0dfee"
+  integrity sha512-HyZ+3Eay8SGaPq7kcFoANZLr4EjeXQ19yjjb9fp6B0PHHpvZoe00jdsnpnooMEbx9J5rQ93nxPUG3MQmXVxGMQ==
 
 "@tootallnate/once@1":
   version "1.1.2"
@@ -3243,10 +3243,10 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
-"@types/xml2js@^0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@types/xml2js/-/xml2js-0.4.6.tgz#9216ceb739e67cd8d686d9e7ba0a31537a95711b"
-  integrity sha512-0nufNQdD4xbim3rD2UBhGl2HSw/LTU8i/6Anbm+Jt2U6qTd5kOKQyDiby6sr+6Ciqvv2m5LPyoXoHQZJAnIrtw==
+"@types/xml2js@^0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@types/xml2js/-/xml2js-0.4.7.tgz#cd5b6c67bbec741ac625718a76e6cb99bc34365e"
+  integrity sha512-f5VOKSMEE0O+/L54FHwA/a7vcx9mHeSDM71844yHCOhh8Cin2xQa0UFw0b7Vc5hoZ3Ih6ZHaDobjfLih4tWPNw==
   dependencies:
     "@types/node" "*"
 
@@ -8142,10 +8142,10 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
-highlight.js@^10.3.2:
-  version "10.3.2"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.3.2.tgz#135fd3619a00c3cbb8b4cd6dbc78d56bfcbc46f1"
-  integrity sha512-3jRT7OUYsVsKvukNKZCtnvRcFyCJqSEIuIMsEybAXRiFSwpt65qjPd/Pr+UOdYt7WJlt+lj3+ypUsHiySBp/Jw==
+highlight.js@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.4.0.tgz#ef3ce475e5dfa7a48484260b49ea242ddab823a0"
+  integrity sha512-EfrUGcQ63oLJbj0J0RI9ebX6TAITbsDBLbsjr881L/X5fMO9+oadKzEF21C7R3ULKG6Gv3uoab2HiqVJa/4+oA==
 
 hmac-drbg@^1.0.0:
   version "1.0.1"

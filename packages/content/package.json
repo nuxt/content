@@ -16,7 +16,7 @@
     "@lokidb/loki": "^2.1.0",
     "@nuxt/types": "^2.14.7",
     "@types/js-yaml": "^3.12.5",
-    "@types/xml2js": "^0.4.6",
+    "@types/xml2js": "^0.4.7",
     "change-case": "^4.1.1",
     "chokidar": "^3.4.3",
     "consola": "^2.15.0",
