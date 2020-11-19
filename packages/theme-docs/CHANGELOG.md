@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.0...@nuxt/content-theme-docs@0.8.1) (2020-11-19)
+
+
+### Bug Fixes
+
+* **theme-docs:** pin @tailwindcss/typography to 0.2.0 ([a8f57f3](https://github.com/nuxt/content/commit/a8f57f37d093a1c3e473c656af383417c1093578))
+
+
+
+
+
 # [0.8.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.2...@nuxt/content-theme-docs@0.8.0) (2020-11-19)
 
 
