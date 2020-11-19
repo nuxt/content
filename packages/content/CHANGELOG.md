@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/nuxt/content/compare/@nuxt/content@1.10.0...@nuxt/content@1.11.0) (2020-11-19)
+
+
+### Bug Fixes
+
+* **content:** add missing types ([#625](https://github.com/nuxt/content/issues/625)) ([43e5a81](https://github.com/nuxt/content/commit/43e5a819e55fa65b3b9ffc0610e3a2206a356e48))
+* **content:** update highlighter spec ([8108f84](https://github.com/nuxt/content/commit/8108f84bf94727d7cb9d786c775e0b9c502d4d0f))
+* set header to empty string if undefined ([#620](https://github.com/nuxt/content/issues/620)) ([5bffdf1](https://github.com/nuxt/content/commit/5bffdf11d5b499829fcb389db29c9c0f316be3ac)), closes [#136](https://github.com/nuxt/content/issues/136)
+* **content:** support space after codeblock for filename ([#621](https://github.com/nuxt/content/issues/621)) ([9d900ff](https://github.com/nuxt/content/commit/9d900ff648c96aa0454986819cb31b374b451ecc))
+
+
+### Features
+
+* support dynamic table of contents ([#600](https://github.com/nuxt/content/issues/600)) ([5cf18c4](https://github.com/nuxt/content/commit/5cf18c41b3b383a4989db5eae775feb9ddf409d0))
+* **lib:** support markdown excerpt ([#607](https://github.com/nuxt/content/issues/607)) ([b453ea8](https://github.com/nuxt/content/commit/b453ea8e22258a664de93ec29c71229b17bf9fd1))
+
+
+
+
+
 # [1.10.0](https://github.com/nuxt/content/compare/@nuxt/content@1.9.0...@nuxt/content@1.10.0) (2020-10-12)
 
 

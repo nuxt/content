@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.2...@nuxt/content-theme-docs@0.8.0) (2020-11-19)
+
+
+### Bug Fixes
+
+* **docs-theme:** support overwriting hooks ([#619](https://github.com/nuxt/content/issues/619)) ([5b8cb40](https://github.com/nuxt/content/commit/5b8cb40fb814c3f3aedd41c26948f53d46987a75))
+* **theme-docs:** prevent warning when global components missing ([#542](https://github.com/nuxt/content/issues/542)) ([1c84288](https://github.com/nuxt/content/commit/1c84288f02b1ef868f1a3360f23f4a7bf25df3aa))
+* **theme-docs:** twitter preview when trailing slash on url ([#574](https://github.com/nuxt/content/issues/574)) ([ba0b8b1](https://github.com/nuxt/content/commit/ba0b8b15135428b538208f7ae5e8a8a6284d5a58))
+
+
+### Features
+
+* support dynamic table of contents ([#600](https://github.com/nuxt/content/issues/600)) ([5cf18c4](https://github.com/nuxt/content/commit/5cf18c41b3b383a4989db5eae775feb9ddf409d0))
+* **theme-docs:** add locale polish support ([#571](https://github.com/nuxt/content/issues/571)) ([ff54d11](https://github.com/nuxt/content/commit/ff54d1134a1bd938d7ebe65438ac8968e9031a08))
+* **theme-docs:** add locale turkish support ([#570](https://github.com/nuxt/content/issues/570)) ([35d79fe](https://github.com/nuxt/content/commit/35d79fe75b5f7d201e2106c153241086693305fa))
+* **theme-docs:** Add new tailwindcss future flags ([#573](https://github.com/nuxt/content/issues/573)) ([9daa645](https://github.com/nuxt/content/commit/9daa6457eeced893f423a8a45766807cc20b16f3))
+
+
+
+
+
 ## [0.7.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.1...@nuxt/content-theme-docs@0.7.2) (2020-10-12)
 
 
