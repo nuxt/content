@@ -45,5 +45,8 @@
     "shiki": "^0.2.7",
     "shiki-twoslash": "^0.8.1",
     "tib": "^0.7.4"
+  },
+  "dependencies": {
+    "remark-gfm": "^1.0.0"
   }
 }
