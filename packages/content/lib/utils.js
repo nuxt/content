@@ -16,7 +16,8 @@ const getDefaults = ({ dev = false } = {}) => ({
       'remark-slug',
       'remark-autolink-headings',
       'remark-external-links',
-      'remark-footnotes'
+      'remark-footnotes',
+      'remark-gfm'
     ],
     rehypePlugins: [
       'rehype-sort-attribute-values',

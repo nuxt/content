@@ -1,7 +1,6 @@
 const matter = require('gray-matter')
 const unified = require('unified')
 const parse = require('remark-parse')
-const gfm = require('remark-gfm')
 const remark2rehype = require('remark-rehype')
 
 const handlers = require('./handlers')
@@ -71,7 +70,7 @@ class Markdown {
     }
 
     return new Promise((resolve, reject) => {
-      let stream = unified().use(parse).use(gfm)
+      let stream = unified().use(parse)
 
       stream = this.processPluginsFor('remark', stream)
       stream = stream.use(remark2rehype, {
