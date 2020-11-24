@@ -161,16 +161,16 @@ Check out [this snippet](/snippets#search) on how to implement search into your 
 
 </alert>
 
-### surround(slug, options)
+### surround(slugOrPath, options)
 
-- `slug`
+- `slugOrPath`
   - Type: `String`
   - `required`
 - `options`
   - Type: `Object`
   - Default: `{ before: 1, after: 1}`
 
-Get prev and next results arround a specific slug.
+Get prev and next results arround a specific slug or path.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
 
@@ -193,6 +193,12 @@ const [prev, next] = await this.$content('articles')
 ```
 
 > `search`, `limit` and `skip` are ineffective when using this method.
+
+<alert type="warning">
+
+Getting results based on `path` is only supported since vx.y.z <!-- set version later -->
+
+</alert>
 
 <alert type="info">
 

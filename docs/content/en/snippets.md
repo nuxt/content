@@ -136,6 +136,16 @@ export default {
 </script>
 ```
 
+<alert type="info">
+
+If more than one document have same slug, you should set `path` as first argument of `surround` method, instead of `slug`.
+This is because Nuxt Content finds previous and next documents based on one which first-matched.
+
+For example, if you sort documents according to `position`, lower-position document will be always used for calculation,
+even when the current page is showing higer-position document.
+
+</alert>
+
 > Check out the [surround documentation](/fetching#surroundslug-options)
 
 ### Table of contents

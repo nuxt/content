@@ -268,6 +268,63 @@ describe('module', () => {
     ])
   })
 
+  test('$content() on directory with surround of 404 path', async () => {
+    const items = await $content('articles').surround('/articles/404').sortBy('date', 'desc').only(['title']).fetch()
+
+    expect(items).toEqual([
+      null,
+      null
+    ])
+  })
+
+  test('$content() on directory with surround (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-1/challenge').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Introduction (Position 1)'
+      }),
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      })
+    ])
+  })
+
+  test('$content() on directory with surround as first (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-1/introduction').fetch()
+
+    expect(items).toEqual([
+      null,
+      expect.objectContaining({
+        title: 'Category 1 Challenge (Position 2)'
+      })
+    ])
+  })
+
+  test('$content() on directory with surround as last (slug)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-2/answer').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      }),
+      null
+    ])
+  })
+
+  test('$content() on directory with surround duplicated slug (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-2/introduction').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      }),
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      })
+    ])
+  })
+
   test('$content() on subdirectory', async () => {
     const items = await $content('articles', '2020', '04').only(['title']).fetch()
 
