@@ -56,9 +56,9 @@ export default {
     }
 
     const [prev, next] = await $content(app.i18n.locale, { deep: true })
-      .only(['title', 'slug', 'to'])
+      .only(['title', 'path', 'to'])
       .sortBy('position', 'asc')
-      .surround(document.slug, { before: 1, after: 1 })
+      .surround(document.path, { before: 1, after: 1 })
       .fetch()
 
     return {
