@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.1](https://github.com/nuxt/content/compare/@nuxt/content@1.11.0...@nuxt/content@1.11.1) (2020-11-25)
+
+
+### Bug Fixes
+
+* [#653](https://github.com/nuxt/content/issues/653) - remark-gfm dependency added to manage markdown tables ([#654](https://github.com/nuxt/content/issues/654)) ([5a5c6ac](https://github.com/nuxt/content/commit/5a5c6ac06698c98972fa3053a1a66ca7202af144))
+
+
+
+
+
 # [1.11.0](https://github.com/nuxt/content/compare/@nuxt/content@1.10.0...@nuxt/content@1.11.0) (2020-11-19)
 
 
