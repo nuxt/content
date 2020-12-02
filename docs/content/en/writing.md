@@ -204,7 +204,7 @@ http.createServer((req, res) => {
 ```
 </pre>
 
-After rendering with the `nuxt-content` component, it will look like this:
+After rendering with the `nuxt-content` component, it should look like this (without the filename yet):
 
 ```html[server.js]
 <div class="nuxt-content-highlight">
