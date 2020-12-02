@@ -99,7 +99,7 @@ export default {
 </script>
 ```
 
-> Vérifier la [documentatio de recherche](/fetching#searchfield-value).
+> Consulter la [documentatio de recherche](/fetching#searchfield-value).
 
 ### Prev et Next
 
@@ -136,7 +136,7 @@ export default {
 </script>
 ```
 
-> Vérifier la [documentation de surround](/fetching#surroundslug-options).
+> Consulter la [documentation de surround](/fetching#surroundslug-options).
 
 ### Table des matières
 
@@ -169,7 +169,7 @@ export default {
 </script>
 ```
 
-> Vérifiez la [documentation de la table des matières](/writing#table-of-contents).
+> Consulter la [documentation de la table des matières](/writing#table-of-contents).
 
 ### Routes dynamiques
 
