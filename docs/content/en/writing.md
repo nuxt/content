@@ -217,9 +217,13 @@ After rendering with the `nuxt-content` component, it will look like this:
 </div>
 ```
 
-> Line numbers are added to the `pre` tag in `data-line` attribute.
+Line numbers are added to the `pre` tag in `data-line` attribute.
 
-> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right of code blocks.
+> Check out this comment on how to render prism line numbers: https://github.com/nuxt/content/issues/28#issuecomment-633246962.
+
+Filename will be converted to a span with a `filename` class, it's up to you to style it.
+
+> Check out the CSS of this documentation for an example of styling filenames: https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/assets/css/main.css#L56.
 
 ### Syntax highlighting
 
