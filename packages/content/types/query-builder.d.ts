@@ -56,11 +56,11 @@ export class QueryBuilder {
   search(query: any | string, value?: string): QueryBuilder;
   /**
    * Surround results
-   * @param slug - Slug of the file to surround.
+   * @param slugOrPath - Slug or path of the file to surround.
    * @param options - Options to surround (before / after).
    * @returns current instance to be chained
    */
-  surround(slug: string, { before, after }?: any): QueryBuilder;
+  surround(slugOrPath: string, { before, after }?: any): QueryBuilder;
   /**
    * Limit number of results
    * @param n - Limit number.

@@ -450,7 +450,7 @@ describe('module', () => {
           date: 'desc'
         },
         surround: {
-          slug: '404',
+          slugOrPath: '404',
           options: {
             before: 1,
             after: 1
@@ -475,7 +475,7 @@ describe('module', () => {
           date: 'desc'
         },
         surround: {
-          slug: 'understanding-how-fetch-works-in-nuxt-2-12'
+          slugOrPath: 'understanding-how-fetch-works-in-nuxt-2-12'
         }
       }
     })
@@ -499,7 +499,7 @@ describe('module', () => {
           date: 'desc'
         },
         surround: {
-          slug: 'build-dev-to-clone-with-nuxt-new-fetch'
+          slugOrPath: 'build-dev-to-clone-with-nuxt-new-fetch'
         }
       }
     })
@@ -521,7 +521,7 @@ describe('module', () => {
           date: 'desc'
         },
         surround: {
-          slug: 'introducing-smart-prefetching'
+          slugOrPath: 'introducing-smart-prefetching'
         }
       }
     })
@@ -531,6 +531,127 @@ describe('module', () => {
         title: 'NuxtJS: From Terminal to Browser'
       }),
       null
+    ])
+  })
+
+  test('POST /_content/articles with surround (object) of 404 path', async () => {
+    const items = await get('/_content/articles', {
+      json: true,
+      method: 'POST',
+      body: {
+        sortBy: {
+          date: 'desc'
+        },
+        surround: {
+          slugOrPath: '/articles/404',
+          options: {
+            before: 1,
+            after: 1
+          }
+        },
+        only: ['title']
+      }
+    })
+
+    expect(items).toEqual([
+      null,
+      null
+    ])
+  })
+
+  test('POST /_content/positioned with surround (object) (path)', async () => {
+    const items = await get('/_content/positioned', {
+      json: true,
+      method: 'POST',
+      body: {
+        deep: true,
+        sortBy: {
+          position: 'asc'
+        },
+        surround: {
+          slugOrPath: '/positioned/category-1/challenge'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Introduction (Position 1)'
+      }),
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      })
+    ])
+  })
+
+  test('POST /_content/positioned with surround as first (object) (path)', async () => {
+    const items = await get('/_content/positioned', {
+      json: true,
+      method: 'POST',
+      body: {
+        deep: true,
+        sortBy: {
+          position: 'asc'
+        },
+        surround: {
+          slugOrPath: '/positioned/category-1/introduction'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      null,
+      expect.objectContaining({
+        title: 'Category 1 Challenge (Position 2)'
+      })
+    ])
+  })
+
+  test('POST /_content/positioned with surround as last (object) (path)', async () => {
+    const items = await get('/_content/positioned', {
+      json: true,
+      method: 'POST',
+      body: {
+        deep: true,
+        sortBy: {
+          position: 'asc'
+        },
+        surround: {
+          slugOrPath: '/positioned/category-2/answer'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      }),
+      null
+    ])
+  })
+
+  test('POST /_content/positioned with surround duplicated slug (path)', async () => {
+    const items = await get('/_content/positioned', {
+      json: true,
+      method: 'POST',
+      body: {
+        deep: true,
+        sortBy: {
+          position: 'asc'
+        },
+        surround: {
+          slugOrPath: '/positioned/category-2/introduction'
+        }
+      }
+    })
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      }),
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      })
     ])
   })
 
