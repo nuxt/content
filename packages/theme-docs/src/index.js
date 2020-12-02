@@ -38,13 +38,17 @@ function themeModule () {
       nuxt.options.watch.push(globalComponentsDirPath)
     }
   })
-  // Configure content after each hook
+  // Configure content after each hook (i18n)
   hook('content:file:beforeInsert', (document) => {
     const regexp = new RegExp(`^/(${options.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
     const dir = document.dir.replace(regexp, '')
     const slug = document.slug.replace(/^index/, '')
 
     document.to = `${dir}/${slug}`
+  })
+  // Configure content after each hook (hidden content)
+  hook('content:file:beforeInsert', (document) => {
+    document.hiddenInMenu = document.hiddenInMenu || false
   })
   // Extend `/` route
   hook('build:extendRoutes', (routes) => {

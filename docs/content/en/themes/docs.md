@@ -340,6 +340,8 @@ To make it work properly, make sure to include these properties in the front-mat
   - Adds a subtitle under the page title
 - `badge` (`String`) <badge>v0.5.0+</badge>
   - Adds a badge next to the page title
+- `hiddenInMenu` (`Boolean`) <!-- set badge later -->
+  - Hides the page in the left menu (defaults to `false`)
 
 ### Example
 
