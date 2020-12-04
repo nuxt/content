@@ -115,7 +115,8 @@ class QueryBuilder {
       }
     }
 
-    this.query = this.query.find({ $fts })
+    this.query = this.query.find({ $fts }).sortByScoring()
+
     return this
   }
 
