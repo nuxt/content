@@ -252,7 +252,16 @@ class Database extends Hookable {
    * @returns {string} Normalized path
    */
   normalizePath (path) {
-    return path.replace(this.dir, '').replace(/\.[^/.]+$/, '').replace(/\\/g, '/')
+    let extractPath = path.replace(this.dir, '')
+    const extensionPath = extractPath.substr(extractPath.lastIndexOf('.'))
+    const additionalsExt = EXTENSIONS.concat(this.extendParserExtensions)
+
+    // Remove the extension from the path if contained at the end or starts with a dot
+    if (additionalsExt.includes(extensionPath) || extractPath.startsWith('.')) {
+      extractPath = extractPath.replace(/(?:\.([^.]+))?$/, '')
+    }
+
+    return extractPath.replace(/\\/g, '/')
   }
 
   /**

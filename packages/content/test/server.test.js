@@ -53,6 +53,19 @@ describe('module', () => {
     ]))
   })
 
+  test('$content() on directory with dot', async () => {
+    const items = await $content('1.0').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Title with dot',
+        dir: '/1.0',
+        path: '/1.0/index',
+        slug: 'index'
+      })
+    ])
+  })
+
   test('$content() on file', async () => {
     const item = await $content('home').fetch()
 
