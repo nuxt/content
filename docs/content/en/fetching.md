@@ -170,7 +170,7 @@ Check out [this snippet](/snippets#search) on how to implement search into your 
   - Type: `Object`
   - Default: `{ before: 1, after: 1}`
 
-Get prev and next results arround a specific slug or path.
+Get prev and next results around a specific slug or path.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
 

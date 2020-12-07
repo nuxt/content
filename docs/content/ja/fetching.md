@@ -173,7 +173,7 @@ const articles = await this.$content('articles').search('welcome').fetch()
   - Type: `Object`
   - Default: `{ before: 1, after: 1}`
 
-Get prev and next results arround a specific slug.
+Get prev and next results around a specific slug.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
 
