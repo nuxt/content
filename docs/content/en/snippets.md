@@ -376,7 +376,7 @@ const interpolateSourceCode = async (file) => {
     }
 
     if (inCodeBlock && line.startsWith('```')) {
-      inCodeBlock = true
+      inCodeBlock = false
     }
   }
 
