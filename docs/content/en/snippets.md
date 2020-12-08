@@ -366,8 +366,8 @@ const interpolateSourceCode = async (file) => {
       try {
         const relativePath = line.split('source:')[1]
         const sourceCode = path.resolve(path.dirname(file.path), relativePath)
-        const buf = await fs.readFile(sourceCode, 'utf8')
-        lines[i] = buf.toString().trim()
+        const buffer = await fs.readFile(sourceCode, 'utf8')
+        lines[i] = buffer.toString().trim()
       } catch (e) {
         throw e
       }
