@@ -394,6 +394,18 @@ You can create a `content/settings.json` file to configure the theme.
     ```
   - If you use `i18n`, make sure the `<langAttribute>` is the same as the html lang selector in the config (defaults to `language`).
   - Take a look at the [@nuxt/content](https://github.com/algolia/docsearch-configs/blob/master/configs/nuxtjs_content.json) docsearch config for an example.
+- `releases` (`Object`) <badge>v0.9.0+</badge>
+  - This option can be used to filter the releases. These options are optional and can be used separately.
+    ```json
+    "releases": {
+        "preRelease": true,
+        "channel": "alpha",
+        "tag": "v2.*.*-alpha"
+    }
+    ```
+  - The `preRelease` option filter based on `prerelease` flag. It's useful when you want to make different docs for stable and pre releases.
+  - The `channel` option filter based on `target_commitish` value. It's really useful when CI make releases based on branch like `alpha`, `beta`, `next`. Making it easy to make docs for specific branches. Can be either a string, or an array of strings.
+  - The `tag` option filter based on `tag_name`. For example, `v2.*.*-alpha` will return alpha releases of v2. Can be either a string, or an array of strings.
 
 ### Example
 
