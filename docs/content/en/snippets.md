@@ -306,3 +306,86 @@ export default {
   }
 }
 ```
+
+## Advanced
+
+### Dynamic Code Block
+
+You can leverage `content:beforeParse` hook to manage source code separately from markdown files.
+
+```markdown[/content/en/index.md (original)]
+# Backslashes are for demonstration
+
+---
+title: Dynamic Code Block
+---
+
+\```
+source:./code-sample.js
+\```
+```
+
+```markdown[/content/en/code-sample.js]
+import Vue from 'vue'
+
+new Vue()
+```
+
+```markdown[/content/en/index.md (rendered)]
+# Backslashes are for demonstration
+
+---
+title: Dynamic Code Block
+---
+
+\```
+import Vue from 'vue'
+
+new Vue()
+\```
+```
+
+```javascript[nuxt.config.js]
+const interpolateSourceCode = async (file) => {
+  if (file.extension !== '.md') {
+    return
+  }
+
+  const lines = file.data.split('\n')
+  let inCodeBlock = false
+
+  for (let i = 0, l = lines.length; i < l; i++) {
+    const line = lines[i]
+
+    if (!inCodeBlock && line.startsWith('```')) {
+      inCodeBlock = true
+      continue
+    }
+
+    if (inCodeBlock && line.startsWith('source:')) {
+      try {
+        const relativePath = line.split('source:')[1]
+        const sourceCode = path.resolve(path.dirname(file.path), relativePath)
+        const buf = await fs.readFile(sourceCode, 'utf8')
+        lines[i] = buf.toString().trim()
+      } catch (e) {
+        throw e
+      }
+
+      continue
+    }
+
+    if (inCodeBlock && line.startsWith('```')) {
+      inCodeBlock = true
+    }
+  }
+
+  file.data = lines.join('\n')
+}
+
+export default {
+  hooks: {
+    'content:file:beforeParse': interpolateSourceCode
+  }
+}
+```
