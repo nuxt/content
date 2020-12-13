@@ -394,6 +394,17 @@ You can create a `content/settings.json` file to configure the theme.
     ```
   - If you use `i18n`, make sure the `<langAttribute>` is the same as the html lang selector in the config (defaults to `language`).
   - Take a look at the [@nuxt/content](https://github.com/algolia/docsearch-configs/blob/master/configs/nuxtjs_content.json) docsearch config for an example.
+- `slots` (`Object`) <badge>vX.X.X+</badge>
+  - This option allows you to add global components to specific "slots" of this theme. Simply add any component to `components/global` and then define the component's name in the `slot` settings like so:
+    ```json
+    "slots": {
+        "navBarTop": "<COMPONENT_NAME>",
+        "navBarBottom": "<COMPONENT_NAME>",
+        "tocTop": "<COMPONENT_NAME>",
+        "tocBottom": "<COMPONENT_NAME>"
+    }
+    ```
+    <img src="/docs-theme-slots.png" class="border-solid rounded-md dark:border-white border-2" width="1280" height="640" alt=""/>
 
 ### Example
 
