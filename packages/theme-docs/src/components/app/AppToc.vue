@@ -8,11 +8,7 @@
           'lg:px-8': settings.layout === 'single'
         }"
       >
-        <!-- START: Theme-Slot "tocTop" -->
-        <div v-if="settings.slots && settings.slots.tocTop" class="mb-3">
-          <component :is="`${settings.slots.tocTop}`"></component>
-        </div>
-        <!-- END: Theme Slot "navBarTop" -->
+        <AppSlot name="tocTop" class="mb-3" />
         <p
           class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
         >{{ $t('toc.title') }}</p>
@@ -38,11 +34,7 @@
             >{{ link.text }}</a>
           </li>
         </scrollactive>
-        <!-- START: Theme-Slot "tocBottom" -->
-        <div v-if="settings.slots && settings.slots.tocBottom" class="mt-2">
-          <component :is="`${settings.slots.tocBottom}`"></component>
-        </div>
-        <!-- END: Theme Slot "tocBottom" -->
+        <AppSlot name="tocBottom" class="mt-2" />
       </nav>
     </div>
   </div>

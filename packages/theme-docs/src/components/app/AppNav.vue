@@ -8,11 +8,7 @@
         <li v-if="!settings.algolia" class="mb-4 lg:hidden">
           <AppSearch />
         </li>
-        <!-- START: Theme-Slot "navBarTop" -->
-        <div v-if="settings.slots && settings.slots.navBarTop">
-          <component :is="`${settings.slots.navBarTop}`"></component>
-        </div>
-        <!-- END: Theme Slot "navBarTop" -->
+        <AppSlot name="navBarTop" />
         <li
           v-for="(docs, category, index) in categories"
           :key="category"
@@ -73,11 +69,7 @@
             <AppColorSwitcher />
           </div>
         </li>
-        <!-- START: Theme-Slot "navBarBottom" -->
-        <div v-if="settings.slots && settings.slots.navBarBottom">
-          <component :is="`${settings.slots.navBarBottom}`"></component>
-        </div>
-        <!-- END: Theme Slot "navBarBottom" -->
+        <AppSlot name="navBarBottom" class="mt-2" />
       </ul>
     </div>
   </aside>
