@@ -13,6 +13,7 @@
       }"
     >
       <article class="prose dark:prose-dark max-w-none lg:px-8">
+        <AppSlot name="contentTop" />
         <h1 class="flex items-center justify-between">
           {{ document.title }}
           <Badge v-if="document.badge">{{ document.badge }}</Badge>
@@ -22,6 +23,7 @@
         </div>
 
         <NuxtContent :document="document" />
+        <AppSlot name="contentBottom" />
       </article>
 
       <AppGithubLink :document="document" />

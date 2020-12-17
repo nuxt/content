@@ -6,8 +6,10 @@
           <BuiltWithNuxtLight class="h-4 light-img" />
           <BuiltWithNuxtDark class="h-4 dark-img" />
         </a>
+        <AppSlot name="footerLeft" class="ml-3" />
       </div>
       <div class="flex items-center space-x-4">
+        <AppSlot name="footerRight" />
         <AppLangSwitcher />
         <AppColorSwitcher />
       </div>
