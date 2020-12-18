@@ -10,18 +10,11 @@ function propsToData (props, doc) {
     const { attribute } = info.find(info.html, key)
 
     if (key === 'v-bind') {
-      let val = doc[value]
-      if (!val) {
-        val = eval(`(${value})`)
-      }
+      const val = value in doc ? doc[value] : eval(`(${value})`)
       obj = Object.assign(obj, val)
     } else if (key.indexOf(':') === 0 || key.indexOf('v-bind:') === 0) {
       key = key.replace('v-bind:', '').replace(':', '')
-      if (doc[value]) {
-        obj[key] = doc[value]
-      } else {
-        obj[key] = eval(`(${value})`)
-      }
+      obj[key] = value in doc ? doc[value] : eval(`(${value})`)
     } else if (Array.isArray(value)) {
       obj[attribute] = value.join(' ')
     } else {
