@@ -2,6 +2,13 @@ const info = require('property-information')
 
 const rootKeys = ['class-name', 'class', 'style']
 
+const rxOn = /^@|^v-on:/
+const rxBind = /^:|^v-bind:/
+
+function evalInContext (code, context) {
+  return new Function("with(this) { return (" + code + ") }").call(context)
+}
+
 function propsToData (props, doc) {
   return Object.keys(props).reduce(function (data, key) {
     const k = key.replace(/.*:/, '')
@@ -10,11 +17,15 @@ function propsToData (props, doc) {
     const { attribute } = info.find(info.html, key)
 
     if (key === 'v-bind') {
-      const val = value in doc ? doc[value] : eval(`(${value})`)
+      const val = value in doc ? doc[value] : evalInContext(value, doc)
       obj = Object.assign(obj, val)
-    } else if (key.indexOf(':') === 0 || key.indexOf('v-bind:') === 0) {
-      key = key.replace('v-bind:', '').replace(':', '')
-      obj[key] = value in doc ? doc[value] : eval(`(${value})`)
+    } else if (rxOn.test(key)) {
+      key = key.replace(rxOn, '')
+      data.on = data.on || {}
+      data.on[key] = evalInContext(value, doc)
+    } else if (rxBind.test(key)) {
+      key = key.replace(rxBind, '')
+      obj[key] = value in doc ? doc[value] : evalInContext(value, doc)
     } else if (Array.isArray(value)) {
       obj[attribute] = value.join(' ')
     } else {
