@@ -4,19 +4,40 @@ const rootKeys = ['class-name', 'class', 'style']
 
 const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
+const rxModel = /^v-model/
+const nativeInputs = ['select', 'textarea', 'input']
 
 function evalInContext (code, context) {
   return new Function("with(this) { return (" + code + ") }").call(context)
 }
 
-function propsToData (props, doc) {
+function propsToData (node, doc) {
+  const { tag, props } = node
   return Object.keys(props).reduce(function (data, key) {
     const k = key.replace(/.*:/, '')
     let obj = rootKeys.includes(k) ? data : data.attrs
     const value = props[key]
     const { attribute } = info.find(info.html, key)
+    const native = nativeInputs.includes(tag)
 
-    if (key === 'v-bind') {
+    if (rxModel.test(key) && value in doc && !native) {
+      const mods = key.replace(rxModel, '')
+        .split('.')
+        .filter(d => d)
+        .reduce((d, k) => (d[k] = true, d), {})
+
+      // As of yet we don't resolve custom v-model field/event names from components
+      const field = 'value'
+      const event = mods.lazy ? 'change' : 'input'
+      const processor =
+        mods.number ? (d => +d) :
+        mods.trim ? (d => d.trim()) :
+        d => d
+
+      obj[field] = evalInContext(value, doc)
+      data.on = data.on || {}
+      data.on[event] = e => doc[value] = processor(e)
+    } else if (key === 'v-bind') {
       const val = value in doc ? doc[value] : evalInContext(value, doc)
       obj = Object.assign(obj, val)
     } else if (rxOn.test(key)) {
@@ -67,7 +88,7 @@ function processNode (node, h, doc) {
   }
 
   const slotData = slotsToData(node || {}, h, doc)
-  const propData = propsToData(node.props, doc)
+  const propData = propsToData(node || {}, doc)
   const data = Object.assign({}, slotData, propData)
 
   /**
