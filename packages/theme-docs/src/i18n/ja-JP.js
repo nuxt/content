@@ -6,6 +6,7 @@ export default {
     title: '現在のページ'
   },
   article: {
-    github: 'このページをGitHubで編集する'
+    github: 'このページをGitHubで編集する',
+    updatedAt: '更新日'
   }
 }
