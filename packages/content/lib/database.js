@@ -46,7 +46,7 @@ class Database extends Hookable {
   query (path, { deep = false, text = false } = {}) {
     const isDir = !path || !!this.dirs.find(dir => dir === path)
     // Look for dir or path
-    const query = isDir ? { dir: deep ? { $regex: new RegExp(`^${path}`) } : path } : { path }
+    const query = isDir ? { dir: deep ? { $regex: new RegExp(`^${path.replace( /[.*+?^${}()|[\]\\]/g, '\\$&') }`) } : path } : { path }
     // Postprocess to get only first result (findOne)
     const postprocess = isDir ? [] : [data => data[0]]
 
