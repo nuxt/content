@@ -11,6 +11,29 @@
   display: block;
 }
 
+/* Style Scrollbar: Works on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary-500) transparent;
+}
+
+/* Style Scrollbar: Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background: none;
+}
+  
+*::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-500);
+    border-radius: 100px;
+    margin-top: 5px;
+    border: 3px solid var(--color-primary-500);
+}
+
+
 .nuxt-content {
   @apply break-words;
 
