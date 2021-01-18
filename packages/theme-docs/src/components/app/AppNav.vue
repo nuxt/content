@@ -18,6 +18,7 @@
           }"
         >
           <p
+            v-if="category"
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
           >{{ category }}</p>
           <ul>
