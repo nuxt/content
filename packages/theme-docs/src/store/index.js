@@ -12,7 +12,9 @@ export const state = () => ({
     url: '',
     defaultDir: 'docs',
     defaultBranch: '',
-    filled: false
+    filled: false,
+    releases: true,
+    tags: true
   }
 })
 
@@ -103,7 +105,7 @@ export const actions = {
     commit('SET_CATEGORIES', categories)
   },
   async fetchReleases ({ commit, state, getters }) {
-    if (!state.settings.github) {
+    if (!state.settings.github || !state.settings.releases) {
       return
     }
 
@@ -120,7 +122,7 @@ export const actions = {
     commit('SET_RELEASES', releases)
   },
   async fetchTags ({ commit, state, getters }) {
-    if (!state.settings.github) {
+    if (!state.settings.github || !state.settings.tags) {
       return
     }
 
