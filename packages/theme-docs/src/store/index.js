@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
-import { fetchGithub, sortByVersion } from '../api/github'
 import defu from 'defu'
+import { fetchGithub, sortByVersion } from '../api/github'
 
 export const state = () => ({
   categories: {},
@@ -43,7 +43,7 @@ export const getters = {
       api: {
         repo: `https://api.github.com/repos/${github}`,
         releases: `https://api.github.com/repos/${github}/releases`,
-        tags: `https://api.github.com/repos/${github}/tags`,
+        tags: `https://api.github.com/repos/${github}/tags`
       }
     }
   },
