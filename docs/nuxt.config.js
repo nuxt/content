@@ -17,8 +17,8 @@ export default theme({
       name: 'Français'
     }, {
       code: 'ja',
-      iso: 'ja_JP',
-      file: 'ja_JP.js',
+      iso: 'ja-JP',
+      file: 'ja-JP.js',
       name: '日本語'
     }, {
       code: 'en',
