@@ -9,7 +9,7 @@ category: Начало
 
 `$content` доступен из **@nuxt/content**.
 
-<alert>
+<alert type="warning">
 
 Обратите внимание, что вы можете получить к нему доступ только **после того, как модуль будет загружен** Nuxt'ом. `require('@nuxt/content')` должно произойти в хуках или внутренних методах Nuxt.
 
@@ -32,13 +32,13 @@ export default {
 
 ### Статическая генерация сайта
 
-<alert type="info">
+Начиная с версии 2.14+, `nuxt generate` имеет интегрированный обходчик, который будет автоматически обходить все ваши ссылки и генерировать маршруты основываясь на них. Поэтому вам не нужно ничего делать для сканирования ваших динамических маршрутов.
 
-Если вы используете Nuxt 2.13+, `nuxt export` имеет встроенную функцию сканирования, поэтому вам не нужно использовать `generate.routes`.
+Также, `nuxt generate` будет пропускать этап сборки если код не был изменен используя кэш. Модуль content интегрируется с этим для игнорирования изменений внутри директории `content/`. Другими словами, когда вы измените контент на вашем сайте выполните развертывание, то шаг сборки будет пропущен.
 
-</alert>
+> Прочитайте больше в [этой статье](https://nuxtjs.org/blog/nuxt-static-improvements).
 
-При использовании `nuxt generate`, вам нужно указать динамические маршруты в [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), потому что Nuxt не знает какие маршруты нужно генерировать.
+При использовании Nuxt <= 2.12 `nuxt generate`, вам нужно указать динамические маршруты в [generate.routes](https://nuxtjs.org/api/configuration-generate/#routes), потому что Nuxt не знает какие маршруты нужно генерировать.
 
 **Пример**
 
@@ -57,6 +57,12 @@ export default {
   }
 }
 ```
+
+<alert type="warning">
+
+Рекомендуем использовать Nuxt 2.14+ вместе с `nuxt generate`, потому что это классно!
+
+</alert>
 
 ## Хуки
 
@@ -173,4 +179,4 @@ Endpoint доступен для `GET` и `POST` запросов, так что
 
 `http://localhost:3000/_content/products?categories.slug_contains=top`
 
-Вы можете узнать больше о конечных точках на [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+> Вы можете узнать больше о конечных точках на [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).

@@ -15,7 +15,6 @@
 
 <script>
 export default {
-  watchQuery: true,
   async asyncData ({ $content, route }) {
     const q = route.query.q
 
@@ -38,6 +37,7 @@ export default {
     q () {
       this.$router.replace({ query: this.q ? { q: this.q } : undefined }).catch(() => { })
     }
-  }
+  },
+  watchQuery: true
 }
 </script>

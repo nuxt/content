@@ -8,8 +8,15 @@ const path = require('path')
 const plugin = require('tailwindcss/plugin')
 const defaultTheme = require('tailwindcss/defaultTheme')
 const selectorParser = require('postcss-selector-parser')
+const { getColors } = require('theme-colors')
 
-module.exports = {
+module.exports = ({ nuxt }) => ({
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+    defaultLineHeights: true,
+    standardFontWeights: true
+  },
   theme: {
     extend: {
       fontFamily: {
@@ -17,23 +24,16 @@ module.exports = {
         mono: ['DM Mono', ...defaultTheme.fontFamily.mono]
       },
       colors: {
-        primary: {
-          100: '#E6FAF2',
-          200: '#BFF3E0',
-          300: '#99EBCD',
-          400: '#4DDCA7',
-          500: '#00CD81',
-          600: '#00B974',
-          700: '#007B4D',
-          800: '#005C3A',
-          900: '#003E27'
-        }
+        primary: getColors(nuxt.options.docs.primaryColor)
       },
       maxHeight: {
         '(screen-16)': 'calc(100vh - 4rem)'
       },
       inset: {
         16: '4rem'
+      },
+      transitionProperty: {
+        padding: 'padding'
       }
     },
     typography: theme => ({
@@ -83,6 +83,9 @@ module.exports = {
           },
           'pre code': {
             fontFamily: 'DM Mono'
+          },
+          'a code': {
+            color: theme('colors.primary.500')
           }
         }
       },
@@ -133,6 +136,9 @@ module.exports = {
             backgroundColor: theme('colors.gray.800'),
             borderWidth: 0
           },
+          'a code': {
+            color: theme('colors.primary.500')
+          },
           thead: {
             color: theme('colors.gray.100'),
             borderBottomColor: theme('colors.gray.600')
@@ -146,6 +152,7 @@ module.exports = {
   },
   variants: {
     margin: ['responsive', 'last'],
+    padding: ['responsive', 'hover'],
     backgroundColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
     textColor: ['responsive', 'hover', 'focus', 'dark', 'dark-hover', 'dark-focus'],
     borderColor: ['responsive', 'hover', 'focus', 'dark', 'dark-focus'],
@@ -177,13 +184,39 @@ module.exports = {
         })
       })
     }),
-    require('@tailwindcss/typography')
+    require('@tailwindcss/typography'),
+    require('tailwind-css-variables')(
+      {
+        colors: 'color',
+        screens: false,
+        fontFamily: false,
+        fontSize: false,
+        fontWeight: false,
+        lineHeight: false,
+        letterSpacing: false,
+        backgroundSize: false,
+        borderWidth: false,
+        borderRadius: false,
+        width: false,
+        height: false,
+        minWidth: false,
+        minHeight: false,
+        maxWidth: false,
+        maxHeight: false,
+        padding: false,
+        margin: false,
+        boxShadow: false,
+        zIndex: false,
+        opacity: false
+      }
+    )
   ],
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
     enabled: process.env.NODE_ENV === 'production',
     content: [
       'content/**/*.md',
+      path.join(nuxt.options.rootDir, 'components/**/*.vue'),
       path.join(__dirname, 'components/**/*.vue'),
       path.join(__dirname, 'layouts/**/*.vue'),
       path.join(__dirname, 'pages/**/*.vue'),
@@ -194,4 +227,4 @@ module.exports = {
       whitelist: ['dark-mode']
     }
   }
-}
+})

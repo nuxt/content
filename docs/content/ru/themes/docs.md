@@ -83,9 +83,6 @@ export default theme()
 import theme from '@nuxt/content-theme-docs'
 
 export default theme({
-  env: {
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN
-  },
   loading: { color: '#48bb78' },
   generate: {
     fallback: '404.html', // for Netlify
@@ -211,11 +208,11 @@ menuTitle: 'Вступление'
 - `logo` (`String` | `Object`)
   - Логотип вашей документации, может быть `Object` для установки на каждый [цветовой режим](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
-  - GitHub репозиторий вашего проекта `${org}/${name}` для отображения последней версии, страницы изменений, ссылки вверху и ссылки `Редактировать эту страницу на GitHub` на каждой странице
+  - GitHub репозиторий вашего проекта `owner/name` для отображения последней версии, страницы изменений, ссылки вверху и ссылки `Редактировать эту страницу на GitHub` на каждой странице. Пример: `nuxt/content`
 - `defaultBranch` ( `String`)
   - Ветка вашего проекта, которая используется по умолчанию , используется для ссылки `Редактировать эту страницу на GitHub` на каждой странице (по умолчанию `main` если ничего не задано)..
 - `twitter` (`String`)
-  - Ваше имя пользователя на twitter
+  - Ваше имя пользователя `@username` на twitter. Пример: `@nuxt_js`
 
 ### Пример
 

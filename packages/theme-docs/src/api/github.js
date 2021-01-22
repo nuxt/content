@@ -1,4 +1,4 @@
-export async function fetchGithub (repo, path = '') {
+export async function fetchGithub (url) {
   const options = {}
 
   if (process.env.GITHUB_TOKEN) {
@@ -6,7 +6,6 @@ export async function fetchGithub (repo, path = '') {
   }
 
   try {
-    const url = `https://api.github.com/repos/${repo}${path ? '/' + path.trim('/') : ''}`
     const data = await fetch(url, options).then((res) => {
       if (!res.ok) {
         throw new Error(res.statusText)

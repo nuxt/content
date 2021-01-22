@@ -2,6 +2,7 @@ const logger = require('consola').withScope('@nuxt/content')
 const { camelCase } = require('change-case')
 
 const getDefaults = ({ dev = false } = {}) => ({
+  editor: './editor.vue',
   watch: dev,
   liveEdit: true,
   apiPrefix: '_content',
@@ -9,12 +10,14 @@ const getDefaults = ({ dev = false } = {}) => ({
   fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   nestedProperties: [],
   markdown: {
+    tocDepth: 3,
     remarkPlugins: [
       'remark-squeeze-paragraphs',
       'remark-slug',
       'remark-autolink-headings',
       'remark-external-links',
-      'remark-footnotes'
+      'remark-footnotes',
+      'remark-gfm'
     ],
     rehypePlugins: [
       'rehype-sort-attribute-values',
@@ -31,23 +34,24 @@ const getDefaults = ({ dev = false } = {}) => ({
   extendParser: {}
 })
 
-const mergeConfig = (content, defaults, options = {}) => {
-  return Object.entries(content).reduce((options, [key, value]) => {
-    const defaultValue = defaults[key]
-    if (value && typeof value !== 'function' && Array.isArray(defaultValue)) {
-      // Merge value with default value if array
-      value = defaultValue.concat(value)
-    } else if (typeof value === 'function' && defaultValue) {
-      // Executed value functions and provide default value as param
-      value = value(defaultValue)
-    } else if (typeof value === 'object') {
-      value = mergeConfig(value, defaultValue || {}, options[key])
-    }
+const processMarkdownTocDepth = (markdown) => {
+  const { tocDepth } = markdown
+  const tocTags = []
 
-    // Finally assign
-    options[key] = value
-    return options
-  }, options)
+  if (tocDepth < 1) {
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will be empty.`)
+    return tocTags
+  }
+
+  if (tocDepth > 6) {
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will include all the headings.`)
+  }
+
+  for (let i = 2; i <= tocDepth; i++) {
+    tocTags.push(`h${i}`)
+  }
+
+  return tocTags
 }
 
 const processMarkdownPlugins = (type, markdown, resolvePath) => {
@@ -81,12 +85,12 @@ const processMarkdownOptions = (options, resolvePath) => {
   if (!resolvePath) {
     resolvePath = path => path
   }
+  options.markdown.tocTags = processMarkdownTocDepth(options.markdown)
   options.markdown.remarkPlugins = processMarkdownPlugins('remark', options.markdown, resolvePath)
   options.markdown.rehypePlugins = processMarkdownPlugins('rehype', options.markdown, resolvePath)
 }
 
 module.exports = {
   getDefaults,
-  mergeConfig,
   processMarkdownOptions
 }

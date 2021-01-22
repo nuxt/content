@@ -3,6 +3,90 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.5.1...nuxt-content-docs@1.6.0) (2020-09-15)
+
+
+### Features
+
+* support github custom domain ([#458](https://github.com/nuxt/content/issues/458)) ([d01e134](https://github.com/nuxt/content/commit/d01e1347f88006948929ced9dfa6dd97e3fa2008))
+* **content:** add custom highlighter ([#467](https://github.com/nuxt/content/issues/467)) ([9e1d0bd](https://github.com/nuxt/content/commit/9e1d0bd85e2bef64a7a9d42dee9ffadc559e60c6))
+* **theme-docs:** add `defaultDir` options ([#468](https://github.com/nuxt/content/issues/468)) ([e4bae6c](https://github.com/nuxt/content/commit/e4bae6cf779e38e8238766d038d4febe2386b602))
+* add content:file:beforeParse hook ([#453](https://github.com/nuxt/content/issues/453)) ([f7ac58d](https://github.com/nuxt/content/commit/f7ac58de9b743cb58fe9b7a7ab81795c4dbf3e3b))
+
+
+
+
+
+## [1.5.1](https://github.com/nuxt/content/compare/nuxt-content-docs@1.5.0...nuxt-content-docs@1.5.1) (2020-09-03)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+# [1.5.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.4.1...nuxt-content-docs@1.5.0) (2020-09-03)
+
+
+### Features
+
+* add database as second argument for beforeInsert ([#442](https://github.com/nuxt/content/issues/442)) ([90c638d](https://github.com/nuxt/content/commit/90c638d153394a284fa387f3ab868989b901b4f9))
+
+
+
+
+
+## [1.4.1](https://github.com/nuxt/content/compare/nuxt-content-docs@1.4.0...nuxt-content-docs@1.4.1) (2020-08-31)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+# [1.4.0](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.6...nuxt-content-docs@1.4.0) (2020-08-25)
+
+
+### Features
+
+* add custom editor API ([#312](https://github.com/nuxt/content/issues/312)) ([78fbb92](https://github.com/nuxt/content/commit/78fbb92ace7934fc15781dc592dfd2722670897a))
+
+
+
+
+
+## [1.3.6](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.5...nuxt-content-docs@1.3.6) (2020-08-18)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+## [1.3.5](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.4...nuxt-content-docs@1.3.5) (2020-08-18)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+## [1.3.4](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.3...nuxt-content-docs@1.3.4) (2020-08-17)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
+## [1.3.3](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.2...nuxt-content-docs@1.3.3) (2020-08-17)
+
+**Note:** Version bump only for package nuxt-content-docs
+
+
+
+
+
 ## [1.3.2](https://github.com/nuxt/content/compare/nuxt-content-docs@1.3.1...nuxt-content-docs@1.3.2) (2020-08-07)
 
 **Note:** Version bump only for package nuxt-content-docs

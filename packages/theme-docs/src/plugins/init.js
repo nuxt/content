@@ -7,7 +7,7 @@ export default async function ({ store, app }) {
     await store.dispatch('fetchDefaultBranch')
   }
   // Spa Fallback
-  if (process.client && !store.state.settings) {
+  if (process.client && !store.state.settings.filled) {
     await store.dispatch('fetchSettings')
   }
   if (process.client && !store.state.releases.length) {

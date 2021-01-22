@@ -1,22 +1,26 @@
 <template>
   <aside
-    class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent"
+    class="w-full lg:w-1/5 lg:block fixed lg:relative inset-0 mt-16 lg:mt-0 z-30 bg-white dark:bg-gray-900 lg:bg-transparent lg:dark:bg-transparent"
     :class="{ 'block': menu, 'hidden': !menu }"
   >
     <div class="lg:sticky lg:top-16 overflow-y-auto h-full lg:h-auto lg:max-h-(screen-16)">
       <ul class="p-4 lg:py-8 lg:pl-0 lg:pr-8">
-        <li class="mb-4 lg:hidden">
+        <li v-if="!settings.algolia" class="mb-4 lg:hidden">
           <AppSearch />
         </li>
         <li
           v-for="(docs, category, index) in categories"
           :key="category"
           class="mb-4"
-          :class="{ 'lg:mb-0': index === Object.keys(categories).length - 1 }"
+          :class="{
+            'active': isCategoryActive(docs),
+            'lg:mb-0': index === Object.keys(categories).length - 1
+          }"
         >
-          <h3
+          <p
+            v-if="category"
             class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-          >{{ category }}</h3>
+          >{{ category }}</p>
           <ul>
             <li v-for="doc of docs" :key="doc.slug" class="text-gray-700 dark:text-gray-300">
               <NuxtLink
@@ -27,7 +31,7 @@
                 {{ doc.menuTitle || doc.title }}
                 <client-only>
                   <span
-                    v-if="isNew(doc)"
+                    v-if="isDocumentNew(doc)"
                     class="animate-pulse rounded-full bg-primary-500 opacity-75 h-2 w-2"
                   />
                 </client-only>
@@ -35,33 +39,33 @@
             </li>
           </ul>
         </li>
-        <li class="lg:hidden">
-          <h3 class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</h3>
-          <div class="flex items-center ml-2">
+        <li class="lg:hidden space-x-2">
+          <p class="mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs">More</p>
+          <div class="flex items-center space-x-4">
             <a
               v-if="settings.twitter"
-              href="`https://twitter.com/${settings.twitter}`"
+              :href="`https://twitter.com/${settings.twitter}`"
               target="_blank"
               rel="noopener noreferrer"
               title="Twitter"
               name="Twitter"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
             >
               <IconTwitter class="w-5 h-5" />
             </a>
             <a
               v-if="settings.github"
-              :href="`https://github.com/${settings.github}`"
+              :href="githubUrls.repo"
               target="_blank"
               rel="noopener noreferrer"
               title="Github"
               name="Github"
-              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500 mr-4"
+              class="inline-flex text-gray-700 dark:text-gray-300 hover:text-primary-500"
             >
               <IconGithub class="w-5 h-5" />
             </a>
 
-            <AppLangSwitcher class="mr-4" />
+            <AppLangSwitcher />
             <AppColorSwitcher />
           </div>
         </li>
@@ -76,7 +80,8 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters([
-      'settings'
+      'settings',
+      'githubUrls'
     ]),
     menu: {
       get () {
@@ -91,7 +96,10 @@ export default {
     }
   },
   methods: {
-    isNew (document) {
+    isCategoryActive (documents) {
+      return documents.some(document => document.to === this.$route.fullPath)
+    },
+    isDocumentNew (document) {
       if (process.server) {
         return
       }

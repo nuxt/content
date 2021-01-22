@@ -5,23 +5,16 @@ const rootKeys = ['class-name', 'class', 'style']
 function propsToData (props, doc) {
   return Object.keys(props).reduce(function (data, key) {
     const k = key.replace(/.*:/, '')
-    const obj = rootKeys.includes(k) ? data : data.attrs
+    let obj = rootKeys.includes(k) ? data : data.attrs
     const value = props[key]
     const { attribute } = info.find(info.html, key)
 
     if (key === 'v-bind') {
-      let val = doc[value]
-      if (!val) {
-        val = eval(`(${value})`)
-      }
+      const val = value in doc ? doc[value] : eval(`(${value})`)
       obj = Object.assign(obj, val)
     } else if (key.indexOf(':') === 0 || key.indexOf('v-bind:') === 0) {
       key = key.replace('v-bind:', '').replace(':', '')
-      if (doc[value]) {
-        obj[key] = doc[value]
-      } else {
-        obj[key] = eval(`(${value})`)
-      }
+      obj[key] = value in doc ? doc[value] : eval(`(${value})`)
     } else if (Array.isArray(value)) {
       obj[attribute] = value.join(' ')
     } else {
@@ -94,7 +87,7 @@ function isTemplate (node) {
 function getSlotName (node) {
   let name = ''
   for (const propName of Object.keys(node.props)) {
-    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) { return }
+    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) { continue }
     name = propName.split(/[:#]/, 2)[1]
     break
   }

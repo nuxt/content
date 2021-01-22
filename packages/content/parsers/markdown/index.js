@@ -35,13 +35,17 @@ class Markdown {
    * @returns {array} List of headers
    */
   generateToc (body) {
-    // Returns only h2 and h3 from body root children
-    return body.children.filter(node => ['h2', 'h3'].includes(node.tag)).map((node) => {
+    const { tocTags } = this.options
+
+    return body.children.filter(node => tocTags.includes(node.tag)).map((node) => {
       const id = node.props.id
 
       const depth = ({
         h2: 2,
-        h3: 3
+        h3: 3,
+        h4: 4,
+        h5: 5,
+        h6: 6
       })[node.tag]
 
       const text = this.flattenNodeText(node)
@@ -59,12 +63,20 @@ class Markdown {
    * @param {string} content - JSON AST generated from markdown.
    * @returns {object} JSON AST body
    */
-  generateBody (content) {
+  async generateBody (content) {
+    let { highlighter } = this.options
+    if (typeof highlighter === 'function' && highlighter.length === 0) {
+      highlighter = await highlighter()
+    }
+
     return new Promise((resolve, reject) => {
       let stream = unified().use(parse)
 
       stream = this.processPluginsFor('remark', stream)
-      stream = stream.use(remark2rehype, { handlers, allowDangerousHtml: true })
+      stream = stream.use(remark2rehype, {
+        handlers: handlers(highlighter),
+        allowDangerousHtml: true
+      })
       stream = this.processPluginsFor('rehype', stream)
 
       stream
@@ -80,23 +92,41 @@ class Markdown {
   }
 
   /**
+   * Generate text excerpt summary
+   * @param {string} excerptContent - JSON AST generated from excerpt markdown.
+   * @returns {string} concatinated excerpt
+   */
+  generateDescription (excerptContent) {
+    return this.flattenNodeText(excerptContent)
+  }
+
+  /**
    * Converts markdown document to it's JSON structure.
    * @param {string} file - Markdown file
    * @return {Object}
    */
   async toJSON (file) {
-    const { data, content } = matter(file)
+    const { data, content, ...rest } = matter(file, { excerpt: true, excerpt_separator: '<!--more-->' })
 
     // Compile markdown from file content to JSON
     const body = await this.generateBody(content)
     // Generate toc from body
     const toc = this.generateToc(body)
 
+    let excerpt
+    let description
+    if (rest.excerpt) {
+      excerpt = await this.generateBody(rest.excerpt)
+      description = this.generateDescription(excerpt)
+    }
+
     return {
+      description,
       ...data,
       toc,
       body,
-      text: content
+      text: content,
+      excerpt
     }
   }
 }

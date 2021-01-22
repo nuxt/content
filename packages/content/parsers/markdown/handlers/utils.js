@@ -21,12 +21,12 @@ utils.parseThematicBlock = function (lang) {
 
   const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
   const lineHighlightTokens = lang.replace(/[[](.+)/, '').split('{')
-  const filenameTokens = lang.split('[')
+  const filenameTokens = lang.match(/\[(.+)\]/)
 
   return {
     language: language ? language[0] : null,
-    lineHighlights: lineHighlightTokens[1] ? lineHighlightTokens[1].replace('}', '') : null,
-    fileName: filenameTokens[1] ? filenameTokens[1].replace(']', '') : null
+    lineHighlights: lineHighlightTokens[1] ? lineHighlightTokens[1].replace(/}.*/, '') : null,
+    fileName: Array.isArray(filenameTokens) ? filenameTokens[1] : null
   }
 }
 

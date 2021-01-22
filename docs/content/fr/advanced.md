@@ -71,7 +71,7 @@ Arguments:
 - `document`
   - Type: `Object`
   - Propriétés:
-    - Voir [écrire du contenu](/writing)
+    - Voir [écrire du contenu](/fr/writing)
 
 **Exemple**
 

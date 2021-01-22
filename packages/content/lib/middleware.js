@@ -114,7 +114,7 @@ module.exports = ({ ws, database, dir, watch }) => async (req, res) => {
     }
   }
   if (params.surround) {
-    query = query.surround(params.surround.slug, params.surround.options)
+    query = query.surround(params.surround.slugOrPath, params.surround.options)
   }
 
   let result

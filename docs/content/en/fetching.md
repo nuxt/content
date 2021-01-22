@@ -5,7 +5,7 @@ position: 4
 category: Getting started
 ---
 
-This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, fetch, nuxtServerInit and Middleware, you can access it from `context.$content`.
+This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, nuxtServerInit and Middleware, you can access it from `context.$content`.
 
 ## Methods
 
@@ -161,16 +161,16 @@ Check out [this snippet](/snippets#search) on how to implement search into your 
 
 </alert>
 
-### surround(slug, options)
+### surround(slugOrPath, options)
 
-- `slug`
+- `slugOrPath`
   - Type: `String`
   - `required`
 - `options`
   - Type: `Object`
   - Default: `{ before: 1, after: 1}`
 
-Get prev and next results arround a specific slug.
+Get prev and next results around a specific slug or path.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
 
@@ -194,9 +194,15 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` and `skip` are ineffective when using this method.
 
+<alert type="warning">
+
+Getting results based on `path` is only supported since vx.y.z <!-- set version later -->
+
+</alert>
+
 <alert type="info">
 
-Check out [this snippet](/snippets#pagination) on how to implement prev and next links into your app
+Check out [this snippet](/snippets#prev-and-next) on how to implement prev and next links into your app
 
 </alert>
 
@@ -205,6 +211,12 @@ Check out [this snippet](/snippets#pagination) on how to implement prev and next
 - Returns: `Promise<Object>` | `Promise<Array>`
 
 Ends the chain sequence and collects data.
+
+### catch()
+
+Checks if the `.md` file exists in content directory or not.
+
+It should be inserted after the `fetch()`.
 
 ## Example
 
@@ -217,11 +229,14 @@ const articles = await this.$content('articles')
   .where({
     tags: 'testing',
     isArchived: false,
-    date: { $gt: new Date(2020) },
+    date: { $gt: new Date('2020-03-31') },
     rating: { $gte: 3 }
   })
   .search('welcome')
   .fetch()
+  .catch((err) => {
+     error({ statusCode: 404, message: 'Page not found' })
+  })
 ```
 
 > You can check how to use the [Content API](/advanced#api-endpoint) in development.

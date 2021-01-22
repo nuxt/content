@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
 import { fetchGithub, sortByVersion } from '../api/github'
+import defu from 'defu'
 
 export const state = () => ({
   categories: {},
@@ -8,13 +9,41 @@ export const state = () => ({
   tags: [],
   settings: {
     title: 'Nuxt Content Docs',
-    defaultBranch: ''
+    url: '',
+    defaultDir: 'docs',
+    defaultBranch: '',
+    filled: false
   }
 })
 
 export const getters = {
   settings (state) {
     return state.settings
+  },
+  githubUrls (state) {
+    const { github = '', githubApi = '' } = state.settings
+
+    // GitHub Enterprise
+    if (github.startsWith('http') && githubApi.startsWith('http')) {
+      return {
+        repo: github,
+        api: {
+          repo: githubApi,
+          releases: `${githubApi}/releases`,
+          tags: `${githubApi}/tags`
+        }
+      }
+    }
+
+    // GitHub
+    return {
+      repo: `https://github.com/${github}`,
+      api: {
+        repo: `https://api.github.com/repos/${github}`,
+        releases: `https://api.github.com/repos/${github}/releases`,
+        tags: `https://api.github.com/repos/${github}/tags`,
+      }
+    }
   },
   releases (state) {
     return state.releases
@@ -42,7 +71,11 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, settings)
+    state.settings = defu({ filled: true }, settings, state.settings)
+    if (!state.settings.url) {
+      // eslint-disable-next-line no-console
+      console.warn('Please provide the `url` property in `content/setting.json`')
+    }
   }
 }
 
@@ -69,12 +102,12 @@ export const actions = {
     const categories = groupBy(docs, 'category')
     commit('SET_CATEGORIES', categories)
   },
-  async fetchReleases ({ commit, state }) {
+  async fetchReleases ({ commit, state, getters }) {
     if (!state.settings.github) {
       return
     }
 
-    const data = await fetchGithub(state.settings.github, 'releases') || []
+    const data = await fetchGithub(getters.githubUrls.api.releases) || []
     const releases = data.filter(r => !r.draft).map((release) => {
       return {
         name: (release.name || release.tag_name).replace('Release ', ''),
@@ -86,17 +119,17 @@ export const actions = {
     releases.sort(sortByVersion)
     commit('SET_RELEASES', releases)
   },
-  async fetchTags ({ commit, state }) {
+  async fetchTags ({ commit, state, getters }) {
     if (!state.settings.github) {
       return
     }
 
-    const data = await fetchGithub(state.settings.github, 'tags') || []
+    const data = await fetchGithub(getters.githubUrls.api.tags) || []
     const tags = await Promise.all(data.map(async (tag) => {
       let date = null
 
       if (tag.commit && tag.commit.sha) {
-        const { commit } = await fetchGithub(state.settings.github, `commits/${tag.commit.sha}`) || {}
+        const { commit } = await fetchGithub(`${getters.githubUrls.api.repo}/commits/${tag.commit.sha}`) || {}
 
         if (commit && commit.committer) {
           date = commit.committer.date
@@ -114,17 +147,18 @@ export const actions = {
     tags.sort(sortByVersion)
     commit('SET_TAGS', tags)
   },
-  async fetchDefaultBranch ({ commit, state }) {
+  async fetchDefaultBranch ({ commit, state, getters }) {
     if (!state.settings.github || state.settings.defaultBranch) {
       return
     }
 
-    const data = await fetchGithub(state.settings.github) || {}
+    const data = await fetchGithub(getters.githubUrls.api.repo) || {}
     commit('SET_DEFAULT_BRANCH', data.defaultDranch || 'main')
   },
   async fetchSettings ({ commit }) {
     try {
-      const settings = await this.$content('settings').fetch()
+      const { dir, extension, path, slug, to, createdAt, updatedAt, ...settings } = await this.$content('settings').fetch()
+
       commit('SET_SETTINGS', settings)
     } catch (e) {
       // eslint-disable-next-line no-console

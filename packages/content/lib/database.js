@@ -111,15 +111,22 @@ class Database extends Hookable {
    * @param {string} path - The path of the file.
    */
   async insertFile (path) {
-    const item = await this.parseFile(path)
+    const items = await this.parseFile(path)
 
-    if (!item) {
+    if (!items) {
       return
     }
 
-    await this.callHook('file:beforeInsert', item)
+    // Assume path is a directory if returning an array
+    if (items.length > 1) {
+      this.dirs.push(this.normalizePath(path))
+    }
 
-    this.items.insert(item)
+    for (const item of items) {
+      await this.callHook('file:beforeInsert', item)
+
+      this.items.insert(item)
+    }
   }
 
   /**
@@ -127,22 +134,24 @@ class Database extends Hookable {
    * @param {string} path - The path of the file.
    */
   async updateFile (path) {
-    const item = await this.parseFile(path)
+    const items = await this.parseFile(path)
 
-    if (!item) {
+    if (!items) {
       return
     }
 
-    await this.callHook('file:beforeInsert', item)
+    for (const item of items) {
+      await this.callHook('file:beforeInsert', item)
 
-    const document = this.items.findOne({ path: item.path })
+      const document = this.items.findOne({ path: item.path })
 
-    logger.info(`Updated ${path.replace(this.cwd, '.')}`)
-    if (document) {
-      this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
-      return
+      logger.info(`Updated ${path.replace(this.cwd, '.')}`)
+      if (document) {
+        this.items.update({ $loki: document.$loki, meta: document.meta, ...item })
+        return
+      }
+      this.items.insert(item)
     }
-    this.items.insert(item)
   }
 
   /**
@@ -166,51 +175,75 @@ class Database extends Hookable {
     if (!EXTENSIONS.includes(extension) && !this.extendParserExtensions.includes(extension)) {
       return
     }
-    const file = await fs.readFile(path, 'utf-8')
+
     const stats = await fs.stat(path)
+    const file = {
+      path,
+      extension,
+      data: await fs.readFile(path, 'utf-8')
+    }
+
+    await this.callHook('file:beforeParse', file)
 
     // Get parser depending on extension
     const parser = ({
-      '.json': file => JSON.parse(file),
-      '.json5': file => JSON5.parse(file),
-      '.md': file => this.markdown.toJSON(file),
-      '.csv': file => this.csv.toJSON(file),
-      '.yaml': file => this.yaml.toJSON(file),
-      '.yml': file => this.yaml.toJSON(file),
-      '.xml': file => this.xml.toJSON(file),
+      '.json': data => JSON.parse(data),
+      '.json5': data => JSON5.parse(data),
+      '.md': data => this.markdown.toJSON(data),
+      '.csv': data => this.csv.toJSON(data),
+      '.yaml': data => this.yaml.toJSON(data),
+      '.yml': data => this.yaml.toJSON(data),
+      '.xml': data => this.xml.toJSON(data),
       ...this.extendParser
     })[extension]
+
     // Collect data from file
-    let data = {}
+    let data = []
     try {
-      data = await parser(file)
+      data = await parser(file.data, { path: file.path })
+      // Force data to be an array
+      data = Array.isArray(data) ? data : [data]
     } catch (err) {
       logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
     }
+
     // Normalize path without dir and ext
     const normalizedPath = this.normalizePath(path)
-    // Extract dir from path
-    const split = normalizedPath.split('/')
-    const dir = split.slice(0, split.length - 1).join('/')
 
-    // Overrides createdAt & updatedAt if it exists in the document
-    const existingCreatedAt = data.createdAt && new Date(data.createdAt)
-    const existingUpdatedAt = data.updatedAt && new Date(data.updatedAt)
-    // validate the existing dates to avoid wrong date format or typo
+    // Validate the existing dates to avoid wrong date format or typo
     const isValidDate = (date) => {
       return date instanceof Date && !isNaN(date)
     }
 
-    return {
-      ...data,
-      dir: dir || '/',
-      path: normalizedPath,
-      extension,
-      slug: split[split.length - 1],
-      createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
-      updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
-    }
+    return data.map((item) => {
+      const paths = normalizedPath.split('/')
+      // `item.slug` is necessary with JSON arrays since `slug` comes from filename by default
+      if (data.length > 1 && item.slug) {
+        paths.push(item.slug)
+      }
+      // Extract `dir` from paths
+      const dir = paths.slice(0, paths.length - 1).join('/') || '/'
+      // Extract `slug` from paths
+      const slug = paths[paths.length - 1]
+      // Construct full path
+      const path = paths.join('/')
+
+      // Overrides createdAt & updatedAt if it exists in the document
+      const existingCreatedAt = item.createdAt && new Date(item.createdAt)
+      const existingUpdatedAt = item.updatedAt && new Date(item.updatedAt)
+
+      return {
+        slug,
+        // Allow slug override
+        ...item,
+        dir,
+        path,
+        extension,
+        createdAt: isValidDate(existingCreatedAt) ? existingCreatedAt : stats.birthtime,
+        updatedAt: isValidDate(existingUpdatedAt) ? existingUpdatedAt : stats.mtime
+      }
+    })
   }
 
   /**
@@ -219,7 +252,16 @@ class Database extends Hookable {
    * @returns {string} Normalized path
    */
   normalizePath (path) {
-    return path.replace(this.dir, '').replace(/\.[^/.]+$/, '').replace(/\\/g, '/')
+    let extractPath = path.replace(this.dir, '')
+    const extensionPath = extractPath.substr(extractPath.lastIndexOf('.'))
+    const additionalsExt = EXTENSIONS.concat(this.extendParserExtensions)
+
+    // Remove the extension from the path if contained at the end or starts with a dot
+    if (additionalsExt.includes(extensionPath) || extractPath.startsWith('.')) {
+      extractPath = extractPath.replace(/(?:\.([^.]+))?$/, '')
+    }
+
+    return extractPath.replace(/\\/g, '/')
   }
 
   /**

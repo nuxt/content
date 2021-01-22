@@ -42,6 +42,10 @@ Using `$content()` on a directory to list, filter and search content:
   <source src="https://res.cloudinary.com/nuxt/video/upload/q_auto/v1588095794/nuxt-content-movies_c0cq9p.ogv" type="video/ogg" />
 </video>
 
+## Tutorial
+
+[Create a blog with Nuxt Content](https://nuxtjs.org/blog/creating-blog-with-nuxt-content)
+
 ## Testimonials
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Adding an FAQ to <a href="https://twitter.com/turnaudio?ref_src=twsrc%5Etfw">@TurnAudio</a> using <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> nuxt/content. Really great module for organizing a little bit of content within your static website <a href="https://t.co/o2uA9Lvmuu">https://t.co/o2uA9Lvmuu</a></p>&mdash; Lee Martin (@leemartin) <a href="https://twitter.com/leemartin/status/1290374428107341830?ref_src=twsrc%5Etfw">August 3, 2020</a></blockquote>
@@ -52,7 +56,7 @@ Using `$content()` on a directory to list, filter and search content:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">I&#39;ve been working on a new portfolio/blog today with <a href="https://twitter.com/tailwindcss?ref_src=twsrc%5Etfw">@tailwindcss</a> and <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a>. I&#39;m blown away by Nuxt Content.</p>&mdash; Cameron Baney (@cameronbaney) <a href="https://twitter.com/cameronbaney/status/1289671455559413761?ref_src=twsrc%5Etfw">August 1, 2020</a></blockquote>
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Docs powered by the new <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> content plugin and stored in <a href="https://twitter.com/Netlify?ref_src=twsrc%5Etfw">@Netlify</a> what a time to be a developer</p>&mdash; Alfonso Bribiesca (@alfonsobries) <a href="https://twitter.com/alfonsobries/status/1288653236833062913?ref_src=twsrc%5Etfw">July 30, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Docs powered by the new <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> content plugin and stored in <a href="https://twitter.com/Netlify?ref_src=twsrc%5Etfw">@Netlify</a> what a time to be a developer</p>&mdash; Alfonso Bribiesca (@alfonsobries) <a href="https://twitter.com/alfonsobries/status/1288653236833062913?ref_src=twsrc%5Etfw">July 30, 2020</a></blockquote>
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">The new vee-validate v4 documentation is using <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> content module and so far it is too damn good 🔥<br><br>I like being able to create my own layouts and &quot;on this page&quot; and &quot;menu&quot; components, in other words, to be in full control 🎮</p>&mdash; Abdelrahman Awad (@logaretm) <a href="https://twitter.com/logaretm/status/1287526576847048705?ref_src=twsrc%5Etfw">July 26, 2020</a></blockquote>
 

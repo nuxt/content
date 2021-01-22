@@ -1,6 +1,7 @@
 {
   "name": "create-nuxt-content-docs",
-  "version": "0.1.2",
+  "version": "0.4.3",
+  "license": "MIT",
   "files": [
     "src",
     "template"

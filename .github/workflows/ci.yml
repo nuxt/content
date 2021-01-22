@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
   pull_request:
     branches:
       - master
@@ -18,7 +19,7 @@ jobs:
         node: [12]
 
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
@@ -26,7 +27,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: cache node_modules
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: node_modules
           key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
