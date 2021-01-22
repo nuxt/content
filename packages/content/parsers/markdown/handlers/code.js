@@ -56,7 +56,7 @@ const toAst = (h, node) => (highlighted) => {
 }
 
 module.exports = highlighter => (h, node) => {
-  const lang = node.lang + (node.meta || '')
+  const lang = node.lang + ' ' + (node.meta || '')
   const { language, lineHighlights, fileName } = parseThematicBlock(lang)
   const code = node.value ? detab(node.value + '\n') : ''
 
