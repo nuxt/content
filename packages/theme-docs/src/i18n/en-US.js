@@ -6,6 +6,7 @@ export default {
     title: 'On this page'
   },
   article: {
-    github: 'Edit this page on GitHub'
+    github: 'Edit this page on GitHub',
+    updatedAt: 'Updated at'
   }
 }

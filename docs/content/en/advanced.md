@@ -102,6 +102,10 @@ Arguments:
   - Type: `Object`
   - Properties:
     - See [writing content](/writing)
+- `database`
+  - Type: `Object`
+  - Properties:
+    - See [type definition](https://github.com/nuxt/content/blob/master/packages/content/types/database.d.ts)
 
 **Example**
 

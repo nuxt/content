@@ -329,7 +329,8 @@ To make it work properly, make sure to include these properties in the front-mat
 #### Optional fields
 
 - `category` (`String`)
-  - This will be used to group the documents in the navigation
+  - This will be used to group the documents in the navigation (defaults to `""`)
+  - If `category` is falsy or not a string, it is coerced to be an empty string, and isn't renderd in the sidebar.
 - `version` (`Float`)
   - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it
 - `fullscreen` (`Boolean`)

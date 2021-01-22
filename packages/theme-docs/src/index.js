@@ -41,10 +41,13 @@ function themeModule () {
   // Configure content after each hook
   hook('content:file:beforeInsert', (document) => {
     const regexp = new RegExp(`^/(${options.i18n.locales.map(locale => locale.code).join('|')})`, 'gi')
-    const dir = document.dir.replace(regexp, '')
-    const slug = document.slug.replace(/^index/, '')
+    const { dir, slug, category } = document
+    const _dir = dir.replace(regexp, '')
+    const _slug = slug.replace(/^index/, '')
+    const _category = category && typeof category === 'string' ? category : ''
 
-    document.to = `${dir}/${slug}`
+    document.to = `${_dir}/${_slug}`
+    document.category = _category
   })
   // Extend `/` route
   hook('build:extendRoutes', (routes) => {
@@ -135,7 +138,28 @@ const defaultConfig = docsOptions => ({
     parsePages: false,
     lazy: true,
     seo: false,
-    langDir: 'i18n/'
+    langDir: 'i18n/',
+    vueI18n: {
+      fallbackLocale: 'en',
+      dateTimeFormats: {
+        en: {
+          long: {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            weekday: 'short'
+          }
+        },
+        fr: {
+          long: {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'short'
+          }
+        }
+      }
+    }
   },
   googleFonts: {
     families: {
