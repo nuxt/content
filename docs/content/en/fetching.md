@@ -229,7 +229,7 @@ const articles = await this.$content('articles')
   .where({
     tags: 'testing',
     isArchived: false,
-    date: { $gt: new Date(2020) },
+    date: { $gt: new Date('2020-03-31') },
     rating: { $gte: 3 }
   })
   .search('welcome')
