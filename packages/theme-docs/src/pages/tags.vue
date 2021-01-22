@@ -1,6 +1,16 @@
 <template>
-  <div class="flex flex-wrap-reverse">
-    <div class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800 lg:border-l lg:border-r">
+  <div
+    class="flex flex-wrap-reverse"
+    :class="{
+      'lg:-mx-8': settings.layout === 'single'
+    }"
+  >
+    <div
+      class="w-full lg:w-3/4 py-4 lg:pt-8 lg:pb-4 dark:border-gray-800"
+      :class="{
+        'lg:border-l lg:border-r': settings.layout !== 'single'
+      }"
+    >
       <article class="prose dark:prose-dark max-w-none lg:px-8">
         <h1>Tags</h1>
 
@@ -42,8 +52,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
+  layout ({ store }) {
+    return store.state.settings.layout || 'default'
+  },
+  head () {
+    return {
+      title: 'Tags'
+    }
+  },
   computed: {
+    ...mapGetters([
+      'settings'
+    ]),
     tags () {
       return this.$store.state.tags
     },
@@ -56,11 +79,6 @@ export default {
       const date = new Date(tag.date)
 
       return date.toLocaleDateString(this.$i18n.locale)
-    }
-  },
-  head () {
-    return {
-      title: 'Tags'
     }
   }
 }
