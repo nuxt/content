@@ -1,5 +1,5 @@
 <template>
-  <div v-if="link" class="pt-4 pb-4 lg:px-8 flex">
+  <div v-if="link" class="pt-4 pb-4 lg:px-8 flex flex-col sm:flex-row justify-between">
     <a
       :href="link"
       target="_blank"
@@ -9,6 +9,9 @@
       {{ $t('article.github') }}
       <IconExternalLink class="w-4 h-4 ml-1" />
     </a>
+    <span class="text-gray-600 dark:text-gray-400 text-sm font-medium flex items-center">
+      {{ $t("article.updatedAt") }} {{ $d(Date.parse(document.updatedAt), "long") }}
+    </span>
   </div>
 </template>
 
@@ -25,8 +28,7 @@ export default {
   computed: {
     ...mapGetters([
       'settings',
-      'githubUrls',
-      'lastRelease'
+      'githubUrls'
     ]),
     link () {
       if (!this.settings.github) {

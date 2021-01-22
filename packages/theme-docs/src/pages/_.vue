@@ -24,7 +24,7 @@
         <NuxtContent :document="document" />
       </article>
 
-      <AppGithubLink :document="document" />
+      <AppPageBottom :document="document" />
       <AppPrevNext :prev="prev" :next="next" />
     </div>
 
