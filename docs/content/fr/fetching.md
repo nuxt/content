@@ -132,7 +132,7 @@ const articles = await this.$content('articles').skip(5).limit(5).fetch()
 ### search(field, value)
 
 - `field`
-  - Type: `String`
+  - Type: `String` | `Boolean`
   - `requis`
 - `value`
   - Type: `String`
@@ -141,11 +141,15 @@ Effectue une recherche plein texte sur un champ. Le paramètre `value` est optio
 
 Le champ sur lequel vous voulez effectuer la recherche doit être défini dans les options afin d'être indexé, voir [configuration](/fr/configuration#fulltextsearchfields).
 
+Pour effectuer une recherche conditionnellement, il est possible de passer `false` comme paramètre à la fonction search
+
 ```js
 // Search on field title
 const articles = await this.$content('articles').search('titre', 'bienvenue').fetch()
 // Search on all pre-defined fields
 const articles = await this.$content('articles').search('bievenue').fetch()
+// Search only if the search string is valid
+const articles = await this.$content('articles').search(this.searchString?.length ? this.searchString : false).fetch()
 ```
 
 ### surround(slug, options)
