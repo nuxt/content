@@ -141,11 +141,15 @@ Effectue une recherche plein texte sur un champ. Le paramètre `value` est optio
 
 Le champ sur lequel vous voulez effectuer la recherche doit être défini dans les options afin d'être indexé, voir [configuration](/fr/configuration#fulltextsearchfields).
 
+Utiliser une chaîne de caractères vide comme paramètre `value` n'exécutera pas la recherche.
+
 ```js
 // Search on field title
 const articles = await this.$content('articles').search('titre', 'bienvenue').fetch()
 // Search on all pre-defined fields
 const articles = await this.$content('articles').search('bievenue').fetch()
+// Search will be skipped if the search string is empty
+const articles = await this.$content('articles').search('').fetch()
 ```
 
 ### surround(slug, options)

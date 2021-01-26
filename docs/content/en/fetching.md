@@ -148,11 +148,15 @@ Performs a full-text search on a field. `value` is optional, in this case `field
 
 The fields you want to search on must be defined in options in order to be indexed, see [configuration](/configuration#fulltextsearchfields).
 
+Using an empty string as parameter will skip the search.
+
 ```js
 // Search on field title
 const articles = await this.$content('articles').search('title', 'welcome').fetch()
 // Search on all pre-defined fields
 const articles = await this.$content('articles').search('welcome').fetch()
+// Search will be skipped if the search string is empty
+const articles = await this.$content('articles').search('').fetch()
 ```
 
 <alert type="info">

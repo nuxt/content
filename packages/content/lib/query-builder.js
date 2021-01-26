@@ -81,6 +81,9 @@ class QueryBuilder {
    * @returns {QueryBuilder} Returns current instance to be chained
    */
   search (query, value) {
+    // Passing an empty or falsey value as query will avoid triggering a search to allow optional chaining
+    if (!query?.length) { return this }
+
     let $fts
 
     if (typeof query === 'object') {
