@@ -48,6 +48,8 @@ Using `$content()` on a directory to list, filter and search content:
 
 ## Testimonials
 
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Really enjoy working with the <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> content module more and more. Especially from a developer perspective. The api is easy to learn and really powerful. Give it a try if you haven&#39;t already.</p>&mdash; Rasmus Langvad (@rlangvad) <a href="https://twitter.com/rlangvad/status/1352940444200669186?ref_src=twsrc%5Etfw">January 23, 2021</a></blockquote>
+
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Adding an FAQ to <a href="https://twitter.com/turnaudio?ref_src=twsrc%5Etfw">@TurnAudio</a> using <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> nuxt/content. Really great module for organizing a little bit of content within your static website <a href="https://t.co/o2uA9Lvmuu">https://t.co/o2uA9Lvmuu</a></p>&mdash; Lee Martin (@leemartin) <a href="https://twitter.com/leemartin/status/1290374428107341830?ref_src=twsrc%5Etfw">August 3, 2020</a></blockquote>
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Wanted to try out <a href="https://twitter.com/nuxt_js?ref_src=twsrc%5Etfw">@nuxt_js</a> new content theme doc, was a blast!<br><br>Managed to hack its interals to extend its Tailwind config with mine hihihi... <a href="https://t.co/fuXXOBKXYE">pic.twitter.com/fuXXOBKXYE</a></p>&mdash; lihbr (@li_hbr) <a href="https://twitter.com/li_hbr/status/1289536277897834497?ref_src=twsrc%5Etfw">August 1, 2020</a></blockquote>
