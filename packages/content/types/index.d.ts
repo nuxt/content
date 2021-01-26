@@ -1,5 +1,4 @@
 import type { contentFunc, extendOrOverwrite, contentFileBeforeInstert, contentFileBeforeParse } from './content'
-import type { QueryBuilder } from './query-builder';
 
 import '@nuxt/types';
 import type { DumpOptions as YamlOptions } from 'js-yaml';
@@ -16,7 +15,7 @@ export const getOptions: (userOptions: IContentOptions) => IContentOptions
 // Modifyed types
 declare module "vuex/types/index" {
   interface Store<S> {
-    $content: QueryBuilder;
+    $content: contentFunc;
   }
 }
 
