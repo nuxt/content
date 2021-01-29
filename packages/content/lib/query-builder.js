@@ -82,7 +82,7 @@ class QueryBuilder {
    */
   search (query, value) {
     // Passing an empty or falsey value as query will avoid triggering a search to allow optional chaining
-    if (!query?.length) { return this }
+    if (!query) { return this }
 
     let $fts
 
