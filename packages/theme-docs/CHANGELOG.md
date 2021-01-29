@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.2...@nuxt/content-theme-docs@0.9.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* **theme-docs:** correct releases link ([#690](https://github.com/nuxt/content/issues/690)) ([d34f92b](https://github.com/nuxt/content/commit/d34f92b8d8952c1b63595e553eb3496213584687))
+* **theme-docs:** remove redundant header ([#722](https://github.com/nuxt/content/issues/722)) ([e85daf0](https://github.com/nuxt/content/commit/e85daf0bfc6491e96555fad9bb1a9772be2a323a))
+* **theme-docs:** rename ja locale file ([#707](https://github.com/nuxt/content/issues/707)) ([28006fd](https://github.com/nuxt/content/commit/28006fd83b28b5dbf81234b9f72d419f97aeda94))
+
+
+### Features
+
+* **content/theme-docs:** support surround by path ([#660](https://github.com/nuxt/content/issues/660)) ([92599e0](https://github.com/nuxt/content/commit/92599e0fc3910da53560e82b9bceb8a118568d84))
+* **theme-docs:** add korean locale ([#709](https://github.com/nuxt/content/issues/709)) ([7fda834](https://github.com/nuxt/content/commit/7fda834b4e926f3ec288702b439c6a9185ae23e1))
+* **theme-docs:** display updatedAt date in bottom of page ([#687](https://github.com/nuxt/content/issues/687)) ([51619dd](https://github.com/nuxt/content/commit/51619dd866f5b4b89645935d6c26bc010ebf9bfe))
+
+
+
+
+
 ## [0.8.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.1...@nuxt/content-theme-docs@0.8.2) (2020-11-25)
 
 **Note:** Version bump only for package @nuxt/content-theme-docs

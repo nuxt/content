@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/nuxt/content/compare/@nuxt/content@1.11.1...@nuxt/content@1.12.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* **content:** codeblock parse lang should support other meta ([#691](https://github.com/nuxt/content/issues/691)) ([881f6d4](https://github.com/nuxt/content/commit/881f6d49a30c67c9151872b81771a185e393d986))
+* **content:** failed ci on windows and enhance file name detection regex ([#680](https://github.com/nuxt/content/issues/680)) ([f445444](https://github.com/nuxt/content/commit/f445444b277d93ef5b9376bb1a031643d4c0329e))
+* **content:** optional search parameter condition ([de4c860](https://github.com/nuxt/content/commit/de4c8607239b3e7ff1605bba698e9ef5c9bd242f))
+* **types:** change types ([#732](https://github.com/nuxt/content/issues/732)) ([a6274e4](https://github.com/nuxt/content/commit/a6274e482947dc177c795cc00867aa266bd91ddb))
+* properly treat falsy values in context ([#685](https://github.com/nuxt/content/issues/685)) ([228f7e0](https://github.com/nuxt/content/commit/228f7e04a5d7a5742ca92617f48ae04b98e9b277))
+
+
+### Features
+
+* **content:** improve reactivity ([#688](https://github.com/nuxt/content/issues/688)) ([1fbcbbc](https://github.com/nuxt/content/commit/1fbcbbcd20f46b360cd8476c0de53c79fb4c20cd))
+* **content:** Optional search parameter ([#733](https://github.com/nuxt/content/issues/733)) ([db3fd67](https://github.com/nuxt/content/commit/db3fd67f08ff18b480b1d4afbc1269c4220995e7))
+* add path for custom parsers ([#656](https://github.com/nuxt/content/issues/656)) ([955cf9f](https://github.com/nuxt/content/commit/955cf9fe1074bcc740e8e0c9695760a04703e961))
+* sort by score (most relevant first) when searching ([#671](https://github.com/nuxt/content/issues/671)) ([1936a0e](https://github.com/nuxt/content/commit/1936a0eee5b929c04c666097453ef27adde7ca21))
+* **content/theme-docs:** support surround by path ([#660](https://github.com/nuxt/content/issues/660)) ([92599e0](https://github.com/nuxt/content/commit/92599e0fc3910da53560e82b9bceb8a118568d84))
+
+
+
+
+
 ## [1.11.1](https://github.com/nuxt/content/compare/@nuxt/content@1.11.0...@nuxt/content@1.11.1) (2020-11-25)
 
 
