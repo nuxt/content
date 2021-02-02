@@ -43,7 +43,7 @@
     "nuxt": "^2.14.7",
     "puppeteer": "^5.5.0",
     "shiki": "^0.2.7",
-    "shiki-twoslash": "^0.8.1",
+    "shiki-twoslash": "^1.0.0",
     "tib": "^0.7.4"
   }
 }
