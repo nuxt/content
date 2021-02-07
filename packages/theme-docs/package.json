@@ -20,7 +20,7 @@
     "clipboard": "^2.0.6",
     "defu": "^3.2.2",
     "lodash.groupby": "^4.6.0",
-    "marked": "^1.2.4",
+    "marked": "^2.0.0",
     "nuxt-i18n": "^6.15.4",
     "prism-themes": "^1.5.0",
     "tailwind-css-variables": "^2.0.3",
