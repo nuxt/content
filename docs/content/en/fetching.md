@@ -200,7 +200,7 @@ const [prev, next] = await this.$content('articles')
 
 <alert type="warning">
 
-Getting results based on `path` is only supported since vx.y.z <!-- set version later -->
+Getting results based on `path` is only supported since v1.12.0
 
 </alert>
 
