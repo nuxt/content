@@ -152,7 +152,7 @@ even when the current page is showing higer-position document.
 
 It is needed to work around Nuxt Content's case-sensitive sorting, to add extra properties to documents, whose value is the lower-cased.
 
-```javascript[nuxt.config.js]
+```js [nuxt.config.js]
 export default {
   hooks: {
     'content:file:beforeInsert': (document) => {
