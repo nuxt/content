@@ -6,17 +6,37 @@ const { parseThematicBlock } = require('./utils')
 
 require('prismjs/components/index')()
 
+// enable syntax highlighting on diff language
+require('prismjs/components/prism-diff')
+require('prismjs/plugins/diff-highlight/prism-diff-highlight')
+
+const DIFF_HIGHLIGHT_SYNTAX = /^(diff)-([\w-]+)/i
+
 const prismHighlighter = (rawCode, language, { lineHighlights, fileName }, { h, node }) => {
-  let lang = language === 'vue' ? 'html' : language
+  let lang = language
+  let grammer
 
-  // eslint-disable-next-line no-prototype-builtins
-  const hasPrismHightlight = Prism.languages.hasOwnProperty(lang)
+  const diffLanguage = language.match(DIFF_HIGHLIGHT_SYNTAX)
+  if (diffLanguage) {
+    lang = diffLanguage[2]
+    grammer = Prism.languages.diff
+  }
 
-  let code = hasPrismHightlight
-    ? Prism.highlight(rawCode, Prism.languages[lang], lang)
+  lang = lang === 'vue' ? 'html' : lang
+
+  if (!grammer) {
+    grammer = Prism.languages[lang]
+  }
+
+  const highlightLanguage = diffLanguage
+    ? `diff-${lang}`
+    : lang
+
+  let code = grammer
+    ? Prism.highlight(rawCode, grammer, highlightLanguage)
     : rawCode
 
-  if (!lang || !hasPrismHightlight) {
+  if (!lang || !grammer) {
     lang = 'text'
     code = escapeHtml(code)
   }
