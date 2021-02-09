@@ -110,6 +110,14 @@ const articles = await this.$content('articles').sortBy('title').fetch()
 
 > Can be chained multiple times to sort on multiple fields.
 
+<alert type="warning">
+
+`sortBy` method does **case-sensitive** sort, which is currently not configurable.
+
+If you need case-insensitive sorting, check out [this snippet](/snippets#case-insensitive-sorting) on how to work around it.
+
+</alert>
+
 ### limit(n)
 
 - `n`

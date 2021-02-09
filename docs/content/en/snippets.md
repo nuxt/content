@@ -148,6 +148,48 @@ even when the current page is showing higer-position document.
 
 > Check out the [surround documentation](/fetching#surroundslug-options)
 
+### Case-Insensitive Sorting
+
+It is needed to work around Nuxt Content's case-sensitive sorting, to add extra properties to documents, whose value is the lower-cased.
+
+```javascript[nuxt.config.js]
+export default {
+  hooks: {
+    'content:file:beforeInsert': (document) => {
+      if (document.extension === '.md') {
+        Object.entries(document).forEach(([key, value]) => {
+          const _key = `case_insensitve__${key}`; // prefix is arbitrary
+
+          if (!document[_key] && typeof value === 'string') {
+            document[_key] = value.toLocaleLowerCase();
+          }
+        });
+      }
+    }
+  }
+};
+```
+
+Then, call `sortBy` method with the extra prop's key by which to sort.
+
+```vue
+<script>
+export default {
+  async asyncData({ $content, params }) {
+    const articles = await $content('articles', params.slug)
+      .sortBy('case_insensitive__title', 'asc') // Set prefixed prop
+      .fetch()
+
+    return {
+      articles
+    }
+  }
+}
+</script>
+```
+
+> Check out the [`sortBy` documentation](/fetching#sortbykey-direction)
+
 ### Table of contents
 
 Add a table of contents by looping over our array of toc and use the `id` to link to it and the `text` to show the title. We can use the `depth` to style the titles differently:
