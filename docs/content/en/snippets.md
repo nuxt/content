@@ -172,8 +172,7 @@ export default {
 
 Then, call `sortBy` method with the extra prop's key by which to sort.
 
-```vue
-<script>
+```ts
 export default {
   async asyncData({ $content, params }) {
     const articles = await $content('articles', params.slug)
@@ -185,8 +184,6 @@ export default {
     }
   }
 }
-</script>
-```
 
 > Check out the [`sortBy` documentation](/fetching#sortbykey-direction)
 
