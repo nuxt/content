@@ -204,7 +204,7 @@ class Database extends Hookable {
       // Force data to be an array
       data = Array.isArray(data) ? data : [data]
     } catch (err) {
-      logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err)
+      logger.warn(`Could not parse ${path.replace(this.cwd, '.')}:`, err.message)
       return null
     }
 
