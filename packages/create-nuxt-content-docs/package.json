@@ -8,7 +8,7 @@
   ],
   "bin": "src/cli.js",
   "dependencies": {
-    "cac": "^6.6.1",
+    "cac": "^6.7.1",
     "sao": "^1.7.1"
   },
   "publishConfig": {
