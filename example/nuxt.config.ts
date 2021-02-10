@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "@nuxt/types";
 
 const config: NuxtConfig = {
-  modules: ['@nuxt/content'],
+  modules: ['../lib'],
   components: true,
   hooks: {
     'content:file:beforeInsert': async (document, database) => {

@@ -1,35 +1,75 @@
 {
-  "name": "nuxt-content",
-  "private": true,
-  "description": "Write your content inside your Nuxt app",
+  "name": "@nuxt/content",
+  "version": "1.13.0",
   "repository": "nuxt/content",
+  "description": "Write your content inside your Nuxt app",
   "license": "MIT",
   "contributors": [
     {
       "name": "NuxtJS Team"
     }
   ],
-  "workspaces": [
-    "packages/*",
-    "docs"
+  "types": "types/index.d.ts",
+  "files": [
+    "lib",
+    "types"
   ],
+  "main": "lib/",
   "scripts": {
     "dev": "nuxt-ts example",
     "docs": "nuxt docs",
     "lint": "eslint --ext .js,.vue .",
-    "release": "yarn test && lerna publish",
-    "test": "yarn lint && yarn test:packages",
-    "test:watch": "jest packages --watch",
-    "test:packages": "jest packages -i",
-    "test:packages:content": "jest packages/content -i",
-    "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
+    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
+    "test": "yarn lint && jest -i"
+  },
+  "dependencies": {
+    "@lokidb/full-text-search": "^2.1.0",
+    "@lokidb/loki": "^2.1.0",
+    "@nuxt/types": "^2.14.12",
+    "@types/js-yaml": "^4.0.0",
+    "@types/xml2js": "^0.4.8",
+    "change-case": "^4.1.2",
+    "chokidar": "^3.5.1",
+    "consola": "^2.15.3",
+    "csvtojson": "^2.0.10",
+    "defu": "^3.2.2",
+    "detab": "^2.0.4",
+    "escape-html": "^1.0.3",
+    "graceful-fs": "^4.2.6",
+    "gray-matter": "^4.0.2",
+    "hasha": "^5.2.2",
+    "hookable": "^4.4.0",
+    "html-tags": "^3.1.0",
+    "js-yaml": "4.0.0",
+    "mdast-util-to-hast": "^10.1.1",
+    "mkdirp": "^1.0.4",
+    "node-req": "^2.1.2",
+    "node-res": "^5.0.1",
+    "p-queue": "6.6.2",
+    "prismjs": "^1.23.0",
+    "property-information": "^5.6.0",
+    "rehype-raw": "^5.0.0",
+    "rehype-sort-attribute-values": "^3.0.2",
+    "rehype-sort-attributes": "^3.0.2",
+    "remark-autolink-headings": "^6.0.1",
+    "remark-external-links": "^8.0.0",
+    "remark-footnotes": "^3.0.0",
+    "remark-gfm": "^1.0.0",
+    "remark-parse": "^9.0.0",
+    "remark-rehype": "^8.0.0",
+    "remark-slug": "^6.0.0",
+    "remark-squeeze-paragraphs": "^4.0.0",
+    "unified": "^9.2.0",
+    "unist-builder": "^2.0.3",
+    "ws": "^7.4.3",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
-    "@nuxtjs/eslint-config": "^5.0.0",
     "@nuxt/typescript-build": "^2.0.4",
     "@nuxt/typescript-runtime": "^2.0.1",
+    "@nuxtjs/eslint-config": "^5.0.0",
     "@nuxtjs/eslint-config-typescript": "^5.0.0",
     "@nuxtjs/module-test-utils": "^1.6.3",
     "babel-eslint": "^10.1.0",
@@ -39,11 +79,14 @@
     "highlight.js": "^10.6.0",
     "husky": "^5.0.9",
     "jest": "^26.6.3",
-    "lerna": "^3.22.1",
     "nuxt": "^2.14.12",
     "puppeteer": "^7.0.4",
     "shiki": "^0.9.2",
     "shiki-twoslash": "^1.0.0",
+    "standard-version": "^9.1.0",
     "tib": "^0.7.5"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
