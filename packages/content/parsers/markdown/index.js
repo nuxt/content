@@ -29,6 +29,16 @@ class Markdown {
     }
   }
 
+  flattenNode (node, maxDepth = 2, depth = 0) {
+    if (!Array.isArray(node.children) || depth === maxDepth) {
+      return [node]
+    }
+    return [
+      node,
+      ...node.children.flatMap(child => this.flattenNode(child, maxDepth, depth + 1))
+    ]
+  }
+
   /**
    * Generate table of contents
    * @param {object} body - JSON AST generated from markdown.
@@ -37,7 +47,9 @@ class Markdown {
   generateToc (body) {
     const { tocTags } = this.options
 
-    return body.children.filter(node => tocTags.includes(node.tag)).map((node) => {
+    const children = this.flattenNode(body, 2)
+
+    return children.filter(node => tocTags.includes(node.tag)).map((node) => {
       const id = node.props.id
 
       const depth = ({
