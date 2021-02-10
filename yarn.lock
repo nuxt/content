@@ -1523,30 +1523,6 @@
     rc9 "^1.2.0"
     std-env "^2.2.1"
 
-"@nuxt/content-theme-docs@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-theme-docs/-/content-theme-docs-0.9.0.tgz#00b18e6ab81c4ceefd44063ddf9bad6a7aa01d7a"
-  integrity sha512-kcB/mtiNqaov3KZt2viaQNG8jAep2o9HFTKdDMcOzR4iLuIw51MpkTqSvYFXO4exv5V1WUWaNXeOlxzWrNPStw==
-  dependencies:
-    "@docsearch/css" "^1.0.0-alpha.28"
-    "@docsearch/js" "^1.0.0-alpha.28"
-    "@nuxt/content" "^1.12.0"
-    "@nuxt/types" "^2.14.7"
-    "@nuxtjs/color-mode" "^2.0.0"
-    "@nuxtjs/google-fonts" "1.2.0"
-    "@nuxtjs/pwa" "^3.2.2"
-    "@nuxtjs/tailwindcss" "^3.2.0"
-    "@tailwindcss/typography" "0.2.0"
-    clipboard "^2.0.6"
-    defu "^3.2.2"
-    lodash.groupby "^4.6.0"
-    marked "^1.2.4"
-    nuxt-i18n "^6.15.4"
-    prism-themes "^1.5.0"
-    tailwind-css-variables "^2.0.3"
-    theme-colors "^0.0.5"
-    vue-scrollactive "^0.9.3"
-
 "@nuxt/core@2.14.12":
   version "2.14.12"
   resolved "https://registry.yarnpkg.com/@nuxt/core/-/core-2.14.12.tgz#8f35142bcff0b1bacde2516d5e04d69e34047a95"
@@ -1663,7 +1639,7 @@
     rc9 "^1.2.0"
     std-env "^2.2.1"
 
-"@nuxt/types@^2.14.12", "@nuxt/types@^2.14.7":
+"@nuxt/types@^2.14.12":
   version "2.14.12"
   resolved "https://registry.yarnpkg.com/@nuxt/types/-/types-2.14.12.tgz#4e5aa642b67081890b3b7aab03db62855ef71a25"
   integrity sha512-x58uEVygHual/kHDTrLAwXjKNYn+5udR4HJOmHd2gXgYonZu8E2UpsShIkyMRZ0nRoEAZ72i4OfcHKqGsVSI6w==
@@ -1804,17 +1780,6 @@
     webpack-node-externals "^2.5.2"
     webpackbar "^4.0.0"
 
-<<<<<<< HEAD
-"@nuxtjs/color-mode@^2.0.0", "@nuxtjs/color-mode@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-2.0.3.tgz#6ba5ab0a6364c966b48386867f2660bf0dcd7b5d"
-  integrity sha512-yfTkUbXcq42YW7qCv66kqAttnjr+sLpxY+HIJq7nlLadDQeEyjl+QMR8AHKS2KQMVfMwd7rbJyE+jU2PKjwDcQ==
-  dependencies:
-    defu "^3.2.2"
-    lodash.template "^4.5.0"
-
-=======
->>>>>>> deee80d (feat: update)
 "@nuxtjs/eslint-config-typescript@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-config-typescript/-/eslint-config-typescript-5.0.0.tgz#060c1402e559b1df78c8c19b2f5a873eac53cab2"
@@ -1849,38 +1814,6 @@
     request "^2.88.2"
     request-promise-native "^1.0.8"
 
-<<<<<<< HEAD
-"@nuxtjs/pwa@^3.2.2", "@nuxtjs/pwa@^3.3.5":
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/pwa/-/pwa-3.3.5.tgz#db7c905536ebe8a464a347b6ae3215810642c044"
-  integrity sha512-8tTmW8DBspWxlJwTimOHTkwfkwPpL9wIcGmy75Gcmin+c9YtX2Ehxmhgt/TLFOC9XsLAqojqynw3/Agr/9OE1w==
-  dependencies:
-    clone-deep "^4.0.1"
-    defu "^3.2.2"
-    execa "^5.0.0"
-    fs-extra "^9.1.0"
-    hasha "^5.2.2"
-    jimp-compact "^0.16.1"
-    lodash.template "^4.5.0"
-    serve-static "^1.14.1"
-    workbox-cdn "^5.1.4"
-
-"@nuxtjs/tailwindcss@^3.2.0", "@nuxtjs/tailwindcss@^3.4.2":
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-3.4.2.tgz#2376877b7e3fff35c044e99828d5e7cacfec5621"
-  integrity sha512-Hv1b/4zYaffNc0JHss3jqKLZoPRQfG7upxGguP749Zx2VgMyFExeT3NMAxntLHctKvv/ohN+5kFGiewZGI5n2A==
-  dependencies:
-    "@nuxt/ufo" "^0.5.2"
-    chalk "^4.1.0"
-    clear-module "^4.1.1"
-    consola "^2.15.0"
-    defu "^3.2.2"
-    fs-extra "^9.0.1"
-    tailwind-config-viewer "^1.4.0"
-    tailwindcss "^1.9.6"
-
-=======
->>>>>>> deee80d (feat: update)
 "@nuxtjs/youch@^4.2.3":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/@nuxtjs/youch/-/youch-4.2.3.tgz#36f8b22df5a0efaa81373109851e1d857aca6bed"
@@ -8470,19 +8403,6 @@ markdown-table@^2.0.0:
   dependencies:
     repeat-string "^1.0.0"
 
-<<<<<<< HEAD
-marked@^1.2.4:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.9.tgz#53786f8b05d4c01a2a5a76b7d1ec9943d29d72dc"
-  integrity sha512-H8lIX2SvyitGX+TRdtS06m1jHMijKN/XjfH6Ooii9fvxMlh8QdqBfBDkGUpMWH2kQNrtixjzYUa3SH8ROTgRRw==
-
-marked@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-2.0.0.tgz#9662bbcb77ebbded0662a7be66ff929a8611cee5"
-  integrity sha512-NqRSh2+LlN2NInpqTQnS614Y/3NkVMFFU6sJlRFEpxJ/LHuK/qJECH7/fXZjk4VZstPW/Pevjil/VtSONsLc7Q==
-
-=======
->>>>>>> deee80d (feat: update)
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -9297,32 +9217,6 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-<<<<<<< HEAD
-nuxt-ackee@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/nuxt-ackee/-/nuxt-ackee-2.0.0.tgz#eeaf9539652ad37f00293d7626283b52ce9a1c91"
-  integrity sha512-xbvt3Mstqz81yyP4gwKh9IxaR8Og8rc8c86S3Kh+ornVeJZhs/8NRPR6EXBWaNbFyJHSxFVWtD21v9ejdQq3sA==
-  dependencies:
-    ackee-tracker "^4.0.0"
-    defu "^3.1.0"
-
-nuxt-i18n@^6.15.4, nuxt-i18n@^6.20.0:
-  version "6.20.0"
-  resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.20.0.tgz#09d7839c56b2f4eec6b37e55ee7be0b0d18563d4"
-  integrity sha512-R6NrAskfaaUvs7xAvApZ+Piakqx3x50EAF5wOsxQZLc2Yx2/pN0C3sktxlFhrf0lr9lD1F9WhgUwz3GJV1ul3A==
-  dependencies:
-    "@babel/parser" "^7.5.5"
-    "@babel/traverse" "^7.5.5"
-    "@intlify/vue-i18n-extensions" "^1.0.1"
-    "@intlify/vue-i18n-loader" "^1.0.0"
-    cookie "^0.4.0"
-    is-https "^3.0.0"
-    js-cookie "^2.2.1"
-    klona "^2.0.4"
-    vue-i18n "^8.18.1"
-
-=======
->>>>>>> deee80d (feat: update)
 nuxt@^2.14.12:
   version "2.14.12"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-2.14.12.tgz#836096ff62ba72554b73744d94f5547109e563f7"
