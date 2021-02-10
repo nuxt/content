@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.1](https://github.com/nuxt/content/compare/@nuxt/content@1.13.0...@nuxt/content@1.13.1) (2021-02-10)
+
+
+### Bug Fixes
+
+* **content:** handle empty lang ([#765](https://github.com/nuxt/content/issues/765)) ([60e758c](https://github.com/nuxt/content/commit/60e758c6f1e7bff4de37f3a499284139db0a7d60))
+
+
+
+
+
 # [1.13.0](https://github.com/nuxt/content/compare/@nuxt/content@1.12.0...@nuxt/content@1.13.0) (2021-02-10)
 
 
