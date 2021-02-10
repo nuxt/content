@@ -1150,10 +1150,10 @@
     rc9 "^1.2.0"
     std-env "^2.2.1"
 
-"@nuxt/content@^1.11.1":
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-1.13.0.tgz#dd64fa0ea7b9160a0c1580db9fb37d823f865b64"
-  integrity sha512-G/mensgJZ07rzcEKyAIOZABGSsJ5LJQ2j03pRufmr/0BLXKTTJ6F/vkQHfaDR/UzUEZ5uJBjKmxF3GgZgqRkjg==
+"@nuxt/content@^1.13.1":
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-1.13.1.tgz#a65a919feb08bcd9503faa2ffeb526c89c8abcdb"
+  integrity sha512-nBq9ezdPIpFsOh8rNfMsLsVV8eDw4Ha77JWj//xCEL8ZmUc2wBPge+Vt2jp0dSYArHgBg2lWBTUUnn6n6q7noQ==
   dependencies:
     "@lokidb/full-text-search" "^2.1.0"
     "@lokidb/loki" "^2.1.0"
@@ -1435,7 +1435,7 @@
     webpack-node-externals "^2.5.2"
     webpackbar "^4.0.0"
 
-"@nuxtjs/color-mode@^2.0.2":
+"@nuxtjs/color-mode@^2.0.3":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-2.0.3.tgz#6ba5ab0a6364c966b48386867f2660bf0dcd7b5d"
   integrity sha512-yfTkUbXcq42YW7qCv66kqAttnjr+sLpxY+HIJq7nlLadDQeEyjl+QMR8AHKS2KQMVfMwd7rbJyE+jU2PKjwDcQ==
@@ -1451,7 +1451,7 @@
     consola "^2.15.0"
     google-fonts-helper "^1.1.1"
 
-"@nuxtjs/pwa@^3.3.4":
+"@nuxtjs/pwa@^3.3.5":
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/@nuxtjs/pwa/-/pwa-3.3.5.tgz#db7c905536ebe8a464a347b6ae3215810642c044"
   integrity sha512-8tTmW8DBspWxlJwTimOHTkwfkwPpL9wIcGmy75Gcmin+c9YtX2Ehxmhgt/TLFOC9XsLAqojqynw3/Agr/9OE1w==
@@ -3826,25 +3826,25 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-docus@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/docus/-/docus-0.0.5.tgz#bbe9f0f0d3e72b031b6098cb0e8970a99139ff38"
-  integrity sha512-j2IjZaiIMVFDquHdhVauN9zjziacnohgoe+Z/rKCm1DwcM8H+IuZj/LwacWrt9ZU/G56EVoj+gxbWnLHZv0I3g==
+docus@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/docus/-/docus-0.0.7.tgz#d774b6dde716e49f2b22e7453af3df9112a404fa"
+  integrity sha512-yd8gjmzFPPGLjZBIwBEy/O6YuW3ZFPjc+t7xO1mEM+I0o10XEcbF+tJtNRTrzbeHIq3qGHoZXBbTfLaf7y6RDQ==
   dependencies:
     "@docsearch/css" "^1.0.0-alpha.28"
     "@docsearch/js" "^1.0.0-alpha.28"
-    "@nuxt/content" "^1.11.1"
-    "@nuxtjs/color-mode" "^2.0.2"
+    "@nuxt/content" "^1.13.1"
+    "@nuxtjs/color-mode" "^2.0.3"
     "@nuxtjs/google-fonts" "1.2.0"
-    "@nuxtjs/pwa" "^3.3.4"
+    "@nuxtjs/pwa" "^3.3.5"
     "@nuxtjs/tailwindcss" "^3.4.2"
     "@tailwindcss/aspect-ratio" "^0.2.0"
     "@tailwindcss/typography" "0.4.0"
     clipboard "^2.0.6"
     defu "^3.2.2"
     lodash.groupby "^4.6.0"
-    marked "^1.2.7"
-    nuxt-i18n "^6.18.0"
+    marked "^2.0.0"
+    nuxt-i18n "^6.20.0"
     postcss "^7"
     prism-themes "^1.5.0"
     tailwind-css-variables "^2.0.3"
@@ -5994,10 +5994,10 @@ markdown-table@^2.0.0:
   dependencies:
     repeat-string "^1.0.0"
 
-marked@^1.2.7:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.9.tgz#53786f8b05d4c01a2a5a76b7d1ec9943d29d72dc"
-  integrity sha512-H8lIX2SvyitGX+TRdtS06m1jHMijKN/XjfH6Ooii9fvxMlh8QdqBfBDkGUpMWH2kQNrtixjzYUa3SH8ROTgRRw==
+marked@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-2.0.0.tgz#9662bbcb77ebbded0662a7be66ff929a8611cee5"
+  integrity sha512-NqRSh2+LlN2NInpqTQnS614Y/3NkVMFFU6sJlRFEpxJ/LHuK/qJECH7/fXZjk4VZstPW/Pevjil/VtSONsLc7Q==
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -6658,7 +6658,7 @@ nuxt-ackee@^2.0.0:
     ackee-tracker "^4.0.0"
     defu "^3.1.0"
 
-nuxt-i18n@^6.18.0:
+nuxt-i18n@^6.20.0:
   version "6.20.0"
   resolved "https://registry.yarnpkg.com/nuxt-i18n/-/nuxt-i18n-6.20.0.tgz#09d7839c56b2f4eec6b37e55ee7be0b0d18563d4"
   integrity sha512-R6NrAskfaaUvs7xAvApZ+Piakqx3x50EAF5wOsxQZLc2Yx2/pN0C3sktxlFhrf0lr9lD1F9WhgUwz3GJV1ul3A==
