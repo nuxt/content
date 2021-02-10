@@ -13,10 +13,10 @@ require('prismjs/plugins/diff-highlight/prism-diff-highlight')
 const DIFF_HIGHLIGHT_SYNTAX = /^(diff)-([\w-]+)/i
 
 const prismHighlighter = (rawCode, language, { lineHighlights, fileName }, { h, node }) => {
-  let lang = language
+  let lang = language || ''
   let grammer
 
-  const diffLanguage = language.match(DIFF_HIGHLIGHT_SYNTAX)
+  const diffLanguage = lang.match(DIFF_HIGHLIGHT_SYNTAX)
   if (diffLanguage) {
     lang = diffLanguage[2]
     grammer = Prism.languages.diff
