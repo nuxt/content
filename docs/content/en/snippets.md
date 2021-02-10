@@ -184,6 +184,7 @@ export default {
     }
   }
 }
+```
 
 > Check out the [`sortBy` documentation](/fetching#sortbykey-direction)
 
