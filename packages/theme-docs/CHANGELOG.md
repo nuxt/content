@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.9.0...@nuxt/content-theme-docs@0.10.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* **theme-docs:** revert @tailwindcss/typography bump ([5adf1a2](https://github.com/nuxt/content/commit/5adf1a295d1c33cbac3a6ea7a3ae32e94a73f9c7))
+
+
+### Features
+
+* **theme-docs:** Added nl-BE.js localization file to docs theme ([#739](https://github.com/nuxt/content/issues/739)) ([10fbaaf](https://github.com/nuxt/content/commit/10fbaaff4ff990e26309853f4e4f5bfccc1ef59c))
+
+
+
+
+
 # [0.9.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.2...@nuxt/content-theme-docs@0.9.0) (2021-01-29)
 
 

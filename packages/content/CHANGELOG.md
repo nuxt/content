@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/nuxt/content/compare/@nuxt/content@1.12.0...@nuxt/content@1.13.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* use top 2 level of nodes to generate toc ([#757](https://github.com/nuxt/content/issues/757)) ([fe4de6b](https://github.com/nuxt/content/commit/fe4de6bf09bb025878975706de4c0a2f8edbd516))
+* **test:** update highlighter snapshots ([32f9f8f](https://github.com/nuxt/content/commit/32f9f8fedb1f4a6d849acaa60124bfa9f0545868))
+
+
+### Features
+
+* use diff-highlight plugin ([#755](https://github.com/nuxt/content/issues/755)) ([3c2186a](https://github.com/nuxt/content/commit/3c2186a9005c37b3b668ff0124aa77f80c989b85))
+
+
+
+
+
 # [1.12.0](https://github.com/nuxt/content/compare/@nuxt/content@1.11.1...@nuxt/content@1.12.0) (2021-01-29)
 
 
