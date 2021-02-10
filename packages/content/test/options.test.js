@@ -237,6 +237,37 @@ describe('options', () => {
       })
     })
 
+    describe('generated table of contents for document with wrapper div', () => {
+      let nuxt
+      let $content
+
+      beforeAll(async () => {
+        ({ nuxt } = (await setup(loadConfig(__dirname))))
+        const module = require('@nuxt/content')
+        $content = module.$content
+      }, 60000)
+
+      afterAll(async () => {
+        await nuxt.close()
+      })
+
+      test('', async () => {
+        const item = await $content('toc-dom-depth-2').fetch()
+
+        expect(item).toEqual(
+          expect.objectContaining({
+            toc: expect.arrayContaining([
+              expect.objectContaining({ depth: 2, id: 'heading-a-2', text: 'Heading A-2' }),
+              expect.objectContaining({ depth: 2, id: 'heading-b-2', text: 'Heading B-2' }),
+              expect.objectContaining({ depth: 3, id: 'heading-b-3', text: 'Heading B-3' }),
+              expect.objectContaining({ depth: 2, id: 'heading-c-2', text: 'Heading C-2' }),
+              expect.objectContaining({ depth: 3, id: 'heading-c-3', text: 'Heading C-3' })
+            ])
+          })
+        )
+      })
+    })
+
     describe('generated table of contents with depth 1', () => {
       let nuxt
       let $content
