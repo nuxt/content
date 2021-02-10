@@ -29,8 +29,8 @@ class Markdown {
     }
   }
 
-  flattenNode (node, maxDepth = 2, depth = 1) {
-    if (!node.children || depth === maxDepth) {
+  flattenNode (node, maxDepth = 2, depth = 0) {
+    if (!Array.isArray(node.children) || depth === maxDepth) {
       return [node]
     }
     return [
