@@ -35,7 +35,7 @@ class Markdown {
     }
     return [
       node,
-      ...node.children.flatMap(child => this.flattenNode(child, maxDepth, depth + 1))
+      ...node.children.reduce((acc, child) => acc.concat(this.flattenNode(child, maxDepth, depth + 1)), [])
     ]
   }
 
