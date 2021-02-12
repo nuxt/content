@@ -4,6 +4,7 @@ const { camelCase } = require('change-case')
 const getDefaults = ({ dev = false } = {}) => ({
   editor: './editor.vue',
   watch: dev,
+  useCache: false,
   liveEdit: true,
   apiPrefix: '_content',
   dir: 'content',

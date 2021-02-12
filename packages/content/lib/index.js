@@ -1,6 +1,5 @@
 const { join, resolve } = require('path')
 const fs = require('graceful-fs').promises
-const mkdirp = require('mkdirp')
 const defu = require('defu')
 const logger = require('consola').withScope('@nuxt/content')
 const hash = require('hasha')
@@ -94,10 +93,20 @@ module.exports = async function (moduleOptions) {
     server.on('upgrade', (...args) => ws.callHook('upgrade', ...args))
   })
 
+  const useCache = options.useCache && !this.options.dev && this.options.ssr
+
   const database = new Database({
     ...options,
-    cwd: this.options.srcDir
+    srcDir: this.options.srcDir,
+    buildDir: resolve(this.options.buildDir, 'content'),
+    useCache
   })
+
+  if (useCache) {
+    this.nuxt.hook('builder:prepared', async () => {
+      await database.rebuildCache()
+    })
+  }
 
   // Database hooks
   database.hook('file:beforeInsert', item =>
@@ -186,12 +195,7 @@ module.exports = async function (moduleOptions) {
     this.nuxt.hook('generate:distRemoved', async () => {
       const dir = resolve(this.options.buildDir, 'dist', 'client', 'content')
 
-      await mkdirp(dir)
-      await fs.writeFile(
-        join(dir, `db-${dbHash}.json`),
-        database.db.serialize(),
-        'utf-8'
-      )
+      await database.save(dir, `db-${dbHash}.json`)
     })
 
     // Add client plugin
