@@ -24,7 +24,7 @@
     "test:packages": "jest packages -i",
     "test:packages:content": "jest packages/content -i",
     "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs",
-    "postinstall": "npx husky install"
+    "postinstall": "yarn husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
