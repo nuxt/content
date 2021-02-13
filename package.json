@@ -23,8 +23,7 @@
     "test:watch": "jest packages --watch",
     "test:packages": "jest packages -i",
     "test:packages:content": "jest packages/content -i",
-    "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs",
-    "postinstall": "yarn husky install"
+    "test:packages:create-nuxt-content-docs": "jest packages/create-nuxt-content-docs"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
