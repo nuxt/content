@@ -1,5 +1,6 @@
 {
   "name": "nuxt-content",
+  "version": "0.1.0",
   "private": true,
   "description": "Write your content inside your Nuxt app",
   "repository": "nuxt/content",
