@@ -73,9 +73,10 @@ class Markdown {
   /**
    * Generate json body
    * @param {string} content - JSON AST generated from markdown.
+   * @param {object} data - document data
    * @returns {object} JSON AST body
    */
-  async generateBody (content) {
+  async generateBody (content, data = {}) {
     let { highlighter } = this.options
     if (typeof highlighter === 'function' && highlighter.length === 0) {
       highlighter = await highlighter()
@@ -83,6 +84,13 @@ class Markdown {
 
     return new Promise((resolve, reject) => {
       let stream = unified().use(parse)
+      // inject document data into stream
+      stream.use(() => {
+        return (tree, file) => {
+          file.data = data
+          return tree
+        }
+      })
 
       stream = this.processPluginsFor('remark', stream)
       stream = stream.use(remark2rehype, {
@@ -120,8 +128,9 @@ class Markdown {
   async toJSON (file) {
     const { data, content, ...rest } = matter(file, { excerpt: true, excerpt_separator: '<!--more-->' })
 
+    const documentData = data || {}
     // Compile markdown from file content to JSON
-    const body = await this.generateBody(content)
+    const body = await this.generateBody(content, documentData)
     // Generate toc from body
     const toc = this.generateToc(body)
 
@@ -134,7 +143,7 @@ class Markdown {
 
     return {
       description,
-      ...data,
+      ...documentData,
       toc,
       body,
       text: content,
