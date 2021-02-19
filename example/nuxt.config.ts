@@ -16,6 +16,11 @@ const config: NuxtConfig = {
     nestedProperties: ['categories.slug'],
     extendParser: {
       '.custom': file => ({ body: file.split('\n').map(line => line.trim()) })
+    },
+    markdown: {
+      remarkPlugins: [
+        '~/utils/contributors'
+      ]
     }
   }
 };
