@@ -84,13 +84,6 @@ class Markdown {
 
     return new Promise((resolve, reject) => {
       let stream = unified().use(parse)
-      // inject document data into stream
-      stream.use(() => {
-        return (tree, file) => {
-          file.data = data
-          return tree
-        }
-      })
 
       stream = this.processPluginsFor('remark', stream)
       stream = stream.use(remark2rehype, {
@@ -101,7 +94,7 @@ class Markdown {
 
       stream
         .use(jsonCompiler)
-        .process(content, (error, file) => {
+        .process({ data, contents: content }, (error, file) => {
           /* istanbul ignore if */
           if (error) {
             return reject(error)
