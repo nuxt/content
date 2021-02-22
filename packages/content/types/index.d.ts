@@ -42,7 +42,6 @@ interface IContentOptions {
   extendParser?: {
     [extension: string]: (file: string) => any;
   };
-  reqBodyKey?: string;
 }
 
 // Nuxt 2.9+

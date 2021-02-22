@@ -3,7 +3,7 @@ const fs = require('graceful-fs').promises
 const nodeReq = require('node-req')
 const nodeRes = require('node-res')
 
-module.exports = ({ ws, database, dir, watch, reqBodyKey }) => async (req, res) => {
+module.exports = ({ ws, database, dir, watch }) => async (req, res) => {
   const url = decodeURI(nodeReq.url(req))
 
   // Handle WS
@@ -20,7 +20,7 @@ module.exports = ({ ws, database, dir, watch, reqBodyKey }) => async (req, res) 
     // If other server middleware has already consumed stream,
     // there is no longer body data to wait (see #292)
     if (req.readableEnded) {
-      params = req[reqBodyKey]
+      params = req.body
     } else {
       let body = ''
       req.on('data', function (data) {

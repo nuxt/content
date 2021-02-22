@@ -156,8 +156,7 @@ module.exports = async function (moduleOptions) {
       ws,
       database,
       dir: options.dir,
-      watch: options.watch,
-      reqBodyKey: options.reqBodyKey
+      watch: options.watch
     })
   })
 

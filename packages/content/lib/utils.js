@@ -31,8 +31,7 @@ const getDefaults = ({ dev = false } = {}) => ({
   yaml: {},
   csv: {},
   xml: {},
-  extendParser: {},
-  reqBodyKey: 'body'
+  extendParser: {}
 })
 
 const processMarkdownTocDepth = (markdown) => {
