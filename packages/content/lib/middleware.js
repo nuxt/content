@@ -17,7 +17,7 @@ module.exports = ({ ws, database, dir, watch, reqBodyKey }) => async (req, res) 
   // Handle body
   /* istanbul ignore else */
   if (['POST', 'PUT'].includes(req.method)) {
-    // If other server middle ware has already consumed stream,
+    // If other server middleware has already consumed stream,
     // there is no longer body data to wait (see #292)
     if (req.readableEnded) {
       params = req[reqBodyKey]
