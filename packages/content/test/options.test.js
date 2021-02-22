@@ -42,7 +42,8 @@ describe('options', () => {
           },
           remarkPlugins: expect.arrayContaining(remarkPlugins.map(name => ({ name, instance: require(name), options: undefined }))),
           rehypePlugins: expect.arrayContaining(rehypePlugins.map(name => ({ name, instance: require(name), options: undefined })))
-        })
+        }),
+        reqBodyKey: 'body'
       }))
     })
   })

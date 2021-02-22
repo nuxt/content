@@ -524,7 +524,17 @@ Your component should implement the following:
 
 You should be aware that you get the full markdown file content so this includes the front-matter. You can use `gray-matter` to split and join the markdown and the front-matter.
 
+### `reqBodyKey`
 
+`@nuxt/content` module waits for request body stream as a server middleware. In case another server middleware consume it in advance, you can configure by which key `@nuxt/content` should resolve request body.
+
+By default, `@nuxt/content` assumes that [`body-parser`](https://www.npmjs.com/package/body-parser) packages is used and `req.body` is populated.
+
+```js{}[nuxt.config.js]
+content: {
+  reqBodyKey: 'body'
+}
+```
 ## Defaults
 
 ```js{}[nuxt.config.js]

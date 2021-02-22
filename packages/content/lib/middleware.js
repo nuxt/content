@@ -3,7 +3,7 @@ const fs = require('graceful-fs').promises
 const nodeReq = require('node-req')
 const nodeRes = require('node-res')
 
-module.exports = ({ ws, database, dir, watch }) => async (req, res) => {
+module.exports = ({ ws, database, dir, watch, reqBodyKey }) => async (req, res) => {
   const url = decodeURI(nodeReq.url(req))
 
   // Handle WS
@@ -17,18 +17,24 @@ module.exports = ({ ws, database, dir, watch }) => async (req, res) => {
   // Handle body
   /* istanbul ignore else */
   if (['POST', 'PUT'].includes(req.method)) {
-    let body = ''
-    req.on('data', function (data) {
-      body += data
-    })
-    // Wait for body data
-    await new Promise(function (resolve, reject) {
-      req.on('end', resolve)
-      req.on('error', reject)
-    })
-    // Parse body
-    if (body) {
-      params = JSON.parse(body)
+    // If other server middle ware has already consumed stream,
+    // there is no longer body data to wait (see #292)
+    if (req.readableEnded) {
+      params = req[reqBodyKey]
+    } else {
+      let body = ''
+      req.on('data', function (data) {
+        body += data
+      })
+      // Wait for body data
+      await new Promise(function (resolve, reject) {
+        req.on('end', resolve)
+        req.on('error', reject)
+      })
+      // Parse body
+      if (body) {
+        params = JSON.parse(body)
+      }
     }
   } else if (req.method === 'GET') {
     params = nodeReq.get(req)
