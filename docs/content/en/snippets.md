@@ -356,3 +356,81 @@ export default {
   }
 }
 ```
+
+### Remark Plugin
+
+Nuxt Content used [remark](https://github.com/remarkjs/remark) under the hood to process markdown documents. Creating remark plugins is a way to manipulate document and add new features contents.
+
+#### List all contributors
+
+Let's say you want to list all contributors of the project in a document. You can create a plugin that fetches all contributors and injects them into document data.
+
+- Create the plugin, this plugin fetches the contributors if `fetchContributors` is set to `true`
+
+```js [~~/plugins/contributors.js]
+const fetch = require('node-fetch')
+
+module.exports = function () {
+  return async (tree, { data }) => {
+    if (data.fetchContributors) {
+      const contributors = await fetch(
+        'https://api.github.com/repos/nuxt/content/contributors'
+      ).then(res => res.json())
+      .then(res => res.map(({ login }) => login))
+      
+      data.$contributors = [...new Set(contributors)]
+    }
+    return tree
+  }
+}
+```
+
+- Register plugin in Nuxt config
+
+```js{}[nuxt.config.js]
+export default {
+  contents: {
+    markdown: {
+      remarkPlugins: [
+        '~~/plugins/contributors.js'
+      ]
+    }
+  }
+}
+```
+
+- Create a simple component to show contributors
+
+```vue{}[~~/components/List.vue]
+<template>
+  <ul>
+    <li v-for="(item, i) in items" :key="i">
+      {{ item }}
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  props: {
+    items: {
+      type: Array,
+      default: () => []
+    }
+  }
+}
+```
+
+- Finally use the components and mark document to fetch the contributors
+
+```md{}[document.md]
+---
+title: Nuxt Content
+fetchContributors: true
+---
+
+## Contributors
+
+<list :items="$contributors"></list>
+
+```
