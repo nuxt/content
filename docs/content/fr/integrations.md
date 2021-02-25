@@ -167,7 +167,7 @@ export default {
   feed: [
     {
       path: '/feed.xml',
-      create
+      create,
       cacheTime: 1000 * 60 * 15,
       type: 'rss2',
       data: [ 'blog', 'xml' ]
