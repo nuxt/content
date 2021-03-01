@@ -64,7 +64,7 @@ module.exports = {
   ],
   async completed () {
     this.gitInit()
-    await this.npmInstall()
+    await this.npmInstall({ npmClient: this.answers.pm })
     this.showProjectTips()
   }
 }
