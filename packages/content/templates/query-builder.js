@@ -1,4 +1,4 @@
-export class QueryBuilder {
+export default class QueryBuilder {
   constructor (url, { deep = false, text = false } = {}) {
     this.url = url
     this.params = {
