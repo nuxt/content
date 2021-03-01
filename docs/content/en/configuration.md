@@ -524,7 +524,6 @@ Your component should implement the following:
 
 You should be aware that you get the full markdown file content so this includes the front-matter. You can use `gray-matter` to split and join the markdown and the front-matter.
 
-
 ## Defaults
 
 ```js{}[nuxt.config.js]
