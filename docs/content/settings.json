@@ -5,9 +5,11 @@
     "light": "/logo-light.svg",
     "dark": "/logo-dark.svg"
   },
-  "github": "nuxt/content",
+  "github": {
+    "repo": "nuxt/content",
+    "branch": "dev"
+  },
   "twitter": "nuxt_js",
-  "defaultBranch": "dev",
   "algolia": {
     "apiKey": "3677e049d48c83792ba0d2cb0715a12f",
     "indexName": "nuxtjs_content"

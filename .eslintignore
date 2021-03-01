@@ -5,6 +5,5 @@ dist
 coverage
 sw.js
 
-# Packages
-packages/content/templates
-packages/create-nuxt-content-docs/template
+# Templates
+lib/templates
