@@ -32,6 +32,7 @@ describe('options', () => {
       expect(options).toEqual(expect.objectContaining({
         apiPrefix: '_content',
         dir: 'content',
+        useCache: false,
         fullTextSearchFields: ['title', 'description', 'slug', 'text'],
         nestedProperties: [],
         csv: {},

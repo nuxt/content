@@ -524,6 +524,12 @@ Your component should implement the following:
 
 You should be aware that you get the full markdown file content so this includes the front-matter. You can use `gray-matter` to split and join the markdown and the front-matter.
 
+### `useCache`
+
+- Type: `Boolean`
+- Default: `false`
+
+When `true`, the production server (`nuxt start`) will use cached version of the content (generated after running `nuxt build`) instead of parsing files. This improves app startup time, but makes app unaware of any content changes.
 
 ## Defaults
 
@@ -536,6 +542,7 @@ export default {
     fullTextSearchFields: ['title', 'description', 'slug', 'text'],
     nestedProperties: [],
     liveEdit: true,
+    useCache: false,
     markdown: {
       remarkPlugins: [
         'remark-squeeze-paragraphs',
