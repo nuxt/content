@@ -33,7 +33,7 @@ export default (ctx, inject) => {
         warn: (...args) => console.warn('[@nuxt/content]', ...args),
       }
       if (!window.WebSocket) {
-        logger.warn('[@nuxt/content] Could not activate hot reload, your browser does not support WebSocket.')
+        logger.warn('Could not activate hot reload, your browser does not support WebSocket.')
         return
       }
       let ws = null
