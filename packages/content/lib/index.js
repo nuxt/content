@@ -77,7 +77,8 @@ module.exports = async function (moduleOptions) {
     nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
         path: '~/components/global',
-        global: true
+        global: true,
+        pathPrefix: false
       })
     })
   } else {
