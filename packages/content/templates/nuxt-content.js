@@ -1,4 +1,4 @@
-const info = require('property-information')
+import info from 'property-information'
 
 const rootKeys = ['class-name', 'class', 'style']
 
