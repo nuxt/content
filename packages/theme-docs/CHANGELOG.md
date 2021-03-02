@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.10.1...@nuxt/content-theme-docs@0.10.2) (2021-03-02)
+
+
+### Bug Fixes
+
+* **content, theme-docs:** disable pathPrefix for nuxt 2.15 compat ([#804](https://github.com/nuxt/content/issues/804)) ([a93dcf4](https://github.com/nuxt/content/commit/a93dcf448355e90df4cf2a6f1f3a4977e2b786d8))
+
+
+
+
+
 ## [0.10.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.10.0...@nuxt/content-theme-docs@0.10.1) (2021-02-10)
 
 **Note:** Version bump only for package @nuxt/content-theme-docs

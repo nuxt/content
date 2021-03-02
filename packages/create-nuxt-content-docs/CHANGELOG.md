@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.6](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.4.5...create-nuxt-content-docs@0.4.6) (2021-03-02)
+
+
+### Bug Fixes
+
+* **create-nuxt-content-docs:** respect npm client answer ([#779](https://github.com/nuxt/content/issues/779)) ([1670c5b](https://github.com/nuxt/content/commit/1670c5b01f442cf3212c81cc17cff9232b6265f8))
+
+
+
+
+
 ## [0.4.5](https://github.com/nuxt/content/compare/create-nuxt-content-docs@0.4.4...create-nuxt-content-docs@0.4.5) (2021-02-10)
 
 **Note:** Version bump only for package create-nuxt-content-docs

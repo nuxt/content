@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/nuxt/content/compare/@nuxt/content@1.13.1...@nuxt/content@1.14.0) (2021-03-02)
+
+
+### Bug Fixes
+
+* **content:** avoid using commonjs for runtime (vite support) ([#805](https://github.com/nuxt/content/issues/805)) ([8de3e12](https://github.com/nuxt/content/commit/8de3e12759c37f6ff74d52c6174e8d099742e833))
+* **content:** handle readable ended request ([#790](https://github.com/nuxt/content/issues/790)) ([7660d0f](https://github.com/nuxt/content/commit/7660d0fff4ef66c04ef20256251f94eb4457734b))
+* **content:** remove flatmap to support node v10 ([#770](https://github.com/nuxt/content/issues/770)) ([21635e2](https://github.com/nuxt/content/commit/21635e2488c9edb899ab3dbffbcc93e6dd9a3b82))
+* **content, theme-docs:** disable pathPrefix for nuxt 2.15 compat ([#804](https://github.com/nuxt/content/issues/804)) ([a93dcf4](https://github.com/nuxt/content/commit/a93dcf448355e90df4cf2a6f1f3a4977e2b786d8))
+
+
+### Features
+
+* **content:** pass document data to remark plugins ([#782](https://github.com/nuxt/content/issues/782)) ([ed56f5a](https://github.com/nuxt/content/commit/ed56f5a4c8cf5fc8b6fb7711b769b882fd73bee1))
+
+
+
+
+
 ## [1.13.1](https://github.com/nuxt/content/compare/@nuxt/content@1.13.0...@nuxt/content@1.13.1) (2021-02-10)
 
 
