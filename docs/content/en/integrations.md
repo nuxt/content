@@ -284,3 +284,22 @@ We recommend to take a look at this tutorial made by [Pascal Cauhépé](https://
 👉 &nbsp;https://nuxt-content-and-forestry.netlify.app
 
 </alert>
+
+## Localization & Internationalization
+
+You can use Nuxt Content with [nuxt-i18n](https://github.com/nuxt-community/i18n-module) to support multiple languages.
+
+** Example ** 
+
+```
+export default {
+  async asyncData({ app, params, $content }) {
+    const { slug } = params
+    const posts = await $content(app.i18n.locale, "blog", slug).fetch()
+
+    return { posts }
+  },
+}
+```
+
+That code loads the content from the file located in the following path: `<locale>/blog.md`.
