@@ -1,10 +1,23 @@
-import type { IContentDocument } from './content';
 interface QueryBuilderOptions {
   query: any;
   path: string;
   init: any;
   text: any;
   postprocess?: any[];
+}
+
+interface FetchReturn extends Record<string, any> {
+  dir: string;
+  path: string;
+  extension: '.md' | '.json' | '.yaml' | '.xml' | '.csv' | string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  toc?: {
+    id: string;
+    depth: number;
+    text: string;
+  }[];
 }
 
 export class QueryBuilder {
@@ -77,6 +90,6 @@ export class QueryBuilder {
    * Collect data and apply process filters
    * @returns processed data
    */
-  fetch(): Promise<IContentDocument | IContentDocument[]>;
-  fetch<T>(): Promise<(T & IContentDocument) | (T & IContentDocument)[]>;
+  fetch(): Promise<FetchReturn | FetchReturn[]>;
+  fetch<T>(): Promise<(T & FetchReturn) | (T & FetchReturn)[]>;
 }
