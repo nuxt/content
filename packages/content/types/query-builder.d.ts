@@ -1,3 +1,5 @@
+import { IContentDocumentBase } from "./content";
+
 interface QueryBuilderOptions {
   query: any;
   path: string;
@@ -6,18 +8,9 @@ interface QueryBuilderOptions {
   postprocess?: any[];
 }
 
-interface FetchReturn extends Record<string, any> {
-  dir: string;
-  path: string;
-  extension: '.md' | '.json' | '.yaml' | '.xml' | '.csv' | string;
-  slug: string;
+interface FetchReturn extends IContentDocumentBase {
   createdAt: string;
   updatedAt: string;
-  toc?: {
-    id: string;
-    depth: number;
-    text: string;
-  }[];
 }
 
 export class QueryBuilder {
