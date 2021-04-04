@@ -20,11 +20,11 @@ Before diving into the individual attributes, please have a look [at the default
 ## Merging defaults
 
 You can define every option either as function or as static value (primitives, objects, arrays, ...).
-if you use a function, the default value will be provided as the first argument.
+If you use a function, the default value will be provided as the first argument.
 
 If you *don't* use a function to define you properties, the module will try to
 merge them with the default values. This can be handy for `markdown.remarkPlugins`, `markdown.rehypePlugins` and so on because
-the defaults are quite sensible. If you don't want to have the defaults include, just use a function.
+the defaults are quite sensible. If you don't want to have the defaults included, just use a function.
 
 ## Properties
 
@@ -306,7 +306,7 @@ content: {
 - Type: `Highlighter` | `PromisedHighlighter`
 - Version: **>=1.9.0**
 
-You can change the default code highlighter in markdown content by using this options. As an example, we use [highlight.js](https://highlightjs.org/).
+You can change the default code highlighter in markdown content by using this option. As an example, we use [highlight.js](https://highlightjs.org/).
 
 ```js{}[nuxt.config.js]
 import highlightjs from 'highlight.js'
@@ -462,7 +462,7 @@ export default {
 - Type: `Object`
 - Default: `{}`
 
-This module uses `js-yaml` to parse `.yaml`, `.yml` files, you can check here for [options](https://github.com/nodeca/js-yaml#api).
+This module uses `js-yaml` to parse `.yaml`, `.yml` files. You can check here for [options](https://github.com/nodeca/js-yaml#api).
 
 Note that we force `json: true` option.
 
@@ -472,14 +472,14 @@ Note that we force `json: true` option.
 - Type: `Object`
 - Default: `{}`
 
-This module uses `xml2js` to parse `.xml` files, you can check here for [options](https://www.npmjs.com/package/xml2js#options).
+This module uses `xml2js` to parse `.xml` files You can check here for [options](https://www.npmjs.com/package/xml2js#options).
 
 ### `csv`
 
 - Type: `Object`
 - Default: `{}`
 
-This module uses `node-csvtojson` to parse csv files, you can check here for [options](https://github.com/Keyang/node-csvtojson#parameters).
+This module uses `node-csvtojson` to parse csv files. You can check here for [options](https://github.com/Keyang/node-csvtojson#parameters).
 
 ### `extendParser`
 

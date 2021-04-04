@@ -186,7 +186,7 @@ This module automatically wraps codeblocks and applies [PrismJS](https://prismjs
 
 Codeblocks in Markdown are wrapped inside 3 backticks. Optionally, you can define the language of the codeblock to enable specific syntax highlighting.
 
-Orginally markdown does not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with its own custom syntax:
+Originally markdown did not support filenames or highlighting specific lines inside codeblocks. However, this module allows it with its own custom syntax:
 
 - Highlighted line numbers inside curly braces
 - Filename inside square brackets
@@ -221,7 +221,7 @@ Line numbers are added to the `pre` tag in `data-line` attribute.
 
 > Check out [this comment](https://github.com/nuxt/content/issues/28#issuecomment-633246962) on how to render prism line numbers.
 
-Filename will be converted to a span with a `filename` class, it's up to you to style it.
+Filename will be converted to a span with a `filename` class. It's up to you to style it.
 
 > Check out [the main.css file](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/assets/css/main.css#L56) of this documentation for an example on styling filenames.
 
