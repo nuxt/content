@@ -74,7 +74,7 @@ export default {
 
 The above approach works well for some use cases. However, if you use `npm run generate` then this approach will produce an error.
 
-Or, if you want to include the body of the article as content, including any content from components if you mix your Vue components and your markdown then you'll need to approach this differently.
+Or, if you want to include the body of the article as content (including any content from components if you mix your Vue components and your markdown) then you'll need to approach this differently.
 
 One possible way to do this uses the [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) documented approach and will work well with `npm run generate` and will use the existing Nuxt process to include the content. Here's how to do it.
 
