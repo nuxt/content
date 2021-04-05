@@ -62,7 +62,7 @@ To get started quickly you can use the [create-nuxt-content-docs](https://github
   </code-block>
 </code-group>
 
-It will ask you some questions (name, title, url, repository, etc.). When answered, the dependencies will be installed. The next step is to navigate to the project folder and launch it:
+It will ask you some questions (name, title, url, repository, etc.). Once you answer, the dependencies will be installed. The next step is to navigate to the project folder and launch it:
 
 <code-group>
   <code-block label="Yarn" active>
