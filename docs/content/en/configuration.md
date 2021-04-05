@@ -472,7 +472,7 @@ Note that we force `json: true` option.
 - Type: `Object`
 - Default: `{}`
 
-This module uses `xml2js` to parse `.xml` files You can check here for [options](https://www.npmjs.com/package/xml2js#options).
+This module uses `xml2js` to parse `.xml` files. You can check here for [options](https://www.npmjs.com/package/xml2js#options).
 
 ### `csv`
 
