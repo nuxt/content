@@ -1,4 +1,4 @@
-import { IContentDocumentBase } from "./content";
+import type { IContentDocumentBase } from "./content";
 
 interface QueryBuilderOptions {
   query: any;
