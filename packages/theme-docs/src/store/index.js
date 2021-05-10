@@ -111,7 +111,7 @@ export const actions = {
 
     releases.sort((a, b) => {
       if (a.name && a.name !== b.name) {
-        return -a.name.localCompare(b.name)
+        return -a.name.localeCompare(b.name)
       }
       return new Date(b.date) - new Date(a.date)
     })
