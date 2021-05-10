@@ -109,9 +109,12 @@ export const actions = {
       })
     } catch (e) { }
 
+    const getMajorVersion = r => r.name && Number(r.name.substring(1, 2))
     releases.sort((a, b) => {
-      if (a.name && a.name !== b.name) {
-        return -a.name.localeCompare(b.name)
+      const aMajorVersion = getMajorVersion(a)
+      const bMajorVersion = getMajorVersion(b)
+      if (aMajorVersion !== bMajorVersion) {
+        return bMajorVersion - aMajorVersion
       }
       return new Date(b.date) - new Date(a.date)
     })
