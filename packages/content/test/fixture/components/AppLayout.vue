@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-layout">
     <header><slot name="header" /></header>
     <main><slot>Default content</slot></main>
     <footer><slot name="footer" /></footer>
