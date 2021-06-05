@@ -6,6 +6,7 @@ const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
 const rxModel = /^v-model/
 const rxClass = /^(?::|v-bind:)*class/
+const rxStyle = /^(?::|v-bind:)*style/
 const nativeInputs = ['select', 'textarea', 'input']
 
 function evalInContext (code, context) {
@@ -40,6 +41,8 @@ function propsToData (node, doc) {
       data.on[event] = e => doc[value] = processor(e)
     } else if (rxClass.test(key)) {
       data.class = value
+    } else if (rxStyle.test(key)) {
+      data.style = value
     } else if (key === 'v-bind') {
       const val = value in doc ? doc[value] : evalInContext(value, doc)
       obj = Object.assign(obj, val)
@@ -56,7 +59,7 @@ function propsToData (node, doc) {
       obj[attribute] = value
     }
     return data
-  }, { class: '', attrs: {} })
+  }, { class: null, style: null, attrs: {} })
 }
 
 /**
