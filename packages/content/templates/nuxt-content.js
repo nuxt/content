@@ -53,7 +53,7 @@ function propsToData (node, doc) {
       obj[attribute] = value
     }
     return data
-  }, { class: null, style: null, attrs: {} })
+  }, { attrs: {} })
 }
 
 /**
