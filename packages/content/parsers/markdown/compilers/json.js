@@ -1,3 +1,5 @@
+const { extname } = require('path')
+
 /**
  * Parses nodes for JSON structure. Attempts to drop
  * unwanted properties.
@@ -13,10 +15,14 @@ function parseAsJSON (node, parent) {
     /**
      * Replace a tag with nuxt-link if relative
      */
-    if (node.tagName === 'a' && (node.properties.href || '').startsWith('/')) {
-      node.tagName = 'nuxt-link'
-      node.properties.to = node.properties.href
-      delete node.properties.href
+    if (node.tagName === 'a') {
+      const pathname = (node.properties.href || '')
+
+      if (pathname.startsWith('/') && extname(pathname) === '') {
+        node.tagName = 'nuxt-link'
+        node.properties.to = node.properties.href
+        delete node.properties.href
+      }
     }
 
     const filtered = {
