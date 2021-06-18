@@ -97,6 +97,7 @@ Example variables will be injected into the document:
   title: "Introduction"
   description: "Learn how to use @nuxt/content."
   dir: "/"
+  excerpt: Object
   extension: ".md"
   path: "/index"
   slug: "index"
