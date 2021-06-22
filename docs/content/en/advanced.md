@@ -253,3 +253,45 @@ Since **v1.4.0**, this endpoint also support `where` in query params:
 `http://localhost:3000/_content/products?categories.slug_contains=top`
 
 > You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+
+## Dynamic Layout
+
+It is possible to drive the layout from the content markdown by configuring the `vue-renderer:ssr:context` hook. This works for both server-driven and static generated apps.
+
+**Example**
+
+```js{}[nuxt.config.js]
+export default {
+  hooks: {
+    'vue-renderer:ssr:context': (ctx) => {
+      /* Look for a layout in the content param */
+      const content = ctx.nuxt.data.find((item) => item?.content?.layout);
+      if (content?.content?.layout) {
+        ctx.nuxt.layout = content.content.layout;
+      }
+    },
+  },
+}
+```
+
+This will look for a `layout` property in the front matter. If it's not set, it will still use the `default` layout
+
+```markdown{}[content/about.md]
+---
+title: About page
+description: This is the about page
+layout: about
+---
+
+This is some content
+```
+
+This expects the `asyncData` to put the content to the `content` param:
+
+```js{}[about.vue]
+export default {
+  async asyncData({ $content }) {
+    return { content: await $content('about').fetch() }
+  }
+}
+```
