@@ -1,10 +1,16 @@
-import type { IContentDocument } from './content';
+import type { IContentDocumentBase } from "./content";
+
 interface QueryBuilderOptions {
   query: any;
   path: string;
   init: any;
   text: any;
   postprocess?: any[];
+}
+
+interface FetchReturn extends IContentDocumentBase {
+  createdAt: string;
+  updatedAt: string;
 }
 
 export class QueryBuilder {
@@ -77,6 +83,6 @@ export class QueryBuilder {
    * Collect data and apply process filters
    * @returns processed data
    */
-  fetch(): Promise<IContentDocument | IContentDocument[]>;
-  fetch<T>(): Promise<(T & IContentDocument) | (T & IContentDocument)[]>;
+  fetch(): Promise<FetchReturn | FetchReturn[]>;
+  fetch<T>(): Promise<(T & FetchReturn) | (T & FetchReturn)[]>;
 }
