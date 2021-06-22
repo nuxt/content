@@ -5,6 +5,8 @@ const rootKeys = ['class-name', 'class', 'style']
 const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
 const rxModel = /^v-model/
+const rxIs = /^is|^:is|^v-bind:is/
+const DYMAMIC_COMOPNENT = 'component'
 const nativeInputs = ['select', 'textarea', 'input']
 
 function evalInContext (code, context) {
@@ -79,12 +81,34 @@ function slotsToData (node, h, doc) {
   return data
 }
 
+function processDynamicNode (node, h, doc) {
+  const { props } = node
+  const key = Object.keys(props).find((key) => rxIs.test(key))
+  const value = props[key]
+
+  if (value) {
+    node.tag = value in doc ? doc[value] : evalInContext(value, doc)
+    node.props.tag = DYMAMIC_COMOPNENT
+    node.children = node.children.filter((child) => {
+      const _child = processNode(child, h, doc)
+      return !(typeof _child === 'string' && /^\s*$/.test(_child))
+    })
+    delete node.props[key]
+  } else { /* Let Vue warn if :is prop is absent */ }
+
+  return node
+}
+
 function processNode (node, h, doc) {
   /**
    * Return raw value as it is
    */
   if (node.type === 'text') {
     return node.value
+  }
+
+  if (node.tag === DYMAMIC_COMOPNENT) {
+    node = processDynamicNode(node, h, doc)
   }
 
   const slotData = slotsToData(node || {}, h, doc)
