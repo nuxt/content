@@ -55,7 +55,7 @@ function parseAsJSON (node, parent) {
 
   /**
    * Root level nodes push to the original parent
-   * children and doesn't create a new node
+   * children and don't create a new node
    */
   if (node.type === 'root') {
     node.children.forEach(child => parseAsJSON(child, parent))
@@ -69,7 +69,7 @@ module.exports = function () {
   this.Compiler = function (root) {
     /**
      * We do not use `map` operation, since each node can be expanded to multiple top level
-     * nodes. Instead, we need a array to fill in as many elements inside a single
+     * nodes. Instead, we need an array to fill in as many elements inside a single
      * iteration
      */
     const result = []

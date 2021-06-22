@@ -62,7 +62,7 @@ To get started quickly you can use the [create-nuxt-content-docs](https://github
   </code-block>
 </code-group>
 
-It will ask you some questions (name, title, url, repository, etc.), when answered the dependencies will be installed. The next step is to navigate to the project folder and launch it:
+It will ask you some questions (name, title, url, repository, etc.). Once you answer, the dependencies will be installed. The next step is to navigate to the project folder and launch it:
 
 <code-group>
   <code-block label="Yarn" active>
@@ -257,7 +257,7 @@ Once you've setup your documentation, you can directly start writing your conten
 
 ### Locales
 
-The first level of directories in the `content/` folder are the locales used with [nuxt-i18n](https://github.com/nuxt-community/i18n-module) defined in your `nuxt.config.js`. By default there is only the default `en` locale defined, you have to create a `content/en/` directory to make it work.
+The first level of directories in the `content/` folder are the locales used with [nuxt-i18n](https://github.com/nuxt-community/i18n-module) defined in your `nuxt.config.js`. By default, only the default `en` locale is defined. You have to create a `content/en/` directory to make it work.
 
 You can override the locales in your `nuxt.config.js`:
 
@@ -413,7 +413,7 @@ You can create a `content/settings.json` file to configure the theme.
 
 ## Images
 
-You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap dependending on the color mode.
+You can apply `dark-img` and `light-img` classes to your images when you have two versions to automatically swap depending on the color mode.
 
 **Example**
 

@@ -2,7 +2,7 @@ const utils = exports = module.exports = {}
 
 /**
  * Parses the value defined next to 3 back ticks
- * in a codeblock and set line-highlights or
+ * in a codeblock and sets line-highlights or
  * filename from it
  *
  * @param {String} lang

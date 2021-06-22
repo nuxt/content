@@ -27,7 +27,7 @@ export class IMarkdown extends baseParser<MarkdownOptions> {
    */
   generateBody(content: string): object;
   /**
-   * Converts markdown document to it's JSON structure.
+   * Converts markdown document to its JSON structure.
    * @param file - Markdown file
    * @return JSON
    */

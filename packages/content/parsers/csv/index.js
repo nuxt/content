@@ -6,7 +6,7 @@ class CSV {
   }
 
   /**
-   * Converts csv document to it's JSON structure.
+   * Converts csv document to its JSON structure.
    * @param {string} file - Csv file
    * @return {Object}
    */
