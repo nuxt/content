@@ -3,9 +3,10 @@ export default {
     placeholder: '搜索文档（按 “/” 聚焦）'
   },
   toc: {
-    title: '此页面'
+    title: '本文目录'
   },
   article: {
-    github: '在 GitHub 上编辑此页面'
+    github: '在 GitHub 上编辑本页面',
+    updatedAt: '更新时间：'
   }
 }
