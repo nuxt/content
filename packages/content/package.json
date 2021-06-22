@@ -49,7 +49,7 @@
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
     "unified": "^9.2.1",
-    "unist-builder": "^2.0.3",
+    "unist-builder": "^3.0.0",
     "ws": "^7.4.3",
     "xml2js": "^0.4.23"
   },
