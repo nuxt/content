@@ -8,6 +8,7 @@
           'lg:px-8': settings.layout === 'single'
         }"
       >
+        <AppSlot name="tocTop" class="mb-3" />
         <p
           class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
         >{{ $t('toc.title') }}</p>
@@ -33,6 +34,7 @@
             >{{ link.text }}</a>
           </li>
         </scrollactive>
+        <AppSlot name="tocBottom" class="mt-2" />
       </nav>
     </div>
   </div>

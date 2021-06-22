@@ -8,6 +8,7 @@
         <li v-if="!settings.algolia" class="mb-4 lg:hidden">
           <AppSearch />
         </li>
+        <AppSlot name="navBarTop" />
         <li
           v-for="(docs, category, index) in categories"
           :key="category"
@@ -69,6 +70,7 @@
             <AppColorSwitcher />
           </div>
         </li>
+        <AppSlot name="navBarBottom" class="mt-2" />
       </ul>
     </div>
   </aside>
