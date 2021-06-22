@@ -10,6 +10,11 @@ export const state = () => ({
     url: '',
     defaultDir: 'docs',
     defaultBranch: '',
+    releases: {
+      tag: [],
+      channel: [],
+      preRelease: null
+    },
     filled: false
   }
 })
@@ -55,7 +60,34 @@ export const mutations = {
     Vue.set(state.categories, this.$i18n.locale, categories)
   },
   SET_RELEASES (state, releases) {
-    state.releases = releases
+    state.releases = releases.filter((release) => {
+      const { releases: _releases } = state.settings
+      let preReleaseFlag = true
+      let channelFlag = true
+      let tagFlag = true
+
+      _releases.channel = Array.isArray(_releases.channel) ? _releases.channel : [_releases.channel]
+      _releases.tag = Array.isArray(_releases.tag) ? _releases.tag : [_releases.tag]
+
+      if (_releases.preRelease !== null) {
+        preReleaseFlag = release.preRelease === _releases.preRelease
+      }
+
+      if (_releases.channel.length > 0) {
+        channelFlag = _releases.channel.includes(release.channel)
+      }
+
+      if (_releases.tag.length > 0) {
+        tagFlag = _releases.tag.some((tag) => {
+          const expression = tag.replace(/\./g, '\\.').replace(/\*/g, '[^*]')
+          const regex = new RegExp(expression)
+
+          return !!release.tag.match(regex)
+        })
+      }
+
+      return preReleaseFlag && channelFlag && tagFlag
+    })
   },
   SET_DEFAULT_BRANCH (state, branch) {
     state.settings.defaultBranch = branch
@@ -104,7 +136,10 @@ export const actions = {
         return {
           name: (release.name || release.tag_name).replace('Release ', ''),
           date: release.published_at,
-          body: this.$markdown(release.body)
+          body: this.$markdown(release.body),
+          tag: release.tag,
+          preRelease: !!release.prerelease,
+          channel: release.target_commitish
         }
       })
     } catch (e) { }
