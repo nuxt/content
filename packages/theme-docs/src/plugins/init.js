@@ -2,6 +2,7 @@ export default async function ({ store, app }) {
   if (process.server) {
     await store.dispatch('fetchSettings')
     await store.dispatch('fetchReleases')
+    await store.dispatch('fetchTags')
     await store.dispatch('fetchCategories')
     await store.dispatch('fetchDefaultBranch')
   }
@@ -11,6 +12,9 @@ export default async function ({ store, app }) {
   }
   if (process.client && !store.state.releases.length) {
     await store.dispatch('fetchReleases')
+  }
+  if (process.client && !store.state.tags.length) {
+    await store.dispatch('fetchTags')
   }
   if (process.client && !store.state.categories[app.i18n.locale]) {
     await store.dispatch('fetchCategories')
@@ -24,6 +28,7 @@ export default async function ({ store, app }) {
       window.$nuxt.$on('content:update', async () => {
         await store.dispatch('fetchSettings')
         await store.dispatch('fetchReleases')
+        await store.dispatch('fetchTags')
         await store.dispatch('fetchDefaultBranch')
         await store.dispatch('fetchCategories')
       })
