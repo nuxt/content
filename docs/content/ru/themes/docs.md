@@ -209,8 +209,26 @@ menuTitle: 'Вступление'
   - Логотип вашей документации, может быть `Object` для установки на каждый [цветовой режим](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
   - GitHub репозиторий вашего проекта `owner/name` для отображения последней версии, страницы изменений, ссылки вверху и ссылки `Редактировать эту страницу на GitHub` на каждой странице. Пример: `nuxt/content`
+- `githubApi` (`String`) <badge>v0.6.0+</badge>
+  - Для GitHub Enterprise, в дополнение к `github`, задайте полный url к API вашего проекта без слеша в конце. Например: `https://hostname/api/v3/repos/owner/name`.
+  - Релизы фетчатся из `${githubApi}/releases`.
 - `defaultBranch` ( `String`)
   - Ветка вашего проекта, которая используется по умолчанию , используется для ссылки `Редактировать эту страницу на GitHub` на каждой странице (по умолчанию `main` если ничего не задано)..
+- `defaultDir` ( `String`)
+  - Путь внутри вашего проекта, в котором расположена директория `content`. Используется для ссылки `Редактировать эту страницу на GitHub` на каждой странице (по умолчанию `docs` если ничего не задано, может быть пустой строкой `""` - это необходимо если `content` расположен в корне проекта)..
+- `layout` (`String`) <badge>v0.4.0+</badge>
+  - Шаблон для вашей документации (по умолчанию `default`). Может быть изменено на `single`, чтобы получить одностраничную документацию.
+- `algolia` (`Object`) <badge>v0.7.0+</badge>
+  - Позволяет использовать [Algolia DocSearch](https://docsearch.algolia.com) для замены обчного встроенного поиска. Чтобы включить это, вам нужно предоставить хотя бы `apiKey` и `indexName`:
+    ```json
+    "algolia": {
+        "apiKey": "<API_KEY>",
+        "indexName": "<INDEX_NAME>",
+        "langAttribute": "language"
+    }
+    ```
+  - Если вы используете `i18n`, убедитесь, что `<langAttribute>` соответствует html lang в конфиге (по умолчанию `language`).
+  - Взгляните на настройку docsearch [@nuxt/content](https://github.com/algolia/docsearch-configs/blob/master/configs/nuxtjs_content.json) для примера.
 - `twitter` (`String`)
   - Ваше имя пользователя `@username` на twitter. Пример: `@nuxt_js`
 
