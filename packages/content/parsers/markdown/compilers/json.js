@@ -16,7 +16,7 @@ function parseAsJSON (node, parent) {
      * Replace a tag with nuxt-link if relative
      */
     if (node.tagName === 'a') {
-      const pathname = (node.properties.href || '')
+      const [pathname] = (node.properties.href || '').split('#')
 
       if (pathname.startsWith('/') && extname(pathname) === '') {
         node.tagName = 'nuxt-link'
