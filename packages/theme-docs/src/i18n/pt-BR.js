@@ -1,6 +1,6 @@
 export default {
   search: {
-    placeholder: 'Buscar em documentos (Pressione "/")'
+    placeholder: 'Prucurar na documentação (Pressione "/")'
   },
   toc: {
     title: 'Nesta página'
