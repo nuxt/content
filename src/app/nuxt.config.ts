@@ -24,17 +24,7 @@ export default nuxtConfig({
    * Docus config
    */
   components: true,
-  loading: {
-    color: 'var(--primary-500)'
-  },
-  meta: {
-    /**
-     * Default theme color.
-     * Overriden by Docus primary color.
-     */
-    theme_color: '#06B6D4'
-  },
-  theme: {},
+
   /**
    * Disable suffix from color-mode
    */
@@ -60,8 +50,7 @@ export default nuxtConfig({
     // r('../github')
   ],
   modules: [
-    // Local modules
-    // r('../i18n'),
+    r('../i18n')
     // r('../core/module')
   ],
 
