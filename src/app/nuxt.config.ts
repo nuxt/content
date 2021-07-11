@@ -79,9 +79,6 @@ export default nuxtConfig({
       ]
     }
   },
-  build: {
-    transpile: ['@docus/app']
-  },
   typescript: {
     // TODO: Re-enable typeCheck
     // Waiting for better support from nuxt-vite / nuxt 3

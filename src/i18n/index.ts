@@ -60,7 +60,9 @@ export default <Module>function docusI18n() {
       // @ts-ignore
       config.locales = languages.filter(language => localeCodes.includes(language.code))
     }
-  } catch (e) {}
+  } catch (e) {
+    config.locales = []
+  }
 
   options.i18n = defu(options.i18n, config)
 
