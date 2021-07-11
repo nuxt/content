@@ -6,6 +6,7 @@ import languages from './languages'
 
 const r = (...args: string[]) => resolve(__dirname, ...args)
 
+// Default i18n config
 const config = {
   langDir: '',
   baseUrl: ({ $docus }: any) => ($docus && $docus.settings && $docus.settings.url) || '',
@@ -47,16 +48,19 @@ export default <Module>function docusI18n() {
   // Inject Docus theme as ~docus
   options.alias['~docus-i18n'] = r('languages')
 
-  if (!options.i18n?.locales?.length) {
-    const contentDir = resolve(options.srcDir, $docus.settings.contentDir)
-    const languageCodes = languages.map(({ code }: { code: string }) => code)
-    const activeLanguages = fs.readdirSync(contentDir).filter(name => languageCodes.includes(name))
-    activeLanguages.unshift(config.defaultLocale)
-    const localeCodes = [...new Set(activeLanguages)]
+  // Try to parse available locales from contentDir
+  try {
+    if (!options.i18n?.locales?.length) {
+      const contentDir = resolve(options.srcDir, $docus.settings.contentDir)
+      const languageCodes = languages.map(({ code }: { code: string }) => code)
+      const activeLanguages = fs.readdirSync(contentDir).filter(name => languageCodes.includes(name))
+      activeLanguages.unshift(config.defaultLocale)
+      const localeCodes = [...new Set(activeLanguages)]
 
-    // @ts-ignore
-    config.locales = languages.filter(language => localeCodes.includes(language.code))
-  }
+      // @ts-ignore
+      config.locales = languages.filter(language => localeCodes.includes(language.code))
+    }
+  } catch (e) {}
 
   options.i18n = defu(options.i18n, config)
 

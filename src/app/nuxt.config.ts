@@ -24,6 +24,7 @@ export default nuxtConfig({
    * Docus config
    */
   components: true,
+  meta: {},
 
   /**
    * Disable suffix from color-mode
