@@ -2,6 +2,7 @@ import { resolve, join, relative } from 'path'
 import fs from 'fs'
 import defu from 'defu'
 import { Module } from '@nuxt/types'
+// @ts-ignore
 import languages from './languages'
 
 const r = (...args: string[]) => resolve(__dirname, ...args)
