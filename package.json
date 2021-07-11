@@ -1,0 +1,100 @@
+{
+  "name": "@docus/core",
+  "version": "1.0.0",
+  "description": "The Docus core.",
+  "keywords": [
+    "nuxt",
+    "module",
+    "nuxt-module"
+  ],
+  "repository": "https://github.com/docusgen/core",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "siroc build",
+    "dev": "nuxt dev example",
+    "lint": "eslint --ext .js,.ts,.vue .",
+    "test": "yarn lint && jest",
+    "clean:example": "rm -rf example/.nuxt example/node_modules",
+    "clean:app": "rm -rf src/app/node_modules src/app/.nuxt",
+    "clean:dist": "rm -rf dist",
+    "clean": "yarn clean:example && yarn clean:app && yarn clean:dist"
+  },
+  "resolutions": {
+    "@nuxt/components": "npm:@pi0/components",
+    "vue-server-renderer": "2.6.14",
+    "vue-template-compiler": "2.6.14"
+  },
+  "dependencies": {
+    "@lokidb/loki": "^2.1.0",
+    "defu": "^5.0.0",
+    "detab": "^3.0.0",
+    "flat": "^5.0.2",
+    "fs-extra": "^10.0.0",
+    "h3": "^0.2.11",
+    "hasha": "^5.2.2",
+    "hookable": "^4.4.1",
+    "jiti": "^1.10.1",
+    "mande": "^1.0.0",
+    "marked": "^2.1.3",
+    "mkdirp": "^1.0.4",
+    "ohmyfetch": "^0.1.8",
+    "rehype-parse": "^7.0.1",
+    "rehype-raw": "^5.1.0",
+    "rehype-sort-attribute-values": "^3.0.2",
+    "rehype-sort-attributes": "^3.0.2",
+    "remark-autolink-headings": "^6.0.1",
+    "remark-directive": "^1.0.1",
+    "remark-emoji": "^2.2.0",
+    "remark-external-links": "^8.0.0",
+    "remark-footnotes": "^3.0.0",
+    "remark-gfm": "^1.0.0",
+    "remark-parse": "^9.0.0",
+    "remark-rehype": "^8.1.0",
+    "remark-slug": "^6.0.0",
+    "remark-squeeze-paragraphs": "^4.0.0",
+    "scule": "^0.2.1",
+    "unstorage": "^0.1.6",
+    "upath": "^2.0.1",
+    "vue": "^2.6.14",
+    "vue-demi": "^0.10.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "latest",
+    "@babel/preset-env": "latest",
+    "@babel/preset-typescript": "latest",
+    "@docus/app": "1.0.8",
+    "@nuxt/test-utils": "latest",
+    "@nuxt/types": "^2.15.7",
+    "@nuxt/typescript-runtime": "latest",
+    "@nuxtjs/eslint-config-typescript": "latest",
+    "@siroc/jest-preset": "latest",
+    "@types/fs-extra": "^9.0.12",
+    "@types/jest": "latest",
+    "babel-eslint": "latest",
+    "babel-jest": "latest",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "latest",
+    "playwright": "^1.12.3",
+    "prettier": "^2.3.2",
+    "siroc": "^0.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

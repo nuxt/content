@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "declaration": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "jest", "@nuxt/types", "nuxt-i18n"]
+  },
+  "include": ["src/**/*", "src/module.ts", "example", "playground", "scripts", "templates/plugin.js"],
+  "exclude": ["node_modules", "dist"]
+}

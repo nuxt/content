@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Nuxt Community Discord
+    url: https://discord.nuxtjs.org/
+    about: Consider asking questions about the module here.
+  # - name: Documentation
+  #   url: /README.md
+  #   about: Check our documentation before reporting issues or questions.
