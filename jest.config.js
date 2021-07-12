@@ -12,5 +12,5 @@ module.exports = {
   collectCoverage: false,
   collectCoverageFrom: ['src/**', '!templates/**', '!example/**', '!.nuxt/**', '!src/i18n/languages/**'],
   coveragePathIgnorePatterns: ['node_modules', '.nuxt'],
-  transformIgnorePatterns: ['node_modules/(?!nuxt-i18n/*)']
+  transformIgnorePatterns: ['node_modules/(?!@docus/app/|nuxt-i18n/*)']
 }
