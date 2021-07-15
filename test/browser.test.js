@@ -11,6 +11,6 @@ describe('module', () => {
     const page = await createPage('/')
     const html = await page.innerHTML('body')
 
-    expect(html).toContain('Docus default app')
+    expect(html).toContain('Hello')
   })
 })

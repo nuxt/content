@@ -4,7 +4,11 @@ module.exports = {
       'babel-jest',
       {
         presets: ['@babel/preset-env', '@babel/preset-typescript'],
-        plugins: ['@babel/plugin-transform-runtime']
+        plugins: [
+          '@babel/plugin-transform-runtime',
+          '@babel/plugin-proposal-class-properties',
+          '@babel/plugin-proposal-object-rest-spread'
+        ]
       }
     ]
   },
@@ -12,5 +16,7 @@ module.exports = {
   collectCoverage: false,
   collectCoverageFrom: ['src/**', '!templates/**', '!example/**', '!.nuxt/**', '!src/i18n/languages/**'],
   coveragePathIgnorePatterns: ['node_modules', '.nuxt'],
-  transformIgnorePatterns: ['node_modules/(?!@docus/app/|nuxt-i18n/*)']
+  transformIgnorePatterns: [
+    'node_modules/(?!@docus/app/|nuxt-i18n|mdast-util-to-hast|unist-builder|detab|unist-util-position/*)'
+  ]
 }
