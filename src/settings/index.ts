@@ -19,6 +19,7 @@ export default <Module>function settingsModule() {
 
   // Get cache dir for Docus inside project rootDir
   const cacheDir = join(options.rootDir, 'node_modules/.cache/docus')
+  options.alias['~docus-cache'] = cacheDir
 
   // Get Docus config path
   let settingsPath = resolve(options.srcDir, 'docus.config')

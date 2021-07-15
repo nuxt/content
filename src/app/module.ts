@@ -4,7 +4,7 @@ import { Module } from '@nuxt/types'
 const r = (...args: any[]) => resolve(__dirname, ...args)
 
 export default <Module>function docusAppModule() {
-  const { nuxt } = this
+  const { nuxt, addPlugin } = this
 
   nuxt.options.layouts.default = r('layouts/default.vue')
 
@@ -19,5 +19,10 @@ export default <Module>function docusAppModule() {
         component: r('pages/_.vue')
       })
     }
+  })
+
+  addPlugin({
+    src: resolve(__dirname, '../../templates/plugin.js'),
+    filename: 'docus/index.js'
   })
 }

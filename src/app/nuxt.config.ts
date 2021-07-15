@@ -43,17 +43,16 @@ export default nuxtConfig({
     '@nuxt/image',
     '@nuxtjs/composition-api/module',
     '@nuxt/postcss8',
+    '@docus/core',
     // Local modules
     r('./module'),
-    r('../settings')
+    r('../settings'),
+    r('../context')
     // r('../social-image'),
     // r('../twitter'),
     // r('../github')
   ],
-  modules: [
-    r('../i18n')
-    // r('../core/module')
-  ],
+  modules: [r('../i18n')],
 
   /**
    * Build configs
@@ -71,11 +70,11 @@ export default nuxtConfig({
         'theme-colors',
         'cookie',
         'js-cookie',
-        'property-information',
         'clipboard',
         'qrcode',
         'axios',
-        'nprogress'
+        'nprogress',
+        'property-information'
       ]
     }
   },
