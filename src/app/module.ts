@@ -38,7 +38,7 @@ export default <Module>function docusAppModule() {
 
   // Add Docus plugin
   addPlugin({
-    src: r('plugin.js'),
+    src: r('../templates/plugin.js'),
     filename: 'docus/index.js'
   })
 }
