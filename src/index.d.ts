@@ -1,4 +1,4 @@
-import { NuxtConfig, Context } from '@nuxt/types'
+import { Context } from '@nuxt/types'
 import { useDocusApi, DocusNavigation } from '@docus/core'
 
 export interface DefaultThemeSettings {
@@ -45,5 +45,3 @@ export type DocusRuntimeInstance<T = DefaultThemeSettings> = {
 export interface Colors {
   [key: string]: string | Colors
 }
-
-export declare const withDocus: (_config: NuxtConfig) => NuxtConfig

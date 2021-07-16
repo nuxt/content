@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'upath'
 import { Module } from '@nuxt/types'
 
 const r = (...args: any[]) => resolve(__dirname, ...args)

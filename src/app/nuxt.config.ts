@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'upath'
 import { nuxtConfig } from 'nuxt-extend'
 
 const r = (path: any) => resolve(__dirname, path)
@@ -64,18 +64,8 @@ export default nuxtConfig({
   vite: {
     experimentWarning: false,
     optimizeDeps: {
-      exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations', 'lokidb'],
-      include: [
-        'defu',
-        'theme-colors',
-        'cookie',
-        'js-cookie',
-        'clipboard',
-        'qrcode',
-        'axios',
-        'nprogress',
-        'property-information'
-      ]
+      exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations'],
+      include: ['defu', 'theme-colors', 'cookie', 'js-cookie', 'clipboard', 'property-information']
     }
   },
   typescript: {

@@ -1,5 +1,5 @@
-import { resolve, join, relative } from 'path'
 import fs from 'fs'
+import { resolve, join, relative } from 'upath'
 import defu from 'defu'
 import { Module } from '@nuxt/types'
 // @ts-ignore

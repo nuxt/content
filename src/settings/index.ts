@@ -1,5 +1,6 @@
-import { join, resolve } from 'path'
-import { mkdirp, remove, existsSync, writeJSONSync } from 'fs-extra'
+import fs from 'fs/promises'
+import { existsSync } from 'fs'
+import { join, resolve } from 'upath'
 import clearModule from 'clear-module'
 import chalk from 'chalk'
 import { Module } from '@nuxt/types'
@@ -80,12 +81,12 @@ export default <Module>function settingsModule() {
 
     // Replace the directory
     if (existsSync(cacheDir)) {
-      await remove(cacheDir)
+      await fs.rmdir(cacheDir, { recursive: true })
     }
-    await mkdirp(cacheDir)
+    await fs.mkdir(cacheDir, { recursive: true })
 
     // Write settings
-    writeJSONSync(jsonPath, this.$docus.settings)
+    await fs.writeFile(jsonPath, JSON.stringify(this.$docus.settings), { encoding: 'utf8' })
   })
 
   // Inject theme name into Nuxt build badge
