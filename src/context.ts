@@ -1,6 +1,6 @@
 import { createContext } from 'unctx'
-import remarkComponentsPlugin from './parser/markdown/components'
-import propsHandler from './parser/markdown/components/props'
+import remarkComponentsPlugin from './transformers/markdown/components'
+import propsHandler from './transformers/markdown/components/props'
 
 const ctx = createContext()
 

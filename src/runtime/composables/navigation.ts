@@ -1,6 +1,6 @@
 import { withTrailingSlash } from 'ufo'
 import { ref, computed } from '@nuxtjs/composition-api'
-import { DocusNavigationGetParameters, NavItem } from '../../../types'
+import { DocusNavigationGetParameters, NavItem } from '../../types'
 import { useDocusTemplates } from './templates'
 
 /**

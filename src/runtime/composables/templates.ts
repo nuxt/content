@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import Vue from 'vue'
 import { ComputedRef } from '@nuxtjs/composition-api'
-import { DocusCurrentNav, DocusDocument } from '../../../types'
+import { DocusCurrentNav, DocusDocument } from '../../types'
 
 // TODO: remove this logic and move its to navgation generator
 export const useDocusTemplates = ({ api, state }: any, currentNav: ComputedRef<DocusCurrentNav>) => {

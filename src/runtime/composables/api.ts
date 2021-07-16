@@ -1,5 +1,5 @@
 import { joinURL } from 'ufo'
-import { NavItem } from '../../../types'
+import { NavItem } from '../../types'
 import { BaseQueryBuiler } from '../database/Query'
 
 type Content = {

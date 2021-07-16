@@ -2,10 +2,11 @@ import { IncomingMessage } from 'http'
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import { Nuxt } from '@nuxt/kit'
-import { NavItem } from '../../types'
-import list from '../runtime/nitro/api/list'
+import { NavItem } from '../types'
+import list from '../server/api/list'
 
 export async function getContents() {
+  // Nitro API
   if (typeof (globalThis as any).$fetch !== 'undefined') {
     return (globalThis as any).$fetch('/_docus/list/content')
   }

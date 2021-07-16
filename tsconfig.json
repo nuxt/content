@@ -12,6 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest", "@nuxt/types", "nuxt-i18n"]
   },
-  "include": ["src/**/*", "src/module.ts", "example", "playground", "scripts", "templates/plugin.js"],
+  "include": ["src/**/*", "src/module.ts", "example", "playground", "scripts", "src/plugin.js"],
   "exclude": ["node_modules", "dist"]
 }

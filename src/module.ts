@@ -2,16 +2,16 @@ import { defineNuxtModule, addPlugin } from '@nuxt/kit'
 import { join, resolve } from 'upath'
 import fsDriver from 'unstorage/drivers/fs'
 import memoryDriver from 'unstorage/drivers/memory'
-import { DocusOptions } from '../types'
+import { DocusOptions } from './types'
 import { setDatabaseProvide } from './runtime/database'
 import { createLokiJsDatabase } from './runtime/database/providers/lokijs'
-import { createServerMiddleware } from './runtime/nitro/compat'
-import { useNuxtIgnoreList } from './storage/ignore'
+import { createServerMiddleware } from './server/compat'
+import { getContent, getDatabase, getList } from './server/content'
+import { useNuxtIgnoreList } from './utils/ignore'
 import { mount } from './storage'
 import { useDocusContext } from './context'
 import { updateNavigation } from './navigation'
-import { processContext } from './parser/markdown'
-import { getContent, getDatabase, getList } from './runtime/nitro/content'
+import { processContext } from './transformers/markdown/utils'
 import setupTarget from './target'
 
 export default defineNuxtModule(nuxt => ({
@@ -48,7 +48,7 @@ export default defineNuxtModule(nuxt => ({
 
     // Add Docus runtime plugin
     addPlugin({
-      src: resolve(__dirname, '../templates/plugin.js'),
+      src: resolve(__dirname, './templates/plugin.js'),
       filename: 'docus/core.js',
       options: {
         apiBase: options.apiBase,

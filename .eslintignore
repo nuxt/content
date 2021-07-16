@@ -7,5 +7,5 @@ coverage
 .code
 *.iml
 package-lock.json
-templates/*
+src/templates/*
 sw.js

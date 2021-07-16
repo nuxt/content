@@ -1,5 +1,5 @@
 import { Node } from 'unist'
-import { DocusRootNode, DocusMarkdownNode } from '../../../types'
+import { DocusRootNode, DocusMarkdownNode } from '../../types'
 
 /**
  * Parses nodes for JSON structure. Attempts to drop

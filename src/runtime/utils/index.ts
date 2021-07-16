@@ -1,5 +1,5 @@
 import { VNode } from 'vue'
-import { DocusMarkdownNode } from '../../../types'
+import { DocusMarkdownNode } from '../../types'
 
 /**
  * The map between html tags and equivalent tags in Docus

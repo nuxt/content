@@ -10,6 +10,4 @@ dist
 sw.js
 .env
 
-module.d.ts
-module.js
-module.mjs
+module/

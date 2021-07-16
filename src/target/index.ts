@@ -1,5 +1,5 @@
 import { Nuxt } from '@nuxt/kit'
-import { DocusOptions } from '../../types'
+import { DocusOptions } from '../types'
 import setupStaticTarget from './static'
 import setupDevTarget from './dev'
 

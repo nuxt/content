@@ -1,4 +1,4 @@
-import { DocusRootNode, DocusMarkdownNode, Toc, TocLink } from '../../../types'
+import { DocusRootNode, DocusMarkdownNode, Toc, TocLink } from '../../types'
 import { expandTags } from '../../runtime/utils'
 import { logger } from '../../utils'
 import { flattenNode, flattenNodeText } from './utils'

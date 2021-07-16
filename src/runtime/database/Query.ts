@@ -1,4 +1,4 @@
-import { QueryBuilder, QueryBuilderParams } from '../../../types/Database'
+import { QueryBuilder, QueryBuilderParams } from '../../types/Database'
 
 export abstract class BaseQueryBuiler<T> implements QueryBuilder<T> {
   protected params: QueryBuilderParams = {

@@ -1,11 +1,18 @@
 import defu from 'defu'
-import { Toc } from '../../../../../types'
-import { generateBody } from '../../../../parser/markdown/content'
-import { generateToc } from '../../../../parser/markdown/toc'
-import { processHeading } from '../../../../parser/markdown/meta'
-import { parseFrontMatter } from '../../../../parser/markdown/fontmatter'
-import { useDocusContext } from '../../../../context'
-import { generatePosition, generateSlug, generateTitleFromSlug, generateTo, isDraft, isHidden } from './utils'
+import { Toc } from '../../types'
+import { generateBody } from './content'
+import { generateToc } from './toc'
+import { parseFrontMatter } from './fontmatter'
+import { useDocusContext } from './../../context'
+import {
+  processHeading,
+  generatePosition,
+  generateSlug,
+  generateTitleFromSlug,
+  generateTo,
+  isDraft,
+  isHidden
+} from './meta'
 
 function getPathMeta(id: string) {
   const context = useDocusContext()

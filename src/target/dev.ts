@@ -1,7 +1,7 @@
 import { Nuxt } from '@nuxt/kit'
 import { WatchEvent } from 'unstorage'
 import { updateNavigation } from '../navigation'
-import { useWebSocket } from '../runtime/nitro/socket'
+import { useWebSocket } from '../server/socket'
 import { useStorage } from '../storage'
 
 export default function setupDevTarget(options: any, nuxt: Nuxt) {

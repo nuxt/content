@@ -2,8 +2,8 @@ import fs from 'fs/promises'
 import hash from 'hasha'
 import { Nuxt } from '@nuxt/kit'
 import { join, resolve } from 'upath'
-import { getDatabase } from '../runtime/nitro/content'
-import { DocusOptions } from '../../types'
+import { getDatabase } from '../server/content'
+import { DocusOptions } from '../types'
 
 function isUrl(string: string) {
   try {
