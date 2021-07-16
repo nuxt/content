@@ -1,8 +1,8 @@
 import { Nuxt } from '@nuxt/kit'
-import { useStorage } from '../storage/storage'
+import { useStorage } from '../storage'
 import { generateNavigation } from './navigation'
 
-export async function index(nuxt: Nuxt) {
+export async function updateNavigation(nuxt: Nuxt) {
   const navigation = await generateNavigation(nuxt)
 
   const storage = useStorage()

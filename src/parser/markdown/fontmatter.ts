@@ -13,15 +13,12 @@ export function stringify(data: any, content: string = '') {
   return matter.stringify(content, data)
 }
 
-export function parseFrontMatter(file) {
+export function parseFrontMatter(file: string) {
   const { data, content, ...rest } = matter(file, { excerpt: true, excerpt_separator: '<!--more-->' })
 
   // unflatten frontmatter data
   // convert `parent.child` keys into `parent: { child: ... }`
-  const unflattenData = unflatten(data || {}, {
-    // preserve arrays and their contents as is and do not waltk through arrays
-    safe: true
-  })
+  const unflattenData: any = unflatten(data || {}, {})
 
   return {
     content,

@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -14,7 +14,11 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./dist/runtime/*": "./dist/runtime/*"
+    "./dist/runtime/*": "./dist/runtime/*",
+    "./dist/module": {
+      "require": "./module.js",
+      "import": "./module.mjs"
+    }
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -81,7 +85,8 @@
     "unist-util-visit-parents": "3.1.1",
     "unstorage": "^0.1.6",
     "upath": "^2.0.1",
-    "vue-docgen-api": "^4.40.0"
+    "vue-docgen-api": "^4.40.0",
+    "ws": "^7.5.3"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.14.5",
@@ -96,10 +101,13 @@
     "@nuxt/typescript-runtime": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@siroc/jest-preset": "latest",
+    "@types/escape-html": "^1.0.1",
+    "@types/flat": "^5.0.2",
     "@types/fs-extra": "^9.0.12",
     "@types/jest": "latest",
+    "@types/prismjs": "^1.16.6",
     "@types/unist": "^2.0.5",
-    "babel-eslint": "latest",
+    "@types/ws": "^7.4.6",
     "babel-jest": "latest",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",

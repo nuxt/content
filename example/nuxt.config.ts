@@ -5,6 +5,14 @@ import { withDocus } from '@docus/app'
 const themePath = resolve(__dirname, './theme/index.ts')
 
 export default withDocus(themePath, {
+  components: [
+    {
+      path: resolve(__dirname, 'components'),
+      prefix: '',
+      isAsync: false,
+      level: 2
+    }
+  ],
   rootDir: __dirname,
   // @ts-ignore
   vite: {
@@ -14,5 +22,5 @@ export default withDocus(themePath, {
       }
     }
   },
-  buildModules: ['@nuxt/typescript-build', '../src']
+  buildModules: ['@nuxt/typescript-build', '../src/module']
 })

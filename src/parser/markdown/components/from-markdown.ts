@@ -1,63 +1,64 @@
 import { Token } from 'micromark/dist/shared-types'
+// @ts-ignore
 import decode from 'parse-entities/decode-entity'
 
-const canContainEols = ['textDirective']
+const canContainEols = ['textComponent']
 const enter = {
-  directiveContainer: enterContainer,
-  directiveContainerSection: enterContainerSection,
-  directiveContainerDataSection: enterContainerDataSection,
-  directiveContainerAttributes: enterAttributes,
-  directiveContainerLabel: enterContainerLabel,
+  componentContainer: enterContainer,
+  componentContainerSection: enterContainerSection,
+  componentContainerDataSection: enterContainerDataSection,
+  componentContainerAttributes: enterAttributes,
+  componentContainerLabel: enterContainerLabel,
 
-  directiveLeaf: enterLeaf,
-  directiveLeafAttributes: enterAttributes,
+  componentLeaf: enterLeaf,
+  componentLeafAttributes: enterAttributes,
 
-  directiveText: enterText,
-  directiveTextSpan: enterTextSpan,
-  directiveTextAttributes: enterAttributes
+  componentText: enterText,
+  textSpan: enterTextSpan,
+  componentTextAttributes: enterAttributes
 }
 const exit = {
-  directiveContainerSectionTitle: exitContainerSectionTitle,
+  componentContainerSectionTitle: exitContainerSectionTitle,
   listUnordered: conditionalExit,
   listOrdered: conditionalExit,
   listItem: conditionalExit,
-  directiveContainerSection: exitContainerSection,
-  directiveContainerDataSection: exitContainerDataSection,
-  directiveContainer: exitContainer,
-  directiveContainerAttributeClassValue: exitAttributeClassValue,
-  directiveContainerAttributeIdValue: exitAttributeIdValue,
-  directiveContainerAttributeName: exitAttributeName,
-  directiveContainerAttributeValue: exitAttributeValue,
-  directiveContainerAttributes: exitAttributes,
-  directiveContainerLabel: exitContainerLabel,
-  directiveContainerName: exitName,
+  componentContainerSection: exitContainerSection,
+  componentContainerDataSection: exitContainerDataSection,
+  componentContainer: exitContainer,
+  componentContainerAttributeClassValue: exitAttributeClassValue,
+  componentContainerAttributeIdValue: exitAttributeIdValue,
+  componentContainerAttributeName: exitAttributeName,
+  componentContainerAttributeValue: exitAttributeValue,
+  componentContainerAttributes: exitAttributes,
+  componentContainerLabel: exitContainerLabel,
+  componentContainerName: exitName,
 
-  directiveContainerAttributeInitializerMarker() {
+  componentContainerAttributeInitializerMarker() {
     // If an attribute name follows by `=` it should be treat as string
-    const attributes = this.getData('directiveAttributes')
+    const attributes = this.getData('componentAttributes')
     attributes[attributes.length - 1][1] = ''
   },
 
-  directiveLeaf: exitToken,
-  directiveLeafAttributeClassValue: exitAttributeClassValue,
-  directiveLeafAttributeIdValue: exitAttributeIdValue,
-  directiveLeafAttributeName: exitAttributeName,
-  directiveLeafAttributeValue: exitAttributeValue,
-  directiveLeafAttributes: exitAttributes,
-  directiveLeafName: exitName,
+  componentLeaf: exitToken,
+  componentLeafAttributeClassValue: exitAttributeClassValue,
+  componentLeafAttributeIdValue: exitAttributeIdValue,
+  componentLeafAttributeName: exitAttributeName,
+  componentLeafAttributeValue: exitAttributeValue,
+  componentLeafAttributes: exitAttributes,
+  componentLeafName: exitName,
 
-  directiveText: exitToken,
-  directiveTextSpan: exitToken,
-  directiveTextAttributeClassValue: exitAttributeClassValue,
-  directiveTextAttributeIdValue: exitAttributeIdValue,
-  directiveTextAttributeName: exitAttributeName,
-  directiveTextAttributeValue: exitAttributeValue,
-  directiveTextAttributes: exitAttributes,
-  directiveTextName: exitName
+  componentText: exitToken,
+  textSpan: exitToken,
+  componentTextAttributeClassValue: exitAttributeClassValue,
+  componentTextAttributeIdValue: exitAttributeIdValue,
+  componentTextAttributeName: exitAttributeName,
+  componentTextAttributeValue: exitAttributeValue,
+  componentTextAttributes: exitAttributes,
+  componentTextName: exitName
 }
 
 function enterContainer(token: Token) {
-  enterToken.call(this, 'containerDirective', token)
+  enterToken.call(this, 'containerComponent', token)
 }
 
 function exitContainer(token: Token) {
@@ -75,7 +76,7 @@ function exitContainer(token: Token) {
       return child.children
     }
     child.data = {
-      hName: 'directive-slot',
+      hName: 'component-slot',
       hProperties: {
         ...child.attributes,
         [`v-slot:${child.name}`]: ''
@@ -88,11 +89,11 @@ function exitContainer(token: Token) {
 }
 
 function enterContainerSection(token: Token) {
-  enterToken.call(this, 'directiveContainerSection', token)
+  enterToken.call(this, 'componentContainerSection', token)
 }
 
 function enterContainerDataSection(token: Token) {
-  enterToken.call(this, 'directiveContainerDataSection', token)
+  enterToken.call(this, 'componentContainerDataSection', token)
 }
 
 function exitContainerSection(token: Token) {
@@ -110,7 +111,7 @@ function exitContainerDataSection(token: Token) {
     section = this.stack[this.stack.length - 1]
   }
 
-  if (section.type === 'directiveContainerDataSection') {
+  if (section.type === 'componentContainerDataSection') {
     section.rawData = this.sliceSerialize(token)
     this.exit(token)
   }
@@ -121,15 +122,15 @@ function exitContainerSectionTitle(token: Token) {
 }
 
 function enterLeaf(token: Token) {
-  enterToken.call(this, 'leafDirective', token)
+  enterToken.call(this, 'leafComponent', token)
 }
 
 function enterTextSpan(token: Token) {
-  this.enter({ type: 'textDirective', name: 'span', attributes: {}, children: [] }, token)
+  this.enter({ type: 'textComponent', name: 'span', attributes: {}, children: [] }, token)
 }
 
 function enterText(token: Token) {
-  enterToken.call(this, 'textDirective', token)
+  enterToken.call(this, 'textComponent', token)
 }
 
 function enterToken(type, token) {
@@ -141,7 +142,7 @@ function exitName(token: Token) {
 }
 
 function enterContainerLabel(token: Token) {
-  this.enter({ type: 'paragraph', data: { directiveLabel: true }, children: [] }, token)
+  this.enter({ type: 'paragraph', data: { componentLabel: true }, children: [] }, token)
 }
 
 function exitContainerLabel(token: Token) {
@@ -149,20 +150,20 @@ function exitContainerLabel(token: Token) {
 }
 
 function enterAttributes() {
-  this.setData('directiveAttributes', [])
+  this.setData('componentAttributes', [])
   this.buffer() // Capture EOLs
 }
 
 function exitAttributeIdValue(token: Token) {
-  this.getData('directiveAttributes').push(['id', decodeLight(this.sliceSerialize(token))])
+  this.getData('componentAttributes').push(['id', decodeLight(this.sliceSerialize(token))])
 }
 
 function exitAttributeClassValue(token: Token) {
-  this.getData('directiveAttributes').push(['class', decodeLight(this.sliceSerialize(token))])
+  this.getData('componentAttributes').push(['class', decodeLight(this.sliceSerialize(token))])
 }
 
 function exitAttributeValue(token: Token) {
-  const attributes = this.getData('directiveAttributes')
+  const attributes = this.getData('componentAttributes')
   attributes[attributes.length - 1][1] = decodeLight(this.sliceSerialize(token))
 }
 
@@ -171,11 +172,11 @@ function exitAttributeName(token: Token) {
   // references can’t exist.
 
   // Use `true` as attrubute default value to solve issue of attributes without value (example `:block{attr1 attr2}`)
-  this.getData('directiveAttributes').push([this.sliceSerialize(token), true])
+  this.getData('componentAttributes').push([this.sliceSerialize(token), true])
 }
 
 function exitAttributes() {
-  const attributes = this.getData('directiveAttributes')
+  const attributes = this.getData('componentAttributes')
   const cleaned: any = {}
   let index = -1
   let attribute
@@ -190,7 +191,7 @@ function exitAttributes() {
     }
   }
 
-  this.setData('directiveAttributes')
+  this.setData('componentAttributes')
   this.resume() // Drop EOLs
 
   let stackTop = this.stack[this.stack.length - 1]

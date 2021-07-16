@@ -8,3 +8,8 @@ node_modules
 coverage
 dist
 sw.js
+.env
+
+module.d.ts
+module.js
+module.mjs

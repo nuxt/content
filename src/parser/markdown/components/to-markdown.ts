@@ -1,7 +1,11 @@
+// @ts-ignore
 import encode from 'stringify-entities/light'
 import visit from 'unist-util-visit-parents'
+// @ts-ignore
 import flow from 'mdast-util-to-markdown/lib/util/container-flow'
+// @ts-ignore
 import phrasing from 'mdast-util-to-markdown/lib/util/container-phrasing'
+// @ts-ignore
 import checkQuote from 'mdast-util-to-markdown/lib/util/check-quote'
 
 const own = {}.hasOwnProperty
@@ -12,11 +16,11 @@ const shortcut = /^[^\t\n\r "#'.<=>`}]+$/
 const unsafe = [
   {
     character: '\r',
-    inConstruct: ['leafDirectiveLabel', 'containerDirectiveLabel']
+    inConstruct: ['leafComponentLabel', 'containerComponentLabel']
   },
   {
     character: '\n',
-    inConstruct: ['leafDirectiveLabel', 'containerDirectiveLabel']
+    inConstruct: ['leafComponentLabel', 'containerComponentLabel']
   },
   {
     before: '[^:]',
@@ -28,20 +32,20 @@ const unsafe = [
 ]
 
 const handlers = {
-  containerDirective: handleDirective,
-  leafDirective: handleDirective,
-  textDirective: handleDirective
+  containerComponent: handleComponent,
+  leafComponent: handleComponent,
+  textComponent: handleComponent
 }
 
-handleDirective.peek = peekDirective
+handleComponent.peek = peekComponent
 
-function handleDirective(node, _, context) {
+function handleComponent(node, _, context) {
   const prefix = fence(node)
   const exit = context.enter(node.type)
   let value = prefix + (node.name || '') + label(node, context) + attributes(node, context)
   let subvalue
 
-  if (node.type === 'containerDirective') {
+  if (node.type === 'containerComponent') {
     subvalue = content(node, context)
     if (subvalue) value += '\n' + subvalue
     value += '\n' + prefix
@@ -51,15 +55,15 @@ function handleDirective(node, _, context) {
   return value
 }
 
-function peekDirective() {
+function peekComponent() {
   return ':'
 }
 
 function label(node, context) {
   let label = node
 
-  if (node.type === 'containerDirective') {
-    if (!inlineDirectiveLabel(node)) return ''
+  if (node.type === 'containerComponent') {
+    if (!inlineComponentLabel(node)) return ''
     label = node.children[0]
   }
 
@@ -73,7 +77,7 @@ function label(node, context) {
 
 function attributes(node, context) {
   const quote = checkQuote(context)
-  const subset = node.type === 'textDirective' ? [quote] : [quote, '\n', '\r']
+  const subset = node.type === 'textComponent' ? [quote] : [quote, '\n', '\r']
   const attrs = node.attributes || {}
   const values = []
   let id
@@ -127,22 +131,22 @@ function attributes(node, context) {
 }
 
 function content(node, context) {
-  const content = inlineDirectiveLabel(node) ? Object.assign({}, node, { children: node.children.slice(1) }) : node
+  const content = inlineComponentLabel(node) ? Object.assign({}, node, { children: node.children.slice(1) }) : node
 
   return flow(content, context)
 }
 
-function inlineDirectiveLabel(node) {
-  return node.children && node.children[0] && node.children[0].data && node.children[0].data.directiveLabel
+function inlineComponentLabel(node) {
+  return node.children && node.children[0] && node.children[0].data && node.children[0].data.componentLabel
 }
 
 function fence(node) {
   let size = 0
 
-  if (node.type === 'containerDirective') {
-    visit(node, 'containerDirective', onvisit)
+  if (node.type === 'containerComponent') {
+    visit(node, 'containerComponent', onvisit)
     size += 3
-  } else if (node.type === 'leafDirective') {
+  } else if (node.type === 'leafComponent') {
     size = 2
   } else {
     size = 1
@@ -155,7 +159,7 @@ function fence(node) {
     let nesting = 0
 
     while (index--) {
-      if (parents[index].type === 'containerDirective') {
+      if (parents[index].type === 'containerComponent') {
         nesting++
       }
     }

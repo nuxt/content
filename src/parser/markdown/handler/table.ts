@@ -1,12 +1,13 @@
+import type { H } from 'mdast-util-to-hast'
 import { position } from 'unist-util-position'
 import { wrap } from 'mdast-util-to-hast/lib/wrap'
 import { all } from 'mdast-util-to-hast/lib/traverse'
 
-export default function table(h, node) {
+export default function table(h: H, node: any) {
   const rows = node.children
   const align = node.align || []
 
-  const result = rows.map((row, index) => {
+  const result = rows.map((row: any, index: number) => {
     const childres = row.children
     const name = index === 0 ? 'prose-th' : 'prose-td'
     let pos = node.align ? align.length : childres.length

@@ -1,3 +1,4 @@
+// @ts-ignore
 import markdownLineEndingOrSpace from 'micromark/dist/character/markdown-line-ending-or-space'
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
 import { Codes } from './constants'
@@ -35,11 +36,11 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       throw new Error('expected correct previous')
     }
 
-    effects.enter('directiveText')
-    effects.enter('directiveTextMarker')
+    effects.enter('componentText')
+    effects.enter('componentTextMarker')
     effects.consume(code)
-    effects.exit('directiveTextMarker')
-    return createName.call(self, effects, afterName, nok, 'directiveTextName')
+    effects.exit('componentTextMarker')
+    return createName.call(self, effects, afterName, nok, 'componentTextName')
   }
 
   function afterName(code: number) {
@@ -81,14 +82,14 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
     if (!markdownLineEndingOrSpace(code) && code !== null && ![Codes.closingSquareBracket].includes(code)) {
       return nok
     }
-    effects.exit('directiveText')
+    effects.exit('componentText')
     return ok(code)
   }
 }
 
 function tokenizeLabel(effects: Effects, ok: Okay, nok: NotOkay) {
   // Always a `[`
-  return createLabel(effects, ok, nok, 'directiveTextLabel', 'directiveTextLabelMarker', 'directiveTextLabelString')
+  return createLabel(effects, ok, nok, 'componentTextLabel', 'componentTextLabelMarker', 'componentTextLabelString')
 }
 
 function tokenizeAttributes(effects: Effects, ok: Okay, nok: NotOkay) {
@@ -97,17 +98,17 @@ function tokenizeAttributes(effects: Effects, ok: Okay, nok: NotOkay) {
     effects,
     ok,
     nok,
-    'directiveTextAttributes',
-    'directiveTextAttributesMarker',
-    'directiveTextAttribute',
-    'directiveTextAttributeId',
-    'directiveTextAttributeClass',
-    'directiveTextAttributeName',
-    'directiveTextAttributeInitializerMarker',
-    'directiveTextAttributeValueLiteral',
-    'directiveTextAttributeValue',
-    'directiveTextAttributeValueMarker',
-    'directiveTextAttributeValueData'
+    'componentTextAttributes',
+    'componentTextAttributesMarker',
+    'componentTextAttribute',
+    'componentTextAttributeId',
+    'componentTextAttributeClass',
+    'componentTextAttributeName',
+    'componentTextAttributeInitializerMarker',
+    'componentTextAttributeValueLiteral',
+    'componentTextAttributeValue',
+    'componentTextAttributeValueMarker',
+    'componentTextAttributeValueData'
   )
 }
 

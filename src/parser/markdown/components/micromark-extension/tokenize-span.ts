@@ -12,7 +12,7 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       throw new Error('expected `[`')
     }
 
-    effects.enter('directiveTextSpan')
+    effects.enter('textSpan')
     return effects.attempt(label, exit, nok)(code)
   }
 
@@ -21,7 +21,7 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
     if (code === Codes.openingParentheses) {
       return nok(code)
     }
-    effects.exit('directiveTextSpan')
+    effects.exit('textSpan')
     return ok(code)
   }
 }
@@ -30,7 +30,7 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
  * Labels starts with `[` and ends with `]`
  */
 function tokenizeLabel(effects: Effects, ok: Okay, nok: NotOkay) {
-  return createLabel(effects, ok, nok, 'directiveTextLabel', 'directiveTextLabelMarker', 'directiveTextLabelString')
+  return createLabel(effects, ok, nok, 'componentTextLabel', 'componentTextLabelMarker', 'componentTextLabelString')
 }
 
 export default {

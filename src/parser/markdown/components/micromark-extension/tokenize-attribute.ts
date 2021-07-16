@@ -1,4 +1,5 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import markdownLineEnding from 'micromark/dist/character/markdown-line-ending'
 import { Codes } from './constants'
 import createAttributes from './factory-attributes'
@@ -7,9 +8,9 @@ const attributes: any = { tokenize: tokenizeAttributes, partial: true }
 
 const validEvents = [
   /**
-   * Span Directive
+   * Span
    */
-  'directiveTextSpan',
+  'textSpan',
   /**
    * Bold & Italic
    */
@@ -54,17 +55,17 @@ function tokenizeAttributes(effects: Effects, ok: Okay, nok: NotOkay) {
     effects,
     ok,
     nok,
-    'directiveTextAttributes',
-    'directiveTextAttributesMarker',
-    'directiveTextAttribute',
-    'directiveTextAttributeId',
-    'directiveTextAttributeClass',
-    'directiveTextAttributeName',
-    'directiveTextAttributeInitializerMarker',
-    'directiveTextAttributeValueLiteral',
-    'directiveTextAttributeValue',
-    'directiveTextAttributeValueMarker',
-    'directiveTextAttributeValueData'
+    'componentTextAttributes',
+    'componentTextAttributesMarker',
+    'componentTextAttribute',
+    'componentTextAttributeId',
+    'componentTextAttributeClass',
+    'componentTextAttributeName',
+    'componentTextAttributeInitializerMarker',
+    'componentTextAttributeValueLiteral',
+    'componentTextAttributeValue',
+    'componentTextAttributeValueMarker',
+    'componentTextAttributeValueData'
   )
 }
 

@@ -1,8 +1,11 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import asciiAlpha from 'micromark/dist/character/ascii-alpha'
+// @ts-ignore
 import asciiAlphanumeric from 'micromark/dist/character/ascii-alphanumeric'
 
 export default function createName(effects: Effects, ok: Okay, nok: NotOkay, nameType: string) {
+  // @ts-ignore
   const self = this
 
   return start

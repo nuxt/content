@@ -9,11 +9,11 @@ export function processHeading(body: DocusRootNode) {
     // top level `text` can be ignored
     .filter(node => node.type !== 'text')
 
-  if (children.length && expandTags(['h1']).includes(children[0].tag)) {
+  if (children.length && expandTags(['h1']).includes(children[0].tag || '')) {
     /**
      * Remove node
      */
-    const node = children.shift()
+    const node = children.shift()!
 
     /**
      * Remove anchor link from H1 tag
@@ -28,16 +28,16 @@ export function processHeading(body: DocusRootNode) {
     /**
      * Inject class
      */
-    node.props = defu(node.props, {
+    node.props = defu(node.props || {}, {
       class: 'd-heading-title'
     })
   }
 
-  if (children.length && expandTags(['p']).includes(children[0].tag)) {
+  if (children.length && expandTags(['p']).includes(children[0].tag || '')) {
     /**
      * Remove node
      */
-    const node = children.shift()
+    const node = children.shift()!
 
     /**
      * Generate description
@@ -47,21 +47,21 @@ export function processHeading(body: DocusRootNode) {
     /**
      * Inject class
      */
-    node.props = defu(node.props, {
+    node.props = defu(node.props || {}, {
       class: 'd-heading-description'
     })
   }
 
-  if (children.length && expandTags(['hr']).includes(children[0].tag)) {
+  if (children.length && expandTags(['hr']).includes(children[0].tag || '')) {
     /**
      * Remove node
      */
-    const node = children.shift()
+    const node = children.shift()!
 
     /**
      * Inject class
      */
-    node.props = defu(node.props, {
+    node.props = defu(node.props || {}, {
       class: 'd-heading-hr'
     })
   }

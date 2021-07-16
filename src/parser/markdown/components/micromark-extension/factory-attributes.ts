@@ -1,10 +1,17 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import asciiAlpha from 'micromark/dist/character/ascii-alpha'
+// @ts-ignore
 import asciiAlphanumeric from 'micromark/dist/character/ascii-alphanumeric'
+// @ts-ignore
 import markdownLineEnding from 'micromark/dist/character/markdown-line-ending'
+// @ts-ignore
 import markdownLineEndingOrSpace from 'micromark/dist/character/markdown-line-ending-or-space'
+// @ts-ignore
 import markdownSpace from 'micromark/dist/character/markdown-space'
+// @ts-ignore
 import createWhitespace from 'micromark/dist/tokenize/factory-whitespace'
+// @ts-ignore
 import createSpace from 'micromark/dist/tokenize/factory-space'
 
 export default function createAttributes(

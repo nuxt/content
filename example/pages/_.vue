@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="w-1/4">
       <ul>
-        <li v-for="link in navigation.body.en" :key="link.id">
+        <li v-for="link in navigation.en" :key="link.id">
           <NuxtLink :to="link.to">{{ link.title }}</NuxtLink>
           <ul v-if="link.children">
             <li v-for="child in link.children" :key="child.id">
@@ -13,7 +13,7 @@
       </ul>
     </div>
     <div class="w-3/4 px-4">
-      <DocusContent :document="page.body" />
+      <DocusContent :document="page" />
     </div>
   </div>
 </template>

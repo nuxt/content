@@ -1,6 +1,7 @@
 import { withoutTrailingSlash, joinURL } from 'ufo'
 import { $fetch } from 'ohmyfetch';
 import Query from '~docus-core/database/providers/<%= options.provider %>/Query';
+/* <% if (options.watch) { %> */ import { useWebSocket } from '~docus-core/composables/websocket' /* <% } %> */
 
 const createQuery = (options) => (path, opts) => {
   const to = typeof path === 'string' ? path : ''
@@ -34,4 +35,6 @@ export function getContent(ctx) {
  **/
 export default async function (ctx, inject) {
   inject('content', getContent(ctx))
+  /* <% if (options.watch) { %> */
+  if (process.client) { useWebSocket('<%= options.apiBase %>').connect() }/* <% } %> */
 }

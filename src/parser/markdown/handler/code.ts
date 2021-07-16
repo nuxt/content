@@ -1,3 +1,4 @@
+import type { H } from 'mdast-util-to-hast'
 import Prism from 'prismjs'
 import { detab } from 'detab'
 import { u } from 'unist-builder'
@@ -59,14 +60,14 @@ const prismHighlighter = (rawCode, language, { lineHighlights, fileName }, { h, 
   return h(node.position, 'prose-code', {}, childs)
 }
 
-const toAst = (h, node) => highlighted => {
+const toAst = (h: H, node: any) => highlighted => {
   if (typeof highlighted === 'string') {
     return h(node, 'prose-code', {}, [u('raw', highlighted)])
   }
   return highlighted
 }
 
-export default highlighter => (h, node) => {
+export default highlighter => (h: H, node: any) => {
   const lang = node.lang + ' ' + (node.meta || '')
   const { language, lineHighlights, fileName } = parseThematicBlock(lang)
   const code = node.value ? detab(node.value + '\n') : ''

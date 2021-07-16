@@ -5,12 +5,12 @@ import { flattenNode, flattenNodeText } from './utils'
 
 const TOC_TAGS = ['h2', 'h3', 'h4', 'h5', 'h6']
 
-const TOC_TAGS_DEPTH = expandTags(['h2', 'h3', 'h4']).reduce((tags, tag) => {
+const TOC_TAGS_DEPTH = expandTags(['h2', 'h3', 'h4']).reduce((tags: any, tag) => {
   tags[tag] = Number(tag.charAt(tag.length - 1))
   return tags
 }, {})
 
-const getHeaderDepth = (node: DocusMarkdownNode): number => TOC_TAGS_DEPTH[node.tag]
+const getHeaderDepth = (node: DocusMarkdownNode): number => TOC_TAGS_DEPTH[node.tag as string]
 
 const getTocTags = (depth: number): string[] => {
   if (depth < 1 || depth > 5) {
@@ -33,11 +33,11 @@ function nestHeaders(headers: TocLink[]): TocLink[] {
       parent = header
       toc.push(header)
     } else {
-      parent.children.push(header)
+      parent.children!.push(header)
     }
   })
   toc.forEach(header => {
-    if (header.children.length) {
+    if (header.children?.length) {
       header.children = nestHeaders(header.children)
     } else {
       delete header.children

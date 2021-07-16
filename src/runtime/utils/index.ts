@@ -1,4 +1,5 @@
 import { VNode } from 'vue'
+import { DocusMarkdownNode } from '../../../types'
 
 /**
  * The map between html tags and equivalent tags in Docus
@@ -44,8 +45,8 @@ export function isTag(vnode: any, tag: string): boolean {
  * @param vnode Virtuel node from Vue virtual DOM
  * @returns Children of given node
  */
-export function nodeChildren(vnode: VNode) {
-  return vnode.children || vnode?.componentOptions?.children || (vnode as any)?.asyncMeta?.children
+export function nodeChildren(node: VNode | DocusMarkdownNode) {
+  return node.children || (node as VNode)?.componentOptions?.children || (node as any)?.asyncMeta?.children
 }
 
 /**
@@ -53,21 +54,26 @@ export function nodeChildren(vnode: VNode) {
  * @param vnode Virtuel node from Vue virtual DOM
  * @returns text content of given node
  */
-export function nodeTextContent(vnode: VNode): string {
+export function nodeTextContent(node: VNode | DocusMarkdownNode): string {
   // Return empty string is vnode is falsy
-  if (!vnode) return ''
+  if (!node) return ''
 
-  if (Array.isArray(vnode)) {
-    return vnode.map(nodeTextContent).join('')
+  if (Array.isArray(node)) {
+    return node.map(nodeTextContent).join('')
   }
 
-  // Check for text node
-  if (vnode.text) {
-    return vnode.text
+  // Check for text markdown node
+  if ((node as DocusMarkdownNode).type === 'text') {
+    return (node as DocusMarkdownNode).value!
+  }
+
+  // Check for text vnode
+  if ((node as VNode).text) {
+    return (node as VNode).text!
   }
 
   // Walk through node children
-  const children = nodeChildren(vnode)
+  const children = nodeChildren(node)
   if (Array.isArray(children)) {
     return children.map(nodeTextContent).join('')
   }

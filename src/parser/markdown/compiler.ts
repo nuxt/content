@@ -35,9 +35,9 @@ function parseAsJSON(node: Node, parent: DocusMarkdownNode[]) {
     }
 
     /**
-     * rename directive slots tags name
+     * rename component slots tags name
      */
-    if (node.tagName === 'directive-slot') {
+    if (node.tagName === 'component-slot') {
       node.tagName = 'template'
       node.content = { ...node }
     }

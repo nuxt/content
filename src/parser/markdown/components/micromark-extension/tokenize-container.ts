@@ -1,8 +1,13 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import markdownSpace from 'micromark/dist/character/markdown-space'
+// @ts-ignore
 import asciiAlpha from 'micromark/dist/character/ascii-alpha'
+// @ts-ignore
 import markdownLineEnding from 'micromark/dist/character/markdown-line-ending'
+// @ts-ignore
 import createSpace from 'micromark/dist/tokenize/factory-space'
+// @ts-ignore
 import sizeChunks from 'micromark/dist/util/size-chunks'
 import createAttributes from './factory-attributes'
 import createLabel from './factory-label'
@@ -57,9 +62,9 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
   function start(code: number) {
     /* istanbul ignore if - handled by mm */
     if (code !== Codes.colon) throw new Error('expected `:`')
-    effects.enter('directiveContainer')
-    effects.enter('directiveContainerFence')
-    effects.enter('directiveContainerSequence')
+    effects.enter('componentContainer')
+    effects.enter('componentContainerFence')
+    effects.enter('componentContainerSequence')
     return sequenceOpen(code)
   }
 
@@ -71,8 +76,8 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
 
     function closingPrefixAfter(code: number) {
       sectionIndentSize = linePrefixSize(self.events)
-      effects.exit('directiveContainerSection')
-      effects.enter('directiveContainerSectionSequence')
+      effects.exit('componentContainerSection')
+      effects.enter('componentContainerSectionSequence')
       return closingSectionSequence(code)
     }
 
@@ -89,25 +94,25 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       // non ascii chars are invalid
       if (!asciiAlpha(code)) return nok(code)
 
-      effects.exit('directiveContainerSectionSequence')
+      effects.exit('componentContainerSectionSequence')
       return createSpace(effects, ok, 'whitespace')(code)
     }
   }
 
   function sectionOpen(code: number) {
-    effects.enter('directiveContainerSection')
+    effects.enter('componentContainerSection')
 
     if (markdownLineEnding(code)) {
       return createSpace(effects, lineStart, 'whitespace')(code)
     }
 
-    effects.enter('directiveContainerSectionTitle')
+    effects.enter('componentContainerSectionTitle')
     return sectionTitle
   }
 
   function sectionTitle(code: number) {
     if (markdownLineEnding(code)) {
-      effects.exit('directiveContainerSectionTitle')
+      effects.exit('componentContainerSectionTitle')
       return createSpace(effects, lineStart, 'linePrefix', 4)(code)
     }
     effects.consume(code)
@@ -125,8 +130,8 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       return nok(code)
     }
 
-    effects.exit('directiveContainerSequence')
-    return createName.call(self, effects, afterName, nok, 'directiveContainerName')(code)
+    effects.exit('componentContainerSequence')
+    return createName.call(self, effects, afterName, nok, 'componentContainerName')(code)
   }
 
   function afterName(code: number) {
@@ -144,10 +149,10 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
   }
 
   function openAfter(code: number) {
-    effects.exit('directiveContainerFence')
+    effects.exit('componentContainerFence')
 
     if (code === null) {
-      effects.exit('directiveContainer')
+      effects.exit('componentContainer')
       return ok(code)
     }
 
@@ -163,16 +168,16 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
 
   function contentStart(code: number) {
     if (code === null) {
-      effects.exit('directiveContainer')
+      effects.exit('componentContainer')
       return ok(code)
     }
 
-    effects.enter('directiveContainerContent')
+    effects.enter('componentContainerContent')
 
     if (!containerSequenceSize.length && !data.isClosed() && (code === Codes.dash || markdownSpace(code))) {
       function _chunkStart(code) {
         data.close()
-        effects.enter('directiveContainerSection')
+        effects.enter('componentContainerSection')
 
         return lineStart(code)
       }
@@ -181,7 +186,7 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       data.close()
     }
 
-    effects.enter('directiveContainerSection')
+    effects.enter('componentContainerSection')
     return lineStart(code)
   }
 
@@ -253,9 +258,9 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
   }
 
   function after(code: number) {
-    effects.exit('directiveContainerSection')
-    effects.exit('directiveContainerContent')
-    effects.exit('directiveContainer')
+    effects.exit('componentContainerSection')
+    effects.exit('componentContainerContent')
+    effects.exit('componentContainer')
     return ok(code)
   }
 
@@ -265,8 +270,8 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
     return createSpace(effects, closingPrefixAfter, 'linePrefix', 4)
 
     function closingPrefixAfter(code: number) {
-      effects.enter('directiveContainerFence')
-      effects.enter('directiveContainerSequence')
+      effects.enter('componentContainerFence')
+      effects.enter('componentContainerSequence')
       return closingSequence(code)
     }
 
@@ -286,13 +291,13 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
 
       // it is important to match sequence
       if (size !== sizeOpen) return nok(code)
-      effects.exit('directiveContainerSequence')
+      effects.exit('componentContainerSequence')
       return createSpace(effects, closingSequenceEnd, 'whitespace')(code)
     }
 
     function closingSequenceEnd(code: number) {
       if (code === null || markdownLineEnding(code)) {
-        effects.exit('directiveContainerFence')
+        effects.exit('componentContainerFence')
         return ok(code)
       }
 
@@ -362,10 +367,10 @@ function tokenizeData(effects, ok) {
         sectionIndentSize = linePrefixSize(self.events)
       }
       if (sectionState === MarkDownDataSectionState.Open) {
-        effects.exit('directiveContainerDataSection')
+        effects.exit('componentContainerDataSection')
       }
 
-      effects.enter('directiveContainerSectionSequence')
+      effects.enter('componentContainerSectionSequence')
       return closingSectionSequence(code)
     }
 
@@ -381,18 +386,18 @@ function tokenizeData(effects, ok) {
       if (sectionIndentSize !== initialPrefix) return nok(code)
       if (!markdownLineEnding(code)) return nok(code)
 
-      effects.exit('directiveContainerSectionSequence')
+      effects.exit('componentContainerSectionSequence')
       return createSpace(effects, ok, 'whitespace')(code)
     }
   }
 
   function sectionOpen(code: number) {
     if (sectionState === MarkDownDataSectionState.NotSeen) {
-      effects.enter('directiveContainerDataSection')
+      effects.enter('componentContainerDataSection')
       sectionState = MarkDownDataSectionState.Open
     } else {
       sectionState = MarkDownDataSectionState.Closed
-      effects.enter('directiveContainerSection')
+      effects.enter('componentContainerSection')
     }
 
     return createSpace(effects, ok, 'whitespace')(code)
@@ -405,9 +410,9 @@ function tokenizeLabel(effects: Effects, ok: Okay, nok: NotOkay) {
     effects,
     ok,
     nok,
-    'directiveContainerLabel',
-    'directiveContainerLabelMarker',
-    'directiveContainerLabelString',
+    'componentContainerLabel',
+    'componentContainerLabelMarker',
+    'componentContainerLabelString',
     true
   )
 }
@@ -418,17 +423,17 @@ function tokenizeAttributes(effects: Effects, ok: Okay, nok: NotOkay) {
     effects,
     ok,
     nok,
-    'directiveContainerAttributes',
-    'directiveContainerAttributesMarker',
-    'directiveContainerAttribute',
-    'directiveContainerAttributeId',
-    'directiveContainerAttributeClass',
-    'directiveContainerAttributeName',
-    'directiveContainerAttributeInitializerMarker',
-    'directiveContainerAttributeValueLiteral',
-    'directiveContainerAttributeValue',
-    'directiveContainerAttributeValueMarker',
-    'directiveContainerAttributeValueData',
+    'componentContainerAttributes',
+    'componentContainerAttributesMarker',
+    'componentContainerAttribute',
+    'componentContainerAttributeId',
+    'componentContainerAttributeClass',
+    'componentContainerAttributeName',
+    'componentContainerAttributeInitializerMarker',
+    'componentContainerAttributeValueLiteral',
+    'componentContainerAttributeValue',
+    'componentContainerAttributeValueMarker',
+    'componentContainerAttributeValueData',
     true
   )
 }

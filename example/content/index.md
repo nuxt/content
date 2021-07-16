@@ -1,4 +1,7 @@
----
-title: Home
----
-# Hello :)
+
+# Hello **:)**
+
+
+A simple paragraph with [span]
+
+:props{of="DocusContent"}

@@ -1,7 +1,6 @@
 import { createContext } from 'unctx'
-import directive from './parser/markdown/directive'
-import remarkComponentsPlugin from './parser/markdown/directive/components'
-import propsHandler from './parser/markdown/directive/props'
+import remarkComponentsPlugin from './parser/markdown/components'
+import propsHandler from './parser/markdown/components/props'
 
 const ctx = createContext()
 
@@ -20,7 +19,6 @@ ctx.set({
         props: propsHandler
       },
       remarkPlugins: [
-        { instance: directive, name: 'directive' },
         { instance: remarkComponentsPlugin, name: 'components', key: 'components' },
         'remark-emoji',
         'remark-squeeze-paragraphs',

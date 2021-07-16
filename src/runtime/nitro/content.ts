@@ -1,4 +1,4 @@
-import { useStorage } from '../../storage/storage'
+import { useStorage } from '../../storage'
 import { DatabaseProvider } from '../database'
 import { createLokiJsDatabase } from '../database/providers/lokijs'
 import { omit } from '../utils/object'

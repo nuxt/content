@@ -7,9 +7,9 @@ import list from '../runtime/nitro/api/list'
 
 export async function getContents() {
   if (typeof (globalThis as any).$fetch !== 'undefined') {
-    return (globalThis as any).$fetch('/_docus/list')
+    return (globalThis as any).$fetch('/_docus/list/content')
   }
-  const { items } = await list({ url: '' } as IncomingMessage)
+  const { items } = await list({ url: '/content' } as IncomingMessage)
   return items
 }
 

@@ -1,8 +1,11 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import createSpace from 'micromark/dist/tokenize/factory-space'
+// @ts-ignore
 import codeFenced from 'micromark/dist/tokenize/code-fenced.js'
+// @ts-ignore
 import prefixSize from 'micromark/dist/util/prefix-size'
-import directiveContainer from './tokenize-directive-container'
+import componentContainer from './tokenize-container'
 import { Codes } from './constants'
 
 function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
@@ -18,7 +21,7 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
       case Codes.backTick:
         return codeFenced.tokenize.call(self, effects, ok, nok)(code)
       case Codes.colon:
-        return directiveContainer.tokenize.call(self, effects, ok, nok)(code)
+        return componentContainer.tokenize.call(self, effects, ok, nok)(code)
       default:
         return nok(code)
     }

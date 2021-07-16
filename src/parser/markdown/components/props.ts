@@ -1,20 +1,15 @@
-import path from 'path'
 import fs from 'fs'
+import path from 'upath'
 import { parse } from 'vue-docgen-api'
 import { setNodeData } from '../utils'
 
 const directories = [
   path.resolve('./docs/components'), // components directory of project docs
   path.resolve('./components'), // components directory of project docs
-  path.resolve(__dirname, '../../../../defaultTheme') // components directory of Docus
+  path.resolve(__dirname, '../../../runtime/components') // components directory of Docus
 ]
 
-function fileName(file) {
-  if (!file.match(/\.vue$/)) {
-    return file + '.vue'
-  }
-  return file
-}
+const fileName = (file: string) => (file.match(/\.vue$/) ? file : file + '.vue')
 
 function resolvePath(file: string) {
   file = fileName(file)

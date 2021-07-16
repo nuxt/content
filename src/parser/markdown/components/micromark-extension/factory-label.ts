@@ -1,9 +1,10 @@
 import { Effects, Okay, NotOkay } from 'micromark/dist/shared-types'
+// @ts-ignore
 import markdownLineEnding from 'micromark/dist/character/markdown-line-ending'
 
 // This is a fork of:
 // <https://github.com/micromark/micromark/blob/bf53bf9/lib/tokenize/factory-label.js>
-// to allow empty labels, balanced brackets (such as for nested directives),
+// to allow empty labels, balanced brackets (such as for nested components),
 // text instead of strings, and optionally disallows EOLs.
 
 // eslint-disable-next-line max-params
