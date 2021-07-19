@@ -69,8 +69,8 @@ export default <Module>function docusI18n() {
 
   nuxt.hook('build:before', () => {
     addPlugin({
-      src: r('../templates/docus.js'),
-      filename: 'docus-i18n.js'
+      src: r('../templates/i18n.js'),
+      filename: 'docus/i18n.js'
     })
 
     requireModule('nuxt-i18n')
