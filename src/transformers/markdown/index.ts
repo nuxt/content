@@ -15,7 +15,7 @@ import {
 } from './meta'
 
 function getPathMeta(id: string) {
-  const context = useDocusContext()
+  const context = useDocusContext()!
   const { codes = [], defaultLocale = 'en' } = context.locales
   const regexp = new RegExp(`^/(${codes.join('|')})`, 'gi')
   const paths = id
@@ -47,7 +47,7 @@ function getPathMeta(id: string) {
 }
 
 export default async function markdown(id: string, file: string) {
-  const options = useDocusContext().transformers.markdown
+  const options = useDocusContext()!.transformers.markdown
   const { content, data, ...rest } = await parseFrontMatter(file)
 
   // Compile markdown from file content to JSON

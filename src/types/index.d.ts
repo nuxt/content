@@ -1,3 +1,4 @@
+export * from './shim.d'
 export * from './Markdown'
 export * from './Database'
 export * from './Navigation'

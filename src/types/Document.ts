@@ -1,4 +1,4 @@
-import { MetaInfo } from 'vue-meta'
+import type { MetaInfo } from 'vue-meta'
 import { DocusRootNode } from './Markdown'
 
 export interface TocLink {

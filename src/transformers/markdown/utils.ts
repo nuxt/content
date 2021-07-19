@@ -2,25 +2,33 @@ import { camelCase } from 'scule'
 import jiti from 'jiti'
 import hasha from 'hasha'
 import { logger } from '../../utils'
+import { DocusContext } from '../../types/Context'
+import { DocusMarkdownNode } from '../../types'
 
-export function flattenNodeText(node) {
+export function flattenNodeText(node: DocusMarkdownNode): string {
   if (node.type === 'text') {
-    return node.value
+    return node.value || ''
   } else {
-    return node.children.reduce((text, child) => {
+    return (node.children || []).reduce((text, child) => {
       return text.concat(flattenNodeText(child))
     }, '')
   }
 }
 
-export function flattenNode(node, maxDepth = 2, _depth = 0) {
+export function flattenNode(node: DocusMarkdownNode, maxDepth = 2, _depth = 0): Array<DocusMarkdownNode> {
   if (!Array.isArray(node.children) || _depth === maxDepth) {
     return [node]
   }
-  return [node, ...node.children.reduce((acc, child) => acc.concat(flattenNode(child, maxDepth, _depth + 1)), [])]
+  return [
+    node,
+    ...node.children.reduce(
+      (acc, child) => acc.concat(flattenNode(child, maxDepth, _depth + 1)),
+      [] as Array<DocusMarkdownNode>
+    )
+  ]
 }
 
-export function setNodeData(node, name, value, pageData) {
+export function setNodeData(node: DocusMarkdownNode & { data: any }, name: string, value: any, pageData: any) {
   if (!name.startsWith(':')) {
     name = ':' + name
   }
@@ -28,8 +36,6 @@ export function setNodeData(node, name, value, pageData) {
   pageData[dataKey] = value
   node.data.hProperties[name] = dataKey
 }
-
-export const r = (...args: string[]) => resolve(__dirname, '../..', ...args)
 
 const _require = jiti(__filename)
 
@@ -60,7 +66,7 @@ const processPlugins = (type: string, markdown: any) => {
     } else if (typeof plugin === 'object') {
       instance = plugin.instance
       name = plugin.name
-      options = plugin.key ? markdown[plugin.key] : plugin.options
+      options = plugin.options || markdown[plugin.name]
     }
 
     try {
@@ -75,7 +81,10 @@ const processPlugins = (type: string, markdown: any) => {
   return plugins
 }
 
-export const processContext = ({ transformers: { markdown: options } }) => {
-  options.remarkPlugins = processPlugins('remark', options)
-  options.rehypePlugins = processPlugins('rehype', options)
+export const processContext = (context: DocusContext) => {
+  const {
+    transformers: { markdown }
+  } = context
+  markdown.remarkPlugins = processPlugins('remark', markdown)
+  markdown.rehypePlugins = processPlugins('rehype', markdown)
 }

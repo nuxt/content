@@ -31,7 +31,7 @@ export default defineNuxtModule(nuxt => ({
     nuxt.options.alias['~docus-core'] = join(__dirname, 'runtime')
 
     // Extend context
-    const context = useDocusContext()
+    const context = useDocusContext()!
     nuxt.callHook('docus:context', context)
 
     // Process/Cleanup context after augmention

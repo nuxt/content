@@ -1,8 +1,9 @@
 import { createContext } from 'unctx'
 import remarkComponentsPlugin from './transformers/markdown/components'
 import propsHandler from './transformers/markdown/components/props'
+import { DocusContext } from './types/Context'
 
-const ctx = createContext()
+const ctx = createContext<DocusContext>()
 
 ctx.set({
   locales: {
@@ -19,7 +20,7 @@ ctx.set({
         props: propsHandler
       },
       remarkPlugins: [
-        { instance: remarkComponentsPlugin, name: 'components', key: 'components' },
+        { instance: remarkComponentsPlugin, name: 'components' },
         'remark-emoji',
         'remark-squeeze-paragraphs',
         'remark-slug',

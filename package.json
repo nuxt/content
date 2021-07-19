@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -14,18 +14,24 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./dist/runtime/*": "./dist/runtime/*",
-    "./dist/module": "./dist/module.js"
+    "./module": {
+      "require": "./dist/module.js",
+      "import": "./dist/module.mjs"
+    },
+    "./node": {
+      "require": "./dist/node.js",
+      "import": "./dist/node.mjs"
+    },
+    "./runtime/*": "./dist/runtime/*"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "module.js"
+    "dist"
   ],
   "scripts": {
-    "build": "siroc build && mkdist --ext=js --src=src/templates --dist=dist/templates",
+    "build": "unbuild",
     "dev": "nuxt dev example",
     "generate": "nuxt generate example",
     "start": "nuxt start example",
@@ -97,7 +103,6 @@
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxt/typescript-runtime": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@siroc/jest-preset": "latest",
     "@types/escape-html": "^1.0.1",
     "@types/flat": "^5.0.2",
     "@types/fs-extra": "^9.0.12",
@@ -113,7 +118,7 @@
     "jest": "latest",
     "playwright": "^1.12.3",
     "prettier": "^2.3.2",
-    "siroc": "^0.12.0"
+    "unbuild": "^0.3.2"
   },
   "publishConfig": {
     "access": "public"
