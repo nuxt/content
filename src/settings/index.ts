@@ -80,9 +80,9 @@ export default <Module>function settingsModule() {
     const jsonPath = join(cacheDir, 'docus-settings.json')
 
     // Replace the directory
-    if (existsSync(cacheDir)) {
-      await fs.rmdir(cacheDir, { recursive: true })
-    }
+    if (existsSync(cacheDir)) await fs.rm(cacheDir, { recursive: true })
+
+    // Create cacheDir
     await fs.mkdir(cacheDir, { recursive: true })
 
     // Write settings
