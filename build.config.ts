@@ -1,4 +1,6 @@
-export default {
+import { BuildOptions } from 'unbuild'
+
+export default <BuildOptions>{
   entries: [
     './src/index',
     './src/module',

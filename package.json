@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -55,7 +55,7 @@
     "escape-html": "^1.0.3",
     "flat": "^5.0.2",
     "gray-matter": "^4.0.3",
-    "h3": "^0.2.11",
+    "h3": "^0.2.12",
     "hasha": "^5.2.2",
     "html-tags": "^3.1.0",
     "jiti": "^1.10.1",
@@ -86,7 +86,7 @@
     "unist-util-position": "^4.0.1",
     "unist-util-visit": "2.0.3",
     "unist-util-visit-parents": "3.1.1",
-    "unstorage": "^0.1.6",
+    "unstorage": "^0.2.3",
     "upath": "^2.0.1",
     "vue-docgen-api": "^4.40.0",
     "ws": "^7.5.3"
@@ -97,7 +97,7 @@
     "@babel/plugin-transform-runtime": "latest",
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
-    "@docus/app": "^1.0.12",
+    "@docus/app": "^1.0.18",
     "@nuxt/test-utils": "latest",
     "@nuxt/types": "^2.15.7",
     "@nuxt/typescript-build": "^2.1.0",
@@ -111,7 +111,7 @@
     "@types/unist": "^2.0.5",
     "@types/ws": "^7.4.6",
     "babel-jest": "latest",
-    "eslint": "^7.30.0",
+    "eslint": "^7.31.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^3.4.0",
