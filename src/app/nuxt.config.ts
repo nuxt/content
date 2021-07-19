@@ -23,7 +23,14 @@ export default nuxtConfig({
   /**
    * Docus config
    */
-  components: true,
+  components: [
+    {
+      path: r('./components'),
+      isAsync: false,
+      prefix: '',
+      level: 2
+    }
+  ],
   meta: {},
 
   /**
@@ -45,7 +52,7 @@ export default nuxtConfig({
     '@nuxt/postcss8',
     '@docus/core/module',
     // Local modules
-    r('./module'),
+    r('./index'),
     r('../settings'),
     r('../context')
     // r('../social-image'),

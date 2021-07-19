@@ -1,7 +1,3 @@
-<template>
-  <Component :is="page.template" :key="page.template" :page="page" />
-</template>
-
 <script>
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
@@ -31,25 +27,33 @@ export default defineComponent({
     const draft = false
 
     // Page query
-    const [page] = await $docus
+    const [match] = await $docus
       .search({ deep: true })
       .where({ language, to, draft, page: { $ne: false } })
       .fetch()
 
     // Break on missing page query
-    if (!page) {
+    if (!match) {
       return error({ statusCode: 404, message: '404 - Page not found' })
     }
+
+    const page = await $docus.page(match.id)
 
     // Get page template
     page.template = $docus.getPageTemplate(page)
 
-    // Preload the component on client-side navigation
-    const component = await Vue.component(page.template)()
+    // Init template
+    const Template = Vue.component(page.template)
 
-    // Set layout defaults for this template
-    if (component.templateOptions) {
-      templateOptions = { ...templateOptions, ...component.templateOptions }
+    // Check template
+    if (Template) {
+      // Preload the component on client-side navigation
+      const component = new Template({ props: { page } })
+
+      // Set layout defaults for this template
+      if (component.templateOptions) {
+        templateOptions = { ...templateOptions, ...component.templateOptions }
+      }
     }
 
     // Set layout from page
@@ -137,6 +141,14 @@ export default defineComponent({
         }
       })
     }
+  },
+
+  render(h) {
+    return h(this.page.template, {
+      props: {
+        page: this.page
+      }
+    })
   }
 })
 </script>

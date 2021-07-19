@@ -5,7 +5,7 @@ export const docusDefaults: DocusSettings = {
   contentDir: 'content',
   url: '',
   description: '',
-  template: 'docs',
+  template: 'page',
   credits: true,
   layout: {
     header: true,
