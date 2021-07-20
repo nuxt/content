@@ -77,7 +77,7 @@ export default async function markdown(id: string, file: string) {
   return {
     body: {
       raw: file,
-      body,
+      ast: body,
       toc
     },
     meta: {

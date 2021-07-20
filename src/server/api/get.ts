@@ -8,6 +8,6 @@ export default async (req: IncomingMessage) => {
     key,
     generatedAt: new Date(),
     ...content.meta,
-    ...content.body
+    body: content.body
   }
 }

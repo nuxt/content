@@ -2,8 +2,20 @@ import { IncomingMessage } from 'http'
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import { Nuxt } from '@nuxt/kit'
+import defu from 'defu'
 import { NavItem } from '../types'
 import list from '../server/api/list'
+import { pick } from '../runtime/utils/object'
+
+/**
+ * List of keys to inherit from parent
+ **/
+const inheritanceKeys = ['layout']
+
+/**
+ * Pick keys from object to inherit from parent
+ **/
+const pickInheritanceKeys = pick(inheritanceKeys)
 
 export async function getContents() {
   // Nitro API
@@ -47,7 +59,8 @@ const getPageLink = (page: any): NavItem => {
     page: (page.slug === '' && page.empty) || page.page,
     children: [],
     title: page.title || slugToTitle(to.split('/').pop() || ''),
-    ...page.navigation
+    ...page.navigation,
+    ...pickInheritanceKeys(page)
   }
 
   if (page.draft) {
@@ -121,13 +134,12 @@ function createNav(pages: any[]) {
       return links.push($page)
     }
 
-    // handle top level contents
-    if (dirs.length === 1 && _page.slug) {
-      return links.push($page)
-    }
-
     let currentLinks = links
     let lastLink: NavItem | undefined
+    const parents: any[] = [
+      // root = '/'
+      findLink(currentLinks, '/')
+    ]
 
     dirs.forEach((dir: string, index: number) => {
       const to = '/' + dirs.slice(0, index + 1).join('/')
@@ -148,7 +160,11 @@ function createNav(pages: any[]) {
       }
       currentLinks = link.children
       lastLink = link
+      parents.push(link)
     })
+
+    // Inherit keys from parent
+    Object.assign($page, defu(pickInheritanceKeys($page), ...parents.map(pickInheritanceKeys)))
 
     if (!currentLinks) return
 

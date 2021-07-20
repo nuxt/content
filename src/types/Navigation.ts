@@ -33,6 +33,8 @@ export interface NavItem extends NavItemNavigationConfig {
    * Child pages
    */
   children: NavItem[]
+
+  [key: string]: any
 }
 
 export type DocusNavigation = {

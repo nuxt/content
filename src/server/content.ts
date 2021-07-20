@@ -14,7 +14,7 @@ export async function getData(id: string) {
 
 export async function getContent(id: string) {
   const data = await getData(id)
-  if (!data.body) {
+  if (typeof data.body === 'undefined' || data.body === null) {
     throw new Error(`Content not found: ${id}`)
   }
   const transformResult = await getTransformer(id)(id, data.body as any)
@@ -31,17 +31,21 @@ export function getKeys(id?: string) {
   return useStorage()?.getKeys(id)
 }
 
+let list: any[] | null = null
 export async function getList(id?: string) {
   const ids = (await getKeys(id)) || []
-  return Promise.all(
-    ids.map(async id => {
-      const content = await getContent(id)
-      return {
-        id,
-        ...content.meta
-      }
-    })
-  )
+  if (!list) {
+    list = await Promise.all(
+      ids.map(async id => {
+        const content = await getContent(id)
+        return {
+          id,
+          ...content.meta
+        }
+      })
+    )
+  }
+  return list
 }
 
 let db: DatabaseProvider
@@ -50,7 +54,7 @@ export async function getDatabase() {
   if (!db) {
     db = createLokiJsDatabase('docus.db')
     const storage = useStorage()
-    const { body: navigation } = (await storage?.getItem('data:docus:navigation')) as any
+    const navigation = (await storage?.getItem('data:docus:navigation')) as any
 
     function index(item: any) {
       if (item.page) {

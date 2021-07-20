@@ -171,7 +171,12 @@ export default {
       return _v(document)
     }
 
-    const { body } = (document || {}) as DocusDocument
+    let { body } = (document || {}) as DocusDocument
+    // look for ast object in the document
+    if (body && body.ast) {
+      body = body.ast
+    }
+
     if (!body || !body.children || !Array.isArray(body.children)) {
       return
     }
