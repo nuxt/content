@@ -30,13 +30,6 @@ export default defineNuxtModule(nuxt => ({
     // setup runtime alias
     nuxt.options.alias['~docus-core'] = join(__dirname, 'runtime')
 
-    // Extend context
-    const context = useDocusContext()!
-    nuxt.callHook('docus:context', context)
-
-    // Process/Cleanup context after augmention
-    processContext(context)
-
     // Set database provider
     setDatabaseProvide(createLokiJsDatabase('docus'))
 
@@ -77,6 +70,15 @@ export default defineNuxtModule(nuxt => ({
     })
     nuxt.hook('build:done', async () => {
       await indexJob
+    })
+
+    nuxt.hook('modules:done', () => {
+      // Extend context
+      const context = useDocusContext()!
+      nuxt.callHook('docus:context', context)
+
+      // Process/Cleanup context after augmention
+      processContext(context)
     })
 
     /**

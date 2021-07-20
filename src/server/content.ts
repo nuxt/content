@@ -50,7 +50,7 @@ export async function getDatabase() {
   if (!db) {
     db = createLokiJsDatabase('docus.db')
     const storage = useStorage()
-    const navigation = await storage?.getItem('data:docus:navigation')
+    const { body: navigation } = (await storage?.getItem('data:docus:navigation')) as any
 
     function index(item: any) {
       if (item.page) {

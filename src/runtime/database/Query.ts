@@ -32,9 +32,9 @@ export abstract class BaseQueryBuiler<T> implements QueryBuilder<T> {
     return this
   }
 
-  surround(slugOrPath: string, options: { before: number; after: number }) {
+  surround(slugOrTo: string, options: { before: number; after: number }) {
     this.params.surround = {
-      slugOrPath,
+      slugOrTo,
       options
     }
     return this

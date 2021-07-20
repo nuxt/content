@@ -115,16 +115,16 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
 
   /**
    * Surround results
-   * @param {string} slugOrPath - Slug or path of the file to surround.
+   * @param {string} slugOrTo - Slug or path of the file to surround.
    * @param {Object} options - Options to surround (before / after).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
   private processSurround(params: any) {
     const {
-      slugOrPath,
+      slugOrTo,
       options: { before = 1, after = 1 }
     } = params.surround
-    const _key = slugOrPath.indexOf('/') === 0 ? 'path' : 'slug'
+    const _key = slugOrTo.indexOf('/') === 0 ? 'to' : 'slug'
 
     // Add slug or path to onlyKeys if only method has been called before
     if (params.only) {
@@ -136,7 +136,7 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
     }
 
     const fn = (data: any) => {
-      const index = data.findIndex((item: any) => item[_key] === slugOrPath)
+      const index = data.findIndex((item: any) => item[_key] === slugOrTo)
       const slice = new Array(before + after).fill(null, 0)
       if (index === -1) {
         return slice
