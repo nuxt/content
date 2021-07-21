@@ -17,13 +17,40 @@ const inheritanceKeys = ['layout']
  **/
 const pickInheritanceKeys = pick(inheritanceKeys)
 
+/**
+ * Determine whether it is the index file or not
+ *
+ * @param path relative to full path of the file
+ * @returns
+ */
+const isIndex = (path: string) => path.endsWith('index.md')
+
+/**
+ * Sort keys and put index files at first
+ *
+ * @param keys array of files
+ * @returns
+ */
+function sortItems(keys: any[]) {
+  return [...keys].sort((a, b) => {
+    const isA = isIndex(a.id)
+    const isB = isIndex(b.id)
+    if (isA && isB) return a.id.length - b.id.length
+    if (isB) return 1
+    if (isA) return -1
+    return 0
+  })
+}
 export async function getContents() {
+  let items
   // Nitro API
   if (typeof (globalThis as any).$fetch !== 'undefined') {
-    return (globalThis as any).$fetch('/_docus/list/content')
+    items = (globalThis as any).$fetch('/_docus/list/content')
+  } else {
+    const result = await list({ url: '/content' } as IncomingMessage)
+    items = result.items
   }
-  const { items } = await list({ url: '/content' } as IncomingMessage)
-  return items
+  return sortItems(items)
 }
 
 /**
@@ -56,7 +83,7 @@ const getPageLink = (page: any): NavItem => {
     slug: page.slug,
 
     to,
-    page: (page.slug === '' && page.empty) || page.page,
+    page: !(page.slug === '' && page.empty) && page.page,
     children: [],
     title: page.title || slugToTitle(to.split('/').pop() || ''),
     ...page.navigation,
@@ -160,7 +187,7 @@ function createNav(pages: any[]) {
       }
       currentLinks = link.children
       lastLink = link
-      parents.push(link)
+      parents.unshift(link)
     })
 
     // Inherit keys from parent
@@ -169,11 +196,7 @@ function createNav(pages: any[]) {
     if (!currentLinks) return
 
     // If index page, merge also with parent for metadata
-    if (!_page.slug) {
-      if (dirs.length === 1) {
-        $page.exclusive = $page.exclusive || false
-      }
-
+    if (lastLink?.to === $page.to) {
       mergeLinks(lastLink!, $page)
     } else {
       // Push page

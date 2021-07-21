@@ -49,7 +49,7 @@ export default defineComponent({
 
     const page = await $content.get(match.id)
 
-    const navigation = await $content.get('data:docus:navigation')
+    const { body: navigation } = await $content.get('data:docus:navigation')
 
     // Get page template --- since we use navigation to fetch the page, we don't need this calculation here
     // page.template = $docus.getPageTemplate(page)

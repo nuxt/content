@@ -1,6 +1,6 @@
 import { withTrailingSlash } from 'ufo'
 import { ref, computed } from '@nuxtjs/composition-api'
-import { DocusNavigationGetParameters, NavItem } from '../../types'
+import { DocusDocument, DocusNavigationGetParameters, NavItem } from '../../types'
 import { useDocusTemplates } from './templates'
 
 /**
@@ -153,12 +153,37 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
 
   const { getPageTemplate } = useDocusTemplates({ api, state }, currentNav)
 
+  // fetch previous and next page based on navigation
+  function getPreviousAndNextLink(page: DocusDocument) {
+    const draft = state.ui?.draft ? undefined : false
+    return api
+      .search({ deep: true })
+      .where({
+        language: app.i18n.locale,
+        draft,
+        // Pages should share same parent
+        parent: page.parent,
+        // Ignore empty index files
+        // Index files that hold no markdown content will not show in bottom navigation
+        page: { $ne: false },
+        // Only get pages that are not hidden. (navigarions != false)
+        hidden: { $ne: true },
+        // Only get pages that are not redirected.
+        redirect: { $type: 'undefined' }
+      })
+      .only(['title', 'slug', 'to'])
+      .sortBy('position', 'asc')
+      .surround(page.to, { before: 1, after: 1 })
+      .fetch()
+  }
+
   return {
     getPageTemplate,
     fetchNavigation,
     currentNav,
     isLinkActive,
     init: fetchNavigation,
-    get
+    get,
+    getPreviousAndNextLink
   }
 }

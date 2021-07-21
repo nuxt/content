@@ -31,25 +31,23 @@ export function getKeys(id?: string) {
   return useStorage()?.getKeys(id)
 }
 
-let list: any[] | null = null
 export async function getList(id?: string) {
   const ids = (await getKeys(id)) || []
-  if (!list) {
-    list = await Promise.all(
-      ids.map(async id => {
-        const content = await getContent(id)
-        return {
-          id,
-          ...content.meta
-        }
-      })
-    )
-  }
-  return list
+  return Promise.all(
+    ids.map(async id => {
+      const content = await getContent(id)
+      return {
+        id,
+        ...content.meta
+      }
+    })
+  )
 }
 
-let db: DatabaseProvider
-
+let db: DatabaseProvider | null
+export function resetDatabase() {
+  db = null
+}
 export async function getDatabase() {
   if (!db) {
     db = createLokiJsDatabase('docus.db')
@@ -58,7 +56,7 @@ export async function getDatabase() {
 
     function index(item: any) {
       if (item.page) {
-        db.setItem(item.id, omit(['children'])(item))
+        db?.setItem(item.id, omit(['children'])(item))
       }
       if (item.children) {
         item.children.forEach(index)
