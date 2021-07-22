@@ -1,22 +1,21 @@
 import fs from 'fs'
 import path from 'upath'
 import { parse } from 'vue-docgen-api'
+import { useDocusContext } from '../../../context'
 import { setNodeData } from '../utils'
-
-const directories = [
-  path.resolve('./docs/components'), // components directory of project docs
-  path.resolve('./components'), // components directory of project docs
-  path.resolve(__dirname, '../../../runtime/components') // components directory of Docus
-]
 
 const fileName = (file: string) => (file.match(/\.vue$/) ? file : file + '.vue')
 
 function resolvePath(file: string) {
+  const {
+    dir: { components }
+  } = useDocusContext()!
+
   file = fileName(file)
   if (fs.existsSync(path.resolve(file))) {
     return path.resolve(file)
   }
-  for (const dir of directories) {
+  for (const dir of components) {
     if (fs.existsSync(path.join(dir, file))) {
       return path.join(dir, file)
     }

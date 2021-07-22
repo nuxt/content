@@ -6,16 +6,7 @@ import defu from 'defu'
 import { NavItem } from '../types'
 import list from '../server/api/list'
 import { pick } from '../runtime/utils/object'
-
-/**
- * List of keys to inherit from parent
- **/
-const inheritanceKeys = ['layout']
-
-/**
- * Pick keys from object to inherit from parent
- **/
-const pickInheritanceKeys = pick(inheritanceKeys)
+import { useDocusContext } from '../context'
 
 /**
  * Determine whether it is the index file or not
@@ -67,6 +58,9 @@ const slugToTitle = (title: string) => title && title.replace(/-/g, ' ').split('
  * Get navigation link for a page
  */
 const getPageLink = (page: any): NavItem => {
+  const {
+    search: { fields, inheritanceFields }
+  } = useDocusContext()!
   const id = page.id
 
   const slug = (page.slug || page.to).split('/').pop()
@@ -87,7 +81,8 @@ const getPageLink = (page: any): NavItem => {
     children: [],
     title: page.title || slugToTitle(to.split('/').pop() || ''),
     ...page.navigation,
-    ...pickInheritanceKeys(page)
+    ...pick(inheritanceFields)(page),
+    ...pick(fields)(page)
   }
 
   if (page.draft) {
@@ -143,6 +138,11 @@ export async function generateNavigation(nuxt: Nuxt) {
  * Create NavItem array to be consumed from runtime plugin.
  */
 function createNav(pages: any[]) {
+  const {
+    search: { inheritanceFields }
+  } = useDocusContext()!
+  const pickInheritanceFields = pick(inheritanceFields)
+
   const links: NavItem[] = []
 
   // Add each page to navigation
@@ -191,7 +191,7 @@ function createNav(pages: any[]) {
     })
 
     // Inherit keys from parent
-    Object.assign($page, defu(pickInheritanceKeys($page), ...parents.map(pickInheritanceKeys)))
+    Object.assign($page, defu(pickInheritanceFields($page), ...parents.map(pickInheritanceFields)))
 
     if (!currentLinks) return
 

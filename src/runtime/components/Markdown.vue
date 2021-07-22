@@ -14,9 +14,15 @@ export default {
       default: ''
     }
   },
-  render: (_h, ctx) => {
+  render: (h, ctx) => {
     const slot = ctx.props.use || 'default'
-    let node = typeof slot === 'string' ? ctx.parent.$scopedSlots[slot] || ctx.parent.$slots[slot] : slot
+    let node =
+      typeof slot === 'string'
+        ? ctx.parent.$scopedSlots[slot] ||
+          ctx.parent.$slots[slot] ||
+          ctx.parent.$parent?.$scopedSlots[slot] ||
+          ctx.parent.$parent?.$slots[slot]
+        : slot
 
     // Execute factory funciton
     if (typeof node === 'function') {
@@ -43,6 +49,18 @@ export default {
       } else {
         node = flatUnwrap(node, tags)
       }
+    }
+
+    // handle child arrays
+    // can be removed in vue 3
+    node = node.map((n: any) => {
+      if (Array.isArray(n)) {
+        return h('div', {}, n)
+      }
+      return n
+    })
+    if (node && node.length > 1) {
+      return h('div', {}, node)
     }
 
     return node

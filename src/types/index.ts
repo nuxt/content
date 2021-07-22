@@ -1,4 +1,3 @@
-export * from './shim.d'
 export * from './Markdown'
 export * from './Database'
 export * from './Navigation'
@@ -14,3 +13,5 @@ export interface DocusOptions {
   _isSSG: boolean
   _dbPath: string
 }
+
+export * from './shim.d'

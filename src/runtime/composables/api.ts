@@ -10,7 +10,7 @@ type Content = {
 export const useDocusApi = ($content: Content) => {
   const data = (path: string) => $content.get(joinURL('/data', path))
 
-  const search = (to: string, params?: any) => $content.search(joinURL(to, params))
+  const search = (to: string, params?: any) => $content.search(to, params)
 
   const page = (path: string) => $content.get(path)
 

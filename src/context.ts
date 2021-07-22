@@ -10,6 +10,13 @@ ctx.set({
     codes: ['en'],
     defaultLocale: 'en'
   },
+  dir: {
+    components: []
+  },
+  search: {
+    inheritanceFields: ['layout'],
+    fields: ['description', 'date', 'imgUrl']
+  },
   transformers: {
     markdown: {
       toc: {

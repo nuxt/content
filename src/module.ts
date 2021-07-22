@@ -91,6 +91,16 @@ export default defineNuxtModule(nuxt => ({
         isAsync: false,
         level: 2
       })
+
+      // Update context: component dirs
+      const context = useDocusContext()!
+      context.dir.components.push(
+        ...dirs.map((dir: any) => {
+          if (typeof dir === 'string') return dir
+          if (typeof dir === 'object') return dir.path
+          return ''
+        })
+      )
     })
 
     // This will be removed once we use Nitro

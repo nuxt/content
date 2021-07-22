@@ -9,6 +9,13 @@ export interface DocusContext {
     codes: string[]
     defaultLocale: string
   }
+  dir: {
+    components: string[]
+  }
+  search: {
+    inheritanceFields: string[]
+    fields: string[]
+  }
   transformers: {
     markdown: {
       toc: {
