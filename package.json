@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -97,7 +97,7 @@
     "@babel/plugin-transform-runtime": "latest",
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
-    "@docus/app": "^1.0.18",
+    "@docus/app": "^1.0.24",
     "@nuxt/test-utils": "latest",
     "@nuxt/types": "^2.15.7",
     "@nuxt/typescript-build": "^2.1.0",
@@ -116,9 +116,9 @@
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^3.4.0",
     "jest": "latest",
-    "playwright": "^1.12.3",
+    "playwright": "^1.13.0",
     "prettier": "^2.3.2",
-    "unbuild": "^0.3.2"
+    "unbuild": "^0.4.0"
   },
   "publishConfig": {
     "access": "public"
