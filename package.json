@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -28,7 +28,13 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "module.mjs",
+    "module.js",
+    "module.d.ts",
+    "node.mjs",
+    "node.js",
+    "node.d.ts"
   ],
   "scripts": {
     "build": "unbuild",
