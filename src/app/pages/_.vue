@@ -42,23 +42,28 @@ export default defineComponent({
     // Get page template
     page.template = $docus.getPageTemplate(page)
 
-    // Init template
-    const Template = Vue.component(page.template)
-
-    // Check template
-    if (Template) {
-      // Preload the component on client-side navigation
-      const component = new Template({ props: { page } })
-
+    let component = Vue.component(page.template)
+    if (component) {
+      try {
+        if (typeof component === 'function' && !component.options) {
+          component = await component()
+          if (!component.options) {
+            component = Vue.extend(component)
+          }
+        }
+      } catch {
+        // eslint-disable-next-line new-cap
+        component = new component({ props: { page } })
+      }
       // Set layout defaults for this template
-      if (component.templateOptions) {
-        templateOptions = { ...templateOptions, ...component.templateOptions }
+      if (component.templateOptions || component.$options?.templateOptions) {
+        templateOptions = { ...templateOptions, ...(component.templateOptions || component.$options?.templateOptions) }
       }
     }
 
     // Set layout from page
-    if (page.layout) {
-      templateOptions = { ...templateOptions, ...page.layout }
+    if (match.layout) {
+      templateOptions = { ...templateOptions, ...match.layout }
     }
 
     // Set template options
