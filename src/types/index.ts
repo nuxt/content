@@ -1,9 +1,11 @@
 import { Context } from '@nuxt/types'
-import { useDocusApi, DocusNavigation } from '@docus/core'
+import { DocusNavigation, DocusDocument } from '@docus/core'
+import { Ref } from '@nuxtjs/composition-api'
 
 export interface DefaultThemeSettings {
   [key: string]: any
 }
+
 export interface DocusSettings<T = DefaultThemeSettings> {
   title: string
   contentDir: string
@@ -31,7 +33,7 @@ export interface DocusAddonContext<T = DefaultThemeSettings> {
   state: DocusState
   settings: DocusSettings<T>
   createQuery: any
-  api: ReturnType<typeof useDocusApi>
+  api: any
   $nuxt?: any
 }
 
@@ -40,7 +42,7 @@ export type DocusRuntimeInstance<T = DefaultThemeSettings> = {
   navigation: Ref<DocusNavigation>
   theme: Ref<T>
   [key: string]: any
-} & ReturnType<typeof useDocusApi>
+}
 
 export interface Colors {
   [key: string]: string | Colors
