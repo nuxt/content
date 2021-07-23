@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { DocusAddonContext } from '../../../index.d'
+import { DocusAddonContext } from '../../../types'
 
 export const docusInit = ({ context, state }: DocusAddonContext) => {
   if (process.server) {

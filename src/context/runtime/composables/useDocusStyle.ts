@@ -1,7 +1,7 @@
 import { MetaInfo } from 'vue-meta'
 import { computed } from '@nuxtjs/composition-api'
 import { getColors } from 'theme-colors'
-import { DocusAddonContext, Colors } from '../../../index.d'
+import { DocusAddonContext, Colors } from '../../../types'
 
 /**
  * Parse color definition from Docus Config.
@@ -69,7 +69,7 @@ function useCSSVariables(colors: Colors) {
 export const useDocusStyle = ({ context, state }: DocusAddonContext) => {
   const app = context.app
 
-  const styles = computed(() => useCSSVariables(state.theme.colors))
+  const styles = computed(() => useCSSVariables(state.theme.colors || {}))
 
   function updateHead() {
     const head: MetaInfo = typeof app.head === 'function' ? app.head() : app.head!

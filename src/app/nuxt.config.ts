@@ -50,7 +50,7 @@ export default nuxtConfig({
     '@nuxt/image',
     '@nuxtjs/composition-api/module',
     '@nuxt/postcss8',
-    '@docus/core/module',
+    '@docus/core',
     // Local modules
     r('./index'),
     r('../settings'),

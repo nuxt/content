@@ -127,10 +127,19 @@ export default defineComponent({
   },
 
   created() {
-    this.$docus.layout.value = this.templateOptions
+    if (process.client) {
+      // Set template options
+      this.$docus.layout.value = this.templateOptions
+
+      // Set Docus runtime current page
+      this.$docus.currentPage.value = this.page
+      // Update navigation path to update currentNav
+      this.$docus.currentPath.value = `/${this.$route.params.pathMatch}`
+    }
   },
 
   mounted() {
+    // This will use to show new bullet in aside navigation
     if (this.page?.version) {
       localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
     }

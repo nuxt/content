@@ -1,4 +1,4 @@
-import { DocusSettings } from '../index.d'
+import { DocusSettings } from '../types'
 
 export const docusDefaults: DocusSettings = {
   title: 'Docus',

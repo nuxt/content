@@ -1,6 +1,10 @@
+import './shims.d'
 import { Context } from '@nuxt/types'
-import { DocusNavigation, DocusDocument } from '@docus/core'
+import { DocusDocument } from '@docus/core'
 import { Ref } from '@nuxtjs/composition-api'
+import { DocusNavigation } from './navigation'
+
+export * from './navigation'
 
 export interface DefaultThemeSettings {
   [key: string]: any
@@ -32,7 +36,6 @@ export interface DocusAddonContext<T = DefaultThemeSettings> {
   context: PermissiveContext
   state: DocusState
   settings: DocusSettings<T>
-  createQuery: any
   api: any
   $nuxt?: any
 }

@@ -1,4 +1,4 @@
-import { DocusAddonContext } from '../../../index.d'
+import { DocusAddonContext } from '../../../types'
 
 type DocusAddons = {
   [key: string]: any

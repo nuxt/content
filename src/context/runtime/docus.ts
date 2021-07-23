@@ -1,9 +1,13 @@
 import { reactive, toRefs } from '@nuxtjs/composition-api'
-import { DocusSettings, DocusState, PermissiveContext, DocusAddonContext, DocusRuntimeInstance } from '../../index.d'
-import { clientAsyncData, docusInit } from './composables/helpers'
-import { useDocusStyle } from './composables/style'
-import { useDocusAddons } from './composables/addons'
-import { useDocusApi, useDocusNavigation } from '~docus-core'
+import { DocusSettings, DocusState, PermissiveContext, DocusAddonContext, DocusRuntimeInstance } from '../../types'
+import {
+  clientAsyncData,
+  docusInit,
+  useDocusStyle,
+  useDocusAddons,
+  useDocusApi,
+  useDocusNavigation
+} from './composables'
 
 let docusInstance: DocusRuntimeInstance
 
@@ -29,7 +33,7 @@ export const createDocus = async (
     currentPage: null,
     settings: null,
     theme: null,
-    navigation: null,
+    navigation: {},
     layout: {
       ...settings.layout,
       ...templateOptions
