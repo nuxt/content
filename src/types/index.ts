@@ -13,5 +13,3 @@ export interface DocusOptions {
   _isSSG: boolean
   _dbPath: string
 }
-
-export * from './shim.d'
