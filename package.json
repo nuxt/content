@@ -15,8 +15,8 @@
       "import": "./dist/index.mjs"
     },
     "./runtime": {
-      "require": "./dist/runtime.js",
-      "import": "./dist/runtime.mjs"
+      "require": "./runtime.js",
+      "import": "./runtime.mjs"
     },
     "./runtime/*": "./dist/runtime/*"
   },
