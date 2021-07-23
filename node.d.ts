@@ -1,1 +1,1 @@
-export * from './node.d'
+export * from './dist/node.d'
