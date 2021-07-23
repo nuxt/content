@@ -7,7 +7,7 @@ export abstract class BaseQueryBuiler<T> implements QueryBuilder<T> {
     only: [],
     without: [],
     sortBy: [],
-    where: null
+    where: {}
   }
 
   only(keys: string | string[]) {

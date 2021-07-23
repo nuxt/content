@@ -14,13 +14,9 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./module": {
-      "require": "./dist/module.js",
-      "import": "./dist/module.mjs"
-    },
-    "./node": {
-      "require": "./dist/node.js",
-      "import": "./dist/node.mjs"
+    "./runtime": {
+      "require": "./dist/runtime.js",
+      "import": "./dist/runtime.mjs"
     },
     "./runtime/*": "./dist/runtime/*"
   },
@@ -29,12 +25,9 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "module.mjs",
-    "module.js",
-    "module.d.ts",
-    "node.mjs",
-    "node.js",
-    "node.d.ts"
+    "runtime.mjs",
+    "runtime.js",
+    "runtime.d.ts"
   ],
   "scripts": {
     "build": "unbuild",

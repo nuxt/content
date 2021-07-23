@@ -22,5 +22,5 @@ export default withDocus(themePath, {
       }
     }
   },
-  buildModules: ['@nuxt/typescript-build', '../src/module']
+  buildModules: ['@nuxt/typescript-build', '../src']
 })

@@ -2,9 +2,8 @@ import { BuildOptions } from 'unbuild'
 
 export default <BuildOptions>{
   entries: [
-    './src/index',
-    './src/module',
-    './src/node',
+    { input: 'src/index' },
+    { input: 'src/runtime' },
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' },
     { input: 'src/templates/', outDir: 'dist/templates', format: 'esm', ext: 'js', declaration: false }
   ],
@@ -15,6 +14,7 @@ export default <BuildOptions>{
     'vue-meta',
     'vue',
     'micromark',
+    '@nuxtjs/composition-api',
     'micromark/dist/character/markdown-line-ending',
     'micromark/dist/character/ascii-alpha',
     'micromark/dist/character/ascii-alphanumeric',

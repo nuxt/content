@@ -57,6 +57,8 @@ export interface QueryBuilder<T> {
   fetch(params?: any): Promise<T | T[]>
 }
 
+export { BaseQueryBuiler } from '../runtime/database/Query'
+
 export interface QueryBuilderParams {
   skip: number
   limit: number
@@ -66,4 +68,29 @@ export interface QueryBuilderParams {
   where: object
 
   [key: string]: any
+}
+
+export interface SearchOptions {
+  sortBy: string[]
+  skip: number
+  limit: number
+  only: string[] | string
+  without: string[] | string
+  where: any
+  surround: string[]
+  deep: boolean
+  text: boolean
+}
+
+export interface DatabaseProvider {
+  getItem<T>(key: string): T
+  setItem<T>(key: string, value: T): void
+  removeItem(key: string): void
+  clear(): void
+  //
+  search<T>(query: string, params: any): Promise<T[]>
+  query<T>(query: string, params: any): QueryBuilder<T>
+  //
+  serialize(): Promise<any>
+  load(serialized: any): Promise<void>
 }

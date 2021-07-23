@@ -32,6 +32,7 @@ function sortItems(keys: any[]) {
     return 0
   })
 }
+
 export async function getContents() {
   let items
   // Nitro API
@@ -75,7 +76,6 @@ const getPageLink = (page: any): NavItem => {
     draft: page.draft,
     language: page.language,
     slug: page.slug,
-
     to,
     page: !(page.slug === '' && page.empty) && page.page,
     children: [],
@@ -135,6 +135,13 @@ export async function generateNavigation(nuxt: Nuxt) {
 }
 
 /**
+ * Sorty links based on id/position map
+ **/
+function sortWithPosition(links: NavItem[], map: { [key: string]: string }) {
+  links.forEach(link => sortWithPosition(link.children || [], map))
+  return links.sort((a, b) => map[a.id].localeCompare(map[b.id]))
+}
+/**
  * Create NavItem array to be consumed from runtime plugin.
  */
 function createNav(pages: any[]) {
@@ -144,9 +151,11 @@ function createNav(pages: any[]) {
   const pickInheritanceFields = pick(inheritanceFields)
 
   const links: NavItem[] = []
+  const sortMap: { [key: string]: string } = {}
 
   // Add each page to navigation
   pages.forEach((_page: any) => {
+    sortMap[_page.id] = _page.position
     const $page = getPageLink(_page)
 
     if ($page.slug.startsWith('_')) {
@@ -204,7 +213,7 @@ function createNav(pages: any[]) {
     }
   })
 
-  return links
+  return sortWithPosition(links, sortMap)
 }
 
 function mergeLinks(to: NavItem, from: NavItem) {

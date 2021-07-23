@@ -4,6 +4,7 @@ import { Nuxt } from '@nuxt/kit'
 import { join, resolve } from 'upath'
 import { getDatabase } from '../server/content'
 import { DocusOptions } from '../types'
+import { updateNavigation } from '../navigation'
 
 function isUrl(string: string) {
   try {
@@ -50,6 +51,10 @@ export function generateStaticDatabaseFile(options: DocusOptions, nuxt: Nuxt) {
 
 export default function setupStaticTarget(options: DocusOptions, nuxt: Nuxt) {
   const dbPath = generateStaticDatabaseFile(options, nuxt)
+
+  nuxt.hook('generate:before', async () => {
+    await updateNavigation(nuxt)
+  })
 
   options._dbPath = dbPath
 }

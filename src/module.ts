@@ -1,3 +1,4 @@
+import { IncomingMessage } from 'http'
 import { defineNuxtModule, addPlugin } from '@nuxt/kit'
 import { join, resolve } from 'upath'
 import fsDriver from 'unstorage/drivers/fs'
@@ -6,7 +7,9 @@ import { DocusOptions } from './types'
 import { setDatabaseProvide } from './runtime/database'
 import { createLokiJsDatabase } from './runtime/database/providers/lokijs'
 import { createServerMiddleware } from './server/compat'
-import { getContent, getDatabase, getList } from './server/content'
+import { getDatabase } from './server/content'
+import apiGet from './server/api/get'
+import apiList from './server/api/list'
 import { useNuxtIgnoreList } from './utils/ignore'
 import { mount } from './storage'
 import { useDocusContext } from './context'
@@ -109,8 +112,8 @@ export default defineNuxtModule(nuxt => ({
       const db = await getDatabase()
 
       ssrContext.docus.content = {
-        get: getContent,
-        list: getList,
+        get: (id: string) => apiGet({ url: id } as IncomingMessage),
+        list: (id: string) => apiList({ url: id } as IncomingMessage),
         search: db.query
       }
     })
