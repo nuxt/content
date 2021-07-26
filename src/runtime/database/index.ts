@@ -3,7 +3,7 @@ import { DatabaseProvider } from '../../types'
 
 const ctx = createContext()
 
-export const setDatabaseProvide = (provider: DatabaseProvider) => ctx.set(provider, true)
+export const setDatabaseProvider = (provider: DatabaseProvider) => ctx.set(provider, true)
 
 export function useDB() {
   const provider = ctx.use()

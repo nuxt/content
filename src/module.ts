@@ -4,7 +4,7 @@ import { join, resolve } from 'upath'
 import fsDriver from 'unstorage/drivers/fs'
 import memoryDriver from 'unstorage/drivers/memory'
 import { DocusOptions } from './types'
-import { setDatabaseProvide } from './runtime/database'
+import { setDatabaseProvider } from './runtime/database'
 import { createLokiJsDatabase } from './runtime/database/providers/lokijs'
 import { createServerMiddleware } from './server/compat'
 import { getDatabase } from './server/content'
@@ -34,7 +34,7 @@ export default defineNuxtModule(nuxt => ({
     nuxt.options.alias['~docus-core'] = join(__dirname, 'runtime')
 
     // Set database provider
-    setDatabaseProvide(createLokiJsDatabase('docus'))
+    setDatabaseProvider(createLokiJsDatabase('docus'))
 
     // Register api
     createServerMiddleware(options, nuxt)
@@ -114,7 +114,7 @@ export default defineNuxtModule(nuxt => ({
       ssrContext.docus.content = {
         get: (id: string) => apiGet({ url: id } as IncomingMessage),
         list: (id: string) => apiList({ url: id } as IncomingMessage),
-        search: db.query
+        search: db?.query
       }
     })
   }

@@ -32,7 +32,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "nuxt dev example",
-    "generate": "nuxt generate example",
+    "generate": "nuxt generate example --force-build",
     "start": "nuxt start example",
     "lint": "eslint --ext .js,.ts,.vue .",
     "test": "yarn lint && jest",

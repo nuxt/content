@@ -14,19 +14,21 @@ const createQuery = (options) => (path, opts) => {
  **/
 export function getContent(ctx) {
   const { docusDbHash } = ctx.$config ? ctx.$config : ctx.nuxtState
-  const query = createQuery({
-    /* <%
-    if (options.isSSG) { 
-      %> */  db: `<%= options.dbPath %>/db-${docusDbHash}.json`,/* <%
-    } else { 
-     %> */ base: withoutTrailingSlash(joinURL('/', '<%= options.apiBase %>', 'search')), /* <%
-    } %> */
-    })
-    
-  const data = (key) => $fetch(joinURL('/', '<%= options.apiBase %>', 'get', key))
+  const getFetchUrl = (key) => {
+    /* <% if (options.isSSG) { %> */return joinURL('/_nuxt', '<%= options.apiBase %>', docusDbHash, key.replace(/^\//, '').replace(/\//g, ':') + '.json')
+    /* <% } else { %> */return joinURL('/', '<%= options.apiBase %>', 'get', key)/* <% } %> */
+  }
+
+  const get = (key) => $fetch(getFetchUrl(key))
+
+  const search = createQuery({
+    /* <% if (options.isSSG) { %> */db: getFetchUrl('data:docus:naviagation'),
+    /* <% } else { %> */base: withoutTrailingSlash(joinURL('/', '<%= options.apiBase %>', 'search')), /* <% } %> */
+  })
+  
   return {
-    search: process.server ? ctx.ssrContext.docus.content.search : query,
-    get: process.server ? ctx.ssrContext.docus.content.get : data,
+    search: process.server ? ctx.ssrContext.docus.content.search : search,
+    get: process.server ? ctx.ssrContext.docus.content.get : get,
   }
 }
 

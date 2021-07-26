@@ -1,8 +1,8 @@
 import { useStorage } from '../storage'
-import { DatabaseProvider } from '../runtime/database'
 import { getTransformer } from '../transformers'
 import { createLokiJsDatabase } from '../runtime/database/providers/lokijs'
 import { omit } from '../runtime/utils/object'
+import { DatabaseProvider } from '../types'
 
 export async function getData(id: string) {
   return {

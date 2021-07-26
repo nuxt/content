@@ -2,9 +2,10 @@ import fs from 'fs/promises'
 import hash from 'hasha'
 import { Nuxt } from '@nuxt/kit'
 import { join, resolve } from 'upath'
-import { getDatabase } from '../server/content'
 import { DocusOptions } from '../types'
 import { updateNavigation } from '../navigation'
+import { useStorage } from '../storage'
+import getContent from '../server/api/get'
 
 function isUrl(string: string) {
   try {
@@ -29,8 +30,10 @@ export function generateStaticDatabaseFile(options: DocusOptions, nuxt: Nuxt) {
     routerBasePath = routerBasePath.slice(0, -1)
   }
   nuxt.hook('generate:distRemoved', async () => {
-    const db = await getDatabase()
-    const serial = await db.serialize()
+    const storage = useStorage()!
+    const keys = await storage.getKeys()
+    const serial = await Promise.all(keys.map(async key => [key, await getContent({ url: key } as any)]))
+
     // Create a hash to fetch the database
     const dbHash = hash(String(serial)).substr(0, 8)
     if (nuxt.options.publicRuntimeConfig) {
@@ -41,10 +44,14 @@ export function generateStaticDatabaseFile(options: DocusOptions, nuxt: Nuxt) {
       })
     }
 
-    const dir = resolve(nuxt.options.buildDir, 'dist', 'client', options.apiBase)
+    const dir = resolve(nuxt.options.buildDir, 'dist', 'client', options.apiBase, dbHash)
 
     await fs.mkdir(dir, { recursive: true })
-    await fs.writeFile(join(dir, `db-${dbHash}.json`), serial, 'utf-8')
+    await Promise.all(
+      serial.map(async ([key, value]) => {
+        await fs.writeFile(join(dir, key + '.json'), JSON.stringify(value), 'utf-8')
+      })
+    )
   })
   return isUrl(publicPath) ? `${publicPath}${options.apiBase}` : `${routerBasePath}${publicPath}${options.apiBase}`
 }
