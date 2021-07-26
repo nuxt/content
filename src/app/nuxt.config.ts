@@ -84,6 +84,9 @@ export default nuxtConfig({
     fallback: '404.html',
     routes: ['/']
   },
+  build: {
+    transpile: ['@docus/']
+  },
   image: {
     domains: ['https://i3.ytimg.com']
   }
