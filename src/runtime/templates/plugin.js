@@ -22,10 +22,10 @@ export function getContent(ctx) {
   const get = (key) => $fetch(getFetchUrl(key))
 
   const search = createQuery({
-    /* <% if (options.isSSG) { %> */db: getFetchUrl('data:docus:naviagation'),
+    /* <% if (options.isSSG) { %> */db: getFetchUrl('data:docus:navigation'),
     /* <% } else { %> */base: withoutTrailingSlash(joinURL('/', '<%= options.apiBase %>', 'search')), /* <% } %> */
   })
-  
+
   return {
     search: process.server ? ctx.ssrContext.docus.content.search : search,
     get: process.server ? ctx.ssrContext.docus.content.get : get,
