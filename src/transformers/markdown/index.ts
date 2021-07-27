@@ -1,18 +1,11 @@
 import defu from 'defu'
 import { Toc } from '../../types'
+import { generatePosition, generateSlug, generateTitleFromSlug, generateTo, isDraft, isHidden } from '../utils'
 import { generateBody } from './content'
 import { generateToc } from './toc'
 import { parseFrontMatter } from './fontmatter'
 import { useDocusContext } from './../../context'
-import {
-  processHeading,
-  generatePosition,
-  generateSlug,
-  generateTitleFromSlug,
-  generateTo,
-  isDraft,
-  isHidden
-} from './meta'
+import { processHeading } from './meta'
 
 function getPathMeta(id: string) {
   const context = useDocusContext()!

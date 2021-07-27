@@ -7,6 +7,7 @@ import { NavItem } from '../types'
 import list from '../server/api/list'
 import { pick } from '../runtime/utils/object'
 import { useDocusContext } from '../context'
+import { generatePosition } from '../transformers/utils'
 
 /**
  * Determine whether it is the index file or not
@@ -164,8 +165,9 @@ function createNav(pages: any[]) {
       return
     }
 
-    // To: '/docs/guide/hello.md' -> dirs: ['docs', 'guide']
+    // To: '/docs/guide/hello.md' -> dirs: ['docs', 'guide', 'hello']
     const dirs = $page.to.split('/').filter(_ => _)
+    const idParts = $page.id.split(/[:/]/)
 
     // handle index file
     if (!dirs.length) {
@@ -189,10 +191,13 @@ function createNav(pages: any[]) {
 
       if (!link) {
         link = getPageLink({
+          id: idParts.slice(0, index + 2).join(':'),
           slug: dir,
           to,
           page: false
         })
+        // generate position for new link
+        sortMap[link.id] = generatePosition(link.id)
 
         currentLinks.push(link)
       }
