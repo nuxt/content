@@ -37,11 +37,12 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
     let Loki = require('@lokidb/loki')
     Loki = Loki.default || Loki
     const db = new Loki('content.db')
-    const navigation = await $fetch(dataUrl)
+    const items = db.addCollection('items')
+    const { body: navigation } = await $fetch(dataUrl)
 
     function index(item: any) {
       if (item.page) {
-        db.insert({
+        items.insert({
           ...item,
           children: undefined
         })
