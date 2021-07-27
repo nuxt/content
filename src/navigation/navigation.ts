@@ -135,12 +135,14 @@ export async function generateNavigation(nuxt: Nuxt) {
 }
 
 /**
- * Sorty links based on id/position map
+ * Sort links based on id/position map.
  **/
 function sortWithPosition(links: NavItem[], map: { [key: string]: string }) {
   links.forEach(link => sortWithPosition(link.children || [], map))
-  return links.sort((a, b) => map[a.id].localeCompare(map[b.id]))
+  const pos = (a: NavItem) => map[a.id] || /* largest position */ '999999999999'
+  return links.sort((a, b) => pos(a).localeCompare(pos(b)))
 }
+
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
