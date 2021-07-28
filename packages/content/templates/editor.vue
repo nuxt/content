@@ -2,7 +2,6 @@
   <textarea
     ref="textarea"
     v-model="file"
-    @keyup.stop="onType"
     @keydown.tab.exact.prevent="onTabRight"
     @keydown.tab.shift.prevent="onTabLeft"
     @compositionstart.prevent="isInComposition = true"
@@ -32,13 +31,18 @@ export default {
       this.$refs.textarea.focus()
     },
     file () {
+      this.onType()
       this.$emit('input', this.file)
     }
   },
   methods: {
     onType () {
       const el = this.$refs.textarea
-      el.style.height = el.scrollHeight + 'px'
+
+      el.style.height = 'auto'
+      this.$nextTick(() => {
+        el.style.height = el.scrollHeight + 'px'
+      })
     },
     onTabRight(event) {
       if (this.isInComposition) {
