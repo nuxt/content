@@ -14,7 +14,7 @@ export default {
       default: ''
     }
   },
-  render: (h, ctx) => {
+  render: (_, ctx) => {
     const slot = ctx.props.use || 'default'
     let node =
       typeof slot === 'string'

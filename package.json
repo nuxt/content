@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
