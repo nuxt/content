@@ -51,18 +51,6 @@ export default {
       }
     }
 
-    // handle child arrays
-    // can be removed in vue 3
-    node = node.map((n: any) => {
-      if (Array.isArray(n)) {
-        return h('div', {}, n)
-      }
-      return n
-    })
-    if (node && node.length > 1) {
-      return h('div', {}, node)
-    }
-
     return node
   }
 }
