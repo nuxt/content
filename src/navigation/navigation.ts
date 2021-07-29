@@ -78,7 +78,7 @@ const getPageLink = (page: any): NavItem => {
     language: page.language,
     slug: page.slug,
     to,
-    page: !(page.slug === '' && page.empty) && page.page,
+    page: !(page.slug === '' && page.empty && !page.navigation?.redirect) && page.page,
     children: [],
     title: page.title || slugToTitle(to.split('/').pop() || ''),
     ...page.navigation,
