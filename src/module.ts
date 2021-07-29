@@ -78,6 +78,11 @@ export default defineNuxtModule(nuxt => ({
     nuxt.hook('modules:done', () => {
       // Extend context
       const context = useDocusContext()!
+      // TODO: possibly move to @docus/app
+      const codes = nuxt.options.i18n?.locales.map((locale: any) => locale.code || locale)
+      context.locales.codes = codes || context.locales.codes
+      context.locales.defaultLocale = nuxt.options.i18n?.defaultLocale || context.locales.defaultLocale
+
       nuxt.callHook('docus:context', context)
 
       // Process/Cleanup context after augmention

@@ -10,7 +10,7 @@ import { processHeading } from './meta'
 function getPathMeta(id: string) {
   const context = useDocusContext()!
   const { codes = [], defaultLocale = 'en' } = context.locales
-  const regexp = new RegExp(`^/(${codes.join('|')})`, 'gi')
+  const regexp = new RegExp(`^/?(${codes.join('|')})`, 'gi')
   const paths = id
     // remove extension
     .split('.')
