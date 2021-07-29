@@ -176,10 +176,11 @@ function createNav(pages: any[]) {
 
     let currentLinks = links
     let lastLink: NavItem | undefined
-    const parents: any[] = [
-      // root = '/'
-      findLink(currentLinks, '/')
-    ]
+    const parents: any[] = []
+
+    // find root content if it exists
+    const root = findLink(currentLinks, '/')
+    if (root) parents.push(root)
 
     dirs.forEach((dir: string, index: number) => {
       const to = '/' + dirs.slice(0, index + 1).join('/')
