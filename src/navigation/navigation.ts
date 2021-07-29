@@ -158,7 +158,7 @@ function createNav(pages: any[]) {
 
   // Add each page to navigation
   pages.forEach((_page: any) => {
-    sortMap[_page.id] = _page.position
+    sortMap[_page.id] = String(_page.position)
     const $page = getPageLink(_page)
 
     if ($page.slug.startsWith('_')) {
