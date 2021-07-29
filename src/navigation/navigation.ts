@@ -198,7 +198,7 @@ function createNav(pages: any[]) {
           page: false
         })
         // generate position for new link
-        sortMap[link.id] = generatePosition(link.id)
+        sortMap[link.id] = generatePosition(idParts.slice(1, index + 2).join(':'))
 
         currentLinks.push(link)
       }
