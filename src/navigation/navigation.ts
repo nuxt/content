@@ -60,9 +60,6 @@ const slugToTitle = (title: string) => title && title.replace(/-/g, ' ').split('
  * Get navigation link for a page
  */
 const getPageLink = (page: any): NavItem => {
-  const {
-    search: { fields, inheritanceFields }
-  } = useDocusContext()!
   const id = page.id
 
   const slug = (page.slug || page.to).split('/').pop()
@@ -72,6 +69,8 @@ const getPageLink = (page: any): NavItem => {
     typeof page.template === 'string' ? { self: page.template, nested: `${page.template}-post` } : page.template
 
   const item: NavItem = {
+    ...page,
+    ...page.navigation,
     // addintional fields for search index
     id,
     draft: page.draft,
@@ -80,10 +79,7 @@ const getPageLink = (page: any): NavItem => {
     to,
     page: !(page.slug === '' && page.empty && !page.navigation?.redirect) && page.page,
     children: [],
-    title: page.title || slugToTitle(to.split('/').pop() || ''),
-    ...page.navigation,
-    ...pick(inheritanceFields)(page),
-    ...pick(fields)(page)
+    title: page.title || slugToTitle(to.split('/').pop() || '')
   }
 
   if (page.draft) {

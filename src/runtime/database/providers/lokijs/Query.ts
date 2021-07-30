@@ -41,12 +41,8 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
     const { body: navigation } = await $fetch(dataUrl)
 
     function index(item: any) {
-      if (item.page) {
-        items.insert({
-          ...item,
-          children: undefined
-        })
-      }
+      // insert pages an non-page document to navigation object for search purpose
+      items.insert({ ...item, children: undefined })
       if (item.children) {
         item.children.forEach(index)
       }

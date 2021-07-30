@@ -55,9 +55,9 @@ export async function getDatabase() {
     const navigation = (await storage?.getItem('data:docus:navigation')) as any
 
     function index(item: any) {
-      if (item.page) {
-        db?.setItem(item.id, omit(['children'])(item))
-      }
+      // insert pages an non-page document to navigation object for search purpose
+      db?.setItem(item.id, omit(['children'])(item))
+
       if (item.children) {
         item.children.forEach(index)
       }
