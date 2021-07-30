@@ -1,4 +1,5 @@
 import { Nuxt } from '@nuxt/kit'
+import debounce from 'debounce'
 import { WatchEvent } from 'unstorage'
 import { updateNavigation } from '../navigation'
 import { resetDatabase } from '../server/content'
@@ -9,7 +10,7 @@ import { logger } from '../utils'
 export default function setupDevTarget(options: any, nuxt: Nuxt) {
   // setup wecocket if watch is enabled
   if (options.watch) {
-    const handleEvent = async (event: WatchEvent, key: string) => {
+    const handleEvent = debounce(async (event: WatchEvent, key: string) => {
       await updateNavigation(nuxt)
       resetDatabase()
 
@@ -17,7 +18,7 @@ export default function setupDevTarget(options: any, nuxt: Nuxt) {
        * Broadcast a message to the server to refresh the page
        **/
       useWebSocket(options, nuxt).broadcast({ event, key })
-    }
+    }, 200)
     const storage = useStorage()
     storage?.watch((event: WatchEvent, key: string) => {
       if (['content'].some(mount => key.startsWith(mount))) {
