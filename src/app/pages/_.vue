@@ -66,8 +66,20 @@ export default defineComponent({
       templateOptions = { ...templateOptions, ...match.layout }
     }
 
-    // Set template options
-    $docus.layout.value = templateOptions
+    /**
+     * It is important to update layout only in server side.
+     * Updating layout in client side (here inside `asyncData`) will cause intermediate rendering before page change.
+     * and it will cause a layout shifting and unwanted behaviours in navigation.
+     */
+    if (process.server) {
+      // Set template options
+      $docus.layout.value = templateOptions
+
+      // Set Docus runtime current page
+      $docus.currentPage.value = page
+      // Update navigation path to update currentNav
+      $docus.currentPath.value = `/${$route.params.pathMatch}`
+    }
 
     // Set Docus runtime current page
     $docus.currentPage.value = page
