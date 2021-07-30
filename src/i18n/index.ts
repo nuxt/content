@@ -2,7 +2,6 @@ import fs from 'fs'
 import { resolve, join, relative } from 'upath'
 import defu from 'defu'
 import { Module } from '@nuxt/types'
-// @ts-ignore
 import languages from './languages'
 
 const r = (...args: string[]) => resolve(__dirname, ...args)
@@ -83,6 +82,18 @@ export default <Module>function docusI18n() {
       // move start route to the end
       const index = routes.findIndex(route => route.path === '/*')
       const [all] = routes.splice(index, 1)
+
+      const codes = options.i18n.locales
+        .map((l: any) => l.code || l)
+        .filter((code: string) => code !== options.i18n.defaultLocale)
+
+      for (const code of codes) {
+        routes.push({
+          ...all,
+          path: '/' + code,
+          name: 'index___' + code
+        })
+      }
       routes.push(all)
     })
   })
