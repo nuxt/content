@@ -12,7 +12,7 @@ export default defineComponent({
     }
   },
 
-  async asyncData({ $docus, app: { i18n, localePath }, params, error, redirect }) {
+  async asyncData({ $docus, app: { i18n, localePath }, route, params, error, redirect }) {
     const language = i18n.locale
 
     // Init template options from Docus settings
@@ -77,8 +77,9 @@ export default defineComponent({
 
       // Set Docus runtime current page
       $docus.currentPage.value = page
+
       // Update navigation path to update currentNav
-      $docus.currentPath.value = `/${$route.params.pathMatch}`
+      $docus.currentPath.value = `/${route.params.pathMatch}`
     }
 
     // Set Docus runtime current page
