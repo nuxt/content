@@ -68,7 +68,14 @@ export default nuxtConfig({
   server: {
     port: process.env.PORT || 4000
   },
+  // @ts-ignore
   vite: {
+    // TODO: Remove that temporary fix.
+    server: {
+      fs: {
+        strict: false
+      }
+    },
     experimentWarning: false,
     optimizeDeps: {
       exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations'],
@@ -85,7 +92,7 @@ export default nuxtConfig({
     routes: ['/']
   },
   build: {
-    transpile: ['@docus/']
+    transpile: ['@docus/', 'ohmyfetch']
   },
   image: {
     domains: ['https://i3.ytimg.com']
