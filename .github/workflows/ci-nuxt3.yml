@@ -1,12 +1,12 @@
-name: ci-dev
+name: ci-nuxt3
 
 on:
   push:
     branches:
-      - dev
+      - nuxt3
   pull_request:
     branches:
-      - dev
+      - nuxt3
 
 jobs:
   ci:
@@ -18,7 +18,7 @@ jobs:
         node: [16]
 
     steps:
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
 
@@ -48,13 +48,13 @@ jobs:
         run: yarn test
 
       - name: Coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v1
 
       - name: Build
         run: yarn build
 
-      # - name: Release Edge
-      #   if: github.event_name == 'push'
-      #   run: ./scripts/release-edge.sh
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+      - name: Release Edge
+        if: github.event_name == 'push'
+        run: ./scripts/release-edge.sh
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
