@@ -197,22 +197,24 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
   }
 
   private processSort(sortBy: any) {
-    const result = []
+    const result: any[] = []
+    const add = ([field, direction]: any[]) =>
+      result.push([field, typeof direction === 'boolean' ? direction : direction === 'desc'])
     if (sortBy) {
       if (Array.isArray(sortBy)) {
         for (const sort of sortBy) {
           if (Array.isArray(sort)) {
-            result.push(sort)
+            add(sort)
           } else if (typeof sort === 'string') {
-            result.push(sort.split(':'))
+            add(sort.split(':'))
           } else {
-            result.push(...Object.entries(sort))
+            Object.entries(sort).forEach(item => add(item))
           }
         }
       } else if (typeof sortBy === 'object') {
-        result.push(...Object.entries(sortBy))
+        Object.entries(sortBy).forEach(item => add(item))
       } else {
-        result.push(sortBy.split(':'))
+        add(sortBy.split(':'))
       }
     }
     return result
