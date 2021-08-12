@@ -79,7 +79,7 @@ export default nuxtConfig({
     experimentWarning: false,
     optimizeDeps: {
       exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations'],
-      include: ['defu', 'theme-colors', 'cookie', 'js-cookie', 'clipboard', 'property-information']
+      include: ['defu', 'theme-colors', 'property-information']
     }
   },
   typescript: {
