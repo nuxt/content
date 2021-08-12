@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Restore all git changes
-git restore -s@ -SW  -- example src templates
+git restore -s@ -SW  -- example src test
 
 # Resolve yarn
 yarn
