@@ -97,7 +97,7 @@ export default defineNuxtModule(nuxt => ({
         path: resolve(__dirname, 'runtime/components'),
         prefix: '',
         isAsync: false,
-        level: 2
+        level: 100
       })
 
       // Update context: component dirs
