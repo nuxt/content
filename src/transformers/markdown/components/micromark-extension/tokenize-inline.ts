@@ -79,7 +79,11 @@ function tokenize(effects: Effects, ok: Okay, nok: NotOkay) {
   }
 
   function exit(code: number) {
-    if (!markdownLineEndingOrSpace(code) && code !== null && ![Codes.closingSquareBracket].includes(code)) {
+    if (
+      !markdownLineEndingOrSpace(code) &&
+      code !== null &&
+      ![Codes.closingSquareBracket, Codes.dot, Codes.comma].includes(code)
+    ) {
       return nok
     }
     effects.exit('componentText')

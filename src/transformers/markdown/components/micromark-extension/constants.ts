@@ -20,6 +20,10 @@ export const Codes = {
    */
   colon: 58,
   /**
+   * ','
+   */
+  comma: 44,
+  /**
    * '-'
    */
   dash: 45,
