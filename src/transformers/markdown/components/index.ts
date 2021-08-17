@@ -1,4 +1,4 @@
-import { kebabCase } from 'scule'
+import { camelCase, kebabCase } from 'scule'
 import visit from 'unist-util-visit'
 import { TAGS_MAP } from '../../../runtime/utils'
 import { parseFrontMatter } from '../fontmatter'
@@ -41,7 +41,7 @@ export default function remarkComponentsPlugin(components: any[]) {
       // parse data slots and retrive data
       const yamlAttributes = getNodeData(node)
 
-      nodeData.hName = tagName(kebabCase(node.name))
+      nodeData.hName = tagName(kebabCase(camelCase(node.name)))
       nodeData.hProperties = bindData(
         {
           ...node.attributes,
