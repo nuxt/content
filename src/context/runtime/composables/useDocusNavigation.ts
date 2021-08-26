@@ -1,6 +1,6 @@
 import { withTrailingSlash } from 'ufo'
 import { ref, computed } from '@nuxtjs/composition-api'
-import { DocusDocument, NavItem } from '@docus/core'
+import type { DocusDocument, NavItem } from '@docus/core'
 import { DocusNavigationGetParameters } from '../../../types'
 import { useDocusTemplates } from './useDocusTemplates'
 
@@ -24,9 +24,9 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
    * Get navigation from Docus data
    */
   async function fetchNavigation() {
-    const { body } = await api.data('/docus/navigation/' + app.i18n.locale)
+    const navigation = await api.data('navigation/' + app.i18n.locale)
 
-    state.navigation[app.i18n.locale] = body
+    state.navigation[app.i18n.locale] = navigation
 
     fetchCounter.value += 1
   }

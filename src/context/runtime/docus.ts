@@ -16,8 +16,7 @@ let docusInstance: DocusRuntimeInstance
  */
 export const createDocus = async (
   context: PermissiveContext,
-  settings: DocusSettings,
-  content: any
+  settings: DocusSettings
 ): Promise<DocusRuntimeInstance<typeof settings['theme']>> => {
   // Nuxt instance proxy
   let $nuxt: any
@@ -46,7 +45,7 @@ export const createDocus = async (
   state.theme = theme
 
   // Create API helpers
-  const api = useDocusApi(content)
+  const api = useDocusApi(context)
 
   // Create Docus Addons context
   const docusAddonContext: DocusAddonContext = {

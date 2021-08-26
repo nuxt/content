@@ -1,17 +1,12 @@
-import { joinURL } from 'ufo'
-import { BaseQueryBuiler, NavItem } from '@docus/core/runtime'
+import type { NavItem } from '@docus/core/runtime'
+import { PermissiveContext } from '../../../types'
 
-type Content = {
-  search: (to: string, params?: any) => BaseQueryBuiler<any>
-  get: (key: string) => Promise<any>
-}
+export const useDocusApi = (context: PermissiveContext) => {
+  const data = (path: string) => context.$content.fetch(path)
 
-export const useDocusApi = ($content: Content) => {
-  const data = (path: string) => $content.get(joinURL('/data', path))
+  const search = (to: string, params?: any) => context.$content.search(to, params)
 
-  const search = (to: string, params?: any) => $content.search(to, params)
-
-  const page = (path: string) => $content.get(path)
+  const page = (path: string) => context.$content.get(path)
 
   const findLink = (links: NavItem[], to: string) => links.find(link => link.to === to)
 

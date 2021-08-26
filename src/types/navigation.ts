@@ -1,4 +1,4 @@
-import { NavItem, NavItemNavigationConfig } from '@docus/core'
+import type { NavItem, NavItemNavigationConfig } from '@docus/core'
 
 export type DocusNavigation = {
   [language: string]: NavItem[]

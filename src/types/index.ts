@@ -1,6 +1,6 @@
 import './shims.d'
 import { Context } from '@nuxt/types'
-import { DocusDocument } from '@docus/core'
+import type { DocusDocument } from '@docus/core'
 import { Ref } from '@nuxtjs/composition-api'
 import { DocusNavigation } from './navigation'
 
