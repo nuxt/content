@@ -12,7 +12,7 @@ export default {
   },
   data() {
     return {
-      template: 'Error'
+      template: 'PageError'
     }
   },
   head() {
