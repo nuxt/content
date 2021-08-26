@@ -1,11 +1,13 @@
 <template>
-  <NuxtLink :to="href" :blank="blank" :static="static">
+  <a v-if="remote || static" target="blank" :href="href"><slot /></a>
+  <NuxtLink v-else :to="href" :target="blank" :static="static">
     <!-- TODO: implement static & remote logic -->
     <slot />
   </NuxtLink>
 </template>
 
 <script lang="ts">
+import { hasProtocol } from 'ufo'
 export default {
   props: {
     href: {
@@ -22,6 +24,11 @@ export default {
     static: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    remote() {
+      return hasProtocol(this.href, true)
     }
   }
 }
