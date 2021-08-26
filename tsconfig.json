@@ -9,8 +9,9 @@
     "declaration": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "noImplicitThis": false,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest", "@nuxt/types", "nuxt-i18n"]
+    "types": ["node", "jest", "@nuxt/kit", "@nuxt/nitro"]
   },
   "include": ["src/**/*", "example"],
   "exclude": ["node_modules", "dist"]

@@ -5,10 +5,14 @@ export default <BuildOptions>{
     { input: 'src/index' },
     { input: 'src/runtime' },
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' },
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'cjs', declaration: false },
     { input: 'src/templates/', outDir: 'dist/templates', format: 'esm', ext: 'js', declaration: false }
   ],
   declaration: true,
   externals: [
+    '#config',
+    '#storage',
+    'node-fetch',
     'ufo',
     'consola',
     'vue-meta',

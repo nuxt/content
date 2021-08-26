@@ -64,8 +64,7 @@ export function useWebSocket(base: string) {
       setTimeout(connect, 1000)
       return
     }
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws'
-    const wsURL = `${protocol}://${location.hostname}:${location.port}/${base}/ws`
+    const wsURL = `${base}/ws`
     logger.log(`WS connect to ${wsURL}`)
     ws = new WebSocket(wsURL)
     ws.onopen = onOpen

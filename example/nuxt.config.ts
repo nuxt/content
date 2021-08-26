@@ -1,10 +1,8 @@
 import { resolve } from 'path'
-import { withDocus } from '@docus/app'
+import { defineNuxtConfig } from '@nuxt/kit'
 
-// Get local theme path
-const themePath = resolve(__dirname, './theme/index.ts')
-
-export default withDocus(themePath, {
+export default defineNuxtConfig({
+  target: 'static',
   components: [
     {
       path: resolve(__dirname, 'components'),
@@ -13,14 +11,7 @@ export default withDocus(themePath, {
       level: 2
     }
   ],
-  rootDir: __dirname,
-  // @ts-ignore
-  vite: {
-    server: {
-      fs: {
-        strict: false
-      }
-    }
-  },
-  buildModules: ['@nuxt/typescript-build', '../src']
+  buildModules: ['@nuxtjs/composition-api/module', '@nuxt/typescript-build'],
+  modules: ['../src'],
+  content: {}
 })

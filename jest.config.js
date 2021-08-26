@@ -1,22 +1,13 @@
 module.exports = {
+  preset: '@nuxt/test-utils',
   transform: {
-    '\\.(js|ts)$': [
-      'babel-jest',
-      {
-        presets: ['@babel/preset-env', '@babel/preset-typescript'],
-        plugins: [
-          '@babel/plugin-transform-runtime',
-          '@babel/plugin-proposal-class-properties',
-          '@babel/plugin-proposal-object-rest-spread'
-        ]
-      }
-    ]
+    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.mjs$': 'babel-jest'
   },
-  // TODO: Fix coverage
-  collectCoverage: false,
-  collectCoverageFrom: ['src/**', '!templates/**', '!example/**', '!.nuxt/**', '!src/i18n/languages/**'],
-  coveragePathIgnorePatterns: ['node_modules', '.nuxt'],
-  transformIgnorePatterns: [
-    'node_modules/(?!@docus/app/|nuxt-i18n|mdast-util-to-hast|unist-builder|detab|unist-util-position/*)'
-  ]
+
+  setupFilesAfterEnv: ['./test/utils/setup-env'],
+
+  moduleNameMapper: {},
+  collectCoverageFrom: ['src/**', '!src/types/**'],
+  transformIgnorePatterns: ['node_modules/(?!@nuxt/design)']
 }

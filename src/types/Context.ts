@@ -1,6 +1,7 @@
 interface MarkdownPlugin {
   name: string
-  instance?: any
+  path?: string
+  configKey?: string
   options?: any
 }
 
@@ -9,8 +10,9 @@ export interface DocusContext {
     codes: string[]
     defaultLocale: string
   }
-  dir: {
-    components: string[]
+  database: {
+    provider: string
+    options: any
   }
   search: {
     inheritanceFields: string[]
@@ -22,9 +24,7 @@ export interface DocusContext {
         depth: number
         searchDepth: number
       }
-      components: {
-        [key: string]: any
-      }
+      components: Array<string | Array<any> | MarkdownPlugin>
       remarkPlugins: Array<string | Array<any> | MarkdownPlugin>
       rehypePlugins: Array<string | Array<any> | MarkdownPlugin>
     }

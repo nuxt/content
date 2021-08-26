@@ -1,9 +1,10 @@
-import Loki from '@lokidb/loki'
+import lokidb from '@lokidb/loki'
 import { DatabaseProvider } from '../../../../types'
 import LokiQuery from './Query'
 
-export function createLokiJsDatabase(name = 'lokijs.db'): DatabaseProvider {
-  const database = new Loki(name)
+export default function createLokiJsDatabase({ name = 'lokijs.db' } = {}): DatabaseProvider {
+  // @ts-ignore
+  const database = new lokidb.Loki(name)
   const colleciton = database.addCollection<any>('items', {})
 
   const query = (path: any, params: any) => {
@@ -24,7 +25,7 @@ export function createLokiJsDatabase(name = 'lokijs.db'): DatabaseProvider {
     }
   }
 
-  const removeItem = (key: string) => colleciton.removeWhere(doc => doc.key === key)
+  const removeItem = (key: string) => colleciton.removeWhere((doc: any) => doc.key === key)
 
   const clear = () => colleciton.removeWhere(() => true)
 
@@ -45,3 +46,4 @@ export function createLokiJsDatabase(name = 'lokijs.db'): DatabaseProvider {
     load
   }
 }
+export const createDatabase = createLokiJsDatabase

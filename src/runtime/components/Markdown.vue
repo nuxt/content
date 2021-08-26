@@ -1,5 +1,6 @@
 <script lang="ts">
-import { flatUnwrap, unwrap, isTag } from '~docus-core/utils'
+// @ts-ignore
+import { flatUnwrap, unwrap, isTag } from '~docus/content/utils'
 
 export default {
   name: 'Markdown',
@@ -14,7 +15,7 @@ export default {
       default: ''
     }
   },
-  render: (_, ctx) => {
+  render: (_: any, ctx: any) => {
     const slot = ctx.props.use || 'default'
     let node =
       typeof slot === 'string'
@@ -45,7 +46,9 @@ export default {
         !['span', 'strong', 'em', 'a', 'code'].some(tag => isTag(first, tag))
 
       if (requireSplitor) {
-        node = node.flatMap((n, i) => (i === 0 ? unwrap(n, tags) : [ctx.scopedSlots.between(), unwrap(n, tags)]))
+        node = node.flatMap((n: any, i: number) =>
+          i === 0 ? unwrap(n, tags) : [ctx.scopedSlots.between(), unwrap(n, tags)]
+        )
       } else {
         node = flatUnwrap(node, tags)
       }

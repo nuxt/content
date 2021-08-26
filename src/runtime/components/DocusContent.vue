@@ -1,9 +1,9 @@
 <script lang="ts">
 import { pascalCase } from 'scule'
-import Vue, { CreateElement, RenderContext, VNode } from 'vue'
-import info from 'property-information'
-import type { DocusDocument } from '../../../types/Document'
-import { DocusMarkdownNode } from '../../../types'
+import Vue, { CreateElement, RenderContext, VNode } from 'vue' // eslint-disable-line
+import { find, html } from 'property-information'
+import type { DocusDocument } from '../../types/Document'
+import { DocusMarkdownNode } from '../../types'
 
 const rootKeys = ['class-name', 'class', 'className', 'style']
 
@@ -31,7 +31,7 @@ function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
       const k = key.replace(/.*:/, '')
       let obj: any = rootKeys.includes(k) ? data : data.attrs
       const value = props[key]
-      const { attribute } = info.find(info.html, key)
+      const { attribute } = find(html, key)
       const native = nativeInputs.includes(tag)
 
       if (rxModel.test(key) && value in doc && !native) {
@@ -51,9 +51,9 @@ function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
 
         obj[field] = evalInContext(value, doc)
         data.on = data.on || {}
-        data.on[event] = e => (doc[value] = processor(e))
+        data.on[event] = (e: any) => ((doc as any)[value] = processor(e))
       } else if (key === 'v-bind') {
-        const val = value in doc ? doc[value] : evalInContext(value, doc)
+        const val = value in doc ? (doc as any)[value] : evalInContext(value, doc)
         obj = Object.assign(obj, val)
       } else if (rxOn.test(key)) {
         key = key.replace(rxOn, '')
@@ -61,7 +61,7 @@ function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
         data.on[key] = evalInContext(value, doc)
       } else if (rxBind.test(key)) {
         key = key.replace(rxBind, '')
-        obj[key] = value in doc ? doc[value] : evalInContext(value, doc)
+        obj[key] = value in doc ? (doc as any)[value] : evalInContext(value, doc)
       } else if (Array.isArray(value)) {
         obj[attribute] = value.join(' ')
       } else {
@@ -79,7 +79,7 @@ function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
  */
 function slotsToData(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocument) {
   const data: any = {}
-  const children = node.children || []
+  const children: DocusMarkdownNode[] = node.children || []
 
   children.forEach(child => {
     // Regular children and default templates are processed inside `processNode`.
@@ -126,7 +126,7 @@ function processNode(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocume
     children.push(...processQueue.map(node => processNode(node, h, doc)))
   }
 
-  if (process.server && typeof Vue.component(pascalCase(node.tag)) === 'function') {
+  if ((process as any).server && typeof Vue.component(pascalCase(node.tag)) === 'function') {
     lazyComponents.add(pascalCase(node.tag))
   }
   return h(node.tag, data, children)
@@ -192,9 +192,9 @@ export default {
     }
     data.class = classes
     data.props = Object.assign({ ...body.props }, data.props)
-    const children = body.children.map(child => processNode(child, h, document))
+    const children = (body.children as DocusMarkdownNode[]).map(child => processNode(child, h, document))
 
-    if (process.server) {
+    if ((process as any).server) {
       ;(parent.$root as any).context.beforeSerialize((nuxtState: any) => {
         if (nuxtState.fetch._lazyComponents) {
           lazyComponents.forEach(name => nuxtState.fetch._lazyComponents.add(name))

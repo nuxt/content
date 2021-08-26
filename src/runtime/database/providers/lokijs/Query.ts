@@ -1,4 +1,3 @@
-import { $fetch } from 'ohmyfetch'
 import { apply, omit, pick } from '../../../utils/object'
 import { BaseQueryBuiler } from '../../Query'
 
@@ -26,10 +25,9 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
    * @returns {(Object|Array)} Returns processed data
    */
   remoteFetch() {
-    return $fetch(this.base, {
+    return globalThis.$fetch(this.base, {
       method: 'POST',
-      body: JSON.stringify(this.params),
-      headers: { 'Content-Type': 'application/json' }
+      body: this.params
     })
   }
 
@@ -38,7 +36,7 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
     Loki = Loki.default || Loki
     const db = new Loki('content.db')
     const items = db.addCollection('items')
-    const { body: navigation } = await $fetch(dataUrl)
+    const { body: navigation } = await globalThis.$fetch(dataUrl)
 
     function index(item: any) {
       // insert pages an non-page document to navigation object for search purpose

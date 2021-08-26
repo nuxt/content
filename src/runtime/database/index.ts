@@ -1,12 +1,26 @@
+import { requireModule } from '@nuxt/kit'
 import { createContext } from 'unctx'
+import { omit } from '../utils/object'
 import { DatabaseProvider } from '../../types'
+import { docusContext } from '../context'
+import { generateNavigation } from '../navigation'
+import createLokijsDatabase from './providers/lokijs'
 
-const ctx = createContext()
+const ctx = createContext<DatabaseProvider>()
 
-export const setDatabaseProvider = (provider: DatabaseProvider) => ctx.set(provider, true)
+export const setDatabase = ctx.set
 
-export function useDB() {
-  const provider = ctx.use()
+export const clearDatabase = ctx.unset
+
+export async function useDB() {
+  let provider = ctx.use()
+
+  if (!provider) {
+    provider = createDatabase(docusContext.database.provider, docusContext.database.options)
+    await initializeDatabase(provider)
+    ctx.set(provider, true)
+  }
+
   return {
     getItem: provider.getItem,
     setItem: provider.setItem,
@@ -16,5 +30,33 @@ export function useDB() {
     query: provider.query,
     serialize: provider.serialize,
     load: provider.load
+  }
+}
+
+async function initializeDatabase(db: DatabaseProvider) {
+  const navigation = await generateNavigation()
+
+  function index(item: any) {
+    // insert pages an non-page document to navigation object for search purpose
+    db?.setItem(item.id, omit(['children'])(item))
+
+    if (item.children) {
+      item.children.forEach(index)
+    }
+  }
+
+  Object.values(navigation || {})
+    .flatMap(i => i)
+    .forEach(index)
+}
+
+function createDatabase(provider: string, options: any): DatabaseProvider {
+  switch (provider) {
+    case 'lokijs':
+      return createLokijsDatabase(options)
+    default: {
+      const createDatabase = requireModule(provider)
+      return createDatabase(options)
+    }
   }
 }

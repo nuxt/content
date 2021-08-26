@@ -20,4 +20,5 @@ export interface DocusRootNode {
   props?: {
     [key: string]: any
   }
+  ast?: DocusRootNode
 }

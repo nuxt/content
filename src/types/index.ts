@@ -1,3 +1,5 @@
+import './shim.d'
+
 export * from './Markdown'
 export * from './Database'
 export * from './Navigation'
@@ -10,7 +12,4 @@ export interface DocusOptions {
   database: {
     provider: string
   }
-
-  _isSSG: boolean
-  _dbPath: string
 }

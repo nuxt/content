@@ -1,17 +1,14 @@
-import { createContext } from 'unctx'
-import remarkComponentsPlugin from './transformers/markdown/components'
-import propsHandler from './transformers/markdown/components/props'
-import { DocusContext } from './types/Context'
+import { resolveModule } from '@nuxt/kit'
+import { DocusContext } from './types'
 
-const ctx = createContext<DocusContext>()
-
-ctx.set({
+export const defaultContext: DocusContext = {
   locales: {
     codes: ['en'],
     defaultLocale: 'en'
   },
-  dir: {
-    components: []
+  database: {
+    provider: 'lokijs',
+    options: {}
   },
   search: {
     inheritanceFields: ['layout'],
@@ -23,11 +20,12 @@ ctx.set({
         depth: 2,
         searchDepth: 2
       },
-      components: {
-        props: propsHandler
-      },
+      components: [],
       remarkPlugins: [
-        { instance: remarkComponentsPlugin, name: 'components' },
+        {
+          name: resolveModule('./runtime/transformers/markdown/components', { paths: __dirname }),
+          configKey: 'components'
+        },
         'remark-emoji',
         'remark-squeeze-paragraphs',
         'remark-slug',
@@ -39,6 +37,4 @@ ctx.set({
       rehypePlugins: ['rehype-sort-attribute-values', 'rehype-sort-attributes', 'rehype-raw']
     }
   }
-})
-
-export const useDocusContext = ctx.use
+}
