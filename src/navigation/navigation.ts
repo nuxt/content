@@ -77,9 +77,12 @@ const getPageLink = (page: any): NavItem => {
     language: page.language,
     slug: page.slug,
     to,
-    page: page.page || !(page.slug === '' && page.empty && !page.navigation?.redirect),
     children: [],
     title: page.title || slugToTitle(to.split('/').pop() || '')
+  }
+
+  if (item.page && page.slug === '' && page.empty && !page.navigation?.redirect) {
+    item.page = false
   }
 
   if (page.draft) {
@@ -191,10 +194,11 @@ function createNav(pages: any[]) {
           id: idParts.slice(0, index + 2).join(':'),
           slug: dir,
           to,
-          page: false
+          page: false,
+          position: generatePosition(idParts.slice(1, index + 2).join(':'))
         })
         // generate position for new link
-        sortMap[link.id] = generatePosition(idParts.slice(1, index + 2).join(':'))
+        sortMap[link.id] = link.position
 
         currentLinks.push(link)
       }
