@@ -1,4 +1,4 @@
-import { MetaInfo } from 'vue-meta'
+import type { MetaInfo } from 'vue-meta'
 import { computed } from '@nuxtjs/composition-api'
 import { getColors } from 'theme-colors'
 import { DocusAddonContext, Colors } from '../../../types'
