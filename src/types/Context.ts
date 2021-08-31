@@ -1,9 +1,4 @@
-interface MarkdownPlugin {
-  name: string
-  path?: string
-  configKey?: string
-  options?: any
-}
+import type { MDCOptions } from '@docus/mdc'
 
 export interface DocusContext {
   locales: {
@@ -19,14 +14,6 @@ export interface DocusContext {
     fields: string[]
   }
   transformers: {
-    markdown: {
-      toc: {
-        depth: number
-        searchDepth: number
-      }
-      components: Array<string | Array<any> | MarkdownPlugin>
-      remarkPlugins: Array<string | Array<any> | MarkdownPlugin>
-      rehypePlugins: Array<string | Array<any> | MarkdownPlugin>
-    }
+    markdown: Partial<MDCOptions>
   }
 }

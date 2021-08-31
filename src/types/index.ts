@@ -1,6 +1,6 @@
 import './shim.d'
 
-export * from './Markdown'
+export * from '@docus/mdc'
 export * from './Database'
 export * from './Navigation'
 export * from './Document'

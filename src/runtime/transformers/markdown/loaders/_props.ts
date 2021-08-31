@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'upath'
 import { parse } from 'vue-docgen-api'
-import { setNodeData } from '../utils'
+import { setNodeData } from '@docus/mdc/utils'
 
 interface PropsComponentHandlerOptions {
   paths?: string[]

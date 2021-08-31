@@ -1,9 +1,10 @@
 <script lang="ts">
 import { pascalCase } from 'scule'
 import Vue, { CreateElement, RenderContext, VNode } from 'vue' // eslint-disable-line
+// @ts-ignore
 import { find, html } from 'property-information'
+import type { MDCNode } from '@docus/mdc'
 import type { DocusDocument } from '../../types/Document'
-import { DocusMarkdownNode } from '../../types'
 
 const rootKeys = ['class-name', 'class', 'className', 'style']
 
@@ -24,7 +25,7 @@ function evalInContext(code: string, context: any) {
   return new Function('with(this) { return (' + code + ') }').call(context)
 }
 
-function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
+function propsToData(node: MDCNode, doc: DocusDocument) {
   const { tag = '', props = {} } = node
   return Object.keys(props).reduce(
     function (data, key) {
@@ -77,9 +78,9 @@ function propsToData(node: DocusMarkdownNode, doc: DocusDocument) {
  * Create the scoped slots from `node` template children. Templates for default
  * slots are processed as regular children in `processNode`.
  */
-function slotsToData(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocument) {
+function slotsToData(node: MDCNode, h: CreateElement, doc: DocusDocument) {
   const data: any = {}
-  const children: DocusMarkdownNode[] = node.children || []
+  const children: MDCNode[] = node.children || []
 
   children.forEach(child => {
     // Regular children and default templates are processed inside `processNode`.
@@ -91,7 +92,7 @@ function slotsToData(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocume
     data.scopedSlots = data.scopedSlots || {}
     const template = child
     const name = getSlotName(template)
-    const vDomTree = template.content.map((tmplNode: DocusMarkdownNode) => processNode(tmplNode, h, doc))
+    const vDomTree = template.content.map((tmplNode: MDCNode) => processNode(tmplNode, h, doc))
     data.scopedSlots[name] = function () {
       return vDomTree
     }
@@ -100,7 +101,7 @@ function slotsToData(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocume
   return data
 }
 
-function processNode(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocument): VNode | string | undefined {
+function processNode(node: MDCNode, h: CreateElement, doc: DocusDocument): VNode | string | undefined {
   /**
    * Return raw value as it is
    */
@@ -122,7 +123,7 @@ function processNode(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocume
       continue
     }
 
-    const processQueue: DocusMarkdownNode[] = isDefaultTemplate(child) ? child.content : [child]
+    const processQueue: MDCNode[] = isDefaultTemplate(child) ? child.content : [child]
     children.push(...processQueue.map(node => processNode(node, h, doc)))
   }
 
@@ -134,15 +135,15 @@ function processNode(node: DocusMarkdownNode, h: CreateElement, doc: DocusDocume
 
 const DEFAULT_SLOT = 'default'
 
-function isDefaultTemplate(node: DocusMarkdownNode) {
+function isDefaultTemplate(node: MDCNode) {
   return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
 }
 
-function isTemplate(node: DocusMarkdownNode) {
+function isTemplate(node: MDCNode) {
   return node.tag === 'template'
 }
 
-function getSlotName(node: DocusMarkdownNode) {
+function getSlotName(node: MDCNode) {
   let name = ''
   for (const propName of Object.keys(node.props || {})) {
     if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) {
@@ -173,8 +174,8 @@ export default {
 
     let { body } = (document || {}) as DocusDocument
     // look for ast object in the document
-    if (body && body.ast) {
-      body = body.ast
+    if (body && (body as any).ast) {
+      body = (body as any).ast
     }
 
     if (!body || !body.children || !Array.isArray(body.children)) {
@@ -192,7 +193,7 @@ export default {
     }
     data.class = classes
     data.props = Object.assign({ ...body.props }, data.props)
-    const children = (body.children as DocusMarkdownNode[]).map(child => processNode(child, h, document))
+    const children = (body.children as MDCNode[]).map(child => processNode(child, h, document))
 
     if ((process as any).server) {
       ;(parent.$root as any).context.beforeSerialize((nuxtState: any) => {
@@ -205,7 +206,7 @@ export default {
     }
 
     // detect root tag
-    const tag = (body as DocusMarkdownNode).tag || 'div'
+    const tag = (body as MDCNode).tag || 'div'
 
     return h(tag, data, children)
   }

@@ -69,3 +69,33 @@ function padLeft(value: string, length: number): string {
 function padRight(value: string, length: number): string {
   return (value + '0'.repeat(length)).substr(0, length)
 }
+
+export function getPathMeta(id: string, { locales = ['en'], defaultLocale = 'en' } = {}) {
+  const regexp = new RegExp(`^/?(${locales.join('|')})`, 'gi')
+  const paths = id
+    // remove extension
+    .split('.')
+    .slice(0, -1)
+    .join('.')
+    // Remove mount point
+    // This should be improved
+    .split(/:/g)
+    .slice(1)
+
+  let path = paths.join('/')
+  const [language] = path.match(regexp) || []
+  if (language) {
+    path = path.replace(regexp, '')
+  }
+  const slug = generateSlug(paths[paths.length - 1])
+
+  return {
+    slug,
+    title: generateTitleFromSlug(slug),
+    position: generatePosition(path),
+    to: generateTo(path),
+    draft: isDraft(path),
+    page: !isHidden(path),
+    language: language || defaultLocale
+  }
+}

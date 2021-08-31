@@ -9,5 +9,5 @@ module.exports = {
 
   moduleNameMapper: {},
   collectCoverageFrom: ['src/**', '!src/types/**'],
-  transformIgnorePatterns: ['node_modules/(?!@nuxt/design)']
+  transformIgnorePatterns: ['node_modules/(?!@nuxt/design|@docus/mdc|unified)/.*']
 }

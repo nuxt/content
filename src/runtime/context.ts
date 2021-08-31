@@ -1,11 +1,13 @@
+import { getContext } from 'unctx'
 import { DocusContext } from '../types'
-import { processContext } from './transformers/markdown/utils'
-// @ts-ignore
-import config from '#config'
+const client = typeof window !== 'undefined'
 
-const ctx = config.docusContext as DocusContext
+const context = client // @ts-ignore
+  ? import('#build/docus/context.client.mjs').then(c => c.default || c) // @ts-ignore
+  : import('#build/docus/context.server.mjs').then(c => c.default || c)
 
-processContext(ctx)
+const ctx = getContext<DocusContext>('docus_context')
 
-export const docusContext = ctx
-export const useDocusContext = () => ctx
+context.then(c => ctx.set(c, true))
+
+export const useDocusContext = ctx.use

@@ -2,7 +2,7 @@ import { requireModule } from '@nuxt/kit'
 import { createContext } from 'unctx'
 import { omit } from '../utils/object'
 import { DatabaseProvider } from '../../types'
-import { docusContext } from '../context'
+import { useDocusContext } from '../context'
 import { generateNavigation } from '../navigation'
 import createLokijsDatabase from './providers/lokijs'
 
@@ -13,6 +13,7 @@ export const setDatabase = ctx.set
 export const clearDatabase = ctx.unset
 
 export async function useDB() {
+  const docusContext = useDocusContext()!
   let provider = ctx.use()
 
   if (!provider) {

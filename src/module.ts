@@ -5,7 +5,8 @@ import {
   Nuxt,
   addPlugin,
   installModule,
-  useNuxt
+  useNuxt,
+  addTemplate
 } from '@nuxt/kit'
 import { NitroContext } from '@nuxt/nitro'
 import { resolve } from 'upath'
@@ -30,7 +31,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     }
   },
   configKey: 'content',
-  setup(options: DocusOptions, nuxt) {
+  setup(options: DocusOptions, nuxt: Nuxt) {
     installModule(nuxt, {
       src: resolveModule('@nuxt/nitro/compat'),
       options: {
@@ -39,16 +40,45 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         }
       }
     })
-
     // Extend context
-    const docusContext = (nuxt.options.privateRuntimeConfig.docusContext = defaultContext)
+    const docusContext = defaultContext
 
     // add root page into generate routes
     nuxt.options.generate.routes = nuxt.options.generate.routes || []
     nuxt.options.generate.routes.push('/')
 
-    const runtimeDir = resolve(__dirname, 'runtime')
+    // transpile @docus/mdc
+    nuxt.options.build.transpile.push(
+      '@docus/mdc',
+      'unified',
+      'bail',
+      'trough',
+      'vfile',
+      'parse-entities',
+      'character-entities',
+      'stringify-entities',
+      'character-reference-invalid',
+      'is-decimal',
+      'is-hexadecimal',
+      'is-alphanumerical',
+      'is-alphabetical',
+      'detab',
+      'emoticon',
+      'space-separated-tokens',
+      'is-absolute-url',
+      'ccount',
+      'markdown-table',
+      'comma-separated-tokens',
+      'web-namespaces',
+      'zwitch',
+      'html-void-elements',
+      'mdurl',
+      'parse5',
+      /(unist|remark|mdast|micromark|rehype|hast)-?.*/
+    )
+
     // setup runtime alias
+    const runtimeDir = resolve(__dirname, 'runtime')
     nuxt.options.alias['~docus/content'] = runtimeDir
     nuxt.options.alias['~docus/database'] = resolve(runtimeDir, `database/providers/${options.database.provider}`)
 
@@ -76,6 +106,18 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     // Add Docus runtime plugin
     addPlugin(resolve(__dirname, './templates/content'))
 
+    // Add Docus context template
+    for (const target of ['server', 'client']) {
+      addTemplate({
+        src: resolve(__dirname, './templates/context.js'),
+        filename: `docus/context.${target}.mjs`,
+        options: {
+          target,
+          context: docusContext
+        }
+      })
+    }
+
     // Setup dev target
     if (nuxt.options.dev) {
       setupDevTarget(options, nuxt)
@@ -98,12 +140,6 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       docusContext.locales.defaultLocale = nuxt.options.i18n?.defaultLocale || docusContext.locales.defaultLocale
 
       nuxt.callHook('docus:context', docusContext)
-
-      // TODO: remove privateRuntimeConfig and use below code once @nuxt/kit-edge is used
-      // addTemplate({
-      //   filename: 'docus.context.mjs',
-      //   getContents: () => ...
-      // })
     })
 
     /**
@@ -126,9 +162,10 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
           return ''
         })
       )
-      docusContext.transformers.markdown.components.push({
+      docusContext.transformers.markdown.components?.push({
         name: 'props',
-        path: resolveModule('./runtime/transformers/markdown/components/props', { paths: __dirname }),
+        path: resolveModule('./runtime/transformers/markdown/loaders/props', { paths: __dirname }),
+        target: 'server',
         options: { paths }
       })
     })

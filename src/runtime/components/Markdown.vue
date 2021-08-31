@@ -1,6 +1,5 @@
 <script lang="ts">
-// @ts-ignore
-import { flatUnwrap, unwrap, isTag } from '~docus/content/utils'
+import { flatUnwrap, unwrap, isTag } from '@docus/mdc/utils'
 
 export default {
   name: 'Markdown',

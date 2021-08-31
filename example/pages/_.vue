@@ -3,10 +3,12 @@
     <div class="w-25">
       <ul>
         <li v-for="link in navigation.en" :key="link.id">
-          <NuxtLink :to="link.to">{{ link.title }}</NuxtLink>
+          <NuxtLink v-if="link.page" :to="link.to">{{ link.title }}</NuxtLink>
+          <span v-else>{{ link.title }}</span>
           <ul v-if="link.children">
             <li v-for="child in link.children" :key="child.id">
-              <NuxtLink :to="child.to">{{ child.title }}</NuxtLink>
+              <NuxtLink v-if="child.page" :to="child.to">{{ child.title }}</NuxtLink>
+              <span v-else>{{ child.title }}</span>
             </li>
           </ul>
         </li>
@@ -18,7 +20,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
 

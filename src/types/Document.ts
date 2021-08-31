@@ -1,19 +1,5 @@
 import type { MetaInfo } from 'vue-meta'
-import { DocusRootNode } from './Markdown'
-
-export interface TocLink {
-  id: string
-  text: string
-  depth: number
-  children?: TocLink[]
-}
-
-export interface Toc {
-  title: string
-  depth: number
-  searchDepth: number
-  links: TocLink[]
-}
+import type { MDCRoot, Toc } from '@docus/mdc'
 
 export interface NavItemNavigationConfig {
   /**
@@ -97,7 +83,7 @@ export interface DocusDocument {
   slug: string
   toc: false | Toc
   language: string
-  body: DocusRootNode
+  body: MDCRoot
   dir: string
   createdAt: Date
   updatedAt: Date
