@@ -21,7 +21,8 @@ export const defaultContext: DocusContext = {
       tagMap: {
         a: 'prose-a',
         blockquote: 'prose-blockquote',
-        code: 'prose-code-inline',
+        'code-inline': 'prose-code-inline',
+        code: 'prose-code',
         em: 'prose-em',
         h1: 'prose-h1',
         h2: 'prose-h2',

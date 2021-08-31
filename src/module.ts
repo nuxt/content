@@ -55,6 +55,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       'trough',
       'vfile',
       'parse-entities',
+      'property-information',
       'character-entities',
       'stringify-entities',
       'character-reference-invalid',
