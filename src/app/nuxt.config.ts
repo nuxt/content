@@ -63,8 +63,8 @@ export default nuxtConfig(
     ],
     nitro: {
       externals: {
-        inline: ['@docus/core']
-        // external: ['@docus/core']
+        inline: ['@docus/core'],
+        external: ['@nuxtjs/composition-api', '@vue/composition-api']
       }
     },
     modules: [r('../i18n')],
@@ -101,7 +101,7 @@ export default nuxtConfig(
       routes: ['/']
     },
     build: {
-      transpile: ['@docus/', 'ohmyfetch']
+      transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api']
     },
     image: {
       domains: ['https://i3.ytimg.com']
