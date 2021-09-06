@@ -33,7 +33,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
   configKey: 'content',
   setup(options: DocusOptions, nuxt: Nuxt) {
     installModule(nuxt, {
-      src: resolveModule('@nuxt/nitro/compat'),
+      src: resolveModule('@nuxt/bridge'),
       options: {
         externals: {
           inline: ['@docus/core']
@@ -50,6 +50,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     // transpile @docus/mdc
     nuxt.options.build.transpile.push(
       '@docus/mdc',
+      'unctx',
       'unified',
       'bail',
       'trough',
