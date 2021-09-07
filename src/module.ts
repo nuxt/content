@@ -6,7 +6,8 @@ import {
   addPlugin,
   installModule,
   useNuxt,
-  addTemplate
+  addTemplate,
+  extendWebpackConfig
 } from '@nuxt/kit'
 import { NitroContext } from '@nuxt/nitro'
 import { resolve } from 'upath'
@@ -46,6 +47,14 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     // add root page into generate routes
     nuxt.options.generate.routes = nuxt.options.generate.routes || []
     nuxt.options.generate.routes.push('/')
+
+    extendWebpackConfig(config => {
+      config?.module?.rules.unshift({
+        test: /\.mjs$/,
+        type: 'javascript/auto',
+        include: [/node_modules/]
+      })
+    })
 
     // transpile @docus/mdc
     nuxt.options.build.transpile.push(

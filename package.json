@@ -74,6 +74,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/debounce": "^1.2.0",
     "@types/jest": "latest",
+    "@types/node-fetch": "^3.0.3",
     "@types/object-hash": "^2.1.1",
     "@types/ws": "^7.4.7",
     "babel-core": "^6.26.3",

@@ -1,5 +1,6 @@
 import { Socket } from 'net'
 import { IncomingMessage } from 'http'
+// @ts-ignore
 import fetch from 'node-fetch'
 import { joinURL } from 'ufo'
 import { Nuxt } from '@nuxt/kit'

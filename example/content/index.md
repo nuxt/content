@@ -4,4 +4,4 @@
 
 A simple paragraph with [span]
 
-:props{of="DocusContent"}
+:HelloWorld

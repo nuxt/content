@@ -1,4 +1,3 @@
-import { requireModule } from '@nuxt/kit'
 import { createContext } from 'unctx'
 import { omit } from '../utils/object'
 import { DatabaseProvider } from '../../types'
@@ -53,11 +52,7 @@ async function initializeDatabase(db: DatabaseProvider) {
 
 function createDatabase(provider: string, options: any): DatabaseProvider {
   switch (provider) {
-    case 'lokijs':
+    default:
       return createLokijsDatabase(options)
-    default: {
-      const createDatabase = requireModule(provider)
-      return createDatabase(options)
-    }
   }
 }
