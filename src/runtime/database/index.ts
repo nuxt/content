@@ -11,7 +11,10 @@ export const setDatabase = ctx.set
 
 export const clearDatabase = ctx.unset
 
-export async function useDB() {
+/**
+ * Gives a DatabaseProvider instance.
+ */
+export async function useDB(): Promise<DatabaseProvider> {
   const docusContext = useDocusContext()!
   let provider = ctx.use()
 
@@ -33,6 +36,9 @@ export async function useDB() {
   }
 }
 
+/**
+ * Initialize the database
+ */
 async function initializeDatabase(db: DatabaseProvider) {
   const navigation = await generateNavigation()
 
@@ -50,6 +56,9 @@ async function initializeDatabase(db: DatabaseProvider) {
     .forEach(index)
 }
 
+/**
+ * Create the database out of the chosen provider (by default: LokiJS)
+ */
 function createDatabase(provider: string, options: any): DatabaseProvider {
   switch (provider) {
     default:

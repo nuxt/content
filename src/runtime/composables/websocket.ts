@@ -4,7 +4,9 @@ const logger = {
   // eslint-disable-next-line no-console
   warn: (...args: any[]) => console.warn('[Docus]', ...args)
 }
+
 let $nuxt: any
+
 let ws = null
 
 export function useWebSocket(base: string) {
@@ -21,20 +23,23 @@ export function useWebSocket(base: string) {
   const onMessage = async (message: any) => {
     try {
       const data = JSON.parse(message.data)
-      if (!data) {
-        return
-      }
+
+      if (!data) return
+
       $nuxt.$emit('content:update', data)
+
       // Nuxt3: await $nuxt.callHook('content:update')
+
       if ($nuxt.$store && $nuxt.$store._actions.nuxtServerInit) {
         await $nuxt.$store.dispatch('nuxtServerInit', $nuxt.$options.context)
       }
+
       // Refresh the current page
       $nuxt.refresh()
     } catch (err) {}
   }
 
-  const onOpen = () => logger.log('WS connected')
+  const onOpen = () => logger.log('WS connected!')
 
   const onError = (e: any) => {
     switch (e.code) {
@@ -60,12 +65,16 @@ export function useWebSocket(base: string) {
 
   const connect = (retry = false) => {
     if (retry) {
-      logger.log('WS reconnecting...')
+      logger.log('WS reconnecting..')
       setTimeout(connect, 1000)
       return
     }
+
+    // WebSocket Base URL
     const wsURL = `${base}/ws`
+
     logger.log(`WS connect to ${wsURL}`)
+
     ws = new WebSocket(wsURL)
     ws.onopen = onOpen
     ws.onmessage = onMessage

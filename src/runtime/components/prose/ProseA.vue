@@ -8,6 +8,7 @@
 
 <script lang="ts">
 import { hasProtocol } from 'ufo'
+
 export default {
   props: {
     href: {

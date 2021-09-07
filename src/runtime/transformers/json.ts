@@ -1,6 +1,6 @@
 export default function transformJSON(_id: string, input: string | object) {
-  if (typeof input === 'string') {
-    return { body: JSON.parse(input) }
-  }
+  // If input is a string, returns it as parsed JSON
+  if (typeof input === 'string') return { body: JSON.parse(input) }
+  // Return body as it is
   return { body: input }
 }

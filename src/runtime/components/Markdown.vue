@@ -1,14 +1,23 @@
 <script lang="ts">
 import { flatUnwrap, unwrap, isTag } from '@docus/mdc/utils'
 
+/**
+ * Markdown component
+ */
 export default {
   name: 'Markdown',
   functional: true,
   props: {
+    /**
+     * A slot name or function
+     */
     use: {
       type: [String, Object, Function, Array],
       default: 'default'
     },
+    /**
+     *
+     */
     unwrap: {
       type: String,
       default: ''
@@ -16,6 +25,7 @@ export default {
   },
   render: (_: any, ctx: any) => {
     const slot = ctx.props.use || 'default'
+    // Get slot node
     let node =
       typeof slot === 'string'
         ? ctx.parent.$scopedSlots[slot] ||
@@ -25,25 +35,27 @@ export default {
         : slot
 
     // Execute factory funciton
-    if (typeof node === 'function') {
-      node = node()
-    }
+    if (typeof node === 'function') node = node()
 
-    if (typeof node === 'string') {
-      return [node]
-    }
+    // If node is raw string, return it as it is
+    if (typeof node === 'string') return [node]
 
-    // unwrap tags
+    // Unwrap tags
     if (node && ctx.props.unwrap) {
+      // Split tags from string prop
       const tags = ctx.props.unwrap.split(/[,\s]/)
 
+      // Get first tag from node
       const first = Array.isArray(node) && node[0]
+
+      // Check if splitting is required
       const requireSplitor =
         ctx.scopedSlots.between &&
         first &&
         !first.text &&
         !['span', 'strong', 'em', 'a', 'code'].some(tag => isTag(first, tag))
 
+      // Get properly unwrapped node
       if (requireSplitor) {
         node = node.flatMap((n: any, i: number) =>
           i === 0 ? unwrap(n, tags) : [ctx.scopedSlots.between(), unwrap(n, tags)]

@@ -31,11 +31,11 @@ export function generateSlug(name: string): string {
        */
       .replace(/(\d+\.)?(.*)/, '$2')
       /**
-       * remove index keyword
+       * Remove index keyword
        */
       .replace(/^index/, '')
       /**
-       * remove draft keyword
+       * Remove draft keyword
        */
       .replace(/\.draft/, '')
   )

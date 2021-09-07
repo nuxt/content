@@ -5,29 +5,31 @@ import LokiQuery from './Query'
 export default function createLokiJsDatabase({ name = 'lokijs.db' } = {}): DatabaseProvider {
   // @ts-ignore
   const database = new lokidb.Loki(name)
-  const colleciton = database.addCollection<any>('items', {})
+  const collection = database.addCollection<any>('items', {})
 
   const query = (path: any, params: any) => {
     const to = typeof path === 'string' ? path : ''
+
     const opts = (typeof path === 'object' ? path : params) || {}
+
     return new LokiQuery<any>(to, { ...opts, db: database })
   }
 
-  const getItem = (key: string) => colleciton.findOne({ key })
+  const getItem = (key: string) => collection.findOne({ key })
 
   const setItem = (key: string, document: any) => {
-    const existed = colleciton.findOne({ key })
+    const existed = collection.findOne({ key })
 
     if (existed) {
-      colleciton.update({ $loki: existed.$loki, meta: existed.meta, ...document })
+      collection.update({ $loki: existed.$loki, meta: existed.meta, ...document })
     } else {
-      colleciton.insert(document)
+      collection.insert(document)
     }
   }
 
-  const removeItem = (key: string) => colleciton.removeWhere((doc: any) => doc.key === key)
+  const removeItem = (key: string) => collection.removeWhere((doc: any) => doc.key === key)
 
-  const clear = () => colleciton.removeWhere(() => true)
+  const clear = () => collection.removeWhere(() => true)
 
   const search = (to: string, params: any): Promise<[]> => query(to, params).fetch() as Promise<[]>
 

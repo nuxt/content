@@ -33,6 +33,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
   },
   configKey: 'content',
   setup(options: DocusOptions, nuxt: Nuxt) {
+    // Install @nuxt/bridge
     installModule(nuxt, {
       src: resolveModule('@nuxt/bridge'),
       options: {
@@ -41,10 +42,11 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         }
       }
     })
+
     // Extend context
     const docusContext = defaultContext
 
-    // add root page into generate routes
+    // Add root page into generate routes
     nuxt.options.generate.routes = nuxt.options.generate.routes || []
     nuxt.options.generate.routes.push('/')
 
@@ -56,18 +58,15 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       })
     })
 
-    // transpile @docus/mdc
+    // Transpile @docus/mdc
     nuxt.options.build.transpile.push(
       '@docus/mdc',
       'unctx',
       'unified',
       'bail',
       'trough',
-      'vfile',
       'parse-entities',
-      'property-information',
       'character-entities',
-      'stringify-entities',
       'character-reference-invalid',
       'is-decimal',
       'is-hexadecimal',
@@ -88,12 +87,12 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       /(unist|remark|mdast|micromark|rehype|hast)-?.*/
     )
 
-    // setup runtime alias
+    // Setup runtime alias
     const runtimeDir = resolve(__dirname, 'runtime')
     nuxt.options.alias['~docus/content'] = runtimeDir
     nuxt.options.alias['~docus/database'] = resolve(runtimeDir, `database/providers/${options.database.provider}`)
 
-    // Register api
+    // Register API
     nuxt.hook('nitro:context', async (ctx: NitroContext) => {
       ctx.storage.mounts.content = {
         driver: 'fs',
@@ -103,6 +102,8 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         }
       }
     })
+
+    // Add a server middleware for each API functions
     for (const api of ['get', 'list', 'search', 'navigation']) {
       addServerMiddleware({
         route: resolveApiRoute(api),
@@ -110,6 +111,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       })
     }
 
+    // Set publicRuntimeConfig $docus key
     ;(nuxt.options.publicRuntimeConfig as any).$docus = {
       apiBase: options.apiBase
     }
@@ -134,37 +136,35 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       setupDevTarget(options, nuxt)
 
       if (options.watch) {
-        // Add reload api
+        // Add reload API
         addServerMiddleware({
           route: `/api/${options.apiBase}/reload`,
           handle: resolveModule('./server/api/reload', { paths: runtimeDir })
         })
-        // Add hot plugin
+
+        // Add Hot plugin
         addPlugin(resolve(__dirname, './templates/hot'))
       }
     }
 
-    nuxt.hook('modules:done', () => {
-      // TODO: possibly move to @docus/app
-      const codes = nuxt.options.i18n?.locales.map((locale: any) => locale.code || locale)
-      docusContext.locales.codes = codes || docusContext.locales.codes
-      docusContext.locales.defaultLocale = nuxt.options.i18n?.defaultLocale || docusContext.locales.defaultLocale
-
-      nuxt.callHook('docus:context', docusContext)
-    })
+    // Call docus:context hook
+    nuxt.hook('modules:done', () => nuxt.callHook('docus:context', docusContext))
 
     /**
      * Register props component handler
      * Props component uses Nuxt Components dirs to find and process component
      **/
     nuxt.hook('components:dirs', dirs => {
+      // Push local default Docus components
       dirs.push({
         path: resolve(__dirname, 'runtime/components'),
         prefix: '',
         isAsync: false,
-        level: 100
+        level: 998
       })
+
       const paths = []
+
       // Update context: component dirs
       paths.push(
         ...dirs.map((dir: any) => {
@@ -173,6 +173,8 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
           return ''
         })
       )
+
+      // Push components directories paths into Markdown transformer
       docusContext.transformers.markdown.components?.push({
         name: 'props',
         path: resolveModule('./runtime/transformers/markdown/loaders/props', { paths: __dirname }),

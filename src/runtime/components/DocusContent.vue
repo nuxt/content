@@ -1,11 +1,13 @@
 <script lang="ts">
+import Vue from 'vue'
 import { pascalCase } from 'scule'
-import Vue, { CreateElement, RenderContext, VNode } from 'vue' // eslint-disable-line
 // @ts-ignore
 import { find, html } from 'property-information'
+import type { CreateElement, RenderContext, VNode } from 'vue'
 import type { MDCNode } from '@docus/mdc'
 import type { DocusDocument } from '../../types/Document'
 
+// Root keys from a node
 const rootKeys = ['class-name', 'class', 'className', 'style']
 
 const rxOn = /^@|^v-on:/
@@ -13,7 +15,7 @@ const rxBind = /^:|^v-bind:/
 const rxModel = /^v-model/
 const nativeInputs = ['select', 'textarea', 'input']
 
-// model modifiers
+// Model modifiers
 const number = (d: any) => +d
 const trim = (d: any) => d.trim()
 const noop = (d: any) => d
@@ -25,8 +27,12 @@ function evalInContext(code: string, context: any) {
   return new Function('with(this) { return (' + code + ') }').call(context)
 }
 
+/**
+ * Create component data from MDC node props.
+ */
 function propsToData(node: MDCNode, doc: DocusDocument) {
   const { tag = '', props = {} } = node
+
   return Object.keys(props).reduce(
     function (data, key) {
       const k = key.replace(/.*:/, '')
@@ -75,8 +81,8 @@ function propsToData(node: MDCNode, doc: DocusDocument) {
 }
 
 /**
- * Create the scoped slots from `node` template children. Templates for default
- * slots are processed as regular children in `processNode`.
+ * Create the scoped slots from `node` template children.
+ * Templates for default slots are processed as regular children in `processNode`.
  */
 function slotsToData(node: MDCNode, h: CreateElement, doc: DocusDocument) {
   const data: any = {}
@@ -84,9 +90,7 @@ function slotsToData(node: MDCNode, h: CreateElement, doc: DocusDocument) {
 
   children.forEach(child => {
     // Regular children and default templates are processed inside `processNode`.
-    if (!isTemplate(child) || isDefaultTemplate(child)) {
-      return
-    }
+    if (!isTemplate(child) || isDefaultTemplate(child)) return
 
     // Non-default templates are converted into slots.
     data.scopedSlots = data.scopedSlots || {}
@@ -102,63 +106,77 @@ function slotsToData(node: MDCNode, h: CreateElement, doc: DocusDocument) {
 }
 
 function processNode(node: MDCNode, h: CreateElement, doc: DocusDocument): VNode | string | undefined {
-  /**
-   * Return raw value as it is
-   */
-  if (node.type === 'text') {
-    return node.value
-  }
+  // Return raw value as it is
+  if (node.type === 'text') return node.value
 
   const slotData = slotsToData(node || {}, h, doc)
   const propData = propsToData(node || {}, doc)
   const data = Object.assign({}, slotData, propData)
 
-  /**
-   * Process child nodes, flat-mapping templates pointing to default slots.
-   */
+  // Process child nodes, flat-mapping templates pointing to default slots.
   const children = []
   for (const child of node.children!) {
     // Template nodes pointing to non-default slots are processed inside `slotsToData`.
-    if (isTemplate(child) && !isDefaultTemplate(child)) {
-      continue
-    }
+    if (isTemplate(child) && !isDefaultTemplate(child)) continue
 
     const processQueue: MDCNode[] = isDefaultTemplate(child) ? child.content : [child]
+
     children.push(...processQueue.map(node => processNode(node, h, doc)))
   }
 
-  if ((process as any).server && typeof Vue.component(pascalCase(node.tag)) === 'function') {
+  // Add component name to lazyComponents set
+  if ((process as any).server && typeof Vue.component(pascalCase(node.tag)) === 'function')
     lazyComponents.add(pascalCase(node.tag))
-  }
+
+  // Return VNode
   return h(node.tag, data, children)
 }
 
 const DEFAULT_SLOT = 'default'
 
+/**
+ * Check if node is root
+ */
 function isDefaultTemplate(node: MDCNode) {
   return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
 }
 
+/**
+ * Check if node is Vue template tag
+ */
 function isTemplate(node: MDCNode) {
   return node.tag === 'template'
 }
 
+/**
+ * Get slot name out of a node
+ */
 function getSlotName(node: MDCNode) {
   let name = ''
+
   for (const propName of Object.keys(node.props || {})) {
-    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) {
-      continue
-    }
+    // Check if prop name correspond to a slot
+    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) continue
+
+    // Get slot name
     name = propName.split(/[:#]/, 2)[1]
+
     break
   }
+
   return name || DEFAULT_SLOT
 }
 
+/**
+ * DocusContent component
+ */
 export default {
   name: 'DocusContent',
   functional: true,
   props: {
+    /**
+     *
+     */
     document: {
       type: [Object, String],
       required: true
@@ -168,20 +186,20 @@ export default {
     const { document } = props
 
     // Render simple string
-    if (typeof document === 'string') {
-      return _v(document)
-    }
+    if (typeof document === 'string') return _v(document)
 
+    // Get body from Docus document
     let { body } = (document || {}) as DocusDocument
-    // look for ast object in the document
+
+    // Look for ast object in the document
     if (body && (body as any).ast) {
       body = (body as any).ast
     }
 
-    if (!body || !body.children || !Array.isArray(body.children)) {
-      return
-    }
+    // No content nor childrens found
+    if (!body || !body.children || !Array.isArray(body.children)) return
 
+    // Get element classes
     let classes = []
     if (Array.isArray(data.class)) {
       classes = data.class
@@ -192,22 +210,25 @@ export default {
       classes = [data.class]
     }
     data.class = classes
+
+    // Get element props
     data.props = Object.assign({ ...body.props }, data.props)
+
+    // Process children nodes
     const children = (body.children as MDCNode[]).map(child => processNode(child, h, document))
 
+    // If server side, add components into lazy components set
     if ((process as any).server) {
       ;(parent.$root as any).context.beforeSerialize((nuxtState: any) => {
-        if (nuxtState.fetch._lazyComponents) {
-          lazyComponents.forEach(name => nuxtState.fetch._lazyComponents.add(name))
-        } else {
-          nuxtState.fetch._lazyComponents = lazyComponents
-        }
+        if (nuxtState.fetch._lazyComponents) lazyComponents.forEach(name => nuxtState.fetch._lazyComponents.add(name))
+        else nuxtState.fetch._lazyComponents = lazyComponents
       })
     }
 
-    // detect root tag
+    // Detect root tag
     const tag = (body as MDCNode).tag || 'div'
 
+    // Return Docus page content
     return h(tag, data, children)
   }
 }

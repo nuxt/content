@@ -1,5 +1,8 @@
 import { QueryBuilder, QueryBuilderParams } from '../../types/Database'
 
+/**
+ * Abstract query builder class, to be implemented by any provider.
+ */
 export abstract class BaseQueryBuiler<T> implements QueryBuilder<T> {
   protected params: QueryBuilderParams = {
     skip: 0,
