@@ -1,6 +1,6 @@
 {
   "name": "@docus/core",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "The Docus core.",
   "keywords": [
     "nuxt",
@@ -42,9 +42,9 @@
   },
   "dependencies": {
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
-    "@lokidb/loki": "^2.1.0",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge",
+    "@lokidb/loki": "^2.1.0",
     "@nuxtjs/composition-api": "^0.28.0",
     "debounce": "^1.2.1",
     "defu": "^5.0.0",
@@ -56,7 +56,7 @@
     "scule": "^0.2.1",
     "ufo": "^0.7.9",
     "unctx": "^1.0.2",
-    "unstorage": "^0.2.5",
+    "unstorage": "0.2.3",
     "upath": "^2.0.1",
     "vue-docgen-api": "^4.41.1",
     "ws": "^7.5.4"

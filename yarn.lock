@@ -7641,7 +7641,7 @@ invariant@^2.2.2:
   dependencies:
     loose-envify "^1.0.0"
 
-ioredis@^4.27.3, ioredis@^4.27.9:
+ioredis@^4.27.3:
   version "4.27.9"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.9.tgz#c27bbade9724f0b8f84c279fb1d567be785ba33d"
   integrity sha512-hAwrx9F+OQ0uIvaJefuS3UTqW+ByOLyLIV+j0EH8ClNVxvFyH9Vmb08hCL4yje6mDYT5zMquShhypkd50RRzkg==
@@ -14040,7 +14040,7 @@ unset-value@^1.0.0:
     has-value "^0.3.1"
     isobject "^3.0.0"
 
-unstorage@^0.2.3:
+unstorage@0.2.3, unstorage@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.2.3.tgz#d91d5b4a67c594d26479aead09811707c852f973"
   integrity sha512-o31l742nDEAMYNOSZkfXrwTiVotDCcdDBXUM5rMgdtFQRclC6sdhyYU3g9JyrqpXDFsEtpvzgUiCPltbLYVihg==
@@ -14055,22 +14055,6 @@ unstorage@^0.2.3:
     ohmyfetch "^0.2.0"
     ufo "^0.7.5"
     ws "^7.4.5"
-
-unstorage@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.2.5.tgz#2acf79e7bdc1d61927379404d3cecb252b8d32a4"
-  integrity sha512-o5fnDX2IJc1QaJsKrYjQ9ZoHOVWXdJBGiGUGS+iKnUFuyWazvkAJ7/eHFlmDhKlppZv7Edq3bKpgin/Ryl9F4Q==
-  dependencies:
-    anymatch "^3.1.1"
-    chokidar "^3.5.2"
-    destr "^1.1.0"
-    h3 "^0.2.10"
-    ioredis "^4.27.9"
-    listhen "^0.2.4"
-    mri "^1.1.6"
-    ohmyfetch "^0.3.1"
-    ufo "^0.7.9"
-    ws "^8.2.1"
 
 untyped@^0.2.8:
   version "0.2.8"
@@ -14764,11 +14748,6 @@ ws@^7.3.1, ws@^7.4.5, ws@^7.4.6, ws@^7.5.4:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.4.tgz#56bfa20b167427e138a7795de68d134fe92e21f9"
   integrity sha512-zP9z6GXm6zC27YtspwH99T3qTG7bBFv2VIkeHstMLrLlDJuzA7tQ5ls3OJ1hOGGCzTQPniNJoHXIAOS0Jljohg==
-
-ws@^8.2.1:
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.2.1.tgz#bdd92b3c56fdb47d2379b5ae534281922cc5bd12"
-  integrity sha512-XkgWpJU3sHU7gX8f13NqTn6KQ85bd1WU7noBHTT8fSohx7OS1TPY8k+cyRPCzFkia7C4mM229yeHr1qK9sM4JQ==
 
 xml-name-validator@^3.0.0:
   version "3.0.0"
