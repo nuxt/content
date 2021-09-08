@@ -1,66 +1,48 @@
-import { reactive, toRefs } from '@nuxtjs/composition-api'
-import { DocusSettings, DocusState, PermissiveContext, DocusAddonContext, DocusRuntimeInstance } from '../../types'
-import {
-  clientAsyncData,
-  docusInit,
-  useDocusStyle,
-  useDocusAddons,
-  useDocusApi,
-  useDocusNavigation
-} from './composables'
+import { ssrRef, Ref } from '@nuxtjs/composition-api'
+import { DocusSettings, PermissiveContext, DocusAddonContext, DocusInstance } from '../../types'
+import { clientAsyncData, useDocusStyle, useDocusAddons, useDocusNavigation } from './composables'
 
-let docusInstance: DocusRuntimeInstance
+const docusInstance = ssrRef<DocusInstance>({}, 'docusInstance')
 
 /**
  * Create the $docus runtime injection instance.
  */
-export const createDocus = async (
-  context: PermissiveContext,
-  settings: DocusSettings
-): Promise<DocusRuntimeInstance<typeof settings['theme']>> => {
+export const createDocus = async (context: PermissiveContext, settings: DocusSettings): Promise<Ref<DocusInstance>> => {
   // Nuxt instance proxy
   let $nuxt: any
 
-  const { ssrContext, nuxtState = {}, route } = context
+  const { $content, ssrContext, nuxtState = {}, route } = context
 
-  // Prevent hydration mismatch: inject templateOptions from ssr payload before page load
+  // Prevent hydration mismatch: inject templateOptions from SSR payload before page load
   const templateOptions = nuxtState.data?.[0].templateOptions || {}
 
-  // State
-  const state = reactive({
+  // Split theme & user settings
+  const { theme, ...userSettings } = settings
+
+  // Create default Docus instance
+  docusInstance.value = {
+    content: $content,
     currentPath: `/${route.params.pathMatch}`,
-    currentPage: null,
-    settings: null,
-    theme: null,
-    navigation: {},
+    currentPage: undefined,
+    settings: userSettings,
+    theme,
     layout: {
       ...settings.layout,
       ...templateOptions
     }
-  }) as DocusState
-
-  // Split theme & user settings
-  const { theme, ...userSettings } = settings
-  state.settings = userSettings
-  state.theme = theme
-
-  // Create API helpers
-  const api = useDocusApi(context)
+  }
 
   // Create Docus Addons context
   const docusAddonContext: DocusAddonContext = {
-    ssrContext,
-    $nuxt,
     context,
-    state,
-    settings,
-    api
+    ssrContext,
+    instance: docusInstance.value
   }
 
   // Docus default addons
   const docusAddons = {
-    useDocusStyle,
-    useDocusNavigation
+    style: useDocusStyle,
+    navigation: useDocusNavigation
   }
 
   // Addons manager
@@ -69,23 +51,53 @@ export const createDocus = async (
   // Setup addons
   await setupAddons()
 
-  // Init Docus for every context
-  docusInit(docusAddonContext)
+  // Update Docus instance with addons
+  docusInstance.value = {
+    ...docusInstance.value,
+    ...addonsContext
+  }
 
   // Workaround for async data
   clientAsyncData($nuxt)
 
-  docusInstance = {
-    ...toRefs(state),
-    ...api,
-    ...addonsContext
-  }
-
   return docusInstance
 }
 
-export const useDocus = () => {
-  if (!docusInstance) throw new Error('Docus not yet initialized! useDocus has to be used in a living Vue instance.')
+// Default error message for Docus helpers.
+const ERROR_MESSAGE = 'Docus not yet initialized! Docus helpers has to be used in a living Vue instance.'
 
-  return docusInstance
+export const useDocus = () => {
+  if (!docusInstance) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value
+}
+
+export const useNavigation = () => {
+  if (!docusInstance || !docusInstance.value || !docusInstance.value.navigation) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value.navigation
+}
+
+export const useContent = () => {
+  if (!docusInstance || !docusInstance.value || !docusInstance.value.content) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value.content
+}
+
+export const useSettings = () => {
+  if (!docusInstance || !docusInstance.value || !docusInstance.value.settings) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value.settings
+}
+
+export const useTheme = () => {
+  if (!docusInstance || !docusInstance.value || !docusInstance.value.theme) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value.theme
+}
+
+export const useLayout = () => {
+  if (!docusInstance || !docusInstance.value || !docusInstance.value.layout) throw new Error(ERROR_MESSAGE)
+
+  return docusInstance.value.layout
 }

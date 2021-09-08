@@ -25,13 +25,10 @@ export default defineNuxtModule({
       settingsPath += '.ts'
     }
 
-    // Get theme settings path
-    if (!nuxt.options.themeDir) {
-      // eslint-disable-next-line no-console
-      console.warn('`themeDir` is not specified in current theme, fallback to default theme')
-      nuxt.options.themeDir = resolve(__dirname, '..', 'defaultTheme')
-    }
+    // Break if the themeDir key is not specified
+    if (!nuxt.options.themeDir) throw new Error('`themeDir` key must be specified from the theme exported Nuxt config.')
 
+    // Get theme default settings
     let themeDefaultsPath = resolve(nuxt.options.themeDir, 'settings')
     if (existsSync(themeDefaultsPath + '.js')) {
       themeDefaultsPath += '.js'
@@ -42,6 +39,7 @@ export default defineNuxtModule({
     // Delete Node cache for settings files
     clearModule(themeDefaultsPath)
     clearModule(settingsPath)
+
     // Get user settings
     let userSettings
     try {
@@ -51,6 +49,7 @@ export default defineNuxtModule({
       // eslint-disable-next-line no-console
       console.info('Using default Docus config, please create a `docus.config.js` to overwrite it.')
     }
+
     // Get theme defaults
     let themeDefaults
     try {
@@ -60,12 +59,14 @@ export default defineNuxtModule({
       // eslint-disable-next-line no-console
       console.warn(`Could not fetch theme settings in ${themeDefaultsPath}`)
     }
+
     // Merge default settings and default theme settings
     const settings = defu(userSettings, {
       ...docusDefaults,
       theme: themeDefaults
     })
-    setDocusSettings(settings)
+
+    setDocusSettings(settings, true)
 
     // Default title and description for pages
     nuxt.options.meta.name = settings.title

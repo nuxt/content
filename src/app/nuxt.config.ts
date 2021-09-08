@@ -10,6 +10,7 @@ export default nuxtConfig(
      * Name for nuxt-extend
      */
     name: 'docus',
+
     /**
      * RootDir
      */
@@ -30,7 +31,7 @@ export default nuxtConfig(
         path: r('./components'),
         isAsync: false,
         prefix: '',
-        level: 2
+        level: 999
       }
     ],
     meta: {},
@@ -47,7 +48,6 @@ export default nuxtConfig(
      */
     buildModules: [
       // Dependencies
-      // 'nuxt-vite',
       '@nuxtjs/pwa',
       '@nuxt/image',
       '@nuxtjs/composition-api/module',
@@ -57,14 +57,26 @@ export default nuxtConfig(
       r('./index'),
       r('../settings'),
       r('../context')
-      // r('../social-image'),
-      // r('../twitter'),
-      // r('../github')
     ],
     nitro: {
+      inlineDynamicImports: true,
       externals: {
-        inline: ['@docus/core'],
-        external: ['@nuxtjs/composition-api', '@vue/composition-api']
+        inline: ['@docus/core', 'ohmyfetch', 'property-information'],
+        external: [
+          '@nuxtjs/composition-api',
+          '@vue/composition-api',
+          'vue-docgen-api',
+          '@nuxt/kit',
+          '@nuxt/image',
+          '@nuxtjs/i18n',
+          'vue-meta',
+          'vue-router',
+          'vue-i18n',
+          'ufo',
+          'vue-client-only',
+          'vue-no-ssr',
+          'ohmyfetch'
+        ]
       }
     },
     modules: [r('../i18n')],
@@ -88,12 +100,12 @@ export default nuxtConfig(
       experimentWarning: false,
       optimizeDeps: {
         exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations'],
-        include: ['defu', 'theme-colors', 'property-information']
+        include: ['defu', 'theme-colors']
       }
     },
     typescript: {
       // TODO: Re-enable typeCheck
-      // Waiting for better support from nuxt-vite / nuxt 3
+      // Waiting for better support from nuxt-vite / Nuxt 3
       typeCheck: false
     },
     generate: {

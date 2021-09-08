@@ -1,9 +1,5 @@
 import type { NavItem, NavItemNavigationConfig } from '@docus/core'
 
-export type DocusNavigation = {
-  [language: string]: NavItem[]
-}
-
 export type DocusCurrentNav = {
   title?: string
   to?: string

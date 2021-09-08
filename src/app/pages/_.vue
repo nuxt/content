@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
+import { useContent, useDocus, useSettings } from '../../context/runtime'
 
 export default defineComponent({
   name: 'PageSlug',
@@ -12,12 +13,15 @@ export default defineComponent({
     }
   },
 
-  async asyncData({ $docus, app: { i18n, localePath }, route, params, error, redirect }) {
+  async asyncData({ app: { i18n, localePath }, route, params, error, redirect }) {
+    const $docus = useDocus()
+    const $content = useContent()
+
     const language = i18n.locale
 
     // Init template options from Docus settings
     let templateOptions = {
-      ...$docus.settings.value.layout
+      ...$docus.layout
     }
 
     // Get the proper current path
@@ -27,7 +31,7 @@ export default defineComponent({
     const draft = false
 
     // Page query
-    const [match] = await $docus
+    const [match] = await $content
       .search({ deep: true })
       .where({ language, to, draft, page: { $ne: false } })
       .fetch()
@@ -37,10 +41,10 @@ export default defineComponent({
       return error({ statusCode: 404, message: '404 - Page not found' })
     }
 
-    const page = await $docus.page(match.id)
+    const page = await $content.get(match.id)
 
     // Get page template
-    page.template = $docus.getPageTemplate(page)
+    page.template = $docus.navigation.getPageTemplate(page)
 
     let component = Vue.component(page.template)
     if (component) {
@@ -51,7 +55,10 @@ export default defineComponent({
             component = Vue.extend(component)
           }
         }
-      } catch {
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+
         // eslint-disable-next-line new-cap
         component = new component({ props: { page } })
       }
@@ -73,17 +80,17 @@ export default defineComponent({
      */
     if (process.server) {
       // Set template options
-      $docus.layout.value = templateOptions
+      $docus.layout = templateOptions
 
       // Set Docus runtime current page
-      $docus.currentPage.value = page
+      $docus.currentPage = page
 
       // Update navigation path to update currentNav
-      $docus.currentPath.value = `/${route.params.pathMatch}`
+      $docus.currentPath = `/${route.params.pathMatch}`
     }
 
     // Set Docus runtime current page
-    $docus.currentPage.value = page
+    $docus.currentPage = page
 
     // Redirect to another page if `navigation.redirect` is declared
     if (page.navigation && page.navigation.redirect) {
@@ -107,11 +114,20 @@ export default defineComponent({
 
   computed: {
     pageMeta() {
+      // Get site title from Docus settings
+      const { title: siteTitle } = useSettings()
+
       return [
         // OpenGraph
         { hid: 'og:title', property: 'og:title', content: this.page.title },
         // Twitter Card
         { hid: 'twitter:title', name: 'twitter:title', content: this.page.title },
+        // Apple Web App title
+        {
+          hid: 'apple-mobile-web-app-title',
+          name: 'apple-mobile-web-app-title',
+          content: siteTitle || ''
+        },
         /// Page description
         ...(this.page.description
           ? [
@@ -142,20 +158,19 @@ export default defineComponent({
   created() {
     if (process.client) {
       // Set template options
-      this.$docus.layout.value = this.templateOptions
+      this.$docus.value.layout = this.templateOptions
 
       // Set Docus runtime current page
-      this.$docus.currentPage.value = this.page
+      this.$docus.value.currentPage = this.page
+
       // Update navigation path to update currentNav
-      this.$docus.currentPath.value = `/${this.$route.params.pathMatch}`
+      this.$docus.value.currentPath = `/${this.$route.params.pathMatch}`
     }
   },
 
   mounted() {
     // This will use to show new bullet in aside navigation
-    if (this.page?.version) {
-      localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
-    }
+    if (this.page?.version) localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
   },
 
   methods: {

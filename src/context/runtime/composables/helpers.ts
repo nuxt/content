@@ -1,15 +1,9 @@
 import Vue from 'vue'
-import { DocusAddonContext } from '../../../types'
-
-export const docusInit = ({ context, state }: DocusAddonContext) => {
-  if (process.server) {
-    context.beforeNuxtRender(({ nuxtState }: any) => (nuxtState.docus = state))
-  }
-}
 
 export const clientAsyncData = ($nuxt: any) => {
   if (process.client) {
     const loadedComponents = new Set()
+
     const loadComponents = function (components?: Set<string>) {
       if (!components) return
       return Array.from(components).map(async function (name) {
@@ -23,6 +17,7 @@ export const clientAsyncData = ($nuxt: any) => {
         }
       })
     }
+
     window.onNuxtReady((nuxt: any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       $nuxt = nuxt
@@ -33,12 +28,12 @@ export const clientAsyncData = ($nuxt: any) => {
         $nuxt.fetchPayload = async function (...args: any[]) {
           const payload = await originalFetchPayload(...args)
 
-          // await loadComponents(payload.fetch?._lazyComponents)
-          await loadComponents(new Set(payload.data[0]?.page?.template))
+          loadComponents(new Set(payload.data[0]?.page?.template))
 
           return payload
         }
       }
+
       // Fetch NuxtContent component
       loadComponents(new Set('NuxtContent'))
     })

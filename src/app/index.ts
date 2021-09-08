@@ -81,5 +81,8 @@ export default defineNuxtModule({
 
     // Add Docus runtime plugin
     addPlugin(r('../templates/docus.js'), { append: true })
+
+    // Add Devtools integration (WIP)
+    // if (nuxt.options.dev) addPlugin(r('../devtools'), { append: true })
   }
 })

@@ -9,9 +9,10 @@ import { DocusAddonContext, Colors } from '../../../types'
 function useColors(colors: Colors) {
   try {
     return Object.entries(colors).map(([key, color]) => [key, typeof color === 'string' ? getColors(color) : color])
-  } catch (e) {
+  } catch (e: any) {
     // eslint-disable-next-line no-console
-    console.warn('Could not parse custom colors:', e.message)
+    console.warn('Could not parse custom colors:', e && e.message ? e.message : e)
+
     return []
   }
 }
@@ -66,10 +67,10 @@ function useCSSVariables(colors: Colors) {
   return generate()
 }
 
-export const useDocusStyle = ({ context, state }: DocusAddonContext) => {
+export const useDocusStyle = ({ context, instance }: DocusAddonContext) => {
   const app = context.app
 
-  const styles = computed(() => useCSSVariables(state.theme.colors || {}))
+  const styles = computed(() => useCSSVariables(instance.theme && instance.theme.colors ? instance.theme.colors : {}))
 
   function updateHead() {
     const head: MetaInfo = typeof app.head === 'function' ? app.head() : app.head!
@@ -89,14 +90,6 @@ export const useDocusStyle = ({ context, state }: DocusAddonContext) => {
       hid: 'docus-theme',
       cssText: styles.value,
       type: 'text/css'
-    })
-
-    // Set 'apple-mobile-web-app-title' from Docus title
-    head.meta = head.meta.filter(s => s.hid !== 'apple-mobile-web-app-title')
-    head.meta.push({
-      hid: 'apple-mobile-web-app-title',
-      name: 'apple-mobile-web-app-title',
-      content: state.settings?.title || ''
     })
 
     head.meta = head.meta.filter(s => s.hid !== 'theme-color')

@@ -1,4 +1,4 @@
-import { createDocus } from '~docus/context'
+import { createDocus } from '#docus'
 import settings from '~docus/cache/docus-settings.json'
 
 /**

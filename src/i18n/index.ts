@@ -65,37 +65,22 @@ export default defineNuxtModule({
       config.locales = []
     }
 
+    // Merge optionos
     nuxt.options.i18n = defu(nuxt.options.i18n, config)
 
     // Add i18n plugin
     addPlugin(r('../templates/i18n.js'))
 
-    // install i18n module
+    // Install i18n module
     await installModule(nuxt, {
       src: resolveModule('@nuxtjs/i18n')
     })
 
-    nuxt.hook('build:before', () => {
-      /**
-       * Temporary fix
-       * This should be done by @nuxtjs/i18n
-       */
-      // extendRoutes((routes: any[]) => {
-      //   // move start route to the end
-      //   const index = routes.findIndex(route => route.path === '/*')
-      //   const [all] = routes.splice(index, 1)
-      //   const codes = nuxt.options.i18n.locales
-      //     .map((l: any) => l.code || l)
-      //     .filter((code: string) => code !== nuxt.options.i18n.defaultLocale)
-      //   for (const code of codes) {
-      //     routes.push({
-      //       ...all,
-      //       path: '/' + code,
-      //       name: 'index___' + code
-      //     })
-      //   }
-      //   routes.push(all)
-      // })
+    // Get available locales and set default locale
+    nuxt.hook('docus:context', docusContext => {
+      const codes = nuxt.options.i18n?.locales.map((locale: any) => locale.code || locale)
+      docusContext.locales.codes = codes || docusContext.locales.codes
+      docusContext.locales.defaultLocale = nuxt.options.i18n?.defaultLocale || docusContext.locales.defaultLocale
     })
   }
 })

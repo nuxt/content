@@ -1,21 +1,23 @@
 import { withTrailingSlash } from 'ufo'
+import Vue from 'vue'
+import { pascalCase } from 'scule'
 import { ref, computed } from '@nuxtjs/composition-api'
 import type { DocusDocument, NavItem } from '@docus/core'
-import { DocusNavigationGetParameters } from '../../../types'
-import { useDocusTemplates } from './useDocusTemplates'
+import { NuxtApp } from '@nuxt/types/app'
+import { DocusAddonContext, DocusCurrentNav, DocusNavigationGetParameters } from '../../../types'
 
 /**
  * Handling all the navigation querying logic.
  */
-export const useDocusNavigation = ({ context, state, api }: any) => {
+export const useDocusNavigation = ({ context, instance: { content, currentPath, settings } }: DocusAddonContext) => {
   // Nuxt context
   const { app } = context
 
-  // Init navigation object if not preset
-  if (!state.navigation) state.navigation = {}
+  // Init navigation state
+  const state = ref<{ [language: string]: NavItem[] }>({})
 
   // Map locales to nav
-  app.i18n.locales.forEach((locale: any) => (state.navigation[locale.code] = []))
+  app.i18n.locales.forEach((locale: any) => (state.value[locale.code] = []))
 
   // Compute `currentNav` on every route change
   const fetchCounter = ref(0)
@@ -24,9 +26,11 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
    * Get navigation from Docus data
    */
   async function fetchNavigation() {
-    const navigation = await api.data('navigation/' + app.i18n.locale)
+    if (!content) return
 
-    state.navigation[app.i18n.locale] = navigation
+    const navigation = (await content.fetch('navigation/' + app.i18n.locale)) as NavItem[]
+
+    state.value[app.i18n.locale] = navigation
 
     fetchCounter.value += 1
   }
@@ -38,15 +42,15 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
    * @param from A vue-router "to" valid path to start with: "/directory" will make my query start at from this directory.
    */
   function get({ depth, locale, from, all }: DocusNavigationGetParameters = {}) {
-    const nav = state.navigation[locale || app.i18n.locale] || []
+    const nav = state.value[locale || app.i18n.locale] || []
 
     let items = nav
-    let match: NavItem
+    let match: NavItem | undefined
 
     // The deepest exclusive navigation that can be found based on `from`
-    let exclusiveContent: NavItem
+    let exclusiveContent: NavItem | undefined
     // Parent of exclusive Content
-    let parent: NavItem
+    let parent: NavItem | undefined
 
     // `from` parameter handling
     if (from) {
@@ -94,7 +98,7 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
       // matched parent
       parent,
       // filter children
-      links: all ? items : filterLinks(items, depth, 1)
+      links: all ? items : filterLinks(items, depth || 1, 1)
     }
   }
 
@@ -127,41 +131,81 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
    * Check if a "to" path is the currently active path.
    */
   function isLinkActive(to: string) {
-    return withTrailingSlash(state.currentPath) === withTrailingSlash(context.$contentLocalePath(to))
+    return withTrailingSlash(currentPath) === withTrailingSlash(context.$contentLocalePath(to))
   }
 
   /**
    * Return the current navigation from the current user path.
    */
-  const currentNav = computed(() => {
+  const currentNav = computed<DocusCurrentNav>(() => {
     // eslint-disable-next-line no-unused-expressions
     fetchCounter.value
 
     // Calculate the navigation based on current path
     return get({
-      from: state.currentPath
+      from: currentPath
     })
   })
 
   // Update content on update.
-  if (process.client) {
-    window.onNuxtReady($nuxt => {
-      $nuxt.$on('content:update', () => {
-        fetchNavigation()
-      })
-    })
-  }
+  if (process.client) window.onNuxtReady(($nuxt: NuxtApp) => $nuxt.$on('content:update', fetchNavigation))
 
-  const { getPageTemplate } = useDocusTemplates({ api, state }, currentNav)
+  function getPageTemplate(page: DocusDocument) {
+    let template =
+      /**
+       * Use template defined in page data
+       */
+      typeof page.template === 'string' ? page.template : page.template?.self
+
+    /**
+     * Look for template in parent pages
+     */
+    if (!template) {
+      // Fetch from nav (root to link) and fallback to settings.template
+      const slugs: string[] = page.to.split('/').filter(Boolean).slice(0, -1) // no need to get latest slug since it is current page
+
+      let { links } = currentNav?.value || {}
+
+      slugs.forEach((_slug: string, index: number) => {
+        // generate full path of parent
+        const to = '/' + slugs.slice(0, index + 1).join('/')
+        const link = links.find((link: NavItem) => link.to === to)
+
+        if (link?.template) {
+          template = link.template || template
+        }
+
+        if (!link?.children) return
+
+        links = link.children
+      })
+    }
+
+    /**
+     * Use global template if template is not defined in page data or in parent pages
+     */
+    if (!template) template = settings?.template || 'Page'
+
+    template = pascalCase(template)
+
+    if (!Vue.component(template)) {
+      // eslint-disable-next-line no-console
+      console.error(`Template ${template} does not exists, fallback to Page template.`)
+
+      template = 'Page'
+    }
+
+    return template
+  }
 
   // fetch previous and next page based on navigation
   function getPreviousAndNextLink(page: DocusDocument) {
-    const draft = state.ui?.draft ? undefined : false
-    return api
+    if (!content) return
+
+    return content
       .search({ deep: true })
       .where({
         language: app.i18n.locale,
-        draft,
         // Pages should share same parent
         parent: page.parent,
         // Ignore empty index files
@@ -179,12 +223,15 @@ export const useDocusNavigation = ({ context, state, api }: any) => {
   }
 
   return {
+    state,
+    currentNav,
     getPageTemplate,
     fetchNavigation,
-    currentNav,
     isLinkActive,
-    init: fetchNavigation,
     get,
-    getPreviousAndNextLink
+    getPreviousAndNextLink,
+    init: fetchNavigation
   }
 }
+
+export type DocusNavigation = ReturnType<typeof useDocusNavigation>
