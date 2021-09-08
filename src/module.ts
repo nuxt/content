@@ -62,6 +62,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     nuxt.options.build.transpile.push(
       '@docus/mdc',
       'unctx',
+      'property-information',
       'unified',
       'bail',
       'trough',
