@@ -26,6 +26,11 @@ export default nuxtConfig(
     /**
      * Docus config
      */
+    meta: {},
+
+    /**
+     * Docus components
+     */
     components: [
       {
         path: r('./components'),
@@ -34,13 +39,21 @@ export default nuxtConfig(
         level: 999
       }
     ],
-    meta: {},
 
     /**
-     * Disable suffix from color-mode
+     * @nuxtjs/color-mode
+     * Docs: https://color-mode.nuxtjs.org/
      */
     colorMode: {
       classSuffix: ''
+    },
+
+    /**
+     * @nuxt/image
+     * Docs: https://image.nuxtjs.org/
+     */
+    image: {
+      domains: ['https://i3.ytimg.com']
     },
 
     /**
@@ -58,6 +71,19 @@ export default nuxtConfig(
       r('../settings'),
       r('../context')
     ],
+    modules: [r('../i18n')],
+
+    /**
+     * Build configs
+     */
+    target: 'static',
+    server: {
+      port: parseInt(process.env.PORT || '4000', 10)
+    },
+    generate: {
+      fallback: '404.html',
+      routes: ['/']
+    },
     nitro: {
       inlineDynamicImports: true,
       externals: {
@@ -79,44 +105,8 @@ export default nuxtConfig(
         ]
       }
     },
-    modules: [r('../i18n')],
-
-    /**
-     * Build configs
-     */
-    target: 'static',
-    server: {
-      port: parseInt(process.env.PORT || '4000', 10)
-    },
-    // @ts-ignore
-    vite: {
-      // TODO: Remove that temporary fix.
-      server: {
-        fs: {
-          strict: false
-        }
-      },
-      // @ts-ignore
-      experimentWarning: false,
-      optimizeDeps: {
-        exclude: ['ohmyfetch', 'vue-demi', 'scule', '@vueuse/integrations'],
-        include: ['defu', 'theme-colors']
-      }
-    },
-    typescript: {
-      // TODO: Re-enable typeCheck
-      // Waiting for better support from nuxt-vite / Nuxt 3
-      typeCheck: false
-    },
-    generate: {
-      fallback: '404.html',
-      routes: ['/']
-    },
     build: {
       transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api']
-    },
-    image: {
-      domains: ['https://i3.ytimg.com']
     }
   }) as NuxtConfig
 )
