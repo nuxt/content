@@ -3,6 +3,161 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.10.0...@nuxt/content-theme-docs@0.10.1) (2021-02-10)
+
+**Note:** Version bump only for package @nuxt/content-theme-docs
+
+
+
+
+
+# [0.10.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.9.0...@nuxt/content-theme-docs@0.10.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* **theme-docs:** revert @tailwindcss/typography bump ([5adf1a2](https://github.com/nuxt/content/commit/5adf1a295d1c33cbac3a6ea7a3ae32e94a73f9c7))
+
+
+### Features
+
+* **theme-docs:** Added nl-BE.js localization file to docs theme ([#739](https://github.com/nuxt/content/issues/739)) ([10fbaaf](https://github.com/nuxt/content/commit/10fbaaff4ff990e26309853f4e4f5bfccc1ef59c))
+
+
+
+
+
+# [0.9.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.2...@nuxt/content-theme-docs@0.9.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* **theme-docs:** correct releases link ([#690](https://github.com/nuxt/content/issues/690)) ([d34f92b](https://github.com/nuxt/content/commit/d34f92b8d8952c1b63595e553eb3496213584687))
+* **theme-docs:** remove redundant header ([#722](https://github.com/nuxt/content/issues/722)) ([e85daf0](https://github.com/nuxt/content/commit/e85daf0bfc6491e96555fad9bb1a9772be2a323a))
+* **theme-docs:** rename ja locale file ([#707](https://github.com/nuxt/content/issues/707)) ([28006fd](https://github.com/nuxt/content/commit/28006fd83b28b5dbf81234b9f72d419f97aeda94))
+
+
+### Features
+
+* **content/theme-docs:** support surround by path ([#660](https://github.com/nuxt/content/issues/660)) ([92599e0](https://github.com/nuxt/content/commit/92599e0fc3910da53560e82b9bceb8a118568d84))
+* **theme-docs:** add korean locale ([#709](https://github.com/nuxt/content/issues/709)) ([7fda834](https://github.com/nuxt/content/commit/7fda834b4e926f3ec288702b439c6a9185ae23e1))
+* **theme-docs:** display updatedAt date in bottom of page ([#687](https://github.com/nuxt/content/issues/687)) ([51619dd](https://github.com/nuxt/content/commit/51619dd866f5b4b89645935d6c26bc010ebf9bfe))
+
+
+
+
+
+## [0.8.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.1...@nuxt/content-theme-docs@0.8.2) (2020-11-25)
+
+**Note:** Version bump only for package @nuxt/content-theme-docs
+
+
+
+
+
+## [0.8.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.8.0...@nuxt/content-theme-docs@0.8.1) (2020-11-19)
+
+
+### Bug Fixes
+
+* **theme-docs:** pin @tailwindcss/typography to 0.2.0 ([a8f57f3](https://github.com/nuxt/content/commit/a8f57f37d093a1c3e473c656af383417c1093578))
+
+
+
+
+
+# [0.8.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.2...@nuxt/content-theme-docs@0.8.0) (2020-11-19)
+
+
+### Bug Fixes
+
+* **docs-theme:** support overwriting hooks ([#619](https://github.com/nuxt/content/issues/619)) ([5b8cb40](https://github.com/nuxt/content/commit/5b8cb40fb814c3f3aedd41c26948f53d46987a75))
+* **theme-docs:** prevent warning when global components missing ([#542](https://github.com/nuxt/content/issues/542)) ([1c84288](https://github.com/nuxt/content/commit/1c84288f02b1ef868f1a3360f23f4a7bf25df3aa))
+* **theme-docs:** twitter preview when trailing slash on url ([#574](https://github.com/nuxt/content/issues/574)) ([ba0b8b1](https://github.com/nuxt/content/commit/ba0b8b15135428b538208f7ae5e8a8a6284d5a58))
+
+
+### Features
+
+* support dynamic table of contents ([#600](https://github.com/nuxt/content/issues/600)) ([5cf18c4](https://github.com/nuxt/content/commit/5cf18c41b3b383a4989db5eae775feb9ddf409d0))
+* **theme-docs:** add locale polish support ([#571](https://github.com/nuxt/content/issues/571)) ([ff54d11](https://github.com/nuxt/content/commit/ff54d1134a1bd938d7ebe65438ac8968e9031a08))
+* **theme-docs:** add locale turkish support ([#570](https://github.com/nuxt/content/issues/570)) ([35d79fe](https://github.com/nuxt/content/commit/35d79fe75b5f7d201e2106c153241086693305fa))
+* **theme-docs:** Add new tailwindcss future flags ([#573](https://github.com/nuxt/content/issues/573)) ([9daa645](https://github.com/nuxt/content/commit/9daa6457eeced893f423a8a45766807cc20b16f3))
+
+
+
+
+
+## [0.7.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.1...@nuxt/content-theme-docs@0.7.2) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** handle purgecss in rootDir components ([#559](https://github.com/nuxt/content/issues/559)) ([08d3c75](https://github.com/nuxt/content/commit/08d3c75986b99ba13b8237753f5b3627d273c0dc))
+* **theme-docs:** pin @nuxtjs/google-fonts dependency ([74dbdc7](https://github.com/nuxt/content/commit/74dbdc72ae14a97af60884a77e5307f4a6efe22b))
+
+
+
+
+
+## [0.7.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.7.0...@nuxt/content-theme-docs@0.7.1) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** missing dependency ([140bc07](https://github.com/nuxt/content/commit/140bc078cdd562316c9ac6bf595ecaeda94c5c66))
+
+
+
+
+
+# [0.7.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.6.1...@nuxt/content-theme-docs@0.7.0) (2020-10-12)
+
+
+### Bug Fixes
+
+* **theme-docs:** avoid exposing `GITHUB_TOKEN` ([#549](https://github.com/nuxt/content/issues/549)) ([206e778](https://github.com/nuxt/content/commit/206e778fac72c67d8edf29b7ddfc273bd6b51bf5))
+
+
+### Features
+
+* **theme-docs:** add algolia integration (similar to vuepress) ([#523](https://github.com/nuxt/content/issues/523)) ([7c83d96](https://github.com/nuxt/content/commit/7c83d96463aaa56a7660c700bfd92f6a16190248))
+* **theme-docs:** add variant and icon support in `list` component ([#490](https://github.com/nuxt/content/issues/490)) ([19ee400](https://github.com/nuxt/content/commit/19ee400704f8d76cc7c5a09b2f9302794b8eb827))
+* **theme-docs:** support `docs.primaryColor` ([#507](https://github.com/nuxt/content/issues/507)) ([cefb24e](https://github.com/nuxt/content/commit/cefb24efeb8e8f05d91e1acd3528aa556296acd5))
+
+
+
+
+
+## [0.6.1](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.6.0...@nuxt/content-theme-docs@0.6.1) (2020-09-18)
+
+
+### Bug Fixes
+
+* **theme-docs:** fixed incorrect Github URL for navbar ([#489](https://github.com/nuxt/content/issues/489)) ([769c10a](https://github.com/nuxt/content/commit/769c10a07321e05820e8e4fe1f13ce0d2f721fb1))
+
+
+
+
+
+# [0.6.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.6...@nuxt/content-theme-docs@0.6.0) (2020-09-15)
+
+
+### Bug Fixes
+
+* **theme-docs:** fix code block's filename style ([#472](https://github.com/nuxt/content/issues/472)) ([afc3eb3](https://github.com/nuxt/content/commit/afc3eb34ff4788e0a345b55ceb08393d9cd5fa38))
+* **theme-docs:** handle single layout on releases ([#482](https://github.com/nuxt/content/issues/482)) ([6033987](https://github.com/nuxt/content/commit/60339876df6ba44e616a86711441e4e6a676bfe9))
+
+
+### Features
+
+* support github custom domain ([#458](https://github.com/nuxt/content/issues/458)) ([d01e134](https://github.com/nuxt/content/commit/d01e1347f88006948929ced9dfa6dd97e3fa2008))
+* **theme-docs:** add `defaultDir` options ([#468](https://github.com/nuxt/content/issues/468)) ([e4bae6c](https://github.com/nuxt/content/commit/e4bae6cf779e38e8238766d038d4febe2386b602))
+* **theme-docs:** add locale simplified chinese support ([#471](https://github.com/nuxt/content/issues/471)) ([17850f7](https://github.com/nuxt/content/commit/17850f77addd2e0046f62588dfc4a0cbcf7361e4))
+
+
+
+
+
 ## [0.5.6](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.5.5...@nuxt/content-theme-docs@0.5.6) (2020-09-03)
 
 **Note:** Version bump only for package @nuxt/content-theme-docs

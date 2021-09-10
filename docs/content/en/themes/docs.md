@@ -5,8 +5,25 @@ menuTitle: Docs
 description: 'Create your documentation with @nuxt/content docs theme in seconds!'
 category: Themes
 position: 8
-version: 1.1
-badge: 'v0.5.6'
+version: 1.3
+badge: 'v0.9.0'
+showcases:
+  - https://strapi.nuxtjs.org
+  - https://tailwindcss.nuxtjs.org
+  - https://storybook.nuxtjs.org
+  - https://firebase.nuxtjs.org
+  - https://pwa.nuxtjs.org
+  - https://image.nuxtjs.org
+  - https://http.nuxtjs.org
+  - https://cloudinary.nuxtjs.org
+  - https://i18n.nuxtjs.org
+  - https://snipcart.nuxtjs.org
+  - https://prismic.nuxtjs.org
+  - https://google-analytics.nuxtjs.org
+  - https://color-mode.nuxtjs.org
+  - https://mdx.nuxtjs.org
+  - https://sanity.nuxtjs.org
+  - https://speedcurve.nuxtjs.org
 ---
 
 <alert type="info">
@@ -123,7 +140,9 @@ Import the theme function from `@nuxt/content-theme-docs`:
 ```js[nuxt.config.js]
 import theme from '@nuxt/content-theme-docs'
 
-export default theme()
+export default theme({
+  // [additional nuxt configuration]
+})
 ```
 
 The theme exports a function to setup the `nuxt.config.js` and allows you to add / override the default config.
@@ -136,8 +155,8 @@ The theme exports a function to setup the `nuxt.config.js` and allows you to add
 import theme from '@nuxt/content-theme-docs'
 
 export default theme({
-  env: {
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN
+  docs: {
+    primaryColor: '#E24F55'
   },
   loading: { color: '#00CD81' },
   i18n: {
@@ -176,6 +195,8 @@ You can override the [default theme config](https://github.com/nuxt/content/blob
 
 The theme design is based on a `primary` color to make it easy to override.
 
+> Default colors are generated using [theme-colors](https://github.com/nuxt-contrib/theme-colors) with `docs.primaryColor` as base. <badge>v0.7.0+</badge>
+
 **Example**
 
 ```js[tailwind.config.js]
@@ -184,23 +205,13 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          100: '#FCEDEE',
-          200: '#F8D3D5',
-          300: '#F3B9BB',
-          400: '#EB8488',
-          500: '#E24F55',
-          600: '#CB474D',
-          700: '#882F33',
-          800: '#662426',
-          900: '#44181A'
+          // ...
         }
       }
     }
   }
 }
 ```
-
-> Check out this awesome [color shades generator](https://javisperez.github.io/tailwindcolorshades/#/) for TailwindCSS
 
 ### `content/`
 
@@ -318,7 +329,8 @@ To make it work properly, make sure to include these properties in the front-mat
 #### Optional fields
 
 - `category` (`String`)
-  - This will be used to group the documents in the navigation
+  - This will be used to group the documents in the navigation (defaults to `""`)
+  - If `category` is falsy or not a string, it is coerced to be an empty string, and isn't renderd in the sidebar.
 - `version` (`Float`)
   - Alert users that the page is new with a badge. Once the page is seen, the version is stored in the local storage until you increment it
 - `fullscreen` (`Boolean`)
@@ -359,13 +371,30 @@ You can create a `content/settings.json` file to configure the theme.
 - `logo` (`String` | `Object`)
   - The logo of your project, can be an `Object` to set a logo per [color mode](https://github.com/nuxt-community/color-mode-module)
 - `github` (`String`)
-  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page. Example: `nuxt/content`
+  - The GitHub repository of your project `owner/name` to display the last version, the releases page, the link at the top and the `Edit this page on GitHub link` on each page Example: `nuxt/content`.
+  - For GitHub Enterprise, you have to assign a full url of your project without a trailing slash. Example: `https://hostname/repos/owner/name`. <badge>v0.6.0+</badge>
+- `githubApi` (`String`) <badge>v0.6.0+</badge>
+  - For GitHub Enterprise, in addition to `github`, you have to assign a API full url of your project without a trailing slash. Example: `https://hostname/api/v3/repos/owner/name`.
+  - Releases are fetched from `${githubApi}/releases`.
 - `twitter` (`String`)
   - The Twitter username `@username` you want to link. Example: `@nuxt_js`
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
   - The default branch for the GitHub repository of your project, used in the `Edit this page on GitHub link` on each page (defaults to `main` if it cannot be detected).
+- `defaultDir` (`String`) <badge>v0.6.0+</badge>
+  - The default dir of your project, used in the `Edit this page on GitHub link` on each page (defaults to `docs`. Can be an empty string eg. `""`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - The layout of your documentation (defaults to `default`). Can be changed to `single` to have a one-page doc.
+- `algolia` (`Object`) <badge>v0.7.0+</badge>
+  - This option allows you to use [Algolia DocSearch](https://docsearch.algolia.com) to replace the simple built-in search. In order to enable it, you need to provide at least the `apiKey` and the `indexName`:
+    ```json
+    "algolia": {
+        "apiKey": "<API_KEY>",
+        "indexName": "<INDEX_NAME>",
+        "langAttribute": "language"
+    }
+    ```
+  - If you use `i18n`, make sure the `<langAttribute>` is the same as the html lang selector in the config (defaults to `language`).
+  - Take a look at the [@nuxt/content](https://github.com/algolia/docsearch-configs/blob/master/configs/nuxtjs_content.json) docsearch config for an example.
 
 ### Example
 
@@ -440,6 +469,13 @@ Check out an info alert with a `codeblock` and a [link](/themes/docs)!
 - `items`
   - Type: `Array`
   - Default: `[]`
+- `type` <badge>v0.7.0+</badge>
+  - Type: `String`
+  - Default: `'primary'`
+  - Values: `['primary', 'info', 'success', 'warning', 'danger']`
+- `icon` <badge>v0.7.0+</badge>
+  - Type: `String`
+  - *Can be used to override the default `type` icon, check out the [icons available](https://github.com/nuxt/content/tree/dev/packages/theme-docs/src/components/global/icons)*
 
 **Example**
 
@@ -457,6 +493,7 @@ items:
 **Result**
 
 <list :items="['Item1', 'Item2', 'Item3']"></list>
+
 
 ### `<badge>`
 
@@ -553,29 +590,4 @@ link: https://codesandbox.io/embed/nuxt-content-l164h?hidenavigation=1&theme=dar
 
 ## Showcases
 
-<div class="grid lg:grid-cols-2 gap-4">
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://content.nuxtjs.org" target="_blank">
-      <img src="https://content.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://content.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://strapi.nuxtjs.org" target="_blank">
-      <img src="https://strapi.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://strapi.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://tailwindcss.nuxtjs.org" target="_blank">
-      <img src="https://tailwindcss.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://tailwindcss.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-  <div class="border dark:border-gray-800 rounded-md">
-    <a href="https://storybook.nuxtjs.org" target="_blank">
-      <img src="https://storybook.nuxtjs.org/preview.png" class="light-img" />
-      <img src="https://storybook.nuxtjs.org/preview-dark.png" class="dark-img" />
-    </a>
-  </div>
-</div>
+<showcases :showcases="showcases"></showcases>

@@ -1,10 +1,9 @@
 import theme from '@nuxt/content-theme-docs'
 
 export default theme({
-  env: {
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN
+  docs: {
+    primaryColor: '#00CD81'
   },
-  loading: { color: '#00CD81' },
   i18n: {
     locales: () => [{
       code: 'ru',
@@ -18,8 +17,8 @@ export default theme({
       name: 'Français'
     }, {
       code: 'ja',
-      iso: 'ja_JP',
-      file: 'ja_JP.js',
+      iso: 'ja-JP',
+      file: 'ja-JP.js',
       name: '日本語'
     }, {
       code: 'en',

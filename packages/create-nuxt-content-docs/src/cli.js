@@ -13,6 +13,7 @@ const cli = cac('create-nuxt-content-docs')
 cli
   .command('[out-dir]', 'Generate in a custom directory or current directory')
   .option('--verbose', 'Show debug logs')
+  // eslint-disable-next-line default-param-last
   .action((outDir = '.', cliOptions) => {
     const files = fs.existsSync(outDir) ? fs.readdirSync(outDir) : []
     // eslint-disable-next-line no-console

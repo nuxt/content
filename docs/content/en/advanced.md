@@ -42,7 +42,7 @@ When using Nuxt <= 2.12, you might need to specify the dynamic routes with [gene
 
 **Example**
 
-```js
+```js{}[nuxt.config.js]
 export default {
   modules: [,
     '@nuxt/content'
@@ -68,6 +68,31 @@ Recommended to use Nuxt 2.14+ with `nuxt generate` because it's awesome!
 
 The module adds some hooks you can use:
 
+### `content:file:beforeParse`
+
+Allows you to modify the contents of a file before it is handled by the parsers.
+
+Arguments:
+- `file`
+ - Type: `Object`
+ - Properties:
+   - path: `String`
+   - extension: `String` (ex: `.md`)
+   - data: `String`
+
+**Example**
+
+Changing all appearances of `react` to `vue` in all Markdown files:
+
+```js{}[nuxt.config.js]
+hooks: {
+  'content:file:beforeParse': (file) => {
+    if (file.extension !== '.md') return
+    file.data = file.data.replace(/react/g, 'vue')
+  }
+}
+```
+
 ### `content:file:beforeInsert`
 
 Allows you to add data to a document before it is stored.
@@ -77,6 +102,10 @@ Arguments:
   - Type: `Object`
   - Properties:
     - See [writing content](/writing)
+- `database`
+  - Type: `Object`
+  - Properties:
+    - See [type definition](https://github.com/nuxt/content/blob/master/packages/content/types/database.d.ts)
 
 **Example**
 
@@ -84,7 +113,7 @@ When building a blog, you can use `file:beforeInsert` to add `readingTime` to a 
 
 > `text` is the body content of a markdown file before it is transformed to JSON AST, you can use at this point but it is not returned by the API.
 
-```js
+```js{}[nuxt.config.js]
 export default {
   modules: [,
     '@nuxt/content'
@@ -105,7 +134,7 @@ export default {
 
 You might want to parse markdown inside a `.json` file. You can access the parsers from the `database` object:
 
-```js
+```js{}[nuxt.config.js]
 export default {
   modules: [,
     '@nuxt/content'
@@ -122,6 +151,31 @@ export default {
 }
 ```
 
+### `content:options`
+
+Extend the content options, useful for modules that wants to read content options when normalized and apply updated to it.
+
+Arguments:
+- `options`
+  - Type: `Object`
+  - Properties:
+    - See [configuration](/configuration#properties)
+
+**Example**
+
+```js{}[nuxt.config.js]
+export default {
+  modules: [,
+    '@nuxt/content'
+  ],
+  hooks: {
+    'content:options': (options) => {
+      console.log('Content options:', options)
+    }
+  }
+}
+```
+
 ## Handling Hot Reload
 
 <alert type="info">
@@ -132,7 +186,7 @@ When you are in development mode, the module will automatically call `nuxtServer
 
 In case you want to listen to the event to do something more, you can listen on `content:update` event on client-side using `$nuxt.$on('content:update')`:
 
-```js{}[plugins/update.client.js
+```js{}[plugins/update.client.js]
 export default function ({ store }) {
   // Only in development
   if (process.dev) {

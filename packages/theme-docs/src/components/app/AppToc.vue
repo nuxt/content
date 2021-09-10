@@ -8,9 +8,9 @@
           'lg:px-8': settings.layout === 'single'
         }"
       >
-        <h3
+        <p
           class="mb-3 lg:mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm lg:text-xs"
-        >{{ $t('toc.title') }}</h3>
+        >{{ $t('toc.title') }}</p>
         <scrollactive highlight-first-item active-class="text-primary-500" :offset="0" tag="ul">
           <li
             v-for="link of toc"
@@ -25,7 +25,10 @@
               class="block text-sm scrollactive-item transition-padding ease-in-out duration-300 hover:pl-1"
               :class="{
                 'py-2': link.depth === 2,
-                'ml-2 pb-2': link.depth === 3
+                'ml-2 pb-2': link.depth === 3,
+                'ml-3 pb-2': link.depth === 4,
+                'ml-4 pb-2': link.depth === 5,
+                'ml-5 pb-2': link.depth === 6
               }"
             >{{ link.text }}</a>
           </li>

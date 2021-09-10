@@ -10,12 +10,14 @@ const getDefaults = ({ dev = false } = {}) => ({
   fullTextSearchFields: ['title', 'description', 'slug', 'text'],
   nestedProperties: [],
   markdown: {
+    tocDepth: 3,
     remarkPlugins: [
       'remark-squeeze-paragraphs',
       'remark-slug',
       'remark-autolink-headings',
       'remark-external-links',
-      'remark-footnotes'
+      'remark-footnotes',
+      'remark-gfm'
     ],
     rehypePlugins: [
       'rehype-sort-attribute-values',
@@ -31,6 +33,26 @@ const getDefaults = ({ dev = false } = {}) => ({
   xml: {},
   extendParser: {}
 })
+
+const processMarkdownTocDepth = (markdown) => {
+  const { tocDepth } = markdown
+  const tocTags = []
+
+  if (tocDepth < 1) {
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will be empty.`)
+    return tocTags
+  }
+
+  if (tocDepth > 6) {
+    logger.info(`content.markdown.tocDepth is set as ${tocDepth}. Table of contents of markdown files will include all the headings.`)
+  }
+
+  for (let i = 2; i <= tocDepth; i++) {
+    tocTags.push(`h${i}`)
+  }
+
+  return tocTags
+}
 
 const processMarkdownPlugins = (type, markdown, resolvePath) => {
   const plugins = []
@@ -63,6 +85,7 @@ const processMarkdownOptions = (options, resolvePath) => {
   if (!resolvePath) {
     resolvePath = path => path
   }
+  options.markdown.tocTags = processMarkdownTocDepth(options.markdown)
   options.markdown.remarkPlugins = processMarkdownPlugins('remark', options.markdown, resolvePath)
   options.markdown.rehypePlugins = processMarkdownPlugins('rehype', options.markdown, resolvePath)
 }

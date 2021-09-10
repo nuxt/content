@@ -32,7 +32,7 @@ Ce module analysera les fichiers `.md`, `.yaml`, `.csv`, `.json`, `.json5` et g�
 
 Ce module convertit vos fichiers `.md` en une arborescence JSON AST, stockée dans une variable `body`.
 
-Assurez-vous d'utiliser le composant `<nuxt-content>` afin d'afficher le `body` de votre contenu Markdown, voir [afficher du contenu](/displaying).
+Assurez-vous d'utiliser le composant `<nuxt-content>` afin d'afficher le `body` de votre contenu Markdown, voir [afficher du contenu](/fr/displaying).
 
 > Vous pouvez consulter le [guide syntaxique de base](https://www.markdownguide.org/basic-syntax) pour apprendre à maîtriser le Markdown.
 
@@ -49,6 +49,43 @@ description: Apprenez comment utiliser @nuxt/content.
 
 Ces variables seront injectées au sein du document:
 
+```json
+{
+  body: Object
+  title: "Introduction"
+  description: "Apprenez comment utiliser @nuxt/content."
+  dir: "/"
+  extension: ".md"
+  path: "/index"
+  slug: "index"
+  toc: Array
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
+### Extrait
+
+L'extrait ou le résumé du contenu peut être extrait du contenu en utilisant `<!--more-->` comme diviseur.
+
+```md
+---
+title: Introduction
+---
+
+Apprenez comment utiliser @nuxt/content.
+<!--more-->
+Quantité totale de contenu au-delà du plus diviseur.
+```
+
+La propriété Description contiendra le contenu de l'extrait à moins qu'elle ne soit définie dans les accessoires Front Matter.
+
+
+<alert type="info">
+Veillez à saisir exactement <code>&lt;!--more--&gt;</code>; c'est-à-dire, tout en minuscules et sans espace.
+</alert>
+
+Des exemples de variables seront injectés dans le document:
 ```json
 {
   body: Object
@@ -92,7 +129,7 @@ Il sera transformé en une structure JSON AST, et en utilisant le composant `nux
 
 ### Liens
 
-Les liens sont transformés afin d'y ajouter des attributs `target` et `rel` valides. Vous pouvez modifier ce comportement, voir [configuration](/configuration#markdownexternallinks). Les liens relatifs sont eux aussi transformés automatiquement en `nuxt-link` afin d'apporter une navigation entre pages plus performante à l'aide du smart prefetching.
+Les liens sont transformés afin d'y ajouter des attributs `target` et `rel` valides. Vous pouvez modifier ce comportement, voir [configuration](/fr/configuration#markdownexternallinks). Les liens relatifs sont eux aussi transformés automatiquement en `nuxt-link` afin d'apporter une navigation entre pages plus performante à l'aide du smart prefetching.
 
 Voici un exemple illustrant l'utilisation de liens externes et relatifs, en utilisant les syntaxes Markdown et HTML:
 
@@ -107,7 +144,7 @@ title: Accueil
 
 <a href="/articles">Lien Html vers le Blog</a>
 
-[Lien Markdown vers le Blog](/articles)
+[Lien Markdown vers le Blog](/fr/articles)
 
 <a href="https://nuxtjs.org">Lien Html externe</a>
 
@@ -138,7 +175,7 @@ Voici une note de bas de page basique,[^1] et en voici une longue.[^bignote]
 
 ### Blocs de code
 
-Ce module enveloppe automatiquement les blocs de code et leur applique des classes propres à [PrismJS](https://prismjs.com) (voir [coloration syntaxique](/writing#syntax-highlighting)).
+Ce module enveloppe automatiquement les blocs de code et leur applique des classes propres à [PrismJS](https://prismjs.com) (voir [coloration syntaxique](/fr/writing#syntax-highlighting)).
 
 Dans du Markdown, les blocs de code sont entourés de 3 backticks. Vous pouvez éventuellement définir le langage du bloc de code pour activer la coloration syntaxique associée.
 
@@ -177,7 +214,7 @@ Voici le résultat après que le composant `nuxt-content` ait généré le rendu
 
 ### Coloration syntaxique
 
-La coloration syntaxique est prise en charge par défaut grâce à [PrismJS](https://prismjs.com), en injectant le thème défini dans les options de votre application Nuxt.js, voir [configuration](/configuration#markdownprismtheme).
+La coloration syntaxique est prise en charge par défaut grâce à [PrismJS](https://prismjs.com), en injectant le thème défini dans les options de votre application Nuxt.js, voir [configuration](/fr/configuration#markdownprismtheme).
 
 ### HTML
 
@@ -279,7 +316,7 @@ multiselectOptions:
 
 <alert type="info">
 
-Ces composants seront rendus en utilisant le composant `<nuxt-conent>`, voir [afficher du contenu](/displaying#component).
+Ces composants seront rendus en utilisant le composant `<nuxt-content>`, voir [afficher du contenu](/fr/displaying#component).
 
 </alert>
 
@@ -362,9 +399,9 @@ Sera transformé en:
 }
 ```
 
-En interne, nous associons une clé `text` avec le corps du Markdown afin de pouvoir l'utiliser pour la [recherche](/fetching#searchfield-value) ou pour créer des [hooks](/advanced#contentfilebeforeinsert).
+En interne, nous associons une clé `text` avec le corps du Markdown afin de pouvoir l'utiliser pour la [recherche](/fr/fetching#searchfield-value) ou pour créer des [hooks](/fr/advanced#contentfilebeforeinsert).
 
-Vous pouvez découvrir la façon d'afficher du Markdown au sein de vos applications dans la section [afficher du contenu](/displaying).
+Vous pouvez découvrir la façon d'afficher du Markdown au sein de vos applications dans la section [afficher du contenu](/fr/displaying).
 
 ## CSV
 

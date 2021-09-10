@@ -3,6 +3,126 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.1](https://github.com/nuxt/content/compare/@nuxt/content@1.13.0...@nuxt/content@1.13.1) (2021-02-10)
+
+
+### Bug Fixes
+
+* **content:** handle empty lang ([#765](https://github.com/nuxt/content/issues/765)) ([60e758c](https://github.com/nuxt/content/commit/60e758c6f1e7bff4de37f3a499284139db0a7d60))
+
+
+
+
+
+# [1.13.0](https://github.com/nuxt/content/compare/@nuxt/content@1.12.0...@nuxt/content@1.13.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* use top 2 level of nodes to generate toc ([#757](https://github.com/nuxt/content/issues/757)) ([fe4de6b](https://github.com/nuxt/content/commit/fe4de6bf09bb025878975706de4c0a2f8edbd516))
+* **test:** update highlighter snapshots ([32f9f8f](https://github.com/nuxt/content/commit/32f9f8fedb1f4a6d849acaa60124bfa9f0545868))
+
+
+### Features
+
+* use diff-highlight plugin ([#755](https://github.com/nuxt/content/issues/755)) ([3c2186a](https://github.com/nuxt/content/commit/3c2186a9005c37b3b668ff0124aa77f80c989b85))
+
+
+
+
+
+# [1.12.0](https://github.com/nuxt/content/compare/@nuxt/content@1.11.1...@nuxt/content@1.12.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* **content:** codeblock parse lang should support other meta ([#691](https://github.com/nuxt/content/issues/691)) ([881f6d4](https://github.com/nuxt/content/commit/881f6d49a30c67c9151872b81771a185e393d986))
+* **content:** failed ci on windows and enhance file name detection regex ([#680](https://github.com/nuxt/content/issues/680)) ([f445444](https://github.com/nuxt/content/commit/f445444b277d93ef5b9376bb1a031643d4c0329e))
+* **content:** optional search parameter condition ([de4c860](https://github.com/nuxt/content/commit/de4c8607239b3e7ff1605bba698e9ef5c9bd242f))
+* **types:** change types ([#732](https://github.com/nuxt/content/issues/732)) ([a6274e4](https://github.com/nuxt/content/commit/a6274e482947dc177c795cc00867aa266bd91ddb))
+* properly treat falsy values in context ([#685](https://github.com/nuxt/content/issues/685)) ([228f7e0](https://github.com/nuxt/content/commit/228f7e04a5d7a5742ca92617f48ae04b98e9b277))
+
+
+### Features
+
+* **content:** improve reactivity ([#688](https://github.com/nuxt/content/issues/688)) ([1fbcbbc](https://github.com/nuxt/content/commit/1fbcbbcd20f46b360cd8476c0de53c79fb4c20cd))
+* **content:** Optional search parameter ([#733](https://github.com/nuxt/content/issues/733)) ([db3fd67](https://github.com/nuxt/content/commit/db3fd67f08ff18b480b1d4afbc1269c4220995e7))
+* add path for custom parsers ([#656](https://github.com/nuxt/content/issues/656)) ([955cf9f](https://github.com/nuxt/content/commit/955cf9fe1074bcc740e8e0c9695760a04703e961))
+* sort by score (most relevant first) when searching ([#671](https://github.com/nuxt/content/issues/671)) ([1936a0e](https://github.com/nuxt/content/commit/1936a0eee5b929c04c666097453ef27adde7ca21))
+* **content/theme-docs:** support surround by path ([#660](https://github.com/nuxt/content/issues/660)) ([92599e0](https://github.com/nuxt/content/commit/92599e0fc3910da53560e82b9bceb8a118568d84))
+
+
+
+
+
+## [1.11.1](https://github.com/nuxt/content/compare/@nuxt/content@1.11.0...@nuxt/content@1.11.1) (2020-11-25)
+
+
+### Bug Fixes
+
+* [#653](https://github.com/nuxt/content/issues/653) - remark-gfm dependency added to manage markdown tables ([#654](https://github.com/nuxt/content/issues/654)) ([5a5c6ac](https://github.com/nuxt/content/commit/5a5c6ac06698c98972fa3053a1a66ca7202af144))
+
+
+
+
+
+# [1.11.0](https://github.com/nuxt/content/compare/@nuxt/content@1.10.0...@nuxt/content@1.11.0) (2020-11-19)
+
+
+### Bug Fixes
+
+* **content:** add missing types ([#625](https://github.com/nuxt/content/issues/625)) ([43e5a81](https://github.com/nuxt/content/commit/43e5a819e55fa65b3b9ffc0610e3a2206a356e48))
+* **content:** update highlighter spec ([8108f84](https://github.com/nuxt/content/commit/8108f84bf94727d7cb9d786c775e0b9c502d4d0f))
+* set header to empty string if undefined ([#620](https://github.com/nuxt/content/issues/620)) ([5bffdf1](https://github.com/nuxt/content/commit/5bffdf11d5b499829fcb389db29c9c0f316be3ac)), closes [#136](https://github.com/nuxt/content/issues/136)
+* **content:** support space after codeblock for filename ([#621](https://github.com/nuxt/content/issues/621)) ([9d900ff](https://github.com/nuxt/content/commit/9d900ff648c96aa0454986819cb31b374b451ecc))
+
+
+### Features
+
+* support dynamic table of contents ([#600](https://github.com/nuxt/content/issues/600)) ([5cf18c4](https://github.com/nuxt/content/commit/5cf18c41b3b383a4989db5eae775feb9ddf409d0))
+* **lib:** support markdown excerpt ([#607](https://github.com/nuxt/content/issues/607)) ([b453ea8](https://github.com/nuxt/content/commit/b453ea8e22258a664de93ec29c71229b17bf9fd1))
+
+
+
+
+
+# [1.10.0](https://github.com/nuxt/content/compare/@nuxt/content@1.9.0...@nuxt/content@1.10.0) (2020-10-12)
+
+
+### Bug Fixes
+
+* avoid registering `components/global` when not exists ([#548](https://github.com/nuxt/content/issues/548)) ([843a5f9](https://github.com/nuxt/content/commit/843a5f9d26af68d1d29c448e58fdc7991778ed05))
+* Included types folder in files ([#525](https://github.com/nuxt/content/issues/525)) ([a42e866](https://github.com/nuxt/content/commit/a42e866df271b371767338d732cb54b45fd452db))
+* Incorrect type for fetch which returns a promise ([#518](https://github.com/nuxt/content/issues/518)) ([c20345a](https://github.com/nuxt/content/commit/c20345af3b30fd12b951133457348c3fbc988132))
+* **content:** fix tab key handling of editor component with IME ([#509](https://github.com/nuxt/content/issues/509)) ([c5c5e02](https://github.com/nuxt/content/commit/c5c5e02497f761f59a8299f3d54ab9b54abe77eb))
+
+
+### Features
+
+* **content:** handle json arrays ([#486](https://github.com/nuxt/content/issues/486)) ([f29daac](https://github.com/nuxt/content/commit/f29daac5dfdcd79d2401522e31b69bd39ea75f32))
+
+
+
+
+
+# [1.9.0](https://github.com/nuxt/content/compare/@nuxt/content@1.8.1...@nuxt/content@1.9.0) (2020-09-15)
+
+
+### Bug Fixes
+
+* **types:** remark plugins and rehype plugins should accept options in array syntax ([#462](https://github.com/nuxt/content/issues/462)) ([460b0c5](https://github.com/nuxt/content/commit/460b0c537961fdc53259f058c35a5970ea97bfdd)), closes [/github.com/nuxt/content/blob/711913c4772a9aad442f093eb4ddc822771e873f/packages/content/lib/utils.js#L46-L48](https://github.com//github.com/nuxt/content/blob/711913c4772a9aad442f093eb4ddc822771e873f/packages/content/lib/utils.js/issues/L46-L48)
+
+
+### Features
+
+* **content:** add custom highlighter ([#467](https://github.com/nuxt/content/issues/467)) ([9e1d0bd](https://github.com/nuxt/content/commit/9e1d0bd85e2bef64a7a9d42dee9ffadc559e60c6))
+* add content:file:beforeParse hook ([#453](https://github.com/nuxt/content/issues/453)) ([f7ac58d](https://github.com/nuxt/content/commit/f7ac58de9b743cb58fe9b7a7ab81795c4dbf3e3b))
+* Added more types following [#443](https://github.com/nuxt/content/issues/443) and [#421](https://github.com/nuxt/content/issues/421) ([#444](https://github.com/nuxt/content/issues/444)) ([6a43bd2](https://github.com/nuxt/content/commit/6a43bd2e89222953a6886654752d0d001e72efea))
+
+
+
+
+
 ## [1.8.1](https://github.com/nuxt/content/compare/@nuxt/content@1.8.0...@nuxt/content@1.8.1) (2020-09-03)
 
 

@@ -11,6 +11,7 @@ const WS = require('./ws')
 const { getDefaults, processMarkdownOptions } = require('./utils')
 
 module.exports = async function (moduleOptions) {
+  const { nuxt } = this
   const isSSG =
     this.options.dev === false &&
     (this.options.target === 'static' ||
@@ -54,7 +55,6 @@ module.exports = async function (moduleOptions) {
   const relativeDir = options.dir
   options.dir = resolve(this.options.srcDir, options.dir)
 
-  // Load markdown plugins
   processMarkdownOptions(options, this.nuxt.resolver.resolvePath)
 
   options.apiPrefixWithBase = options.apiPrefix
@@ -68,13 +68,23 @@ module.exports = async function (moduleOptions) {
     options.apiPrefixWithBase = baseRouter + options.apiPrefix
   }
 
+  nuxt.callHook('content:options', options)
+
   // Nuxt hooks
-  this.nuxt.hook('components:dirs', (dirs) => {
-    dirs.push({
-      path: '~/components/global',
-      global: true
+  const globalComponents = resolve(this.options.srcDir, 'components/global')
+  const dirStat = await fs.stat(globalComponents).catch(() => null)
+  if (dirStat && dirStat.isDirectory()) {
+    nuxt.hook('components:dirs', (dirs) => {
+      dirs.push({
+        path: '~/components/global',
+        global: true
+      })
     })
-  })
+  } else {
+    // restart Nuxt on first component creation inside the dir
+    nuxt.options.watch.push(globalComponents)
+  }
+
   this.nuxt.hook('generate:cache:ignore', ignore => ignore.push(relativeDir))
 
   const ws = new WS({
@@ -92,6 +102,9 @@ module.exports = async function (moduleOptions) {
   // Database hooks
   database.hook('file:beforeInsert', item =>
     this.nuxt.callHook('content:file:beforeInsert', item, database)
+  )
+  database.hook('file:beforeParse', file =>
+    this.nuxt.callHook('content:file:beforeParse', file)
   )
   database.hook('file:updated', event => ws.broadcast(event))
 
@@ -132,7 +145,7 @@ module.exports = async function (moduleOptions) {
   })
 
   // Add prism theme
-  if (options.markdown.prism.theme) {
+  if (options.markdown.prism.theme && !options.markdown.highlighter) {
     this.nuxt.options.css.push(options.markdown.prism.theme)
   }
 

@@ -54,6 +54,46 @@ These variables will be injected into the document:
 ```json
 {
   body: Object
+  excerpt: Object
+  title: "Introduction"
+  description: "Learn how to use @nuxt/content."
+  dir: "/"
+  extension: ".md"
+  path: "/index"
+  slug: "index"
+  toc: Array
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
+### Excerpt
+
+Content excerpt or summary can be extracted from the content using `<!--more-->` as a divider.
+
+```md
+---
+title: Introduction
+---
+
+Learn how to use @nuxt/content.
+<!--more-->
+Full amount of content beyond the more divider.
+```
+
+Description property will contain the excerpt content unless defined within the Front Matter props.
+
+<alert type="info">
+
+Be careful to enter <code>&lt;!--more--&gt;</code> exactly; i.e., all lowercase and with no whitespace.
+
+</alert>
+
+Example variables will be injected into the document:
+
+```json
+{
+  body: Object
   title: "Introduction"
   description: "Learn how to use @nuxt/content."
   dir: "/"
@@ -164,7 +204,7 @@ http.createServer((req, res) => {
 ```
 </pre>
 
-After rendering with the `nuxt-content` component, it will look like this:
+After rendering with the `nuxt-content` component, it should look like this (without the filename yet):
 
 ```html[server.js]
 <div class="nuxt-content-highlight">
@@ -177,9 +217,13 @@ After rendering with the `nuxt-content` component, it will look like this:
 </div>
 ```
 
-> Line numbers are added to the `pre` tag in `data-line` attribute.
+Line numbers are added to the `pre` tag in `data-line` attribute.
 
-> The filename will be converted to a span with a `filename` class, it's up to you to style it. Take a look at this documentation, on the top right of code blocks.
+> Check out [this comment](https://github.com/nuxt/content/issues/28#issuecomment-633246962) on how to render prism line numbers.
+
+Filename will be converted to a span with a `filename` class, it's up to you to style it.
+
+> Check out [the main.css file](https://github.com/nuxt/content/blob/dev/packages/theme-docs/src/assets/css/main.css#L56) of this documentation for an example on styling filenames.
 
 ### Syntax highlighting
 
@@ -429,6 +473,97 @@ Will be transformed into:
 
 We internally add a `text` key with the markdown body that will be used for [searching](/fetching#searchfield-value) or [extending](/advanced#contentfilebeforeinsert) it.
 
+## JSON / JSON5
+
+Data defined will be injected into the document.
+
+> No body will be generated.
+
+### Arrays
+
+<badge>v0.10.0+</badge>
+
+You can now use arrays inside your `.json` files. Objects will be flattened and inserted into the collection. You can [fetch](/fetching) your content in the same way as your used to.
+
+<alert type="warning">
+
+Since the `slug` is by default taken from the path and missing in this case, you have to define it in your objects for this feature to work properly.
+
+</alert>
+
+> Check out our [example](https://github.com/nuxt/content/tree/dev/example) with articles and authors.
+
+### Example
+
+A file `content/home.json`:
+
+```json
+{
+  "title": "Home",
+  "description": "Welcome!"
+}
+```
+
+Will be transformed into:
+
+```json
+{
+  "dir": "/",
+  "slug": "home",
+  "path": "/home",
+  "extension": ".json",
+  "title": "Home",
+  "description": "Welcome!"
+}
+```
+
+A file `content/authors.json`:
+
+```json
+[
+  {
+    "name": "Sébastien Chopin",
+    "slug": "atinux"
+  },
+  {
+    "name": "Krutie Patel",
+    "slug": "krutiepatel"
+  },
+  {
+    "name": "Sergey Bedritsky",
+    "slug": "sergeybedritsky"
+  }
+]
+```
+
+Will be transformed into:
+
+```json
+[
+  {
+    "name": "Sébastien Chopin",
+    "slug": "atinux",
+    "dir": "/authors",
+    "path": "/authors/atinux",
+    "extension": ".json"
+  },
+  {
+    "name": "Krutie Patel",
+    "slug": "krutiepatel",
+    "dir": "/authors",
+    "path": "/authors/krutiepatel",
+    "extension": ".json"
+  },
+  {
+    "name": "Sergey Bedritsky",
+    "slug": "sergeybedritsky",
+    "dir": "/authors",
+    "path": "/authors/sergeybedritsky",
+    "extension": ".json"
+  }
+]
+```
+
 ## CSV
 
 Rows will be assigned to body variable.
@@ -503,7 +638,6 @@ Will be transformed into:
 }
 ```
 
-
 ## YAML / YML
 
 Data defined will be injected into the document.
@@ -527,37 +661,6 @@ Will be transformed into:
   "slug": "home",
   "path": "/home",
   "extension": ".yaml",
-  "title": "Home",
-  "description": "Welcome!"
-}
-```
-
-## JSON / JSON5
-
-Data defined will be injected into the document.
-
-> No body will be generated.
-
-### Example
-
-A file `content/home.json`:
-
-```json
-{
-  "title": "Home",
-  "description": "Welcome!"
-}
-
-```
-
-Will be transformed into:
-
-```json
-{
-  "dir": "/",
-  "slug": "home",
-  "path": "/home",
-  "extension": ".json",
   "title": "Home",
   "description": "Welcome!"
 }

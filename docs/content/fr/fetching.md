@@ -75,7 +75,7 @@ const articles = await this.$content('articles').where({ age: { $gt: 18 } }).fet
 const articles = await this.$content('articles').where({ name: { $in: ['odin', 'thor'] } }).fetch()
 ```
 
-Pour filtrer des objets et des tableaux, vous devez configurer la propritété `nestedProperties`, voir la partie [configuration](/configuration#nestedproperties).
+Pour filtrer des objets et des tableaux, vous devez configurer la propritété `nestedProperties`, voir la partie [configuration](/fr/configuration#nestedproperties).
 
 ```js
 const produits = await this.$content('produits').where({ 'categories.slug': { $contains: 'haut' } }).fetch()
@@ -139,13 +139,17 @@ const articles = await this.$content('articles').skip(5).limit(5).fetch()
 
 Effectue une recherche plein texte sur un champ. Le paramètre `value` est optionnel, dans ce cas `field` devient la `value`  et la recherche est alors effectuée sur tous les champs définis en tant que champ de recherche plein texte.
 
-Le champ sur lequel vous voulez effectuer la recherche doit être défini dans les options afin d'être indexé, voir [configuration](/configuration#fulltextsearchfields).
+Le champ sur lequel vous voulez effectuer la recherche doit être défini dans les options afin d'être indexé, voir [configuration](/fr/configuration#fulltextsearchfields).
+
+Utiliser une chaîne de caractères vide comme paramètre `value` n'exécutera pas la recherche.
 
 ```js
 // Search on field title
 const articles = await this.$content('articles').search('titre', 'bienvenue').fetch()
 // Search on all pre-defined fields
 const articles = await this.$content('articles').search('bievenue').fetch()
+// Search will be skipped if the search string is empty
+const articles = await this.$content('articles').search('').fetch()
 ```
 
 ### surround(slug, options)
@@ -207,7 +211,7 @@ const articles = await this.$content('articles')
 
 ## API
 
-Lorsque vous développez, ce module expose une API qui vous permet facilement de consulter les données de chaque répertoire ou fichier au format JSON, à l'adresse http://localhost:3000/_content/. Par défaut, le préfixe est `_content` mais il peut être configuré à l'aide la la propriété [apiPrefix](/configuration#apiprefix).
+Lorsque vous développez, ce module expose une API qui vous permet facilement de consulter les données de chaque répertoire ou fichier au format JSON, à l'adresse http://localhost:3000/_content/. Par défaut, le préfixe est `_content` mais il peut être configuré à l'aide la la propriété [apiPrefix](/fr/configuration#apiprefix).
 
 Exemple:
 

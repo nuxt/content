@@ -17,7 +17,7 @@ class WS extends Hookable {
     this.handleUpgrade(req, req.socket, undefined)
   }
 
-  handleUpgrade (request, socket, head) {
+  handleUpgrade (request, socket, head = '') {
     return this.wss.handleUpgrade(request, socket, head, (client) => {
       this.wss.emit('connection', client, request)
     })

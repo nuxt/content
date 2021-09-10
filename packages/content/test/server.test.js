@@ -53,6 +53,19 @@ describe('module', () => {
     ]))
   })
 
+  test('$content() on directory with dot', async () => {
+    const items = await $content('1.0').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Title with dot',
+        dir: '/1.0',
+        path: '/1.0/index',
+        slug: 'index'
+      })
+    ])
+  })
+
   test('$content() on file', async () => {
     const item = await $content('home').fetch()
 
@@ -268,6 +281,63 @@ describe('module', () => {
     ])
   })
 
+  test('$content() on directory with surround of 404 path', async () => {
+    const items = await $content('articles').surround('/articles/404').sortBy('date', 'desc').only(['title']).fetch()
+
+    expect(items).toEqual([
+      null,
+      null
+    ])
+  })
+
+  test('$content() on directory with surround (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-1/challenge').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Introduction (Position 1)'
+      }),
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      })
+    ])
+  })
+
+  test('$content() on directory with surround as first (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-1/introduction').fetch()
+
+    expect(items).toEqual([
+      null,
+      expect.objectContaining({
+        title: 'Category 1 Challenge (Position 2)'
+      })
+    ])
+  })
+
+  test('$content() on directory with surround as last (slug)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-2/answer').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      }),
+      null
+    ])
+  })
+
+  test('$content() on directory with surround duplicated slug (path)', async () => {
+    const items = await $content('positioned', { deep: true }).sortBy('position', 'asc').surround('/positioned/category-2/introduction').fetch()
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        title: 'Category 1 Answer (Position 3)'
+      }),
+      expect.objectContaining({
+        title: 'Category 2 Challenge (Position 5)'
+      })
+    ])
+  })
+
   test('$content() on subdirectory', async () => {
     const items = await $content('articles', '2020', '04').only(['title']).fetch()
 
@@ -333,5 +403,32 @@ describe('module', () => {
     const item = await $content('home', { text: true }).fetch()
 
     expect(item).toHaveProperty('text')
+  })
+
+  test('$content() on json array "directory"', async () => {
+    const items = await $content('authors').fetch()
+
+    expect(items).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        slug: 'atinux'
+      }),
+      expect.objectContaining({
+        slug: 'krutiepatel'
+      }),
+      expect.objectContaining({
+        slug: 'sergeybedritsky'
+      })
+    ]))
+  })
+
+  test('$content() on json array "file"', async () => {
+    const item = await $content('authors', 'atinux').fetch()
+
+    expect(item).toEqual(expect.objectContaining({
+      name: 'Sébastien Chopin',
+      slug: 'atinux',
+      avatarUrl: 'https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg',
+      link: 'https://twitter.com/atinux'
+    }))
   })
 })

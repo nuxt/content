@@ -1,69 +1,81 @@
-import '@nuxt/types'
-import './vuex'
+import type { contentFunc, extendOrOverwrite, contentFileBeforeInstert, contentFileBeforeParse } from './content'
 
-import { DumpOptions as yamlOptions } from 'js-yaml'
-import { OptionsV2 as xmlOptions } from 'xml2js'
-import { CSVParseParam as csvOptions } from 'csvtojson/v2/Parameters'
+import '@nuxt/types';
+import type { DumpOptions as YamlOptions } from 'js-yaml';
+import type { OptionsV2 as XMLOptions } from 'xml2js';
+import type { CSVParseParam as CSVOptions } from 'csvtojson/v2/Parameters';
+import type { Database  as Database_imp } from './database';
+import { Highlighter, PromisedHighlighter } from './highlighter';
 
-interface NuxtContentInstance {
-  only(keys: string | string[]): NuxtContentInstance
-  without(keys: string | string[]): NuxtContentInstance
-  sortBy(field: string, direction?: string): NuxtContentInstance
-  where(query: Object): NuxtContentInstance
-  search(query: Object | string, value?: string): NuxtContentInstance
-  surround(slug: string, options?: Object): NuxtContentInstance
-  limit(n: number | string): NuxtContentInstance
-  skip(n: number | string): NuxtContentInstance
-  fetch<T = Result | Result[]>(): Promise<T>
-}
+// Exports of index.js
+export const $content: contentFunc
+export const Database: Database_imp
+export const getOptions: (userOptions: IContentOptions) => IContentOptions
 
-type contentFunc = (...args: Array<string | Object>) => NuxtContentInstance
-
-type Result = (Object[] & {
-  0: ('parallel' | 'sequential');
-});
-
-declare module '@nuxt/vue-app' {
-  interface Context {
-    $content: contentFunc
+// Modifyed types
+declare module "vuex/types/index" {
+  interface Store<S> {
+    $content: contentFunc;
   }
 }
 
-type extendOrOverwrite<T> = ((old: T) => T) | T
+interface IContentOptions {
+  watch?: boolean;
+  liveEdit?: boolean;
+  apiPrefix?: string;
+  dir?: string;
+  fullTextSearchFields?: extendOrOverwrite<Array<string>>;
+  nestedProperties?: extendOrOverwrite<Array<string>>;
+  markdown?: {
+    tocDepth?: number;
+    tocTags?: extendOrOverwrite<Array<string>>;
+    remarkPlugins?: extendOrOverwrite<Array<string | [string, Record<string, unknown>]>>;
+    rehypePlugins?: extendOrOverwrite<Array<string | [string, Record<string, unknown>]>>;
+    prism?: {
+      theme?: string | false;
+    };
+    highlighter?: Highlighter | PromisedHighlighter;
+  };
+  yaml?: YamlOptions;
+  csv?: CSVOptions;
+  xml?: XMLOptions;
+  extendParser?: {
+    [extension: string]: (file: string) => any;
+  };
+}
 
 // Nuxt 2.9+
 declare module '@nuxt/types' {
   interface Context {
-    $content: contentFunc
+    $content: contentFunc;
   }
 
   interface Configuration {
-    content?: {
-      watch?: boolean,
-      liveEdit?: boolean,
-      apiPrefix?: string,
-      dir?: string,
-      fullTextSearchFields?: extendOrOverwrite<Array<string>>,
-      nestedProperties?: extendOrOverwrite<Array<string>>,
-      markdown?: {
-        remarkPlugins?: extendOrOverwrite<Array<string>>,
-        rehypePlugins?: extendOrOverwrite<Array<string>>,
-        prism?: {
-          theme?: string | false
-        }
-      },
-      yaml?: yamlOptions,
-      csv?: csvOptions,
-      xml?: xmlOptions,
-      extendParser?: {
-        [extension: string]: (file: string) => any
-      }
-    }
+    content?: IContentOptions;
+  }
+}
+
+declare module '@nuxt/vue-app' {
+  interface Context {
+    $content: contentFunc;
   }
 }
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $content: contentFunc
+    $content: contentFunc;
+  }
+}
+
+declare module '@nuxt/types/config/hooks' {
+  interface NuxtOptionsHooks {
+    'content:file:beforeInsert'?: contentFileBeforeInstert;
+    'content:file:beforeParse'?: contentFileBeforeParse;
+    content?: {
+      file?: {
+        beforeInsert?: contentFileBeforeInstert;
+        beforeParse?: contentFileBeforeParse;
+      };
+    };
   }
 }

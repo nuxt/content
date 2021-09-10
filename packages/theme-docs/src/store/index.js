@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import groupBy from 'lodash.groupby'
+import defu from 'defu'
 
 export const state = () => ({
   categories: {},
   releases: [],
   settings: {
     title: 'Nuxt Content Docs',
+    url: '',
+    defaultDir: 'docs',
     defaultBranch: '',
     filled: false
   }
@@ -14,6 +17,29 @@ export const state = () => ({
 export const getters = {
   settings (state) {
     return state.settings
+  },
+  githubUrls (state) {
+    const { github = '', githubApi = '' } = state.settings
+
+    // GitHub Enterprise
+    if (github.startsWith('http') && githubApi.startsWith('http')) {
+      return {
+        repo: github,
+        api: {
+          repo: githubApi,
+          releases: `${githubApi}/releases`
+        }
+      }
+    }
+
+    // GitHub
+    return {
+      repo: `https://github.com/${github}`,
+      api: {
+        repo: `https://api.github.com/repos/${github}`,
+        releases: `https://api.github.com/repos/${github}/releases`
+      }
+    }
   },
   releases (state) {
     return state.releases
@@ -35,7 +61,11 @@ export const mutations = {
     state.settings.defaultBranch = branch
   },
   SET_SETTINGS (state, settings) {
-    state.settings = Object.assign({}, settings, { filled: true })
+    state.settings = defu({ filled: true }, settings, state.settings)
+    if (!state.settings.url) {
+      // eslint-disable-next-line no-console
+      console.warn('Please provide the `url` property in `content/setting.json`')
+    }
   }
 }
 
@@ -53,18 +83,18 @@ export const actions = {
 
     commit('SET_CATEGORIES', categories)
   },
-  async fetchReleases ({ commit, state }) {
+  async fetchReleases ({ commit, state, getters }) {
     if (!state.settings.github) {
       return
     }
 
     const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    if (this.$config.githubToken) {
+      options.headers = { Authorization: `token ${this.$config.githubToken}` }
     }
     let releases = []
     try {
-      const data = await fetch(`https://api.github.com/repos/${state.settings.github}/releases`, options).then((res) => {
+      const data = await fetch(getters.githubUrls.api.releases, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }
@@ -91,18 +121,18 @@ export const actions = {
 
     commit('SET_RELEASES', releases)
   },
-  async fetchDefaultBranch ({ commit, state }) {
+  async fetchDefaultBranch ({ commit, state, getters }) {
     if (!state.settings.github || state.settings.defaultBranch) {
       return
     }
 
     const options = {}
-    if (process.env.GITHUB_TOKEN) {
-      options.headers = { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    if (this.$config.githubToken) {
+      options.headers = { Authorization: `token ${this.$config.githubToken}` }
     }
     let defaultBranch
     try {
-      const data = await fetch(`https://api.github.com/repos/${state.settings.github}`, options).then((res) => {
+      const data = await fetch(getters.githubUrls.api.repo, options).then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText)
         }
@@ -115,7 +145,8 @@ export const actions = {
   },
   async fetchSettings ({ commit }) {
     try {
-      const settings = await this.$content('settings').fetch()
+      const { dir, extension, path, slug, to, createdAt, updatedAt, ...settings } = await this.$content('settings').fetch()
+
       commit('SET_SETTINGS', settings)
     } catch (e) {
       // eslint-disable-next-line no-console

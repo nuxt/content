@@ -5,7 +5,7 @@ position: 4
 category: Getting started
 ---
 
-This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, fetch, nuxtServerInit and Middleware, you can access it from `context.$content`.
+This module globally injects `$content` instance, meaning that you can access it anywhere using `this.$content`. For plugins, asyncData, nuxtServerInit and Middleware, you can access it from `context.$content`.
 
 ## Methods
 
@@ -110,6 +110,14 @@ const articles = await this.$content('articles').sortBy('title').fetch()
 
 > Can be chained multiple times to sort on multiple fields.
 
+<alert type="warning">
+
+`sortBy` method does **case-sensitive** sort, which is currently not configurable.
+
+If you need case-insensitive sorting, check out [this snippet](/snippets#case-insensitive-sorting) on how to work around it.
+
+</alert>
+
 ### limit(n)
 
 - `n`
@@ -148,11 +156,15 @@ Performs a full-text search on a field. `value` is optional, in this case `field
 
 The fields you want to search on must be defined in options in order to be indexed, see [configuration](/configuration#fulltextsearchfields).
 
+Using an empty string as parameter will skip the search.
+
 ```js
 // Search on field title
 const articles = await this.$content('articles').search('title', 'welcome').fetch()
 // Search on all pre-defined fields
 const articles = await this.$content('articles').search('welcome').fetch()
+// Search will be skipped if the search string is empty
+const articles = await this.$content('articles').search('').fetch()
 ```
 
 <alert type="info">
@@ -161,16 +173,16 @@ Check out [this snippet](/snippets#search) on how to implement search into your 
 
 </alert>
 
-### surround(slug, options)
+### surround(slugOrPath, options)
 
-- `slug`
+- `slugOrPath`
   - Type: `String`
   - `required`
 - `options`
   - Type: `Object`
   - Default: `{ before: 1, after: 1}`
 
-Get prev and next results arround a specific slug.
+Get prev and next results around a specific slug or path.
 
 You will always obtain an array of fixed length filled with the maching document or `null`.
 
@@ -194,6 +206,12 @@ const [prev, next] = await this.$content('articles')
 
 > `search`, `limit` and `skip` are ineffective when using this method.
 
+<alert type="warning">
+
+Getting results based on `path` is only supported since v1.12.0
+
+</alert>
+
 <alert type="info">
 
 Check out [this snippet](/snippets#prev-and-next) on how to implement prev and next links into your app
@@ -206,6 +224,12 @@ Check out [this snippet](/snippets#prev-and-next) on how to implement prev and n
 
 Ends the chain sequence and collects data.
 
+### catch()
+
+Checks if the `.md` file exists in content directory or not.
+
+It should be inserted after the `fetch()`.
+
 ## Example
 
 ```js
@@ -217,11 +241,14 @@ const articles = await this.$content('articles')
   .where({
     tags: 'testing',
     isArchived: false,
-    date: { $gt: new Date(2020) },
+    date: { $gt: new Date('2020-03-31') },
     rating: { $gte: 3 }
   })
   .search('welcome')
   .fetch()
+  .catch((err) => {
+     error({ statusCode: 404, message: 'Page not found' })
+  })
 ```
 
 > You can check how to use the [Content API](/advanced#api-endpoint) in development.

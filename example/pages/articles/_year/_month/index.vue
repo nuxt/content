@@ -13,7 +13,6 @@
 
 <script>
 export default {
-  watchQuery: true,
   async asyncData ({ $content, route, params }) {
     const { year, month } = params
 
@@ -26,6 +25,7 @@ export default {
       year,
       month
     }
-  }
+  },
+  watchQuery: true
 }
 </script>

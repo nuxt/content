@@ -81,6 +81,9 @@ class QueryBuilder {
    * @returns {QueryBuilder} Returns current instance to be chained
    */
   search (query, value) {
+    // Passing an empty or falsey value as query will avoid triggering a search to allow optional chaining
+    if (!query) { return this }
+
     let $fts
 
     if (typeof query === 'object') {
@@ -115,28 +118,31 @@ class QueryBuilder {
       }
     }
 
-    this.query = this.query.find({ $fts })
+    this.query = this.query.find({ $fts }).sortByScoring()
+
     return this
   }
 
   /**
    * Surround results
-   * @param {string} slug - Slug of the file to surround.
+   * @param {string} slugOrPath - Slug or path of the file to surround.
    * @param {Object} options - Options to surround (before / after).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  surround (slug, { before = 1, after = 1 } = {}) {
-    // Add slug to onlyKeys if only method has been called before
+  surround (slugOrPath, { before = 1, after = 1 } = {}) {
+    const _key = slugOrPath.indexOf('/') === 0 ? 'path' : 'slug'
+
+    // Add slug or path to onlyKeys if only method has been called before
     if (this.onlyKeys) {
-      this.onlyKeys.push('slug')
+      this.onlyKeys.push(_key)
     }
-    // Remove slug from withoutKeys if without method has been called before
+    // Remove slug or path from withoutKeys if without method has been called before
     if (this.withoutKeys) {
-      this.withoutKeys = this.withoutKeys.filter(key => key !== 'slug')
+      this.withoutKeys = this.withoutKeys.filter(key => key !== _key)
     }
 
     const fn = (data) => {
-      const index = data.findIndex(item => item.slug === slug)
+      const index = data.findIndex(item => item[_key] === slugOrPath)
       const slice = new Array(before + after).fill(null, 0)
       if (index === -1) {
         return slice
