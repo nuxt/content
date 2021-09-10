@@ -114,7 +114,7 @@ const defaultConfig = docsOptions => ({
     '@nuxt/content'
   ],
   components: [
-    { path: '~/components', pathPrefix: false }
+    { path: '~/components', pathPrefix: false, level: 1 }
   ],
   loading: {
     color: docsOptions.primaryColor
