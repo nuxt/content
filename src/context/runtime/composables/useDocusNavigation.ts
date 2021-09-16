@@ -5,11 +5,12 @@ import { ref, computed } from '@nuxtjs/composition-api'
 import type { DocusDocument, NavItem } from '@docus/core'
 import { NuxtApp } from '@nuxt/types/app'
 import { DocusAddonContext, DocusCurrentNav, DocusNavigationGetParameters } from '../../../types'
+import { useContent } from '..'
 
 /**
  * Handling all the navigation querying logic.
  */
-export const useDocusNavigation = ({ context, instance: { content, currentPath, settings } }: DocusAddonContext) => {
+export const useDocusNavigation = ({ context, instance: { currentPath, settings } }: DocusAddonContext) => {
   // Nuxt context
   const { app } = context
 
@@ -26,13 +27,22 @@ export const useDocusNavigation = ({ context, instance: { content, currentPath, 
    * Get navigation from Docus data
    */
   async function fetchNavigation() {
-    if (!content) return
+    const content = useContent()
 
     const navigation = (await content.fetch('navigation/' + app.i18n.locale)) as NavItem[]
 
     state.value[app.i18n.locale] = navigation
 
     fetchCounter.value += 1
+  }
+
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.onNuxtReady($nuxt => {
+      $nuxt.$on('docus:content:preview', () => {
+        fetchNavigation()
+      })
+    })
   }
 
   /**
@@ -200,7 +210,7 @@ export const useDocusNavigation = ({ context, instance: { content, currentPath, 
 
   // fetch previous and next page based on navigation
   function getPreviousAndNextLink(page: DocusDocument) {
-    if (!content) return
+    const content = useContent()
 
     return content
       .search({ deep: true })

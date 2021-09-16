@@ -25,7 +25,11 @@ export default defineComponent({
     }
 
     // Get the proper current path
-    const to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
+    let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
+
+    if ($docus.preview) {
+      to = to.replace(/^\/_preview/, '') || '/'
+    }
 
     // TODO: Fix the draft system
     const draft = false
@@ -97,7 +101,7 @@ export default defineComponent({
       redirect(localePath(page.navigation.redirect))
     }
 
-    return { page, templateOptions }
+    return { page, templateOptions, preview: $docus.preview }
   },
 
   head() {
@@ -169,11 +173,22 @@ export default defineComponent({
   },
 
   mounted() {
+    this.$nuxt.$on('docus:content:preview', this.updatePage)
     // This will use to show new bullet in aside navigation
     if (this.page?.version) localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
   },
+  unmounted() {
+    this.$nuxt.$off('docus:content:preview', this.updatePage)
+  },
 
   methods: {
+    async updatePage({ key }) {
+      if (key === this.page?.key) {
+        const $content = useContent()
+        const updatedPage = await $content.get(this.page.key)
+        Object.assign(this.page, updatedPage)
+      }
+    },
     mergeMeta(to, from) {
       from.forEach(newMeta => {
         const key = newMeta.hid || newMeta.name || newMeta.property

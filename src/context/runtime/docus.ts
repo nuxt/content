@@ -1,4 +1,5 @@
 import { ssrRef, Ref } from '@nuxtjs/composition-api'
+import { withLeadingSlash } from 'ufo'
 import { DocusSettings, PermissiveContext, DocusAddonContext, DocusInstance } from '../../types'
 import { clientAsyncData, useDocusStyle, useDocusAddons, useDocusNavigation } from './composables'
 
@@ -11,7 +12,7 @@ export const createDocus = async (context: PermissiveContext, settings: DocusSet
   // Nuxt instance proxy
   let $nuxt: any
 
-  const { $content, ssrContext, nuxtState = {}, route } = context
+  const { $content, $config, ssrContext, nuxtState = {}, route, params } = context
 
   // Prevent hydration mismatch: inject templateOptions from SSR payload before page load
   const templateOptions = nuxtState.data?.[0].templateOptions || {}
@@ -19,8 +20,20 @@ export const createDocus = async (context: PermissiveContext, settings: DocusSet
   // Split theme & user settings
   const { theme, ...userSettings } = settings
 
+  // Detect & Prepare preview mode
+  const path = withLeadingSlash(params.pathMatch || route.path || '/')
+  const preview = context.$config?._app?.basePath === '/_preview/' || path.startsWith('/_preview')
+  const basePath = preview ? '/_preview/' : '/'
+  if ($config?._app?.basePath) {
+    $config._app.basePath = basePath
+  }
+  if (ssrContext?.runtimeConfig?.public?._app?.basePath) {
+    ssrContext.runtimeConfig.public._app.basePath = basePath
+  }
+
   // Create default Docus instance
   docusInstance.value = {
+    preview,
     content: $content,
     currentPath: `/${route.params.pathMatch}`,
     currentPage: undefined,
@@ -81,7 +94,7 @@ export const useNavigation = () => {
 export const useContent = () => {
   if (!docusInstance || !docusInstance.value || !docusInstance.value.content) throw new Error(ERROR_MESSAGE)
 
-  return docusInstance.value.content
+  return docusInstance.value.preview ? docusInstance.value.content.preview() : docusInstance.value.content
 }
 
 export const useSettings = () => {

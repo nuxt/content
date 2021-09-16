@@ -23,6 +23,7 @@ export interface DocusSettings<T = DefaultThemeSettings> {
 }
 
 export type DocusInstance<T = DefaultThemeSettings> = {
+  preview: boolean
   content?: Context['$content']
   currentPath?: string
   navigation?: DocusNavigation
