@@ -6,8 +6,10 @@ import { getList } from '../content'
  * List a contents from the database.
  */
 export default async (req: IncomingMessage) => {
-  const id = (req.url || '').split('?')[0]
-  let items: any[] = await getList(id)
+  const id = (req.url || '').split('?')[0].replace(/^\//, '')
+  // detect preview mode
+  const withPreview = (req.url || '').includes('preview=true')
+  let items: any[] = await getList(id, withPreview)
 
   const { q } = useQuery(req)
 

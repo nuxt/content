@@ -92,5 +92,5 @@ export interface DatabaseProvider {
   query<T>(query: string, params: any): QueryBuilder<T>
   //
   serialize(): Promise<any>
-  load(serialized: any): Promise<void>
+  load(serialized: any): void | Promise<void>
 }

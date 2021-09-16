@@ -1,10 +1,9 @@
-import lokidb from '@lokidb/loki'
+import Loki from 'lokijs'
 import { DatabaseProvider } from '../../../../types'
 import LokiQuery from './Query'
 
 export default function createLokiJsDatabase({ name = 'lokijs.db' } = {}): DatabaseProvider {
-  // @ts-ignore
-  const database = new lokidb.Loki(name)
+  const database = new Loki(name)
   const collection = database.addCollection<any>('items', {})
 
   const query = (path: any, params: any) => {

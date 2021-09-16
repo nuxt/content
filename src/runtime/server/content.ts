@@ -1,36 +1,63 @@
+import { prefixStorage } from 'unstorage'
+import micromatch from 'micromatch'
 import { getTransformer } from '../transformers'
-import { useDB } from '../database'
+import { createDatabase } from '../database'
 import { generateNavigation } from '../navigation'
-import { cachify } from './utils/cache'
+import { useDocusContext } from '../context'
 // @ts-ignore
 import { storage } from '#storage'
 
-const isProduction = process.env.NODE_ENV === 'production'
+export const assetsStorage = prefixStorage(storage, 'assets')
+export const previewStorage = prefixStorage(storage, 'preview')
 
-// Cachify instance
-const withCache = (name: string, fn: any) => (isProduction ? cachify(fn, { name, swr: true, ttl: 60000 }) : fn)
+// Remove prefix from key
+const removePrefix = (key: string) => key.split(':').slice(1).join(':')
 
 // Get data from storage
-export async function getData(id: string) {
+async function getData(id: string, withPreview?: boolean) {
+  let body = null
+  let meta = null
+  // Use updated data if it exists
+  if (withPreview) {
+    body = await previewStorage.getItem(id)
+    meta = await previewStorage.getMeta(id)
+  }
+  // Use original data
+  if (!body) {
+    body = await assetsStorage.getItem(id)
+    meta = await assetsStorage.getMeta(id)
+  }
+
   return {
-    body: await storage.getItem(id),
-    meta: { mtime: new Date() }
-    // meta: storage.getMeta(id)
+    body,
+    meta
   }
 }
 
-// Get keys from cache
-export const getKeys = withCache('getKeys', getKeysNoCache)
-// - Without cache
-function getKeysNoCache(id?: string) {
-  return storage.getKeys(id)
+async function getKeys(id?: string, withPreview?: boolean) {
+  let keys: string[] = await assetsStorage.getKeys(id)
+  // Remove assets prefix
+  keys = keys.map(removePrefix)
+
+  // Merge preview keys with original keys
+  if (withPreview) {
+    const previewKeys = (await previewStorage.getKeys()).map(removePrefix)
+    // Remove updated keys from original keys
+    keys = keys.filter(key => !previewKeys.includes(key))
+    keys.push(...previewKeys)
+  }
+
+  // filter out ignored contents
+  const context = useDocusContext()
+  // @ts-ignore
+  keys = micromatch.not(keys, context.ignoreList)
+
+  return keys
 }
 
-// Get content from cachee
-export const getContent = withCache('getContent', getContentNoCache)
-// - Without cache
-async function getContentNoCache(id: string) {
-  const data = await getData(id)
+// Get content
+export async function getContent(id: string, withPreview?: boolean) {
+  const data = await getData(id, withPreview)
   if (typeof data.body === 'undefined' || data.body === null) {
     throw new Error(`Content not found: ${id}`)
   }
@@ -44,30 +71,31 @@ async function getContentNoCache(id: string) {
   }
 }
 
-// Get list from cache
-export const getList = withCache('getList', getListNoCache)
-// - Without cache
-async function getListNoCache(id?: string) {
-  const ids: string[] = (await getKeys(id)) || []
+// Get list of content
+export async function getList(id?: string, withPreview?: boolean) {
+  const keys: string[] = await getKeys(id, withPreview)
   return Promise.all(
-    ids.map(async id => {
-      const content = await getContent(id)
+    keys.map(async key => {
+      const content = await getContent(key, withPreview)
       return {
-        id,
+        id: key,
         ...content.meta
       }
     })
   )
 }
 
-// Get content from cache
-export const searchContent = withCache('searchContent', searchContentNoCache)
-// - Without cache
-async function searchContentNoCache(to: string, body: any) {
-  const db = await useDB()
+// Get content
+export async function searchContent(to: string, body: any, withPreview?: boolean) {
+  const navigation = await getNavigation(withPreview)
+
+  const db = await createDatabase(navigation)
 
   return db.search(to, body)
 }
 
 // Get navigation from cache
-export const getNavigation = withCache('getNavigation', generateNavigation)
+export const getNavigation = async (withPreview?: boolean) => {
+  const list = await getList(undefined, withPreview)
+  return generateNavigation(list)
+}

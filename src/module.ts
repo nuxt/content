@@ -13,9 +13,9 @@ import { NitroContext } from '@nuxt/nitro'
 import { resolve } from 'upath'
 import { joinURL } from 'ufo'
 import { DocusOptions } from './types'
-import { useNuxtIgnoreList } from './utils/ignore'
 import { defaultContext } from './context'
 import setupDevTarget from './module.dev'
+import { useNuxtIgnoreList } from './utils'
 
 export const resolveApiRoute = (route: string) => {
   const nuxt = useNuxt()
@@ -35,16 +35,16 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
   setup(options: DocusOptions, nuxt: Nuxt) {
     // Install @nuxt/bridge
     installModule(nuxt, {
-      src: resolveModule('@nuxt/bridge'),
-      options: {
-        externals: {
-          inline: ['@docus/core']
-        }
-      }
+      src: resolveModule('@nuxt/bridge')
     })
 
     // Extend context
     const docusContext = defaultContext
+
+    useNuxtIgnoreList(nuxt).then(ignoreList => {
+      // @ts-ignore
+      docusContext.ignoreList = ignoreList
+    })
 
     // Add root page into generate routes
     nuxt.options.generate.routes = nuxt.options.generate.routes || []
@@ -93,19 +93,18 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     nuxt.options.alias['~docus/content'] = runtimeDir
     nuxt.options.alias['~docus/database'] = resolve(runtimeDir, `database/providers/${options.database.provider}`)
 
-    // Register API
-    nuxt.hook('nitro:context', async (ctx: NitroContext) => {
-      ctx.storage.mounts.content = {
-        driver: 'fs',
-        driverOptions: {
-          base: resolve(nuxt.options.srcDir, 'content'),
-          ignore: await useNuxtIgnoreList(nuxt)
-        }
+    // Register api
+    nuxt.hook('nitro:context', (ctx: NitroContext) => {
+      ctx.assets.dirs.content = {
+        dir: resolve(nuxt.options.rootDir, 'content'),
+        meta: true
+      }
+
+      ctx.storage.mounts.preview = {
+        driver: 'memory'
       }
     })
-
-    // Add a server middleware for each API functions
-    for (const api of ['get', 'list', 'search', 'navigation']) {
+    for (const api of ['get', 'list', 'search', 'navigation', 'preview']) {
       addServerMiddleware({
         route: resolveApiRoute(api),
         handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir })

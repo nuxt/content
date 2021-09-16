@@ -13,5 +13,8 @@ export default defineNuxtConfig({
   ],
   buildModules: ['@nuxtjs/composition-api/module', '@nuxt/typescript-build'],
   modules: ['../src'],
-  content: {}
+  content: {},
+  nitro: {
+    preset: 'browser'
+  }
 })

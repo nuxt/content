@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
 import { Nuxt } from '@nuxt/kit'
-import { join, resolve } from 'upath'
+import { resolve } from 'upath'
 
 export async function useNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
   const ignore = nuxt.options.ignore || []
@@ -12,7 +12,13 @@ export async function useNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
   }
 
   // Ignore '.' prefixed files
-  ignore.push('**/node_modules/**', '**/.git/**', join(nuxt.options.rootDir, '**/.**'))
+  ignore.push('**/node_modules/**', '**/.git/**', '**/.**')
+  const refinedList = ignore.map((pattern: any) => {
+    if (typeof pattern === 'string') {
+      return pattern.replace(/\//g, ':')
+    }
+    return pattern
+  })
 
-  return ignore
+  return refinedList
 }

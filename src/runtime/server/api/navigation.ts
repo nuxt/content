@@ -6,8 +6,10 @@ import { getNavigation } from '../content'
  * Also supports getting it by localization.
  */
 export default async (req: IncomingMessage) => {
-  const url = req.url!.replace(/^\//, '')
-  const result = await getNavigation()
+  const url = (req.url || '').split('?')[0].replace(/^\//, '')
+  // detect preview mode
+  const withPreview = (req.url || '').includes('preview=true')
+  const result = await getNavigation(withPreview)
 
   // Return navigation of a specific language
   if (result[url]) return result[url]

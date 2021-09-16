@@ -31,33 +31,9 @@ export default class LokiQuery<T> extends BaseQueryBuiler<T> {
     })
   }
 
-  async initDBFromDataUrl(dataUrl: string) {
-    let Loki = require('@lokidb/loki')
-    Loki = Loki.default || Loki
-    const db = new Loki('content.db')
-    const items = db.addCollection('items')
-    const { body: navigation } = await globalThis.$fetch(dataUrl)
-
-    function index(item: any) {
-      // insert pages an non-page document to navigation object for search purpose
-      items.insert({ ...item, children: undefined })
-      if (item.children) {
-        item.children.forEach(index)
-      }
-    }
-    Object.values(navigation || {})
-      .flatMap(i => i)
-      .forEach(index)
-    return db
-  }
-
-  async fetch(params = this.params): Promise<T | T[]> {
+  fetch(params = this.params): Promise<T | T[]> {
     if (!this.db) {
       return this.remoteFetch()
-    }
-
-    if (typeof this.db === 'string') {
-      this.db = await this.initDBFromDataUrl(this.db)
     }
 
     const { postprocess = [] } = this.options

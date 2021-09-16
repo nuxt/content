@@ -11,7 +11,7 @@ const createQuery = (options: any) => (path: string, opts: any) => {
 /**
  * This helper function is used to create api in @docus/app
  **/
-export function getContent(ctx: any) {
+export function getContent(ctx: any, withPreview: boolean = false) {
   let { $docus } = ctx.$config ? ctx.$config : ctx.nuxtState
   // TODO: replace with public runtime config
   if (!$docus) {
@@ -21,18 +21,45 @@ export function getContent(ctx: any) {
     }
   }
 
-  const fetch = (key: string, opts: any = undefined) => globalThis.$fetch(joinURL('/api', $docus.apiBase, key), opts)
+  // Preview mode query params
+  const query = withPreview ? '?preview=true' : ''
+
+  const fetch = (key: string, opts: any = undefined) => globalThis.$fetch(joinURL('/api', $docus.apiBase, key) + query, opts)
 
   const get = (key: string) => fetch(joinURL('get', key))
 
   const search = createQuery({
-    base: withoutTrailingSlash(joinURL('/api', $docus.apiBase, 'search')),
+    base: withoutTrailingSlash(joinURL('/api', $docus.apiBase, 'search') + query),
   })
+
+  if (withPreview) {
+    return {
+      fetch,
+      get,
+      search,
+      setItem: async (key: string, content: string) => {
+        await fetch('preview', { method: 'POST', body: { key, content } })
+        if (typeof window !== 'undefined') {
+          // @ts-ignore
+          window.$nuxt.$emit('docus:content:preview', { key, event: 'change' })
+        }
+        
+      },
+      removeItem: async (key: string) => {
+        await fetch(joinURL("preview", key), { method: "DELETE" })
+        if (typeof window !== 'undefined') {
+          // @ts-ignore
+          window.$nuxt.$emit('docus:content:preview', { key, event: 'remove' })
+        }
+      }
+    }
+  }
 
   return {
     fetch,
     get,
-    search
+    search,
+    preview: () => getContent(ctx, true)
   }
 }
 

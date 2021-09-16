@@ -1,10 +1,10 @@
-import { clearDatabase } from '../../database'
+// import { clearDatabase } from '../../database'
 
 /**
  * Reload the database.
  */
 export default () => {
-  clearDatabase()
+  // clearDatabase()
 
   return true
 }

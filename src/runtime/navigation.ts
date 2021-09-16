@@ -1,9 +1,7 @@
-import { IncomingMessage } from 'http'
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
 import { NavItem } from '../types'
-import list from './server/api/list'
 import { pick } from './utils/object'
 import { useDocusContext } from './context'
 import { generatePosition } from './transformers/utils'
@@ -31,19 +29,6 @@ function sortItems(keys: any[]) {
     if (isA) return -1
     return 0
   })
-}
-
-export async function getContents() {
-  let items
-  // Nitro API
-  if (typeof (globalThis as any).$fetch !== 'undefined') {
-    const result = await (globalThis as any).$fetch('/api/_docus/list/content')
-    items = result.items
-  } else {
-    const result = await list({ url: '/content' } as IncomingMessage)
-    items = result.items
-  }
-  return sortItems(items)
 }
 
 /**
@@ -106,11 +91,16 @@ const getPageLink = (page: any): NavItem => {
 /**
  * Fetch and update navigation with latest changes
  */
-export async function generateNavigation() {
+export async function generateNavigation(contents?: any[]) {
   const defaultLocale = 'en'
 
-  // Query pages
-  const contents = await getContents()
+  if (!contents) {
+    // Query pages
+    contents = await (globalThis as any).$fetch('/api/_docus/list/content').then(({ items }: any) => items)
+  }
+
+  // sort items
+  contents = sortItems(contents || [])
 
   const languages: { [key: string]: any[] } = contents.reduce((map: any, page: any) => {
     const language = page.language || defaultLocale
