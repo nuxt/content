@@ -9,8 +9,11 @@ export default async (req: IncomingMessage) => {
   const id = (req.url || '').split('?')[0].replace(/^\//, '')
   // detect preview mode
   const withPreview = (req.url || '').includes('preview=true')
-  const unenvBody = (req as any).body
-  const body = unenvBody ? JSON.parse(unenvBody) : await useBody(req)
+  let body = (req as any).body || (await useBody(req))
+  if (typeof body === 'string') {
+    body = JSON.parse(body)
+  }
+
   const result = await searchContent(id, body || {}, withPreview)
 
   return result

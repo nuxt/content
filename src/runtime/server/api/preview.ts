@@ -16,8 +16,10 @@ export default async (req: IncomingMessage) => {
       // clearDatabase()
       break
     case 'POST': {
-      const unenvBody = (req as any).body
-      const body = unenvBody ? JSON.parse(unenvBody) : await useBody(req)
+      let body = (req as any).body || (await useBody(req))
+      if (typeof body === 'string') {
+        body = JSON.parse(body)
+      }
 
       await previewStorage.setItem(body.key, body.content)
 
