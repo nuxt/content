@@ -8,6 +8,7 @@ declare module '@nuxt/types' {
       search: (to?: string | SearchOptions, options?: SearchOptions) => QueryBuilder
       fetch: <T>(path: string, opts?: any) => Promise<T>
       get: <T>(id: string) => Promise<T>
+      preview: () => Context['$content']
     }
   }
 }
