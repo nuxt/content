@@ -2,13 +2,15 @@ import { IncomingMessage } from 'http'
 import { useBody } from 'h3'
 // import { clearDatabase } from '../../database'
 import { previewStorage } from '../content'
+import { useKey, usePreview } from '../utils'
 
 export default async (req: IncomingMessage) => {
-  const id = (req.url || '').split('?')[0].replace(/^\//, '')
+  const preview = usePreview(req)
+  const key = (preview ? preview + ':' : '') + useKey(req)
   switch (req.method) {
     case 'DELETE':
-      if (id) {
-        await previewStorage.removeItem(id)
+      if (key) {
+        await previewStorage.removeItem(key)
       } else {
         await previewStorage.clear()
       }
@@ -21,17 +23,17 @@ export default async (req: IncomingMessage) => {
         body = JSON.parse(body)
       }
 
-      await previewStorage.setItem(body.key, body.content)
+      await previewStorage.setItem((preview ? preview + ':' : '') + body.key, body.content)
 
       // reset database to update preview content
       // clearDatabase()
       break
     }
     case 'GET':
-      if (id) {
+      if (key) {
         return await previewStorage.getKeys()
       } else {
-        return await previewStorage.getItem(id)
+        return await previewStorage.getItem(key)
       }
   }
 

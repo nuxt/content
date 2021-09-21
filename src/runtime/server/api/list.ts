@@ -1,15 +1,16 @@
 import { IncomingMessage } from 'http'
 import { useQuery } from 'h3'
 import { getList } from '../content'
+import { useKey, usePreview } from '../utils'
 
 /**
  * List a contents from the database.
  */
 export default async (req: IncomingMessage) => {
-  const id = (req.url || '').split('?')[0].replace(/^\//, '')
+  const key = useKey(req)
   // detect preview mode
-  const withPreview = (req.url || '').includes('preview=true')
-  let items: any[] = await getList(id, withPreview)
+  const previewKey = usePreview(req)
+  let items: any[] = await getList(key, previewKey)
 
   const { q } = useQuery(req)
 

@@ -14,13 +14,13 @@ export const previewStorage = prefixStorage(storage, 'preview')
 const removePrefix = (key: string) => key.split(':').slice(1).join(':')
 
 // Get data from storage
-async function getData(id: string, withPreview?: boolean) {
+async function getData(id: string, previewKey?: string) {
   let body = null
   let meta = null
   // Use updated data if it exists
-  if (withPreview) {
-    body = await previewStorage.getItem(id)
-    meta = await previewStorage.getMeta(id)
+  if (previewKey) {
+    body = await previewStorage.getItem(`${previewKey}:${id}`)
+    meta = await previewStorage.getMeta(`${previewKey}:${id}`)
   }
   // Use original data
   if (!body) {
@@ -34,14 +34,19 @@ async function getData(id: string, withPreview?: boolean) {
   }
 }
 
-async function getKeys(id?: string, withPreview?: boolean) {
+async function getKeys(id?: string, previewKey?: string) {
   let keys: string[] = await assetsStorage.getKeys(id)
   // Remove assets prefix
   keys = keys.map(removePrefix)
 
   // Merge preview keys with original keys
-  if (withPreview) {
-    const previewKeys = (await previewStorage.getKeys()).map(removePrefix)
+  if (previewKey) {
+    const prefix = `${previewKey}:`
+    const previewKeys = (await previewStorage.getKeys(previewKey)).map((key: string) =>
+      removePrefix(key.replace(prefix, ''))
+    )
+    // Remove preview prefix
+
     // Remove updated keys from original keys
     keys = keys.filter(key => !previewKeys.includes(key))
     keys.push(...previewKeys)
@@ -56,8 +61,8 @@ async function getKeys(id?: string, withPreview?: boolean) {
 }
 
 // Get content
-export async function getContent(id: string, withPreview?: boolean) {
-  const data = await getData(id, withPreview)
+export async function getContent(id: string, previewKey?: string) {
+  const data = await getData(id, previewKey)
   if (typeof data.body === 'undefined' || data.body === null) {
     throw new Error(`Content not found: ${id}`)
   }
@@ -72,11 +77,11 @@ export async function getContent(id: string, withPreview?: boolean) {
 }
 
 // Get list of content
-export async function getList(id?: string, withPreview?: boolean) {
-  const keys: string[] = await getKeys(id, withPreview)
+export async function getList(id?: string, previewKey?: string) {
+  const keys: string[] = await getKeys(id, previewKey)
   return Promise.all(
     keys.map(async key => {
-      const content = await getContent(key, withPreview)
+      const content = await getContent(key, previewKey)
       return {
         id: key,
         ...content.meta
@@ -86,8 +91,8 @@ export async function getList(id?: string, withPreview?: boolean) {
 }
 
 // Get content
-export async function searchContent(to: string, body: any, withPreview?: boolean) {
-  const navigation = await getNavigation(withPreview)
+export async function searchContent(to: string, body: any, previewKey?: string) {
+  const navigation = await getNavigation(previewKey)
 
   const db = await createDatabase(navigation)
 
@@ -95,7 +100,7 @@ export async function searchContent(to: string, body: any, withPreview?: boolean
 }
 
 // Get navigation from cache
-export const getNavigation = async (withPreview?: boolean) => {
-  const list = await getList(undefined, withPreview)
+export const getNavigation = async (previewKey?: string) => {
+  const list = await getList(undefined, previewKey)
   return generateNavigation(list)
 }

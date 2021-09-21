@@ -1,18 +1,19 @@
 import { IncomingMessage } from 'http'
 import { getNavigation } from '../content'
+import { useKey, usePreview } from '../utils'
 
 /**
  * Get the navigation object from the database.
  * Also supports getting it by localization.
  */
 export default async (req: IncomingMessage) => {
-  const url = (req.url || '').split('?')[0].replace(/^\//, '')
+  const key = useKey(req)
   // detect preview mode
-  const withPreview = (req.url || '').includes('preview=true')
-  const result = await getNavigation(withPreview)
+  const previewKey = usePreview(req)
+  const result = await getNavigation(previewKey)
 
   // Return navigation of a specific language
-  if (result[url]) return result[url]
+  if (result[key]) return result[key]
 
   return result
 }

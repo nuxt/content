@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { withoutTrailingSlash } from 'ufo'
+import { withoutTrailingSlash, joinURL } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
 
 export default defineComponent({
@@ -40,9 +40,9 @@ export default defineComponent({
     // const language = i18n.locale
 
     // Get the proper current path
-    let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
+    let to = joinURL($config?._app?.basePath || '', withoutTrailingSlash(`/${params.pathMatch || ''}`)) || '/'
 
-    const preview = $config?._app?.basePath === '/_preview/' || to.startsWith('/_preview')
+    const preview = to.startsWith('/_preview')
     if (preview) {
       $config?._app?.basePath = '/_preview/'
       ssrContext?.runtimeConfig?.public?._app?.basePath = '/_preview/'

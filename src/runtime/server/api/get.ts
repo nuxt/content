@@ -1,14 +1,15 @@
 import { IncomingMessage } from 'http'
 import { getContent } from '../content'
+import { useKey, usePreview } from '../utils'
 
 /**
  * Get a content from the database.
  */
 export default async (req: IncomingMessage) => {
-  const key = (req.url || '').split('?')[0].replace(/^\//, '')
+  const key = useKey(req)
   // detect preview mode
-  const withPreview = (req.url || '').includes('preview=true')
-  const content = await getContent(key, withPreview)
+  const previewKey = usePreview(req)
+  const content = await getContent(key, previewKey)
 
   return {
     key,

@@ -11,7 +11,7 @@ const createQuery = (options: any) => (path: string, opts: any) => {
 /**
  * This helper function is used to create api in @docus/app
  **/
-export function getContent(ctx: any, withPreview: boolean = false) {
+export function getContent(ctx: any, previewKey: string = '') {
   let { $docus } = ctx.$config ? ctx.$config : ctx.nuxtState
   // TODO: replace with public runtime config
   if (!$docus) {
@@ -22,7 +22,7 @@ export function getContent(ctx: any, withPreview: boolean = false) {
   }
 
   // Preview mode query params
-  const query = withPreview ? '?preview=true' : ''
+  const query = previewKey ? '?preview=' + previewKey : ''
 
   const fetch = (key: string, opts: any = undefined) => globalThis.$fetch(joinURL('/api', $docus.apiBase, key) + query, opts)
 
@@ -32,7 +32,7 @@ export function getContent(ctx: any, withPreview: boolean = false) {
     base: withoutTrailingSlash(joinURL('/api', $docus.apiBase, 'search') + query),
   })
 
-  if (withPreview) {
+  if (previewKey) {
     return {
       fetch,
       get,
@@ -59,7 +59,7 @@ export function getContent(ctx: any, withPreview: boolean = false) {
     fetch,
     get,
     search,
-    preview: () => getContent(ctx, true)
+    preview: (previewKey = 'memory') => getContent(ctx, previewKey)
   }
 }
 
