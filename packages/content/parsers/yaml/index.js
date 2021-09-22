@@ -6,7 +6,7 @@ class YAML {
   }
 
   /**
-   * Converts yaml document to it's JSON structure.
+   * Converts yaml document to its JSON structure.
    * @param {string} file - Yaml file
    * @return {Object}
    */

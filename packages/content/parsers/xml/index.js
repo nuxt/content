@@ -6,7 +6,7 @@ class XML {
   }
 
   /**
-   * Converts xml document to it's JSON structure.
+   * Converts xml document to its JSON structure.
    * @param {string} file - xml file
    * @return {Object}
    */

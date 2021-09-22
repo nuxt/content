@@ -68,7 +68,7 @@ class Database extends Hookable {
     const startTime = process.hrtime()
     await this.walk(this.dir)
     const [s, ns] = process.hrtime(startTime)
-    logger.info(`Parsed ${this.items.count()} files in ${s},${Math.round(ns / 1e8)} seconds`)
+    logger.info(`Parsed ${this.items.count()} files in ${s}.${Math.round(ns / 1e8)} seconds`)
   }
 
   /**
