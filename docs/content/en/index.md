@@ -9,7 +9,7 @@ features:
   - Full-text search
   - Support static site generation with `nuxt generate`
   - Powerful QueryBuilder API (MongoDB like)
-  - Syntax highlighting to code blocks in markdown files using PrismJS.
+  - Syntax highlighting for code blocks in markdown files using PrismJS.
   - Table of contents generation
   - Handles Markdown, CSV, YAML, JSON(5), XML
   - Extend with custom parsers
