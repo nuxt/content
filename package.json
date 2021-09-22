@@ -65,7 +65,7 @@
     "unstorage": "^0.2.8",
     "upath": "^2.0.1",
     "vue-docgen-api": "^4.41.2",
-    "ws": "^7.5.5"
+    "ws": "^8.2.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.14.5",
