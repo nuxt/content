@@ -11,22 +11,22 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
     },
     "./runtime": {
-      "require": "./dist/runtime.js",
+      "require": "./dist/runtime.cjs",
       "import": "./dist/runtime.mjs"
     },
     "./dist/runtime/*": "./dist/runtime/*"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "runtime.mjs",
-    "runtime.js",
+    "runtime.cjs",
     "runtime.d.ts"
   ],
   "scripts": {
