@@ -1,8 +1,8 @@
 import gracefulFs from 'graceful-fs'
-import { resolve } from 'upath'
+import { resolve, join } from 'upath'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
-import { addPlugin, defineNuxtModule, Nuxt } from '@nuxt/kit'
+import { addPluginTemplate, defineNuxtModule, Nuxt } from '@nuxt/kit'
 
 // Resolve from dirname
 const r = (...args: any[]) => resolve(__dirname, ...args)
@@ -36,6 +36,10 @@ export default defineNuxtModule({
         })
       }
     })
+
+    // Get cache dir for Docus inside project rootDir
+    const cacheDir = join(nuxt.options.rootDir, 'node_modules/.cache/docus')
+    nuxt.options.alias['~docus/cache'] = cacheDir
 
     nuxt.hook('build:before', async () => {
       // Add default error page if not defined
@@ -80,7 +84,19 @@ export default defineNuxtModule({
     })
 
     // Add Docus runtime plugin
-    addPlugin(r('../templates/docus.js'), { append: true })
+    addPluginTemplate(
+      {
+        src: r('../templates/docus.js'),
+        options: {
+          hasDocusConfig: nuxt.options.hasDocusConfig,
+          hasTheme: nuxt.options.hasTheme,
+          hasThemeConfig: nuxt.options.hasThemeConfig
+        }
+      },
+      {
+        append: true
+      }
+    )
 
     // Add Devtools integration (WIP)
     // if (nuxt.options.dev) addPlugin(r('../devtools'), { append: true })

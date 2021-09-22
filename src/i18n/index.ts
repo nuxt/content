@@ -2,7 +2,7 @@ import fs from 'fs'
 import { resolve, join, relative } from 'upath'
 import defu from 'defu'
 import { addPlugin, defineNuxtModule, installModule, Nuxt, resolveModule } from '@nuxt/kit'
-import { useDocusSettings } from '../settings/useDocusSettings'
+import { useDocusConfig } from '../config/useDocusConfig'
 import languages from './languages'
 
 const r = (...args: string[]) => resolve(__dirname, ...args)
@@ -44,7 +44,7 @@ export default defineNuxtModule({
     // Update i18n langDir to relative from `~` (https://github.com/nuxt-community/i18n-module/blob/4bfa890ff15b43bc8c2d06ef9225451da711dde6/src/templates/utils.js#L31)
     config.langDir = join(relative(nuxt.options.srcDir, r('languages')), '/')
 
-    const settings = useDocusSettings()
+    const settings = useDocusConfig()
 
     // Inject Docus theme as ~docus
     nuxt.options.alias['~docus/i18n'] = r('languages')

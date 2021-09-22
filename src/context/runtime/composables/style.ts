@@ -1,7 +1,11 @@
 import type { MetaInfo } from 'vue-meta'
 import { computed } from '@nuxtjs/composition-api'
 import { getColors } from 'theme-colors'
-import { DocusAddonContext, Colors } from '../../../types'
+import { Context } from '@nuxt/types'
+import { useTheme } from '..'
+import { Colors } from '../../../'
+
+let _head: any
 
 /**
  * Parse color definition from Docus Config.
@@ -67,37 +71,51 @@ function useCSSVariables(colors: Colors) {
   return generate()
 }
 
-export const useDocusStyle = ({ context, instance }: DocusAddonContext) => {
-  const app = context.app
+function updateHead() {
+  const head: MetaInfo = typeof _head === 'function' ? _head() : _head!
 
-  const styles = computed(() => useCSSVariables(instance.theme && instance.theme.colors ? instance.theme.colors : {}))
-
-  function updateHead() {
-    const head: MetaInfo = typeof app.head === 'function' ? app.head() : app.head!
-
-    // Init head if absent
-    if (!Array.isArray(head.style)) {
-      head.style = []
-    }
-
-    // Init meta is absent
-    if (!Array.isArray(head.meta)) {
-      head.meta = []
-    }
-
-    // Push CSS variables
-    head.style.push({
-      hid: 'docus-theme',
-      cssText: styles.value,
-      type: 'text/css'
-    })
-
-    head.meta = head.meta.filter(s => s.hid !== 'theme-color')
+  // Init head if absent
+  if (!Array.isArray(head.style)) {
+    head.style = []
   }
 
+  // Init meta is absent
+  if (!Array.isArray(head.meta)) {
+    head.meta = []
+  }
+
+  // Push CSS variables
+  head.style.push({
+    hid: 'docus-theme',
+    cssText: styles.value,
+    type: 'text/css'
+  })
+
+  head.meta = head.meta.filter(s => s.hid !== 'theme-color')
+}
+
+const styles = computed(() => {
+  const theme = useTheme()
+
+  return useCSSVariables(theme.value?.colors ? theme.value.colors : {})
+})
+
+export const createDocusStyles = (context: Context) => {
+  const { app } = context
+
+  // Proxy app.head()
+  _head = app.head
+
+  // Update head
+  updateHead()
+}
+
+/**
+ * Access the styling state and helpers.
+ */
+export const useStyles = () => {
   return {
     styles,
-    updateHead,
-    init: updateHead
+    updateHead
   }
 }

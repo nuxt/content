@@ -2,36 +2,35 @@
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
-import { useContent, useDocus, useSettings } from '../../context/runtime'
+import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage } from '../../context/runtime'
 
 export default defineComponent({
   name: 'PageSlug',
 
   middleware({ app, params, redirect }) {
-    if (params.pathMatch === 'index') {
-      redirect(app.localePath('/'))
-    }
+    if (params.pathMatch === 'index') redirect(app.localePath('/'))
   },
 
   async asyncData({ app: { i18n, localePath }, route, params, error, redirect }) {
-    const $docus = useDocus()
+    const docus = useDocus()
     const $content = useContent()
-
+    const navigation = useNavigation()
+    const layout = useLayout()
+    const currentPage = usePage()
     const language = i18n.locale
 
     // Init template options from Docus settings
     let templateOptions = {
-      ...$docus.layout
+      ...layout.value
     }
 
     // Get the proper current path
     let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
 
-    if ($docus.preview) {
-      to = to.replace(/^\/_preview/, '') || '/'
-    }
+    // Replace URL if preview enabled
+    if (docus.value.preview) to = to.replace(new RegExp(`^/${docus.value.preview}`), '') || '/'
 
-    // TODO: Fix the draft system
+    // TODO: Implement the draft system
     const draft = false
 
     // Page query
@@ -41,23 +40,22 @@ export default defineComponent({
       .fetch()
 
     // Break on missing page query
-    if (!match) {
-      return error({ statusCode: 404, message: '404 - Page not found' })
-    }
+    if (!match) return error({ statusCode: 404, message: '404 - Page not found' })
 
+    // Get page data
     const page = await $content.get(match.id)
 
     // Get page template
-    page.template = $docus.navigation.getPageTemplate(page)
+    page.template = navigation.getPageTemplate(page)
 
+    // Get page template and merge options & props
     let component = Vue.component(page.template)
     if (component) {
       try {
         if (typeof component === 'function' && !component.options) {
           component = await component()
-          if (!component.options) {
-            component = Vue.extend(component)
-          }
+
+          if (!component.options) component = Vue.extend(component)
         }
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -66,6 +64,7 @@ export default defineComponent({
         // eslint-disable-next-line new-cap
         component = new component({ props: { page } })
       }
+
       // Set layout defaults for this template
       if (component.templateOptions || component.$options?.templateOptions) {
         templateOptions = { ...templateOptions, ...(component.templateOptions || component.$options?.templateOptions) }
@@ -84,24 +83,21 @@ export default defineComponent({
      */
     if (process.server) {
       // Set template options
-      $docus.layout = templateOptions
+      layout.value = templateOptions
 
       // Set Docus runtime current page
-      $docus.currentPage = page
+      currentPage.value = page
 
       // Update navigation path to update currentNav
-      $docus.currentPath = `/${route.params.pathMatch}`
+      navigation.currentPath.value = `/${route.params.pathMatch}`
     }
-
-    // Set Docus runtime current page
-    $docus.currentPage = page
 
     // Redirect to another page if `navigation.redirect` is declared
     if (page.navigation && page.navigation.redirect) {
       redirect(localePath(page.navigation.redirect))
     }
 
-    return { page, templateOptions, preview: $docus.preview }
+    return { page, templateOptions, preview: docus.value.preview }
   },
 
   head() {
@@ -119,7 +115,7 @@ export default defineComponent({
   computed: {
     pageMeta() {
       // Get site title from Docus settings
-      const { title: siteTitle } = useSettings()
+      const { title: siteTitle } = useConfig()
 
       return [
         // OpenGraph
@@ -161,14 +157,18 @@ export default defineComponent({
 
   created() {
     if (process.client) {
+      const layout = useLayout()
+      const currentPage = usePage()
+      const navigation = useNavigation()
+
       // Set template options
-      this.$docus.value.layout = this.templateOptions
+      layout.value = this.templateOptions
 
       // Set Docus runtime current page
-      this.$docus.value.currentPage = this.page
+      currentPage.value = this.page
 
       // Update navigation path to update currentNav
-      this.$docus.value.currentPath = `/${this.$route.params.pathMatch}`
+      navigation.currentPath.value = `/${this.$route.params.pathMatch}`
     }
   },
 
@@ -177,6 +177,7 @@ export default defineComponent({
     // This will use to show new bullet in aside navigation
     if (this.page?.version) localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
   },
+
   unmounted() {
     this.$nuxt.$off('docus:content:preview', this.updatePage)
   },

@@ -1,116 +1,142 @@
-import { ssrRef, Ref } from '@nuxtjs/composition-api'
-import { withLeadingSlash } from 'ufo'
-import { DocusSettings, PermissiveContext, DocusAddonContext, DocusInstance } from '../../types'
-import { clientAsyncData, useDocusStyle, useDocusAddons, useDocusNavigation } from './composables'
+import { DocusDocument } from '@docus/core'
+import { Context } from '@nuxt/types'
+import { ssrRef, useContext as _useContext } from '@nuxtjs/composition-api'
+import { DefaultThemeConfig, DocusConfig } from '../../'
+import { clientAsyncData, detectPreview, normalizePreviewScope } from './composables/helpers'
+import { createDocusNavigation } from './composables/navigation'
+import { createDocusStyles } from './composables/style'
+export { useNavigation } from './composables/navigation'
+export { useStyles } from './composables/style'
 
-const docusInstance = ssrRef<DocusInstance>({}, 'docusInstance')
+// $content proxy
+let content: Context['$content']
+
+// Nuxt Context proxy
+let _context: Context
+// @ts-ignore
+export const useContext = process.server ? () => _context : (_useContext as () => Context)
+
+export interface DocusState {
+  preview: string | false
+}
+
+// Docus state
+const state = ssrRef<DocusState>(
+  {
+    preview: false
+  },
+  'docus-state'
+)
+
+// Docus config (from docus.config)
+const config = ssrRef<DocusConfig>({}, 'docus-settings')
+
+// Docus theme config (from docus.config > `theme`)
+const theme = ssrRef<DefaultThemeConfig>({}, 'docus-theme')
+
+// Docus layout config (cascade from docus.config > template options > page settings)
+const layout = ssrRef<{ [key: string]: any }>({}, 'docus-layout')
+
+// Current page data
+const currentPage = ssrRef<DocusDocument | undefined>(undefined, 'docus-current-page')
 
 /**
  * Create the $docus runtime injection instance.
  */
-export const createDocus = async (context: PermissiveContext, settings: DocusSettings): Promise<Ref<DocusInstance>> => {
+export const createDocus = async (
+  context: Context,
+  _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig }
+) => {
   // Nuxt instance proxy
   let $nuxt: any
 
-  const { $content, $config, ssrContext, nuxtState = {}, route, params } = context
+  const { $content, nuxtState = {} } = context
+
+  // Init context
+  _context = context
+
+  // Detect preview mode
+  state.value.preview = detectPreview(context)
+
+  // Set $content proxy
+  content = $content
 
   // Prevent hydration mismatch: inject templateOptions from SSR payload before page load
   const templateOptions = nuxtState.data?.[0].templateOptions || {}
 
-  // Split theme & user settings
-  const { theme, ...userSettings } = settings
+  // Set Docus settings
+  config.value = { ..._config.docusConfig }
 
-  // Detect & Prepare preview mode
-  const path = withLeadingSlash(params.pathMatch || route.path || '/')
-  const preview = context.$config?._app?.basePath === '/_preview/' || path.startsWith('/_preview')
-  const basePath = preview ? '/_preview/' : '/'
-  if ($config?._app?.basePath) {
-    $config._app.basePath = basePath
-  }
-  if (ssrContext?.runtimeConfig?.public?._app?.basePath) {
-    ssrContext.runtimeConfig.public._app.basePath = basePath
+  // Set Docus theme
+  theme.value = { ..._config.themeConfig }
+
+  // Init layout from settings and template options
+  layout.value = {
+    ...config.value.layout,
+    ...templateOptions
   }
 
-  // Create default Docus instance
-  docusInstance.value = {
-    preview,
-    content: $content,
-    currentPath: `/${route.params.pathMatch}`,
-    currentPage: undefined,
-    settings: userSettings,
-    theme,
-    layout: {
-      ...settings.layout,
-      ...templateOptions
-    }
-  }
+  // Create Docus navigation
+  await createDocusNavigation(context)
 
-  // Create Docus Addons context
-  const docusAddonContext: DocusAddonContext = {
-    context,
-    ssrContext,
-    instance: docusInstance.value
-  }
-
-  // Docus default addons
-  const docusAddons = {
-    style: useDocusStyle,
-    navigation: useDocusNavigation
-  }
-
-  // Addons manager
-  const { setupAddons, addonsContext } = useDocusAddons(docusAddonContext, docusAddons)
-
-  // Setup addons
-  await setupAddons()
-
-  // Update Docus instance with addons
-  docusInstance.value = {
-    ...docusInstance.value,
-    ...addonsContext
-  }
+  // Create Docus styling
+  createDocusStyles(context)
 
   // Workaround for async data
   clientAsyncData($nuxt)
-
-  return docusInstance
 }
 
 // Default error message for Docus helpers.
 const ERROR_MESSAGE = 'Docus not yet initialized! Docus helpers has to be used in a living Vue instance.'
 
+/**
+ * Access the Docus state.
+ */
 export const useDocus = () => {
-  if (!docusInstance) throw new Error(ERROR_MESSAGE)
+  if (!state) throw new Error(ERROR_MESSAGE)
 
-  return docusInstance.value
+  return state
 }
 
-export const useNavigation = () => {
-  if (!docusInstance || !docusInstance.value || !docusInstance.value.navigation) throw new Error(ERROR_MESSAGE)
-
-  return docusInstance.value.navigation
-}
-
+/**
+ * Access the content querying functions.
+ */
 export const useContent = () => {
-  if (!docusInstance || !docusInstance.value || !docusInstance.value.content) throw new Error(ERROR_MESSAGE)
-
-  return docusInstance.value.preview ? docusInstance.value.content.preview() : docusInstance.value.content
+  return state.value.preview ? content.preview(normalizePreviewScope(state.value.preview)) : content
 }
 
-export const useSettings = () => {
-  if (!docusInstance || !docusInstance.value || !docusInstance.value.settings) throw new Error(ERROR_MESSAGE)
+/**
+ * Access the config object.
+ */
+export const useConfig = () => {
+  if (!config || !config.value) throw new Error(ERROR_MESSAGE)
 
-  return docusInstance.value.settings
+  return config
 }
 
+/**
+ * Access the theme config object.
+ */
 export const useTheme = () => {
-  if (!docusInstance || !docusInstance.value || !docusInstance.value.theme) throw new Error(ERROR_MESSAGE)
+  if (!theme || !theme.value) throw new Error(ERROR_MESSAGE)
 
-  return docusInstance.value.theme
+  return theme
 }
 
+/**
+ * Access the layout config object.
+ */
 export const useLayout = () => {
-  if (!docusInstance || !docusInstance.value || !docusInstance.value.layout) throw new Error(ERROR_MESSAGE)
+  if (!layout || !layout.value) throw new Error(ERROR_MESSAGE)
 
-  return docusInstance.value.layout
+  return layout
+}
+
+/**
+ * Access the current page object.
+ */
+export const usePage = () => {
+  if (!currentPage) throw new Error(ERROR_MESSAGE)
+
+  return currentPage
 }

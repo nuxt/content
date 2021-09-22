@@ -1,8 +1,6 @@
 export default function ({ app }, inject) {
   if (process.client) {
-    app.i18n.onLanguageSwitched = () => {
-      window.$nuxt.$docus.fetchNavigation()
-    }
+    app.i18n.onLanguageSwitched = () => window.$nuxt.$docus.fetchNavigation(app.i18n.locale)
   }
 
   // Generate local path for static contents.
@@ -36,6 +34,7 @@ export default function ({ app }, inject) {
     if (!path.endsWith('/') && localePath.endsWith('/')) {
       localePath = localePath.replace(/\/*$/, '')
     }
+
     return localePath
   })
 }
