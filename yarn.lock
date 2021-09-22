@@ -6336,12 +6336,10 @@ destroy@^1.0.4, destroy@~1.0.4:
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
 
-detab@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/detab/-/detab-2.0.4.tgz#b927892069aff405fbb9a186fe97a44a92a94b43"
-  integrity sha512-8zdsQA5bIkoRECvCrNKPla84lyoR7DSAyf7p0YgXzBO9PDJx8KntPUay7NS6yp+KdxdVtiE5SpHKtbp2ZQyA9g==
-  dependencies:
-    repeat-string "^1.5.4"
+detab@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/detab/-/detab-3.0.1.tgz#2f1874ccee75b96858cb5efa30d41212a8657baf"
+  integrity sha512-T8gDOoz58xXMsXKLJkKxkyUTRkEpwOBL9w5nFFDJsD/XiFkajkBc2Yz99a/0kW7DGIYq/B1+oqqqru+fZetSvg==
 
 detect-indent@^5.0.0:
   version "5.0.0"
@@ -13612,7 +13610,7 @@ repeat-element@^1.1.2:
   resolved "https://registry.yarnpkg.com/repeat-element/-/repeat-element-1.1.4.tgz#be681520847ab58c7568ac75fbfad28ed42d39e9"
   integrity sha512-LFiNfRcSu7KK3evMyYOuCzv3L10TW7yC1G2/+StMjK8Y6Vqd2MG7r/Qjw4ghtuCOjFvlnms/iMmLqpvW/ES/WQ==
 
-repeat-string@^1.0.0, repeat-string@^1.5.4, repeat-string@^1.6.1:
+repeat-string@^1.0.0, repeat-string@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
