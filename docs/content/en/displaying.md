@@ -71,7 +71,7 @@ export default {
 
 Depending on what you're using to design your app, you may need to write some style to properly display the markdown.
 
-`<nuxt-content>` component will automatically add a `.nuxt-content` class, you can use it to customize your styles:
+`<nuxt-content>` component will automatically add a `.nuxt-content` class. You can use it to customize your styles:
 
 ```css
 .nuxt-content h1 {
