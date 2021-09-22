@@ -37,7 +37,7 @@
     "node-res": "^5.0.1",
     "p-queue": "6.6.2",
     "prismjs": "^1.23.0",
-    "property-information": "^5.6.0",
+    "property-information": "^6.0.1",
     "rehype-raw": "^5.0.0",
     "rehype-sort-attribute-values": "^3.0.2",
     "rehype-sort-attributes": "^3.0.2",
