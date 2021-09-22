@@ -114,7 +114,7 @@ class Markdown {
   }
 
   /**
-   * Converts markdown document to it's JSON structure.
+   * Converts markdown document to its JSON structure.
    * @param {string} file - Markdown file
    * @return {Object}
    */
