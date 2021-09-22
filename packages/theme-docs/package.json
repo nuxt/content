@@ -23,7 +23,7 @@
     "marked": "^2.0.1",
     "nuxt-i18n": "^6.20.4",
     "prism-themes": "^1.5.0",
-    "tailwind-css-variables": "^2.0.3",
+    "tailwind-css-variables": "^3.0.1",
     "theme-colors": "^0.0.5",
     "vue-scrollactive": "^0.9.3"
   },
