@@ -44,13 +44,10 @@ export const clientAsyncData = ($nuxt: any) => {
 
 const PREVIEW_PREFIX_REGEX = /\/(_preview\/[0-9a-zA-Z-_]+\/[0-9a-zA-Z-_%]+)/
 export const detectPreview = (context: Context) => {
-  const { $config, ssrContext, route, params } = context
+  const { $config, ssrContext, route } = context
 
   // Detect & prepare preview mode
-  const path = joinURL(
-    (context.$config?._app as any)?.basePath || '',
-    withLeadingSlash(params.pathMatch || route.path || '/')
-  )
+  const path = joinURL((context.$config?._app as any)?.basePath || '', withLeadingSlash(route.path || '/'))
 
   const preview = path.match(PREVIEW_PREFIX_REGEX)?.[1] || false
 
