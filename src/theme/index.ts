@@ -11,11 +11,12 @@ export default defineNuxtModule({
 
     const fileName = 'theme.config'
 
-    // Load Docus config
-    const { configFile: themeConfig, configPath } = loadConfig(fileName, nuxt.options.rootDir)
+    let themeConfig = {}
 
-    // Check themeConfig existence
-    if (!themeConfig) return
+    // Load Docus config
+    const { configFile: _themeConfig, configPath } = loadConfig(fileName, nuxt.options.rootDir)
+
+    if (_themeConfig) themeConfig = _themeConfig
 
     // Merge default settings and default theme settings
     const config = defu(themeConfig, {})
