@@ -7,7 +7,7 @@ _docusConfig = require('~docus/cache/docus.config.json')
 <% } %>
 
 let _themeConfig = {}
-<% if (options.hasTheme) { %>
+<% if (options.hasThemeConfig) { %>
 _themeConfig = require('~docus/cache/theme.config.json')
 <% } %>
 
