@@ -4,7 +4,7 @@ import { useQuery } from 'h3'
 export function usePreview(req: IncomingMessage) {
   const query = useQuery(req)
 
-  return (query.preview as string) || ''
+  return ((query.preview as string) || '').replace(/\//g, ':')
 }
 
 export function useKey(req: IncomingMessage) {
