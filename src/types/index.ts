@@ -1,24 +1,11 @@
 import { NavItem, NavItemNavigationConfig } from '@docus/core'
 import { NuxtConfig } from '@nuxt/kit'
 
-export type DocusCurrentNav = {
-  title?: string
-  to?: string
-  navigation?: NavItemNavigationConfig | false
-  parent?: NavItem
-  links: NavItem[]
-}
-
-export interface DocusNavigationGetParameters {
-  depth?: number
-  locale?: string
-  from?: string
-  all?: boolean
-}
-
-export interface Colors {
-  [key: string]: string | Colors
-}
+/**
+ *
+ * APP
+ *
+ */
 
 export interface DocusConfig {
   /**
@@ -53,6 +40,29 @@ export interface DocusConfig {
   [key: string]: any
 }
 
+/**
+ *
+ * CONTEXT
+ *
+ */
+
+export interface DocusState {
+  /**
+   * Whether or not the app is running in preview mode.
+   */
+  preview: string | false
+  /**
+   * Any key.
+   */
+  [key: string]: any
+}
+
+/**
+ *
+ * THEME
+ *
+ */
+
 export interface DefaultThemeConfig {
   [key: string]: any
 }
@@ -82,4 +92,63 @@ export interface DocusTheme<T = DefaultThemeConfig> {
    * A wrapper to define this theme config with type safety.
    */
   defineThemeConfig: (config: T) => T
+}
+
+/**
+ *
+ * NAVIGATION
+ *
+ */
+
+export type DocusCurrentNav = {
+  /**
+   * The current page title.
+   */
+  title?: string
+  /**
+   * The current path.
+   */
+  to?: string
+  /**
+   * The current nav.
+   */
+  navigation?: NavItemNavigationConfig | false
+  /**
+   * The parent nav.
+   */
+  parent?: NavItem
+  /**
+   * The current navigation links.
+   */
+  links: NavItem[]
+}
+
+export interface DocusNavigationGetParameters {
+  /**
+   * Depth to which the navigation should be queried.
+   */
+  depth?: number
+  /**
+   * Locale in which the navigation should be queried.
+   */
+  locale?: string
+  /**
+   * A path from which the navigation should be queried.
+   */
+  from?: string
+  /**
+   * Whether or not the regular filters (exclusive, draft...) should be applied to the query.
+   * @default false
+   */
+  all?: boolean
+}
+
+/**
+ *
+ * MISCELLANOUS
+ *
+ */
+
+export interface Colors {
+  [key: string]: string | Colors
 }

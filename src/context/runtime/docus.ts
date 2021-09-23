@@ -1,7 +1,7 @@
 import { DocusDocument } from '@docus/core'
 import { Context } from '@nuxt/types'
 import { ssrRef, useContext as _useContext } from '@nuxtjs/composition-api'
-import { DefaultThemeConfig, DocusConfig } from '../../'
+import { DefaultThemeConfig, DocusConfig, DocusState } from '../../'
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './composables/helpers'
 import { createDocusNavigation } from './composables/navigation'
 import { createDocusStyles } from './composables/style'
@@ -15,10 +15,6 @@ let content: Context['$content']
 let _context: Context
 // @ts-ignore
 export const useContext = process.server ? () => _context : (_useContext as () => Context)
-
-export interface DocusState {
-  preview: string | false
-}
 
 // Docus state
 const state = ssrRef<DocusState>(
