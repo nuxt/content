@@ -46,6 +46,9 @@ export const loadConfig = <T = any>(file: string, rootDir: string): { configFile
   // Get user settings
   try {
     data.configFile = _require(data.configPath)
+
+    // @ts-ignore
+    data.configFile = data.configFile?.default || data.configFile
   } catch (err) {
     throw new Error(`Could not find ${file}, this file is needed for Docus.`)
   }
@@ -76,7 +79,10 @@ export const loadTheme = (path: string, rootDir: string) => {
   }
 
   // Require the theme
-  const theme: DocusTheme = jiti(rootDir)(themePath)
+  let theme: DocusTheme = jiti(rootDir)(themePath)
+
+  // @ts-ignore - If import has default key return it
+  theme = theme?.default || theme
 
   return theme
 }
