@@ -28,7 +28,11 @@ export default defineComponent({
     let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
 
     // Replace URL if preview enabled
-    if (docus.value.preview) to = to.replace(new RegExp(`^/${docus.value.preview}`), '') || '/'
+    if (docus.value.preview) {
+      // nuxt-i18n does not preserve encoded components in url so we need to decode preview prefix before replacing
+      const prefix = decodeURIComponent(docus.value.preview)
+      to = to.replace(new RegExp(`^/${prefix}`), '') || '/'
+    }
 
     // TODO: Implement the draft system
     const draft = false

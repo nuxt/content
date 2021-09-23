@@ -42,7 +42,7 @@ export const clientAsyncData = ($nuxt: any) => {
   }
 }
 
-const PREVIEW_PREFIX_REGEX = /\/(_preview\/[0-9a-zA-Z-_]+\/[0-9a-zA-Z-_]+)/
+const PREVIEW_PREFIX_REGEX = /\/(_preview\/[0-9a-zA-Z-_]+\/[0-9a-zA-Z-_%]+)/
 export const detectPreview = (context: Context) => {
   const { $config, ssrContext, route, params } = context
 
