@@ -1,6 +1,6 @@
 import { mergeHooks } from 'hookable'
 import defu from 'defu'
-import type { NuxtConfig } from '@nuxt/types'
+import type { NuxtConfig } from '@nuxt/kit'
 
 export function mergeConfig(target: NuxtConfig, base: NuxtConfig): NuxtConfig {
   // Custom merges

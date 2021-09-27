@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
-import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage } from '../../context/runtime'
+import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage } from '#docus'
 
 export default defineComponent({
   name: 'PageSlug',

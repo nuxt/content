@@ -3,10 +3,10 @@ import Vue from 'vue'
 import { pascalCase } from 'scule'
 import { ssrRef, unref, computed } from '@nuxtjs/composition-api'
 import type { DocusDocument, NavItem } from '@docus/core'
-import { NuxtApp } from '@nuxt/types/app'
+import type { NuxtApp } from '@nuxt/types/app'
+import type { DocusCurrentNav, DocusNavigationGetParameters } from 'types'
 import { Context } from '@nuxt/types'
-import { DocusCurrentNav, DocusNavigationGetParameters } from '../../../'
-import { useConfig, useContent, useContext } from '..'
+import { useConfig, useContent, useContext } from '../docus'
 
 // Locale proxy
 let _locale: string

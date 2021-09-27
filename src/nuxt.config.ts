@@ -1,6 +1,6 @@
-import { resolve } from 'upath'
 import { defineNuxtConfig } from '@nuxt/kit'
-const r = (path: any) => resolve(__dirname, path)
+import { rAppDir } from './dirs'
+import docusAppModule from './module'
 
 export default defineNuxtConfig({
   /**
@@ -25,7 +25,7 @@ export default defineNuxtConfig({
    */
   components: [
     {
-      path: r('./components'),
+      path: rAppDir('components'),
       isAsync: false,
       prefix: '',
       level: 999
@@ -38,6 +38,13 @@ export default defineNuxtConfig({
    */
   colorMode: {
     classSuffix: ''
+  },
+
+  /**
+   * @nuxt/bridge
+   */
+  bridge: {
+    capi: false
   },
 
   /**
@@ -58,13 +65,8 @@ export default defineNuxtConfig({
     '@nuxtjs/composition-api/module',
     '@nuxt/postcss8',
     '@docus/core',
-    // Local modules
-    r('./index'),
-    r('../config'),
-    r('../theme'),
-    r('../context')
+    docusAppModule
   ],
-  modules: [r('../i18n')],
 
   /**
    * Build configs

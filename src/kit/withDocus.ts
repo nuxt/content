@@ -1,9 +1,9 @@
-import { NuxtConfig } from '@nuxt/types'
+import { NuxtConfig } from '@nuxt/kit'
 import jiti from 'jiti'
-import { DocusConfig } from '../types'
+import type { DocusConfig } from '../../types'
+import _nuxtConfig from '../nuxt.config'
 import { mergeConfig } from './extend'
-import { loadTheme } from './helpers'
-import { checkDocusTheme } from './'
+import { loadTheme, checkDocusTheme } from './helpers'
 
 const _require = (path: string, root: string = __filename, exportName: string = 'default') => {
   const file = jiti(root)(path)
@@ -19,9 +19,6 @@ const ERRORS = {
 }
 
 export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtConfig {
-  // Resolve local Nuxt config
-  const _nuxtConfig = _require('../app/nuxt.config')
-
   // Check rootDir key existence in userConfig (only required key)
   if (!userConfig.rootDir) throw new Error(ERRORS.rootDir)
 
@@ -35,7 +32,7 @@ export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtCon
   }
 
   // Set second level extend for theme config
-  let appConfig: NuxtConfig = _nuxtConfig
+  let appConfig: NuxtConfig = _nuxtConfig as NuxtConfig
 
   // Set hasThemeConfig default
   appConfig.hasThemeConfig = false

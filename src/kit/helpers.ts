@@ -3,7 +3,13 @@ import { existsSync } from 'fs'
 import jiti from 'jiti'
 import { resolve, join } from 'upath'
 import clearModule from 'clear-module'
-import { DocusTheme } from '../'
+import type { DocusTheme, DocusConfig, DefaultThemeConfig, ThemeNuxtConfig } from 'types'
+
+export const defineThemeNuxtConfig = (config: ThemeNuxtConfig) => config
+
+export const defineThemeConfig = <T = DefaultThemeConfig>(config: T) => config
+
+export const defineDocusConfig = (config: DocusConfig) => config
 
 const _require = jiti(__filename)
 

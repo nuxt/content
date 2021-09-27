@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { withLeadingSlash, joinURL } from 'ufo'
-import { Context } from '@nuxt/types'
+import type { Context } from '@nuxt/types'
 
 export const clientAsyncData = ($nuxt: any) => {
   if (process.client) {
