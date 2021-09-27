@@ -1,12 +1,12 @@
 import { withTrailingSlash } from 'ufo'
 import Vue from 'vue'
-import { pascalCase } from 'scule'
+import scule from 'scule'
 import { ssrRef, unref, computed } from '@nuxtjs/composition-api'
 import type { DocusDocument, NavItem } from '@docus/core'
 import type { NuxtApp } from '@nuxt/types/app'
 import type { DocusCurrentNav, DocusNavigationGetParameters } from 'types'
 import { Context } from '@nuxt/types'
-import { useConfig, useContent, useContext } from '../docus'
+import { useConfig, useContent, useContext } from '..'
 
 // Locale proxy
 let _locale: string
@@ -183,7 +183,7 @@ function getPageTemplate(page: DocusDocument) {
    */
   if (!template) template = settings.value?.template || 'Page'
 
-  template = pascalCase(template)
+  template = scule.pascalCase(template)
 
   if (!Vue.component(template)) {
     // eslint-disable-next-line no-console

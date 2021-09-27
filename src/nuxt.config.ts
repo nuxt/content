@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from '@nuxt/kit'
-import { rAppDir } from './dirs'
+import { resolveAppDir } from './dirs'
 import docusAppModule from './module'
 
 export default defineNuxtConfig({
@@ -25,7 +25,7 @@ export default defineNuxtConfig({
    */
   components: [
     {
-      path: rAppDir('components'),
+      path: resolveAppDir('components'),
       isAsync: false,
       prefix: '',
       level: 999

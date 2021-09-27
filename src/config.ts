@@ -6,7 +6,7 @@ import { version } from '../package.json'
 import { setupThemeModule } from './theme'
 import { loadConfig, writeConfig, defineDocusConfig } from './kit'
 import { setDocusConfig } from './context'
-import { rRuntimeDir } from './dirs'
+import { resolveRuntimeDir } from './dirs'
 
 const defaultConfig = defineDocusConfig({
   title: 'Docus',
@@ -45,7 +45,7 @@ export const setupConfigModule = (nuxt: Nuxt) => {
   nuxt.options.watch.push(configPath)
 
   // Context
-  nuxt.options.alias['#docus'] = rRuntimeDir('.')
+  nuxt.options.alias['#docus'] = resolveRuntimeDir('.')
 
   // Only loads the theme module if `theme` key exists on Docus
   if (docusConfig && docusConfig.theme) setupThemeModule(nuxt)

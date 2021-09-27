@@ -4,7 +4,7 @@ import defu from 'defu'
 import { addPlugin, installModule, Nuxt, resolveModule } from '@nuxt/kit'
 import { useDocusConfig } from './context'
 import languages from './runtime/languages'
-import { rRuntimeDir } from './dirs'
+import { resolveRuntimeDir, resolveTemplateDir } from './dirs'
 
 // Default i18n config
 const config = {
@@ -39,7 +39,7 @@ const config = {
 }
 
 export const setupI18nModule = async (nuxt: Nuxt) => {
-  const langDir = rRuntimeDir('languages')
+  const langDir = resolveRuntimeDir('languages')
 
   // Update i18n langDir to relative from `~` (https://github.com/nuxt-community/i18n-module/blob/4bfa890ff15b43bc8c2d06ef9225451da711dde6/src/templates/utils.js#L31)
   config.langDir = join(relative(nuxt.options.srcDir, langDir), '/')
@@ -69,7 +69,7 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
   nuxt.options.i18n = defu(nuxt.options.i18n, config)
 
   // Add i18n plugin
-  addPlugin(rRuntimeDir('templates/i18n.js'))
+  addPlugin(resolveTemplateDir('i18n.js'))
 
   // Install i18n module
   await installModule(nuxt, {

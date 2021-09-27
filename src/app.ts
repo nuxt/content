@@ -4,7 +4,7 @@ import type { Nuxt } from '@nuxt/kit'
 import { join, resolve } from 'upath'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
-import { rAppDir, rRuntimeDir } from './dirs'
+import { resolveAppDir, resolveTemplateDir } from './dirs'
 
 // Use gracefulFs promises instead of `fs` imports
 const fs = gracefulFs.promises
@@ -20,7 +20,7 @@ const glob = (pattern: string, options: GlobOptions = {}) =>
 
 export const setupAppModule = (nuxt: Nuxt) => {
   // Setup default layout
-  nuxt.options.layouts.default = rAppDir('layouts/default.vue')
+  nuxt.options.layouts.default = resolveAppDir('layouts/default.vue')
 
   // Extend `/` route
   nuxt.hook('build:extendRoutes', (routes: any[]) => {
@@ -30,7 +30,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
       routes.push({
         path: '/*',
         name: 'all',
-        component: rAppDir('pages/_.vue')
+        component: resolveAppDir('pages/_.vue')
       })
     }
   })
@@ -43,7 +43,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
     // Add default error page if not defined
     const errorPagePath = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts, 'error.vue')
     const errorPageExists = await fs.stat(errorPagePath).catch(() => false)
-    if (!errorPageExists) nuxt.options.ErrorPage = nuxt.options.ErrorPage || rAppDir('layouts/error.vue')
+    if (!errorPageExists) nuxt.options.ErrorPage = nuxt.options.ErrorPage || resolveAppDir('layouts/error.vue')
 
     // If pages/ does not exists, disable Nuxt pages parser (to avoid warning) and watch pages/ creation for full restart
     // To support older version of Nuxt
@@ -84,7 +84,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
   // Add Docus runtime plugin
   addPluginTemplate(
     {
-      src: rRuntimeDir('templates/docus.js'),
+      src: resolveTemplateDir('docus.js'),
       options: {
         hasDocusConfig: nuxt.options.hasDocusConfig,
         hasTheme: nuxt.options.hasTheme,

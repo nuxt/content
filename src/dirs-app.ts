@@ -8,7 +8,10 @@ const _makeResolve = (base: string) => {
 }
 
 export const appDir = resolve(distDir, '../app')
-export const rAppDir = _makeResolve(appDir)
+export const resolveAppDir = _makeResolve(appDir)
 
 export const runtimeDir = resolve(distDir, 'runtime')
-export const rRuntimeDir = _makeResolve(runtimeDir)
+export const resolveRuntimeDir = _makeResolve(runtimeDir)
+
+export const templateDir = resolve(distDir, 'templates')
+export const resolveTemplateDir = _makeResolve(templateDir)
