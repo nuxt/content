@@ -3,7 +3,7 @@ import type { Context } from '@nuxt/types'
 import type { Colors } from 'types'
 import themeColors from 'theme-colors'
 import { computed } from '@nuxtjs/composition-api'
-import { useTheme } from '..'
+import { useTheme } from './'
 
 let _head: any
 

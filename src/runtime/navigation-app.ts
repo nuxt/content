@@ -6,7 +6,7 @@ import type { DocusDocument, NavItem } from '@docus/core'
 import type { NuxtApp } from '@nuxt/types/app'
 import type { DocusCurrentNav, DocusNavigationGetParameters } from 'types'
 import { Context } from '@nuxt/types'
-import { useConfig, useContent, useContext } from '..'
+import { useConfig, useContent, useContext } from './'
 
 // Locale proxy
 let _locale: string

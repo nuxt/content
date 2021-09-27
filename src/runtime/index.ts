@@ -2,11 +2,11 @@ import type { DocusDocument } from '@docus/core'
 import type { DefaultThemeConfig, DocusConfig, DocusState } from 'types'
 import { ssrRef, useContext as _useContext } from '@nuxtjs/composition-api'
 import { Context } from '@nuxt/types'
-import { clientAsyncData, detectPreview, normalizePreviewScope } from './composables/helpers'
-import { createDocusNavigation } from './composables/navigation'
-import { createDocusStyles } from './composables/style'
-export { useNavigation } from './composables/navigation'
-export { useStyles } from './composables/style'
+import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
+import { createDocusNavigation } from './navigation'
+import { createDocusStyles } from './style'
+export { useNavigation } from './navigation'
+export { useStyles } from './style'
 
 // $content proxy
 let content: Context['$content']
