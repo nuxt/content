@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
+import { resolve } from 'pathe'
 import { Nuxt } from '@nuxt/kit'
-import { resolve } from 'upath'
 
 export async function useNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
   const ignore = nuxt.options.ignore || []

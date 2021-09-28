@@ -1,5 +1,5 @@
 import fs from 'fs'
-import path from 'upath'
+import { resolve, join } from 'pathe'
 import { parse } from 'vue-docgen-api'
 import { setNodeData } from '@docus/mdc/utils'
 
@@ -11,12 +11,12 @@ const fileName = (file: string) => (file.match(/\.vue$/) ? file : file + '.vue')
 
 function resolvePath(file: string, { paths = [] }: PropsComponentHandlerOptions = {}) {
   file = fileName(file)
-  if (fs.existsSync(path.resolve(file))) {
-    return path.resolve(file)
+  if (fs.existsSync(resolve(file))) {
+    return resolve(file)
   }
   for (const dir of paths) {
-    if (fs.existsSync(path.join(dir, file))) {
-      return path.join(dir, file)
+    if (fs.existsSync(join(dir, file))) {
+      return join(dir, file)
     }
   }
   return null

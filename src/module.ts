@@ -1,3 +1,4 @@
+import { resolve } from 'pathe'
 import {
   defineNuxtModule,
   resolveModule,
@@ -10,7 +11,6 @@ import {
   extendWebpackConfig
 } from '@nuxt/kit'
 import { NitroContext } from '@nuxt/nitro'
-import { resolve } from 'upath'
 import { joinURL } from 'ufo'
 import { DocusOptions } from './types'
 import { defaultContext } from './context'

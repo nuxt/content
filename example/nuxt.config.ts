@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import { defineNuxtConfig } from '@nuxt/kit'
 
 export default defineNuxtConfig({
@@ -16,5 +16,8 @@ export default defineNuxtConfig({
   content: {},
   nitro: {
     preset: 'browser'
+  },
+  bridge: {
+    capi: false
   }
 })
