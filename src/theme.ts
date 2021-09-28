@@ -18,7 +18,7 @@ export const setupThemeModule = (nuxt: Nuxt) => {
   if (_themeConfig) themeConfig = _themeConfig
 
   // Merge default settings and default theme settings
-  const config = defu(themeConfig, {})
+  const config = defu(themeConfig, nuxt.options.themeConfigDefaults || {})
 
   // Init config in context
   setThemeConfig(config, true)

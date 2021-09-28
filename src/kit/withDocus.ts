@@ -57,6 +57,9 @@ export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtCon
     // Merge Docus and theme Nuxt configs
     appConfig = mergeConfig(_themeNuxtConfig as NuxtConfig, appConfig)
 
+    // Set default theme config
+    if (_theme.themeConfig) appConfig.themeConfigDefaults = _theme.themeConfig
+
     // Quick check, verifying if theme.config is present
     try {
       _require('./theme.config', userConfig.rootDir)

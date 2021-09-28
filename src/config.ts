@@ -31,6 +31,9 @@ export const setupConfigModule = (nuxt: Nuxt) => {
   // Init config in context
   setDocusConfig(config, true)
 
+  // Only loads the theme module if `theme` key exists on Docus
+  if (docusConfig && docusConfig.theme) setupThemeModule(nuxt)
+
   // Default title and description for pages
   nuxt.options.meta.name = config.title
   nuxt.options.meta.description = config.description
@@ -46,7 +49,4 @@ export const setupConfigModule = (nuxt: Nuxt) => {
 
   // Context
   nuxt.options.alias['#docus'] = resolveRuntimeDir('.')
-
-  // Only loads the theme module if `theme` key exists on Docus
-  if (docusConfig && docusConfig.theme) setupThemeModule(nuxt)
 }
