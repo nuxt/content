@@ -11,7 +11,7 @@ const omit = (obj, keys = []) => {
 }
 
 class QueryBuilder {
-  constructor ({ query, path, init, text, postprocess = [] }, options) {
+  constructor({ query, path, init, text, postprocess = [] }, options) {
     this.query = query
     this.path = path
     this.init = init
@@ -34,7 +34,7 @@ class QueryBuilder {
    * @param {Array} keys - Array of fields to be picked.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  only (keys) {
+  only(keys) {
     // Assign keys to this.onlyKeys to be processed in fetch
     this.onlyKeys = Array.isArray(keys) ? keys : [keys]
     // Return current instance
@@ -46,7 +46,7 @@ class QueryBuilder {
    * @param {Array} keys - Array of fields to be picked.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  without (keys) {
+  without(keys) {
     // Assign keys to this.withoutKeys to be processed in fetch
     this.withoutKeys = Array.isArray(keys) ? keys : [keys]
     // Return current instance
@@ -59,7 +59,7 @@ class QueryBuilder {
    * @param {string} direction - Direction of sort (asc / desc).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  sortBy (field, direction) {
+  sortBy(field, direction) {
     this.sortKeys.push([field, direction === 'desc'])
     return this
   }
@@ -69,7 +69,7 @@ class QueryBuilder {
    * @param {object} query - Where query.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  where (query) {
+  where(query) {
     this.query = this.query.find(query)
     return this
   }
@@ -80,7 +80,7 @@ class QueryBuilder {
    * @param {string} value - Value of search (means query equals to field).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  search (query, value) {
+  search(query, value) {
     // Passing an empty or falsey value as query will avoid triggering a search to allow optional chaining
     if (!query) { return this }
 
@@ -129,7 +129,7 @@ class QueryBuilder {
    * @param {Object} options - Options to surround (before / after).
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  surround (slugOrPath, { before = 1, after = 1 } = {}) {
+  surround(slugOrPath, { before = 1, after = 1 } = {}) {
     const _key = slugOrPath.indexOf('/') === 0 ? 'path' : 'slug'
 
     // Add slug or path to onlyKeys if only method has been called before
@@ -175,7 +175,7 @@ class QueryBuilder {
    * @param {number} n - Limit number.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  limit (n) {
+  limit(n) {
     if (typeof n === 'string') { n = parseInt(n) }
 
     this.limitN = n
@@ -187,7 +187,7 @@ class QueryBuilder {
    * @param {number} n - Skip number.
    * @returns {QueryBuilder} Returns current instance to be chained
    */
-  skip (n) {
+  skip(n) {
     if (typeof n === 'string') { n = parseInt(n) }
 
     this.skipN = n
@@ -199,7 +199,7 @@ class QueryBuilder {
    * @returns {(Object|Array)} Returns processed data
    */
   // eslint-disable-next-line require-await
-  async fetch () {
+  async fetch() {
     if (this.sortKeys && this.sortKeys.length) {
       this.query = this.query.compoundsort(this.sortKeys)
     }
@@ -246,4 +246,4 @@ class QueryBuilder {
   }
 }
 
-module.exports = QueryBuilder
+export default QueryBuilder
