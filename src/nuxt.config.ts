@@ -101,6 +101,6 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api', 'theme-colors']
+    transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api']
   }
 })
