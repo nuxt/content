@@ -10,21 +10,16 @@
   "repository": "https://github.com/docusgen/core",
   "license": "MIT",
   "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    },
-    "./runtime": {
-      "require": "./dist/runtime.cjs",
-      "import": "./dist/runtime.mjs"
-    },
+    ".": "./dist/index.mjs",
+    "./runtime": "./dist/runtime.mjs",
     "./dist/runtime/*": "./dist/runtime/*"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./types/index.d.ts",
   "files": [
     "dist",
+    "types",
     "runtime.mjs",
     "runtime.cjs",
     "runtime.d.ts"
@@ -38,26 +33,21 @@
     "test": "yarn lint && jest --forceExit",
     "clean:example": "rm -rf example/.nuxt example/node_modules",
     "clean:dist": "rm -rf dist node_modules",
-    "clean": "yarn clean:example && yarn clean:dist",
-    "postinstall": "patch-package"
-  },
-  "resolutions": {
-    "unstorage": "^0.2.8"
+    "clean": "yarn clean:example && yarn clean:dist"
   },
   "dependencies": {
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
-    "@nuxt/bridge": "npm:@nuxt/bridge-edge",
-    "@nuxt/kit": "npm:@nuxt/kit-edge",
+    "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
+    "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "@nuxtjs/composition-api": "^0.29.2",
+    "consola": "^2.15.3",
     "debounce": "^1.2.1",
     "defu": "^5.0.0",
     "h3": "^0.3.1",
-    "hasha": "^5.2.2",
     "lokijs": "^1.5.12",
     "micromatch": "^4.0.4",
     "node-fetch": "^2.6.5",
     "object-hash": "^2.2.0",
-    "patch-package": "^6.4.7",
     "pathe": "^0.2.0",
     "property-information": "6.0.1",
     "scule": "^0.2.1",
@@ -74,9 +64,6 @@
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
     "@nuxt/test-utils": "latest",
-    "@nuxt/types": "^2.15.8",
-    "@nuxt/typescript-build": "^2.1.0",
-    "@nuxt/typescript-runtime": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/debounce": "^1.2.1",
     "@types/jest": "latest",
@@ -97,8 +84,5 @@
     "prettier": "^2.4.1",
     "unbuild": "^0.5.4",
     "vue-jest": "^3.0.7"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

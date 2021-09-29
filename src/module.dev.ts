@@ -1,12 +1,13 @@
-import { Socket } from 'net'
-import { IncomingMessage } from 'http'
-// @ts-ignore
+import type { IncomingMessage } from 'http'
+import type { Socket } from 'net'
+import type { WatchEvent, WatchCallback } from 'unstorage'
+import type { Nuxt } from '@nuxt/kit'
+
 import { resolve } from 'pathe'
 import fetch from 'node-fetch'
 import { joinURL } from 'ufo'
-import { Nuxt } from '@nuxt/kit'
 import { debounce } from 'debounce'
-import { WatchEvent, createStorage, WatchCallback } from 'unstorage'
+import { createStorage } from 'unstorage'
 import fsDriver from 'unstorage/drivers/fs'
 import { useWebSocket } from './runtime/server/socket'
 import { logger } from './runtime/utils'

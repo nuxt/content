@@ -8,6 +8,6 @@ module.exports = {
   setupFilesAfterEnv: ['./test/utils/setup-env'],
 
   moduleNameMapper: {},
-  collectCoverageFrom: ['src/**', '!src/types/**'],
+  collectCoverageFrom: ['src/**'],
   transformIgnorePatterns: ['node_modules/(?!@nuxt/design|@docus/mdc|unified)/.*']
 }

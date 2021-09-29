@@ -57,7 +57,7 @@ export interface QueryBuilder<T> {
   fetch(params?: any): Promise<T | T[]>
 }
 
-export { BaseQueryBuiler } from '../runtime/database/Query'
+export { BaseQueryBuiler } from '../src/runtime/database/Query'
 
 export interface QueryBuilderParams {
   skip: number

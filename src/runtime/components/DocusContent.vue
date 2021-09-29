@@ -1,11 +1,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import { pascalCase } from 'scule'
-// @ts-ignore
 import { find, html } from 'property-information'
 import type { CreateElement, RenderContext, VNode } from 'vue'
 import type { MDCNode } from '@docus/mdc'
-import type { DocusDocument } from '../../types/Document'
+import type { DocusDocument } from 'types'
 
 // Root keys from a node
 const rootKeys = ['class-name', 'class', 'className', 'style']

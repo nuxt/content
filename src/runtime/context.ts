@@ -1,5 +1,5 @@
 import { getContext } from 'unctx'
-import { DocusContext } from '../types'
+import type { DocusContext } from 'types'
 // TODO: dynamically load server/client context
 // @ts-ignore
 import context from '#build/docus/context.client.mjs'

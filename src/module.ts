@@ -3,19 +3,20 @@ import {
   defineNuxtModule,
   resolveModule,
   addServerMiddleware,
-  Nuxt,
   addPlugin,
   installModule,
   useNuxt,
   addTemplate,
   extendWebpackConfig
 } from '@nuxt/kit'
-import { NitroContext } from '@nuxt/nitro'
+import type { Nuxt } from '@nuxt/kit'
+import type { NitroContext } from '@nuxt/nitro'
 import { joinURL } from 'ufo'
-import { DocusOptions } from './types'
+import type { DocusOptions } from 'types'
 import { defaultContext } from './context'
 import setupDevTarget from './module.dev'
 import { useNuxtIgnoreList } from './utils'
+import { resolveRuntimeDir, resolveTemplateDir, runtimeDir, templateDir } from './dirs'
 
 export const resolveApiRoute = (route: string) => {
   const nuxt = useNuxt()
@@ -34,9 +35,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
   configKey: 'content',
   setup(options: DocusOptions, nuxt: Nuxt) {
     // Install @nuxt/bridge
-    installModule(nuxt, {
-      src: resolveModule('@nuxt/bridge')
-    })
+    installModule(nuxt, { src: resolveModule('@nuxt/bridge') })
 
     // Extend context
     const docusContext = defaultContext
@@ -58,40 +57,12 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       })
     })
 
-    // Transpile @docus/mdc
-    nuxt.options.build.transpile.push(
-      '@docus/mdc',
-      'unctx',
-      'property-information',
-      'unified',
-      'bail',
-      'trough',
-      'parse-entities',
-      'character-entities',
-      'character-reference-invalid',
-      'is-decimal',
-      'is-hexadecimal',
-      'is-alphanumerical',
-      'is-alphabetical',
-      'detab',
-      'emoticon',
-      'space-separated-tokens',
-      'is-absolute-url',
-      'ccount',
-      'markdown-table',
-      'comma-separated-tokens',
-      'web-namespaces',
-      'zwitch',
-      'html-void-elements',
-      'mdurl',
-      'parse5',
-      /(unist|remark|mdast|micromark|rehype|hast)-?.*/
-    )
+    // Transpile dependencies
+    nuxt.options.build.transpile.push('property-information')
 
     // Setup runtime alias
-    const runtimeDir = resolve(__dirname, 'runtime')
     nuxt.options.alias['~docus/content'] = runtimeDir
-    nuxt.options.alias['~docus/database'] = resolve(runtimeDir, `database/providers/${options.database.provider}`)
+    nuxt.options.alias['~docus/database'] = resolveRuntimeDir('database/providers', options.database.provider)
 
     // Register api
     nuxt.hook('nitro:context', (ctx: NitroContext) => {
@@ -107,7 +78,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     for (const api of ['get', 'list', 'search', 'navigation', 'preview']) {
       addServerMiddleware({
         route: resolveApiRoute(api),
-        handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir })
+        handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir }).replace(/\.js$/, '.mjs')
       })
     }
 
@@ -117,12 +88,12 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     }
 
     // Add Docus runtime plugin
-    addPlugin(resolve(__dirname, './templates/content'))
+    addPlugin(resolveTemplateDir('content'))
 
     // Add Docus context template
     for (const target of ['server', 'client']) {
       addTemplate({
-        src: resolve(__dirname, './templates/context.js'),
+        src: resolveModule('./context', { paths: templateDir }),
         filename: `docus/context.${target}.mjs`,
         options: {
           target,
@@ -143,7 +114,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         })
 
         // Add Hot plugin
-        addPlugin(resolve(__dirname, './templates/hot'))
+        addPlugin(resolveModule('./hot', { paths: templateDir }))
       }
     }
 
@@ -157,7 +128,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     nuxt.hook('components:dirs', dirs => {
       // Push local default Docus components
       dirs.push({
-        path: resolve(__dirname, 'runtime/components'),
+        path: resolveRuntimeDir('components'),
         prefix: '',
         isAsync: false,
         level: 998
@@ -177,7 +148,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       // Push components directories paths into Markdown transformer
       docusContext.transformers.markdown.components?.push({
         name: 'props',
-        path: resolveModule('./runtime/transformers/markdown/loaders/props', { paths: __dirname }),
+        path: resolveModule('./transformers/markdown/loaders/props', { paths: runtimeDir }),
         target: 'server',
         options: { paths }
       })

@@ -1,5 +1,5 @@
 import Loki from 'lokijs'
-import { DatabaseProvider } from '../../../../types'
+import type { DatabaseProvider } from 'types'
 import LokiQuery from './Query'
 
 export default function createLokiJsDatabase({ name = 'lokijs.db' } = {}): DatabaseProvider {

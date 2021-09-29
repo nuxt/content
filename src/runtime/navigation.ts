@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
-import { NavItem } from '../types'
+import type { NavItem } from 'types'
 import { pick } from './utils/object'
 import { useDocusContext } from './context'
 import { generatePosition } from './transformers/utils'

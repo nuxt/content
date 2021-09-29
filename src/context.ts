@@ -1,4 +1,4 @@
-import { DocusContext } from './types'
+import type { DocusContext } from 'types'
 
 export const defaultContext: DocusContext = {
   locales: {

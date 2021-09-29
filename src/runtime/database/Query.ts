@@ -1,4 +1,4 @@
-import { QueryBuilder, QueryBuilderParams } from '../../types/Database'
+import type { QueryBuilder, QueryBuilderParams } from 'types'
 
 /**
  * Abstract query builder class, to be implemented by any provider.

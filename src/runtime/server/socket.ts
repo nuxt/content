@@ -2,7 +2,7 @@ import { Socket } from 'net'
 import { IncomingMessage } from 'http'
 import { Nuxt } from '@nuxt/kit'
 import WS from 'ws'
-import { DocusOptions } from '../../types'
+import type { DocusOptions } from 'types'
 
 let wss: WS.Server
 

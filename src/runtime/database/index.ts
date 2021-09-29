@@ -1,5 +1,5 @@
+import type { DatabaseProvider } from 'types'
 import { omit } from '../utils/object'
-import { DatabaseProvider } from '../../types'
 import { useDocusContext } from '../context'
 import createLokiJsDatabase from './providers/lokijs'
 
