@@ -1,8 +1,8 @@
 import type { MetaInfo } from 'vue-meta'
 import type { Context } from '@nuxt/types'
 import type { Colors } from 'types'
-import themeColors from 'theme-colors'
 import { computed } from '@nuxtjs/composition-api'
+import { getColors } from './theme-colors'
 import { useTheme } from './'
 
 let _head: any
@@ -12,10 +12,7 @@ let _head: any
  */
 function useColors(colors: Colors) {
   try {
-    return Object.entries(colors).map(([key, color]) => [
-      key,
-      typeof color === 'string' ? themeColors.getColors(color) : color
-    ])
+    return Object.entries(colors).map(([key, color]) => [key, typeof color === 'string' ? getColors(color) : color])
   } catch (e: any) {
     // eslint-disable-next-line no-console
     console.warn('Could not parse custom colors:', e && e.message ? e.message : e)
