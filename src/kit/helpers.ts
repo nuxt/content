@@ -1,9 +1,10 @@
 import * as fs from 'fs/promises'
 import { existsSync } from 'fs'
 import jiti from 'jiti'
-import { resolve, join } from 'upath'
+import { resolve, join } from 'pathe'
 import clearModule from 'clear-module'
 import type { DocusTheme, DocusConfig, DefaultThemeConfig, ThemeNuxtConfig } from 'types'
+import { distDir } from '../dirs'
 
 export const defineThemeNuxtConfig = (config: ThemeNuxtConfig) => config
 
@@ -11,7 +12,7 @@ export const defineThemeConfig = <T = DefaultThemeConfig>(config: T) => config
 
 export const defineDocusConfig = (config: DocusConfig) => config
 
-const _require = jiti(__filename)
+const _require = jiti(distDir)
 
 export const isDocusTheme = (theme: any): theme is DocusTheme => {
   return !!(theme.defineThemeConfig && theme.nuxtConfig && theme.themeConfig)

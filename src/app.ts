@@ -1,7 +1,7 @@
 import gracefulFs from 'graceful-fs'
 import { addPluginTemplate } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/kit'
-import { join, resolve } from 'upath'
+import { join, resolve } from 'pathe'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
 import { resolveAppDir, resolveTemplateDir } from './dirs'

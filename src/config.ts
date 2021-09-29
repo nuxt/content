@@ -28,6 +28,9 @@ export const setupConfigModule = (nuxt: Nuxt) => {
   // Merge user config and default Docus config
   const config = defu(docusConfig || {}, defaultConfig)
 
+  // Add badge
+  nuxt.options.cli.badgeMessages.push(chalk.bold('📝 Docus: ') + chalk.underline.yellow(`v${version}`))
+
   // Init config in context
   setDocusConfig(config, true)
 
@@ -40,9 +43,6 @@ export const setupConfigModule = (nuxt: Nuxt) => {
 
   // Write config json file
   nuxt.hook('modules:done', async () => await writeConfig(fileName, cacheDir, config))
-
-  // Add badge
-  nuxt.options.cli.badgeMessages.push(chalk.bold('📝 Docus: ') + chalk.underline.yellow(`v${version}`))
 
   // Watch config
   nuxt.options.watch.push(configPath)

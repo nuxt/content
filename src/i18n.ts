@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { resolve, join, relative } from 'upath'
+import { resolve, join, relative } from 'pathe'
 import defu from 'defu'
 import { addPlugin, installModule, Nuxt, resolveModule } from '@nuxt/kit'
 import languages from '../app/languages'

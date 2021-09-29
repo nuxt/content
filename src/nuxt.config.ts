@@ -1,12 +1,12 @@
 import { defineNuxtConfig } from '@nuxt/kit'
-import { resolveAppDir } from './dirs'
+import { distDir, resolveAppDir } from './dirs'
 import docusAppModule from './module'
 
 export default defineNuxtConfig({
   /**
    * RootDir
    */
-  rootDir: __dirname,
+  rootDir: distDir,
 
   /**
    * Default app config

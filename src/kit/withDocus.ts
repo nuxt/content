@@ -1,11 +1,12 @@
 import { NuxtConfig } from '@nuxt/kit'
 import jiti from 'jiti'
+import { distDir } from '../dirs'
 import type { DocusConfig } from '../../types'
 import _nuxtConfig from '../nuxt.config'
 import { mergeConfig } from './extend'
 import { loadTheme, checkDocusTheme } from './helpers'
 
-const _require = (path: string, root: string = __filename, exportName: string = 'default') => {
+const _require = (path: string, root: string = distDir, exportName: string = 'default') => {
   const file = jiti(root)(path)
 
   return file[exportName] || file
