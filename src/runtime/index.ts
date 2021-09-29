@@ -98,7 +98,7 @@ export const useDocus = () => {
  * Access the content querying functions.
  */
 export const useContent = () => {
-  return state.value.preview ? content.preview(normalizePreviewScope(state.value.preview)) : content
+  return state.value.preview ? (content as any).preview(normalizePreviewScope(state.value.preview)) : content
 }
 
 /**
