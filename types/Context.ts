@@ -5,6 +5,7 @@ export interface DocusContext {
     codes: string[]
     defaultLocale: string
   }
+  ignoreList: string[]
   database: {
     provider: string
     options: any

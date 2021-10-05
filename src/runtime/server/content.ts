@@ -55,9 +55,9 @@ async function getKeys(id?: string, previewKey?: string) {
   // Merge preview keys with original keys
   if (previewKey) {
     const prefix = `${previewKey}:`
-    const previewKeys = (await previewStorage.getKeys(previewKey))
-      // Remove preview prefix
-      .map((key: string) => removePrefix(key.replace(prefix, '')))
+    const previewKeys = (await previewStorage.getKeys(previewKey)).map((key: string) =>
+      removePrefix(key.replace(prefix, ''))
+    )
 
     // Remove updated keys from original keys
     keys = keys.filter(key => !previewKeys.includes(key))
@@ -66,8 +66,7 @@ async function getKeys(id?: string, previewKey?: string) {
 
   // filter out ignored contents
   const context = useDocusContext()
-  // @ts-ignore
-  keys = micromatch.not(keys, context.ignoreList)
+  keys = micromatch.not(keys, context!.ignoreList)
 
   return keys
 }

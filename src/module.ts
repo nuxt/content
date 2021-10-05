@@ -150,6 +150,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         options: { paths }
       })
     })
+
     // Install @nuxt/bridge
     await installModule(nuxt, { src: resolveModule('@nuxt/bridge') })
   }
