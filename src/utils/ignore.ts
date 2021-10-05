@@ -3,7 +3,7 @@ import { resolve } from 'pathe'
 import { Nuxt } from '@nuxt/kit'
 
 export async function useNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
-  const ignore = nuxt.options.ignore || []
+  const ignore = ['**/-*.*', '**/node_modules/**', '**/.git/**', '**/.**']
   const ignoreFile = resolve(nuxt.options.rootDir, '.nuxtignore')
   const ignoreContent = await fs.readFile(ignoreFile, { encoding: 'utf-8' }).catch(() => '')
 
@@ -11,8 +11,6 @@ export async function useNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
     ignore.push(...ignoreContent.split('\n').filter(Boolean))
   }
 
-  // Ignore '.' prefixed files
-  ignore.push('**/node_modules/**', '**/.git/**', '**/.**')
   const refinedList = ignore.map((pattern: any) => {
     if (typeof pattern === 'string') {
       return pattern.replace(/\//g, ':')

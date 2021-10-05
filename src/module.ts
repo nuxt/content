@@ -33,10 +33,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     }
   },
   configKey: 'content',
-  setup(options: DocusOptions, nuxt: Nuxt) {
-    // Install @nuxt/bridge
-    installModule(nuxt, { src: resolveModule('@nuxt/bridge') })
-
+  async setup(options: DocusOptions, nuxt: Nuxt) {
     // Extend context
     const docusContext = defaultContext
 
@@ -153,5 +150,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         options: { paths }
       })
     })
+    // Install @nuxt/bridge
+    await installModule(nuxt, { src: resolveModule('@nuxt/bridge') })
   }
 }))

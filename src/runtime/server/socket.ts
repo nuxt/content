@@ -12,8 +12,8 @@ let wss: WS.Server
 export function useWebSocket(options: DocusOptions, nuxt: Nuxt) {
   if (!wss) wss = new WS.Server({ noServer: true })
 
-  nuxt.hook('listen', ({ on }) =>
-    on('upgrade', (req: IncomingMessage, socket: Socket, head: any) => {
+  nuxt.hook('listen', server =>
+    server.on('upgrade', (req: IncomingMessage, socket: Socket, head: any) => {
       if (req.url === `/${options.apiBase}/ws`) {
         serve(req, socket, head)
       }
