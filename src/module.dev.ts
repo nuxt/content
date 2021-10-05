@@ -14,7 +14,7 @@ import { logger } from './runtime/utils'
 import { useNuxtIgnoreList } from './utils'
 
 export default function setupDevTarget(options: any, nuxt: Nuxt) {
-  const ws = useWebSocket(options, nuxt)
+  const ws = useWebSocket()
 
   if (options.watch) {
     const storage = createStorage()
