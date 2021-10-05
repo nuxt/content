@@ -28,6 +28,19 @@ async function getData(id: string, previewKey?: string) {
     meta = await assetsStorage.getMeta(id)
   }
 
+  /**
+   * Unstorage tries to parse content as JSON
+   * The following logic will ensure that the content is always a string
+   */
+  // Stringify objects
+  if (typeof body === 'object') {
+    body = JSON.stringify(typeof (body as any).default !== 'undefined' ? (body as any).default : body)
+  }
+  // Ensure body is a string
+  if (typeof body !== 'string') {
+    body = body + ''
+  }
+
   return {
     body,
     meta
