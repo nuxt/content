@@ -133,13 +133,13 @@ export default {
     document: {
       required: true
     },
-    as: {
+    tag: {
       type: String,
       default: 'div'
     }
   },
   render (h, { data, props }) {
-    const { document, as } = props
+    const { document, tag } = props
     const { body } = document || {}
     if (!body || !body.children || !Array.isArray(body.children)) {
       return
@@ -155,6 +155,6 @@ export default {
     }
     data.class = classes.concat('nuxt-content')
     data.props = Object.assign({ ...body.props }, data.props)
-    return h(as, data, body.children.map(child => processNode(child, h, document)))
+    return h(tag, data, body.children.map(child => processNode(child, h, document)))
   }
 }
