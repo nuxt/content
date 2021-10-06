@@ -41,13 +41,6 @@ export default defineNuxtConfig({
   },
 
   /**
-   * @nuxt/bridge
-   */
-  bridge: {
-    capi: false
-  },
-
-  /**
    * @nuxt/image
    * Docs: https://image.nuxtjs.org/
    */
@@ -62,7 +55,6 @@ export default defineNuxtConfig({
     // Dependencies
     '@nuxtjs/pwa',
     '@nuxt/image',
-    '@nuxtjs/composition-api/module',
     '@nuxt/postcss8',
     '@docus/core',
     docusAppModule
@@ -84,8 +76,6 @@ export default defineNuxtConfig({
     externals: {
       inline: ['@docus/core', 'ohmyfetch', 'property-information'],
       external: [
-        '@nuxtjs/composition-api',
-        '@vue/composition-api',
         'vue-docgen-api',
         '@nuxt/kit',
         '@nuxt/image',
@@ -101,6 +91,6 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api', '@nuxt/bridge']
+    transpile: ['@docus/', 'ohmyfetch']
   }
 })
