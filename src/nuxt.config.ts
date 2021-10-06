@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from '@nuxt/kit'
+import { defineNuxtConfig } from '@nuxt/bridge'
 import { distDir, resolveAppDir } from './dirs'
 import docusAppModule from './module'
 
@@ -101,6 +101,6 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api']
+    transpile: ['@docus/', 'ohmyfetch', '@vue/composition-api', '@nuxt/bridge']
   }
 })

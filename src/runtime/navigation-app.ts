@@ -1,15 +1,18 @@
 import { withTrailingSlash } from 'ufo'
 import Vue from 'vue'
-import { ssrRef, unref, computed } from '@nuxtjs/composition-api'
+import { onGlobalSetup, ssrRef, watch, unref } from '@nuxtjs/composition-api'
 import type { DocusDocument, NavItem } from '@docus/core'
 import type { NuxtApp } from '@nuxt/types/app'
 import type { DocusCurrentNav, DocusNavigationGetParameters } from 'types'
 import { Context } from '@nuxt/types'
 import { pascalCase } from './scule'
-import { useConfig, useContent, useContext } from './'
+import { useConfig, useContent } from './'
 
 // Locale proxy
 let _locale: string
+
+// contentLocalePath proxy
+let _contentLocalePath: any
 
 // Init navigation state
 const state = ssrRef<{ [language: string]: NavItem[] }>({}, 'docus-navigation-state')
@@ -17,31 +20,25 @@ const state = ssrRef<{ [language: string]: NavItem[] }>({}, 'docus-navigation-st
 // Current path
 const currentPath = ssrRef<string>('', 'docus-current-path')
 
-// Compute `currentNav` on every route change
-const fetchCounter = ssrRef(0, 'docus-navigation-fetch-counter')
-
 // Current navigation
-const currentNav = computed<DocusCurrentNav>(() => {
-  // eslint-disable-next-line no-unused-expressions
-  fetchCounter.value
-
-  // Calculate the navigation based on current path
-  return get({
-    from: currentPath.value
-  })
-})
+const currentNav = ssrRef<DocusCurrentNav>(
+  {
+    links: []
+  },
+  'docus-current-navigation'
+)
 
 /**
  * Get navigation from Docus data
  */
-async function fetchNavigation(locale: string) {
+async function fetchNavigation(locale?: string) {
   const content = useContent()
 
-  const navigation = (await content.fetch('navigation/' + locale)) as NavItem[]
+  const __locale = locale || _locale
 
-  state.value[locale] = navigation
+  const navigation = (await content.fetch('navigation/' + __locale)) as NavItem[]
 
-  fetchCounter.value += 1
+  state.value[__locale] = navigation
 }
 
 /**
@@ -140,9 +137,7 @@ function filterLinks(nodes: NavItem[], maxDepth: number, currentDepth: number) {
  * Check if a "to" path is the currently active path.
  */
 function isLinkActive(to: string) {
-  const context = useContext()
-
-  return withTrailingSlash(currentPath.value) === withTrailingSlash((context as any).$contentLocalePath(to))
+  return withTrailingSlash(currentPath.value) === withTrailingSlash(_contentLocalePath(to))
 }
 
 function getPageTemplate(page: DocusDocument) {
@@ -222,7 +217,7 @@ function getPreviousAndNextLink(page: DocusDocument) {
 /**
  * Handling all the navigation querying logic.
  */
-export const createDocusNavigation = async (context: Context) => {
+export const createDocusNavigation = (context: Context) => {
   // Nuxt context
   const { app, route } = context
 
@@ -230,11 +225,23 @@ export const createDocusNavigation = async (context: Context) => {
 
   const _route = unref(route)
 
+  // @ts-ignore
+  _contentLocalePath = context.$contentLocalePath
+
   // Init currentPath
   currentPath.value = `/${_route.params.pathMatch}`
 
   // Map locales to nav
   app.i18n.locales.forEach((locale: any) => (state.value[locale.code] = []))
+
+  // Watch current path; update currentNav accordingly
+  onGlobalSetup(() => {
+    watch(currentPath, (from: string) => {
+      currentNav.value = get({
+        from
+      })
+    })
+  })
 
   // Preview mode for navigation
   if (typeof window !== 'undefined') {
@@ -245,8 +252,6 @@ export const createDocusNavigation = async (context: Context) => {
   if (process.client) {
     window.onNuxtReady(($nuxt: NuxtApp) => $nuxt.$on('content:update', () => fetchNavigation(_locale)))
   }
-
-  await fetchNavigation(_locale)
 }
 
 /**

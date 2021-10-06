@@ -1,20 +1,15 @@
 import type { DocusDocument } from '@docus/core'
 import type { DefaultThemeConfig, DocusConfig, DocusState } from 'types'
-import { ssrRef, useContext as _useContext } from '@nuxtjs/composition-api'
+import { ssrRef } from '@nuxtjs/composition-api'
 import { Context } from '@nuxt/types'
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
-import { createDocusNavigation } from './navigation'
+import { createDocusNavigation, useNavigation } from './navigation'
 import { createDocusStyles } from './style'
 export { useNavigation } from './navigation'
 export { useStyles } from './style'
 
 // $content proxy
 let content: Context['$content']
-
-// Nuxt Context proxy
-let _context: Context
-// @ts-ignore
-export const useContext = process.server ? () => _context : (_useContext as () => Context)
 
 // Docus state
 const state = ssrRef<DocusState>(
@@ -41,15 +36,13 @@ const currentPage = ssrRef<DocusDocument | undefined>(undefined, 'docus-current-
  */
 export const createDocus = async (
   context: Context,
-  _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig }
+  _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig },
+  inject: (key: string, value: any) => void
 ) => {
   // Nuxt instance proxy
   let $nuxt: any
 
   const { $content, nuxtState = {} } = context
-
-  // Init context
-  _context = context
 
   // Detect preview mode
   state.value.preview = detectPreview(context)
@@ -72,14 +65,34 @@ export const createDocus = async (
     ...templateOptions
   }
 
-  // Create Docus navigation
-  await createDocusNavigation(context)
-
   // Create Docus styling
   createDocusStyles(context)
 
   // Workaround for async data
   clientAsyncData($nuxt)
+
+  // Create Docus navigation
+  createDocusNavigation(context)
+
+  // Create $docus
+  const $docus = {
+    state: useDocus(),
+    content: useContent(),
+    config: useConfig(),
+    theme: useTheme(),
+    layout: useLayout(),
+    page: usePage(),
+    navigation: useNavigation()
+  }
+
+  // Inject $docus inside app
+  inject('docus', $docus)
+
+  // Inject $docus into window
+  if (process.client) window.$docus = $docus
+
+  // Initialize navigation
+  await $docus.navigation.fetchNavigation()
 }
 
 // Default error message for Docus helpers.

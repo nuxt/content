@@ -2,7 +2,7 @@
 import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { createDocus } from '#docus'
 
-export default defineNuxtPlugin(async (ctx) => {
+export default defineNuxtPlugin(async (ctx, inject) => {
   let docusConfig = {}
   let themeConfig = {}
 
@@ -14,5 +14,5 @@ export default defineNuxtPlugin(async (ctx) => {
   themeConfig = (await import('#docus-cache/theme.config.json')).default
   <% } %>
 
-  await createDocus(ctx, { docusConfig, themeConfig })
+  await createDocus(ctx, { docusConfig, themeConfig }, inject)
 })
