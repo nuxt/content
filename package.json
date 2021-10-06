@@ -53,7 +53,7 @@
     "scule": "^0.2.1",
     "ufo": "^0.7.9",
     "unctx": "^1.0.2",
-    "unstorage": "^0.2.8",
+    "unstorage": "^0.2.9",
     "vue-docgen-api": "^4.41.2",
     "ws": "^8.2.3"
   },
@@ -79,8 +79,8 @@
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "latest",
-    "nuxt-edge": "^2.16.0-27223214.034b9901",
-    "playwright": "^1.15.1",
+    "nuxt-edge": "^2.16.0-27224655.034b9901",
+    "playwright": "^1.15.2",
     "prettier": "^2.4.1",
     "unbuild": "^0.5.6",
     "vue-jest": "^3.0.7"
