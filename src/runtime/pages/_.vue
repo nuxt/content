@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '@nuxtjs/composition-api'
-import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage } from '#docus'
+import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage, useTheme } from '#docus'
 
 export default defineComponent({
   name: 'PageSlug',
@@ -13,6 +13,7 @@ export default defineComponent({
 
   async asyncData({ app: { i18n, localePath }, route, params, error, redirect }) {
     const docus = useDocus()
+    const theme = useTheme()
     const $content = useContent()
     const navigation = useNavigation()
     const layout = useLayout()
@@ -21,6 +22,7 @@ export default defineComponent({
 
     // Init template options from Docus settings
     let templateOptions = {
+      ...(theme.value?.layout || {}),
       ...layout.value
     }
 
