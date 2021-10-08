@@ -1,35 +1,24 @@
-import type { DocusDocument } from '@docus/core'
-import type { DefaultThemeConfig, DocusConfig, DocusState } from 'types'
-import { ssrRef } from '@nuxtjs/composition-api'
+import type { DefaultThemeConfig, DocusConfig, DocusContext } from 'types'
 import { Context } from '@nuxt/types'
+// @ts-ignore
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
 import { createDocusNavigation, useNavigation } from './navigation'
 import { createDocusStyles } from './style'
+import { computed, reactive } from '#app'
 export { useNavigation } from './navigation'
 export { useStyles } from './style'
 
 // $content proxy
 let content: Context['$content']
 
-// Docus state
-const state = ssrRef<DocusState>(
-  {
+const docusState = reactive<DocusContext>({
+  config: {
     preview: false
   },
-  'docus-state'
-)
-
-// Docus config (from docus.config)
-const config = ssrRef<DocusConfig>({}, 'docus-settings')
-
-// Docus theme config (from docus.config > `theme`)
-const theme = ssrRef<DefaultThemeConfig>({}, 'docus-theme')
-
-// Docus layout config (cascade from docus.config > template options > page settings)
-const layout = ssrRef<{ [key: string]: any }>({}, 'docus-layout')
-
-// Current page data
-const currentPage = ssrRef<DocusDocument | undefined>(undefined, 'docus-current-page')
+  theme: {},
+  layout: {},
+  currentPage: undefined
+})
 
 /**
  * Create the $docus runtime injection instance.
@@ -44,9 +33,6 @@ export const createDocus = async (
 
   const { $content, nuxtState = {} } = context
 
-  // Detect preview mode
-  state.value.preview = detectPreview(context)
-
   // Set $content proxy
   content = $content
 
@@ -54,14 +40,17 @@ export const createDocus = async (
   const templateOptions = nuxtState.data?.[0].templateOptions || {}
 
   // Set Docus settings
-  config.value = { ..._config.docusConfig }
+  docusState.config = { ..._config.docusConfig }
+
+  // Detect preview mode
+  docusState.config.preview = detectPreview(context)
 
   // Set Docus theme
-  theme.value = { ..._config.themeConfig }
+  docusState.theme = { ..._config.themeConfig }
 
   // Init layout from settings and template options
-  layout.value = {
-    ...config.value.layout,
+  docusState.layout = {
+    ...(_config.themeConfig?.layout || {}),
     ...templateOptions
   }
 
@@ -98,54 +87,60 @@ export const createDocus = async (
 // Default error message for Docus helpers.
 const ERROR_MESSAGE = 'Docus not yet initialized! Docus helpers has to be used in a living Vue instance.'
 
+const createStateComputed = (key: keyof DocusContext) =>
+  computed({
+    get: () => docusState[key],
+    set: (newVal: any) => (docusState[key] = newVal)
+  })
+
 /**
  * Access the Docus state.
  */
 export const useDocus = () => {
-  if (!state) throw new Error(ERROR_MESSAGE)
+  if (!docusState) throw new Error(ERROR_MESSAGE)
 
-  return state
+  return docusState
 }
 
 /**
  * Access the content querying functions.
  */
 export const useContent = () => {
-  return state.value.preview ? (content as any).preview(normalizePreviewScope(state.value.preview)) : content
+  return docusState.config.preview
+    ? (content as any).preview(normalizePreviewScope(docusState.config.preview))
+    : content
 }
 
 /**
  * Access the config object.
  */
 export const useConfig = () => {
-  if (!config || !config.value) throw new Error(ERROR_MESSAGE)
+  if (!docusState.config) throw new Error(ERROR_MESSAGE)
 
-  return config
+  return createStateComputed('config')
 }
 
 /**
  * Access the theme config object.
  */
 export const useTheme = () => {
-  if (!theme || !theme.value) throw new Error(ERROR_MESSAGE)
+  if (!docusState.theme || !docusState.theme) throw new Error(ERROR_MESSAGE)
 
-  return theme
+  return createStateComputed('theme')
 }
 
 /**
  * Access the layout config object.
  */
 export const useLayout = () => {
-  if (!layout || !layout.value) throw new Error(ERROR_MESSAGE)
+  if (!docusState.layout) throw new Error(ERROR_MESSAGE)
 
-  return layout
+  return createStateComputed('layout')
 }
 
 /**
  * Access the current page object.
  */
 export const usePage = () => {
-  if (!currentPage) throw new Error(ERROR_MESSAGE)
-
-  return currentPage
+  return createStateComputed('currentPage')
 }

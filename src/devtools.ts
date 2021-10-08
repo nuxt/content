@@ -1,11 +1,10 @@
 /* WIP Devtools integration
 
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
-import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 
 const inspectorId = 'docus.inspector'
 
-export default defineNuxtPlugin(({ app }) => {
+export default ({ app }) => {
   if (process.client) {
     setupDevtoolsPlugin(
       {
@@ -26,5 +25,5 @@ export default defineNuxtPlugin(({ app }) => {
       }
     )
   }
-})
+}
 */

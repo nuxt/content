@@ -1,7 +1,7 @@
 <script>
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent } from '#app'
 import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage, useTheme } from '#docus'
 
 export default defineComponent({
@@ -30,7 +30,7 @@ export default defineComponent({
     let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
 
     // Replace URL if preview enabled
-    if (docus.value.preview) {
+    if (docus.config.preview) {
       // nuxt-i18n does not preserve encoded components in url so we need to decode preview prefix before replacing
       const prefix = decodeURIComponent(docus.value.preview)
       to = to.replace(new RegExp(`^/${prefix}`), '') || '/'
@@ -95,7 +95,7 @@ export default defineComponent({
       currentPage.value = page
 
       // Update navigation path to update currentNav
-      navigation.currentPath.value = `/${route.params.pathMatch}`
+      navigation.currentPath = `/${route.params.pathMatch}`
     }
 
     // Redirect to another page if `navigation.redirect` is declared
@@ -103,7 +103,7 @@ export default defineComponent({
       redirect(localePath(page.navigation.redirect))
     }
 
-    return { page, templateOptions, preview: docus.value.preview }
+    return { page, templateOptions, preview: docus.config.preview }
   },
 
   head() {
@@ -174,7 +174,7 @@ export default defineComponent({
       currentPage.value = this.page
 
       // Update navigation path to update currentNav
-      navigation.currentPath.value = `/${this.$route.params.pathMatch}`
+      navigation.currentPath = `/${this.$route.params.pathMatch}`
     }
   },
 

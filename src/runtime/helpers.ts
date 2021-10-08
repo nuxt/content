@@ -44,7 +44,7 @@ export const clientAsyncData = ($nuxt: any) => {
 
 const PREVIEW_PREFIX_REGEX = /\/(_preview\/[0-9a-zA-Z-_]+\/[0-9a-zA-Z-_%]+)/
 export const detectPreview = (context: Context) => {
-  const { $config, ssrContext, route } = context
+  const { /* $config, ssrContext, */ route } = context
 
   // Detect & prepare preview mode
   const path = joinURL((context.$config?._app as any)?.basePath || '', withLeadingSlash(route.path || '/'))
@@ -54,10 +54,10 @@ export const detectPreview = (context: Context) => {
   const basePath = preview ? `/${preview}/` : '/'
 
   // @ts-ignore
-  if ($config?._app?.basePath) $config._app.basePath = basePath
+  // if ($config?._app?.basePath) $config._app.basePath = basePath
 
   // @ts-ignore
-  if (ssrContext?.runtimeConfig?.public?._app?.basePath) ssrContext.runtimeConfig.public._app.basePath = basePath
+  // if (ssrContext?.runtimeConfig?.public?._app?.basePath) ssrContext.runtimeConfig.public._app.basePath = basePath
 
   return preview
 }

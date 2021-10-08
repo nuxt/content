@@ -21,6 +21,16 @@ export default defineNuxtConfig({
   meta: {},
 
   /**
+   * Bridge config
+   */
+  bridge: {
+    // Preserve old CompositionAPI until ssrRef can be replaced
+    // capi: false,
+    // Disable globalImports for now
+    globalImports: false
+  },
+
+  /**
    * Docus components
    */
   components: [

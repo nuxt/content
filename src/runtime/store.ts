@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import type { CombinedVueInstance } from 'vue/types/vue'
 import { Context } from '@nuxt/types'
-import { getCurrentInstance, Ref, ref } from '@nuxtjs/composition-api'
+import { getCurrentInstance, Ref, ref } from '#app'
 
 const createPlugin = <T = any>(key: string, defaultValue: T) => {
   const store = ref(defaultValue || {})
