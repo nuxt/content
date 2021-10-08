@@ -180,24 +180,26 @@ export default {
     document: {
       type: [Object, String],
       required: true
+    },
+    tag: {
+      type: String,
+      default: undefined
     }
   },
   render(h: CreateElement, { data, props, parent, _v }: RenderContext & { _v: any }) {
-    const { document } = props
+    const { tag, document } = props
+
+    // No content to render
+    if (!document) return
 
     // Render simple string
     if (typeof document === 'string') return _v(document)
 
     // Get body from Docus document
-    let { body } = (document || {}) as DocusDocument
+    let body = (document.body || document) as MDCNode
 
     // Look for ast object in the document
-    if (body && (body as any).ast) {
-      body = (body as any).ast
-    }
-
-    // No content nor childrens found
-    if (!body || !body.children || !Array.isArray(body.children)) return
+    body = (body as any).ast || body
 
     // Get element classes
     let classes = []
@@ -215,7 +217,7 @@ export default {
     data.props = Object.assign({ ...body.props }, data.props)
 
     // Process children nodes
-    const children = (body.children as MDCNode[]).map(child => processNode(child, h, document))
+    const children = (body.children || []).map(child => processNode(child, h, document))
 
     // If server side, add components into lazy components set
     if (process.server) {
@@ -225,11 +227,8 @@ export default {
       })
     }
 
-    // Detect root tag
-    const tag = (body as MDCNode).tag || 'div'
-
     // Return Docus page content
-    return h(tag, data, children)
+    return h(tag || body.tag || 'div', data, children)
   }
 }
 </script>
