@@ -21,14 +21,20 @@ const isIndex = (path: string) => path.endsWith('index.md')
  * @returns
  */
 function sortItems(keys: any[]) {
-  return [...keys].sort((a, b) => {
-    const isA = isIndex(a.id)
-    const isB = isIndex(b.id)
-    if (isA && isB) return a.id.length - b.id.length
-    if (isB) return 1
-    if (isA) return -1
-    return 0
-  })
+  return (
+    [...keys]
+      // Sort alphabetically to ensure even without ordering keys, the navigation always look the same.
+      .sort((a, b) => a.id.localeCompare(b.id))
+      // Put index.md at top
+      .sort((a, b) => {
+        const isA = isIndex(a.id)
+        const isB = isIndex(b.id)
+        if (isA && isB) return a.id.length - b.id.length
+        if (isB) return 1
+        if (isA) return -1
+        return 0
+      })
+  )
 }
 
 /**

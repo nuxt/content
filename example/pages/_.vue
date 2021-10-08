@@ -25,9 +25,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { withoutTrailingSlash, joinURL } from 'ufo'
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   name: 'PageSlug',
@@ -36,22 +36,26 @@ export default defineComponent({
     if (params.pathMatch === 'index') redirect(app.localePath('/'))
   },
 
-  async asyncData({ $content, params, error, ssrContext, $config }) {
+  async asyncData({ $content, params, error, $config }) {
     // const language = i18n.locale
 
     // Get the proper current path
-    let to = joinURL($config?._app?.basePath || '', withoutTrailingSlash(`/${params.pathMatch || ''}`)) || '/'
+    const to = joinURL($config?._app?.basePath || '', withoutTrailingSlash(`/${params.pathMatch || ''}`)) || '/'
 
     const preview = to.startsWith('/_preview')
+
+    // TODO: Fix this preview detection
+    /*
     if (preview) {
-      $config?._app?.basePath = '/_preview/'
-      ssrContext?.runtimeConfig?.public?._app?.basePath = '/_preview/'
+      $config._app.basePath = '/_preview/'
+      ssrContext.runtimeConfig.public._app.basePath = '/_preview/'
       to = to.replace(/^\/_preview/, '') || '/'
       $content = $content.preview()
     } else {
-      $config?._app?.basePath = '/'
-      ssrContext?.runtimeConfig?.public?._app?.basePath = '/'
+      $config.app.basePath = '/'
+      ssrContext.runtimeConfig.public._app.basePath = '/'
     }
+    */
 
     // TODO: Fix the draft system
     const draft = false
@@ -75,29 +79,45 @@ export default defineComponent({
     togglePreviewMode() {
       if (this.preview) {
         this.$router.replace(this.$route.fullPath.replace(/^\/_preview/, '') || '/')
-        this.$config?._app?.basePath = '/preview/'
+        // TODO: Fix this preview detection
+        // this.$config._app.basePath = '/preview/'
       } else {
-        this.$config?._app?.basePath = '/'
+        // TODO: Fix this preview detection
+        // this.$config._app.basePath = '/'
         this.$router.replace('/_preview' + this.$route.fullPath)
       }
     },
     async randomContent() {
       const id = parseInt(Math.random() * 10e4)
-      console.log('ID generated')
+
+      // eslint-disable-next-line no-console
+      console.log('Generated ID: ' + id)
+
       const $preview = this.$content.preview()
-      await $preview.setItem('content:random-conten-t' + id + '.md', `# Random Content #${id}
+      await $preview.setItem(
+        'content:random-content-' + id + '.md',
+        `# Random Content #${id}
 
         Hello 👋
 
-        I just got modified
+        I just got modified`
+      )
 
-    `)
-      console.log('Document Added')
+      // eslint-disable-next-line no-console
+      console.log('Document added!')
+
+      // eslint-disable-next-line no-console
       console.log('Fetching new navigation', this.preview)
+
       const $content = this.preview ? this.$content.preview() : this.$content
+
       const navigation = await $content.fetch('navigation')
+
+      // eslint-disable-next-line no-console
       console.log('Navigation loaded')
       this.navigation = navigation
+
+      // eslint-disable-next-line no-console
       console.log('Navigation updated')
     }
   }

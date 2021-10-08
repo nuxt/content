@@ -1,7 +1,7 @@
 import { resolve } from 'pathe'
-import { defineNuxtConfig } from '@nuxt/kit'
+import { defineNuxtConfig } from '@nuxt/bridge'
 
-export default defineNuxtConfig({
+const config = defineNuxtConfig({
   components: [
     {
       path: resolve(__dirname, 'components'),
@@ -10,9 +10,10 @@ export default defineNuxtConfig({
       level: 2
     }
   ],
-  buildModules: ['@nuxtjs/composition-api/module'],
   modules: ['../src'],
-  bridge: {
-    capi: false
+  build: {
+    transpile: ['@nuxt/bridge']
   }
 })
+
+export default config

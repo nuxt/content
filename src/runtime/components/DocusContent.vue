@@ -124,8 +124,9 @@ function processNode(node: MDCNode, h: CreateElement, doc: DocusDocument): VNode
   }
 
   // Add component name to lazyComponents set
-  if ((process as any).server && typeof Vue.component(pascalCase(node.tag)) === 'function')
+  if (process.server && typeof Vue.component(pascalCase(node.tag)) === 'function') {
     lazyComponents.add(pascalCase(node.tag))
+  }
 
   // Return VNode
   return h(node.tag, data, children)
@@ -217,7 +218,7 @@ export default {
     const children = (body.children as MDCNode[]).map(child => processNode(child, h, document))
 
     // If server side, add components into lazy components set
-    if ((process as any).server) {
+    if (process.server) {
       ;(parent.$root as any).context.beforeSerialize((nuxtState: any) => {
         if (nuxtState.fetch._lazyComponents) lazyComponents.forEach(name => nuxtState.fetch._lazyComponents.add(name))
         else nuxtState.fetch._lazyComponents = lazyComponents

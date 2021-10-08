@@ -4,7 +4,6 @@ import {
   resolveModule,
   addServerMiddleware,
   addPlugin,
-  installModule,
   useNuxt,
   addTemplate,
   extendWebpackConfig
@@ -25,6 +24,7 @@ export const resolveApiRoute = (route: string) => {
 }
 
 export default defineNuxtModule((nuxt: Nuxt) => ({
+  configKey: 'content',
   defaults: {
     apiBase: '_docus',
     watch: nuxt.options.dev,
@@ -32,8 +32,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       provider: 'lokijs'
     }
   },
-  configKey: 'content',
-  async setup(options: DocusOptions, nuxt: Nuxt) {
+  setup(options: DocusOptions, nuxt: Nuxt) {
     // Extend context
     const docusContext = defaultContext
 
@@ -61,7 +60,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     nuxt.options.alias['~docus/content'] = runtimeDir
     nuxt.options.alias['~docus/database'] = resolveRuntimeDir('database/providers', options.database.provider)
 
-    // Register api
+    // Register API
     nuxt.hook('nitro:context', (ctx: NitroContext) => {
       ctx.assets.dirs.content = {
         dir: resolve(nuxt.options.rootDir, 'content'),
@@ -72,6 +71,8 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         driver: 'memory'
       }
     })
+
+    // Add server routes for each content functions
     for (const api of ['get', 'list', 'search', 'navigation', 'preview']) {
       addServerMiddleware({
         route: resolveApiRoute(api),
@@ -150,8 +151,5 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         options: { paths }
       })
     })
-
-    // Install @nuxt/bridge
-    await installModule(nuxt, { src: resolveModule('@nuxt/bridge') })
   }
 }))

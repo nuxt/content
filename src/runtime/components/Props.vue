@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { computed, defineComponent } from '@nuxtjs/composition-api'
+import { computed, defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   props: {
