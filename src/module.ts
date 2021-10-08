@@ -131,25 +131,6 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         isAsync: false,
         level: 998
       })
-
-      const paths = []
-
-      // Update context: component dirs
-      paths.push(
-        ...dirs.map((dir: any) => {
-          if (typeof dir === 'string') return dir
-          if (typeof dir === 'object') return dir.path
-          return ''
-        })
-      )
-
-      // Push components directories paths into Markdown transformer
-      docusContext.transformers.markdown.components?.push({
-        name: 'props',
-        path: resolveModule('./transformers/markdown/loaders/props', { paths: runtimeDir }),
-        target: 'server',
-        options: { paths }
-      })
     })
   }
 }))

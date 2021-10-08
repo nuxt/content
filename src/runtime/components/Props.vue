@@ -16,11 +16,11 @@
           <ProseCodeInline>{{ prop.name }}</ProseCodeInline>
         </ProseTd>
         <ProseTd>
-          <ProseCodeInline>{{ prop.type && prop.type.name }}</ProseCodeInline>
+          <ProseCodeInline>{{ prop.type.join(' | ') }}</ProseCodeInline>
         </ProseTd>
         <ProseTd v-if="showRequired">{{ prop.required ? 'Yes' : 'No' }}</ProseTd>
         <ProseTd v-if="showDefault">
-          <ProseCodeInline v-if="prop.defaultValue">{{ prop.defaultValue && prop.defaultValue.value }}</ProseCodeInline>
+          <ProseCodeInline v-if="prop.default">{{ prop.default }}</ProseCodeInline>
         </ProseTd>
         <ProseTd v-if="showValues">
           <ProseCodeInline v-if="prop.values">{{
@@ -37,54 +37,53 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import { pascalCase } from 'scule'
 import { computed, defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   props: {
     of: {
       type: String,
-      default: undefined
+      required: true
     },
-    /**
-     * @ignore
-     */
-    data: {
-      type: Object,
-      default: () => ({})
-    },
-    /**
-     * Toggle required column.
-     */
     required: {
       type: Boolean,
-      default: undefined
+      default: undefined,
+      description: 'Toggle required column.'
     },
-    /**
-     * Toggle values column.
-     */
     values: {
       type: Boolean,
-      default: undefined
+      default: undefined,
+      description: 'Toggle values column.'
     },
-    /**
-     * Toggle description column.
-     */
     description: {
       type: Boolean,
-      default: undefined
+      default: undefined,
+      description: 'Toggle description column.'
     },
-    /**
-     * Toglle default column.
-     */
-    defaultValue: {
+    default: {
       type: Boolean,
-      default: undefined
+      default: undefined,
+      description: 'Toggle default column.'
     }
   },
   setup(props) {
-    const component = computed(() => props.data)
+    const component = computed(() => Vue.component(pascalCase(props.of)))
 
-    const properties = computed(() => component.value.props?.filter(prop => !prop.tags?.ignore))
+    const properties = computed(() =>
+      Object.entries(component.value.options.props)
+        .map(([name, prop]) => ({
+          name,
+          type: Array.isArray(prop.type) ? prop.type.map(type => type.name) : [prop.type.name],
+          default: prop.default && JSON.stringify(typeof prop.default === 'function' ? prop.default() : prop.default),
+          required: prop.required,
+          values: prop.values,
+          description: prop.description,
+          internal: prop.internal
+        }))
+        .filter(prop => prop.internal !== true)
+    )
 
     const showRequired = computed(() => {
       if (props.required !== undefined) {
@@ -111,11 +110,11 @@ export default defineComponent({
     })
 
     const showDefault = computed(() => {
-      if (props.defaultValue !== undefined) {
-        return props.defaultValue
+      if (props.default !== undefined) {
+        return props.default
       }
 
-      return properties.value?.find(prop => prop.defaultValue)
+      return properties.value?.find(prop => prop.default)
     })
 
     return {
