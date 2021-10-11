@@ -92,3 +92,10 @@ export interface DatabaseProvider {
   serialize(): Promise<any>
   load(serialized: any): void | Promise<void>
 }
+
+export interface DocusContent<T> {
+  search: (to?: string | SearchOptions, options?: SearchOptions) => QueryBuilder<T>
+  fetch: <T>(path: string, opts?: any) => Promise<T>
+  get: <T>(id: string) => Promise<T>
+  preview: (previewKey?: string) => this
+}
