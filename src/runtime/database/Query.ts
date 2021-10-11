@@ -3,7 +3,7 @@ import type { QueryBuilder, QueryBuilderParams } from 'types'
 /**
  * Abstract query builder class, to be implemented by any provider.
  */
-export abstract class BaseQueryBuiler<T> implements QueryBuilder<T> {
+export abstract class BaseQueryBuilder<T> implements QueryBuilder<T> {
   protected params: QueryBuilderParams = {
     skip: 0,
     limit: 0,

@@ -13,12 +13,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "types": [
-      "./types",
-      "node",
-      "jest",
-      "@nuxt/kit",
-      "@nuxt/nitro"
-    ]
+    "types": ["./types", "./shims", "node", "jest", "@nuxt/kit", "@nuxt/nitro"]
   }
 }

@@ -1,7 +1,7 @@
 import { apply, omit, pick } from '../../../utils/object'
-import { BaseQueryBuiler } from '../../Query'
+import { BaseQueryBuilder } from '../../Query'
 
-export default class LokiQuery<T> extends BaseQueryBuiler<T> {
+export default class LokiQuery<T> extends BaseQueryBuilder<T> {
   private base = ''
   private db: any
   private lokiQuery: any

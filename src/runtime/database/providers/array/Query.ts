@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { apply, omit, pick } from '../../../utils/object'
-import { BaseQueryBuiler } from '../../Query'
+import { BaseQueryBuilder } from '../../Query'
 
 const sorComparable = (key: string, direction: string | boolean) => (a: any, b: any) => {
   const values = [a, b]
@@ -34,7 +34,7 @@ function match(item: any, where: any) {
   })
 }
 
-export default class ArrayQuery<T> extends BaseQueryBuiler<T> {
+export default class ArrayQuery<T> extends BaseQueryBuilder<T> {
   items: any[] = []
   params: any = {}
 

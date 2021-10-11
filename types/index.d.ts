@@ -1,4 +1,4 @@
-import './shim'
+import '../shims'
 
 export * from '@docus/mdc'
 export * from './Database'
