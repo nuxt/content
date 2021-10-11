@@ -15,7 +15,7 @@ import type { DocusOptions } from 'types'
 import { defaultContext } from './context'
 import setupDevTarget from './module.dev'
 import { useNuxtIgnoreList } from './utils'
-import { resolveRuntimeDir, resolveTemplateDir, runtimeDir, templateDir } from './dirs'
+import { resolveComponentsDir, resolveRuntimeDir, resolveTemplateDir, runtimeDir, templateDir } from './dirs'
 
 export const resolveApiRoute = (route: string) => {
   const nuxt = useNuxt()
@@ -126,7 +126,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     nuxt.hook('components:dirs', dirs => {
       // Push local default Docus components
       dirs.push({
-        path: resolveRuntimeDir('components'),
+        path: resolveComponentsDir(),
         prefix: '',
         isAsync: false,
         level: 998

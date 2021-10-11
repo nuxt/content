@@ -19,7 +19,9 @@
   "types": "./types/index.d.ts",
   "files": [
     "dist",
-    "types",
+    "types.d.ts",
+    "shims.d.ts",
+    "components",
     "runtime.mjs",
     "runtime.cjs",
     "runtime.d.ts"

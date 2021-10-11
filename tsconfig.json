@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "strict": true,
     "target": "ESNext",
     "module": "ESNext",
@@ -13,6 +13,12 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "types": ["./types", "./shims", "node", "jest", "@nuxt/kit", "@nuxt/nitro"]
+    "types": ["./shims", "./types", "node", "jest", "@nuxt/kit", "@nuxt/nitro", "@nuxt/bridge"],
+    "paths": {
+      "#app": ["./node_modules/@nuxt/bridge/dist/runtime"]
+    }
+  },
+  "vueCompilerOptions": {
+    "experimentalCompatMode": 2
   }
 }

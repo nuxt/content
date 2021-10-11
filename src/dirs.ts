@@ -12,3 +12,6 @@ export const resolveRuntimeDir = _makeResolve(runtimeDir)
 
 export const templateDir = resolve(distDir, 'templates')
 export const resolveTemplateDir = _makeResolve(templateDir)
+
+export const componentsDir = resolve(distDir, '../app')
+export const resolveComponentsDir = _makeResolve(componentsDir)
