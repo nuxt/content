@@ -6,8 +6,9 @@ import type { NuxtApp } from '@nuxt/types/app'
 import type { DocusCurrentNav, DocusNavigationGetParameters } from 'types'
 import { Context } from '@nuxt/types'
 import { pascalCase } from './scule'
-import { useConfig, useContent } from './'
-import { reactive, computed, unref, watch, onGlobalSetup } from '#app'
+import { StateTypes, useConfig, useContent } from './'
+import { unref, useState } from '#app'
+import type { Ref } from '#app'
 
 // Locale proxy
 let _locale: string
@@ -21,24 +22,19 @@ export interface DocusNavigationContext {
   currentPath: string
 }
 
-// Init navigation state
-const state = reactive<DocusNavigationContext>({
-  navigation: {},
-  currentNav: {},
-  currentPath: ''
-})
-
 /**
  * Get navigation from Docus data
  */
 async function fetchNavigation(locale?: string) {
+  const navigation = useNavigationState()
+
   const content = useContent()
 
   const __locale = locale || _locale
 
-  const navigation = (await content.fetch('navigation/' + __locale)) as NavItem[]
+  const data = (await content.fetch('navigation/' + __locale)) as NavItem[]
 
-  state.navigation[__locale] = navigation
+  navigation.value[__locale] = data
 }
 
 /**
@@ -48,7 +44,9 @@ async function fetchNavigation(locale?: string) {
  * @param from A vue-router "to" valid path to start with: "/directory" will make my query start at from this directory.
  */
 function get({ depth, locale = _locale, from, all }: DocusNavigationGetParameters = {}) {
-  const nav = state.navigation[locale] || []
+  const navigation = useNavigationState()
+
+  const nav = navigation.value[locale] || []
 
   let items = nav
   let match: NavItem | undefined
@@ -137,10 +135,14 @@ function filterLinks(nodes: NavItem[], maxDepth: number, currentDepth: number) {
  * Check if a "to" path is the currently active path.
  */
 function isLinkActive(to: string) {
-  return withTrailingSlash(state.currentPath) === withTrailingSlash(_contentLocalePath(to))
+  const currenPath = useCurrentPath()
+
+  return withTrailingSlash(currenPath.value) === withTrailingSlash(_contentLocalePath(to))
 }
 
 function getPageTemplate(page: DocusDocument) {
+  const currentNav = useCurrentNav()
+
   const config = useConfig()
 
   let template =
@@ -156,7 +158,7 @@ function getPageTemplate(page: DocusDocument) {
     // Fetch from nav (root to link) and fallback to config.template
     const slugs: string[] = page.to.split('/').filter(Boolean).slice(0, -1) // no need to get latest slug since it is current page
 
-    let { links } = state.currentNav || {}
+    let { links } = currentNav.value || {}
 
     slugs.forEach((_slug: string, index: number) => {
       // generate full path of parent
@@ -194,24 +196,27 @@ function getPageTemplate(page: DocusDocument) {
 function getPreviousAndNextLink(page: DocusDocument) {
   const content = useContent()
 
-  return content
-    .search({ deep: true })
-    .where({
-      language: _locale,
-      // Pages should share same parent
-      parent: page.parent,
-      // Ignore empty index files
-      // Index files that hold no markdown content will not show in bottom navigation
-      page: { $ne: false },
-      // Only get pages that are not hidden. (navigation != false)
-      hidden: { $ne: true },
-      // Only get pages that are not redirected
-      redirect: { $type: 'undefined' }
-    })
-    .only(['title', 'slug', 'to'])
-    .sortBy('position', 'asc')
-    .surround(page.to, { before: 1, after: 1 })
-    .fetch()
+  return (
+    content
+      // @ts-ignore
+      .search({ deep: true })
+      .where({
+        language: _locale,
+        // Pages should share same parent
+        parent: page.parent,
+        // Ignore empty index files
+        // Index files that hold no markdown content will not show in bottom navigation
+        page: { $ne: false },
+        // Only get pages that are not hidden. (navigation != false)
+        hidden: { $ne: true },
+        // Only get pages that are not redirected
+        redirect: { $type: 'undefined' }
+      })
+      .only(['title', 'slug', 'to'])
+      .sortBy('position', 'asc')
+      .surround(page.to, { before: 1, after: 1 })
+      .fetch()
+  )
 }
 
 /**
@@ -225,14 +230,20 @@ export const createDocusNavigation = (context: Context) => {
 
   const _route = unref(route)
 
+  const docusNavigation = useState(StateTypes.Navigation) as Ref<{ [language: string]: NavItem[] }>
+
+  useState(StateTypes.CurrentNav) as Ref<DocusCurrentNav>
+
+  const docusCurrentPath = useState(StateTypes.CurrentPath) as Ref<string>
+
   // @ts-ignore
   _contentLocalePath = context.$contentLocalePath
 
   // Init currentPath
-  state.currentPath = `/${_route.params.pathMatch}`
+  docusCurrentPath.value = `/${_route.params.pathMatch}`
 
   // Map locales to nav
-  app.i18n.locales.forEach((locale: any) => (state.navigation[locale.code] = []))
+  app.i18n.locales.forEach((locale: any) => (docusNavigation.value[locale.code] = []))
 
   // Preview mode for navigation
   if (typeof window !== 'undefined') {
@@ -250,14 +261,9 @@ export const createDocusNavigation = (context: Context) => {
  */
 export const useNavigation = () => {
   return {
-    state: computed({
-      get: () => state.navigation,
-      set: (value: any) => (state.navigation = value)
-    }),
-    currentNav: computed({
-      get: () => state.currentNav,
-      set: (value: any) => (state.currentNav = value)
-    }),
+    state: useNavigationState(),
+    currentNav: useCurrentNav(),
+    currentPath: useCurrentPath(),
     getPageTemplate,
     fetchNavigation,
     isLinkActive,
@@ -265,5 +271,20 @@ export const useNavigation = () => {
     getPreviousAndNextLink
   }
 }
+
+/**
+ * Access the navigation state.
+ */
+export const useNavigationState = () => useState(StateTypes.Navigation)
+
+/**
+ * Access the current navigation.
+ */
+export const useCurrentNav = () => useState(StateTypes.CurrentNav)
+
+/**
+ * Access the current path.
+ */
+export const useCurrentPath = () => useState(StateTypes.CurrentPath)
 
 export type DocusNavigation = ReturnType<typeof useNavigation>

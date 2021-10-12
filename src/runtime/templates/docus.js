@@ -1,7 +1,8 @@
 // @ts-nocheck
+import { defineNuxtPlugin } from '#app'
 import { createDocus } from '#docus'
 
-export default async (ctx, inject) => {
+export default defineNuxtPlugin(async (ctx, inject) => {
   let docusConfig = {}
   let themeConfig = {}
 
@@ -14,4 +15,4 @@ export default async (ctx, inject) => {
   <% } %>
 
   await createDocus(ctx, { docusConfig, themeConfig }, inject)
-}
+})

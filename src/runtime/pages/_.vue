@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '#app'
@@ -121,7 +121,7 @@ export default defineComponent({
   computed: {
     pageMeta() {
       // Get site title from Docus settings
-      const { title: siteTitle } = useConfig()
+      const config = useConfig()
 
       return [
         // OpenGraph
@@ -132,7 +132,7 @@ export default defineComponent({
         {
           hid: 'apple-mobile-web-app-title',
           name: 'apple-mobile-web-app-title',
-          content: siteTitle || ''
+          content: config.value.title || ''
         },
         /// Page description
         ...(this.page.description

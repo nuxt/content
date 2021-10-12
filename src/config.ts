@@ -38,7 +38,9 @@ export const setupConfigModule = (nuxt: Nuxt) => {
   if (docusConfig && docusConfig.theme) setupThemeModule(nuxt)
 
   // Default title and description for pages
+  // @ts-ignore
   nuxt.options.meta.name = config.title
+  // @ts-ignore
   nuxt.options.meta.description = config.description
 
   // Write config json file

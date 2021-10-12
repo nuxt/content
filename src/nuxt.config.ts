@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     // Preserve old CompositionAPI until ssrRef can be replaced
     // capi: false,
     // Disable globalImports for now
-    globalImports: false
+    autoImports: false
   },
 
   /**
@@ -63,7 +63,8 @@ export default defineNuxtConfig({
    */
   buildModules: [
     // Dependencies
-    '@nuxtjs/pwa',
+    // '@nuxt/typescript-build',
+    // '@nuxtjs/pwa',
     '@nuxt/image',
     '@nuxt/postcss8',
     '@docus/core',

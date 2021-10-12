@@ -52,7 +52,7 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
   // Try to parse available locales from contentDir
   try {
     if (!nuxt.options.i18n?.locales?.length) {
-      const contentDir = resolve(nuxt.options.srcDir, settings?.contentDir)
+      const contentDir = resolve(nuxt.options.srcDir, settings?.contentDir || 'content')
       const languageCodes = languages.map(({ code }: { code: string }) => code)
       const activeLanguages = fs.readdirSync(contentDir).filter(name => languageCodes.includes(name))
       activeLanguages.unshift(config.defaultLocale)
