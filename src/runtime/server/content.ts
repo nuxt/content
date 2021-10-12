@@ -66,7 +66,7 @@ async function getKeys(id?: string, previewKey?: string) {
 
   // filter out ignored contents
   const context = useDocusContext()
-  keys = micromatch.not(keys, context!.ignoreList)
+  keys = micromatch.not(keys, context?.ignoreList || [])
 
   return keys
 }

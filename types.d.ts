@@ -102,15 +102,15 @@ export interface QueryBuilderParams {
 }
 
 export interface SearchOptions {
-  sortBy: string[]
-  skip: number
-  limit: number
-  only: string[] | string
-  without: string[] | string
-  where: any
-  surround: string[]
-  deep: boolean
-  text: boolean
+  sortBy?: string[]
+  skip?: number
+  limit?: number
+  only?: string[] | string
+  without?: string[] | string
+  where?: any
+  surround?: string[]
+  deep?: boolean
+  text?: boolean
 }
 
 export interface DatabaseProvider {
