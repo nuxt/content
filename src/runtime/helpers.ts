@@ -51,7 +51,7 @@ export const detectPreview = (context: Context) => {
 
   const preview = path.match(PREVIEW_PREFIX_REGEX)?.[1] || false
 
-  const basePath = preview ? `/${preview}/` : '/'
+  // const basePath = preview ? `/${preview}/` : '/'
 
   // @ts-ignore
   // if ($config?._app?.basePath) $config._app.basePath = basePath

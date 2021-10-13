@@ -2,7 +2,6 @@
 import Vue from 'vue'
 import { withoutTrailingSlash } from 'ufo'
 import { defineComponent } from '#app'
-import { useContent, useDocus, useConfig, useNavigation, useLayout, usePage, useTheme } from '#docus'
 
 export default defineComponent({
   name: 'PageSlug',
@@ -11,14 +10,22 @@ export default defineComponent({
     if (params.pathMatch === 'index') redirect(app.localePath('/'))
   },
 
-  async asyncData({ app: { i18n, localePath }, route, params, error, redirect }) {
-    const docus = useDocus()
-    const theme = useTheme()
-    const $content = useContent()
-    const navigation = useNavigation()
-    const layout = useLayout()
-    const currentPage = usePage()
+  async asyncData(context) {
+    const {
+      app: { i18n, localePath },
+      route,
+      params,
+      error,
+      redirect,
+      $docus,
+      $content
+    } = context
+
+    // Assign currnet locale
     const language = i18n.locale
+
+    // Get Docus instance via Context
+    const { config, theme, navigation, layout, page: currentPage } = $docus
 
     // Init template options from Docus settings
     let templateOptions = {
@@ -30,9 +37,9 @@ export default defineComponent({
     let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
 
     // Replace URL if preview enabled
-    if (docus.config.preview) {
+    if (config.value.preview) {
       // nuxt-i18n does not preserve encoded components in url so we need to decode preview prefix before replacing
-      const prefix = decodeURIComponent(docus.value.preview)
+      const prefix = decodeURIComponent(config.value.preview)
       to = to.replace(new RegExp(`^/${prefix}`), '') || '/'
     }
 
@@ -103,7 +110,7 @@ export default defineComponent({
       redirect(localePath(page.navigation.redirect))
     }
 
-    return { page, templateOptions, preview: docus.config.preview }
+    return { page, templateOptions, preview: config.value.preview }
   },
 
   head() {
@@ -119,9 +126,12 @@ export default defineComponent({
   },
 
   computed: {
+    currentPath() {
+      return this.$docus.navigation.currentPath.value
+    },
     pageMeta() {
       // Get site title from Docus settings
-      const config = useConfig()
+      const config = this.$docus.config.value
 
       return [
         // OpenGraph
@@ -132,7 +142,7 @@ export default defineComponent({
         {
           hid: 'apple-mobile-web-app-title',
           name: 'apple-mobile-web-app-title',
-          content: config.value.title || ''
+          content: config.title || ''
         },
         /// Page description
         ...(this.page.description
@@ -161,25 +171,32 @@ export default defineComponent({
     }
   },
 
+  watch: {
+    currentPath: {
+      handler() {
+        this.$docus.navigation.updateCurrentNav()
+      }
+    }
+  },
+
   created() {
     if (process.client) {
-      const layout = useLayout()
-      const currentPage = usePage()
-      const navigation = useNavigation()
+      const { layout, page, navigation } = this.$docus
 
       // Set template options
       layout.value = this.templateOptions
 
       // Set Docus runtime current page
-      currentPage.value = this.page
+      page.value = this.page
 
       // Update navigation path to update currentNav
-      navigation.currentPath = `/${this.$route.params.pathMatch}`
+      navigation.currentPath.value = `/${this.$route.params.pathMatch}`
     }
   },
 
   mounted() {
     this.$nuxt.$on('docus:content:preview', this.updatePage)
+
     // This will use to show new bullet in aside navigation
     if (this.page?.version) localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
   },
@@ -191,7 +208,7 @@ export default defineComponent({
   methods: {
     async updatePage({ key }) {
       if (key === this.page?.key) {
-        const $content = useContent()
+        const $content = this.$content
         const updatedPage = await $content.get(this.page.key)
         Object.assign(this.page, updatedPage)
       }

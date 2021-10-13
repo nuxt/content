@@ -1,18 +1,19 @@
 // @ts-nocheck
-import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin } from '#app'
 import { createDocus } from '#docus'
+import docusConfig from '#docus-cache/docus.config.json'
+import themeConfig from '#docus-cache/theme.config.json'
 
-export default defineNuxtPlugin(async (ctx, inject) => {
-  let docusConfig = {}
-  let themeConfig = {}
+export default defineNuxtPlugin(async nuxt => {
+  const { $docus, init } = createDocus(nuxt, { docusConfig, themeConfig })
 
-  <% if (options.hasDocusConfig) { %>
-  docusConfig = (await import('#docus-cache/docus.config.json')).default
-  <% } %>
+  nuxt.provide('docus', $docus)
+  nuxt.provide('navigation', $docus.navigation)
 
-  <% if (options.hasThemeConfig) { %>
-  themeConfig = (await import('#docus-cache/theme.config.json')).default
-  <% } %>
+  if (process.client) {
+    window.$docus = $docus
+    window.$navigation = $docus.navigation
+  }
 
-  await createDocus(ctx, { docusConfig, themeConfig }, inject)
+  await init()
 })

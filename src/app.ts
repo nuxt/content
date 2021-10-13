@@ -96,11 +96,6 @@ export const setupAppModule = (nuxt: Nuxt) => {
     }
   )
 
-  // Inject store plugins
-  addPluginTemplate({
-    src: resolveTemplateDir('store.js')
-  })
-
   // TODO: Remove when adding bridge
   nuxt.hook('webpack:config', configs => {
     for (const config of configs.filter(c => c.module)) {

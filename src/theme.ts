@@ -27,7 +27,10 @@ export const setupThemeModule = (nuxt: Nuxt) => {
   nuxt.hook('modules:done', async () => await writeConfig(fileName, cacheDir, config))
 
   // Add badge
-  nuxt.options.cli.badgeMessages.push('', chalk.bold('💄 Theme: ') + chalk.underline.yellow(nuxt.options.themeName))
+  nuxt.options.cli.badgeMessages.push(
+    '',
+    chalk.bold('💄 Theme: ') + chalk.underline.yellow(nuxt.options.themeName || 'Blank')
+  )
 
   // Watch config
   nuxt.options.watch.push(configPath)

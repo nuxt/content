@@ -8,7 +8,6 @@ export default defineNuxtModule({
   async setup(_moduleOptions: any, nuxt: Nuxt) {
     setupAppModule(nuxt)
 
-    // Also sets up theme
     setupConfigModule(nuxt)
 
     await setupI18nModule(nuxt)
