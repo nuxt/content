@@ -48,6 +48,7 @@
     "lokijs": "^1.5.12",
     "micromatch": "^4.0.4",
     "node-fetch": "^2.6.5",
+    "nuxt-component-meta": "^0.0.3",
     "object-hash": "^2.2.0",
     "pathe": "^0.2.0",
     "property-information": "6.0.1",

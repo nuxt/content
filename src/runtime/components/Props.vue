@@ -37,9 +37,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import { pascalCase } from 'scule'
 import { computed, defineComponent } from '@vue/composition-api'
+import { getComponent } from 'nuxt-component-meta'
 
 export default defineComponent({
   props: {
@@ -69,14 +68,14 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const component = computed(() => Vue.component(pascalCase(props.of)))
+    const component = computed(() => getComponent(props.of))
 
     const properties = computed(() =>
-      Object.entries(component.value.options.props)
-        .map(([name, prop]) => ({
-          name,
-          type: Array.isArray(prop.type) ? prop.type.map(type => type.name) : [prop.type.name],
-          default: prop.default && JSON.stringify(typeof prop.default === 'function' ? prop.default() : prop.default),
+      component.value.props
+        .map(prop => ({
+          name: prop.name,
+          type: prop.type,
+          default: prop.default,
           required: prop.required,
           values: prop.values,
           description: prop.description,

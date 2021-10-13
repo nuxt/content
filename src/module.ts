@@ -6,7 +6,8 @@ import {
   addPlugin,
   useNuxt,
   addTemplate,
-  extendWebpackConfig
+  extendWebpackConfig,
+  installModule
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/kit'
 import type { NitroContext } from '@nuxt/nitro'
@@ -32,7 +33,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
       provider: 'lokijs'
     }
   },
-  setup(options: DocusOptions, nuxt: Nuxt) {
+  async setup(options: DocusOptions, nuxt: Nuxt) {
     // Extend context
     const docusContext = defaultContext
 
@@ -54,7 +55,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     })
 
     // Transpile dependencies
-    nuxt.options.build.transpile.push('property-information')
+    nuxt.options.build.transpile.push('property-information', 'nuxt-component-meta')
 
     // Setup runtime alias
     nuxt.options.alias['~docus/content'] = runtimeDir
@@ -131,6 +132,10 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         isAsync: false,
         level: 998
       })
+    })
+
+    await installModule(nuxt, {
+      src: 'nuxt-component-meta/module'
     })
   }
 }))
