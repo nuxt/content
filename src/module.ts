@@ -83,7 +83,9 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     // Set publicRuntimeConfig $docus key
     ;(nuxt.options.publicRuntimeConfig as any).$docus = {
-      apiBase: options.apiBase
+      apiBase: options.apiBase,
+      // `tagMap` will use in `<Makdown>` to unwrap tags
+      tagMap: docusContext.transformers.markdown.tagMap
     }
 
     // Add Docus runtime plugin

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { flatUnwrap, unwrap, isTag } from '@docus/mdc/utils'
+import { flatUnwrap, unwrap, isTag, expandTags } from '@docus/mdc/utils'
 
 /**
  * Markdown component
@@ -43,7 +43,7 @@ export default {
     // Unwrap tags
     if (node && ctx.props.unwrap) {
       // Split tags from string prop
-      const tags = ctx.props.unwrap.split(/[,\s]/)
+      const tags = expandTags(ctx.props.unwrap.split(/[,\s]/), ctx.parent.$config.$docus.tagMap)
 
       // Get first tag from node
       const first = Array.isArray(node) && node[0]
