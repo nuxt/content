@@ -83,7 +83,7 @@
     "nuxt-edge": "^2.16.0-27226092.034b9901",
     "playwright": "^1.15.2",
     "prettier": "^2.4.1",
-    "unbuild": "^0.5.6",
+    "unbuild": "^0.5.7",
     "vue-jest": "^3.0.7"
   }
 }
