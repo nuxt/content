@@ -252,4 +252,4 @@ Since **v1.4.0**, this endpoint also supports `where` in query params:
 
 `http://localhost:3000/_content/products?categories.slug_contains=top`
 
-> You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/master/lib/middleware.js).
+> You can learn more about that endpoint in [lib/middleware.js](https://github.com/nuxt/content/blob/main/packages/content/lib/middleware.js).
