@@ -42,6 +42,7 @@
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "consola": "^2.15.3",
+    "core-js": "3",
     "debounce": "^1.2.1",
     "defu": "^5.0.0",
     "h3": "^0.3.3",
