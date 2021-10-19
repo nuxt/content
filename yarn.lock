@@ -7014,6 +7014,11 @@ h3@^0.3.1:
   resolved "https://registry.yarnpkg.com/h3/-/h3-0.3.1.tgz#37cd5ff211c8019128c0655b73169e9d1629b935"
   integrity sha512-5YSJxxz5b3EfbXP02UE8hwUD4icC+7iJ/Yr0Zhipa2s/D01lOWfgDzt6yiauMohY7P/TR7R8MX3Y7I6vtlWBBA==
 
+h3@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/h3/-/h3-0.3.3.tgz#9c6feb2ddf842ea5448c53a8bc8bc3a686799c21"
+  integrity sha512-ammvVddtZArv6pnCkl0tEekY8owWPZNZCW4teePYzGwfN2w7kb0wnraLIFnB20mqUU2kCAV5bvI+2mjmGztS3w==
+
 hable@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/hable/-/hable-3.0.0.tgz#6de089b2df946635cf8134b9e4859f1b62de255f"
