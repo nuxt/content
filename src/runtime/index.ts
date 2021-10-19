@@ -1,11 +1,9 @@
 import type { DefaultThemeConfig, DocusConfig } from 'types'
 import type { DocusContent, DocusDocument } from '@docus/core'
-import type { NuxtApp } from '@nuxt/kit'
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
 import { createDocusNavigation, useNavigation } from './navigation'
 import { createDocusStyles } from './style'
-import type { Ref } from '#app'
-import { useState } from '#app'
+import { NuxtAppCompat, Ref, useNuxtApp, useState } from '#app'
 export { useNavigation } from './navigation'
 export { useStyles } from './style'
 
@@ -21,53 +19,50 @@ export enum StateTypes {
   CurrentLocale = 'docus-current-locale'
 }
 
-// Content proxy for useDocus composable
-let content: DocusContent<any>
-
 /**
  * Create the $docus runtime injection instance.
  */
-export const createDocus = (nuxt: NuxtApp, _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig }) => {
-  // @ts-ignore - Get context
-  const { nuxtState = {}, legacyNuxt: $nuxt } = nuxt
-  const { context, $content } = $nuxt
-  content = $content
+export const createDocus = (
+  nuxtApp: NuxtAppCompat,
+  _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig }
+) => {
+  // TODO: Do not depend on nuxt2 legacy context and use nuxtApp inteface everywhere without destructure
+  const $nuxt = (nuxtApp.nuxt2Context as any).app
 
   // Docus config
   const docusConfig = useState(StateTypes.Config, () => ({
     ..._config.docusConfig,
-    preview: detectPreview(context)
+    preview: detectPreview($nuxt.context)
   })) as Ref<DocusConfig>
 
   // Docus Theme config
   const docusTheme = useState(StateTypes.Theme, () => ({ ..._config.themeConfig })) as Ref<DefaultThemeConfig>
 
   // Docus layout
-  const docusLayout = useState(StateTypes.Layout, () => ({
-    ...(_config.themeConfig?.layout || {}),
-    ...(nuxtState.data?.[0].templateOptions || {})
-  })) as Ref<DefaultThemeConfig['layout']>
+  const docusLayout = useState(StateTypes.Layout, () => _config.themeConfig?.layout || {}) as Ref<
+    DefaultThemeConfig['layout']
+  >
 
   // Docus current page (initialized in _.vue > asyncData)
   const docusCurrentPage = useState(StateTypes.CurrentPage) as Ref<DocusDocument>
 
   // Docus current locale
-  const docusCurrentLocale = useState(StateTypes.CurrentLocale, () => context.app.i18n.locale) as Ref<string>
+  const docusCurrentLocale = useState(StateTypes.CurrentLocale, () => $nuxt.context.app.i18n.locale) as Ref<string>
 
   // Create Docus styling
-  createDocusStyles(context)
+  createDocusStyles($nuxt.context)
 
   // Workaround for async data
   clientAsyncData($nuxt)
 
   // Create Docus navigation
-  createDocusNavigation(context, docusConfig, $content, docusCurrentLocale)
+  createDocusNavigation($nuxt.context, docusConfig, $nuxt.$content, docusCurrentLocale)
 
   // Create $docus
   const $docus = {
     currentLocale: docusCurrentLocale,
     config: docusConfig,
-    content: $content,
+    content: $nuxt.$content,
     theme: docusTheme,
     layout: docusLayout,
     page: docusCurrentPage,
@@ -87,7 +82,7 @@ export const createDocus = (nuxt: NuxtApp, _config: { docusConfig: DocusConfig; 
  * Access the Docus runtime API.
  */
 export const useDocus = () => ({
-  content,
+  content: useNuxtApp().vue2App.$content as DocusContent<any>,
   currentLocale: useState(StateTypes.CurrentLocale) as Ref<string>,
   config: useState(StateTypes.Config) as Ref<DocusConfig>,
   theme: useState(StateTypes.Theme) as Ref<DefaultThemeConfig>,
@@ -100,9 +95,11 @@ export const useDocus = () => ({
  * Access the content querying functions.
  */
 export const useContent = () => {
+  const $content = useNuxtApp().vue2App.$content as DocusContent<any>
+
   const preview = (useState(StateTypes.Config) as Ref<DocusConfig>).value.preview || false
 
-  return preview ? content.preview(normalizePreviewScope(preview)) : content
+  return preview ? $content.preview(normalizePreviewScope(preview)) : $content
 }
 
 /**
