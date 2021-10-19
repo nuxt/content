@@ -17,8 +17,7 @@ export default defineComponent({
       params,
       error,
       redirect,
-      $docus,
-      $content
+      $docus
     } = context
 
     // Assign currnet locale
@@ -37,20 +36,13 @@ export default defineComponent({
     }
 
     // Get the proper current path
-    let to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
-
-    // Replace URL if preview enabled
-    if (config.value.preview) {
-      // nuxt-i18n does not preserve encoded components in url so we need to decode preview prefix before replacing
-      const prefix = decodeURIComponent(config.value.preview)
-      to = to.replace(new RegExp(`^/${prefix}`), '') || '/'
-    }
+    const to = withoutTrailingSlash(`/${params.pathMatch || ''}`) || '/'
 
     // TODO: Implement the draft system
     const draft = false
 
     // Page query
-    const [match] = await $content
+    const [match] = await $docus.content
       .search({ deep: true })
       .where({ language, to, draft, page: { $ne: false } })
       .fetch()
@@ -59,7 +51,7 @@ export default defineComponent({
     if (!match) return error({ statusCode: 404, message: '404 - Page not found' })
 
     // Get page data
-    const page = await $content.get(match.id)
+    const page = await $docus.content.get(match.id)
 
     // Get page template
     page.template = navigation.getPageTemplate(page)
@@ -198,20 +190,20 @@ export default defineComponent({
   },
 
   mounted() {
-    this.$nuxt.$on('docus:content:preview', this.updatePage)
+    window.$nuxt.$on('docus:content:preview', this.updatePage)
 
     // This will use to show new bullet in aside navigation
     if (this.page?.version) localStorage.setItem(`page-${this.page.slug}-version`, this.page.version)
   },
 
   unmounted() {
-    this.$nuxt.$off('docus:content:preview', this.updatePage)
+    window.$nuxt.$off('docus:content:preview', this.updatePage)
   },
 
   methods: {
     async updatePage({ key }) {
       if (key === this.page?.key) {
-        const $content = this.$content
+        const $content = this.$docus.content
         const updatedPage = await $content.get(this.page.key)
         Object.assign(this.page, updatedPage)
       }
