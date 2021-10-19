@@ -67,9 +67,11 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
         dir: resolve(nuxt.options.rootDir, 'content'),
         meta: true
       }
-
-      ctx.storage.mounts.preview = {
-        driver: 'memory'
+      // Set preview storage as memory if not set
+      if (!ctx.storage.mounts.preview) {
+        ctx.storage.mounts.preview = {
+          driver: 'memory'
+        }
       }
     })
 
