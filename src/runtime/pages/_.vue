@@ -27,9 +27,12 @@ export default defineComponent({
     // Get Docus instance via Context
     const { config, theme, navigation, layout, page: currentPage } = $docus
 
+    // Get the theme layout value
+    const themeLayout = theme.value?.layout || {}
+
     // Init template options from Docus settings
     let templateOptions = {
-      ...(theme.value?.layout || {}),
+      ...themeLayout,
       ...layout.value
     }
 
@@ -78,16 +81,18 @@ export default defineComponent({
         component = new component({ props: { page } })
       }
 
-      // Set layout defaults for this template
-      if (component.templateOptions || component.$options?.templateOptions) {
-        templateOptions = { ...templateOptions, ...(component.templateOptions || component.$options?.templateOptions) }
-      }
+      const componentTemplateOptions =
+        component.options.templateOptions ||
+        component.extendOptions.templateOptions ||
+        component.sealedOptions.templateOptions ||
+        {}
+
+      // Merge current layout defaults with component template options
+      if (templateOptions) templateOptions = { ...templateOptions, ...componentTemplateOptions }
     }
 
     // Set layout from page
-    if (match.layout) {
-      templateOptions = { ...templateOptions, ...match.layout }
-    }
+    if (match.layout) templateOptions = { ...templateOptions, ...match.layout }
 
     /**
      * It is important to update layout only in server side.
@@ -106,9 +111,7 @@ export default defineComponent({
     }
 
     // Redirect to another page if `navigation.redirect` is declared
-    if (page.navigation && page.navigation.redirect) {
-      redirect(localePath(page.navigation.redirect))
-    }
+    if (page.navigation && page.navigation.redirect) redirect(localePath(page.navigation.redirect))
 
     return { page, templateOptions, preview: config.value.preview }
   },
