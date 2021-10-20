@@ -83,6 +83,9 @@ export default defineNuxtConfig({
     routes: ['/']
   },
   nitro: {
+    experiments: {
+      wasm: true
+    },
     externals:
       // Bundle everything when using CloudFlare
       process.env.NITRO_PRESET === 'cloudflare'
