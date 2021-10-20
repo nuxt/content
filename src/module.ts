@@ -122,6 +122,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     }
 
     // Call docus:context hook
+    // @ts-ignore
     nuxt.hook('modules:done', () => nuxt.callHook('docus:context', docusContext))
 
     /**
