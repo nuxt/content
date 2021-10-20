@@ -88,7 +88,7 @@ export default defineNuxtConfig({
       process.env.NITRO_PRESET === 'cloudflare'
         ? false
         : {
-            inline: ['@docus/core', 'ohmyfetch', 'property-information'],
+            inline: ['@docus/core', 'ohmyfetch', 'property-information', '@docus/mdc'],
             external: [
               'vue-docgen-api',
               '@nuxt/kit',
