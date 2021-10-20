@@ -987,10 +987,10 @@
   resolved "https://registry.npmjs.org/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@docus/mdc@npm:@docus/mdc-edge":
-  version "0.1.0-27245643.30c8a7c"
-  resolved "https://registry.npmjs.org/@docus/mdc-edge/-/mdc-edge-0.1.0-27245643.30c8a7c.tgz#390e5a77d478ea28637666df7e7fd01e5587fb9c"
-  integrity sha512-6cSAr+pCz7i6woMfngDd03YhSJzeHDbW4GMafbt9uizKqduXQXrjQ/6Kp5PXjEU20p1NXUe0bOtvyBqQCvAzFg==
+"@docus/mdc@npm:@docus/mdc-edge@0.1.0-27223896.f25079f":
+  version "0.1.0-27223896.f25079f"
+  resolved "https://registry.npmjs.org/@docus/mdc-edge/-/mdc-edge-0.1.0-27223896.f25079f.tgz#cac104cb20f92b3ceb9a6953010a3801dd51f02e"
+  integrity sha512-RWLXzzr4rcEaa2otLQ7RMzsEVtmpBx9Cwjay4J9P/UiUSCjIHrKxv19M1QAjiLq9kBkpnTOkq5dP5Oq0Gq49Eg==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     defu "^5.0.0"
@@ -998,10 +998,10 @@
     escape-html "^1.0.3"
     flat "^5.0.2"
     gray-matter "^4.0.3"
-    hast-util-to-string "^2.0.0"
     html-tags "^3.1.0"
     mdast-util-to-hast "^11.3.0"
     mdurl "^1.0.1"
+    prismjs "^1.25.0"
     rehype-raw "^6.1.0"
     rehype-sort-attribute-values "^4.0.0"
     rehype-sort-attributes "^4.0.0"
@@ -1015,7 +1015,6 @@
     remark-slug "^7.0.0"
     remark-squeeze-paragraphs "^5.0.0"
     scule "^0.2.1"
-    shiki "^0.9.10"
     unified "^10.1.0"
     unist-builder "^3.0.0"
     unist-util-position "^4.0.1"
@@ -6982,13 +6981,6 @@ hast-util-to-parse5@^7.0.0:
     web-namespaces "^2.0.0"
     zwitch "^2.0.0"
 
-hast-util-to-string@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/hast-util-to-string/-/hast-util-to-string-2.0.0.tgz#b008b0a4ea472bf34dd390b7eea1018726ae152a"
-  integrity sha512-02AQ3vLhuH3FisaMM+i/9sm4OXGSq1UhOOCpTLLQtHdL3tZt7qil69r8M8iDkZYyC0HCFylcYoP+8IO7ddta1A==
-  dependencies:
-    "@types/hast" "^2.0.0"
-
 hastscript@^7.0.0:
   version "7.0.2"
   resolved "https://registry.npmjs.org/hastscript/-/hastscript-7.0.2.tgz#d811fc040817d91923448a28156463b2e40d590a"
@@ -10096,13 +10088,6 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onigasm@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/onigasm/-/onigasm-2.2.5.tgz#cc4d2a79a0fa0b64caec1f4c7ea367585a676892"
-  integrity sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==
-  dependencies:
-    lru-cache "^5.1.1"
-
 open@^8.0.5:
   version "8.3.0"
   resolved "https://registry.npmjs.org/open/-/open-8.3.0.tgz#fdef1cdfe405e60dec8ebd18889e7e812f39c59f"
@@ -11357,6 +11342,11 @@ printj@~1.1.0:
   resolved "https://registry.npmjs.org/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"
   integrity sha512-zA2SmoLaxZyArQTOPj5LXecR+RagfPSU5Kw1qP+jkWeNlrq+eJZyY2oS68SU1Z/7/myXM4lo9716laOFAVStCQ==
 
+prismjs@^1.25.0:
+  version "1.25.0"
+  resolved "https://registry.npmjs.org/prismjs/-/prismjs-1.25.0.tgz#6f822df1bdad965734b310b315a23315cf999756"
+  integrity sha512-WCjJHl1KEWbnkQom1+SzftbtXMKQoezOCYs5rECqMN+jP+apI7ftoflyqigqzopSO3hMhTEb0mFClA8lkolgEg==
+
 private@^0.1.6, private@^0.1.8:
   version "0.1.8"
   resolved "https://registry.npmjs.org/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
@@ -12509,15 +12499,6 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.npmjs.org/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
-
-shiki@^0.9.10:
-  version "0.9.12"
-  resolved "https://registry.npmjs.org/shiki/-/shiki-0.9.12.tgz#70cbc8c1bb78ff7b356f84a7eecdb040efddd247"
-  integrity sha512-VXcROdldv0/Qu0w2XvzU4IrvTeBNs/Kj/FCmtcEXGz7Tic/veQzliJj6tEiAgoKianhQstpYmbPDStHU5Opqcw==
-  dependencies:
-    jsonc-parser "^3.0.0"
-    onigasm "^2.2.5"
-    vscode-textmate "5.2.0"
 
 side-channel@^1.0.4:
   version "1.0.4"
@@ -13966,11 +13947,6 @@ void-elements@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/void-elements/-/void-elements-3.1.0.tgz#614f7fbf8d801f0bb5f0661f5b2f5785750e4f09"
   integrity sha1-YU9/v42AHwu18GYfWy9XhXUOTwk=
-
-vscode-textmate@5.2.0:
-  version "5.2.0"
-  resolved "https://registry.npmjs.org/vscode-textmate/-/vscode-textmate-5.2.0.tgz#01f01760a391e8222fe4f33fbccbd1ad71aed74e"
-  integrity sha512-Uw5ooOQxRASHgu6C7GVvUxisKXfSgW4oFlO+aa+PAkgmH89O3CXxEEzNRNtHSqtXFTl0nAC1uYj0GMSH27uwtQ==
 
 vue-bundle-renderer@^0.3.2:
   version "0.3.2"
