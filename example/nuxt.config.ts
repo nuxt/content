@@ -13,6 +13,14 @@ const config = defineNuxtConfig({
   modules: ['../src'],
   build: {
     transpile: ['@nuxt/bridge']
+  },
+  nitro: {
+    externals: {
+      inline: ['@docus/mdc']
+    },
+    experiments: {
+      wasm: true
+    }
   }
 })
 
