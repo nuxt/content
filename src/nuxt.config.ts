@@ -74,7 +74,7 @@ export default defineNuxtConfig({
   /**
    * Build configs
    */
-  target: 'static',
+  target: 'server',
   server: {
     port: parseInt(process.env.PORT || '4000', 10)
   },
@@ -83,23 +83,27 @@ export default defineNuxtConfig({
     routes: ['/']
   },
   nitro: {
-    inlineDynamicImports: true,
-    externals: {
-      inline: ['@docus/core', 'ohmyfetch', 'property-information'],
-      external: [
-        'vue-docgen-api',
-        '@nuxt/kit',
-        '@nuxt/image',
-        '@nuxtjs/i18n',
-        'vue-meta',
-        'vue-router',
-        'vue-i18n',
-        'ufo',
-        'vue-client-only',
-        'vue-no-ssr',
-        'ohmyfetch'
-      ]
-    }
+    externals:
+      // Bundle everything when using CloudFlare
+      process.env.NITRO_PRESET === 'cloudflare'
+        ? false
+        : {
+            inline: ['@docus/core', 'ohmyfetch', 'property-information'],
+            external: [
+              'vue-docgen-api',
+              '@nuxt/kit',
+              '@nuxt/image',
+              '@nuxtjs/i18n',
+              'vue-meta',
+              'vue-router',
+              'vue-i18n',
+              'ufo',
+              'vue-client-only',
+              'vue-no-ssr',
+              'ohmyfetch'
+            ]
+          },
+    inlineDynamicImports: true
   },
   build: {
     transpile: ['@docus/', 'ohmyfetch']

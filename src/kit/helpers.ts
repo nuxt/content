@@ -93,3 +93,13 @@ export const loadTheme = (path: string, rootDir: string) => {
 
   return theme
 }
+
+export const buildExternals = [
+  '@docus/app',
+  '@docus/app/kit',
+  '@nuxt/bridge',
+  '@nuxt/kit',
+  '#app',
+  '@vue/composition-api',
+  '@nuxtjs/composition-api'
+]

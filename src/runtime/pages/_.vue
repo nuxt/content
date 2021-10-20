@@ -20,7 +20,7 @@ export default defineComponent({
       $docus
     } = context
 
-    // Assign currnet locale
+    // Assign current locale
     const language = i18n.locale
 
     // Get Docus instance via Context
