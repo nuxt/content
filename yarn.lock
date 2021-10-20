@@ -987,10 +987,10 @@
   resolved "https://registry.npmjs.org/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@docus/mdc@npm:@docus/mdc-edge@latest":
-  version "0.1.0-27245588.6c4c2c2"
-  resolved "https://registry.npmjs.org/@docus/mdc-edge/-/mdc-edge-0.1.0-27245588.6c4c2c2.tgz#ddc22fe86dae1a16a4d6a9ee2ee8a8da4da56859"
-  integrity sha512-+aC5ZdANGJMLlw/UmBcqFZp25a26tnAva4+VGURkXRVbK0qBnSsoReqkyQP/pCJ4LAW+qiT2hzcsYdcGW6f0lw==
+"@docus/mdc@npm:@docus/mdc-edge":
+  version "0.1.0-27245643.30c8a7c"
+  resolved "https://registry.npmjs.org/@docus/mdc-edge/-/mdc-edge-0.1.0-27245643.30c8a7c.tgz#390e5a77d478ea28637666df7e7fd01e5587fb9c"
+  integrity sha512-6cSAr+pCz7i6woMfngDd03YhSJzeHDbW4GMafbt9uizKqduXQXrjQ/6Kp5PXjEU20p1NXUe0bOtvyBqQCvAzFg==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     defu "^5.0.0"
