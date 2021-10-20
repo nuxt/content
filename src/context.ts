@@ -15,9 +15,6 @@ export const defaultContext: DocusContext = {
   },
   transformers: {
     markdown: {
-      highlighter: {
-        theme: 'github-light'
-      },
       components: [],
       rehypePlugins: [],
       remarkPlugins: [],
