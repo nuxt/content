@@ -128,7 +128,7 @@ Installez `nuxt` et `@nuxt/content-theme-docs`:
   },
   "dependencies": {
     "@nuxt/content-theme-docs": "^0.1.3",
-    "nuxt": "^2.14.0"
+    "nuxt": "^2.15.8"
   }
 }
 ```
@@ -384,7 +384,7 @@ Vous pouvez créer un fichier `content/settings.json` pour configurer le thème.
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - La mise en page de votre documentation (par défaut, `default`). Peut être changé en `single` pour avoir un document d'une seule page.
 - `algolia` (`Object`) <badge>v0.7.0+</badge>
-  - Cette option vous permet d'utiliser [Algolia DocSearch](https://docsearch.algolia.com) pour remplacer la recherche intégrée simple. Pour l'activer, vous devez fournir au moins le `apiKey` et le `indexName` : 
+  - Cette option vous permet d'utiliser [Algolia DocSearch](https://docsearch.algolia.com) pour remplacer la recherche intégrée simple. Pour l'activer, vous devez fournir au moins le `apiKey` et le `indexName` :
     ```json
     "algolia": {
         "apiKey": "<API_KEY>",

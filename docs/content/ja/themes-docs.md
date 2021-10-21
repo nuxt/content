@@ -55,7 +55,7 @@ version: 1.6
   },
   "dependencies": {
     "@nuxt/content-theme-docs": "^0.1.1",
-    "nuxt": "^2.14.0"
+    "nuxt": "^2.15.8"
   }
 }
 ```

@@ -128,7 +128,7 @@ Install `nuxt` and `@nuxt/content-theme-docs`:
   },
   "dependencies": {
     "@nuxt/content-theme-docs": "^0.1.3",
-    "nuxt": "^2.14.0"
+    "nuxt": "^2.15.8"
   }
 }
 ```
