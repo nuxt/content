@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/nuxt/content/compare/@nuxt/content@1.14.0...@nuxt/content@1.15.0) (2021-10-21)
+
+
+### Bug Fixes
+
+* **content:** add missing `:is="tag"` to `nuxt-content-container` ([ef7b18d](https://github.com/nuxt/content/commit/ef7b18dde22e9c10db4d8ad4f6c1ab0a0c7b1790))
+* **content:** merge class and style attribute ([#905](https://github.com/nuxt/content/issues/905)) ([d905ffe](https://github.com/nuxt/content/commit/d905ffe35bfba8ccfb4db534d6571fcabff8ef8c))
+* **content:** prevent editor extending on typing ([#933](https://github.com/nuxt/content/issues/933)) ([d4dce1e](https://github.com/nuxt/content/commit/d4dce1eabc66d19f31ee412e9eb844517cc60586))
+* **content:** update type definition for `QueryBuilder.fetch()` ([#825](https://github.com/nuxt/content/issues/825)) ([4cc224e](https://github.com/nuxt/content/commit/4cc224ef2779d2000092333ab9b5ac3f99171674))
+* terminal time log information display error ([#891](https://github.com/nuxt/content/issues/891)) ([1f12dd5](https://github.com/nuxt/content/commit/1f12dd59bc0055ec0eb4b333edde0dd4433780ef))
+
+
+### Features
+
+* add yarn v2 (berry) support ([#820](https://github.com/nuxt/content/issues/820)) ([971c36f](https://github.com/nuxt/content/commit/971c36f685e2ef8bc66529c8124aa40969ab8402))
+* **content:** support `useCache` option ([#772](https://github.com/nuxt/content/issues/772)) ([9d7f3a0](https://github.com/nuxt/content/commit/9d7f3a008bb08fae5670d9842fd81832fcfe3beb))
+
+
+
+
+
 # [1.14.0](https://github.com/nuxt/content/compare/@nuxt/content@1.13.1...@nuxt/content@1.14.0) (2021-03-02)
 
 

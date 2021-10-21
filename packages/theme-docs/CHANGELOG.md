@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.10.2...@nuxt/content-theme-docs@0.11.0) (2021-10-21)
+
+
+### Bug Fixes
+
+* **theme-docs:** allow overriding theme components ([#963](https://github.com/nuxt/content/issues/963)) ([1f4a5d2](https://github.com/nuxt/content/commit/1f4a5d2c4bae36a84b656c93d77cb523ec6a37ff))
+* **theme-docs:** revert @tailwindcss/typography bump ([#953](https://github.com/nuxt/content/issues/953)) ([95a4afa](https://github.com/nuxt/content/commit/95a4afa0d18d919c33578a06e9a525fcea476499))
+* **theme-docs:** updated german locale ([#853](https://github.com/nuxt/content/issues/853)) ([be84bbd](https://github.com/nuxt/content/commit/be84bbdd6adb0ce1fa0c8720e714a44d3388da98))
+
+
+### Features
+
+* **theme-docs:** add Brazilian Portuguese translation file ([#915](https://github.com/nuxt/content/issues/915)) ([329ca8e](https://github.com/nuxt/content/commit/329ca8e477698038f7ae1bfba3390682780bc258))
+* **theme-docs:** update locale simplified Chinese translation ([#838](https://github.com/nuxt/content/issues/838)) ([d33bd68](https://github.com/nuxt/content/commit/d33bd681e394b9e33100c7061786c552a1ef6807))
+
+
+
+
+
 ## [0.10.2](https://github.com/nuxt/content/compare/@nuxt/content-theme-docs@0.10.1...@nuxt/content-theme-docs@0.10.2) (2021-03-02)
 
 
