@@ -1,5 +1,5 @@
 <template>
-  <div :class="['nuxt-content-container', { 'is-editing': isEditing }]">
+  <div :class="['nuxt-content-container', { 'is-editing': isEditing }]" :is="tag">
     <client-only>
       <editor
         v-show="isEditing"
