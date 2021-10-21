@@ -315,7 +315,7 @@ export default {
   content: {
     markdown: {
       highlighter(rawCode, lang) {
-        const highlightedCode = highlightjs.highlight(lang, rawCode).value
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
 
         // We need to create a wrapper, because
         // the returned code from highlight.js
@@ -348,7 +348,7 @@ export default {
   content: {
     markdown: {
       highlighter(rawCode, lang, _, { h, node, u }) {
-        const highlightedCode = highlightjs.highlight(lang, rawCode).value
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
 
         // We can use ast helper to create the wrapper
         const childs = []
@@ -393,7 +393,7 @@ export default {
   content: {
     markdown: {
       highlighter(rawCode, lang, { lineHighlights, fileName }, { h, node, u }) {
-        const highlightedCode = highlightjs.highlight(lang, rawCode).value
+        const highlightedCode = highlightjs.highlight(rawCode, { language: lang }).value
 
         const childs = []
         const props = {
@@ -447,7 +447,7 @@ export default {
         const highlighter = await getHighlighter()
 
         return (rawCode, lang) => {
-          return highlighter.highlight(rawCode, lang)
+          return highlighter.highlight(rawCode, { language: lang })
         }
       }
     }

@@ -230,7 +230,7 @@ export default {
         if (!lang) {
           return wrap(highlightjs.highlightAuto(rawCode).value, lang)
         }
-        return wrap(highlightjs.highlight(lang, rawCode).value, lang)
+        return wrap(highlightjs.highlight(rawCode, { language: lang }).value, lang)
       }
     }
   }
