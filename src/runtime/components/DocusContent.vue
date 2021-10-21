@@ -21,15 +21,19 @@ const noop = (d: any) => d
 
 const lazyComponents = new Set()
 
-function evalInContext(code: string, context: any) {
-  let result = code.split('.').reduce((o, k) => o && o[k], context)
+function valueInContext(code: string, context: DocusDocument) {
+  return code.split('.').reduce((o: any, k) => o && o[k], context)
+}
 
+function evalInContext(code: string, context: any) {
+  let result = valueInContext(code, context)
   if (typeof result === 'undefined') {
     try {
       result = JSON.parse(code)
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(`Error evaluating ${code}`, e)
+      result = code
     }
   }
 
@@ -81,7 +85,7 @@ function propsToData(node: MDCNode, doc: DocusDocument) {
       } else if (Array.isArray(value)) {
         obj[attribute] = value.join(' ')
       } else if (typeof value === 'string') {
-        obj[attribute] = evalInContext(value, doc)
+        obj[attribute] = valueInContext(value, doc) || value
       } else {
         obj[attribute] = value
       }
