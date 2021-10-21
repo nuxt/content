@@ -39,6 +39,8 @@ export default {
 - document:
   - Type: `Object`
   - `required`
+- tag:
+  - Type: `String`
 
 Learn more about what you can write in your markdown file in the [writing content](/writing#markdown) section.
 
@@ -67,11 +69,19 @@ export default {
 </script>
 ```
 
+## Root Element
+
+`<nuxt-content>` component will add a `div` element as the root of the content by default. You can change this by setting the `tag` prop. Below example will use `article` as the root element.
+
+```vue
+<nuxt-content :document="doc" tag="article">
+```
+
 ## Style
 
 Depending on what you're using to design your app, you may need to write some style to properly display the markdown.
 
-`<nuxt-content>` component will automatically add a `.nuxt-content` class, you can use it to customize your styles:
+`<nuxt-content>` component will automatically add a `.nuxt-content` class. You can use it to customize your styles:
 
 ```css
 .nuxt-content h1 {

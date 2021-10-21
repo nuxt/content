@@ -1,6 +1,6 @@
 import info from 'property-information'
 
-const rootKeys = ['class-name', 'class', 'style']
+const rootKeys = ['class-name', 'class', 'className', 'style']
 
 const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
@@ -132,10 +132,14 @@ export default {
   props: {
     document: {
       required: true
+    },
+    tag: {
+      type: String,
+      default: 'div'
     }
   },
   render (h, { data, props }) {
-    const { document } = props
+    const { document, tag } = props
     const { body } = document || {}
     if (!body || !body.children || !Array.isArray(body.children)) {
       return
@@ -151,6 +155,6 @@ export default {
     }
     data.class = classes.concat('nuxt-content')
     data.props = Object.assign({ ...body.props }, data.props)
-    return h('div', data, body.children.map(child => processNode(child, h, document)))
+    return h(tag, data, body.children.map(child => processNode(child, h, document)))
   }
 }

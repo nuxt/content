@@ -6,6 +6,7 @@ export default {
     title: '페이지 정보'
   },
   article: {
-    github: 'GitHub에서 현재 페이지 수정하기'
+    github: 'GitHub에서 현재 페이지 수정하기',
+    updatedAt: '최종 업데이트: '
   }
 }

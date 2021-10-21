@@ -380,7 +380,6 @@ Vous pouvez créer un fichier `content/settings.json` pour configurer le thème.
 - `defaultBranch` (`String`) <badge>v0.2.0+</badge>
   - La branche par défaut du repository GitHub de votre projet, utilisée dans le lien `Editer cette page sur GitHub` sur chaque page (par défaut `main` s'il ne peut pas être détecté).
 - `defaultDir` (`String`) <badge>v0.6.0+</badge>
-  - The default dir of your project, used in the `Editer cette page sur GitHub` on each page (defaults to `docs`. Can be an empty string eg. `""`).
   - Le répertoire par défaut de votre projet, utilisé dans `Editer cette page sur GitHub` sur chaque page (par défaut `docs`. Peut être une chaîne vide, par exemple. `""`).
 - `layout` (`String`) <badge>v0.4.0+</badge>
   - La mise en page de votre documentation (par défaut, `default`). Peut être changé en `single` pour avoir un document d'une seule page.
