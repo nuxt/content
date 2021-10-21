@@ -127,7 +127,7 @@ Installez `nuxt` et `@nuxt/content-theme-docs`:
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content-theme-docs": "^0.1.3",
+    "@nuxt/content-theme-docs": "^0.11.0",
     "nuxt": "^2.15.8"
   }
 }
