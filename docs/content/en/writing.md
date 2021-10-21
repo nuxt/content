@@ -332,7 +332,11 @@ multiselectOptions:
 <example-multiselect :options="multiselectOptions"></example-multiselect>
 ```
 
-<example-multiselect :options="multiselectOptions"></example-multiselect><br>
+<div class="border rounded-md p-2 mb-2 bg-gray-200 dark:bg-gray-800">
+
+<example-multiselect :options="multiselectOptions"></example-multiselect>
+
+</div>
 
 <alert type="info">
 
