@@ -1,6 +1,6 @@
 import info from 'property-information'
 
-const rootKeys = ['class-name', 'class', 'style']
+const rootKeys = ['class-name', 'class', 'className', 'style']
 
 const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
