@@ -138,11 +138,11 @@ export default {
 
 <alert type="info">
 
-If more than one document have same slug, you should set `path` as first argument of `surround` method, instead of `slug`.
-This is because Nuxt Content finds previous and next documents based on one which first-matched.
+If more than one document has the same slug, you should set `path` as the first argument of the `surround` method, instead of `slug`.
+This is because Nuxt Content finds previous and next documents based on the one that matched first.
 
-For example, if you sort documents according to `position`, lower-position document will be always used for calculation,
-even when the current page is showing higer-position document.
+For example, if you sort documents according to `position`, the lower-positioned document will be always used for calculation,
+even when the current page is showing the higer-positioned document.
 
 </alert>
 
@@ -150,7 +150,7 @@ even when the current page is showing higer-position document.
 
 ### Case-Insensitive Sorting
 
-It is needed to work around Nuxt Content's case-sensitive sorting, to add extra properties to documents, whose value is the lower-cased.
+It is needed to work around Nuxt Content's case-sensitive sorting, to add extra properties to documents, whose value is lower-cased.
 
 ```js [nuxt.config.js]
 export default {
@@ -223,7 +223,7 @@ export default {
 
 ### Dynamic routing
 
-Let's say you want to create an app with routes following the `content/` file structure, you can do so by creating a `pages/_.vue` component:
+Let's say you want to create an app with routes following the `content/` file structure. You can do so by creating a `pages/_.vue` component:
 
 ```vue[pages/_.vue]
 <script>
@@ -291,7 +291,7 @@ export default {
 
 [Shiki](https://github.com/shikijs/shiki) is syntax highlighter that uses TexMate grammar and colors the tokens with VS Code themes. It will generate HTML that looks like exactly your code in VS Code.
 
-You don't need to add custom styling, because Shiki will inlined it in the HTML.
+You don't need to add custom styling, because Shiki will inline it in the HTML.
 
 ```js{}[nuxt.config.js]
 import shiki from 'shiki'
@@ -317,11 +317,11 @@ export default {
 
 #### Shiki Twoslash
 
-[Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/ts-twoslasher) is a markup format for TypeScript code. Internally, Twoslash uses TypeScript compiler to generate rich highlight info.
+[Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/ts-twoslasher) is a markup format for TypeScript code. Internally, Twoslash uses the TypeScript compiler to generate rich highlight info.
 
-To get better idea how Twoslash works, you can get over to the [Official TypeScript Documentation](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#type-aliases) and hover some code example there.
+To get a better idea of how Twoslash works, you can go over to the [Official TypeScript Documentation](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#type-aliases) and hover over some code examples there.
 
-You can achieve the same result by using [Shiki Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/shiki-twoslash). This package is also the one that power Official TypeScript Documentation.
+You can achieve the same result by using [Shiki Twoslash](https://github.com/microsoft/TypeScript-Website/tree/v2/packages/shiki-twoslash). This package is also the one that powers the Official TypeScript Documentation.
 
 ```js{}[nuxt.config.js]
 import {
@@ -355,4 +355,82 @@ export default {
     }
   }
 }
+```
+
+### Remark Plugin
+
+Nuxt Content uses [remark](https://github.com/remarkjs/remark) under the hood to process markdown documents. Creating remark plugins is a way to manipulate documents and add new features.
+
+#### List all contributors
+
+Let's say you want to list all contributors of the project in a document. You can create a plugin that fetches all contributors and injects them into the document data.
+
+- Create the plugin. This plugin fetches the contributors if `fetchContributors` is set to `true`
+
+```js [~~/plugins/contributors.js]
+const fetch = require('node-fetch')
+
+module.exports = function () {
+  return async (tree, { data }) => {
+    if (data.fetchContributors) {
+      const contributors = await fetch(
+        'https://api.github.com/repos/nuxt/content/contributors'
+      ).then(res => res.json())
+      .then(res => res.map(({ login }) => login))
+      
+      data.$contributors = [...new Set(contributors)]
+    }
+    return tree
+  }
+}
+```
+
+- Register plugin in Nuxt config
+
+```js{}[nuxt.config.js]
+export default {
+  contents: {
+    markdown: {
+      remarkPlugins: [
+        '~~/plugins/contributors.js'
+      ]
+    }
+  }
+}
+```
+
+- Create a simple component to show contributors
+
+```vue{}[~~/components/List.vue]
+<template>
+  <ul>
+    <li v-for="(item, i) in items" :key="i">
+      {{ item }}
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  props: {
+    items: {
+      type: Array,
+      default: () => []
+    }
+  }
+}
+```
+
+- Finally use the components and mark the document to fetch the contributors
+
+```md{}[document.md]
+---
+title: Nuxt Content
+fetchContributors: true
+---
+
+## Contributors
+
+<list :items="$contributors"></list>
+
 ```

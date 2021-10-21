@@ -43,7 +43,17 @@ describe('component', () => {
 
       expect(html).toMatch(
         // eslint-disable-next-line prefer-regex-literals
-        new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<div>\s*<header>Header content<\/header>\s*<main>\s*Main content\s*<\/main>\s*<footer>Footer content<\/footer><\/div><\/div><\/div>/)
+        new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<div class="app-layout dark" style="background-color:blue;color:red;">\s*<header>Header content<\/header>\s*<main>\s*Main content\s*<\/main>\s*<footer>Footer content<\/footer><\/div><\/div><\/div>/)
+      )
+    })
+
+    test('has rendered a Vue.js functional component', async () => {
+      page = await browser.page(url('/vue-component'))
+      const html = await page.getHtml()
+
+      expect(html).toMatch(
+        // eslint-disable-next-line prefer-regex-literals
+        new RegExp(/<div>\s*<h1><\/h1>\s*<div class="nuxt-content">\s*<div class="app-layout dark" style="background-color:blue;color:red;">\s*<header>Header content<\/header>\s*<main>\s*Main content\s*<\/main>\s*<footer>Footer content<\/footer><\/div><\/div><\/div>/)
       )
     })
 
@@ -93,6 +103,13 @@ describe('component', () => {
       const html = await page.getHtml()
 
       expect(html).toMatch(/<div><h1>.*<\/h1>\s*<div\s*.*id="my-id"\s*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*id="my-id"\s*.*><p.*>This is the home page!<\/p><\/div><\/div><\/div>/)
+    })
+
+    test('has generated html with "tag" as root element', async () => {
+      page = await browser.page(url('/home?tag=article'))
+      const html = await page.getHtml()
+
+      expect(html).toMatch(/<div><h1>.*<\/h1>\s*<article\s*.*class="nuxt-content-container"\s*.*><textarea.*><\/textarea>\s*<div\s*.*class="nuxt-content"\s*.*><p.*>This is the home page!<\/p><\/div><\/article><\/div>/)
     })
 
     test('has generated html with class', async () => {

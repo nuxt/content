@@ -74,7 +74,7 @@ export default {
 
 The above approach works well for some use cases. However, if you use `npm run generate` then this approach will produce an error.
 
-Or, if you want to include the body of the article as content, including any content from components if you mix your vue components and your markdown then you'll need to approach this differently.
+Or, if you want to include the body of the article as content (including any content from components if you mix your Vue components and your markdown) then you'll need to approach this differently.
 
 One possible way to do this uses the [@nuxtjs/feed](https://github.com/nuxt-community/feed-module) documented approach and will work well with `npm run generate` and will use the existing Nuxt process to include the content. Here's how to do it.
 
@@ -114,7 +114,7 @@ modules: [
   ],
 ```
 
-You can make the best use of the nuxt/content api but declaring your create function separately and then supplying it to the feed array object. The create function can be declared at the top of the nuxt.config.js file, or separately in another directory and exported. The create function runs _after_ the Nuxt process has compiled the markdown and Vue components into HTML. This allows us to pull in that content and supply it to the feed. 
+You can make the best use of the nuxt/content api by declaring your create function separately and then supplying it to the feed array object. The create function can be declared at the top of the nuxt.config.js file, or separately in another directory and exported. The create function runs _after_ the Nuxt process has compiled the markdown and Vue components into HTML. This allows us to pull in that content and supply it to the feed. 
 
 **Example 2**
 
@@ -167,7 +167,7 @@ export default {
   feed: [
     {
       path: '/feed.xml',
-      create
+      create,
       cacheTime: 1000 * 60 * 15,
       type: 'rss2',
       data: [ 'blog', 'xml' ]
@@ -239,11 +239,11 @@ Retrieving just the markdown works great if you're using the feed to integrate w
 
 ## @nuxtjs/sitemap
 
-You may want to generate a sitemap that includes links to all of your posts. You can do this in a similar way as you generated the feed.
+You may want to generate a sitemap that includes links to all of your posts. You can do this similarly to how you generated the feed.
 
 **Example 1**
 
-The sitemap module should always be declared last so that routes created by other modules can be included. After declaring the module you must configure the sitemap by adding the sitemap configuration object to the nuxt.config.js. You must supply the hostname and you can optionally include any routes that are dynamically generated from nuxt content.
+The sitemap module should always be declared last so that routes created by other modules can be included. After declaring the module you must configure the sitemap by adding the sitemap configuration object to the nuxt.config.js. You must supply the hostname, and you can optionally include any routes that are dynamically generated from nuxt content.
 The routes property accepts an async function that returns an array of URLs.
 
 ```js

@@ -1,6 +1,6 @@
 {
   "name": "create-nuxt-content-docs",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "license": "MIT",
   "files": [
     "src",
@@ -8,7 +8,7 @@
   ],
   "bin": "src/cli.js",
   "dependencies": {
-    "cac": "^6.7.1",
+    "cac": "^6.7.2",
     "sao": "^1.7.1"
   },
   "publishConfig": {

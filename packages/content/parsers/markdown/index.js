@@ -35,7 +35,7 @@ class Markdown {
     }
     return [
       node,
-      ...node.children.flatMap(child => this.flattenNode(child, maxDepth, depth + 1))
+      ...node.children.reduce((acc, child) => acc.concat(this.flattenNode(child, maxDepth, depth + 1)), [])
     ]
   }
 
@@ -73,9 +73,10 @@ class Markdown {
   /**
    * Generate json body
    * @param {string} content - JSON AST generated from markdown.
+   * @param {object} data - document data
    * @returns {object} JSON AST body
    */
-  async generateBody (content) {
+  async generateBody (content, data = {}) {
     let { highlighter } = this.options
     if (typeof highlighter === 'function' && highlighter.length === 0) {
       highlighter = await highlighter()
@@ -93,7 +94,7 @@ class Markdown {
 
       stream
         .use(jsonCompiler)
-        .process(content, (error, file) => {
+        .process({ data, contents: content }, (error, file) => {
           /* istanbul ignore if */
           if (error) {
             return reject(error)
@@ -113,15 +114,16 @@ class Markdown {
   }
 
   /**
-   * Converts markdown document to it's JSON structure.
+   * Converts markdown document to its JSON structure.
    * @param {string} file - Markdown file
    * @return {Object}
    */
   async toJSON (file) {
     const { data, content, ...rest } = matter(file, { excerpt: true, excerpt_separator: '<!--more-->' })
 
+    const documentData = data || {}
     // Compile markdown from file content to JSON
-    const body = await this.generateBody(content)
+    const body = await this.generateBody(content, documentData)
     // Generate toc from body
     const toc = this.generateToc(body)
 
@@ -134,7 +136,7 @@ class Markdown {
 
     return {
       description,
-      ...data,
+      ...documentData,
       toc,
       body,
       text: content,

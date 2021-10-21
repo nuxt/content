@@ -98,7 +98,11 @@ export default {
 }
 
 .nuxt-content-editor {
+  box-sizing: border-box;
+  display: block;
   width: 100%;
   padding: 8px;
+  overflow: hidden;
+  resize: none;
 }
 </style>

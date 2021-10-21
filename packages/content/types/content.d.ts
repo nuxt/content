@@ -3,11 +3,22 @@ import type { QueryBuilder } from './query-builder'
 
 export type contentFunc = (...args: Array<string | Object>) => QueryBuilder;
 
-export interface IContentDocument extends Record<string, any> {
+export interface IContentDocumentBase extends Record<string, any> {
   dir: string;
   path: string;
   extension: '.md' | '.json' | '.yaml' | '.xml' | '.csv' | string;
   slug: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  body?: object;
+  toc?: {
+    id: string;
+    depth: number;
+    text: string;
+  }[];
+}
+
+export interface IContentDocument extends IContentDocumentBase {
   createdAt: Date;
   updatedAt: Date;
 }

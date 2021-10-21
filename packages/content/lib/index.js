@@ -76,7 +76,8 @@ module.exports = async function (moduleOptions) {
     nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
         path: '~/components/global',
-        global: true
+        global: true,
+        pathPrefix: false
       })
     })
   } else {
@@ -207,7 +208,7 @@ module.exports = async function (moduleOptions) {
         dirs: database.dirs
       }
     })
-    let publicPath = this.options.build.publicPath // can be an url
+    let publicPath = this.options.build.publicPath // can be a url
     let routerBasePath = this.options.router.base
 
     /* istanbul ignore if */
@@ -222,7 +223,7 @@ module.exports = async function (moduleOptions) {
       fileName: 'content/plugin.client.js',
       src: join(__dirname, '../templates/plugin.static.js'),
       options: {
-        // if publicPath is an URL, use public path, if not, add basepath before it
+        // if publicPath is a URL, use public path, if not, add basepath before it
         dbPath: isUrl(publicPath)
           ? `${publicPath}content`
           : `${routerBasePath}${publicPath}content`
@@ -276,7 +277,7 @@ module.exports = async function (moduleOptions) {
 
   function isUrl (string) {
     try {
-      // quick test if the string is an URL
+      // quick test if the string is a URL
       // eslint-disable-next-line no-new
       new URL(string)
     } catch (_) {
