@@ -22,8 +22,18 @@ const noop = (d: any) => d
 const lazyComponents = new Set()
 
 function evalInContext(code: string, context: any) {
-  // eslint-disable-next-line no-new-func
-  return new Function('with(this) { return (' + code + ') }').call(context)
+  let result = code.split('.').reduce((o, k) => o && o[k], context)
+
+  if (typeof result === 'undefined') {
+    try {
+      result = JSON.parse(code)
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Error evaluating ${code}`, e)
+    }
+  }
+
+  return result
 }
 
 /**
@@ -59,17 +69,19 @@ function propsToData(node: MDCNode, doc: DocusDocument) {
         data.on = data.on || {}
         data.on[event] = (e: any) => ((doc as any)[value] = processor(e))
       } else if (key === 'v-bind') {
-        const val = value in doc ? (doc as any)[value] : evalInContext(value, doc)
+        const val = evalInContext(value, doc)
         obj = Object.assign(obj, val)
       } else if (rxOn.test(key)) {
         key = key.replace(rxOn, '')
         data.on = data.on || {}
-        data.on[key] = evalInContext(value, doc)
+        data.on[key] = () => evalInContext(value, doc)
       } else if (rxBind.test(key)) {
         key = key.replace(rxBind, '')
-        obj[key] = value in doc ? (doc as any)[value] : evalInContext(value, doc)
+        obj[key] = evalInContext(value, doc)
       } else if (Array.isArray(value)) {
         obj[attribute] = value.join(' ')
+      } else if (typeof value === 'string') {
+        obj[attribute] = evalInContext(value, doc)
       } else {
         obj[attribute] = value
       }
