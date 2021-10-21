@@ -67,7 +67,7 @@ describe("highlighter", () => {
                 )
               }
               return wrapHighlightjs(
-                highlightjs.highlight(lang, rawCode).value,
+                highlightjs.highlight(rawCode, { language: lang }).value,
                 lang
               )
             }
@@ -95,10 +95,10 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs js\\"><span class=\\"hljs-built_in\\">console</span>.log(<span class=\\"hljs-string\\">'Highlighter'</span>)
+        "<div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs js\\"><span class=\\"hljs-variable language_\\">console</span>.<span class=\\"hljs-title function_\\">log</span>(<span class=\\"hljs-string\\">'Highlighter'</span>)
         </code></pre></div>
         <div class=\\"nuxt-content-highlight\\"><pre><code class=\\"hljs typescript\\"><span class=\\"hljs-comment\\">// @errors: 2322</span>
-        <span class=\\"hljs-function\\"><span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-title\\">string</span> </span>{
+        <span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title function_\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-built_in\\">string</span> {
           <span class=\\"hljs-keyword\\">return</span> <span class=\\"hljs-literal\\">true</span>
         }
         </code></pre></div>"
@@ -246,7 +246,7 @@ describe("highlighter", () => {
               if (!lang || lang === "null") {
                 code = highlightjs.highlightAuto(rawCode).value
               } else {
-                code = highlightjs.highlight(lang, rawCode).value
+                code = highlightjs.highlight(rawCode, { language: lang }).value
               }
               return h(
                 node,
@@ -282,10 +282,10 @@ describe("highlighter", () => {
 
     test("renders correctly", () => {
       expect(nuxtContent).toMatchInlineSnapshot(`
-        "<div class=\\"highlighted-using-highlightjs\\"><pre><code class=\\"hljs undefined\\"><span class=\\"hljs-built_in\\">console</span>.log(<span class=\\"hljs-string\\">'Highlighter'</span>)
+        "<div class=\\"highlighted-using-highlightjs\\"><pre><code class=\\"hljs undefined\\"><span class=\\"hljs-variable language_\\">console</span>.<span class=\\"hljs-title function_\\">log</span>(<span class=\\"hljs-string\\">'Highlighter'</span>)
         </code></pre></div>
         <div data-line=\\"1\\" class=\\"highlighted-using-highlightjs index.ts\\"><pre><code class=\\"hljs undefined\\"><span class=\\"hljs-comment\\">// @errors: 2322</span>
-        <span class=\\"hljs-function\\"><span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-title\\">string</span> </span>{
+        <span class=\\"hljs-keyword\\">function</span> <span class=\\"hljs-title function_\\">sum</span>(<span class=\\"hljs-params\\">a: <span class=\\"hljs-built_in\\">number</span>, b: <span class=\\"hljs-built_in\\">number</span></span>): <span class=\\"hljs-built_in\\">string</span> {
           <span class=\\"hljs-keyword\\">return</span> <span class=\\"hljs-literal\\">true</span>
         }
         </code></pre></div>"

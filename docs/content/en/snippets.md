@@ -280,7 +280,7 @@ export default {
         if (!lang) {
           return wrap(highlightjs.highlightAuto(rawCode).value, lang)
         }
-        return wrap(highlightjs.highlight(lang, rawCode).value, lang)
+        return wrap(highlightjs.highlight(rawCode, { language: lang }).value, lang)
       }
     }
   }
@@ -377,7 +377,7 @@ module.exports = function () {
         'https://api.github.com/repos/nuxt/content/contributors'
       ).then(res => res.json())
       .then(res => res.map(({ login }) => login))
-      
+
       data.$contributors = [...new Set(contributors)]
     }
     return tree
