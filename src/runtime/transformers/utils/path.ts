@@ -1,6 +1,8 @@
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
 
+const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
+
 export function generatePosition(path: string): string {
   const position = path
     .split(/[/:]/)
@@ -20,6 +22,10 @@ export function generatePosition(path: string): string {
  * Clean up special keywords from path part
  */
 export function generateSlug(name: string): string {
+  // Match 1, 1.2, 1.x, 1.2.x, 1.2.3.x,
+  if (SEMVER_REGEX.test(name)) {
+    return name
+  }
   return (
     name
       /**
