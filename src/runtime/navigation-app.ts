@@ -247,11 +247,19 @@ export const createDocusNavigation = (
   if (process.client) {
     // Preview mode for navigation
     window.onNuxtReady(($nuxt: NuxtApp) =>
-      $nuxt.$on('docus:content:preview', () => _fetchNavigation(currentLocale.value))
+      $nuxt.$on('docus:content:preview', () => {
+        _fetchNavigation(currentLocale.value)
+        _updateCurrentNav()
+      })
     )
 
     // Update content on update.
-    window.onNuxtReady(($nuxt: NuxtApp) => $nuxt.$on('content:update', () => _fetchNavigation(currentLocale.value)))
+    window.onNuxtReady(($nuxt: NuxtApp) =>
+      $nuxt.$on('content:update', () => {
+        _fetchNavigation(currentLocale.value)
+        _updateCurrentNav()
+      })
+    )
   }
 }
 
