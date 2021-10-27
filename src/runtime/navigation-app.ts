@@ -3,9 +3,9 @@ import Vue from 'vue'
 import type { DocusContent, DocusDocument, NavItem } from '@docus/core'
 import type { NuxtApp } from '@nuxt/types/app'
 import { Context } from '@nuxt/types'
+import type { DocusConfig, DocusCurrentNav, DocusNavigationGetParameters, DocusNavigationState } from 'types'
 import { pascalCase } from './scule'
 import { StateTypes } from './'
-import type { DocusConfig, DocusCurrentNav, DocusNavigationGetParameters, DocusNavigationState } from 'types'
 import { unref, useState } from '#app'
 import type { Ref } from '#app'
 
@@ -48,6 +48,10 @@ let _getPreviousAndNextLink: (page: DocusDocument) => Promise<any>
  * Updates the currentNav object from the current path.
  */
 let _updateCurrentNav: () => void
+/**
+ * Refresh the navigation and currentNav object
+ */
+let _refresh: (locale?: string) => Promise<void>
 
 /**
  * Handling all the navigation querying logic.
@@ -240,26 +244,23 @@ export const createDocusNavigation = (
     })
   }
 
+  _refresh = async currentLocale => {
+    console.log('refresh')
+    await _fetchNavigation(currentLocale)
+    _updateCurrentNav()
+  }
+
   const docusCurrentNav = useState(StateTypes.CurrentNav, () => {
     return _get({ from: `/${_route.params.pathMatch}` })
   }) as Ref<DocusCurrentNav>
 
   if (process.client) {
-    // Preview mode for navigation
-    window.onNuxtReady(($nuxt: NuxtApp) =>
-      $nuxt.$on('docus:content:preview', () => {
-        _fetchNavigation(currentLocale.value)
-        _updateCurrentNav()
-      })
-    )
-
-    // Update content on update.
-    window.onNuxtReady(($nuxt: NuxtApp) =>
-      $nuxt.$on('content:update', () => {
-        _fetchNavigation(currentLocale.value)
-        _updateCurrentNav()
-      })
-    )
+    window.onNuxtReady(() => {
+      // Preview mode for navigation
+      window.$nuxt.$on('docus:content:preview', () => _refresh(currentLocale.value))
+      // Update content on update.
+      window.$nuxt.$on('content:update', () => _refresh(currentLocale.value))
+    })
   }
 }
 
