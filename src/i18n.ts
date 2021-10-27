@@ -76,7 +76,7 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
     src: resolveModule('@nuxtjs/i18n')
   })
 
-  // Get available locales and set default locale
+  // @ts-ignore - Get available locales and set default locale
   nuxt.hook('docus:context', docusContext => {
     const codes = nuxt.options.i18n?.locales.map((locale: any) => locale.code || locale)
     docusContext.locales.codes = codes || docusContext.locales.codes
