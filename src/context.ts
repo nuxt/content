@@ -38,7 +38,7 @@ export const defaultContext: DocusContext = {
         strong: 'prose-strong',
         table: 'prose-table',
         tbody: 'prose-tbody',
-        tf: 'prose-tf',
+        td: 'prose-td',
         th: 'prose-th',
         thead: 'prose-thead',
         tr: 'prose-tr',
