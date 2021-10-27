@@ -988,9 +988,9 @@
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
 "@docus/mdc@npm:@docus/mdc-edge@latest":
-  version "0.1.0-27255654.3ae5aae"
-  resolved "https://registry.yarnpkg.com/@docus/mdc-edge/-/mdc-edge-0.1.0-27255654.3ae5aae.tgz#39c1d2854a62a43755f41dd75f8fb0f826a76c89"
-  integrity sha512-YhKUE1IWEsBhBPJzKusFI0o8J1+D67jYiukOXJ5HChd/iH3lazvOIIlDJvlVT4/FXaKc2oakcOPpmhZh+34CxA==
+  version "0.1.0-27255713.5af0db0"
+  resolved "https://registry.yarnpkg.com/@docus/mdc-edge/-/mdc-edge-0.1.0-27255713.5af0db0.tgz#2f3138c648a14012380b6e056086258ebc6701af"
+  integrity sha512-YYFxGXi15bJXk0/oqWrHDxKzhmpL5k49EhB+aPTozVTLeOE2xvdcCP0cJPhga67J5h56Gz7uaQQpLWvDseWXOw==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     defu "^5.0.0"
