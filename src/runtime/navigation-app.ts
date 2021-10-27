@@ -245,7 +245,6 @@ export const createDocusNavigation = (
   }
 
   _refresh = async currentLocale => {
-    console.log('refresh')
     await _fetchNavigation(currentLocale)
     _updateCurrentNav()
   }
