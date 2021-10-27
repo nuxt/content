@@ -1,8 +1,8 @@
 import type { MetaInfo } from 'vue-meta'
 import type { Context } from '@nuxt/types'
+import type { Colors } from 'types'
 import { getColors } from './theme-colors'
 import { useTheme } from './'
-import type { Colors } from 'types'
 import { computed } from '#app'
 
 let _head: any

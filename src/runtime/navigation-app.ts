@@ -1,7 +1,6 @@
 import { withTrailingSlash } from 'ufo'
 import Vue from 'vue'
 import type { DocusContent, DocusDocument, NavItem } from '@docus/core'
-import type { NuxtApp } from '@nuxt/types/app'
 import { Context } from '@nuxt/types'
 import type { DocusConfig, DocusCurrentNav, DocusNavigationGetParameters, DocusNavigationState } from 'types'
 import { pascalCase } from './scule'
