@@ -988,9 +988,9 @@
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
 "@docus/mdc@npm:@docus/mdc-edge@latest":
-  version "0.1.0-27255632.4466884"
-  resolved "https://registry.yarnpkg.com/@docus/mdc-edge/-/mdc-edge-0.1.0-27255632.4466884.tgz#c9ada3788de3f95685d348dc49db81fb0d9d6817"
-  integrity sha512-8rtXJIIq/funf3zJCbjCUhmfGqbYQOWB+w/h+Nm2+Uq4rsP8YU46s24B5p8WDZdwnvZopwgbmwiltWag6Ee4MQ==
+  version "0.1.0-27255654.3ae5aae"
+  resolved "https://registry.yarnpkg.com/@docus/mdc-edge/-/mdc-edge-0.1.0-27255654.3ae5aae.tgz#39c1d2854a62a43755f41dd75f8fb0f826a76c89"
+  integrity sha512-YhKUE1IWEsBhBPJzKusFI0o8J1+D67jYiukOXJ5HChd/iH3lazvOIIlDJvlVT4/FXaKc2oakcOPpmhZh+34CxA==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     defu "^5.0.0"
@@ -4680,6 +4680,11 @@ core-js-compat@^3.16.0, core-js-compat@^3.16.2, core-js-compat@^3.17.2:
   dependencies:
     browserslist "^4.17.3"
     semver "7.0.0"
+
+core-js@3:
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.19.0.tgz#9e40098a9bc326c7e81b486abbd5e12b9d275176"
+  integrity sha512-L1TpFRWXZ76vH1yLM+z6KssLZrP8Z6GxxW4auoCj+XiViOzNPJCAuTIkn03BGdFe6Z5clX5t64wRIRypsZQrUg==
 
 core-js@^2.4.0, core-js@^2.5.0, core-js@^2.6.5:
   version "2.6.12"
