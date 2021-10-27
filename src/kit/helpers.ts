@@ -3,8 +3,8 @@ import { existsSync } from 'fs'
 import jiti from 'jiti'
 import { resolve, join } from 'pathe'
 import clearModule from 'clear-module'
-import type { DocusTheme, DocusConfig, DefaultThemeConfig, ThemeNuxtConfig } from 'types'
 import { distDir } from '../dirs'
+import type { DocusTheme, DocusConfig, DefaultThemeConfig, ThemeNuxtConfig } from 'types'
 
 export const defineThemeNuxtConfig = (config: ThemeNuxtConfig) => config
 

@@ -1,12 +1,12 @@
 import defu from 'defu'
 import type { Nuxt } from '@nuxt/kit'
 import chalk from 'chalk'
-import type { DocusConfig } from 'types'
 import { version } from '../package.json'
 import { setupThemeModule } from './theme'
 import { loadConfig, writeConfig, defineDocusConfig } from './kit'
 import { setDocusConfig } from './context'
 import { resolveRuntimeDir } from './dirs'
+import type { DocusConfig } from 'types'
 
 const defaultConfig = defineDocusConfig({
   title: 'Docus',
