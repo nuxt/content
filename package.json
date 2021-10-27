@@ -38,7 +38,7 @@
     "clean": "yarn clean:example && yarn clean:dist"
   },
   "dependencies": {
-    "@docus/mdc": "npm:@docus/mdc-edge@0.1.0-27223896.f25079f",
+    "@docus/mdc": "npm:@docus/mdc-edge@latest",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "consola": "^2.15.3",
