@@ -24,10 +24,10 @@ export default defineNuxtConfig({
    * Bridge config
    */
   bridge: {
-    // Preserve old CompositionAPI until ssrRef can be replaced
-    // capi: false,
     // Disable globalImports for now
-    autoImports: false
+    autoImports: false,
+    // Enable postcss8
+    postcss8: true
   },
 
   /**
@@ -63,10 +63,8 @@ export default defineNuxtConfig({
    */
   buildModules: [
     // Dependencies
-    // '@nuxt/typescript-build',
     // '@nuxtjs/pwa',
     '@nuxt/image',
-    '@nuxt/postcss8',
     '@docus/core',
     docusAppModule
   ],
