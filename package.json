@@ -78,7 +78,7 @@
     "babel-jest": "latest",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-nuxt": "^3.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "latest",
     "nuxt-edge": "^2.16.0-27226092.034b9901",
