@@ -1,10 +1,10 @@
-import type { DatabaseProvider } from 'types'
 import { omit } from '../utils/object'
 import { useDocusContext } from '../context'
-import createLokiJsDatabase from './providers/lokijs'
+import createLocalDatabase from './providers/local'
+import type { DatabaseProvider } from 'types'
 
 /**
- * Create the database out of the chosen provider (by default: LokiJS)
+ * Create the database out of the choosen provider
  */
 export async function createDatabase(navigation: any) {
   const {
@@ -13,8 +13,9 @@ export async function createDatabase(navigation: any) {
   let db
 
   switch (provider) {
+    case 'local':
     default:
-      db = createLokiJsDatabase(options)
+      db = createLocalDatabase(options)
   }
 
   // initialize the database using given navigation

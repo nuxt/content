@@ -1,4 +1,5 @@
 import ArrayQuery from './Query'
+import { DatabaseProvider } from 'types'
 
 export default function createArrayDatabase(_options = {}): DatabaseProvider {
   const database: any = {}

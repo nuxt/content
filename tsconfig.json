@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "strict": true,
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "CommonJS",
     "lib": ["ESNext", "DOM"],
     "esModuleInterop": true,
     "moduleResolution": "Node",

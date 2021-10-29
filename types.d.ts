@@ -9,6 +9,7 @@ export interface DocusOptions {
   watch: boolean
   database: {
     provider: string
+    options: Record<string, any>
   }
 }
 
@@ -24,7 +25,6 @@ export interface DocusContext {
   }
   search: {
     inheritanceFields: string[]
-    fields: string[]
   }
   transformers: {
     markdown: Partial<MDCOptions>

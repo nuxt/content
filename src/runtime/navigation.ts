@@ -1,10 +1,10 @@
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
-import type { NavItem } from 'types'
 import { pick } from './utils/object'
 import { useDocusContext } from './context'
 import { generatePosition } from './transformers/utils'
+import type { NavItem } from 'types'
 
 /**
  * Determine whether it is the index file or not

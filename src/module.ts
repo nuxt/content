@@ -12,11 +12,11 @@ import {
 import type { Nuxt } from '@nuxt/kit'
 import type { NitroContext } from '@nuxt/nitro'
 import { joinURL } from 'ufo'
-import type { DocusOptions } from 'types'
-import { defaultContext } from './context'
+import { useDefaultContext } from './context'
 import setupDevTarget from './module.dev'
 import { useNuxtIgnoreList } from './utils'
 import { resolveComponentsDir, resolveRuntimeDir, resolveTemplateDir, runtimeDir, templateDir } from './dirs'
+import type { DocusOptions } from 'types'
 
 export const resolveApiRoute = (route: string) => {
   const nuxt = useNuxt()
@@ -30,12 +30,12 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     apiBase: '_docus',
     watch: nuxt.options.dev,
     database: {
-      provider: 'lokijs'
+      provider: 'local'
     }
   },
   async setup(options: DocusOptions, nuxt: Nuxt) {
     // Extend context
-    const docusContext = defaultContext
+    const docusContext = useDefaultContext(options)
 
     useNuxtIgnoreList(nuxt).then(ignoreList => {
       // @ts-ignore

@@ -1,17 +1,17 @@
-import type { DocusContext } from 'types'
+import type { DocusContext, DocusOptions } from 'types'
 
-export const defaultContext: DocusContext = {
+export const useDefaultContext = (options: DocusOptions): DocusContext => ({
   locales: {
     codes: ['en'],
     defaultLocale: 'en'
   },
   database: {
-    provider: 'lokijs',
-    options: {}
+    provider: options.database.provider || 'local',
+    options: options.database.options || {}
   },
+  ignoreList: [],
   search: {
-    inheritanceFields: ['layout'],
-    fields: ['description', 'date', 'imgUrl']
+    inheritanceFields: ['layout']
   },
   transformers: {
     markdown: {
@@ -46,4 +46,4 @@ export const defaultContext: DocusContext = {
       }
     }
   }
-}
+})
