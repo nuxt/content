@@ -20,6 +20,8 @@ export default defineComponent({
       $docus
     } = context
 
+    console.log(i18n)
+
     // Assign current locale
     const language = i18n.locale
 

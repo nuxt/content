@@ -1,8 +1,10 @@
-export default function ({ app }, inject) {
+import { defineNuxtPlugin } from '#app'
+
+export default defineNuxtPlugin(nuxt => {
   // Generate local path for static contents.
   // This helper does not respect `router.trailingSlash`
   // and add/remove trailingSlash baded on original path
-  inject('contentLocalePath', path => {
+  nuxt.provide('contentLocalePath', path => {
     const { localeCodes, defaultLocale } = app.i18n
 
     // If `path` includes a locale do not change the locale
@@ -27,6 +29,8 @@ export default function ({ app }, inject) {
   })
 
   if (process.client) {
-    app.i18n.onLanguageSwitched = () => window.$nuxt.$docus.fetchNavigation(app.i18n.locale)
+    nuxt.nuxt2Context.i18n.onLanguageSwitched = () => {
+      window.$docus.navigation.fetchNavigation(nuxt.nuxt2Context.i18n.locale)
+    }
   }
-}
+})
