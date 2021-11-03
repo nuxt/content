@@ -39,6 +39,7 @@ export const setupConfigModule = (nuxt: Nuxt) => {
 
   // @ts-ignore - Default title and description for pages
   nuxt.options.meta.name = config.title
+
   // @ts-ignore
   nuxt.options.meta.description = config.description
 

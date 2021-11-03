@@ -19,6 +19,85 @@ const glob = (pattern: string, options: GlobOptions = {}) =>
   )
 
 export const setupAppModule = (nuxt: Nuxt) => {
+  // Initialize meta
+  nuxt.options.meta = nuxt.options.meta || {}
+
+  // Initialize head
+  nuxt.options.head = nuxt.options.head || {}
+
+  // Initialize head meta
+  nuxt.options.head.meta = nuxt.options.head.meta || []
+
+  // Push meta to head meta
+  nuxt.options.head.meta.push(
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+  )
+
+  // Set bridge config
+  nuxt.options.bridge = nuxt.options.bridge || {}
+  nuxt.options.bridge.autoImports = false
+  nuxt.options.bridge.postcss8 = true
+
+  // Inject components
+  nuxt.options.components = Array.isArray(nuxt.options.components) ? nuxt.options.components : []
+  nuxt.options.components.push({
+    path: resolveAppDir('components'),
+    isAsync: false,
+    prefix: '',
+    level: 999
+  })
+
+  // Init color mode
+  // Docs: https://color-mode.nuxtjs.org
+  nuxt.options.colorMode = nuxt.options.colorMode || {}
+  nuxt.options.colorMode.classSuffix = ''
+
+  // Init image module
+  nuxt.options.image = nuxt.options.image || {}
+  nuxt.options.image.domains = nuxt.options.image.domains || []
+  nuxt.options.image.domains.push('https://i3.ytimg.com')
+
+  // Set server configuration
+  nuxt.options.target = 'server'
+  nuxt.options.server = nuxt.options.server || {}
+  nuxt.options.server.port = parseInt(process.env.PORT || '4000', 10)
+
+  // Set generate configuration
+  nuxt.options.generate = nuxt.options.generate || {}
+  nuxt.options.generate.fallback = '404.html'
+  nuxt.options.generate.routes.push('/')
+
+  // Set Nitro configuration
+  nuxt.options.nitro = nuxt.options.nitro || {}
+  nuxt.options.nitro.experiments = nuxt.options.nitro.experiments || {}
+  nuxt.options.nitro.experiments.wasm = true
+  nuxt.options.nitro.inlineDynamicImports = true
+  nuxt.options.nitro.externals =
+    process.env.NITRO_PRESET === 'cloudflare'
+      ? false
+      : {
+          inline: ['@docus/core', 'ohmyfetch', 'property-information', '@docus/mdc'],
+          external: [
+            'vue-docgen-api',
+            '@nuxt/kit',
+            '@nuxt/image',
+            '@nuxtjs/i18n',
+            'vue-meta',
+            'vue-router',
+            'vue-i18n',
+            'ufo',
+            'vue-client-only',
+            'vue-no-ssr',
+            'ohmyfetch'
+          ]
+        }
+
+  // Set build configuration
+  nuxt.options.build = nuxt.options.build || {}
+  nuxt.options.build.transpile = nuxt.options.build.transpile || []
+  nuxt.options.build.transpile.push('@docus/', 'ohmyfetch')
+
   // Setup default layout
   nuxt.options.layouts.default = resolveAppDir('layouts/default.vue')
 
@@ -108,7 +187,4 @@ export const setupAppModule = (nuxt: Nuxt) => {
       }
     }
   })
-
-  // Add Devtools integration (WIP)
-  // if (nuxt.options.dev) addPlugin(r('../devtools'), { append: true })
 }

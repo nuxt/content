@@ -1,5 +1,5 @@
 import type { Nuxt } from '@nuxt/kit'
-import { defineNuxtModule } from '@nuxt/kit'
+import { defineNuxtModule, installModule } from '@nuxt/kit'
 import { setupConfigModule } from './config'
 import { setupI18nModule } from './i18n'
 import { setupAppModule } from './app'
@@ -11,5 +11,9 @@ export default defineNuxtModule({
     setupConfigModule(nuxt)
 
     await setupI18nModule(nuxt)
+
+    await installModule(nuxt, {
+      src: '@nuxt/image'
+    })
   }
 })

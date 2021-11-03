@@ -2,7 +2,7 @@ import { NuxtConfig } from '@nuxt/kit'
 import jiti from 'jiti'
 import { distDir } from '../dirs'
 import type { DocusConfig } from '../../types'
-import _nuxtConfig from '../nuxt.config'
+import docusModule from '../module'
 import { mergeConfig } from './extend'
 import { loadTheme, checkDocusTheme } from './helpers'
 
@@ -27,13 +27,17 @@ export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtCon
   let _docusConfig: DocusConfig = {}
   try {
     _docusConfig = _require('./docus.config', userConfig.rootDir)
-    _nuxtConfig.hasDocusConfig = true
+    userConfig.hasDocusConfig = true
   } catch (e) {
-    _nuxtConfig.hasDocusConfig = false
+    userConfig.hasDocusConfig = false
   }
 
   // Set second level extend for theme config
-  let appConfig: NuxtConfig = _nuxtConfig as NuxtConfig
+  let appConfig: NuxtConfig = userConfig as NuxtConfig
+
+  // Add Docus modules
+  if (!appConfig.buildModules) appConfig.buildModules = []
+  appConfig.buildModules = ['@docus/core', docusModule, ...appConfig.buildModules]
 
   // Set hasThemeConfig default
   appConfig.hasThemeConfig = false
@@ -71,9 +75,6 @@ export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtCon
   } else {
     appConfig.hasTheme = false
   }
-
-  // Merge previous config with user Nuxt config
-  appConfig = mergeConfig(userConfig, appConfig)
 
   return appConfig
 }
