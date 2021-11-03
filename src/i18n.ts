@@ -1,7 +1,8 @@
 import fs from 'fs'
 import { resolve, join, relative } from 'pathe'
 import defu from 'defu'
-import { addPlugin, installModule, Nuxt, resolveModule } from '@nuxt/kit'
+import { addPlugin, Nuxt } from '@nuxt/kit'
+import chalk from 'chalk'
 import languages from '../app/languages'
 import { useDocusConfig } from './context'
 import { resolveTemplateDir, resolveAppDir } from './dirs'
@@ -38,7 +39,7 @@ const config = {
   }
 }
 
-export const setupI18nModule = async (nuxt: Nuxt) => {
+export const setupI18nModule = (nuxt: Nuxt) => {
   const langDir = resolveAppDir('languages')
 
   // Update i18n langDir to relative from `~` (https://github.com/nuxt-community/i18n-module/blob/4bfa890ff15b43bc8c2d06ef9225451da711dde6/src/templates/utils.js#L31)
@@ -71,10 +72,11 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
   // Add i18n plugin
   addPlugin(resolveTemplateDir('i18n.js'))
 
-  // Install i18n module
-  await installModule(nuxt, {
-    src: resolveModule('@nuxtjs/i18n')
-  })
+  // Add languages badge
+  nuxt.options.cli.badgeMessages.push(
+    '',
+    chalk.bold('📙 Languages: ') + chalk.underline.yellow(config.locales.map(({ code }: any) => code).join(', '))
+  )
 
   // @ts-ignore - Get available locales and set default locale
   nuxt.hook('docus:context', docusContext => {
