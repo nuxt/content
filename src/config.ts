@@ -11,7 +11,7 @@ import type { DocusConfig } from 'types'
 const defaultConfig = defineDocusConfig({
   title: 'Docus',
   contentDir: 'content',
-  url: 'http://localhost:4000',
+  url: 'http://localhost:3000',
   description: 'A website built with Docus.',
   template: 'page'
 })

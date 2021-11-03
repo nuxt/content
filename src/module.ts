@@ -10,9 +10,7 @@ export default defineNuxtModule({
 
     setupConfigModule(nuxt)
 
-    setupI18nModule(nuxt)
-
-    await installModule(nuxt, '@nuxtjs/i18n')
+    await setupI18nModule(nuxt)
 
     await installModule(nuxt, '@nuxt/image')
   }

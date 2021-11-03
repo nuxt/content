@@ -15,8 +15,7 @@ export enum StateTypes {
   CurrentPage = 'docus-current-page',
   Navigation = 'docus-navigation',
   CurrentNav = 'docus-current-nav',
-  CurrentPath = 'docus-current-path',
-  CurrentLocale = 'docus-current-locale'
+  CurrentPath = 'docus-current-path'
 }
 
 /**
@@ -51,9 +50,6 @@ export const createDocus = (
   // Docus current page (initialized in _.vue > asyncData)
   const docusCurrentPage = useState(StateTypes.CurrentPage) as Ref<DocusDocument>
 
-  // Docus current locale
-  const docusCurrentLocale = useState(StateTypes.CurrentLocale, () => $nuxt.context.app.i18n.locale) as Ref<string>
-
   // Create Docus styling
   createDocusStyles($nuxt.context)
 
@@ -61,11 +57,10 @@ export const createDocus = (
   clientAsyncData($nuxt)
 
   // Create Docus navigation
-  createDocusNavigation($nuxt.context, docusConfig, $nuxt.$content, docusCurrentLocale)
+  createDocusNavigation($nuxt.context, docusConfig, $nuxt.$content)
 
   // Create $docus
   const $docus = {
-    currentLocale: docusCurrentLocale,
     config: docusConfig,
     content: $nuxt.$content,
     theme: docusTheme,
@@ -88,7 +83,6 @@ export const createDocus = (
  */
 export const useDocus = () => ({
   content: useNuxtApp().vue2App.$content as DocusContent<any>,
-  currentLocale: useState(StateTypes.CurrentLocale) as Ref<string>,
   config: useState(StateTypes.Config) as Ref<DocusConfig>,
   theme: useState(StateTypes.Theme) as Ref<DefaultThemeConfig>,
   layout: useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>,
@@ -111,11 +105,6 @@ export const useContent = () => {
  * Access the config object.
  */
 export const useConfig = () => useState(StateTypes.Config) as Ref<DocusConfig>
-
-/**
- * Access the current locale.
- */
-export const useCurrentLocale = () => useState(StateTypes.CurrentLocale) as Ref<string>
 
 /**
  * Access the theme config object.

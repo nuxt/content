@@ -5,7 +5,7 @@ export default defineNuxtPlugin(nuxt => {
   // This helper does not respect `router.trailingSlash`
   // and add/remove trailingSlash baded on original path
   nuxt.provide('contentLocalePath', path => {
-    const { localeCodes, defaultLocale } = app.i18n
+    const { localeCodes, defaultLocale } = nuxt.app.i18n
 
     // If `path` includes a locale do not change the locale
     let localePath = localeCodes.some(code => path.startsWith(`/${code}`)) ? path : app.localePath(path)

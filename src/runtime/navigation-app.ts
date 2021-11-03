@@ -55,12 +55,7 @@ let _refresh: (locale?: string) => Promise<void>
 /**
  * Handling all the navigation querying logic.
  */
-export const createDocusNavigation = (
-  context: Context,
-  config: Ref<DocusConfig>,
-  content: DocusContent<any>,
-  currentLocale: Ref<string>
-) => {
+export const createDocusNavigation = (context: Context, config: Ref<DocusConfig>, content: DocusContent<any>) => {
   // @ts-ignore - Extract context
   const _contentLocalePath = context.$contentLocalePath
   const { route } = context
@@ -71,14 +66,14 @@ export const createDocusNavigation = (
   const docusCurrentPath = useState(StateTypes.CurrentPath, () => `/${_route.params.pathMatch}`) as Ref<string>
 
   _fetchNavigation = async (locale?: string) => {
-    const __locale = locale || currentLocale.value
+    const __locale = locale || context.i18n.locale
 
     const data = (await content.fetch('navigation/' + __locale)) as NavItem[]
 
     docusNavigation.value[__locale] = data
   }
 
-  _get = ({ depth, locale = currentLocale.value, from, all }: DocusNavigationGetParameters = {}) => {
+  _get = ({ depth, locale = context.i18n.locale, from, all }: DocusNavigationGetParameters = {}) => {
     const nav = docusNavigation.value[locale] || []
 
     let items = nav
@@ -219,7 +214,7 @@ export const createDocusNavigation = (
         // @ts-ignore
         .search({ deep: true })
         .where({
-          language: currentLocale.value,
+          language: context.i18n.locale,
           // Pages should share same parent
           parent: page.parent,
           // Ignore empty index files
@@ -243,8 +238,8 @@ export const createDocusNavigation = (
     })
   }
 
-  _refresh = async currentLocale => {
-    await _fetchNavigation(currentLocale)
+  _refresh = async locale => {
+    await _fetchNavigation(locale)
     _updateCurrentNav()
   }
 
@@ -255,9 +250,10 @@ export const createDocusNavigation = (
   if (process.client) {
     window.onNuxtReady(() => {
       // Preview mode for navigation
-      window.$nuxt.$on('docus:content:preview', () => _refresh(currentLocale.value))
+      window.$nuxt.$on('docus:content:preview', () => _refresh(context.i18n.locale))
+
       // Update content on update.
-      window.$nuxt.$on('content:update', () => _refresh(currentLocale.value))
+      window.$nuxt.$on('content:update', () => _refresh(context.i18n.locale))
     })
   }
 }
