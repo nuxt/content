@@ -1,11 +1,11 @@
 import type { DocusContent, DocusDocument } from '@docus/core'
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
-import { createDocusNavigation, useNavigation } from './navigation'
+import { createDocusNavigation, useDocusNavigation } from './navigation'
 import { createDocusStyles } from './style'
 import type { DefaultThemeConfig, DocusConfig } from 'types'
 import { NuxtAppCompat, Ref, useNuxtApp, useState } from '#app'
-export { useNavigation } from './navigation'
-export { useStyles } from './style'
+export { useDocusNavigation } from './navigation'
+export { useDocusStyles } from './style'
 
 // State ids for Docus runtime API
 export enum StateTypes {
@@ -66,7 +66,7 @@ export const createDocus = (
     theme: docusTheme,
     layout: docusLayout,
     page: docusCurrentPage,
-    navigation: useNavigation()
+    navigation: useDocusNavigation()
   }
 
   return {
@@ -87,13 +87,13 @@ export const useDocus = () => ({
   theme: useState(StateTypes.Theme) as Ref<DefaultThemeConfig>,
   layout: useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>,
   page: useState(StateTypes.CurrentPage) as Ref<DocusDocument>,
-  navigation: useNavigation()
+  navigation: useDocusNavigation()
 })
 
 /**
  * Access the content querying functions.
  */
-export const useContent = () => {
+export const useDocusContent = () => {
   const $content = useNuxtApp().vue2App.$content as DocusContent<any>
 
   const preview = (useState(StateTypes.Config) as Ref<DocusConfig>).value.preview || false
@@ -104,19 +104,19 @@ export const useContent = () => {
 /**
  * Access the config object.
  */
-export const useConfig = () => useState(StateTypes.Config) as Ref<DocusConfig>
+export const useDocusConfig = () => useState(StateTypes.Config) as Ref<DocusConfig>
 
 /**
  * Access the theme config object.
  */
-export const useTheme = () => useState(StateTypes.Theme) as Ref<DefaultThemeConfig>
+export const useDocusTheme = () => useState(StateTypes.Theme) as Ref<DefaultThemeConfig>
 
 /**
  * Access the layout config object.
  */
-export const useLayout = () => useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>
+export const useDocusLayout = () => useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>
 
 /**
  * Access the current page object.
  */
-export const usePage = () => useState(StateTypes.CurrentPage) as Ref<DocusDocument>
+export const useDocusPage = () => useState(StateTypes.CurrentPage) as Ref<DocusDocument>

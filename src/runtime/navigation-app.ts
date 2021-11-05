@@ -261,11 +261,11 @@ export const createDocusNavigation = (context: Context, config: Ref<DocusConfig>
 /**
  * Access the navigation state and helpers.
  */
-export const useNavigation = () => {
+export const useDocusNavigation = () => {
   return {
-    state: useNavigationState(),
-    currentNav: useCurrentNav(),
-    currentPath: useCurrentPath(),
+    state: useDocusNavigationState(),
+    currentNav: useDocusCurrentNav(),
+    currentPath: useDocusCurrentPath(),
     getPageTemplate: _getPageTemplate,
     fetchNavigation: _fetchNavigation,
     isLinkActive: _isLinkActive,
@@ -278,14 +278,14 @@ export const useNavigation = () => {
 /**
  * Access the navigation state.
  */
-export const useNavigationState = () => useState(StateTypes.Navigation) as Ref<DocusNavigationState>
+export const useDocusNavigationState = () => useState(StateTypes.Navigation) as Ref<DocusNavigationState>
 
 /**
  * Access the current navigation.
  */
-export const useCurrentNav = () => useState(StateTypes.CurrentNav) as Ref<DocusCurrentNav>
+export const useDocusCurrentNav = () => useState(StateTypes.CurrentNav) as Ref<DocusCurrentNav>
 
 /**
  * Access the current path.
  */
-export const useCurrentPath = () => useState(StateTypes.CurrentPath) as Ref<string>
+export const useDocusCurrentPath = () => useState(StateTypes.CurrentPath) as Ref<string>

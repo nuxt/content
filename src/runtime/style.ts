@@ -1,7 +1,7 @@
 import type { MetaInfo } from 'vue-meta'
 import type { Context } from '@nuxt/types'
 import { getColors } from './theme-colors'
-import { useTheme } from './'
+import { useDocusTheme } from './'
 import type { Colors } from 'types'
 import { computed } from '#app'
 
@@ -95,7 +95,7 @@ function updateHead() {
 }
 
 const styles = computed(() => {
-  const theme = useTheme()
+  const theme = useDocusTheme()
 
   return useCSSVariables(theme.value?.colors ? theme.value.colors : {})
 })
@@ -113,7 +113,7 @@ export const createDocusStyles = (context: Context) => {
 /**
  * Access the styling state and helpers.
  */
-export const useStyles = () => {
+export const useDocusStyles = () => {
   return {
     styles,
     updateHead
