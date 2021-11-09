@@ -65,6 +65,16 @@ export default {
       }
     }
 
+    if (Array.isArray(node) && node.length > 1 && (ctx.data.staticClass || ctx.data.class)) {
+      // eslint-disable-next-line no-console
+      console.warn('Markdown: `class` prop is ignored because there is multiple elements on component root.')
+      // eslint-disable-next-line no-console
+      console.warn('Markdown: This is likely to happen when you use `unwrap` attribute.')
+    } else {
+      const tmpNode = Array.isArray(node) ? node[0] : node
+      Object.assign(tmpNode.data, ctx.data)
+    }
+
     return node
   }
 }
