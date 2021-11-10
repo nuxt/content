@@ -14413,11 +14413,6 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-types-cloudflare-worker@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/types-cloudflare-worker/-/types-cloudflare-worker-1.2.0.tgz#99dfc204a48815ee502f68fc9d45ba1d11d9dcd2"
-  integrity sha512-mBOu+VLj3LReTFBdlqIQBGTygW7znrSCYcvgqfwZnwisatLbZwrOwoWGc1H0O2TiI+2dGCFAolDdy7g1RtQeQg==
-
 typescript@^4.4.4:
   version "4.4.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.4.tgz#2cd01a1a1f160704d3101fd5a58ff0f9fcb8030c"
