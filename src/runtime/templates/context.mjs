@@ -1,8 +1,8 @@
 // @ts-nocheck
 <% 
-const remarkPlugins = options.context.transformers.markdown.remarkPlugins
-const rehypePlugins = options.context.transformers.markdown.rehypePlugins
-const components = options.context.transformers.markdown.components.filter(item => !item.target || item.target === options.target)
+const remarkPlugins = options.transformers.markdown.remarkPlugins
+const rehypePlugins = options.transformers.markdown.rehypePlugins
+const components = options.transformers.markdown.components
 
 const serializeImportName = id => '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
 %>
@@ -16,7 +16,7 @@ import <%= serializeImportName(item[0] || item.name || item) %> from '<%= item[0
   import <%= serializeImportName(item[0] || item.name || item) %> from '<%= item[0] || item.name || item %>'
   <% }) %>
 
-const _context = <%= JSON.stringify(options.context) %>
+const _context = <%= JSON.stringify(options) %>
 
 _context.transformers.markdown.components = [
   <% components.forEach(item => { %>{

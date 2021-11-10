@@ -102,7 +102,7 @@ export async function generateNavigation(contents?: any[]) {
 
   if (!contents) {
     // Query pages
-    contents = await (globalThis as any).$fetch('/api/_docus/list/content').then(({ items }: any) => items)
+    contents = await (globalThis as any).$fetch('/api/_docus/list').then(({ items }: any) => items)
   }
 
   // sort items

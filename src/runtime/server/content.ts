@@ -1,4 +1,5 @@
-import { prefixStorage } from 'unstorage'
+import { prefixStorage as unstoragePrefixStorage } from 'unstorage'
+import type { Storage } from 'unstorage'
 import micromatch from 'micromatch'
 import { getTransformer } from '../transformers'
 import { createDatabase } from '../database'
@@ -7,86 +8,83 @@ import { useDocusContext } from '../context'
 import { cachify } from './utils/cache'
 // @ts-ignore
 import { storage } from '#storage'
+import type { MDCRoot } from 'types'
 
-export const assetsStorage = prefixStorage(storage, 'assets')
-export const previewStorage = prefixStorage(storage, 'preview')
+interface DocusContent {
+  body: MDCRoot
+  meta: Record<string, any>
+}
+
+// TODO: Fix in upstream
+function prefixStorage(storage: Storage, base: string): Storage {
+  const nsStorage = unstoragePrefixStorage(storage, base)
+  const prefixRegex = new RegExp(`^${base}:`)
+  nsStorage.getKeys = (id: string = '') => {
+    return storage.getKeys(base + ':' + id).then(keys => keys.map(key => key.replace(prefixRegex, '')))
+  }
+  return nsStorage
+}
+
+export const contentStorage = prefixStorage(storage, 'docus:source')
+export const buildStorage = prefixStorage(storage, 'assets:docus:build')
+export const previewStorage = prefixStorage(storage, 'docus:preview')
 
 const isProduction = process.env.NODE_ENV === 'production'
-const withCache = (name: string, fn: any, force = false) =>
-  isProduction || force ? cachify(fn, { name, swr: true, ttl: 60000, integrity: 'docus' }) : fn
-
-// Remove prefix from key
-const removePrefix = (key: string) => key.split(':').slice(1).join(':')
-
-const getContentData = withCache('getContentData', async (id: string) => {
-  let body = await assetsStorage.getItem(id)
-  const meta = await assetsStorage.getMeta(id)
-
-  /**
-   * Unstorage tries to parse content as JSON
-   * The following logic will ensure that the content is always a string
-   */
-  // Stringify objects
-  if (typeof body === 'object') {
-    body = JSON.stringify(typeof (body as any).default !== 'undefined' ? (body as any).default : body)
-  }
-  // Ensure body is a string
-  if (typeof body !== 'string') {
-    body = body + ''
-  }
-  return {
-    body,
-    meta
-  }
-})
-
-async function getPreviewData(id: string, previewKey: string) {
-  let body = await previewStorage.getItem(`${previewKey}:${id}`)
-  const meta = await previewStorage.getMeta(`${previewKey}:${id}`)
-
-  /**
-   * Unstorage tries to parse content as JSON
-   * The following logic will ensure that the content is always a string
-   */
-  // Stringify objects
-  if (typeof body === 'object') {
-    body = JSON.stringify(typeof (body as any).default !== 'undefined' ? (body as any).default : body)
-  }
-  // Ensure body is a string
-  if (typeof body !== 'string') {
-    body = body + ''
-  }
-  return {
-    body,
-    meta
-  }
-}
+const withCache = (name: string, fn: any) =>
+  isProduction ? cachify(fn, { name, swr: true, ttl: 60000, integrity: 'docus' }) : fn
 
 // Get data from storage
-function getData(id: string, previewKey?: string) {
+async function getData(id: string, previewKey?: string) {
+  let body
+  let meta
   // Use updated data if it exists
   if (previewKey) {
-    return getPreviewData(id, previewKey)
+    body = await previewStorage.getItem(`${previewKey}:${id}`)
+    meta = await previewStorage.getMeta(`${previewKey}:${id}`)
   }
 
-  return getContentData(id)
+  // Fallback to original data
+  if (!body) {
+    body = await contentStorage.getItem(id)
+    meta = await contentStorage.getMeta(id)
+  }
+
+  /**
+   * Unstorage tries to parse content as JSON
+   * The following logic will ensure that the content is always a string
+   */
+  if (body && typeof body === 'object') {
+    body = JSON.stringify(typeof (body as any).default !== 'undefined' ? (body as any).default : body)
+  }
+
+  // Ensure body is a string
+  if (typeof body !== 'string') {
+    body = body + ''
+  }
+
+  return {
+    body: body as string,
+    meta
+  }
 }
 
-const getContentKeys = withCache('getContentKeys', async (id?: string) => {
-  let keys: string[] = await assetsStorage.getKeys(id)
-  // Remove assets prefix
-  keys = keys.map(removePrefix)
+const getContentKeys = async (id?: string) => {
+  let keys: string[] = await buildStorage.getKeys(id)
 
-  // filter out ignored contents
-  const context = useDocusContext()
-  keys = micromatch.not(keys, context?.ignoreList || [])
+  if (keys.length === 0) {
+    keys = await contentStorage.getKeys(id)
+
+    // filter out ignored contents
+    const context = useDocusContext()
+    keys = micromatch.not(keys, context?.ignoreList || [])
+  }
 
   return keys
-})
+}
 
 const getPreviewKeys = async (id?: string, previewKey?: string) => {
   let keys = (await previewStorage.getKeys(id ? `${previewKey}:${id}` : previewKey)).map((key: string) =>
-    removePrefix(key.replace(`${previewKey}:`, ''))
+    key.replace(`${previewKey}:`, '')
   )
 
   // filter out ignored contents
@@ -96,6 +94,13 @@ const getPreviewKeys = async (id?: string, previewKey?: string) => {
   return keys
 }
 
+/**
+ * Find list of content keys
+ *
+ * @param id Base if for lookup
+ * @param previewKey Preview ID
+ * @returns List of content keys in given base path
+ */
 async function getKeys(id?: string, previewKey?: string) {
   let keys: string[] = await getContentKeys(id)
 
@@ -111,24 +116,55 @@ async function getKeys(id?: string, previewKey?: string) {
   return keys
 }
 
-// Get content
-const transform = withCache('transform', (id: string, body: string) => getTransformer(id)(id, body), true)
-export async function getContent(id: string, previewKey?: string) {
+/**
+ * Read content form source file, generate and cache the content
+ *
+ * @param id Content ID
+ * @param previewKey Preview id
+ * @returns Transformed content
+ */
+export async function buildContent(id: string, previewKey?: string): Promise<DocusContent> {
   const data = await getData(id, previewKey)
   if (typeof data.body === 'undefined' || data.body === null) {
     throw new Error(`Content not found: ${id}`)
   }
-  const transformResult = await transform(id, data.body as any)
-  return {
+  const transformResult = await getTransformer(id)(id, data.body)
+  const content = {
     meta: {
       ...data.meta,
       ...transformResult.meta
     },
     body: transformResult.body
   }
+  if (!previewKey) {
+    await buildStorage.setItem(id, content)
+  }
+  return content
 }
 
-// Get list of content
+/**
+ * Return transformed conntent if it exists in cache or build it on demand
+ *
+ * @param id Content ID
+ * @param previewKey Preview ID
+ * @returns Transformed content
+ */
+export async function getContent(id: string, previewKey?: string): Promise<DocusContent> {
+  let content = !previewKey && ((await buildStorage.getItem(id)) as DocusContent)
+
+  if (!content) {
+    content = await buildContent(id, previewKey)
+  }
+  return content
+}
+
+/**
+ * Find list of contents
+ *
+ * @param id Base if for lookup
+ * @param previewKey Preview ID
+ * @returns List of content in given base path
+ */
 export async function getList(id?: string, previewKey?: string) {
   const keys: string[] = await getKeys(id, previewKey)
   return Promise.all(
@@ -142,7 +178,14 @@ export async function getList(id?: string, previewKey?: string) {
   )
 }
 
-// Get content
+/**
+ * Search content database for a given query
+ *
+ * @param to Base path for search
+ * @param body Search options
+ * @param previewKey Preview ID
+ * @returns Single content of list of contents that matchs the search
+ */
 export async function searchContent(to: string, body: any, previewKey?: string) {
   const navigation = await getNavigation(previewKey)
 

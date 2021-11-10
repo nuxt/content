@@ -28,6 +28,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
   configKey: 'content',
   defaults: {
     apiBase: '_docus',
+    dirs: ['content'],
     watch: nuxt.options.dev,
     database: {
       provider: 'local'
@@ -63,13 +64,31 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     // Register API
     nuxt.hook('nitro:context', (ctx: NitroContext) => {
-      ctx.assets.dirs.content = {
-        dir: resolve(nuxt.options.rootDir, 'content'),
-        meta: true
+      if (ctx.preset === 'dev') {
+        for (const dir of options.dirs) {
+          ctx.storage.mounts[`docus:source:${dir}`] = {
+            driver: 'fs',
+            driverOptions: {
+              base: resolve(nuxt.options.rootDir, dir)
+            }
+          }
+        }
+        // prefix `docus:build` with assets to match production keys
+        ctx.storage.mounts['assets:docus:build'] = {
+          driver: 'fs',
+          driverOptions: {
+            base: resolve(nuxt.options.buildDir, 'docus/build')
+          }
+        }
+      } else {
+        ctx.assets.dirs['docus:build'] = {
+          dir: resolve(nuxt.options.buildDir, 'docus/build'),
+          meta: true
+        }
       }
       // Set preview storage as memory if not set
-      if (!ctx.storage.mounts.preview) {
-        ctx.storage.mounts.preview = {
+      if (!ctx.storage.mounts['docus:preview']) {
+        ctx.storage.mounts['docus:preview'] = {
           driver: 'memory'
         }
       }
@@ -94,16 +113,11 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     addPlugin(resolveTemplateDir('content'))
 
     // Add Docus context template
-    for (const target of ['server', 'client']) {
-      addTemplate({
-        src: resolveModule('./context', { paths: templateDir }),
-        filename: `docus/context.${target}.mjs`,
-        options: {
-          target,
-          context: docusContext
-        }
-      })
-    }
+    addTemplate({
+      src: resolveModule('./context', { paths: templateDir }),
+      filename: 'docus/context.mjs',
+      options: docusContext
+    })
 
     // Setup dev target
     if (nuxt.options.dev) {

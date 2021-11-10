@@ -22,7 +22,7 @@ export default function setupDevTarget(options: any, nuxt: Nuxt) {
       storage.mount(
         'content',
         fsDriver({
-          base: resolve(nuxt.options.srcDir, 'content'),
+          base: resolve(nuxt.options.rootDir, 'content'),
           ignore: ignoreList
         })
       )
@@ -39,7 +39,10 @@ export default function setupDevTarget(options: any, nuxt: Nuxt) {
       storage.watch(
         createDebounceContentWatcher(async (event: WatchEvent, key: string) => {
           // call reload api: clear database and navigation
-          await fetch(joinURL(url, 'api', options.apiBase, 'reload', key))
+          await fetch(joinURL(url, 'api', options.apiBase, 'reload'), {
+            method: 'POST',
+            body: JSON.stringify({ event, key })
+          })
 
           /**
            * Broadcast a message to the server to refresh the page
@@ -60,7 +63,7 @@ function createDebounceContentWatcher(callback: WatchCallback) {
   return (event: WatchEvent, key: string) => {
     if (key.endsWith('.md') && ['content'].some(mount => key.startsWith(mount))) {
       handleEvent(event, key)
-      logger.info(`${key} ${event}`)
+      logger.info(`[DOCUS]: ${key} ${event}`)
     }
   }
 }

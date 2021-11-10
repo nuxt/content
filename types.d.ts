@@ -7,6 +7,7 @@ export * from '@docus/mdc'
 export interface DocusOptions {
   apiBase: string
   watch: boolean
+  dirs: string[]
   database: {
     provider: string
     options: Record<string, any>
