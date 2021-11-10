@@ -195,8 +195,10 @@ export async function searchContent(to: string, body: any, previewKey?: string) 
 }
 
 // Get navigation from cache
-const getNavigationFromCache = withCache('navigation', generateNavigation)
+const getNavigationCached = withCache('navigation', async () => generateNavigation(await getList()))
 export const getNavigation = async (previewKey?: string) => {
-  const list = await getList(undefined, previewKey)
-  return previewKey ? generateNavigation(list) : getNavigationFromCache(list)
+  if (!previewKey) {
+    return getNavigationCached()
+  }
+  return generateNavigation(await getList(undefined, previewKey))
 }

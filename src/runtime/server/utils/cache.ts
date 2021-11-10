@@ -1,4 +1,4 @@
-import hash from 'object-hash'
+import { murmurHashV3 } from 'murmurhash-es'
 import type { Handle } from 'h3'
 // @ts-ignore
 import { storage } from '#storage'
@@ -32,7 +32,7 @@ export function cachify(fn: (...args: any[]) => any, opts: CachifyOptions) {
   // Normalize cache params
   const group = opts.group || ''
   const name = opts.name || fn.name || '_'
-  const integrity = hash(opts.integrity || fn)
+  const integrity = murmurHashV3(JSON.stringify(opts.integrity || fn)) + '-' + name
 
   async function get(key: string, resolver: any) {
     const cacheKey = [opts.base, group, name, key].filter(Boolean).join(':')
@@ -81,7 +81,7 @@ export function cachify(fn: (...args: any[]) => any, opts: CachifyOptions) {
 }
 
 function getKey(...args: any[]) {
-  return args.length ? hash(args, {}) : ''
+  return 'args' + murmurHashV3(JSON.stringify(args))
 }
 
 export function cachifyHandle(handle: Handle, opts: Omit<CachifyOptions, 'getKey'>) {

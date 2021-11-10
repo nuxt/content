@@ -2,8 +2,8 @@ import type { IncomingMessage } from 'http'
 import type { Socket } from 'net'
 import type { WatchEvent, WatchCallback } from 'unstorage'
 import type { Nuxt } from '@nuxt/kit'
-
 import { resolve } from 'pathe'
+// @ts-ignore
 import fetch from 'node-fetch'
 import { joinURL } from 'ufo'
 import { debounce } from 'debounce'
