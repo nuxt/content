@@ -72,7 +72,9 @@ export default {
       console.warn('Markdown: This is likely to happen when you use `unwrap` attribute.')
     } else {
       const tmpNode = Array.isArray(node) ? node[0] : node
-      Object.assign(tmpNode.data, ctx.data)
+      if (tmpNode?.data) {
+        Object.assign(tmpNode.data, ctx.data)
+      }
     }
 
     return node
