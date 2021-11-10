@@ -1,5 +1,6 @@
-import { NuxtConfig } from '@nuxt/kit'
 import jiti from 'jiti'
+import { defineNuxtConfig } from '@nuxt/bridge'
+import type { NuxtConfig } from '@nuxt/bridge'
 import { distDir } from '../dirs'
 import type { DocusConfig } from '../../types'
 import docusModule from '../module'
@@ -76,5 +77,5 @@ export function withDocus(userConfig: NuxtConfig & { rootDir: string }): NuxtCon
     appConfig.hasTheme = false
   }
 
-  return appConfig
+  return defineNuxtConfig(appConfig)
 }
