@@ -1,21 +1,19 @@
 import fs from 'fs'
-import { resolve, join, relative } from 'pathe'
+import { resolve } from 'pathe'
 import defu from 'defu'
 import { addPlugin, installModule, Nuxt } from '@nuxt/kit'
 import chalk from 'chalk'
 import type { Options as NuxtI18nOptions } from '@nuxtjs/i18n'
-import languages from '../app/languages'
+import iso639 from 'iso-639-1'
 import { useDocusConfig } from './context'
-import { resolveTemplateDir, resolveAppDir } from './dirs'
+import { resolveTemplateDir } from './dirs'
 
 // Default i18n config
-const i18nConfig: NuxtI18nOptions = {
-  langDir: '',
+const defaultI18nConfig: NuxtI18nOptions = {
   baseUrl: (nuxt: any) => nuxt.app?.$docus?.config?.value?.url || '',
   locales: [],
   defaultLocale: 'en',
   parsePages: false,
-  lazy: true,
   vuex: false,
   vueI18n: {
     fallbackLocale: 'en',
@@ -41,34 +39,42 @@ const i18nConfig: NuxtI18nOptions = {
 }
 
 export const setupI18nModule = async (nuxt: Nuxt) => {
-  const langDir = resolveAppDir('languages')
-
-  // Update i18n langDir to relative from `~` (https://github.com/nuxt-community/i18n-module/blob/4bfa890ff15b43bc8c2d06ef9225451da711dde6/src/templates/utils.js#L31)
-  i18nConfig.langDir = join(relative(nuxt.options.srcDir, langDir), '/')
-
   const config = useDocusConfig()
 
-  // Inject Docus languages as #docus-i18n
-  nuxt.options.alias['#docus-i18n'] = langDir
+  // Merge default options w/ user-project
+  nuxt.options.i18n = defu(nuxt.options.i18n, defaultI18nConfig)
 
-  // Try to parse available locales from contentDir
+  const i18nConfig = nuxt.options.i18n
+
+  // Detect available locales from the content directory
   try {
+    // Check if `locales` key is already set by user / theme.
     if (!nuxt.options.i18n?.locales?.length) {
       const contentDir = resolve(nuxt.options.srcDir, config?.contentDir || 'content')
-      const languageCodes = languages.map(({ code }: { code: string }) => code)
-      const activeLanguages = fs.readdirSync(contentDir).filter(name => languageCodes.includes(name))
-      activeLanguages.unshift(i18nConfig.defaultLocale as string)
-      const localeCodes = [...new Set(activeLanguages)]
 
-      // @ts-ignore
-      i18nConfig.locales = languages.filter(language => localeCodes.includes(language.code))
+      const contentDirectories = fs.readdirSync(contentDir)
+
+      // Assign locales from contentDir root directories
+      i18nConfig.locales = contentDirectories
+        // Filter iso639 valid codes
+        .filter((lang: string) => !!iso639.getName(lang))
+        // Map iso639 code to valid `LocaleObject`
+        .map(code => ({ code, iso: code, name: iso639.getName(code) }))
+
+      // No locales detected from contentDir; get to fallback.
+      if (!i18nConfig.locales.length) throw new Error('No locales detected from `contentDir`! Using fallback.')
     }
   } catch (e) {
-    i18nConfig.locales = []
+    // Fallback to `en`
+    const defaultLocale = i18nConfig.defaultLocale || 'en'
+    i18nConfig.locales = [
+      {
+        code: defaultLocale,
+        iso: defaultLocale,
+        name: iso639.getName(defaultLocale) || defaultLocale
+      }
+    ]
   }
-
-  // Merge options
-  nuxt.options.i18n = defu(nuxt.options.i18n, i18nConfig)
 
   // Add i18n plugin
   addPlugin(resolveTemplateDir('i18n.js'))
@@ -77,6 +83,7 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
   const localesList = i18nConfig.locales?.map(({ code }: any) => code).join(', ') || 'en'
   nuxt.options.cli.badgeMessages.push('', chalk.bold('📙 Languages: ') + chalk.underline.yellow(localesList))
 
+  // Setup i18n module
   await installModule(nuxt, '@nuxtjs/i18n')
 
   // @ts-ignore - Get available locales and set default locale
