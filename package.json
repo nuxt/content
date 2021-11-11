@@ -79,7 +79,7 @@
     "eslint-plugin-nuxt": "^3.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "latest",
-    "nuxt-edge": "^2.16.0-27275055.ab1c6cb4",
+    "nuxt-edge": "^2.16.0-27276495.ab1c6cb4",
     "playwright": "^1.16.3",
     "prettier": "^2.4.1",
     "unbuild": "^0.5.11",
