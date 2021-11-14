@@ -38,7 +38,7 @@ export default {
   - Type: `Object`
   - `required`
 
-Markdonwファイルに書くことができる内容についての詳細はこちらをご覧ください。[コンテンツを作成する](/ja/writing#markdown)
+Markdownファイルに書くことができる内容についての詳細はこちらをご覧ください。[コンテンツを作成する](/ja/writing#markdown)
 
 ## Style
 
