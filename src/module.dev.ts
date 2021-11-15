@@ -12,20 +12,24 @@ import fsDriver from 'unstorage/drivers/fs'
 import { useWebSocket } from './runtime/server/socket'
 import { logger } from './runtime/utils'
 import { useNuxtIgnoreList } from './utils'
+import { DocusContext } from 'types'
 
-export default function setupDevTarget(options: any, nuxt: Nuxt) {
+export default function setupDevTarget(options: DocusContext, nuxt: Nuxt) {
   const ws = useWebSocket()
 
   if (options.watch) {
     const storage = createStorage()
     useNuxtIgnoreList(nuxt).then(ignoreList => {
-      storage.mount(
-        'content',
-        fsDriver({
-          base: resolve(nuxt.options.rootDir, 'content'),
-          ignore: ignoreList
-        })
-      )
+      options.dirs.forEach(dir => {
+        const [path, key] = Array.isArray(dir) ? dir : [dir, dir]
+        storage.mount(
+          key,
+          fsDriver({
+            base: resolve(nuxt.options.rootDir, path),
+            ignore: ignoreList
+          })
+        )
+      })
     })
 
     // create socket server
@@ -61,7 +65,7 @@ function createDebounceContentWatcher(callback: WatchCallback) {
   const handleEvent = debounce(callback, 200)
 
   return (event: WatchEvent, key: string) => {
-    if (key.endsWith('.md') && ['content'].some(mount => key.startsWith(mount))) {
+    if (key.endsWith('.md')) {
       handleEvent(event, key)
       logger.info(`[DOCUS]: ${key} ${event}`)
     }

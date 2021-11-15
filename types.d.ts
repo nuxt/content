@@ -4,17 +4,10 @@ import type { MetaInfo } from 'vue-meta'
 
 export * from '@docus/mdc'
 
-export interface DocusOptions {
+export interface DocusContext {
   apiBase: string
   watch: boolean
-  dirs: string[]
-  database: {
-    provider: string
-    options: Record<string, any>
-  }
-}
-
-export interface DocusContext {
+  dirs: Array<string | string[]>
   ignoreList?: string[]
   locales: {
     codes: string[]
@@ -22,7 +15,7 @@ export interface DocusContext {
   }
   database: {
     provider: string
-    options: any
+    options: Record<string, any>
   }
   search: {
     inheritanceFields: string[]

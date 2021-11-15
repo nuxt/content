@@ -6,8 +6,8 @@ import {
   getContext,
   loadFixture,
   loadNuxt,
-  setContext,
-  spyOnClass
+  setContext
+  // spyOnClass
 } from '@nuxt/test-utils'
 import type { NuxtTestOptions } from '@nuxt/test-utils'
 import getPort from 'get-port'
@@ -27,9 +27,11 @@ export function setupTest(options: Partial<NuxtTestOptions>) {
     setContext(ctx)
   })
   afterEach(() => {
-    setContext(undefined)
+    setContext(undefined as any)
   })
-  afterAll(async () => {
+
+  // @ts-ignore
+  after(async () => {
     // close browser before nuxt server
     if (ctx.browser) {
       await ctx.browser.close()
@@ -39,33 +41,33 @@ export function setupTest(options: Partial<NuxtTestOptions>) {
       await ctx.nuxt.close()
     }
   })
-  test(
-    'setup nuxt',
-    async () => {
-      if (ctx.options.fixture) {
-        await loadFixture()
-      }
-      if (!ctx.nuxt) {
-        await loadNuxt()
-        spyOnClass(ctx.nuxt.moduleContainer)
-        await ctx.nuxt.ready()
-      }
-      if (ctx.options.build) {
-        await build()
-      }
-      if (ctx.options.server) {
-        await listen()
-      }
-      if (ctx.options.generate) {
-        await generate()
-      }
-      if (ctx.options.waitFor) {
-        await new Promise(resolve => setTimeout(resolve, ctx.options.waitFor))
-      }
-      if (ctx.options.browser) {
-        await createBrowser()
-      }
-    },
-    ctx.options.setupTimeout
-  )
+
+  it('setup nuxt', async function () {
+    // @ts-ignore
+    this.timeout(ctx.options.waitFor)
+    if (ctx.options.fixture) {
+      await loadFixture()
+    }
+    if (!ctx.nuxt) {
+      await loadNuxt()
+      // TODO: spyOnClass
+      // spyOnClass(ctx.nuxt.moduleContainer)
+      await ctx.nuxt!.ready()
+    }
+    if (ctx.options.build) {
+      await build()
+    }
+    if (ctx.options.server) {
+      await listen()
+    }
+    if (ctx.options.generate) {
+      await generate()
+    }
+    if (ctx.options.waitFor) {
+      await new Promise(resolve => setTimeout(resolve, ctx.options.waitFor))
+    }
+    if (ctx.options.browser) {
+      await createBrowser()
+    }
+  })
 }

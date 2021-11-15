@@ -21,6 +21,9 @@ const config = defineNuxtConfig({
     experiments: {
       wasm: true
     }
+  },
+  content: {
+    dirs: ['content', ['test', 'content/test']]
   }
 })
 

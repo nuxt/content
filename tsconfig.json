@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "strict": true,
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "esModuleInterop": true,
     "moduleResolution": "Node",
@@ -13,7 +13,16 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "types": ["./shims", "./types", "node", "jest", "@nuxt/kit", "@nuxt/nitro", "@nuxt/bridge"],
+    "types": [
+      "./shims",
+      "./types",
+      "node",
+      "mocha",
+      "chai",
+      "@nuxt/kit",
+      "@nuxt/nitro",
+      "@nuxt/bridge"
+    ],
     "paths": {
       "#app": ["./node_modules/@nuxt/bridge/dist/runtime"]
     }

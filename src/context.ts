@@ -1,13 +1,17 @@
-import type { DocusContext, DocusOptions } from 'types'
+import { Nuxt } from '@nuxt/kit'
+import type { DocusContext } from 'types'
 
-export const useDefaultContext = (options: DocusOptions): DocusContext => ({
+export const useDefaultContext = (nuxt: Nuxt): DocusContext => ({
+  apiBase: '_docus',
+  dirs: ['content'],
+  watch: nuxt.options.dev,
   locales: {
     codes: ['en'],
     defaultLocale: 'en'
   },
   database: {
-    provider: options.database.provider || 'local',
-    options: options.database.options || {}
+    provider: 'local',
+    options: {}
   },
   ignoreList: [],
   search: {

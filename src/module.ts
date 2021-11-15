@@ -16,7 +16,7 @@ import { useDefaultContext } from './context'
 import setupDevTarget from './module.dev'
 import { useNuxtIgnoreList } from './utils'
 import { resolveComponentsDir, resolveRuntimeDir, resolveTemplateDir, runtimeDir, templateDir } from './dirs'
-import type { DocusOptions } from 'types'
+import type { DocusContext } from 'types'
 
 export const resolveApiRoute = (route: string) => {
   const nuxt = useNuxt()
@@ -26,18 +26,8 @@ export const resolveApiRoute = (route: string) => {
 
 export default defineNuxtModule((nuxt: Nuxt) => ({
   configKey: 'content',
-  defaults: {
-    apiBase: '_docus',
-    dirs: ['content'],
-    watch: nuxt.options.dev,
-    database: {
-      provider: 'local'
-    }
-  },
-  async setup(options: DocusOptions, nuxt: Nuxt) {
-    // Extend context
-    const docusContext = useDefaultContext(options)
-
+  defaults: useDefaultContext(nuxt),
+  async setup(docusContext: DocusContext, nuxt: Nuxt) {
     useNuxtIgnoreList(nuxt).then(ignoreList => {
       // @ts-ignore
       docusContext.ignoreList = ignoreList
@@ -60,16 +50,17 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     // Setup runtime alias
     nuxt.options.alias['~docus/content'] = runtimeDir
-    nuxt.options.alias['~docus/database'] = resolveRuntimeDir('database/providers', options.database.provider)
+    nuxt.options.alias['~docus/database'] = resolveRuntimeDir('database/providers', docusContext.database.provider)
 
     // Register API
     nuxt.hook('nitro:context', (ctx: NitroContext) => {
       if (ctx.preset === 'dev') {
-        for (const dir of options.dirs) {
-          ctx.storage.mounts[`docus:source:${dir}`] = {
+        for (const dir of docusContext.dirs) {
+          const [path, key] = Array.isArray(dir) ? dir : [dir, dir.replace(/[/:]/g, '_')]
+          ctx.storage.mounts[`docus:source:${key}`] = {
             driver: 'fs',
             driverOptions: {
-              base: resolve(nuxt.options.rootDir, dir)
+              base: resolve(nuxt.options.rootDir, path)
             }
           }
         }
@@ -104,7 +95,7 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     // Set publicRuntimeConfig $docus key
     ;(nuxt.options.publicRuntimeConfig as any).$docus = {
-      apiBase: options.apiBase,
+      apiBase: docusContext.apiBase,
       // `tagMap` will use in `<Makdown>` to unwrap tags
       tagMap: docusContext.transformers.markdown.tagMap
     }
@@ -121,12 +112,12 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     // Setup dev target
     if (nuxt.options.dev) {
-      setupDevTarget(options, nuxt)
+      setupDevTarget(docusContext, nuxt)
 
-      if (options.watch) {
+      if (docusContext.watch) {
         // Add reload API
         addServerMiddleware({
-          route: `/api/${options.apiBase}/reload`,
+          route: `/api/${docusContext.apiBase}/reload`,
           handle: resolveModule('./server/api/reload', { paths: runtimeDir })
         })
 
