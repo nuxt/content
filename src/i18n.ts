@@ -97,11 +97,9 @@ export const setupI18nModule = async (nuxt: Nuxt) => {
    * Temporary fix
    * This should be done by nuxt-i18n
    */
-  nuxt.hook('modules:done', nuxt => {
-    nuxt.extendRoutes((routes: any[]) => {
-      const index = routes.findIndex(route => route.path === '/*')
-      const [all] = routes.splice(index, 1)
-      routes.push(all)
-    })
+  nuxt.hook('build:extendRoutes', routes => {
+    const index = routes.findIndex(route => route.path === '/*')
+    const [all] = routes.splice(index, 1)
+    routes.push(all)
   })
 }
