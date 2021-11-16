@@ -8,7 +8,7 @@ interface QueryBuilderOptions {
   postprocess?: any[];
 }
 
-interface FetchReturn extends IContentDocumentBase {
+export interface FetchReturn extends IContentDocumentBase {
   createdAt: string;
   updatedAt: string;
 }
