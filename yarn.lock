@@ -9798,10 +9798,10 @@ number-is-nan@^1.0.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt-component-meta@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.0.4.tgz#c079cec2cfdb4d04fa2169297e24163892ec4816"
-  integrity sha512-tRYvFeDb/mde2NXqgjkz/4m1m4TAVk7whs8caNJVi8p4qtTk6lFDOO4aCNSDU89mrfn2nSkAxmO7JSsUeDaVag==
+nuxt-component-meta@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.0.5.tgz#673b06b5802c41a548970590e108092b1bb5ebcd"
+  integrity sha512-9bvpUNZzhw9ZEpfEWxdVh8F/515QE5w1tQGiPCccStU64mxK1c+xV9TuK5Bc7uc0j+xdSWxL75l3F0idwKzdZw==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     pathe "^0.2.0"
