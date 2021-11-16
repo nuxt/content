@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import fetch from 'node-fetch'
+import { $fetch } from 'ohmyfetch/node'
 import { expect } from 'chai'
 import { join } from 'pathe'
 import { url } from '@nuxt/test-utils'
@@ -8,7 +8,7 @@ export default function navigationTest() {
   it('Global Navigation', async () => {
     await new Promise(resolve => setTimeout(resolve, 400))
 
-    const nav = await fetch(url('/api/_docus/navigation')).then((res: any) => res.json())
+    const nav = await $fetch(url('/api/_docus/navigation'))
     expect(nav).to.has.ownProperty('fa')
     expect(nav).to.has.ownProperty('en')
 
@@ -25,7 +25,7 @@ export default function navigationTest() {
     // wait core to watch file change
     await new Promise(resolve => setTimeout(resolve, 800))
 
-    const nav = await fetch(url('/api/_docus/navigation')).then((res: any) => res.json())
+    const nav = await $fetch(url('/api/_docus/navigation'))
 
     // revent file content
     await fs.writeFile(path, originalContent, { encoding: 'utf-8' })

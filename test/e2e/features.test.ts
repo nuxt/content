@@ -36,7 +36,7 @@ describe('Features', () => {
 
     it('link', async () => {
       const el = await page.$('#links a')
-      assert(el !== null)
+      assert(el !== null, 'Link should exist')
 
       await el!.textContent().then(text => expect(text).to.equal('Nuxt.js official website'))
       await el!.getAttribute('href').then(text => expect(text).to.equal('https://nuxtjs.org'))
