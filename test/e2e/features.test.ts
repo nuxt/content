@@ -19,7 +19,7 @@ describe('Features', () => {
         locales: {
           codes: ['en', 'fa']
         },
-        dirs: [['../test/contents/navigation', 'navigation']]
+        dirs: ['content', ['../test/contents/navigation', 'navigation']]
       }
     }
   })
