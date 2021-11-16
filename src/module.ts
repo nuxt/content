@@ -11,6 +11,9 @@ import {
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/kit'
 import type { NitroContext } from '@nuxt/nitro'
+import type { Options as ComponentMetaModuleOptions } from 'nuxt-component-meta/dist/module'
+import type { Documentation } from 'vue-docgen-api'
+import type { ASTElement } from 'vue-template-compiler'
 import { joinURL } from 'ufo'
 import { useDefaultContext } from './context'
 import setupDevTarget from './module.dev'
@@ -145,7 +148,23 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
     })
 
     await installModule(nuxt, {
-      src: 'nuxt-component-meta/module'
+      src: 'nuxt-component-meta/module',
+      options: {
+        parserOptions: {
+          addTemplateHandlers: [
+            (documentation: Documentation, ast: ASTElement) => {
+              if (ast.tag === 'Markdown') {
+                const useValue = ast.props?.find(prop => prop.name === 'use')?.value as
+                  | { content: string }
+                  | string
+                  | undefined
+                const slotName = (typeof useValue === 'object' ? useValue.content : useValue) ?? 'default'
+                documentation.getSlotDescriptor(slotName)
+              }
+            }
+          ] as unknown[]
+        }
+      } as ComponentMetaModuleOptions
     })
   }
 }))
