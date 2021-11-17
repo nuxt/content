@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.1](https://github.com/nuxt/content/compare/@nuxt/content@1.15.0...@nuxt/content@1.15.1) (2021-11-17)
+
+
+### Bug Fixes
+
+* **content:** export `FetchReturn` type ([#987](https://github.com/nuxt/content/issues/987)) ([18c8c50](https://github.com/nuxt/content/commit/18c8c50f34b473d9e4f3bd8285ef6756507c0408))
+
+
+
+
+
 # [1.15.0](https://github.com/nuxt/content/compare/@nuxt/content@1.14.0...@nuxt/content@1.15.0) (2021-10-21)
 
 

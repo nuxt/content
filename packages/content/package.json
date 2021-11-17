@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "repository": "nuxt/content",
   "license": "MIT",
   "types": "types/index.d.ts",
