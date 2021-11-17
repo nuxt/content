@@ -6,6 +6,7 @@ export default {
     title: 'Bu sayfada'
   },
   article: {
-    github: 'Bu sayfayı GitHub üzerinde düzenleyin'
+    github: 'Bu sayfayı GitHub üzerinde düzenleyin',
+    updatedAt: 'Güncelleme tarihi;'
   }
 }
