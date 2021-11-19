@@ -1,18 +1,16 @@
 {
-  "name": "@docus/core",
+  "name": "docus",
   "version": "1.2.3",
-  "description": "The Docus core.",
+  "description": "The Docus",
   "keywords": [
     "nuxt",
     "module",
     "nuxt-module"
   ],
-  "repository": "https://github.com/docusgen/core",
+  "repository": "https://github.com/docusgen/docus",
   "license": "MIT",
   "exports": {
-    ".": "./dist/index.mjs",
-    "./runtime": "./dist/runtime.mjs",
-    "./dist/runtime/*": "./dist/runtime/*"
+    ".": "./dist/index.mjs"
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -20,11 +18,7 @@
   "files": [
     "dist",
     "types.d.ts",
-    "shims.d.ts",
-    "components",
-    "runtime.mjs",
-    "runtime.cjs",
-    "runtime.d.ts"
+    "shims.d.ts"
   ],
   "scripts": {
     "build": "unbuild",
@@ -39,13 +33,19 @@
   },
   "dependencies": {
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
-    "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
+    "@nuxt/image": "^0.6.0",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
+    "@nuxtjs/i18n": "^7.2.0",
+    "chalk": "^4.1.2",
+    "clear-module": "^4.1.2",
     "consola": "^2.15.3",
     "core-js": "3",
     "debounce": "^1.2.1",
     "defu": "^5.0.0",
+    "glob": "^7.2.0",
     "h3": "^0.3.3",
+    "iso-639-1": "^2.1.10",
+    "jiti": "^1.12.9",
     "micromatch": "^4.0.4",
     "murmurhash-es": "^0.1.1",
     "node-fetch": "^2.6.6",
@@ -59,21 +59,19 @@
     "ws": "^8.2.3"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.16.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.16.0",
-    "@babel/plugin-transform-runtime": "latest",
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
+    "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/test-utils": "latest",
+    "@nuxt/types": "^2.15.8",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/chai": "^4.2.22",
     "@types/debounce": "^1.2.1",
+    "@types/glob": "^7.2.0",
     "@types/micromatch": "^4.0.2",
     "@types/mocha": "^9.0.0",
     "@types/node-fetch": "^3.0.3",
-    "@types/object-hash": "^2.2.1",
     "@types/ws": "^8.2.0",
-    "babel-core": "^6.26.3",
     "chai": "^4.3.4",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",

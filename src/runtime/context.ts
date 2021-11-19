@@ -1,10 +1,10 @@
 import { getContext } from 'unctx'
-import type { DocusContext } from 'types'
+import type { DocusConfig } from 'types'
 // @ts-ignore
-import context from '#build/docus/context.mjs'
+import options from '#build/docus/options.mjs'
 
-const ctx = getContext<DocusContext>('docus_context')
+const ctx = getContext<DocusConfig>('docus_context')
 
-ctx.set(context, true)
+ctx.set(options, true)
 
 export const useDocusContext = ctx.use

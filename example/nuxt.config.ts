@@ -23,7 +23,7 @@ const config = defineNuxtConfig({
     }
   },
   content: {
-    dirs: ['content', ['test', 'content/test']]
+    dirs: ['content']
   }
 })
 

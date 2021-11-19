@@ -32,6 +32,8 @@ describe('Features', () => {
       html = await page.innerHTML('body')
 
       assert(html !== null)
+      // wait 1s
+      await new Promise(resolve => setTimeout(resolve, 1000))
     })
 
     it('link', async () => {

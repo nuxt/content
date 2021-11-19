@@ -29,3 +29,7 @@ data: "value"
 ::
 
 ```
+
+---
+
+:debug

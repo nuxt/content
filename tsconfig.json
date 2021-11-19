@@ -24,7 +24,10 @@
       "@nuxt/bridge"
     ],
     "paths": {
-      "#app": ["./node_modules/@nuxt/bridge/dist/runtime"]
+      "#app": ["./node_modules/@nuxt/bridge/dist/runtime"],
+      "#docus": ["./src/runtime/index"],
+      "#docus/composables/*": ["./src/runtime/app/composables/*"],
+      "#docus/database/*": ["./src/runtime/database/providers/local/*"]
     }
   },
   "vueCompilerOptions": {

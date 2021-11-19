@@ -10,6 +10,10 @@ declare global {
       previewUrl: string
     }
   }
+  interface Window {
+    onNuxtReady: any
+    $docus: DocusRuntimeInstance
+  }
 }
 
 declare module '@nuxt/types' {

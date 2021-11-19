@@ -10,5 +10,3 @@ coverage
 dist
 sw.js
 .env
-
-module/
