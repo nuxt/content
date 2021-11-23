@@ -1,7 +1,7 @@
-import { resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { resolve, dirname } from 'pathe'
 
-export const distDir = resolve(typeof __dirname === 'undefined' ? fileURLToPath(import.meta.url) : __dirname)
+export const distDir = resolve(typeof __dirname === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : __dirname)
 
 const _makeResolve = (base: string) => {
   return (...p: string[]) => resolve(base, ...p)
