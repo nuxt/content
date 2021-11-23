@@ -53,8 +53,8 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Release Edge
-        if: github.event_name == 'push'
-        run: ./scripts/release-edge.sh
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+      # - name: Release Edge
+      #   if: github.event_name == 'push'
+      #   run: ./scripts/release-edge.sh
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
