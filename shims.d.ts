@@ -10,6 +10,7 @@ declare global {
       previewUrl: string
     }
   }
+
   interface Window {
     onNuxtReady: any
     $docus: DocusRuntimeInstance

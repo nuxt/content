@@ -5,10 +5,11 @@ export default defineNuxtPlugin((nuxt: any) => {
   // This helper does not respect `router.trailingSlash`
   // and add/remove trailingSlash baded on original path
   nuxt.provide('contentLocalePath', (path: string) => {
-    const { localeCodes, defaultLocale } = nuxt.app.i18n
+    const app = nuxt.vue2App
+    const { localeCodes, defaultLocale } = nuxt.nuxt2Context.i18n
 
     // If `path` includes a locale do not change the locale
-    let localePath = localeCodes.some((code: string) => path.startsWith(`/${code}`)) ? path : nuxt.app.localePath(path)
+    let localePath = localeCodes.some((code: string) => path.startsWith(`/${code}`)) ? path : app.localePath(path)
 
     // Remove default locale from path
     if (localePath.startsWith(`/${defaultLocale}`)) {

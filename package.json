@@ -1,11 +1,12 @@
 {
-  "name": "docus",
-  "version": "1.2.3",
-  "description": "The Docus",
+  "name": "@docus/core",
+  "version": "2.0.0",
+  "description": "The Modern Website Generator.",
   "keywords": [
     "nuxt",
     "module",
-    "nuxt-module"
+    "nuxt-module",
+    "docus-core"
   ],
   "repository": "https://github.com/docusgen/docus",
   "license": "MIT",
@@ -49,13 +50,13 @@
     "micromatch": "^4.0.4",
     "murmurhash-es": "^0.1.1",
     "node-fetch": "^2.6.6",
-    "nuxt-component-meta": "^0.0.5",
+    "nuxt-component-meta": "^0.0.7",
     "pathe": "^0.2.0",
     "property-information": "6.1.1",
     "scule": "^0.2.1",
     "ufo": "^0.7.9",
     "unctx": "^1.0.2",
-    "unstorage": "^0.3.2",
+    "unstorage": "^0.3.3",
     "ws": "^8.2.3"
   },
   "devDependencies": {
@@ -73,14 +74,14 @@
     "@types/node-fetch": "^3.0.3",
     "@types/ws": "^8.2.0",
     "chai": "^4.3.4",
-    "eslint": "^8.2.0",
+    "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^3.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^9.1.3",
-    "nuxt-edge": "^2.16.0-27282256.ab1c6cb4",
+    "nuxt-edge": "^2.16.0-27292334.ab1c6cb4",
     "playwright": "^1.16.3",
     "prettier": "^2.4.1",
-    "unbuild": "^0.5.11"
+    "unbuild": "^0.5.13"
   }
 }

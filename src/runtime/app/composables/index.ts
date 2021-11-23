@@ -33,9 +33,7 @@ export const createDocus = (
   })) as Ref<DocusConfig>
 
   // Activate Docus preview mode for _.vue (cannot use CAPI yet)
-  if (docusConfig.value.preview) {
-    $nuxt.$content = $nuxt.$content.preview(docusConfig.value.preview)
-  }
+  if (docusConfig.value.preview) $nuxt.$content = $nuxt.$content.preview(docusConfig.value.preview)
 
   // Docus Theme config
   const docusTheme = useState(StateTypes.Theme, () => ({ ..._config.themeConfig })) as Ref<DefaultThemeConfig>

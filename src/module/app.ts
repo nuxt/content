@@ -1,10 +1,12 @@
 import fs from 'fs/promises'
-import { addPluginTemplate, resolveModule } from '@nuxt/kit'
+import { addPluginTemplate, addTemplate, resolveModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/kit'
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
-import { resolveAppDir, templateDir } from '../dirs'
+import { resolveAppDir, resolveRuntimeDir, runtimeDir, templateDir } from '../dirs'
+import { loadNuxtIgnoreList } from './utils'
+import type { DocusOptions } from 'types'
 
 // Promisified glob
 const glob = (pattern: string, options: GlobOptions = {}) =>
@@ -15,7 +17,18 @@ const glob = (pattern: string, options: GlobOptions = {}) =>
     })
   )
 
-export const setupAppModule = (nuxt: Nuxt) => {
+export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
+  // @ts-ignore
+  loadNuxtIgnoreList(nuxt).then(ignoreList => (options.ignoreList = ignoreList))
+
+  // Setup runtime aliases
+  nuxt.options.alias['#docus$'] = runtimeDir
+  nuxt.options.alias['#docus/composables'] = resolveAppDir('composables')
+  nuxt.options.alias['#docus/database'] = resolveRuntimeDir('database/providers', options.database.provider)
+
+  // Get cache dir for Docus inside project rootDir
+  nuxt.options.alias['#docus/cache'] = join(nuxt.options.rootDir, 'node_modules/.cache/docus')
+
   // Initialize meta
   nuxt.options.meta = nuxt.options.meta || {}
 
@@ -62,6 +75,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
 
   // Set generate configuration
   nuxt.options.generate = nuxt.options.generate || {}
+  nuxt.options.generate.routes = nuxt.options.generate.routes || []
   nuxt.options.generate.fallback = '404.html'
   nuxt.options.generate.routes.push('/')
 
@@ -93,7 +107,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
   // Set build configuration
   nuxt.options.build = nuxt.options.build || {}
   nuxt.options.build.transpile = nuxt.options.build.transpile || []
-  nuxt.options.build.transpile.push('@docus/', 'ohmyfetch')
+  nuxt.options.build.transpile.push('@docus/', 'ohmyfetch', 'property-information', 'nuxt-component-meta')
 
   // Setup default layout
   nuxt.options.layouts.default = resolveAppDir('layouts/default.vue')
@@ -153,6 +167,13 @@ export const setupAppModule = (nuxt: Nuxt) => {
     }
   })
 
+  // Add Docus context template
+  addTemplate({
+    src: resolveModule('./options', { paths: templateDir }),
+    filename: 'docus/options.mjs',
+    options
+  })
+
   // Add Docus runtime plugin
   addPluginTemplate(
     {
@@ -167,4 +188,7 @@ export const setupAppModule = (nuxt: Nuxt) => {
       append: true
     }
   )
+
+  // @ts-ignore - Call docus:context hook
+  nuxt.hook('modules:done', () => nuxt.callHook('docus:options', options))
 }
