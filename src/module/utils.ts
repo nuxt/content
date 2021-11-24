@@ -15,7 +15,7 @@ import type { DocusConfig, ThemeConfig } from 'types'
 /**
  * Define the the theme configuration object.
  */
-export const defineThemeConfig = <T = ThemeConfig>(config: Partial<T>) => config
+export const defineThemeConfig = <T = ThemeConfig>(config: T) => config
 
 /**
  * Define the Docus configuration object.
@@ -110,3 +110,5 @@ export async function loadNuxtIgnoreList(nuxt: Nuxt): Promise<string[]> {
 
   return refinedList
 }
+
+export { withDocus } from './withDocus'

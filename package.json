@@ -32,6 +32,9 @@
     "clean:dist": "rm -rf dist node_modules",
     "clean": "yarn clean:example && yarn clean:dist"
   },
+  "bin": {
+    "create-docus": "node_modules/@docus/cli/dist/create-docus/create-docus.js"
+  },
   "resolutions": {
     "mdast-util-from-markdown": "1.0.4"
   },

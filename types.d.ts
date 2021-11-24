@@ -4,22 +4,6 @@ import type { MetaInfo } from 'vue-meta'
 
 export * from '@docus/mdc'
 
-declare module '#docus'
-
-/**
- * Shim modules for NuxtOptions
- */
-declare module '@nuxt/schema' {
-  interface NuxtOptions {
-    bridge: any
-    colorMode: any
-    image: any
-    nitro: any
-    i18n: any
-    content: any
-  }
-}
-
 export interface DocusOptions {
   apiBase: string
   watch: boolean
@@ -392,6 +376,26 @@ export interface DocusRuntimeInstance {
   layout: ReturnType<typeof useDocusLayout>
   page: ReturnType<typeof useDocusPage>
   navigation: ReturnType<typeof useDocusNavigation>
+}
+
+/**
+ * Shims
+ */
+
+declare module '#docus'
+
+/**
+ * Shim modules for @nuxt/schema
+ */
+declare module '@nuxt/schema' {
+  interface NuxtOptions {
+    bridge: any
+    colorMode: any
+    image: any
+    nitro: any
+    i18n: any
+    content: any
+  }
 }
 
 export * from './dist'

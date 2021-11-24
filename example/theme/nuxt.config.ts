@@ -1,10 +1,10 @@
 import { defineNuxtConfig } from '@nuxt/bridge'
-import { resolve } from 'pathe'
+import { resolveThemeDir } from './dirs'
 
 export default defineNuxtConfig({
   components: [
     {
-      path: resolve(__dirname, '/components'),
+      path: resolveThemeDir('components'),
       isAsync: false,
       level: 2
     }

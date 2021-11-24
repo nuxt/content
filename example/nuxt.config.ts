@@ -1,9 +1,8 @@
 import { resolve } from 'pathe'
-import { defineNuxtConfig } from '@nuxt/bridge'
+import { withDocus } from '../src'
 
-const config = defineNuxtConfig({
-  rootDir: resolve(__dirname),
-  modules: ['../src']
+const config = withDocus({
+  rootDir: resolve(__dirname)
 })
 
 export default config
