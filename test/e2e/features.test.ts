@@ -27,16 +27,17 @@ describe('Features', () => {
   describe('Native Markdown', () => {
     let page: Page, html
 
-    it('render', async () => {
+    it('Render a page', async () => {
       page = await createPage('/features/native-markdown')
       html = await page.innerHTML('body')
 
       assert(html !== null)
-      // wait 1s
+
+      // Wait 1s
       await new Promise(resolve => setTimeout(resolve, 1000))
     })
 
-    it('link', async () => {
+    it('Displays links', async () => {
       const el = await page.$('#links a')
       assert(el !== null, 'Link should exist')
 
@@ -44,15 +45,15 @@ describe('Features', () => {
       await el!.getAttribute('href').then(text => expect(text).to.equal('https://nuxtjs.org'))
     })
 
-    it('headings', async () => {
+    it('Displays headings', async () => {
       const expectHeading = async (heading: string, text: string) => {
         const el = await page.$(heading)
 
         assert(el !== null)
-        // check heading id
+        // Check heading id
         await el!.getAttribute('id').then(id => expect(id).to.equal(text.toLocaleLowerCase()))
 
-        // check inner link href
+        // Check inner link href
         await el!
           .$('a')
           .then(a => a?.getAttribute('href'))
@@ -68,7 +69,7 @@ describe('Features', () => {
       await expectHeading('#headings h6', 'H6')
     })
 
-    it('unordered lists', async () => {
+    it('Displays unordered lists', async () => {
       const el = await page.$('#lists > ul')
       assert(el !== null)
 
@@ -78,7 +79,7 @@ describe('Features', () => {
       )
     })
 
-    it('ordered lists', async () => {
+    it('Displays ordered lists', async () => {
       const el = await page.$('#lists > ol')
       assert(el !== null)
 
@@ -88,7 +89,7 @@ describe('Features', () => {
       )
     })
 
-    it('inline code', async () => {
+    it('Displays inline code', async () => {
       const codes = await page.$$('#codes code')
 
       assert(codes[0] !== null)
@@ -98,7 +99,7 @@ describe('Features', () => {
       expect(await codes[1]!.innerHTML()).to.equal('Use `code` in your Markdown file.')
     })
 
-    it('code block', async () => {
+    it('Displays code blocks', async () => {
       const pre = await page.$('#codes pre')
       assert(pre !== null)
 
@@ -111,7 +112,7 @@ describe('Features', () => {
       )
     })
 
-    it('horizontal rule', async () => {
+    it('Displays horizontal rule', async () => {
       const pre = await page.$$('#hr hr')
       assert(pre.length === 3)
     })

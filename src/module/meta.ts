@@ -1,7 +1,7 @@
 import type { Documentation } from 'vue-docgen-api'
 import type { ASTElement } from 'vue-template-compiler'
-import type { Nuxt } from '@nuxt/kit'
 import { installModule } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 
 export async function setupComponentMetaModule(nuxt: Nuxt) {
   /**

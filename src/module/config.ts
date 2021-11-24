@@ -1,5 +1,5 @@
 import defu from 'defu'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import chalk from 'chalk'
 import { version } from '../../package.json'
 import { setDocusConfig } from '../context'

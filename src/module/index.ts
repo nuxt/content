@@ -1,5 +1,5 @@
 import { defineNuxtModule, installModule } from '@nuxt/kit'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { useDefaultOptions } from './options'
 import { setupDevTarget } from './dev'
 import { setupAppModule } from './app'

@@ -5,17 +5,21 @@ import { resolve, join } from 'pathe'
 import clearModule from 'clear-module'
 import { resolveModule, useNuxt } from '@nuxt/kit'
 import { joinURL } from 'ufo'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { distDir } from '../dirs'
 import { logger } from '../runtime/utils/log'
 import { THEME_CONFIG_FILE } from './constants'
 import { useDefaultOptions } from './options'
-import type { DocusConfig, DefaultThemeConfig, ThemeNuxtConfig } from 'types'
+import type { DocusConfig, ThemeConfig } from 'types'
 
-export const defineThemeNuxtConfig = (config: ThemeNuxtConfig) => config
+/**
+ * Define the the theme configuration object.
+ */
+export const defineThemeConfig = <T = ThemeConfig>(config: Partial<T>) => config
 
-export const defineThemeConfig = <T = DefaultThemeConfig>(config: T) => config
-
+/**
+ * Define the Docus configuration object.
+ */
 export const defineDocusConfig = (config: DocusConfig) => config
 
 export const loadConfig = <T = any>(file: string, rootDir: string): { configFile: false | T; configPath: string } => {
@@ -59,9 +63,9 @@ export const writeConfig = async (file: string, cacheDir: string, content: any) 
 }
 
 export const loadTheme = (path: string, rootDir: string) => {
-  let themeConfig: DefaultThemeConfig = {}
+  let themeConfig: ThemeConfig = {}
 
-  // resolve theme config path
+  // Resolve theme config path
   let themeConfigPath: string = resolveModule(join(path, THEME_CONFIG_FILE), { paths: rootDir })
   try {
     themeConfigPath = jiti(rootDir).resolve(themeConfigPath)
@@ -69,7 +73,7 @@ export const loadTheme = (path: string, rootDir: string) => {
     return themeConfig
   }
 
-  // load theme config
+  // Load theme config
   try {
     themeConfig = jiti(rootDir)(themeConfigPath)
   } catch (err) {

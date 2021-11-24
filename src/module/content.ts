@@ -1,5 +1,5 @@
 import { resolveModule, addServerMiddleware, addPlugin } from '@nuxt/kit'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import type { NitroContext } from '@nuxt/nitro'
 import { resolve } from 'pathe'
 import { runtimeDir, templateDir } from '../dirs'

@@ -6,6 +6,20 @@ export * from '@docus/mdc'
 
 declare module '#docus'
 
+/**
+ * Shim modules for NuxtOptions
+ */
+declare module '@nuxt/schema' {
+  interface NuxtOptions {
+    bridge: any
+    colorMode: any
+    image: any
+    nitro: any
+    i18n: any
+    content: any
+  }
+}
+
 export interface DocusOptions {
   apiBase: string
   watch: boolean
@@ -299,39 +313,17 @@ export interface DocusConfig {
  *
  */
 
-export interface DefaultThemeConfig {
-  layout?: {
-    [key: string]: any
-  }
-  [key: string]: any
-}
-
-export interface ThemeNuxtConfig extends NuxtConfig {
-  /**
-   * Like `rootDir` but for the theme.
-   * You can use `__dirname` in a vast majority of cases.
-   */
-  themeDir: string
+export interface ThemeConfig {
   /**
    * The theme name to be displayed for users.
    */
-  themeName: string
+  name?: string
+  /**
+   * The theme config is by definition permissive.
+   */
+  [key: string]: any
 }
 
-export interface DocusTheme<T = DefaultThemeConfig> {
-  /**
-   * A valid ThemeNuxtConfig to be imported by Docus.
-   */
-  nuxtConfig: ThemeNuxtConfig
-  /**
-   * The default theme config to be merged with the user one.
-   */
-  themeConfig: T
-  /**
-   * A wrapper to define this theme config with type safety.
-   */
-  defineThemeConfig: (config: T) => T
-}
 /**
  *
  * NAVIGATION

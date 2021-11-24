@@ -1,4 +1,4 @@
-import { Nuxt } from '@nuxt/kit'
+import { Nuxt } from '@nuxt/schema'
 import type { DocusOptions } from 'types'
 
 export const useDefaultOptions = (nuxt: Nuxt): DocusOptions => ({

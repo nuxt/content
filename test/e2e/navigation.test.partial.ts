@@ -1,9 +1,10 @@
+// @ts-ignore
 import { $fetch } from 'ohmyfetch/node'
 import { expect } from 'chai'
 import { url } from '@nuxt/test-utils'
 
 export default function navigationTest() {
-  it('Global Navigation', async () => {
+  it('Fetch global navigation', async () => {
     await new Promise(resolve => setTimeout(resolve, 400))
 
     const nav = await $fetch(url('/api/_docus/navigation'))

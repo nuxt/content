@@ -1,7 +1,8 @@
 import type { IncomingMessage } from 'http'
 import type { Socket } from 'net'
 import type { WatchEvent, WatchCallback } from 'unstorage'
-import { addPlugin, addServerMiddleware, Nuxt, resolveModule } from '@nuxt/kit'
+import { addPlugin, addServerMiddleware, resolveModule } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { resolve } from 'pathe'
 // @ts-ignore
 import fetch from 'node-fetch'
@@ -42,7 +43,7 @@ export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
       })
     })
 
-    // create socket server
+    // Create socket server
     nuxt.server.listen(0).then(({ url, server }: { url: string; server: any }) => {
       // @ts-ignore
       nuxt.options.publicRuntimeConfig.$docus.wsUrl = url.replace('http', 'ws')
@@ -77,7 +78,16 @@ function createDebounceContentWatcher(callback: WatchCallback) {
   return (event: WatchEvent, key: string) => {
     if (key.endsWith('.md')) {
       handleEvent(event, key)
-      logger.info(`[DOCUS]: ${key} ${event}`)
+      switch (event) {
+        case 'remove':
+          logger.info(`You removed ${key}`)
+          return
+        case 'update':
+          logger.info(`You updated ${key}`)
+          return
+        default:
+          logger.info(`You updated ${key}`)
+      }
     }
   }
 }

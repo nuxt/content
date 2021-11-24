@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
 import { addPluginTemplate, addTemplate, resolveModule } from '@nuxt/kit'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { join, resolve } from 'pathe'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
@@ -107,7 +107,13 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
   // Set build configuration
   nuxt.options.build = nuxt.options.build || {}
   nuxt.options.build.transpile = nuxt.options.build.transpile || []
-  nuxt.options.build.transpile.push('@docus/', 'ohmyfetch', 'property-information', 'nuxt-component-meta')
+  nuxt.options.build.transpile.push(
+    '@docus/',
+    'ohmyfetch',
+    'property-information',
+    'nuxt-component-meta',
+    '@nuxt/bridge'
+  )
 
   // Setup default layout
   nuxt.options.layouts.default = resolveAppDir('layouts/default.vue')
@@ -177,12 +183,7 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
   // Add Docus runtime plugin
   addPluginTemplate(
     {
-      src: resolveModule('./docus', { paths: templateDir }),
-      options: {
-        hasDocusConfig: nuxt.options.hasDocusConfig,
-        hasTheme: nuxt.options.hasTheme,
-        hasThemeConfig: nuxt.options.hasThemeConfig
-      }
+      src: resolveModule('./docus', { paths: templateDir })
     },
     {
       append: true

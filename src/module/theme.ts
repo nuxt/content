@@ -1,9 +1,11 @@
 import chalk from 'chalk'
 import defu from 'defu'
-import { Nuxt, resolveAlias } from '@nuxt/kit'
+import { resolveAlias } from '@nuxt/kit'
+import { Nuxt } from '@nuxt/schema'
 import { setThemeConfig, useDocusConfig } from '../context'
 import { loadConfig, loadTheme, writeConfig } from './utils'
 import { THEME_CONFIG_FILE } from './constants'
+import { ThemeConfig } from 'types'
 
 export const setupThemeModule = (nuxt: Nuxt) => {
   // Get cacheDir
@@ -11,9 +13,9 @@ export const setupThemeModule = (nuxt: Nuxt) => {
 
   const docusConfig = useDocusConfig()
 
-  let themeConfig = {}
+  let themeConfig: ThemeConfig = {}
 
-  // load theme
+  // Load theme
   if (docusConfig?.theme) {
     const themePath = resolveAlias(docusConfig?.theme, nuxt.options.alias)
     themeConfig = loadTheme(themePath, nuxt.options.rootDir)
@@ -34,7 +36,7 @@ export const setupThemeModule = (nuxt: Nuxt) => {
   // Add badge
   nuxt.options.cli.badgeMessages.push(
     '',
-    chalk.bold('💄 Theme: ') + chalk.underline.yellow(nuxt.options.themeName || 'Blank')
+    chalk.bold('💄 Theme: ') + chalk.underline.yellow(themeConfig?.name || 'Blank')
   )
 
   // Watch config

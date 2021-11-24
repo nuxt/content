@@ -10,6 +10,7 @@ import {
   useDocusStyles
 } from '#docus'
 import { defineComponent } from '#app'
+
 export default defineComponent({
   setup() {
     const content = useDocusContent()

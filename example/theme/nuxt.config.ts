@@ -1,10 +1,12 @@
-export default {
+import { defineNuxtConfig } from '@nuxt/bridge'
+import { resolve } from 'pathe'
+
+export default defineNuxtConfig({
   components: [
     {
-      path: '~/theme/components',
-      prefix: '',
+      path: resolve(__dirname, '/components'),
       isAsync: false,
       level: 2
     }
   ]
-}
+})
