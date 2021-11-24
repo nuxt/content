@@ -1,7 +1,5 @@
 import type { MDCOptions, MDCRoot, Toc } from '@docus/mdc'
 
-import type { NuxtConfig } from '@nuxt/kit'
-
 import type { MetaInfo } from 'vue-meta'
 
 export * from '@docus/mdc'
