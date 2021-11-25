@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import { existsSync } from 'fs'
 import jiti from 'jiti'
-import { resolve, join } from 'pathe'
+import { resolve, join, dirname } from 'pathe'
 import clearModule from 'clear-module'
 import { useNuxt } from '@nuxt/kit'
 import { joinURL } from 'ufo'
@@ -65,15 +65,22 @@ export const loadTheme = (path: string, rootDir: string) => {
   // Resolve theme path
   let themePath: string
   try {
+    // Use `require.resolve` as most of themes will be modules
     themePath = require.resolve(path, {
       paths: [rootDir]
     })
+
+    // We use the module as a classic directory to import {nuxt|theme}.config
+    // Resolve the dirname as `require.resolve` gives the `main` file and not the parent directory
+    themePath = dirname(themePath)
   } catch (e) {
+    // Use raw path in case the theme is local
     themePath = path
   }
 
   // Resolve theme theme.config file
   const { configFile: themeConfig, configPath: themeConfigPath } = loadConfig(THEME_CONFIG_FILE, themePath)
+
   // Resolve theme nuxt.config file
   const { configFile: nuxtConfig, configPath: nuxtConfigPath } = loadConfig(NUXT_CONFIG_FILE, themePath)
 
