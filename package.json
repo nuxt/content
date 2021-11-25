@@ -11,7 +11,9 @@
   "repository": "https://github.com/docusgen/docus",
   "license": "MIT",
   "exports": {
-    ".": "./dist/index.mjs"
+    ".": "./dist/index.mjs",
+    "./runtime": "./dist/runtime.mjs",
+    "./dist/runtime/*": "./dist/runtime/*"
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
