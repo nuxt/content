@@ -1,3 +1,3 @@
-# Directory Number 1
+# Directory number 1
 
 :HelloWorld

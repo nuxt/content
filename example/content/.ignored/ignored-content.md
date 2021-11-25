@@ -1,1 +1,1 @@
-This content will not read or rendered by Docus
+This content will not be read or rendered by Docus.

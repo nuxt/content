@@ -1,4 +1,4 @@
-Links
+# Links
 
 <div id="links">
 
@@ -6,9 +6,11 @@ Links
 
 </div>
 
-Typography
+# Typography
 
 <div id="headings">
+
+## Headings
 
 # H1
 ## H2
@@ -18,7 +20,6 @@ Typography
 ###### H6
 
 </div>
-
 
 <div id="lists">
 
@@ -33,7 +34,6 @@ Typography
 
 ## Ordered list
 
-
 1. First item
 2. Second item
     - Indented item
@@ -44,7 +44,6 @@ Typography
 4. Fourth item
 
 </div>
-
 
 <div id="codes">
 
@@ -61,6 +60,8 @@ export default {}
 </div>
 
 <div id="hr">
+
+## Horizontal rule
 
 ***
 

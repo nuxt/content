@@ -1,8 +1,7 @@
-import { resolve } from 'pathe'
 import { defineDocusConfig } from '../src'
 
 export default defineDocusConfig({
   title: 'Example',
-  theme: resolve(__dirname, 'theme'),
+  theme: '@docus/debug-theme',
   template: 'page'
 })
