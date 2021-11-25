@@ -8,9 +8,9 @@
 
 # Typography
 
-<div id="headings">
-
 ## Headings
+
+<div id="headings">
 
 # H1
 ## H2
