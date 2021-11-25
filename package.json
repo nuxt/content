@@ -35,11 +35,8 @@
   "bin": {
     "create-docus": "node_modules/@docus/cli/dist/create-docus/create-docus.js"
   },
-  "resolutions": {
-    "mdast-util-from-markdown": "1.0.4"
-  },
   "dependencies": {
-    "@docus/cli": "^1.1.0",
+    "@docus/cli": "latest",
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
     "@nuxt/image": "^0.6.0",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",

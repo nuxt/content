@@ -3,12 +3,11 @@ import { existsSync } from 'fs'
 import jiti from 'jiti'
 import { resolve, join } from 'pathe'
 import clearModule from 'clear-module'
-import { resolveModule, useNuxt } from '@nuxt/kit'
+import { useNuxt } from '@nuxt/kit'
 import { joinURL } from 'ufo'
 import type { Nuxt } from '@nuxt/schema'
 import { distDir } from '../dirs'
-import { logger } from '../runtime/utils/log'
-import { THEME_CONFIG_FILE } from './constants'
+import { NUXT_CONFIG_FILE, THEME_CONFIG_FILE } from './constants'
 import { useDefaultOptions } from './options'
 import type { DocusConfig, ThemeConfig } from 'types'
 
@@ -63,25 +62,27 @@ export const writeConfig = async (file: string, cacheDir: string, content: any) 
 }
 
 export const loadTheme = (path: string, rootDir: string) => {
-  let themeConfig: ThemeConfig = {}
-
-  // Resolve theme config path
-  let themeConfigPath: string = resolveModule(join(path, THEME_CONFIG_FILE), { paths: rootDir })
+  // Resolve theme path
+  let themePath: string
   try {
-    themeConfigPath = jiti(rootDir).resolve(themeConfigPath)
-  } catch (err) {
-    return themeConfig
+    themePath = require.resolve(path, {
+      paths: [rootDir]
+    })
+  } catch (e) {
+    themePath = path
   }
 
-  // Load theme config
-  try {
-    themeConfig = jiti(rootDir)(themeConfigPath)
-  } catch (err) {
-    logger.warn(`Could not load theme config: ${themeConfigPath}`, err)
-  }
-  themeConfig = themeConfig.default || themeConfig
+  // Resolve theme theme.config file
+  const { configFile: themeConfig, configPath: themeConfigPath } = loadConfig(THEME_CONFIG_FILE, themePath)
+  // Resolve theme nuxt.config file
+  const { configFile: nuxtConfig, configPath: nuxtConfigPath } = loadConfig(NUXT_CONFIG_FILE, themePath)
 
-  return themeConfig
+  return {
+    themeConfig,
+    themeConfigPath,
+    nuxtConfig,
+    nuxtConfigPath
+  }
 }
 
 export const buildExternals = ['@nuxt/bridge', '@nuxt/kit', '#app', '@vue/composition-api']

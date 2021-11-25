@@ -88,7 +88,7 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
     process.env.NITRO_PRESET === 'cloudflare'
       ? false
       : {
-          inline: ['docus', 'ohmyfetch', 'property-information', '@docus/mdc'],
+          inline: ['docus', 'ohmyfetch', 'property-information', '@docus/mdc', '@docus/remark-mdc'],
           external: [
             'vue-docgen-api',
             '@nuxt/kit',
@@ -107,13 +107,7 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
   // Set build configuration
   nuxt.options.build = nuxt.options.build || {}
   nuxt.options.build.transpile = nuxt.options.build.transpile || []
-  nuxt.options.build.transpile.push(
-    '@docus/',
-    'ohmyfetch',
-    'property-information',
-    'nuxt-component-meta',
-    '@nuxt/bridge'
-  )
+  nuxt.options.build.transpile.push('@docus/', 'ohmyfetch', 'property-information', 'nuxt-component-meta', 'docus')
 
   // Setup default layout
   nuxt.options.layouts.default = resolveAppDir('layouts/default.vue')

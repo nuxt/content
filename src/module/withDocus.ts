@@ -3,8 +3,8 @@ import type { NuxtConfig } from '@nuxt/schema'
 import jiti from 'jiti'
 import docusModule from '../module'
 import { distDir } from '../dirs'
-import { NUXT_CONFIG_FILE } from './constants'
 import { mergeConfig } from './extend'
+import { loadTheme } from './utils'
 import type { DocusConfig } from 'types'
 
 const ERRORS = {
@@ -32,15 +32,7 @@ export function withDocus(userConfig: NuxtConfig): NuxtConfig {
 
   if (docusConfig.theme) {
     // Resolve theme path
-    let themeNuxtConfigPath: string
-    try {
-      themeNuxtConfigPath = require.resolve(`${docusConfig.theme}/${NUXT_CONFIG_FILE}`)
-    } catch (e) {
-      themeNuxtConfigPath = `${docusConfig.theme}/${NUXT_CONFIG_FILE}`
-    }
-
-    // Get theme Nuxt config file
-    const themeNuxtConfig = _require(themeNuxtConfigPath, userConfig.rootDir)
+    const { nuxtConfig: themeNuxtConfig } = loadTheme(docusConfig.theme, userConfig.rootDir)
 
     // Merge theme Nuxt config with user project one
     userConfig = mergeConfig(themeNuxtConfig, userConfig)
