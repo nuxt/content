@@ -6751,7 +6751,7 @@ gzip-size@^6.0.0:
   dependencies:
     duplexer "^0.1.2"
 
-h3@^0.3.3:
+h3@^0.3.3, h3@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/h3/-/h3-0.3.5.tgz#7ca11d29e346d7cd857f7dd88649bfee9e980c6e"
   integrity sha512-VbN+TvIovJTje27lUg6YfINMLgMc2aD65HIDxtUaLOMCPMNtOJa+kSektGAOn7vBOSYHgFCS2XLC8LE9OsThIA==
@@ -9526,7 +9526,7 @@ nuxt-component-meta@^0.0.7:
     scule "^0.2.1"
     vue-docgen-api "^4.41.2"
 
-nuxt-edge@^2.16.0-27295215.ab1c6cb4:
+nuxt-edge@^2.16.0-27296655.ab1c6cb4:
   version "2.16.0-27296655.ab1c6cb4"
   resolved "https://registry.yarnpkg.com/nuxt-edge/-/nuxt-edge-2.16.0-27296655.ab1c6cb4.tgz#d4e1eccaadefffd6867cf09c90124f7b1a9e7d97"
   integrity sha512-j45weuYhwEEuXTHZfm2Bo9vfmVYgHbVrgEdc6/yaur9h3Mxi/dXTvHvhIcw0uyROIUVV0AKuMXRkDZyrrUcjKA==
