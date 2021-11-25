@@ -21,11 +21,17 @@ async function listen() {
   ctx.url = 'http://localhost:' + port
   await (ctx.nuxt as any).server.listen(port)
 }
+
 export function setupTest(options: Partial<NuxtTestOptions>) {
+  // @ts-ignore - Set LOCAL_IMPORT env variable for testing with debug-theme
+  process.env.LOCAL_IMPORT = true
+
   const ctx = createContext(options)
+
   beforeEach(() => {
     setContext(ctx)
   })
+
   afterEach(() => {
     setContext(undefined as any)
   })
@@ -45,27 +51,34 @@ export function setupTest(options: Partial<NuxtTestOptions>) {
   it('setup nuxt', async function () {
     // @ts-ignore
     this.timeout(ctx.options.waitFor)
+
     if (ctx.options.fixture) {
       await loadFixture()
     }
+
     if (!ctx.nuxt) {
       await loadNuxt()
       // TODO: spyOnClass
       // spyOnClass(ctx.nuxt.moduleContainer)
       await ctx.nuxt!.ready()
     }
+
     if (ctx.options.build) {
       await build()
     }
+
     if (ctx.options.server) {
       await listen()
     }
+
     if (ctx.options.generate) {
       await generate()
     }
+
     if (ctx.options.waitFor) {
       await new Promise(resolve => setTimeout(resolve, ctx.options.waitFor))
     }
+
     if (ctx.options.browser) {
       await createBrowser()
     }
