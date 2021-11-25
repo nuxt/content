@@ -39,8 +39,8 @@ export function withDocus(userConfig: NuxtConfig): NuxtConfig {
   }
 
   // Add Docus modules
-  if (!userConfig.modules) userConfig.modules = []
-  userConfig.modules = [docusModule, ...userConfig.modules]
+  if (!userConfig.buildModules) userConfig.buildModules = []
+  userConfig.buildModules = [docusModule, ...userConfig.buildModules]
 
   return defineNuxtConfig(userConfig)
 }

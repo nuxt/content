@@ -23,8 +23,8 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "dev": "nuxt dev example",
-    "generate": "nuxt generate example",
+    "dev": "LOCAL_IMPORT=true nuxt dev example",
+    "generate": "LOCAL_IMPORT=true nuxt generate example",
     "start": "nuxt start example",
     "lint": "eslint --ext .js,.ts,.vue .",
     "test": "yarn lint && mocha --timeout 10000 --exit -r jiti/register test/**/*.test.ts",
@@ -66,7 +66,7 @@
   "devDependencies": {
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
-    "@docus/debug-theme": "^2.0.1",
+    "@docus/debug-theme": "latest",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/test-utils": "latest",
     "@nuxt/types": "^2.15.8",

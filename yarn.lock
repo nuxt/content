@@ -985,13 +985,12 @@
     minimist "^1.2.5"
     prompts "^2.4.2"
 
-"@docus/debug-theme@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@docus/debug-theme/-/debug-theme-2.0.1.tgz#1ef9d8617b3a1e7225c0b50d7809c3a969f76fad"
-  integrity sha512-Oz8bVVcjPLLVJ8BEvQDE3SV1vL/LcWcQ4vt+n9L0JZqlEH9NnE+pqgXw/9weP/LRk4XE9UdVmv0yP6wi28+9UA==
+"@docus/debug-theme@latest":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@docus/debug-theme/-/debug-theme-2.0.3.tgz#8c57d5f561ef575c8c99ff417c8d1de837a1fbbe"
+  integrity sha512-wZFLQF1EE1W5lkMgiQ91xH8yuaXuYSYEWe/CFnhgJ0Zhrxn5gQpJw4fYbkgbjJxUXqgi7sHjHeWZk7f73pbkrQ==
   dependencies:
     "@nuxtjs/color-mode" "^2.1.1"
-    docus "npm:docus-edge@latest"
 
 "@docus/mdc@npm:@docus/mdc-edge@latest":
   version "0.2.0-27296722.efcb0c6"
@@ -2221,9 +2220,9 @@
     "@types/webpack" "^4"
 
 "@types/sass@*":
-  version "1.43.0"
-  resolved "https://registry.yarnpkg.com/@types/sass/-/sass-1.43.0.tgz#b4cebe057d887ed66dc6813fd6cbef22043057bb"
-  integrity sha512-DPSXNJ1rYLo88GyF9tuB4bsYGfpKI1a4+wOQmc+LI1SUoocm9QLRSpz0GxxuyjmJsYFIQo/dDlRSSpIXngff+w==
+  version "1.43.1"
+  resolved "https://registry.yarnpkg.com/@types/sass/-/sass-1.43.1.tgz#86bb0168e9e881d7dade6eba16c9ed6d25dc2f68"
+  integrity sha512-BPdoIt1lfJ6B7rw35ncdwBZrAssjcwzI5LByIrYs+tpXlj/CAkuVdRsgZDdP4lq5EjyWzwxZCqAoFyHKFwp32g==
   dependencies:
     "@types/node" "*"
 
@@ -4151,9 +4150,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001272, caniuse-lite@^1.0.30001275, caniuse-lite@^1.0.30001280:
-  version "1.0.30001282"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001282.tgz#38c781ee0a90ccfe1fe7fefd00e43f5ffdcb96fd"
-  integrity sha512-YhF/hG6nqBEllymSIjLtR2iWDDnChvhnVJqp+vloyt2tEHFG1yBR+ac2B/rOw0qOK0m0lEXU2dv4E/sMk5P9Kg==
+  version "1.0.30001283"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001283.tgz#8573685bdae4d733ef18f78d44ba0ca5fe9e896b"
+  integrity sha512-9RoKo841j1GQFSJz/nCXOj0sD7tHBtlowjYlrqIUS812x9/emfBLBt6IyMz1zIaYc/eRL8Cs6HPUVi2Hzq4sIg==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -5290,38 +5289,6 @@ doctypes@^1.1.0:
   resolved "https://registry.yarnpkg.com/doctypes/-/doctypes-1.1.0.tgz#ea80b106a87538774e8a3a4a5afe293de489e0a9"
   integrity sha1-6oCxBqh1OHdOijpKWv4pPeSJ4Kk=
 
-"docus@npm:docus-edge@latest":
-  version "2.1.0-27296731.5e48782"
-  resolved "https://registry.yarnpkg.com/docus-edge/-/docus-edge-2.1.0-27296731.5e48782.tgz#35dc45ff826711c02e0f4c951e20f8fbe3daabad"
-  integrity sha512-l22FzJmKhmnSMRh8EIWdqWSMOq6fZIa/54eXX+Wj9s+gNb8sxZp+i64g+rVvjC0lOJeUi480Tj2OYKSOwmbslA==
-  dependencies:
-    "@docus/cli" latest
-    "@docus/mdc" "npm:@docus/mdc-edge@latest"
-    "@nuxt/image" "^0.6.0"
-    "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
-    "@nuxtjs/i18n" "^7.2.0"
-    chalk "^4.1.2"
-    clear-module "^4.1.2"
-    consola "^2.15.3"
-    core-js "3"
-    debounce "^1.2.1"
-    defu "^5.0.0"
-    glob "^7.2.0"
-    h3 "^0.3.3"
-    iso-639-1 "^2.1.10"
-    jiti "^1.12.9"
-    micromatch "^4.0.4"
-    murmurhash-es "^0.1.1"
-    node-fetch "^2.6.6"
-    nuxt-component-meta "^0.0.7"
-    pathe "^0.2.0"
-    property-information "6.1.1"
-    scule "^0.2.1"
-    ufo "^0.7.9"
-    unctx "^1.0.2"
-    unstorage "^0.3.3"
-    ws "^8.3.0"
-
 dom-converter@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/dom-converter/-/dom-converter-0.2.0.tgz#6721a9daee2e293682955b6afe416771627bb768"
@@ -5438,9 +5405,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.896:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.0.tgz#7456192519838f881e35e4038bf4ad2c36353e63"
-  integrity sha512-+oXCt6SaIu8EmFTPx8wNGSB0tHQ5biDscnlf6Uxuz17e9CjzMRtGk9B8705aMPnj0iWr3iC74WuIkngCsLElmA==
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.1.tgz#623f8fa6ee416e016d93f00efc34fbc73f9f59ed"
+  integrity sha512-9ldvb6QMHiDpUNF1iSwBTiTT0qXEN+xIO5WlCJrC5gt0z74ofOiqR698vaJqYWnri0XZiF0YmnrFmGq/EmpGAA==
 
 elliptic@^6.5.3:
   version "6.5.4"
@@ -11166,9 +11133,9 @@ prettier-linter-helpers@^1.0.0:
     fast-diff "^1.1.2"
 
 "prettier@^1.18.2 || ^2.0.0", prettier@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.1.tgz#671e11c89c14a4cfc876ce564106c4a6726c9f5c"
-  integrity sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.0.tgz#a6370e2d4594e093270419d9cc47f7670488f893"
+  integrity sha512-FM/zAKgWTxj40rH03VxzIPdXmj39SwSjwG0heUcNFwI+EMZJnY93yAiKXM3dObIKAM5TA88werc8T/EwhB45eg==
 
 pretty-bytes@^5.6.0:
   version "5.6.0"
