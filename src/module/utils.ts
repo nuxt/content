@@ -85,6 +85,7 @@ export const loadTheme = (path: string, rootDir: string) => {
   const { configFile: nuxtConfig, configPath: nuxtConfigPath } = loadConfig(NUXT_CONFIG_FILE, themePath)
 
   return {
+    themePath,
     themeConfig,
     themeConfigPath,
     nuxtConfig,

@@ -14,14 +14,20 @@ export const setupThemeModule = (nuxt: Nuxt) => {
 
   let themeConfig: ThemeConfig = {}
 
+  let themePath: string = docusConfig?.theme || ''
+
   // Load theme
-  if (docusConfig?.theme) themeConfig = loadTheme(docusConfig.theme, nuxt.options.rootDir).themeConfig
+  if (docusConfig?.theme) {
+    const theme = loadTheme(docusConfig.theme, nuxt.options.rootDir)
+    themeConfig = theme.themeConfig
+    themePath = theme.themePath
+  }
 
   // Load user project theme config file
   const { configFile: userThemeConfig, configPath } = loadConfig(THEME_CONFIG_FILE, nuxt.options.rootDir)
 
   // Merge default theme config and user theme config
-  themeConfig = defu(userThemeConfig || {}, themeConfig)
+  themeConfig = defu(userThemeConfig || {}, themeConfig, { themePath })
 
   // Init config in context
   setThemeConfig(themeConfig, true)
