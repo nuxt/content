@@ -66,6 +66,7 @@
   "devDependencies": {
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
+    "@docus/debug-theme": "^2.0.1",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxt/test-utils": "latest",
     "@nuxt/types": "^2.15.8",

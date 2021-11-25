@@ -985,6 +985,14 @@
     minimist "^1.2.5"
     prompts "^2.4.2"
 
+"@docus/debug-theme@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@docus/debug-theme/-/debug-theme-2.0.1.tgz#1ef9d8617b3a1e7225c0b50d7809c3a969f76fad"
+  integrity sha512-Oz8bVVcjPLLVJ8BEvQDE3SV1vL/LcWcQ4vt+n9L0JZqlEH9NnE+pqgXw/9weP/LRk4XE9UdVmv0yP6wi28+9UA==
+  dependencies:
+    "@nuxtjs/color-mode" "^2.1.1"
+    docus "npm:docus-edge@latest"
+
 "@docus/mdc@npm:@docus/mdc-edge@latest":
   version "0.2.0-27296722.efcb0c6"
   resolved "https://registry.yarnpkg.com/@docus/mdc-edge/-/mdc-edge-0.2.0-27296722.efcb0c6.tgz#40ea63259f22be5ab9fd46c979bee325c369200a"
@@ -1687,6 +1695,14 @@
     webpack-hot-middleware "^2.25.1"
     webpack-node-externals "^3.0.0"
     webpackbar "^5.0.2"
+
+"@nuxtjs/color-mode@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-2.1.1.tgz#374f995f56a8fe27c6263ab865a034a50e90c1ea"
+  integrity sha512-kGB/FoICF4RwZkfNBhL/yGrHfaUFpviYq6HGvSkZEm2dCpjRXIv9VsWoP0uzwxnoaRAQQOkkWjaGv/nSk0gUSQ==
+  dependencies:
+    defu "^5.0.0"
+    lodash.template "^4.5.0"
 
 "@nuxtjs/eslint-config-typescript@latest":
   version "7.0.2"
@@ -5273,6 +5289,38 @@ doctypes@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/doctypes/-/doctypes-1.1.0.tgz#ea80b106a87538774e8a3a4a5afe293de489e0a9"
   integrity sha1-6oCxBqh1OHdOijpKWv4pPeSJ4Kk=
+
+"docus@npm:docus-edge@latest":
+  version "2.1.0-27296731.5e48782"
+  resolved "https://registry.yarnpkg.com/docus-edge/-/docus-edge-2.1.0-27296731.5e48782.tgz#35dc45ff826711c02e0f4c951e20f8fbe3daabad"
+  integrity sha512-l22FzJmKhmnSMRh8EIWdqWSMOq6fZIa/54eXX+Wj9s+gNb8sxZp+i64g+rVvjC0lOJeUi480Tj2OYKSOwmbslA==
+  dependencies:
+    "@docus/cli" latest
+    "@docus/mdc" "npm:@docus/mdc-edge@latest"
+    "@nuxt/image" "^0.6.0"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
+    "@nuxtjs/i18n" "^7.2.0"
+    chalk "^4.1.2"
+    clear-module "^4.1.2"
+    consola "^2.15.3"
+    core-js "3"
+    debounce "^1.2.1"
+    defu "^5.0.0"
+    glob "^7.2.0"
+    h3 "^0.3.3"
+    iso-639-1 "^2.1.10"
+    jiti "^1.12.9"
+    micromatch "^4.0.4"
+    murmurhash-es "^0.1.1"
+    node-fetch "^2.6.6"
+    nuxt-component-meta "^0.0.7"
+    pathe "^0.2.0"
+    property-information "6.1.1"
+    scule "^0.2.1"
+    ufo "^0.7.9"
+    unctx "^1.0.2"
+    unstorage "^0.3.3"
+    ws "^8.3.0"
 
 dom-converter@^0.2.0:
   version "0.2.0"
