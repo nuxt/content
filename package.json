@@ -43,7 +43,7 @@
     "@nuxt/image": "^0.6.0",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "@nuxtjs/i18n": "^7.2.0",
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.0",
     "clear-module": "^4.1.2",
     "consola": "^2.15.3",
     "core-js": "3",
