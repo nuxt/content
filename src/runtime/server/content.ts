@@ -149,6 +149,13 @@ export async function buildContent(id: string, previewKey?: string): Promise<Doc
 export async function getContent(id: string, previewKey?: string): Promise<DocusContent> {
   let content = !previewKey && ((await buildStorage.getItem(id)) as DocusContent)
 
+  /**
+   * Check modified time of content
+   */
+  if (!isProduction && content && content.meta.mtime !== (await contentStorage.getMeta(id)).mtime) {
+    content = false
+  }
+
   if (!content) {
     content = await buildContent(id, previewKey)
   }

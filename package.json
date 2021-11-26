@@ -55,7 +55,6 @@
     "jiti": "^1.12.9",
     "micromatch": "^4.0.4",
     "murmurhash-es": "^0.1.1",
-    "node-fetch": "^2.6.6",
     "nuxt-component-meta": "^0.0.7",
     "pathe": "^0.2.0",
     "property-information": "6.1.1",

@@ -1,31 +1,22 @@
 import type { IncomingMessage } from 'http'
 import type { Socket } from 'net'
-import type { WatchEvent, WatchCallback } from 'unstorage'
-import { addPlugin, addServerMiddleware, resolveModule } from '@nuxt/kit'
+import type { WatchEvent } from 'unstorage'
+import { addPlugin, resolveModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { resolve } from 'pathe'
-// @ts-ignore
-import fetch from 'node-fetch'
-import { joinURL } from 'ufo'
 import * as Debounce from 'debounce'
 import { createStorage } from 'unstorage'
 import fsDriver from 'unstorage/drivers/fs'
 import { useWebSocket } from '../runtime/server/socket'
 import { logger } from '../runtime/utils'
-import { runtimeDir, templateDir } from '../dirs'
-import { resolveApiRoute, loadNuxtIgnoreList } from './utils'
+import { templateDir } from '../dirs'
+import { loadNuxtIgnoreList } from './utils'
 import { DocusOptions } from 'types'
 
 export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
   const ws = useWebSocket()
 
   if (options.watch) {
-    // Add reload API
-    addServerMiddleware({
-      route: resolveApiRoute('reload'),
-      handle: resolveModule('./server/api/reload', { paths: runtimeDir }).replace(/\.js$/, '.mjs')
-    })
-
     // Add Hot plugin
     addPlugin(resolveModule('./hot', { paths: templateDir }))
 
@@ -41,6 +32,12 @@ export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
           })
         )
       })
+      storage.mount(
+        'assets:docus:build',
+        fsDriver({
+          base: resolve(nuxt.options.buildDir, 'docus/build')
+        })
+      )
     })
 
     // Create socket server
@@ -49,44 +46,32 @@ export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
 
       server.on('upgrade', (req: IncomingMessage, socket: Socket, head: any) => ws.serve(req, socket, head))
 
+      /**
+       * Broadcast a message to the server to refresh the page
+       **/
+      const broadcast = Debounce.debounce((event: WatchEvent, key: string) => ws.broadcast({ event, key }), 200)
+
       // Watch contents
-      storage.watch(
-        createDebounceContentWatcher(async (event: WatchEvent, key: string) => {
-          // call reload api: clear database and navigation
-          await fetch(joinURL(url, 'api', options.apiBase, 'reload'), {
-            method: 'POST',
-            body: JSON.stringify({ event, key })
-          })
-
-          /**
-           * Broadcast a message to the server to refresh the page
-           **/
-          ws.broadcast({ event, key })
-        })
-      )
+      storage.watch(async (event: WatchEvent, key: string) => {
+        if (key.startsWith('assets')) return
+        if (key.endsWith('.md')) {
+          switch (event) {
+            case 'remove':
+              await storage.removeItem(`assets:docus:build:${key}`)
+              logger.info(`You removed ${key}`)
+              return
+            case 'update':
+            default:
+              /**
+               * This is required to create cache entry for new files
+               * Whithout this the file will not be served
+               */
+              await storage.setItem(`assets:docus:build:${key}`, false)
+              logger.info(`You updated ${key}`)
+          }
+          broadcast(event, key)
+        }
+      })
     })
-  }
-}
-
-/**
- * Create a watcher for the content folder
- **/
-function createDebounceContentWatcher(callback: WatchCallback) {
-  const handleEvent = Debounce.debounce(callback, 200)
-
-  return (event: WatchEvent, key: string) => {
-    if (key.endsWith('.md')) {
-      handleEvent(event, key)
-      switch (event) {
-        case 'remove':
-          logger.info(`You removed ${key}`)
-          return
-        case 'update':
-          logger.info(`You updated ${key}`)
-          return
-        default:
-          logger.info(`You updated ${key}`)
-      }
-    }
   }
 }
