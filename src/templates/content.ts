@@ -1,11 +1,12 @@
 import { withoutTrailingSlash, joinURL } from 'ufo'
 import Query from '#docus/database/Query'
+import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 
 /**
  * This helper function is used to create api in @docus/app
  **/
-export function getContent(ctx: any, previewKey: string = '') {
-  let runtimeConfig = ctx.$config ? ctx.$config : ctx.nuxtState
+export function getContent(previewKey: string = '') {
+  let runtimeConfig = useRuntimeConfig()
   
   // Preview mode query params
   const query = previewKey ? '?preview=' + previewKey : ''
@@ -49,13 +50,13 @@ export function getContent(ctx: any, previewKey: string = '') {
     fetch,
     get,
     search,
-    preview: (previewKey = 'memory') => getContent(ctx, previewKey)
+    preview: (previewKey = 'memory') => getContent(previewKey)
   }
 }
 
 /**
  * This is the main entry point for the plugin.
  **/
-export default async function (ctx: any, inject: any) {
-  inject('content', getContent(ctx))
-}
+export default defineNuxtPlugin((app) => {
+  app.provide('content', getContent())
+})

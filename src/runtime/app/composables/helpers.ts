@@ -42,7 +42,7 @@ export const clientAsyncData = ($nuxt: any) => {
 }
 
 export const detectPreview = (context: Context) => {
-  const { /* $config, ssrContext, */ route } = context
+  const { route } = context
 
   if (process.server && route.query._preview) {
     return String(route.query._preview).replace(/\/$/, '')

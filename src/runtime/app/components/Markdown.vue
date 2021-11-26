@@ -1,5 +1,6 @@
 <script lang="ts">
 import { flatUnwrap, unwrap, isTag, expandTags } from '@docus/mdc/utils'
+import { useRuntimeConfig } from '#app'
 
 /**
  * Markdown component
@@ -24,6 +25,7 @@ export default {
     }
   },
   render: (_: any, ctx: any) => {
+    const runtimeConfig = useRuntimeConfig()
     const slot = ctx.props.use || 'default'
     // Get slot node
     let node =
@@ -43,7 +45,7 @@ export default {
     // Unwrap tags
     if (node && ctx.props.unwrap) {
       // Split tags from string prop
-      const tags = expandTags(ctx.props.unwrap.split(/[,\s]/), ctx.parent.$config.docus.tagMap)
+      const tags = expandTags(ctx.props.unwrap.split(/[,\s]/), runtimeConfig.docus.tagMap)
 
       // Get first tag from node
       const first = Array.isArray(node) && node[0]
