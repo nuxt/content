@@ -26,6 +26,7 @@
     "paths": {
       "#app": ["./node_modules/@nuxt/bridge/dist/runtime"],
       "#docus": ["./src/runtime/index"],
+      "#docus/markdown": ["./example/.nuxt/docus/markdown.mjs"],
       "#docus/composables/*": ["./src/runtime/app/composables/*"],
       "#docus/database/*": ["./src/runtime/database/providers/local/*"]
     }

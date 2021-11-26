@@ -4,9 +4,8 @@ import micromatch from 'micromatch'
 import { getTransformer } from '../transformers'
 import { createDatabase } from '../database'
 import { generateNavigation } from '../navigation'
-import { useDocusContext } from '../context'
 import { cachify } from './utils/cache'
-// @ts-ignore
+import privateConfig from '#config'
 import { storage } from '#storage'
 import type { MDCRoot } from 'types'
 
@@ -75,8 +74,7 @@ const getContentKeys = async (id?: string) => {
     keys = await contentStorage.getKeys(id)
 
     // filter out ignored contents
-    const context = useDocusContext()
-    keys = micromatch.not(keys, context?.ignoreList || [])
+    keys = micromatch.not(keys, privateConfig.docus.ignoreList || [])
   }
 
   return keys
@@ -88,8 +86,7 @@ const getPreviewKeys = async (id?: string, previewKey?: string) => {
   )
 
   // filter out ignored contents
-  const context = useDocusContext()
-  keys = micromatch.not(keys, context?.ignoreList || [])
+  keys = micromatch.not(keys, privateConfig.docus.ignoreList || [])
 
   return keys
 }

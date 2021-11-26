@@ -2,8 +2,8 @@ import { pascalCase } from 'scule'
 import { withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
 import { pick } from './utils/object'
-import { useDocusContext } from './context'
 import { generatePosition } from './transformers/utils'
+import privateConfig from '#config'
 import type { NavItem } from 'types'
 
 /**
@@ -141,10 +141,7 @@ function sortWithPosition(links: NavItem[], map: { [key: string]: string }) {
  * Create NavItem array to be consumed from runtime plugin.
  */
 function createNav(pages: any[]) {
-  const {
-    search: { inheritanceFields }
-  } = useDocusContext()!
-  const pickInheritanceFields = pick(inheritanceFields)
+  const pickInheritanceFields = pick(privateConfig.docus.search.inheritanceFields)
 
   const links: NavItem[] = []
   const sortMap: { [key: string]: string } = {}

@@ -1,21 +1,18 @@
 import { omit } from '../utils/object'
-import { useDocusContext } from '../context'
 import createLocalDatabase from './providers/local'
+import privateConfig from '#config'
 import type { DatabaseProvider } from 'types'
 
 /**
  * Create the database out of the choosen provider
  */
 export async function createDatabase(navigation: any) {
-  const {
-    database: { provider, options }
-  } = useDocusContext()!
   let db
 
-  switch (provider) {
+  switch (privateConfig.docus.database.provider) {
     case 'local':
     default:
-      db = createLocalDatabase(options)
+      db = createLocalDatabase(privateConfig.docus.database.options)
   }
 
   // initialize the database using given navigation

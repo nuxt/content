@@ -25,9 +25,9 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "dev": "LOCAL_IMPORT=true nuxt dev example",
-    "generate": "LOCAL_IMPORT=true nuxt generate example",
-    "start": "nuxt start example",
+    "dev": "LOCAL_IMPORT=true nuxi dev example",
+    "generate": "LOCAL_IMPORT=true nuxi generate example",
+    "start": "nuxi start example",
     "lint": "eslint --ext .js,.ts,.vue .",
     "test": "yarn lint && mocha --timeout 10000 --exit -r jiti/register test/**/*.test.ts",
     "clean:example": "rm -rf example/.nuxt example/node_modules",

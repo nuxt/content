@@ -1,11 +1,10 @@
 import fs from 'fs/promises'
-import { addPluginTemplate, addTemplate, resolveModule } from '@nuxt/kit'
+import { addPluginTemplate, resolveModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { join, resolve } from 'pathe'
 import _glob from 'glob'
 import type { IOptions as GlobOptions } from 'glob'
 import { resolveAppDir, resolveRuntimeDir, runtimeDir, templateDir } from '../dirs'
-import { loadNuxtIgnoreList } from './utils'
 import type { DocusOptions } from 'types'
 
 // Promisified glob
@@ -18,9 +17,6 @@ const glob = (pattern: string, options: GlobOptions = {}) =>
   )
 
 export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
-  // @ts-ignore
-  loadNuxtIgnoreList(nuxt).then(ignoreList => (options.ignoreList = ignoreList))
-
   // Setup runtime aliases
   nuxt.options.alias['#docus$'] = runtimeDir
   nuxt.options.alias['#docus/composables'] = resolveAppDir('composables')
@@ -165,13 +161,6 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
       // Watch existence of root `components` directory
       nuxt.options.watch.push(componentsDirPath)
     }
-  })
-
-  // Add Docus context template
-  addTemplate({
-    src: resolveModule('./options', { paths: templateDir }),
-    filename: 'docus/options.mjs',
-    options
   })
 
   // Add Docus runtime plugin

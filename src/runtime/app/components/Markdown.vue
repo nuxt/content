@@ -43,7 +43,7 @@ export default {
     // Unwrap tags
     if (node && ctx.props.unwrap) {
       // Split tags from string prop
-      const tags = expandTags(ctx.props.unwrap.split(/[,\s]/), ctx.parent.$config.$docus.tagMap)
+      const tags = expandTags(ctx.props.unwrap.split(/[,\s]/), ctx.parent.$config.docus.tagMap)
 
       // Get first tag from node
       const first = Array.isArray(node) && node[0]

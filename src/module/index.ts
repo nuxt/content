@@ -17,9 +17,9 @@ export default defineNuxtModule((nuxt: Nuxt) => ({
 
     setupAppModule(nuxt, options)
 
-    setupContentModule(nuxt, options)
-
     setupConfigModule(nuxt)
+
+    await setupContentModule(nuxt, options)
 
     await setupI18nModule(nuxt)
 

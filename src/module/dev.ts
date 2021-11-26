@@ -45,8 +45,7 @@ export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
 
     // Create socket server
     nuxt.server.listen(0).then(({ url, server }: { url: string; server: any }) => {
-      // @ts-ignore
-      nuxt.options.publicRuntimeConfig.$docus.wsUrl = url.replace('http', 'ws')
+      nuxt.options.publicRuntimeConfig.docus.wsUrl = url.replace('http', 'ws')
 
       server.on('upgrade', (req: IncomingMessage, socket: Socket, head: any) => ws.serve(req, socket, head))
 
