@@ -7,7 +7,7 @@ import { resolve } from 'pathe'
 // @ts-ignore
 import fetch from 'node-fetch'
 import { joinURL } from 'ufo'
-import { debounce } from 'debounce'
+import * as Debounce from 'debounce'
 import { createStorage } from 'unstorage'
 import fsDriver from 'unstorage/drivers/fs'
 import { useWebSocket } from '../runtime/server/socket'
@@ -73,7 +73,7 @@ export function setupDevTarget(options: DocusOptions, nuxt: Nuxt) {
  * Create a watcher for the content folder
  **/
 function createDebounceContentWatcher(callback: WatchCallback) {
-  const handleEvent = debounce(callback, 200)
+  const handleEvent = Debounce.debounce(callback, 200)
 
   return (event: WatchEvent, key: string) => {
     if (key.endsWith('.md')) {

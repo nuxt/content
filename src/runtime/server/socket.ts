@@ -1,13 +1,13 @@
 import type { IncomingMessage } from 'http'
-import { Server } from 'ws'
+import * as WebSocket from 'ws'
 
-let wss: Server
+let wss: WebSocket.Server
 
 /**
  * WebSocket server useful for live content reload.
  */
 export function useWebSocket() {
-  if (!wss) wss = new Server({ noServer: true })
+  if (!wss) wss = new WebSocket.Server({ noServer: true })
 
   const serve = (req: IncomingMessage, socket = req.socket, head: any = '') =>
     wss.handleUpgrade(req, socket, head, (client: any) => wss.emit('connection', client, req))
