@@ -1,6 +1,7 @@
 import { withoutTrailingSlash, joinURL } from 'ufo'
 import Query from '#docus/database/Query'
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { setTagsMap } from '#docus'
 
 /**
  * This helper function is used to create api in @docus/app
@@ -58,5 +59,11 @@ export function getContent(previewKey: string = '') {
  * This is the main entry point for the plugin.
  **/
 export default defineNuxtPlugin((app) => {
+  /**
+   * Set tag map into `@docus/mdc` for client-side hydration
+   */
+  let runtimeConfig = useRuntimeConfig()
+  setTagsMap(runtimeConfig.docus.tagMap)
+
   app.provide('content', getContent())
 })
