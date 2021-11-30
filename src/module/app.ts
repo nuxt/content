@@ -64,11 +64,6 @@ export const setupAppModule = (nuxt: Nuxt, options: DocusOptions) => {
   nuxt.options.image.domains = nuxt.options.image.domains || []
   nuxt.options.image.domains.push('https://i3.ytimg.com')
 
-  // Set server configuration
-  nuxt.options.target = 'server'
-  nuxt.options.server = nuxt.options.server || {}
-  nuxt.options.server.port = parseInt(process.env.PORT || '4000', 10)
-
   // Set generate configuration
   nuxt.options.generate = nuxt.options.generate || {}
   nuxt.options.generate.routes = nuxt.options.generate.routes || []
