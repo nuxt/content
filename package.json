@@ -34,11 +34,7 @@
     "clean:dist": "rm -rf dist node_modules",
     "clean": "yarn clean:example && yarn clean:dist"
   },
-  "bin": {
-    "create-docus": "node_modules/@docus/cli/dist/create-docus/create-docus.js"
-  },
   "dependencies": {
-    "@docus/cli": "latest",
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
     "@nuxt/image": "^0.6.0",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
