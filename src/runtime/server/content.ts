@@ -1,6 +1,6 @@
 import { prefixStorage as unstoragePrefixStorage } from 'unstorage'
 import type { Storage } from 'unstorage'
-import micromatch from 'micromatch'
+import minimatch from 'minimatch'
 import { getTransformer } from '../transformers'
 import { createDatabase } from '../database'
 import { generateNavigation } from '../navigation'
@@ -31,6 +31,15 @@ export const previewStorage = prefixStorage(storage, 'docus:preview')
 const isProduction = process.env.NODE_ENV === 'production'
 const withCache = (name: string, fn: any) =>
   isProduction ? cachify(fn, { name, swr: true, ttl: 60000, integrity: 'docus' }) : fn
+
+/**
+ * Content ignore filter
+ *
+ * @param key file name
+ * @returns true if file does not match any of patterns
+ */
+const filterIgnoredContents = (key: string) =>
+  !(privateConfig.docus.ignoreList || []).some((pattern: string) => minimatch(key, pattern))
 
 // Get data from storage
 async function getData(id: string, previewKey?: string) {
@@ -74,7 +83,7 @@ const getContentKeys = async (id?: string) => {
     keys = await contentStorage.getKeys(id)
 
     // filter out ignored contents
-    keys = micromatch.not(keys, privateConfig.docus.ignoreList || [])
+    keys = keys.filter(filterIgnoredContents)
   }
 
   return keys
@@ -86,7 +95,7 @@ const getPreviewKeys = async (id?: string, previewKey?: string) => {
   )
 
   // filter out ignored contents
-  keys = micromatch.not(keys, privateConfig.docus.ignoreList || [])
+  keys = keys.filter(filterIgnoredContents)
 
   return keys
 }
