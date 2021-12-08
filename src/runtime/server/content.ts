@@ -161,8 +161,11 @@ export async function getContent(id: string, previewKey?: string): Promise<Docus
   /**
    * Check modified time of content
    */
-  if (!isProduction && content && content.meta.mtime !== (await contentStorage.getMeta(id)).mtime) {
-    content = false
+  if (!isProduction && content) {
+    const meta = await contentStorage.getMeta(id)
+    if (!meta || meta.mtime !== content.meta?.mtime) {
+      content = false
+    }
   }
 
   if (!content) {
