@@ -99,6 +99,9 @@ export const setupContentModule = async (nuxt: Nuxt, options: DocusOptions) => {
         .map(item => `import ${item.instance} from '${item.path || item.name}';`)
         .join('\n')}
       const config = ${JSON.stringify(config)};
+      ${config.remarkPlugins.map((item, i) => `config.remarkPlugins[${i}].instance = ${item.instance}`).join('\n')}
+      ${config.rehypePlugins.map((item, i) => `config.rehypePlugins[${i}].instance = ${item.instance}`).join('\n')}
+      ${config.components.map((item, i) => `config.components[${i}].instance = ${item.instance}`).join('\n')}
       export default (_id, input) => parse(input, config)`
     },
     options
