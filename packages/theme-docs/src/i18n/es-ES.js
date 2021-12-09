@@ -7,6 +7,6 @@ export default {
   },
   article: {
     github: 'Editar esta página en Github',
-    updatedAt: 'Actualizado el',
+    updatedAt: 'Actualizado el'
   }
 }
