@@ -1,7 +1,7 @@
 import { clientAsyncData, detectPreview, normalizePreviewScope } from './helpers'
 import { createDocusNavigation, useDocusNavigation } from './navigation'
 import { createDocusStyles } from './style'
-import type { DefaultThemeConfig, DocusConfig, DocusContent, DocusDocument } from 'types'
+import type { ThemeConfig, DocusConfig, DocusContent, DocusDocument } from 'types'
 import { NuxtAppCompat, Ref, useNuxtApp, useState } from '#app'
 export { useDocusStyles } from './style'
 
@@ -21,7 +21,7 @@ export enum StateTypes {
  */
 export const createDocus = (
   nuxtApp: NuxtAppCompat,
-  _config: { docusConfig: DocusConfig; themeConfig: DefaultThemeConfig }
+  _config: { docusConfig: DocusConfig; themeConfig: ThemeConfig }
 ) => {
   // TODO: Do not depend on nuxt2 legacy context and use nuxtApp inteface everywhere without destructure
   const $nuxt = (nuxtApp.nuxt2Context as any).app
@@ -36,12 +36,10 @@ export const createDocus = (
   if (docusConfig.value.preview) $nuxt.$content = $nuxt.$content.preview(docusConfig.value.preview)
 
   // Docus Theme config
-  const docusTheme = useState(StateTypes.Theme, () => ({ ..._config.themeConfig })) as Ref<DefaultThemeConfig>
+  const docusTheme = useState(StateTypes.Theme, () => ({ ..._config.themeConfig })) as Ref<ThemeConfig>
 
   // Docus layout
-  const docusLayout = useState(StateTypes.Layout, () => _config.themeConfig?.layout || {}) as Ref<
-    DefaultThemeConfig['layout']
-  >
+  const docusLayout = useState(StateTypes.Layout, () => _config.themeConfig?.layout || {}) as Ref<ThemeConfig['layout']>
 
   // Docus current page (initialized in _.vue > asyncData)
   const docusCurrentPage = useState(StateTypes.CurrentPage) as Ref<DocusDocument>
@@ -80,8 +78,8 @@ export const createDocus = (
 export const useDocus = () => ({
   content: useNuxtApp().vue2App.$content as DocusContent<any>,
   config: useState(StateTypes.Config) as Ref<DocusConfig>,
-  theme: useState(StateTypes.Theme) as Ref<DefaultThemeConfig>,
-  layout: useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>,
+  theme: useState(StateTypes.Theme) as Ref<ThemeConfig>,
+  layout: useState(StateTypes.Layout) as Ref<ThemeConfig['layout']>,
   page: useState(StateTypes.CurrentPage) as Ref<DocusDocument>,
   navigation: useDocusNavigation()
 })
@@ -105,12 +103,12 @@ export const useDocusConfig = () => useState(StateTypes.Config) as Ref<DocusConf
 /**
  * Access the theme config object.
  */
-export const useDocusTheme = () => useState(StateTypes.Theme) as Ref<DefaultThemeConfig>
+export const useDocusTheme = () => useState(StateTypes.Theme) as Ref<ThemeConfig>
 
 /**
  * Access the layout config object.
  */
-export const useDocusLayout = () => useState(StateTypes.Layout) as Ref<DefaultThemeConfig['layout']>
+export const useDocusLayout = () => useState(StateTypes.Layout) as Ref<ThemeConfig['layout']>
 
 /**
  * Access the current page object.

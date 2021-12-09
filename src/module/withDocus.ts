@@ -35,7 +35,7 @@ export function withDocus(userConfig: NuxtConfig): NuxtConfig {
     const { nuxtConfig: themeNuxtConfig } = loadTheme(docusConfig.theme, userConfig.rootDir)
 
     // Merge theme Nuxt config with user project one
-    userConfig = mergeConfig(themeNuxtConfig, userConfig)
+    userConfig = mergeConfig(userConfig, themeNuxtConfig)
   }
 
   // Add Docus modules
