@@ -8,5 +8,5 @@ export default defineBuildConfig({
     { input: 'src/templates/', outDir: 'dist/templates', declaration: false }
   ],
   declaration: true,
-  externals: ['#config', '#app', '#storage', 'vue-meta', 'vue', '@nuxt/bridge', '@nuxt/schema', 'types']
+  externals: ['#config', '#app', '#storage', 'vue-meta', 'vue', '@nuxt/bridge', '@nuxt/schema', 'types', 'hookable']
 })
