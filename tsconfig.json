@@ -13,25 +13,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "types": [
-      "./shims",
-      "./types",
-      "node",
-      "mocha",
-      "chai",
-      "@nuxt/kit",
-      "@nuxt/nitro",
-      "@nuxt/bridge"
-    ],
-    "paths": {
-      "#app": ["./node_modules/@nuxt/bridge/dist/runtime"],
-      "#docus": ["./src/runtime/index"],
-      "#docus/markdown": ["./example/.nuxt/docus/markdown.mjs"],
-      "#docus/composables/*": ["./src/runtime/app/composables/*"],
-      "#docus/database/*": ["./src/runtime/database/providers/local/*"]
-    }
-  },
-  "vueCompilerOptions": {
-    "experimentalCompatMode": 2
+    "types": ["./shims", "./types", "node", "@nuxt/kit", "@nuxt/nitro", "nuxt3"]
   }
 }

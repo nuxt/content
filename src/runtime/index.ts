@@ -1,3 +1,7 @@
-export * from './utils'
-export * from './app/composables'
-export * from '@docus/mdc/utils'
+import { defineNuxtPlugin } from 'nuxt3'
+
+export default defineNuxtPlugin(({ vueApp, ssrContext, hook, hooks, provide }) => {
+  console.log({ vueApp, ssrContext, hook, hooks, provide })
+
+  console.log('Hello World!')
+})

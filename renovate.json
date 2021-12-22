@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "@nuxtjs"
-  ],
+  "extends": ["@nuxtjs"],
   "lockFileMaintenance": {
     "enabled": true
   }
