@@ -10,3 +10,5 @@ coverage
 dist
 sw.js
 .env
+
+fake

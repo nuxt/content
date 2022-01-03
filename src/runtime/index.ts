@@ -1,7 +1,13 @@
-import { defineNuxtPlugin } from 'nuxt3'
+// @ts-ignore
+import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
-export default defineNuxtPlugin(({ vueApp, ssrContext, hook, hooks, provide }) => {
-  console.log({ vueApp, ssrContext, hook, hooks, provide })
+export * from './composables'
 
-  console.log('Hello World!')
+export default defineNuxtPlugin((/* { vueApp, ssrContext, hook, hooks, provide } */) => {
+  const config = useRuntimeConfig()
+
+  if (process.client && config.docus.wsUrl) {
+    // Connect to websocket
+    import('./composables/web-socket').then(({ useWebSocket }) => useWebSocket())
+  }
 })

@@ -1,4 +1,7 @@
-import { defineNuxtModule } from '@nuxt/kit'
+import { addPlugin, defineNuxtModule, resolveModule } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
+import { runtimeDir } from './dirs'
+import { setupContentModule } from './module/content'
 
 export default defineNuxtModule({
   meta: {
@@ -10,9 +13,21 @@ export default defineNuxtModule({
     version: '3',
     configKey: 'docus'
   },
+  defaults: {
+    sources: ['content']
+  },
   setup(options, nuxt) {
-    console.log({ options, nuxt })
+    // Setup runtime alias
+    nuxt.options.alias['#docus'] = runtimeDir
 
-    console.log('Hello World!')
+    // Initialize Docus runtime config
+    nuxt.options.publicRuntimeConfig.docus = {}
+    nuxt.options.privateRuntimeConfig.docus = {}
+
+    // Setup content module
+    setupContentModule(options, nuxt as unknown as Nuxt)
+
+    // Add Docus plugin
+    addPlugin(resolveModule('./index', { paths: runtimeDir }))
   }
 })
