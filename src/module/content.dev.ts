@@ -54,7 +54,7 @@ function getMountDriver(mount: MountOptions) {
 export function setupContentDevModule(options: any, nuxt: Nuxt) {
   // Create storage instance
   const storage = createStorage()
-  const mounts = useContentMounts(nuxt, options.sources)
+  const mounts = useContentMounts(nuxt, options.content.sources)
   for (const mount in mounts) storage.mount(mount, getMountDriver(mounts[mount]))
 
   const ws = createWebSocket()

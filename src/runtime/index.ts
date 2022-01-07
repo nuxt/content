@@ -1,4 +1,3 @@
-// @ts-ignore
 import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 export * from './composables'

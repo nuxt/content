@@ -63,6 +63,7 @@ export function runSuite(suite: Benchmark.Suite) {
   const events: Record<string, Array<any>> = suite.events
 
   return new Promise(resolve => {
+    let beforeAll = Promise.resolve<any>([])
     suite.on('complete', () => {
       if (events.afterAll) {
         Promise.all(events.afterAll.map(fn => fn())).then(() => {
@@ -71,11 +72,13 @@ export function runSuite(suite: Benchmark.Suite) {
       }
       resolve(0)
     })
+
     if (events.beforeAll) {
-      Promise.all(events.beforeAll.map(fn => fn())).then(() => {
-        suite.run()
-      })
+      beforeAll = Promise.all(events.beforeAll.map(fn => fn()))
     }
+    beforeAll.then(() => {
+      suite.run()
+    })
   })
 }
 

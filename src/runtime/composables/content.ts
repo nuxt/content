@@ -1,6 +1,5 @@
 import { onUnmounted } from 'vue'
 import { withBase } from 'ufo'
-// @ts-ignore
 import { useFetch, useNuxtApp } from '#imports'
 
 const withContentBase = (url: string) => withBase(url, '/api/_docus')

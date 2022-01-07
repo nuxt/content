@@ -1,0 +1,4 @@
+type: root
+children:
+  - type: text
+    value: Index

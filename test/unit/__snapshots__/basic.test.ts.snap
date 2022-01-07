@@ -1,0 +1,29 @@
+// Vitest Snapshot v1
+
+exports[`Basic tests > Get contents index 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Index",
+        },
+      ],
+      "props": {
+        "class": "d-heading-title",
+        "id": "index",
+      },
+      "tag": "h1",
+      "type": "element",
+    },
+  ],
+  "toc": {
+    "depth": 2,
+    "links": [],
+    "searchDepth": 2,
+    "title": "",
+  },
+  "type": "root",
+}
+`;

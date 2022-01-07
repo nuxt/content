@@ -3,7 +3,7 @@ import { afterAll, beforeAll, benchmark, describe } from './utils.js'
 
 const randomMember = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
 
-describe('api test', () => {
+describe('Api', () => {
   const ctx = setupTest({
     fixture: 'basic',
     server: true

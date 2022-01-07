@@ -3,7 +3,6 @@ import { execSync } from 'child_process'
 import { resolve, dirname } from 'pathe'
 import defu from 'defu'
 import hash from 'object-hash'
-// @ts-ignore
 import { execa } from 'execa'
 import { createCommonJS } from 'mlly'
 

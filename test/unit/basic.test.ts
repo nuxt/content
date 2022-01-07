@@ -16,6 +16,10 @@ describe('Basic tests', () => {
 
     assert(list.length > 0)
     assert(list.includes('content:index.md'))
+
+    // Ignored files should be listed
+    assert(list.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
+    assert(list.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
   })
 
   test('Get contents index', async () => {
@@ -24,6 +28,14 @@ describe('Basic tests', () => {
     expect(index).toHaveProperty('meta.mtime')
     expect(index).toHaveProperty('body')
 
-    expect(index.body).toContain('# Index')
+    expect(index.body).toMatchInlineSnapshot()
+  })
+
+  test('Get ignored contents', async () => {
+    const index = await ctx.fetch<any>('/api/_docus/get/content:.ignored.md')
+
+    expect(index).not.toHaveProperty('meta.mtime')
+    expect(index).toMatchObject({})
+    expect(index.body).toBeNull()
   })
 })

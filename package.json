@@ -18,7 +18,7 @@
   "files": [
     "dist",
     "types.d.ts",
-    "shims.d.ts"
+    "env.d.ts"
   ],
   "type": "module",
   "main": "./dist/index.mjs",
@@ -41,7 +41,8 @@
     "start:theme": "nuxi preview theme",
     "start:examples": "nuxi dev examples",
     "lint": "eslint --ext .js,.ts,.vue .",
-    "test": "pnpm test:unit && pnpm test:e2e",
+    "test": "pnpm build:docs && pnpm test:unit && pnpm test:e2e",
+    "test:types": "tsc --build tsconfig.json",
     "test:unit": "vitest run",
     "test:e2e": "start-server-and-test 'pnpm dev' http://localhost:3000 'pnpm cy:run'",
     "test:e2e:gui": "start-server-and-test 'pnpm dev' http://localhost:3000 'pnpm cy:open'",
@@ -61,6 +62,7 @@
     "*.{js,vue}": "eslint --fix"
   },
   "dependencies": {
+    "@docus/mdc": "npm:@docus/mdc-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "debounce": "^1.2.1",
     "pathe": "^0.2.0",
@@ -71,12 +73,12 @@
   "devDependencies": {
     "@nuxt/test-utils": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@unocss/nuxt": "^0.20.4",
     "@types/benchmark": "^2.1.1",
     "@types/debounce": "^1.2.1",
     "@types/faker": "^5.5.9",
     "@types/object-hash": "^2.2.1",
     "@types/ws": "^8.2.2",
+    "@unocss/nuxt": "^0.20.4",
     "beachball": "^2.20.0",
     "benchmark": "^2.1.4",
     "c8": "^7.10.0",

@@ -14,7 +14,10 @@ export default defineNuxtModule({
     configKey: 'docus'
   },
   defaults: {
-    sources: ['content']
+    content: {
+      sources: ['content'],
+      ignores: ['\\.', '-']
+    }
   },
   setup(options, nuxt) {
     // Setup runtime alias

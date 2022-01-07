@@ -37,8 +37,11 @@ export function useContentMounts(nuxt: Nuxt, storages: Array<string | (MountOpti
 }
 
 export function setupContentModule(options: any, nuxt: Nuxt) {
+  // Pass content ignore patterns to runtimr config, Ignore patterns will use in storage layer
+  nuxt.options.privateRuntimeConfig.docus.ignores = options.content.ignores
+
   nuxt.hook('nitro:context', ctx => {
-    const mounts = useContentMounts(nuxt, options.sources)
+    const mounts = useContentMounts(nuxt, options.content.sources)
     Object.assign(ctx.storage.mounts, mounts)
   })
 

@@ -1,4 +1,3 @@
-// @ts-ignore
 import { useNuxtApp, useRuntimeConfig } from '#imports'
 
 const logger = {

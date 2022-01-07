@@ -34,4 +34,6 @@ npx create-docus my-project
 
 ## Contribute
 
+If you want to setup this repository locally, check out [setup](./docs/content/repository/setup.md).
+
 This repository commands are listed [here](./docs/content/repository/commands.md).
