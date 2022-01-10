@@ -1,4 +1,4 @@
-import info from 'property-information'
+import * as info from 'property-information'
 
 const rootKeys = ['class-name', 'class', 'className', 'style']
 
