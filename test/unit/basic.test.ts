@@ -28,7 +28,7 @@ describe('Basic tests', () => {
     expect(index).toHaveProperty('meta.mtime')
     expect(index).toHaveProperty('body')
 
-    expect(index.body).toMatchInlineSnapshot()
+    expect(index.body).toMatchSnapshot('basic-index-body')
   })
 
   test('Get ignored contents', async () => {

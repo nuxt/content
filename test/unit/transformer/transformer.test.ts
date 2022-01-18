@@ -11,6 +11,6 @@ describe('Transformer', () => {
     assert(parsed.meta.id === 'content:index.md')
 
     expect(parsed).toHaveProperty('body')
-    expect(parsed).toMatchInlineSnapshot()
+    expect(parsed).toMatchSnapshot('transformer-index-parsed')
   })
 })

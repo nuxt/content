@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`Basic tests > Get contents index 1`] = `
+exports[`Basic tests > Get contents index > basic-index-body 1`] = `
 {
   "children": [
     {
