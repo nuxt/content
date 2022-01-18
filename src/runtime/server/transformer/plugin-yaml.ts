@@ -9,7 +9,8 @@ export default defineContentPlugin({
 
     return {
       meta: {
-        id
+        id,
+        type: 'yaml'
       },
       body: parsed.data
     }

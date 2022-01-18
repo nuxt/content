@@ -14,7 +14,7 @@ exports[`Basic tests > Get contents index 1`] = `
         "class": "d-heading-title",
         "id": "index",
       },
-      "tag": "h1",
+      "tag": "prose-h1",
       "type": "element",
     },
   ],

@@ -56,6 +56,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('autoImports:dirs', dirs => {
       dirs.push(resolveRuntimeDir('composables'))
     })
+
+    // Add Docus components
+    nuxt.hook('components:dirs', dirs => {
+      dirs.push(resolveRuntimeDir('components'))
+    })
   }
 })
 

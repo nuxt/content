@@ -23,7 +23,48 @@ export default defineNuxtConfig({
     ]
   }
 })
- ```
+```
+
+## Components
+
+### `<Content>`
+
+Render a content usnig its uniuqe ID
+
+```vue
+<template>
+  <Content :id="contentID" />
+</template>
+```
+
+### `<ContentRendererMarkdown>`
+
+Render a markdown content
+
+```Vue
+<script setup lang="ts">
+const content = getContent('content:index.md')
+</script>
+
+<template>
+  <ContentRendererMarkdown :document="content" />
+</template>
+```
+
+
+### `<ContentRendererYaml>`
+
+Render a YAML content
+
+```Vue
+<script setup lang="ts">
+const content = getContent('content:index.yml')
+</script>
+
+<template>
+  <ContentRendererYaml :document="content" />
+</template>
+```
 
 ## Endpoints
 

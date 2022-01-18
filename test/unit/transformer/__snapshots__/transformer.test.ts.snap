@@ -17,7 +17,7 @@ exports[`Transformer > Parse 1`] = `
           "class": "d-heading-title",
           "id": "index",
         },
-        "tag": "h1",
+        "tag": "prose-h1",
         "type": "element",
       },
     ],
@@ -35,6 +35,7 @@ exports[`Transformer > Parse 1`] = `
     "excerpt": undefined,
     "id": "content:index.md",
     "title": "Index",
+    "type": "markdown",
   },
 }
 `;

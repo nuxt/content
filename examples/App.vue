@@ -7,11 +7,11 @@
           <button>Query</button>
         </form>
       </div>
-      <span v-for="item in list" :key="item" @click="load(item.id)">
+      <span v-for="item in list" :key="item" @click="content = item.id">
         {{ item.title }}
       </span>
     </div>
-    <pre>{{ content }}</pre>
+    <Content v-if="content" :id="content" />
   </div>
 </template>
 
@@ -19,9 +19,6 @@
 const content = ref('')
 const list = ref('')
 const title = ref('')
-const load = async id => {
-  content.value = await getContent(id)
-}
 
 const query = async () => {
   list.value = await queryContent()
