@@ -43,7 +43,7 @@
     "lint": "eslint --ext .js,.ts,.vue .",
     "test": "pnpm build:docs && pnpm test:unit && pnpm test:e2e",
     "test:types": "tsc --build tsconfig.json",
-    "test:unit": "vitest run",
+    "test:unit": "vitest run --config test/vite.config.js",
     "test:e2e": "start-server-and-test 'pnpm dev' http://localhost:3000 'pnpm cy:run'",
     "test:e2e:gui": "start-server-and-test 'pnpm dev' http://localhost:3000 'pnpm cy:open'",
     "coverage": "vitest --coverage",
@@ -60,6 +60,9 @@
   "lint-staged": {
     "*.{js,json,css,vue}": "prettier --write",
     "*.{js,vue}": "eslint --fix"
+  },
+  "resolutions": {
+    "node-fetch": "3.1.0"
   },
   "dependencies": {
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
@@ -91,7 +94,7 @@
     "faker": "^5.5.3",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.3",
-    "nuxt3": "latest",
+    "nuxt3": "^3.0.0-27374259.21b664c",
     "object-hash": "^2.2.0",
     "prettier": "^2.5.1",
     "start-server-and-test": "^1.14.0",

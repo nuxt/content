@@ -1,8 +1,14 @@
 <template>
   <div>
     <div>
-      <span v-for="item in list" :key="item" @click="load(item)">
-        {{ item }}
+      <div>
+        <form @submit.prevent="query">
+          <input v-model="title" type="text" />
+          <button>Query</button>
+        </form>
+      </div>
+      <span v-for="item in list" :key="item" @click="load(item.id)">
+        {{ item.title }}
       </span>
     </div>
     <pre>{{ content }}</pre>
@@ -10,14 +16,20 @@
 </template>
 
 <script setup>
-import { getContent, useContentList } from '#docus'
-
 const content = ref('')
+const list = ref('')
+const title = ref('')
 const load = async id => {
   content.value = await getContent(id)
 }
 
-const list = await useContentList()
+const query = async () => {
+  list.value = await queryContent()
+    .where({ title: { $icontains: title.value } })
+    .version(1)
+    .fetch()
+}
+await query()
 </script>
 
 <style>

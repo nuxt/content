@@ -1,4 +1,5 @@
 import { prefixStorage } from 'unstorage'
+import { createQuery } from '../query'
 import { parse, transform } from './transformer'
 import { storage } from '#storage'
 import { privateConfig } from '#config'
@@ -18,10 +19,18 @@ export const contentIgnores = privateConfig.docus.ignores.map((p: any) =>
 const contentIgnorePredicate = (key: string) =>
   !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
 
-export const getContentsList = async (prefix?: string) => {
+export const getContentsIds = async (prefix?: string) => {
   const keys = await contentStorage.getKeys(prefix)
 
   return keys.filter(contentIgnorePredicate)
+}
+
+export const getContentsList = async (prefix?: string) => {
+  const keys = await getContentsIds(prefix)
+
+  const contents = await Promise.all(keys.map(key => getContent(key).then(c => c.meta)))
+
+  return contents
 }
 
 export const getContent = async (key: string) => {
@@ -44,4 +53,10 @@ export const getContent = async (key: string) => {
     },
     body: parsedContent.body
   }
+}
+
+export const searchContents = async (query: Partial<QueryBuilderParams>) => {
+  const $query = createQuery(await getContentsList(), query)
+
+  return $query.fetch()
 }

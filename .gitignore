@@ -1,3 +1,4 @@
+# Nuxt
 node_modules
 *.iml
 .idea
@@ -11,4 +12,9 @@ dist
 sw.js
 .env
 
+# Cypress
+cypress/videos
+cypress/screenshots
+
+# Tests
 fake

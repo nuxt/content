@@ -20,6 +20,7 @@
       "#app": ["./node_modules/.pnpm/nuxt3@3.0.0-27338323.1e98259/node_modules/nuxt3/dist/app"],
       "#app/*": ["./node_modules/.pnpm/nuxt3@3.0.0-27338323.1e98259/node_modules/nuxt3/dist/app/*"],
       "#imports": ["./docs/.nuxt/imports"],
+      "#docus": ["./src/runtime"],
       "#build": ["./docs/.nuxt"],
       "#build/*": ["./docs/.nuxt/*"]
     }

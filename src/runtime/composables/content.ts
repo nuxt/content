@@ -1,5 +1,6 @@
 import { onUnmounted } from 'vue'
 import { withBase } from 'ufo'
+import { createQuery } from '../query'
 import { useFetch, useNuxtApp } from '#imports'
 
 const withContentBase = (url: string) => withBase(url, '/api/_docus')
@@ -35,7 +36,7 @@ export const useContentList = () => {
 export const getContent = (id: string) => $fetch<any>(withContentBase(`/get/${id}`))
 
 /**
- * Content entry-point
+ * Fetch a content by id (Reactive version)
  */
 export const useContent = (id: string) => {
   const nuxtApp = useNuxtApp()
@@ -52,4 +53,24 @@ export const useContent = (id: string) => {
   onUnmounted(() => nuxtApp.hooks.removeHook('content:update', hook))
 
   return promise.then(({ data }: any) => data)
+}
+
+/**
+ * Fetch query result
+ */
+const queryFetch = (body: Partial<QueryBuilderParams>) =>
+  $fetch<any>(withContentBase('/query'), { method: 'POST', body })
+
+/**
+ * Query contents
+ */
+export const queryContent = (body?: string | Partial<QueryBuilderParams>, aq?: Partial<QueryBuilderParams>) => {
+  if (typeof body === 'string') {
+    body = {
+      to: body,
+      ...aq
+    }
+  }
+
+  return createQuery(queryFetch, body)
 }

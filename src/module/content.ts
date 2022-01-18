@@ -46,7 +46,7 @@ export function setupContentModule(options: any, nuxt: Nuxt) {
   })
 
   // Add server routes for each content functions
-  for (const api of ['list', 'get']) {
+  for (const api of ['list', 'get', 'query']) {
     addServerMiddleware({
       route: `/api/_docus/${api}`,
       handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir })
