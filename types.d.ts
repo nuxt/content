@@ -1,3 +1,5 @@
+import './dist/types.d'
+
 interface ParsedContent {
   meta: {
     id: string

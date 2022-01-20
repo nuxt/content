@@ -3,7 +3,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolve } from 'pathe'
 import defu from 'defu'
 
-import type { ModuleOptions } from '../index'
+import type { ModuleOptions } from '../module'
 
 export function setupQueryModule(options: ModuleOptions, nuxt: Nuxt) {
   addTemplate({

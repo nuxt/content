@@ -20,17 +20,20 @@
     "types.d.ts",
     "env.d.ts"
   ],
-  "type": "module",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./types.d.ts",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": {
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    },
     "./runtime": "./dist/runtime/index.mjs",
     "./dist/runtime/*": "./dist/runtime/*"
   },
+  "type": "module",
+  "main": "./dist/module.cjs",
+  "module": "./dist/module.mjs",
+  "types": "./types.d.ts",
   "scripts": {
-    "build": "unbuild",
+    "build": "nuxt-module-build",
     "build:docs": "nuxi build docs",
     "build:theme": "nuxi build theme",
     "build:examples": "nuxi build theme",
@@ -55,7 +58,8 @@
     "version:bump": "beachball bump",
     "version:bump-edge": "pnpm jiti .github/scripts/bump-edge.ts",
     "version:check": "beachball check",
-    "version:publish": "beachball publish"
+    "version:publish": "beachball publish",
+    "prepack": "nuxt-module-build"
   },
   "lint-staged": {
     "*.{js,json,css,vue}": "prettier --write",
@@ -67,13 +71,16 @@
   "dependencies": {
     "@docus/mdc": "npm:@docus/mdc-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
+    "consola": "^2.15.3",
     "debounce": "^1.2.1",
+    "defu": "^5.0.1",
     "pathe": "^0.2.0",
     "ufo": "^0.7.9",
     "unstorage": "^0.3.3",
     "ws": "^8.4.2"
   },
   "devDependencies": {
+    "@nuxt/module-builder": "^0.1.7",
     "@nuxt/test-utils": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/benchmark": "^2.1.1",
@@ -100,7 +107,6 @@
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4",
-    "unbuild": "^0.6.7",
     "unocss": "^0.22.4",
     "vitest": "^0.1.20"
   },

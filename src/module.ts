@@ -13,6 +13,8 @@ export interface ModuleOptions {
   }
 }
 
+export interface ModuleHooks {}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'docus',
@@ -64,11 +66,21 @@ export default defineNuxtModule<ModuleOptions>({
   }
 })
 
+interface ModulePublicRuntimeConfig {
+  // Websocket server URL
+  wsUrl?: string
+}
+interface ModulePrivateRuntimeConfig {
+  // List of content ignore patterns
+  ignores: Array<string>
+}
 declare module '@nuxt/schema' {
-  interface NuxtConfig {
-    docus?: ModuleOptions
-  }
-  interface NuxtOptions {
-    docus?: ModuleOptions
+  interface ConfigSchema {
+    publicRuntimeConfig?: {
+      docus?: ModulePublicRuntimeConfig
+    }
+    privateRuntimeConfig?: {
+      docus?: ModulePrivateRuntimeConfig & ModulePublicRuntimeConfig
+    }
   }
 }
