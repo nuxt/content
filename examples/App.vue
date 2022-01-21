@@ -26,6 +26,7 @@ const query = async () => {
     .version(1)
     .fetch()
 }
+
 await query()
 </script>
 

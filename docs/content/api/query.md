@@ -7,16 +7,15 @@ Query layer provides server API and composables to search and query contents.
 Query server exposes one API:
 
 - `/api/_docus/query`
-  
-  Search/Query contents.
 
+  Search/Query contents.
 
 ## Composables
 
 Docus provide composables to work with content server:
 
 - `queryContent`
-  
+
   Query and fetch list of contents based on actions and conditions provides.
 
   ```js
@@ -26,12 +25,13 @@ Docus provide composables to work with content server:
     .fetch()
   ```
 
-
 ## Plugins
 
-The layer can be extend using custom plugins. With plugins users can extend query behaviors and add new helpers and fucntionalities to it.
+The layer can be extend using custom plugins.
 
-### Create Plugin 
+With plugins users can extend query behaviors and add new features to it.
+
+### Create plugin
 
 ```ts
 // file `~/plugin-version.ts`
@@ -54,7 +54,7 @@ export default defineQueryPlugin({
 })
 ```
 
-### Register Plugin
+### Register plugin
 
 ```ts
 // file `nuxt.config.ts`

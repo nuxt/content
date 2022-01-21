@@ -11,6 +11,7 @@ coverage
 dist
 sw.js
 .env
+.netlify
 
 # Cypress
 cypress/videos

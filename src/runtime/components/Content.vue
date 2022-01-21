@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue'
+import { computed } from 'vue'
+import { useContent } from '#imports'
 
 const props = defineProps({
   id: {
@@ -12,12 +13,8 @@ const props = defineProps({
   }
 })
 
-const content = ref<ParsedContent | null>(null)
+const content = await useContent(props.id)
 const type = computed(() => content.value?.meta?.type)
-
-watchEffect(async () => {
-  content.value = await getContent(props.id)
-})
 </script>
 
 <template>

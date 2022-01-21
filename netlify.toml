@@ -1,0 +1,7 @@
+[build]
+    publish = "dist"
+    command = "npx pnpm install --store=node_modules/.pnpm-store && npx pnpm build:theme"
+
+[build.environment]
+  NODE_VERSION = "16"
+  NPM_FLAGS = "--version" # prevent Netlify npm install

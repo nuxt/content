@@ -51,7 +51,6 @@ const content = getContent('content:index.md')
 </template>
 ```
 
-
 ### `<ContentRendererYaml>`
 
 Render a YAML content
@@ -71,7 +70,7 @@ const content = getContent('content:index.yml')
 Content server exposes two APIs:
 
 - `/api/_docus/list`
-  
+
   List available contents in all sources.
 
 - `/api/_docus/get/:id`
@@ -83,25 +82,25 @@ Content server exposes two APIs:
 Docus provide composables to work with content server:
 
 - `getContentList`
-  
+
   Fetch contents list from server and return as simple array.
-  
+
 - `useContentList`
-  
+
   Fetch contents list from server and return a reactive array. The result automatically updates every time a content changes.
-  
+
 - `getContent(:id)`
-  
+
   Fetch meta and body of specific content.
-  
+
 - `useContent(:id)`
-  
+
   Fetch meta and body of specific content. Result will update everytime the content changes.
 
 ## Hooks
 
 Docus also provides the `content:update` hook notified on content changes.
-  
+
 ```ts
 nuxtApp.hook('content:update', ({ event, key }) => {
   // ...
@@ -122,10 +121,8 @@ Parsers and Transformers can be defined using `defineContentPlugin`:
 export default defineContentPlugin({
   name: 'plugin-name',
   extentions: ['.md'],
-  parse: async (id, content) => {
-  },
-  transform: async (content) => {
-  }
+  parse: async (id, content) => {},
+  transform: async content => {}
 })
 ```
 

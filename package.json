@@ -44,7 +44,7 @@
     "start:theme": "nuxi preview theme",
     "start:examples": "nuxi dev examples",
     "lint": "eslint --ext .js,.ts,.vue .",
-    "test": "pnpm build:docs && pnpm test:unit && pnpm test:e2e",
+    "test": "pnpm build:theme && pnpm test:unit && pnpm test:e2e",
     "test:types": "tsc --build tsconfig.json",
     "test:unit": "vitest run --config test/vite.config.js",
     "test:e2e": "start-server-and-test 'pnpm dev' http://localhost:3000 'pnpm cy:run'",
