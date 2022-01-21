@@ -11,9 +11,8 @@
   },
   "keywords": [
     "nuxt",
-    "module",
-    "content-driven",
-    "website-generator"
+    "content",
+    "module"
   ],
   "files": [
     "dist",
