@@ -1,5 +1,5 @@
 {
-  "extends": "./docs/.nuxt/tsconfig.json",
+  "extends": "./theme/.nuxt/tsconfig.json",
   "include": ["env.d.ts", "types.d.ts", "src/**/*", "test/**/*", "examples/**/*", "docs/**/*", "theme/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
