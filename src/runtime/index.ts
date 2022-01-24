@@ -10,3 +10,10 @@ export function defineQueryPlugin(plugin: QueryPlugin) {
 
   return plugin
 }
+
+/**
+ * Define new plugin for content parsing.
+ */
+export function defineContentPlugin(plugin: ContentPlugin): ContentPlugin {
+  return plugin
+}

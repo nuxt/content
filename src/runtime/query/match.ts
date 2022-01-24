@@ -37,7 +37,7 @@ const operators: Record<string, QueryMatchOperator> = {
 
   // Ignore case contains
   $icontains: (item, condition) => {
-    if (typeof item !== 'string') throw new TypeError('$icontains requires a string, use $contains instead')
+    if (typeof condition !== 'string') throw new TypeError('$icontains requires a string, use $contains instead')
 
     item = String(item).toLocaleLowerCase()
     return ensureArray(condition).every((i: any) => item.includes(i.toLocaleLowerCase()))

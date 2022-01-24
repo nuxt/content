@@ -7,6 +7,7 @@ export interface ModuleOptions {
   content?: {
     sources?: Array<string>
     ignores?: Array<string>
+    plugins?: Array<string>
   }
   query?: {
     plugins?: Array<string>
@@ -28,13 +29,14 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     content: {
       sources: ['content'],
-      ignores: ['\\.', '-']
-    },
-    query: {
+      ignores: ['\\.', '-'],
       plugins: []
     }
   },
   setup(options, nuxt) {
+    // @ts-ignore
+    nuxt.options.docus = options
+
     // Initialize Docus runtime config
     nuxt.options.publicRuntimeConfig.docus = {}
     nuxt.options.privateRuntimeConfig.docus = {}

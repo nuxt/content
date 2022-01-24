@@ -1,16 +1,13 @@
 import { extname } from 'pathe'
-import pluginMarkdown from './plugin-markdown'
-import pluginPathMeta from './plugin-path-meta'
-import pluginYaml from './plugin-yaml'
-
-const plugins: ContentPluginOptions[] = [pluginMarkdown, pluginPathMeta, pluginYaml]
+// @ts-ignore
+import { getParser, getTransformers } from '#docus-content-plugins'
 
 /**
  * Parse content file using registered plugins
  */
 export function parse(id: string, content: string) {
   const ext = extname(id)
-  const plugin = plugins.find(p => p.extentions.includes(ext) && p.parse)
+  const plugin = getParser(ext)
   if (!plugin) {
     throw new Error(`No parser found for ${ext}`)
   }
@@ -24,9 +21,9 @@ export function parse(id: string, content: string) {
  */
 export async function transform(content: ParsedContent) {
   const ext = extname(content.meta.id)
-  const transformers = plugins.filter(p => ext.match(new RegExp(p.extentions.join('|'))) && p.transform)
+  const transformers = getTransformers(ext)
 
-  const result = await transformers.reduce(async (prev, cur) => {
+  const result = await transformers.reduce(async (prev: Promise<ParsedContent>, cur: ContentPlugin) => {
     const next = (await prev) || content
 
     return cur.transform!(next)

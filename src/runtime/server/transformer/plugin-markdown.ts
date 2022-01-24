@@ -1,5 +1,5 @@
 import { parse } from '@docus/mdc'
-import { defineContentPlugin } from './helpers'
+import { defineContentPlugin } from '../../'
 
 export default defineContentPlugin({
   name: 'mdc',

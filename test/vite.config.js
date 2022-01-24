@@ -10,7 +10,11 @@ export default defineConfig({
     alias: [
       {
         find: '#docus-query-plugins',
-        replacement: path.resolve(__dir, './mocks/docus-query-plugins.mjs')
+        replacement: path.resolve(__dir, './mocks/docus-query-plugins.ts')
+      },
+      {
+        find: '#docus-content-plugins',
+        replacement: path.resolve(__dir, './mocks/docus-content-plugins.ts')
       }
     ]
   }

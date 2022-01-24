@@ -8,11 +8,11 @@ interface ParsedContent {
   body: any
 }
 
-interface ContentPluginOptions {
+interface ContentPlugin {
   name: string
   extentions: string[]
-  parse(id: string, content: string): Promise<ParsedContent> | ParsedContent
-  transform: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
+  parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
+  transform?: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
 }
 
 // Query

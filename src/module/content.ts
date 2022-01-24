@@ -1,8 +1,10 @@
-import { addServerMiddleware, resolveModule } from '@nuxt/kit'
+import { addServerMiddleware, addTemplate, resolveAlias, resolveModule, templateUtils } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
+import defu from 'defu'
 import { runtimeDir } from '../dirs'
 import { setupContentDevModule } from './content.dev'
+import { addContentPlugin } from './utils'
 
 export type MountOptions = {
   driver: 'fs' | 'http' | 'memory' | string
@@ -52,6 +54,35 @@ export function setupContentModule(options: any, nuxt: Nuxt) {
       handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir })
     })
   }
+
+  addTemplate({
+    filename: 'docus-content-plugins.mjs',
+    write: true,
+    getContents: () => {
+      const plugins = (options.content.plugins || []).map((p: string) => resolveAlias(p, nuxt.options.alias))
+      return `${templateUtils.importSources(plugins)}
+        export const plugins = [${plugins.map(templateUtils.importName).join(', ')}];
+        export const getParser = (ext) => plugins.find(p => p.extentions.includes(ext) && p.parse);
+        export const getTransformers = (ext) => plugins.filter(p => ext.match(new RegExp(p.extentions.join('|'))) && p.transform);
+        export default () => {};
+      `
+    }
+  })
+
+  nuxt.options.alias['#docus-content-plugins'] = join(nuxt.options.buildDir, 'docus-content-plugins')
+  nuxt.hook('nitro:context', ctx => {
+    ctx.alias['#docus-content-plugins'] = join(nuxt.options.buildDir, 'docus-content-plugins.mjs')
+
+    // Inline content template in Nitro bundle
+    ctx.externals = defu(ctx.externals, {
+      inline: [ctx.alias['#docus-content-plugins']]
+    })
+  })
+
+  // Register internal content plugins
+  addContentPlugin(resolveModule('./server/transformer/plugin-markdown', { paths: runtimeDir }))
+  addContentPlugin(resolveModule('./server/transformer/plugin-path-meta', { paths: runtimeDir }))
+  addContentPlugin(resolveModule('./server/transformer/plugin-yaml', { paths: runtimeDir }))
 
   // Setup content dev module
   if (nuxt.options.dev) {

@@ -1,5 +1,5 @@
 import { parseFrontMatter } from '@docus/mdc'
-import { defineContentPlugin } from './helpers'
+import { defineContentPlugin } from '../../'
 
 export default defineContentPlugin({
   name: 'Yaml',

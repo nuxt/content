@@ -1,6 +1,6 @@
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { defineContentPlugin } from './helpers'
+import { defineContentPlugin } from '../../'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
