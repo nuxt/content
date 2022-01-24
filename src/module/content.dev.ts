@@ -3,8 +3,8 @@ import type { Nuxt } from '@nuxt/schema'
 import { createStorage } from 'unstorage'
 import type { WatchEvent } from 'unstorage'
 import fsDriver from 'unstorage/drivers/fs'
-import * as Debounce from 'debounce'
-import * as WebSocket from 'ws'
+import Debounce from 'debounce'
+import { WebSocketServer } from 'ws'
 import { MountOptions, useContentMounts } from './content'
 import { logger } from './utils'
 
@@ -12,7 +12,7 @@ import { logger } from './utils'
  * WebSocket server useful for live content reload.
  */
 function createWebSocket() {
-  const wss = new WebSocket.Server({ noServer: true })
+  const wss = new WebSocketServer({ noServer: true })
 
   const serve = (req: IncomingMessage, socket = req.socket, head: any = '') =>
     wss.handleUpgrade(req, socket, head, (client: any) => wss.emit('connection', client, req))
