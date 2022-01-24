@@ -1,7 +1,7 @@
 import { defineNuxtConfig } from 'nuxt3'
 import { resolve } from 'pathe'
 
-const modulePath = resolve(__dirname, '../src/index')
+const modulePath = resolve(__dirname, '../src/module')
 
 export default defineNuxtConfig({
   rootDir: __dirname,
