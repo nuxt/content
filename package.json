@@ -1,6 +1,6 @@
 {
   "name": "@docus/content",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Temporary @nuxt/content module for Nuxt 3.",
   "author": "NuxtLabs <hello@nuxtlabs.com>",
   "license": "ISC",
