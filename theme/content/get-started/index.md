@@ -1,7 +1,0 @@
----
-layout: 'docs'
----
-
-# Hello
-
-hello

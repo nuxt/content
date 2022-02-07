@@ -4,10 +4,7 @@
 git restore -s@ -SW  -- examples src test
 
 # Bump versions to edge
-pnpm jiti ./scripts/bump-edge
-
-# Resolve PNPM
-pnpm
+yarn jiti ./scripts/bump-edge
 
 # Update token
 if [[ ! -z ${NODE_AUTH_TOKEN} ]] ; then

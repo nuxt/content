@@ -1,10 +1,15 @@
-import { defineQueryPlugin } from '#docus'
+import type { QueryBuilder } from '../../src/runtime/types'
+import { defineQueryPlugin } from '../../src/runtime/query'
+
+export interface Queries<T> {
+  version(v: string): QueryBuilder<T>
+}
 
 export default defineQueryPlugin({
   name: 'version',
   queries: {
-    version: params => {
-      return v => {
+    version: (params) => {
+      return (v) => {
         params.version = v
       }
     }

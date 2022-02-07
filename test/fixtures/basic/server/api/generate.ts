@@ -3,9 +3,9 @@ import { prefixStorage } from 'unstorage'
 import faker from 'faker'
 import { storage } from '#storage'
 
-const contentStorage = prefixStorage(storage, 'docus:source')
+const contentStorage = prefixStorage(storage, 'content:source')
 
-export default defineHandle(async req => {
+export default defineHandle(async (req) => {
   const { count = 100 } = useQuery(req)
 
   const fakeContents = await contentStorage.getKeys('content:fake')
@@ -18,7 +18,7 @@ export default defineHandle(async req => {
   }
 })
 
-function generateMD() {
+function generateMD () {
   const name = faker.lorem.word() + '-' + faker.lorem.word()
   const content = `---
 title: "${faker.lorem.words()}"

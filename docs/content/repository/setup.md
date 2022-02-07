@@ -3,12 +3,10 @@ title: Setup
 description: Setup the repository locally.
 ---
 
-We use [PNPM](https://pnpm.io) as a package manager for Docus.
-
-The regular setup command is:
+## Install dependencies
 
 ```bash
-pnpm install
+yarn install
 ```
 
 ## Type support
@@ -20,5 +18,5 @@ If you want to get full type support from Nuxt 3, you might want to run an initi
 Nuxt 3 generate its tsconfig.json on first build, so we need this local build to get full support for type aliases.
 
 ```bash
-pnpm build:docs
+yarn build:docs
 ```

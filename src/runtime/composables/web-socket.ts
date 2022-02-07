@@ -9,7 +9,7 @@ const logger = {
 
 let ws: WebSocket | undefined
 
-export function useWebSocket() {
+export function useWebSocket () {
   const nuxtApp = useNuxtApp()
 
   if (!window.WebSocket) {
@@ -21,7 +21,9 @@ export function useWebSocket() {
     try {
       const data = JSON.parse(message.data)
 
-      if (!data) return
+      if (!data) {
+        return
+      }
 
       // @ts-ignore
       nuxtApp.hooks.callHook('content:update', data)
@@ -67,7 +69,7 @@ export function useWebSocket() {
     }
 
     // WebSocket Base URL
-    const wsURL = `${useRuntimeConfig().docus.wsUrl}ws`
+    const wsURL = `${useRuntimeConfig().content.wsUrl}ws`
 
     logger.log(`WS connect to ${wsURL}`)
 

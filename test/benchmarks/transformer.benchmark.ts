@@ -1,4 +1,4 @@
-import markdownPlugin from '../../src/runtime/server/transformer/plugin-markdown.js'
+import markdownPlugin from '../../src/markdown/runtime/plugin-markdown.js'
 import pathMetaPlugin from '../../src/runtime/server/transformer/plugin-path-meta.js'
 import { benchmark, describe } from './utils.js'
 

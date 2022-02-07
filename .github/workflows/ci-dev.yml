@@ -24,31 +24,25 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.23.5
-
       - name: Setup node v16
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: yarn install
 
       - name: Lint project
-        run: pnpm lint
+        run: yarn lint
 
       - name: Test project
-        run: pnpm test
+        run: yarn test
 
       - name: Generate coverage
         uses: codecov/codecov-action@v2
 
       - name: Build project
-        run: pnpm build
+        run: yarn build
 
       # - name: Release Edge version
       #   if: github.event_name == 'push'

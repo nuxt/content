@@ -8,19 +8,19 @@ import { createCommonJS } from 'mlly'
 
 const cjs = createCommonJS(import.meta.url)
 
-export function resolveWorkspace(name: string) {
+export function resolveWorkspace (name: string) {
   return resolve(cjs.__dirname, '../', name)
 }
 
-export function fixtureDir(name: string) {
+export function fixtureDir (name: string) {
   return resolve(cjs.__dirname, 'fixtures', name)
 }
 
-export async function execNuxtCLI(args: string[], opts: any) {
+export async function execNuxtCLI (args: string[], opts: any) {
   await execa('npm', ['nuxi', ...args], opts)
 }
 
-export async function loadFixture(opts: any, unhashedConfig?: any) {
+export async function loadFixture (opts: any, unhashedConfig?: any) {
   const buildId = hash(opts)
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
   const { loadNuxt } = await import('@nuxt/kit')
@@ -28,7 +28,7 @@ export async function loadFixture(opts: any, unhashedConfig?: any) {
   return nuxt
 }
 
-export async function buildFixture(opts: any) {
+export async function buildFixture (opts: any) {
   const buildId = hash(opts)
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
 
@@ -53,18 +53,18 @@ export async function buildFixture(opts: any) {
   }
 }
 
-function mkdirpSync(dir: string) {
+function mkdirpSync (dir: string) {
   if (!existsSync(dir)) {
     mkdirpSync(dirname(dir))
     mkdirSync(dir)
   }
 }
 
-function readSync(file: string) {
+function readSync (file: string) {
   return existsSync(file) ? readFileSync(file, 'utf8') : null
 }
 
-function isAlive(pid: string) {
+function isAlive (pid: string) {
   try {
     process.kill(+pid, 0)
     return true
@@ -73,7 +73,7 @@ function isAlive(pid: string) {
   }
 }
 
-function waitWhile(check: () => boolean, interval = 100, timeout = 30000) {
+function waitWhile (check: () => boolean, interval = 100, timeout = 30000) {
   return new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('Timeout')), timeout)
     const i = setInterval(() => {
@@ -86,6 +86,6 @@ function waitWhile(check: () => boolean, interval = 100, timeout = 30000) {
   })
 }
 
-function gitHead() {
+function gitHead () {
   return execSync('git rev-parse HEAD').toString('utf8').trim()
 }

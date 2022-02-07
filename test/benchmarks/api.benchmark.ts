@@ -17,7 +17,10 @@ describe('Api', () => {
         count: 100
       }
     })
+
     contents = await ctx.fetch('/api/_docus/list')
+
+    // eslint-disable-next-line no-console
     console.log(`Generated ${contents.length} docs`)
   })
 

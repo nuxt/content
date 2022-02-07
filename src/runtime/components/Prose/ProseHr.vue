@@ -1,3 +1,3 @@
 <template>
-  <hr />
+  <hr>
 </template>

@@ -3,7 +3,7 @@
     <div>
       <div>
         <form @submit.prevent="query">
-          <input v-model="title" type="text" />
+          <input v-model="title" type="text">
           <button>Query</button>
         </form>
       </div>
@@ -23,7 +23,6 @@ const title = ref('')
 const query = async () => {
   list.value = await queryContent()
     .where({ title: { $icontains: title.value } })
-    .version(1)
     .fetch()
 }
 

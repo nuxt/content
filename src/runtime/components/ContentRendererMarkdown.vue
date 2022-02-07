@@ -5,7 +5,7 @@ import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 
 import type { VNode, ConcreteComponent } from 'vue'
-import type { MDCNode } from '@docus/mdc'
+import type { MarkdownNode } from '../types'
 
 type CreateElement = typeof h
 type ContentVNode = VNode | string
@@ -30,11 +30,11 @@ const number = (d: any) => +d
 const trim = (d: any) => d.trim()
 const noop = (d: any) => d
 
-function valueInContext(code: string, context: ContentMeta) {
+function valueInContext (code: string, context: ContentMeta) {
   return code.split('.').reduce((o: any, k) => o && o[k], context)
 }
 
-function evalInContext(code: string, context: any) {
+function evalInContext (code: string, context: any) {
   let result = valueInContext(code, context)
   if (typeof result === 'undefined') {
     try {
@@ -51,7 +51,7 @@ function evalInContext(code: string, context: any) {
 /**
  * Create component data from MDC node props.
  */
-function propsToData(node: MDCNode, documentMeta: ContentMeta) {
+function propsToData (node: MarkdownNode, documentMeta: ContentMeta) {
   const { tag = '', props = {} } = node
   return Object.keys(props).reduce(function (data, key) {
     const value = props[key]
@@ -98,39 +98,43 @@ function propsToData(node: MDCNode, documentMeta: ContentMeta) {
  * Create the scoped slots from `node` template children.
  * Templates for default slots are processed as regular children in `processNode`.
  */
-function processNonDefaultSlots(node: MDCNode, h: CreateElement, documentMeta: ContentMeta) {
+function processNonDefaultSlots (node: MarkdownNode, h: CreateElement, documentMeta: ContentMeta) {
   const data: any = {}
-  const children: MDCNode[] = node.children || []
-  children.forEach(child => {
+  const children: MarkdownNode[] = node.children || []
+  children.forEach((child) => {
     // Regular children and default templates are processed inside `processNode`.
-    if (!isTemplate(child) || isDefaultTemplate(child)) return
+    if (!isTemplate(child) || isDefaultTemplate(child)) {
+      return
+    }
     const template = child
     const name = getSlotName(template)
-    const vDomTree = template.content.map((tmplNode: MDCNode) => processNode(tmplNode, h, documentMeta))
+    const vDomTree = template.content.map((tmplNode: MarkdownNode) => processNode(tmplNode, h, documentMeta))
     data[name] = createSlotFunction(vDomTree)
   })
   return data
 }
 
-function processNode(node: MDCNode, h: CreateElement, documentMeta: ContentMeta): ContentVNode {
+function processNode (node: MarkdownNode, h: CreateElement, documentMeta: ContentMeta): ContentVNode {
   /**
    * Render Text node
    */
-  if (node.type === 'text') return h(Text, node.value)
+  if (node.type === 'text') {
+    return h(Text, node.value)
+  }
   const propData = propsToData(node, documentMeta)
   const data = Object.assign({}, propData)
   /**
    * Process child nodes, flat-mapping templates pointing to default slots.
    */
-  const children: Array<VNode | string> = (node.children || []).flatMap(child => {
+  const children: Array<VNode | string> = (node.children || []).flatMap((child) => {
     /**
      * Template nodes pointing to non-default slots are processed inside `slotsToData`.
      */
     if (isTemplate(child) && !isDefaultTemplate(child)) {
       return []
     }
-    const nodes: MDCNode[] = isDefaultTemplate(child) ? child.content : [child]
-    return (nodes || []).map((node: MDCNode) => processNode(node, h, documentMeta) as ContentVNode)
+    const nodes: MarkdownNode[] = isDefaultTemplate(child) ? child.content : [child]
+    return (nodes || []).map((node: MarkdownNode) => processNode(node, h, documentMeta) as ContentVNode)
   })
   let component: string | ConcreteComponent | undefined = node.tag
   if (isVueComponent(component as string)) {
@@ -145,32 +149,34 @@ function processNode(node: MDCNode, h: CreateElement, documentMeta: ContentMeta)
 /**
  * Check if node is root
  */
-function isDefaultTemplate(node: MDCNode) {
+function isDefaultTemplate (node: MarkdownNode) {
   return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
 }
 
 /**
  * Check if node is Vue template tag
  */
-function isTemplate(node: MDCNode) {
+function isTemplate (node: MarkdownNode) {
   return node.tag === 'template'
 }
 
 /**
  * Check is node is a Vue component
  */
-function isVueComponent(name: string) {
+function isVueComponent (name: string) {
   return !htmlTags.includes(name)
 }
 
 /**
  * Get slot name out of a node
  */
-function getSlotName(node: MDCNode) {
+function getSlotName (node: MarkdownNode) {
   let name = ''
   for (const propName of Object.keys(node.props || {})) {
     // Check if prop name correspond to a slot
-    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) continue
+    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) {
+      continue
+    }
     // Get slot name
     name = propName.split(/[:#]/, 2)[1]
     break
@@ -200,12 +206,14 @@ export default defineComponent({
       default: 'div'
     }
   },
-  render() {
+  render () {
     const { document, ...contentProps } = this.$props
     // No content to render
-    if (!document) return
+    if (!document) {
+      return
+    }
     // Get body from Docus document
-    const body = ((document as any).body || document) as MDCNode
+    const body = ((document as any).body || document) as MarkdownNode
     const meta: ContentMeta = (document as any).meta || {}
     let component: string | ConcreteComponent = meta.component || this.$props.tag
     if (typeof meta.component === 'object') {

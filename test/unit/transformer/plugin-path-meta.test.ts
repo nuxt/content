@@ -1,5 +1,6 @@
 import { describe, test, expect, assert } from 'vitest'
 import plugin from '../../../src/runtime/server/transformer/plugin-path-meta'
+import type { ParsedContent, ParsedContentMeta } from '../../../src/runtime/types'
 
 const matchMeta = (transformed: any, expected: any) => {
   expect(transformed).toHaveProperty('meta.id')
@@ -14,10 +15,10 @@ const matchMeta = (transformed: any, expected: any) => {
     `Draft is not equal, expected: ${expected.draft}, actual: ${transformed.meta.draft}`
   )
 
-  expect(transformed).toHaveProperty('meta.page')
+  expect(transformed).toHaveProperty('meta.partial')
   assert(
-    transformed.meta.page === expected.page,
-    `Page is not equal, expected: ${expected.page}, actual: ${transformed.meta.page}`
+    transformed.meta.partial === expected.partial,
+    `Partial is not equal, expected: ${expected.partial}, actual: ${transformed.meta.partial}`
   )
 
   expect(transformed).toHaveProperty('meta.slug')
@@ -42,7 +43,7 @@ const matchMeta = (transformed: any, expected: any) => {
 describe('Path Meta Plugin', () => {
   test('Index file', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:index.md' },
+      meta: { id: 'content:index.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -50,7 +51,7 @@ describe('Path Meta Plugin', () => {
       title: '',
       id: transformed.meta.id,
       draft: false,
-      page: true,
+      partial: false,
       slug: '/',
       position: '999900000000'
     })
@@ -58,7 +59,7 @@ describe('Path Meta Plugin', () => {
 
   test('Index file with position', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:3.index.md' },
+      meta: { id: 'content:3.index.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -66,7 +67,7 @@ describe('Path Meta Plugin', () => {
       title: '',
       id: transformed.meta.id,
       draft: false,
-      page: true,
+      partial: false,
       slug: '/',
       position: '000300000000'
     })
@@ -74,7 +75,7 @@ describe('Path Meta Plugin', () => {
 
   test('Index file with position [Draft]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:3.index.draft.md' },
+      meta: { id: 'content:3.index.draft.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -82,7 +83,7 @@ describe('Path Meta Plugin', () => {
       title: '',
       id: transformed.meta.id,
       draft: true,
-      page: false,
+      partial: false,
       slug: '/',
       position: '000300000000'
     })
@@ -90,7 +91,7 @@ describe('Path Meta Plugin', () => {
 
   test('Blog Index file with position [Draft]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.blog:3.index.draft.md' },
+      meta: { id: 'content:1.blog:3.index.draft.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -98,15 +99,15 @@ describe('Path Meta Plugin', () => {
       title: '',
       id: transformed.meta.id,
       draft: true,
-      page: false,
+      partial: false,
       slug: '/blog',
       position: '000100030000'
     })
   })
 
-  test('Blog post file with position [Non-Page]', () => {
+  test('Blog post file with position [Partial]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.blog:_4.the-post.md' },
+      meta: { id: 'content:1.blog:_4.the-post.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -114,7 +115,7 @@ describe('Path Meta Plugin', () => {
       title: 'The Post',
       id: transformed.meta.id,
       draft: false,
-      page: false,
+      partial: true,
       slug: '/blog/the-post',
       position: '000100040000'
     })
@@ -123,9 +124,9 @@ describe('Path Meta Plugin', () => {
   test('Semver directory', () => {
     const semvers = ['1.0.0', '1.1', '1', '1.x', '1.0.x', '1.0.0.x']
 
-    semvers.forEach(semver => {
+    semvers.forEach((semver) => {
       const transformed = plugin.transform!({
-        meta: { id: `content:${semver}:doc.md` },
+        meta: { id: `content:${semver}:doc.md` } as ParsedContentMeta,
         body: '# Index'
       }) as ParsedContent
 
@@ -133,7 +134,7 @@ describe('Path Meta Plugin', () => {
         title: 'Doc',
         id: transformed.meta.id,
         draft: false,
-        page: true,
+        partial: false,
         slug: `/${semver}/doc`,
         position: '999999990000'
       })
@@ -142,7 +143,7 @@ describe('Path Meta Plugin', () => {
 
   test('Position of nested directories (position will calculate with first three directory)', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.one:2.two:3.three:4.four:5.five:doc.md' },
+      meta: { id: 'content:1.one:2.two:3.three:4.four:5.five:doc.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
 
@@ -150,7 +151,7 @@ describe('Path Meta Plugin', () => {
       title: 'Doc',
       id: transformed.meta.id,
       draft: false,
-      page: true,
+      partial: false,
       slug: '/one/two/three/four/five/doc',
       position: '000100020003'
     })

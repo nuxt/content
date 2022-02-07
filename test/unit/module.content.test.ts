@@ -1,13 +1,13 @@
 import type { Nuxt } from '@nuxt/schema'
 import { assert, expect, test, describe } from 'vitest'
-import { useContentMounts } from '../../src/module/content'
+import { useContentMounts } from '../../src/utils'
 
-const nuxtDummy = { options: { rootDir: '/test' } } as Nuxt
+const nuxtDummy = { options: { rootDir: '/test', srcDir: '/test' } } as Nuxt
 
 describe('Content sources', () => {
   test('Relative path', () => {
     const mounts = useContentMounts(nuxtDummy, ['content'])
-    const mount = mounts['docus:source:content']
+    const mount = mounts['content:source:content']
 
     assert(typeof mount === 'object')
     assert(mount.driver === 'fs')
@@ -16,7 +16,7 @@ describe('Content sources', () => {
 
   test('Absolute path', () => {
     const mounts = useContentMounts(nuxtDummy, ['/content'])
-    const mount = mounts['docus:source:_content']
+    const mount = mounts['content:source:_content']
 
     assert(typeof mount === 'object')
     assert(mount.driver === 'fs')
@@ -37,7 +37,7 @@ describe('Content sources', () => {
     assert(Object.keys(mounts).length === 1)
 
     expect(mounts).toMatchObject({
-      'docus:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
+      'content:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
     })
   })
 
@@ -58,10 +58,10 @@ describe('Content sources', () => {
     assert(Object.keys(mounts).length === 4)
 
     expect(mounts).toMatchObject({
-      'docus:source:content': { driver: 'fs', driverOptions: { base: '/test/content' } },
-      'docus:source:_repo1_docs': { driver: 'fs', driverOptions: { base: '/repo1/docs' } },
-      'docus:source:repo2_docs': { driver: 'fs', driverOptions: { base: '/test/repo2/docs' } },
-      'docus:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
+      'content:source:content': { driver: 'fs', driverOptions: { base: '/test/content' } },
+      'content:source:_repo1_docs': { driver: 'fs', driverOptions: { base: '/repo1/docs' } },
+      'content:source:repo2_docs': { driver: 'fs', driverOptions: { base: '/test/repo2/docs' } },
+      'content:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
     })
   })
 })

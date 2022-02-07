@@ -3,9 +3,6 @@
 # Restore all git changes
 git restore -s@ -SW  -- examples src test
 
-# Resolve PNPM
-pnpm
-
 # Update token
 if [[ ! -z ${NODE_AUTH_TOKEN} ]] ; then
   echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc

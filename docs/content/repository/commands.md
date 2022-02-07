@@ -5,10 +5,10 @@ description: Usage description for each of the Docus repository commands.
 
 This page will list all the available commands for Docus repository.
 
-These commands can be run using `pnpm` which is the package manager of this repository.
+These commands can be run using `yarn` which is the package manager of this repository.
 
 ```bash
-pnpm build
+yarn build
 ```
 
 ## Commands
@@ -18,7 +18,7 @@ pnpm build
 Runs the package build using [`unbuild`](https://github.com/unjs/unbuild).
 
 ```bash
-pnpm build
+yarn build
 ```
 
 ### `build:docs`
@@ -26,15 +26,7 @@ pnpm build
 Runs the documentation build using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
 
 ```bash
-pnpm build:docs
-```
-
-### `build:theme`
-
-Runs the theme build using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
-
-```bash
-pnpm build:theme
+yarn build:docs
 ```
 
 ### `build:examples`
@@ -42,7 +34,7 @@ pnpm build:theme
 Runs the examples build using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
 
 ```bash
-pnpm build:examples
+yarn build:examples
 ```
 
 ### `dev`
@@ -50,15 +42,7 @@ pnpm build:examples
 Runs the documentation dev env using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
 
 ```bash
-pnpm dev
-```
-
-### `dev:theme`
-
-Runs the theme dev env using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
-
-```bash
-pnpm dev:theme
+yarn dev
 ```
 
 ### `dev:examples`
@@ -66,7 +50,7 @@ pnpm dev:theme
 Runs the examples dev env using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
 
 ```bash
-pnpm dev:examples
+yarn dev:examples
 ```
 
 ### `start:docs`
@@ -76,17 +60,7 @@ Runs the documentation prod env using [`nuxi`](https://v3.nuxtjs.org/getting-sta
 Has to be runned after `build:docs`.
 
 ```bash
-pnpm start:docs
-```
-
-### `start:theme`
-
-Runs the theme prod env using [`nuxi`](https://v3.nuxtjs.org/getting-started/commands).
-
-Has to be runned after `build:theme`.
-
-```bash
-pnpm start:theme
+yarn start:docs
 ```
 
 ### `start:examples`
@@ -96,19 +70,17 @@ Runs the examples prod env using [`nuxi`](https://v3.nuxtjs.org/getting-started/
 Has to be runned after `build:examples`.
 
 ```bash
-pnpm start:examples
+yarn start:examples
 ```
 
 ### `lint`
 
 Runs [ESLint](https://eslint.org/) on all `js`, `ts` and `.vue` files.
 
-ESLint is configured to work with [Prettier](https://prettier.io).
-
-We also use [@nuxtjs/eslint-config-typescript](https://www.npmjs.com/package/@nuxtjs/eslint-config-typescript).
+We use [@nuxtjs/eslint-config-typescript](https://www.npmjs.com/package/@nuxtjs/eslint-config-typescript).
 
 ```bash
-pnpm lint
+yarn lint
 ```
 
 ### `test`
@@ -116,7 +88,7 @@ pnpm lint
 Runs both test suites, **E2E** and **unit**.
 
 ```bash
-pnpm test
+yarn test
 ```
 
 ### `test:unit`
@@ -124,7 +96,7 @@ pnpm test
 Runs unit tests with [Vitest](https://vitest.dev).
 
 ```bash
-pnpm test:unit
+yarn test:unit
 ```
 
 ### `test:e2e`
@@ -132,7 +104,7 @@ pnpm test:unit
 Runs end to en tests with [Cypress](https://www.cypress.io).
 
 ```bash
-pnpm test:e2e
+yarn test:e2e
 ```
 
 ### `test:e2e:gui`
@@ -140,7 +112,7 @@ pnpm test:e2e
 Runs end to en tests with [Cypress](https://www.cypress.io) and opens its GUI.
 
 ```bash
-pnpm test:e2e:gui
+yarn test:e2e:gui
 ```
 
 ### `coverage`
@@ -148,7 +120,7 @@ pnpm test:e2e:gui
 Runs coverage calculation with [Vitest](https://vitest.dev).
 
 ```bash
-pnpm coverage
+yarn coverage
 ```
 
 ### Prepare
@@ -156,7 +128,7 @@ pnpm coverage
 Setup Git Hooks with [Husky](https://github.com/typicode/husky).
 
 ```bash
-pnpm prepare
+yarn prepare
 ```
 
 ### `cy:open`
@@ -164,7 +136,7 @@ pnpm prepare
 Shorthand to [`cypress open`](https://docs.cypress.io/guides/guides/command-line#cypress-open) command.
 
 ```bash
-pnpm cy:open
+yarn cy:open
 ```
 
 ### `cy:run`
@@ -172,23 +144,7 @@ pnpm cy:open
 Shorthand to [`cypress run`](https://docs.cypress.io/guides/guides/command-line#cypress-run) command.
 
 ```bash
-pnpm cy:run
-```
-
-### `version:change`
-
-Run [`beachball change`](https://microsoft.github.io/beachball/cli/change.html) command.
-
-```bash
-pnpm version:change
-```
-
-### `version:bump`
-
-Run [`beachball bump`](https://microsoft.github.io/beachball/cli/bump.html) command.
-
-```bash
-pnpm version:bump
+yarn cy:run
 ```
 
 ### `version:bump-edge`
@@ -196,21 +152,5 @@ pnpm version:bump
 Run [`bump-edge`](https://github.com/docusgen/docus/blob/2ca5f4dfdecd05f9a62f52faca80e0781eb828d0/.github/scripts/bump-edge.ts) script.
 
 ```bash
-pnpm version:bump-edge
-```
-
-### `version:check`
-
-Run [`beachball check`](https://microsoft.github.io/beachball/cli/check.html) command.
-
-```bash
-pnpm version:check
-```
-
-### `version:publish`
-
-Run [`beachball publish`](https://microsoft.github.io/beachball/cli/publish.html) command.
-
-```bash
-pnpm version:publish
+yarn version:bump-edge
 ```

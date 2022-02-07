@@ -3,7 +3,7 @@ import plugin from '../../../src/runtime/server/transformer/plugin-markdown'
 
 describe('Path Markdown Plugin', () => {
   test('Index file', async () => {
-    const parsed = await plugin.parse('content:index.md', '# Index')
+    const parsed = await plugin.parse!('content:index.md', '# Index')
 
     expect(parsed).toHaveProperty('meta.id')
     assert(parsed.meta.id === 'content:index.md')

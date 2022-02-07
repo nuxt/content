@@ -1,11 +1,12 @@
 import { extname } from 'pathe'
+import type { ParsedContent, ContentPlugin } from '../../types'
 // @ts-ignore
-import { getParser, getTransformers } from '#docus-content-plugins'
+import { getParser, getTransformers } from '#content-plugins'
 
 /**
  * Parse content file using registered plugins
  */
-export function parse(id: string, content: string) {
+export function parse (id: string, content: string) {
   const ext = extname(id)
   const plugin = getParser(ext)
   if (!plugin) {
@@ -19,7 +20,7 @@ export function parse(id: string, content: string) {
  * Transform parsed content.
  * Custom plugins can be registered to transform parsed content.
  */
-export async function transform(content: ParsedContent) {
+export async function transform (content: ParsedContent) {
   const ext = extname(content.meta.id)
   const transformers = getTransformers(ext)
 

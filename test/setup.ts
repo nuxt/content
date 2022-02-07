@@ -45,11 +45,11 @@ interface TestContext {
   _destroy: () => Promise<void>
 }
 
-export function importModule(path: string) {
+export function importModule (path: string) {
   return import(pathToFileURL(path).href)
 }
 
-export function setupTest(options: TestOptions) {
+export function setupTest (options: TestOptions) {
   const rootDir = fixtureDir(options.fixture)
   const buildDir = resolve(rootDir, '.nuxt')
 
@@ -90,6 +90,6 @@ export function setupTest(options: TestOptions) {
   return ctx
 }
 
-export async function startServer(ctx: TestContext, handle: RequestListener) {
+export async function startServer (ctx: TestContext, handle: RequestListener) {
   ctx.server = await listen(handle)
 }

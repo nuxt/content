@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { apply, get, omit, pick, sortByKey } from '../../../src/runtime/query/utils'
+import { apply, get, omit, pick, sortByKey } from '../../../src/runtime/query/match/utils'
 
 describe('query utils', () => {
   test('Omit', () => {

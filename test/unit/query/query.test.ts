@@ -1,19 +1,23 @@
 import { assert, describe, test } from 'vitest'
+import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
 import { createQuery } from '../../../src/runtime/query/query'
 import database from './db.json'
 
 const shuffledDatabase: Array<any> = [...database].sort(() => Math.random() - 0.5)
+const pipelineFetcher = createPipelineFetcher(() => Promise.resolve(shuffledDatabase), [])
 
 describe('Database Provider', () => {
   test('Matches nested exact match', async () => {
-    const result: Array<any> = await createQuery(shuffledDatabase).where({ 'nested.users.0': 'Ahad' }).fetch()
+    const result: Array<any> = await createQuery(pipelineFetcher, shuffledDatabase)
+      .where({ 'nested.users.0': 'Ahad' })
+      .fetch()
     assert(result.length > 0)
     assert(result.every(item => item.nested.users.includes('Ahad')) === true)
   })
 
   test('Matches nested with operator', async () => {
     // $contains
-    const result: Array<any> = await createQuery(shuffledDatabase)
+    const result: Array<any> = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         'nested.users': {
           $contains: 'Pooya'
@@ -25,31 +29,31 @@ describe('Database Provider', () => {
   })
 
   test('Apply limit', async () => {
-    const first3 = await createQuery(shuffledDatabase).limit(3).fetch()
+    const first3 = await createQuery(pipelineFetcher, shuffledDatabase).limit(3).fetch()
     assert(first3.length === 3)
   })
 
   test('Apply skip', async () => {
-    const first3 = await createQuery(shuffledDatabase).limit(3).fetch()
-    const limit3skip2 = await createQuery(shuffledDatabase).skip(2).limit(3).fetch()
+    const first3 = await createQuery(pipelineFetcher, shuffledDatabase).limit(3).fetch()
+    const limit3skip2 = await createQuery(pipelineFetcher, shuffledDatabase).skip(2).limit(3).fetch()
     assert(limit3skip2[0].id === first3[2].id)
   })
 
   test('Apply sort', async () => {
-    const nameAsc = await createQuery(shuffledDatabase).sortBy('name', 'asc').fetch()
+    const nameAsc = await createQuery(pipelineFetcher, shuffledDatabase).sortBy('name', 'asc').fetch()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(shuffledDatabase).sortBy('name', 'desc').fetch()
+    const nameDesc = await createQuery(pipelineFetcher, shuffledDatabase).sortBy('name', 'desc').fetch()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 
   test('Apply sort and skip', async () => {
-    const nameAsc = await createQuery(shuffledDatabase).sortBy('name', 'asc').skip(2).fetch()
+    const nameAsc = await createQuery(pipelineFetcher, shuffledDatabase).sortBy('name', 'asc').skip(2).fetch()
     assert(nameAsc[0].name === database[2].name)
   })
 
   test('Apply $in', async () => {
-    const result = await createQuery(shuffledDatabase)
+    const result = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         category: { $in: 'c1' }
       })
@@ -58,7 +62,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $in array', async () => {
-    const result = await createQuery(shuffledDatabase)
+    const result = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         category: { $in: ['c1', 'c3'] }
       })
@@ -67,7 +71,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $or + $in', async () => {
-    const result = await createQuery(shuffledDatabase)
+    const result = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         $or: [{ category: { $in: 'c1' } }, { category: { $in: 'c2' } }]
       })
@@ -76,7 +80,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $contains string', async () => {
-    const result = await createQuery(shuffledDatabase)
+    const result = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         quote: { $contains: ['best', 'way'] }
       })
@@ -86,7 +90,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $containsAny string', async () => {
-    const result = await createQuery(shuffledDatabase)
+    const result = await createQuery(pipelineFetcher, shuffledDatabase)
       .where({
         author: { $containsAny: ['Wilson', 'William'] }
       })

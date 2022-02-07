@@ -1,6 +1,6 @@
 [build]
     publish = "dist"
-    command = "npx pnpm install --store=node_modules/.pnpm-store && npx pnpm build:theme"
+    command = "yarn install && yarn build:docs"
 
 [build.environment]
   NODE_VERSION = "16"

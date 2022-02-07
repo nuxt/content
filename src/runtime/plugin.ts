@@ -1,9 +1,9 @@
 import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
-export default defineNuxtPlugin((/* { vueApp, ssrContext, hook, hooks, provide } */) => {
+export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
-  if (process.client && config.docus.wsUrl) {
+  if (process.client && config.content.wsUrl) {
     // Connect to websocket
     import('./composables/web-socket').then(({ useWebSocket }) => useWebSocket())
   }

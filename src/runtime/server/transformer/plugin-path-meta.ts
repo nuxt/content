@@ -1,13 +1,13 @@
 import { pascalCase } from 'scule'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { defineContentPlugin } from '../../'
+import { defineContentPlugin } from '../..'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
 export default defineContentPlugin({
   name: 'path-meta',
   extentions: ['.*'],
-  transform(content) {
+  transform (content) {
     const parts = content.meta.id.split(/[/:]/)
     // remove extension
     parts[parts.length - 1] = parts[parts.length - 1].split('.').slice(0, -1).join('.')
@@ -22,7 +22,7 @@ export default defineContentPlugin({
       slug: generateSlug(filePath),
       position: generatePosition(filePath),
       draft: isDraft(filePath),
-      page: !isDraft(filePath) && isPage(filePath)
+      partial: isPartial(filePath)
     })
     return content
   }
@@ -34,9 +34,9 @@ export default defineContentPlugin({
 const isDraft = (path: string): boolean => !!path.match(/\.draft(\/|\.|$)/)
 
 /**
- * Files or directories that starts with underscore `_` will mark as non-page content.
+ * Files or directories that starts with underscore `_` will mark as partial content.
  */
-const isPage = (path: string): boolean => !path.split(/[:/]/).some(part => part.match(/^_.*/))
+const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => part.match(/^_.*/))
 
 /**
  * Generate slug from file name
@@ -55,7 +55,7 @@ const generateTitle = (slug: string) => slug.split(/[\s-]/g).map(pascalCase).joi
 /**
  * Clean up special keywords from path part
  */
-export function refineUrlPart(name: string): string {
+export function refineUrlPart (name: string): string {
   name = name.split(/[/:]/).pop()!
   // Match 1, 1.2, 1.x, 1.2.x, 1.2.3.x,
   if (SEMVER_REGEX.test(name)) {
@@ -85,11 +85,11 @@ export function refineUrlPart(name: string): string {
 /**
  * Generate position from file path
  */
-export function generatePosition(path: string): string {
+export function generatePosition (path: string): string {
   const position = path
     .split(/[/:]/)
     .filter(Boolean)
-    .map(part => {
+    .map((part) => {
       const match = part.match(/^[_.-]?(\d+)\./)
       if (match && !SEMVER_REGEX.test(part)) {
         return String(match[1]).padStart(4, '0')

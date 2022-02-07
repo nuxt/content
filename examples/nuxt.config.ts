@@ -7,9 +7,8 @@ const modulePath = resolve(__dirname, '../src/module')
 export default defineNuxtConfig({
   rootDir: __dirname,
   buildModules: [modulePath],
-  docus: {
-    query: {
-      plugins: [resolveModule('./extras/version', { paths: __dirname })]
-    }
+
+  query: {
+    plugins: [resolveModule('./extras/version', { paths: __dirname })]
   }
 })

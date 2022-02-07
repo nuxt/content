@@ -1,15 +1,19 @@
 import { prefixStorage } from 'unstorage'
-import { createQuery } from '../query'
+import type { QueryBuilderParams, ParsedContentMeta } from '../types'
+import { createQuery } from '../query/query'
+import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformer'
-import { storage } from '#storage'
 import { privateConfig } from '#config'
+import { storage } from '#storage'
+// @ts-ignore
+import { plugins } from '#query-plugins'
 
-export const contentStorage = prefixStorage(storage, 'docus:source')
+export const contentStorage = prefixStorage(storage, 'content:source')
 
 /**
  * Content ignore patterns
  */
-export const contentIgnores = privateConfig.docus.ignores.map((p: any) =>
+export const contentIgnores = privateConfig.content.ignores.map((p: any) =>
   typeof p === 'string' ? new RegExp(`^${p}`) : p
 )
 
@@ -55,8 +59,21 @@ export const getContent = async (key: string) => {
   }
 }
 
-export const searchContents = async (query: Partial<QueryBuilderParams>) => {
-  const $query = createQuery(await getContentsList(), query)
+/**
+ * Query contents
+ */
+export const queryContent = <T = ParsedContentMeta>(
+  body?: string | Partial<QueryBuilderParams>,
+  params?: Partial<QueryBuilderParams>
+) => {
+  if (typeof body === 'string') {
+    body = {
+      slug: body,
+      ...params
+    }
+  }
 
-  return $query.fetch()
+  const pipelineFetcher = createPipelineFetcher(getContentsList, plugins)
+
+  return createQuery<T>(pipelineFetcher, body, plugins)
 }
