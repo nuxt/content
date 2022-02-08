@@ -38,21 +38,11 @@ export default function listItem (h: H, node: Node, parent: Node) {
   while (++index < length) {
     child = result[index] as Node
 
-    // Add eols before nodes, except if this is a loose, first paragraph.
-    if (loose || index !== 0 || child.tagName !== 'p') {
-      wrapped.push(u('text', '\n'))
-    }
-
     if (child.tagName === 'p' && !loose) {
       wrapped = wrapped.concat(child.children || [])
     } else {
       wrapped.push(child)
     }
-  }
-
-  // Add a final eol.
-  if (length && (loose || child?.tagName !== 'p')) {
-    wrapped.push(u('text', '\n'))
   }
 
   return h(node, 'li', props, wrapped)
