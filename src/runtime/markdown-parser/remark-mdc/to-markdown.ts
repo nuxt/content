@@ -36,13 +36,13 @@ const handlers = {
 }
 
 type NodeComponentContainerSection = Parent & { name: string }
-function componentContainerSection(node: NodeComponentContainerSection, _: any, context: any) {
+function componentContainerSection (node: NodeComponentContainerSection, _: any, context: any) {
   context.indexStack = context.stack
   return `#${(node as any).name}\n\n${content(node, context)}`
 }
 
 type NodeTextComponent = Parent & { name: string; rawData: string }
-function textComponent(node: NodeTextComponent, _: any, context: any) {
+function textComponent (node: NodeTextComponent, _: any, context: any) {
   context.indexStack = context.stack
   const exit = context.enter(node.type)
   let value = ':' + (node.name || '') + label(node, context) + attributes(node, context)
@@ -53,7 +53,7 @@ function textComponent(node: NodeTextComponent, _: any, context: any) {
 
 type NodeContainerComponent = Parent & { name: string; fmAttributes?: Record<string, any> }
 let nest = 0
-function containerComponent(node: NodeContainerComponent, _: any, context: any) {
+function containerComponent (node: NodeContainerComponent, _: any, context: any) {
   context.indexStack = context.stack
   const prefix = ':'.repeat(baseFense + nest)
   nest += 1
@@ -68,7 +68,7 @@ function containerComponent(node: NodeContainerComponent, _: any, context: any) 
 
   if ((node.type as string) === 'containerComponent') {
     subvalue = content(node, context)
-    if (subvalue) value += '\n' + subvalue
+    if (subvalue) { value += '\n' + subvalue }
     value += '\n' + prefix
 
     if (nest > 1) {
@@ -83,15 +83,15 @@ function containerComponent(node: NodeContainerComponent, _: any, context: any) 
   return value
 }
 
-containerComponent.peek = function peekComponent() {
+containerComponent.peek = function peekComponent () {
   return ':'
 }
 
-function label(node: Parent, context: any) {
+function label (node: Parent, context: any) {
   let label: any = node
 
   if ((node.type as string) === 'containerComponent') {
-    if (!inlineComponentLabel(node)) return ''
+    if (!inlineComponentLabel(node)) { return '' }
     label = node.children[0]
   }
 
@@ -103,7 +103,7 @@ function label(node: Parent, context: any) {
   return value ? '[' + value + ']' : ''
 }
 
-function attributes(node: Parent, context: any) {
+function attributes (node: Parent, context: any) {
   const quote = checkQuote(context)
   const subset = (node.type as string) === 'textComponent' ? [quote] : [quote, '\n', '\r']
   const attrs = (node as any).attributes || {}
@@ -155,17 +155,17 @@ function attributes(node: Parent, context: any) {
 
   return values.length ? '{' + values.join(' ') + '}' : ''
 
-  function quoted(key: string, value: string) {
+  function quoted (key: string, value: string) {
     return key + '=' + quote + stringifyEntitiesLight(value, { subset }) + quote
   }
 }
 
-function content(node: Parent, context: any) {
+function content (node: Parent, context: any) {
   const content = inlineComponentLabel(node) ? Object.assign({}, node, { children: node.children.slice(1) }) : node
   return containerFlow(content, context)
 }
 
-function inlineComponentLabel(node: Parent) {
+function inlineComponentLabel (node: Parent) {
   return node.children && node.children[0] && node.children[0].data && node.children[0].data.componentLabel
 }
 

@@ -1,7 +1,7 @@
 import * as matter from 'gray-matter'
 import flat from 'flat'
 
-export function stringify(data: any, content: string = '') {
+export function stringify (data: any, content: string = '') {
   // flatten frontmatter data
   // convert `parent: { child: ... }` into flat keys `parent.child`
   data = flat.flatten(data, {
@@ -13,7 +13,7 @@ export function stringify(data: any, content: string = '') {
   return matter.stringify(content, data)
 }
 
-export function parseFrontMatter(file: string) {
+export function parseFrontMatter (file: string) {
   const { data, content, ...rest } = matter.default(file, {
     excerpt: true,
     excerpt_separator: '<!--more-->'

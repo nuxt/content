@@ -5,11 +5,11 @@ import { prefixSize } from './utils'
 import componentContainer from './tokenize-container'
 import { Codes } from './constants'
 
-function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State) {
+function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
   const self = this
   return factorySpace(effects, lineStart as State, 'linePrefix')
 
-  function lineStart(code: Code) {
+  function lineStart (code: Code) {
     // skip if line prefix is smaller than markdown code indent
     if (prefixSize(self.events, 'linePrefix') < 4) {
       return nok(code)

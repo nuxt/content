@@ -10,7 +10,7 @@ export function stringifyFrontMatter (data: any, content: string = '') {
     safe: true
   })
 
-  return matter.stringify(content, data)
+  return matter.stringify(content, data) // eslint-disable-line import/no-named-as-default-member
 }
 
 export function parseFrontMatter (file: string) {

@@ -1,13 +1,13 @@
 import type { Effects, State } from 'micromark-util-types'
 import { asciiAlpha, asciiAlphanumeric } from 'micromark-util-character'
 
-export default function createName(effects: Effects, ok: State, nok: State, nameType: string) {
+export default function createName (effects: Effects, ok: State, nok: State, nameType: string) {
   // @ts-ignore
   const self = this
 
   return start
 
-  function start(code: number) {
+  function start (code: number) {
     if (asciiAlpha(code)) {
       effects.enter(nameType)
       effects.consume(code)
@@ -17,7 +17,7 @@ export default function createName(effects: Effects, ok: State, nok: State, name
     return nok(code)
   }
 
-  function name(code: number) {
+  function name (code: number) {
     if (code === 45 /* `-` */ || code === 95 /* `_` */ || asciiAlphanumeric(code)) {
       effects.consume(code)
       return name

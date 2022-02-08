@@ -8,19 +8,19 @@ import createName from './factory-name'
 const label: any = { tokenize: tokenizeLabel, partial: true }
 const attributes: any = { tokenize: tokenizeAttributes, partial: true }
 
-function previous(this: TokenizeContext, code: Code) {
+function previous (this: TokenizeContext, code: Code) {
   // If there is a previous code, there will always be a tail.
   return code !== 58 /* `:` */ || this.events[this.events.length - 1][1].type === 'characterEscape'
 }
 
-function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State) {
+function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
   const self = this
 
   return start
 
-  function start(code: Code) {
+  function start (code: Code) {
     /* istanbul ignore if - handled by mm */
-    if (code !== 58 /* `:` */) throw new Error('expected `:`')
+    if (code !== 58 /* `:` */) { throw new Error('expected `:`') }
 
     if (
       self.previous !== null &&
@@ -42,7 +42,7 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
     return createName.call(self, effects, afterName as State, nok, 'componentTextName')
   }
 
-  function afterName(code: Code) {
+  function afterName (code: Code) {
     if (code === 58 /* `:` */) {
       return nok(code)
     }
@@ -60,7 +60,7 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
     return exit(code)
   }
 
-  function afterAttributes(code: Code) {
+  function afterAttributes (code: Code) {
     // Check for label after attributes
     if (code === Codes.openingSquareBracket) {
       return effects.attempt(label, afterLabel as State, afterLabel as State)(code)
@@ -69,7 +69,7 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
     return exit(code)
   }
 
-  function afterLabel(code: Code) {
+  function afterLabel (code: Code) {
     // Check for attributes after label
     if (code === Codes.openingCurlyBracket) {
       return effects.attempt(attributes, exit as State, exit as State)(code)
@@ -77,7 +77,7 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
     return exit(code)
   }
 
-  function exit(code: Code) {
+  function exit (code: Code) {
     if (!markdownLineEndingOrSpace(code) && code !== null && ![Codes.closingSquareBracket].includes(code)) {
       return nok
     }
@@ -86,12 +86,12 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
   }
 }
 
-function tokenizeLabel(effects: Effects, ok: State, nok: State) {
+function tokenizeLabel (effects: Effects, ok: State, nok: State) {
   // Always a `[`
   return createLabel(effects, ok, nok, 'componentTextLabel', 'componentTextLabelMarker', 'componentTextLabelString')
 }
 
-function tokenizeAttributes(effects: Effects, ok: State, nok: State) {
+function tokenizeAttributes (effects: Effects, ok: State, nok: State) {
   // Always a `{`
   return createAttributes(
     effects,

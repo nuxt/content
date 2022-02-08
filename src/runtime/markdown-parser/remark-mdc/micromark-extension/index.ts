@@ -9,7 +9,7 @@ import tokenizeContainer from './tokenize-container'
 import tokenizeContainerIndented from './tokenize-container-indented'
 import { Codes } from './constants'
 
-export default function micromarkComponentsExtension() {
+export default function micromarkComponentsExtension () {
   return {
     text: {
       [Codes.colon]: tokenizeInline,

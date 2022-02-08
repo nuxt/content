@@ -28,13 +28,13 @@ const validEvents = [
   'image'
 ]
 
-function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State) {
+function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
   const self = this
 
   return start
 
-  function start(code: number) {
-    if (code !== Codes.openingCurlyBracket) throw new Error('expected `{`')
+  function start (code: number) {
+    if (code !== Codes.openingCurlyBracket) { throw new Error('expected `{`') }
 
     /**
      * Make sure sytax is used after valid tags
@@ -48,7 +48,7 @@ function tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State
   }
 }
 
-function tokenizeAttributes(effects: Effects, ok: State, nok: State) {
+function tokenizeAttributes (effects: Effects, ok: State, nok: State) {
   // Always a `{`
   return createAttributes(
     effects,

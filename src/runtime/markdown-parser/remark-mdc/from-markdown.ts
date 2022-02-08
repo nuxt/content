@@ -34,7 +34,7 @@ const exit = {
   componentContainerLabel: exitContainerLabel,
   componentContainerName: exitName,
 
-  componentContainerAttributeInitializerMarker() {
+  componentContainerAttributeInitializerMarker () {
     // If an attribute name follows by `=` it should be treat as string
     const attributes = this.getData('componentAttributes')
     attributes[attributes.length - 1][1] = ''
@@ -58,11 +58,11 @@ const exit = {
   componentTextName: exitName
 }
 
-function enterContainer(token: Token) {
+function enterContainer (token: Token) {
   enterToken.call(this, 'containerComponent', token)
 }
 
-function exitContainer(token: Token) {
+function exitContainer (token: Token) {
   const container = this.stack[this.stack.length - 1]
   if (container.children.length > 1) {
     const dataSection = container.children.find((child: any) => child.rawData)
@@ -89,19 +89,19 @@ function exitContainer(token: Token) {
   this.exit(token)
 }
 
-function enterContainerSection(token: Token) {
+function enterContainerSection (token: Token) {
   enterToken.call(this, 'componentContainerSection', token)
 }
 
-function enterContainerDataSection(token: Token) {
+function enterContainerDataSection (token: Token) {
   enterToken.call(this, 'componentContainerDataSection', token)
 }
 
-function exitContainerSection(token: Token) {
+function exitContainerSection (token: Token) {
   this.exit(token)
 }
 
-function exitContainerDataSection(token: Token) {
+function exitContainerDataSection (token: Token) {
   let section = this.stack[this.stack.length - 1]
   /**
    * Ensure lists and list-items are closed before closing section
@@ -121,57 +121,57 @@ function exitContainerDataSection(token: Token) {
   }
 }
 
-function exitContainerSectionTitle(token: Token) {
+function exitContainerSectionTitle (token: Token) {
   this.stack[this.stack.length - 1].name = this.sliceSerialize(token)
 }
 
-function enterLeaf(token: Token) {
+function enterLeaf (token: Token) {
   enterToken.call(this, 'leafComponent', token)
 }
 
-function enterTextSpan(token: Token) {
+function enterTextSpan (token: Token) {
   this.enter({ type: 'textComponent', name: 'span', attributes: {}, children: [] }, token)
 }
 
-function enterText(token: Token) {
+function enterText (token: Token) {
   enterToken.call(this, 'textComponent', token)
 }
 
-function enterToken(type: string, token: Token) {
+function enterToken (type: string, token: Token) {
   this.enter({ type, name: '', attributes: {}, children: [] }, token)
 }
 
-function exitName(token: Token) {
+function exitName (token: Token) {
   this.stack[this.stack.length - 1].name = this.sliceSerialize(token)
 }
 
-function enterContainerLabel(token: Token) {
+function enterContainerLabel (token: Token) {
   this.enter({ type: 'paragraph', data: { componentLabel: true }, children: [] }, token)
 }
 
-function exitContainerLabel(token: Token) {
+function exitContainerLabel (token: Token) {
   this.exit(token)
 }
 
-function enterAttributes() {
+function enterAttributes () {
   this.setData('componentAttributes', [])
   this.buffer() // Capture EOLs
 }
 
-function exitAttributeIdValue(token: Token) {
+function exitAttributeIdValue (token: Token) {
   this.getData('componentAttributes').push(['id', decodeLight(this.sliceSerialize(token))])
 }
 
-function exitAttributeClassValue(token: Token) {
+function exitAttributeClassValue (token: Token) {
   this.getData('componentAttributes').push(['class', decodeLight(this.sliceSerialize(token))])
 }
 
-function exitAttributeValue(token: Token) {
+function exitAttributeValue (token: Token) {
   const attributes = this.getData('componentAttributes')
   attributes[attributes.length - 1][1] = decodeLight(this.sliceSerialize(token))
 }
 
-function exitAttributeName(token: Token) {
+function exitAttributeName (token: Token) {
   // Attribute names in CommonMark are significantly limited, so character
   // references can’t exist.
 
@@ -179,7 +179,7 @@ function exitAttributeName(token: Token) {
   this.getData('componentAttributes').push([this.sliceSerialize(token), true])
 }
 
-function exitAttributes() {
+function exitAttributes () {
   const attributes = this.getData('componentAttributes')
   const cleaned: Record<string, any> = {}
   let index = -1
@@ -209,11 +209,11 @@ function exitAttributes() {
   stackTop.attributes = cleaned
 }
 
-function exitToken(token: Token) {
+function exitToken (token: Token) {
   this.exit(token)
 }
 
-function conditionalExit(token: Token) {
+function conditionalExit (token: Token) {
   // As of mdast-util-from-markdown@1.1.0 tokenStach items is an array containing the token and a handler
   // https://github.com/syntax-tree/mdast-util-from-markdown/blob/752dc22acfc517d280612e8d499d5ce0cd5a4495/dev/lib/index.js#L548
   const [section] = this.tokenStack[this.tokenStack.length - 1]
@@ -222,11 +222,11 @@ function conditionalExit(token: Token) {
   }
 }
 
-function decodeLight(value: string) {
+function decodeLight (value: string) {
   return value.replace(/&(#(\d{1,7}|x[\da-f]{1,6})|[\da-z]{1,31});/gi, decodeIfPossible)
 }
 
-function decodeIfPossible($0: string, _$1: string) {
+function decodeIfPossible ($0: string, _$1: string) {
   return parseEntities($0) || $0
 }
 

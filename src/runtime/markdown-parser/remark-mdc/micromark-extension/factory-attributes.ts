@@ -11,7 +11,7 @@ import {
 } from 'micromark-util-character'
 import { Codes } from './constants'
 
-export default function createAttributes(
+export default function createAttributes (
   effects: Effects,
   ok: State,
   nok: State,
@@ -33,7 +33,7 @@ export default function createAttributes(
 
   return start
 
-  function start(code: number) {
+  function start (code: number) {
     // Always a `{`
     effects.enter(attributesType)
     effects.enter(attributesMarkerType)
@@ -42,7 +42,7 @@ export default function createAttributes(
     return between
   }
 
-  function between(code: number): void | State {
+  function between (code: number): void | State {
     if (code === 35 /* `#` */) {
       type = attributeIdType
       return shortcutStart(code) as State
@@ -71,7 +71,7 @@ export default function createAttributes(
     return end(code)
   }
 
-  function shortcutStart(code: number) {
+  function shortcutStart (code: number) {
     effects.enter(attributeType)
     effects.enter(type)
     effects.enter(type + 'Marker')
@@ -80,7 +80,7 @@ export default function createAttributes(
     return shortcutStartAfter
   }
 
-  function shortcutStartAfter(code: number) {
+  function shortcutStartAfter (code: number) {
     if (
       code === null /* EOF */ ||
       code === 34 /* `"` */ ||
@@ -102,7 +102,7 @@ export default function createAttributes(
     return shortcut
   }
 
-  function shortcut(code: number) {
+  function shortcut (code: number) {
     if (
       code === null /* EOF */ ||
       code === 34 /* `"` */ ||
@@ -130,7 +130,7 @@ export default function createAttributes(
     Vue bind shorthand `:`
   */
 
-  function bindAttributeName(code: number) {
+  function bindAttributeName (code: number) {
     if (code === 45 /* `-` */ || asciiAlphanumeric(code)) {
       effects.consume(code)
       return bindAttributeName
@@ -149,7 +149,7 @@ export default function createAttributes(
     return bindAttributeNameAfter(code)
   }
 
-  function bindAttributeNameAfter(code: number) {
+  function bindAttributeNameAfter (code: number) {
     if (code === 61 /* `=` */) {
       effects.enter(attributeInitializerType)
       effects.consume(code)
@@ -162,7 +162,7 @@ export default function createAttributes(
     return nok(code)
   }
 
-  function name(code: number) {
+  function name (code: number) {
     if (
       code === 45 /* `-` */ ||
       code === 46 /* `.` */ ||
@@ -187,7 +187,7 @@ export default function createAttributes(
     return nameAfter(code)
   }
 
-  function nameAfter(code: number) {
+  function nameAfter (code: number) {
     if (code === 61 /* `=` */) {
       effects.enter(attributeInitializerType)
       effects.consume(code)
@@ -200,7 +200,7 @@ export default function createAttributes(
     return between(code)
   }
 
-  function valueBefore(code: number): void | State {
+  function valueBefore (code: number): void | State {
     if (
       code === null /* EOF */ ||
       code === 60 /* `<` */ ||
@@ -237,7 +237,7 @@ export default function createAttributes(
     return valueUnquoted as State
   }
 
-  function valueUnquoted(code: number) {
+  function valueUnquoted (code: number) {
     if (
       code === null /* EOF */ ||
       code === 34 /* `"` */ ||
@@ -261,7 +261,7 @@ export default function createAttributes(
     return valueUnquoted
   }
 
-  function valueQuotedStart(code: number) {
+  function valueQuotedStart (code: number) {
     if (code === marker) {
       effects.enter(attributeValueMarker)
       effects.consume(code)
@@ -275,7 +275,7 @@ export default function createAttributes(
     return valueQuotedBetween(code)
   }
 
-  function valueQuotedBetween(code: number): void | State {
+  function valueQuotedBetween (code: number): void | State {
     if (code === marker) {
       effects.exit(attributeValueType)
       return valueQuotedStart(code) as State
@@ -295,7 +295,7 @@ export default function createAttributes(
     return valueQuoted as State
   }
 
-  function valueQuoted(code: number) {
+  function valueQuoted (code: number) {
     if (code === marker || code === null /* EOF */ || markdownLineEnding(code)) {
       effects.exit(attributeValueData)
       return valueQuotedBetween(code)
@@ -305,11 +305,11 @@ export default function createAttributes(
     return valueQuoted
   }
 
-  function valueQuotedAfter(code: number) {
+  function valueQuotedAfter (code: number) {
     return code === 125 /* `}` */ || markdownLineEndingOrSpace(code) ? between(code) : end(code)
   }
 
-  function end(code: number) {
+  function end (code: number) {
     if (code === 125 /* `}` */) {
       effects.enter(attributesMarkerType)
       effects.consume(code)

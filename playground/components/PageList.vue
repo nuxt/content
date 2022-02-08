@@ -10,11 +10,7 @@
 </template>
 
 <script setup lang="ts">
-const { data: pages } = await useAsyncData('pages-list', async () =>
-  queryContent()
-    .where({
-      $not: { slug: '/' }
-    })
-    .fetch()
+const { data: pages } = await useAsyncData('pages-list', () =>
+  queryContent().where({ $not: { slug: '/' } }).fetch()
 )
 </script>

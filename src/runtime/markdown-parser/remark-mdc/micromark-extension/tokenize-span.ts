@@ -4,10 +4,10 @@ import createLabel from './factory-label'
 
 const label: any = { tokenize: tokenizeLabel, partial: true }
 
-function tokenize(effects: Effects, ok: State, nok: State) {
+function tokenize (effects: Effects, ok: State, nok: State) {
   return start
 
-  function start(code: Code) {
+  function start (code: Code) {
     if (code !== Codes.openingSquareBracket) {
       throw new Error('expected `[`')
     }
@@ -16,7 +16,7 @@ function tokenize(effects: Effects, ok: State, nok: State) {
     return effects.attempt(label, exit as State, nok)(code)
   }
 
-  function exit(code: Code) {
+  function exit (code: Code) {
     // prevent conflict with link syntax
     if (code === Codes.openingParentheses) {
       return nok(code)
@@ -29,7 +29,7 @@ function tokenize(effects: Effects, ok: State, nok: State) {
 /**
  * Labels starts with `[` and ends with `]`
  */
-function tokenizeLabel(effects: Effects, ok: State, nok: State) {
+function tokenizeLabel (effects: Effects, ok: State, nok: State) {
   return createLabel(effects, ok, nok, 'componentTextLabel', 'componentTextLabelMarker', 'componentTextLabelString')
 }
 
