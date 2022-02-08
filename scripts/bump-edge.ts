@@ -38,7 +38,7 @@ async function loadWorkspace (dir: string) {
   const workspacePkg = await loadPackage(dir)
   const pkgDirs = await globby(workspacePkg.data.workspaces || [], { onlyDirectories: true })
 
-  const packages: Package[] = []
+  const packages: Package[] = [workspacePkg]
 
   for (const pkgDir of pkgDirs) {
     const pkg = await loadPackage(pkgDir)
