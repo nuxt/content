@@ -1,57 +1,34 @@
-name: ci-main
+name: ci
 
 on:
   push:
     branches:
       - main
+      - v2
   pull_request:
     branches:
       - main
+      - v2
 
 jobs:
   ci:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest] # macos-latest, windows-latest
-        node: [16]
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Setup node v16
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Lint project
-        run: yarn lint
-
-      - name: Test project
-        run: yarn test
-
-      - name: Generate coverage
-        uses: codecov/codecov-action@v2
-
-      - name: Build project
-        run: yarn build
-
-      - name: Check if the version has been bumped
-        id: check
-        uses: EndBug/version-check@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Release Main version
-      #   if: github.event_name == 'push' && steps.check.outputs.changed == 'true'
-      #   run: ./scripts/release.sh
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          node-version: '16'
+          cache: yarn
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn build
+      - name: Release Edge
+        if: |
+          github.event_name == 'push' &&
+          !contains(github.event.head_commit.message, '[skip-release]') &&
+          !contains(github.event.head_commit.message, 'chore') &&
+          !contains(github.event.head_commit.message, 'docs')
+        run: ./scripts/release-edge.sh
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

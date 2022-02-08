@@ -588,9 +588,11 @@ __metadata:
     execa: ^6.0.0
     faker: ^6.6.6
     flat: ^5.0.2
+    globby: ^13.1.1
     gray-matter: ^4.0.3
     html-tags: ^3.1.0
     husky: ^7.0.4
+    jiti: ^1.12.15
     lint-staged: ^12.3.3
     mdast-util-from-markdown: ^1.2.0
     mdast-util-to-markdown: ^1.2.6

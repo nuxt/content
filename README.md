@@ -1,17 +1,5 @@
 # Content Module
 
-<!-- <h1>
-  <img src="./.github/banner.png" >
-</h1> -->
-
-<p>
-  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/dm/" alt="Downloads"></a>
-  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/v/" alt="Version"></a>
-  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/license/" alt="License"></a>
-</p>
-
----
-
 Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
@@ -30,6 +18,7 @@ Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 - Clone repository
 - Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable` (use `npm i -g corepack` for Node.js < 16.10)
 - Install dependencies using `yarn install`
+- Prepare using `yarn dev:prepare`
 - Try playground using `yarn dev`
 
 ## License

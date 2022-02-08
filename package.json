@@ -7,7 +7,7 @@
     "content",
     "module"
   ],
-  "repository": "nuxt/content",
+  "repository": "nuxt/content-next",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -23,24 +23,16 @@
     "dist"
   ],
   "scripts": {
-    "benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
     "build": "nuxt-module-build",
-    "build:docs": "nuxi build docs",
-    "build:examples": "nuxi build examples",
-    "coverage": "vitest --coverage",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
-    "dev:examples": "nuxi dev examples",
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "lint": "eslint --ext .js,.ts,.vue .",
-    "lint:fix": "yarn lint --fix",
     "prepack": "yarn build",
-    "prepare": "nuxt-module-build --stub && nuxi prepare playground",
-    "start:docs": "nuxi preview docs",
-    "start:examples": "nuxi dev examples",
-    "test": "yarn build:docs && yarn test:unit && yarn test:e2e",
+    "test:benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
+    "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
-    "test:unit": "vitest run --config test/vite.config.js",
-    "version:bump-edge": "yarn jiti .github/scripts/bump-edge.ts"
+    "test:unit": "vitest run --config test/vite.config.js"
   },
   "dependencies": {
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
@@ -99,7 +91,9 @@
     "eslint-plugin-nuxt": "^3.1.0",
     "execa": "^6.0.0",
     "faker": "^6.6.6",
+    "globby": "^13.1.1",
     "husky": "^7.0.4",
+    "jiti": "^1.12.15",
     "lint-staged": "^12.3.3",
     "nuxt3": "latest",
     "object-hash": "^2.2.0",
