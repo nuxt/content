@@ -1,7 +1,0 @@
-[build]
-    publish = "dist"
-    command = "yarn install && yarn build:docs"
-
-[build.environment]
-  NODE_VERSION = "16"
-  NPM_FLAGS = "--version" # prevent Netlify npm install

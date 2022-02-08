@@ -11,11 +11,8 @@ import { resolve } from 'pathe'
 import { createStorage } from 'unstorage'
 import Debounce from 'debounce'
 import type { WatchEvent } from 'unstorage'
-import {
-  contentPluginTemplate,
-  queryPluginTemplate,
-  typeTemplate
-} from './templates'
+import { name, version } from '../package.json'
+import { contentPluginTemplate, queryPluginTemplate, typeTemplate } from './templates'
 import {
   createWebSocket,
   getMountDriver,
@@ -23,9 +20,6 @@ import {
   MOUNT_PREFIX,
   useContentMounts
 } from './utils'
-
-const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-const resolveRuntimeDir = (...p: string[]) => resolve(runtimeDir, ...p)
 
 export interface ModuleOptions {
   base?: string;
@@ -39,12 +33,13 @@ export interface ModuleHooks {}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'content',
+    name,
+    version,
+    configKey: 'content',
     compatibility: {
-      nuxt: '>=3.0.0',
+      nuxt: '^3.0.0',
       bridge: true
-    },
-    version: '3'
+    }
   },
   defaults: {
     base: '_content',
@@ -52,6 +47,10 @@ export default defineNuxtModule<ModuleOptions>({
     ignores: ['\\.', '-']
   },
   setup (options, nuxt) {
+    // TODO: Use createResolver
+    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+    const resolveRuntimeDir = (...p: string[]) => resolve(runtimeDir, ...p)
+
     const context = {
       transformers: [
         // Register internal content plugins

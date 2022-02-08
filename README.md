@@ -1,39 +1,37 @@
-<h1>
+# Content Module
+
+<!-- <h1>
   <img src="./.github/banner.png" >
-</h1>
+</h1> -->
 
 <p>
-  <a href="https://www.npmjs.com/package/docus"><img src="https://badgen.net/npm/dm/docus" alt="Downloads"></a>
-  <a href="https://www.npmjs.com/package/docus"><img src="https://badgen.net/npm/v/docus" alt="Version"></a>
-  <a href="https://www.npmjs.com/package/docus"><img src="https://badgen.net/npm/license/docus" alt="License"></a>
+  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/dm/" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/v/" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/@nuxt/content"><img src="https://badgen.net/npm/license/" alt="License"></a>
 </p>
 
 ---
 
-Docus is the best way to create a document-driven website with [**Nuxt3**](https://v3.nuxtjs.org).
+Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
 
-- 💚 Based on [**Nuxt 3**](https://v3.nuxtjs.org)
-- 🗒 Easiest way to publish and maintain document-driven websites
+- 💚 [**Nuxt 3**](https://v3.nuxtjs.org) Support
+- 🗒  Easiest way to publish and maintain document-driven websites
 - 🎮 Powerful editor to interact with your codebase
 - ✍️ Publish changes without rebuilding
 - 🚀 A Markdown syntax made for components (MDC)
 - 💄 Easy yet powerful theming capabilities
 - 🌍 Deploys to the Edge (supports CloudFlare Workers)
 
-## Get Started
 
-The fastest way to create a project is to use [**Docus.com**](https://dev.docus.com).
+## 💻 Development
 
-If you want to create it on your own, you can run this command:
+- Clone repository
+- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable` (use `npm i -g corepack` for Node.js < 16.10)
+- Install dependencies using `yarn install`
+- Try playground using `yarn dev`
 
-```bash
-npx create-docus my-project
-```
+## License
 
-## Contribute
-
-If you want to setup this repository locally, check out [setup](./docs/content/repository/setup.md).
-
-This repository commands are listed [here](./docs/content/repository/commands.md).
+[MIT](./LICENSE) - Made with 💚

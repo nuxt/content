@@ -1,29 +1,4 @@
 {
-  "extends": "./docs/.nuxt/tsconfig.json",
-  "include": ["env.d.ts", "types.d.ts", "src/**/*", "test/**/*", "examples/**/*", "docs/**/*"],
-  "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "declaration": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "types": ["node", "@nuxt/kit", "@nuxt/nitro", "nuxt3", "ohmyfetch"],
-    "paths": {
-      "#app": ["./node_modules/nuxt3/dist/app"],
-      "#app/*": ["./node_modules/nuxt3/dist/app/*"],
-      "#imports": ["./docs/.nuxt/imports"],
-      "#content": ["./src/runtime/server/utils"],
-      "#content-query": ["src/runtime/runtime/server/utils"],
-      "#build": ["./docs/.nuxt"],
-      "#build/*": ["./docs/.nuxt/*"]
-    }
-  }
+  "extends": "./playground/.nuxt/tsconfig.json",
+  "compilerOptions": {}
 }

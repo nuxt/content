@@ -1,60 +1,48 @@
 {
-  "name": "@docus/content",
-  "version": "0.0.14",
-  "description": "Temporary @nuxt/content module for Nuxt 3.",
-  "author": "NuxtLabs <hello@nuxtlabs.com>",
-  "license": "ISC",
-  "homepage": "https://github.com/docusgen/docus#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/docusgen/docus.git"
-  },
+  "name": "@nuxt/content",
+  "version": "2.0.0",
+  "description": "Write your content inside your Nuxt app",
   "keywords": [
     "nuxt",
     "content",
     "module"
   ],
-  "files": [
-    "dist"
-  ],
+  "repository": "nuxt/content",
+  "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     }
   },
-  "type": "module",
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
   "types": "./dist/runtime/types.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
     "build": "nuxt-module-build",
     "build:docs": "nuxi build docs",
     "build:examples": "nuxi build examples",
-    "dev": "nuxi dev docs",
+    "coverage": "vitest --coverage",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
     "dev:examples": "nuxi dev examples",
+    "lint": "eslint --ext .js,.ts,.vue .",
+    "lint:fix": "yarn lint --fix",
+    "prepack": "yarn build",
+    "prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "start:docs": "nuxi preview docs",
     "start:examples": "nuxi dev examples",
-    "lint": "eslint --ext .js,.ts,.vue .",
-    "lint:fix": "eslint --fix --ext .js,.ts,.vue .",
     "test": "yarn build:docs && yarn test:unit && yarn test:e2e",
     "test:types": "tsc --build tsconfig.json",
     "test:unit": "vitest run --config test/vite.config.js",
-    "test:e2e": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cy:run'",
-    "test:e2e:gui": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cy:open'",
-    "coverage": "vitest --coverage",
-    "prepare": "husky install",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
-    "benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
-    "version:bump-edge": "yarn jiti .github/scripts/bump-edge.ts",
-    "prepack": "nuxt-module-build"
-  },
-  "lint-staged": {
-    "*.{js,vue}": "eslint --fix"
+    "version:bump-edge": "yarn jiti .github/scripts/bump-edge.ts"
   },
   "dependencies": {
-    "@docus/remark-mdc": "npm:@docus/remark-mdc-edge@latest",
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
     "consola": "^2.15.3",
     "debounce": "^1.2.1",
@@ -64,6 +52,14 @@
     "flat": "^5.0.2",
     "gray-matter": "^4.0.3",
     "html-tags": "^3.1.0",
+    "mdast-util-from-markdown": "^1.2.0",
+    "mdast-util-to-markdown": "^1.2.6",
+    "micromark": "^3.0.10",
+    "micromark-core-commonmark": "^1.0.6",
+    "micromark-factory-space": "^1.0.0",
+    "micromark-factory-whitespace": "^1.0.0",
+    "micromark-util-character": "^1.1.0",
+    "parse-entities": "^4.0.0",
     "pathe": "^0.2.0",
     "prismjs": "^1.26.0",
     "property-information": "^6.1.1",
@@ -79,14 +75,17 @@
     "remark-rehype": "^10.1.0",
     "remark-slug": "^7.0.1",
     "remark-squeeze-paragraphs": "^5.0.1",
+    "scule": "^0.2.1",
+    "stringify-entities": "^4.0.2",
     "ufo": "^0.7.10",
     "unified": "^10.1.1",
+    "unist-util-visit": "^4.1.0",
+    "unist-util-visit-parents": "^5.1.0",
     "unstorage": "^0.3.3",
     "ws": "^8.4.2"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
-    "@nuxt/test-utils": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/benchmark": "^2.1.1",
     "@types/debounce": "^1.2.1",
@@ -96,21 +95,17 @@
     "@types/ws": "^8.2.2",
     "benchmark": "^2.1.4",
     "c8": "^7.11.0",
-    "cypress": "^9.4.1",
     "eslint": "^8.8.0",
     "eslint-plugin-nuxt": "^3.1.0",
     "execa": "^6.0.0",
     "faker": "^6.6.6",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.3",
-    "nuxt3": "3.0.0-27403830.c1148d4",
+    "nuxt3": "latest",
     "object-hash": "^2.2.0",
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5",
     "vitest": "^0.2.7"
-  },
-  "bugs": {
-    "url": "https://github.com/docusgen/docus/issues"
   }
 }

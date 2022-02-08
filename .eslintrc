@@ -1,16 +1,6 @@
 {
   "root": true,
-  "globals": {
-    "NodeJS": true,
-    "$fetch": true
-  },
-  "env": {
-    "browser": true,
-    "node": true
-  },
   "extends": [
-    "@nuxtjs",
-    "plugin:nuxt/recommended",
     "@nuxtjs/eslint-config-typescript"
   ]
 }
