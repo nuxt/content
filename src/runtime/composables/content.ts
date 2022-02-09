@@ -1,7 +1,7 @@
 import { onUnmounted, Ref } from 'vue'
 import { withBase } from 'ufo'
 import type { ParsedContentMeta, ParsedContent } from '../types'
-import { useFetch, useNuxtApp, useRuntimeConfig } from '#imports'
+import { useNuxtApp, useRuntimeConfig } from '#imports'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
@@ -17,34 +17,38 @@ export const getContentList = () => $fetch<Array<ParsedContentMeta>>(withContent
  */
 export const useContentList = () => {
   const nuxtApp = useNuxtApp()
-  const promise = useFetch<Array<ParsedContentMeta>>(withContentBase('/list'))
+  const list = ref([] as Array<ParsedContentMeta>)
 
-  const hook = () => promise.refresh()
-
-  // @ts-ignore
-  nuxtApp.hooks.hook('content:update', hook)
+  const fetch = () => getContentList().then(con => (list.value = con))
 
   // @ts-ignore
-  onUnmounted(() => nuxtApp.hooks.removeHook('content:update', hook))
+  nuxtApp.hooks.hook('content:update', fetch)
 
-  return promise.then((res: any) => res.data as Ref<Array<ParsedContentMeta>>)
+  // @ts-ignore
+  onUnmounted(() => nuxtApp.hooks.removeHook('content:update', fetch))
+
+  return fetch().then(() => list)
 }
 
 /**
  * Fetch a content by id
  */
-export const getContent = (id: string) => $fetch<ParsedContent>(withContentBase(`/get/${id}`))
+export const getContentDocument = (id: string) => $fetch<ParsedContent>(withContentBase(`/get/${id}`))
 
 /**
  * Fetch a content by id (Reactive version)
  */
-export const useContent = (id: string) => {
+export const useContentDocument = (id: Ref<string>) => {
   const nuxtApp = useNuxtApp()
-  const promise = useFetch(withContentBase(`/get/${id}`))
+  const content = ref(null)
+
+  const fetch = () => getContentDocument(id.value).then(con => (content.value = con))
+
+  watch(() => id.value, fetch)
 
   const hook = ({ key }: { key: string }) => {
-    if (id === key) {
-      promise.refresh()
+    if ((id.value) === key) {
+      fetch()
     }
   }
 
@@ -54,5 +58,5 @@ export const useContent = (id: string) => {
   // @ts-ignore
   onUnmounted(() => nuxtApp.hooks.removeHook('content:update', hook))
 
-  return promise.then((res: any) => res.data as Ref<ParsedContent>)
+  return fetch().then(() => content)
 }

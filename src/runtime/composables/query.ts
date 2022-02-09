@@ -11,7 +11,7 @@ const queryFetch = (body: Partial<QueryBuilderParams>) =>
 /**
  * Query contents
  */
-export const queryContent = <T = ParsedContentMeta>(
+export const useContentQuery = <T = ParsedContentMeta>(
   body?: string | Partial<QueryBuilderParams>,
   aq?: Partial<QueryBuilderParams>
 ) => {

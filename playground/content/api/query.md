@@ -14,12 +14,12 @@ Query server exposes one API:
 
 Docus provide composables to work with content server:
 
-- `queryContent`
+- `useContentQuery`
 
   Query and fetch list of contents based on actions and conditions provides.
 
   ```js
-  const contents = await queryContent()
+  const contents = await useContentQuery()
     .where({ category: { $in: ['nature', 'people'] } })
     .limit(10)
     .fetch()
@@ -73,7 +73,7 @@ export default defineNuxtConfig({
 ## Usage
 
 ```ts
-const contents = await queryContent()
+const contents = await useContentQuery()
   .where({ category: { $in: ['nature', 'people'] } })
   .version('3.x')
   .limit(10)

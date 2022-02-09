@@ -11,6 +11,10 @@
 
 <script setup lang="ts">
 const { data: pages } = await useAsyncData('pages-list', () =>
-  queryContent().where({ $not: { slug: '/' } }).fetch()
+  useContentQuery()
+    .where({
+      $not: { slug: '/' }
+    })
+    .fetch()
 )
 </script>

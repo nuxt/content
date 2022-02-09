@@ -140,13 +140,13 @@ export default defineNuxtModule<ModuleOptions>({
           names: [
             'getContentList',
             'useContentList',
-            'getContent',
-            'useContent'
+            'getContentDocument',
+            'useContentDocument'
           ]
         },
         {
           path: resolveModule('./composables/query', { paths: runtimeDir }),
-          names: ['queryContent']
+          names: ['useContentQuery']
         }
       ]
       for (const { path, names } of files) {

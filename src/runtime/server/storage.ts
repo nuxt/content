@@ -62,7 +62,7 @@ export const getContent = async (key: string) => {
 /**
  * Query contents
  */
-export const queryContent = <T = ParsedContentMeta>(
+export const useContentQuery = <T = ParsedContentMeta>(
   body?: string | Partial<QueryBuilderParams>,
   params?: Partial<QueryBuilderParams>
 ) => {

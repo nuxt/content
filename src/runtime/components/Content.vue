@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useContent } from '#imports'
+import { computed, toRef } from 'vue'
+import { useContentDocument } from '#imports'
 
 const props = defineProps({
   id: {
     type: String,
     required: true
-  },
-  tag: {
-    type: String,
-    default: 'div'
   }
 })
 
-const content = await useContent(props.id)
+const content = await useContentDocument(toRef(props, 'id'))
 const type = computed(() => content.value?.meta?.type)
 </script>
 

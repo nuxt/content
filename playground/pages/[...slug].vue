@@ -20,6 +20,6 @@
 const route = useRoute()
 
 const { data: page } = useAsyncData('page-content', async () => {
-  return (await queryContent().where({ slug: route.path }).fetch()).pop()
+  return (await useContentQuery().where({ slug: route.path }).fetch()).pop()
 })
 </script>

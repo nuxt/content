@@ -89,11 +89,11 @@ Docus provide composables to work with content server:
 
   Fetch contents list from server and return a reactive array. The result automatically updates every time a content changes.
 
-- `getContent(:id)`
+- `getContentDocument(:id)`
 
   Fetch meta and body of specific content.
 
-- `useContent(:id)`
+- `useContentDocument(:id)`
 
   Fetch meta and body of specific content. Result will update everytime the content changes.
 
