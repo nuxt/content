@@ -1,12 +1,20 @@
-import { resolve } from 'pathe'
 import { defineNuxtConfig } from 'nuxt3'
-
-const modulePath = resolve(__dirname, '../../../src/module')
+import { resolve } from 'pathe'
+import contentModule from '../../..'
 
 export default defineNuxtConfig({
   buildDir: process.env.NITRO_BUILD_DIR,
   nitro: {
-    output: { dir: process.env.NITRO_OUTPUT_DIR }
+    output: { dir: process.env.NITRO_OUTPUT_DIR },
+    externals: {
+      inline: [
+        resolve('../../..'),
+        'micromark-util-character',
+        'micromark-factory-space',
+        'micromark-factory-whitespace',
+        'micromark-core-commonmark'
+      ]
+    }
   },
-  buildModules: [modulePath]
+  buildModules: [contentModule]
 })

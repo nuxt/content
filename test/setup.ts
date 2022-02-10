@@ -1,4 +1,3 @@
-import { pathToFileURL } from 'url'
 import type { RequestListener } from 'http'
 import { resolve } from 'pathe'
 import { listen } from 'listhen'
@@ -46,7 +45,8 @@ interface TestContext {
 }
 
 export function importModule (path: string) {
-  return import(pathToFileURL(path).href)
+  // return import(pathToFileURL(path).href)
+  return import(path)
 }
 
 export function setupTest (options: TestOptions) {
