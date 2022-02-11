@@ -1,4 +1,4 @@
-# Hello Content
+# Hello World!
 
 Index page.
 

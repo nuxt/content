@@ -1,7 +1,7 @@
-import type { DatabaseFetcher, ParsedContent, QueryBuilder, QueryBuilderParams, QueryPlugin } from '../types'
+import type { DatabaseFetcher, ParsedContentMeta, QueryBuilder, QueryBuilderParams, QueryPlugin } from '../types'
 import { ensureArray } from './match/utils'
 
-export const createQuery = <T = ParsedContent>(
+export const createQuery = <T = ParsedContentMeta>(
   fetcher: DatabaseFetcher<T>,
   queryParams?: Partial<QueryBuilderParams>,
   plugins?: Array<QueryPlugin>

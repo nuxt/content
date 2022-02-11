@@ -1,13 +1,8 @@
 <template>
   <div>
-    Slug: {{ route.path }}
-    <br>
-    <router-link to="/">
-      Home
-    </router-link>
-    <router-link to="/repository/commands">
-      Commands
-    </router-link>
+    <PageNav />
+
+    <hr>
 
     <Content v-if="page" :id="page.id" />
     <div v-else>
@@ -19,7 +14,5 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { data: page } = useAsyncData('page-content', async () => {
-  return (await useContentQuery().where({ slug: route.path }).fetch()).pop()
-})
+const { data: page } = await useAsyncData('page-content', async () => (await useContentQuery().where({ slug: route.path }).fetch()).pop())
 </script>

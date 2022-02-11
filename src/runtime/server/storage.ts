@@ -1,5 +1,5 @@
 import { prefixStorage } from 'unstorage'
-import type { QueryBuilderParams, ParsedContentMeta } from '../types'
+import type { QueryBuilderParams, ParsedContentMeta, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformer'
@@ -37,16 +37,16 @@ export const getContentsList = async (prefix?: string) => {
   return contents
 }
 
-export const getContent = async (key: string) => {
-  // Handled ingored key
-  if (!contentIgnorePredicate(key)) {
-    return { meta: {}, body: null }
+export const getContent = async (id: string): Promise<ParsedContent> => {
+  // Handled ingored id
+  if (!contentIgnorePredicate(id)) {
+    return { meta: { id }, body: null }
   }
 
-  const body = await contentStorage.getItem(key)
-  const meta = await contentStorage.getMeta(key)
+  const body = await contentStorage.getItem(id)
+  const meta = await contentStorage.getMeta(id)
 
-  let parsedContent = await parse(key, body as string)
+  let parsedContent = await parse(id, body as string)
 
   parsedContent = await transform(parsedContent)
 
@@ -62,7 +62,7 @@ export const getContent = async (key: string) => {
 /**
  * Query contents
  */
-export const useContentQuery = <T = ParsedContentMeta>(
+export const useContentQuery = (
   body?: string | Partial<QueryBuilderParams>,
   params?: Partial<QueryBuilderParams>
 ) => {
@@ -75,5 +75,5 @@ export const useContentQuery = <T = ParsedContentMeta>(
 
   const pipelineFetcher = createPipelineFetcher(getContentsList, plugins)
 
-  return createQuery<T>(pipelineFetcher, body, plugins)
+  return createQuery<ParsedContentMeta>(pipelineFetcher, body, plugins)
 }

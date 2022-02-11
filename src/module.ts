@@ -22,11 +22,12 @@ import {
 } from './utils'
 
 export interface ModuleOptions {
-  base?: string;
-  sources?: Array<string>;
-  ignores?: Array<string>;
-  markdown?: false | Record<string, any>;
-  yaml?: false | Record<string, any>;
+  base: string;
+  sources: Array<string>;
+  ignores: Array<string>;
+  markdown: false | Record<string, any>;
+  yaml: false | Record<string, any>;
+  navigation: boolean;
 }
 
 export interface ModuleHooks {}
@@ -44,7 +45,10 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     base: '_content',
     sources: ['content'],
-    ignores: ['\\.', '-']
+    ignores: ['\\.', '-'],
+    markdown: {},
+    yaml: {},
+    navigation: true
   },
   setup (options, nuxt) {
     // TODO: Use createResolver
@@ -87,8 +91,6 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
     }
-
-    // Register content mounts
 
     // Add server routes
     for (const api of ['list', 'get', 'query']) {
@@ -178,6 +180,22 @@ export default defineNuxtModule<ModuleOptions>({
         path: resolve(nuxt.options.buildDir, 'content-query.d.ts')
       })
     })
+
+    // Register navigation
+    if (options.navigation) {
+      addServerMiddleware({
+        route: `/api/${options.base}/navigation`,
+        handle: resolveModule('./server/api/navigation', { paths: runtimeDir })
+      })
+
+      nuxt.hook('autoImports:extend', (imports) => {
+        imports.push({
+          from: resolveModule('./composables/navigation', { paths: runtimeDir }),
+          name: 'useContentNavigation',
+          as: 'useContentNavigation'
+        })
+      })
+    }
 
     // Setup content dev module
     if (!nuxt.options.dev) {

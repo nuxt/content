@@ -1,12 +1,17 @@
 <template>
-  <ul>
-    <li v-for="page of pages" :key="page.id" class="mt-2">
-      <span class="mr-1">🔗</span>
-      <NuxtLink class="font-bold" :to="page.slug">
-        {{ page.title }}
-      </NuxtLink>
-    </li>
-  </ul>
+  <div>
+    <hr>
+
+    <ul>
+      <li v-for="page of pages" :key="page.id">
+        <span>🔗</span>
+        <NuxtLink :to="page.slug">
+          {{ page.title }}
+        </NuxtLink>
+      </li>
+    </ul>
+    <hr>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -15,6 +20,7 @@ const { data: pages } = await useAsyncData('pages-list', () =>
     .where({
       $not: { slug: '/' }
     })
+    .sortBy('id', 'asc')
     .fetch()
 )
 </script>

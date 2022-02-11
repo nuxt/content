@@ -3,6 +3,7 @@ import contentModule from '..' // eslint-disable-line
 
 export default defineNuxtConfig({
   rootDir: __dirname,
-  buildModules: [contentModule]
+  buildModules: [contentModule],
+  components: true
   // content: {}
 })

@@ -50,7 +50,7 @@ const generateSlug = (path: string): string =>
 /**
  * generate title from file slug
  */
-const generateTitle = (slug: string) => slug.split(/[\s-]/g).map(pascalCase).join(' ')
+export const generateTitle = (slug: string) => slug.split(/[\s-]/g).map(pascalCase).join(' ')
 
 /**
  * Clean up special keywords from path part

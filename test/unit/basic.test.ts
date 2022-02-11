@@ -38,4 +38,30 @@ describe('Basic tests', () => {
     expect(index).toMatchObject({})
     expect(index.body).toBeNull()
   })
+
+  test('Get navigation', async () => {
+    const list = await ctx.fetch<Array<string>>('/api/_content/navigation')
+
+    expect(list).toMatchSnapshot('basic-navigation')
+  })
+
+  test('Get cats navigation', async () => {
+    const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
+      params: {
+        prefix: '/cats'
+      }
+    })
+
+    expect(list).toMatchSnapshot('basic-navigation-cats')
+  })
+
+  test('Get cats navigation', async () => {
+    const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
+      params: {
+        prefix: '/dogs'
+      }
+    })
+
+    expect(list).toMatchSnapshot('basic-navigation-dogs')
+  })
 })

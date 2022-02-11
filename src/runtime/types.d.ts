@@ -173,3 +173,14 @@ export interface QueryPlugin {
   queries?: Record<string, QueryChainAction>
   execute?: QueryPipe
 }
+
+// Navigation
+export interface NavItem {
+  title: string
+  position: string
+  slug: string
+  id?: string
+  draft?: boolean
+  partial?: boolean
+  children?: NavItem[]
+}
