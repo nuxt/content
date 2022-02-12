@@ -227,10 +227,11 @@ class Database extends Hookable {
     }
 
     const stats = await fs.stat(path)
+    const raw = await fs.readFile(path)
     const file = {
       path,
       extension,
-      data: await fs.readFile(path, 'utf-8')
+      data: raw.toString('utf-8')
     }
 
     await this.callHook('file:beforeParse', file)
@@ -250,7 +251,7 @@ class Database extends Hookable {
     // Collect data from file
     let data = []
     try {
-      data = await parser(file.data, { path: file.path })
+      data = await parser(file.data, { path: file.path, raw })
       // Force data to be an array
       data = Array.isArray(data) ? data : [data]
     } catch (err) {
