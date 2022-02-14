@@ -1,4 +1,4 @@
-import { onUnmounted, Ref } from 'vue'
+import { onUnmounted, ref, watch, Ref } from 'vue'
 import { withBase } from 'ufo'
 import type { ParsedContentMeta, ParsedContent } from '../types'
 import { useNuxtApp, useRuntimeConfig } from '#imports'
