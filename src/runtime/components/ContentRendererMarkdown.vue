@@ -184,11 +184,8 @@ function getSlotName (node: MarkdownNode) {
   return name || DEFAULT_SLOT
 }
 
-/**
- * DocusContent component
- */
 export default defineComponent({
-  name: 'DocusContent',
+  name: 'ContentRendererMarkdown',
   functional: true,
   props: {
     /**
@@ -212,7 +209,7 @@ export default defineComponent({
     if (!document) {
       return
     }
-    // Get body from Docus document
+    // Get body from document
     const body = ((document as any).body || document) as MarkdownNode
     const meta: ContentMeta = (document as any).meta || {}
     let component: string | ConcreteComponent = meta.component || this.$props.tag

@@ -2,9 +2,9 @@ import { useNuxtApp, useRuntimeConfig } from '#imports'
 
 const logger = {
   // eslint-disable-next-line no-console
-  log: (...args: any[]) => console.log('[Docus]', ...args),
+  log: (...args: any[]) => console.log('[Content]', ...args),
   // eslint-disable-next-line no-console
-  warn: (...args: any[]) => console.warn('[Docus]', ...args)
+  warn: (...args: any[]) => console.warn('[Content]', ...args)
 }
 
 let ws: WebSocket | undefined

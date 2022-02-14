@@ -24,7 +24,7 @@ export function setNodeData (node: MarkdownNode & { data: any }, name: string, v
   if (!name.startsWith(':')) {
     name = ':' + name
   }
-  const dataKey = `docus_d_${randomHash()}`
+  const dataKey = `content_d_${randomHash()}`
   pageData[dataKey] = value
   node.data.hProperties[name] = dataKey
 }

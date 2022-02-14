@@ -8,7 +8,7 @@ const markdowns = [
   ['h2', '## Index'],
   ['paragraph', 'This is a paragraph'],
   ['code', "```js\nconst foo = 'bar'\n```"],
-  ['link', '[link](https://docus.dev)'],
+  ['link', '[link](https://nuxtjs.org)'],
   ['ul', '- Item 1\n- Item 2\n- Item 3\n  - Item 3.1\n   - Item 3.1'],
   ['component', '::component\n\nThis is a paragraph\n\n::'],
   ['inline-component', ':component{.class #id prop="value"}'],

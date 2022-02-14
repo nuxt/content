@@ -2,13 +2,13 @@
 
 Content server uses Nuxt storages to fetch contents.
 
-Storages can define `docus.sources` options inside `nuxt.config`.
+Storages can define `content.sources` options inside `nuxt.config`.
 
-By default Docus uses `content` directory at project root.
+By default **@nuxt/content** uses `content` directory at project root.
 
 ```ts
 export default defineNuxtConfig({
-  docus: {
+  content: {
     sources: [
       'content', // Default directory
       'v2/content', // Additional source
@@ -69,17 +69,17 @@ const content = getContent('content:index.yml')
 
 Content server exposes two APIs:
 
-- `/api/_docus/list`
+- `/api/_content/list`
 
   List available contents in all sources.
 
-- `/api/_docus/get/:id`
+- `/api/_content/get/:id`
 
   Fetch specific content using content id. (Ids can retrive from list API)
 
 ## Composables
 
-Docus provide composables to work with content server:
+**@nuxt/content** provide composables to work with content server:
 
 - `getContentList`
 
@@ -99,7 +99,7 @@ Docus provide composables to work with content server:
 
 ## Hooks
 
-Docus also provides the `content:update` hook notified on content changes.
+**@nuxt/content** also provides the `content:update` hook notified on content changes.
 
 ```ts
 nuxtApp.hook('content:update', ({ event, key }) => {
@@ -132,7 +132,7 @@ Path-meta is a built-in transformer that extract multiple meta informations from
 
 - **Ordering**
 
-Docus use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
+**@nuxt/content** use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
 
 ```any
 1.hello.md

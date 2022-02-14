@@ -70,7 +70,8 @@ export default defineNuxtModule<ModuleOptions>({
       ],
       queries: []
     }
-    // Initialize Docus runtime config
+
+    // Initialize module runtime config
     nuxt.options.publicRuntimeConfig.content = {}
     nuxt.options.privateRuntimeConfig.content = {}
 

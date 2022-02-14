@@ -6,13 +6,13 @@ Query layer provides server API and composables to search and query contents.
 
 Query server exposes one API:
 
-- `/api/_docus/query`
+- `/api/_content/query`
 
   Search/Query contents.
 
 ## Composables
 
-Docus provide composables to work with content server:
+**@nuxt/content** provide composables to work with content server:
 
 - `useContentQuery`
 
@@ -35,7 +35,7 @@ With plugins users can extend query behaviors and add new features to it.
 
 ```ts
 // file `~/plugin-version.ts`
-import { defineQueryPlugin } from '#docus'
+import { defineQueryPlugin } from '#imports'
 
 export default defineQueryPlugin({
   name: 'version',
@@ -62,7 +62,7 @@ import { defineNuxtConfig } from 'nuxt3'
 import { resolveModule } from '@nuxt/kit'
 
 export default defineNuxtConfig({
-  docus: {
+  content: {
     query: {
       plugins: [resolveModule('./plugin-version', { paths: __dirname })]
     }

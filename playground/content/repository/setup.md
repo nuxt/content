@@ -11,7 +11,7 @@ yarn install
 
 ## Type support
 
-We write most of the Docus code using [TypeScript](https://www.typescriptlang.org).
+We write most of the **@nuxt/content** code using [TypeScript](https://www.typescriptlang.org).
 
 If you want to get full type support from Nuxt 3, you might want to run an initial build of `docs` directory.
 

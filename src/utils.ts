@@ -10,7 +10,7 @@ type MountOptions = {
   driverOptions?: Record<string, any>
 }
 
-export const logger = consola.withScope('docus')
+export const logger = consola.withScope('content')
 
 export const MOUNT_PREFIX = 'content:source:'
 

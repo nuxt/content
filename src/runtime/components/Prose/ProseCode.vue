@@ -1,5 +1,5 @@
 <template>
-  <div class="docus-highlight group">
+  <div>
     <slot />
   </div>
 </template>

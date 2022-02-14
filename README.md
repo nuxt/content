@@ -12,11 +12,9 @@ Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 - 💄 Easy yet powerful theming capabilities
 - 🌍 Deploys to the Edge (supports CloudFlare Workers)
 
-
 ## 💻 Development
 
 - Clone repository
-- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable` (use `npm i -g corepack` for Node.js < 16.10)
 - Install dependencies using `yarn install`
 - Prepare using `yarn dev:prepare`
 - Try playground using `yarn dev`

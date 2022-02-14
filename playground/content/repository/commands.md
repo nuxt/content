@@ -1,9 +1,9 @@
 ---
 title: Commands
-description: Usage description for each of the Docus repository commands.
+description: Usage description for each of the Content repository commands.
 ---
 
-This page will list all the available commands for Docus repository.
+This page will list all the available commands for Content repository.
 
 These commands can be run using `yarn` which is the package manager of this repository.
 
@@ -149,7 +149,7 @@ yarn cy:run
 
 ### `version:bump-edge`
 
-Run [`bump-edge`](https://github.com/docusgen/docus/blob/2ca5f4dfdecd05f9a62f52faca80e0781eb828d0/.github/scripts/bump-edge.ts) script.
+Run [`bump-edge`](.github/scripts/bump-edge.ts) script.
 
 ```bash
 yarn version:bump-edge

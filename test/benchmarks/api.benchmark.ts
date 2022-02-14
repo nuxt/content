@@ -18,7 +18,7 @@ describe('Api', () => {
       }
     })
 
-    contents = await ctx.fetch('/api/_docus/list')
+    contents = await ctx.fetch('/api/_content/list')
 
     // eslint-disable-next-line no-console
     console.log(`Generated ${contents.length} docs`)
@@ -26,7 +26,7 @@ describe('Api', () => {
 
   afterAll(() => ctx._destroy?.())
 
-  benchmark('List Contents', async () => await ctx.fetch('/api/_docus/list'))
+  benchmark('List Contents', async () => await ctx.fetch('/api/_content/list'))
 
-  benchmark('Get Single Content', async () => await ctx.fetch(`/api/_docus/get/${randomMember(contents)}`))
+  benchmark('Get Single Content', async () => await ctx.fetch(`/api/_content/get/${randomMember(contents)}`))
 })
