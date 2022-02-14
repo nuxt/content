@@ -10,6 +10,21 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
       .reduce((acc, p) => ({ ...acc, ...p.operators }), {} as Record<string, QueryMatchOperator>)
   })
 
+  /**
+   * Exctract surrounded items of specific condition
+   */
+  const surround = (data: any[], { query, before, after }: QueryBuilderParams['surround']) => {
+    const matchQuery = typeof query === 'string' ? { slug: query } : query
+    // Find matched item index
+    const index = data.findIndex(item => match(item, matchQuery))
+
+    before = before || 0
+    after = after || 0
+    const slice = new Array(before + after).fill(null, 0)
+
+    return index === -1 ? slice : slice.map((_, i) => data[index - before + i + Number(i >= before)] || null)
+  }
+
   const pipelines: Array<QueryPipe> = [
     // Filter items based on `params.slug`
     (data, params) => (params.slug ? data.filter(item => String(item.slug).startsWith(params.slug)) : data),
@@ -19,6 +34,8 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     (data, params) => params.sortBy.forEach(([key, direction]) => sortByKey(data, key, direction)),
     // Custom pipelines registered by plugins
     ...plugins.map((plugin: QueryPlugin) => plugin.execute!).filter(Boolean),
+    // Surround logic
+    (data, params) => params.surround ? surround(data, params.surround) : data,
     // Skip first items
     (data, params) => (params.skip ? data.slice(params.skip) : data),
     // Pick first items
@@ -33,6 +50,15 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
 
   return async (params: QueryBuilderParams) => {
     const data = await getContentsList()
+
+    // Provide default sort order if not specified
+    if (!params.sortBy || !params.sortBy.length) {
+      params.sortBy = [
+        ['slug', 'asc'],
+        ['position', 'asc']
+      ]
+    }
+
     return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, params) || $data, data)
   }
 }

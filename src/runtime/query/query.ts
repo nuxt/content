@@ -15,6 +15,7 @@ export const createQuery = <T = ParsedContentMeta>(
     without: [],
     sortBy: [],
     where: {},
+    surround: undefined,
     ...queryParams
   }
 
@@ -35,7 +36,7 @@ export const createQuery = <T = ParsedContentMeta>(
     where: $set('where'),
     deep: $set('deep', v => v !== false),
     sortBy: $set('sortBy', (field, direction) => [...params.sortBy, [field, direction]]),
-    surround: $set('surround', (slugOrTo, options) => ({ slugOrTo, options })),
+    surround: $set('surround', (query, options = { before: 1, after: 1 }) => ({ query, ...options })),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10))
   }

@@ -8,11 +8,17 @@
     <div v-else>
       Not Found!
     </div>
+
+    <PagePrevNext v-if="page" :page="page" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ParsedContentMeta } from '../../src/runtime/types'
+
 const route = useRoute()
 
-const { data: page } = await useAsyncData('page-content', async () => (await useContentQuery().where({ slug: route.path }).fetch()).pop())
+const { fetch } = useContentQuery(route.path)
+
+const { data: page } = await useAsyncData('page-content', () => fetch() as Promise<ParsedContentMeta>)
 </script>

@@ -105,6 +105,11 @@ export interface QueryBuilderParams {
   without: string[]
   sortBy: Array<string[]>
   where: object
+  surround: {
+    query: string | object
+    before: number
+    after: number
+  }
 
   [key: string]: any
 }
@@ -138,7 +143,7 @@ export interface QueryBuilder<T = ParsedContent> {
   /**
    * Surround results
    */
-  surround(slugOrPath: string, count: { before: number; after: number }): QueryBuilder<T>
+  surround(slugOrPath: string | object, count?: Partial<{ before: number; after: number }>): QueryBuilder<T>
 
   /**
    * Limit number of results
