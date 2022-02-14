@@ -98,7 +98,7 @@ export interface ContentPlugin {
 
 export interface QueryBuilderParams {
   slug: string
-  deep: boolean
+  first: boolean
   skip: number
   limit: number
   only: string[]
@@ -107,19 +107,14 @@ export interface QueryBuilderParams {
   where: object
   surround: {
     query: string | object
-    before: number
-    after: number
+    before?: number
+    after?: number
   }
 
   [key: string]: any
 }
 
 export interface QueryBuilder<T = ParsedContent> {
-  /**
-   * Set deep to true to fetch all matched documents.
-   */
-  deep(deep?: boolean): QueryBuilder<T>
-
   /**
    * Select a subset of fields
    */
@@ -141,11 +136,6 @@ export interface QueryBuilder<T = ParsedContent> {
   where(query: any): QueryBuilder<T>
 
   /**
-   * Surround results
-   */
-  surround(slugOrPath: string | object, count?: Partial<{ before: number; after: number }>): QueryBuilder<T>
-
-  /**
    * Limit number of results
    */
   limit(count: number): QueryBuilder<T>
@@ -156,9 +146,19 @@ export interface QueryBuilder<T = ParsedContent> {
   skip(count: number): QueryBuilder<T>
 
   /**
-   * Collect data and apply process filters
+   * Fetch list of contents
    */
-  fetch(): Promise<T | T[]>
+  find(): Promise<Array<T>>
+
+  /**
+   * Fetch first matched content
+   */
+  findOne(): Promise<T>
+
+  /**
+   * Fetch sorround contents
+   */
+  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
 }
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void

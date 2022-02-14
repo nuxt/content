@@ -10,7 +10,7 @@ describe('Database Provider', () => {
   test('Matches nested exact match', async () => {
     const result: Array<any> = await createQuery(pipelineFetcher)
       .where({ 'nested.users.0': 'Ahad' })
-      .fetch()
+      .find()
     assert(result.length > 0)
     assert(result.every(item => item.nested.users.includes('Ahad')) === true)
   })
@@ -23,32 +23,32 @@ describe('Database Provider', () => {
           $contains: 'Pooya'
         }
       })
-      .fetch()
+      .find()
     assert(result.length > 0)
     assert(result.every(item => item.nested.users.includes('Pooya')) === true)
   })
 
   test('Apply limit', async () => {
-    const first3 = await createQuery(pipelineFetcher).limit(3).fetch()
+    const first3 = await createQuery(pipelineFetcher).limit(3).find()
     assert(first3.length === 3)
   })
 
   test('Apply skip', async () => {
-    const first3 = await createQuery(pipelineFetcher).limit(3).fetch()
-    const limit3skip2 = await createQuery(pipelineFetcher).skip(2).limit(3).fetch()
+    const first3 = await createQuery(pipelineFetcher).limit(3).find()
+    const limit3skip2 = await createQuery(pipelineFetcher).skip(2).limit(3).find()
     assert(limit3skip2[0].id === first3[2].id)
   })
 
   test('Apply sort', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').fetch()
+    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').find()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(pipelineFetcher).sortBy('name', 'desc').fetch()
+    const nameDesc = await createQuery(pipelineFetcher).sortBy('name', 'desc').find()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 
   test('Apply sort and skip', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').skip(2).fetch()
+    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').skip(2).find()
     assert(nameAsc[0].name === database[2].name)
   })
 
@@ -57,7 +57,7 @@ describe('Database Provider', () => {
       .where({
         category: { $in: 'c1' }
       })
-      .fetch()
+      .find()
     assert(result.every((item: any) => item.category === 'c1') === true)
   })
 
@@ -66,7 +66,7 @@ describe('Database Provider', () => {
       .where({
         category: { $in: ['c1', 'c3'] }
       })
-      .fetch()
+      .find()
     assert(result.every((item: any) => ['c1', 'c3'].includes(item.category)) === true)
   })
 
@@ -75,7 +75,7 @@ describe('Database Provider', () => {
       .where({
         $or: [{ category: { $in: 'c1' } }, { category: { $in: 'c2' } }]
       })
-      .fetch()
+      .find()
     assert(result.every((item: any) => ['c1', 'c2'].includes(item.category)) === true)
   })
 
@@ -84,7 +84,7 @@ describe('Database Provider', () => {
       .where({
         quote: { $contains: ['best', 'way'] }
       })
-      .fetch()
+      .find()
 
     assert(result.every((item: any) => item.quote.includes('way')) === true)
   })
@@ -94,7 +94,7 @@ describe('Database Provider', () => {
       .where({
         author: { $containsAny: ['Wilson', 'William'] }
       })
-      .fetch()
+      .find()
 
     assert(result.every((item: any) => item.author.includes('William')) === false)
     assert(result.every((item: any) => item.author.includes('Wilson')) === false)
@@ -104,8 +104,7 @@ describe('Database Provider', () => {
   test('Surround with slug (default)', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
     const result = await createQuery(fetcher)
-      .surround('/b')
-      .fetch()
+      .findSurround('/b')
 
     assert(result[0].slug === '/a')
     assert(result[1].slug === '/c')
@@ -114,8 +113,7 @@ describe('Database Provider', () => {
   test('Surround more that 1 item with slug', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
     const result = await createQuery(fetcher)
-      .surround('/b', { before: 2, after: 1 })
-      .fetch()
+      .findSurround('/b', { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
     assert(result[0] === null)
@@ -126,8 +124,7 @@ describe('Database Provider', () => {
   test('Surround with object', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
     const result = await createQuery(fetcher)
-      .surround({ id: 3 }, { before: 2, after: 1 })
-      .fetch()
+      .findSurround({ id: 3 }, { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
     assert(result[0].slug === '/a')

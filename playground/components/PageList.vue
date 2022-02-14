@@ -21,6 +21,6 @@ const { data: pages } = await useAsyncData('pages-list', () =>
       $not: { slug: '/' }
     })
     .sortBy('id', 'asc')
-    .fetch()
+    .find()
 )
 </script>

@@ -14,11 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { ParsedContentMeta } from '../../src/runtime/types'
-
 const route = useRoute()
 
-const { fetch } = useContentQuery(route.path)
+const { findOne } = useContentQuery(route.path)
 
-const { data: page } = await useAsyncData('page-content', () => fetch() as Promise<ParsedContentMeta>)
+const { data: page } = await useAsyncData('page-content', findOne)
 </script>

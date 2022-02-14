@@ -8,7 +8,7 @@ export const createQuery = <T = ParsedContentMeta>(
 ): QueryBuilder<T> => {
   const params: QueryBuilderParams = {
     slug: '',
-    deep: false,
+    first: false,
     skip: 0,
     limit: 0,
     only: [],
@@ -30,15 +30,16 @@ export const createQuery = <T = ParsedContentMeta>(
   }
 
   const query: QueryBuilder<T> = {
-    fetch: () => fetcher(params),
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
     where: $set('where'),
-    deep: $set('deep', v => v !== false),
     sortBy: $set('sortBy', (field, direction) => [...params.sortBy, [field, direction]]),
-    surround: $set('surround', (query, options = { before: 1, after: 1 }) => ({ query, ...options })),
     limit: $set('limit', v => parseInt(String(v), 10)),
-    skip: $set('skip', v => parseInt(String(v), 10))
+    skip: $set('skip', v => parseInt(String(v), 10)),
+    // find
+    findOne: () => fetcher({ ...params, first: true }) as Promise<T>,
+    find: () => fetcher(params) as Promise<Array<T>>,
+    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<T>>
   }
 
   // Register plugins

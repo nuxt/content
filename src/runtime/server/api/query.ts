@@ -7,7 +7,7 @@ export default defineHandle(async (req) => {
 
   const body = await useBody<Partial<QueryBuilderParams>>(req)
 
-  const contents = await useContentQuery(body).fetch()
+  const contents = await useContentQuery(body).find()
 
   return contents
 })

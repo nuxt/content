@@ -28,9 +28,5 @@ const props = defineProps({
   }
 })
 
-const { data: prevNext } = await useAsyncData('prev-next', async () => {
-  const prevNext = await useContentQuery().surround(props.page.slug, { before: 1, after: 1 }).fetch()
-
-  return prevNext
-})
+const { data: prevNext } = await useAsyncData('prev-next', () => useContentQuery().findSurround(props.page.slug))
 </script>

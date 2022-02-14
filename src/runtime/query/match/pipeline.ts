@@ -18,8 +18,8 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
 
-    before = before || 0
-    after = after || 0
+    before = before || 1
+    after = after || 1
     const slice = new Array(before + after).fill(null, 0)
 
     return index === -1 ? slice : slice.map((_, i) => data[index - before + i + Number(i >= before)] || null)
@@ -45,7 +45,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     // Select only wanted fields
     (data, params) => apply(pick(params.only))(data),
     // Evaluate result
-    (data, params) => (!params.deep && data[0]?.slug === params.slug ? data[0] : data)
+    (data, params) => params.first ? data[0] : data
   ]
 
   return async (params: QueryBuilderParams) => {

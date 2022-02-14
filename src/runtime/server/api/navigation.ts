@@ -8,7 +8,7 @@ export default defineHandle(async (req) => {
 
   const { prefix } = useQuery(req)
 
-  const contents = await useContentQuery(prefix as string).deep(true).fetch()
+  const contents = await useContentQuery(prefix as string).find()
 
   return createNav(contents as ParsedContentMeta[])
 })
