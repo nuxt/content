@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import type { Ref } from 'vue'
 import type { NavItem } from '../types'
 import { withContentBase } from './content'
