@@ -16,13 +16,13 @@ import { parseFrontMatter } from './frontmatter'
 import { generateToc } from './toc'
 import { generateBody } from './content'
 
-export const defaultOption: MarkdownOptions = {
+export const useDefaultOptions = (): MarkdownOptions => ({
   mdc: true,
   toc: {
     depth: 2,
     searchDepth: 2
   },
-  tagMap: {
+  tags: {
     a: 'prose-a',
     blockquote: 'prose-blockquote',
     'code-inline': 'prose-code-inline',
@@ -48,7 +48,6 @@ export const defaultOption: MarkdownOptions = {
     tr: 'prose-tr',
     ul: 'prose-ul'
   },
-  components: [],
   remarkPlugins: [
     remarkEmoji,
     remarkSlug,
@@ -59,11 +58,11 @@ export const defaultOption: MarkdownOptions = {
     remarkGfm
   ],
   rehypePlugins: [rehypeSortAttributeValues, rehypeSortAttributes, [rehypeRaw, { passThrough: ['element'] }]]
-}
+})
 
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {
-  const options = defu(userOptions, defaultOption) as MarkdownOptions
-  setTagsMap(options.tagMap)
+  const options = defu(userOptions, useDefaultOptions()) as MarkdownOptions
+  setTagsMap(options.tags)
 
   const { content, data, ...rest } = await parseFrontMatter(file)
 

@@ -14,6 +14,33 @@ export const logger = consola.withScope('content')
 
 export const MOUNT_PREFIX = 'content:source:'
 
+export const PROSE_TAGS = [
+  'p',
+  'a',
+  'blockquote',
+  'code-inline',
+  'code',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'hr',
+  'img',
+  'ul',
+  'ol',
+  'li',
+  'strong',
+  'table',
+  'thead',
+  'tbody',
+  'td',
+  'th',
+  'tr'
+]
+
 /**
  * Resolve driver of a mount.
  */

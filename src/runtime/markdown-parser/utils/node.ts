@@ -7,8 +7,8 @@ ctx.set({}, true)
 export const useTagsMap = () => ctx.use()!
 export const setTagsMap = (map: Record<string, string>) => ctx.set(map, true)
 
-export const expandTags = (_tags: string[], tagMap: Record<string, string> = useTagsMap()): string[] =>
-  _tags.map(t => tagMap[t] || t)
+export const expandTags = (_tags: string[], map: Record<string, string> = useTagsMap()): string[] =>
+  _tags.map(t => map[t] || t)
 
 /**
  * List of text nodes

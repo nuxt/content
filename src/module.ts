@@ -20,17 +20,31 @@ import {
   MOUNT_PREFIX,
   useContentMounts
 } from './utils'
+import { useDefaultOptions as useMarkdownDefaultOptions } from './runtime/markdown-parser/index'
+import type { MarkdownOptions } from './runtime/types'
+
+interface ContentContext {
+  transformers: string[],
+  queries: [],
+  sources: string[],
+  ignores: string[],
+  markdown: MarkdownOptions
+  yaml: false | Record<string, any>
+  navigation: boolean;
+}
 
 export interface ModuleOptions {
   base: string;
   sources: Array<string>;
   ignores: Array<string>;
-  markdown: false | Record<string, any>;
+  markdown: MarkdownOptions
   yaml: false | Record<string, any>;
   navigation: boolean;
 }
 
-export interface ModuleHooks {}
+export interface ModuleHooks {
+  'content:context'(ctx: ContentContext): void
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -46,7 +60,7 @@ export default defineNuxtModule<ModuleOptions>({
     base: '_content',
     sources: ['content'],
     ignores: ['\\.', '-'],
-    markdown: {},
+    markdown: useMarkdownDefaultOptions(),
     yaml: {},
     navigation: true
   },
@@ -55,7 +69,7 @@ export default defineNuxtModule<ModuleOptions>({
     const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
     const resolveRuntimeDir = (...p: string[]) => resolve(runtimeDir, ...p)
 
-    const context = {
+    const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
         resolveModule('./server/transformer/plugin-markdown', {
@@ -68,18 +82,26 @@ export default defineNuxtModule<ModuleOptions>({
           paths: runtimeDir
         })
       ],
-      queries: []
+      queries: [],
+      sources: options.sources,
+      ignores: options.ignores,
+      markdown: options.markdown,
+      yaml: options.yaml,
+      navigation: options.navigation
     }
 
-    // Initialize module runtime config
-    nuxt.options.publicRuntimeConfig.content = {}
+    // Initialize Docus runtime config
+    nuxt.options.publicRuntimeConfig.content = {
+      basePath: options.base
+    }
     nuxt.options.privateRuntimeConfig.content = {}
 
-    //  Set api base path
-    nuxt.options.publicRuntimeConfig.content.basePath = options.base
-
-    // Pass content ignore patterns to runtime config, Ignore patterns will use in storage layer
-    nuxt.options.privateRuntimeConfig.content.ignores = options.ignores
+    // Add module server runtime to Nitro inlines
+    nuxt.options.nitro = defu(nuxt.options.nitro, {
+      externals: {
+        inline: [resolveRuntimeDir('./server')]
+      }
+    })
 
     // Add Vite configurations
     if (nuxt.options.vite !== false) {
@@ -104,34 +126,31 @@ export default defineNuxtModule<ModuleOptions>({
     // Add Content plugin
     addPlugin(resolveModule('./plugin', { paths: runtimeDir }))
 
-    // Add content template
-    nuxt.options.alias['#content-plugins'] = addTemplate({
-      ...contentPluginTemplate,
-      options: context
-    }).dst!
-    nuxt.options.alias['#query-plugins'] = addTemplate({
-      ...queryPluginTemplate,
-      options: context
-    }).dst!
-    addTemplate({
-      ...typeTemplate,
-      options
-    })
+    nuxt.hook('nitro:context', async (ctx) => {
+      // @ts-ignore
+      await nuxt.callHook('content:context', contentContext)
 
-    nuxt.hook('nitro:context', (ctx) => {
+      nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
+      // Pass content ignore patterns to runtime config, Ignore patterns will use in storage layer
+      nuxt.options.privateRuntimeConfig.content.ignores = contentContext.ignores
+
+      // Add content template
+      nuxt.options.alias['#content-plugins'] = addTemplate({ ...contentPluginTemplate, options: contentContext }).dst!
+      nuxt.options.alias['#query-plugins'] = addTemplate({ ...queryPluginTemplate, options: contentContext }).dst!
+      addTemplate({ ...typeTemplate, options: contentContext })
+
       ctx.alias['#content-plugins'] = nuxt.options.alias['#content-plugins']
+      ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
 
-      // Inline content template in Nitro bundle
+      // Inline query/content template in Nitro bundle
       ctx.externals = defu(ctx.externals, {
-        inline: [ctx.alias['#content-plugins']]
+        inline: [ctx.alias['#query-plugins'], ctx.alias['#content-plugins']]
       })
-    })
 
-    nuxt.hook('nitro:context', (ctx) => {
       // Register mounts
       Object.assign(
         ctx.storage.mounts,
-        useContentMounts(nuxt, options.sources || [])
+        useContentMounts(nuxt, contentContext.sources || [])
       )
     })
 
@@ -167,15 +186,6 @@ export default defineNuxtModule<ModuleOptions>({
       })
     })
 
-    nuxt.hook('nitro:context', (ctx) => {
-      ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
-
-      // Inline query template in Nitro bundle
-      ctx.externals = defu(ctx.externals, {
-        inline: [ctx.alias['#query-plugins']]
-      })
-    })
-
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({
         path: resolve(nuxt.options.buildDir, 'content-query.d.ts')
@@ -205,10 +215,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Create storage instance
     const storage = createStorage()
-    const mounts = useContentMounts(nuxt, options.sources || [])
-    for (const mount in mounts) {
-      storage.mount(mount, getMountDriver(mounts[mount]))
-    }
+    nuxt.hook('modules:done', () => {
+      const mounts = useContentMounts(nuxt, contentContext.sources || [])
+      for (const mount in mounts) {
+        storage.mount(mount, getMountDriver(mounts[mount]))
+      }
+    })
 
     const ws = createWebSocket()
 

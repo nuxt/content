@@ -57,14 +57,18 @@ export interface MarkdownRoot {
 }
 
 export interface MarkdownOptions {
+  /**
+   * Enable/Disable MDC components.
+   */
   mdc: boolean
   toc: {
+    /**
+     * Maximum heading depth to include in the table of contents.
+     */
     depth: number
     searchDepth: number
   }
-  tagMap: Record<string, string>
-  highlighter?: any
-  components: Array<any | Array<any>>
+  tags: Record<string, string>
   remarkPlugins: Array<any | Array<any>>
   rehypePlugins: Array<any | Array<any>>
 }

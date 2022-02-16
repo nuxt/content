@@ -9,7 +9,7 @@ export function processHeading (body: MarkdownRoot, options: MarkdownOptions) {
     // top level `text` can be ignored
     .filter(node => node.type !== 'text')
 
-  if (children.length && expandTags(['h1'], options.tagMap).includes(children[0].tag || '')) {
+  if (children.length && expandTags(['h1'], options.tags).includes(children[0].tag || '')) {
     /**
      * Remove node
      */

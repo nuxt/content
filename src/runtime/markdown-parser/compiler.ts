@@ -1,5 +1,5 @@
 import { Node as UnistNode } from 'unist'
-import type { MarkdownRoot, MarkdownNode } from '../types'
+import type { MarkdownRoot, MarkdownNode, MarkdownOptions } from '../types'
 
 type Node = UnistNode & {
   tagName?: string
@@ -14,8 +14,8 @@ type Node = UnistNode & {
 /**
  * JSON compiler
  */
-export default function (this: any, options: any) {
-  const tagMap = options?.tagMap || {}
+export default function (this: any, options: MarkdownOptions) {
+  const tags = options?.tags || {}
   /**
    * Parses nodes for JSON structure. Attempts to drop
    * unwanted properties.
@@ -69,8 +69,8 @@ export default function (this: any, options: any) {
         }
       }
 
-      if (tagMap[node.tagName as string] && !(node.properties as any)?.ignoreMap) {
-        node.tagName = tagMap[node.tagName as string]
+      if (tags[node.tagName as string] && !(node.properties as any)?.ignoreMap) {
+        node.tagName = tags[node.tagName as string]
       }
 
       const filtered: MarkdownNode = {
