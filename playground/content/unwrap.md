@@ -1,0 +1,11 @@
+::markdown{unwrap="ul li"}
+- A
+- B
+- C
+::
+
+::markdown{unwrap}
+- A
+- B
+- C
+::

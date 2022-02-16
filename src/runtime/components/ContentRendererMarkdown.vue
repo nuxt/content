@@ -139,6 +139,9 @@ function processNode (node: MarkdownNode, h: CreateElement, documentMeta: Conten
   let component: string | ConcreteComponent | undefined = node.tag
   if (isVueComponent(component as string)) {
     component = resolveComponent(pascalCase(component), false)
+    if (typeof component === 'object') {
+      component.tag = node.tag
+    }
   }
   return h(component as any, data, {
     ...processNonDefaultSlots(node, h, documentMeta),

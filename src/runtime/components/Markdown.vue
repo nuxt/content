@@ -1,6 +1,19 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { flatUnwrap, unwrap, isTag } from '../markdown-parser/utils'
+import { useRuntimeConfig } from '#app'
+import { defineComponent, getCurrentInstance, Slot, VNode } from 'vue'
+
+const unwrap = (vnodes: VNode[], tags: string[]) => {
+  if (!tags.length) {
+    return vnodes
+  }
+
+  return vnodes.map(vnode =>
+    typeof vnode.type === 'object' && (tags[0] === '*' || (vnode.type as any).tag === tags[0])
+      ? unwrap((vnode.children as any).default(), tags.slice(1))
+      : vnode
+  )
+}
+
 /**
  * Markdown component
  */
@@ -10,81 +23,37 @@ export default defineComponent({
   functional: true,
   props: {
     /**
-     * A slot name or function
+      * A slot name or function
      */
     use: {
-      type: [String, Object, Function, Array],
+      type: [String, Function],
       default: 'default'
     },
     /**
-     *
+     * Tags to unwrap separated by spaces
+     * Example: 'ul li'
      */
     unwrap: {
-      type: String,
-      default: ''
+      type: [Boolean, String],
+      default: false
     }
   },
-  render () {
-    const { $props, $parent, $slots, $attrs } = this
-    const slot = $props.use || 'default'
-    // Get slot node
-    let node =
-      typeof slot === 'string'
-        ? $parent && ($parent.$slots?.[slot] || $parent.$parent?.$slots?.[slot])
-        : slot
-    // Execute factory funciton
-    if (typeof node === 'function') {
-      node = node()
+  setup (props) {
+    const { parent } = getCurrentInstance()
+    const { content: { tags: tagMap } } = useRuntimeConfig()
+
+    const slot = typeof props.use === 'string' ? parent?.slots[props.use] || parent?.parent?.slots[props.use] : props.use as Slot
+
+    if (!slot) {
+      return () => []
     }
-    // If node is raw string, return it as it is
-    if (typeof node === 'string') {
-      return [node]
+
+    if (props.unwrap) {
+      const tags = props.unwrap === true ? ['*'] : props.unwrap.split(' ')
+      return () => unwrap(slot(), tags.map(tag => tagMap[tag] || tag))
     }
-    // Unwrap tags
-    if (node && $props.unwrap) {
-      // Split tags from string prop
-      const tags = $props.unwrap.split(/[,\s]/)
-      // Get first tag from node
-      const first = Array.isArray(node) && node[0]
-      // Check if splitting is required
-      const requireSplitor =
-        $slots.between &&
-        first &&
-        !first.text &&
-        !['span', 'strong', 'em', 'a', 'code'].some(tag => isTag(first, tag))
-      // Get properly unwrapped node
-      if (requireSplitor) {
-        node = node.flatMap((n: any, i: number) =>
-          i === 0
-            ? unwrap(n, tags)
-            : [(this as any).$slot.between(), unwrap(n, tags)]
-        )
-      } else {
-        node = flatUnwrap(node, tags)
-      }
-    }
-    /**
-     * Unwrap array if there is only one element in it
-     */
-    if (node && node.length === 1) {
-      node = node[0]
-    }
-    /**
-     * Pass `$attrs` to root node
-     *
-     * If there are multiple nodes, Vue will raise warning message
-     */
-    if (node?.$attrs) {
-      Object.assign(node.$attrs, $attrs)
-    }
-    /**
-     * Fallback to default slot if no node is found
-     * Usage: `<Markdown>Default Value</Markdown>`
-     */
-    if (!node && typeof $slots.default === 'function') {
-      return $slots.default()
-    }
-    return node
+
+    return () => slot()
   }
 })
 </script>

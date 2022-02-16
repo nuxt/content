@@ -6,7 +6,7 @@ export default defineContentPlugin({
   name: 'markdown',
   extentions: ['.md'],
   parse: async (id, content) => {
-    const parsed = await parse(content, privateConfig.markdown)
+    const parsed = await parse(content, privateConfig.content)
 
     return {
       meta: {
