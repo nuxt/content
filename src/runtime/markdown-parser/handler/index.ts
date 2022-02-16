@@ -14,27 +14,20 @@ import inlineCode from './inlineCode'
 import thematicBreak from './thematicBreak'
 import containerComponent from './containerComponent'
 
-export default async function handlers (highlighter: any) {
-  // create highlighter if its a factory funtions
-  if (typeof highlighter === 'function' && highlighter.length === 0) {
-    highlighter = await highlighter()
-  }
-
-  return {
-    emphasis,
-    code: code(highlighter),
-    paragraph,
-    html,
-    link,
-    list,
-    listItem,
-    heading,
-    table,
-    image,
-    blockquote,
-    strong,
-    inlineCode,
-    thematicBreak,
-    containerComponent
-  }
+export default {
+  emphasis,
+  code,
+  paragraph,
+  html,
+  link,
+  list,
+  listItem,
+  heading,
+  table,
+  image,
+  blockquote,
+  strong,
+  inlineCode,
+  thematicBreak,
+  containerComponent
 }

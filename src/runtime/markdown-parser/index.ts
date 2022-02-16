@@ -1,11 +1,9 @@
 import defu from 'defu'
 import remarkEmoji from 'remark-emoji'
-import remarkSlug from 'remark-slug'
+import rehypeSlug from 'rehype-slug'
 import remarkSqueezeParagraphs from 'remark-squeeze-paragraphs'
-import remarkExternalLinks from 'remark-external-links'
-import remarkFootnotes from 'remark-footnotes'
+import rehypeExternalLinks from 'rehype-external-links'
 import remarkGfm from 'remark-gfm'
-import remarkAutolinkHeadings from 'remark-autolink-headings'
 import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
@@ -50,14 +48,16 @@ export const useDefaultOptions = (): MarkdownOptions => ({
   },
   remarkPlugins: [
     remarkEmoji,
-    remarkSlug,
-    [remarkAutolinkHeadings, { behavior: 'wrap' }],
     remarkSqueezeParagraphs,
-    remarkExternalLinks,
-    remarkFootnotes,
     remarkGfm
   ],
-  rehypePlugins: [rehypeSortAttributeValues, rehypeSortAttributes, [rehypeRaw, { passThrough: ['element'] }]]
+  rehypePlugins: [
+    rehypeSlug,
+    rehypeExternalLinks,
+    rehypeSortAttributeValues,
+    rehypeSortAttributes,
+    [rehypeRaw, { passThrough: ['element'] }]
+  ]
 })
 
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {

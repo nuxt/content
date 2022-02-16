@@ -25,9 +25,22 @@ export function parseThematicBlock (lang: string) {
 
   return {
     language: language ? language[0] : null,
-    lineHighlights: lineHighlightTokens[1] ? lineHighlightTokens[1].replace(/}.*/, '') : null,
-    fileName: Array.isArray(filenameTokens) ? filenameTokens[1] : null
+    lineHighlights: parseHighlightedLines(lineHighlightTokens[1] && lineHighlightTokens[1].replace(/}.*/, '')),
+    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : null
   }
+}
+
+function parseHighlightedLines (lines?: string) {
+  if (!lines) { return [] }
+  return String(lines)
+    .split(',')
+    .map((line) => {
+      if (line.includes('-')) {
+        const [start, end] = line.split('-')
+        return [Number(start.trim()), Number(end.trim())]
+      }
+      return [Number(line.trim()), Number(line.trim())]
+    })
 }
 
 const TAG_NAME_REGEXP = /^<\/?([A-Za-z0-9-_]+) ?[^>]*>/

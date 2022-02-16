@@ -26,10 +26,9 @@ export function generateDescription (excerptContent: MarkdownRoot) {
  * @param {object} data - document data
  * @returns {object} JSON AST body
  */
-export async function generateBody (content: string, options: MarkdownOptions & { data: any }): Promise<MarkdownRoot> {
-  const { highlighter, data } = options
+export function generateBody (content: string, options: MarkdownOptions & { data: any }): Promise<MarkdownRoot> {
   const rehypeOptions: any = {
-    handlers: await handlers(highlighter),
+    handlers,
     allowDangerousHtml: true
   }
 
@@ -37,7 +36,7 @@ export async function generateBody (content: string, options: MarkdownOptions & 
     const stream = unified().use(remarkParse)
 
     if (options.mdc) {
-      stream.use(remarkMDC, { components: options.components })
+      stream.use(remarkMDC)
     }
 
     usePlugins(options.remarkPlugins, stream)
@@ -48,13 +47,13 @@ export async function generateBody (content: string, options: MarkdownOptions & 
     stream.process(
       {
         value: content,
-        data
+        data: options.data
       },
       (error, file) => {
         if (error) {
           return reject(error)
         }
-        Object.assign(data, file?.data || {})
+        Object.assign(options.data, file?.data || {})
 
         resolve(file?.result as MarkdownRoot)
       }
