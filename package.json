@@ -1,7 +1,7 @@
 {
   "name": "@nuxt/content",
   "version": "2.0.0",
-  "description": "Write your content inside your Nuxt app",
+  "description": "Write your content inside your Nuxt app.",
   "keywords": [
     "nuxt",
     "content",
