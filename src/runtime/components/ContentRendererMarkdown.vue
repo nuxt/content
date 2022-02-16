@@ -83,7 +83,8 @@ function propsToData (node: MarkdownNode, documentMeta: ContentMeta) {
     } else if (rxBind.test(key)) {
       key = key.replace(rxBind, '')
       data[key] = evalInContext(value, documentMeta)
-    } else if (Array.isArray(value)) {
+    } else if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
+      // Join string arrays using space, see: https://github.com/nuxt/content/issues/247
       data[attribute] = value.join(' ')
     } else if (typeof value === 'string') {
       data[attribute] = valueInContext(value, documentMeta) || value
