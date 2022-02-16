@@ -3,7 +3,13 @@ import { withBase } from 'ufo'
 import type { ParsedContentMeta, ParsedContent } from '../types'
 import { useNuxtApp, useRuntimeConfig } from '#imports'
 
-export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
+export const withContentBase = (() => {
+  let base: string
+  return (url: string) => {
+    if (!base) { base = `/api/${useRuntimeConfig().content.basePath}` }
+    return withBase(url, base)
+  }
+})()
 
 /**
  * Fetch list of contents
