@@ -4,8 +4,6 @@ import { u } from 'unist-builder'
  * Parses the value defined next to 3 back ticks
  * in a codeblock and set line-highlights or
  * filename from it
- *
- * @param {String} lang
  */
 export function parseThematicBlock (lang: string) {
   /**
@@ -13,34 +11,32 @@ export function parseThematicBlock (lang: string) {
    */
   if (!lang) {
     return {
-      language: null,
-      lineHighlights: null,
-      fileName: null
+      language: undefined,
+      highlights: undefined,
+      fileName: undefined
     }
   }
 
   const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
-  const lineHighlightTokens = lang.replace(/[[](.+)/, '').split('{')
+  const highlightTokens = lang.match(/{([^}]+)}/)
   const filenameTokens = lang.match(/\[(.+)\]/)
 
   return {
-    language: language ? language[0] : null,
-    lineHighlights: parseHighlightedLines(lineHighlightTokens[1] && lineHighlightTokens[1].replace(/}.*/, '')),
-    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : null
+    language: language ? language[0] : undefined,
+    highlights: parseHighlightedLines(highlightTokens && highlightTokens[1]),
+    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : undefined
   }
 }
 
 function parseHighlightedLines (lines?: string) {
-  if (!lines) { return [] }
-  return String(lines)
+  const lineArray = String(lines || '')
     .split(',')
-    .map((line) => {
-      if (line.includes('-')) {
-        const [start, end] = line.split('-')
-        return [Number(start.trim()), Number(end.trim())]
-      }
-      return [Number(line.trim()), Number(line.trim())]
+    .filter(Boolean)
+    .flatMap((line) => {
+      const [start, end] = line.trim().split('-').map(a => Number(a.trim()))
+      return Array.from({ length: (end || start) - start + 1 }).map((_, i) => start + i)
     })
+  return lineArray.length ? lineArray : undefined
 }
 
 const TAG_NAME_REGEXP = /^<\/?([A-Za-z0-9-_]+) ?[^>]*>/
@@ -54,13 +50,8 @@ export function getTagName (value: string) {
 /**
  * Wrap `nodes` with line feeds between each entry.
  * Optionally adds line feeds at the start and end.
- *
- * @param {Array.<Content>} nodes
- * @param {boolean} [loose=false]
- * @returns {Array.<Content>}
  */
 export function wrap (nodes: any[], loose: boolean = false) {
-  /** @type {Array.<Content>} */
   const result = []
   let index = -1
 

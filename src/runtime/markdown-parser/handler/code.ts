@@ -5,7 +5,7 @@ import { parseThematicBlock } from './utils'
 
 export default (h: H, node: any) => {
   const lang = node.lang + ' ' + (node.meta || '')
-  const { language, lineHighlights, filename } = parseThematicBlock(lang)
+  const { language, highlights, filename } = parseThematicBlock(lang)
   const code = node.value ? detab(node.value + '\n') : ''
 
   return h(
@@ -14,7 +14,7 @@ export default (h: H, node: any) => {
     {
       language,
       filename,
-      highlights: lineHighlights as any,
+      highlights,
       code
     },
     [h(node, 'pre', {}, [h(node, 'code', { ignoreMap: 'true' }, [u('text', code)])])]
