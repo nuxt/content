@@ -69,8 +69,8 @@ export interface MarkdownOptions {
     searchDepth: number
   }
   tags: Record<string, string>
-  remarkPlugins: Array<any | Array<any>>
-  rehypePlugins: Array<any | Array<any>>
+  remarkPlugins: Array<any | [any, any]>
+  rehypePlugins: Array<any | [any, any]>
 }
 
 export interface TocLink {

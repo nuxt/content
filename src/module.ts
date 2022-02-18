@@ -1,13 +1,12 @@
-import { fileURLToPath, URL } from 'url'
 import {
   addPlugin,
   defineNuxtModule,
   resolveModule,
   addServerMiddleware,
-  addTemplate
+  addTemplate,
+  createResolver
 } from '@nuxt/kit'
 import defu from 'defu'
-import { resolve } from 'pathe'
 import { createStorage } from 'unstorage'
 import Debounce from 'debounce'
 import type { WatchEvent } from 'unstorage'
@@ -18,17 +17,26 @@ import {
   getMountDriver,
   logger,
   MOUNT_PREFIX,
+  processMarkdownOptions,
+  PROSE_TAGS,
   useContentMounts
 } from './utils'
-import { useDefaultOptions as useMarkdownDefaultOptions } from './runtime/markdown-parser/index'
-import type { MarkdownOptions } from './runtime/types'
 
 interface ContentContext {
-  transformers: string[],
+  transformers: Array<string>
   queries: [],
   sources: string[],
   ignores: string[],
-  markdown: MarkdownOptions
+  markdown: {
+    mdc?: boolean
+    toc?: {
+      depth?: number
+      searchDepth?: number
+    },
+    tags?: Record<string, string>
+    remarkPlugins?: Array<string | [string, any]>
+    rehypePlugins?: Array<string | [string, any]>
+  }
   yaml: false | Record<string, any>
   navigation: boolean;
 }
@@ -37,7 +45,16 @@ export interface ModuleOptions {
   base: string;
   sources: Array<string>;
   ignores: Array<string>;
-  markdown: MarkdownOptions
+  markdown: {
+    mdc?: boolean
+    toc?: {
+      depth?: number
+      searchDepth?: number
+    },
+    tags?: Record<string, string>
+    remarkPlugins?: Array<string | [string, any]>
+    rehypePlugins?: Array<string | [string, any]>
+  }
   yaml: false | Record<string, any>;
   navigation: boolean;
 }
@@ -60,27 +77,22 @@ export default defineNuxtModule<ModuleOptions>({
     base: '_content',
     sources: ['content'],
     ignores: ['\\.', '-'],
-    markdown: useMarkdownDefaultOptions(),
+    markdown: {
+      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
+    },
     yaml: {},
     navigation: true
   },
-  setup (options, nuxt) {
-    // TODO: Use createResolver
-    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
-    const resolveRuntimeDir = (...p: string[]) => resolve(runtimeDir, ...p)
+  async setup (options, nuxt) {
+    const { resolve } = createResolver(import.meta.url)
+    const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
     const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
-        resolveModule('./server/transformer/plugin-markdown', {
-          paths: runtimeDir
-        }),
-        resolveModule('./server/transformer/plugin-yaml', {
-          paths: runtimeDir
-        }),
-        resolveModule('./server/transformer/plugin-path-meta', {
-          paths: runtimeDir
-        })
+        resolveRuntimeModule('./server/transformer/plugin-markdown'),
+        resolveRuntimeModule('./server/transformer/plugin-yaml'),
+        resolveRuntimeModule('./server/transformer/plugin-path-meta')
       ],
       queries: [],
       sources: options.sources,
@@ -90,7 +102,7 @@ export default defineNuxtModule<ModuleOptions>({
       navigation: options.navigation
     }
 
-    // Initialize Docus runtime config
+    // Initialize runtime config
     nuxt.options.publicRuntimeConfig.content = {
       basePath: options.base
     }
@@ -99,7 +111,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Add module server runtime to Nitro inlines
     nuxt.options.nitro = defu(nuxt.options.nitro, {
       externals: {
-        inline: [resolveRuntimeDir('./server')]
+        inline: [resolve('./runtime/server')]
       }
     })
 
@@ -119,26 +131,14 @@ export default defineNuxtModule<ModuleOptions>({
     for (const api of ['list', 'get', 'query']) {
       addServerMiddleware({
         route: `/api/${options.base}/${api}`,
-        handle: resolveModule(`./server/api/${api}`, { paths: runtimeDir })
+        handle: resolveRuntimeModule(`./server/api/${api}`)
       })
     }
 
     // Add Content plugin
-    addPlugin(resolveModule('./plugin', { paths: runtimeDir }))
+    addPlugin(resolveRuntimeModule('./plugin'))
 
-    nuxt.hook('nitro:context', async (ctx) => {
-      // @ts-ignore
-      await nuxt.callHook('content:context', contentContext)
-
-      nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
-      // Pass content ignore patterns to runtime config, Ignore patterns will use in storage layer
-      nuxt.options.privateRuntimeConfig.content.ignores = contentContext.ignores
-
-      // Add content template
-      nuxt.options.alias['#content-plugins'] = addTemplate({ ...contentPluginTemplate, options: contentContext }).dst!
-      nuxt.options.alias['#query-plugins'] = addTemplate({ ...queryPluginTemplate, options: contentContext }).dst!
-      addTemplate({ ...typeTemplate, options: contentContext })
-
+    nuxt.hook('nitro:context', (ctx) => {
       ctx.alias['#content-plugins'] = nuxt.options.alias['#content-plugins']
       ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
 
@@ -158,7 +158,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('autoImports:extend', (imports) => {
       const files = [
         {
-          path: resolveModule('./composables/content', { paths: runtimeDir }),
+          path: resolveRuntimeModule('./composables/content'),
           names: [
             'getContentList',
             'useContentList',
@@ -167,7 +167,7 @@ export default defineNuxtModule<ModuleOptions>({
           ]
         },
         {
-          path: resolveModule('./composables/query', { paths: runtimeDir }),
+          path: resolveRuntimeModule('./composables/query'),
           names: ['useContentQuery']
         }
       ]
@@ -179,7 +179,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Add components
     nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
-        path: resolveRuntimeDir('components'),
+        path: resolve('./runtime/components'),
         isAsync: false,
         prefix: '',
         level: 999
@@ -196,17 +196,31 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.navigation) {
       addServerMiddleware({
         route: `/api/${options.base}/navigation`,
-        handle: resolveModule('./server/api/navigation', { paths: runtimeDir })
+        handle: resolveRuntimeModule('./server/api/navigation')
       })
 
       nuxt.hook('autoImports:extend', (imports) => {
         imports.push({
-          from: resolveModule('./composables/navigation', { paths: runtimeDir }),
+          from: resolveRuntimeModule('./composables/navigation'),
           name: 'useContentNavigation',
           as: 'useContentNavigation'
         })
       })
     }
+
+    // @ts-ignore
+    await nuxt.callHook('content:context', contentContext)
+
+    contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
+
+    nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
+    // Pass content ignore patterns to runtime config, Ignore patterns will use in storage layer
+    nuxt.options.privateRuntimeConfig.content = contentContext
+
+    // Add content template
+    nuxt.options.alias['#content-plugins'] = addTemplate({ ...contentPluginTemplate, options: contentContext }).dst!
+    nuxt.options.alias['#query-plugins'] = addTemplate({ ...queryPluginTemplate, options: contentContext }).dst!
+    addTemplate({ ...typeTemplate, options: contentContext })
 
     // Setup content dev module
     if (!nuxt.options.dev) {
@@ -215,12 +229,10 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Create storage instance
     const storage = createStorage()
-    nuxt.hook('modules:done', () => {
-      const mounts = useContentMounts(nuxt, contentContext.sources || [])
-      for (const mount in mounts) {
-        storage.mount(mount, getMountDriver(mounts[mount]))
-      }
-    })
+    const mounts = useContentMounts(nuxt, contentContext.sources || [])
+    for (const mount in mounts) {
+      storage.mount(mount, getMountDriver(mounts[mount]))
+    }
 
     const ws = createWebSocket()
 
@@ -257,14 +269,13 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 interface ModulePublicRuntimeConfig {
+  tags: Record<string, string>
   basePath?: string;
   // Websocket server URL
   wsUrl?: string;
 }
 
 interface ModulePrivateRuntimeConfig {
-  // List of content ignore patterns
-  ignores: Array<string>;
 }
 
 declare module '@nuxt/schema' {
@@ -273,7 +284,7 @@ declare module '@nuxt/schema' {
       content?: ModulePublicRuntimeConfig;
     };
     privateRuntimeConfig?: {
-      content?: ModulePrivateRuntimeConfig & ModulePublicRuntimeConfig;
+      content?: ModulePrivateRuntimeConfig & ContentContext;
     };
   }
 }

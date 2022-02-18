@@ -1,5 +1,10 @@
 export const privateConfig = {
   content: {
-    ignores: []
+    ignores: [],
+    markdown: {
+      tags: {
+        h1: 'prose-h1'
+      }
+    }
   }
 }

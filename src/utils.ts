@@ -4,6 +4,8 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import { WebSocketServer } from 'ws'
 import consola from 'consola'
+import { resolveModule } from '@nuxt/kit'
+import type { ModuleOptions } from './module'
 
 type MountOptions = {
   driver: 'fs' | 'http' | 'memory' | string
@@ -108,5 +110,23 @@ export function createWebSocket () {
     serve,
     broadcast,
     close: () => wss.close()
+  }
+}
+
+export function processMarkdownOptions (nuxt: Nuxt, options: ModuleOptions['markdown']) {
+  options.rehypePlugins = (options.rehypePlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
+  options.remarkPlugins = (options.remarkPlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
+
+  return options
+
+  function resolveMarkdownPlugin (plugin: string | [string, any]): [string, any] {
+    if (typeof plugin === 'string') { plugin = [plugin, {}] }
+
+    if (!Array.isArray(plugin)) {
+      logger.warn('Plugin silently ignored:', (plugin as any).name || plugin)
+      return
+    }
+
+    return [resolveModule(plugin[0], { paths: nuxt.options.srcDir }), plugin[1]]
   }
 }
