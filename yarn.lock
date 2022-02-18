@@ -630,7 +630,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.3.5
+    vitest: ^0.4.1
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -10453,17 +10453,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinypool@npm:^0.1.1":
+"tinypool@npm:^0.1.2":
   version: 0.1.2
   resolution: "tinypool@npm:0.1.2"
   checksum: 886ec64fcbd5a02336c2127973be3ee184d643f3ffc86d6e52752b0eb396b048801dc07e16fbb6012ab130f58104e0bbd59989ed21f5a49e707a661387e89f86
   languageName: node
   linkType: hard
 
-"tinyspy@npm:^0.2.10":
-  version: 0.2.10
-  resolution: "tinyspy@npm:0.2.10"
-  checksum: 7c4d89f603f5e12b335f5a97811b11712a6cc44565c2d1c1d76ccf6a0cb9c2b0ca8b7eb84f6cdabd0a49149fb9dababaefadab43bec6d8252dfc797a205f48bd
+"tinyspy@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "tinyspy@npm:0.3.0"
+  checksum: 8776bc6b29d190195c12a0769f8e9f0ae7756ff4a8de070b181a5962fc17fdffb1b95043501f7970cea007d4ddf41559c5b376576c8d244ccf35d04a49e664fb
   languageName: node
   linkType: hard
 
@@ -11072,7 +11072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.7.13, vite@npm:^2.8.0":
+"vite@npm:^2.8.0":
   version: 2.8.1
   resolution: "vite@npm:2.8.1"
   dependencies:
@@ -11101,17 +11101,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.3.5":
-  version: 0.3.5
-  resolution: "vitest@npm:0.3.5"
+"vite@npm:^2.8.2":
+  version: 2.8.4
+  resolution: "vite@npm:2.8.4"
+  dependencies:
+    esbuild: ^0.14.14
+    fsevents: ~2.3.2
+    postcss: ^8.4.6
+    resolve: ^1.22.0
+    rollup: ^2.59.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 0531ea17d354c35026c87e732d28c777492cc5165c4abdaa507c4894535ecbbfcf447fa3f270bbb160cd7cba8ad319cc86a221be18b2ccd40d8be139f9d7381d
+  languageName: node
+  linkType: hard
+
+"vitest@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "vitest@npm:0.4.1"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
     chai: ^4.3.6
     local-pkg: ^0.4.1
-    tinypool: ^0.1.1
-    tinyspy: ^0.2.10
-    vite: ^2.7.13
+    tinypool: ^0.1.2
+    tinyspy: ^0.3.0
+    vite: ^2.8.2
   peerDependencies:
     "@vitest/ui": "*"
     c8: "*"
@@ -11128,7 +11157,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: c47bfbcbae9a666bb1fcd2a57b02395e35896a25882ec46e3f184ec8463e878879199d2349bd296b84c7c20f79ee4e3c48d6813961a692fc97e3063b95990337
+  checksum: f350464cd674612151ea6e63fd37401156ff9d3fafd3f663595beb1dbe19658fb1f7f345253250f3a9c5dff7febf8fc3284f94d46ed167f37141bd609d424e05
   languageName: node
   linkType: hard
 

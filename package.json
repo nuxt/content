@@ -101,6 +101,6 @@
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5",
-    "vitest": "^0.3.5"
+    "vitest": "^0.4.1"
   }
 }
