@@ -108,13 +108,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
     nuxt.options.privateRuntimeConfig.content = {}
 
-    // Add module server runtime to Nitro inlines
-    nuxt.options.nitro = defu(nuxt.options.nitro, {
-      externals: {
-        inline: [resolve('./runtime/server')]
-      }
-    })
-
     // Add Vite configurations
     if (nuxt.options.vite !== false) {
       nuxt.options.vite = defu(
@@ -139,6 +132,11 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugin'))
 
     nuxt.hook('nitro:context', (ctx) => {
+      // Add module runtime to Nitro inlines
+      ctx.externals = defu(ctx.externals, {
+        inline: [resolve('./runtime')]
+      })
+
       ctx.alias['#content-plugins'] = nuxt.options.alias['#content-plugins']
       ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
 
