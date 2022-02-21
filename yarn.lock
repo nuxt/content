@@ -618,6 +618,7 @@ __metadata:
     remark-rehype: ^10.1.0
     remark-squeeze-paragraphs: ^5.0.1
     scule: ^0.2.1
+    shiki-es: ^0.1.2
     start-server-and-test: ^1.14.0
     stringify-entities: ^4.0.2
     ts-node: ^10.5.0
@@ -9736,6 +9737,13 @@ __metadata:
   version: 3.0.0
   resolution: "shebang-regex@npm:3.0.0"
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
+  languageName: node
+  linkType: hard
+
+"shiki-es@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "shiki-es@npm:0.1.2"
+  checksum: 3436111ff4e5eed864fb51e660fc95e822768d005add78cb9d47c66d52457a39552763767f45e7c927870be2d92fec8f86f27f619fed282ce4c65b91e71834e5
   languageName: node
   linkType: hard
 

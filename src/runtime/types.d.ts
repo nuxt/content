@@ -193,3 +193,14 @@ export interface NavItem {
   partial?: boolean
   children?: NavItem[]
 }
+
+// Highlight
+export interface HighlightParams {
+  code: string
+  lang: string
+}
+
+export interface HighlightThemedToken {
+  content: string
+  color?: string
+}

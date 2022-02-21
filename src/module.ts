@@ -121,7 +121,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Add server routes
-    for (const api of ['list', 'get', 'query']) {
+    for (const api of ['list', 'get', 'query', 'highlight']) {
       addServerMiddleware({
         route: `/api/${options.base}/${api}`,
         handle: resolveRuntimeModule(`./server/api/${api}`)
@@ -167,6 +167,10 @@ export default defineNuxtModule<ModuleOptions>({
         {
           path: resolveRuntimeModule('./composables/query'),
           names: ['useContentQuery']
+        },
+        {
+          path: resolveRuntimeModule('./composables/highlight'),
+          names: ['useContentHighlight']
         }
       ]
       for (const { path, names } of files) {

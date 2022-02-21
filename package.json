@@ -66,6 +66,7 @@
     "remark-rehype": "^10.1.0",
     "remark-squeeze-paragraphs": "^5.0.1",
     "scule": "^0.2.1",
+    "shiki-es": "^0.1.2",
     "stringify-entities": "^4.0.2",
     "ufo": "^0.7.10",
     "unctx": "^1.0.2",

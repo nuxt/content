@@ -41,7 +41,7 @@ Render a content usnig its uniuqe ID
 
 Render a markdown content
 
-```Vue
+```vue
 <script setup lang="ts">
 const content = getContent('content:index.md')
 </script>
@@ -55,7 +55,7 @@ const content = getContent('content:index.md')
 
 Render a YAML content
 
-```Vue
+```vue
 <script setup lang="ts">
 const content = getContent('content:index.yml')
 </script>
@@ -134,7 +134,7 @@ Path-meta is a built-in transformer that extract multiple meta informations from
 
 **@nuxt/content** use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
 
-```any
+```
 1.hello.md
 2.index.md
 3.group/1.index.md
