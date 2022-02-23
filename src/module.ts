@@ -154,6 +154,10 @@ export default defineNuxtModule<ModuleOptions>({
         {
           path: resolveRuntimeModule('./composables/highlight'),
           names: ['useContentHighlight']
+        },
+        {
+          path: resolveRuntimeModule('./composables/markdown'),
+          names: ['useUnwrap']
         }
       ]
       for (const { path, names } of files) {

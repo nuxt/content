@@ -1,10 +1,9 @@
 import { MarkdownRoot, MarkdownNode, Toc, TocLink } from '../types'
-import { expandTags } from './utils/node'
 import { flattenNode, flattenNodeText } from './utils/ast'
 
 const TOC_TAGS = ['h2', 'h3', 'h4', 'h5', 'h6']
 
-const TOC_TAGS_DEPTH = expandTags(['h2', 'h3', 'h4']).reduce((tags: any, tag: string) => {
+const TOC_TAGS_DEPTH = ['h2', 'h3', 'h4'].reduce((tags: any, tag: string) => {
   tags[tag] = Number(tag.charAt(tag.length - 1))
   return tags
 }, {})
@@ -48,7 +47,7 @@ function nestHeaders (headers: TocLink[]): TocLink[] {
 
 export function generateFlatToc (body: MarkdownRoot, options: Toc): Toc {
   const { searchDepth, depth, title = '' } = options
-  const tags = expandTags(getTocTags(depth))
+  const tags = getTocTags(depth)
 
   const headers = flattenNode(body, searchDepth).filter((node: MarkdownNode) => tags.includes(node.tag || ''))
 

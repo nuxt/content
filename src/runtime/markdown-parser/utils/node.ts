@@ -1,19 +1,10 @@
 import type { VNode } from 'vue'
-import { getContext } from 'unctx'
 import { MarkdownNode } from '../../types'
-
-const ctx = getContext<Record<string, string>>('mdc_tags')
-ctx.set({}, true)
-export const useTagsMap = () => ctx.use()!
-export const setTagsMap = (map: Record<string, string>) => ctx.set(map, true)
-
-export const expandTags = (_tags: string[], map: Record<string, string> = useTagsMap()): string[] =>
-  _tags.map(t => map[t] || t)
 
 /**
  * List of text nodes
  */
-export const TEXT_TAGS = expandTags(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])
+export const TEXT_TAGS = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li']
 
 /**
  * Check virtual node's tag
@@ -21,21 +12,32 @@ export const TEXT_TAGS = expandTags(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'l
  * @param tag tag name
  * @returns `true` it the virtual node match the tag
  */
-export function isTag (vnode: any, tag: string): boolean {
-  // Vue3 VNode
+export function isTag (vnode: any, tag: string | symbol): boolean {
+  // Vue 3 uses `type` instead of `tag`
   if (vnode.type === tag) {
     return true
   }
+
+  // Vue3 VNode (tag is provided by ContentRendererMarkdown)
+  if (typeof vnode.type === 'object' && vnode.type.tag === tag) {
+    return true
+  }
+  // Classic VNode
   if (vnode.tag === tag) {
     return true
   }
+  // Component Options
   if (vnode.componentOptions && vnode.componentOptions.tag === tag) {
     return true
   }
-  if (vnode.asyncMeta && vnode.asyncMeta.tag === tag) {
-    return true
-  }
   return false
+}
+
+/**
+ * Check if virtual node is text node
+ */
+export function isText (vnode: VNode | MarkdownNode): boolean {
+  return isTag(vnode, 'text') || typeof vnode.children === 'string'
 }
 
 /**
@@ -44,15 +46,12 @@ export function isTag (vnode: any, tag: string): boolean {
  * @returns Children of given node
  */
 export function nodeChildren (node: VNode | MarkdownNode) {
-  if (node.children) {
+  if (Array.isArray(node.children) || typeof node.children === 'string') {
     return node.children
   }
-  // TODO: Fix for Vue 3
-  // if ((node as VNode).componentOptions && (node as VNode).componentOptions!.children) {
-  //   return (node as VNode).componentOptions!.children
-  // }
-  if ((node as any).asyncMeta && (node as any).asyncMeta.children) {
-    return (node as any).asyncMeta.children
+  // Vue3 VNode children
+  if (typeof node.children.default === 'function') {
+    return node.children.default()
   }
   return []
 }
@@ -70,16 +69,9 @@ export function nodeTextContent (node: VNode | MarkdownNode): string {
     return node.map(nodeTextContent).join('')
   }
 
-  // Check for text markdown node
-  if ((node as MarkdownNode).type === 'text') {
-    return (node as MarkdownNode).value!
+  if (isText(node)) {
+    return node.children as string || (node as MarkdownNode).value
   }
-
-  // TODO: Fix for Vue 3
-  // Check for text vnode
-  // if ((node as VNode).text) {
-  //   return (node as VNode).text!
-  // }
 
   // Walk through node children
   const children = nodeChildren(node)
@@ -101,11 +93,11 @@ export function unwrap (vnode: any, tags = ['p']): any | any[] {
   if (Array.isArray(vnode)) {
     return vnode.flatMap(node => unwrap(node, tags))
   }
-  tags = expandTags(tags)
+
   let result = vnode
 
-  // unwrapp children
-  if (tags.some(tag => isTag(vnode, tag))) {
+  // unwrap children
+  if (tags.some(tag => tag === '*' || isTag(vnode, tag))) {
     result = nodeChildren(vnode) || vnode
     if (TEXT_TAGS.some(tag => isTag(vnode, tag))) {
       result = [result]
@@ -116,12 +108,11 @@ export function unwrap (vnode: any, tags = ['p']): any | any[] {
 }
 
 export function flatUnwrap (vnodes: any[] | any, tags = ['p']) {
-  return (
-    (Array.isArray(vnodes) ? vnodes : [vnodes])
-      .flatMap(vnode => unwrap(vnode, tags))
-      // second step unwrap for inner tags like li
-      .flatMap(vnode => unwrap(vnode, tags))
-      // trim new lines
-      .filter(vnode => !vnode.text || !!vnode.text.trim())
-  )
+  if (!tags.length) {
+    return vnodes
+  }
+
+  return (Array.isArray(vnodes) ? vnodes : [vnodes])
+    .flatMap(vnode => flatUnwrap(unwrap(vnode, [tags[0]]), tags.slice(1)))
+    .filter(vnode => !(isText(vnode) && nodeTextContent(vnode).trim() === ''))
 }

@@ -1,11 +1,12 @@
 <script lang="ts">
+import { useRuntimeConfig } from '#app'
 import { h, resolveComponent, Text, defineComponent } from 'vue'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
-
 import type { VNode, ConcreteComponent } from 'vue'
-import type { MarkdownNode } from '../types'
+
+import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
 type ContentVNode = VNode | string
@@ -116,6 +117,8 @@ function processNonDefaultSlots (node: MarkdownNode, h: CreateElement, documentM
 }
 
 function processNode (node: MarkdownNode, h: CreateElement, documentMeta: ContentMeta): ContentVNode {
+  const originalTag = node.tag
+  const renderTag: string = !node.props?.ignoreMap && documentMeta.tags[node.tag] ? documentMeta.tags[node.tag] : node.tag
   /**
    * Render Text node
    */
@@ -137,11 +140,11 @@ function processNode (node: MarkdownNode, h: CreateElement, documentMeta: Conten
     const nodes: MarkdownNode[] = isDefaultTemplate(child) ? child.content : [child]
     return (nodes || []).map((node: MarkdownNode) => processNode(node, h, documentMeta) as ContentVNode)
   })
-  let component: string | ConcreteComponent | undefined = node.tag
+  let component: string | ConcreteComponent | undefined = renderTag
   if (isVueComponent(component as string)) {
     component = resolveComponent(pascalCase(component), false)
     if (typeof component === 'object') {
-      component.tag = node.tag
+      component.tag = originalTag
     }
   }
   return h(component as any, data, {
@@ -207,6 +210,12 @@ export default defineComponent({
       default: 'div'
     }
   },
+  setup () {
+    const { content: { tags } } = useRuntimeConfig()
+    return {
+      tags
+    }
+  },
   render () {
     const { document, ...contentProps } = this.$props
     // No content to render
@@ -214,8 +223,15 @@ export default defineComponent({
       return
     }
     // Get body from document
-    const body = ((document as any).body || document) as MarkdownNode
-    const meta: ContentMeta = (document as any).meta || {}
+    const body = (document.body || document) as MarkdownNode
+    const meta: ParsedContentMeta = {
+      ...document.meta || {},
+      tags: {
+        ...this.tags || {},
+        ...document.meta?.tags || {}
+      }
+    }
+
     let component: string | ConcreteComponent = meta.component || this.$props.tag
     if (typeof meta.component === 'object') {
       component = meta.component.name

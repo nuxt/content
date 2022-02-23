@@ -8,7 +8,6 @@ import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
 import { MarkdownOptions, Toc } from '../types'
-import { setTagsMap } from './utils'
 import { processHeading } from './meta'
 import { parseFrontMatter } from './frontmatter'
 import { generateToc } from './toc'
@@ -37,7 +36,6 @@ export const useDefaultOptions = (): MarkdownOptions => ({
 
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {
   const options = defu(userOptions, useDefaultOptions()) as MarkdownOptions
-  setTagsMap(options.tags)
 
   const { content, data, ...rest } = await parseFrontMatter(file)
 
@@ -61,7 +59,7 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
   /**
    * Process content headeings
    */
-  const heading = processHeading(body, options)
+  const heading = processHeading(body)
 
   return {
     body: {

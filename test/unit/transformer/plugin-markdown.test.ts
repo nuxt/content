@@ -10,7 +10,7 @@ describe('Path Markdown Plugin', () => {
 
     expect(parsed).toHaveProperty('body')
     expect(parsed.body).toHaveProperty('type', 'root')
-    expect(parsed.body).toHaveProperty('children[0].tag', 'prose-h1')
+    expect(parsed.body).toHaveProperty('children[0].tag', 'h1')
     expect(parsed.body).toHaveProperty('children[0].children[0].value', 'Index')
   })
 })

@@ -14,8 +14,7 @@ type Node = UnistNode & {
 /**
  * JSON compiler
  */
-export default function (this: any, options: MarkdownOptions) {
-  const tags = options?.tags || {}
+export default function (this: any, _options: MarkdownOptions) {
   /**
    * Parses nodes for JSON structure. Attempts to drop
    * unwanted properties.
@@ -67,10 +66,6 @@ export default function (this: any, options: MarkdownOptions) {
           properties.to = properties.href
           delete properties.href
         }
-      }
-
-      if (tags[node.tagName as string] && !(node.properties as any)?.ignoreMap) {
-        node.tagName = tags[node.tagName as string]
       }
 
       const filtered: MarkdownNode = {
