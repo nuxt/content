@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from 'nuxt3'
-import contentModule from '..' // eslint-disable-line
+import contentModule from '../src/module' // eslint-disable-line
 
 export default defineNuxtConfig({
   rootDir: __dirname,

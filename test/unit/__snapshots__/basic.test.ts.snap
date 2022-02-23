@@ -6,6 +6,13 @@ exports[`Basic tests > Get cats navigation > basic-navigation-cats 1`] = `
     "children": [
       {
         "draft": false,
+        "id": "content:cats:index.md",
+        "partial": false,
+        "slug": "/cats",
+        "title": "Cats list",
+      },
+      {
+        "draft": false,
         "id": "content:cats:persian.md",
         "partial": false,
         "slug": "/cats/persian",
@@ -19,9 +26,7 @@ exports[`Basic tests > Get cats navigation > basic-navigation-cats 1`] = `
         "title": "Ragdoll",
       },
     ],
-    "draft": false,
     "id": "content:cats:index.md",
-    "partial": false,
     "slug": "/cats",
     "title": "Cats list",
   },
@@ -84,9 +89,16 @@ exports[`Basic tests > Get contents index > basic-index-body 1`] = `
 exports[`Basic tests > Get navigation > basic-navigation 1`] = `
 [
   {
-    "draft": false,
+    "children": [
+      {
+        "draft": false,
+        "id": "content:index.md",
+        "partial": false,
+        "slug": "/",
+        "title": "Index",
+      },
+    ],
     "id": "content:index.md",
-    "partial": false,
     "slug": "/",
     "title": "Index",
   },
@@ -114,6 +126,13 @@ exports[`Basic tests > Get navigation > basic-navigation 1`] = `
     "children": [
       {
         "draft": false,
+        "id": "content:cats:index.md",
+        "partial": false,
+        "slug": "/cats",
+        "title": "Cats list",
+      },
+      {
+        "draft": false,
         "id": "content:cats:persian.md",
         "partial": false,
         "slug": "/cats/persian",
@@ -127,9 +146,7 @@ exports[`Basic tests > Get navigation > basic-navigation 1`] = `
         "title": "Ragdoll",
       },
     ],
-    "draft": false,
     "id": "content:cats:index.md",
-    "partial": false,
     "slug": "/cats",
     "title": "Cats list",
   },
