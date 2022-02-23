@@ -22,11 +22,10 @@ import {
   useContentMounts
 } from './utils'
 
-interface ContentContext {
-  transformers: Array<string>
-  queries: [],
-  sources: string[],
-  ignores: string[],
+export interface ModuleOptions {
+  base: string
+  sources: Array<string>
+  ignores: Array<string>
   markdown: {
     mdc?: boolean
     toc?: {
@@ -38,25 +37,13 @@ interface ContentContext {
     rehypePlugins?: Array<string | [string, any]>
   }
   yaml: false | Record<string, any>
-  navigation: boolean;
+  navigation: boolean
 }
 
-export interface ModuleOptions {
-  base: string;
-  sources: Array<string>;
-  ignores: Array<string>;
-  markdown: {
-    mdc?: boolean
-    toc?: {
-      depth?: number
-      searchDepth?: number
-    },
-    tags?: Record<string, string>
-    remarkPlugins?: Array<string | [string, any]>
-    rehypePlugins?: Array<string | [string, any]>
-  }
-  yaml: false | Record<string, any>;
-  navigation: boolean;
+interface ContentContext extends ModuleOptions {
+  base: Readonly<string>
+  transformers: Array<string>
+  queries: Array<string>
 }
 
 export interface ModuleHooks {
@@ -95,11 +82,7 @@ export default defineNuxtModule<ModuleOptions>({
         resolveRuntimeModule('./server/transformer/plugin-path-meta')
       ],
       queries: [],
-      sources: options.sources,
-      ignores: options.ignores,
-      markdown: options.markdown,
-      yaml: options.yaml,
-      navigation: options.navigation
+      ...options
     }
 
     // Initialize runtime config
@@ -190,7 +173,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({
-        path: resolve(nuxt.options.buildDir, 'content-query.d.ts')
+        path: resolve(nuxt.options.buildDir, typeTemplate.filename)
       })
     })
 

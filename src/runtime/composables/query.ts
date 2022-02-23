@@ -1,6 +1,8 @@
 import { createQuery } from '../query/query'
 import type { QueryBuilderParams, ParsedContentMeta } from '../types'
 import { withContentBase } from './content'
+// @ts-ignore
+import { plugins } from '#query-plugins'
 
 /**
  * Fetch query result
@@ -22,5 +24,5 @@ export const useContentQuery = <T = ParsedContentMeta>(
     }
   }
 
-  return createQuery<T>(queryFetch, body)
+  return createQuery<T>(queryFetch, body, plugins)
 }

@@ -43,15 +43,12 @@ export const createQuery = <T = ParsedContentMeta>(
   }
 
   // Register plugins
-  for (const plugin of plugins || []) {
-    Object.assign(
-      query,
-      Object.entries(plugin.queries || {}).reduce((acc, [key, fn]) => {
-        acc[key] = (...args: any[]) => fn(params, query as any)(...args) || query
-        return acc
-      }, {} as any)
-    )
-  }
+  ;(plugins || []).filter(p => p.queries).forEach((p) => {
+    const queries = p.queries(params, query) || {}
+    Object.entries(queries).forEach(([key, fn]) => {
+      query[key] = (...args) => fn(...args) || query
+    })
+  })
 
   return query
 }

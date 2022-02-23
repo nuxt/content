@@ -171,15 +171,10 @@ export type DatabaseFetcher<T> = (params: QueryBuilderParams) => Promise<Array<T
 
 export type QueryMatchOperator = (item: any, condition: any) => boolean
 
-export type QueryChainAction<T = ParsedContent> = (
-  param: QueryBuilderParams,
-  query: QueryBuilder<T>
-) => (...args: any[]) => QueryBuilder<T> | void
-
 export interface QueryPlugin {
   name: string
   operators?: Record<string, QueryMatchOperator>
-  queries?: Record<string, QueryChainAction>
+  queries?: (param: QueryBuilderParams, query: QueryBuilder<T>) => Record<string, (...args: any[]) => any> | void
   execute?: QueryPipe
 }
 
