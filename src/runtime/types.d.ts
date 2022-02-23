@@ -118,51 +118,51 @@ export interface QueryBuilderParams {
   [key: string]: any
 }
 
-export interface QueryBuilder<T = ParsedContent> {
+export interface QueryBuilder {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder<T>
+  only(keys: string | string[]): QueryBuilder
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder<T>
+  without(keys: string | string[]): QueryBuilder
 
   /**
    * Sort results
    */
-  sortBy(field: string, direction: 'asc' | 'desc'): QueryBuilder<T>
+  sortBy(field: string, direction: 'asc' | 'desc'): QueryBuilder
 
   /**
    * Filter results
    */
-  where(query: any): QueryBuilder<T>
+  where(query: any): QueryBuilder
 
   /**
    * Limit number of results
    */
-  limit(count: number): QueryBuilder<T>
+  limit(count: number): QueryBuilder
 
   /**
    * Skip number of results
    */
-  skip(count: number): QueryBuilder<T>
+  skip(count: number): QueryBuilder
 
   /**
    * Fetch list of contents
    */
-  find(): Promise<Array<T>>
+  find(): Promise<Array<ParsedContentMeta>>
 
   /**
    * Fetch first matched content
    */
-  findOne(): Promise<T>
+  findOne(): Promise<ParsedContentMeta>
 
   /**
    * Fetch sorround contents
    */
-  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
+  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<ParsedContentMeta>>
 }
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void
@@ -174,7 +174,7 @@ export type QueryMatchOperator = (item: any, condition: any) => boolean
 export interface QueryPlugin {
   name: string
   operators?: Record<string, QueryMatchOperator>
-  queries?: (param: QueryBuilderParams, query: QueryBuilder<T>) => Record<string, (...args: any[]) => any> | void
+  queries?: (param: QueryBuilderParams, query: QueryBuilder) => Record<string, (...args: any[]) => any> | void
   execute?: QueryPipe
 }
 

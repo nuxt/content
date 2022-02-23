@@ -1,11 +1,11 @@
 import type { DatabaseFetcher, ParsedContentMeta, QueryBuilder, QueryBuilderParams, QueryPlugin } from '../types'
 import { ensureArray } from './match/utils'
 
-export const createQuery = <T = ParsedContentMeta>(
-  fetcher: DatabaseFetcher<T>,
+export const createQuery = (
+  fetcher: DatabaseFetcher<ParsedContentMeta>,
   queryParams?: Partial<QueryBuilderParams>,
   plugins?: Array<QueryPlugin>
-): QueryBuilder<T> => {
+): QueryBuilder => {
   const params: QueryBuilderParams = {
     slug: '',
     first: false,
@@ -29,7 +29,7 @@ export const createQuery = <T = ParsedContentMeta>(
     }
   }
 
-  const query: QueryBuilder<T> = {
+  const query: QueryBuilder = {
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
     where: $set('where'),
@@ -37,9 +37,9 @@ export const createQuery = <T = ParsedContentMeta>(
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
     // find
-    findOne: () => fetcher({ ...params, first: true }) as Promise<T>,
-    find: () => fetcher(params) as Promise<Array<T>>,
-    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<T>>
+    findOne: () => fetcher({ ...params, first: true }) as Promise<ParsedContentMeta>,
+    find: () => fetcher(params) as Promise<Array<ParsedContentMeta>>,
+    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<ParsedContentMeta>>
   }
 
   // Register plugins
