@@ -1,10 +1,18 @@
-import { defineHandle, assertMethod } from 'h3'
+import { defineHandle, assertMethod, sendError, createError } from 'h3'
+import { withoutLeadingSlash } from 'ufo'
 import { getContent } from '../storage'
 
-export default defineHandle((req) => {
+export default defineHandle((req, res) => {
   assertMethod(req, 'GET')
 
-  const key = (req.url || '/').split('/')[1] || ''
+  const id = decodeURIComponent(withoutLeadingSlash(req.url || ''))
 
-  return getContent(key)
+  if (!id) {
+    return sendError(res, createError({
+      statusCode: 400,
+      statusMessage: 'Bad Request'
+    }))
+  }
+
+  return getContent(id)
 })

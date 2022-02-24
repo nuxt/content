@@ -33,7 +33,7 @@ export const useContentList = () => {
 /**
  * Fetch a content by id
  */
-export const getContentDocument = (id: string) => $fetch<ParsedContent>(withContentBase(`/get/${id}`))
+export const getContentDocument = (id: string) => $fetch<ParsedContent>(withContentBase(`get/${encodeURIComponent(id)}`))
 
 /**
  * Fetch a content by id (Reactive version)

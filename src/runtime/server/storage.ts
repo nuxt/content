@@ -44,6 +44,11 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   }
 
   const body = await contentStorage.getItem(id)
+
+  if (body === null) {
+    return { meta: { id }, body: null }
+  }
+
   const meta = await contentStorage.getMeta(id)
 
   let parsedContent = await parse(id, body as string)

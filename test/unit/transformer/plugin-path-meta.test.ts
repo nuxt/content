@@ -156,4 +156,20 @@ describe('Path Meta Plugin', () => {
       position: '000100020003'
     })
   })
+
+  test('Handle special chars in file name', () => {
+    const transformed = plugin.transform!({
+      meta: { id: 'content:1.one:file?param=value#hash.md' } as ParsedContentMeta,
+      body: '# Index'
+    }) as ParsedContent
+
+    matchMeta(transformed, {
+      title: 'File?param=value#hash',
+      id: transformed.meta.id,
+      draft: false,
+      partial: false,
+      slug: '/one/fileparamvaluehash',
+      position: '000199990000'
+    })
+  })
 })

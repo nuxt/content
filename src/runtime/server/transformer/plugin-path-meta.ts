@@ -1,4 +1,5 @@
 import { pascalCase } from 'scule'
+import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
 import { defineContentPlugin } from '../..'
 
@@ -45,7 +46,7 @@ const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => par
  * @returns generated slug
  */
 const generateSlug = (path: string): string =>
-  withLeadingSlash(withoutTrailingSlash(path.split('/').map(refineUrlPart).join('/')))
+  withLeadingSlash(withoutTrailingSlash(path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')))
 
 /**
  * generate title from file slug
