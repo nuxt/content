@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, getCurrentInstance, Slot } from 'vue'
+import { defineComponent, getCurrentInstance, useSlots, Slot } from 'vue'
 import { useUnwrap } from '#imports'
 
 /**
@@ -28,6 +28,7 @@ export default defineComponent({
   },
   setup (props) {
     const { parent } = getCurrentInstance()
+    const { between } = useSlots()
     const { flatUnwrap } = useUnwrap()
 
     const slot = typeof props.use === 'string' ? parent?.slots[props.use] || parent?.parent?.slots[props.use] : props.use as Slot
@@ -38,7 +39,12 @@ export default defineComponent({
 
     if (props.unwrap) {
       const tags = props.unwrap === true ? ['*'] : props.unwrap.split(' ')
-      return () => flatUnwrap(slot(), tags)
+      return () => {
+        const unwrapped = flatUnwrap(slot(), tags)
+        return between
+          ? unwrapped.flatMap((vnode, index) => index === 0 ? [vnode] : [between(), vnode])
+          : unwrapped
+      }
     }
 
     return () => slot()

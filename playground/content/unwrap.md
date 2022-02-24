@@ -9,3 +9,9 @@
 - B
 - C
 ::
+
+::markdown-between
+- A
+- B
+- C
+::
