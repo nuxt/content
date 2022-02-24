@@ -8,10 +8,9 @@ import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
 import { MarkdownOptions, Toc } from '../types'
-import { processHeading } from './meta'
 import { parseFrontMatter } from './frontmatter'
 import { generateToc } from './toc'
-import { generateBody } from './content'
+import { contentHeading, generateBody } from './content'
 
 export const useDefaultOptions = (): MarkdownOptions => ({
   mdc: true,
@@ -57,9 +56,9 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
   }
 
   /**
-   * Process content headeings
+   * Process content headings
    */
-  const heading = processHeading(body)
+  const heading = contentHeading(body)
 
   return {
     body: {

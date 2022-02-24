@@ -7,6 +7,7 @@ import remarkMDC from './remark-mdc'
 import handlers from './handler'
 import compiler from './compiler'
 import { flattenNodeText } from './utils/ast'
+import { nodeTextContent } from './utils/node'
 
 const usePlugins = (plugins: any[], stream: Processor) =>
   plugins.reduce((stream, plugin) => stream.use(plugin[0] || plugin, plugin[1] || undefined), stream)
@@ -59,4 +60,41 @@ export function generateBody (content: string, options: MarkdownOptions & { data
       }
     )
   })
+}
+
+export function contentHeading (body: MarkdownRoot) {
+  let title = ''
+  let description = ''
+  const children = body.children
+    // top level `text` can be ignored
+    .filter(node => node.type !== 'text')
+
+  if (children.length && children[0].tag === 'h1') {
+    /**
+     * Remove node
+     */
+    const node = children.shift()!
+
+    /**
+     * Generate title
+     */
+    title = nodeTextContent(node)
+  }
+
+  if (children.length && children[0].tag === 'p') {
+    /**
+     * Remove node
+     */
+    const node = children.shift()!
+
+    /**
+     * Generate description
+     */
+    description = nodeTextContent(node)
+  }
+
+  return {
+    title,
+    description
+  }
 }

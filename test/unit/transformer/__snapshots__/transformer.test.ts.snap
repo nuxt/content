@@ -14,7 +14,6 @@ exports[`Transformer > Parse > transformer-index-parsed 1`] = `
         ],
         "fmAttributes": undefined,
         "props": {
-          "class": "d-heading-title",
           "id": "index",
         },
         "tag": "h1",

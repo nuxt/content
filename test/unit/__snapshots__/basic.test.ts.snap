@@ -69,7 +69,6 @@ exports[`Basic tests > Get contents index > basic-index-body 1`] = `
         },
       ],
       "props": {
-        "class": "d-heading-title",
         "id": "index",
       },
       "tag": "h1",
