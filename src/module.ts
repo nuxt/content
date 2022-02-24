@@ -188,13 +188,9 @@ export default defineNuxtModule<ModuleOptions>({
         handle: resolveRuntimeModule('./server/api/navigation')
       })
 
-      nuxt.hook('autoImports:extend', (imports) => {
-        imports.push({
-          from: resolveRuntimeModule('./composables/navigation'),
-          name: 'useContentNavigation',
-          as: 'useContentNavigation'
-        })
-      })
+      contentContext.queries.push(
+        resolveRuntimeModule('./query/plugin-navigation')
+      )
     }
 
     // @ts-ignore

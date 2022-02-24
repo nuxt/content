@@ -13,5 +13,6 @@
 </template>
 
 <script setup lang="ts">
-const navigation = await useContentNavigation()
+const { findNavigation } = useContentQuery()
+const { data: navigation } = await useAsyncData('navigation', findNavigation)
 </script>

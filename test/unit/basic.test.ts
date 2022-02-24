@@ -47,8 +47,9 @@ describe('Basic tests', () => {
 
   test('Get cats navigation', async () => {
     const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
-      params: {
-        prefix: '/cats'
+      method: 'POST',
+      body: {
+        slug: '/cats'
       }
     })
 
@@ -57,8 +58,9 @@ describe('Basic tests', () => {
 
   test('Get cats navigation', async () => {
     const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
-      params: {
-        prefix: '/dogs'
+      method: 'POST',
+      body: {
+        slug: '/dogs'
       }
     })
 

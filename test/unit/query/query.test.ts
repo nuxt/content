@@ -102,7 +102,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround with slug (default)', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
     const result = await createQuery(fetcher)
       .findSurround('/b')
 
@@ -111,7 +111,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround more that 1 item with slug', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
     const result = await createQuery(fetcher)
       .findSurround('/b', { before: 2, after: 1 })
 
@@ -122,7 +122,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround with object', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
     const result = await createQuery(fetcher)
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
