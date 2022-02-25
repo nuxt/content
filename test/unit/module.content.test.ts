@@ -26,7 +26,7 @@ describe('Content sources', () => {
   test('Custom driver', () => {
     const mounts = useContentMounts(nuxtDummy, [
       {
-        base: 'repo1',
+        name: 'repo1',
         driver: 'http',
         driverOptions: {
           base: 'https://cdn.com'
@@ -47,7 +47,7 @@ describe('Content sources', () => {
       '/repo1/docs',
       'repo2/docs',
       {
-        base: 'repo1',
+        name: 'repo1',
         driver: 'http',
         driverOptions: {
           base: 'https://cdn.com'

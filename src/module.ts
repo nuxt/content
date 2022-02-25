@@ -22,6 +22,13 @@ import {
   useContentMounts
 } from './utils'
 
+export type MountOptions = {
+  name: string
+  prefix?: string
+  driver: 'fs' | 'http' | string
+  driverOptions?: Record<string, any>
+}
+
 export interface ModuleOptions {
   base: string
   sources: Array<string>

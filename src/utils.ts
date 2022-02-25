@@ -2,15 +2,11 @@ import type { IncomingMessage } from 'http'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
+import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
-import type { ModuleOptions } from './module'
-
-type MountOptions = {
-  driver: 'fs' | 'http' | 'memory' | string
-  driverOptions?: Record<string, any>
-}
+import type { ModuleOptions, MountOptions } from './module'
 
 export const logger = consola.withScope('content')
 
@@ -51,6 +47,10 @@ export function getMountDriver (mount: MountOptions) {
     return fsDriver(mount.driverOptions || {})
   }
 
+  if (mount.driver === 'http') {
+    return httpDriver(mount.driverOptions || {})
+  }
+
   try {
     return require(mount.driver).default(mount.driverOptions || {})
   } catch (e) {
@@ -62,13 +62,15 @@ export function getMountDriver (mount: MountOptions) {
 /**
  * Generate mounts for content storages
  */
-export function useContentMounts (nuxt: Nuxt, storages: Array<string | (MountOptions & { base: string })>) {
-  const key = (path: string) => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}`
+export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions>) {
+  const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
   return storages.reduce((mounts, storage) => {
     if (typeof storage === 'string') {
       mounts[key(storage)] = {
+        name: storage,
         driver: 'fs',
+        prefix: '',
         driverOptions: {
           base: resolve(nuxt.options.srcDir, storage)
         }
@@ -76,7 +78,8 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | (MountOpt
     }
 
     if (typeof storage === 'object') {
-      mounts[key(storage.base)] = {
+      mounts[key(storage.name, storage.prefix)] = {
+        name: storage.name,
         driver: storage.driver,
         driverOptions: storage.driverOptions
       }

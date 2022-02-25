@@ -149,5 +149,19 @@ exports[`Basic tests > Get navigation > basic-navigation 1`] = `
     "slug": "/cats",
     "title": "Cats list",
   },
+  {
+    "children": [
+      {
+        "draft": false,
+        "id": "fa-ir:fa:index.md",
+        "partial": false,
+        "slug": "/fa",
+        "title": "سلام",
+      },
+    ],
+    "id": "fa-ir:fa:index.md",
+    "slug": "/fa",
+    "title": "سلام",
+  },
 ]
 `;

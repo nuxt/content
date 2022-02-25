@@ -20,6 +20,8 @@ describe('Basic tests', () => {
     // Ignored files should be listed
     assert(list.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
     assert(list.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
+
+    assert(list.includes('fa-ir:fa:index.md') === true, 'Files with `fa-ir` prefix should be listed')
   })
 
   test('Get contents index', async () => {

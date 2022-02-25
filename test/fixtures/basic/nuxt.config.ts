@@ -16,5 +16,17 @@ export default defineNuxtConfig({
       ]
     }
   },
-  buildModules: [contentModule]
+  buildModules: [contentModule],
+  content: {
+    sources: [
+      {
+        name: 'fa-ir',
+        prefix: '/fa',
+        driver: 'fs',
+        driverOptions: {
+          base: resolve(__dirname, 'content-fa')
+        }
+      }
+    ]
+  }
 })
