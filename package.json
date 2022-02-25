@@ -87,7 +87,7 @@
     "@types/faker": "5.5.9",
     "@types/flat": "^5.0.2",
     "@types/object-hash": "^2.2.1",
-    "@types/ws": "^8.5.0",
+    "@types/ws": "^8.5.1",
     "benchmark": "^2.1.4",
     "c8": "^7.11.0",
     "eslint": "^8.9.0",
