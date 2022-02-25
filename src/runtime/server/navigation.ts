@@ -31,6 +31,12 @@ export function createNav (contents: ParsedContentMeta[]) {
         const indexItem = getNavItem(content)
         navItem.children.push(indexItem)
 
+        // Check for "parent" key on index
+        if (content.parent) {
+          // Check for "title" key on index
+          if (content.parent.title && typeof content.parent.title === 'string') { navItem.title = content.parent.title }
+        }
+
         // Set parent as directory
         delete navItem.draft
         delete navItem.partial
