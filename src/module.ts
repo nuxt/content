@@ -169,9 +169,10 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('components:dirs', (dirs) => {
       dirs.push({
         path: resolve('./runtime/components'),
-        isAsync: false,
+        pathPrefix: false,
         prefix: '',
-        level: 999
+        level: 999,
+        global: true
       })
     })
 
