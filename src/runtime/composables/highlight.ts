@@ -1,4 +1,4 @@
-import { unref, Ref } from 'vue'
+import { unref, watch, Ref } from 'vue'
 import { useState } from '#app'
 import type { HighlightParams, HighlightThemedToken } from '../types'
 import { withContentBase } from './content'
