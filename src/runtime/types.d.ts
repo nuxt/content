@@ -1,3 +1,5 @@
+import type { Theme } from 'shiki-es'
+
 export interface ParsedContentMeta {
   /**
    * Content id
@@ -193,6 +195,7 @@ export interface NavItem {
 export interface HighlightParams {
   code: string
   lang: string
+  theme: Theme
 }
 
 export interface HighlightThemedToken {
