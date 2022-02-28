@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   },
   buildModules: [contentModule],
   content: {
+    locales: ['en', 'fa'],
     sources: [
       {
         name: 'fa-ir',

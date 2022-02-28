@@ -25,6 +25,10 @@ export interface ParsedContentMeta {
    * Content partial status
    */
   partial?: boolean
+  /**
+   * Content locale
+   */
+  locale?: boolean
 
   [key: string]: any
 }

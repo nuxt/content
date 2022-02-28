@@ -91,6 +91,20 @@ exports[`Basic tests > Get navigation > basic-navigation 1`] = `
     "children": [
       {
         "draft": false,
+        "id": "fa-ir:fa:index.md",
+        "partial": false,
+        "slug": "/",
+        "title": "سلام",
+      },
+    ],
+    "id": "fa-ir:fa:index.md",
+    "slug": "/",
+    "title": "سلام",
+  },
+  {
+    "children": [
+      {
+        "draft": false,
         "id": "content:index.md",
         "partial": false,
         "slug": "/",
@@ -148,20 +162,6 @@ exports[`Basic tests > Get navigation > basic-navigation 1`] = `
     "id": "content:cats:index.md",
     "slug": "/cats",
     "title": "Cats list",
-  },
-  {
-    "children": [
-      {
-        "draft": false,
-        "id": "fa-ir:fa:index.md",
-        "partial": false,
-        "slug": "/fa",
-        "title": "سلام",
-      },
-    ],
-    "id": "fa-ir:fa:index.md",
-    "slug": "/fa",
-    "title": "سلام",
   },
 ]
 `;

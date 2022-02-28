@@ -2,28 +2,34 @@ import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
 import { defineContentPlugin } from '../..'
+import { privateConfig } from '#config'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
+
+const withoutExtension = (path: string) => path.replace(/\.[^.]+$/, '')
 
 export default defineContentPlugin({
   name: 'path-meta',
   extentions: ['.*'],
   transform (content) {
-    const parts = content.meta.id.split(/[/:]/)
-    // remove extension
-    parts[parts.length - 1] = parts[parts.length - 1].split('.').slice(0, -1).join('.')
-
-    const filePath = parts
+    const { locales, defaultLocale } = privateConfig.content || {}
+    const parts = withoutExtension(content.meta.id)
+      .split(/[/:]/)
       // First part always represents the mount-point/source
       .slice(1)
-      .join('/')
+
+    // Check first part for locale name
+    const locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
+
+    const filePath = parts.join('/')
 
     Object.assign(content.meta, {
       title: content.meta.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
       slug: generateSlug(filePath),
       position: generatePosition(filePath),
       draft: isDraft(filePath),
-      partial: isPartial(filePath)
+      partial: isPartial(filePath),
+      locale: locale || content.meta?.locale
     })
     return content
   }

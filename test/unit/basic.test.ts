@@ -68,4 +68,27 @@ describe('Basic tests', () => {
 
     expect(list).toMatchSnapshot('basic-navigation-dogs')
   })
+
+  test('Search contents using `locale` helper', async () => {
+    const fa = await ctx.fetch('/locale-fa')
+
+    expect(fa).toContain('fa-ir:fa:index.md')
+    expect(fa).not.toContain('content:index.md')
+
+    const en = await ctx.fetch('/locale-en')
+
+    expect(en).not.toContain('fa-ir:fa:index.md')
+    expect(en).toContain('content:index.md')
+  })
+
+  test('Use default locale for unscoped contents', async () => {
+    const index = await ctx.fetch<any>('/api/_content/get/content:index.md')
+
+    expect(index).toHaveProperty('meta.mtime')
+    expect(index).toMatchObject({
+      meta: {
+        locale: 'en'
+      }
+    })
+  })
 })

@@ -45,6 +45,8 @@ export interface ModuleOptions {
   }
   yaml: false | Record<string, any>
   navigation: boolean
+  locales: Array<string>
+  defaultLocale: string
 }
 
 interface ContentContext extends ModuleOptions {
@@ -71,6 +73,8 @@ export default defineNuxtModule<ModuleOptions>({
     base: '_content',
     sources: ['content'],
     ignores: ['\\.', '-'],
+    locales: [],
+    defaultLocale: undefined,
     markdown: {
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
@@ -203,6 +207,15 @@ export default defineNuxtModule<ModuleOptions>({
 
     // @ts-ignore
     await nuxt.callHook('content:context', contentContext)
+
+    contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
+
+    // Add locale plugin if needed
+    if (contentContext.locales.length > 1) {
+      contentContext.queries.push(
+        resolveRuntimeModule('./query/plugin-locale')
+      )
+    }
 
     contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
 
