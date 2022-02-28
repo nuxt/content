@@ -69,7 +69,7 @@
     "shiki-es": "^0.1.2",
     "slugify": "^1.6.5",
     "stringify-entities": "^4.0.2",
-    "ufo": "^0.7.10",
+    "ufo": "^0.7.11",
     "unctx": "^1.0.2",
     "unified": "^10.1.1",
     "unist-builder": "^3.0.0",
@@ -90,7 +90,7 @@
     "@types/ws": "^8.5.1",
     "benchmark": "^2.1.4",
     "c8": "^7.11.0",
-    "eslint": "^8.9.0",
+    "eslint": "^8.10.0",
     "eslint-plugin-nuxt": "^3.1.0",
     "execa": "^6.1.0",
     "faker": "5.5.3",
@@ -103,6 +103,6 @@
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5",
-    "vitest": "^0.5.5"
+    "vitest": "^0.5.8"
   }
 }
