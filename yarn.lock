@@ -632,7 +632,7 @@ __metadata:
     start-server-and-test: ^1.14.0
     stringify-entities: ^4.0.2
     ts-node: ^10.5.0
-    typescript: ^4.5.5
+    typescript: ^4.6.2
     ufo: ^0.7.11
     unctx: ^1.0.2
     unified: ^10.1.1
@@ -641,7 +641,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.5.8
+    vitest: ^0.5.9
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -10683,6 +10683,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "typescript@npm:4.6.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 8a44ed7e6f6c4cb1ebe8cf236ecda2fb119d84dcf0fbd77e707b2dfea1bbcfc4e366493a143513ce7f57203c75da9d4e20af6fe46de89749366351046be7577c
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
   version: 4.5.5
   resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
@@ -10690,6 +10700,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: c05c318d79c690f101d7ffb34cd6c7d6bbd884d3af9cefe7749ad0cd6be43c7082f098280982ca945dcba23fde34a08fed9602bb26540936baf8c0520727d3ba
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>":
+  version: 4.6.2
+  resolution: "typescript@patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=493e53"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: efb83260a22ee49d4c8bdc59b3cefe54fdf51d6f563f5c3a35aa3d5e46fb12f3f1d33a36d6f9f64171e567ead1847e99cb612d0a9a74e7d44e16cad9d0bbc937
   languageName: node
   linkType: hard
 
@@ -11145,9 +11165,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.5.8":
-  version: 0.5.8
-  resolution: "vitest@npm:0.5.8"
+"vitest@npm:^0.5.9":
+  version: 0.5.9
+  resolution: "vitest@npm:0.5.9"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -11172,7 +11192,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 8b035020873898f63ca48774386cec42713f8f1cf4d72b3e140f9d1c5ce8ed239d8379da7e885cc2f027589ded4e398915bb105720939f0eab986c9805d0dcbe
+  checksum: 92c3cd5d0ee48b9aaf167adc6b6913c1b6a4404a63f81aba9082b2d039816ef957ef2b6e624cb8a898bcbaf4c3921db8e0a1f56f01601781d91b1e514e74656a
   languageName: node
   linkType: hard
 
