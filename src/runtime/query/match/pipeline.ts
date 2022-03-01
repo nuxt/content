@@ -29,7 +29,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     // Filter items based on `params.slug`
     (data, params) => (params.slug ? data.filter(item => String(item.slug).startsWith(params.slug)) : data),
     // Conditions
-    (data, params) => data.filter(item => match(item, params.where)),
+    (data, params) => data.filter(item => params.where.every(matchQuery => match(item, matchQuery))),
     // Sort data
     (data, params) => params.sortBy.forEach(([key, direction]) => sortByKey(data, key, direction)),
     // Custom pipelines registered by plugins

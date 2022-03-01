@@ -131,4 +131,20 @@ describe('Database Provider', () => {
     assert(result[1].slug === '/b')
     assert(result[2] === null)
   })
+
+  test('Chain multiple where conditions', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
+    const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })
+    const singleWhereResult = await query.find()
+
+    assert((singleWhereResult as Array<any>).length === 2)
+    assert(singleWhereResult[0].slug === '/a')
+    assert(singleWhereResult[1].slug === '/b')
+
+    // Test with second condition
+    const doubleWhereResult = await query.where({ slug: { $contains: 'b' } }).find()
+
+    assert((doubleWhereResult as Array<any>).length === 1)
+    assert(doubleWhereResult[0].slug === '/b')
+  })
 })

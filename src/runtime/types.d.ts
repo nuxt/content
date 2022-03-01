@@ -114,7 +114,7 @@ export interface QueryBuilderParams {
   only: string[]
   without: string[]
   sortBy: Array<string[]>
-  where: object
+  where: object[]
   surround: {
     query: string | object
     before?: number

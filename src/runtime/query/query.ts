@@ -11,12 +11,12 @@ export const createQuery = (
     first: false,
     skip: 0,
     limit: 0,
-    only: [],
-    without: [],
     sortBy: [],
-    where: {},
     surround: undefined,
-    ...queryParams
+    ...queryParams,
+    where: queryParams?.where ? ensureArray(queryParams.where) : [],
+    only: queryParams?.only ? ensureArray(queryParams.only) : [],
+    without: queryParams?.without ? ensureArray(queryParams.without) : []
   }
 
   /**
@@ -32,7 +32,7 @@ export const createQuery = (
   const query: QueryBuilder = {
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
-    where: $set('where'),
+    where: $set('where', (q: any) => [...params.where, q]),
     sortBy: $set('sortBy', (field, direction) => [...params.sortBy, [field, direction]]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
