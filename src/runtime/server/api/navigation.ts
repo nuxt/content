@@ -8,7 +8,15 @@ export default defineHandle(async (req) => {
 
   const params = isMethod(req, 'POST') ? await useBody(req) : {}
 
-  const contents = await useContentQuery(params || {}).find()
+  const contents = await useContentQuery(params || {})
+    .where({
+      /**
+       * Partial contents are not included in the navigation
+       * A partial content is a content that has `_` prefix in its path
+       */
+      partial: false
+    })
+    .find()
 
   return createNav(contents as ParsedContentMeta[])
 })
