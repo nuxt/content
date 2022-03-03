@@ -584,7 +584,7 @@ __metadata:
     "@types/faker": 5.5.9
     "@types/flat": ^5.0.2
     "@types/object-hash": ^2.2.1
-    "@types/ws": ^8.5.1
+    "@types/ws": ^8.5.2
     benchmark: ^2.1.4
     c8: ^7.11.0
     consola: ^2.15.3
@@ -631,7 +631,7 @@ __metadata:
     slugify: ^1.6.5
     start-server-and-test: ^1.14.0
     stringify-entities: ^4.0.2
-    ts-node: ^10.5.0
+    ts-node: ^10.6.0
     typescript: ^4.6.2
     ufo: ^0.7.11
     unctx: ^1.0.2
@@ -1228,12 +1228,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "@types/ws@npm:8.5.1"
+"@types/ws@npm:^8.5.2":
+  version: 8.5.2
+  resolution: "@types/ws@npm:8.5.2"
   dependencies:
     "@types/node": "*"
-  checksum: 4f06ff8b9e61201b28e7f4bbd0b30c5eeb32ed4d2c091554efc3b3b63ab56b4630c316a394be6bd6cc36bab87d0e5225ba55d0f7b170767175c26f7c14086bf9
+  checksum: 3182db3a84474636cd990482b451c1e247bb2c4524eb85f937e3734c9600af34dfc07f9a2d973d4a39dfe433339f9afd8c5824e32a597e7cffba475cbbd487c9
   languageName: node
   linkType: hard
 
@@ -9600,9 +9600,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.5.0":
-  version: 10.5.0
-  resolution: "ts-node@npm:10.5.0"
+"ts-node@npm:^10.6.0":
+  version: 10.6.0
+  resolution: "ts-node@npm:10.6.0"
   dependencies:
     "@cspotcode/source-map-support": 0.7.0
     "@tsconfig/node10": ^1.0.7
@@ -9633,7 +9633,7 @@ __metadata:
     ts-node-script: dist/bin-script.js
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
-  checksum: d51ac8a9b3582ce3705cef8d35f3372e40caa277dbd7c7baeb651961538f13d2f11f22402614348f78d9b10501bd1cb5f05ec4f2ec9a74bd0e288de769c32335
+  checksum: bc7589d8c38dc75a2a6f832ac43faaac7edd3d0ef4643f46a9deeaabcdd35722e8c89e729fcd39a16069b30d09e297c2fb3eec917a82dd3f1e7da8b352bbd447
   languageName: node
   linkType: hard
 

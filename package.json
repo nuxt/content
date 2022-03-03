@@ -87,7 +87,7 @@
     "@types/faker": "5.5.9",
     "@types/flat": "^5.0.2",
     "@types/object-hash": "^2.2.1",
-    "@types/ws": "^8.5.1",
+    "@types/ws": "^8.5.2",
     "benchmark": "^2.1.4",
     "c8": "^7.11.0",
     "eslint": "^8.10.0",
@@ -101,7 +101,7 @@
     "nuxt3": "latest",
     "object-hash": "^3.0.0",
     "start-server-and-test": "^1.14.0",
-    "ts-node": "^10.5.0",
+    "ts-node": "^10.6.0",
     "typescript": "^4.6.2",
     "vitest": "^0.5.9"
   }
