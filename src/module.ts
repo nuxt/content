@@ -31,6 +31,13 @@ export type MountOptions = {
 
 export interface ModuleOptions {
   base: string
+  /**
+   * Disable content watcher and hot content reload.
+   * Note: Watcher is a development feature and will not includes in the production.
+   *
+   * @default true
+   */
+  watch: boolean
   sources: Array<string | MountOptions>
   ignores: Array<string>
   markdown: {
@@ -71,6 +78,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     base: '_content',
+    watch: true,
     sources: ['content'],
     ignores: ['\\.', '-'],
     locales: [],
@@ -229,7 +237,7 @@ export default defineNuxtModule<ModuleOptions>({
     addTemplate({ ...typeTemplate, options: contentContext })
 
     // Setup content dev module
-    if (!nuxt.options.dev) {
+    if (!nuxt.options.dev || !options.watch) {
       return
     }
 
