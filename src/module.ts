@@ -31,7 +31,7 @@ export type MountOptions = {
 
 export interface ModuleOptions {
   base: string
-  sources: Array<string>
+  sources: Array<string | MountOptions>
   ignores: Array<string>
   markdown: {
     mdc?: boolean

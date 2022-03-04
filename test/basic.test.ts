@@ -1,18 +1,15 @@
-import { assert, test, describe, expect, afterAll } from 'vitest'
-import { setupTest } from '../setup'
+import { fileURLToPath } from 'url'
+import { assert, test, describe, expect } from 'vitest'
+import { setup, $fetch } from '@nuxt/test-utils'
 
-describe('Basic tests', () => {
-  const ctx = setupTest({
-    fixture: 'basic',
+describe('fixtures:basic', async () => {
+  await setup({
+    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     server: true
   })
 
-  afterAll(ctx._destroy)
-
-  test('Build', ctx._init, 0)
-
   test('List contents', async () => {
-    const list = await ctx.fetch<Array<string>>('/api/_content/list')
+    const list = await $fetch('/api/_content/list')
 
     assert(list.length > 0)
     assert(list.includes('content:index.md'))
@@ -25,7 +22,7 @@ describe('Basic tests', () => {
   })
 
   test('Get contents index', async () => {
-    const index = await ctx.fetch<any>('/api/_content/get/content:index.md')
+    const index = await $fetch('/api/_content/get/content:index.md')
 
     expect(index).toHaveProperty('meta.mtime')
     expect(index).toHaveProperty('body')
@@ -34,7 +31,7 @@ describe('Basic tests', () => {
   })
 
   test('Get ignored contents', async () => {
-    const index = await ctx.fetch<any>('/api/_content/get/content:.ignored.md')
+    const index = await $fetch('/api/_content/get/content:.ignored.md')
 
     expect(index).not.toHaveProperty('meta.mtime')
     expect(index).toMatchObject({})
@@ -42,13 +39,13 @@ describe('Basic tests', () => {
   })
 
   test('Get navigation', async () => {
-    const list = await ctx.fetch<Array<string>>('/api/_content/navigation')
+    const list = await $fetch('/api/_content/navigation')
 
     expect(list).toMatchSnapshot('basic-navigation')
   })
 
   test('Get cats navigation', async () => {
-    const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
+    const list = await $fetch('/api/_content/navigation', {
       method: 'POST',
       body: {
         slug: '/cats'
@@ -59,7 +56,7 @@ describe('Basic tests', () => {
   })
 
   test('Get cats navigation', async () => {
-    const list = await ctx.fetch<Array<string>>('/api/_content/navigation', {
+    const list = await $fetch('/api/_content/navigation', {
       method: 'POST',
       body: {
         slug: '/dogs'
@@ -70,19 +67,19 @@ describe('Basic tests', () => {
   })
 
   test('Search contents using `locale` helper', async () => {
-    const fa = await ctx.fetch('/locale-fa')
+    const fa = await $fetch('/locale-fa')
 
     expect(fa).toContain('fa-ir:fa:index.md')
     expect(fa).not.toContain('content:index.md')
 
-    const en = await ctx.fetch('/locale-en')
+    const en = await $fetch('/locale-en')
 
     expect(en).not.toContain('fa-ir:fa:index.md')
     expect(en).toContain('content:index.md')
   })
 
   test('Use default locale for unscoped contents', async () => {
-    const index = await ctx.fetch<any>('/api/_content/get/content:index.md')
+    const index = await $fetch('/api/_content/get/content:index.md')
 
     expect(index).toHaveProperty('meta.mtime')
     expect(index).toMatchObject({

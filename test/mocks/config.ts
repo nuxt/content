@@ -1,7 +1,5 @@
+import nuxtConfig from '../fixtures/basic/nuxt.config'
+
 export const privateConfig = {
-  content: {
-    ignores: [],
-    locales: [],
-    markdown: {}
-  }
+  content: nuxtConfig.content
 }

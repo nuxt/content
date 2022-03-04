@@ -1,6 +1,6 @@
 import { describe, test, expect, assert } from 'vitest'
-import plugin from '../../../src/runtime/server/transformer/plugin-path-meta'
-import type { ParsedContent, ParsedContentMeta } from '../../../src/runtime/types'
+import plugin from '../../src/runtime/server/transformer/plugin-path-meta'
+import type { ParsedContent, ParsedContentMeta } from '../../src/runtime/types'
 
 const matchMeta = (transformed: any, expected: any) => {
   expect(transformed).toHaveProperty('meta.id')

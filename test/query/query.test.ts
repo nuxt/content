@@ -1,6 +1,6 @@
 import { assert, describe, test } from 'vitest'
-import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
-import { createQuery } from '../../../src/runtime/query/query'
+import { createPipelineFetcher } from '../../src/runtime/query/match/pipeline'
+import { createQuery } from '../../src/runtime/query/query'
 import database from './db.json'
 
 const shuffledDatabase: Array<any> = [...database].sort(() => Math.random() - 0.5)

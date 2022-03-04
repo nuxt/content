@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`Basic tests > Get cats navigation > basic-navigation-cats 1`] = `
+exports[`fixtures:basic > Get cats navigation > basic-navigation-cats 1`] = `
 [
   {
     "children": [
@@ -33,7 +33,7 @@ exports[`Basic tests > Get cats navigation > basic-navigation-cats 1`] = `
 ]
 `;
 
-exports[`Basic tests > Get cats navigation > basic-navigation-dogs 1`] = `
+exports[`fixtures:basic > Get cats navigation > basic-navigation-dogs 1`] = `
 [
   {
     "children": [
@@ -58,7 +58,7 @@ exports[`Basic tests > Get cats navigation > basic-navigation-dogs 1`] = `
 ]
 `;
 
-exports[`Basic tests > Get contents index > basic-index-body 1`] = `
+exports[`fixtures:basic > Get contents index > basic-index-body 1`] = `
 {
   "children": [
     {
@@ -85,7 +85,7 @@ exports[`Basic tests > Get contents index > basic-index-body 1`] = `
 }
 `;
 
-exports[`Basic tests > Get navigation > basic-navigation 1`] = `
+exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
 [
   {
     "children": [

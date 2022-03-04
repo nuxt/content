@@ -1,6 +1,6 @@
 import type { Nuxt } from '@nuxt/schema'
 import { assert, expect, test, describe } from 'vitest'
-import { useContentMounts } from '../../src/utils'
+import { useContentMounts } from '../src/utils'
 
 const nuxtDummy = { options: { rootDir: '/test', srcDir: '/test' } } as Nuxt
 
