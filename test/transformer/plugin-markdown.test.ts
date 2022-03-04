@@ -13,4 +13,15 @@ describe('Path Markdown Plugin', () => {
     expect(parsed.body).toHaveProperty('children[0].tag', 'h1')
     expect(parsed.body).toHaveProperty('children[0].children[0].value', 'Index')
   })
+
+  test('Html `<code>` should render as inline code', async () => {
+    const parsed = await plugin.parse!('content:index.md', '`code`')
+
+    expect(parsed).toHaveProperty('meta.id')
+    assert(parsed.meta.id === 'content:index.md')
+    expect(parsed).toHaveProperty('body')
+    expect(parsed.body).toHaveProperty('type', 'root')
+    expect(parsed.body).toHaveProperty('children[0].tag', 'p')
+    expect(parsed.body).toHaveProperty('children[0].children[0].tag', 'code-inline')
+  })
 })
