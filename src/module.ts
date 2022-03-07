@@ -4,7 +4,9 @@ import {
   resolveModule,
   addServerMiddleware,
   addTemplate,
-  createResolver
+  createResolver,
+  addAutoImport,
+  addComponentsDir
 } from '@nuxt/kit'
 import defu from 'defu'
 import { createStorage } from 'unstorage'
@@ -30,6 +32,11 @@ export type MountOptions = {
 }
 
 export interface ModuleOptions {
+  /**
+   * Base route that will be used for content api
+   *
+   * @default '_content'
+   */
   base: string
   /**
    * Disable content watcher and hot content reload.
@@ -38,21 +45,92 @@ export interface ModuleOptions {
    * @default true
    */
   watch: boolean
+  /**
+   * Contents can located in multiple places, in multiple directories or even in remote git repositories.
+   * Using sources option you can tell Content module where to look for contents.
+   *
+   * @default ['content']
+   */
   sources: Array<string | MountOptions>
+  /**
+   * List of ignore pattern that will be used for excluding content from parsing and rendering.
+   *
+   * @default ['\\.', '-']
+   */
   ignores: Array<string>
+  /**
+   * Content module uses `remark` and `rehype` under the hood to compile markdown files.
+   * You can modify this options to control its behavior.
+   */
   markdown: {
+    /**
+     * Whether MDC syntax should be supported or not.
+     *
+     * @default true
+     */
     mdc?: boolean
+    /**
+     * Control behavior of Table of Contents generation
+     */
     toc?: {
+      /**
+       * Maximum heading depth that includes in the table of contents.
+       *
+       * @default 2
+       */
       depth?: number
+      /**
+       * Maximum depth of nested tags to search for heading.
+       *
+       * @default 2
+       */
       searchDepth?: number
     },
+    /**
+     * Tags will be used to replace markdown components and render custom components instead of default ones.
+     *
+     * @default {}
+     */
     tags?: Record<string, string>
+    /**
+     * Register custom remark plugin to provide new feature into your markdown contents.
+     * Checkout: https://github.com/remarkjs/remark/blob/main/doc/plugins.md
+     *
+     * @default []
+     */
     remarkPlugins?: Array<string | [string, any]>
+    /**
+     * Register custom remark plugin to provide new feature into your markdown contents.
+     * Checkout: https://github.com/rehypejs/rehype/blob/main/doc/plugins.md
+     *
+     * @default []
+     */
     rehypePlugins?: Array<string | [string, any]>
   }
+  /**
+   * Options for yaml parser.
+   *
+   * @default {}
+   */
   yaml: false | Record<string, any>
+  /**
+   * Enable/Disable navigation.
+   *
+   * @defaul true
+   */
   navigation: boolean
+  /**
+   * List of locale codes.
+   * This codes will be used to detect contents locale.
+   *
+   * @default []
+   */
   locales: Array<string>
+  /**
+   * Default locale for top level contents.
+   *
+   * @default undefined
+   */
   defaultLocale: string
 }
 
@@ -134,17 +212,17 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugin'))
 
     nuxt.hook('nitro:context', (ctx) => {
-      // Add module runtime to Nitro inlines
-      ctx.externals = defu(ctx.externals, {
-        inline: [resolve('./runtime')]
-      })
-
       ctx.alias['#content-plugins'] = nuxt.options.alias['#content-plugins']
       ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
 
-      // Inline query/content template in Nitro bundle
       ctx.externals = defu(ctx.externals, {
-        inline: [ctx.alias['#query-plugins'], ctx.alias['#content-plugins']]
+        inline: [
+          // Inline module runtime in Nitro bundle
+          resolve('./runtime'),
+          // Inline query/content template in Nitro bundle
+          ctx.alias['#query-plugins'],
+          ctx.alias['#content-plugins']
+        ]
       })
 
       // Register mounts
@@ -154,45 +232,24 @@ export default defineNuxtModule<ModuleOptions>({
       )
     })
 
-    // Add content composables
-    nuxt.hook('autoImports:extend', (imports) => {
-      const files = [
-        {
-          path: resolveRuntimeModule('./composables/content'),
-          names: [
-            'getContentList',
-            'useContentList',
-            'getContentDocument',
-            'useContentDocument'
-          ]
-        },
-        {
-          path: resolveRuntimeModule('./composables/query'),
-          names: ['useContentQuery']
-        },
-        {
-          path: resolveRuntimeModule('./composables/highlight'),
-          names: ['useContentHighlight']
-        },
-        {
-          path: resolveRuntimeModule('./composables/markdown'),
-          names: ['useUnwrap']
-        }
-      ]
-      for (const { path, names } of files) {
-        imports.push(...names.map(name => ({ from: path, name, as: name })))
-      }
-    })
+    // Register composables
+    addAutoImport([
+      { name: 'getContentList', as: 'getContentList', from: resolveRuntimeModule('./composables/content') },
+      { name: 'useContentList', as: 'useContentList', from: resolveRuntimeModule('./composables/content') },
+      { name: 'getContentDocument', as: 'getContentDocument', from: resolveRuntimeModule('./composables/content') },
+      { name: 'useContentDocument', as: 'useContentDocument', from: resolveRuntimeModule('./composables/content') },
+      { name: 'useContentQuery', as: 'useContentQuery', from: resolveRuntimeModule('./composables/query') },
+      { name: 'useContentHighlight', as: 'useContentHighlight', from: resolveRuntimeModule('./composables/highlight') },
+      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/markdown') }
+    ])
 
-    // Add components
-    nuxt.hook('components:dirs', (dirs) => {
-      dirs.push({
-        path: resolve('./runtime/components'),
-        pathPrefix: false,
-        prefix: '',
-        level: 999,
-        global: true
-      })
+    // Register components
+    addComponentsDir({
+      path: resolve('./runtime/components'),
+      pathPrefix: false,
+      prefix: '',
+      level: 999,
+      global: true
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
@@ -225,13 +282,15 @@ export default defineNuxtModule<ModuleOptions>({
       )
     }
 
+    // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
 
+    // Tags will use in markdown renderer for component replacement
     nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
-    // Pass content ignore patterns to runtime config, Ignore patterns will use in storage layer
+    // Context will use in server
     nuxt.options.privateRuntimeConfig.content = contentContext
 
-    // Add content template
+    // Register templates
     nuxt.options.alias['#content-plugins'] = addTemplate({ ...contentPluginTemplate, options: contentContext }).dst!
     nuxt.options.alias['#query-plugins'] = addTemplate({ ...queryPluginTemplate, options: contentContext }).dst!
     addTemplate({ ...typeTemplate, options: contentContext })
