@@ -633,13 +633,13 @@ __metadata:
     typescript: ^4.6.2
     ufo: ^0.7.11
     unctx: ^1.0.2
-    unified: ^10.1.1
+    unified: ^10.1.2
     unist-builder: ^3.0.0
     unist-util-position: ^4.0.1
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.5.9
+    vitest: ^0.6.0
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -9843,7 +9843,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified@npm:^10.0.0, unified@npm:^10.1.1":
+"unified@npm:^10.0.0":
   version: 10.1.1
   resolution: "unified@npm:10.1.1"
   dependencies:
@@ -9855,6 +9855,21 @@ __metadata:
     trough: ^2.0.0
     vfile: ^5.0.0
   checksum: 5419bd8d9608393bd6637d9b7948fa50b7ecfd1641513293f4af38ac602aadc2b04074c2714191ed5a783a2bffbcb0ee2665fe5367b436a45ee493d264e14e71
+  languageName: node
+  linkType: hard
+
+"unified@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "unified@npm:10.1.2"
+  dependencies:
+    "@types/unist": ^2.0.0
+    bail: ^2.0.0
+    extend: ^3.0.0
+    is-buffer: ^2.0.0
+    is-plain-obj: ^4.0.0
+    trough: ^2.0.0
+    vfile: ^5.0.0
+  checksum: 053e7c65ede644607f87bd625a299e4b709869d2f76ec8138569e6e886903b6988b21cd9699e471eda42bee189527be0a9dac05936f1d069a5e65d0125d5d756
   languageName: node
   linkType: hard
 
@@ -10184,9 +10199,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.5.9":
-  version: 0.5.9
-  resolution: "vitest@npm:0.5.9"
+"vitest@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "vitest@npm:0.6.0"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -10211,7 +10226,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 92c3cd5d0ee48b9aaf167adc6b6913c1b6a4404a63f81aba9082b2d039816ef957ef2b6e624cb8a898bcbaf4c3921db8e0a1f56f01601781d91b1e514e74656a
+  checksum: 5c953a80acb9a6b7c79cf91eca08f4a4e1c73317f6bbe33dfad6e7f894f8dc60aa547247c3733e9333a34ef504824210adc0620960aa72be76b79397c786f35e
   languageName: node
   linkType: hard
 
