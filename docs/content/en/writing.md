@@ -280,12 +280,12 @@ An issue exists with locally registered components and live edit in development,
 
 </alert>
 
-Since `@nuxt/content` operates under the assumption all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
+Since `@nuxt/content` operates under the assumption that all Markdown is provided by the author (and not via third-party user submission), sources are processed in full (tags included), with a couple of caveats from [rehype-raw](https://github.com/rehypejs/rehype-raw):
 
-1. You need to refer to your components by kebab case naming:
+1. You need to refer to your components and their props by kebab case naming:
 
 ```html
-Use <my-component> instead of <MyComponent>
+Use <my-component :my-prop="myValue"> instead of <MyComponent :myProp="myValue">
 ```
 
 2. You cannot use self-closing tags, i.e., **this won't work**:
