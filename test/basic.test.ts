@@ -88,4 +88,9 @@ describe('fixtures:basic', async () => {
       }
     })
   })
+
+  test('features:multi-part-slug', async () => {
+    const html = await $fetch('/features/multi-part-slug')
+    expect(html).contains('Persian')
+  })
 })
