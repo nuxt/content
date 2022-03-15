@@ -6,17 +6,26 @@ import { privateConfig } from '#config'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
-const withoutExtension = (path: string) => path.replace(/\.[^.]+$/, '')
+const describeId = (id: string) => {
+  const [source, ...parts] = id.split(':')
+
+  const [, filename, extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
+  parts[parts.length - 1] = filename
+
+  return {
+    source,
+    path: parts.join('/'),
+    extension
+  }
+}
 
 export default defineContentPlugin({
   name: 'path-meta',
   extentions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = privateConfig.content || {}
-    const parts = withoutExtension(content.meta.id)
-      .split(/[/:]/)
-      // First part always represents the mount-point/source
-      .slice(1)
+    const { source, path, extension } = describeId(content.meta.id)
+    const parts = path.split('/')
 
     // Check first part for locale name
     const locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
@@ -24,9 +33,11 @@ export default defineContentPlugin({
     const filePath = parts.join('/')
 
     Object.assign(content.meta, {
+      source,
+      path,
+      extension,
       title: content.meta.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
       slug: generateSlug(filePath),
-      position: generatePosition(filePath),
       draft: isDraft(filePath),
       partial: isPartial(filePath),
       locale: locale || content.meta?.locale
@@ -87,22 +98,4 @@ export function refineUrlPart (name: string): string {
        */
       .replace(/\.draft/, '')
   )
-}
-
-/**
- * Generate position from file path
- */
-export function generatePosition (path: string): string {
-  const position = path
-    .split(/[/:]/)
-    .filter(Boolean)
-    .map((part) => {
-      const match = part.match(/^[_.-]?(\d+)\./)
-      if (match && !SEMVER_REGEX.test(part)) {
-        return String(match[1]).padStart(4, '0')
-      }
-      return '9999' // Parts without a position are going down to the bottom
-    })
-    .join('')
-  return String(position).padEnd(12, '0').substring(0, 12)
 }

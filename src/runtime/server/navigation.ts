@@ -1,6 +1,7 @@
 import { NavItem, ParsedContentMeta } from '../types'
-import { generatePosition, generateTitle } from './transformer/plugin-path-meta'
+import { generateTitle } from './transformer/plugin-path-meta'
 
+type PrivateNavItem = NavItem & { path?: string }
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
@@ -19,12 +20,12 @@ export function createNav (contents: ParsedContentMeta[]) {
           slug: content.slug,
           draft: content.draft,
           partial: content.partial,
-          position: content.position,
+          path: content.path,
           children: []
         }
       }
 
-      const navItem: NavItem = getNavItem(content)
+      const navItem: PrivateNavItem = getNavItem(content)
 
       // Push index
       if (isIndex) {
@@ -54,14 +55,14 @@ export function createNav (contents: ParsedContentMeta[]) {
         const currentPathSlug = '/' + parts.slice(0, i + 1).join('/')
 
         // Find parent node
-        let parent = nodes.find(n => n.slug === currentPathSlug)
+        let parent: PrivateNavItem = nodes.find(n => n.slug === currentPathSlug)
 
         // Create dummy parent if not found
         if (!parent) {
           parent = {
             slug: currentPathSlug,
             title: generateTitle(part),
-            position: generatePosition(idParts.slice(0, i + 1).join(':')),
+            path: idParts.slice(0, i + 1).join(':'),
             children: []
           }
           nodes.push(parent)
@@ -72,16 +73,16 @@ export function createNav (contents: ParsedContentMeta[]) {
       siblings.push(navItem)
 
       return nav
-    }, [] as NavItem[])
+    }, [] as PrivateNavItem[])
 
   return sortAndClear(nav)
 }
 
 /**
- * Sort items by position and clear empty children keys.
+ * Sort items by path and clear empty children keys.
  */
-function sortAndClear (nav: NavItem[]) {
-  const sorted = nav.sort((a, b) => a.position.localeCompare(b.position))
+function sortAndClear (nav: PrivateNavItem[]) {
+  const sorted = nav.sort((a, b) => a.path.localeCompare(b.path))
 
   for (const item of sorted) {
     if (item.children.length) {
@@ -91,8 +92,8 @@ function sortAndClear (nav: NavItem[]) {
       // Remove empty children
       delete item.children
     }
-    // Remove position after sort
-    delete item.position
+    // Remove path after sort
+    delete item.path
   }
 
   return nav

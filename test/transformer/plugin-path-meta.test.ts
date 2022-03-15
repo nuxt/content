@@ -3,6 +3,7 @@ import plugin from '../../src/runtime/server/transformer/plugin-path-meta'
 import type { ParsedContent, ParsedContentMeta } from '../../src/runtime/types'
 
 const matchMeta = (transformed: any, expected: any) => {
+  const fullPath = expected.id.replace(/:/g, '/')
   expect(transformed).toHaveProperty('meta.id')
   assert(
     transformed.meta.id === expected.id,
@@ -27,10 +28,21 @@ const matchMeta = (transformed: any, expected: any) => {
     `Slug is not equal, expected: ${expected.slug}, actual: ${transformed.meta.slug}`
   )
 
-  expect(transformed).toHaveProperty('meta.position')
+  expect(transformed).toHaveProperty('meta.source')
   assert(
-    transformed.meta.position === expected.position,
-    `Position is not equal, expected: ${expected.position}, actual: ${transformed.meta.position}`
+    fullPath.startsWith(`${transformed.meta.source}/`),
+    `source is not equal, recieved: ${transformed.meta.source}`
+  )
+
+  expect(transformed).toHaveProperty('meta.path')
+  assert(
+    fullPath.startsWith(`${transformed.meta.source}/${transformed.meta.path}`),
+    `path is not equal, recieved: ${transformed.meta.path}`
+  )
+  expect(transformed).toHaveProperty('meta.extension')
+  assert(
+    fullPath.startsWith(`${transformed.meta.source}/${transformed.meta.path}.${transformed.meta.extension}`),
+    `extension is not equal, recieved: ${transformed.meta.path}`
   )
 
   expect(transformed).toHaveProperty('meta.title')
@@ -43,22 +55,6 @@ const matchMeta = (transformed: any, expected: any) => {
 describe('Path Meta Plugin', () => {
   test('Index file', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:index.md' } as ParsedContentMeta,
-      body: '# Index'
-    }) as ParsedContent
-
-    matchMeta(transformed, {
-      title: '',
-      id: transformed.meta.id,
-      draft: false,
-      partial: false,
-      slug: '/',
-      position: '999900000000'
-    })
-  })
-
-  test('Index file with position', () => {
-    const transformed = plugin.transform!({
       meta: { id: 'content:3.index.md' } as ParsedContentMeta,
       body: '# Index'
     }) as ParsedContent
@@ -68,8 +64,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: false,
       partial: false,
-      slug: '/',
-      position: '000300000000'
+      slug: '/'
     })
   })
 
@@ -84,8 +79,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: true,
       partial: false,
-      slug: '/',
-      position: '000300000000'
+      slug: '/'
     })
   })
 
@@ -100,8 +94,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: true,
       partial: false,
-      slug: '/blog',
-      position: '000100030000'
+      slug: '/blog'
     })
   })
 
@@ -116,8 +109,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: false,
       partial: true,
-      slug: '/blog/the-post',
-      position: '000100040000'
+      slug: '/blog/the-post'
     })
   })
 
@@ -136,7 +128,8 @@ describe('Path Meta Plugin', () => {
         draft: false,
         partial: false,
         slug: `/${semver}/doc`,
-        position: '999999990000'
+        source: 'content',
+        path: `${semver}/doc.md`
       })
     })
   })
@@ -152,8 +145,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: false,
       partial: false,
-      slug: '/one/two/three/four/five/doc',
-      position: '000100020003'
+      slug: '/one/two/three/four/five/doc'
     })
   })
 
@@ -168,8 +160,7 @@ describe('Path Meta Plugin', () => {
       id: transformed.meta.id,
       draft: false,
       partial: false,
-      slug: '/one/fileparamvaluehash',
-      position: '000199990000'
+      slug: '/one/fileparamvaluehash'
     })
   })
 })

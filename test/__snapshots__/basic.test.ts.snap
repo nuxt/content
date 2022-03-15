@@ -91,29 +91,29 @@ exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
     "children": [
       {
         "draft": false,
-        "id": "fa-ir:fa:index.md",
+        "id": "content:cats:index.md",
         "partial": false,
-        "slug": "/",
-        "title": "سلام",
+        "slug": "/cats",
+        "title": "Cats list",
       },
-    ],
-    "id": "fa-ir:fa:index.md",
-    "slug": "/",
-    "title": "سلام",
-  },
-  {
-    "children": [
       {
         "draft": false,
-        "id": "content:index.md",
+        "id": "content:cats:persian.md",
         "partial": false,
-        "slug": "/",
-        "title": "Index",
+        "slug": "/cats/persian",
+        "title": "Persian",
+      },
+      {
+        "draft": false,
+        "id": "content:cats:ragdoll.md",
+        "partial": false,
+        "slug": "/cats/ragdoll",
+        "title": "Ragdoll",
       },
     ],
-    "id": "content:index.md",
-    "slug": "/",
-    "title": "Index",
+    "id": "content:cats:index.md",
+    "slug": "/cats",
+    "title": "Cats list",
   },
   {
     "children": [
@@ -139,29 +139,29 @@ exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
     "children": [
       {
         "draft": false,
-        "id": "content:cats:index.md",
+        "id": "fa-ir:fa:index.md",
         "partial": false,
-        "slug": "/cats",
-        "title": "Cats list",
-      },
-      {
-        "draft": false,
-        "id": "content:cats:persian.md",
-        "partial": false,
-        "slug": "/cats/persian",
-        "title": "Persian",
-      },
-      {
-        "draft": false,
-        "id": "content:cats:ragdoll.md",
-        "partial": false,
-        "slug": "/cats/ragdoll",
-        "title": "Ragdoll",
+        "slug": "/",
+        "title": "سلام",
       },
     ],
-    "id": "content:cats:index.md",
-    "slug": "/cats",
-    "title": "Cats list",
+    "id": "fa-ir:fa:index.md",
+    "slug": "/",
+    "title": "سلام",
+  },
+  {
+    "children": [
+      {
+        "draft": false,
+        "id": "content:index.md",
+        "partial": false,
+        "slug": "/",
+        "title": "Index",
+      },
+    ],
+    "id": "content:index.md",
+    "slug": "/",
+    "title": "Index",
   },
 ]
 `;

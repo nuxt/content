@@ -6,6 +6,14 @@ export interface ParsedContentMeta {
    */
   id: string
   /**
+   * Content source
+   */
+  source: string
+  /**
+   * Content path, this path is source agnostic and it the content my live in any source
+   */
+  path: string
+  /**
    * Content slug
    */
   slug?: string
@@ -13,10 +21,6 @@ export interface ParsedContentMeta {
    * Content title
    */
   title?: string
-  /**
-   * Content position generated from file path
-   */
-  position?: string
   /**
    * Content draft status
    */
@@ -187,7 +191,6 @@ export interface QueryPlugin {
 // Navigation
 export interface NavItem {
   title: string
-  position: string
   slug: string
   id?: string
   draft?: boolean

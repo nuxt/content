@@ -54,8 +54,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     // Provide default sort order if not specified
     if (!params.sortBy || !params.sortBy.length) {
       params.sortBy = [
-        ['slug', 'asc'],
-        ['position', 'asc']
+        ['path', 'asc']
       ]
     }
 
