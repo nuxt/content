@@ -600,7 +600,7 @@ __metadata:
     html-tags: ^3.1.0
     husky: ^7.0.4
     jiti: ^1.13.0
-    lint-staged: ^12.3.5
+    lint-staged: ^12.3.6
     mdast-util-from-markdown: ^1.2.0
     mdast-util-to-hast: ^12.1.1
     mdast-util-to-markdown: ^1.3.0
@@ -631,7 +631,7 @@ __metadata:
     stringify-entities: ^4.0.2
     ts-node: ^10.7.0
     typescript: ^4.6.2
-    ufo: ^0.8.0
+    ufo: ^0.8.1
     unctx: ^1.0.2
     unified: ^10.1.2
     unist-builder: ^3.0.0
@@ -639,7 +639,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.6.1
+    vitest: ^0.6.3
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -5773,9 +5773,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.3.5":
-  version: 12.3.5
-  resolution: "lint-staged@npm:12.3.5"
+"lint-staged@npm:^12.3.6":
+  version: 12.3.6
+  resolution: "lint-staged@npm:12.3.6"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -5787,12 +5787,13 @@ __metadata:
     micromatch: ^4.0.4
     normalize-path: ^3.0.0
     object-inspect: ^1.12.0
+    pidtree: ^0.5.0
     string-argv: ^0.3.1
     supports-color: ^9.2.1
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 6653c7078b36741e521e5f309b56bb75db198a05cbdd188124ff82a290e352ade3eb1e6080265729e19711ac08d190e300874af00e4e540b57b3c8f0690e2573
+  checksum: b5075addb79cefd3a01eb3e4b511cdbe255c86e80ac4f27c4ce90bbd5a6ef3765ec0c70ddc33e37d13aef54218b6026f52fcd0ed0ac9bf3a205a533b994ed387
   languageName: node
   linkType: hard
 
@@ -7710,6 +7711,15 @@ __metadata:
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
+  languageName: node
+  linkType: hard
+
+"pidtree@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "pidtree@npm:0.5.0"
+  bin:
+    pidtree: bin/pidtree.js
+  checksum: 371cd14bbc9bdee2a6a44596dd521dd3565e223481e0b1afffdca3f1c29831850bfa7784114dc30d245d37e7d186cec035e036256b39f75d878d19498fe0df6a
   languageName: node
   linkType: hard
 
@@ -9756,10 +9766,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ufo@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "ufo@npm:0.8.0"
-  checksum: cab38504a4caf316a9b24d187d24400c403599d563c260fbdad5e61371ed0be756edb8d1e0b322f37a4c8893e7496e47ea193f1cb039c343e6f6924a95ccadfe
+"ufo@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "ufo@npm:0.8.1"
+  checksum: dbdb779f901da1036f501ef65a71797c44763285a449cfc0497a8fee0421bf0e7e38fa6a5b461cca079e63efca80da5013fcdcd180ec6095912761944d107763
   languageName: node
   linkType: hard
 
@@ -10199,9 +10209,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "vitest@npm:0.6.1"
+"vitest@npm:^0.6.3":
+  version: 0.6.3
+  resolution: "vitest@npm:0.6.3"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -10226,7 +10236,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 2064a0cc2fbe70cb11531f8bbdfb4e11b2cd32b83947ce434588c6395d590d91be5d88e1b45452d047c09530d362ba62e6ce444b9e69106a5ed55b3e0b5e1ad7
+  checksum: 8910891e12df16a7fdd6228812ead9cb185dba35f78193b657d6cf29849e028fc78e4d72ce645ad1c5d2686053ce8c5f548a37d84314cc1b7dbd092bedbc9de3
   languageName: node
   linkType: hard
 
