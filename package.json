@@ -69,7 +69,7 @@
     "shiki-es": "^0.1.2",
     "slugify": "^1.6.5",
     "stringify-entities": "^4.0.2",
-    "ufo": "^0.7.11",
+    "ufo": "^0.8.0",
     "unctx": "^1.0.2",
     "unified": "^10.1.2",
     "unist-builder": "^3.0.0",

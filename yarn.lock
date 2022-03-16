@@ -631,7 +631,7 @@ __metadata:
     stringify-entities: ^4.0.2
     ts-node: ^10.7.0
     typescript: ^4.6.2
-    ufo: ^0.7.11
+    ufo: ^0.8.0
     unctx: ^1.0.2
     unified: ^10.1.2
     unist-builder: ^3.0.0
@@ -9753,6 +9753,13 @@ __metadata:
   version: 0.7.11
   resolution: "ufo@npm:0.7.11"
   checksum: e5dfaff619e9b6d2e1e205877738f701722c99a0da8eda5e180f72844cdb668488656de47d6777d85c1ca17717d527a45ae8eb3954a0271d7d08e59acc02dd99
+  languageName: node
+  linkType: hard
+
+"ufo@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "ufo@npm:0.8.0"
+  checksum: cab38504a4caf316a9b24d187d24400c403599d563c260fbdad5e61371ed0be756edb8d1e0b322f37a4c8893e7496e47ea193f1cb039c343e6f6924a95ccadfe
   languageName: node
   linkType: hard
 
