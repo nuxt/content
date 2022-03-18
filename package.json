@@ -96,11 +96,11 @@
     "globby": "^13.1.1",
     "husky": "^7.0.4",
     "jiti": "^1.13.0",
-    "lint-staged": "^12.3.6",
+    "lint-staged": "^12.3.7",
     "nuxt3": "latest",
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.2",
-    "vitest": "^0.7.0"
+    "vitest": "^0.7.4"
   }
 }

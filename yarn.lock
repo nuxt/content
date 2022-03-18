@@ -600,7 +600,7 @@ __metadata:
     html-tags: ^3.1.0
     husky: ^7.0.4
     jiti: ^1.13.0
-    lint-staged: ^12.3.6
+    lint-staged: ^12.3.7
     mdast-util-from-markdown: ^1.2.0
     mdast-util-to-hast: ^12.1.1
     mdast-util-to-markdown: ^1.3.0
@@ -639,7 +639,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.7.0
+    vitest: ^0.7.4
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -5773,9 +5773,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.3.6":
-  version: 12.3.6
-  resolution: "lint-staged@npm:12.3.6"
+"lint-staged@npm:^12.3.7":
+  version: 12.3.7
+  resolution: "lint-staged@npm:12.3.7"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -5793,7 +5793,7 @@ __metadata:
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: b5075addb79cefd3a01eb3e4b511cdbe255c86e80ac4f27c4ce90bbd5a6ef3765ec0c70ddc33e37d13aef54218b6026f52fcd0ed0ac9bf3a205a533b994ed387
+  checksum: b595097556880eb2ab7ce2cf105047f6f22525ccfd608fbdc63ab243259aa36a26949576fadff673748fb885e7cb37ad3f4471d964ad54c1205d57a58999ba24
   languageName: node
   linkType: hard
 
@@ -10209,9 +10209,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "vitest@npm:0.7.0"
+"vitest@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "vitest@npm:0.7.4"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -10236,7 +10236,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: c8b19d373e788ee730ce3cf7fe033f85943e06ea7f719687fa3f2f14e4f8911343b7dbde007c892482e16de2fd65a18f1cf82c8a074f4e4deaa807c98af0866a
+  checksum: 35de66c4f750dec07ed083cd39788eef095feba5011cd188ab3c253365d2123b1a1769d03b56e53f15f0757140e7003927d8fd0f99861e36e84a223bcbf1b877
   languageName: node
   linkType: hard
 
