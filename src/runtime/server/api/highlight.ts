@@ -1,6 +1,7 @@
 import { lazyHandle, assertMethod, useBody, createError } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
+import { publicConfig } from '#config'
 
 const resolveLang = (lang: string): Lang | undefined =>
   BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang))?.id as Lang
@@ -28,10 +29,13 @@ const resolveBody = (body: Partial<HighlightParams>): { code: string, lang?: Lan
 }
 
 export default lazyHandle(async () => {
+  // Grab highlighter config from publicRuntimeConfig
+  const { theme, preload } = publicConfig.content.highlight
+
   // Initialize highlighter with defaults
   const highlighter = await getHighlighter({
-    theme: 'dark-plus',
-    langs: ['js', 'ts', 'html', 'css']
+    theme: theme || 'dark-plus',
+    langs: preload || ['json', 'js', 'ts', 'html', 'css']
   })
 
   return async (req): Promise<HighlightThemedToken[][]> => {

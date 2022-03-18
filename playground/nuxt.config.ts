@@ -23,6 +23,10 @@ export default defineNuxtConfig({
           base: resolve(__dirname, 'content-fa')
         }
       }
-    ]
+    ],
+    highlight: {
+      theme: 'one-dark-pro',
+      preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
+    }
   }
 })

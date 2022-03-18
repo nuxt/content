@@ -12,6 +12,7 @@ import defu from 'defu'
 import { createStorage } from 'unstorage'
 import Debounce from 'debounce'
 import type { WatchEvent } from 'unstorage'
+import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { name, version } from '../package.json'
 import { contentPluginTemplate, queryPluginTemplate, typeTemplate } from './templates'
 import {
@@ -108,6 +109,20 @@ export interface ModuleOptions {
     rehypePlugins?: Array<string | [string, any]>
   }
   /**
+   * Content module uses `shiki` to highlight code blocks.
+   * You can configure Shiki options to control its behavior.
+   */
+  highlight: {
+    /**
+     * Default theme that will be used for highlighting code blocks.
+     */
+    theme: ShikiTheme,
+    /**
+     * Preloaded languages that will be available for highlighting code blocks.
+     */
+    preload: ShikiLang[]
+  },
+  /**
    * Options for yaml parser.
    *
    * @default {}
@@ -161,6 +176,10 @@ export default defineNuxtModule<ModuleOptions>({
     ignores: ['\\.', '-'],
     locales: [],
     defaultLocale: undefined,
+    highlight: {
+      theme: 'dark-plus',
+      preload: ['json', 'js', 'ts', 'html', 'css']
+    },
     markdown: {
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
@@ -184,7 +203,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Initialize runtime config
     nuxt.options.publicRuntimeConfig.content = {
-      basePath: options.base
+      basePath: options.base,
+      highlight: options.highlight
     }
     nuxt.options.privateRuntimeConfig.content = {}
 
@@ -346,6 +366,8 @@ interface ModulePublicRuntimeConfig {
   basePath?: string;
   // Websocket server URL
   wsUrl?: string;
+  // Shiki config
+  highlight: ModuleOptions['highlight']
 }
 
 interface ModulePrivateRuntimeConfig {
