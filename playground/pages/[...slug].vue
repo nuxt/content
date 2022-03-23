@@ -14,9 +14,13 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
+const { data: page } = await useAsyncData('page-content', async () => {
+  const route = useRoute()
 
-const { findOne } = useContentQuery(route.path)
+  const { findOne } = useContentQuery().where({
+    slug: route.path
+  })
 
-const { data: page } = await useAsyncData('page-content', findOne)
+  return await findOne()
+})
 </script>
