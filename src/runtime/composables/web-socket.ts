@@ -1,4 +1,4 @@
-import { useNuxtApp, useRuntimeConfig } from '#imports'
+import { useNuxtApp, useRuntimeConfig } from '#app'
 
 const logger = {
   // eslint-disable-next-line no-console

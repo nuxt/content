@@ -1,7 +1,7 @@
 import { onUnmounted, ref, watch, Ref } from 'vue'
 import { withBase } from 'ufo'
+import { useNuxtApp, useRuntimeConfig } from '#app'
 import type { ParsedContentMeta, ParsedContent } from '../types'
-import { useNuxtApp, useRuntimeConfig } from '#imports'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
