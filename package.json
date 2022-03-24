@@ -51,6 +51,7 @@
     "micromark-factory-space": "^1.0.0",
     "micromark-factory-whitespace": "^1.0.0",
     "micromark-util-character": "^1.1.0",
+    "ohash": "^0.1.0",
     "parse-entities": "^4.0.0",
     "pathe": "^0.2.0",
     "perfect-debounce": "^0.1.3",

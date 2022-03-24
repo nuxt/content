@@ -1,4 +1,6 @@
 import { prefixStorage } from 'unstorage'
+import { isDevelopment } from 'std-env'
+import { hash as ohash } from 'ohash'
 import type { QueryBuilderParams, ParsedContentMeta, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
@@ -31,7 +33,6 @@ export const getContentsIds = async (prefix?: string) => {
 
 export const getContentsList = async (prefix?: string) => {
   const keys = await getContentsIds(prefix)
-
   const contents = await Promise.all(keys.map(key => getContent(key).then(c => c.meta)))
 
   return contents
@@ -42,7 +43,15 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   if (!contentIgnorePredicate(id)) {
     return { meta: { id }, body: null }
   }
+  if (isDevelopment) {
+    const hash = ohash(await contentStorage.getMeta(id))
+    const cached: any = await storage.getItem(`cache:${id}`)
+    if (cached?.hash === hash) {
+      return cached.parsed as ParsedContent
+    }
+  }
 
+  const now = Date.now()
   const body = await contentStorage.getItem(id)
 
   if (body === null) {
@@ -55,13 +64,20 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 
   parsedContent = await transform(parsedContent)
 
-  return {
+  const parsed = {
     meta: {
       ...meta,
       ...parsedContent.meta
     },
     body: parsedContent.body
   }
+
+  if (isDevelopment) {
+    const hash = ohash(meta)
+    await storage.setItem(`cache:${id}`, { parsed, hash })
+  }
+
+  return parsed
 }
 
 /**
