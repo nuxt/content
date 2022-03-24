@@ -1,7 +1,9 @@
 <template>
   <div>
     <h1>
-      Navigation
+      <NuxtLink to="/">
+        Navigation
+      </NuxtLink>
     </h1>
 
     <span>📌 Current page: <b>{{ $route.path }}</b></span>
@@ -13,6 +15,5 @@
 </template>
 
 <script setup lang="ts">
-const { findNavigation } = useContentQuery()
-const { data: navigation } = await useAsyncData('navigation', findNavigation)
+const { data: navigation } = await useAsyncData('navigation', () => useContentQuery().findNavigation())
 </script>
