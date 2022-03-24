@@ -10,7 +10,8 @@ import {
 } from '@nuxt/kit'
 import defu from 'defu'
 import { createStorage } from 'unstorage'
-import Debounce from 'debounce'
+import { join } from 'pathe'
+import { debounce } from 'perfect-debounce'
 import type { WatchEvent } from 'unstorage'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { name, version } from '../package.json'
@@ -219,6 +220,13 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
     }
+    // Tell Nuxt to ignore content dir for app build
+    options.sources.forEach((source) => {
+      if (typeof source === 'string') {
+        nuxt.options.ignore.push(join('content', '**'))
+      }
+      // TODO: handle object format and make sure to ignore urls
+    })
 
     // Add server routes
     for (const api of ['list', 'get', 'query', 'highlight']) {
@@ -343,14 +351,14 @@ export default defineNuxtModule<ModuleOptions>({
 
         // Broadcast a message to the server to refresh the page
         // eslint-disable-next-line import/no-named-as-default-member
-        const broadcast = Debounce.debounce(ws.broadcast, 200)
-
-        // Watch contents
-        storage.watch((event: WatchEvent, key: string) => {
+        const broadcast = debounce((event: WatchEvent, key: string) => {
           key = key.substring(MOUNT_PREFIX.length)
           logger.info(`${key} ${event}d`)
-          broadcast({ event, key })
-        })
+          ws.broadcast({ event, key })
+        }, 50)
+
+        // Watch contents
+        storage.watch(broadcast)
       })
 
     // Dispose storage on nuxt close
