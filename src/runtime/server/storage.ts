@@ -51,7 +51,6 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
     }
   }
 
-  const now = Date.now()
   const body = await contentStorage.getItem(id)
 
   if (body === null) {
