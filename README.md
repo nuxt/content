@@ -4,7 +4,7 @@ Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
 
-- 💚 [**Nuxt 3**](https://v3.nuxtjs.org) Support
+- 💚 [**Nuxt 3**](https://v3.nuxtjs.org) support
 - 🗒  Easiest way to publish and maintain document-driven websites
 - 🎮 Powerful editor to interact with your codebase
 - ✍️ Publish changes without rebuilding
