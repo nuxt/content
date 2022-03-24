@@ -354,9 +354,11 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
     // Dispose storage on nuxt close
-    nuxt.hook('close', () => {
-      storage.dispose()
-      ws.close()
+    nuxt.hook('close', async () => {
+      await Promise.all([
+        storage.dispose(),
+        ws.close()
+      ])
     })
   }
 })

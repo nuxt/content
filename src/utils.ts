@@ -112,7 +112,7 @@ export function createWebSocket () {
   return {
     serve,
     broadcast,
-    close: () => wss.close()
+    close: () => new Promise(resolve => wss.close(resolve))
   }
 }
 
