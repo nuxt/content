@@ -339,7 +339,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Create socket server
     nuxt.server
-      .listen(0)
+      .listen(0, { showURL: false })
       .then(({ url, server }: { url: string; server: any }) => {
         // Inject socket server address into runtime config
         nuxt.options.publicRuntimeConfig.content.wsUrl = url.replace(
