@@ -56,4 +56,4 @@ Add the types to your "types" array in tsconfig.json after the `@nuxt/types` (Nu
 
 > **Why?**
 >
-> Because of the way nuxt works the `$content` property on the context has to be merged into the nuxt `Context` interface via [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html). Adding `@nuxt/content` to your types will import the types from the package and make typescript aware of the additions to the `Context` interface.
+> Because of the way Nuxt works the `$content` property on the context has to be merged into the Nuxt `Context` interface via [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html). Adding `@nuxt/content` to your types will import the types from the package and make TypeScript aware of the additions to the `Context` interface.
