@@ -566,7 +566,7 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": latest
     "@types/benchmark": ^2.1.1
     "@types/debounce": ^1.2.1
-    "@types/faker": 5.5.9
+    "@types/faker": 6.6.8
     "@types/flat": ^5.0.2
     "@types/ws": ^8.5.3
     benchmark: ^2.1.4
@@ -576,7 +576,7 @@ __metadata:
     detab: ^3.0.1
     eslint: ^8.12.0
     eslint-plugin-nuxt: ^3.2.0
-    faker: 5.5.3
+    faker: 6.6.6
     flat: ^5.0.2
     globby: ^13.1.1
     gray-matter: ^4.0.3
@@ -1104,10 +1104,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/faker@npm:5.5.9":
-  version: 5.5.9
-  resolution: "@types/faker@npm:5.5.9"
-  checksum: c2cbd082abe29047c89cf29b86257e582d2a177a9d1ed3abf99aa1cc025d5e8a3d201dfaddf8441bfcc57ed43e4da80e666951e1c23a5b759ac441a5855b5c36
+"@types/faker@npm:6.6.8":
+  version: 6.6.8
+  resolution: "@types/faker@npm:6.6.8"
+  dependencies:
+    faker: "*"
+  checksum: 21267dcb169acc9e424018d692c8eb60ff97c5d81d2c02de8f68f3a1f0397d7b7e28117c8b089760cb278ccb313c0d6c28b5a5673bcd56dc81a92e864f31f19d
   languageName: node
   linkType: hard
 
@@ -4157,10 +4159,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"faker@npm:5.5.3":
-  version: 5.5.3
-  resolution: "faker@npm:5.5.3"
-  checksum: 684fd64c8d3897e54248f95b4f6319f75d97691b8500cd13adf4af2c28f9204f766c1d1aaa6b41338f0beaaa87256c3132f8708a1a8f189d122b92f6b98081c3
+"faker@npm:*, faker@npm:6.6.6":
+  version: 6.6.6
+  resolution: "faker@npm:6.6.6"
+  checksum: bfb0d581ab4d76095f2c6bff213fe1735ce077f0f8df849c144ad26035e105bce1b7a704cc030366338c52e25b636ac097a712426a78c9b8804af78f6f2bffe7
   languageName: node
   linkType: hard
 
