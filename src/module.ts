@@ -8,7 +8,7 @@ import {
   addAutoImport,
   addComponentsDir
 } from '@nuxt/kit'
-import defu from 'defu'
+import { defu } from 'defu'
 import { createStorage } from 'unstorage'
 import { join } from 'pathe'
 import { debounce } from 'perfect-debounce'
@@ -156,6 +156,17 @@ interface ContentContext extends ModuleOptions {
   queries: Array<string>
 }
 
+interface ModulePublicRuntimeConfig {
+  tags: Record<string, string>
+  basePath?: string;
+  // Websocket server URL
+  wsUrl?: string;
+  // Shiki config
+  highlight: ModuleOptions['highlight']
+}
+
+interface ModulePrivateRuntimeConfig {}
+
 export interface ModuleHooks {
   'content:context'(ctx: ContentContext): void
 }
@@ -202,11 +213,12 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     }
 
-    // Initialize runtime config
+    // @ts-ignore - Initialize public runtime config
     nuxt.options.publicRuntimeConfig.content = {
       basePath: options.base,
       highlight: options.highlight
     }
+    // @ts-ignore - Initialize private runtime config
     nuxt.options.privateRuntimeConfig.content = {}
 
     // Add Vite configurations
@@ -309,9 +321,9 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
 
-    // Tags will use in markdown renderer for component replacement
+    // @ts-ignore - Tags will use in markdown renderer for component replacement
     nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
-    // Context will use in server
+    // @ts-ignore - Context will use in server
     nuxt.options.privateRuntimeConfig.content = contentContext
 
     // Register templates
@@ -366,18 +378,6 @@ export default defineNuxtModule<ModuleOptions>({
     })
   }
 })
-
-interface ModulePublicRuntimeConfig {
-  tags: Record<string, string>
-  basePath?: string;
-  // Websocket server URL
-  wsUrl?: string;
-  // Shiki config
-  highlight: ModuleOptions['highlight']
-}
-
-interface ModulePrivateRuntimeConfig {
-}
 
 declare module '@nuxt/schema' {
   interface ConfigSchema {

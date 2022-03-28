@@ -1,4 +1,5 @@
-import { useNuxtApp, useRuntimeConfig } from '#app'
+import { useRuntimeConfig } from '#app'
+import { refreshNuxtData } from '#imports'
 
 const logger = {
   // eslint-disable-next-line no-console
@@ -10,8 +11,6 @@ const logger = {
 let ws: WebSocket | undefined
 
 export function useWebSocket () {
-  const nuxtApp = useNuxtApp()
-
   if (!window.WebSocket) {
     logger.warn('Could not enable hot reload, your browser does not support WebSocket.')
     return
@@ -21,12 +20,9 @@ export function useWebSocket () {
     try {
       const data = JSON.parse(message.data)
 
-      if (!data) {
-        return
-      }
+      if (!data) { return }
 
-      // @ts-ignore
-      nuxtApp.hooks.callHook('app:data:refresh', data)
+      refreshNuxtData()
     } catch (err) {}
   }
 
