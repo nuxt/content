@@ -21,7 +21,7 @@ const props = defineProps({
   }
 })
 
-const key = `highlighted-code-${hash([props.code, props.language, propes.filename, props.highlights])}`
+const key = `highlighted-code-${hash([props.code, props.language, props.filename, props.highlights])}`
 const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(props.code, { lang: props.language }))
 </script>
 
