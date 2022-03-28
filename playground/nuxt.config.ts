@@ -4,7 +4,7 @@ import contentModule from '../src/module' // eslint-disable-line
 
 export default defineNuxtConfig({
   rootDir: __dirname,
-  buildModules: [contentModule],
+  modules: [contentModule],
   components: {
     dirs: [
       {
