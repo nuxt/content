@@ -695,7 +695,7 @@ __metadata:
     benchmark: ^2.1.4
     c8: ^7.11.0
     consola: ^2.15.3
-    defu: ^5.0.1
+    defu: ^6.0.0
     detab: ^3.0.1
     eslint: ^8.11.0
     eslint-plugin-nuxt: ^3.2.0
