@@ -156,17 +156,6 @@ interface ContentContext extends ModuleOptions {
   queries: Array<string>
 }
 
-interface ModulePublicRuntimeConfig {
-  tags: Record<string, string>
-  basePath?: string;
-  // Websocket server URL
-  wsUrl?: string;
-  // Shiki config
-  highlight: ModuleOptions['highlight']
-}
-
-interface ModulePrivateRuntimeConfig {}
-
 export interface ModuleHooks {
   'content:context'(ctx: ContentContext): void
 }
@@ -323,7 +312,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // @ts-ignore - Tags will use in markdown renderer for component replacement
     nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
-    // @ts-ignore - Context will use in server
+    // @ts-ignore -Context will use in server
     nuxt.options.privateRuntimeConfig.content = contentContext
 
     // Register templates
@@ -349,7 +338,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.server
       .listen(0, { showURL: false })
       .then(({ url, server }: { url: string; server: any }) => {
-        // Inject socket server address into runtime config
+        // @ts-ignore - Inject socket server address into runtime config
         nuxt.options.publicRuntimeConfig.content.wsUrl = url.replace(
           'http',
           'ws'
@@ -378,6 +367,17 @@ export default defineNuxtModule<ModuleOptions>({
     })
   }
 })
+
+interface ModulePublicRuntimeConfig {
+  tags: Record<string, string>
+  basePath?: string;
+  // Websocket server URL
+  wsUrl?: string;
+  // Shiki config
+  highlight: ModuleOptions['highlight']
+}
+
+interface ModulePrivateRuntimeConfig {}
 
 declare module '@nuxt/schema' {
   interface ConfigSchema {
