@@ -3,21 +3,26 @@ import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from '
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import { publicConfig } from '#config'
 
+/**
+ * Resolve Shiki compatible lang from string.
+ *
+ * Used to resolve lang from both languages id's and aliases.
+ */
 const resolveLang = (lang: string): Lang | undefined =>
   BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang))?.id as Lang
 
+/**
+ * Resolve Shiki compatible theme from string.
+ */
 const resolveTheme = (theme: string): Theme | undefined =>
   BUNDLED_THEMES.find(t => t === theme)
 
+/**
+ * Resolve Shiki highlighter compatible payload from request body.
+ */
 const resolveBody = (body: Partial<HighlightParams>): { code: string, lang?: Lang, theme?: Theme } => {
   // Assert body schema
-  if (!(
-    typeof body.code === 'string' &&
-    typeof body.lang === 'string' &&
-    (typeof body.theme === 'string' || typeof body.theme === 'undefined')
-  )) {
-    throw createError({ statusMessage: 'Bad Request', statusCode: 400 })
-  }
+  if (typeof body.code !== 'string') { throw createError({ statusMessage: 'Bad Request', statusCode: 400, message: 'Missing code key.' }) }
 
   return {
     // Remove trailing carriage returns

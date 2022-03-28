@@ -26,7 +26,7 @@ export function useWebSocket () {
       }
 
       // @ts-ignore
-      nuxtApp.hooks.callHook('content:update', data)
+      nuxtApp.hooks.callHook('app:data:refresh', data)
     } catch (err) {}
   }
 

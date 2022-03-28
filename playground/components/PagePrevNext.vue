@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  page: {
+  document: {
     type: Object,
     required: true
   }
 })
 
-const { data: prevNext } = await useAsyncData('prev-next', () => useContentQuery().findSurround(props.page.slug))
+const { data: prevNext } = await useAsyncData('prev-next', () => queryContent().findSurround(props.document.slug))
 </script>

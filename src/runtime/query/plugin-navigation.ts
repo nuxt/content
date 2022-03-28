@@ -5,7 +5,7 @@ export interface Queries {
   /**
    * Find navigation object for current query
    */
-  findNavigation(): Promise<NavItem>
+  findNavigation?(): Promise<NavItem[]>
 }
 
 export default defineQueryPlugin({

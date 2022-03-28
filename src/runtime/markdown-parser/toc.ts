@@ -13,7 +13,7 @@ const getHeaderDepth = (node: MarkdownNode): number => TOC_TAGS_DEPTH[node.tag a
 const getTocTags = (depth: number): string[] => {
   if (depth < 1 || depth > 5) {
     // eslint-disable-next-line
-    console.log(`toc.depth is set to ${depth}. It should be a muber between 1 and 5. `)
+    console.log(`\`toc.depth\` is set to ${depth}. It should be a number between 1 and 5. `)
     depth = 1
   }
 

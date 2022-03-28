@@ -29,83 +29,60 @@ export default defineNuxtConfig({
 
 ### `<Content>`
 
-Render a content usnig its uniuqe ID
+Render a document content.
 
-```vue
+```vue [pages/[...slug].vue]
+<script setup>
+const route = useRoute()
+const { data: document } = await useAsyncData(`doc-${route.path}`, () => queryContent(route.path).findOne())
+</script>
+
 <template>
-  <Content :id="contentID" />
+  <Content :document="document" />
 </template>
 ```
 
 ### `<ContentRendererMarkdown>`
 
+> This component is used by `<Content>` under the hood.
+
 Render a markdown content
 
 ```vue
-<script setup lang="ts">
-const content = getContent('content:index.md')
-</script>
-
 <template>
-  <ContentRendererMarkdown :document="content" />
+  <ContentRendererMarkdown :document="document" />
 </template>
 ```
 
 ### `<ContentRendererYaml>`
 
-Render a YAML content
+> This component is used by `<Content>` under the hood.
+
+Render a YAML content.
 
 ```vue
-<script setup lang="ts">
-const content = getContent('content:index.yml')
-</script>
-
 <template>
-  <ContentRendererYaml :document="content" />
+  <ContentRendererYaml :document="document" />
 </template>
 ```
 
 ## Endpoints
 
-Content server exposes two APIs:
+- `/api/_content/highlight`
 
-- `/api/_content/list`
+  Highlight a piece of code.
 
-  List available contents in all sources.
-
-- `/api/_content/get/:id`
-
-  Fetch specific content using content id. (Ids can retrive from list API)
-
-## Composables
-
-**@nuxt/content** provide composables to work with content server:
-
-- `getContentList`
-
-  Fetch contents list from server and return as simple array.
-
-- `useContentList`
-
-  Fetch contents list from server and return a reactive array. The result automatically updates every time a content changes.
-
-- `getContentDocument(:id)`
-
-  Fetch meta and body of specific content.
-
-- `useContentDocument(:id)`
-
-  Fetch meta and body of specific content. Result will update everytime the content changes.
-
-## Hooks
-
-**@nuxt/content** also provides the `content:update` hook notified on content changes.
-
-```ts
-nuxtApp.hook('content:update', ({ event, key }) => {
-  // ...
-})
-```
+  ```ts
+  $fetch('/api/_content/highlight', {
+    method: 'POST',
+    body: {
+      code: `const contents = await queryContent('posts').where({ category: { $in: ['nature', 'people'] } }).limit(10).find()`,
+      lang: 'js'
+    }
+  })
+  // Return an array of tokens
+  // [{ content: 'const', color: '#C678DD' }, ...]
+  ```
 
 ## Parsers & Transformers
 

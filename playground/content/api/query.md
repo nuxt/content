@@ -8,21 +8,41 @@ Query server exposes one API:
 
 - `/api/_content/query`
 
-  Search/Query contents.
+  Query content in all sources, should be a `POST` request. `GET` requests can be made but are limited to simple values (`slug`, `first`, `skip` and `limit`).
+
+  ```ts
+  $fetch('/api/_content/query', {
+    method: 'POST',
+    body: {
+      slug: '/posts',
+      first: false, // set to true for returning only one document
+      skip: 0,
+      limit: 0,
+      sortBy: [],
+      where: [],
+      only:[],
+      without:[]
+    },
+  })
+  // returns an array
+  // [{ path: 'posts/hello-world' }, ...]
+  ```
 
 ## Composables
 
 **@nuxt/content** provide composables to work with content server:
 
-- `useContentQuery`
+- `queryContent(...slugParts)`
 
   Query and fetch list of contents based on actions and conditions provides.
 
-  ```js
-  const contents = await useContentQuery()
+  ```ts
+  const post = await queryContent('posts')
     .where({ category: { $in: ['nature', 'people'] } })
     .limit(10)
     .find()
+
+  const document = await queryContent('/').findOne()
   ```
 
 ## Plugins
@@ -73,7 +93,7 @@ export default defineNuxtConfig({
 ## Usage
 
 ```ts
-const contents = await useContentQuery()
+const contents = await queryContent()
   .where({ category: { $in: ['nature', 'people'] } })
   .version('3.x')
   .limit(10)

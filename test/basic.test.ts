@@ -8,34 +8,43 @@ describe('fixtures:basic', async () => {
     server: true
   })
 
-  test('List contents', async () => {
-    const list = await $fetch('/api/_content/list')
+  const QUERY_ENDPOINT = '/api/_content/query'
+  const fetchDocument = id => $fetch(QUERY_ENDPOINT, {
+    method: 'POST',
+    body: {
+      first: true,
+      where: { id }
+    }
+  })
 
-    assert(list.length > 0)
-    assert(list.includes('content:index.md'))
+  test('List contents', async () => {
+    const docs = await $fetch(`${QUERY_ENDPOINT}?only=id`)
+    const ids = docs.map(doc => doc.id)
+
+    assert(ids.length > 0)
+    assert(ids.includes('content:index.md'))
 
     // Ignored files should be listed
-    assert(list.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
-    assert(list.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
+    assert(ids.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
+    assert(ids.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
 
-    assert(list.includes('fa-ir:fa:index.md') === true, 'Files with `fa-ir` prefix should be listed')
+    assert(ids.includes('fa-ir:fa:index.md') === true, 'Files with `fa-ir` prefix should be listed')
   })
 
   test('Get contents index', async () => {
-    const index = await $fetch('/api/_content/get/content:index.md')
+    const index = await fetchDocument('content:index.md')
 
-    expect(index).toHaveProperty('meta.mtime')
+    expect(index).toHaveProperty('mtime')
     expect(index).toHaveProperty('body')
 
     expect(index.body).toMatchSnapshot('basic-index-body')
   })
 
   test('Get ignored contents', async () => {
-    const index = await $fetch('/api/_content/get/content:.ignored.md')
+    // eslint-disable-next-line node/handle-callback-err
+    const ignored = await fetchDocument('content:.dot-ignored.md').catch(_err => null)
 
-    expect(index).not.toHaveProperty('meta.mtime')
-    expect(index).toMatchObject({})
-    expect(index.body).toBeNull()
+    expect(ignored).toBeNull()
   })
 
   test('Get navigation', async () => {
@@ -79,13 +88,11 @@ describe('fixtures:basic', async () => {
   })
 
   test('Use default locale for unscoped contents', async () => {
-    const index = await $fetch('/api/_content/get/content:index.md')
+    const index = await fetchDocument('content:index.md')
 
-    expect(index).toHaveProperty('meta.mtime')
+    expect(index).toHaveProperty('mtime')
     expect(index).toMatchObject({
-      meta: {
-        locale: 'en'
-      }
+      locale: 'en'
     })
   })
 

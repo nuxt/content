@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 const route = useRoute()
-
-const list = await useContentQuery().locale(route.params.locale).find()
-const ids = list.map(item => item.id).join('\n')
+const { data: list } = await useAsyncData(route.path, () => queryContent().locale(route.params.locale).find())
+const ids = computed(() => list.value.map(item => item.id).join('\n'))
 </script>

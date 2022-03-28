@@ -1,5 +1,5 @@
 import { defineHandle, assertMethod, isMethod, useBody } from 'h3'
-import { useContentQuery } from '../storage'
+import { queryContent } from '../storage'
 import { createNav } from '../navigation'
 import { ParsedContentMeta } from '../../types'
 
@@ -8,7 +8,7 @@ export default defineHandle(async (req) => {
 
   const params = isMethod(req, 'POST') ? await useBody(req) : {}
 
-  const contents = await useContentQuery(params || {})
+  const contents = await queryContent(params || {})
     .where({
       /**
        * Partial contents are not included in the navigation

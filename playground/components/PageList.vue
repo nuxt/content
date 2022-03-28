@@ -1,7 +1,6 @@
 <template>
   <div>
     <hr>
-
     <ul>
       <li v-for="page of pages" :key="page.id">
         <span>🔗</span>
@@ -15,12 +14,6 @@
 </template>
 
 <script setup lang="ts">
-const { data: pages } = await useAsyncData('pages-list', () =>
-  useContentQuery()
-    .where({
-      $not: { slug: '/' }
-    })
-    .sortBy('id', 'asc')
-    .find()
-)
+const { find } = queryContent().where({ $not: { slug: '/' } }).sortBy('id', 'asc')
+const { data: pages } = await useAsyncData('pages-list', find)
 </script>

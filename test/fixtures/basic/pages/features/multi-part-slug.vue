@@ -1,7 +1,7 @@
 <template>
-  <Content :id="content.id" />
+  <Content :document="doc" />
 </template>
 
 <script setup lang="ts">
-const content = await useContentQuery('cats', 'persian').findOne()
+const { data: doc } = await useAsyncData('multi-part-slug', () => queryContent('cats', 'persian').findOne())
 </script>

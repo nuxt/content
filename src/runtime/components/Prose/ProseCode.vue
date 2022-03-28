@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useContentHighlight } from '#imports'
+import { hash } from 'ohash'
+import { highlightCode } from '#imports'
 
 const props = defineProps({
   code: {
@@ -21,10 +21,8 @@ const props = defineProps({
   }
 })
 
-const highlightedCode = await useContentHighlight(
-  computed(() => props.code),
-  computed(() => ({ lang: props.language }))
-)
+const key = `highlighted-code-${hash([props.code, props.language, propes.filename, props.highlights])}`
+const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(props.code, { lang: props.language }))
 </script>
 
 <template>

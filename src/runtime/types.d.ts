@@ -8,11 +8,11 @@ export interface ParsedContentMeta {
   /**
    * Content source
    */
-  source: string
+  source?: string
   /**
    * Content path, this path is source agnostic and it the content my live in any source
    */
-  path: string
+  path?: string
   /**
    * Content slug
    */
@@ -37,8 +37,7 @@ export interface ParsedContentMeta {
   [key: string]: any
 }
 
-export interface ParsedContent {
-  meta: ParsedContentMeta
+export interface ParsedContent extends ParsedContentMeta{
   body: any
 }
 

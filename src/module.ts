@@ -229,7 +229,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Add server routes
-    for (const api of ['list', 'get', 'query', 'highlight']) {
+    for (const api of ['query', 'highlight']) {
       addServerMiddleware({
         route: `/api/${options.base}/${api}`,
         handle: resolveRuntimeModule(`./server/api/${api}`)
@@ -262,12 +262,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register composables
     addAutoImport([
-      { name: 'getContentList', as: 'getContentList', from: resolveRuntimeModule('./composables/content') },
-      { name: 'useContentList', as: 'useContentList', from: resolveRuntimeModule('./composables/content') },
-      { name: 'getContentDocument', as: 'getContentDocument', from: resolveRuntimeModule('./composables/content') },
-      { name: 'useContentDocument', as: 'useContentDocument', from: resolveRuntimeModule('./composables/content') },
-      { name: 'useContentQuery', as: 'useContentQuery', from: resolveRuntimeModule('./composables/query') },
-      { name: 'useContentHighlight', as: 'useContentHighlight', from: resolveRuntimeModule('./composables/highlight') },
+      { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
+      { name: 'highlightCode', as: 'highlightCode', from: resolveRuntimeModule('./composables/highlight') },
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/markdown') }
     ])
 

@@ -19,12 +19,6 @@ export default function link (h: H, node: Node) {
     href: encode(node.url)
   }
 
-  // if (props.href.startsWith('/') && !props.href.startsWith('//') && props.href.match(/\.[a-z0-9A-Z]{2,4}$/)) {
-  //   if (fs.existsSync(join(process.env.NUXT_STATIC_DIR || '', props.href))) {
-  //     props.static = true
-  //   }
-  // }
-
   if (node.title !== null && node.title !== undefined) {
     props.title = node.title
   }
