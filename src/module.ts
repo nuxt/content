@@ -8,7 +8,7 @@ import {
   addAutoImport,
   addComponentsDir
 } from '@nuxt/kit'
-import { defu } from 'defu'
+import defu from 'defu'
 import { createStorage } from 'unstorage'
 import { join } from 'pathe'
 import { debounce } from 'perfect-debounce'

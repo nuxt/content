@@ -1,4 +1,4 @@
-import { defu } from 'defu'
+import defu from 'defu'
 import remarkEmoji from 'remark-emoji'
 import rehypeSlug from 'rehype-slug'
 import remarkSqueezeParagraphs from 'remark-squeeze-paragraphs'
