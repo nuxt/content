@@ -43,7 +43,13 @@ export default defineComponent({
         const unwrapped = flatUnwrap(slot(), tags)
         return between
           ? unwrapped.flatMap((vnode, index) => index === 0 ? [vnode] : [between(), vnode])
-          : unwrapped
+          : unwrapped.reduce((acc, item) => {
+            // Concat raw texts to prevent hydration mismatches
+            (typeof item.children === 'string' && acc.length && typeof acc[acc.length - 1].children === 'string')
+              ? acc[acc.length - 1].children += item.children
+              : acc.push(item)
+            return acc
+          }, [])
       }
     }
 
