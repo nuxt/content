@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { hash } from 'ohash'
-import { highlightCode } from '#imports'
+import { highlightCode, useAsyncData } from '#imports'
 
 const props = defineProps({
   code: {
