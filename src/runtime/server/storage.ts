@@ -45,7 +45,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   }
   if (isDevelopment) {
     const hash = ohash(await contentStorage.getMeta(id))
-    const cached: any = await storage.getItem(`cache:${id}`)
+    const cached: any = await storage.getItem(`cache:parsed:${id}`)
     if (cached?.hash === hash) {
       return cached.parsed as ParsedContent
     }
