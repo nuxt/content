@@ -11,6 +11,7 @@ import { storage } from '#storage'
 import { plugins } from '#query-plugins'
 
 export const contentStorage = prefixStorage(storage, 'content:source')
+export const cacheStorage = prefixStorage(storage, 'cache:content')
 
 /**
  * Content ignore patterns
@@ -45,7 +46,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   }
   if (isDevelopment) {
     const hash = ohash(await contentStorage.getMeta(id))
-    const cached: any = await storage.getItem(`cache:parsed:${id}`)
+    const cached: any = await cacheStorage.getItem(`parsed:${id}`)
     if (cached?.hash === hash) {
       return cached.parsed as ParsedContent
     }
@@ -67,7 +68,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 
   if (isDevelopment) {
     const hash = ohash(meta)
-    await storage.setItem(`cache:parsed:${id}`, { parsed, hash })
+    await cacheStorage.setItem(`parsed:${id}`, { parsed, hash })
   }
 
   return parsed
