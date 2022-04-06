@@ -409,10 +409,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "@faker-js/faker@npm:6.1.1"
-  checksum: 3a0a0acc8ce69e1a91fd8d1beb051145a7ec94c52ad3242b807b1c99a6eaf00b79719e50939f72e667a2f4437fd9e03c317b7811ed817f461875e8f912316858
+"@faker-js/faker@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "@faker-js/faker@npm:6.1.2"
+  checksum: 953d0301f71e264330a2aa1e04ae4ecd8c7af5276ce932f92138923d3ef2cc69354a879a7d232805066728e6c65d1021a3f20a72b9b4c49d0ee880db9fcecada
   languageName: node
   linkType: hard
 
@@ -567,7 +567,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/content@workspace:."
   dependencies:
-    "@faker-js/faker": ^6.1.1
+    "@faker-js/faker": ^6.1.2
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest"
     "@nuxt/module-builder": ^0.1.7
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest"
@@ -586,7 +586,7 @@ __metadata:
     flat: ^5.0.2
     globby: ^13.1.1
     gray-matter: ^4.0.3
-    html-tags: ^3.1.0
+    html-tags: ^3.2.0
     husky: ^7.0.4
     jiti: ^1.13.0
     lint-staged: ^12.3.7
@@ -622,15 +622,15 @@ __metadata:
     stringify-entities: ^4.0.2
     ts-node: ^10.7.0
     typescript: ^4.6.3
-    ufo: ^0.8.1
-    unctx: ^1.1.3
+    ufo: ^0.8.3
+    unctx: ^1.1.4
     unified: ^10.1.2
     unist-builder: ^3.0.0
-    unist-util-position: ^4.0.2
+    unist-util-position: ^4.0.3
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.7.12
+    vitest: ^0.8.4
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -4931,6 +4931,13 @@ __metadata:
   version: 3.1.0
   resolution: "html-tags@npm:3.1.0"
   checksum: 67587f2d4022390d7bc34b1313773ecb0b0e0c79fb331aa3e20023eb4c862c7188a1ff775d126fcd75f4e4f08f956666a1c57688c4d24d85a77f9d4b1a42f345
+  languageName: node
+  linkType: hard
+
+"html-tags@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "html-tags@npm:3.2.0"
+  checksum: a0c9e96ac26c84adad9cc66d15d6711a17f60acda8d987218f1d4cbaacd52864939b230e635cce5a1179f3ddab2a12b9231355617dfbae7945fcfec5e96d2041
   languageName: node
   linkType: hard
 
@@ -9819,6 +9826,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ufo@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "ufo@npm:0.8.3"
+  checksum: 7ea20e9d0fbd92b3310de4b020919f0a0542db60a6787ccecf232285d55795ddc0ea482b04d6c07cac60367a294aee705d888999867a5c3c69e47ed8d0ae3009
+  languageName: node
+  linkType: hard
+
 "unbox-primitive@npm:^1.0.1":
   version: 1.0.1
   resolution: "unbox-primitive@npm:1.0.1"
@@ -9877,6 +9891,18 @@ __metadata:
     magic-string: ^0.26.1
     unplugin: ^0.5.2
   checksum: 33f4d7c5bf2824a054d687e21b505ae253aaf03d4aa1b3061446060649cccf26d59baf5d587f4ce7266965fa9f74212cd3c67efe2f440db3d4e02dfac199b06d
+  languageName: node
+  linkType: hard
+
+"unctx@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "unctx@npm:1.1.4"
+  dependencies:
+    acorn: ^8.7.0
+    estree-walker: ^2.0.2
+    magic-string: ^0.26.1
+    unplugin: ^0.6.1
+  checksum: 5b42fae7af0ab02279a313d14ac9df6026a758e44692c384781b1a4e198396bb7f3f31b9291f6fb9669cc485e81716ac228c245d5d3a40a43f6d917818137257
   languageName: node
   linkType: hard
 
@@ -9977,12 +10003,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unist-util-position@npm:^4.0.0, unist-util-position@npm:^4.0.2":
+"unist-util-position@npm:^4.0.0":
   version: 4.0.2
   resolution: "unist-util-position@npm:4.0.2"
   dependencies:
     "@types/unist": ^2.0.0
   checksum: 6da7320689c387c6c4740c8d27edc42c4582ee19736143604005ccad51b1239d65fed29b7bf966a778935985d5a6036e27dc35108d050a94a9757dbf76bf2d10
+  languageName: node
+  linkType: hard
+
+"unist-util-position@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "unist-util-position@npm:4.0.3"
+  dependencies:
+    "@types/unist": ^2.0.0
+  checksum: 0d89973628d40f19345cbcc50008f7f56d411afa54434bbe6c224b22d26aaf9d4500da2de363f1f01945acab1f1c31920c514253149eb546ff9b8bbc1ea94209
   languageName: node
   linkType: hard
 
@@ -10132,6 +10167,31 @@ __metadata:
     webpack:
       optional: true
   checksum: 33e0d033f984f9013df72fd810ac5a6c803bbb6f2506cd2c711f0d72942698fe781a22a1c60f13a470d547caf9ec645eda42e3dcd102551326daf38f3bd682b5
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "unplugin@npm:0.6.1"
+  dependencies:
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.4.3
+  peerDependencies:
+    esbuild: ">=0.13"
+    rollup: ^2.50.0
+    vite: ^2.3.0
+    webpack: 4 || 5
+  peerDependenciesMeta:
+    esbuild:
+      optional: true
+    rollup:
+      optional: true
+    vite:
+      optional: true
+    webpack:
+      optional: true
+  checksum: ece0552cef85fc042ffd91d26554b4d66bde7270551d21acfc7ec556134bd59a99785e427be395b85fefad1db9dea4e3769f281cf413bde846ec23782e715d88
   languageName: node
   linkType: hard
 
@@ -10341,9 +10401,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.7.12":
-  version: 0.7.12
-  resolution: "vitest@npm:0.7.12"
+"vitest@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "vitest@npm:0.8.4"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -10368,7 +10428,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 62ed3078336e0b6cd093fe8d7f7ef2eb8f97996732e8aa78b1d2d495539e23a1e905253aeb515956b56b1c92cfe9346537416a90c4b0e7061fc6b944eec2ae61
+  checksum: 4048499c3339f5b6f9ba9468f7bfe987f140f6e0553922321a021ee0f8829c7ea75e93780a7328529dfb1c292423def738048e73574621ec6e8efe2c56edb019
   languageName: node
   linkType: hard
 
