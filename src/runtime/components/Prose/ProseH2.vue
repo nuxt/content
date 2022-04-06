@@ -1,8 +1,8 @@
 <template>
   <h2 :id="id">
-    <a :href="`#${id}`">
+    <NuxtLink :href="`#${id}`">
       <slot />
-    </a>
+    </NuxtLink>
   </h2>
 </template>
 

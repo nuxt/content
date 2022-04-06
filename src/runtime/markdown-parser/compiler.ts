@@ -56,18 +56,6 @@ export default function (this: any, _options: MarkdownOptions) {
         node.content = { ...node }
       }
 
-      /**
-       * Replace a tag with nuxt-link if relative
-       */
-      if (node.tagName === 'a') {
-        const properties = node.properties as any
-        if ((properties.href || '').startsWith('/')) {
-          node.tagName = 'nuxt-link'
-          properties.to = properties.href
-          delete properties.href
-        }
-      }
-
       const filtered: MarkdownNode = {
         type: 'element',
         tag: node.tagName as string,
