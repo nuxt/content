@@ -30,6 +30,7 @@ export const createQuery = (
   }
 
   const query: QueryBuilder = {
+    params: () => Object.freeze(params),
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...params.where, q]),

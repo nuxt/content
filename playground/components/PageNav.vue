@@ -15,5 +15,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: navigation } = await useAsyncData('navigation', () => queryContent().findNavigation())
+const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
 </script>

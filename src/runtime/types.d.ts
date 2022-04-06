@@ -172,6 +172,12 @@ export interface QueryBuilder {
    * Fetch sorround contents
    */
   findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<ParsedContentMeta>>
+
+  /**
+   * Retrieve query builder params
+   * @internal
+   */
+  params: () => readonly QueryBuilderParams
 }
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void

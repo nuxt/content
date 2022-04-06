@@ -290,9 +290,7 @@ export default defineNuxtModule<ModuleOptions>({
         handle: resolveRuntimeModule('./server/api/navigation')
       })
 
-      contentContext.queries.push(
-        resolveRuntimeModule('./query/plugin-navigation')
-      )
+      addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
     }
 
     // @ts-ignore
