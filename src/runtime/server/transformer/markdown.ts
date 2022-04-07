@@ -1,10 +1,10 @@
-import { defineContentPlugin } from '../..'
 import { parse } from '../../markdown-parser'
-import { MarkdownOptions } from '../../types'
+import type { MarkdownOptions } from '../../types'
 import { privateConfig } from '#config'
 
 const importPlugin = async (p: [string, any]) => [await import(p[0]).then(res => res.default || res), p[1]]
-export default defineContentPlugin({
+
+export default {
   name: 'markdown',
   extentions: ['.md'],
   parse: async (id, content) => {
@@ -15,12 +15,10 @@ export default defineContentPlugin({
     const parsed = await parse(content, config)
 
     return {
-      meta: {
-        id,
-        type: 'markdown',
-        ...parsed.meta
-      },
-      body: parsed.body
+      ...parsed.meta,
+      body: parsed.body,
+      type: 'markdown',
+      id
     }
   }
-})
+}

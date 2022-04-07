@@ -28,13 +28,11 @@ exports[`Transformer > Parse > transformer-index-parsed 1`] = `
     },
     "type": "root",
   },
-  "meta": {
-    "description": "",
-    "empty": false,
-    "excerpt": undefined,
-    "id": "content:index.md",
-    "title": "Index",
-    "type": "markdown",
-  },
+  "description": "",
+  "empty": false,
+  "excerpt": undefined,
+  "id": "content:index.md",
+  "title": "Index",
+  "type": "markdown",
 }
 `;

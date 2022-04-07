@@ -15,7 +15,7 @@ import { debounce } from 'perfect-debounce'
 import type { WatchEvent } from 'unstorage'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { name, version } from '../package.json'
-import { contentPluginTemplate, queryPluginTemplate, typeTemplate } from './templates'
+import { transformersTemplate, typeTemplate } from './templates'
 import {
   createWebSocket,
   getMountDriver,
@@ -153,7 +153,6 @@ export interface ModuleOptions {
 interface ContentContext extends ModuleOptions {
   base: Readonly<string>
   transformers: Array<string>
-  queries: Array<string>
 }
 
 export interface ModuleHooks {
@@ -194,11 +193,10 @@ export default defineNuxtModule<ModuleOptions>({
     const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
-        resolveRuntimeModule('./server/transformer/plugin-markdown'),
-        resolveRuntimeModule('./server/transformer/plugin-yaml'),
-        resolveRuntimeModule('./server/transformer/plugin-path-meta')
+        resolveRuntimeModule('./server/transformer/markdown'),
+        resolveRuntimeModule('./server/transformer/yaml'),
+        resolveRuntimeModule('./server/transformer/path-meta')
       ],
-      queries: [],
       ...options
     }
 
@@ -208,7 +206,7 @@ export default defineNuxtModule<ModuleOptions>({
       highlight: options.highlight
     }
     // @ts-ignore - Initialize private runtime config
-    nuxt.options.privateRuntimeConfig.content = {}
+    nuxt.options.privateRuntimeConfig.gcontent = {}
 
     // Add Vite configurations
     if (nuxt.options.vite !== false) {
@@ -241,16 +239,15 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugin'))
 
     nuxt.hook('nitro:context', (ctx) => {
-      ctx.alias['#content-plugins'] = nuxt.options.alias['#content-plugins']
-      ctx.alias['#query-plugins'] = nuxt.options.alias['#query-plugins']
+      ctx.alias['#content'] = resolveRuntimeModule('./index')
+      ctx.alias['#content-transformers'] = nuxt.options.alias['#content-transformers']
 
       ctx.externals = defu(ctx.externals, {
         inline: [
           // Inline module runtime in Nitro bundle
           resolve('./runtime'),
-          // Inline query/content template in Nitro bundle
-          ctx.alias['#query-plugins'],
-          ctx.alias['#content-plugins']
+          // Inline content template in Nitro bundle
+          ctx.alias['#content-transformers']
         ]
       })
 
@@ -265,7 +262,8 @@ export default defineNuxtModule<ModuleOptions>({
     addAutoImport([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
       { name: 'highlightCode', as: 'highlightCode', from: resolveRuntimeModule('./composables/highlight') },
-      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/markdown') }
+      { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
+      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
     ])
 
     // Register components
@@ -298,13 +296,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
-    // Add locale plugin if needed
-    if (contentContext.locales.length > 1) {
-      contentContext.queries.push(
-        resolveRuntimeModule('./query/plugin-locale')
-      )
-    }
-
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
 
@@ -314,8 +305,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.privateRuntimeConfig.content = contentContext
 
     // Register templates
-    nuxt.options.alias['#content-plugins'] = addTemplate({ ...contentPluginTemplate, options: contentContext }).dst!
-    nuxt.options.alias['#query-plugins'] = addTemplate({ ...queryPluginTemplate, options: contentContext }).dst!
+    nuxt.options.alias['#content-transformers'] = addTemplate({ ...transformersTemplate, options: contentContext }).dst!
     addTemplate({ ...typeTemplate, options: contentContext })
 
     // Setup content dev module

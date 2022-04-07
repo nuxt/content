@@ -1,6 +1,6 @@
 import type { Theme, Lang } from 'shiki-es'
 import type { HighlightParams, HighlightThemedToken } from '../types'
-import { withContentBase } from './content'
+import { withContentBase } from './utils'
 
 type HighlightCodeOptions = { lang?: Lang, theme?: Theme }
 

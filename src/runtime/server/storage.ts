@@ -7,8 +7,6 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformer'
 import { privateConfig } from '#config'
 import { storage } from '#storage'
-// @ts-ignore
-import { plugins } from '#query-plugins'
 
 export const contentStorage = prefixStorage(storage, 'content:source')
 export const cacheStorage = prefixStorage(storage, 'cache:content')
@@ -62,8 +60,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   const parsedContent = await parse(id, body as string).then(transform)
   const parsed = {
     ...meta,
-    ...parsedContent.meta,
-    body: parsedContent.body
+    ...parsedContent
   }
 
   if (isDevelopment) {
@@ -88,7 +85,7 @@ export const queryContent = (
     }
   }
 
-  const pipelineFetcher = createPipelineFetcher(getContentsList, plugins)
+  const pipelineFetcher = createPipelineFetcher(getContentsList)
 
-  return createQuery(pipelineFetcher, body, plugins)
+  return createQuery(pipelineFetcher, body)
 }

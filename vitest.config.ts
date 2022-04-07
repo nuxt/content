@@ -8,8 +8,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '#storage', replacement: r('./test/mocks/storage.ts') },
-      { find: '#query-plugins', replacement: r('./test/fixtures/basic/.nuxt/query-plugins.mjs') },
-      { find: '#content-plugins', replacement: r('./test/fixtures/basic/.nuxt/content-plugins.mjs') },
+      { find: '#content-transformers', replacement: r('./test/fixtures/basic/.nuxt/nuxt-content-transformers.mjs') },
       { find: '#config', replacement: r('./test/mocks/config.ts') }
     ]
   }

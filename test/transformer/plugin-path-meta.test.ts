@@ -1,67 +1,67 @@
 import { describe, test, expect, assert } from 'vitest'
-import plugin from '../../src/runtime/server/transformer/plugin-path-meta'
-import type { ParsedContent, ParsedContentMeta } from '../../src/runtime/types'
+import plugin from '../../src/runtime/server/transformer/path-meta'
+import type { ParsedContent } from '../../src/runtime/types'
 
 const matchMeta = (transformed: any, expected: any) => {
   const fullPath = expected.id.replace(/:/g, '/')
-  expect(transformed).toHaveProperty('meta.id')
+  expect(transformed).toHaveProperty('id')
   assert(
-    transformed.meta.id === expected.id,
-    `Id is not equal, expected: ${expected.id}, actual: ${transformed.meta.id}`
+    transformed.id === expected.id,
+    `Id is not equal, expected: ${expected.id}, actual: ${transformed.id}`
   )
 
-  expect(transformed).toHaveProperty('meta.draft')
+  expect(transformed).toHaveProperty('draft')
   assert(
-    transformed.meta.draft === expected.draft,
-    `Draft is not equal, expected: ${expected.draft}, actual: ${transformed.meta.draft}`
+    transformed.draft === expected.draft,
+    `Draft is not equal, expected: ${expected.draft}, actual: ${transformed.draft}`
   )
 
-  expect(transformed).toHaveProperty('meta.partial')
+  expect(transformed).toHaveProperty('partial')
   assert(
-    transformed.meta.partial === expected.partial,
-    `Partial is not equal, expected: ${expected.partial}, actual: ${transformed.meta.partial}`
+    transformed.partial === expected.partial,
+    `Partial is not equal, expected: ${expected.partial}, actual: ${transformed.partial}`
   )
 
-  expect(transformed).toHaveProperty('meta.slug')
+  expect(transformed).toHaveProperty('slug')
   assert(
-    transformed.meta.slug === expected.slug,
-    `Slug is not equal, expected: ${expected.slug}, actual: ${transformed.meta.slug}`
+    transformed.slug === expected.slug,
+    `Slug is not equal, expected: ${expected.slug}, actual: ${transformed.slug}`
   )
 
-  expect(transformed).toHaveProperty('meta.source')
+  expect(transformed).toHaveProperty('source')
   assert(
-    fullPath.startsWith(`${transformed.meta.source}/`),
-    `source is not equal, recieved: ${transformed.meta.source}`
+    fullPath.startsWith(`${transformed.source}/`),
+    `source is not equal, recieved: ${transformed.source}`
   )
 
-  expect(transformed).toHaveProperty('meta.path')
+  expect(transformed).toHaveProperty('path')
   assert(
-    fullPath.startsWith(`${transformed.meta.source}/${transformed.meta.path}`),
-    `path is not equal, recieved: ${transformed.meta.path}`
+    fullPath.startsWith(`${transformed.source}/${transformed.path}`),
+    `path is not equal, recieved: ${transformed.path}`
   )
-  expect(transformed).toHaveProperty('meta.extension')
+  expect(transformed).toHaveProperty('extension')
   assert(
-    fullPath.startsWith(`${transformed.meta.source}/${transformed.meta.path}.${transformed.meta.extension}`),
-    `extension is not equal, recieved: ${transformed.meta.path}`
+    fullPath.startsWith(`${transformed.source}/${transformed.path}.${transformed.extension}`),
+    `extension is not equal, recieved: ${transformed.path}`
   )
 
-  expect(transformed).toHaveProperty('meta.title')
+  expect(transformed).toHaveProperty('title')
   assert(
-    transformed.meta.title === expected.title,
-    `Title is not equal, expected: ${expected.title}, actual: ${transformed.meta.title}`
+    transformed.title === expected.title,
+    `Title is not equal, expected: ${expected.title}, actual: ${transformed.title}`
   )
 }
 
 describe('Path Meta Plugin', () => {
   test('Index file', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:3.index.md' } as ParsedContentMeta,
+      id: 'content:3.index.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: '',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: false,
       partial: false,
       slug: '/'
@@ -70,13 +70,13 @@ describe('Path Meta Plugin', () => {
 
   test('Index file with position [Draft]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:3.index.draft.md' } as ParsedContentMeta,
+      id: 'content:3.index.draft.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: '',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: true,
       partial: false,
       slug: '/'
@@ -85,13 +85,13 @@ describe('Path Meta Plugin', () => {
 
   test('Blog Index file with position [Draft]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.blog:3.index.draft.md' } as ParsedContentMeta,
+      id: 'content:1.blog:3.index.draft.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: '',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: true,
       partial: false,
       slug: '/blog'
@@ -100,13 +100,13 @@ describe('Path Meta Plugin', () => {
 
   test('Blog post file with position [Partial]', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.blog:_4.the-post.md' } as ParsedContentMeta,
+      id: 'content:1.blog:_4.the-post.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: 'The Post',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: false,
       partial: true,
       slug: '/blog/the-post'
@@ -118,13 +118,13 @@ describe('Path Meta Plugin', () => {
 
     semvers.forEach((semver) => {
       const transformed = plugin.transform!({
-        meta: { id: `content:${semver}:doc.md` } as ParsedContentMeta,
+        id: `content:${semver}:doc.md`,
         body: '# Index'
       }) as ParsedContent
 
       matchMeta(transformed, {
         title: 'Doc',
-        id: transformed.meta.id,
+        id: transformed.id,
         draft: false,
         partial: false,
         slug: `/${semver}/doc`,
@@ -136,13 +136,13 @@ describe('Path Meta Plugin', () => {
 
   test('Position of nested directories (position will calculate with first three directory)', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.one:2.two:3.three:4.four:5.five:doc.md' } as ParsedContentMeta,
+      id: 'content:1.one:2.two:3.three:4.four:5.five:doc.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: 'Doc',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: false,
       partial: false,
       slug: '/one/two/three/four/five/doc'
@@ -151,13 +151,13 @@ describe('Path Meta Plugin', () => {
 
   test('Handle special chars in file name', () => {
     const transformed = plugin.transform!({
-      meta: { id: 'content:1.one:file?param=value#hash.md' } as ParsedContentMeta,
+      id: 'content:1.one:file?param=value#hash.md',
       body: '# Index'
     }) as ParsedContent
 
     matchMeta(transformed, {
       title: 'File?param=value#hash',
-      id: transformed.meta.id,
+      id: transformed.id,
       draft: false,
       partial: false,
       slug: '/one/fileparamvaluehash'

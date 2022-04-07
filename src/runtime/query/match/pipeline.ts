@@ -1,14 +1,10 @@
-import type { QueryBuilderParams, QueryMatchOperator, QueryPipe, QueryPlugin } from '../../types'
+import type { QueryBuilderParams, QueryPipe } from '../../types'
 import { apply, omit, pick, sortByKey } from './utils'
 import { createMatch } from '.'
 
-export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T>>, plugins: Array<QueryPlugin>) {
+export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T>>) {
   // Create Matcher
-  const match = createMatch({
-    operators: plugins
-      .filter(p => p.operators)
-      .reduce((acc, p) => ({ ...acc, ...p.operators }), {} as Record<string, QueryMatchOperator>)
-  })
+  const match = createMatch()
 
   /**
    * Exctract surrounded items of specific condition
@@ -32,8 +28,6 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     (data, params) => data.filter(item => params.where.every(matchQuery => match(item, matchQuery))),
     // Sort data
     (data, params) => params.sortBy.forEach(([key, direction]) => sortByKey(data, key, direction)),
-    // Custom pipelines registered by plugins
-    ...plugins.map((plugin: QueryPlugin) => plugin.execute!).filter(Boolean),
     // Surround logic
     (data, params) => params.surround ? surround(data, params.surround) : data,
     // Skip first items

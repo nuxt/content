@@ -1,5 +1,5 @@
-import pluginMD from '../../src/runtime/server/transformer/plugin-markdown'
-import pluginYaml from '../../src/runtime/server/transformer/plugin-yaml'
+import pluginMD from '../../src/runtime/server/transformer/markdown'
+import pluginYaml from '../../src/runtime/server/transformer/yaml'
 import pluginMeta from '../../src/runtime/server/transformer/plugin-path-meta'
 
 export const plugins = [pluginMD, pluginYaml, pluginMeta]

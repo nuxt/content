@@ -1,7 +1,6 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { defineContentPlugin } from '../..'
 import { privateConfig } from '#config'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
@@ -19,12 +18,12 @@ const describeId = (id: string) => {
   }
 }
 
-export default defineContentPlugin({
+export default {
   name: 'path-meta',
   extentions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = privateConfig.content || {}
-    const { source, path, extension } = describeId(content.meta.id)
+    const { source, path, extension } = describeId(content.id)
     const parts = path.split('/')
 
     // Check first part for locale name
@@ -32,19 +31,19 @@ export default defineContentPlugin({
 
     const filePath = parts.join('/')
 
-    Object.assign(content.meta, {
-      source,
-      path,
-      extension,
-      title: content.meta.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
+    return {
+      title: generateTitle(refineUrlPart(parts[parts.length - 1])),
       slug: generateSlug(filePath),
       draft: isDraft(filePath),
       partial: isPartial(filePath),
-      locale: locale || content.meta?.locale
-    })
-    return content
+      locale,
+      ...content,
+      source,
+      path,
+      extension
+    }
   }
-})
+}
 
 /**
  * When file name ends with `.draft` then it will mark as draft.

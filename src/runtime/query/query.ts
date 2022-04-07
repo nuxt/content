@@ -1,10 +1,9 @@
-import type { DatabaseFetcher, ParsedContentMeta, QueryBuilder, QueryBuilderParams, QueryPlugin } from '../types'
+import type { DatabaseFetcher, ParsedContentMeta, QueryBuilder, QueryBuilderParams } from '../types'
 import { ensureArray } from './match/utils'
 
 export const createQuery = (
   fetcher: DatabaseFetcher<ParsedContentMeta>,
-  queryParams?: Partial<QueryBuilderParams>,
-  plugins?: Array<QueryPlugin>
+  queryParams?: Partial<QueryBuilderParams>
 ): QueryBuilder => {
   const params: QueryBuilderParams = {
     slug: '',
@@ -40,16 +39,10 @@ export const createQuery = (
     // find
     findOne: () => fetcher({ ...params, first: true }) as Promise<ParsedContentMeta>,
     find: () => fetcher(params) as Promise<Array<ParsedContentMeta>>,
-    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<ParsedContentMeta>>
+    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<ParsedContentMeta>>,
+    // locale
+    locale: (locale: string) => query.where({ locale })
   }
-
-  // Register plugins
-  ;(plugins || []).filter(p => p.queries).forEach((p) => {
-    const queries = p.queries(params, query) || {}
-    Object.entries(queries).forEach(([key, fn]) => {
-      query[key] = (...args) => fn(...args) || query
-    })
-  })
 
   return query
 }

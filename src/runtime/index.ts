@@ -1,8 +1,11 @@
-import type { ContentPlugin } from './types'
+import type { ContentTransformer } from './types'
 
 /**
- * Define new plugin for content parsing.
+ * Define new transformenr for content parsing.
  */
-export function defineContentPlugin (plugin: ContentPlugin): ContentPlugin {
-  return plugin
+export function defineContentTransformer (transformer: ContentTransformer): ContentTransformer {
+  return transformer
 }
+
+export { queryContent } from './server/storage'
+export * from '#cotnent-transformers'

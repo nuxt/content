@@ -1,9 +1,7 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { createQuery } from '../query/query'
 import type { QueryBuilder, QueryBuilderParams } from '../types'
-import { withContentBase } from './content'
-// @ts-ignore
-import { plugins } from '#query-plugins'
+import { withContentBase } from './utils'
 
 /**
  * Fetch query result
@@ -21,5 +19,5 @@ export function queryContent (slug?: string, ...slugParts: string[]) {
     slug: withLeadingSlash(joinURL(slug, ...slugParts))
   }
 
-  return createQuery(queryFetch, body, plugins)
+  return createQuery(queryFetch, body)
 }

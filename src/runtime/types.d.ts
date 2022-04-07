@@ -96,9 +96,7 @@ export interface Toc {
   links: TocLink[]
 }
 
-///
-
-export interface ContentPlugin {
+export interface ContentTransformer {
   name: string
   extentions: string[]
   parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
@@ -174,6 +172,11 @@ export interface QueryBuilder {
   findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<ParsedContentMeta>>
 
   /**
+   * Filter contents based on locale
+   */
+  locale(locale: string): QueryBuilder
+
+  /**
    * Retrieve query builder params
    * @internal
    */
@@ -185,13 +188,6 @@ export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => 
 export type DatabaseFetcher<T> = (params: QueryBuilderParams) => Promise<Array<T> | T>
 
 export type QueryMatchOperator = (item: any, condition: any) => boolean
-
-export interface QueryPlugin {
-  name: string
-  operators?: Record<string, QueryMatchOperator>
-  queries?: (param: QueryBuilderParams, query: QueryBuilder) => Record<string, (...args: any[]) => any> | void
-  execute?: QueryPipe
-}
 
 // Navigation
 export interface NavItem {

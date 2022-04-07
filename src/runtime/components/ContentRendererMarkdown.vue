@@ -223,10 +223,10 @@ export default defineComponent({
     // Get body from document
     const body = (document.body || document) as MarkdownNode
     const meta: ParsedContentMeta = {
-      ...document.meta || {},
+      ...document,
       tags: {
         ...this.tags || {},
-        ...document.meta?.tags || {}
+        ...document?.tags || {}
       }
     }
 
