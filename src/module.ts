@@ -238,6 +238,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('nitro:config', (nitroConfig) => {
       // TODO: create the parsed content ouput for production bundle
+      // TODO: handle multi sources by looping on contentContext.sources
       nitroConfig.serverAssets = nitroConfig.serverAssets || []
       nitroConfig.serverAssets.push({
         baseName: 'content',

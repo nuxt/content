@@ -7,7 +7,7 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
 import { useRuntimeConfig, useStorage } from '#nitro'
 
-export const contentStorage = prefixStorage(useStorage(), 'content:source')
+export const contentStorage = isDevelopment ? prefixStorage(useStorage(), 'content:source') : prefixStorage(useStorage(), '/assets')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
 
 /**
