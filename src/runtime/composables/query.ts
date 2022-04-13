@@ -1,13 +1,14 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { createQuery } from '../query/query'
-import type { QueryBuilder, QueryBuilderParams } from '../types'
-import { withContentBase } from './utils'
+import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import { contentApiWithParams } from './utils'
 
 /**
  * Fetch query result
  */
-const queryFetch = (body: Partial<QueryBuilderParams>) =>
-  $fetch<any>(withContentBase('/query'), { method: 'POST', headers: { Accept: 'application/json' }, body })
+const queryFetch = (params: Partial<QueryBuilderParams>) => {
+  return $fetch<Array<ParsedContent>>(contentApiWithParams('/query', params))
+}
 
 /**
  * Query contents

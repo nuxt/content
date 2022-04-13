@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { findOne } = queryContent(route.path)
-const { data: document } = await useAsyncData(route.path, findOne)
+const { data: document } = await useAsyncData(route.path, () => {
+  return queryContent(route.path).findOne()
+})
 </script>

@@ -1,9 +1,9 @@
 import { defineHandle, useQuery } from 'h3'
 import { prefixStorage } from 'unstorage'
 import { faker } from '@faker-js/faker'
-import { storage } from '#storage'
+import { useStorage } from '#nitro'
 
-const contentStorage = prefixStorage(storage, 'content:source')
+const contentStorage = prefixStorage(useStorage, 'content:source')
 
 export default defineHandle(async (req) => {
   const { count = 100 } = useQuery(req)

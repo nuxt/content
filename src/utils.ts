@@ -4,11 +4,8 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
-import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
-
-export const logger = consola.withScope('content')
 
 export const MOUNT_PREFIX = 'content:source:'
 
@@ -44,15 +41,15 @@ export const PROSE_TAGS = [
  */
 export function getMountDriver (mount: MountOptions) {
   if (mount.driver === 'fs') {
-    return fsDriver(mount.driverOptions || {})
+    return fsDriver(mount as any)
   }
 
   if (mount.driver === 'http') {
-    return httpDriver(mount.driverOptions || {})
+    return httpDriver(mount as any)
   }
 
   try {
-    return require(mount.driver).default(mount.driverOptions || {})
+    return require(mount.driver).default(mount as any)
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("Couldn't load driver", mount.driver)
@@ -71,18 +68,12 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
         name: storage,
         driver: 'fs',
         prefix: '',
-        driverOptions: {
-          base: resolve(nuxt.options.srcDir, storage)
-        }
+        base: resolve(nuxt.options.srcDir, storage)
       }
     }
 
     if (typeof storage === 'object') {
-      mounts[key(storage.name, storage.prefix)] = {
-        name: storage.name,
-        driver: storage.driver,
-        driverOptions: storage.driverOptions
-      }
+      mounts[key(storage.name, storage.prefix)] = storage
     }
 
     return mounts

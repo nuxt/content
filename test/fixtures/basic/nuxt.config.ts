@@ -3,9 +3,7 @@ import { resolve } from 'pathe'
 import contentModule from '../../..'
 
 export default defineNuxtConfig({
-  buildDir: process.env.NITRO_BUILD_DIR,
   nitro: {
-    output: { dir: process.env.NITRO_OUTPUT_DIR },
     externals: {
       inline: [
         resolve('../../..'),
@@ -24,9 +22,7 @@ export default defineNuxtConfig({
         name: 'fa-ir',
         prefix: '/fa',
         driver: 'fs',
-        driverOptions: {
-          base: resolve(__dirname, 'content-fa')
-        }
+        base: resolve(__dirname, 'content-fa')
       }
     ]
   }

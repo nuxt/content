@@ -1,4 +1,13 @@
 {
   "extends": "./playground/.nuxt/tsconfig.json",
-  "compilerOptions": {}
+  "compilerOptions": {
+    "paths": {
+      "#content": [
+        "../src/runtime/index"
+      ],
+      "#content/*": [
+        "../src/runtime/*"
+      ],
+    },
+  }
 }

@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { privateConfig } from '#config'
+import { useRuntimeConfig } from '#nitro'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
@@ -22,7 +22,7 @@ export default {
   name: 'path-meta',
   extentions: ['.*'],
   transform (content) {
-    const { locales, defaultLocale } = privateConfig.content || {}
+    const { locales, defaultLocale } = useRuntimeConfig().content || {}
     const { source, path, extension } = describeId(content.id)
     const parts = path.split('/')
 

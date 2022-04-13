@@ -1,5 +1,5 @@
 import { NavItem, ParsedContentMeta } from '../types'
-import { generateTitle } from './transformer/path-meta'
+import { generateTitle } from './transformers/path-meta'
 
 type PrivateNavItem = NavItem & { path?: string }
 /**

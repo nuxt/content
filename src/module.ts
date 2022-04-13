@@ -3,23 +3,23 @@ import {
   defineNuxtModule,
   resolveModule,
   addServerMiddleware,
-  addTemplate,
   createResolver,
   addAutoImport,
-  addComponentsDir
+  addComponentsDir,
+  templateUtils,
+  useLogger
 } from '@nuxt/kit'
 import defu from 'defu'
 import { createStorage } from 'unstorage'
 import { join } from 'pathe'
-import { debounce } from 'perfect-debounce'
-import type { WatchEvent } from 'unstorage'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
+import { listen } from 'listhen'
+import type { WatchEvent } from 'unstorage'
+import { debounce } from 'perfect-debounce'
 import { name, version } from '../package.json'
-import { transformersTemplate, typeTemplate } from './templates'
 import {
   createWebSocket,
   getMountDriver,
-  logger,
   MOUNT_PREFIX,
   processMarkdownOptions,
   PROSE_TAGS,
@@ -30,7 +30,7 @@ export type MountOptions = {
   name: string
   prefix?: string
   driver: 'fs' | 'http' | string
-  driverOptions?: Record<string, any>
+  [options: string]: any
 }
 
 export interface ModuleOptions {
@@ -190,23 +190,17 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
+    const logger = useLogger('@nuxt/content')
+
     const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
-        resolveRuntimeModule('./server/transformer/markdown'),
-        resolveRuntimeModule('./server/transformer/yaml'),
-        resolveRuntimeModule('./server/transformer/path-meta')
+        resolveRuntimeModule('./server/transformers/markdown'),
+        resolveRuntimeModule('./server/transformers/yaml'),
+        resolveRuntimeModule('./server/transformers/path-meta')
       ],
       ...options
     }
-
-    // @ts-ignore - Initialize public runtime config
-    nuxt.options.publicRuntimeConfig.content = {
-      basePath: options.base,
-      highlight: options.highlight
-    }
-    // @ts-ignore - Initialize private runtime config
-    nuxt.options.privateRuntimeConfig.gcontent = {}
 
     // Add Vite configurations
     if (nuxt.options.vite !== false) {
@@ -231,31 +225,53 @@ export default defineNuxtModule<ModuleOptions>({
     for (const api of ['query', 'highlight']) {
       addServerMiddleware({
         route: `/api/${options.base}/${api}`,
-        handle: resolveRuntimeModule(`./server/api/${api}`)
+        handler: resolveRuntimeModule(`./server/api/${api}`)
+      })
+      addServerMiddleware({
+        route: `/api/${options.base}/${api}/:params`,
+        handler: resolveRuntimeModule(`./server/api/${api}`)
       })
     }
 
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugin'))
 
-    nuxt.hook('nitro:context', (ctx) => {
-      ctx.alias['#content'] = resolveRuntimeModule('./index')
-      ctx.alias['#content-transformers'] = nuxt.options.alias['#content-transformers']
-
-      ctx.externals = defu(ctx.externals, {
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      // TODO: create the parsed content ouput for production bundle
+      nitroConfig.serverAssets = nitroConfig.serverAssets || []
+      nitroConfig.serverAssets.push({
+        baseName: 'content',
+        dir: resolve(nitroConfig.rootDir, 'content')
+      })
+      nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle
-          resolve('./runtime'),
-          // Inline content template in Nitro bundle
-          ctx.alias['#content-transformers']
+          resolve('./runtime')
         ]
       })
 
       // Register mounts
-      Object.assign(
-        ctx.storage.mounts,
+      nitroConfig.storage = Object.assign(
+        nitroConfig.storage || {},
         useContentMounts(nuxt, contentContext.sources || [])
       )
+
+      nitroConfig.autoImport = nitroConfig.autoImport || {}
+      nitroConfig.autoImport.imports = nitroConfig.autoImport.imports || []
+      nitroConfig.autoImport.imports.push(...[
+        { name: 'parse', as: 'parse', from: resolveRuntimeModule('./server/transformers') },
+        { name: 'transform', as: 'transform', from: resolveRuntimeModule('./server/transformers') }
+      ])
+
+      nitroConfig.virtual = nitroConfig.virtual || {}
+      nitroConfig.virtual['#content/virtual/transformers'] = [
+        // TODO: remove kit usage
+        templateUtils.importSources(contentContext.transformers),
+        `const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
+        'export const getParser = (ext) => transformers.find(p => p.extentions.includes(ext) && p.parse)',
+        'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extentions.join("|"))) && p.transform)',
+        'export default () => {}'
+      ].join('\n')
     })
 
     // Register composables
@@ -275,17 +291,15 @@ export default defineNuxtModule<ModuleOptions>({
       global: true
     })
 
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({
-        path: resolve(nuxt.options.buildDir, typeTemplate.filename)
-      })
-    })
-
     // Register navigation
     if (options.navigation) {
       addServerMiddleware({
         route: `/api/${options.base}/navigation`,
-        handle: resolveRuntimeModule('./server/api/navigation')
+        handler: resolveRuntimeModule('./server/api/navigation')
+      })
+      addServerMiddleware({
+        route: `/api/${options.base}/navigation/:params`,
+        handler: resolveRuntimeModule('./server/api/navigation')
       })
 
       addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
@@ -299,14 +313,15 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
 
-    // @ts-ignore - Tags will use in markdown renderer for component replacement
-    nuxt.options.publicRuntimeConfig.content.tags = contentContext.markdown.tags
-    // @ts-ignore -Context will use in server
-    nuxt.options.privateRuntimeConfig.content = contentContext
-
-    // Register templates
-    nuxt.options.alias['#content-transformers'] = addTemplate({ ...transformersTemplate, options: contentContext }).dst!
-    addTemplate({ ...typeTemplate, options: contentContext })
+    nuxt.options.runtimeConfig.public.content = {
+      base: options.base,
+      // Tags will use in markdown renderer for component replacement
+      tags: contentContext.markdown.tags as any,
+      highlight: options.highlight,
+      wsUrl: ''
+    }
+    // Context will use in server
+    nuxt.options.runtimeConfig.content = contentContext as any
 
     // Setup content dev module
     if (!nuxt.options.dev || !options.watch) {
@@ -322,30 +337,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     const ws = createWebSocket()
 
-    // Create socket server
-    nuxt.server
-      .listen(0, { showURL: false })
-      .then(({ url, server }: { url: string; server: any }) => {
-        // @ts-ignore - Inject socket server address into runtime config
-        nuxt.options.publicRuntimeConfig.content.wsUrl = url.replace(
-          'http',
-          'ws'
-        )
-
-        server.on('upgrade', ws.serve)
-
-        // Broadcast a message to the server to refresh the page
-        // eslint-disable-next-line import/no-named-as-default-member
-        const broadcast = debounce((event: WatchEvent, key: string) => {
-          key = key.substring(MOUNT_PREFIX.length)
-          logger.info(`${key} ${event}d`)
-          ws.broadcast({ event, key })
-        }, 50)
-
-        // Watch contents
-        storage.watch(broadcast)
-      })
-
     // Dispose storage on nuxt close
     nuxt.hook('close', async () => {
       await Promise.all([
@@ -353,12 +344,29 @@ export default defineNuxtModule<ModuleOptions>({
         ws.close()
       ])
     })
+
+    // Listen dev server
+    const { server, url } = await listen(() => 'Nuxt Content', { port: 4000, showURL: false })
+    server.on('upgrade', ws.serve)
+
+    // Register ws url
+    nuxt.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
+
+    // Broadcast a message to the server to refresh the page
+    const broadcast = debounce((event: WatchEvent, key: string) => {
+      key = key.substring(MOUNT_PREFIX.length)
+      logger.info(`${key} ${event}d`)
+      ws.broadcast({ event, key })
+    }, 50)
+
+    // Watch contents
+    storage.watch(broadcast)
   }
 })
 
 interface ModulePublicRuntimeConfig {
   tags: Record<string, string>
-  basePath?: string;
+  base: string;
   // Websocket server URL
   wsUrl?: string;
   // Shiki config

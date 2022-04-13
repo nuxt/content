@@ -1,9 +1,9 @@
 import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig()
+  const publicConfig = useRuntimeConfig().public
 
-  if (process.client && config.content.wsUrl) {
+  if (process.client && publicConfig.content.wsUrl) {
     // Connect to websocket
     import('./composables/web-socket').then(({ useWebSocket }) => useWebSocket())
   }

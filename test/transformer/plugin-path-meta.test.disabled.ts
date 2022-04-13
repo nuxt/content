@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import plugin from '../../src/runtime/server/transformer/path-meta'
+import plugin from '../../src/runtime/server/transformers/path-meta'
 import type { ParsedContent } from '../../src/runtime/types'
 
 const matchMeta = (transformed: any, expected: any) => {

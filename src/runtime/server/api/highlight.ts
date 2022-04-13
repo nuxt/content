@@ -1,7 +1,8 @@
-import { lazyHandle, assertMethod, useBody, createError } from 'h3'
+import { assertMethod, createError, defineLazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
-import { publicConfig } from '#config'
+import { contentApiParams } from '../utils'
+import { useRuntimeConfig } from '#nitro'
 
 /**
  * Resolve Shiki compatible lang from string.
@@ -33,9 +34,9 @@ const resolveBody = (body: Partial<HighlightParams>): { code: string, lang?: Lan
   }
 }
 
-export default lazyHandle(async () => {
+export default defineLazyEventHandler(async () => {
   // Grab highlighter config from publicRuntimeConfig
-  const { theme, preload } = publicConfig.content.highlight
+  const { theme, preload } = useRuntimeConfig().content.highlight
 
   // Initialize highlighter with defaults
   const highlighter = await getHighlighter({
@@ -43,12 +44,12 @@ export default lazyHandle(async () => {
     langs: preload || ['json', 'js', 'ts', 'html', 'css']
   })
 
-  return async (req): Promise<HighlightThemedToken[][]> => {
-    assertMethod(req, 'POST')
+  return async (event): Promise<HighlightThemedToken[][]> => {
+    assertMethod(event, 'GET')
 
-    const body = await useBody<Partial<HighlightParams>>(req)
+    const params = contentApiParams<Partial<HighlightParams>>(event)
 
-    const { code, lang, theme } = resolveBody(body)
+    const { code, lang, theme } = resolveBody(params)
 
     // Skip highlight if lang is not supported
     if (!lang) {

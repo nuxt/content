@@ -1,12 +1,13 @@
-import { defineHandle, assertMethod, isMethod, useBody } from 'h3'
+import { defineEventHandler, assertMethod } from 'h3'
 import { queryContent } from '../storage'
 import { createNav } from '../navigation'
-import { ParsedContentMeta } from '../../types'
+import { ParsedContentMeta, QueryBuilderParams } from '../../types'
+import { contentApiParams } from '../utils'
 
-export default defineHandle(async (req) => {
-  assertMethod(req, ['GET', 'POST'])
+export default defineEventHandler(async (event) => {
+  assertMethod(event, 'GET')
 
-  const params = isMethod(req, 'POST') ? await useBody(req) : {}
+  const params: Partial<QueryBuilderParams> = contentApiParams(event)
 
   const contents = await queryContent(params || {})
     .where({

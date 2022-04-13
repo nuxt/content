@@ -11,7 +11,7 @@ describe('Content sources', () => {
 
     assert(typeof mount === 'object')
     assert(mount.driver === 'fs')
-    assert(mount.driverOptions?.base === '/test/content')
+    assert(mount.base === '/test/content')
   })
 
   test('Absolute path', () => {
@@ -20,7 +20,7 @@ describe('Content sources', () => {
 
     assert(typeof mount === 'object')
     assert(mount.driver === 'fs')
-    assert(mount.driverOptions?.base === '/content')
+    assert(mount.base === '/content')
   })
 
   test('Custom driver', () => {
@@ -28,16 +28,14 @@ describe('Content sources', () => {
       {
         name: 'repo1',
         driver: 'http',
-        driverOptions: {
-          base: 'https://cdn.com'
-        }
+        base: 'https://cdn.com'
       }
     ])
 
     assert(Object.keys(mounts).length === 1)
 
     expect(mounts).toMatchObject({
-      'content:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
+      'content:source:repo1': { driver: 'http', base: 'https://cdn.com' }
     })
   })
 
@@ -49,19 +47,17 @@ describe('Content sources', () => {
       {
         name: 'repo1',
         driver: 'http',
-        driverOptions: {
-          base: 'https://cdn.com'
-        }
+        base: 'https://cdn.com'
       }
     ])
 
     assert(Object.keys(mounts).length === 4)
 
     expect(mounts).toMatchObject({
-      'content:source:content': { driver: 'fs', driverOptions: { base: '/test/content' } },
-      'content:source:_repo1_docs': { driver: 'fs', driverOptions: { base: '/repo1/docs' } },
-      'content:source:repo2_docs': { driver: 'fs', driverOptions: { base: '/test/repo2/docs' } },
-      'content:source:repo1': { driver: 'http', driverOptions: { base: 'https://cdn.com' } }
+      'content:source:content': { driver: 'fs', base: '/test/content' },
+      'content:source:_repo1_docs': { driver: 'fs', base: '/repo1/docs' },
+      'content:source:repo2_docs': { driver: 'fs', base: '/test/repo2/docs' },
+      'content:source:repo1': { driver: 'http', base: 'https://cdn.com' }
     })
   })
 })

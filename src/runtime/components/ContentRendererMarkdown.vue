@@ -1,5 +1,4 @@
 <script lang="ts">
-import { useRuntimeConfig } from '#app'
 import { h, resolveComponent, Text, defineComponent } from 'vue'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
@@ -7,6 +6,7 @@ import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 
 import type { MarkdownNode, ParsedContentMeta } from '../types'
+import { useRuntimeConfig } from '#app'
 
 type CreateElement = typeof h
 type ContentVNode = VNode | string
@@ -209,7 +209,7 @@ export default defineComponent({
     }
   },
   setup () {
-    const { content: { tags } } = useRuntimeConfig()
+    const { content: { tags } } = useRuntimeConfig().public
     return {
       tags
     }

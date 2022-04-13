@@ -1,14 +1,14 @@
 import type { Theme, Lang } from 'shiki-es'
 import type { HighlightParams, HighlightThemedToken } from '../types'
-import { withContentBase } from './utils'
+import { contentApiWithParams } from './utils'
 
 type HighlightCodeOptions = { lang?: Lang, theme?: Theme }
 
 /**
  * Fetch highlight result
  */
-const highlightFetch = (body: Partial<HighlightParams>): Promise<HighlightThemedToken[][]> =>
-  $fetch<any>(withContentBase('/highlight'), { method: 'POST', body })
+const highlightFetch = (body: Partial<HighlightParams>) =>
+  $fetch<HighlightThemedToken[][]>(contentApiWithParams('/highlight', body))
 
 /**
  * Highlight code

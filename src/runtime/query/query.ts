@@ -5,18 +5,13 @@ export const createQuery = (
   fetcher: DatabaseFetcher<ParsedContentMeta>,
   queryParams?: Partial<QueryBuilderParams>
 ): QueryBuilder => {
-  const params: QueryBuilderParams = {
-    slug: '',
-    first: false,
-    skip: 0,
-    limit: 0,
+  const params = {
     sortBy: [],
-    surround: undefined,
     ...queryParams,
     where: queryParams?.where ? ensureArray(queryParams.where) : [],
     only: queryParams?.only ? ensureArray(queryParams.only) : [],
     without: queryParams?.without ? ensureArray(queryParams.without) : []
-  }
+  } as QueryBuilderParams
 
   /**
    * Factory function to create a parameter setter
@@ -32,7 +27,7 @@ export const createQuery = (
     params: () => Object.freeze(params),
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
-    where: $set('where', (q: any) => [...params.where, q]),
+    where: $set('where', (q: any) => [...(params.where), q]),
     sortBy: $set('sortBy', (field, direction) => [...params.sortBy, [field, direction]]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),

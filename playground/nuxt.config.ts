@@ -16,12 +16,10 @@ export default defineNuxtConfig({
   content: {
     sources: [
       {
-        name: 'translation',
+        name: 'translation-fa',
         prefix: '/fa',
         driver: 'fs',
-        driverOptions: {
-          base: resolve(__dirname, 'content-fa')
-        }
+        base: resolve(__dirname, 'content-fa')
       }
     ],
     highlight: {

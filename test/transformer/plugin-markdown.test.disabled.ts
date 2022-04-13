@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import plugin from '../../src/runtime/server/transformer/markdown'
+import plugin from '../../src/runtime/server/transformers/markdown'
 
 describe('Path Markdown Plugin', () => {
   test('Index file', async () => {

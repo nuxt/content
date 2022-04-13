@@ -1,7 +1,6 @@
 import { extname } from 'pathe'
 import type { ParsedContent, ContentTransformer } from '../../types'
-// @ts-ignore
-import { getParser, getTransformers } from '#content-transformers'
+import { getParser, getTransformers } from '#content/virtual/transformers'
 
 /**
  * Parse content file using registered plugins

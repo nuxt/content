@@ -1,16 +1,12 @@
-import { defineHandle, isMethod, assertMethod, useBody, useQuery, createError } from 'h3'
-import { queryContent } from '../storage'
+import { assertMethod, createError, defineEventHandler } from 'h3'
 import type { QueryBuilderParams } from '../../types'
+import { queryContent } from '../storage'
+import { contentApiParams } from '../utils'
 
-export default defineHandle(async (req) => {
-  assertMethod(req, ['GET', 'POST'])
+export default defineEventHandler(async (event) => {
+  assertMethod(event, 'GET')
 
-  const params = useQuery(req)
-  const body = isMethod(req, 'POST') ? await useBody<Partial<QueryBuilderParams>>(req) : {}
-  const query = {
-    ...params,
-    ...body
-  }
+  const query = contentApiParams<Partial<QueryBuilderParams>>(event)
   const contents = await queryContent(query).find()
 
   // If no documents matchs and using findOne()

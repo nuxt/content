@@ -6,6 +6,3 @@ import type { ContentTransformer } from './types'
 export function defineContentTransformer (transformer: ContentTransformer): ContentTransformer {
   return transformer
 }
-
-export { queryContent } from './server/storage'
-export * from '#cotnent-transformers'

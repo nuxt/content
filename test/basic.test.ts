@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'url'
 import { assert, test, describe, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
+import { fromByteArray } from 'base64-js'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -9,13 +10,10 @@ describe('fixtures:basic', async () => {
   })
 
   const QUERY_ENDPOINT = '/api/_content/query'
-  const fetchDocument = id => $fetch(QUERY_ENDPOINT, {
-    method: 'POST',
-    body: {
-      first: true,
-      where: { id }
-    }
-  })
+  const fetchDocument = (id: string) => {
+    const params = fromByteArray(Array.from(JSON.stringify({ first: true, where: { id } })).map(c => c.charCodeAt(0)) as any)
+    return $fetch(`${QUERY_ENDPOINT}/${params}`)
+  }
 
   test('List contents', async () => {
     const docs = await $fetch(`${QUERY_ENDPOINT}?only=id`)
@@ -54,23 +52,15 @@ describe('fixtures:basic', async () => {
   })
 
   test('Get cats navigation', async () => {
-    const list = await $fetch('/api/_content/navigation', {
-      method: 'POST',
-      body: {
-        slug: '/cats'
-      }
-    })
+    const params = fromByteArray(Array.from(JSON.stringify({ slug: '/cats' })).map(c => c.charCodeAt(0)) as any)
+    const list = await $fetch(`/api/_content/navigation/${params}`)
 
     expect(list).toMatchSnapshot('basic-navigation-cats')
   })
 
   test('Get cats navigation', async () => {
-    const list = await $fetch('/api/_content/navigation', {
-      method: 'POST',
-      body: {
-        slug: '/dogs'
-      }
-    })
+    const params = fromByteArray(Array.from(JSON.stringify({ slug: '/dogs' })).map(c => c.charCodeAt(0)) as any)
+    const list = await $fetch(`/api/_content/navigation/${params}`)
 
     expect(list).toMatchSnapshot('basic-navigation-dogs')
   })

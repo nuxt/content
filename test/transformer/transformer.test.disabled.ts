@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import * as transformer from '../../src/runtime/server/transformer'
+import * as transformer from '../../src/runtime/server/transformers'
 
 describe('Transformer', () => {
   test('Parse', async () => {

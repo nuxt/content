@@ -4,17 +4,16 @@ import { hash as ohash } from 'ohash'
 import type { QueryBuilderParams, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parse, transform } from './transformer'
-import { privateConfig } from '#config'
-import { storage } from '#storage'
+import { parse, transform } from './transformers'
+import { useRuntimeConfig, useStorage } from '#nitro'
 
-export const contentStorage = prefixStorage(storage, 'content:source')
-export const cacheStorage = prefixStorage(storage, 'cache:content')
+export const contentStorage = prefixStorage(useStorage(), 'content:source')
+export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
 
 /**
  * Content ignore patterns
  */
-export const contentIgnores = privateConfig.content.ignores.map((p: any) =>
+export const contentIgnores = useRuntimeConfig().content.ignores.map((p: any) =>
   typeof p === 'string' ? new RegExp(`^${p}`) : p
 )
 
@@ -38,7 +37,7 @@ export const getContentsList = async (prefix?: string) => {
 }
 
 export const getContent = async (id: string): Promise<ParsedContent> => {
-  // Handled ingored id
+  // Handle ignored id
   if (!contentIgnorePredicate(id)) {
     return { id, body: null }
   }

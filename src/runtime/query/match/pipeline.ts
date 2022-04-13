@@ -1,5 +1,5 @@
 import type { QueryBuilderParams, QueryPipe } from '../../types'
-import { apply, omit, pick, sortByKey } from './utils'
+import { apply, ensureArray, omit, pick, sortByKey } from './utils'
 import { createMatch } from '.'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T>>) {
@@ -25,9 +25,9 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     // Filter items based on `params.slug`
     (data, params) => (params.slug ? data.filter(item => String(item.slug).startsWith(params.slug)) : data),
     // Conditions
-    (data, params) => data.filter(item => params.where.every(matchQuery => match(item, matchQuery))),
+    (data, params) => data.filter(item => ensureArray(params.where).every(matchQuery => match(item, matchQuery))),
     // Sort data
-    (data, params) => params.sortBy.forEach(([key, direction]) => sortByKey(data, key, direction)),
+    (data, params) => ensureArray(params.sortBy).forEach(([key, direction]) => sortByKey(data, key, direction)),
     // Surround logic
     (data, params) => params.surround ? surround(data, params.surround) : data,
     // Skip first items
