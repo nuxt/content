@@ -208,7 +208,7 @@ export default defineNuxtModule<ModuleOptions>({
         nuxt.options.vite === true ? {} : nuxt.options.vite,
         {
           optimizeDeps: {
-            include: ['html-tags']
+            include: ['html-tags', 'base64-js']
           }
         }
       )
