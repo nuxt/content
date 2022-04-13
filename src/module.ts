@@ -237,25 +237,28 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugin'))
 
     nuxt.hook('nitro:config', (nitroConfig) => {
+      // Register source storages
+      const sources = useContentMounts(nuxt, contentContext.sources || [])
+      nitroConfig.storage = Object.assign(
+        nitroConfig.storage || {},
+        sources
+      )
       // TODO: create the parsed content ouput for production bundle
-      // TODO: handle multi sources by looping on contentContext.sources
+      // TODO: handle remote sources
+      const localSources = Object.entries(sources).filter(([_, source]) => source.driver === 'fs')
       nitroConfig.serverAssets = nitroConfig.serverAssets || []
-      nitroConfig.serverAssets.push({
-        baseName: 'content',
-        dir: resolve(nitroConfig.rootDir, 'content')
-      })
+      nitroConfig.serverAssets.push(
+        ...localSources.map(([baseName, source]) => ({
+          baseName,
+          dir: source.base
+        }))
+      )
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle
           resolve('./runtime')
         ]
       })
-
-      // Register mounts
-      nitroConfig.storage = Object.assign(
-        nitroConfig.storage || {},
-        useContentMounts(nuxt, contentContext.sources || [])
-      )
 
       nitroConfig.autoImport = nitroConfig.autoImport || {}
       nitroConfig.autoImport.imports = nitroConfig.autoImport.imports || []
