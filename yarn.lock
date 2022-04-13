@@ -571,7 +571,7 @@ __metadata:
     c8: ^7.11.0
     defu: ^6.0.0
     detab: ^3.0.1
-    eslint: ^8.12.0
+    eslint: ^8.13.0
     eslint-plugin-nuxt: ^3.2.0
     flat: ^5.0.2
     globby: ^13.1.1
@@ -590,7 +590,7 @@ __metadata:
     micromark-factory-space: ^1.0.0
     micromark-factory-whitespace: ^1.0.0
     micromark-util-character: ^1.1.0
-    nuxt3: ^3.0.0-27489107.7379184
+    nuxt3: ^3.0.0-27497845.f4fb916
     ohash: ^0.1.0
     parse-entities: ^4.0.0
     pathe: ^0.2.0
@@ -621,7 +621,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.9.0
+    vitest: ^0.9.3
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -3801,7 +3801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.12.0":
+"eslint@npm:^8.13.0":
   version: 8.13.0
   resolution: "eslint@npm:8.13.0"
   dependencies:
@@ -7148,7 +7148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt3@npm:^3.0.0-27489107.7379184":
+"nuxt3@npm:^3.0.0-27497845.f4fb916":
   version: 3.0.0-27497868.ee93659
   resolution: "nuxt3@npm:3.0.0-27497868.ee93659"
   dependencies:
@@ -10105,7 +10105,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.9.0":
+"vitest@npm:^0.9.3":
   version: 0.9.3
   resolution: "vitest@npm:0.9.3"
   dependencies:

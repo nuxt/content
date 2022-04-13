@@ -92,16 +92,16 @@
     "@types/ws": "^8.5.3",
     "benchmark": "^2.1.4",
     "c8": "^7.11.0",
-    "eslint": "^8.12.0",
+    "eslint": "^8.13.0",
     "eslint-plugin-nuxt": "^3.2.0",
     "globby": "^13.1.1",
     "husky": "^7.0.4",
     "jiti": "^1.13.0",
     "lint-staged": "^12.3.7",
-    "nuxt3": "^3.0.0-27489107.7379184",
+    "nuxt3": "^3.0.0-27497845.f4fb916",
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3",
-    "vitest": "^0.9.0"
+    "vitest": "^0.9.3"
   }
 }
