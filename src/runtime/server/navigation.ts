@@ -39,6 +39,7 @@ export function createNav (contents: ParsedContentMeta[]) {
         }
 
         // Set parent as directory
+        delete navItem.id
         delete navItem.draft
         delete navItem.partial
       }
