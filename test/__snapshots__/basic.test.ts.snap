@@ -26,7 +26,6 @@ exports[`fixtures:basic > Get cats navigation > basic-navigation-cats 1`] = `
         "title": "Ragdoll",
       },
     ],
-    "id": "content:cats:index.md",
     "slug": "/cats",
     "title": "Cats list",
   },
