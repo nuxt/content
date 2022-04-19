@@ -32,12 +32,12 @@ export default {
     const filePath = parts.join('/')
 
     return {
-      title: generateTitle(refineUrlPart(parts[parts.length - 1])),
       slug: generateSlug(filePath),
       draft: isDraft(filePath),
       partial: isPartial(filePath),
       locale,
       ...content,
+      title: content.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
       source,
       path,
       extension

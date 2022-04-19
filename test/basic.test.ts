@@ -2,6 +2,11 @@ import { fileURLToPath } from 'url'
 import { assert, test, describe, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { fromByteArray } from 'base64-js'
+import { testMarkdownParser } from './features/parser-markdown'
+import { testPathMetaTransformer } from './features/transformer-path-meta'
+import { testYamlParser } from './features/parser-yaml'
+import { testNavigation } from './features/navigation'
+import { testMDCComponent } from './features/mdc-component'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -51,27 +56,6 @@ describe('fixtures:basic', async () => {
     expect(ignored).toBeNull()
   })
 
-  test('Get navigation', async () => {
-    const list = await $fetch('/api/_content/navigation/')
-
-    expect(list).toMatchSnapshot('basic-navigation')
-  })
-
-  test('Get cats navigation', async () => {
-    const params = encodeParams({ slug: '/cats' })
-
-    const list = await $fetch(`/api/_content/navigation/${params}`)
-
-    expect(list).toMatchSnapshot('basic-navigation-cats')
-  })
-
-  test('Get cats navigation', async () => {
-    const params = encodeParams({ slug: '/dogs' })
-    const list = await $fetch(`/api/_content/navigation/${params}`)
-
-    expect(list).toMatchSnapshot('basic-navigation-dogs')
-  })
-
   test('Search contents using `locale` helper', async () => {
     const fa = await $fetch('/locale-fa')
 
@@ -97,4 +81,14 @@ describe('fixtures:basic', async () => {
     const html = await $fetch('/features/multi-part-slug')
     expect(html).contains('Persian')
   })
+
+  testNavigation()
+
+  testMarkdownParser()
+
+  testYamlParser()
+
+  testPathMetaTransformer()
+
+  testMDCComponent()
 })

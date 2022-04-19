@@ -1,6 +1,33 @@
 // Vitest Snapshot v1
 
-exports[`fixtures:basic > Get cats navigation > basic-navigation-cats 1`] = `
+exports[`fixtures:basic > Get contents index > basic-index-body 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Index",
+        },
+      ],
+      "props": {
+        "id": "index",
+      },
+      "tag": "h1",
+      "type": "element",
+    },
+  ],
+  "toc": {
+    "depth": 2,
+    "links": [],
+    "searchDepth": 2,
+    "title": "",
+  },
+  "type": "root",
+}
+`;
+
+exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-cats 1`] = `
 [
   {
     "children": [
@@ -32,7 +59,7 @@ exports[`fixtures:basic > Get cats navigation > basic-navigation-cats 1`] = `
 ]
 `;
 
-exports[`fixtures:basic > Get cats navigation > basic-navigation-dogs 1`] = `
+exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-dogs 1`] = `
 [
   {
     "children": [
@@ -57,34 +84,7 @@ exports[`fixtures:basic > Get cats navigation > basic-navigation-dogs 1`] = `
 ]
 `;
 
-exports[`fixtures:basic > Get contents index > basic-index-body 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "type": "text",
-          "value": "Index",
-        },
-      ],
-      "props": {
-        "id": "index",
-      },
-      "tag": "h1",
-      "type": "element",
-    },
-  ],
-  "toc": {
-    "depth": 2,
-    "links": [],
-    "searchDepth": 2,
-    "title": "",
-  },
-  "type": "root",
-}
-`;
-
-exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
+exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
 [
   {
     "children": [
@@ -110,7 +110,6 @@ exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
         "title": "Ragdoll",
       },
     ],
-    "id": "content:cats:index.md",
     "slug": "/cats",
     "title": "Cats list",
   },
@@ -144,7 +143,6 @@ exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
         "title": "سلام",
       },
     ],
-    "id": "fa-ir:fa:index.md",
     "slug": "/",
     "title": "سلام",
   },
@@ -158,7 +156,6 @@ exports[`fixtures:basic > Get navigation > basic-navigation 1`] = `
         "title": "Index",
       },
     ],
-    "id": "content:index.md",
     "slug": "/",
     "title": "Index",
   },

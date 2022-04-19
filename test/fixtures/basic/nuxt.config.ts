@@ -14,6 +14,14 @@ export default defineNuxtConfig({
       ]
     }
   },
+  components: {
+    dirs: [
+      {
+        path: resolve(__dirname, './components'),
+        global: true
+      }
+    ]
+  },
   buildModules: [contentModule],
   content: {
     locales: ['en', 'fa'],

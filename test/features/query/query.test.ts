@@ -1,10 +1,10 @@
 import { assert, describe, test } from 'vitest'
-import { createPipelineFetcher } from '../../src/runtime/query/match/pipeline'
-import { createQuery } from '../../src/runtime/query/query'
+import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
+import { createQuery } from '../../../src/runtime/query/query'
 import database from './db.json'
 
 const shuffledDatabase: Array<any> = [...database].sort(() => Math.random() - 0.5)
-const pipelineFetcher = createPipelineFetcher(() => Promise.resolve(shuffledDatabase), [])
+const pipelineFetcher = createPipelineFetcher(() => Promise.resolve(shuffledDatabase))
 
 describe('Database Provider', () => {
   test('Matches nested exact match', async () => {
@@ -102,7 +102,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround with slug (default)', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b')
 
@@ -111,7 +111,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround more that 1 item with slug', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b', { before: 2, after: 1 })
 
@@ -122,7 +122,7 @@ describe('Database Provider', () => {
   })
 
   test('Surround with object', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
@@ -133,7 +133,7 @@ describe('Database Provider', () => {
   })
 
   test('Chain multiple where conditions', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]), [])
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
     const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })
     const singleWhereResult = await query.find()
 

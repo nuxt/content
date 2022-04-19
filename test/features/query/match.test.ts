@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { createMatch } from '../../src/runtime/query/match'
+import { createMatch } from '../../../src/runtime/query/match'
 
 describe('Match', () => {
   const match = createMatch()

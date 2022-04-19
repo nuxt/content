@@ -2,7 +2,6 @@ import {
   addPlugin,
   defineNuxtModule,
   resolveModule,
-  addServerMiddleware,
   createResolver,
   addAutoImport,
   addComponentsDir,
@@ -16,7 +15,6 @@ import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { debounce } from 'perfect-debounce'
-import { $fetch } from 'ohmyfetch'
 import { name, version } from '../package.json'
 import {
   createWebSocket,
@@ -279,8 +277,8 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.autoImport = nitroConfig.autoImport || {}
       nitroConfig.autoImport.imports = nitroConfig.autoImport.imports || []
       nitroConfig.autoImport.imports.push(...[
-        { name: 'parse', as: 'parse', from: resolveRuntimeModule('./server/transformers') },
-        { name: 'transform', as: 'transform', from: resolveRuntimeModule('./server/transformers') }
+        { name: 'parse', as: 'contentParse', from: resolveRuntimeModule('./server/transformers') },
+        { name: 'transform', as: 'contentTransform', from: resolveRuntimeModule('./server/transformers') }
       ])
 
       nitroConfig.virtual = nitroConfig.virtual || {}
