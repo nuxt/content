@@ -1,6 +1,7 @@
 import type { Theme, Lang } from 'shiki-es'
 import type { HighlightParams, HighlightThemedToken } from '../types'
 import { contentApiWithParams } from './utils'
+import { useHead } from '#app'
 
 type HighlightCodeOptions = { lang?: Lang, theme?: Theme }
 
