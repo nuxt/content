@@ -4,20 +4,15 @@ import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 import { useRuntimeConfig } from '#app'
 
 const toByteArray = (s: string) => new Uint8Array(s.length).map((_, i) => s[i].charCodeAt(0))
+const encodeParams = (params: any = {}) => {
+  return fromByteArray(toByteArray(JSON.stringify(params)))
+    .replace(/\+/g, '.').replace(/\//g, '-') // Replace special characters to prevent creating malformed URL
+}
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
 
 export const contentApiWithParams = (url: string, params: any) => {
-  let _hash = ''
-  if (params) {
-    params = JSON.stringify(params)
-    // Encode JSON data
-    _hash = fromByteArray(toByteArray(params))
-      // Replace special characters to prevent creating malformed URL
-      .replace(/\+/g, '.').replace(/\//g, '-')
-  }
-
-  return withContentBase(`${url}/${(_hash)}${process.dev ? '' : '.json'}`)
+  return withContentBase(`${url}/${encodeParams(params)}`)
 }
 
 export const useUnwrap = () => ({

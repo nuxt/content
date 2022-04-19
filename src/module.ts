@@ -16,6 +16,7 @@ import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { debounce } from 'perfect-debounce'
+import { $fetch } from 'ohmyfetch'
 import { name, version } from '../package.json'
 import {
   createWebSocket,
@@ -221,22 +222,37 @@ export default defineNuxtModule<ModuleOptions>({
       // TODO: handle object format and make sure to ignore urls
     })
 
-    // Add server routes
-    for (const api of ['query', 'highlight']) {
-      addServerMiddleware({
-        route: `/api/${options.base}/${api}`,
-        handler: resolveRuntimeModule(`./server/api/${api}`)
-      })
-      addServerMiddleware({
-        route: `/api/${options.base}/${api}/:params`,
-        handler: resolveRuntimeModule(`./server/api/${api}`)
-      })
-    }
-
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugin'))
 
     nuxt.hook('nitro:config', (nitroConfig) => {
+      // Add server handlers
+      nitroConfig.handlers = nitroConfig.handlers || []
+      nitroConfig.handlers.push({
+        method: 'get',
+        route: `/api/${options.base}/query/:params`,
+        handler: resolveRuntimeModule('./server/api/query')
+      })
+      nitroConfig.handlers.push({
+        method: 'get',
+        route: `/api/${options.base}/highlight/:params`,
+        handler: resolveRuntimeModule('./server/api/highlight')
+      })
+      nitroConfig.handlers.push({
+        method: 'get',
+        route: `/api/${options.base}/cache`,
+        handler: resolveRuntimeModule('./server/api/cache')
+      })
+      if (options.navigation) {
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `/api/${options.base}/navigation/:params`,
+          handler: resolveRuntimeModule('./server/api/navigation')
+        })
+      }
+      if (!nuxt.options.dev) {
+        nitroConfig.prerender.routes.push('/api/_content/cache')
+      }
       // Register source storages
       const sources = useContentMounts(nuxt, contentContext.sources || [])
       nitroConfig.storage = Object.assign(
@@ -297,15 +313,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register navigation
     if (options.navigation) {
-      addServerMiddleware({
-        route: `/api/${options.base}/navigation`,
-        handler: resolveRuntimeModule('./server/api/navigation')
-      })
-      addServerMiddleware({
-        route: `/api/${options.base}/navigation/:params`,
-        handler: resolveRuntimeModule('./server/api/navigation')
-      })
-
       addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
     }
 

@@ -1,11 +1,9 @@
-import { assertMethod, createError, defineEventHandler } from 'h3'
+import { createError, defineEventHandler } from 'h3'
 import type { QueryBuilderParams } from '../../types'
 import { queryContent } from '../storage'
 import { contentApiParams } from '../utils'
 
 export default defineEventHandler(async (event) => {
-  assertMethod(event, 'GET')
-
   const query = contentApiParams<Partial<QueryBuilderParams>>(event)
   const contents = await queryContent(query).find()
 

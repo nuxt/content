@@ -7,8 +7,18 @@ type HighlightCodeOptions = { lang?: Lang, theme?: Theme }
 /**
  * Fetch highlight result
  */
-const highlightFetch = (body: Partial<HighlightParams>) =>
-  $fetch<HighlightThemedToken[][]>(contentApiWithParams('/highlight', body))
+const highlightFetch = (params: Partial<HighlightParams>) => {
+  const path = contentApiWithParams('/highlight', params)
+
+  if (process.server) {
+    useHead({
+      link: [
+        { rel: 'prefetch', href: path }
+      ]
+    })
+  }
+  return $fetch<HighlightThemedToken[][]>(path)
+}
 
 /**
  * Highlight code

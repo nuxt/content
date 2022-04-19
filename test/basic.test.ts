@@ -10,13 +10,19 @@ describe('fixtures:basic', async () => {
   })
 
   const QUERY_ENDPOINT = '/api/_content/query'
+  const toByteArray = (s: string) => new Uint8Array(s.length).map((_, i) => s[i].charCodeAt(0))
+  const encodeParams = (params: any = {}) => {
+    return fromByteArray(toByteArray(JSON.stringify(params)))
+      .replace(/\+/g, '.').replace(/\//g, '-') // Replace special characters to prevent creating malformed URL
+  }
   const fetchDocument = (id: string) => {
-    const params = fromByteArray(Array.from(JSON.stringify({ first: true, where: { id } })).map(c => c.charCodeAt(0)) as any)
+    const params = encodeParams({ first: true, where: { id } })
     return $fetch(`${QUERY_ENDPOINT}/${params}`)
   }
 
   test('List contents', async () => {
-    const docs = await $fetch(`${QUERY_ENDPOINT}?only=id`)
+    const params = encodeParams({ only: 'id' })
+    const docs = await $fetch(`${QUERY_ENDPOINT}/${params}`)
     const ids = docs.map(doc => doc.id)
 
     assert(ids.length > 0)
@@ -46,20 +52,21 @@ describe('fixtures:basic', async () => {
   })
 
   test('Get navigation', async () => {
-    const list = await $fetch('/api/_content/navigation')
+    const list = await $fetch('/api/_content/navigation/')
 
     expect(list).toMatchSnapshot('basic-navigation')
   })
 
   test('Get cats navigation', async () => {
-    const params = fromByteArray(Array.from(JSON.stringify({ slug: '/cats' })).map(c => c.charCodeAt(0)) as any)
+    const params = encodeParams({ slug: '/cats' })
+
     const list = await $fetch(`/api/_content/navigation/${params}`)
 
     expect(list).toMatchSnapshot('basic-navigation-cats')
   })
 
   test('Get cats navigation', async () => {
-    const params = fromByteArray(Array.from(JSON.stringify({ slug: '/dogs' })).map(c => c.charCodeAt(0)) as any)
+    const params = encodeParams({ slug: '/dogs' })
     const list = await $fetch(`/api/_content/navigation/${params}`)
 
     expect(list).toMatchSnapshot('basic-navigation-dogs')

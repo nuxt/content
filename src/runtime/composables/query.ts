@@ -2,12 +2,22 @@ import { joinURL, withLeadingSlash } from 'ufo'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { contentApiWithParams } from './utils'
+import { useHead } from '#app'
 
 /**
  * Fetch query result
  */
 const queryFetch = (params: Partial<QueryBuilderParams>) => {
-  return $fetch<Array<ParsedContent>>(contentApiWithParams('/query', params))
+  const path = contentApiWithParams('/query', params)
+
+  if (process.server) {
+    useHead({
+      link: [
+        { rel: 'prefetch', href: path }
+      ]
+    })
+  }
+  return $fetch<Array<ParsedContent>>(path)
 }
 
 /**

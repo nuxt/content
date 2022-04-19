@@ -1,4 +1,4 @@
-import { assertMethod, createError, defineLazyEventHandler } from 'h3'
+import { createError, defineLazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import { contentApiParams } from '../utils'
@@ -45,8 +45,6 @@ export default defineLazyEventHandler(async () => {
   })
 
   return async (event): Promise<HighlightThemedToken[][]> => {
-    assertMethod(event, 'GET')
-
     const params = contentApiParams<Partial<HighlightParams>>(event)
 
     const { code, lang, theme } = resolveBody(params)
