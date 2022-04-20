@@ -5,7 +5,7 @@ import type { QueryBuilderParams, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
-import { useRuntimeConfig, useStorage } from '#nitro'
+import { useRuntimeConfig, useStorage } from '#imports'
 
 export const contentStorage = isDevelopment
   ? prefixStorage(useStorage(), 'content:source')
@@ -43,12 +43,10 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   if (!contentIgnorePredicate(id)) {
     return { id, body: null }
   }
-  if (isDevelopment) {
-    const hash = ohash(await contentStorage.getMeta(id))
-    const cached: any = await cacheStorage.getItem(`parsed:${id}`)
-    if (cached?.hash === hash) {
-      return cached.parsed as ParsedContent
-    }
+  const hash = ohash(await contentStorage.getMeta(id))
+  const cached: any = await cacheStorage.getItem(`parsed:${id}`)
+  if (cached?.hash === hash) {
+    return cached.parsed as ParsedContent
   }
 
   const body = await contentStorage.getItem(id)
@@ -64,10 +62,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
     ...parsedContent
   }
 
-  if (isDevelopment) {
-    const hash = ohash(meta)
-    await cacheStorage.setItem(`parsed:${id}`, { parsed, hash })
-  }
+  await cacheStorage.setItem(`parsed:${id}`, { parsed, hash })
 
   return parsed
 }
