@@ -4,7 +4,7 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
-import { resolveModule } from '@nuxt/kit'
+import { resolveModule, useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
 
 export const MOUNT_PREFIX = 'content:source:'
@@ -117,7 +117,7 @@ export function processMarkdownOptions (nuxt: Nuxt, options: ModuleOptions['mark
     if (typeof plugin === 'string') { plugin = [plugin, {}] }
 
     if (!Array.isArray(plugin)) {
-      logger.warn('Plugin silently ignored:', (plugin as any).name || plugin)
+      useLogger('@nuxt/content').warn('Plugin silently ignored:', (plugin as any).name || plugin)
       return
     }
 
