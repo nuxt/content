@@ -2,7 +2,10 @@ import { parse } from '../../markdown-parser'
 import type { MarkdownOptions } from '../../types'
 import { useRuntimeConfig } from '#nitro'
 
-const importPlugin = async (p: [string, any]) => [await import(p[0]).then(res => res.default || res), p[1]]
+const importPlugin = async (p: [string, any]) => ([
+  await import(p[0]).then(res => res.default || res),
+  typeof p[1] === 'object' ? { ...p[1] } : p[1]
+])
 
 export default {
   name: 'markdown',
