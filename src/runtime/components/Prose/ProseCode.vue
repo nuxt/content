@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { hash } from 'ohash'
-import { highlightCode, useAsyncData } from '#imports'
-
-const props = defineProps({
+defineProps({
   code: {
     type: String,
     default: ''
@@ -20,28 +17,11 @@ const props = defineProps({
     default: () => []
   }
 })
-
-const key = `highlighted-code-${hash([props.code, props.language, props.filename, props.highlights])}`
-const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(props.code, { lang: props.language }))
 </script>
 
 <template>
   <div>
-    <pre><code>
-      <span
-        v-for="(line, lineIndex) in highlightedCode"
-        :key="`line-${lineIndex + 1}`"
-        class="line"
-        :class="{ 'highlight': highlights.includes(lineIndex + 1) }"
-      >
-        <span
-          v-for="(token, tokenIndex) in line"
-          :key="`token-${tokenIndex}`"
-          :style="{ color: token.color }"
-          v-text="token.content"
-        />
-      </span>
-    </code></pre>
+    <slot />
   </div>
 </template>
 
@@ -51,24 +31,24 @@ div {
   color: #d4d4d4;
 }
 
-pre {
+:deep(pre) {
   flex: 1 1 0%;
   background-color: #2e3440;
   padding: 1rem 0;
 }
 
-code {
+:deep(code) {
   display: flex;
   flex-direction: column;
 }
 
-.line {
+:deep(.line) {
   display: inline-table;
   min-height: 15px;
   padding: 0 1rem;
 }
 
-.line.highlight {
+:deep(.line.highlight) {
   background-color: #3f3f46;
 }
 </style>

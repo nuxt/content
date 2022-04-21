@@ -112,7 +112,7 @@ export interface ModuleOptions {
    * Content module uses `shiki` to highlight code blocks.
    * You can configure Shiki options to control its behavior.
    */
-  highlight: {
+  highlight: false | {
     /**
      * Default theme that will be used for highlighting code blocks.
      */
@@ -175,10 +175,7 @@ export default defineNuxtModule<ModuleOptions>({
     ignores: ['\\.', '-'],
     locales: [],
     defaultLocale: undefined,
-    highlight: {
-      theme: 'dark-plus',
-      preload: ['json', 'js', 'ts', 'html', 'css']
-    },
+    highlight: false,
     markdown: {
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
@@ -233,21 +230,10 @@ export default defineNuxtModule<ModuleOptions>({
       })
       nitroConfig.handlers.push({
         method: 'get',
-        route: `/api/${options.base}/highlight/:params`,
-        handler: resolveRuntimeModule('./server/api/highlight')
-      })
-      nitroConfig.handlers.push({
-        method: 'get',
         route: `/api/${options.base}/cache`,
         handler: resolveRuntimeModule('./server/api/cache')
       })
-      if (options.navigation) {
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: `/api/${options.base}/navigation/:params`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        })
-      }
+
       if (!nuxt.options.dev) {
         nitroConfig.prerender.routes.push('/api/_content/cache')
       }
@@ -312,6 +298,27 @@ export default defineNuxtModule<ModuleOptions>({
     // Register navigation
     if (options.navigation) {
       addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
+
+      nuxt.hook('nitro:config', (nitroConfig) => {
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `/api/${options.base}/navigation/:params`,
+          handler: resolveRuntimeModule('./server/api/navigation')
+        })
+      })
+    }
+
+    // Register highlighter
+    if (options.highlight) {
+      contentContext.transformers.push(resolveRuntimeModule('./server/transformers/shiki'))
+
+      nuxt.hook('nitro:config', (nitroConfig) => {
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `/api/${options.base}/highlight/:params`,
+          handler: resolveRuntimeModule('./server/api/highlight')
+        })
+      })
     }
 
     // @ts-ignore
