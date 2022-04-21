@@ -7,6 +7,7 @@ Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 - 💚 [**Nuxt 3**](https://v3.nuxtjs.org) support
 - 🗒  Easiest way to publish and maintain document-driven websites
 - 🎮 Powerful editor to interact with your codebase
+- 🔮 Code highlighting provided by [**Shiki**](https://shikijs.github.io)
 - ✍️ Publish changes without rebuilding
 - 🚀 A Markdown syntax made for components (MDC)
 - 💄 Easy yet powerful theming capabilities
