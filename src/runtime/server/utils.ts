@@ -13,5 +13,5 @@ export const contentApiParams = <T>(event: CompatibilityEvent): T => {
   // Decode data
   params = String.fromCharCode(...toByteArray(params))
 
-  return params ? JSON.parse(params) : {}
+  return params ? JSON.parse(decodeURIComponent(params)) : {}
 }

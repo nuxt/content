@@ -5,7 +5,7 @@ import { useRuntimeConfig } from '#imports'
 
 const toByteArray = (s: string) => new Uint8Array(s.length).map((_, i) => s[i].charCodeAt(0))
 const encodeParams = (params: any = {}) => {
-  return fromByteArray(toByteArray(JSON.stringify(params)))
+  return fromByteArray(toByteArray(encodeURIComponent(JSON.stringify(params))))
     .replace(/\+/g, '.').replace(/\//g, '-') // Replace special characters to prevent creating malformed URL
 }
 
