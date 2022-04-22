@@ -83,7 +83,7 @@
     "ws": "^8.5.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^6.1.2",
+    "@faker-js/faker": "^6.2.0",
     "@nuxt/module-builder": "^0.1.7",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -92,17 +92,17 @@
     "@types/flat": "^5.0.2",
     "@types/ws": "^8.5.3",
     "benchmark": "^2.1.4",
-    "c8": "^7.11.0",
+    "c8": "^7.11.2",
     "eslint": "^8.13.0",
     "eslint-plugin-nuxt": "^3.2.0",
     "globby": "^13.1.1",
     "husky": "^7.0.4",
     "jiti": "^1.13.0",
-    "lint-staged": "^12.3.8",
+    "lint-staged": "^12.4.0",
     "nuxt3": "latest",
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3",
-    "vitest": "^0.9.3"
+    "vitest": "^0.9.4"
   }
 }

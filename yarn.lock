@@ -399,10 +399,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^6.1.2":
-  version: 6.1.2
-  resolution: "@faker-js/faker@npm:6.1.2"
-  checksum: 953d0301f71e264330a2aa1e04ae4ecd8c7af5276ce932f92138923d3ef2cc69354a879a7d232805066728e6c65d1021a3f20a72b9b4c49d0ee880db9fcecada
+"@faker-js/faker@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "@faker-js/faker@npm:6.2.0"
+  checksum: 8caffc9e55c9eb5bc5ee8824366338cb81469ed9cb591c38f06be73e8e4366d48eb6ced78e9f4c3530d0ed5f4c63bf50edf45c514cb25151a9567a7ebe45a4b1
   languageName: node
   linkType: hard
 
@@ -447,7 +447,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@istanbuljs/schema@npm:^0.1.2":
+"@istanbuljs/schema@npm:^0.1.2, @istanbuljs/schema@npm:^0.1.3":
   version: 0.1.3
   resolution: "@istanbuljs/schema@npm:0.1.3"
   checksum: 5282759d961d61350f33d9118d16bcaed914ebf8061a52f4fa474b2cb08720c9c81d165e13b82f2e5a8a212cc5af482f0c6fc1ac27b9e067e5394c9a6ed186c9
@@ -475,6 +475,16 @@ __metadata:
     "@jridgewell/resolve-uri": ^3.0.3
     "@jridgewell/sourcemap-codec": ^1.4.10
   checksum: ab8bce84bbbc8c34f3ba8325ed926f8f2d3098983c10442a80c55764c4eb6e47d5b92d8ff20a0dd868c3e76a3535651fd8a0138182c290dbfc8396195685c37b
+  languageName: node
+  linkType: hard
+
+"@jridgewell/trace-mapping@npm:^0.3.7":
+  version: 0.3.9
+  resolution: "@jridgewell/trace-mapping@npm:0.3.9"
+  dependencies:
+    "@jridgewell/resolve-uri": ^3.0.3
+    "@jridgewell/sourcemap-codec": ^1.4.10
+  checksum: d89597752fd88d3f3480845691a05a44bd21faac18e2185b6f436c3b0fd0c5a859fbbd9aaa92050c4052caf325ad3e10e2e1d1b64327517471b7d51babc0ddef
   languageName: node
   linkType: hard
 
@@ -557,7 +567,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/content@workspace:."
   dependencies:
-    "@faker-js/faker": ^6.1.2
+    "@faker-js/faker": ^6.2.0
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest"
     "@nuxt/module-builder": ^0.1.7
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest"
@@ -568,7 +578,7 @@ __metadata:
     "@types/ws": ^8.5.3
     base64-js: ^1.5.1
     benchmark: ^2.1.4
-    c8: ^7.11.0
+    c8: ^7.11.2
     debounce: ^1.2.1
     defu: ^6.0.0
     detab: ^3.0.1
@@ -580,7 +590,7 @@ __metadata:
     html-tags: ^3.2.0
     husky: ^7.0.4
     jiti: ^1.13.0
-    lint-staged: ^12.3.8
+    lint-staged: ^12.4.0
     listhen: ^0.2.10
     mdast-util-from-markdown: ^1.2.0
     mdast-util-to-hast: ^12.1.1
@@ -622,7 +632,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.9.3
+    vitest: ^0.9.4
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -1001,7 +1011,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chai@npm:*, @types/chai@npm:^4.3.0":
+"@types/chai@npm:*, @types/chai@npm:^4.3.1":
   version: 4.3.1
   resolution: "@types/chai@npm:4.3.1"
   checksum: 2ee246b76c469cd620a7a1876a73bc597074361b67d547b4bd96a0c1adb43597ede2d8589ab626192e14349d83cbb646cc11e2c179eeeb43ff11596de94d82c4
@@ -1992,25 +2002,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"c8@npm:^7.11.0":
-  version: 7.11.0
-  resolution: "c8@npm:7.11.0"
+"c8@npm:^7.11.2":
+  version: 7.11.2
+  resolution: "c8@npm:7.11.2"
   dependencies:
     "@bcoe/v8-coverage": ^0.2.3
-    "@istanbuljs/schema": ^0.1.2
+    "@istanbuljs/schema": ^0.1.3
     find-up: ^5.0.0
     foreground-child: ^2.0.0
-    istanbul-lib-coverage: ^3.0.1
+    istanbul-lib-coverage: ^3.2.0
     istanbul-lib-report: ^3.0.0
-    istanbul-reports: ^3.0.2
-    rimraf: ^3.0.0
+    istanbul-reports: ^3.1.4
+    rimraf: ^3.0.2
     test-exclude: ^6.0.0
-    v8-to-istanbul: ^8.0.0
+    v8-to-istanbul: ^9.0.0
     yargs: ^16.2.0
-    yargs-parser: ^20.2.7
+    yargs-parser: ^20.2.9
   bin:
     c8: bin/c8.js
-  checksum: 3576fd62dfbef7ef8ae0ce95349d3b297c3b10fa77902b5067896f40a6a3a4bc89637fb81a5badc6b36b4da3f883edc96172c325629d3ec3e24ff9aefab6dcca
+  checksum: 86b515f3936e3e4ddd7843ca24740072f3714d1d96a400f4d7bdbd2746b6a9740d76484a2f838a014f2d4389b662db49269d49e02cd4009e7f83008b7bf39872
   languageName: node
   linkType: hard
 
@@ -5344,7 +5354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istanbul-lib-coverage@npm:^3.0.0, istanbul-lib-coverage@npm:^3.0.1":
+"istanbul-lib-coverage@npm:^3.0.0, istanbul-lib-coverage@npm:^3.2.0":
   version: 3.2.0
   resolution: "istanbul-lib-coverage@npm:3.2.0"
   checksum: a2a545033b9d56da04a8571ed05c8120bf10e9bce01cf8633a3a2b0d1d83dff4ac4fe78d6d5673c27fc29b7f21a41d75f83a36be09f82a61c367b56aa73c1ff9
@@ -5362,7 +5372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istanbul-reports@npm:^3.0.2":
+"istanbul-reports@npm:^3.1.4":
   version: 3.1.4
   resolution: "istanbul-reports@npm:3.1.4"
   dependencies:
@@ -5601,9 +5611,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.3.8":
-  version: 12.3.8
-  resolution: "lint-staged@npm:12.3.8"
+"lint-staged@npm:^12.4.0":
+  version: 12.4.0
+  resolution: "lint-staged@npm:12.4.0"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -5621,7 +5631,7 @@ __metadata:
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: af6a89ae4244e4eac7180c6e7da452f378fd156ff38eaa666ecbb78f1e2efb7f1a9fc766dcc1cdde2bd76e03da68e602056ca9d2f1c6e46cf10aa83d20bf4d49
+  checksum: e25b273a73b79f224ff1ccb22432c34a9050fe8318b9cf7e08c748e2efc80e1f48ed4f2aa61cd16a701bb7fd6323ecf0d94a497c97732db04f2b5382d6b70131
   languageName: node
   linkType: hard
 
@@ -8439,7 +8449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^3.0.0, rimraf@npm:^3.0.2":
+"rimraf@npm:^3.0.2":
   version: 3.0.2
   resolution: "rimraf@npm:3.0.2"
   dependencies:
@@ -9961,14 +9971,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"v8-to-istanbul@npm:^8.0.0":
-  version: 8.1.1
-  resolution: "v8-to-istanbul@npm:8.1.1"
+"v8-to-istanbul@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "v8-to-istanbul@npm:9.0.0"
   dependencies:
+    "@jridgewell/trace-mapping": ^0.3.7
     "@types/istanbul-lib-coverage": ^2.0.1
     convert-source-map: ^1.6.0
-    source-map: ^0.7.3
-  checksum: 54ce92bec2727879626f623d02c8d193f0c7e919941fa373ec135189a8382265117f5316ea317a1e12a5f9c13d84d8449052a731fe3306fa4beaafbfa4cab229
+  checksum: d8ed2c39ba657dfd851a3c7b3f2b87e5b96c9face806ecfe5b627abe53b0c86f264f51425c591e451405b739e3f8a6728da59670f081790990710e813d8d3440
   languageName: node
   linkType: hard
 
@@ -10085,17 +10095,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.9.3":
-  version: 0.9.3
-  resolution: "vitest@npm:0.9.3"
+"vitest@npm:^0.9.4":
+  version: 0.9.4
+  resolution: "vitest@npm:0.9.4"
   dependencies:
-    "@types/chai": ^4.3.0
+    "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
     chai: ^4.3.6
     local-pkg: ^0.4.1
     tinypool: ^0.1.2
     tinyspy: ^0.3.2
-    vite: ^2.9.1
+    vite: ^2.9.5
   peerDependencies:
     "@vitest/ui": "*"
     c8: "*"
@@ -10112,7 +10122,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 0f9d7016ac4c2795172984ab76577bbf2cbaca938697f515b69c8b86f4952da7539c18c6952def4a71a9caefce96e35a11c46cfcce467b7663bde24ce53bf772
+  checksum: 31614494f682a6adcedb5c1199e21de7d8b34ca836ab3374691a2948d72d1fb0691366d11560dca23f07c92585f65c305d46199de2d84a0e4407e9f213aca229
   languageName: node
   linkType: hard
 
@@ -10421,7 +10431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.7":
+"yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.9":
   version: 20.2.9
   resolution: "yargs-parser@npm:20.2.9"
   checksum: 8bb69015f2b0ff9e17b2c8e6bfe224ab463dd00ca211eece72a4cd8a906224d2703fb8a326d36fdd0e68701e201b2a60ed7cf81ce0fd9b3799f9fe7745977ae3
