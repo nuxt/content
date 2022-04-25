@@ -1,7 +1,7 @@
 import { defineHandle, useQuery } from 'h3'
 import { prefixStorage } from 'unstorage'
 import { faker } from '@faker-js/faker'
-import { useStorage } from '#nitro'
+import { useStorage } from '#imports'
 
 const contentStorage = prefixStorage(useStorage, 'content:source')
 

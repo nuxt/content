@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { useRuntimeConfig } from '#nitro'
+import { useRuntimeConfig } from '#imports'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 

@@ -2,7 +2,7 @@ import { createError, defineLazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import { contentApiParams } from '../utils'
-import { useRuntimeConfig } from '#nitro'
+import { useRuntimeConfig } from '#imports'
 
 /**
  * Resolve Shiki compatible lang from string.

@@ -1,6 +1,6 @@
 import { parse } from '../../markdown-parser'
 import type { MarkdownOptions } from '../../types'
-import { useRuntimeConfig } from '#nitro'
+import { useRuntimeConfig } from '#imports'
 
 const importPlugin = async (p: [string, any]) => ([
   await import(p[0]).then(res => res.default || res),
