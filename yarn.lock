@@ -382,9 +382,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/eslintrc@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@eslint/eslintrc@npm:1.2.1"
+"@eslint/eslintrc@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@eslint/eslintrc@npm:1.2.2"
   dependencies:
     ajv: ^6.12.4
     debug: ^4.3.2
@@ -395,7 +395,7 @@ __metadata:
     js-yaml: ^4.1.0
     minimatch: ^3.0.4
     strip-json-comments: ^3.1.1
-  checksum: 1f797b9f94d71b965992cf6c44e3bcb574643014fd1e3d4862d25056bd5568f59c488461a7e9a1c1758ca7f0def5d3cb69c3d8b38581bcf4a53af74371243797
+  checksum: d891036bbffb0efec1462aa4a603ed6e349d546b1632dde7d474ddd15c2a8b6895671b25293f1d3ba10ff629c24a3649ad049373fe695a0e44b612537088563c
   languageName: node
   linkType: hard
 
@@ -582,7 +582,7 @@ __metadata:
     debounce: ^1.2.1
     defu: ^6.0.0
     detab: ^3.0.1
-    eslint: ^8.13.0
+    eslint: ^8.14.0
     eslint-plugin-nuxt: ^3.2.0
     flat: ^5.0.2
     globby: ^13.1.1
@@ -3779,11 +3779,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.13.0":
-  version: 8.13.0
-  resolution: "eslint@npm:8.13.0"
+"eslint@npm:^8.14.0":
+  version: 8.14.0
+  resolution: "eslint@npm:8.14.0"
   dependencies:
-    "@eslint/eslintrc": ^1.2.1
+    "@eslint/eslintrc": ^1.2.2
     "@humanwhocodes/config-array": ^0.9.2
     ajv: ^6.10.0
     chalk: ^4.0.0
@@ -3820,7 +3820,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: bc7d2fc9a046d42cb2c8987573ecaf534c1fae14747c4695e32388e179c5f21b83eefdb3e4f35924bf76152e226d7cc9dfb21f12348baf12c803109005b17439
+  checksum: 87d2e3e5eb93216d4ab36006e7b8c0bfad02f40b0a0f193f1d42754512cd3a9d8244152f1c69df5db2e135b3c4f1c10d0ed2f0881fe8a8c01af55465968174c1
   languageName: node
   linkType: hard
 

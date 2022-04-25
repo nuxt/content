@@ -93,7 +93,7 @@
     "@types/ws": "^8.5.3",
     "benchmark": "^2.1.4",
     "c8": "^7.11.2",
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
     "eslint-plugin-nuxt": "^3.2.0",
     "globby": "^13.1.1",
     "husky": "^7.0.4",
