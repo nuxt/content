@@ -281,7 +281,6 @@ export default defineNuxtModule<ModuleOptions>({
     // Register composables
     addAutoImport([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
-      { name: 'highlightCode', as: 'highlightCode', from: resolveRuntimeModule('./composables/highlight') },
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
     ])
