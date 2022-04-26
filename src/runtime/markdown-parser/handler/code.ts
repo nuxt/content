@@ -17,6 +17,6 @@ export default (h: H, node: any) => {
       highlights,
       code
     },
-    [h(node, 'pre', {}, [h(node, 'code', { ignoreMap: 'true' }, [u('text', code)])])]
+    [h(node, 'pre', {}, [h(node, 'code', { __ignoreMap: '' }, [u('text', code)])])]
   )
 }

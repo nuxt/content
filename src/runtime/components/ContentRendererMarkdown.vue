@@ -1,21 +1,15 @@
 <script lang="ts">
 import { h, resolveComponent, Text, defineComponent } from 'vue'
+import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
-
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 import { useRuntimeConfig } from '#app'
 
 type CreateElement = typeof h
 type ContentVNode = VNode | string
-type ContentMeta = Record<string, any>
-
-/**
- * Create a factory function if there is a node in the list
- */
-const createSlotFunction = (nodes: Array<VNode | string>) => (nodes.length ? () => nodes : undefined)
 
 /**
  *  Default slot name
@@ -26,150 +20,250 @@ const rxOn = /^@|^v-on:/
 const rxBind = /^:|^v-bind:/
 const rxModel = /^v-model/
 const nativeInputs = ['select', 'textarea', 'input']
-// Model modifiers
-const number = (d: any) => +d
-const trim = (d: any) => d.trim()
-const noop = (d: any) => d
 
-function valueInContext (code: string, context: ContentMeta) {
-  return code.split('.').reduce((o: any, k) => o && o[k], context)
-}
+export default defineComponent({
+  name: 'ContentRendererMarkdown',
+  props: {
+    /**
+     * Content to render
+     */
+    document: {
+      type: Object,
+      required: true
+    },
+    /**
+     * Root tag to use for rendering
+     */
+    tag: {
+      type: String,
+      default: 'div'
+    }
+  },
+  setup (props) {
+    const { content: { tags = {} } } = useRuntimeConfig().public
+    const { tag, document, ...contentProps } = props
 
-function evalInContext (code: string, context: any) {
-  let result = valueInContext(code, context)
-  if (typeof result === 'undefined') {
-    try {
-      result = JSON.parse(code)
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(`Error evaluating ${code}`, e)
-      result = code
+    return () => {
+      // Get body from document
+      const body = (document.body || document) as MarkdownNode
+      const meta: ParsedContentMeta = {
+        ...(document as ParsedContentMeta),
+        tags: {
+          ...tags,
+          ...document?.tags || {}
+        }
+      }
+
+      let component: string | ConcreteComponent = meta.component || tag
+      if (typeof meta.component === 'object') {
+        component = meta.component.name
+      }
+
+      // Resolve component if it's a Vue component
+      component = resolveVueComponent(component as string)
+
+      // Process children
+      const children = (body.children || []).map(child => renderNode(child, h, meta))
+
+      // Return Vue component
+      return h(
+        component as any,
+        {
+          ...contentProps,
+          ...meta.component?.props
+        },
+        {
+          default: createSlotFunction(children)
+        }
+      )
     }
   }
-  return result
-}
+})
 
 /**
- * Create component data from MDC node props.
+ * Render a markdown node
  */
-function propsToData (node: MarkdownNode, documentMeta: ContentMeta) {
-  const { tag = '', props = {} } = node
-  return Object.keys(props).reduce(function (data, key) {
-    const value = props[key]
-    const { attribute } = find(html, key)
-    const native = nativeInputs.includes(tag)
-    if (rxModel.test(key) && value in documentMeta && !native) {
-      const mods = key
-        .replace(rxModel, '')
-        .split('.')
-        .filter(d => d)
-        .reduce((d, k) => {
-          d[k] = true
-          return d
-        }, {} as any)
-      // As of yet we don't resolve custom v-model field/event names from components
-      const field = 'value'
-      const event = mods.lazy ? 'change' : 'input'
-      const processor = mods.number ? number : mods.trim ? trim : noop
-      data[field] = evalInContext(value, documentMeta)
-      data.on = data.on || {}
-      data.on[event] = (e: any) => ((documentMeta as any)[value] = processor(e))
-    } else if (key === 'v-bind') {
-      const val = evalInContext(value, documentMeta)
-      data = Object.assign(data, val)
-    } else if (rxOn.test(key)) {
-      key = key.replace(rxOn, '')
-      data.on = data.on || {}
-      data.on[key] = () => evalInContext(value, documentMeta)
-    } else if (rxBind.test(key)) {
-      key = key.replace(rxBind, '')
-      data[key] = evalInContext(value, documentMeta)
-    } else if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
-      // Join string arrays using space, see: https://github.com/nuxt/content/issues/247
-      data[attribute] = value.join(' ')
-    } else {
-      data[attribute] = value
-    }
-    return data
-  }, {} as any)
-}
-
-/**
- * Create the scoped slots from `node` template children.
- * Templates for default slots are processed as regular children in `processNode`.
- */
-function processNonDefaultSlots (node: MarkdownNode, h: CreateElement, documentMeta: ContentMeta) {
-  const data: any = {}
-  const children: MarkdownNode[] = node.children || []
-  children.forEach((child) => {
-    // Regular children and default templates are processed inside `processNode`.
-    if (!isTemplate(child) || isDefaultTemplate(child)) {
-      return
-    }
-    const template = child
-    const name = getSlotName(template)
-    const vDomTree = template.content.map((tmplNode: MarkdownNode) => processNode(tmplNode, h, documentMeta))
-    data[name] = createSlotFunction(vDomTree)
-  })
-  return data
-}
-
-function processNode (node: MarkdownNode, h: CreateElement, documentMeta: ContentMeta): ContentVNode {
+function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta): ContentVNode {
   const originalTag = node.tag
-  const renderTag: string = !node.props?.ignoreMap && documentMeta.tags[node.tag] ? documentMeta.tags[node.tag] : node.tag
+  // `_ignoreMap` is an special prop to disables tag-mapper
+  const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[node.tag]) || node.tag
+
   /**
    * Render Text node
    */
   if (node.type === 'text') {
     return h(Text, node.value)
   }
-  const propData = propsToData(node, documentMeta)
-  const data = Object.assign({}, propData)
-  /**
-   * Process child nodes, flat-mapping templates pointing to default slots.
-   */
-  const children: Array<VNode | string> = (node.children || []).flatMap((child) => {
-    /**
-     * Template nodes pointing to non-default slots are processed inside `slotsToData`.
-     */
-    if (isTemplate(child) && !isDefaultTemplate(child)) {
-      return []
+
+  const component = resolveVueComponent(renderTag)
+  if (typeof component === 'object') {
+    component.tag = originalTag
+  }
+
+  return h(
+    component as any,
+    propsToData(node, documentMeta),
+    renderSlots(node, h, documentMeta)
+  )
+}
+
+/**
+ * Create slots from `node` template children.
+ */
+function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta) {
+  const children: MarkdownNode[] = node.children || []
+
+  const slots: Record<string, Array<VNode | string>> = children.reduce((data, node) => {
+    if (!isTemplate(node)) {
+      data[DEFAULT_SLOT].push(renderNode(node, h, documentMeta))
+      return data
     }
-    const nodes: MarkdownNode[] = isDefaultTemplate(child) ? child.content : [child]
-    return (nodes || []).map((node: MarkdownNode) => processNode(node, h, documentMeta) as ContentVNode)
+
+    if (isDefaultTemplate(node)) {
+      data[DEFAULT_SLOT].push(...node.content.map(child => renderNode(child, h, documentMeta)))
+      return data
+    }
+
+    const slotName = getSlotName(node)
+    data[slotName] = node.content.map(child => renderNode(child, h, documentMeta))
+
+    return data
+  }, {
+    [DEFAULT_SLOT]: []
   })
-  let component: string | ConcreteComponent | undefined = renderTag
-  if (isVueComponent(component as string)) {
-    component = resolveComponent(pascalCase(component), false)
-    if (typeof component === 'object') {
-      component.tag = originalTag
+
+  return Object.fromEntries(
+    Object.entries(slots).map(([name, vDom]) => ([name, createSlotFunction(vDom)]))
+  )
+}
+
+/**
+ * Create component data from node props.
+ */
+function propsToData (node: MarkdownNode, documentMeta: ParsedContentMeta) {
+  const { tag = '', props = {} } = node
+  return Object.keys(props).reduce(function (data, key) {
+    // Ignore internal `__ignoreMap` prop.
+    if (key === '__ignoreMap') { return data }
+
+    const value = props[key]
+
+    // `v-model="foo"`
+    if (rxModel.test(key) && !nativeInputs.includes(tag)) {
+      return propsToDataRxModel(key, value, data, documentMeta)
+    }
+
+    // `v-bind="{foo: 'bar'}"`
+    if (key === 'v-bind') {
+      return propsToDataVBind(key, value, data, documentMeta)
+    }
+
+    // `v-on="foo"`
+    if (rxOn.test(key)) {
+      return propsToDataRxOn(key, value, data, documentMeta)
+    }
+
+    // `:foo="bar"`, `v-bind:foo="bar"`
+    if (rxBind.test(key)) {
+      return propsToDataRxBind(key, value, data, documentMeta)
+    }
+
+    const { attribute } = find(html, key)
+
+    // Join string arrays using space, see: https://github.com/nuxt/content/issues/247
+    if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
+      data[attribute] = value.join(' ')
+      return data
+    }
+
+    data[attribute] = value
+
+    return data
+  }, {} as any)
+}
+
+/**
+ * Handle `v-model`
+ */
+function propsToDataRxModel (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
+  // Model modifiers
+  const number = (d: any) => +d
+  const trim = (d: any) => d.trim()
+  const noop = (d: any) => d
+
+  const mods = key
+    .replace(rxModel, '')
+    .split('.')
+    .filter(d => d)
+    .reduce((d, k) => {
+      d[k] = true
+      return d
+    }, {} as any)
+
+  // As of yet we don't resolve custom v-model field/event names from components
+  const field = 'value'
+  const event = mods.lazy ? 'change' : 'input'
+  const processor = mods.number ? number : mods.trim ? trim : noop
+  data[field] = evalInContext(value, documentMeta)
+  data.on = data.on || {}
+  data.on[event] = (e: any) => ((documentMeta as any)[value] = processor(e))
+
+  return data
+}
+
+/**
+ * Handle object binding `v-bind`
+ */
+function propsToDataVBind (_key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
+  const val = evalInContext(value, documentMeta)
+  data = Object.assign(data, val)
+  return data
+}
+
+/**
+ * Handle `v-on` and `@`
+ */
+function propsToDataRxOn (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
+  key = key.replace(rxOn, '')
+  data.on = data.on || {}
+  data.on[key] = () => evalInContext(value, documentMeta)
+  return data
+}
+
+/**
+ * Handle single binding `v-bind:` and `:`
+ */
+function propsToDataRxBind (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
+  key = key.replace(rxBind, '')
+  data[key] = evalInContext(value, documentMeta)
+  return data
+}
+
+/**
+ * Resolve component if it's a Vue component
+ */
+const resolveVueComponent = (component: string) => {
+  // Check if node is not a native HTML tag
+  if (!htmlTags.includes(component as any)) {
+    const componentFn = resolveComponent(pascalCase(component), false)
+    // If component exists
+    if (typeof componentFn === 'object') {
+      return componentFn
     }
   }
-  return h(component as any, data, {
-    ...processNonDefaultSlots(node, h, documentMeta),
-    default: createSlotFunction(children)
-  })
+  return component
 }
 
 /**
- * Check if node is root
+ * Evaluate value in specific context
  */
-function isDefaultTemplate (node: MarkdownNode) {
-  return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
-}
+function evalInContext (code: string, context: any) {
+  // Retrive value from context
+  const result = code
+    .split('.')
+    .reduce((o: any, k) => typeof o === 'object' ? o[k] : undefined, context)
 
-/**
- * Check if node is Vue template tag
- */
-function isTemplate (node: MarkdownNode) {
-  return node.tag === 'template'
-}
-
-/**
- * Check is node is a Vue component
- */
-function isVueComponent (name: string) {
-  return !htmlTags.includes(name)
+  return typeof result === 'undefined' ? destr(code) : result
 }
 
 /**
@@ -189,69 +283,24 @@ function getSlotName (node: MarkdownNode) {
   return name || DEFAULT_SLOT
 }
 
-export default defineComponent({
-  name: 'ContentRendererMarkdown',
-  functional: true,
-  props: {
-    /**
-     * Content to render
-     */
-    document: {
-      type: [Object, String],
-      required: true
-    },
-    /**
-     * Root tag to use for rendering
-     */
-    tag: {
-      type: String,
-      default: 'div'
-    }
-  },
-  setup () {
-    const { content: { tags } } = useRuntimeConfig().public
-    return {
-      tags
-    }
-  },
-  render () {
-    const { document, ...contentProps } = this.$props
-    // No content to render
-    if (!document) {
-      return
-    }
-    // Get body from document
-    const body = (document.body || document) as MarkdownNode
-    const meta: ParsedContentMeta = {
-      ...document,
-      tags: {
-        ...this.tags || {},
-        ...document?.tags || {}
-      }
-    }
+/**
+ * Create a factory function if there is a node in the list
+ */
+function createSlotFunction (nodes: Array<VNode | string>) {
+  return (nodes.length ? () => nodes : undefined)
+}
 
-    let component: string | ConcreteComponent = meta.component || this.$props.tag
-    if (typeof meta.component === 'object') {
-      component = meta.component.name
-    }
+/**
+ * Check if node is root
+ */
+function isDefaultTemplate (node: MarkdownNode) {
+  return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
+}
 
-    // Resolve component if it's a Vue component
-    if (component && isVueComponent(component as string)) {
-      const componentFn = resolveComponent(pascalCase(component as string), false)
-      // If component exists
-      if (componentFn !== component) {
-        component = componentFn
-      }
-    }
-
-    // Get node props
-    const props: Record<string, any> = { ...contentProps, ...meta.component?.props }
-
-    // Process children
-    const children = (body.children || []).map(child => processNode(child, h, meta))
-
-    // Return Vue component
-    return h(component as any, props, { default: createSlotFunction(children) })
-  }
-})
+/**
+ * Check if node is Vue template tag
+ */
+function isTemplate (node: MarkdownNode) {
+  return node.tag === 'template'
+}
 </script>
