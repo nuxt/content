@@ -148,5 +148,21 @@ describe('Match', () => {
         })
       ).toBe(true)
     })
+
+    test('$regex', () => {
+      // case sensitive
+      expect(match(item, { 'nested.users.0': /maha/ })).toBe(false)
+      expect(match(item, { 'nested.users.0': { $regex: '/maha/' } })).toBe(false)
+      expect(match(item, { 'nested.users.0': { $regex: 'maha' } })).toBe(false)
+
+      // case insensitive
+      expect(match(item, { 'nested.users.0': '/maha/i' })).toBe(false)
+      expect(match(item, { 'nested.users.0': /maha/i })).toBe(true)
+      expect(match(item, { 'nested.users.0': { $regex: '/maha/i' } })).toBe(true)
+
+      // with `$not`
+      expect(match(item, { 'nested.users.0': { $not: /maha/i } })).toBe(false)
+      expect(match(item, { 'nested.users.0': { $not: /maha/ } })).toBe(true)
+    })
   })
 })

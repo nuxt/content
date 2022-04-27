@@ -2,10 +2,10 @@ import { defineEventHandler } from 'h3'
 import { queryContent } from '../storage'
 import { createNav } from '../navigation'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
-import { contentApiParams } from '../utils'
+import { decodeApiParams } from '../../utils'
 
 export default defineEventHandler(async (event) => {
-  const params: Partial<QueryBuilderParams> = contentApiParams(event)
+  const params = decodeApiParams<Partial<QueryBuilderParams>>(event.context.params.params)
 
   const contents = await queryContent(params || {})
     .where({

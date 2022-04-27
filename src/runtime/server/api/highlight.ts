@@ -1,7 +1,7 @@
 import { createError, defineLazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
-import { contentApiParams } from '../utils'
+import { decodeApiParams } from '../../utils'
 import { useRuntimeConfig } from '#imports'
 
 /**
@@ -45,7 +45,7 @@ export default defineLazyEventHandler(async () => {
   })
 
   return async (event): Promise<HighlightThemedToken[][]> => {
-    const params = contentApiParams<Partial<HighlightParams>>(event)
+    const params = decodeApiParams<Partial<HighlightParams>>(event.context.params.params)
 
     const { code, lang, theme } = resolveBody(params)
 

@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'url'
 import { assert, test, describe, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
-import { fromByteArray } from 'base64-js'
+import { encodeApiParams } from '../src/runtime/utils'
 import { testMarkdownParser } from './features/parser-markdown'
 import { testPathMetaTransformer } from './features/transformer-path-meta'
 import { testYamlParser } from './features/parser-yaml'
@@ -15,18 +15,13 @@ describe('fixtures:basic', async () => {
   })
 
   const QUERY_ENDPOINT = '/api/_content/query'
-  const toByteArray = (s: string) => new Uint8Array(s.length).map((_, i) => s[i].charCodeAt(0))
-  const encodeParams = (params: any = {}) => {
-    return fromByteArray(toByteArray(JSON.stringify(params)))
-      .replace(/\+/g, '.').replace(/\//g, '-') // Replace special characters to prevent creating malformed URL
-  }
   const fetchDocument = (id: string) => {
-    const params = encodeParams({ first: true, where: { id } })
+    const params = encodeApiParams({ first: true, where: { id } })
     return $fetch(`${QUERY_ENDPOINT}/${params}`)
   }
 
   test('List contents', async () => {
-    const params = encodeParams({ only: 'id' })
+    const params = encodeApiParams({ only: 'id' })
     const docs = await $fetch(`${QUERY_ENDPOINT}/${params}`)
     const ids = docs.map(doc => doc.id)
 

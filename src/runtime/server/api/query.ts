@@ -1,10 +1,11 @@
 import { createError, defineEventHandler } from 'h3'
 import type { QueryBuilderParams } from '../../types'
 import { queryContent } from '../storage'
-import { contentApiParams } from '../utils'
+import { decodeApiParams } from '../../utils'
 
 export default defineEventHandler(async (event) => {
-  const query = contentApiParams<Partial<QueryBuilderParams>>(event)
+  const query = decodeApiParams<Partial<QueryBuilderParams>>(event.context.params.params)
+
   const contents = await queryContent(query).find()
 
   // If no documents matchs and using findOne()
