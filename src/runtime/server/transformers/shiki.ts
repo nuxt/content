@@ -1,16 +1,10 @@
 import { visit } from 'unist-util-visit'
-import { fromByteArray } from 'base64-js'
 import { withBase } from 'ufo'
+import { encodeApiParams } from '../../utils'
 import { useRuntimeConfig } from '#imports'
 
-const toByteArray = (s: string) => new Uint8Array(s.length).map((_, i) => s[i].charCodeAt(0))
-const encodeParams = (params: any = {}) => {
-  return fromByteArray(toByteArray(encodeURIComponent(JSON.stringify(params))))
-    .replace(/\+/g, '.').replace(/\//g, '-') // Replace special characters to prevent creating malformed URL
-}
-
 const contentApiWithParams = (url: string, params: any) => {
-  return withBase(`${url}/${encodeParams(params)}`, `/api/${useRuntimeConfig().public.content.base}`)
+  return withBase(`${url}/${encodeApiParams(params)}`, `/api/${useRuntimeConfig().public.content.base}`)
 }
 
 export default {
