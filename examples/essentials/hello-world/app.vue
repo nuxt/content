@@ -1,6 +1,6 @@
 <script setup>
 const { data: document } = await useAsyncData('home', () => {
-  return queryContent().where({ slug: '/' }).findOne()
+  return queryContent('/').findOne()
 })
 </script>
 
