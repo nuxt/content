@@ -22,11 +22,16 @@
   "files": [
     "dist"
   ],
+  "workspaces": [
+    "examples/*/*"
+  ],
   "scripts": {
     "build": "nuxt-module-build",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "example": "yarn workspace example-$0 dev",
+    "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .js,.ts,.vue .",
     "prepack": "yarn build",
     "test:benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
