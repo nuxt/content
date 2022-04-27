@@ -591,8 +591,8 @@ __metadata:
     html-tags: ^3.2.0
     husky: ^7.0.4
     jiti: ^1.13.0
-    lint-staged: ^12.4.0
-    listhen: ^0.2.10
+    lint-staged: ^12.4.1
+    listhen: ^0.2.11
     mdast-util-from-markdown: ^1.2.0
     mdast-util-to-hast: ^12.1.1
     mdast-util-to-markdown: ^1.3.0
@@ -633,7 +633,7 @@ __metadata:
     unist-util-visit: ^4.1.0
     unist-util-visit-parents: ^5.1.0
     unstorage: ^0.3.3
-    vitest: ^0.9.4
+    vitest: ^0.10.0
     ws: ^8.5.0
   languageName: unknown
   linkType: soft
@@ -5612,9 +5612,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.4.0":
-  version: 12.4.0
-  resolution: "lint-staged@npm:12.4.0"
+"lint-staged@npm:^12.4.1":
+  version: 12.4.1
+  resolution: "lint-staged@npm:12.4.1"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -5632,7 +5632,7 @@ __metadata:
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: e25b273a73b79f224ff1ccb22432c34a9050fe8318b9cf7e08c748e2efc80e1f48ed4f2aa61cd16a701bb7fd6323ecf0d94a497c97732db04f2b5382d6b70131
+  checksum: b57183b537064cda6caef6679918bf271903145f7c28d09567e918b8b13094048b579f8df808ea590dbd7ea2ec332327c5e372cf3d77e85b7b0254f6541ce4c3
   languageName: node
   linkType: hard
 
@@ -5647,6 +5647,20 @@ __metadata:
     http-shutdown: ^1.2.2
     selfsigned: ^2.0.1
   checksum: fbbebba2b685d767fc51b30662b21e212850a931d9f8b71410a2fc774d6504b8d536601210e0deb60fd8f60d39176144d12df6188b7ba984f49886597d2c953a
+  languageName: node
+  linkType: hard
+
+"listhen@npm:^0.2.11":
+  version: 0.2.11
+  resolution: "listhen@npm:0.2.11"
+  dependencies:
+    clipboardy: ^3.0.0
+    colorette: ^2.0.16
+    defu: ^6.0.0
+    get-port-please: ^2.5.0
+    http-shutdown: ^1.2.2
+    selfsigned: ^2.0.1
+  checksum: c4b7e6f9574643d685577c519f31bf4f24cd3daccb7d9bbace23948a356b068fcd5758d4da154799aca18a032a27aeca5e98b3288369060eb2b939ddc510927d
   languageName: node
   linkType: hard
 
@@ -10096,9 +10110,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.9.4":
-  version: 0.9.4
-  resolution: "vitest@npm:0.9.4"
+"vitest@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "vitest@npm:0.10.0"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -10123,7 +10137,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 31614494f682a6adcedb5c1199e21de7d8b34ca836ab3374691a2948d72d1fb0691366d11560dca23f07c92585f65c305d46199de2d84a0e4407e9f213aca229
+  checksum: bbcf6079f9b667be7d5def4aa397ad1318d282aa283f3aecda9822ce3bc9c1d1aac0423a8f05dfc4b772631571c2ea719bbe78072a2629ca207ed5b575836de1
   languageName: node
   linkType: hard
 
