@@ -131,9 +131,11 @@ export interface ModuleOptions {
   /**
    * Enable/Disable navigation.
    *
-   * @defaul true
+   * @defaul {}
    */
-  navigation: boolean
+  navigation: false | {
+    fields: Array<string>
+  }
   /**
    * List of locale codes.
    * This codes will be used to detect contents locale.
@@ -180,7 +182,9 @@ export default defineNuxtModule<ModuleOptions>({
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
     yaml: {},
-    navigation: true
+    navigation: {
+      fields: []
+    }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)

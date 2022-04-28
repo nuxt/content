@@ -195,8 +195,9 @@ export interface NavItem {
   slug: string
   id?: string
   draft?: boolean
-  partial?: boolean
   children?: NavItem[]
+
+  [key: string]: any
 }
 
 // Highlight

@@ -1,11 +1,14 @@
 import { NavItem, ParsedContentMeta } from '../types'
 import { generateTitle } from './transformers/path-meta'
+import { useRuntimeConfig } from '#imports'
 
 type PrivateNavItem = NavItem & { path?: string }
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export function createNav (contents: ParsedContentMeta[]) {
+export function createNav (contents: ParsedContentMeta[], configs: Record<string, ParsedContentMeta>) {
+  const { navigation } = useRuntimeConfig().content
+  const pickNavigationFields = pick(['title', ...navigation.fields])
   const nav = contents
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .reduce((nav, content) => {
@@ -18,10 +21,10 @@ export function createNav (contents: ParsedContentMeta[]) {
           id: content.id,
           title: content.title,
           slug: content.slug,
-          draft: content.draft,
-          partial: content.partial,
           path: content.path,
-          children: []
+          children: [],
+          ...pickNavigationFields(content),
+          ...(content.draft ? { draft: true } : {})
         }
       }
 
@@ -32,16 +35,11 @@ export function createNav (contents: ParsedContentMeta[]) {
         const indexItem = getNavItem(content)
         navItem.children.push(indexItem)
 
-        // Check for "parent" key on index
-        if (content.parent) {
-          // Check for "title" key on index
-          if (content.parent.title && typeof content.parent.title === 'string') { navItem.title = content.parent.title }
-        }
+        const conf = configs[indexItem.path.split('/').slice(0, -1).join('/')]
+        Object.assign(indexItem, pickNavigationFields(conf))
 
         // Set parent as directory
         delete navItem.id
-        delete navItem.draft
-        delete navItem.partial
       }
 
       // First-level item, push it straight to nav
@@ -60,11 +58,13 @@ export function createNav (contents: ParsedContentMeta[]) {
 
         // Create dummy parent if not found
         if (!parent) {
+          const conf = configs[idParts.slice(0, i + 1).join('/')]
           parent = {
             slug: currentPathSlug,
             title: generateTitle(part),
-            path: idParts.slice(0, i + 1).join(':'),
-            children: []
+            path: idParts.slice(0, i + 1).join('/'),
+            children: [],
+            ...pickNavigationFields(conf)
           }
           nodes.push(parent)
         }
@@ -98,4 +98,18 @@ function sortAndClear (nav: PrivateNavItem[]) {
   }
 
   return nav
+}
+
+/**
+ * Returns a new object with the specified keys
+ **/
+function pick (keys?: string[]) {
+  return (obj: any = {}) => {
+    if (keys && keys.length) {
+      return keys
+        .filter(key => typeof obj[key] !== 'undefined')
+        .reduce((newObj, key) => Object.assign(newObj, { [key]: obj[key] }), {})
+    }
+    return obj
+  }
 }

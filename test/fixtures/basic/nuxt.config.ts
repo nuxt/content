@@ -32,6 +32,9 @@ export default defineNuxtConfig({
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
       }
-    ]
+    ],
+    navigation: {
+      fields: ['icon']
+    }
   }
 })

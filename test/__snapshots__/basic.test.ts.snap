@@ -32,23 +32,17 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
   {
     "children": [
       {
-        "draft": false,
         "id": "content:cats:index.md",
-        "partial": false,
         "slug": "/cats",
         "title": "Cats list",
       },
       {
-        "draft": false,
         "id": "content:cats:persian.md",
-        "partial": false,
         "slug": "/cats/persian",
         "title": "Persian",
       },
       {
-        "draft": false,
         "id": "content:cats:ragdoll.md",
-        "partial": false,
         "slug": "/cats/ragdoll",
         "title": "Ragdoll",
       },
@@ -59,27 +53,24 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
 ]
 `;
 
-exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-dogs 1`] = `
+exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-dogs 1`] = `
 [
   {
     "children": [
       {
-        "draft": false,
         "id": "content:dogs:bulldog.md",
-        "partial": false,
         "slug": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "draft": false,
         "id": "content:dogs:German Shepherd.md",
-        "partial": false,
         "slug": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
+    "icon": "🐶",
     "slug": "/dogs",
-    "title": "Dogs",
+    "title": "Dogs List",
   },
 ]
 `;
@@ -89,23 +80,17 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "draft": false,
         "id": "content:cats:index.md",
-        "partial": false,
         "slug": "/cats",
         "title": "Cats list",
       },
       {
-        "draft": false,
         "id": "content:cats:persian.md",
-        "partial": false,
         "slug": "/cats/persian",
         "title": "Persian",
       },
       {
-        "draft": false,
         "id": "content:cats:ragdoll.md",
-        "partial": false,
         "slug": "/cats/ragdoll",
         "title": "Ragdoll",
       },
@@ -116,29 +101,24 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "draft": false,
         "id": "content:dogs:bulldog.md",
-        "partial": false,
         "slug": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "draft": false,
         "id": "content:dogs:German Shepherd.md",
-        "partial": false,
         "slug": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
+    "icon": "🐶",
     "slug": "/dogs",
-    "title": "Dogs",
+    "title": "Dogs List",
   },
   {
     "children": [
       {
-        "draft": false,
         "id": "fa-ir:fa:index.md",
-        "partial": false,
         "slug": "/",
         "title": "سلام",
       },
@@ -149,9 +129,7 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "draft": false,
         "id": "content:index.md",
-        "partial": false,
         "slug": "/",
         "title": "Index",
       },

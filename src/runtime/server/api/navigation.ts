@@ -17,5 +17,19 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  return createNav(contents as ParsedContentMeta[])
+  const dirConfigs = await queryContent().where({ path: /\/_dir$/i }).find()
+  const configs = dirConfigs.reduce((configs, conf) => {
+    const key = conf.path.split('/').slice(0, -1).join('/')
+    configs[key] = {
+      ...conf,
+      // Extract meta from body. (non MD files)
+      ...conf.body
+    }
+    if (conf.title.toLowerCase() === 'dir') {
+      conf.title = undefined
+    }
+    return configs
+  }, {} as Record<string, ParsedContentMeta>)
+
+  return createNav(contents as ParsedContentMeta[], configs)
 })

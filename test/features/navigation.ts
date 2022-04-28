@@ -16,7 +16,7 @@ export const testNavigation = () => {
       expect(list).toMatchSnapshot('basic-navigation-cats')
     })
 
-    test('Get cats navigation', async () => {
+    test('Get dogs navigation', async () => {
       const list = await $fetch(`/api/_content/navigation/${encodeApiParams({ slug: '/dogs' })}`)
 
       expect(list).toMatchSnapshot('basic-navigation-dogs')
