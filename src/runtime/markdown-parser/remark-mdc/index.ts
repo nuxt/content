@@ -60,14 +60,14 @@ export default <Plugin<Array<RemarkMDCOptions>, Root, Root>> function ({ compone
     }
   }
 
-  return (tree: ComponentNode, { data }: { data: Record<string, any> }) => {
+  return (tree: ComponentNode) => {
     visit<ComponentNode, string[]>(tree, ['textComponent', 'leafComponent', 'containerComponent'], (node) => {
-      bindNode(node, data)
+      bindNode(node)
     })
   }
 }
 
-function bindNode (node: ComponentNode, data: Record<string, any>) {
+function bindNode (node: ComponentNode) {
   const nodeData = node.data || (node.data = {})
 
   node.fmAttributes = getNodeData(node)
@@ -78,8 +78,7 @@ function bindNode (node: ComponentNode, data: Record<string, any>) {
       ...node.attributes,
       // Parse data slots and retrieve data
       ...node.fmAttributes
-    },
-    data
+    }
   )
 }
 
@@ -94,13 +93,13 @@ function getNodeData (node: ComponentNode) {
   return data
 }
 
-function bindData (data: Record<string, any>, pageData: Record<string, any>) {
+function bindData (data: Record<string, any>) {
   const entries = Object.entries(data).map(([key, value]) => {
     if (key.startsWith(':')) {
       return [key, value]
     }
     if (typeof value === 'string') {
-      return [pageData[value] ? `:${key}` : key, value]
+      return [key, value]
     }
     return [`:${key}`, JSON.stringify(value)]
   })

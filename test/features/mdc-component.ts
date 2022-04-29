@@ -16,5 +16,19 @@ export const testMDCComponent = () => {
         ']</div>'
       ].join('\n'))
     })
+
+    test('normal/binded props (inline component)', async () => {
+      const content = await $fetch('/partial/mdc-props-inline')
+
+      // Normal Prop
+      expect(content).includes('<div class="prop-a">categories</div>')
+      // Binded Prop
+      expect(content).includes([
+        '<div class="prop-b">[',
+        '  &quot;Art&quot;,',
+        '  &quot;History&quot;',
+        ']</div>'
+      ].join('\n'))
+    })
   })
 }
