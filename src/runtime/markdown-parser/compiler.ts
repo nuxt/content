@@ -57,7 +57,7 @@ export default function (this: any, _options: MarkdownOptions) {
         type: 'element',
         tag: node.tagName as string,
         props: node.properties,
-        children: parseAsJSON(node.children)
+        children: parseAsJSON(node.children || [])
       }
     }
 
@@ -84,7 +84,7 @@ export default function (this: any, _options: MarkdownOptions) {
      */
     return {
       type: 'root',
-      children: parseAsJSON(root.children)
+      children: parseAsJSON(root.children || [])
     }
   }
 }
