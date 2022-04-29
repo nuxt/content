@@ -129,6 +129,12 @@ export interface ModuleOptions {
    */
   yaml: false | Record<string, any>
   /**
+   * Options for yaml parser.
+   *
+   * @default {}
+   */
+  csv: false | Record<string, any>
+  /**
    * Enable/Disable navigation.
    *
    * @defaul {}
@@ -182,6 +188,7 @@ export default defineNuxtModule<ModuleOptions>({
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
     yaml: {},
+    csv: {},
     navigation: {
       fields: []
     }
@@ -198,6 +205,7 @@ export default defineNuxtModule<ModuleOptions>({
         resolveRuntimeModule('./server/transformers/markdown'),
         resolveRuntimeModule('./server/transformers/yaml'),
         resolveRuntimeModule('./server/transformers/json'),
+        resolveRuntimeModule('./server/transformers/csv'),
         resolveRuntimeModule('./server/transformers/path-meta')
       ],
       ...options

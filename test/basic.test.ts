@@ -8,6 +8,7 @@ import { testYamlParser } from './features/parser-yaml'
 import { testNavigation } from './features/navigation'
 import { testMDCComponent } from './features/mdc-component'
 import { testJSONParser } from './features/parser-json'
+import { testCSVParser } from './features/parser-csv'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -83,6 +84,8 @@ describe('fixtures:basic', async () => {
   testMarkdownParser()
 
   testYamlParser()
+
+  testCSVParser()
 
   testJSONParser()
 
