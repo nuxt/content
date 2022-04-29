@@ -3,12 +3,9 @@ import type { MarkdownRoot, MarkdownNode, MarkdownOptions } from '../types'
 
 type Node = UnistNode & {
   tagName?: string
-  content?: any
   value?: string
   children?: Node[]
   properties: Record<string, any>
-  attributes?: Record<string, any>
-  fmAttributes?: Record<string, any>
 }
 
 /**
@@ -19,22 +16,23 @@ export default function (this: any, _options: MarkdownOptions) {
    * Parses nodes for JSON structure. Attempts to drop
    * unwanted properties.
    */
-  function parseAsJSON (node: Node, parent: MarkdownNode[]) {
+  function parseAsJSON (node: Node | Node[]) {
+    if (Array.isArray(node)) {
+      return node.map(parseAsJSON)
+    }
     /**
      * Element node creates an isolated children array to
      * allow nested elements
      */
     if (node.type === 'element') {
-      const childs: Node[] = []
-
       if (node.tagName === 'li') {
         // unwrap unwanted paragraphs around `<li>` children
         let hasPreviousParagraph = false
-        node.children = (node.children as Node[]).flatMap((child) => {
+        node.children = node.children.flatMap((child) => {
           if (child.tagName === 'p') {
             if (hasPreviousParagraph) {
               // Insert line break before new paragraph
-              ;(child.children as Node[]).unshift({
+              child.children.unshift({
                 type: 'element',
                 tagName: 'br',
                 properties: {}
@@ -49,57 +47,33 @@ export default function (this: any, _options: MarkdownOptions) {
       }
 
       /**
-       * rename component slots tags name
+       * Rename component slots tags name
        */
       if (node.tagName === 'component-slot') {
         node.tagName = 'template'
-        node.content = { ...node }
       }
 
-      const filtered: MarkdownNode = {
+      return <MarkdownNode> {
         type: 'element',
         tag: node.tagName as string,
         props: node.properties,
-        children: childs,
-        attributes: node.attributes,
-        fmAttributes: node.fmAttributes
+        children: parseAsJSON(node.children)
       }
-
-      // Unwrap contents of the template, saving the root level inside content.
-      if (node.tagName === 'template') {
-        const children = (node.content as Node).children as Node[]
-        const templateContent: any[] = []
-        children.forEach(templateNode => parseAsJSON(templateNode, templateContent))
-        filtered.content = templateContent
-      }
-
-      parent.push(filtered)
-
-      if (node.children) {
-        ;(node.children as Node[]).forEach(child => parseAsJSON(child, childs))
-      }
-
-      return
     }
 
     /**
-     * Text node pushes to the parent
+     * Text node
      */
     if (node.type === 'text') {
-      parent.push({
+      return <MarkdownNode> {
         type: 'text',
         value: node.value as string
-      })
-      return
+      }
     }
 
-    /**
-     * Root level nodes push to the original parent
-     * children and doesn't create a new node
-     */
-    if (node.type === 'root') {
-      ;(node.children as Node[]).forEach(child => parseAsJSON(child, parent))
-    }
+    node.children = parseAsJSON(node.children || [])
+
+    return node as MarkdownNode
   }
 
   this.Compiler = function (root: Node): MarkdownRoot {
@@ -108,12 +82,9 @@ export default function (this: any, _options: MarkdownOptions) {
      * nodes. Instead, we need a array to fill in as many elements inside a single
      * iteration
      */
-    const result: any = []
-    parseAsJSON(root, result)
-
     return {
       type: 'root',
-      children: result
+      children: parseAsJSON(root.children)
     }
   }
 }

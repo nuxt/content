@@ -120,12 +120,12 @@ function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: Parsed
     }
 
     if (isDefaultTemplate(node)) {
-      data[DEFAULT_SLOT].push(...node.content.map(child => renderNode(child, h, documentMeta)))
+      data[DEFAULT_SLOT].push(...node.children.map(child => renderNode(child, h, documentMeta)))
       return data
     }
 
     const slotName = getSlotName(node)
-    data[slotName] = node.content.map(child => renderNode(child, h, documentMeta))
+    data[slotName] = node.children.map(child => renderNode(child, h, documentMeta))
 
     return data
   }, {
