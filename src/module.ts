@@ -197,6 +197,7 @@ export default defineNuxtModule<ModuleOptions>({
         // Register internal content plugins
         resolveRuntimeModule('./server/transformers/markdown'),
         resolveRuntimeModule('./server/transformers/yaml'),
+        resolveRuntimeModule('./server/transformers/json'),
         resolveRuntimeModule('./server/transformers/path-meta')
       ],
       ...options

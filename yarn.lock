@@ -692,6 +692,7 @@ __metadata:
     html-tags: ^3.2.0
     husky: ^7.0.4
     jiti: ^1.13.0
+    json5: ^2.2.1
     lint-staged: ^12.4.1
     listhen: ^0.2.11
     mdast-util-from-markdown: ^1.2.0

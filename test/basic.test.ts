@@ -7,6 +7,7 @@ import { testPathMetaTransformer } from './features/transformer-path-meta'
 import { testYamlParser } from './features/parser-yaml'
 import { testNavigation } from './features/navigation'
 import { testMDCComponent } from './features/mdc-component'
+import { testJSONParser } from './features/parser-json'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -82,6 +83,8 @@ describe('fixtures:basic', async () => {
   testMarkdownParser()
 
   testYamlParser()
+
+  testJSONParser()
 
   testPathMetaTransformer()
 

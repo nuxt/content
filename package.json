@@ -49,6 +49,7 @@
     "flat": "^5.0.2",
     "gray-matter": "^4.0.3",
     "html-tags": "^3.2.0",
+    "json5": "^2.2.1",
     "listhen": "^0.2.11",
     "mdast-util-from-markdown": "^1.2.0",
     "mdast-util-to-hast": "^12.1.1",
