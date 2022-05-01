@@ -5,5 +5,12 @@ const { data: document } = await useAsyncData('home', () => {
 </script>
 
 <template>
-  <Content v-if="document" :document="document" />
+  <NuxtExampleLayout example="mdc/slot" repo="nuxt/content-next">
+    <template #icon>
+      Nuxt/content
+    </template>
+    <main>
+      <Content v-if="document" :document="document" />
+    </main>
+  </NuxtExampleLayout>
 </template>

@@ -4389,6 +4389,7 @@ __metadata:
   resolution: "example-hello-world@workspace:examples/essentials/hello-world"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
+    "@nuxt/ui": ^0.1.0
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
