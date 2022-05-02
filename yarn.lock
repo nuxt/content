@@ -858,26 +858,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/ui@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@nuxt/ui@npm:0.1.0"
+"@nuxt/ui@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@nuxt/ui@npm:0.1.1"
   dependencies:
     "@iconify-json/carbon": ^1.1.3
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest"
     "@nuxtjs/color-mode": ^3.0.2
-    "@unocss/core": ^0.31.5
-    "@unocss/nuxt": ^0.31.5
-    "@unocss/preset-attributify": ^0.31.5
-    "@unocss/preset-icons": ^0.31.5
-    "@unocss/preset-mini": ^0.31.5
-    "@unocss/reset": ^0.31.5
+    "@unocss/core": ^0.31.6
+    "@unocss/nuxt": ^0.31.6
+    "@unocss/preset-attributify": ^0.31.6
+    "@unocss/preset-icons": ^0.31.6
+    "@unocss/preset-mini": ^0.31.6
+    "@unocss/reset": ^0.31.6
     "@vueuse/core": ^8.2.6
     "@vueuse/integrations": ^8.2.6
     "@vueuse/nuxt": ^8.2.6
     defu: ^6.0.0
     focus-trap: ^6.7.3
-    unocss: ^0.31.5
-  checksum: 938705d912d1b0f252bd65eccca3a9471649e8eef3d300c41af3e71f2cbe309c82d763323d59634634a33f5ef828d8c583b9191fdbaeeb786e426ac40b66f086
+    unocss: ^0.31.6
+  checksum: 296f451eaddb8db4d317cc372dd1be4aa30c8d531e1f9136859b67057fac4469bfe7d7330a6a863a72e327fbcb27e76a5c06eb3d07694fb7dc6eec4cfeca93ab
   languageName: node
   linkType: hard
 
@@ -1468,7 +1468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/core@npm:0.31.17, @unocss/core@npm:^0.31.5":
+"@unocss/core@npm:0.31.17, @unocss/core@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/core@npm:0.31.17"
   checksum: 99a07be656827b8775e1834f175d8c656111b860b044ce0ace0900cffef712624c62e8ccb1069716de805853a1451f6b59bebccd86150a6517d0a788d4fae7d0
@@ -1485,7 +1485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/nuxt@npm:^0.31.5":
+"@unocss/nuxt@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/nuxt@npm:0.31.17"
   dependencies:
@@ -1505,7 +1505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-attributify@npm:0.31.17, @unocss/preset-attributify@npm:^0.31.5":
+"@unocss/preset-attributify@npm:0.31.17, @unocss/preset-attributify@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/preset-attributify@npm:0.31.17"
   dependencies:
@@ -1514,7 +1514,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-icons@npm:0.31.17, @unocss/preset-icons@npm:^0.31.5":
+"@unocss/preset-icons@npm:0.31.17, @unocss/preset-icons@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/preset-icons@npm:0.31.17"
   dependencies:
@@ -1524,7 +1524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-mini@npm:0.31.17, @unocss/preset-mini@npm:^0.31.5":
+"@unocss/preset-mini@npm:0.31.17, @unocss/preset-mini@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/preset-mini@npm:0.31.17"
   dependencies:
@@ -1573,7 +1573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:0.31.17, @unocss/reset@npm:^0.31.5":
+"@unocss/reset@npm:0.31.17, @unocss/reset@npm:^0.31.6":
   version: 0.31.17
   resolution: "@unocss/reset@npm:0.31.17"
   checksum: 3a11e343e648fcd4894b2941c1daa8dd4076dcce3fd3f624f1b1e97c82fecb5200132835ac4936b1927ac709bc3b1d8b15f9fae8570ae75046a90902ac807bf8
@@ -4389,7 +4389,7 @@ __metadata:
   resolution: "example-hello-world@workspace:examples/essentials/hello-world"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
-    "@nuxt/ui": ^0.1.0
+    "@nuxt/ui": ^0.1.1
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -4399,7 +4399,7 @@ __metadata:
   resolution: "example-inline-component@workspace:examples/mdc/inline-component"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
-    "@nuxt/ui": ^0.1.0
+    "@nuxt/ui": ^0.1.1
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -4409,7 +4409,7 @@ __metadata:
   resolution: "example-nested-components@workspace:examples/mdc/nested-components"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
-    "@nuxt/ui": ^0.1.0
+    "@nuxt/ui": ^0.1.1
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -4419,7 +4419,7 @@ __metadata:
   resolution: "example-props@workspace:examples/mdc/props"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
-    "@nuxt/ui": ^0.1.0
+    "@nuxt/ui": ^0.1.1
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -4429,7 +4429,7 @@ __metadata:
   resolution: "example-slot-component@workspace:examples/mdc/slot"
   dependencies:
     "@nuxt/content": "npm:@nuxt/content-edge@latest"
-    "@nuxt/ui": ^0.1.0
+    "@nuxt/ui": ^0.1.1
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -10367,7 +10367,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unocss@npm:0.31.17, unocss@npm:^0.31.5":
+"unocss@npm:0.31.17, unocss@npm:^0.31.6":
   version: 0.31.17
   resolution: "unocss@npm:0.31.17"
   dependencies:
