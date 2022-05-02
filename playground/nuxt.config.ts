@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt3'
+import { defineNuxtConfig } from 'nuxt'
 import { resolve } from 'pathe'
 import contentModule from '../src/module' // eslint-disable-line
 

@@ -1,0 +1,14 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "preview": "nuxi preview"
+  },
+  "devDependencies": {
+    "nuxt": "npm:nuxt3@latest",
+    "docus": "npm:docus-edge@latest"
+  }
+}

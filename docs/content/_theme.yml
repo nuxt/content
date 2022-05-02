@@ -1,0 +1,22 @@
+title: "@nuxt/content"
+debug: false
+description: TODO
+twitter: "@nuxt_js"
+github: nuxt/content
+cover: https://user-images.githubusercontent.com/904724/105075054-872fac80-5a89-11eb-8aab-46dd254ad986.png
+coverAlt: TODO
+url: "https://content.nuxtjs.org/"
+header:
+  title: false
+  logo: true
+footer:
+  credits:
+    icon: IconNuxtLabs
+    text: Made by Nuxt
+  icons:
+  - label: NuxtJS
+    href: https://nuxtjs.org
+    component: IconNuxt
+  - label: Vue Telescope
+    href: https://vuetelescope.com
+    component: IconVueTelescope

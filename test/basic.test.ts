@@ -47,7 +47,6 @@ describe('fixtures:basic', async () => {
   })
 
   test('Get ignored contents', async () => {
-    // eslint-disable-next-line node/handle-callback-err
     const ignored = await fetchDocument('content:.dot-ignored.md').catch(_err => null)
 
     expect(ignored).toBeNull()
