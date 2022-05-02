@@ -1,31 +1,11 @@
-![docus preview](./static/preview.png)
+[![nuxt-content](/public/cover.png "@nuxt/content image")](https://content.nuxtjs.org)
 
-# Docus Starter
+# @nuxt/content docs
 
-Starter template for [Docus](https://docus.dev).
+This documentation uses [Docus](https://github.com/nuxtlabs/docus).
 
-## Setup
+## 💻 Development
 
-Install dependencies:
-
-```bash
-yarn install
-```
-
-## Development
-
-```bash
-yarn dev
-```
-
-## Static Generation
-
-This will create the `dist/` directory for publishing to static hosting:
-
-```bash
-yarn build
-```
-
-To preview the static generated app, run `yarn start`
-
-For detailed explanation on how things work, checkout [Docus](https://docus.dev).
+- Install dependencies using `yarn install`
+- Start using `yarn dev`
+- Build using `yarn build`
