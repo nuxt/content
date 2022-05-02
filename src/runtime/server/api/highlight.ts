@@ -2,6 +2,7 @@ import { createError, defineLazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import { decodeApiParams } from '../../utils'
+import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
 import { useRuntimeConfig } from '#imports'
 
 /**
@@ -41,7 +42,20 @@ export default defineLazyEventHandler(async () => {
   // Initialize highlighter with defaults
   const highlighter = await getHighlighter({
     theme: theme || 'dark-plus',
-    langs: preload || ['json', 'js', 'ts', 'html', 'css']
+    langs: [
+      ...(preload || ['json', 'js', 'ts', 'css']),
+      'shell',
+      'html',
+      'md',
+      'yaml',
+      {
+        id: 'md',
+        scopeName: 'text.markdown.mdc',
+        path: 'mdc.tmLanguage.json',
+        aliases: ['markdown'],
+        grammar: mdcTMLanguage
+      }
+    ]
   })
 
   return async (event): Promise<HighlightThemedToken[][]> => {
