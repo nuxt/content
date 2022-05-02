@@ -88,7 +88,7 @@
     "unist-util-visit": "^4.1.0",
     "unist-util-visit-parents": "^5.1.0",
     "unstorage": "^0.3.3",
-    "ws": "^8.5.0"
+    "ws": "^8.6.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.2.0",
@@ -108,7 +108,7 @@
     "lint-staged": "^12.4.1",
     "nuxt3": "latest",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3",
+    "typescript": "^4.6.4",
     "vitest": "^0.10.0"
   }
 }
