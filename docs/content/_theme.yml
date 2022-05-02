@@ -3,8 +3,8 @@ debug: false
 description: TODO
 twitter: "@nuxt_js"
 github: nuxt/content
-cover: https://user-images.githubusercontent.com/904724/105075054-872fac80-5a89-11eb-8aab-46dd254ad986.png
-coverAlt: TODO
+cover: /cover.png
+coverAlt: "@nuxt/content cover image."
 url: "https://content.nuxtjs.org/"
 header:
   title: false

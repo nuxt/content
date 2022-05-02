@@ -1,17 +1,21 @@
-# Content Module
+[![nuxt-content](/docs/public/cover.png "@nuxt/content image")](https://content.nuxtjs.org)
 
-Create a document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
+# @nuxt/content
+
+Create a document-driven websites with [**Nuxt 3**](https://v3.nuxtjs.org).
 
 ## Features
 
-- 💚 [**Nuxt 3**](https://v3.nuxtjs.org) support
-- 🗒  Easiest way to publish and maintain document-driven websites
-- 🎮 Powerful editor to interact with your codebase
-- 🔮 Code highlighting provided by [**Shiki**](https://shikijs.github.io)
-- ✍️ Publish changes without rebuilding
-- 🚀 A Markdown syntax made for components (MDC)
-- 💄 Easy yet powerful theming capabilities
-- 🌍 Deploys to the Edge (supports CloudFlare Workers)
+- [**Nuxt 3**](https://v3.nuxtjs.org) support
+- Easiest way to publish and maintain document-driven websites
+- Code highlighting with [**Shiki**](https://shikijs.github.io)
+- Blazing fast hot reload in development
+- Powerful query builder (MongoDB like)
+- Table of contents generation
+- Navigation generation
+- Handles Markdown, CSV, YAML, JSON(5), XML
+- A Markdown syntax made for components (**MDC**)
+- Extend with hooks and content plugins
 
 ## 💻 Development
 
