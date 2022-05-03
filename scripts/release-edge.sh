@@ -24,4 +24,4 @@ fi
 
 # Release packages
 echo "Publishing package..."
-yarn npm publish --access public --tolerate-republish
+npm publish --access public --tolerate-republish
