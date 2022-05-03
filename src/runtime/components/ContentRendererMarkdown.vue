@@ -1,5 +1,5 @@
 <script lang="ts">
-import { h, resolveComponent, Text, defineComponent } from 'vue'
+import { h, resolveComponent, Text, defineComponent, toRefs } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
@@ -39,15 +39,19 @@ export default defineComponent({
       default: 'div'
     }
   },
-  setup () {
+  setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { tag: _t, document: _d, ...contentProps } = toRefs(props)
+
     return {
-      tags
+      tags,
+      contentProps
     }
   },
   render () {
-    const { tags, tag, document, ...contentProps } = this
+    const { tags, tag, document, contentProps } = this
 
     // Get body from document
     const body = (document.body || document) as MarkdownNode
