@@ -39,34 +39,39 @@ export default defineComponent({
       default: 'div'
     }
   },
-  setup (props) {
+  setup () {
     const { content: { tags = {} } } = useRuntimeConfig().public
-    const { tag, document, ...contentProps } = props
 
-    return () => {
-      // Get body from document
-      const body = (document.body || document) as MarkdownNode
-      const meta: ParsedContentMeta = {
-        ...(document as ParsedContentMeta),
-        tags: {
-          ...tags,
-          ...document?.tags || {}
-        }
+    return {
+      tags
+    }
+  },
+  render () {
+    const { tags, tag, document, ...contentProps } = this
+
+    // Get body from document
+    const body = (document.body || document) as MarkdownNode
+    const meta: ParsedContentMeta = {
+      ...(document as ParsedContentMeta),
+      tags: {
+        ...tags,
+        ...document?.tags || {}
       }
+    }
 
-      let component: string | ConcreteComponent = meta.component || tag
-      if (typeof meta.component === 'object') {
-        component = meta.component.name
-      }
+    let component: string | ConcreteComponent = meta.component || tag
+    if (typeof meta.component === 'object') {
+      component = meta.component.name
+    }
 
-      // Resolve component if it's a Vue component
-      component = resolveVueComponent(component as string)
+    // Resolve component if it's a Vue component
+    component = resolveVueComponent(component as string)
 
-      // Process children
-      const children = (body.children || []).map(child => renderNode(child, h, meta))
+    // Process children
+    const children = (body.children || []).map(child => renderNode(child, h, meta))
 
-      // Return Vue component
-      return h(
+    // Return Vue component
+    return h(
         component as any,
         {
           ...contentProps,
@@ -75,8 +80,7 @@ export default defineComponent({
         {
           default: createSlotFunction(children)
         }
-      )
-    }
+    )
   }
 })
 
