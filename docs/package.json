@@ -8,7 +8,7 @@
     "preview": "nuxi preview"
   },
   "devDependencies": {
-    "nuxt": "npm:nuxt3@latest",
-    "docus": "npm:docus-edge@latest"
+    "docus": "npm:docus-edge@latest",
+    "nuxt": "npm:nuxt3@latest"
   }
 }
