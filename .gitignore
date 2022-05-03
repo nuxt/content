@@ -5,6 +5,11 @@ jspm_packages
 package-lock.json
 # */**/yarn.lock
 
+# Docs
+# TODO: Remove this line
+# Ignore docs/yarn.lock so docs gets latest Docus on every push
+docs/yarn.lock
+
 # Logs
 *.log
 
