@@ -1,11 +1,17 @@
 import { defineEventHandler } from 'h3'
-import { queryContent } from '../storage'
+import { cacheStorage, queryContent } from '../storage'
 
 // This route is used to cache all the parsed content
 export default defineEventHandler(async () => {
   const now = Date.now()
   // Fetch all content
-  await queryContent().find()
+  const items = await queryContent().find()
+
+  await cacheStorage.setItem('-manifest.json', {
+    count: items.length,
+    generatedAt: now,
+    generateTime: Date.now() - now
+  })
 
   return {
     generatedAt: now,

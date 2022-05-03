@@ -5,6 +5,6 @@ export default defineNuxtPlugin(() => {
 
   if (process.client && publicConfig.content.wsUrl) {
     // Connect to websocket
-    import('./composables/web-socket').then(({ useWebSocket }) => useWebSocket())
+    import('./composables/web-socket').then(({ useContentWebSocket }) => useContentWebSocket())
   }
 })

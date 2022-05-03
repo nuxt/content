@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "docus": "npm:docus-edge@latest",
-    "nuxt": "npm:nuxt3@latest"
+    "nuxt": "npm:nuxt3@latest",
+    "unstorage": "^0.4.0"
   }
 }

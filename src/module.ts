@@ -252,20 +252,13 @@ export default defineNuxtModule<ModuleOptions>({
       }
       // Register source storages
       const sources = useContentMounts(nuxt, contentContext.sources || [])
-      nitroConfig.storage = Object.assign(
-        nitroConfig.storage || {},
+      nitroConfig.devStorage = Object.assign(
+        nitroConfig.devStorage || {},
         sources
       )
-      // TODO: create the parsed content ouput for production bundle
-      // TODO: handle remote sources
-      const localSources = Object.entries(sources).filter(([_, source]) => source.driver === 'fs')
-      nitroConfig.serverAssets = nitroConfig.serverAssets || []
-      nitroConfig.serverAssets.push(
-        ...localSources.map(([baseName, source]) => ({
-          baseName,
-          dir: source.base
-        }))
-      )
+      nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
+      nitroConfig.bundledStorage.push('/cache/content')
+
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle

@@ -1,5 +1,4 @@
 import { prefixStorage } from 'unstorage'
-import { isDevelopment } from 'std-env'
 import { hash as ohash } from 'ohash'
 import type { QueryBuilderParams, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
@@ -7,10 +6,11 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
 import { useRuntimeConfig, useStorage } from '#imports'
 
-export const contentStorage = isDevelopment
-  ? prefixStorage(useStorage(), 'content:source')
-  : prefixStorage(useStorage(), 'assets:content:source')
+export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
+export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 /**
  * Content ignore patterns
@@ -26,7 +26,12 @@ const contentIgnorePredicate = (key: string) =>
   !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
 
 export const getContentsIds = async (prefix?: string) => {
-  const keys = await contentStorage.getKeys(prefix)
+  let keys = await cacheParsedStorage.getKeys(prefix)
+
+  // Later: handle preview mode, etc
+  if (keys.length === 0) {
+    keys = await sourceStorage.getKeys(prefix)
+  }
 
   return keys.filter(contentIgnorePredicate)
 }
@@ -43,26 +48,31 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   if (!contentIgnorePredicate(id)) {
     return { id, body: null }
   }
-  const hash = ohash(await contentStorage.getMeta(id))
-  const cached: any = await cacheStorage.getItem(`parsed:${id}`)
+
+  const cached: any = await cacheParsedStorage.getItem(id)
+  if (isProduction && cached) {
+    return cached.parsed
+  }
+
+  const meta = await sourceStorage.getMeta(id)
+  const hash = ohash(meta)
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
   }
 
-  const body = await contentStorage.getItem(id)
+  const body = await sourceStorage.getItem(id)
 
   if (body === null) {
     return { id, body: null }
   }
 
-  const meta = await contentStorage.getMeta(id)
   const parsedContent = await parse(id, body as string).then(transform)
   const parsed = {
     ...meta,
     ...parsedContent
   }
 
-  await cacheStorage.setItem(`parsed:${id}`, { parsed, hash })
+  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
   return parsed
 }

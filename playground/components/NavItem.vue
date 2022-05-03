@@ -1,8 +1,19 @@
+<script setup lang="ts">
+const { navItem } = defineProps<{
+  navItem: any
+}>()
+const icon = computed(() => {
+  if (navItem.icon) { return navItem.icon }
+  if (navItem.children && navItem.children.length) { return '📁' }
+  return '📄'
+})
+</script>
+
 <template>
   <li>
-    <span v-if="navItem.children && navItem.children.length">{{ navItem.title }}</span>
+    <span v-if="navItem.children && navItem.children.length"><span>{{ icon }}</span> {{ navItem.title }}</span>
     <NuxtLink v-else :to="navItem.slug">
-      {{ navItem.title }}
+      <span>{{ icon }}</span> {{ navItem.title }}
     </NuxtLink>
 
     <ul v-if="navItem.children">
@@ -10,9 +21,3 @@
     </ul>
   </li>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  navItem: any
-}>()
-</script>

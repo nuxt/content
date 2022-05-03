@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     ]
   },
   content: {
+    navigation: {
+      fields: ['icon']
+    },
     sources: [
       {
         name: 'translation-fa',

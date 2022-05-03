@@ -10,7 +10,7 @@ const logger = {
 
 let ws: WebSocket | undefined
 
-export function useWebSocket () {
+export function useContentWebSocket () {
   if (!window.WebSocket) {
     logger.warn('Could not enable hot reload, your browser does not support WebSocket.')
     return
