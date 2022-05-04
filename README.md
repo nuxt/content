@@ -2,19 +2,18 @@
 
 # @nuxt/content
 
-Create a document-driven websites with [**Nuxt 3**](https://v3.nuxtjs.org).
+Create Document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
 
 - [**Nuxt 3**](https://v3.nuxtjs.org) support
-- Easiest way to publish and maintain document-driven websites
+- A Markdown syntax made for components (**MDC**)
+- Navigation generation
 - Code highlighting with [**Shiki**](https://shikijs.github.io)
-- Blazing fast hot reload in development
+- Blazing fast hot module replacement in development
 - Powerful query builder (MongoDB like)
 - Table of contents generation
-- Navigation generation
-- Handles Markdown, CSV, YAML, JSON(5), XML
-- A Markdown syntax made for components (**MDC**)
+- Also handles CSV, YAML, JSON(5) and XML
 - Extend with hooks and content plugins
 
 ## 💻 Development
