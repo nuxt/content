@@ -7243,6 +7243,22 @@ unstorage@^0.4.0:
     ufo "^0.8.3"
     ws "^8.6.0"
 
+unstorage@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.4.1.tgz#66d174886f017a5ceef567b8f007c5966b4690f4"
+  integrity sha512-nK2XsRV2lfB6aNCuoatsQUhRVMnDDP5pm3D4UrgRMxP3D57Rn5+dx3aNaLCi5rcq6QAdOmhjyBvKcW8d3PY+Sw==
+  dependencies:
+    anymatch "^3.1.2"
+    chokidar "^3.5.3"
+    destr "^1.1.1"
+    h3 "^0.7.6"
+    ioredis "^5.0.4"
+    listhen "^0.2.11"
+    mri "^1.2.0"
+    ohmyfetch "^0.4.16"
+    ufo "^0.8.3"
+    ws "^8.6.0"
+
 untyped@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/untyped/-/untyped-0.3.0.tgz#854df4dec055cc6a0a2217aa2d20152277b6ada9"

@@ -85,7 +85,7 @@
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
     "unist-util-visit-parents": "^5.1.0",
-    "unstorage": "^0.4.0",
+    "unstorage": "^0.4.1",
     "ws": "^8.6.0"
   },
   "devDependencies": {
