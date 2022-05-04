@@ -1,5 +1,6 @@
 import type { Effects, State } from 'micromark-util-types'
 import { markdownLineEnding } from 'micromark-util-character'
+import { Codes } from './constants'
 
 // This is a fork of:
 // <https://github.com/micromark/micromark/blob/bf53bf9/lib/tokenize/factory-label.js>
@@ -23,7 +24,7 @@ export default function createLabel (
 
   function start (code: number) {
     /* istanbul ignore if - always `[` */
-    if (code !== 91 /* `[` */) { throw new Error('expected `[`') }
+    if (code !== Codes.openingSquareBracket) { throw new Error('expected `[`') }
     effects.enter(type)
     effects.enter(markerType)
     effects.consume(code)
@@ -32,7 +33,7 @@ export default function createLabel (
   }
 
   function afterStart (code: number) {
-    if (code === 93 /* `]` */) {
+    if (code === Codes.closingSquareBracket) {
       effects.enter(markerType)
       effects.consume(code)
       effects.exit(markerType)
@@ -46,14 +47,14 @@ export default function createLabel (
 
   function atBreak (code: number) {
     if (
-      code === null /* EOF */ ||
+      code === Codes.EOF ||
       /* <https://github.com/micromark/micromark/blob/bf53bf9/lib/constant/constants.js#L34> */
       size > 999
     ) {
       return nok(code)
     }
 
-    if (code === 93 /* `]` */ && !balance--) {
+    if (code === Codes.closingSquareBracket && !balance--) {
       return atClosingBrace(code)
     }
 
@@ -75,7 +76,7 @@ export default function createLabel (
 
   function label (code: number): void | State {
     if (
-      code === null /* EOF */ ||
+      code === Codes.EOF ||
       markdownLineEnding(code) ||
       /* <https://github.com/micromark/micromark/blob/bf53bf9/lib/constant/constants.js#L34> */
       size > 999
@@ -84,17 +85,17 @@ export default function createLabel (
       return atBreak(code) as State
     }
 
-    if (code === 91 /* `[` */ && ++balance > 3) {
+    if (code === Codes.openingSquareBracket && ++balance > 3) {
       return nok(code)
     }
 
-    if (code === 93 /* `]` */ && !balance--) {
+    if (code === Codes.closingSquareBracket && !balance--) {
       effects.exit('chunkText')
       return atClosingBrace(code)
     }
 
     effects.consume(code)
-    return (code === 92 /* `\` */ ? labelEscape : label) as State
+    return (code === Codes.backSlash ? labelEscape : label) as State
   }
 
   function atClosingBrace (code: number) {
@@ -107,7 +108,7 @@ export default function createLabel (
   }
 
   function labelEscape (code: number): void | State {
-    if (code === 91 /* `[` */ || code === 92 /* `\` */ || code === 93 /* `]` */) {
+    if (code === Codes.openingSquareBracket || code === Codes.backSlash || code === Codes.closingSquareBracket) {
       effects.consume(code)
       size++
       return label as State

@@ -1,5 +1,6 @@
 import type { Effects, State } from 'micromark-util-types'
 import { asciiAlpha, asciiAlphanumeric } from 'micromark-util-character'
+import { Codes } from './constants'
 
 export default function createName (effects: Effects, ok: State, nok: State, nameType: string) {
   // @ts-ignore
@@ -18,13 +19,13 @@ export default function createName (effects: Effects, ok: State, nok: State, nam
   }
 
   function name (code: number) {
-    if (code === 45 /* `-` */ || code === 95 /* `_` */ || asciiAlphanumeric(code)) {
+    if (code === Codes.dash || code === Codes.underscore || asciiAlphanumeric(code)) {
       effects.consume(code)
       return name
     }
 
     effects.exit(nameType)
     // To do next major: disallow `-` at end of name too, for consistency.
-    return self.previous === 95 /* `_` */ ? nok(code) : ok(code)
+    return self.previous === Codes.underscore ? nok(code) : ok(code)
   }
 }

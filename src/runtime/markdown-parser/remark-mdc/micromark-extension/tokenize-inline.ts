@@ -10,7 +10,7 @@ const attributes: any = { tokenize: tokenizeAttributes, partial: true }
 
 function previous (this: TokenizeContext, code: Code) {
   // If there is a previous code, there will always be a tail.
-  return code !== 58 /* `:` */ || this.events[this.events.length - 1][1].type === 'characterEscape'
+  return code !== Codes.colon || this.events[this.events.length - 1][1].type === 'characterEscape'
 }
 
 function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
@@ -20,7 +20,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
   function start (code: Code) {
     /* istanbul ignore if - handled by mm */
-    if (code !== 58 /* `:` */) { throw new Error('expected `:`') }
+    if (code !== Codes.colon) { throw new Error('expected `:`') }
 
     if (
       self.previous !== null &&
@@ -43,7 +43,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   }
 
   function afterName (code: Code) {
-    if (code === 58 /* `:` */) {
+    if (code === Codes.colon) {
       return nok(code)
     }
 

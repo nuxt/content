@@ -1,4 +1,9 @@
 // @ts-nocheck
+/**
+ * Based on: https://github.com/syntax-tree/mdast-util-directive
+ * Version: 2.1.0
+ * License: MIT (https://github.com/syntax-tree/mdast-util-directive/blob/main/license)
+ */
 import type { Token } from 'micromark-util-types'
 import { parseEntities } from 'parse-entities'
 import { kebabCase } from 'scule'
@@ -159,16 +164,16 @@ function enterAttributes () {
 }
 
 function exitAttributeIdValue (token: Token) {
-  this.getData('componentAttributes').push(['id', decodeLight(this.sliceSerialize(token))])
+  this.getData('componentAttributes').push(['id', parseEntities(this.sliceSerialize(token))])
 }
 
 function exitAttributeClassValue (token: Token) {
-  this.getData('componentAttributes').push(['class', decodeLight(this.sliceSerialize(token))])
+  this.getData('componentAttributes').push(['class', parseEntities(this.sliceSerialize(token))])
 }
 
 function exitAttributeValue (token: Token) {
   const attributes = this.getData('componentAttributes')
-  attributes[attributes.length - 1][1] = decodeLight(this.sliceSerialize(token))
+  attributes[attributes.length - 1][1] = parseEntities(this.sliceSerialize(token))
 }
 
 function exitAttributeName (token: Token) {
@@ -220,14 +225,6 @@ function conditionalExit (token: Token) {
   if ((section as Token).type === token.type) {
     this.exit(token)
   }
-}
-
-function decodeLight (value: string) {
-  return value.replace(/&(#(\d{1,7}|x[\da-f]{1,6})|[\da-z]{1,31});/gi, decodeIfPossible)
-}
-
-function decodeIfPossible ($0: string, _$1: string) {
-  return parseEntities($0) || $0
 }
 
 export default {

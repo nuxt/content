@@ -4,21 +4,45 @@ export const SectionSequenceSize = 3
 
 export const Codes = {
   /**
+   * null
+   */
+  EOF: null,
+  /**
+   * '"'
+   */
+  quotationMark: 34,
+  /**
    * '#'
    */
   hash: 35,
+  /**
+   * ' ' '
+   */
+  apostrophe: 39,
   /**
    * '`'
    */
   backTick: 96,
   /**
-   * '\'
+   * '\\'
    */
   backSlash: 92,
   /**
    * ':'
    */
   colon: 58,
+  /**
+   * '<'
+   */
+  LessThan: 60,
+  /**
+   * '='
+   */
+  equals: 61,
+  /**
+   * '>'
+   */
+  greaterThan: 62,
   /**
    * '-'
    */
@@ -43,6 +67,10 @@ export const Codes = {
    * '{'
    */
   openingCurlyBracket: 123,
+  /**
+   * '}'
+   */
+  closingCurlyBracket: 125,
   /**
    * '('
    */

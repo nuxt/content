@@ -43,17 +43,17 @@ export default function createAttributes (
   }
 
   function between (code: number): void | State {
-    if (code === 35 /* `#` */) {
+    if (code === Codes.hash) {
       type = attributeIdType
       return shortcutStart(code) as State
     }
 
-    if (code === 46 /* `.` */) {
+    if (code === Codes.dot) {
       type = attributeClassType
       return shortcutStart(code) as State
     }
 
-    if (code === 58 /* `:` */ || code === 95 /* `_` */ || asciiAlpha(code)) {
+    if (code === Codes.colon || code === Codes.underscore || asciiAlpha(code)) {
       effects.enter(attributeType)
       effects.enter(attributeNameType)
       effects.consume(code)
@@ -82,16 +82,16 @@ export default function createAttributes (
 
   function shortcutStartAfter (code: number) {
     if (
-      code === null /* EOF */ ||
-      code === 34 /* `"` */ ||
-      code === 35 /* `#` */ ||
-      code === 39 /* `'` */ ||
-      code === 46 /* `.` */ ||
-      code === 60 /* `<` */ ||
-      code === 61 /* `=` */ ||
-      code === 62 /* `>` */ ||
-      code === 96 /* `` ` `` */ ||
-      code === 125 /* `}` */ ||
+      code === Codes.EOF ||
+      code === Codes.quotationMark ||
+      code === Codes.hash ||
+      code === Codes.apostrophe ||
+      code === Codes.dot ||
+      code === Codes.LessThan ||
+      code === Codes.equals ||
+      code === Codes.greaterThan ||
+      code === Codes.backTick ||
+      code === Codes.closingCurlyBracket ||
       markdownLineEndingOrSpace(code)
     ) {
       return nok(code)
@@ -104,18 +104,18 @@ export default function createAttributes (
 
   function shortcut (code: number) {
     if (
-      code === null /* EOF */ ||
-      code === 34 /* `"` */ ||
-      code === 39 /* `'` */ ||
-      code === 60 /* `<` */ ||
-      code === 61 /* `=` */ ||
-      code === 62 /* `>` */ ||
-      code === 96 /* `` ` `` */
+      code === Codes.EOF ||
+      code === Codes.quotationMark ||
+      code === Codes.apostrophe ||
+      code === Codes.LessThan ||
+      code === Codes.equals ||
+      code === Codes.greaterThan ||
+      code === Codes.backTick
     ) {
       return nok(code)
     }
 
-    if (code === 35 /* `#` */ || code === 46 /* `.` */ || code === 125 /* `}` */ || markdownLineEndingOrSpace(code)) {
+    if (code === Codes.hash || code === Codes.dot || code === Codes.closingCurlyBracket || markdownLineEndingOrSpace(code)) {
       effects.exit(type + 'Value')
       effects.exit(type)
       effects.exit(attributeType)
@@ -131,7 +131,7 @@ export default function createAttributes (
   */
 
   function bindAttributeName (code: number) {
-    if (code === 45 /* `-` */ || asciiAlphanumeric(code)) {
+    if (code === Codes.dash || asciiAlphanumeric(code)) {
       effects.consume(code)
       return bindAttributeName
     }
@@ -150,7 +150,7 @@ export default function createAttributes (
   }
 
   function bindAttributeNameAfter (code: number) {
-    if (code === 61 /* `=` */) {
+    if (code === Codes.equals) {
       effects.enter(attributeInitializerType)
       effects.consume(code)
       effects.exit(attributeInitializerType)
@@ -164,10 +164,10 @@ export default function createAttributes (
 
   function name (code: number) {
     if (
-      code === 45 /* `-` */ ||
-      code === 46 /* `.` */ ||
-      code === 58 /* `:` */ ||
-      code === 95 /* `_` */ ||
+      code === Codes.dash ||
+      code === Codes.dot ||
+      code === Codes.colon ||
+      code === Codes.underscore ||
       asciiAlphanumeric(code)
     ) {
       effects.consume(code)
@@ -188,7 +188,7 @@ export default function createAttributes (
   }
 
   function nameAfter (code: number) {
-    if (code === 61 /* `=` */) {
+    if (code === Codes.equals) {
       effects.enter(attributeInitializerType)
       effects.consume(code)
       effects.exit(attributeInitializerType)
@@ -202,18 +202,18 @@ export default function createAttributes (
 
   function valueBefore (code: number): void | State {
     if (
-      code === null /* EOF */ ||
-      code === 60 /* `<` */ ||
-      code === 61 /* `=` */ ||
-      code === 62 /* `>` */ ||
-      code === 96 /* `` ` `` */ ||
-      code === 125 /* `}` */ ||
+      code === Codes.EOF ||
+      code === Codes.LessThan ||
+      code === Codes.equals ||
+      code === Codes.greaterThan ||
+      code === Codes.backTick ||
+      code === Codes.closingCurlyBracket ||
       (disallowEol && markdownLineEnding(code))
     ) {
       return nok(code)
     }
 
-    if (code === 34 /* `"` */ || code === 39 /* `'` */) {
+    if (code === Codes.quotationMark || code === Codes.apostrophe) {
       effects.enter(attributeValueLiteralType)
       effects.enter(attributeValueMarker)
       effects.consume(code)
@@ -239,18 +239,18 @@ export default function createAttributes (
 
   function valueUnquoted (code: number) {
     if (
-      code === null /* EOF */ ||
-      code === 34 /* `"` */ ||
-      code === 39 /* `'` */ ||
-      code === 60 /* `<` */ ||
-      code === 61 /* `=` */ ||
-      code === 62 /* `>` */ ||
-      code === 96 /* `` ` `` */
+      code === Codes.EOF ||
+      code === Codes.quotationMark ||
+      code === Codes.apostrophe ||
+      code === Codes.LessThan ||
+      code === Codes.equals ||
+      code === Codes.greaterThan ||
+      code === Codes.backTick
     ) {
       return nok(code)
     }
 
-    if (code === 125 /* `}` */ || markdownLineEndingOrSpace(code)) {
+    if (code === Codes.closingCurlyBracket || markdownLineEndingOrSpace(code)) {
       effects.exit(attributeValueData)
       effects.exit(attributeValueType)
       effects.exit(attributeType)
@@ -281,7 +281,7 @@ export default function createAttributes (
       return valueQuotedStart(code) as State
     }
 
-    if (code === null /* EOF */) {
+    if (code === Codes.EOF) {
       return nok(code)
     }
 
@@ -296,7 +296,7 @@ export default function createAttributes (
   }
 
   function valueQuoted (code: number) {
-    if (code === marker || code === null /* EOF */ || markdownLineEnding(code)) {
+    if (code === marker || code === Codes.EOF || markdownLineEnding(code)) {
       effects.exit(attributeValueData)
       return valueQuotedBetween(code)
     }
@@ -306,11 +306,11 @@ export default function createAttributes (
   }
 
   function valueQuotedAfter (code: number) {
-    return code === 125 /* `}` */ || markdownLineEndingOrSpace(code) ? between(code) : end(code)
+    return code === Codes.closingCurlyBracket || markdownLineEndingOrSpace(code) ? between(code) : end(code)
   }
 
   function end (code: number) {
-    if (code === 125 /* `}` */) {
+    if (code === Codes.closingCurlyBracket) {
       effects.enter(attributesMarkerType)
       effects.consume(code)
       effects.exit(attributesMarkerType)

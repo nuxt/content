@@ -1,5 +1,7 @@
 /**
- * Based on https://github.com/micromark/micromark-extension-component
+ * Based on: https://github.com/micromark/micromark-extension-directive
+ * Version: 2.1.0
+ * License: MIT (https://github.com/micromark/micromark-extension-directive/blob/main/license)
  **/
 
 import tokenizeSpan from './tokenize-span'

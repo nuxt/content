@@ -1,3 +1,8 @@
+/**
+ * Based on: https://github.com/syntax-tree/mdast-util-directive
+ * Version: 2.1.0
+ * License: MIT (https://github.com/syntax-tree/mdast-util-directive/blob/main/license)
+ */
 import { stringifyEntitiesLight } from 'stringify-entities'
 import type { Parent } from 'mdast-util-to-markdown/lib/types'
 import { containerFlow, containerPhrasing, checkQuote } from './mdast-util-to-markdown'
@@ -8,29 +13,29 @@ const own = {}.hasOwnProperty
 const shortcut = /^[^\t\n\r "#'.<=>`}]+$/
 const baseFense = 2
 
-// TODO: convert container sections to markdown
-const unsafe = [
-  {
-    character: '\r',
-    inConstruct: ['leafComponentLabel', 'containerComponentLabel']
-  },
-  {
-    character: '\n',
-    inConstruct: ['leafComponentLabel', 'containerComponentLabel']
-  },
-  {
-    before: '[^:]',
-    character: ':',
-    after: '[A-Za-z]',
-    inConstruct: ['phrasing']
-  },
-  { atBreak: true, character: ':', after: ':' }
-]
-
-const handlers = {
-  containerComponent,
-  textComponent,
-  componentContainerSection
+export default {
+  unsafe: [
+    {
+      character: '\r',
+      inConstruct: ['leafComponentLabel', 'containerComponentLabel']
+    },
+    {
+      character: '\n',
+      inConstruct: ['leafComponentLabel', 'containerComponentLabel']
+    },
+    {
+      before: '[^:]',
+      character: ':',
+      after: '[A-Za-z]',
+      inConstruct: ['phrasing']
+    },
+    { atBreak: true, character: ':', after: ':' }
+  ],
+  handlers: {
+    containerComponent,
+    textComponent,
+    componentContainerSection
+  }
 }
 
 type NodeComponentContainerSection = Parent & { name: string }
@@ -165,9 +170,4 @@ function content (node: Parent, context: any) {
 
 function inlineComponentLabel (node: Parent) {
   return node.children && node.children[0] && node.children[0].data && node.children[0].data.componentLabel
-}
-
-export default {
-  handlers,
-  unsafe
 }
