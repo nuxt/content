@@ -1,6 +1,6 @@
 <template>
   <aside>
     <h2>Nested component</h2>
-    <slot />
+    <Markdown unwrap="p" />
   </aside>
 </template>
