@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'url'
 import { assert, test, describe, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
-import { encodeApiParams } from '../src/runtime/utils'
+import { hash } from 'ohash'
 import { testMarkdownParser } from './features/parser-markdown'
 import { testPathMetaTransformer } from './features/transformer-path-meta'
 import { testYamlParser } from './features/parser-yaml'
@@ -18,13 +18,19 @@ describe('fixtures:basic', async () => {
 
   const QUERY_ENDPOINT = '/api/_content/query'
   const fetchDocument = (id: string) => {
-    const params = encodeApiParams({ first: true, where: { id } })
-    return $fetch(`${QUERY_ENDPOINT}/${params}`)
+    const params = { first: true, where: { id } }
+    const qid = hash(params)
+    return $fetch(`${QUERY_ENDPOINT}/${qid}`, {
+      params: { params: JSON.stringify(params) }
+    })
   }
 
   test('List contents', async () => {
-    const params = encodeApiParams({ only: 'id' })
-    const docs = await $fetch(`${QUERY_ENDPOINT}/${params}`)
+    const params = { only: 'id' }
+    const qid = hash(params)
+    const docs = await $fetch(`${QUERY_ENDPOINT}/${qid}`, {
+      params: { params: JSON.stringify(params) }
+    })
     const ids = docs.map(doc => doc.id)
 
     assert(ids.length > 0)

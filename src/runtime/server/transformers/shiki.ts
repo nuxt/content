@@ -1,10 +1,9 @@
 import { visit } from 'unist-util-visit'
 import { withBase } from 'ufo'
-import { encodeApiParams } from '../../utils'
 import { useRuntimeConfig } from '#imports'
 
-const contentApiWithParams = (url: string, params: any) => {
-  return withBase(`${url}/${encodeApiParams(params)}`, `/api/${useRuntimeConfig().public.content.base}`)
+const withContentBase = (url: string) => {
+  return withBase(url, `/api/${useRuntimeConfig().public.content.base}`)
 }
 
 export default {
@@ -43,10 +42,13 @@ const highlightInline = async (node) => {
   const code = node.children[0].value
 
   // Fetch highlighted tokens
-  const lines = await $fetch(contentApiWithParams('highlight', {
-    code,
-    lang: node.props.lang || node.props.language
-  }))
+  const lines = await $fetch(withContentBase('highlight'), {
+    method: 'POST',
+    body: {
+      code,
+      lang: node.props.lang || node.props.language
+    }
+  })
 
   // Generate highlighted children
   node.children = lines[0].map(tokenSpan)
@@ -61,10 +63,13 @@ const highlightBlock = async (node) => {
   const { code, language: lang, highlights = [] } = node.props
 
   // Fetch highlighted tokens
-  const lines = await $fetch(contentApiWithParams('highlight', {
-    code,
-    lang
-  }))
+  const lines = await $fetch(withContentBase('highlight'), {
+    method: 'POST',
+    body: {
+      code,
+      lang
+    }
+  })
 
   // Generate highlighted children
   const innerCodeNode = node.children[0].children[0]

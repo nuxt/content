@@ -1,14 +1,14 @@
 import { joinURL, withLeadingSlash } from 'ufo'
+import { hash } from 'ohash'
 import { useHead } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
-import { contentApiWithParams } from './utils'
 
 /**
  * Fetch query result
  */
 const queryFetch = (params: Partial<QueryBuilderParams>) => {
-  const path = contentApiWithParams('/query', params)
+  const path = withContentBase(`/query/${hash(params)}`)
 
   if (process.server) {
     useHead({
@@ -17,7 +17,13 @@ const queryFetch = (params: Partial<QueryBuilderParams>) => {
       ]
     })
   }
-  return $fetch<Array<ParsedContent>>(path)
+  return $fetch<Array<ParsedContent>>(path, {
+    method: 'GET',
+    responseType: 'json',
+    params: {
+      params: JSON.stringify(params)
+    }
+  })
 }
 
 /**

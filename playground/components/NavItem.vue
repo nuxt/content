@@ -11,9 +11,11 @@ const icon = computed(() => {
 
 <template>
   <li>
-    <span v-if="navItem.children && navItem.children.length"><span>{{ icon }}</span> {{ navItem.title }}</span>
+    <div v-if="navItem.children && navItem.children.length">
+      <span>{{ icon }}</span> <span class="title">{{ navItem.title }}</span>
+    </div>
     <NuxtLink v-else :to="navItem.slug">
-      <span>{{ icon }}</span> {{ navItem.title }}
+      <span>{{ icon }}</span> <span class="title">{{ navItem.title }}</span>
     </NuxtLink>
 
     <ul v-if="navItem.children">
@@ -21,3 +23,28 @@ const icon = computed(() => {
     </ul>
   </li>
 </template>
+
+<style scoped>
+ul {
+  margin: 0;
+  padding-left: 20px;
+}
+li {
+  list-style-type: none;
+}
+a {
+  color: black;
+  text-decoration: none;
+}
+.title {
+  display: inline-block;
+  margin-left: 4px;
+  font-family: sans-serif;
+}
+a .title {
+  text-decoration: underline;
+}
+.router-link-exact-active {
+  font-weight: bold;
+}
+</style>

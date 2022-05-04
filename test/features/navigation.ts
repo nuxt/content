@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
-import { encodeApiParams } from '../../src/runtime/utils'
+import { hash } from 'ohash'
 
 export const testNavigation = () => {
   describe('navigation', () => {
@@ -11,13 +11,21 @@ export const testNavigation = () => {
     })
 
     test('Get cats navigation', async () => {
-      const list = await $fetch(`/api/_content/navigation/${encodeApiParams({ slug: '/cats' })}`)
+      const list = await $fetch(`/api/_content/navigation/${hash({ slug: '/cats' })}`, {
+        params: {
+          params: JSON.stringify({ slug: '/cats' })
+        }
+      })
 
       expect(list).toMatchSnapshot('basic-navigation-cats')
     })
 
     test('Get dogs navigation', async () => {
-      const list = await $fetch(`/api/_content/navigation/${encodeApiParams({ slug: '/dogs' })}`)
+      const list = await $fetch(`/api/_content/navigation/${hash({ slug: '/dogs' })}`, {
+        params: {
+          params: JSON.stringify({ slug: '/dogs' })
+        }
+      })
 
       expect(list).toMatchSnapshot('basic-navigation-dogs')
     })

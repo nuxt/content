@@ -1,10 +1,10 @@
-import { createError, defineEventHandler } from 'h3'
+import { createError, defineEventHandler, useQuery } from 'h3'
 import type { QueryBuilderParams } from '../../types'
-import { queryContent } from '../storage'
-import { decodeApiParams } from '../../utils'
+import { queryContent, useApiQuery } from '../storage'
 
 export default defineEventHandler(async (event) => {
-  const query = decodeApiParams<Partial<QueryBuilderParams>>(event.context.params.params)
+  const { query: qid } = event.context.params
+  const query: Partial<QueryBuilderParams> = useApiQuery(qid, useQuery(event)?.params || undefined)
 
   const contents = await queryContent(query).find()
 

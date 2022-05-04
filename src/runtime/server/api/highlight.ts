@@ -1,7 +1,6 @@
-import { createError, defineLazyEventHandler } from 'h3'
+import { createError, defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
-import { decodeApiParams } from '../../utils'
 import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
 import { useRuntimeConfig } from '#imports'
 
@@ -55,11 +54,11 @@ export default defineLazyEventHandler(async () => {
         aliases: ['markdown'],
         grammar: mdcTMLanguage
       }
-    ]
+    ] as any[]
   })
 
   return async (event): Promise<HighlightThemedToken[][]> => {
-    const params = decodeApiParams<Partial<HighlightParams>>(event.context.params.params)
+    const params = await useBody<Partial<HighlightParams>>(event)
 
     const { code, lang, theme } = resolveBody(params)
 

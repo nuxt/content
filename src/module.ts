@@ -217,7 +217,7 @@ export default defineNuxtModule<ModuleOptions>({
         nuxt.options.vite === true ? {} : nuxt.options.vite,
         {
           optimizeDeps: {
-            include: ['html-tags', 'base64-js']
+            include: ['html-tags']
           }
         }
       )
@@ -238,7 +238,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers = nitroConfig.handlers || []
       nitroConfig.handlers.push({
         method: 'get',
-        route: `/api/${options.base}/query/:params`,
+        route: `/api/${options.base}/query/:query`,
         handler: resolveRuntimeModule('./server/api/query')
       })
       nitroConfig.handlers.push({
@@ -307,7 +307,7 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers.push({
           method: 'get',
-          route: `/api/${options.base}/navigation/:params`,
+          route: `/api/${options.base}/navigation/:query`,
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })
@@ -319,8 +319,8 @@ export default defineNuxtModule<ModuleOptions>({
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers.push({
-          method: 'get',
-          route: `/api/${options.base}/highlight/:params`,
+          method: 'post',
+          route: `/api/${options.base}/highlight`,
           handler: resolveRuntimeModule('./server/api/highlight')
         })
       })

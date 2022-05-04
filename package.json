@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest",
-    "base64-js": "^1.5.1",
     "csvtojson": "^2.0.10",
     "debounce": "^1.2.1",
     "defu": "^6.0.0",
