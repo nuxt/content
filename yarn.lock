@@ -7227,23 +7227,7 @@ unplugin@^0.6.1, unplugin@^0.6.2:
     webpack-sources "^3.2.3"
     webpack-virtual-modules "^0.4.3"
 
-unstorage@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.4.0.tgz#274b636355e573953b60097fa6d6b4bd9a278116"
-  integrity sha512-hbc4bKfeeYHlW3PrfJozSp1TQ2XFIm9NOxYzW3iFe5vs4bT1atYOfFgeD84IvParXiIWAr1qaR3Sf9QcGOxWHw==
-  dependencies:
-    anymatch "^3.1.2"
-    chokidar "^3.5.3"
-    destr "^1.1.1"
-    h3 "^0.7.6"
-    ioredis "^5.0.4"
-    listhen "^0.2.11"
-    mri "^1.2.0"
-    ohmyfetch "^0.4.16"
-    ufo "^0.8.3"
-    ws "^8.6.0"
-
-unstorage@^0.4.1:
+unstorage@^0.4.0, unstorage@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.4.1.tgz#66d174886f017a5ceef567b8f007c5966b4690f4"
   integrity sha512-nK2XsRV2lfB6aNCuoatsQUhRVMnDDP5pm3D4UrgRMxP3D57Rn5+dx3aNaLCi5rcq6QAdOmhjyBvKcW8d3PY+Sw==
@@ -7493,9 +7477,9 @@ vue-eslint-parser@^8.0.1:
     semver "^7.3.5"
 
 vue-router@^4.0.14:
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.0.14.tgz#ce2028c1c5c33e30c7287950c973f397fce1bd65"
-  integrity sha512-wAO6zF9zxA3u+7AkMPqw9LjoUCjSxfFvINQj3E/DceTt6uEz1XZLraDhdg2EYmvVwTBSGlLYsUw8bDmx0754Mw==
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.0.15.tgz#b4a0661efe197f8c724e0f233308f8776e2c3667"
+  integrity sha512-xa+pIN9ZqORdIW1MkN2+d9Ui2pCM1b/UMgwYUCZOiFYHAvz/slKKBDha8DLrh5aCG/RibtrpyhKjKOZ85tYyWg==
   dependencies:
     "@vue/devtools-api" "^6.0.0"
 
