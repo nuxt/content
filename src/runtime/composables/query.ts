@@ -3,6 +3,7 @@ import { hash } from 'ohash'
 import { useHead } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import { withContentBase } from './utils'
 
 /**
  * Fetch query result
