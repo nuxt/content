@@ -1,8 +1,8 @@
 import { joinURL, withLeadingSlash } from 'ufo'
+import { useHead } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { contentApiWithParams } from './utils'
-import { useHead } from '#app'
 
 /**
  * Fetch query result

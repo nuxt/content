@@ -1,7 +1,7 @@
 import { withBase } from 'ufo'
+import { useRuntimeConfig } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 import { encodeApiParams } from '../utils'
-import { useRuntimeConfig } from '#app'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
 

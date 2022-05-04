@@ -5,8 +5,8 @@ import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
-import type { MarkdownNode, ParsedContentMeta } from '../types'
 import { useRuntimeConfig } from '#app'
+import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
 type ContentVNode = VNode | string

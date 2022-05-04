@@ -1,12 +1,13 @@
-import { defineHandle, useQuery } from 'h3'
+import { eventHandler, useQuery } from 'h3'
 import { prefixStorage } from 'unstorage'
 import { faker } from '@faker-js/faker'
+// eslint-disable-next-line import/named
 import { useStorage } from '#imports'
 
 const contentStorage = prefixStorage(useStorage, 'content:source')
 
-export default defineHandle(async (req) => {
-  const { count = 100 } = useQuery(req)
+export default eventHandler(async (event) => {
+  const { count = 100 } = useQuery(event)
 
   const fakeContents = await contentStorage.getKeys('content:fake')
 
