@@ -21,15 +21,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   if (process.client && previewToken.value) {
     console.info('👀 Preview mode activated:', previewToken.value)
 
-    const io = await import('socket.io-client')
-    const socket = io.connect(`http://localhost:1337/preview:${previewToken.value}`, {
-      transports: ['websocket', 'polling']
-    })
-
-    socket.on('draft:update', () => {
-      refreshNuxtData()
-    })
-
     nuxtApp.hooks.hookOnce('app:mounted', () => {
       const wrapper = document.createElement('div')
       wrapper.id = 'content-preview-wrapper'
