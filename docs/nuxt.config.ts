@@ -11,11 +11,10 @@ if (process.env.NODE_ENV === 'development') {
 
 export default defineNuxtConfig({
   alias,
-  components: [{
-    path: '~/components',
-    global: true
-  }],
   extends: ['./node_modules/docus/theme'],
+  github: {
+    repo: 'nuxt/content'
+  },
   tailwindcss: {
     config: {
       theme: {
