@@ -9,7 +9,7 @@ Create Document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 - [**Nuxt 3**](https://v3.nuxtjs.org) support
 - A Markdown syntax made for components (**MDC**)
 - Navigation generation
-- Code highlighting with [**Shiki**](https://shikijs.github.io)
+- Code highlighting with [**Shiki**](https://shiki.matsu.io)
 - Blazing fast hot module replacement in development
 - Powerful query builder (MongoDB like)
 - Table of contents generation
