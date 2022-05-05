@@ -4,7 +4,7 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
-import { resolveModule, useLogger } from '@nuxt/kit'
+import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
 
 export const MOUNT_PREFIX = 'content:source:'
@@ -107,7 +107,7 @@ export function createWebSocket () {
   }
 }
 
-export function processMarkdownOptions (nuxt: Nuxt, options: ModuleOptions['markdown']) {
+export function processMarkdownOptions (options: ModuleOptions['markdown']) {
   options.rehypePlugins = (options.rehypePlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
   options.remarkPlugins = (options.remarkPlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
 
@@ -121,6 +121,7 @@ export function processMarkdownOptions (nuxt: Nuxt, options: ModuleOptions['mark
       return
     }
 
-    return [resolveModule(plugin[0], { paths: nuxt.options.srcDir }), plugin[1]]
+    // TODO: Add support for local custom plugins
+    return plugin
   }
 }

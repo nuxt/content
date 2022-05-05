@@ -332,7 +332,7 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
     // Process markdown plugins, resovle paths
-    contentContext.markdown = processMarkdownOptions(nuxt, contentContext.markdown)
+    contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = {
       base: options.base,
