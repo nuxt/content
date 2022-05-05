@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "preview": "nuxi preview"
+    "preview": "nuxi preview",
+    "generate": "nuxi generate"
   },
   "devDependencies": {
     "docus": "npm:docus-edge@latest",
