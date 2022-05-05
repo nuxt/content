@@ -5,14 +5,6 @@ import contentModule from '../src/module' // eslint-disable-line
 export default defineNuxtConfig({
   rootDir: __dirname,
   modules: [contentModule],
-  components: {
-    dirs: [
-      {
-        path: resolve(__dirname, './components'),
-        global: true
-      }
-    ]
-  },
   content: {
     navigation: {
       fields: ['icon']
