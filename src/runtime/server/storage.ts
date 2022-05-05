@@ -1,4 +1,6 @@
-import { prefixStorage } from 'unstorage'
+import { prefixStorage, createStorage } from 'unstorage'
+import overlay from 'unstorage/drivers/overlay'
+import memory from 'unstorage/drivers/memory'
 import { hash as ohash } from 'ohash'
 import destr from 'destr'
 import type { QueryBuilderParams, ParsedContent } from '../types'
@@ -11,7 +13,15 @@ import { useRuntimeConfig, useStorage } from '#imports'
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
 export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
-
+// Todo: handle multiple storage (one per token)
+export const previewStorage = createStorage({
+  driver: overlay({
+    layers: [
+      memory(),
+      cacheParsedStorage
+    ]
+  })
+})
 const isProduction = process.env.NODE_ENV === 'production'
 
 /**
@@ -30,7 +40,10 @@ const contentIgnorePredicate = (key: string) =>
 export const getContentsIds = async (prefix?: string) => {
   let keys = []
 
-  if (isProduction) {
+  const isPreview = await cacheStorage.getItem('isPreview')
+  if (isPreview) {
+    keys = await previewStorage.getKeys(prefix)
+  } else if (isProduction) {
     keys = await cacheParsedStorage.getKeys(prefix)
   }
 
@@ -53,6 +66,12 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   // Handle ignored id
   if (!contentIgnorePredicate(id)) {
     return { id, body: null }
+  }
+
+  const isPreview = await cacheStorage.getItem('isPreview')
+  if (isPreview) {
+    const draft: any = await previewStorage.getItem(id)
+    return draft.parsed
   }
 
   const cached: any = await cacheParsedStorage.getItem(id)
@@ -96,7 +115,6 @@ export const queryContent = (
       ...params
     }
   }
-
   const pipelineFetcher = createPipelineFetcher(getContentsList)
 
   return createQuery(pipelineFetcher, body)

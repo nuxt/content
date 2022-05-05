@@ -1,11 +1,14 @@
 import { defineEventHandler, useQuery } from 'h3'
 import { queryContent, useApiQuery } from '../storage'
 import { createNav } from '../navigation'
+import { togglePreviewMode } from '../preview'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
 
 export default defineEventHandler(async (event) => {
   const { query: qid } = event.context.params
   const query: Partial<QueryBuilderParams> = useApiQuery(qid, useQuery(event)?.params || undefined)
+
+  await togglePreviewMode(event)
 
   const contents = await queryContent(query)
     .where({

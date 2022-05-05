@@ -18,7 +18,8 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: JSON.stringify(params)
+      params: JSON.stringify(params),
+      previewToken: useCookie('previewToken').value
     }
   })
 }
