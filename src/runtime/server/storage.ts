@@ -28,7 +28,11 @@ const contentIgnorePredicate = (key: string) =>
   !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
 
 export const getContentsIds = async (prefix?: string) => {
-  let keys = await cacheParsedStorage.getKeys(prefix)
+  let keys = []
+
+  if (isProduction) {
+    keys = await cacheParsedStorage.getKeys(prefix)
+  }
 
   // Later: handle preview mode, etc
   if (keys.length === 0) {
