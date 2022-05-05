@@ -1,5 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
+import colors from 'tailwindcss/colors.js'
 
 const alias = {}
 
@@ -14,5 +15,16 @@ export default defineNuxtConfig({
     path: '~/components',
     global: true
   }],
-  extends: ['./node_modules/docus/theme']
+  extends: ['./node_modules/docus/theme'],
+  tailwindcss: {
+    config: {
+      theme: {
+        extend: {
+          colors: {
+            primary: colors.emerald
+          }
+        }
+      }
+    }
+  }
 })
