@@ -301,6 +301,7 @@ export default defineNuxtModule<ModuleOptions>({
       global: true
     })
     // Register user global components
+
     const globalComponents = resolve(nuxt.options.srcDir, 'components/content')
     const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
     if (dirStat && dirStat.isDirectory()) {
@@ -315,9 +316,14 @@ export default defineNuxtModule<ModuleOptions>({
         })
       })
     } else {
-      // TODO: watch for file creation and tell Nuxt to restart
-      // Not possible for now since directories are hard-coded: https://github.com/nuxt/framework/blob/5b63ae8ad54eeb3cb49479da8f32eacc1a743ca0/packages/nuxi/src/commands/dev.ts#L94
-      logger.info('Please create `~/components/content` and restart the Nuxt server to use components in Markdown')
+      const componentsDir = resolve(nuxt.options.srcDir, 'components/')
+      const componentsDirStat = await fs.promises.stat(componentsDir).catch(() => null)
+
+      if (componentsDirStat && componentsDirStat.isDirectory()) {
+        // TODO: watch for file creation and tell Nuxt to restart
+        // Not possible for now since directories are hard-coded: https://github.com/nuxt/framework/blob/5b63ae8ad54eeb3cb49479da8f32eacc1a743ca0/packages/nuxi/src/commands/dev.ts#L94
+        logger.info('Please create `~/components/content` and restart the Nuxt server to use components in Markdown')
+      }
     }
 
     // Register navigation
