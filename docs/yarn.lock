@@ -6620,9 +6620,9 @@ vfile@^5.0.0:
     vfile-message "^3.0.0"
 
 vite-node@^0.10.1:
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.10.3.tgz#c38b943049812bde9edda14b88abbe6dfd56bdf0"
-  integrity sha512-NIcjwKw6uburfxitwfJQXx4aHFSZfcpgYiI3uD8kGZTEUsFkKcKLPphc8BaqUQcH334E5kCOZShLBM9o5aVQAg==
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.10.4.tgz#1a8c33c47fda4a730730fd61437cb5e214974e8f"
+  integrity sha512-h/hLd31UxqWPWH8aFKYP91quQm512NdcUjMXSMumLh2PM7S9jxuQpDEt7OeKwVpKabsUsMPZICG+H4i/YPT7Sg==
   dependencies:
     kolorist "^1.5.1"
     minimist "^1.2.6"
