@@ -1,4 +1,4 @@
-[![nuxt-content](/docs/public/cover_dark.png#gh-dark-mode-only "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxtjs.org)
 
 # Nuxt Content
 
