@@ -7,7 +7,7 @@
     "content",
     "module"
   ],
-  "repository": "nuxt/content-next",
+  "repository": "nuxt/content",
   "license": "MIT",
   "type": "module",
   "exports": {
