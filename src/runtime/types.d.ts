@@ -125,56 +125,56 @@ export interface QueryBuilderParams {
   [key: string]: any
 }
 
-export interface QueryBuilder {
+export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder
+  only(keys: string | string[]): QueryBuilder<T>
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder
+  without(keys: string | string[]): QueryBuilder<T>
 
   /**
    * Sort results
    */
-  sortBy(field: string, direction: 'asc' | 'desc'): QueryBuilder
+  sortBy(field: string, direction: 'asc' | 'desc'): QueryBuilder<T>
 
   /**
    * Filter results
    */
-  where(query: any): QueryBuilder
+  where(query: any): QueryBuilder<T>
 
   /**
    * Limit number of results
    */
-  limit(count: number): QueryBuilder
+  limit(count: number): QueryBuilder<T>
 
   /**
    * Skip number of results
    */
-  skip(count: number): QueryBuilder
+  skip(count: number): QueryBuilder<T>
 
   /**
    * Fetch list of contents
    */
-  find(): Promise<Array<ParsedContentMeta>>
+  find(): Promise<Array<T>>
 
   /**
    * Fetch first matched content
    */
-  findOne(): Promise<ParsedContentMeta>
+  findOne(): Promise<T>
 
   /**
    * Fetch sorround contents
    */
-  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<ParsedContentMeta>>
+  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
 
   /**
    * Filter contents based on locale
    */
-  locale(locale: string): QueryBuilder
+  locale(locale: string): QueryBuilder<T>
 
   /**
    * Retrieve query builder params

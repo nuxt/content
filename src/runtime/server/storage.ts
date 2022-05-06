@@ -1,7 +1,7 @@
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
 import destr from 'destr'
-import type { QueryBuilderParams, ParsedContent } from '../types'
+import type { QueryBuilderParams, ParsedContent, ParsedContentMeta } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
@@ -86,7 +86,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export const queryContent = (
+export const queryContent = <T = ParsedContentMeta>(
   body?: string | Partial<QueryBuilderParams>,
   params?: Partial<QueryBuilderParams>
 ) => {
@@ -97,9 +97,11 @@ export const queryContent = (
     }
   }
 
-  const pipelineFetcher = createPipelineFetcher(getContentsList)
+  const pipelineFetcher = createPipelineFetcher<T>(
+    getContentsList as unknown as () => Promise<T[]>
+  )
 
-  return createQuery(pipelineFetcher, body)
+  return createQuery<T>(pipelineFetcher, body)
 }
 
 const _queries = {}

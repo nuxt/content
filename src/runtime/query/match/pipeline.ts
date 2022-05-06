@@ -2,7 +2,7 @@ import type { QueryBuilderParams, QueryPipe } from '../../types'
 import { apply, ensureArray, omit, pick, sortByKey } from './utils'
 import { createMatch } from '.'
 
-export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T>>) {
+export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   // Create Matcher
   const match = createMatch()
 
@@ -42,7 +42,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     (data, params) => params.first ? data[0] : data
   ]
 
-  return async (params: QueryBuilderParams) => {
+  return async (params: QueryBuilderParams): Promise<T | T[]> => {
     const data = await getContentsList()
 
     // Provide default sort order if not specified
