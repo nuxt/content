@@ -1,6 +1,7 @@
-[![nuxt-content](/docs/public/cover.png "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_light.png#gh-light-mode-only "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png#gh-dark-mode-only "@nuxt/content image")](https://content.nuxtjs.org)
 
-# @nuxt/content docs
+# Documentation
 
 This documentation uses [Docus](https://github.com/nuxtlabs/docus).
 
