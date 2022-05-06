@@ -14,10 +14,11 @@ export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
 export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
 // Todo: handle multiple storage (one per token)
+export const draftStorage = memory()
 export const previewStorage = createStorage({
   driver: overlay({
     layers: [
-      memory(),
+      draftStorage,
       cacheParsedStorage
     ]
   })

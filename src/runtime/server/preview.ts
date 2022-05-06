@@ -1,6 +1,6 @@
 import { useQuery, useCookie, deleteCookie } from 'h3'
 import { parse, transform } from './transformers'
-import { cacheStorage, previewStorage } from './storage'
+import { cacheStorage, draftStorage, previewStorage } from './storage'
 
 export const togglePreviewMode = async (event) => {
   const previewToken = useQuery(event).previewToken || useCookie(event, 'previewToken')
@@ -13,6 +13,7 @@ export const togglePreviewMode = async (event) => {
       await cacheStorage.setItem('isPreview', false)
     } else {
       await cacheStorage.setItem('isPreview', true)
+      await draftStorage.clear()
       for (const addition of draft.additions) {
         const { path, oldPath, content } = addition
 
