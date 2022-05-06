@@ -1,5 +1,4 @@
-[![nuxt-content](/docs/public/cover_light.png#gh-light-mode-only)](https://content.nuxtjs.org)
-[![nuxt-content](/docs/public/cover_dark.png#gh-dark-mode-only)](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png)](https://content.nuxtjs.org)
 
 # Documentation
 
