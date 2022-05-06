@@ -12,21 +12,24 @@ export const togglePreviewMode = async (event) => {
       deleteCookie(event, 'previewToken', null)
       await cacheStorage.setItem('isPreview', false)
     } else {
-      await cacheStorage.setItem('isPreview', true)
-      await draftStorage.clear()
-      for (const addition of draft.additions) {
-        const { path, oldPath, content } = addition
+      const previewMtime = await cacheStorage.getItem('isPreview')
+      if (previewMtime !== draft.mtime) {
+        await cacheStorage.setItem('isPreview', draft.mtime)
+        await draftStorage.clear()
+        for (const addition of draft.additions) {
+          const { path, oldPath, content } = addition
 
-        if (oldPath) {
-          previewStorage.removeItem(oldPath)
+          if (oldPath) {
+            previewStorage.removeItem(oldPath)
+          }
+
+          const id = path.replace(/\//g, ':')
+          const parsed = await parse(id, content).then(transform)
+          previewStorage.setItem(id, { parsed })
         }
-
-        const id = path.replace(/\//g, ':')
-        const parsed = await parse(id, content).then(transform)
-        previewStorage.setItem(id, { parsed })
-      }
-      for (const deletion of draft.deletions) {
-        previewStorage.removeItem(deletion.path)
+        for (const deletion of draft.deletions) {
+          previewStorage.removeItem(deletion.path)
+        }
       }
     }
   } else {
