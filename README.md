@@ -1,8 +1,8 @@
-[![nuxt-content](/docs/public/cover.png "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png#gh-dark-mode-only "@nuxt/content image")](https://content.nuxtjs.org)
 
-# @nuxt/content
+# Nuxt Content
 
-Create Document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
+File based Headless CMS for modern websites built with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
 
