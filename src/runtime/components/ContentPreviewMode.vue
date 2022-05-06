@@ -12,6 +12,7 @@ const refreshing = ref(false)
 const closePreviewMode = () => {
   open.value = false
   previewToken.value = null
+  refreshNuxtData()
 }
 onMounted(async () => {
   const io = await import('socket.io-client')
@@ -29,8 +30,8 @@ onMounted(async () => {
 
 <template>
   <div v-if="open" class="preview">
-    Preview mode activated. <button @click="closePreviewMode">
-      close
+    Preview mode enabled. <button @click="closePreviewMode">
+      x
     </button>{{ refreshing? 'Refreshing...' : '' }}
   </div>
 </template>
@@ -47,7 +48,7 @@ onMounted(async () => {
 }
 .preview button {
   border: 1px white solid;
-  padding: 2px 4px;
+  width: 30px;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.2);
   margin-left: 5px;
