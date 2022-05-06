@@ -5,7 +5,7 @@ const { data: document } = await useAsyncData('homepage', () => {
 </script>
 
 <template>
-  <NuxtExampleLayout example="queries/without" repo="nuxt/content-next">
+  <NuxtExampleLayout example="queries/without" repo="nuxt/content">
     <template #icon>
       Nuxt/content
     </template>
