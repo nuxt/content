@@ -22,8 +22,6 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   }
 
   const pipelines: Array<QueryPipe> = [
-    // Filter items based on `params.slug`
-    (data, params) => (params.slug ? data.filter(item => String(item.slug).startsWith(params.slug)) : data),
     // Conditions
     (data, params) => data.filter(item => ensureArray(params.where).every(matchQuery => match(item, matchQuery))),
     // Sort data

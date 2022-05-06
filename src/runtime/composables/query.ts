@@ -33,9 +33,8 @@ const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
 export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
 export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: string[]) {
-  const body: Partial<QueryBuilderParams> = {
-    slug: withLeadingSlash(joinURL(slug, ...slugParts))
-  }
+  slug = withLeadingSlash(joinURL(slug, ...slugParts))
 
-  return createQuery<T>(queryFetch, body)
+  return createQuery<T>(queryFetch)
+    .where({ slug: new RegExp(`^${slug}`) })
 }

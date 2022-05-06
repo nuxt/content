@@ -1,7 +1,8 @@
+import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
 import destr from 'destr'
-import type { QueryBuilderParams, ParsedContent, ParsedContentMeta } from '../types'
+import type { ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
@@ -86,22 +87,17 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export const queryContent = <T = ParsedContentMeta>(
-  body?: string | Partial<QueryBuilderParams>,
-  params?: Partial<QueryBuilderParams>
-) => {
-  if (typeof body === 'string') {
-    body = {
-      slug: body,
-      ...params
-    }
-  }
+export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
+export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
+export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: string[]) {
+  slug = withLeadingSlash(joinURL(slug, ...slugParts))
 
   const pipelineFetcher = createPipelineFetcher<T>(
     getContentsList as unknown as () => Promise<T[]>
   )
 
-  return createQuery<T>(pipelineFetcher, body)
+  return createQuery<T>(pipelineFetcher)
+    .where({ slug: new RegExp(`^${slug}`) })
 }
 
 const _queries = {}
