@@ -2,7 +2,7 @@ import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
 import destr from 'destr'
-import type { ParsedContent, QueryBuilder } from '../types'
+import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
@@ -88,17 +88,22 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
  * Query contents
  */
 export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
+export function queryContent<T = ParsedContent>(params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
 export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: string[]) {
-  slug = withLeadingSlash(joinURL(slug, ...slugParts))
-
+export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
+  let body = slug as Partial<QueryBuilderParams>
+  if (typeof slug === 'string') {
+    slug = withLeadingSlash(joinURL(slug, ...slugParts))
+    body = {
+      where: [{ slug: new RegExp(`^${slug}`) }]
+    }
+  }
   const pipelineFetcher = createPipelineFetcher<T>(
     getContentsList as unknown as () => Promise<T[]>
   )
 
-  return createQuery<T>(pipelineFetcher)
-    .where({ slug: new RegExp(`^${slug}`) })
-    // Provide default sort order if not specified
+  return createQuery<T>(pipelineFetcher, body)
+    // Provide default sort order
     .sortBy('path', 'asc')
 }
 
