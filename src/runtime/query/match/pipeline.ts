@@ -43,13 +43,6 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   return async (params: QueryBuilderParams): Promise<T | T[]> => {
     const data = await getContentsList()
 
-    // Provide default sort order if not specified
-    if (!params.sortBy || !params.sortBy.length) {
-      params.sortBy = [
-        ['path', 'asc']
-      ]
-    }
-
     return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, params) || $data, data)
   }
 }

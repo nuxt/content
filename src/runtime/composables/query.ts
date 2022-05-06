@@ -37,4 +37,6 @@ export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: st
 
   return createQuery<T>(queryFetch)
     .where({ slug: new RegExp(`^${slug}`) })
+    // Provide default sort order if not specified
+    .sortBy('path', 'asc')
 }
