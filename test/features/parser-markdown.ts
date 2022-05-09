@@ -37,5 +37,23 @@ export const testMarkdownParser = () => {
       expect(parsed.body).toHaveProperty('children[0].tag', 'p')
       expect(parsed.body).toHaveProperty('children[0].children[0].tag', 'code-inline')
     })
+
+    test('comment', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: '<!-- coment -->'
+        }
+      })
+
+      expect(parsed).toHaveProperty('id')
+      assert(parsed.id === 'content:index.md')
+      expect(parsed).toHaveProperty('body')
+      expect(parsed.body).toHaveProperty('type', 'root')
+      expect(parsed.body).toHaveProperty('children')
+
+      expect(parsed.body.children.length).toEqual(0)
+    })
   })
 }
