@@ -1,6 +1,7 @@
 import { hash } from 'ohash'
 import { useHead } from '#app'
 import type { NavItem, QueryBuilder } from '../types'
+import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
 
 export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
@@ -18,7 +19,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: JSON.stringify(params)
+      params: jsonStringify(params)
     }
   })
 }

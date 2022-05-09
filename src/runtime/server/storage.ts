@@ -1,6 +1,5 @@
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
-import destr from 'destr'
 import type { QueryBuilderParams, ParsedContent } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
@@ -100,13 +99,4 @@ export const queryContent = (
   const pipelineFetcher = createPipelineFetcher(getContentsList)
 
   return createQuery(pipelineFetcher, body)
-}
-
-const _queries = {}
-export const useApiQuery = (qid?: string, query?: any) => {
-  if (query) {
-    _queries[qid] = typeof query === 'string' ? destr(query) : query
-  }
-
-  return _queries[qid] || {}
 }
