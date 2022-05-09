@@ -43,7 +43,7 @@ export const testMarkdownParser = () => {
         method: 'POST',
         body: {
           id: 'content:index.md',
-          content: '<!-- coment -->'
+          content: '<!-- comment -->'
         }
       })
 
