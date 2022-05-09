@@ -18,7 +18,7 @@ export default function (this: any, _options: MarkdownOptions) {
    */
   function parseAsJSON (node: Node | Node[]) {
     if (Array.isArray(node)) {
-      return node.map(parseAsJSON)
+      return node.map(parseAsJSON).filter(Boolean)
     }
     /**
      * Element node creates an isolated children array to
@@ -69,6 +69,11 @@ export default function (this: any, _options: MarkdownOptions) {
         type: 'text',
         value: node.value as string
       }
+    }
+
+    // Remove comment nodes from AST tree
+    if (node.type === 'comment') {
+      return null
     }
 
     node.children = parseAsJSON(node.children || [])
