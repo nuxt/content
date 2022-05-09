@@ -1,5 +1,5 @@
 ---
-toc: false
+layout: page
 ---
 
 :releases
