@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 import { hash } from 'ohash'
-import { jsonStringify } from '../../src/runtime/utils'
+import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testNavigation = () => {
   describe('navigation', () => {
@@ -12,7 +12,7 @@ export const testNavigation = () => {
     })
 
     test('Get cats navigation', async () => {
-      const query = { where: [{ slug: /^\/dogs/ }] }
+      const query = { where: [{ slug: /^\/cats/ }] }
       const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
         params: {
           params: jsonStringify(query)
@@ -29,7 +29,6 @@ export const testNavigation = () => {
           params: jsonStringify(query)
         }
       })
-      console.log(jsonStringify(query))
 
       expect(list).toMatchSnapshot('basic-navigation-dogs')
     })
