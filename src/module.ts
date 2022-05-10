@@ -10,7 +10,6 @@ import {
   useLogger
 } from '@nuxt/kit'
 import defu from 'defu'
-import { createStorage } from 'unstorage'
 import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
@@ -19,7 +18,6 @@ import { debounce } from 'perfect-debounce'
 import { name, version } from '../package.json'
 import {
   createWebSocket,
-  getMountDriver,
   MOUNT_PREFIX,
   processMarkdownOptions,
   PROSE_TAGS,
@@ -374,39 +372,31 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    // Create storage instance
-    const storage = createStorage()
-    const mounts = useContentMounts(nuxt, contentContext.sources || [])
-    for (const mount in mounts) {
-      storage.mount(mount, getMountDriver(mounts[mount]))
-    }
+    nuxt.hook('nitro:init', async (nitro) => {
+      const ws = createWebSocket()
 
-    const ws = createWebSocket()
+      // Dispose storage on nuxt close
+      nitro.hooks.hook('close', async () => {
+        await ws.close()
+      })
 
-    // Dispose storage on nuxt close
-    nuxt.hook('close', async () => {
-      await Promise.all([
-        storage.dispose(),
-        ws.close()
-      ])
+      // Listen dev server
+      const { server, url } = await listen(() => 'Nuxt Content', { port: 4000, showURL: false })
+      server.on('upgrade', ws.serve)
+
+      // Register ws url
+      nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
+
+      // Broadcast a message to the server to refresh the page
+      const broadcast = debounce((event: WatchEvent, key: string) => {
+        key = key.substring(MOUNT_PREFIX.length)
+        logger.info(`${key} ${event}d`)
+        ws.broadcast({ event, key })
+      }, 50)
+
+      // Watch contents
+      await nitro.storage.watch(broadcast)
     })
-
-    // Listen dev server
-    const { server, url } = await listen(() => 'Nuxt Content', { port: 4000, showURL: false })
-    server.on('upgrade', ws.serve)
-
-    // Register ws url
-    nuxt.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
-
-    // Broadcast a message to the server to refresh the page
-    const broadcast = debounce((event: WatchEvent, key: string) => {
-      key = key.substring(MOUNT_PREFIX.length)
-      logger.info(`${key} ${event}d`)
-      ws.broadcast({ event, key })
-    }, 50)
-
-    // Watch contents
-    storage.watch(broadcast)
   }
 })
 

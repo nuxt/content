@@ -6,7 +6,6 @@ import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig } from '#app'
-import { content } from 'micromark-core-commonmark'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
@@ -60,6 +59,10 @@ export default defineComponent({
   },
   render () {
     const { tags, tag, document, contentProps } = this
+
+    if (!document) {
+      return null
+    }
 
     // Get body from document
     let body = (document.body || document) as MarkdownNode
