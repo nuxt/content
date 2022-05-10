@@ -173,8 +173,7 @@ export default defineNuxtModule<ModuleOptions>({
     version,
     configKey: 'content',
     compatibility: {
-      nuxt: '^3.0.0',
-      bridge: true
+      nuxt: '^3.0.0-rc.3'
     }
   },
   defaults: {
