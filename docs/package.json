@@ -10,6 +10,6 @@
   },
   "devDependencies": {
     "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
-    "nuxt": "npm:nuxt3@latest"
+    "nuxt": "^3.0.0-rc.3"
   }
 }
