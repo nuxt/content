@@ -1,6 +1,6 @@
 title: "Nuxt Content"
 description: Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.
-url: "https://content.nuxtjs.org/"
+url: "https://content.nuxtjs.org"
 debug: false
 socials:
   twitter: "@nuxt_js"
@@ -10,7 +10,7 @@ github:
   dir: docs
   releases: true
 cover:
-  src: /cover.png
+  src: /cover_dark.png
   alt: "@nuxt/content cover image."
 aside:
   level: 1
