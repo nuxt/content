@@ -1,5 +1,5 @@
 <script setup>
-const { data: document } = await useAsyncData('navigation', () => {
+const { data: navigation } = await useAsyncData('navigation', () => {
   return fetchContentNavigation()
 })
 </script>
@@ -11,7 +11,7 @@ const { data: document } = await useAsyncData('navigation', () => {
     </template>
     <main class="text-left">
       <nav>
-        <pre>{{ document }}</pre>
+        <AppNavigation :navigation-tree="navigation" />
       </nav>
     </main>
   </NuxtExampleLayout>
