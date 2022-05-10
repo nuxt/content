@@ -67,4 +67,4 @@ export const assertArray = (value: any, message = 'Expected an array') => {
 /**
  * Ensure result is an array
  */
-export const ensureArray = (value: any) => (Array.isArray(value) ? value : [value])
+export const ensureArray = (value: any) => (Array.isArray(value) ? value : value ? [value] : [])
