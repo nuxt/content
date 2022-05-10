@@ -11,7 +11,7 @@ const { data: document } = await useAsyncData('navigation', () => {
     </template>
     <main class="text-left">
       <nav>
-        <AppNavigation :navigation-tree="document" />
+        <pre>{{ document }}</pre>
       </nav>
     </main>
   </NuxtExampleLayout>
