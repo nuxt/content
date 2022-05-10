@@ -54,18 +54,6 @@ Render a markdown content
 </template>
 ```
 
-### `<ContentRendererYaml>`
-
-> This component is used by `<Content>` under the hood.
-
-Render a YAML content.
-
-```vue
-<template>
-  <ContentRendererYaml :document="document" />
-</template>
-```
-
 ## Endpoints
 
 - `/api/_content/highlight`
