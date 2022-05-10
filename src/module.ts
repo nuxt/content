@@ -361,7 +361,7 @@ export default defineNuxtModule<ModuleOptions>({
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
-      highlight: options.highlight,
+      highlight: options.highlight as any,
       wsUrl: ''
     }
     // Context will use in server
@@ -404,9 +404,12 @@ export default defineNuxtModule<ModuleOptions>({
 
 interface ModulePublicRuntimeConfig {
   tags: Record<string, string>
+
   base: string;
+
   // Websocket server URL
   wsUrl?: string;
+
   // Shiki config
   highlight: ModuleOptions['highlight']
 }
@@ -415,11 +418,13 @@ interface ModulePrivateRuntimeConfig {}
 
 declare module '@nuxt/schema' {
   interface ConfigSchema {
-    publicRuntimeConfig?: {
-      content?: ModulePublicRuntimeConfig;
-    };
-    privateRuntimeConfig?: {
-      content?: ModulePrivateRuntimeConfig & ContentContext;
-    };
+    runtimeConfig: {
+      public?: {
+        content?: ModulePublicRuntimeConfig;
+      }
+      private?: {
+        content?: ModulePrivateRuntimeConfig & ContentContext;
+      }
+    }
   }
 }

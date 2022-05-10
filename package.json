@@ -90,6 +90,7 @@
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",
     "@nuxt/module-builder": "^0.1.7",
+    "@nuxt/schema": "^3.0.0-rc.3",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/benchmark": "^2.1.1",
