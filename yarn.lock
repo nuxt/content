@@ -362,9 +362,9 @@
   integrity sha512-GryiOJmNcWbovBxTfZSF71V/mXbgcV3MewDe3kIMCLyIh5e7SKAeUZs+rMnJ8jkMolZ/4/VsdBmMrw3l+VdZ3w==
 
 "@jridgewell/trace-mapping@^0.3.7", "@jridgewell/trace-mapping@^0.3.9":
-  version "0.3.10"
-  resolved "https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.10.tgz#db436f0917d655393851bc258918c00226c9b183"
-  integrity sha512-Q0YbBd6OTsXm8Y21+YUSDXupHnodNC2M4O18jtd3iwJ3+vMZNdKGols0a9G6JOK0dcJ3IdUUHoh908ZI6qhk8Q==
+  version "0.3.11"
+  resolved "https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.11.tgz#eb2e124521f27673493030d02dffedf60e56553f"
+  integrity sha512-RllI476aSMsxzeI9TtlSMoNTgHDxEmnl6GkkHwhr0vdL8W+0WuesyI8Vd3rBOfrwtPXbPxdT9ADJdiOKgzxPQA==
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
@@ -4935,9 +4935,9 @@ needle@^2.2.1:
     sax "^1.2.4"
 
 nitropack@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/nitropack/-/nitropack-0.4.2.tgz#50cae9bf31c59a7fa865e0e343e17333254141db"
-  integrity sha512-Laa40T2TfnA6f1Yu1DEmagYHG3dO8iJcUa+wGKYq7BoXshN5qHTUSQ0ijDHT6OkCYTwMHHoUAnB3O0ZLZY8DiQ==
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/nitropack/-/nitropack-0.4.3.tgz#58c0adb8dab13ca8833356b13adc0513c0761e8b"
+  integrity sha512-DEjpTWgkwklmx4ndPSrzhNVyb97eLr3KjPXqgcbv/C8TC3mH8DGtI07z4QujDG4ARdJAan9DcpjmEQzlYMZc+g==
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@netlify/functions" "^1.0.0"
@@ -4983,7 +4983,7 @@ nitropack@^0.4.2:
     pkg-types "^0.3.2"
     pretty-bytes "^6.0.0"
     radix3 "^0.1.2"
-    rollup "^2.72.0"
+    rollup "^2.72.1"
     rollup-plugin-terser "^7.0.2"
     rollup-plugin-visualizer "^5.6.0"
     scule "^0.2.1"
@@ -4995,7 +4995,7 @@ nitropack@^0.4.2:
     table "^6.8.0"
     ufo "^0.8.4"
     unenv "^0.5.1"
-    unimport "^0.1.8"
+    unimport "^0.2.1"
     unstorage "^0.4.1"
 
 node-domexception@^1.0.0:
@@ -6216,7 +6216,7 @@ rollup-pluginutils@^2.8.2:
   dependencies:
     estree-walker "^0.6.1"
 
-rollup@^2.59.0, rollup@^2.66.1, rollup@^2.72.0, rollup@^2.72.1:
+rollup@^2.59.0, rollup@^2.66.1, rollup@^2.72.1:
   version "2.72.1"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.72.1.tgz#861c94790537b10008f0ca0fbc60e631aabdd045"
   integrity sha512-NTc5UGy/NWFGpSqF1lFY8z9Adri6uhyMLI6LvPAXdBKoPRFhIIiBUpt+Qg2awixqO3xvzSijjhnb4+QEZwJmxA==
@@ -7055,10 +7055,25 @@ unified@^10.0.0, unified@^10.1.2:
     trough "^2.0.0"
     vfile "^5.0.0"
 
-unimport@^0.1.6, unimport@^0.1.8, unimport@^0.1.9:
+unimport@^0.1.6, unimport@^0.1.9:
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.1.9.tgz#a8688f37df179eb1768f04d365c62cc74c7b35c5"
   integrity sha512-ap7MnS7zuA4A8eAyA8CHN3YFw1tMpWQK3rSrh6jvrB3tWkT4EKvslg9sNoax5WuL8TnMaXSydRxwOgUUXrnovg==
+  dependencies:
+    "@rollup/pluginutils" "^4.2.1"
+    escape-string-regexp "^5.0.0"
+    globby "^13.1.1"
+    local-pkg "^0.4.1"
+    magic-string "^0.26.1"
+    mlly "^0.5.2"
+    pathe "^0.3.0"
+    scule "^0.2.1"
+    unplugin "^0.6.3"
+
+unimport@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.2.1.tgz#dd7cc65fcd9d945186aee1eceb1bdc06ecfdf49f"
+  integrity sha512-6u1uY6GFIi9WslI7fPun0I0ZrIGJ0yAn92n/9rQv4MAEEnxg8zMO+Tj7q/6Z/7XxTn8qFCJIqEM/3Io81Zwmmw==
   dependencies:
     "@rollup/pluginutils" "^4.2.1"
     escape-string-regexp "^5.0.0"
