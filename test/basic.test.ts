@@ -9,6 +9,7 @@ import { testNavigation } from './features/navigation'
 import { testMDCComponent } from './features/mdc-component'
 import { testJSONParser } from './features/parser-json'
 import { testCSVParser } from './features/parser-csv'
+import { testRegex } from './features/regex'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -97,4 +98,6 @@ describe('fixtures:basic', async () => {
   testPathMetaTransformer()
 
   testMDCComponent()
+
+  testRegex()
 })
