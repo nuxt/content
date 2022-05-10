@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Content v-if="document.excerpt" tag="pre" :document="document" excerpt />
+    <Content v-if="document?.excerpt" tag="pre" :document="document" excerpt />
     <Content v-if="document" :document="document" />
     <div v-else>
       Not Found!

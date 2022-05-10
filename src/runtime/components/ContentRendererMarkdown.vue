@@ -60,6 +60,10 @@ export default defineComponent({
   render () {
     const { tags, tag, document, contentProps } = this
 
+    if (!document) {
+      return null
+    }
+
     // Get body from document
     let body = (document.body || document) as MarkdownNode
     if (this.excerpt && document.excerpt) {
