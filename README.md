@@ -13,7 +13,7 @@ File based Headless CMS for modern websites built with [**Nuxt**](https://v3.nux
 - Blazing fast hot module replacement in development
 - Powerful query builder (MongoDB like)
 - Table of contents generation
-- Also handles CSV, YAML, JSON(5) and XML
+- Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
 
 ## 💻 Development

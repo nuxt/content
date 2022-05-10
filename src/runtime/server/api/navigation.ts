@@ -1,11 +1,11 @@
-import { defineEventHandler, useQuery } from 'h3'
-import { queryContent, useApiQuery } from '../storage'
+import { defineEventHandler } from 'h3'
+import { queryContent } from '../storage'
 import { createNav } from '../navigation'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
+import { useApiParams } from '../params'
 
 export default defineEventHandler(async (event) => {
-  const { query: qid } = event.context.params
-  const query: Partial<QueryBuilderParams> = useApiQuery(qid, useQuery(event)?.params || undefined)
+  const query: Partial<QueryBuilderParams> = useApiParams(event)
 
   const contents = await queryContent(query)
     .where({

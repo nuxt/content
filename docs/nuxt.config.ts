@@ -10,6 +10,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  generate: {
+    routes: []
+  },
   alias,
   extends: ['./node_modules/@docus/docs-theme'],
   github: {

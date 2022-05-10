@@ -3,6 +3,7 @@ import { hash } from 'ohash'
 import { useHead } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
 
 /**
@@ -22,7 +23,7 @@ const queryFetch = (params: Partial<QueryBuilderParams>) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: JSON.stringify(params)
+      params: jsonStringify(params)
     }
   })
 }
