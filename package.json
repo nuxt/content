@@ -32,7 +32,6 @@
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",
     "prepack": "yarn build",
-    "test:benchmark": "node --loader ts-node/esm test/benchmarks/run.ts test/benchmarks/*.benchmark.*",
     "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
     "test:unit": "nuxi prepare test/fixtures/basic && vitest run"
@@ -40,7 +39,6 @@
   "dependencies": {
     "@nuxt/kit": "^3.0.0-rc.3",
     "csvtojson": "^2.0.10",
-    "debounce": "^1.2.1",
     "defu": "^6.0.0",
     "destr": "^1.1.1",
     "detab": "^3.0.1",
@@ -83,21 +81,16 @@
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
-    "unist-util-visit-parents": "^5.1.0",
     "unstorage": "^0.4.1",
     "ws": "^8.6.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^6.3.1",
     "@nuxt/module-builder": "^0.1.7",
     "@nuxt/schema": "^3.0.0-rc.3",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/benchmark": "^2.1.1",
-    "@types/debounce": "^1.2.1",
     "@types/flat": "^5.0.2",
     "@types/ws": "^8.5.3",
-    "benchmark": "^2.1.4",
     "c8": "^7.11.2",
     "eslint": "^8.15.0",
     "globby": "^13.1.1",
@@ -105,8 +98,6 @@
     "jiti": "^1.13.0",
     "lint-staged": "^12.4.1",
     "nuxt": "^3.0.0-rc.3",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.4",
-    "vitest": "^0.12.3"
+    "vitest": "^0.10.2"
   }
 }
