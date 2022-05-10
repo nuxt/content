@@ -55,5 +55,18 @@ export const testMarkdownParser = () => {
 
       expect(parsed.body.children.length).toEqual(0)
     })
+
+    test('empty file with new lines', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: ['', '', ''].join('\n')
+        }
+      })
+
+      expect(parsed.body).toHaveProperty('children')
+      expect(parsed.body.children.length).toEqual(0)
+    })
   })
 }
