@@ -65,6 +65,10 @@ export default function (this: any, _options: MarkdownOptions) {
      * Text node
      */
     if (node.type === 'text') {
+      // Remove new line nodes
+      if (node.value === '\n') {
+        return null
+      }
       return <MarkdownNode> {
         type: 'text',
         value: node.value as string

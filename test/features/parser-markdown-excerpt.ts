@@ -11,7 +11,9 @@ export const testMarkdownParserExcerpt = () => {
           content: [
             '# Index',
             'First paragraph',
+            '',
             '<!--more-->',
+            '',
             'Second paragraph'
           ].join('\n')
         }
@@ -22,7 +24,7 @@ export const testMarkdownParserExcerpt = () => {
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.excerpt).toBeDefined()
-      expect(parsed.excerpt.children).toHaveLength(3)
+      expect(parsed.excerpt.children).toHaveLength(2)
 
       // First child (H1)
       expect(parsed.excerpt.children[0]).toMatchInlineSnapshot(`
@@ -40,12 +42,8 @@ export const testMarkdownParserExcerpt = () => {
           "type": "element",
         }
       `)
-
-      // Second child (newline)
-      expect(parsed.excerpt.children[1].value).toBe('\n')
-
-      // Third child (paragraph)
-      expect(parsed.excerpt.children[2]).toMatchInlineSnapshot(`
+      // Second child (paragraph)
+      expect(parsed.excerpt.children[1]).toMatchInlineSnapshot(`
         {
           "children": [
             {
