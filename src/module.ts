@@ -389,6 +389,10 @@ export default defineNuxtModule<ModuleOptions>({
 
       // Broadcast a message to the server to refresh the page
       const broadcast = debounce((event: WatchEvent, key: string) => {
+        // Ignore events that are not related to content
+        if (!key.startsWith(MOUNT_PREFIX)) {
+          return
+        }
         key = key.substring(MOUNT_PREFIX.length)
         logger.info(`${key} ${event}d`)
         ws.broadcast({ event, key })
