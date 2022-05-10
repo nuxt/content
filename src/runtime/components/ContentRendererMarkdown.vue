@@ -6,6 +6,7 @@ import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig } from '#app'
+import { content } from 'micromark-core-commonmark'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
@@ -32,6 +33,13 @@ export default defineComponent({
       required: true
     },
     /**
+     * Render only the excerpt
+     */
+    excerpt: {
+      type: Boolean,
+      default: false
+    },
+    /**
      * Root tag to use for rendering
      */
     tag: {
@@ -54,7 +62,10 @@ export default defineComponent({
     const { tags, tag, document, contentProps } = this
 
     // Get body from document
-    const body = (document.body || document) as MarkdownNode
+    let body = (document.body || document) as MarkdownNode
+    if (this.excerpt && document.excerpt) {
+      body = document.excerpt
+    }
     const meta: ParsedContentMeta = {
       ...(document as ParsedContentMeta),
       tags: {
