@@ -1,5 +1,6 @@
 ---
-layout: blog
+layout: article
+navigation: false
 title: 'Going Full Static'
 description: 'Long awaited features for JAMstack fans has been shipped in v2.13: full static export, improved smart prefetching, integrated crawler, faster re-deploy, built-in web server and new target option for config ⚡️'
 imgUrl: blog/going-full-static/main.jpeg
@@ -52,7 +53,7 @@ Read more about [querying with Nuxt Content 2](https://content-v2.nuxtjs.org/api
 TODO: demo & video same as https://content.nuxtjs.org/#videos
 ## Introducing MDC
 
-In Content 1, you were able to use Vue components directly into the Markdown using the HTML syntax but this had limitations: 
+In Content 1, you were able to use Vue components directly into the Markdown using the HTML syntax but this had limitations:
 
 - Only kebab case naming
 - No self-closing tags
@@ -76,5 +77,3 @@ If you need to use slots, you can the the :: syntax:
 Yes, you can use Markdown inside it:
 
 ## How does it work?
-
-
