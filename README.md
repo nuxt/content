@@ -1,8 +1,8 @@
-[![nuxt-content](/docs/public/cover.png "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxtjs.org)
 
-# @nuxt/content
+# Nuxt Content
 
-Create Document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
+File based Headless CMS for modern websites built with [**Nuxt**](https://v3.nuxtjs.org).
 
 ## Features
 
@@ -13,7 +13,7 @@ Create Document-driven websites with [**Nuxt**](https://v3.nuxtjs.org).
 - Blazing fast hot module replacement in development
 - Powerful query builder (MongoDB like)
 - Table of contents generation
-- Also handles CSV, YAML, JSON(5) and XML
+- Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
 
 ## 💻 Development

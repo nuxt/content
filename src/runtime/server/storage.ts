@@ -1,8 +1,7 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
-import destr from 'destr'
-import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
@@ -105,13 +104,4 @@ export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBu
   return createQuery<T>(pipelineFetcher, body)
     // Provide default sort order
     .sortBy('path', 'asc')
-}
-
-const _queries = {}
-export const useApiQuery = (qid?: string, query?: any) => {
-  if (query) {
-    _queries[qid] = typeof query === 'string' ? destr(query) : query
-  }
-
-  return _queries[qid] || {}
 }
