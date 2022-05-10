@@ -1,3 +1,4 @@
+---
 name: "\U0001F41E Bug report"
 description: Create a report to help us improve Nuxt
 labels: ["pending triage"]
@@ -45,3 +46,4 @@ body:
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
       render: shell
+---
