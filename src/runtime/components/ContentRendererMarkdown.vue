@@ -6,7 +6,6 @@ import { find, html } from 'property-information'
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig } from '#app'
-import { content } from 'micromark-core-commonmark'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
