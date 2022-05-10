@@ -372,32 +372,30 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    nuxt.hook('nitro:init', (nitro) => {
+    nuxt.hook('nitro:init', async (nitro) => {
       const ws = createWebSocket()
 
       // Dispose storage on nuxt close
-      nuxt.hook('close', async () => {
+      nitro.hooks.hook('close', async () => {
         await ws.close()
       })
 
       // Listen dev server
-      listen(() => 'Nuxt Content', { port: 4000, showURL: false })
-        .then(({ server, url }) => {
-          server.on('upgrade', ws.serve)
+      const { server, url } = await listen(() => 'Nuxt Content', { port: 4000, showURL: false })
+      server.on('upgrade', ws.serve)
 
-          // Register ws url
-          nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
+      // Register ws url
+      nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
-          // Broadcast a message to the server to refresh the page
-          const broadcast = debounce((event: WatchEvent, key: string) => {
-            key = key.substring(MOUNT_PREFIX.length)
-            logger.info(`${key} ${event}d`)
-            ws.broadcast({ event, key })
-          }, 50)
+      // Broadcast a message to the server to refresh the page
+      const broadcast = debounce((event: WatchEvent, key: string) => {
+        key = key.substring(MOUNT_PREFIX.length)
+        logger.info(`${key} ${event}d`)
+        ws.broadcast({ event, key })
+      }, 50)
 
-          // Watch contents
-          nitro.storage.watch(broadcast)
-        })
+      // Watch contents
+      await nitro.storage.watch(broadcast)
     })
   }
 })
