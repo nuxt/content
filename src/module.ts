@@ -11,7 +11,7 @@ import {
   addTemplate
 } from '@nuxt/kit'
 import defu from 'defu'
-import { join, relative } from 'pathe'
+import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
