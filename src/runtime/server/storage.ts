@@ -91,18 +91,21 @@ export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent)
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
-  let body = slug as Partial<QueryBuilderParams>
+  let params = slug as Partial<QueryBuilderParams>
   if (typeof slug === 'string') {
     slug = withLeadingSlash(joinURL(slug, ...slugParts))
-    body = {
+    params = {
       where: [{ slug: new RegExp(`^${slug}`) }]
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
-      getContentsList as unknown as () => Promise<T[]>
+    getContentsList as unknown as () => Promise<T[]>
   )
 
-  return createQuery<T>(pipelineFetcher, body)
   // Provide default sort order
-    .sortBy('path', 'asc')
+  if (!params.sortBy?.length) {
+    params.sortBy = [['path', 'asc']]
+  }
+
+  return createQuery<T>(pipelineFetcher, params)
 }
