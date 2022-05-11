@@ -7,10 +7,11 @@ import {
   addAutoImport,
   addComponentsDir,
   templateUtils,
-  useLogger
+  useLogger,
+  addTemplate
 } from '@nuxt/kit'
 import defu from 'defu'
-import { join } from 'pathe'
+import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
@@ -264,12 +265,7 @@ export default defineNuxtModule<ModuleOptions>({
         ]
       })
 
-      nitroConfig.autoImport = nitroConfig.autoImport || {}
-      nitroConfig.autoImport.imports = nitroConfig.autoImport.imports || []
-      nitroConfig.autoImport.imports.push(...[
-        { name: 'parse', as: 'contentParse', from: resolveRuntimeModule('./server/transformers') },
-        { name: 'transform', as: 'contentTransform', from: resolveRuntimeModule('./server/transformers') }
-      ])
+      nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
 
       nitroConfig.virtual = nitroConfig.virtual || {}
       nitroConfig.virtual['#content/virtual/transformers'] = [
@@ -297,8 +293,25 @@ export default defineNuxtModule<ModuleOptions>({
       level: 999,
       global: true
     })
-    // Register user global components
 
+    addTemplate({
+      filename: 'types/content.d.ts',
+      getContents: () => [
+        'declare module \'#content/server\' {',
+        `  import { QueryBuilder, ParsedContent, QueryBuilderParams } from "${relative(nuxt.options.buildDir, resolve('./runtime/types'))}";`,
+        '  const queryContent: <T = ParsedContent>() => QueryBuilder<T>;',
+        '  const queryContent: <T = ParsedContent>(params?: Partial<QueryBuilderParams>) => QueryBuilder<T>;',
+        '  const queryContent: <T = ParsedContent>(slug?: string, ...slugParts: string[]) => QueryBuilder<T>;',
+        '  const parseContent: (id: string, content: string) => Promise<ParsedContent>;',
+        '}'
+      ].join('\n')
+    })
+
+    nuxt.hook('prepare:types', (options) => {
+      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/content.d.ts') })
+    })
+
+    // Register user global components
     const globalComponents = resolve(nuxt.options.srcDir, 'components/content')
     const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
     if (dirStat && dirStat.isDirectory()) {

@@ -5,7 +5,7 @@ import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parse, transform } from './transformers'
+import { parseContent } from './transformers'
 // eslint-disable-next-line import/named
 import { useRuntimeConfig, useStorage } from '#imports'
 
@@ -73,7 +73,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
     return { id, body: null }
   }
 
-  const parsedContent = await parse(id, body as string).then(transform)
+  const parsedContent = await parseContent(id, body as string)
   const parsed = {
     ...meta,
     ...parsedContent
