@@ -91,7 +91,7 @@ export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent)
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
-  let params = slug as Partial<QueryBuilderParams>
+  let params = (slug || {}) as Partial<QueryBuilderParams>
   if (typeof slug === 'string') {
     slug = withLeadingSlash(joinURL(slug, ...slugParts))
     params = {
