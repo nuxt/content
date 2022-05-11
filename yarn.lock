@@ -570,6 +570,14 @@
     vite-node "^0.12.1"
     vite-plugin-checker "^0.4.6"
 
+"@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
+  version "0.0.1-27538003.bc43256"
+  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27538003.bc43256.tgz#c757126d37d74ce61f1a3367a16a9fa3ecfb18ce"
+  integrity sha512-WRKiVervRH3//5wRa8oJ9SYvgIQtboZBZmDYf/Uek591j1BsMWnRTCYQI+zLv2OqFhWuaDGus1GK/kW0H5K/bg==
+  dependencies:
+    "@nuxt/kit" "^3.0.0-rc.3"
+    nuxt-component-meta "^0.1.5"
+
 "@nuxtjs/eslint-config-typescript@latest":
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-config-typescript/-/eslint-config-typescript-10.0.0.tgz#08eab1c450b34d4da88b81ede81b549318e4b2d6"
@@ -1006,7 +1014,7 @@
     "@vue/compiler-core" "3.2.33"
     "@vue/shared" "3.2.33"
 
-"@vue/compiler-sfc@3.2.33":
+"@vue/compiler-sfc@3.2.33", "@vue/compiler-sfc@^3.2.33":
   version "3.2.33"
   resolved "https://registry.yarnpkg.com/@vue/compiler-sfc/-/compiler-sfc-3.2.33.tgz#7ce01dc947a8b76c099811dc6ca58494d4dc773d"
   integrity sha512-H8D0WqagCr295pQjUYyO8P3IejM3vEzeCO1apzByAEaAR/WimhMYczHfZVvlCE/9yBaEu/eu9RdiWr0kF8b71Q==
@@ -5151,6 +5159,15 @@ nuxi@^3.0.0-rc.3:
   integrity sha512-WXeW3k2DOaVgkIcPJ9XHxgHWUzvAKV+R3I0c+gXjvzNc5bfRW9ks7Hr2jb83frH+r6i4aALlRTaBHIrJhYHh6w==
   optionalDependencies:
     fsevents "~2.3.2"
+
+nuxt-component-meta@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.1.5.tgz#d17f1072268faa933b1123bf8148bd9843b022c4"
+  integrity sha512-kcTnYMC4IflXEDSp3r/s9ZhoPuHi2lAu9ngCGm5CNxHKUmc0AjmjjiSeqTrNlH9NWojy+zk34NC7nTRN6fVCDQ==
+  dependencies:
+    "@nuxt/kit" "^3.0.0-rc.3"
+    "@vue/compiler-sfc" "^3.2.33"
+    scule "^0.2.1"
 
 nuxt@^3.0.0-rc.3:
   version "3.0.0-rc.3"
