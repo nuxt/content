@@ -12,7 +12,7 @@ watch([skip, limit], () => {
 </script>
 
 <template>
-  <NuxtExampleLayout example="queries/skip-limit" repo="nuxt/content-next">
+  <NuxtExampleLayout example="queries/skip-limit" repo="nuxt/content">
     <template #icon>
       Nuxt/content
     </template>

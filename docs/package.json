@@ -9,8 +9,7 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "docus": "npm:docus-edge@latest",
-    "nuxt": "npm:nuxt3@latest",
-    "unstorage": "latest"
+    "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
+    "nuxt": "^3.0.0-rc.3"
   }
 }

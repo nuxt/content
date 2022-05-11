@@ -9,6 +9,8 @@ import { testNavigation } from './features/navigation'
 import { testMDCComponent } from './features/mdc-component'
 import { testJSONParser } from './features/parser-json'
 import { testCSVParser } from './features/parser-csv'
+import { testRegex } from './features/regex'
+import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -87,6 +89,7 @@ describe('fixtures:basic', async () => {
   testNavigation()
 
   testMarkdownParser()
+  testMarkdownParserExcerpt()
 
   testYamlParser()
 
@@ -97,4 +100,6 @@ describe('fixtures:basic', async () => {
   testPathMetaTransformer()
 
   testMDCComponent()
+
+  testRegex()
 })

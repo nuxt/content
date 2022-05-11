@@ -1,9 +1,10 @@
 import { prefixStorage, createStorage } from 'unstorage'
 import overlay from 'unstorage/drivers/overlay'
 import memory from 'unstorage/drivers/memory'
+import { joinURL, withLeadingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
-import destr from 'destr'
-import type { QueryBuilderParams, ParsedContent } from '../types'
+import type { CompatibilityEvent } from 'h3'
+import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
@@ -106,26 +107,25 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export const queryContent = (
-  body?: string | Partial<QueryBuilderParams>,
-  params?: Partial<QueryBuilderParams>
-) => {
-  if (typeof body === 'string') {
-    body = {
-      slug: body,
-      ...params
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
+  let params = (slug || {}) as Partial<QueryBuilderParams>
+  if (typeof slug === 'string') {
+    slug = withLeadingSlash(joinURL(slug, ...slugParts))
+    params = {
+      where: [{ slug: new RegExp(`^${slug}`) }]
     }
   }
-  const pipelineFetcher = createPipelineFetcher(getContentsList)
+  const pipelineFetcher = createPipelineFetcher<T>(
+    getContentsList as unknown as () => Promise<T[]>
+  )
 
-  return createQuery(pipelineFetcher, body)
-}
-
-const _queries = {}
-export const useApiQuery = (qid?: string, query?: any) => {
-  if (query) {
-    _queries[qid] = typeof query === 'string' ? destr(query) : query
+  // Provide default sort order
+  if (!params.sortBy?.length) {
+    params.sortBy = [['path', 'asc']]
   }
 
-  return _queries[qid] || {}
+  return createQuery<T>(pipelineFetcher, params)
 }

@@ -3,12 +3,13 @@ import { hash } from 'ohash'
 import { useHead, useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
 
 /**
  * Fetch query result
  */
-const queryFetch = (params: Partial<QueryBuilderParams>) => {
+const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
   const path = withContentBase(`/query/${hash(params)}`)
 
   if (process.server) {
@@ -18,11 +19,11 @@ const queryFetch = (params: Partial<QueryBuilderParams>) => {
       ]
     })
   }
-  return $fetch<Array<ParsedContent>>(path, {
+  return $fetch<T | T[]>(path, {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: JSON.stringify(params),
+      params: jsonStringify(params),
       previewToken: useCookie('previewToken').value
     }
   })
@@ -31,12 +32,11 @@ const queryFetch = (params: Partial<QueryBuilderParams>) => {
 /**
  * Query contents
  */
-export function queryContent(): QueryBuilder;
-export function queryContent(slug?: string, ...slugParts: string[]): QueryBuilder;
-export function queryContent (slug?: string, ...slugParts: string[]) {
-  const body: Partial<QueryBuilderParams> = {
-    slug: withLeadingSlash(joinURL(slug, ...slugParts))
-  }
+export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
+export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
+export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: string[]) {
+  slug = withLeadingSlash(joinURL(slug, ...slugParts))
 
-  return createQuery(queryFetch, body)
+  return createQuery<T>(queryFetch)
+    .where({ slug: new RegExp(`^${slug}`) })
 }

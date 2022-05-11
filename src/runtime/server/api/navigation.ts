@@ -1,16 +1,16 @@
-import { defineEventHandler, useQuery } from 'h3'
-import { queryContent, useApiQuery } from '../storage'
+import { defineEventHandler } from 'h3'
+import { serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
 import { togglePreviewMode } from '../preview'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
+import { useApiParams } from '../params'
 
 export default defineEventHandler(async (event) => {
-  const { query: qid } = event.context.params
-  const query: Partial<QueryBuilderParams> = useApiQuery(qid, useQuery(event)?.params || undefined)
+  const query: Partial<QueryBuilderParams> = useApiParams(event)
 
   await togglePreviewMode(event)
 
-  const contents = await queryContent(query)
+  const contents = await serverQueryContent(event, query)
     .where({
       /**
        * Partial contents are not included in the navigation
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  const dirConfigs = await queryContent().where({ path: /\/_dir$/i, partial: true }).find()
+  const dirConfigs = await serverQueryContent(event).where({ path: /\/_dir$/i, partial: true }).find()
   const configs = dirConfigs.reduce((configs, conf) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined

@@ -2,7 +2,7 @@ import type { QueryBuilderParams, QueryPipe } from '../../types'
 import { apply, ensureArray, omit, pick, sortByKey } from './utils'
 import { createMatch } from '.'
 
-export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T>>) {
+export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   // Create Matcher
   const match = createMatch()
 
@@ -22,8 +22,6 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
   }
 
   const pipelines: Array<QueryPipe> = [
-    // Filter items based on `params.slug`
-    (data, params) => (params.slug ? data.filter(item => String(item.slug).startsWith(params.slug)) : data),
     // Conditions
     (data, params) => data.filter(item => ensureArray(params.where).every(matchQuery => match(item, matchQuery))),
     // Sort data
@@ -42,15 +40,8 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<Array<T
     (data, params) => params.first ? data[0] : data
   ]
 
-  return async (params: QueryBuilderParams) => {
+  return async (params: QueryBuilderParams): Promise<T | T[]> => {
     const data = await getContentsList()
-
-    // Provide default sort order if not specified
-    if (!params.sortBy || !params.sortBy.length) {
-      params.sortBy = [
-        ['path', 'asc']
-      ]
-    }
 
     return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, params) || $data, data)
   }

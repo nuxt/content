@@ -1,15 +1,15 @@
-import { createError, defineEventHandler, useQuery } from 'h3'
+import { createError, defineEventHandler } from 'h3'
 import type { QueryBuilderParams } from '../../types'
-import { queryContent, useApiQuery } from '../storage'
 import { togglePreviewMode } from '../preview'
+import { serverQueryContent } from '../storage'
+import { useApiParams } from '../params'
 
 export default defineEventHandler(async (event) => {
-  const { query: qid } = event.context.params
-  const query: Partial<QueryBuilderParams> = useApiQuery(qid, useQuery(event)?.params || undefined)
+  const query: Partial<QueryBuilderParams> = useApiParams(event)
 
   await togglePreviewMode(event)
 
-  const contents = await queryContent(query).find()
+  const contents = await serverQueryContent(event, query).find()
 
   // If no documents matchs and using findOne()
   if (query.first && Array.isArray(contents) && contents.length === 0) {
