@@ -11,7 +11,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   }
 
   // If admin configured with API URL
-  console.log('publicConfig.admin', publicConfig.admin)
   if (publicConfig.admin?.apiURL) {
     const { query } = useRoute()
     const previewToken = useCookie('previewToken')
@@ -28,7 +27,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
       nuxtApp.hooks.hookOnce('app:mounted', () => {
         const wrapper = document.createElement('div')
-        wrapper.id = 'content-preview-wrapper'
+        wrapper.id = '__nuxt_preview_wrapper'
         document.body.appendChild(wrapper)
         createApp(ContentPreviewMode, { previewToken, apiURL: publicConfig.admin.apiURL }).mount(wrapper)
       })
