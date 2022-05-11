@@ -9,23 +9,29 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     // Connect to websocket
     import('./composables/web-socket').then(({ useContentWebSocket }) => useContentWebSocket())
   }
-  const { query } = useRoute()
-  const previewToken = useCookie('previewToken')
 
-  // If opening a preview link
-  if (query._preview) {
-    // Set the preview cookie
-    previewToken.value = String(query._preview)
-  }
+  // If admin configured with API URL
+  console.log('publicConfig.admin', publicConfig.admin)
+  if (publicConfig.admin?.apiURL) {
+    const { query } = useRoute()
+    const previewToken = useCookie('previewToken')
 
-  if (process.client && previewToken.value) {
-    console.info('👀 Preview mode activated:', previewToken.value)
+    // If opening a preview link
+    if (query._preview) {
+      // Set the preview cookie
+      previewToken.value = String(query._preview)
+    }
 
-    nuxtApp.hooks.hookOnce('app:mounted', () => {
-      const wrapper = document.createElement('div')
-      wrapper.id = 'content-preview-wrapper'
-      document.body.appendChild(wrapper)
-      createApp(ContentPreviewMode, { previewToken }).mount(wrapper)
-    })
+    if (process.client && previewToken.value) {
+      // eslint-disable-next-line no-console
+      console.info('👀 Preview mode activated:', previewToken.value)
+
+      nuxtApp.hooks.hookOnce('app:mounted', () => {
+        const wrapper = document.createElement('div')
+        wrapper.id = 'content-preview-wrapper'
+        document.body.appendChild(wrapper)
+        createApp(ContentPreviewMode, { previewToken, apiURL: publicConfig.admin.apiURL }).mount(wrapper)
+      })
+    }
   }
 })

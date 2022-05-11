@@ -4,7 +4,7 @@ import contentModule from '../src/module' // eslint-disable-line
 
 export default defineNuxtConfig({
   rootDir: __dirname,
-  modules: [contentModule],
+  modules: [contentModule, '@nuxthq/admin'],
   content: {
     navigation: {
       fields: ['icon']

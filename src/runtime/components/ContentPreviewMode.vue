@@ -1,9 +1,13 @@
 <script setup>
 import { onMounted } from 'vue'
 
-const { previewToken } = defineProps({
+const { previewToken, apiURL } = defineProps({
   previewToken: {
     type: Object,
+    required: true
+  },
+  apiURL: {
+    type: String,
     required: true
   }
 })
@@ -16,7 +20,7 @@ const closePreviewMode = () => {
 }
 onMounted(async () => {
   const io = await import('socket.io-client')
-  const socket = io.connect(`http://localhost:1337/preview:${previewToken.value}`, {
+  const socket = io.connect(`${apiURL}/preview:${previewToken.value}`, {
     transports: ['websocket', 'polling']
   })
 

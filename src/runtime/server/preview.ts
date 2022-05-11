@@ -1,11 +1,12 @@
 import { useQuery, useCookie, deleteCookie } from 'h3'
 import { parse, transform } from './transformers'
 import { cacheStorage, draftStorage, previewStorage } from './storage'
+const publicConfig = useRuntimeConfig().public
 
 export const togglePreviewMode = async (event) => {
   const previewToken = useQuery(event).previewToken || useCookie(event, 'previewToken')
-  if (previewToken) {
-    const draft = await $fetch(`http://localhost:1337/api/projects/preview?token=${previewToken}`).catch(_err => null)
+  if (publicConfig.admin?.apiURL && previewToken) {
+    const draft = await $fetch(`/api/projects/preview?token=${previewToken}`, { baseURL: publicConfig.admin?.apiURL }).catch(_err => null)
     // If invalid token
     if (!draft) {
       // Clear cookie
