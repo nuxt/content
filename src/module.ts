@@ -299,9 +299,9 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => [
         'declare module \'#content/server\' {',
         `  import { QueryBuilder, ParsedContent, QueryBuilderParams } from "${relative(nuxt.options.buildDir, resolve('./runtime/types'))}";`,
-        '  const queryContent: <T = ParsedContent>() => QueryBuilder<T>;',
-        '  const queryContent: <T = ParsedContent>(params?: Partial<QueryBuilderParams>) => QueryBuilder<T>;',
-        '  const queryContent: <T = ParsedContent>(slug?: string, ...slugParts: string[]) => QueryBuilder<T>;',
+        '  const serverQueryContent: <T = ParsedContent>() => QueryBuilder<T>;',
+        '  const serverQueryContent: <T = ParsedContent>(params?: Partial<QueryBuilderParams>) => QueryBuilder<T>;',
+        '  const serverQueryContent: <T = ParsedContent>(slug?: string, ...slugParts: string[]) => QueryBuilder<T>;',
         '  const parseContent: (id: string, content: string) => Promise<ParsedContent>;',
         '}'
       ].join('\n')
