@@ -1,6 +1,7 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
+import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
@@ -86,10 +87,10 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
   let body = slug as Partial<QueryBuilderParams>
   if (typeof slug === 'string') {
     slug = withLeadingSlash(joinURL(slug, ...slugParts))
@@ -98,10 +99,10 @@ export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBu
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
-    getContentsList as unknown as () => Promise<T[]>
+      getContentsList as unknown as () => Promise<T[]>
   )
 
   return createQuery<T>(pipelineFetcher, body)
-    // Provide default sort order
+  // Provide default sort order
     .sortBy('path', 'asc')
 }

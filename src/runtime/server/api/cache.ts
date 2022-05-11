@@ -1,11 +1,11 @@
 import { defineEventHandler } from 'h3'
-import { queryContent } from '../storage'
+import { serverQueryContent } from '../storage'
 
 // This route is used to cache all the parsed content
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
   const now = Date.now()
   // Fetch all content
-  await queryContent().find()
+  await serverQueryContent(event).find()
 
   return {
     generatedAt: now,
