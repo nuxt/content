@@ -1,35 +1,49 @@
-<script setup>
-const { path } = defineProps({
-  path: {
-    type: String,
-    default: () => useRoute().path
-  }
-})
-const isPartial = path.includes('/_')
-const { data: document } = await useAsyncData(`content-doc-${path}`, () => {
-  return queryContent().where({ path, partial: isPartial }).findOne()
-})
-// Head management (only if doc = route path)
-if (document.value && document.value.path === useRoute().path && !document.value.partial) {
-  const head = document.value.head || {}
+<script setup lang="ts">
+import { useHead, useRoute, watch, computed, useAsyncData } from '#imports'
 
-  head.title = head.title || document.value.title
-  head.meta = head.meta || []
-  if (document.value.description && head.meta.filter(m => m.name === 'description').length === 0) {
-    head.meta.push({
-      name: 'description',
-      content: document.value.description
-    })
-  }
+const {
+  path = useRoute().path,
+  tag = 'div'
+} = defineProps<{
+  path?: string
+  tag?: string
+}>()
 
-  useHead(head)
-}
+const isPartial = computed(() => path.includes('/_'))
+
+const { data: document } = await useAsyncData(`content-doc-${path}`, () => queryContent().where({ path, partial: isPartial.value }).findOne())
+
+watch(
+  () => document,
+  (newDoc) => {
+    if (!newDoc) { return }
+
+    const { path, head = {}, partial = false, description } = newDoc
+
+    // Head management (only if doc = route path)
+    if (path && path === useRoute().path && !partial) {
+      head.title = head.title || document.value.title
+      head.meta = head.meta || []
+
+      if (description && head.meta.filter(m => m.name === 'description').length === 0) {
+        head.meta.push({
+          name: 'description',
+          content: document.value.description
+        })
+      }
+
+      useHead(head)
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
-  <Document v-if="document" v-model="document" />
-  <div v-else>
-    Not Found!
-    <!-- TODO: slot -->
-  </div>
+  <Document v-if="document" :value="document" :tag="tag" />
+  <component :is="tag" v-else>
+    <slot name="not-found" />
+  </component>
 </template>

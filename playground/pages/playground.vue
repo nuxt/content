@@ -33,7 +33,7 @@ const tabs = ref(['preview', 'AST'])
       <button v-for="name in tabs" :key="name" :class="{ active: name === tab }" @click="tab = name">
         {{ name }}
       </button>
-      <Document v-if="tab === 'preview'" v-model="document" />
+      <Document v-if="tab === 'preview'" :value="document" />
       <pre v-else>{{ document }}</pre>
     </div>
   </div>

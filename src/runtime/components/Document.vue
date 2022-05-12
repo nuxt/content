@@ -1,27 +1,33 @@
 <script setup lang="ts">
-// defineEmits(['update:modelValue'])
-const { modelValue: document, excerpt } = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  excerpt: {
-    type: Boolean,
-    default: false
-  },
-  tag: {
-    type: String,
-    default: 'div'
-  }
-})
+import { watch } from '#imports'
 
-if (excerpt && !document.excerpt) {
-  // eslint-disable-next-line no-console
-  console.warn(`No excerpt found for document content/${document.path}.${document.extension}. Make sure to use <!--more--> in your content.`)
-}
+const {
+  value,
+  excerpt = 'false',
+  tag = 'div'
+} = defineProps<{
+  value?: ParsedContent
+  excerpt?: boolean
+  tag?: string
+}>()
+
+watch(
+  () => excerpt,
+  (newExcerpt) => {
+    if (newExcerpt && !document.excerpt) {
+      // eslint-disable-next-line no-console
+      console.warn(`No excerpt found for document content/${value.path}.${value.extension}!`)
+      // eslint-disable-next-line no-console
+      console.warn('Make sure to use <!--more--> in your content if you want to use excerpt feature.')
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
-  <MarkdownRenderer v-if="modelValue?.type === 'markdown'" :document="modelValue" :excerpt="excerpt" :tag="tag" />
-  <pre v-else>{{ modelValue }}</pre>
+  <MarkdownRenderer v-if="value?.type === 'markdown'" :document="value" :excerpt="excerpt" :tag="tag" />
+  <pre v-else>{{ document }}</pre>
 </template>
