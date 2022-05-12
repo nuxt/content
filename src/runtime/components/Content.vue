@@ -9,8 +9,8 @@ const isPartial = path.includes('/_')
 const { data: document } = await useAsyncData(`content-doc-${path}`, () => {
   return queryContent().where({ path, partial: isPartial }).findOne()
 })
-// Head management
-if (document.value) {
+// Head management (only if doc = route path)
+if (document.value && document.value.path === useRoute().path && !document.value.partial) {
   const head = document.value.head || {}
 
   head.title = head.title || document.value.title
