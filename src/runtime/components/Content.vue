@@ -3,26 +3,26 @@ const { path } = defineProps({
   path: {
     type: String,
     default: () => useRoute().path
-  },
-  surround: {
-    type: Boolean,
-    default: false
   }
 })
 const isPartial = path.includes('/_')
 const { data: document } = await useAsyncData(`content-doc-${path}`, () => {
   return queryContent().where({ path, partial: isPartial }).findOne()
-  // TODO: fix partial
-  // TODO: add surround
 })
+// Head management
 if (document.value) {
-  useHead({
-    title: document.value.title,
-    meta: [
-      { name: 'description', content: document.value.description }
-      // TODO: read document.value.meta
-    ]
-  })
+  const head = document.value.head || {}
+
+  head.title = head.title || document.value.title
+  head.meta = head.meta || []
+  if (document.value.description && head.meta.filter(m => m.name === 'description').length === 0) {
+    head.meta.push({
+      name: 'description',
+      content: document.value.description
+    })
+  }
+
+  useHead(head)
 }
 </script>
 
