@@ -1,8 +1,8 @@
 <script setup>
-const route = useRoute()
+const { path } = useRoute()
 
 const { data: document } = await useAsyncData(`content-${route.path}`, () => {
-  return queryContent().where({ slug: route.path }).findOne()
+  return queryContent().where({ path }).findOne()
 })
 </script>
 

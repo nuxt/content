@@ -29,11 +29,38 @@ export const getContentQuery = (event: CompatibilityEvent) => {
     return parseQueryParams(query._params)
   }
 
-  // Using /api/_content/query?slug=...
+  // Using /api/_content/query?path=...&only=...
 
-  // Support both ?only=slug,title and ?only=slug&only=title
+  // Support both ?only=path,title and ?only=path&only=title
   if (typeof query.only === 'string' && query.only.includes(',')) {
     query.only = query.only.split(',').map(s => s.trim())
+  }
+  if (typeof query.without === 'string' && query.without.includes(',')) {
+    query.without = query.without.split(',').map(s => s.trim())
+  }
+
+  query.where = query.where || {}
+  // ?partial=true|false&draft=true|false&empty=true|false
+  for (const key of ['draft', 'partial', 'empty']) {
+    // ?partial=true|false
+    if (query[key] && ['true', 'false'].includes(query[key])) {
+      query.where[key] = query[key] === 'true'
+      delete query[key]
+    }
+  }
+  // ?sortyBy=size:asc
+  if (query.sortBy) {
+    query.sortBy = query.sortBy.split(',').map((s) => {
+      const [key, order] = s.split(':')
+      return [key, order || 'asc']
+    })
+  }
+  // ?[query]=...
+  const reservedKeys = ['partial', 'draft', 'only', 'without', 'where', 'sortBy', 'limit', 'skip']
+  for (const key of Object.keys(query)) {
+    if (reservedKeys.includes(key)) { continue }
+
+    query.where[key] = query[key]
   }
 
   return query

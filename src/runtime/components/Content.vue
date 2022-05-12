@@ -11,7 +11,7 @@ const { path } = defineProps({
 })
 const isPartial = path.includes('/_')
 const { data: document } = await useAsyncData(`content-doc-${path}`, () => {
-  return queryContent().where({ slug: path, partial: isPartial }).findOne()
+  return queryContent().where({ path, partial: isPartial }).findOne()
   // TODO: fix partial
   // TODO: add surround
 })

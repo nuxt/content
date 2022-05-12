@@ -7,35 +7,35 @@ const testCases = {
     title: '',
     draft: false,
     partial: false,
-    slug: '/'
+    path: '/'
   },
   'content:3.index.draft.md': {
     __description: 'Index file with position [Draft]',
     title: '',
     draft: true,
     partial: false,
-    slug: '/'
+    path: '/'
   },
   'content:1.blog:3.index.draft.md': {
     __description: 'Blog Index file with position [Draft]',
     title: '',
     draft: true,
     partial: false,
-    slug: '/blog'
+    path: '/blog'
   },
   'content:1.blog:_4.the-post.md': {
     __description: 'Blog post file with position [Partial]',
     title: 'The Post',
     draft: false,
     partial: true,
-    slug: '/blog/the-post'
+    path: '/blog/the-post'
   },
   ...['1.0.0', '1.1', '1', '1.x', '1.0.x', '1.0.0.x'].reduce((map, semver) => {
     map[`content:${semver}:doc.md`] = {
       title: 'Doc',
       draft: false,
       partial: false,
-      slug: `/${semver}/doc`,
+      path: `/${semver}/doc`,
       source: 'content',
       path: `${semver}/doc.md`
     }
@@ -46,14 +46,14 @@ const testCases = {
     title: 'Doc',
     draft: false,
     partial: false,
-    slug: '/one/two/three/four/five/doc'
+    path: '/one/two/three/four/five/doc'
   },
   'content:1.one:file?param=value#hash.md': {
     __description: 'Handle special chars in file name',
     title: 'File?param=value#hash',
     draft: false,
     partial: false,
-    slug: '/one/fileparamvaluehash'
+    path: '/one/fileparamvaluehash'
   }
 }
 
@@ -85,10 +85,10 @@ export const testPathMetaTransformer = () => {
           `Partial is not equal, expected: ${expected.partial}, actual: ${transformed.partial}`
         )
 
-        expect(transformed).toHaveProperty('slug')
+        expect(transformed).toHaveProperty('path')
         assert(
-          transformed.slug === expected.slug,
-          `Slug is not equal, expected: ${expected.slug}, actual: ${transformed.slug}`
+          transformed.path === expected.path,
+          `Path is not equal, expected: ${expected.path}, actual: ${transformed.path}`
         )
 
         expect(transformed).toHaveProperty('source')

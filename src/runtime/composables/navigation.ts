@@ -6,20 +6,20 @@ import { withContentBase } from './utils'
 
 export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
   const params = queryBuilder?.params()
-  const path = withContentBase(`/navigation/${hash(params)}`)
+  const apiPath = withContentBase(params ? `/navigation/${hash(params)}` : '/navigation')
 
-  if (process.server) {
+  if (!process.dev && process.server) {
     useHead({
       link: [
-        { rel: 'prefetch', href: path }
+        { rel: 'prefetch', href: apiPath }
       ]
     })
   }
-  return $fetch<Array<NavItem>>(path, {
+  return $fetch<Array<NavItem>>(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
-      _params: jsonStringify(params)
+      _params: jsonStringify(params || {})
     }
   })
 }

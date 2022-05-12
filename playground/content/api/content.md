@@ -113,9 +113,9 @@ Is the file marked as `draft` or not.
 
 Files with `.draft` suffix will be marked as draft.
 
-- **Slug**
+- **path**
 
-Slug for content based on its relative path on storage.
+path for content based on its relative path on storage.
 
 - **Title**
 

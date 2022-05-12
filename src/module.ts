@@ -335,7 +335,12 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers.push({
           method: 'get',
-          route: `/api/${options.base}/navigation/:query`,
+          route: `/api/${options.base}/navigation/:qid`,
+          handler: resolveRuntimeModule('./server/api/navigation')
+        })
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `/api/${options.base}/navigation`,
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })

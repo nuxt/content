@@ -81,8 +81,8 @@ describe('fixtures:basic', async () => {
     })
   })
 
-  test('features:multi-part-slug', async () => {
-    const html = await $fetch('/features/multi-part-slug')
+  test('features:multi-part-path', async () => {
+    const html = await $fetch('/features/multi-part-path')
     expect(html).contains('Persian')
   })
 

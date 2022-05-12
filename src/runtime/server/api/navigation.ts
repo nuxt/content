@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf.path.split('/').slice(0, -1).join('/')
+    const key = conf.path.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)
