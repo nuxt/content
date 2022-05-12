@@ -1,5 +1,5 @@
 {
-  "name": "example-queries-where",
+  "name": "example-use-route",
   "private": true,
   "scripts": {
     "build": "nuxt build",
