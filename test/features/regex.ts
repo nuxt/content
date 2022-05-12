@@ -9,7 +9,7 @@ export const testRegex = () => {
       const params = { where: { path: /^\/cats/ } }
       const list = await $fetch(`/api/_content/query/${hash(params)}`, {
         params: {
-          params: jsonStringify(params)
+          _params: jsonStringify(params)
         }
       })
 
@@ -23,7 +23,7 @@ export const testRegex = () => {
       const params = { where: { path: /^\/cats/ } }
       const list = await $fetch(`/api/_content/navigation/${hash(params)}`, {
         params: {
-          params: jsonStringify(params)
+          _params: jsonStringify(params)
         }
       })
 
