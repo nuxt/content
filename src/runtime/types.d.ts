@@ -38,6 +38,13 @@ export interface ParsedContentMeta {
 }
 
 export interface ParsedContent extends ParsedContentMeta{
+  /**
+   * Exceprt
+   */
+  exceprt?: any
+  /**
+   * Content body
+   */
   body: any
 }
 

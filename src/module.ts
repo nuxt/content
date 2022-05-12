@@ -236,6 +236,11 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers = nitroConfig.handlers || []
       nitroConfig.handlers.push({
         method: 'get',
+        route: `/api/${options.base}/query`,
+        handler: resolveRuntimeModule('./server/api/query')
+      })
+      nitroConfig.handlers.push({
+        method: 'get',
         route: `/api/${options.base}/query/:query`,
         handler: resolveRuntimeModule('./server/api/query')
       })

@@ -8,6 +8,6 @@ const { data: document } = await useAsyncData(`content-${route.path}`, () => {
 
 <template>
   <main>
-    <Content v-if="document" :document="document" />
+    <Document v-if="document" :document="document" />
   </main>
 </template>
