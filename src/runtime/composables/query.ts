@@ -23,7 +23,7 @@ const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: jsonStringify(params)
+      _params: jsonStringify(params)
     }
   })
 }

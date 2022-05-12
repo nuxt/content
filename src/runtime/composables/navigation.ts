@@ -19,7 +19,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: jsonStringify(params)
+      _params: jsonStringify(params)
     }
   })
 }
