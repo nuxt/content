@@ -1,6 +1,5 @@
 import { prefixStorage, createStorage } from 'unstorage'
 import overlay from 'unstorage/drivers/overlay'
-import memory from 'unstorage/drivers/memory'
 import { joinURL, withLeadingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { CompatibilityEvent } from 'h3'
@@ -9,18 +8,18 @@ import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
 // eslint-disable-next-line import/named
+import { getPreview, isPreview, isPreview } from './preview'
 import { useRuntimeConfig, useStorage } from '#imports'
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
 export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
 // Todo: handle multiple storage (one per token)
-export const draftStorage = memory()
+// TODO: Remove preview storage in favor of mounting driver unser `content:source:preview:` prefix
 export const previewStorage = createStorage({
   driver: overlay({
     layers: [
-      draftStorage,
-      cacheParsedStorage
+      sourceStorage
     ]
   })
 })
@@ -37,15 +36,12 @@ export const contentIgnores = useRuntimeConfig().content.ignores.map((p: any) =>
  * Filter predicate for ignore patterns
  */
 const contentIgnorePredicate = (key: string) =>
-  !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
+  !key.startsWith('preview:') && !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
 
-export const getContentsIds = async (prefix?: string) => {
+export const getContentsIds = async (event: CompatibilityEvent, prefix?: string) => {
   let keys = []
 
-  const isPreview = await cacheStorage.getItem('isPreview')
-  if (isPreview) {
-    keys = await previewStorage.getKeys(prefix)
-  } else if (isProduction) {
+  if (isProduction) {
     keys = await cacheParsedStorage.getKeys(prefix)
   }
 
@@ -54,26 +50,52 @@ export const getContentsIds = async (prefix?: string) => {
     keys = await sourceStorage.getKeys(prefix)
   }
 
+  if (isPreview(event)) {
+    const { key } = getPreview(event)
+    const previewPrefix = `preview:${key}:${prefix || ''}`
+    const previewKeys = await sourceStorage.getKeys(previewPrefix)
+
+    if (previewKeys.length) {
+      const keysSet = new Set(keys)
+      // TODO: refactor merge logic
+      await Promise.all(
+        previewKeys.map(async (key) => {
+          const item = await sourceStorage.getItem(key)
+          if (item === '__OVERLAY_REMOVED__') {
+            keysSet.delete(key.substring(previewPrefix.length))
+          } else {
+            keysSet.add(key.substring(previewPrefix.length))
+          }
+        })
+      )
+      keys = Array.from(keysSet)
+    }
+  }
+
   return keys.filter(contentIgnorePredicate)
 }
 
-export const getContentsList = async (prefix?: string) => {
-  const keys = await getContentsIds(prefix)
-  const contents = await Promise.all(keys.map(key => getContent(key)))
+export const getContentsList = async (event: CompatibilityEvent, prefix?: string) => {
+  const keys = await getContentsIds(event, prefix)
+  const contents = await Promise.all(keys.map(key => getContent(event, key)))
 
   return contents
 }
 
-export const getContent = async (id: string): Promise<ParsedContent> => {
+export const getContent = async (event: CompatibilityEvent, id: string): Promise<ParsedContent> => {
+  const contentId = id
   // Handle ignored id
   if (!contentIgnorePredicate(id)) {
-    return { id, body: null }
+    return { id: contentId, body: null }
   }
 
-  const isPreview = await cacheStorage.getItem('isPreview')
-  if (isPreview) {
-    const draft: any = await previewStorage.getItem(id)
-    return draft.parsed
+  if (isPreview(event)) {
+    const { key } = getPreview(event)
+    const previewId = `preview:${key}:${id}`
+    const draft = await sourceStorage.getItem(previewId)
+    if (draft) {
+      id = previewId
+    }
   }
 
   const cached: any = await cacheParsedStorage.getItem(id)
@@ -90,10 +112,10 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { id, body: null }
+    return { id: contentId, body: null }
   }
 
-  const parsedContent = await parse(id, body as string).then(transform)
+  const parsedContent = await parse(contentId, body as string).then(transform)
   const parsed = {
     ...meta,
     ...parsedContent
@@ -110,7 +132,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
+export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
   let params = (slug || {}) as Partial<QueryBuilderParams>
   if (typeof slug === 'string') {
     slug = withLeadingSlash(joinURL(slug, ...slugParts))
@@ -119,7 +141,7 @@ export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEven
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
-    getContentsList as unknown as () => Promise<T[]>
+    () => getContentsList(event) as unknown as Promise<T[]>
   )
 
   // Provide default sort order
