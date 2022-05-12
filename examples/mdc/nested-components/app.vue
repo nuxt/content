@@ -3,9 +3,7 @@
     <template #icon>
       Nuxt/content
     </template>
-    <main>
-      <Content />
-    </main>
+    <Content :key="$route.path" />
   </NuxtExampleLayout>
 </template>
 
