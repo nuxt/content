@@ -41,7 +41,7 @@ export interface ParsedContent extends ParsedContentMeta{
   /**
    * Exceprt
    */
-  exceprt?: any
+  excerpt?: any
   /**
    * Content body
    */
