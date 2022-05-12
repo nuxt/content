@@ -36,8 +36,7 @@ const testCases = {
       draft: false,
       partial: false,
       path: `/${semver}/doc`,
-      source: 'content',
-      path: `${semver}/doc.md`
+      source: 'content'
     }
     return map
   }, {}),
