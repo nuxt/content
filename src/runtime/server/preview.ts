@@ -1,6 +1,6 @@
 import type { CompatibilityEvent } from 'h3'
 import { useQuery, useCookie, deleteCookie } from 'h3'
-import { cacheStorage, previewStorage, sourceStorage } from './storage'
+import { cacheStorage, sourceStorage } from './storage'
 const publicConfig = useRuntimeConfig().public
 
 export const isPreview = (event: CompatibilityEvent) => {
@@ -31,19 +31,17 @@ export const togglePreviewMode = async (event) => {
         await sourceStorage.clear(`preview:${previewToken}`)
         for (const addition of draft.additions) {
           const { path, oldPath, content } = addition
+          const id = path.replace(/\//g, ':')
 
           if (oldPath) {
-            previewStorage.removeItem(oldPath)
+            sourceStorage.setMeta(`preview:${previewToken}:${id}`, { __deleted: true })
           }
 
-          const id = path.replace(/\//g, ':')
-          // const parsed = await parse(id, content).then(transform)
-
-          previewStorage.setItem(`preview:${previewToken}:${id}`, content)
-          previewStorage.setItem(`preview:${previewToken}:${id}$`, { mtime: draft.mtime })
+          sourceStorage.setItem(`preview:${previewToken}:${id}`, content)
+          sourceStorage.setMeta(`preview:${previewToken}:${id}`, { mtime: new Date(draft.mtime).toISOString() })
         }
         for (const deletion of draft.deletions) {
-          previewStorage.removeItem(deletion.path)
+          sourceStorage.setMeta(`preview:${previewToken}:${deletion.path}`, { __deleted: true })
         }
       }
     }

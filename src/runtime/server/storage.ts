@@ -1,5 +1,4 @@
-import { prefixStorage, createStorage } from 'unstorage'
-import overlay from 'unstorage/drivers/overlay'
+import { prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { CompatibilityEvent } from 'h3'
@@ -8,21 +7,12 @@ import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parse, transform } from './transformers'
 // eslint-disable-next-line import/named
-import { getPreview, isPreview, isPreview } from './preview'
+import { getPreview, isPreview } from './preview'
 import { useRuntimeConfig, useStorage } from '#imports'
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
-export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
-// Todo: handle multiple storage (one per token)
-// TODO: Remove preview storage in favor of mounting driver unser `content:source:preview:` prefix
-export const previewStorage = createStorage({
-  driver: overlay({
-    layers: [
-      sourceStorage
-    ]
-  })
-})
+
 const isProduction = process.env.NODE_ENV === 'production'
 
 /**
@@ -42,7 +32,7 @@ export const getContentsIds = async (event: CompatibilityEvent, prefix?: string)
   let keys = []
 
   if (isProduction) {
-    keys = await cacheParsedStorage.getKeys(prefix)
+    keys = await cacheStorage.getKeys(`parsed:${prefix}`)
   }
 
   // Later: handle preview mode, etc
@@ -57,11 +47,10 @@ export const getContentsIds = async (event: CompatibilityEvent, prefix?: string)
 
     if (previewKeys.length) {
       const keysSet = new Set(keys)
-      // TODO: refactor merge logic
       await Promise.all(
         previewKeys.map(async (key) => {
-          const item = await sourceStorage.getItem(key)
-          if (item === '__OVERLAY_REMOVED__') {
+          const meta = await sourceStorage.getMeta(key)
+          if (meta?.__deleted) {
             keysSet.delete(key.substring(previewPrefix.length))
           } else {
             keysSet.add(key.substring(previewPrefix.length))
@@ -98,7 +87,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     }
   }
 
-  const cached: any = await cacheParsedStorage.getItem(id)
+  const cached: any = await cacheStorage.getItem(`parsed:${id}`)
   if (isProduction && cached) {
     return cached.parsed
   }
@@ -121,7 +110,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     ...parsedContent
   }
 
-  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+  await cacheStorage.setItem(`parsed:${id}`, { parsed, hash }).catch(() => {})
 
   return parsed
 }
