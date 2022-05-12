@@ -25,10 +25,10 @@ const testCases = {
   },
   'content:1.blog:_4.the-post.md': {
     __description: 'Blog post file with position [Partial]',
-    title: 'The Post',
+    title: '4The Post',
     draft: false,
     partial: true,
-    path: '/blog/the-post'
+    path: '/blog/_4.the-post'
   },
   ...['1.0.0', '1.1', '1', '1.x', '1.0.x', '1.0.0.x'].reduce((map, semver) => {
     map[`content:${semver}:doc.md`] = {
@@ -98,13 +98,14 @@ export const testPathMetaTransformer = () => {
 
         expect(transformed).toHaveProperty('path')
         assert(
-          fullPath.startsWith(`${transformed.source}/${transformed.path}`),
-          `path is not equal, recieved: ${transformed.path}`
+          fullPath.startsWith(`${transformed.source}/${transformed.file}`),
+          `file is not equal, recieved: ${transformed.file}`
         )
+
         expect(transformed).toHaveProperty('extension')
         assert(
-          fullPath.startsWith(`${transformed.source}/${transformed.path}.${transformed.extension}`),
-          `extension is not equal, recieved: ${transformed.path}`
+          fullPath.endsWith(`.${transformed.extension}`),
+          `extension is not equal, recieved: ${transformed.extension}`
         )
 
         expect(transformed).toHaveProperty('title')

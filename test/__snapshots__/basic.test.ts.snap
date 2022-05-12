@@ -32,17 +32,14 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
   {
     "children": [
       {
-        "id": "content:cats:index.md",
         "path": "/cats",
         "title": "Cats list",
       },
       {
-        "id": "content:cats:persian.md",
         "path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "id": "content:cats:ragdoll.md",
         "path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
@@ -58,12 +55,10 @@ exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-do
   {
     "children": [
       {
-        "id": "content:dogs:bulldog.md",
         "path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "id": "content:dogs:German Shepherd.md",
         "path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
@@ -80,17 +75,14 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "id": "content:cats:index.md",
         "path": "/cats",
         "title": "Cats list",
       },
       {
-        "id": "content:cats:persian.md",
         "path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "id": "content:cats:ragdoll.md",
         "path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
@@ -101,12 +93,10 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "id": "content:dogs:bulldog.md",
         "path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "id": "content:dogs:German Shepherd.md",
         "path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
@@ -118,7 +108,6 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "id": "fa-ir:fa:index.md",
         "path": "/",
         "title": "سلام",
       },
@@ -129,7 +118,6 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "id": "content:index.md",
         "path": "/",
         "title": "Index",
       },
