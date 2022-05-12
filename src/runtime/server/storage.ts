@@ -1,10 +1,11 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
+import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parse, transform } from './transformers'
+import { parseContent } from './transformers'
 // eslint-disable-next-line import/named
 import { useRuntimeConfig, useStorage } from '#imports'
 
@@ -72,7 +73,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
     return { id, body: null }
   }
 
-  const parsedContent = await parse(id, body as string).then(transform)
+  const parsedContent = await parseContent(id, body as string)
   const parsed = {
     ...meta,
     ...parsedContent
@@ -86,14 +87,14 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
-  let body = slug as Partial<QueryBuilderParams>
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
+  let params = (slug || {}) as Partial<QueryBuilderParams>
   if (typeof slug === 'string') {
     slug = withLeadingSlash(joinURL(slug, ...slugParts))
-    body = {
+    params = {
       where: [{ slug: new RegExp(`^${slug}`) }]
     }
   }
@@ -101,7 +102,10 @@ export function queryContent<T = ParsedContent> (slug?: string | Partial<QueryBu
     getContentsList as unknown as () => Promise<T[]>
   )
 
-  return createQuery<T>(pipelineFetcher, body)
-    // Provide default sort order
-    .sortBy('path', 'asc')
+  // Provide default sort order
+  if (!params.sortBy?.length) {
+    params.sortBy = [['path', 'asc']]
+  }
+
+  return createQuery<T>(pipelineFetcher, params)
 }
