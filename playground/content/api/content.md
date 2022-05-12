@@ -29,6 +29,8 @@ export default defineNuxtConfig({
 
 ### `<Content>`
 
+### `<Document>`
+
 Render a document content.
 
 ```vue [pages/[...slug].vue]
@@ -38,11 +40,11 @@ const { data: document } = await useAsyncData(`doc-${route.path}`, () => queryCo
 </script>
 
 <template>
-  <Content :document="document" />
+  <Document v-model="document" />
 </template>
 ```
 
-### `<ContentRendererMarkdown>`
+### `<MarkdownRenderer>`
 
 > This component is used by `<Content>` under the hood.
 
@@ -50,7 +52,7 @@ Render a markdown content
 
 ```vue
 <template>
-  <ContentRendererMarkdown :document="document" />
+  <MarkdownRenderer :document="document" />
 </template>
 ```
 
@@ -111,9 +113,9 @@ Is the file marked as `draft` or not.
 
 Files with `.draft` suffix will be marked as draft.
 
-- **Slug**
+- **path**
 
-Slug for content based on its relative path on storage.
+path for content based on its relative path on storage.
 
 - **Title**
 

@@ -23,7 +23,7 @@ describe('fixtures:basic', async () => {
     const params = { first: true, where: { id } }
     const qid = hash(params)
     return $fetch(`${QUERY_ENDPOINT}/${qid}`, {
-      params: { params: JSON.stringify(params) }
+      params: { _params: JSON.stringify(params) }
     })
   }
 
@@ -31,7 +31,7 @@ describe('fixtures:basic', async () => {
     const params = { only: 'id' }
     const qid = hash(params)
     const docs = await $fetch(`${QUERY_ENDPOINT}/${qid}`, {
-      params: { params: JSON.stringify(params) }
+      params: { _params: JSON.stringify(params) }
     })
     const ids = docs.map(doc => doc.id)
 
@@ -81,8 +81,8 @@ describe('fixtures:basic', async () => {
     })
   })
 
-  test('features:multi-part-slug', async () => {
-    const html = await $fetch('/features/multi-part-slug')
+  test('features:multi-part-path', async () => {
+    const html = await $fetch('/features/multi-part-path')
     expect(html).contains('Persian')
   })
 

@@ -17,7 +17,7 @@ export function isTag (vnode: VNode | MarkdownNode, tag: string | symbol): boole
   if (vnode.type === tag) {
     return true
   }
-  // Vue 3 VNode `type` can be an object (tag is provided by ContentRendererMarkdown)
+  // Vue 3 VNode `type` can be an object (tag is provided by MarkdownRenderer)
   if (typeof vnode.type === 'object' && (vnode.type as any).tag === tag) {
     return true
   }

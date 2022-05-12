@@ -89,13 +89,13 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
  */
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
-  let params = (slug || {}) as Partial<QueryBuilderParams>
-  if (typeof slug === 'string') {
-    slug = withLeadingSlash(joinURL(slug, ...slugParts))
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, path?: string | Partial<QueryBuilderParams>, ...pathParts: string[]) {
+  let params = (path || {}) as Partial<QueryBuilderParams>
+  if (typeof path === 'string') {
+    path = withLeadingSlash(joinURL(path, ...pathParts))
     params = {
-      where: [{ slug: new RegExp(`^${slug}`) }]
+      where: [{ path: new RegExp(`^${path}`) }]
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
@@ -104,7 +104,7 @@ export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEven
 
   // Provide default sort order
   if (!params.sortBy?.length) {
-    params.sortBy = [['path', 'asc']]
+    params.sortBy = [['file', 'asc']]
   }
 
   return createQuery<T>(pipelineFetcher, params)

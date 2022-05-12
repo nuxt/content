@@ -14,12 +14,12 @@ const icon = computed(() => {
     <div v-if="navItem.children && navItem.children.length">
       <span>{{ icon }}</span> <span class="title">{{ navItem.title }}</span>
     </div>
-    <NuxtLink v-else :to="navItem.slug">
+    <NuxtLink v-else :to="navItem.path">
       <span>{{ icon }}</span> <span class="title">{{ navItem.title }}</span>
     </NuxtLink>
 
     <ul v-if="navItem.children">
-      <NavItem v-for="item of navItem.children" :key="item.slug" :nav-item="item" />
+      <NavItem v-for="item of navItem.children" :key="item.path" :nav-item="item" />
     </ul>
   </li>
 </template>

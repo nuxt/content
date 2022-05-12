@@ -1,7 +1,7 @@
 <template>
   <div>
     <NuxtLoadingBar />
-    <PageNav />
+    <PageNav v-if="$route.path !== '/playground'" />
     <hr>
     <NuxtPage />
   </div>

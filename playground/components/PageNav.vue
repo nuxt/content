@@ -13,7 +13,7 @@ const { data: navigation } = await useAsyncData('navigation', () => fetchContent
     <p>📌 Current page: <b>{{ $route.path }}</b></p>
 
     <ul>
-      <NavItem v-for="item of navigation" :key="item.slug" :nav-item="item" />
+      <NavItem v-for="item of navigation" :key="item.path" :nav-item="item" />
     </ul>
   </div>
 </template>

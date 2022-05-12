@@ -12,10 +12,10 @@ export const testNavigation = () => {
     })
 
     test('Get cats navigation', async () => {
-      const query = { where: [{ slug: /^\/cats/ }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const query = { where: [{ path: /^\/cats/ }] }
+      const list = await $fetch(`/api/_content/navigation/${hash(query)}?path=/cats`, {
         params: {
-          params: jsonStringify(query)
+          _params: jsonStringify(query)
         }
       })
 
@@ -23,10 +23,10 @@ export const testNavigation = () => {
     })
 
     test('Get dogs navigation', async () => {
-      const query = { where: [{ slug: /^\/dogs/ }] }
+      const query = { where: [{ path: /^\/dogs/ }] }
       const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
         params: {
-          params: jsonStringify(query)
+          _params: jsonStringify(query)
         }
       })
 
