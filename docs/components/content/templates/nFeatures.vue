@@ -25,8 +25,8 @@ defineProps({
       </div>
       <div class="w-3/4 sm:w-full mx-auto pb-20 grid gap-20 sm:grid-cols-2 lg:grid-cols-4">
         <div v-for="feature in features" :key="feature.icon">
-          <div class="h-32 w-32 mx-auto flex justify-center items-center text-green-500 border border-gray-200 rounded-full p-4">
-            <Icon :name="feature.icon || 'uil:icons'" class="h-16 w-16 mx-auto text-green-500" />
+          <div class="transition-all h-32 w-32 mx-auto flex justify-center items-center text-green-500 border-double border-4 border-gray-100 rounded-full p-4">
+            <Icon :name="feature.icon || 'uil:icons'" class="h-16 w-16 mx-auto" />
           </div>
           <h3 class="text-xl font-semibold py-4">
             {{ feature.title }}
