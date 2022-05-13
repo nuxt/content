@@ -104,7 +104,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     return { id: contentId, body: null }
   }
 
-  const parsedContent = await parseContent(id, body as string)
+  const parsedContent = await parseContent(contentId, body as string)
   const parsed = {
     ...meta,
     ...parsedContent

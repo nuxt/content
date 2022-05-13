@@ -1,6 +1,6 @@
 import type { CompatibilityEvent } from 'h3'
-import { useQuery, useCookie, deleteCookie } from 'h3'
-import { cacheStorage, sourceStorage } from './storage'
+import { useQuery, useCookie } from 'h3'
+import { defineDriver } from 'unstorage'
 const publicConfig = useRuntimeConfig().public
 
 export const isPreview = (event: CompatibilityEvent) => {
@@ -14,38 +14,53 @@ export const getPreview = (event) => {
   return { key }
 }
 
-export const togglePreviewMode = async (event) => {
-  const previewToken = useQuery(event).previewToken || useCookie(event, 'previewToken')
-  if (publicConfig.admin?.apiURL && previewToken) {
-    const draft = await $fetch(`/api/projects/preview?token=${previewToken}`, { baseURL: publicConfig.admin?.apiURL }).catch(_err => null)
-    // If invalid token
-    if (!draft) {
-      // Clear cookie
-      deleteCookie(event, 'previewToken', null)
-      await cacheStorage.setItem('isPreview', false)
-    } else {
-      const previewMtime = await cacheStorage.getItem('isPreview')
+const adminDriver = defineDriver((options) => {
+  const { baseURL } = options
 
-      if (previewMtime !== draft.mtime) {
-        await cacheStorage.setItem('isPreview', draft.mtime)
-        await sourceStorage.clear(`preview:${previewToken}`)
+  let memory = {}
+  let preview = null
+
+  return {
+    async getKeys (prefix: string) {
+      if (!prefix) {
+        return []
+      }
+
+      const [previewToken] = prefix.split(':')
+      const draft = await $fetch(`/api/projects/preview?token=${previewToken}`, { baseURL }).catch(_err => null)
+      if (!draft) {
+        return []
+      }
+      if (preview?.mtime !== draft.mtime) {
+        memory = {}
+        preview = draft
         for (const addition of draft.additions) {
           const { path, oldPath, content } = addition
           const id = path.replace(/\//g, ':')
 
+          // Mark old path as deleted
           if (oldPath) {
-            sourceStorage.setMeta(`preview:${previewToken}:${id}`, { __deleted: true })
+            memory[`${previewToken}:${id}`] = { __deleted: true }
           }
 
-          sourceStorage.setItem(`preview:${previewToken}:${id}`, content)
-          sourceStorage.setMeta(`preview:${previewToken}:${id}`, { mtime: new Date(draft.mtime).toISOString() })
+          memory[`${previewToken}:${id}`] = content
+          memory[`${previewToken}:${id}$`] = { mtime: new Date(draft.mtime).toISOString() }
         }
         for (const deletion of draft.deletions) {
-          sourceStorage.setMeta(`preview:${previewToken}:${deletion.path}`, { __deleted: true })
+          memory[`${previewToken}:${deletion.pathid}`] = { __deleted: true }
         }
       }
+      return Object.keys(memory).filter(key => !key.endsWith('$'))
+    },
+    getItem (key: string) {
+      return Promise.resolve(memory[key])
+    },
+    getMeta (key: string) {
+      return Promise.resolve(memory[`${key}$`])
     }
-  } else {
-    await cacheStorage.setItem('isPreview', false)
   }
-}
+})
+// TODO: Move it to admin module
+useStorage().mount('content:source:preview', adminDriver({
+  baseURL: publicConfig.admin?.apiURL || 'https://dev-api.nuxt.com'
+}))

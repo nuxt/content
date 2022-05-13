@@ -1,14 +1,11 @@
 import { defineEventHandler } from 'h3'
 import { serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
-import { togglePreviewMode } from '../preview'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
 import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
   const query: Partial<QueryBuilderParams> = getContentQuery(event)
-
-  await togglePreviewMode(event)
 
   const contents = await serverQueryContent(event, query)
     .where({
