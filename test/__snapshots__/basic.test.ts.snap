@@ -32,22 +32,19 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
   {
     "children": [
       {
-        "id": "content:cats:index.md",
-        "slug": "/cats",
+        "path": "/cats",
         "title": "Cats list",
       },
       {
-        "id": "content:cats:persian.md",
-        "slug": "/cats/persian",
+        "path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "id": "content:cats:ragdoll.md",
-        "slug": "/cats/ragdoll",
+        "path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
     ],
-    "slug": "/cats",
+    "path": "/cats",
     "title": "Cats list",
   },
 ]
@@ -58,18 +55,16 @@ exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-do
   {
     "children": [
       {
-        "id": "content:dogs:bulldog.md",
-        "slug": "/dogs/bulldog",
+        "path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "id": "content:dogs:German Shepherd.md",
-        "slug": "/dogs/german-shepherd",
+        "path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
     "icon": "🐶",
-    "slug": "/dogs",
+    "path": "/dogs",
     "title": "Dogs List",
   },
 ]
@@ -80,61 +75,54 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
   {
     "children": [
       {
-        "id": "content:cats:index.md",
-        "slug": "/cats",
+        "path": "/cats",
         "title": "Cats list",
       },
       {
-        "id": "content:cats:persian.md",
-        "slug": "/cats/persian",
+        "path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "id": "content:cats:ragdoll.md",
-        "slug": "/cats/ragdoll",
+        "path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
     ],
-    "slug": "/cats",
+    "path": "/cats",
     "title": "Cats list",
   },
   {
     "children": [
       {
-        "id": "content:dogs:bulldog.md",
-        "slug": "/dogs/bulldog",
+        "path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "id": "content:dogs:German Shepherd.md",
-        "slug": "/dogs/german-shepherd",
+        "path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
     "icon": "🐶",
-    "slug": "/dogs",
+    "path": "/dogs",
     "title": "Dogs List",
   },
   {
     "children": [
       {
-        "id": "fa-ir:fa:index.md",
-        "slug": "/",
+        "path": "/",
         "title": "سلام",
       },
     ],
-    "slug": "/",
+    "path": "/",
     "title": "سلام",
   },
   {
     "children": [
       {
-        "id": "content:index.md",
-        "slug": "/",
+        "path": "/",
         "title": "Index",
       },
     ],
-    "slug": "/",
+    "path": "/",
     "title": "Index",
   },
 ]

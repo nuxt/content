@@ -2,10 +2,10 @@ import { createError, defineEventHandler } from 'h3'
 import type { QueryBuilderParams } from '../../types'
 import { togglePreviewMode } from '../preview'
 import { serverQueryContent } from '../storage'
-import { useApiParams } from '../params'
+import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
-  const query: Partial<QueryBuilderParams> = useApiParams(event)
+  const query: Partial<QueryBuilderParams> = getContentQuery(event)
 
   await togglePreviewMode(event)
 

@@ -101,50 +101,50 @@ describe('Database Provider', () => {
     assert(result.every((item: any) => item.author.includes('Wilson') || item.author.includes('William')) === true)
   })
 
-  test('Surround with slug (default)', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
+  test('Surround with path (default)', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b')
 
-    assert(result[0].slug === '/a')
-    assert(result[1].slug === '/c')
+    assert(result[0].path === '/a')
+    assert(result[1].path === '/c')
   })
 
-  test('Surround more that 1 item with slug', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
+  test('Surround more that 1 item with path', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b', { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
     assert(result[0] === null)
-    assert(result[1].slug === '/a')
-    assert(result[2].slug === '/c')
+    assert(result[1].path === '/a')
+    assert(result[2].path === '/c')
   })
 
   test('Surround with object', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
-    assert(result[0].slug === '/a')
-    assert(result[1].slug === '/b')
+    assert(result[0].path === '/a')
+    assert(result[1].path === '/b')
     assert(result[2] === null)
   })
 
   test('Chain multiple where conditions', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, slug: '/a' }, { id: 2, slug: '/b' }, { id: 3, slug: '/c' }] as any[]))
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })
     const singleWhereResult = await query.find()
 
     assert((singleWhereResult as Array<any>).length === 2)
-    assert(singleWhereResult[0].slug === '/a')
-    assert(singleWhereResult[1].slug === '/b')
+    assert(singleWhereResult[0].path === '/a')
+    assert(singleWhereResult[1].path === '/b')
 
     // Test with second condition
-    const doubleWhereResult = await query.where({ slug: { $contains: 'b' } }).find()
+    const doubleWhereResult = await query.where({ path: { $contains: 'b' } }).find()
 
     assert((doubleWhereResult as Array<any>).length === 1)
-    assert(doubleWhereResult[0].slug === '/b')
+    assert(doubleWhereResult[0].path === '/b')
   })
 })

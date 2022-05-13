@@ -10,7 +10,7 @@ defineProps({
 <template>
   <ul class="navigation">
     <li v-for="(item, index) in navigationTree" :key="index">
-      <NuxtLink :to="item.slug">
+      <NuxtLink :to="item.path">
         {{ item.title }}
       </NuxtLink>
       <AppNavigation v-if="item.children" :navigation-tree="item.children" class="sub-navigation" />

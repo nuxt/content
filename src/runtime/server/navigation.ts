@@ -10,18 +10,17 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   const { navigation } = useRuntimeConfig().content
   const pickNavigationFields = pick(['title', ...navigation.fields])
   const nav = contents
-    .sort((a, b) => a.slug.localeCompare(b.slug))
+    .sort((a, b) => a.file.localeCompare(b.file))
     .reduce((nav, content) => {
-      const parts = content.slug.substring(1).split('/')
+      const parts = content.path.substring(1).split('/')
       const idParts = content.id.split(':').slice(1)
       const isIndex = !!idParts[idParts.length - 1].match(/([1-9][0-9]*\.)?index.md/g)
 
       const getNavItem = (content: ParsedContentMeta) => {
         return {
-          id: content.id,
           title: content.title,
-          slug: content.slug,
           path: content.path,
+          file: content.file,
           children: [],
           ...pickNavigationFields(content),
           ...(content.draft ? { draft: true } : {})
@@ -35,11 +34,9 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         const indexItem = getNavItem(content)
         navItem.children.push(indexItem)
 
-        const conf = configs[indexItem.path.split('/').slice(0, -1).join('/')]
+        const p = indexItem.path.split('/').slice(0, -1).join('/') || '/'
+        const conf = configs[p]
         Object.assign(indexItem, pickNavigationFields(conf))
-
-        // Set parent as directory
-        delete navItem.id
       }
 
       // First-level item, push it straight to nav
@@ -50,19 +47,19 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
 
       // Find siblings of current item and push them to parent children key
       const siblings = parts.slice(0, -1).reduce((nodes, part, i) => {
-        // Slug of current path
-        const currentPathSlug = '/' + parts.slice(0, i + 1).join('/')
+        // Part of current path
+        const currentPathPart = '/' + parts.slice(0, i + 1).join('/')
 
         // Find parent node
-        let parent: PrivateNavItem = nodes.find(n => n.slug === currentPathSlug)
+        let parent: PrivateNavItem = nodes.find(n => n.path === currentPathPart)
 
         // Create dummy parent if not found
         if (!parent) {
-          const conf = configs[idParts.slice(0, i + 1).join('/')]
+          const conf = configs[currentPathPart]
           parent = {
-            slug: currentPathSlug,
             title: generateTitle(part),
-            path: idParts.slice(0, i + 1).join('/'),
+            path: currentPathPart,
+            file: content.file,
             children: [],
             ...pickNavigationFields(conf)
           }
@@ -83,7 +80,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear (nav: PrivateNavItem[]) {
-  const sorted = nav.sort((a, b) => a.path.localeCompare(b.path))
+  const sorted = nav.sort((a, b) => a.file.localeCompare(b.file))
 
   for (const item of sorted) {
     if (item.children.length) {
@@ -94,7 +91,7 @@ function sortAndClear (nav: PrivateNavItem[]) {
       delete item.children
     }
     // Remove path after sort
-    delete item.path
+    delete item.file
   }
 
   return nav

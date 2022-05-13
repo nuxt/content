@@ -3,10 +3,10 @@ import { serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
 import { togglePreviewMode } from '../preview'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
-import { useApiParams } from '../params'
+import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
-  const query: Partial<QueryBuilderParams> = useApiParams(event)
+  const query: Partial<QueryBuilderParams> = getContentQuery(event)
 
   await togglePreviewMode(event)
 
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf.path.split('/').slice(0, -1).join('/')
+    const key = conf.path.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)

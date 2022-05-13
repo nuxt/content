@@ -10,11 +10,13 @@ const describeId = (id: string) => {
 
   const [, filename, extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
   parts[parts.length - 1] = filename
+  const path = parts.join('/')
 
   return {
     source,
-    path: parts.join('/'),
-    extension
+    path,
+    extension,
+    file: extension ? `${path}.${extension}` : path
   }
 }
 
@@ -23,7 +25,7 @@ export default {
   extentions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = useRuntimeConfig().content || {}
-    const { source, path, extension } = describeId(content.id)
+    const { source, file, path, extension } = describeId(content.id)
     const parts = path.split('/')
 
     // Check first part for locale name
@@ -32,14 +34,14 @@ export default {
     const filePath = parts.join('/')
 
     return {
-      slug: generateSlug(filePath),
+      path: generatePath(filePath),
       draft: isDraft(filePath),
       partial: isPartial(filePath),
       locale,
       ...content,
       title: content.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
       source,
-      path,
+      file,
       extension
     }
   }
@@ -56,18 +58,18 @@ const isDraft = (path: string): boolean => !!path.match(/\.draft(\/|\.|$)/)
 const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => part.match(/^_.*/))
 
 /**
- * Generate slug from file name
+ * Generate path from file name
  *
  * @param path file full path
  * @returns generated slug
  */
-const generateSlug = (path: string): string =>
+const generatePath = (path: string): string =>
   withLeadingSlash(withoutTrailingSlash(path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')))
 
 /**
- * generate title from file slug
+ * generate title from file path
  */
-export const generateTitle = (slug: string) => slug.split(/[\s-]/g).map(pascalCase).join(' ')
+export const generateTitle = (path: string) => path.split(/[\s-]/g).map(pascalCase).join(' ')
 
 /**
  * Clean up special keywords from path part
@@ -80,10 +82,6 @@ export function refineUrlPart (name: string): string {
   }
   return (
     name
-      /**
-       * Remove hidden keyword
-       */
-      .replace(/^[_.-]/, '')
       /**
        * Remove numbering
        */

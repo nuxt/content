@@ -5,7 +5,7 @@ import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parse, transform } from './transformers'
+import { parseContent } from './transformers'
 // eslint-disable-next-line import/named
 import { getPreview, isPreview } from './preview'
 import { useRuntimeConfig, useStorage } from '#imports'
@@ -104,7 +104,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     return { id: contentId, body: null }
   }
 
-  const parsedContent = await parse(contentId, body as string).then(transform)
+  const parsedContent = await parseContent(id, body as string)
   const parsed = {
     ...meta,
     ...parsedContent
@@ -120,13 +120,13 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
  */
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, slug?: string | Partial<QueryBuilderParams>, ...slugParts: string[]) {
-  let params = (slug || {}) as Partial<QueryBuilderParams>
-  if (typeof slug === 'string') {
-    slug = withLeadingSlash(joinURL(slug, ...slugParts))
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, path?: string | Partial<QueryBuilderParams>, ...pathParts: string[]) {
+  let params = (path || {}) as Partial<QueryBuilderParams>
+  if (typeof path === 'string') {
+    path = withLeadingSlash(joinURL(path, ...pathParts))
     params = {
-      where: [{ slug: new RegExp(`^${slug}`) }]
+      where: [{ path: new RegExp(`^${path}`) }]
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
@@ -135,7 +135,7 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
 
   // Provide default sort order
   if (!params.sortBy?.length) {
-    params.sortBy = [['path', 'asc']]
+    params.sortBy = [['file', 'asc']]
   }
 
   return createQuery<T>(pipelineFetcher, params)
