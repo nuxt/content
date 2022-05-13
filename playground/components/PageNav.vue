@@ -1,21 +1,23 @@
 <script setup lang="ts">
+const route = useRoute()
+const open = ref(false)
 const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
 </script>
 
 <template>
-  <div>
-    <h1>
+  <details style="padding: 1rem; margin-bottom: 0 !important;" :open="open" @click.prevent="open = !open">
+    <summary>
       <NuxtLink to="/">
         Navigation
       </NuxtLink>
-    </h1>
+    </summary>
 
-    <p>📌 Current page: <b>{{ $route.path }}</b></p>
-
+    <span>📌 Current page: <b>{{ $route.path }}</b></span>
     <ul>
+      <NavItem :nav-item="{ path: '/playground', title: 'Playground', icon: '📝' }" />
       <NavItem v-for="item of navigation" :key="item.path" :nav-item="item" />
     </ul>
-  </div>
+  </details>
 </template>
 
 <style scoped>

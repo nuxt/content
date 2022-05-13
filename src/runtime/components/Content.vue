@@ -42,8 +42,7 @@ watch(
 </script>
 
 <template>
-  <Document v-if="document" :value="document" :tag="tag" />
-  <component :is="tag" v-else>
-    <slot name="not-found" />
-  </component>
+  <Document :value="document" :tag="tag">
+    <slot name="empty" />
+  </Document>
 </template>
