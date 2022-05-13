@@ -1,5 +1,6 @@
 import type { H } from 'mdast-util-to-hast'
 import { all } from 'mdast-util-to-hast'
+// eslint-disable-next-line import/no-named-as-default
 import htmlTags from 'html-tags'
 import { kebabCase } from 'scule'
 import { getTagName } from './utils'

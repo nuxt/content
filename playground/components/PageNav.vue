@@ -2,6 +2,7 @@
 const route = useRoute()
 const open = ref(false)
 const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
+watch(() => route.path, () => (open.value = false))
 </script>
 
 <template>

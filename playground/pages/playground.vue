@@ -1,7 +1,5 @@
 <script setup>
-const INITIAL_CODE = ''
-const INITIAL_CODE_YML = ''
-const INITIAL_CODE_BK = `# MDC
+const INITIAL_CODE = `# MDC
 
 MDC stands for _**M**ark**D**own **C**omponents_.
 
@@ -11,7 +9,7 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 - [Install Nuxt Content](/docs/getting-started)
 - [Explore the MDC syntax](/docs/syntax)
 `
-const content = ref(INITIAL_CODE_BK)
+const content = ref(INITIAL_CODE)
 
 const { data: document, refresh } = await useAsyncData('playground', async () => {
   try {
