@@ -1,7 +1,6 @@
 <script lang="ts">
-import { defineComponent, getCurrentInstance, useSlots } from 'vue'
 import type { Slot } from 'vue'
-import { useUnwrap } from '#imports'
+import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap } from '#imports'
 
 /**
  * Markdown component
