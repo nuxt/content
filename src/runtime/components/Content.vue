@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHead, useRoute, watch, computed, useAsyncData } from '#imports'
+import { useHead, useRoute, watch, computed, useAsyncData, queryContent } from '#imports'
 
 const {
   path = useRoute().path,
@@ -14,7 +14,7 @@ const isPartial = computed(() => path.includes('/_'))
 const { data: document } = await useAsyncData(`content-doc-${path}`, () => queryContent().where({ path, partial: isPartial.value }).findOne())
 
 watch(
-  () => document,
+  document,
   (newDoc) => {
     if (!newDoc) { return }
 
@@ -22,7 +22,7 @@ watch(
 
     // Head management (only if doc = route path)
     if (path && path === useRoute().path && !partial) {
-      head.title = head.title || document.value.title
+      head.title = head.title || newDoc.title
       head.meta = head.meta || []
 
       if (description && head.meta.filter(m => m.name === 'description').length === 0) {
