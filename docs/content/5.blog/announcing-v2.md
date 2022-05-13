@@ -4,7 +4,7 @@ navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
 cover: /announcing-v2.png
-date: 2022-05-10
+date: 2022-05-17
 authors:
   - name: Sebastien Chopin
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
