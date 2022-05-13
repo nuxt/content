@@ -16,7 +16,7 @@ defineProps({
           <Markdown use="tag" unwrap />
           <Icon name="heroicons-solid:sparkles" class="h-4 w-4 text-amber-400" />
         </p>
-        <h2 class="font-semibold text-3xl sm:text-4xl lg:text-5xl py-4">
+        <h2 class="font-semibold text-3xl sm:text-4xl lg:text-5xl py-4 lg:leading-tight">
           <Markdown use="title" unwrap />
         </h2>
         <p class="text-lg text-gray-400 dark:text-gray-300 py-4">
