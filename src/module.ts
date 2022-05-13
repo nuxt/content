@@ -10,6 +10,7 @@ import {
   useLogger,
   addTemplate
 } from '@nuxt/kit'
+// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'

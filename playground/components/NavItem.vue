@@ -31,9 +31,9 @@ ul {
 }
 li {
   list-style-type: none;
+  padding: 0.15rem 0.5rem;
 }
 a {
-  color: black;
   text-decoration: none;
 }
 .title {

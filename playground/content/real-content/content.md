@@ -40,7 +40,7 @@ const { data: document } = await useAsyncData(`doc-${route.path}`, () => queryCo
 </script>
 
 <template>
-  <Document v-model="document" />
+  <Document :value="document" />
 </template>
 ```
 

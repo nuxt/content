@@ -1,5 +1,5 @@
 <template>
-  <Document v-model="doc" />
+  <Document :value="doc" />
 </template>
 
 <script setup lang="ts">

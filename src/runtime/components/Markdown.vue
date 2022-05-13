@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent, getCurrentInstance, useSlots, Slot } from 'vue'
-import { useUnwrap } from '#imports'
+import type { Slot } from 'vue'
+import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap } from '#imports'
 
 /**
  * Markdown component
@@ -29,31 +29,43 @@ export default defineComponent({
   setup (props) {
     const { parent } = getCurrentInstance()
     const { between } = useSlots()
-    const { flatUnwrap } = useUnwrap()
 
-    const slot = typeof props.use === 'string' ? parent?.slots[props.use] || parent?.parent?.slots[props.use] : props.use as Slot
+    const tags = computed(() => {
+      if (typeof props.unwrap === 'string') { return props.unwrap.split(' ') }
+      return ['*']
+    })
 
-    if (!slot) {
-      return () => []
+    return {
+      tags,
+      between,
+      parent
     }
+  },
+  render ({ use, unwrap, between, tags, parent }) {
+    try {
+      const slot: Slot = typeof use === 'string' ? parent?.slots[use] || parent?.parent?.slots[use] : use
 
-    if (props.unwrap) {
-      const tags = props.unwrap === true ? ['*'] : props.unwrap.split(' ')
-      return () => {
-        const unwrapped = flatUnwrap(slot(), tags)
-        return between
-          ? unwrapped.flatMap((vnode, index) => index === 0 ? [vnode] : [between(), vnode])
-          : unwrapped.reduce((acc, item) => {
-            // Concat raw texts to prevent hydration mismatches
-            (typeof item.children === 'string' && acc.length && typeof acc[acc.length - 1].children === 'string')
-              ? acc[acc.length - 1].children += item.children
-              : acc.push(item)
-            return acc
-          }, [])
-      }
+      if (!slot) { return [] }
+
+      if (!unwrap) { return [slot()] }
+
+      const { flatUnwrap } = useUnwrap()
+
+      const unwrapped = flatUnwrap(slot(), tags)
+
+      return between
+        ? unwrapped.flatMap((vnode, index) => index === 0 ? [vnode] : [between(), vnode])
+        : unwrapped.reduce((acc, item) => {
+        // Concat raw texts to prevent hydration mismatches
+          (typeof item.children === 'string' && acc.length && typeof acc[acc.length - 1].children === 'string')
+            ? acc[acc.length - 1].children += item.children
+            : acc.push(item)
+          return acc
+        }, [])
+    } catch (e) {
+      // Catching errors to allow content reactivity
+      return []
     }
-
-    return () => slot()
   }
 })
 </script>
