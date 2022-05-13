@@ -98,6 +98,14 @@ body {
   margin-right: 8px;
   color: rgba(0, 0, 0, 0.8);
   font-size: 14px;
+  line-height: 1rem;
+  transition: none;
+  text-align: center;
+  font-weight: normal;
+  box-shadow: none;
+  display: inline-block;
+  width: auto;
+  margin: 0;
 }
 #__nuxt_preview button:hover,
 #__nuxt_preview button:focus {
