@@ -2,7 +2,7 @@
 layout: article
 navigation: false
 title: 'Announcing Nuxt Content v2'
-description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content with the support of Nuxt 3.'
+description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
 cover: /announcing-v2.png
 date: 2022-05-10
 authors:
@@ -25,25 +25,24 @@ tags:
 category: Announcements
 ---
 
-2 years after the [release of Content v1](https://github.com/nuxt/content/releases/tag/v1.0.0), we are proud to announce the second version of Nuxt Content with the support of [Nuxt 3](https://v3.nuxtjs.org).
+2 years after the [release of Content v1](https://github.com/nuxt/content/releases/tag/v1.0.0), we are proud to announce the second version of Nuxt Content built for [Nuxt 3](https://v3.nuxtjs.org).
 
-It has been rewritten in TypScript and comes with new features:
+On top of the Nuxt 3 support, we couldn't help adding new features:
 
 ::list{icon="heroicons-outline:badge-check"}
 - The [MDC Syntax](/guide/writing/mdc) for Components in Markdown
-- [Multi sources](/api/configuration#sources) (experimental)
-- Locale support (i18n)
+- Internationalization support
 - [Navigation generation](/guide/displaying/navigation)
+- [Fully typed](/guide/displaying/typescript)
+- [Multi sources](/api/configuration#sources) (experimental)
 - Live preview edition (coming soon)
 ::
 
-The repository is open source under the MIT license and available on GitHub: [nuxt/content](https://github.com/nuxt/content)
-
 ## What is Nuxt Content?
 
-Nuxt Content is a [Nuxt module](https://v3.nuxtjs.org/guide/features/modules) allowing you to have a `content/` directory where you can place your Markdown, YAML, CSV and JSON files.
+Nuxt Content is a [Nuxt module](https://v3.nuxtjs.org/guide/features/modules) that reads Markdown, YAML, CSV and JSON files in the `content/` directory.
 
-Let’s imagine a content directory with the following structure:
+Let’s imagine a `content/` directory with the following structure:
 
 ::code-group
   ```[Directory Structure]
@@ -55,11 +54,31 @@ Let’s imagine a content directory with the following structure:
 
   My first paragraph.
 
-  https://content.nuxtjs.org
+  <https://content.nuxtjs.org>
   ```
 ::
 
-You can query the `hello.md` document by using the `queryContent()` composable:
+Create a `pages/[...slug].vue` file with the [`<Content>`](/guide/displaying/rendering) component:
+
+```vue [pages/[...slug].vue]
+<template>
+  <Content />
+</template>
+```
+
+And voilà!
+
+::code-group
+  ::code-block{label="https://wonderful-app.com/hello" preview}
+    # Hello World
+
+    My first paragraph.
+
+    https://content.nuxtjs.org
+  ::
+::
+
+You can also query the `hello.md` document by using the `queryContent()` composable:
 
 ```ts
 const document = await queryContent('hello').findOne()
@@ -150,80 +169,64 @@ const document = await queryContent('hello').findOne()
   ::
 ::
 
-This document can be displayed using the [`<Content>`](/guide/displaying/rendering) component:
-
-```html
-<Content :document="document" />
-```
-
-This will render:
-
-::code-group
-  ::code-block{label="Preview"}
-    # Hello World
-
-    My first paragraph.
-
-    https://content.nuxtjs.org
-  ::
-::
-
-Best is to view it in video:
-
-::video-player{loop playsinline controls}
----
-sources:
-- src: https://res.cloudinary.com/nuxt/video/upload/q_auto/v1652198986/hello-content-world_d7byjh.webm
-  type: video/webm
-- src: https://res.cloudinary.com/nuxt/video/upload/q_auto/v1652198986/hello-content-world_d7byjh.mp4
-  type: video/mp4
-- src: https//res.cloudinary.com/nuxt/video/upload/q_auto/v1652198986/hello-content-world_d7byjh.ogv
-  type: video/ogg
-poster: https://res.cloudinary.com/nuxt/video/upload/v1652198986/hello-content-world_d7byjh.jpg
----
-::
-
 You can do much more than fetching only one document, take a look at the [querying content](/guide/displaying/querying) section to discover the full potential.
-
 
 ## Introducing MDC
 
-In Content v1, you were able to use Vue components directly into the Markdown using the HTML syntax but this had limitations:
+We wanted to leverage the power of Vue components in a content edition experience. After months of testing on the [NuxtJS website itself](https://nuxtjs.org), we are happy to introduce the [**M**ark**D**own **C**omponents syntax](/guide/writing/mdc).
 
-::list{icon="heroicons-outline:emoji-sad"}
-- Only kebab case naming
-- No `<self-closing/>` tags
-- Extra blank lines around the HTML tags for having Markdown in slots
-- No named slots
-- Props had to live in document front-matter = no scope
-- No inline components combined with Markdown
+::list{icon="heroicons-outline:badge-check"}
+
+- Use your own Vue components in Markdown.
+- Customize them with props.
+- Write Markdown content in slots.
+- (And of course, you can nest them).
+- Experience Vite HMR for Markdown and MDC.
 ::
-
-To solve all the issues above, we created a new Markdown syntax for leveraging the power of Vue components: [The MarkDown Components syntax](/guide/writing/mdc).
 
 ::alert
 MDC is Markdown, so nothing changes and you can keep using the `.md` extension.
 ::
 
-You can replace all your HTML tags with a colon naming convention:
+### Show me how it works!
 
 ::code-group
-  ```html [Content v1]
-  <my-button>hello</my-button>
-  ```
-  ```md [Content v2]
-  :my-button[hello]
 
-  or
-
-  ::my-button
-  hello
+  ```md [content/index.md]
+  ::my-button{type="success"}
+    ✏️ Start **writing!**
   ::
   ```
+
+  ::code-block{label="Preview" preview}
+    <MyButton type="success">✏️ Start <strong>writing!</strong></MyButton>
+  ::
+
+  ```vue [components/MyButton.vue]
+    <script setup>
+      defineProps({
+        type: {
+          type: String,
+          default: 'info'
+        }
+      })
+      </script>
+
+      <template>
+        <button :class="type">
+          <Markdown unwrap="p" />
+        </button>
+      </template>
+  ```
+
 ::
 
 Head over to the [MDC guide](/guide/writing/mdc) to discover the full power of Markdown with Vue components.
 
 ## Thank you
 
-We are thanksful from all the contributions we received in Content v1 and are impatient to see what you will build with Nuxt 3 and Content v2 :blush:
+We are thankful for all the contributions we received in Content v1 and are impatient to see what you will build with Nuxt 3 and Content v2 :blush:
+
+::alert
+The repository is open source under the MIT license and available on GitHub: [nuxt/content](https://github.com/nuxt/content)
+::
