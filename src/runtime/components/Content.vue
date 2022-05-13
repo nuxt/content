@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHead, useRoute, watch, computed, useAsyncData } from '#imports'
+import { useHead, useRoute, watch, computed, useAsyncData, queryContent } from '#imports'
 
 const {
   path = useRoute().path,
