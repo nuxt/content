@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, watch, h, useSlots, cloneVNode } from 'vue'
+import { defineComponent, watch, h, useSlots } from 'vue'
 import { MarkdownRenderer } from '#components'
 
 export default defineComponent({
@@ -79,18 +79,14 @@ export default defineComponent({
       */
     }
 
-    try {
-      return h(
-        tag,
-        {},
-        // Render default / not found slot
-        slots?.empty?.() ||
-        // Render empty node
-        []
-      )
-    } catch (e) {
-      return h(tag)
-    }
+    return h(
+      tag,
+      {},
+      // Render default / empty slot
+      slots?.empty?.() ||
+      // Render empty node
+      []
+    )
   }
 })
 </script>
