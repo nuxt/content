@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'development') {
   alias['@nuxt/content'] = '../src/module.ts'
 }
 
+// API test
 export default defineNuxtConfig({
   generate: {
     routes: []
