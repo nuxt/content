@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { apply, get, omit, pick, sortByKey } from '../../../src/runtime/query/match/utils'
+import { apply, get, omit, pick, sortList } from '../../../src/runtime/query/match/utils'
 
 describe('query utils', () => {
   test('Omit', () => {
@@ -68,25 +68,25 @@ describe('query utils', () => {
       { a: 1, b: 1 }
     ]
 
-    expect(sortByKey(data, 'a', 'asc')).toEqual([
+    expect(sortList(data, { a: 1 })).toEqual([
       { a: 1, b: 2 },
       { a: 1, b: 1 },
       { a: 2, b: 1 }
     ])
 
-    expect(sortByKey(data, 'a', 'desc')).toEqual([
+    expect(sortList(data, { a: 0 })).toEqual([
       { a: 2, b: 1 },
       { a: 1, b: 2 },
       { a: 1, b: 1 }
     ])
 
-    expect(sortByKey(data, 'b', 'asc')).toEqual([
+    expect(sortList(data, { b: 1 })).toEqual([
       { a: 2, b: 1 },
       { a: 1, b: 1 },
       { a: 1, b: 2 }
     ])
 
-    expect(sortByKey(data, 'b', 'desc')).toEqual([
+    expect(sortList(data, { b: 0 })).toEqual([
       { a: 1, b: 2 },
       { a: 2, b: 1 },
       { a: 1, b: 1 }
@@ -97,21 +97,21 @@ describe('query utils', () => {
     const data = [{ data: { a: 1, b: 2 } }, { data: { a: 2, b: 1 } }, { data: { a: 1, b: 1 } }]
 
     // sort by a descending
-    const aDesc = sortByKey(data, 'data.a', 'desc')
-    expect(sortByKey(aDesc, 'data.b', 'desc')).toEqual([
+    const aDesc = sortList(data, { 'data.a': 0 })
+    expect(sortList(aDesc, { 'data.b': 0 })).toEqual([
       { data: { a: 1, b: 2 } },
       { data: { a: 2, b: 1 } },
       { data: { a: 1, b: 1 } }
     ])
 
     // Sort again by b asc.
-    expect(sortByKey(aDesc, 'data.b', 'asc')).toEqual([
+    expect(sortList(aDesc, { 'data.b': 1 })).toEqual([
       { data: { a: 2, b: 1 } },
       { data: { a: 1, b: 1 } },
       { data: { a: 1, b: 2 } }
     ])
 
     // Sort again by a desc.
-    expect(sortByKey(aDesc, 'data.a', 'desc')).toEqual(aDesc)
+    expect(sortList(aDesc, { 'data.a': 0 })).toEqual(aDesc)
   })
 })

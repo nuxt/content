@@ -1,4 +1,4 @@
-import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams } from '../types'
+import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
 import { ensureArray } from './match/utils'
 
 const arrayParams = ['sortBy', 'where', 'only', 'without']
@@ -32,7 +32,7 @@ export const createQuery = <T>(
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...ensureArray(params.where), q]),
-    sortBy: $set('sortBy', (field, direction) => [...ensureArray(params.sortBy), [field, direction]]),
+    sort: $set('sort', (sort: SortOptions) => [...ensureArray(params.sort), ...ensureArray(sort)]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
     // find

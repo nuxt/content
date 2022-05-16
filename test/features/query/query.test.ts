@@ -40,15 +40,15 @@ describe('Database Provider', () => {
   })
 
   test('Apply sort', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').find()
+    const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).find()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(pipelineFetcher).sortBy('name', 'desc').find()
+    const nameDesc = await createQuery(pipelineFetcher).sort({ name: 0 }).find()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 
   test('Apply sort and skip', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sortBy('name', 'asc').skip(2).find()
+    const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).skip(2).find()
     assert(nameAsc[0].name === database[2].name)
   })
 
