@@ -52,24 +52,30 @@ describe('Database Provider', () => {
     assert(nameAsc[0].name === database[2].name)
   })
 
-  test('Apply sort $options', async () => {
+  test('Apply sort $sensitivity', async () => {
     const textOrder = ['aab', 'aaB', 'aAb', 'aAB', 'Aab', 'AaB', 'AAb', 'AAB']
 
-    // lower case first
     const sensitivityCase = await createQuery(pipelineFetcher).sort({ text: 1, $sensitivity: 'case' }).find()
-    const caseLower = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'lower' }).find()
-    expect(sensitivityCase).toMatchObject(caseLower)
     textOrder.forEach((text, index) => {
       expect(sensitivityCase[index].text).toBe(text)
+    })
+  })
+
+  test('Apply sort $caseFirst', async () => {
+    const textOrder = ['aab', 'aaB', 'aAb', 'aAB', 'Aab', 'AaB', 'AAb', 'AAB']
+
+    const caseLower = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'lower' }).find()
+    textOrder.forEach((text, index) => {
       expect(caseLower[index].text).toBe(text)
     })
-
     // upper case first
     const caseUpper = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'upper' }).find()
     textOrder.reverse().forEach((text, index) => {
       expect(caseUpper[index].text).toBe(text)
     })
+  })
 
+  test('Apply sort $numeric', async () => {
     // sort string alphabetically
     const nonNumericSort = await createQuery(pipelineFetcher).sort({ numberString: 1 }).find()
     const nonNumericOrder = [1, 10, 100, 2, 20, 3, 30, 4]
