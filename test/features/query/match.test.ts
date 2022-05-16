@@ -165,4 +165,26 @@ describe('Match', () => {
       expect(match(item, { 'nested.users.0': { $not: /maha/ } })).toBe(true)
     })
   })
+
+  describe('Numerical operators', () => {
+    test('$gt', () => {
+      expect(match(item, { id: { $gt: 0 } })).toBe(true)
+      expect(match(item, { id: { $gt: 1 } })).toBe(false)
+    })
+
+    test('$gte', () => {
+      expect(match(item, { id: { $gte: 1 } })).toBe(true)
+      expect(match(item, { id: { $gte: 2 } })).toBe(false)
+    })
+
+    test('$lt', () => {
+      expect(match(item, { id: { $lt: 2 } })).toBe(true)
+      expect(match(item, { id: { $lt: 1 } })).toBe(false)
+    })
+
+    test('$lte', () => {
+      expect(match(item, { id: { $lte: 1 } })).toBe(true)
+      expect(match(item, { id: { $lte: 0 } })).toBe(false)
+    })
+  })
 })

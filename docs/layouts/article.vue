@@ -1,7 +1,8 @@
 <script setup lang="ts">
+// eslint-disable-next-line import/named
 import { useDocus } from '#imports'
 
-const { theme, page } = useDocus()
+const { page } = useDocus()
 </script>
 
 <template>
