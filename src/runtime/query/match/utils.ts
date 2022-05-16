@@ -1,4 +1,4 @@
-import { SortFields, SortParams } from '../../types'
+import { SortOptions } from '../../types'
 
 /**
  * Retrive nested value from object by path
@@ -29,10 +29,7 @@ export const apply = (fn: (d: any) => any) => (data: any) => Array.isArray(data)
 /**
  * Sort list of items by givin options
  */
-export const sortList = (data: any[], params: SortFields & SortParams) => {
-  if (params.length === 0) {
-    return data
-  }
+export const sortList = (data: any[], params: SortOptions) => {
   const comperable = new Intl.Collator(params.$locale as string, {
     numeric: params.$numeric as boolean,
     caseFirst: params.$caseFirst as string,
