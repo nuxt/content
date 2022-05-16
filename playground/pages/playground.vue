@@ -1,4 +1,6 @@
 <script setup>
+const PARSE_SERVER = 'https://mdc.nuxt.dev/api/parse'
+
 const INITIAL_CODE = `# MDC
 
 MDC stands for _**M**ark**D**own **C**omponents_.
@@ -13,8 +15,9 @@ const content = ref(INITIAL_CODE)
 
 const { data: document, refresh } = await useAsyncData('playground', async () => {
   try {
-    return await $fetch('/api/parse', {
+    return await $fetch(PARSE_SERVER, {
       method: 'POST',
+      cors: true,
       body: {
         id: 'content:_file.md',
         content: content.value
@@ -24,6 +27,7 @@ const { data: document, refresh } = await useAsyncData('playground', async () =>
     return document.value
   }
 })
+
 const tab = ref('Preview')
 
 const tabs = ref(['Preview', 'AST'])
