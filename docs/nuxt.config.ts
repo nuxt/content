@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   generate: {
     routes: []
   },
+  modules: ['@nuxthq/admin'],
   alias,
   extends: ['./node_modules/@docus/docs-theme'],
   github: {
