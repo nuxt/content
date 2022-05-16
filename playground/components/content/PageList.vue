@@ -14,6 +14,6 @@
 </template>
 
 <script setup lang="ts">
-const { find } = queryContent().where({ $not: { path: '/' } }).sortBy('id', 'asc')
+const { find } = queryContent().where({ $not: { path: '/' } }).sort({ id: 1 })
 const { data: pages } = await useAsyncData('pages-list', find)
 </script>
