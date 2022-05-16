@@ -29,30 +29,32 @@ export default defineNuxtConfig({
 
 ### `<Content>`
 
-### `<Document>`
+### `<ContentRenderer>`
 
-Render a document content.
+> This component is used by `<Content>` under the hood.
+
+Render any document content.
 
 ```vue [pages/[...slug].vue]
 <script setup>
 const route = useRoute()
-const { data: document } = await useAsyncData(`doc-${route.path}`, () => queryContent(route.path).findOne())
+const { data } = await useAsyncData(`doc-${route.path}`, () => queryContent(route.path).findOne())
 </script>
 
 <template>
-  <Document :value="document" />
+  <ContentRenderer :value="data" />
 </template>
 ```
 
 ### `<MarkdownRenderer>`
 
-> This component is used by `<Content>` under the hood.
+> This component is used by `<ContentRenderer>` under the hood.
 
-Render a markdown content
+Render a markdown content.
 
 ```vue
 <template>
-  <MarkdownRenderer :document="document" />
+  <MarkdownRenderer :value="data" />
 </template>
 ```
 

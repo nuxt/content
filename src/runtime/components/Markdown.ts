@@ -1,4 +1,3 @@
-<script lang="ts">
 import type { Slot } from 'vue'
 import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap } from '#imports'
 
@@ -63,9 +62,10 @@ export default defineComponent({
           return acc
         }, [])
     } catch (e) {
+      console.log({ e })
+
       // Catching errors to allow content reactivity
       return []
     }
   }
 })
-</script>
