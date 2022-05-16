@@ -127,28 +127,28 @@ function createOperators (match: (...args: any[]) => boolean, operators: Record<
      * Check if item is less than condition
      */
     $lt: (item, condition) => {
-      return +item < +condition
+      return item < condition
     },
 
     /**
      * Check if item is less than or equal to condition
      */
     $lte: (item, condition) => {
-      return +item <= +condition
+      return item <= condition
     },
 
     /**
      * Check if item is greater than condition
      */
     $gt: (item, condition) => {
-      return +item > +condition
+      return item > condition
     },
 
     /**
      * Check if item is greater than or equal to condition
      */
     $gte: (item, condition) => {
-      return +item >= +condition
+      return item >= condition
     },
 
     ...(operators || {})
