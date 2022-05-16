@@ -8,7 +8,7 @@ Query server exposes one API:
 
 - `/api/_content/query`
 
-  Query content in all sources, should be a `POST` request. `GET` requests can be made but are limited to simple values (`slug`, `first`, `skip` and `limit`).
+  Query content in all sources, should be a `POST` request. `GET` requests can be made but are limited to simple values (`path`, `first`, `skip` and `limit`).
 
   ```ts
   $fetch('/api/_content/query', {
@@ -18,7 +18,7 @@ Query server exposes one API:
       first: false, // set to true for returning only one document
       skip: 0,
       limit: 0,
-      sortBy: [],
+      sort: [],
       where: [],
       only:[],
       without:[]
@@ -32,7 +32,7 @@ Query server exposes one API:
 
 **@nuxt/content** provide composables to work with content server:
 
-- `queryContent(...slugParts)`
+- `queryContent(...pathParts)`
 
   Query and fetch list of contents based on actions and conditions provides.
 

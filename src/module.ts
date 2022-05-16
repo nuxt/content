@@ -7,8 +7,10 @@ import {
   addAutoImport,
   addComponentsDir,
   templateUtils,
-  useLogger
+  useLogger,
+  addTemplate
 } from '@nuxt/kit'
+// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
@@ -236,7 +238,12 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers = nitroConfig.handlers || []
       nitroConfig.handlers.push({
         method: 'get',
-        route: `/api/${options.base}/query/:query`,
+        route: `/api/${options.base}/query/:qid`,
+        handler: resolveRuntimeModule('./server/api/query')
+      })
+      nitroConfig.handlers.push({
+        method: 'get',
+        route: `/api/${options.base}/query`,
         handler: resolveRuntimeModule('./server/api/query')
       })
       nitroConfig.handlers.push({
@@ -264,12 +271,7 @@ export default defineNuxtModule<ModuleOptions>({
         ]
       })
 
-      nitroConfig.autoImport = nitroConfig.autoImport || {}
-      nitroConfig.autoImport.imports = nitroConfig.autoImport.imports || []
-      nitroConfig.autoImport.imports.push(...[
-        { name: 'parse', as: 'contentParse', from: resolveRuntimeModule('./server/transformers') },
-        { name: 'transform', as: 'contentTransform', from: resolveRuntimeModule('./server/transformers') }
-      ])
+      nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
 
       nitroConfig.virtual = nitroConfig.virtual || {}
       nitroConfig.virtual['#content/virtual/transformers'] = [
@@ -297,8 +299,22 @@ export default defineNuxtModule<ModuleOptions>({
       level: 999,
       global: true
     })
-    // Register user global components
 
+    addTemplate({
+      filename: 'types/content.d.ts',
+      getContents: () => [
+        'declare module \'#content/server\' {',
+        `  const serverQueryContent: typeof import('${resolve('./runtime/server')}').serverQueryContent`,
+        `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
+        '}'
+      ].join('\n')
+    })
+
+    nuxt.hook('prepare:types', (options) => {
+      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/content.d.ts') })
+    })
+
+    // Register user global components
     const globalComponents = resolve(nuxt.options.srcDir, 'components/content')
     const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
     if (dirStat && dirStat.isDirectory()) {
@@ -330,7 +346,12 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers.push({
           method: 'get',
-          route: `/api/${options.base}/navigation/:query`,
+          route: `/api/${options.base}/navigation/:qid`,
+          handler: resolveRuntimeModule('./server/api/navigation')
+        })
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `/api/${options.base}/navigation`,
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })
@@ -389,6 +410,10 @@ export default defineNuxtModule<ModuleOptions>({
 
       // Broadcast a message to the server to refresh the page
       const broadcast = debounce((event: WatchEvent, key: string) => {
+        // Ignore events that are not related to content
+        if (!key.startsWith(MOUNT_PREFIX)) {
+          return
+        }
         key = key.substring(MOUNT_PREFIX.length)
         logger.info(`${key} ${event}d`)
         ws.broadcast({ event, key })

@@ -3,6 +3,16 @@ import { resolve } from 'pathe'
 import contentModule from '../src/module' // eslint-disable-line
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://unpkg.com/@picocss/pico@latest/css/pico.min.css'
+        }
+      ]
+    }
+  },
   rootDir: __dirname,
   modules: [contentModule],
   content: {

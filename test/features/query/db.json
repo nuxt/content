@@ -6,6 +6,15 @@
   { "id": 5, "name": "e", "to": "e", "category": "c3", "nested": { "users": ["Sergey"] } },
   { "id": 6, "name": "f", "to": "f", "category": "c3", "nested": { "users": ["Alexandre"] } },
   { "id": 7, "name": "g", "to": "g", "category": "c4", "nested": { "users": ["Daniel"] } },
+  
+  { "text": "aab", "numberString": "1", "number": 1 },
+  { "text": "aaB", "numberString": "2", "number": 2 },
+  { "text": "aAb", "numberString": "3", "number": 3 },
+  { "text": "aAB", "numberString": "4", "number": 4 },
+  { "text": "Aab", "numberString": "10", "number": 10 },
+  { "text": "AaB", "numberString": "20", "number": 20 },
+  { "text": "AAb", "numberString": "30", "number": 30 },
+  { "text": "AAB", "numberString": "100", "number": 100 },
 
   {
     "quote": "What is the difference between unethical and ethical advertising? Unethical advertising uses falsehoods to deceive the public; ethical advertising uses truth to deceive the public.",

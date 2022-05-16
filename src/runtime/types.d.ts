@@ -38,6 +38,13 @@ export interface ParsedContentMeta {
 }
 
 export interface ParsedContent extends ParsedContentMeta{
+  /**
+   * Excerpt
+   */
+  excerpt?: any
+  /**
+   * Content body
+   */
   body: any
 }
 
@@ -106,6 +113,45 @@ export interface ContentTransformer {
 /**
  * Query
  */
+export interface SortParams {
+  /**
+   * Locale specifier for sorting
+   * A string with a BCP 47 language tag
+   *
+   * @default undefined
+   */
+  $locale?: string
+  /**
+   * Whether numeric collation should be used, such that "1" < "2" < "10".
+   * Possible values are `true` and `false`;
+   *
+   * @default false
+   */
+  $numeric?: boolean
+  /**
+   * Whether upper case or lower case should sort first.
+   * Possible values are `"upper"`, `"lower"`, or `"false"`
+   *
+   * @default "depends on locale"
+   */
+  $caseFirst?: 'upper' | 'lower' | 'false'
+  /**
+   * Which differences in the strings should lead to non-zero result values. Possible values are:
+   *  - "base": Only strings that differ in base letters compare as unequal. Examples: a ≠ b, a = á, a = A.
+   *  - "accent": Only strings that differ in base letters or accents and other diacritic marks compare as unequal. Examples: a ≠ b, a ≠ á, a = A.
+   *  - "case": Only strings that differ in base letters or case compare as unequal. Examples: a ≠ b, a = á, a ≠ A.
+   *  - "variant": Strings that differ in base letters, accents and other diacritic marks, or case compare as unequal. Other differences may also be taken into consideration. Examples: a ≠ b, a ≠ á, a ≠ A.
+   *
+   * @default "variant"
+   */
+  $sensitivity?: 'base' | 'accent' | 'case' | 'variant'
+}
+
+export interface SortFields {
+  [field: string]: 0 | 1
+}
+
+export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
   slug: string
@@ -114,7 +160,7 @@ export interface QueryBuilderParams {
   limit: number
   only: string[]
   without: string[]
-  sortBy: Array<string[]>
+  sort: SortOptions[]
   where: object[]
   surround: {
     query: string | object
@@ -125,56 +171,56 @@ export interface QueryBuilderParams {
   [key: string]: any
 }
 
-export interface QueryBuilder {
+export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder
+  only(keys: string | string[]): QueryBuilder<T>
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder
+  without(keys: string | string[]): QueryBuilder<T>
 
   /**
    * Sort results
    */
-  sortBy(field: string, direction: 'asc' | 'desc'): QueryBuilder
+  sort(options: SortOptions): QueryBuilder<T>
 
   /**
    * Filter results
    */
-  where(query: any): QueryBuilder
+  where(query: any): QueryBuilder<T>
 
   /**
    * Limit number of results
    */
-  limit(count: number): QueryBuilder
+  limit(count: number): QueryBuilder<T>
 
   /**
    * Skip number of results
    */
-  skip(count: number): QueryBuilder
+  skip(count: number): QueryBuilder<T>
 
   /**
    * Fetch list of contents
    */
-  find(): Promise<Array<ParsedContentMeta>>
+  find(): Promise<Array<T>>
 
   /**
    * Fetch first matched content
    */
-  findOne(): Promise<ParsedContentMeta>
+  findOne(): Promise<T>
 
   /**
    * Fetch sorround contents
    */
-  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<ParsedContentMeta>>
+  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
 
   /**
    * Filter contents based on locale
    */
-  locale(locale: string): QueryBuilder
+  locale(locale: string): QueryBuilder<T>
 
   /**
    * Retrieve query builder params

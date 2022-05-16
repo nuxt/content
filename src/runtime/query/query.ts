@@ -1,17 +1,21 @@
-import type { DatabaseFetcher, ParsedContentMeta, QueryBuilder, QueryBuilderParams } from '../types'
+import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
 import { ensureArray } from './match/utils'
 
-export const createQuery = (
-  fetcher: DatabaseFetcher<ParsedContentMeta>,
+const arrayParams = ['sort', 'where', 'only', 'without']
+
+export const createQuery = <T>(
+  fetcher: DatabaseFetcher<T>,
   queryParams?: Partial<QueryBuilderParams>
-): QueryBuilder => {
+): QueryBuilder<T> => {
   const params = {
-    sortBy: [],
-    ...queryParams,
-    where: queryParams?.where ? ensureArray(queryParams.where) : [],
-    only: queryParams?.only ? ensureArray(queryParams.only) : [],
-    without: queryParams?.without ? ensureArray(queryParams.without) : []
+    ...queryParams
   } as QueryBuilderParams
+
+  for (const key of arrayParams) {
+    if (params[key]) {
+      params[key] = ensureArray(params[key])
+    }
+  }
 
   /**
    * Factory function to create a parameter setter
@@ -23,18 +27,18 @@ export const createQuery = (
     }
   }
 
-  const query: QueryBuilder = {
+  const query: QueryBuilder<T> = {
     params: () => Object.freeze(params),
     only: $set('only', ensureArray),
     without: $set('without', ensureArray),
-    where: $set('where', (q: any) => [...(params.where), q]),
-    sortBy: $set('sortBy', (field, direction) => [...params.sortBy, [field, direction]]),
+    where: $set('where', (q: any) => [...ensureArray(params.where), q]),
+    sort: $set('sort', (sort: SortOptions) => [...ensureArray(params.sort), ...ensureArray(sort)]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
     // find
-    findOne: () => fetcher({ ...params, first: true }) as Promise<ParsedContentMeta>,
-    find: () => fetcher(params) as Promise<Array<ParsedContentMeta>>,
-    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<ParsedContentMeta>>,
+    findOne: () => fetcher({ ...params, first: true }) as Promise<T>,
+    find: () => fetcher(params) as Promise<Array<T>>,
+    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<T>>,
     // locale
     locale: (locale: string) => query.where({ locale })
   }

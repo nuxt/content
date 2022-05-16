@@ -1,13 +1,13 @@
 import { defineEventHandler } from 'h3'
-import { queryContent } from '../storage'
+import { serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
 import { ParsedContentMeta, QueryBuilderParams } from '../../types'
-import { useApiParams } from '../params'
+import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
-  const query: Partial<QueryBuilderParams> = useApiParams(event)
+  const query: Partial<QueryBuilderParams> = getContentQuery(event)
 
-  const contents = await queryContent(query)
+  const contents = await serverQueryContent(event, query)
     .where({
       /**
        * Partial contents are not included in the navigation
@@ -17,12 +17,12 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  const dirConfigs = await queryContent().where({ path: /\/_dir$/i, partial: true }).find()
+  const dirConfigs = await serverQueryContent(event).where({ path: /\/_dir$/i, partial: true }).find()
   const configs = dirConfigs.reduce((configs, conf) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf.path.split('/').slice(0, -1).join('/')
+    const key = conf.path.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)

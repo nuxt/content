@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 import { hash } from 'ohash'
+import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testNavigation = () => {
   describe('navigation', () => {
@@ -11,9 +12,10 @@ export const testNavigation = () => {
     })
 
     test('Get cats navigation', async () => {
-      const list = await $fetch(`/api/_content/navigation/${hash({ slug: '/cats' })}`, {
+      const query = { where: [{ path: /^\/cats/ }] }
+      const list = await $fetch(`/api/_content/navigation/${hash(query)}?path=/cats`, {
         params: {
-          params: JSON.stringify({ slug: '/cats' })
+          _params: jsonStringify(query)
         }
       })
 
@@ -21,9 +23,10 @@ export const testNavigation = () => {
     })
 
     test('Get dogs navigation', async () => {
-      const list = await $fetch(`/api/_content/navigation/${hash({ slug: '/dogs' })}`, {
+      const query = { where: [{ path: /^\/dogs/ }] }
+      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
         params: {
-          params: JSON.stringify({ slug: '/dogs' })
+          _params: jsonStringify(query)
         }
       })
 

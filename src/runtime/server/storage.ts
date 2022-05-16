@@ -1,9 +1,11 @@
+import { joinURL, withLeadingSlash } from 'ufo'
 import { prefixStorage } from 'unstorage'
 import { hash as ohash } from 'ohash'
-import type { QueryBuilderParams, ParsedContent } from '../types'
+import type { CompatibilityEvent } from 'h3'
+import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parse, transform } from './transformers'
+import { parseContent } from './transformers'
 // eslint-disable-next-line import/named
 import { useRuntimeConfig, useStorage } from '#imports'
 
@@ -71,7 +73,7 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
     return { id, body: null }
   }
 
-  const parsedContent = await parse(id, body as string).then(transform)
+  const parsedContent = await parseContent(id, body as string)
   const parsed = {
     ...meta,
     ...parsedContent
@@ -85,18 +87,25 @@ export const getContent = async (id: string): Promise<ParsedContent> => {
 /**
  * Query contents
  */
-export const queryContent = (
-  body?: string | Partial<QueryBuilderParams>,
-  params?: Partial<QueryBuilderParams>
-) => {
-  if (typeof body === 'string') {
-    body = {
-      slug: body,
-      ...params
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (_event: CompatibilityEvent, path?: string | Partial<QueryBuilderParams>, ...pathParts: string[]) {
+  let params = (path || {}) as Partial<QueryBuilderParams>
+  if (typeof path === 'string') {
+    path = withLeadingSlash(joinURL(path, ...pathParts))
+    params = {
+      where: [{ path: new RegExp(`^${path}`) }]
     }
   }
+  const pipelineFetcher = createPipelineFetcher<T>(
+    getContentsList as unknown as () => Promise<T[]>
+  )
 
-  const pipelineFetcher = createPipelineFetcher(getContentsList)
+  // Provide default sort order
+  if (!params.sort?.length) {
+    params.sort = [{ file: 1, $numeric: true }]
+  }
 
-  return createQuery(pipelineFetcher, body)
+  return createQuery<T>(pipelineFetcher, params)
 }

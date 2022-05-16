@@ -1,13 +1,13 @@
 <script setup>
-const route = useRoute()
+const { path } = useRoute()
 
 const { data: document } = await useAsyncData(`content-${route.path}`, () => {
-  return queryContent().where({ slug: route.path }).findOne()
+  return queryContent().where({ path }).findOne()
 })
 </script>
 
 <template>
   <main>
-    <Content v-if="document" :document="document" />
+    <Document v-if="document" :document="document" />
   </main>
 </template>
