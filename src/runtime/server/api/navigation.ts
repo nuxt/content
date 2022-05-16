@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
        */
       partial: false
     })
+    .sort({ path: 1, $numeric: true })
     .find()
 
   const dirConfigs = await serverQueryContent(event).where({ path: /\/_dir$/i, partial: true }).find()

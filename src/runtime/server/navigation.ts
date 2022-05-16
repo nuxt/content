@@ -10,7 +10,6 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   const { navigation } = useRuntimeConfig().content
   const pickNavigationFields = pick(['title', ...navigation.fields])
   const nav = contents
-    .sort((a, b) => a.path.localeCompare(b.path))
     .reduce((nav, content) => {
       const parts = content.path.substring(1).split('/')
       const idParts = content.id.split(':').slice(1)

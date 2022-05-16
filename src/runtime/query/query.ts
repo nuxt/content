@@ -1,7 +1,7 @@
 import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
 import { ensureArray } from './match/utils'
 
-const arrayParams = ['sortBy', 'where', 'only', 'without']
+const arrayParams = ['sort', 'where', 'only', 'without']
 
 export const createQuery = <T>(
   fetcher: DatabaseFetcher<T>,

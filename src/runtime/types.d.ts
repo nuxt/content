@@ -151,7 +151,7 @@ export interface SortFields {
   [field: string]: 0 | 1
 }
 
-export type SortOptions = SortParams & SortFields
+export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
   slug: string
