@@ -1,4 +1,4 @@
-import { assert, describe, test } from 'vitest'
+import { assert, describe, expect, test } from 'vitest'
 import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
 import { createQuery } from '../../../src/runtime/query/query'
 import database from './db.json'
@@ -50,6 +50,39 @@ describe('Database Provider', () => {
   test('Apply sort and skip', async () => {
     const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).skip(2).find()
     assert(nameAsc[0].name === database[2].name)
+  })
+
+  test('Apply sort $options', async () => {
+    const textOrder = ['aab', 'aaB', 'aAb', 'aAB', 'Aab', 'AaB', 'AAb', 'AAB']
+
+    // lower case first
+    const sensitivityCase = await createQuery(pipelineFetcher).sort({ text: 1, $sensitivity: 'case' }).find()
+    const caseLower = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'lower' }).find()
+    expect(sensitivityCase).toMatchObject(caseLower)
+    textOrder.forEach((text, index) => {
+      expect(sensitivityCase[index].text).toBe(text)
+      expect(caseLower[index].text).toBe(text)
+    })
+
+    // upper case first
+    const caseUpper = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'upper' }).find()
+    textOrder.reverse().forEach((text, index) => {
+      expect(caseUpper[index].text).toBe(text)
+    })
+
+    // sort string alphabetically
+    const nonNumericSort = await createQuery(pipelineFetcher).sort({ numberString: 1 }).find()
+    const nonNumericOrder = [1, 10, 100, 2, 20, 3, 30, 4]
+    nonNumericOrder.forEach((number, index) => {
+      expect(nonNumericSort[index].numberString).toBe(String(number))
+    })
+
+    // sort string numerically
+    const numericSort = await createQuery(pipelineFetcher).sort({ numberString: 1, $numeric: true }).find()
+    const numericOrder = [1, 2, 3, 4, 10, 20, 30, 100]
+    numericOrder.forEach((number, index) => {
+      expect(numericSort[index].numberString).toBe(String(number))
+    })
   })
 
   test('Apply $in', async () => {
