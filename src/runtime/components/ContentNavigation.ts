@@ -45,6 +45,6 @@ export default defineComponent({
     }
 
     // Render default slot with navigation as `data`
-    return slots?.default?.({ data, refresh }) || h('pre', undefined, JSON.stringify(data, null, 2))
+    return slots?.default?.({ navigation: data, refresh }) || h('pre', undefined, JSON.stringify(data, null, 2))
   }
 })

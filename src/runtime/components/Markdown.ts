@@ -62,8 +62,6 @@ export default defineComponent({
           return acc
         }, [])
     } catch (e) {
-      console.log({ e })
-
       // Catching errors to allow content reactivity
       return []
     }

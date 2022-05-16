@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- This showcases renderless usage of <Content /> component-->
-    <Content tag="div" :query="{ where: { path: '/test' } }" :renderer="false" :sync="false">
+    <Content tag="div" :query="{ where: { path: '/_test' } }" :renderer="false" :sync="false">
       <template #default="{ data }">
         <pre>{{ data }}</pre>
 

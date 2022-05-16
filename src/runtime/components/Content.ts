@@ -1,8 +1,8 @@
 
-import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
+import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
 import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
-import { useHead, useRoute, watch, computed, useAsyncData, queryContent } from '#imports'
+import { useHead, useRoute, computed, useAsyncData, queryContent } from '#imports'
 
 export default defineComponent({
   props: {
@@ -80,52 +80,49 @@ export default defineComponent({
       type
     } = toRefs(props)
 
+    const route = useRoute()
+
     const isPartial = computed(() => path.value.includes('/_'))
 
     const { data, refresh } = await useAsyncData<ParsedContent>(
-  `content-doc-${path.value}`,
-  () => {
-    let queryBuilder
+      `content-doc-${path.value}`,
+      () => {
+        let queryBuilder
 
-    if (sync.value) {
-      queryBuilder = queryContent(path.value).where({ partial: isPartial.value })
-    } else {
-      queryBuilder = queryContent(query.value)
-    }
+        if (sync.value) {
+          queryBuilder = queryContent(path.value).where({ partial: isPartial.value })
+        } else {
+          queryBuilder = queryContent(query.value)
+        }
 
-    // Return find or findOne
-    return queryBuilder[type.value]()
-  }
+        // Return find or findOne
+        return queryBuilder[type.value]()
+      }
     )
 
-    if (sync.value) {
-      watch(
-        data,
-        (newDoc) => {
-          if (!newDoc) { return }
+    const updateHead = () => {
+      if (!data.value) { return }
 
-          const { path, head = {}, partial = false, description } = newDoc
+      const { path = false, head = {}, partial = false, description = false } = data.value
 
-          // Head management (only if doc = route path)
-          if (path && path === useRoute().path && !partial) {
-            head.title = head.title || newDoc.title
-            head.meta = head.meta || []
+      // Head management (only if doc = route path)
+      if (path && path === route.path && !partial) {
+        head.title = head.title || data.title
+        head.meta = head.meta || []
 
-            if (description && head.meta.filter(m => m.name === 'description').length === 0) {
-              head.meta.push({
-                name: 'description',
-                content: data.value.description
-              })
-            }
-
-            useHead(head)
-          }
-        },
-        {
-          immediate: true
+        if (description && head.meta.filter(m => m.name === 'description').length === 0) {
+          head.meta.push({
+            name: 'description',
+            content: data.value?.description || ''
+          })
         }
-      )
+      }
+
+      // Throws an "nuxt instance unavailable" error
+      useHead(head)
     }
+
+    watch(data, () => updateHead())
 
     return {
       isPartial,
@@ -151,8 +148,7 @@ export default defineComponent({
 
     if (Array.isArray(data)) {
       // Render data as array
-
-      return
+      return slots?.default?.({ data, isPartial, refresh }) || h('pre', undefined, JSON.stringify(data, null, 2))
     }
 
     // Render empty data object
