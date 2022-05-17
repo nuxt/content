@@ -12,6 +12,7 @@ import { useRuntimeConfig, useStorage } from '#imports'
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
+export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -32,7 +33,7 @@ export const getContentsIds = async (event: CompatibilityEvent, prefix?: string)
   let keys = []
 
   if (isProduction) {
-    keys = await cacheStorage.getKeys(`parsed:${prefix}`)
+    keys = await cacheParsedStorage.getKeys(prefix)
   }
 
   // Later: handle preview mode, etc
@@ -87,7 +88,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     }
   }
 
-  const cached: any = await cacheStorage.getItem(`parsed:${id}`)
+  const cached: any = await cacheParsedStorage.getItem(id)
   if (isProduction && cached) {
     return cached.parsed
   }
@@ -110,7 +111,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     ...parsedContent
   }
 
-  await cacheStorage.setItem(`parsed:${id}`, { parsed, hash }).catch(() => {})
+  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
   return parsed
 }
