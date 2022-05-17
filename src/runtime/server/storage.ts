@@ -134,8 +134,8 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
   )
 
   // Provide default sort order
-  if (!params.sortBy?.length) {
-    params.sortBy = [['file', 'asc']]
+  if (!params.sort?.length) {
+    params.sort = [{ file: 1, $numeric: true }]
   }
 
   return createQuery<T>(pipelineFetcher, params)
