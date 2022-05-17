@@ -33,6 +33,7 @@ describe('fixtures:basic', async () => {
     const docs = await $fetch(`${QUERY_ENDPOINT}/${qid}`, {
       params: { _params: JSON.stringify(params) }
     })
+    console.log(docs);
     const ids = docs.map(doc => doc.id)
 
     assert(ids.length > 0)

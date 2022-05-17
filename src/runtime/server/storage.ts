@@ -35,6 +35,7 @@ export const getContentsIds = async (event: CompatibilityEvent, prefix?: string)
     keys = await cacheStorage.getKeys(`parsed:${prefix}`)
   }
 
+      JSON.stringify( await sourceStorage.getKeys(prefix), null, 2)
   // Later: handle preview mode, etc
   if (keys.length === 0) {
     keys = await sourceStorage.getKeys(prefix)
