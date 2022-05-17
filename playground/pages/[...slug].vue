@@ -1,17 +1,5 @@
 <template>
-  <div>
-    <Content v-if="document?.excerpt" tag="pre" :document="document" excerpt />
-    <Content v-if="document" :document="document" />
-    <div v-else>
-      Not Found!
-    </div>
-    <PagePrevNext v-if="document" :document="document" />
+  <div style="padding: 1rem;">
+    <Content />
   </div>
 </template>
-
-<script setup lang="ts">
-const route = useRoute()
-const { data: document } = await useAsyncData(route.path, () => {
-  return queryContent(route.path).findOne()
-})
-</script>

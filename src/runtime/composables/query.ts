@@ -10,20 +10,20 @@ import { withContentBase } from './utils'
  * Fetch query result
  */
 const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
-  const path = withContentBase(`/query/${hash(params)}`)
+  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}`)
 
-  if (process.server) {
+  if (!process.dev && process.server) {
     useHead({
       link: [
-        { rel: 'prefetch', href: path }
+        { rel: 'prefetch', href: apiPath }
       ]
     })
   }
-  return $fetch<T | T[]>(path, {
+  return $fetch<T | T[]>(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
-      params: jsonStringify(params)
+      _params: jsonStringify(params)
     }
   })
 }
@@ -32,10 +32,10 @@ const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
  * Query contents
  */
 export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(slug?: string, ...slugParts: string[]): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (slug?: string, ...slugParts: string[]) {
-  slug = withLeadingSlash(joinURL(slug, ...slugParts))
+export function queryContent<T = ParsedContent>(path?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function queryContent<T = ParsedContent> (path?: string, ...pathParts: string[]) {
+  path = withLeadingSlash(joinURL(path, ...pathParts))
 
   return createQuery<T>(queryFetch)
-    .where({ slug: new RegExp(`^${slug}`) })
+    .where({ path: new RegExp(`^${path}`) })
 }

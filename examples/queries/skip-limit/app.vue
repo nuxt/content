@@ -23,7 +23,7 @@ watch([skip, limit], () => {
     <section>
       <h2>Results: </h2>
       <ul>
-        <li v-for="{slug, title} in document" :key="slug">
+        <li v-for="{path, title} in document" :key="path">
           {{ title }}
         </li>
       </ul>
