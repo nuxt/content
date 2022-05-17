@@ -5,7 +5,6 @@ import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
   const query: Partial<QueryBuilderParams> = getContentQuery(event)
-    return fs.writeFileSync('/tmp/query.json', JSON.stringify(query, null, 2))
   const contents = await serverQueryContent(event, query).find()
 
   // If no documents matchs and using findOne()
