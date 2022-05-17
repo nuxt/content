@@ -42,7 +42,7 @@ Query server exposes one API:
     .limit(10)
     .find()
 
-  const document = await queryContent('/').findOne()
+  const doc = await queryContent('/').findOne()
   ```
 
 ## Plugins

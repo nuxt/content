@@ -1,4 +1,3 @@
-<script lang="ts">
 import { h, resolveComponent, Text, defineComponent, toRefs } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
@@ -28,7 +27,7 @@ export default defineComponent({
     /**
      * Content to render
      */
-    document: {
+    value: {
       type: Object,
       required: true
     },
@@ -51,30 +50,30 @@ export default defineComponent({
     const { content: { tags = {} } } = useRuntimeConfig().public
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { tag: _t, document: _d, ...contentProps } = toRefs(props)
+    const { tag: _t, value: _d, ...contentProps } = toRefs(props)
 
     return {
       tags,
       contentProps
     }
   },
-  render () {
-    const { tags, tag, document, contentProps } = this
+  render (ctx) {
+    const { tags, tag, value, contentProps } = ctx
 
-    if (!document) {
+    if (!value) {
       return null
     }
 
-    // Get body from document
-    let body = (document.body || document) as MarkdownNode
-    if (this.excerpt && document.excerpt) {
-      body = document.excerpt
+    // Get body from value
+    let body = (value.body || value) as MarkdownNode
+    if (this.excerpt && value.excerpt) {
+      body = value.excerpt
     }
     const meta: ParsedContentMeta = {
-      ...(document as ParsedContentMeta),
+      ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...document?.tags || {}
+        ...value?.tags || {}
       }
     }
 
@@ -326,4 +325,3 @@ function isDefaultTemplate (node: MarkdownNode) {
 function isTemplate (node: MarkdownNode) {
   return node.tag === 'template'
 }
-</script>

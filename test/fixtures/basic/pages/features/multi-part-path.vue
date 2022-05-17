@@ -1,5 +1,5 @@
 <template>
-  <Document :value="doc" />
+  <ContentRenderer :value="doc" />
 </template>
 
 <script setup lang="ts">
