@@ -1,13 +1,20 @@
 <script setup>
-const { data: directorQuery } = await useAsyncData('director', () => {
+const { data: equalQuery } = await useAsyncData('equal', () => {
   return queryContent('/').where({ director: 'Hayao Miyazaki' }).find()
 })
 
-const { data: yearQuery } = await useAsyncData('year', () => {
-  return queryContent('/').where({ release_date: { $lte: 1997 } }).find()
+const { data: lowerThanQuery } = await useAsyncData('lower-than', () => {
+  return queryContent('/').where({ release_date: { $lt: 1997 } }).find()
 })
 
-console.log(directorQuery.value)
+const { data: notEqualQuery } = await useAsyncData('not-equal', () => {
+  return queryContent('/').where({ director: { $ne: 'Hayao Miyazaki' } }).find()
+})
+
+const { data: inQuery } = await useAsyncData('in', () => {
+  return queryContent('/').where({ director: { $in: ['Hayao Miyazaki', 'Yoshifumi Kondō'] } }).find()
+})
+
 </script>
 
 <template>
@@ -21,28 +28,78 @@ console.log(directorQuery.value)
     </header>
     <main>
       <section>
-        <h2>Director query</h2>
-        <code>
-          queryContent('/').where({ 'body.director': 'Hayao Miyazaki' }).find()
-        </code>
-        <ul v-if="directorQuery">
-          <li v-for="movie in directorQuery" :key="movie.id">
+        <header>
+          <h2>Equal query</h2>
+          <code>
+            queryContent('/').where({ director: 'Hayao Miyazaki' }).find()
+          </code>
+        </header>
+        <ul v-if="equalQuery">
+          <li v-for="movie in equalQuery" :key="movie.id">
             {{ movie.title }}
           </li>
         </ul>
       </section>
 
+      <hr>
+
       <section>
-        <h2>Year query</h2>
-        <code>
-          queryContent('/').where({ release_date: { $lte: 1997 } }).find()
-        </code>
-        <ul v-if="yearQuery">
-          <li v-for="movie in yearQuery" :key="movie.id">
+        <header>
+          <h2>Lower Than query</h2>
+          <code>
+            queryContent('/').where({ release_date: { $lte: 1997 } }).find()
+          </code>
+        </header>
+        <ul v-if="lowerThanQuery">
+          <li v-for="movie in lowerThanQuery" :key="movie.id">
             {{ movie.title }} - {{ movie.release_date }}
+          </li>
+        </ul>
+      </section>
+
+      <hr>
+
+      <section>
+        <header>
+          <h2>Not Equal query</h2>
+          <code>
+            queryContent('/').where({ director: { $ne: 'Hayao Miyazaki' } }).find()
+          </code>
+        </header>
+        <ul v-if="notEqualQuery">
+          <li v-for="movie in notEqualQuery" :key="movie.id">
+            {{ movie.title }} - {{ movie.director }}
+          </li>
+        </ul>
+      </section>
+
+      <hr>
+
+      <section>
+        <header>
+          <h2>In query</h2>
+          <code>
+            queryContent('/').where({ director: { $in: ['Hayao Miyazaki', 'Yoshifumi Kondō'] } }).find()
+          </code>
+        </header>
+        <ul v-if="inQuery">
+          <li v-for="movie in inQuery" :key="movie.id">
+            {{ movie.title }} - {{ movie.director }}
           </li>
         </ul>
       </section>
     </main>
   </NuxtExampleLayout>
 </template>
+
+<style scoped>
+hr {
+  border: 0;
+  border-top: 1px solid #eaeaea;
+  margin: 1.5rem 0;
+}
+
+section > header {
+  margin-bottom: 1.5rem;
+}
+</style>
