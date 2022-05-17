@@ -6,8 +6,8 @@ import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { parseContent } from './transformers'
-// eslint-disable-next-line import/named
 import { getPreview, isPreview } from './preview'
+// eslint-disable-next-line import/named
 import { useRuntimeConfig, useStorage } from '#imports'
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
