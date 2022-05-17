@@ -27,11 +27,11 @@ export default defineNuxtConfig({
 
 ## Components
 
-### `<Content>`
+### `<ContentDoc>`
 
 ### `<ContentRenderer>`
 
-> This component is used by `<Content>` under the hood.
+> This component is used by `<ContentDoc>` under the hood.
 
 Render any document content.
 

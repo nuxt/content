@@ -1,5 +1,5 @@
 import type { Slot } from 'vue'
-import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap } from '#imports'
+import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h } from '#imports'
 
 /**
  * Markdown component
@@ -44,7 +44,7 @@ export default defineComponent({
     try {
       const slot: Slot = typeof use === 'string' ? parent?.slots[use] || parent?.parent?.slots[use] : use
 
-      if (!slot) { return [] }
+      if (!slot) { return h('div') }
 
       if (!unwrap) { return [slot()] }
 
@@ -63,7 +63,7 @@ export default defineComponent({
         }, [])
     } catch (e) {
       // Catching errors to allow content reactivity
-      return []
+      return h('div')
     }
   }
 })

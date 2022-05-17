@@ -1,18 +1,28 @@
 <template>
   <div>
-    <!-- This showcases renderless usage of <Content /> component-->
-    <Content tag="div" :query="{ where: { path: '/_test' } }" :renderer="false" :sync="false">
-      <template #default="{ data }">
-        <pre>{{ data }}</pre>
+    <!-- This showcases renderless usage of <ContentDoc /> component-->
+    <ContentDoc tag="div" path="/_test">
+      <template #default="{ doc }">
+        <pre>{{ doc }}</pre>
 
-        <ContentRenderer :value="data" />
+        <h1>Using ContentRenderer:</h1>
+
+        <ContentRenderer :value="doc" />
       </template>
 
       <template #empty>
         <div>
-          Hello
+          Hello empty
         </div>
       </template>
-    </Content>
+
+      <template #not-found>
+        <div>
+          Hello not found
+        </div>
+      </template>
+    </ContentDoc>
+
+    <ContentList />
   </div>
 </template>

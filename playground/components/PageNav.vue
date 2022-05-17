@@ -6,6 +6,8 @@ const navEl = ref()
 watch(
   () => route.path,
   () => {
+    if (!navEl.value) { return }
+
     (navEl.value as HTMLElement).attributes.removeNamedItem('open')
   }
 )

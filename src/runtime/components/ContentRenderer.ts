@@ -1,5 +1,4 @@
 import { defineComponent, watch, h, useSlots } from 'vue'
-import { ParsedContent } from '../types'
 import MarkdownRenderer from './MarkdownRenderer'
 
 export default defineComponent({
@@ -12,6 +11,7 @@ export default defineComponent({
       required: false,
       default: () => ({})
     },
+
     /**
      * Whether or not to render the excerpt.
      * @default false
@@ -20,6 +20,7 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+
     /**
      * The tag to use for the renderer element if it is used.
      * @default 'div'
@@ -27,14 +28,6 @@ export default defineComponent({
     tag: {
       type: String,
       default: 'div'
-    },
-    /**
-     * Whether or not to use the built-in MarkdownRenderer.
-     * @default true
-     */
-    renderer: {
-      type: Boolean,
-      default: true
     }
   },
   setup (props) {
@@ -59,13 +52,10 @@ export default defineComponent({
   render (ctx) {
     const slots = useSlots()
 
-    const { value, excerpt, tag, renderer } = ctx
-
-    // No value found, return `empty` slot
-    if (!value) { return slots?.empty?.({ excerpt, tag, renderer }) || h('pre', undefined, JSON.stringify(value, null, 2)) }
+    const { value, excerpt, tag } = ctx
 
     // Use built-in MarkdownRenderer
-    if (renderer && value && value?.type === 'markdown' && value?.body?.children?.length) {
+    if (value && value?.type === 'markdown' && value?.body?.children?.length) {
       return h(
         MarkdownRenderer,
         {
@@ -76,10 +66,21 @@ export default defineComponent({
       )
     }
 
-    return slots?.default
-      // Render default slot with `value` as v-slot="{ data }"
-      ? slots.default({ data: value as ParsedContent })
-      // Render <pre>{{ value }}</pre> if no default slot but content present
-      : slots?.empty?.({ excerpt, tag, renderer }) || h('pre', undefined, JSON.stringify(value, null, 2))
+    if (value && slots?.default) {
+      return slots.default({ value, excerpt, tag })
+    } else if (slots?.empty) {
+      // Fallback on `empty` slot.
+      return slots.empty({ value, excerpt, tag })
+    } else if (slots?.default) {
+      // Fallback on `default` slot with undefined `value` if no `empty` slot.
+      return slots.default({ value, excerpt, tag })
+    }
+
+    // Fallback on JSON.stringify if no slot at all.
+    return h(
+      'pre',
+      null,
+      JSON.stringify({ message: 'You should use slots with <ContentRenderer>!', value, excerpt, tag }, null, 2)
+    )
   }
 })
