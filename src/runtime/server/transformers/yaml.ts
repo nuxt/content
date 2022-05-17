@@ -4,12 +4,15 @@ export default {
   name: 'Yaml',
   extentions: ['.yml', '.yaml'],
   parse: async (id, content) => {
-    const parsed = await parseFrontMatter(`---\n${content}\n---`)
+    const { data } = await parseFrontMatter(`---\n${content}\n---`)
+
+    // Keep array contents under `body` key
+    const parsed = Array.isArray(data) ? { body: data } : data
 
     return {
+      ...parsed,
       id,
-      type: 'yaml',
-      body: parsed.data
+      type: 'yaml'
     }
   }
 }
