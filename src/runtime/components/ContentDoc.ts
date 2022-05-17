@@ -61,7 +61,7 @@ export default defineComponent({
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = Object.assign(query || {}, { path, find: 'one' })
 
-    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentDoc>!', slot, data }, null, 2))
+    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentDoc>', slot, data }, null, 2))
 
     return h(
       ContentQuery,
@@ -79,7 +79,7 @@ export default defineComponent({
         // Empty slot
         empty: bindings => slots?.empty?.(bindings),
         // Not Found slot
-        'not-found': bindings => slots?.['not-found']?.(bindings)
+        'not-found': bindings => slots?.['not-found']?.(bindings) || h('p', null, 'Document not found, overwrite this content with #not-found slot in <ContentDoc>.')
       }
     )
   }
