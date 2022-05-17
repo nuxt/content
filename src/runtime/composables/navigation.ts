@@ -1,5 +1,5 @@
 import { hash } from 'ohash'
-import { useHead } from '#app'
+import { useHead, useCookie } from '#app'
 import type { NavItem, QueryBuilder } from '../types'
 import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
@@ -19,7 +19,8 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
     method: 'GET',
     responseType: 'json',
     params: {
-      _params: jsonStringify(params || {})
+      _params: jsonStringify(params || {}),
+      previewToken: useCookie('previewToken').value
     }
   })
 }

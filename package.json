@@ -86,8 +86,9 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
-    "@nuxt/schema": "^3.0.0-rc.3",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
+    "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
+    "@nuxt/schema": "^3.0.0-rc.3",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/flat": "^5.0.2",
     "@types/ws": "^8.5.3",

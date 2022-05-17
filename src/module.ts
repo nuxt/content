@@ -378,13 +378,13 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
-    nuxt.options.runtimeConfig.public.content = {
+    nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
       wsUrl: ''
-    }
+    })
     // Context will use in server
     nuxt.options.runtimeConfig.content = contentContext as any
 
