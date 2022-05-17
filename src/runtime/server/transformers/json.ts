@@ -16,9 +16,9 @@ export default {
     }
 
     return {
+      ...parsed,
       id,
-      type: 'json',
-      body: parsed
+      type: 'json'
     }
   }
 }

@@ -7,9 +7,9 @@ export default {
     const parsed = await parseFrontMatter(`---\n${content}\n---`)
 
     return {
+      ...parsed.data,
       id,
-      type: 'yaml',
-      body: parsed.data
+      type: 'yaml'
     }
   }
 }
