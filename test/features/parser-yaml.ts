@@ -15,25 +15,8 @@ export const testYamlParser = () => {
       expect(parsed).toHaveProperty('id')
       assert(parsed.id === 'content:index.yml')
 
-      expect(parsed).toHaveProperty('key', 'value')
-    })
-
-    test('array', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.yml',
-          content: '- item 1 \n- item 2'
-        }
-      })
-
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.yml')
-
-      expect(parsed).haveOwnProperty('body')
-      expect(Array.isArray(parsed.body)).toBeTruthy()
-      expect(parsed.body).toHaveLength(2)
-      expect(parsed.body).toMatchObject(['item 1', 'item 2'])
+      expect(parsed).toHaveProperty('body')
+      expect(parsed.body).toHaveProperty('key', 'value')
     })
   })
 }
