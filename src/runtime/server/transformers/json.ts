@@ -15,6 +15,13 @@ export default {
       }
     }
 
+    // Keep array contents under `body` key
+    if (Array.isArray(parsed)) {
+      parsed = {
+        body: parsed
+      }
+    }
+
     return {
       ...parsed,
       id,
