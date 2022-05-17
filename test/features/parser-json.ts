@@ -4,6 +4,10 @@ import { $fetch } from '@nuxt/test-utils'
 const json = `{
   "key": "value"
 }`
+const jsonArray = JSON.stringify([
+  'item 1',
+  'item 2'
+])
 const json5 = `{
   key: 'value',
   // comments
@@ -31,9 +35,7 @@ export const testJSONParser = () => {
 
       expect(parsed).toHaveProperty('id')
       assert(parsed.id === 'content:index.json')
-
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('key', 'value')
+      assert(parsed.key === 'value')
     })
   })
 
@@ -50,12 +52,29 @@ export const testJSONParser = () => {
       expect(parsed).toHaveProperty('id')
       assert(parsed.id === 'content:index.json5')
 
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('key', 'value')
+      assert(parsed.key === 'value')
 
-      expect(parsed.body.leadingDecimalPoint).toEqual(0.8675309)
-      expect(parsed.body.andTrailing).toEqual(8675309)
-      expect(parsed.body.lineBreaks).toEqual("Look, Mom! No \n's!")
+      expect(parsed.leadingDecimalPoint).toEqual(0.8675309)
+      expect(parsed.andTrailing).toEqual(8675309)
+      expect(parsed.lineBreaks).toEqual("Look, Mom! No \n's!")
     })
+  })
+
+  test('array', async () => {
+    const parsed = await $fetch('/api/parse', {
+      method: 'POST',
+      body: {
+        id: 'content:index.json',
+        content: jsonArray
+      }
+    })
+
+    expect(parsed).toHaveProperty('id')
+    assert(parsed.id === 'content:index.json')
+
+    expect(parsed).haveOwnProperty('body')
+    expect(Array.isArray(parsed.body)).toBeTruthy()
+    expect(parsed.body).toHaveLength(2)
+    expect(parsed.body).toMatchObject(['item 1', 'item 2'])
   })
 }

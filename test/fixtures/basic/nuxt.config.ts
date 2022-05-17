@@ -3,17 +3,6 @@ import { resolve } from 'pathe'
 import contentModule from '../../..'
 
 export default defineNuxtConfig({
-  nitro: {
-    externals: {
-      inline: [
-        resolve('../../..'),
-        'micromark-util-character',
-        'micromark-factory-space',
-        'micromark-factory-whitespace',
-        'micromark-core-commonmark'
-      ]
-    }
-  },
   components: {
     dirs: [
       {

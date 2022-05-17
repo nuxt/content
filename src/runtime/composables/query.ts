@@ -1,6 +1,6 @@
 import { joinURL, withLeadingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useHead } from '#app'
+import { useHead, useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
@@ -25,7 +25,8 @@ export const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams
     method: 'GET',
     responseType: 'json',
     params: {
-      _params: jsonStringify(params)
+      _params: jsonStringify(params),
+      previewToken: useCookie('previewToken').value
     }
   })
 }
