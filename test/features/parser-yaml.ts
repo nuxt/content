@@ -15,8 +15,7 @@ export const testYamlParser = () => {
       expect(parsed).toHaveProperty('id')
       assert(parsed.id === 'content:index.yml')
 
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('key', 'value')
+      expect(parsed).toHaveProperty('key', 'value')
     })
   })
 }
