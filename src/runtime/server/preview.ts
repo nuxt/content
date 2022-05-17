@@ -6,7 +6,7 @@ export const isPreview = (event: CompatibilityEvent) => {
   return !!previewToken
 }
 
-export const getPreview = (event) => {
+export const getPreview = (event: CompatibilityEvent) => {
   const key = useQuery(event).previewToken as string || useCookie(event, 'previewToken')
 
   return { key }
