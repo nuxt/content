@@ -92,7 +92,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/flat": "^5.0.2",
     "@types/ws": "^8.5.3",
-    "c8": "^7.11.2",
+    "c8": "^7.11.3",
     "eslint": "^8.15.0",
     "globby": "^13.1.1",
     "husky": "^8.0.1",
