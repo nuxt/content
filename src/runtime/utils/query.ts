@@ -48,15 +48,15 @@ export const getContentQuery = (event: CompatibilityEvent) => {
       delete query[key]
     }
   }
-  // ?sortyBy=size:asc
-  if (query.sortBy) {
-    query.sortBy = query.sortBy.split(',').map((s) => {
+  // ?sortyBy=size:1
+  if (query.sort) {
+    query.sort = query.sort.split(',').map((s) => {
       const [key, order] = s.split(':')
-      return [key, order || 'asc']
+      return [key, +order]
     })
   }
   // ?[query]=...
-  const reservedKeys = ['partial', 'draft', 'only', 'without', 'where', 'sortBy', 'limit', 'skip']
+  const reservedKeys = ['partial', 'draft', 'only', 'without', 'where', 'sort', 'limit', 'skip']
   for (const key of Object.keys(query)) {
     if (reservedKeys.includes(key)) { continue }
 

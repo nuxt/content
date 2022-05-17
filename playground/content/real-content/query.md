@@ -18,7 +18,7 @@ Query server exposes one API:
       first: false, // set to true for returning only one document
       skip: 0,
       limit: 0,
-      sortBy: [],
+      sort: [],
       where: [],
       only:[],
       without:[]
