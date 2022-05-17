@@ -594,12 +594,14 @@
     vite-plugin-checker "^0.4.6"
 
 "@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
-  version "0.0.1-27539132.30187e6"
-  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27539132.30187e6.tgz#22030c4dfc40ef145e5f482f838ae8c5933f2958"
-  integrity sha512-hR9G/mJqk1o+q9bvWioS/ryinJFtnxAK3a3nyozXQ9aMX/MyOFumKULbHST5hwAqZ3RAAM+XGV1/WZLmqsJqYA==
+  version "0.0.1-27546523.78b540c"
+  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27546523.78b540c.tgz#a540e92e37b60e92609bff1c67769fd88b851a44"
+  integrity sha512-Ml7fbPyi4BEjQgRpLm0FmWU5jBTN8jlilYXygx5ThMCTOy6ioMzrRvQgAP/shCAXUKi0wqli2aUI+Tv+xE9KFA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     nuxt-component-meta "^0.1.5"
+    socket.io-client "^4.5.0"
+    unstorage "^0.4.1"
 
 "@nuxtjs/eslint-config-typescript@latest":
   version "10.0.0"
