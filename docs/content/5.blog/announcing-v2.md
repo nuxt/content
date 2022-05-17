@@ -4,7 +4,7 @@ navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
 cover: /announcing-v2.png
-date: 2022-05-17
+date: 2022-05-19
 authors:
   - name: Sebastien Chopin
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
@@ -34,7 +34,7 @@ On top of the Nuxt 3 support, we couldn't help adding new features:
 - Internationalization support
 - [Navigation generation](/guide/displaying/navigation)
 - [Fully typed](/guide/displaying/typescript)
-- [Multi sources](/api/configuration#sources) (experimental)
+- [Multiple sources](/api/configuration#sources) (experimental)
 - Live preview edition (coming soon)
 ::
 
@@ -58,11 +58,11 @@ Let’s imagine a `content/` directory with the following structure:
   ```
 ::
 
-Create a `pages/[...slug].vue` file with the [`<Content>`](/guide/displaying/rendering) component:
+Create a `pages/[...slug].vue` file with the [`<ContentDoc>`](/guide/displaying/rendering) component inside:
 
 ```vue [pages/[...slug].vue]
 <template>
-  <Content />
+  <ContentDoc />
 </template>
 ```
 
@@ -78,15 +78,15 @@ And voilà!
   ::
 ::
 
-You can also query the `hello.md` document by using the `queryContent()` composable:
+You can also query the `hello.md` file by using the `queryContent()` composable:
 
 ```ts
-const document = await queryContent('hello').findOne()
+const file = await queryContent('hello').findOne()
 ```
 
 ::alert
   ::details
-    :summary[The returned document won't be Markdown or HTML, but a JSON representing the abtract syntax tree.]
+    :summary[The returned file won't be Markdown or HTML, but a JSON representing the abtract syntax tree.]
     ```json [document value]
     {
       "type": "markdown",
@@ -169,19 +169,18 @@ const document = await queryContent('hello').findOne()
   ::
 ::
 
-You can do much more than fetching only one document, take a look at the [querying content](/guide/displaying/querying) section to discover the full potential.
+You can do much more than fetch only one file, take a look at the [querying content](/guide/displaying/querying) section to discover its full potential.
 
 ## Introducing MDC
 
-We wanted to leverage the power of Vue components in a content edition experience. After months of testing on the [NuxtJS website itself](https://nuxtjs.org), we are happy to introduce the [**M**ark**D**own **C**omponents syntax](/guide/writing/mdc).
+We wanted to leverage the power of Vue components in a content edition experience. After months of testing on the [Nuxt website](https://nuxtjs.org), we are happy to introduce the [**M**ark**D**own **C**omponents syntax](/guide/writing/mdc).
 
 ::list{icon="heroicons-outline:badge-check"}
 
-- Use your own Vue components in Markdown.
-- Customize them with props.
-- Write Markdown content in slots.
-- (And of course, you can nest them).
-- Experience Vite HMR for Markdown and MDC.
+- Use your own Vue components in Markdown
+- Customize them with props
+- Write Markdown content in slots (and of course, you can nest them)
+- Experience blazing fast HMR for Markdown and MDC (as fast as Vite!)
 ::
 
 ::alert
