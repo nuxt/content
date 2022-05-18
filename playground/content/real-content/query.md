@@ -8,13 +8,12 @@ Query server exposes one API:
 
 - `/api/_content/query`
 
-  Query content in all sources, should be a `POST` request. `GET` requests can be made but are limited to simple values (`path`, `first`, `skip` and `limit`).
+  Query content in all sources, should be a `POST` request. `GET` requests can be made but are limited to simple values (`first`, `skip` and `limit`).
 
   ```ts
   $fetch('/api/_content/query', {
     method: 'POST',
     body: {
-      slug: '/posts',
       first: false, // set to true for returning only one document
       skip: 0,
       limit: 0,

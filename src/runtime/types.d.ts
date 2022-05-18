@@ -154,7 +154,6 @@ export interface SortFields {
 export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
-  slug: string
   first: boolean
   skip: number
   limit: number
@@ -238,9 +237,9 @@ export type QueryMatchOperator = (item: any, condition: any) => boolean
 // Navigation
 export interface NavItem {
   title: string
-  slug: string
-  id?: string
-  draft?: boolean
+  _path: string
+  _id?: string
+  _draft?: boolean
   children?: NavItem[]
 
   [key: string]: any
