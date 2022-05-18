@@ -5,18 +5,18 @@ import { useRuntimeConfig } from '#imports'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
-const describeId = (id: string) => {
-  const [source, ...parts] = id.split(':')
+const describeId = ($id: string) => {
+  const [$source, ...parts] = $id.split(':')
 
-  const [, filename, extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
+  const [, filename, $extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
   parts[parts.length - 1] = filename
-  const path = parts.join('/')
+  const $path = parts.join('/')
 
   return {
-    source,
-    path,
-    extension,
-    file: extension ? `${path}.${extension}` : path
+    $source,
+    $path,
+    $extension,
+    $file: $extension ? `${$path}.${$extension}` : $path
   }
 }
 
@@ -25,24 +25,25 @@ export default {
   extentions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = useRuntimeConfig().content || {}
-    const { source, file, path, extension } = describeId(content.id)
-    const parts = path.split('/')
+    const { $source, $file, $path, $extension } = describeId(content.$id)
+    const parts = $path.split('/')
 
     // Check first part for locale name
-    const locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
+    const $locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
 
     const filePath = parts.join('/')
 
     return {
-      path: generatePath(filePath),
-      draft: isDraft(filePath),
-      partial: isPartial(filePath),
-      locale,
+      $path: generatePath(filePath),
+      $draft: isDraft(filePath),
+      $partial: isPartial(filePath),
+      $locale,
       ...content,
+      // TODO: move title to Markdown parser
       title: content.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
-      source,
-      file,
-      extension
+      $source,
+      $file,
+      $extension
     }
   }
 }

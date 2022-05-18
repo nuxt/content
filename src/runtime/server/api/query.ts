@@ -6,6 +6,7 @@ import { getContentQuery } from '../../utils/query'
 export default defineEventHandler(async (event) => {
   const query: Partial<QueryBuilderParams> = getContentQuery(event)
   const contents = await serverQueryContent(event, query).find()
+  console.log('query', query)
 
   // If no documents matchs and using findOne()
   if (query.first && Array.isArray(contents) && contents.length === 0) {

@@ -106,8 +106,12 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   }
 
   const parsedContent = await parseContent(contentId, body as string)
+  const $meta = {}
+  Object.keys(meta).forEach((key) => {
+    $meta[`$${key}`] = meta[key]
+  })
   const parsed = {
-    ...meta,
+    ...$meta,
     ...parsedContent
   }
 
@@ -127,7 +131,7 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
     params = {
-      where: [{ path: new RegExp(`^${path}`) }]
+      where: [{ $path: new RegExp(`^${path}`) }]
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
@@ -136,7 +140,7 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
 
   // Provide default sort order
   if (!params.sort?.length) {
-    params.sort = [{ file: 1, $numeric: true }]
+    params.sort = [{ $file: 1, $numeric: true }]
   }
 
   return createQuery<T>(pipelineFetcher, params)
