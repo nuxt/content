@@ -105,15 +105,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     return { $id: contentId, body: null }
   }
 
-  const parsedContent = await parseContent(contentId, body as string)
-  const $meta = {}
-  Object.keys(meta).forEach((key) => {
-    $meta[`$${key}`] = meta[key]
-  })
-  const parsed = {
-    ...$meta,
-    ...parsedContent
-  }
+  const parsed = await parseContent(contentId, body as string)
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
