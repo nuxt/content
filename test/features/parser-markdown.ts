@@ -12,8 +12,8 @@ export const testMarkdownParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.md')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.md')
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('type', 'root')
@@ -30,8 +30,8 @@ export const testMarkdownParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.md')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.md')
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('type', 'root')
       expect(parsed.body).toHaveProperty('children[0].tag', 'p')
@@ -47,8 +47,8 @@ export const testMarkdownParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.md')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.md')
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('type', 'root')
       expect(parsed.body).toHaveProperty('children')

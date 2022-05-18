@@ -59,11 +59,6 @@ const tabs = ref(['Preview', 'AST'])
 </template>
 
 <style>
-body, html {
-  margin: 0;
-  padding: 0;
-}
-
 .playground {
   display: flex;
   align-items: stretch;

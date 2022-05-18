@@ -6,7 +6,7 @@ import { jsonStringify } from '../../src/runtime/utils/json'
 export const testRegex = () => {
   describe('regex', () => {
     test('Get cats with regex', async () => {
-      const params = { where: { path: /^\/cats/ } }
+      const params = { where: { _path: /^\/cats/ } }
       const list = await $fetch(`/api/_content/query/${hash(params)}`, {
         params: {
           _params: jsonStringify(params)
@@ -15,12 +15,12 @@ export const testRegex = () => {
 
       expect(list.length).greaterThan(0)
       for (const item of list) {
-        expect(item.path).toMatch(/^\/cats/)
+        expect(item._path).toMatch(/^\/cats/)
       }
     })
 
     test('Get cats navigation with regex', async () => {
-      const params = { where: { path: /^\/cats/ } }
+      const params = { where: { _path: /^\/cats/ } }
       const list = await $fetch(`/api/_content/navigation/${hash(params)}`, {
         params: {
           _params: jsonStringify(params)
@@ -28,10 +28,10 @@ export const testRegex = () => {
       })
 
       expect(list.length).greaterThan(0)
-      expect(list[0].path).toEqual('/cats')
+      expect(list[0]._path).toEqual('/cats')
 
       for (const item of list[0].children) {
-        expect(item.path).toMatch(/^\/cats/)
+        expect(item._path).toMatch(/^\/cats/)
       }
     })
   })

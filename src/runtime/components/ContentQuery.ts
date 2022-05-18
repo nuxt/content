@@ -103,7 +103,7 @@ export default defineComponent({
       () => {
         let queryBuilder: QueryBuilder = queryContent()
 
-        if (path.value) { queryBuilder = queryBuilder.where({ path: path.value }) }
+        if (path.value) { queryBuilder = queryBuilder.where({ _path: path.value }) }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
 
@@ -117,7 +117,7 @@ export default defineComponent({
 
         if (skip.value) { queryBuilder = queryBuilder.skip(skip.value) }
 
-        if (locale.value) { queryBuilder = queryBuilder.where({ locale: locale.value }) }
+        if (locale.value) { queryBuilder = queryBuilder.where({ _locale: locale.value }) }
 
         if (find.value === 'one') { return queryBuilder.findOne() as Promise<ParsedContent> }
 
@@ -183,7 +183,7 @@ export default defineComponent({
       if (!data && slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
 
       // Empty slots for `one` if type is "markdown" refers to an empty `body.children` key.
-      if (data.type && data.type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
+      if (data._type && data._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
     } else if (!data || !data.length) {
       // Handle `find()` and `findSurround()`
 

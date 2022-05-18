@@ -25,7 +25,7 @@ watch(
       <span>📌 Current page: <b>{{ $route.path }}</b></span>
       <ul>
         <NavItem :nav-item="{ path: '/playground', title: 'Playground', icon: '📝' }" />
-        <NavItem v-for="item of navigation" :key="item.path" :nav-item="item" />
+        <NavItem v-for="item of navigation" :key="item._path" :nav-item="item" />
       </ul>
     </details>
   </ContentNavigation>

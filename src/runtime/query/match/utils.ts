@@ -26,6 +26,34 @@ export const omit = (keys?: string[]) => (obj: any) =>
  */
 export const apply = (fn: (d: any) => any) => (data: any) => Array.isArray(data) ? data.map(item => fn(item)) : fn(data)
 
+export const detectProperties = (keys: string[]) => {
+  const prefixes = []
+  const properties = []
+  for (const key of keys) {
+    if (['$', '_'].includes(key)) {
+      prefixes.push(key)
+    } else {
+      properties.push(key)
+    }
+  }
+  return { prefixes, properties }
+}
+
+export const withoutKeys = (keys: string[] = []) => (obj: any) => {
+  if (keys.length === 0) {
+    return obj
+  }
+  const { prefixes, properties } = detectProperties(keys)
+  return _pick(obj, key => !properties.includes(key) && !prefixes.includes(key[0]))
+}
+
+export const withKeys = (keys: string[] = []) => (obj: any) => {
+  if (keys.length === 0) {
+    return obj
+  }
+  const { prefixes, properties } = detectProperties(keys)
+  return _pick(obj, key => properties.includes(key) || prefixes.includes(key[0]))
+}
 /**
  * Sort list of items by givin options
  */

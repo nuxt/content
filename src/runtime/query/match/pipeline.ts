@@ -1,5 +1,5 @@
 import type { QueryBuilderParams, QueryPipe } from '../../types'
-import { apply, ensureArray, omit, pick, sortList } from './utils'
+import { apply, ensureArray, sortList, withoutKeys, withKeys } from './utils'
 import { createMatch } from '.'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
@@ -33,9 +33,9 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     // Pick first items
     (data, params) => (params.limit ? data.slice(0, params.limit) : data),
     // Remove unwanted fields
-    (data, params) => apply(omit(params.without))(data),
+    (data, params) => apply(withoutKeys(params.without))(data),
     // Select only wanted fields
-    (data, params) => apply(pick(params.only))(data),
+    (data, params) => apply(withKeys(params.only))(data),
     // Evaluate result
     (data, params) => params.first ? data[0] : data
   ]

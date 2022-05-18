@@ -39,7 +39,7 @@ export default defineComponent({
       (newExcerpt) => {
         if (newExcerpt && !props.value?.excerpt) {
           // eslint-disable-next-line no-console
-          console.warn(`No excerpt found for document content/${props?.value?.path}.${props?.value?.extension}!`)
+          console.warn(`No excerpt found for document content/${props?.value?._path}.${props?.value?._extension}!`)
           // eslint-disable-next-line no-console
           console.warn('Make sure to use <!--more--> in your content if you want to use excerpt feature.')
         }
@@ -55,7 +55,7 @@ export default defineComponent({
     const { value, excerpt, tag } = ctx
 
     // Use built-in MarkdownRenderer
-    if (value && value?.type === 'markdown' && value?.body?.children?.length) {
+    if (value && value?._type === 'markdown' && value?.body?.children?.length) {
       return h(
         MarkdownRenderer,
         {

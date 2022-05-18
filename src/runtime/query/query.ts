@@ -40,7 +40,7 @@ export const createQuery = <T>(
     find: () => fetcher(params) as Promise<Array<T>>,
     findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<T>>,
     // locale
-    locale: (locale: string) => query.where({ locale })
+    locale: (_locale: string) => query.where({ _locale })
   }
 
   return query
