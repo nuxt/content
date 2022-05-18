@@ -190,26 +190,26 @@ describe('Database Provider', () => {
   test('Select specific keys', async () => {
     const query = createQuery(pipelineFetcher)
       .where({ id: { $in: [1, 2] } })
-      .only(['name', 'id', '$'])
+      .only(['name', 'id', '_'])
     const result = await query.find()
 
     expect(result.length).toBeGreaterThan(0)
     result.forEach((item) => {
-      expect(Object.keys(item)).toMatchObject(['id', 'name', '$deleted'])
+      expect(Object.keys(item)).toMatchObject(['id', 'name', '_deleted'])
     })
   })
 
   test('Drop specific keys', async () => {
     const query = createQuery(pipelineFetcher)
       .where({ id: { $in: [1, 2] } })
-      .without(['name', '$'])
+      .without(['name', '_'])
     const result = await query.find()
 
     expect(result.length).toBeGreaterThan(0)
     result.forEach((item) => {
       expect(item.id).toBeDefined()
       expect(item.name).toBeUndefined()
-      expect(item.$deleted).toBeUndefined()
+      expect(item._deleted).toBeUndefined()
     })
   })
 })
