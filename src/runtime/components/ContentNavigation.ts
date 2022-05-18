@@ -42,12 +42,12 @@ export default defineComponent({
 
     // Render empty data object
     if (slots?.empty && (!data || !data?.length)) {
-      return slots?.empty?.({ query }) || emptyNode('empty', { query, data })
+      return slots?.empty?.({ query, ...this.$attrs }) || emptyNode('empty', { query, data })
     }
 
     // Render default slot with navigation as `data`
     return slots?.default
-      ? slots.default({ navigation: data, refresh })
+      ? slots.default({ navigation: data, refresh, ...this.$attrs })
       : emptyNode('default', data)
   }
 })

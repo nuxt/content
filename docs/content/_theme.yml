@@ -14,9 +14,6 @@ cover:
   alt: "@nuxt/content cover image."
 aside:
   level: 1
-  filter:
-    - /releases
-    - /
 header:
   title: false
   logo: true

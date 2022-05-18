@@ -16,10 +16,11 @@ export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:par
 
 const isProduction = process.env.NODE_ENV === 'production'
 
+const contentConfig = useRuntimeConfig().content
 /**
  * Content ignore patterns
  */
-export const contentIgnores = useRuntimeConfig().content.ignores.map((p: any) =>
+export const contentIgnores = contentConfig.ignores.map((p: any) =>
   typeof p === 'string' ? new RegExp(`^${p}`) : p
 )
 
@@ -94,7 +95,11 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   }
 
   const meta = await sourceStorage.getMeta(id)
-  const hash = ohash(meta)
+  const hash = ohash({
+    meta,
+    // Add Content version to the hash, to revalidate the cache on content update
+    version: contentConfig.version
+  })
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
   }

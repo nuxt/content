@@ -1,7 +1,7 @@
 <template>
   <div class="py-10 sm:py-20">
     <div class="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8 flex flex-col gap-y-8 items-center justify-center text-center">
-      <div class="font-semibold text-gray-400">
+      <div v-if="page.date" class="font-semibold text-gray-400">
         <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
       </div>
       <h1 class="font-bold text-gray-900 dark:text-white text-5xl">

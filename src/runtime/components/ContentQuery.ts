@@ -180,19 +180,19 @@ export default defineComponent({
       // Handle `findOne()` #empty/#not-found content
 
       // If `type` is `one` and `data` is `undefined render the #not-found slot.
-      if (!data && slots?.['not-found']) { return slots['not-found']({ props }) }
+      if (!data && slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
 
       // Empty slots for `one` if type is "markdown" refers to an empty `body.children` key.
-      if (data.type && data.type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props }) }
+      if (data.type && data.type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
     } else if (!data || !data.length) {
       // Handle `find()` and `findSurround()`
 
       // These functions does not handle "empty" slots, as "empty" refers to missing content in `body` of the document.
-      if (slots?.['not-found']) { return slots['not-found']({ props }) }
+      if (slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
     }
 
     // Return default slot if present
-    if (slots?.default) { return slots.default({ data, refresh, isPartial, props }) }
+    if (slots?.default) { return slots.default({ data, refresh, isPartial, props, ...this.$attrs }) }
 
     const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentQuery>!', slot, data }, null, 2))
 
