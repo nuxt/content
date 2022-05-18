@@ -89,18 +89,15 @@ const file = await queryContent('hello').findOne()
     :summary[The returned file won't be Markdown or HTML, but a JSON representing the abtract syntax tree.]
     ```json [document value]
     {
-      "type": "markdown",
-      "id": "content:hello.md",
-      "source": "content",
-      "path": "hello",
-      "extension": "md",
-      "atime": "2022-05-10T14:38:23.462Z",
-      "mtime": "2022-05-10T14:38:23.462Z",
-      "size": 63,
-      "slug": "/hello",
-      "draft": false,
-      "partial": false,
-      "empty": false,
+      "_type": "markdown",
+      "_id": "content:hello.md",
+      "_source": "content",
+      "_file": "hello.md",
+      "_extension": "md",
+      "_path": "/hello",
+      "_draft": false,
+      "_partial": false,
+      "_empty": false,
       "title": "Hello World",
       "description": "My first paragraph.",
       "body": {
