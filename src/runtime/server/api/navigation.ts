@@ -13,16 +13,16 @@ export default defineEventHandler(async (event) => {
        * Partial contents are not included in the navigation
        * A partial content is a content that has `_` prefix in its path
        */
-      partial: false
+      $partial: false
     })
     .find()
 
-  const dirConfigs = await serverQueryContent(event).where({ path: /\/_dir$/i, partial: true }).find()
+  const dirConfigs = await serverQueryContent(event).where({ $path: /\/_dir$/i, $partial: true }).find()
   const configs = dirConfigs.reduce((configs, conf) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf.path.split('/').slice(0, -1).join('/') || '/'
+    const key = conf.$path.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)

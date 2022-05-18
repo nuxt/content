@@ -17,7 +17,7 @@ export function createMatch (opts: MatchFactoryOptions = {}) {
     return Object.keys(conditions || {}).every((key) => {
       const condition = conditions[key]
 
-      if (key.startsWith('$')) {
+      if (key.startsWith('$') && operators[key]) {
         const fn = operators[key]
         return typeof fn === 'function' ? fn(item, condition) : false
       }
