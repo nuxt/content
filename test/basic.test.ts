@@ -6,7 +6,7 @@ import { testMarkdownParser } from './features/parser-markdown'
 import { testPathMetaTransformer } from './features/transformer-path-meta'
 import { testYamlParser } from './features/parser-yaml'
 import { testNavigation } from './features/navigation'
-import { testMDCComponent } from './features/mdc-component'
+// import { testMDCComponent } from './features/mdc-component'
 import { testJSONParser } from './features/parser-json'
 import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
@@ -19,8 +19,8 @@ describe('fixtures:basic', async () => {
   })
 
   const QUERY_ENDPOINT = '/api/_content/query'
-  const fetchDocument = (id: string) => {
-    const params = { first: true, where: { id } }
+  const fetchDocument = ($id: string) => {
+    const params = { first: true, where: { $id } }
     const qid = hash(params)
     return $fetch(`${QUERY_ENDPOINT}/${qid}`, {
       params: { _params: JSON.stringify(params) }
@@ -28,13 +28,13 @@ describe('fixtures:basic', async () => {
   }
 
   test('List contents', async () => {
-    const params = { only: 'id' }
+    const params = { only: '$id' }
     const qid = hash(params)
     const docs = await $fetch(`${QUERY_ENDPOINT}/${qid}`, {
       params: { _params: JSON.stringify(params) }
     })
 
-    const ids = docs.map(doc => doc.id)
+    const ids = docs.map(doc => doc.$id)
 
     assert(ids.length > 0)
     assert(ids.includes('content:index.md'))
@@ -49,7 +49,7 @@ describe('fixtures:basic', async () => {
   test('Get contents index', async () => {
     const index = await fetchDocument('content:index.md')
 
-    expect(index).toHaveProperty('mtime')
+    expect(index).toHaveProperty('$mtime')
     expect(index).toHaveProperty('body')
 
     expect(index.body).toMatchSnapshot('basic-index-body')
@@ -76,9 +76,9 @@ describe('fixtures:basic', async () => {
   test('Use default locale for unscoped contents', async () => {
     const index = await fetchDocument('content:index.md')
 
-    expect(index).toHaveProperty('mtime')
+    expect(index).toHaveProperty('$mtime')
     expect(index).toMatchObject({
-      locale: 'en'
+      $locale: 'en'
     })
   })
 
@@ -100,7 +100,7 @@ describe('fixtures:basic', async () => {
 
   testPathMetaTransformer()
 
-  testMDCComponent()
+  // testMDCComponent()
 
   testRegex()
 })

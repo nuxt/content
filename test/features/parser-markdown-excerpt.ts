@@ -19,8 +19,8 @@ export const testMarkdownParserExcerpt = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.md')
+      expect(parsed).toHaveProperty('$id')
+      assert(parsed.$id === 'content:index.md')
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.excerpt).toBeDefined()

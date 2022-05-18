@@ -5,54 +5,54 @@ const testCases = {
   'content:3.index.md': {
     __description: 'Index file',
     title: '',
-    draft: false,
-    partial: false,
-    path: '/'
+    $draft: false,
+    $partial: false,
+    $path: '/'
   },
   'content:3.index.draft.md': {
     __description: 'Index file with position [Draft]',
     title: '',
-    draft: true,
-    partial: false,
-    path: '/'
+    $draft: true,
+    $partial: false,
+    $path: '/'
   },
   'content:1.blog:3.index.draft.md': {
     __description: 'Blog Index file with position [Draft]',
     title: '',
-    draft: true,
-    partial: false,
-    path: '/blog'
+    $draft: true,
+    $partial: false,
+    $path: '/blog'
   },
   'content:1.blog:_4.the-post.md': {
     __description: 'Blog post file with position [Partial]',
     title: '4The Post',
-    draft: false,
-    partial: true,
-    path: '/blog/_4.the-post'
+    $draft: false,
+    $partial: true,
+    $path: '/blog/_4.the-post'
   },
   ...['1.0.0', '1.1', '1', '1.x', '1.0.x', '1.0.0.x'].reduce((map, semver) => {
     map[`content:${semver}:doc.md`] = {
       title: 'Doc',
-      draft: false,
-      partial: false,
-      path: `/${semver}/doc`,
-      source: 'content'
+      $draft: false,
+      $partial: false,
+      $path: `/${semver}/doc`,
+      $source: 'content'
     }
     return map
   }, {}),
   'content:1.one:2.two:3.three:4.four:5.five:doc.md': {
     __description: 'Position of nested directories (position will calculate with first three directory)',
     title: 'Doc',
-    draft: false,
-    partial: false,
-    path: '/one/two/three/four/five/doc'
+    $draft: false,
+    $partial: false,
+    $path: '/one/two/three/four/five/doc'
   },
   'content:1.one:file?param=value#hash.md': {
     __description: 'Handle special chars in file name',
     title: 'File?param=value#hash',
-    draft: false,
-    partial: false,
-    path: '/one/fileparamvaluehash'
+    $draft: false,
+    $partial: false,
+    $path: '/one/fileparamvaluehash'
   }
 }
 
@@ -66,46 +66,46 @@ export const testPathMetaTransformer = () => {
         })
 
         const fullPath = id.replace(/:/g, '/')
-        expect(transformed).toHaveProperty('id')
+        expect(transformed).toHaveProperty('$id')
         assert(
-          transformed.id === id,
+          transformed.$id === id,
           `Id is not equal, expected: ${id}, actual: ${transformed.id}`
         )
 
-        expect(transformed).toHaveProperty('draft')
+        expect(transformed).toHaveProperty('$draft')
         assert(
-          transformed.draft === expected.draft,
-          `Draft is not equal, expected: ${expected.draft}, actual: ${transformed.draft}`
+          transformed.$draft === expected.$draft,
+          `Draft is not equal, expected: ${expected.$draft}, actual: ${transformed.draft}`
         )
 
-        expect(transformed).toHaveProperty('partial')
+        expect(transformed).toHaveProperty('$partial')
         assert(
-          transformed.partial === expected.partial,
-          `Partial is not equal, expected: ${expected.partial}, actual: ${transformed.partial}`
+          transformed.$partial === expected.$partial,
+          `Partial is not equal, expected: ${expected.$partial}, actual: ${transformed.partial}`
         )
 
-        expect(transformed).toHaveProperty('path')
+        expect(transformed).toHaveProperty('$path')
         assert(
-          transformed.path === expected.path,
-          `Path is not equal, expected: ${expected.path}, actual: ${transformed.path}`
+          transformed.$path === expected.$path,
+          `Path is not equal, expected: ${expected.$path}, actual: ${transformed.path}`
         )
 
-        expect(transformed).toHaveProperty('source')
+        expect(transformed).toHaveProperty('$source')
         assert(
-          fullPath.startsWith(`${transformed.source}/`),
-          `source is not equal, recieved: ${transformed.source}`
+          fullPath.startsWith(`${transformed.$source}/`),
+          `source is not equal, recieved: ${transformed.$source}`
         )
 
-        expect(transformed).toHaveProperty('path')
+        expect(transformed).toHaveProperty('$path')
         assert(
-          fullPath.startsWith(`${transformed.source}/${transformed.file}`),
-          `file is not equal, recieved: ${transformed.file}`
+          fullPath.startsWith(`${transformed.$source}/${transformed.$file}`),
+          `file is not equal, recieved: ${transformed.$file}`
         )
 
-        expect(transformed).toHaveProperty('extension')
+        expect(transformed).toHaveProperty('$extension')
         assert(
-          fullPath.endsWith(`.${transformed.extension}`),
-          `extension is not equal, recieved: ${transformed.extension}`
+          fullPath.endsWith(`.${transformed.$extension}`),
+          `extension is not equal, recieved: ${transformed.$extension}`
         )
 
         expect(transformed).toHaveProperty('title')

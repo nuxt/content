@@ -12,8 +12,8 @@ export const testYamlParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.yml')
+      expect(parsed).toHaveProperty('$id')
+      assert(parsed.$id === 'content:index.yml')
 
       expect(parsed).toHaveProperty('key', 'value')
     })
@@ -27,8 +27,8 @@ export const testYamlParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('id')
-      assert(parsed.id === 'content:index.yml')
+      expect(parsed).toHaveProperty('$id')
+      assert(parsed.$id === 'content:index.yml')
 
       expect(parsed).haveOwnProperty('body')
       expect(Array.isArray(parsed.body)).toBeTruthy()
