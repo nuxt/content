@@ -408,19 +408,16 @@ export default defineNuxtModule<ModuleOptions>({
       // Register ws url
       nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
-      // Broadcast a message to the server to refresh the page
-      const broadcast = debounce((event: WatchEvent, key: string) => {
+      // Watch contents
+      await nitro.storage.watch((event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
         if (!key.startsWith(MOUNT_PREFIX)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)
-        logger.info(`${key} ${event}d`)
+        // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
-      }, 50)
-
-      // Watch contents
-      await nitro.storage.watch(broadcast)
+      })
     })
   }
 })
