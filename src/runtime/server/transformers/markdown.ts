@@ -10,7 +10,7 @@ const importPlugin = async (p: [string, any]) => ([
 export default {
   name: 'markdown',
   extentions: ['.md'],
-  parse: async (id, content) => {
+  parse: async (_id, content) => {
     const config: MarkdownOptions = { ...useRuntimeConfig().content?.markdown || {} }
     config.rehypePlugins = await Promise.all((config.rehypePlugins || []).map(importPlugin))
     config.remarkPlugins = await Promise.all((config.remarkPlugins || []).map(importPlugin))
@@ -20,8 +20,8 @@ export default {
     return {
       ...parsed.meta,
       body: parsed.body,
-      type: 'markdown',
-      id
+      _type: 'markdown',
+      _id
     }
   }
 }

@@ -1,5 +1,5 @@
 <script setup>
-const { data: document } = await useAsyncData('homepage', () => {
+const { data } = await useAsyncData('homepage', () => {
   return queryContent('/').without(['title']).findOne()
 })
 </script>
@@ -11,7 +11,7 @@ const { data: document } = await useAsyncData('homepage', () => {
     </template>
     <p>The <code>without(['title'])</code> query excludes <code>title</code> from the returned object</p>
     <ul>
-      <li v-for="item in Object.keys(document)" :key="item">
+      <li v-for="item in Object.keys(data)" :key="item">
         {{ item }}
       </li>
     </ul>

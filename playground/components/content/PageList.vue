@@ -2,9 +2,9 @@
   <div>
     <hr>
     <ul>
-      <li v-for="page of pages" :key="page.id">
+      <li v-for="page of pages" :key="page._id">
         <span>🔗</span>
-        <NuxtLink :to="page.path">
+        <NuxtLink :to="page._path">
           {{ page.title }}
         </NuxtLink>
       </li>
@@ -14,6 +14,6 @@
 </template>
 
 <script setup lang="ts">
-const { find } = queryContent().where({ $not: { path: '/' } }).sort({ id: 1 })
+const { find } = queryContent().where({ $not: { _path: '/' } }).sort({ _id: 1 })
 const { data: pages } = await useAsyncData('pages-list', find)
 </script>

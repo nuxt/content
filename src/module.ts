@@ -16,7 +16,6 @@ import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
-import { debounce } from 'perfect-debounce'
 import { name, version } from '../package.json'
 import {
   createWebSocket,
@@ -378,15 +377,18 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
-    nuxt.options.runtimeConfig.public.content = {
+    nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
       wsUrl: ''
-    }
+    })
     // Context will use in server
-    nuxt.options.runtimeConfig.content = contentContext as any
+    nuxt.options.runtimeConfig.content = {
+      version,
+      ...contentContext as any
+    }
 
     // Setup content dev module
     if (!nuxt.options.dev || !options.watch) {
@@ -408,19 +410,16 @@ export default defineNuxtModule<ModuleOptions>({
       // Register ws url
       nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
-      // Broadcast a message to the server to refresh the page
-      const broadcast = debounce((event: WatchEvent, key: string) => {
+      // Watch contents
+      await nitro.storage.watch((event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
         if (!key.startsWith(MOUNT_PREFIX)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)
-        logger.info(`${key} ${event}d`)
+        // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
-      }, 50)
-
-      // Watch contents
-      await nitro.storage.watch(broadcast)
+      })
     })
   }
 })
@@ -437,7 +436,9 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 }
 
-interface ModulePrivateRuntimeConfig {}
+interface ModulePrivateRuntimeConfig {
+  version: string;
+}
 
 declare module '@nuxt/schema' {
   interface ConfigSchema {

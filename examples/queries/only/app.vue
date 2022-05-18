@@ -1,5 +1,5 @@
 <script setup>
-const { data: document } = await useAsyncData('homepage', () => {
+const { data } = await useAsyncData('homepage', () => {
   return queryContent('/').only(['title']).findOne()
 })
 </script>
@@ -9,6 +9,6 @@ const { data: document } = await useAsyncData('homepage', () => {
     <template #icon>
       Nuxt/content
     </template>
-    <h1>{{ document.title }}</h1>
+    <h1>{{ data.title }}</h1>
   </NuxtExampleLayout>
 </template>

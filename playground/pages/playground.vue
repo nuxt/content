@@ -13,7 +13,7 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 `
 const content = ref(INITIAL_CODE)
 
-const { data: document, refresh } = await useAsyncData('playground', async () => {
+const { data: doc, refresh } = await useAsyncData('playground', async () => {
   try {
     return await $fetch(PARSE_SERVER, {
       method: 'POST',
@@ -24,7 +24,7 @@ const { data: document, refresh } = await useAsyncData('playground', async () =>
       }
     })
   } catch (e) {
-    return document.value
+    return doc.value
   }
 })
 
@@ -48,22 +48,17 @@ const tabs = ref(['Preview', 'AST'])
           {{ name }}
         </button>
       </div>
-      <Document v-if="tab === 'Preview'" :value="document">
+      <ContentRenderer v-if="tab === 'Preview'" :value="doc">
         <template #empty>
           <div>Content is empty.</div>
         </template>
-      </Document>
-      <pre v-if="tab === 'AST'" style="padding: 1rem;">{{ document }}</pre>
+      </ContentRenderer>
+      <pre v-if="tab === 'AST'" style="padding: 1rem;">{{ doc }}</pre>
     </div>
   </div>
 </template>
 
 <style>
-body, html {
-  margin: 0;
-  padding: 0;
-}
-
 .playground {
   display: flex;
   align-items: stretch;

@@ -9,7 +9,12 @@ export async function parseContent (id: string, content: string) {
   const ext = extname(id)
   const plugin: ContentTransformer = getParser(ext)
   if (!plugin) {
-    throw new Error(`No parser found for ${ext}`)
+    // eslint-disable-next-line no-console
+    console.warn(`${ext} files are not supported, "${id}" falling back to raw content`)
+    return {
+      _id: id,
+      body: content
+    }
   }
 
   const parsed: ParsedContent = await plugin.parse!(id, content)

@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; align-items: center; justify-content: space-between;">
     <div v-if="prevNext[0]">
-      <NuxtLink :to="prevNext[0].path">
+      <NuxtLink :to="prevNext[0]._path">
         {{ prevNext[0].title }}
       </NuxtLink>
     </div>
@@ -10,7 +10,7 @@
     </div>
 
     <div v-if="prevNext[1]">
-      <NuxtLink :to="prevNext[1].path">
+      <NuxtLink :to="prevNext[1]._path">
         {{ prevNext[1].title }}
       </NuxtLink>
     </div>
@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  document: {
+  doc: {
     type: Object,
     required: true
   }
 })
 
-const { data: prevNext } = await useAsyncData(`prev-next-${props.document.path}`, () => queryContent().findSurround(props.document.path))
+const { data: prevNext } = await useAsyncData(`prev-next-${props.doc._path}`, () => queryContent().findSurround(props.doc._path))
 </script>
