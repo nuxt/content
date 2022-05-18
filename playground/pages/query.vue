@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const query = ref({
   where: {
-
     _partial: false
   },
   sort: {
