@@ -1,10 +1,14 @@
 <script setup lang="ts">
 const query = ref({
-  path: '',
-  where: {},
-  sort: {},
+  where: {
+
+    _partial: false
+  },
+  sort: {
+    _path: 1
+  },
   only: [],
-  without: [],
+  without: ['body', 'excerpt'],
   skip: 0,
   limit: 10
 })
@@ -22,7 +26,7 @@ watch(qs, (value) => {
 })
 
 const { data: docs } = await useAsyncData('query', () => {
-  return queryContent(query.value.path).where(query.value.where).find()
+  return queryContent(query.value).find()
 }, { watch: [query] })
 
 const tabber = (event) => {

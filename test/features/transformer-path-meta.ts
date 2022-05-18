@@ -69,25 +69,25 @@ export const testPathMetaTransformer = () => {
         expect(transformed).toHaveProperty('_id')
         assert(
           transformed._id === id,
-          `Id is not equal, expected: ${id}, actual: ${transformed.id}`
+          `Id is not equal, expected: ${id}, actual: ${transformed._id}`
         )
 
         expect(transformed).toHaveProperty('_draft')
         assert(
           transformed._draft === expected._draft,
-          `Draft is not equal, expected: ${expected._draft}, actual: ${transformed.draft}`
+          `Draft is not equal, expected: ${expected._draft}, actual: ${transformed._draft}`
         )
 
         expect(transformed).toHaveProperty('_partial')
         assert(
           transformed._partial === expected._partial,
-          `Partial is not equal, expected: ${expected._partial}, actual: ${transformed.partial}`
+          `Partial is not equal, expected: ${expected._partial}, actual: ${transformed._partial}`
         )
 
         expect(transformed).toHaveProperty('_path')
         assert(
           transformed._path === expected._path,
-          `Path is not equal, expected: ${expected._path}, actual: ${transformed.path}`
+          `Path is not equal, expected: ${expected._path}, actual: ${transformed._path}`
         )
 
         expect(transformed).toHaveProperty('_source')
