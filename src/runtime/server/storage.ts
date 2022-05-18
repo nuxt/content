@@ -76,7 +76,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   const contentId = id
   // Handle ignored id
   if (!contentIgnorePredicate(id)) {
-    return { id: contentId, body: null }
+    return { $id: contentId, body: null }
   }
 
   if (isPreview(event)) {
@@ -102,7 +102,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { id: contentId, body: null }
+    return { $id: contentId, body: null }
   }
 
   const parsedContent = await parseContent(contentId, body as string)
