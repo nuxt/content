@@ -186,4 +186,30 @@ describe('Database Provider', () => {
     assert((doubleWhereResult as Array<any>).length === 1)
     assert(doubleWhereResult[0].path === '/b')
   })
+
+  test('Select specific keys', async () => {
+    const query = createQuery(pipelineFetcher)
+      .where({ id: { $in: [1, 2] } })
+      .only(['name', 'id', '$'])
+    const result = await query.find()
+
+    expect(result.length).toBeGreaterThan(0)
+    result.forEach((item) => {
+      expect(Object.keys(item)).toMatchObject(['id', 'name', '$deleted'])
+    })
+  })
+
+  test('Drop specific keys', async () => {
+    const query = createQuery(pipelineFetcher)
+      .where({ id: { $in: [1, 2] } })
+      .without(['name', '$'])
+    const result = await query.find()
+
+    expect(result.length).toBeGreaterThan(0)
+    result.forEach((item) => {
+      expect(item.id).toBeDefined()
+      expect(item.name).toBeUndefined()
+      expect(item.$deleted).toBeUndefined()
+    })
+  })
 })

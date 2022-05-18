@@ -1,11 +1,11 @@
 [
-  { "id": 1, "name": "a", "to": "a", "category": "c1", "nested": { "users": ["Ahad", "Yaël", "Kevin"] } },
-  { "id": 2, "name": "b", "to": "b", "category": "c1", "nested": { "users": ["Sebastien", "Pooya"] } },
-  { "id": 3, "name": "c", "to": "c", "category": "c2", "nested": { "users": ["Ahad", "Pooya"] } },
-  { "id": 4, "name": "d", "to": "d", "category": "c2", "nested": { "users": ["Yaël", "Benjamin"] } },
-  { "id": 5, "name": "e", "to": "e", "category": "c3", "nested": { "users": ["Sergey"] } },
-  { "id": 6, "name": "f", "to": "f", "category": "c3", "nested": { "users": ["Alexandre"] } },
-  { "id": 7, "name": "g", "to": "g", "category": "c4", "nested": { "users": ["Daniel"] } },
+  { "id": 1, "name": "a", "$deleted": false, "to": "a", "category": "c1", "nested": { "users": ["Ahad", "Yaël", "Kevin"] } },
+  { "id": 2, "name": "b", "$deleted": false, "to": "b", "category": "c1", "nested": { "users": ["Sebastien", "Pooya"] } },
+  { "id": 3, "name": "c", "$deleted": false, "to": "c", "category": "c2", "nested": { "users": ["Ahad", "Pooya"] } },
+  { "id": 4, "name": "d", "$deleted": false, "to": "d", "category": "c2", "nested": { "users": ["Yaël", "Benjamin"] } },
+  { "id": 5, "name": "e", "$deleted": true, "to": "e", "category": "c3", "nested": { "users": ["Sergey"] } },
+  { "id": 6, "name": "f", "$deleted": true, "to": "f", "category": "c3", "nested": { "users": ["Alexandre"] } },
+  { "id": 7, "name": "g", "$deleted": true, "to": "g", "category": "c4", "nested": { "users": ["Daniel"] } },
   
   { "text": "aab", "numberString": "1", "number": 1 },
   { "text": "aaB", "numberString": "2", "number": 2 },
