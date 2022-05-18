@@ -55,7 +55,7 @@ export default defineComponent({
     const { value, excerpt, tag } = ctx
 
     // Use built-in MarkdownRenderer
-    if (value && value?.type === 'markdown' && value?.body?.children?.length) {
+    if (value && value?._type === 'markdown' && value?.body?.children?.length) {
       return h(
         MarkdownRenderer,
         {
