@@ -103,7 +103,7 @@ export default defineComponent({
       () => {
         let queryBuilder: QueryBuilder = queryContent()
 
-        if (path.value) { queryBuilder = queryBuilder.where({ path: path.value }) }
+        if (path.value) { queryBuilder = queryBuilder.where({ $path: path.value }) }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
 
