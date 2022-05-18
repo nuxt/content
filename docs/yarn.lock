@@ -282,24 +282,24 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-1.0.0.tgz#91c560df2ed8d9700e4c7ed4ac21a3a322c9d975"
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
-"@docus/base@npm:@docus/base-edge@3.0.0-86e80b6":
-  version "3.0.0-86e80b6"
-  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-86e80b6.tgz#0211afb3dd0fa82517f096f8a93710fedeeefbf3"
-  integrity sha512-bOlmHlsALRVptNyaLanHpReUIRc+jWnVk99WRJOCKJWeYz3DfnSR2htZaB4RV9fZHKMUM6poTNKyRb/iRlKWgA==
+"@docus/base@npm:@docus/base-edge@3.0.0-ab7d8c3":
+  version "3.0.0-ab7d8c3"
+  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-ab7d8c3.tgz#2ba694e6fd591c4f3040a8ec676ce0994689d6ff"
+  integrity sha512-S4H2jFlll3dcTtDu+elRslw7EFm7DVAW4/Y1vFZTqA1QuNHt6OSwRRqrg79GLFg32Wy+DbTWOUuh8Hasuhc74g==
   dependencies:
     "@nuxt/content" "npm:@nuxt/content-edge@latest"
     "@nuxthq/admin" "npm:@nuxthq/admin-edge@latest"
-    "@vueuse/core" "^8.4.2"
-    "@vueuse/nuxt" "^8.4.2"
+    "@vueuse/core" "^8.5.0"
+    "@vueuse/nuxt" "^8.5.0"
     defu "^6.0.0"
     nuxt "^3.0.0-rc.3"
 
 "@docus/docs-theme@npm:@docus/docs-theme-edge@latest":
-  version "3.0.0-86e80b6"
-  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-86e80b6.tgz#51a222db3a562583995a0632d9985b49ded142a2"
-  integrity sha512-eezHTnzR0L3rCRZkRY4jtuhhxsvitKuY2FuvgZcHDPAPIHBOeJ+H+a/QzqxP5tMc5g+EM/Mdh07Ux+b4H8950Q==
+  version "3.0.0-ab7d8c3"
+  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-ab7d8c3.tgz#2fcfcfd352ebcd7a56208cfd2b225a16c6ff3a8e"
+  integrity sha512-oe51Qe1rLAvb2dJNPUXB28Z3e9aPRm6KbQlvB6MmRPrt1PkymflzsR5AIx0C+xFGqdO47JOyjLtJA5Pgu+XjPg==
   dependencies:
-    "@docus/base" "npm:@docus/base-edge@3.0.0-86e80b6"
+    "@docus/base" "npm:@docus/base-edge@3.0.0-ab7d8c3"
     "@docus/github" latest
     "@iconify/vue" "^3.2.1"
     "@nuxtjs/color-mode" "^3.0.3"
@@ -321,14 +321,14 @@
     remark-github "^11.2.2"
 
 "@docus/github@npm:@docus/github-edge@latest":
-  version "1.2.6-86e80b6"
-  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-86e80b6.tgz#2d76f673fe146882b4c762e55f57b6bdf728d893"
-  integrity sha512-DRQeBsFewgVeAwCrRFql89vQXOsAnw/5/qCbcXhp5f+NL0GN6SnJi1CV/ktUlM8fCDeqmoVnsr8brTvataKs/A==
+  version "1.2.6-ab7d8c3"
+  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-ab7d8c3.tgz#da944524188435c6bb1eadbbfdc5b6950b235550"
+  integrity sha512-7hW6xie3OPdEpggIy1BE+v/NHKUmun4vL3Jk9WuORCJhSa3iAil9+mR8XJfAq8CpShSikZtgXh+SyjnnIsAWig==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     "@octokit/graphql" "^4.8.0"
     "@octokit/rest" "^18.12.0"
-    remark-github "^11.2.2"
+    remark-github "^11.2.3"
 
 "@iconify/vue@^3.2.1":
   version "3.2.1"
@@ -435,9 +435,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27547967.ab3d41a"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27547967.ab3d41a.tgz#97f3c3de97e2da4a98b4a19728df511e3e5fa8ff"
-  integrity sha512-NNz5wM59ZgN296Rd2Tsui0OYPtvHPC5l73UV26c4FmnqZX16CVNMfmL3NDWtvWpaP2Tw7ECiZJduOmu84JxG9w==
+  version "2.0.0-27548221.7185fa5"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27548221.7185fa5.tgz#a0765b89685eb2632bdb1db77307b52437cde340"
+  integrity sha512-rp/eCf8L6Jf37AqDwIzAfPEvxJpeaFnXR0yOpFkkhrlWCyHmoelueCAi1EPKnj8TmYuGcAFd1d9yIctpiCmlPg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -903,9 +903,9 @@
   integrity sha512-WJu0I4PpqNPuutpaA9zDUq2JXR+lorZ7PbLcKNLmb6GL9/HLfC7w3CRsMhJF4BbYd/lkY6CfXOvkYpuGnZfkpQ==
 
 "@tailwindcss/forms@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.1.tgz#7fe86b9b67e6d91cb902e2d3f4ebe561cc057a13"
-  integrity sha512-QSwsFORnC2BAP0lRzQkz1pw+EzIiiPdk4e27vGQjyXkwJPeC7iLIRVndJzf9CJVbcrrIcirb/TfxF3gRTyFEVA==
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.2.tgz#4ef45f9916dcb37838cbe7fecdcc4ba7a7c2ab59"
+  integrity sha512-pSrFeJB6Bg1Mrg9CdQW3+hqZXAKsBrSG9MAfFLKy1pVA4Mb4W7C0k7mEhlmS2Dfo/otxrQOET7NJiJ9RrS563w==
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
@@ -1169,7 +1169,7 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.33.tgz#69a8c99ceb37c1b031d5cc4aec2ff1dc77e1161e"
   integrity sha512-UBc1Pg1T3yZ97vsA2ueER0F6GbJebLHYlEi4ou1H5YL4KWvMOOWwpYo9/QpWq93wxKG6Wo13IY74Hcn/f7c7Bg==
 
-"@vueuse/core@8.5.0", "@vueuse/core@^8.0.1", "@vueuse/core@^8.4.2":
+"@vueuse/core@8.5.0", "@vueuse/core@^8.0.1", "@vueuse/core@^8.5.0":
   version "8.5.0"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-8.5.0.tgz#2b7548e52165c88e1463756c36188e105d806543"
   integrity sha512-VEJ6sGNsPlUp0o9BGda2YISvDZbhWJSOJu5zlp2TufRGVrLcYUKr31jyFEOj6RXzG3k/H4aCYeZyjpItfU8glw==
@@ -1200,7 +1200,7 @@
     style-value-types "^5.1.0"
     vue-demi "*"
 
-"@vueuse/nuxt@^8.4.2":
+"@vueuse/nuxt@^8.5.0":
   version "8.5.0"
   resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-8.5.0.tgz#392617df38d56f87b705f5feef4af27544371f6c"
   integrity sha512-riGrDwlTQbjSDxyw46oc1catXpZwzzRrEk+PTy8NQZG6uevgJ8wNuAhPVx/5oG0jYG/t2orIFfc9xGEA6uytSg==
@@ -4344,7 +4344,7 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nanoid@^3.1.32, nanoid@^3.3.3:
+nanoid@^3.1.32, nanoid@^3.3.3, nanoid@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
@@ -5233,11 +5233,11 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.1.0, postcss-value-parser@^
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
 postcss@^8.1.10, postcss@^8.2.15, postcss@^8.4.12, postcss@^8.4.13, postcss@^8.4.8:
-  version "8.4.13"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.13.tgz#7c87bc268e79f7f86524235821dfdf9f73e5d575"
-  integrity sha512-jtL6eTBrza5MPzy8oJLFuUscHDXTV5KcLlqAWHl5q5WYRfnNRGSmOZmOZ1T6Gy7A99mOZfqungmZMpMmCVJ8ZA==
+  version "8.4.14"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.14.tgz#ee9274d5622b4858c1007a74d76e42e56fd21caf"
+  integrity sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==
   dependencies:
-    nanoid "^3.3.3"
+    nanoid "^3.3.4"
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
@@ -5461,7 +5461,7 @@ remark-gfm@^3.0.1:
     micromark-extension-gfm "^2.0.0"
     unified "^10.0.0"
 
-remark-github@^11.2.2:
+remark-github@^11.2.2, remark-github@^11.2.3:
   version "11.2.3"
   resolved "https://registry.yarnpkg.com/remark-github/-/remark-github-11.2.3.tgz#5898c5f37b70bc1efd69a4833a391d74c0850574"
   integrity sha512-3V/EnKy3Z2Ukmxt11M6pP8QHuSbsQO1yNujfr+hyRVAZT9RlTSYLmwOe23um0ynqWbG37fYhkbUMWsFDxlXAhw==
