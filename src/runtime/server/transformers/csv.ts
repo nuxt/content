@@ -3,7 +3,7 @@ import { useRuntimeConfig } from '#imports'
 export default {
   name: 'csv',
   extentions: ['.csv'],
-  parse: async ($id, content) => {
+  parse: async (_id, content) => {
     const config = { ...useRuntimeConfig().content?.csv || {} }
 
     const csvToJson: any = await import('csvtojson').then(m => m.default || m)
@@ -12,8 +12,8 @@ export default {
       .fromString(content)
 
     return {
-      $id,
-      $type: 'csv',
+      _id,
+      _type: 'csv',
       body: parsed
     }
   }

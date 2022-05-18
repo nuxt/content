@@ -1,5 +1,5 @@
 ---
-$path: '/titi'
+_path: '/titi'
 ---
 
 # Toto 2

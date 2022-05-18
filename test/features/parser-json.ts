@@ -33,8 +33,8 @@ export const testJSONParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('$id')
-      assert(parsed.$id === 'content:index.json')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.json')
       assert(parsed.key === 'value')
     })
     test('array', async () => {
@@ -46,8 +46,8 @@ export const testJSONParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('$id')
-      assert(parsed.$id === 'content:index.json')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.json')
 
       expect(parsed).haveOwnProperty('body')
       expect(Array.isArray(parsed.body)).toBeTruthy()
@@ -66,8 +66,8 @@ export const testJSONParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('$id')
-      assert(parsed.$id === 'content:index.json5')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.json5')
       assert(parsed.key === 'value')
 
       expect(parsed.leadingDecimalPoint).toEqual(0.8675309)

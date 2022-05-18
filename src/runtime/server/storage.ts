@@ -76,7 +76,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   const contentId = id
   // Handle ignored id
   if (!contentIgnorePredicate(id)) {
-    return { $id: contentId, body: null }
+    return { _id: contentId, body: null }
   }
 
   if (isPreview(event)) {
@@ -102,7 +102,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { $id: contentId, body: null }
+    return { _id: contentId, body: null }
   }
 
   const parsed = await parseContent(contentId, body as string)
@@ -123,7 +123,7 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
     params = {
-      where: [{ $path: new RegExp(`^${path}`) }]
+      where: [{ _path: new RegExp(`^${path}`) }]
     }
   }
   const pipelineFetcher = createPipelineFetcher<T>(
@@ -132,7 +132,7 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
 
   // Provide default sort order
   if (!params.sort?.length) {
-    params.sort = [{ $file: 1, $numeric: true }]
+    params.sort = [{ _file: 1, $numeric: true }]
   }
 
   return createQuery<T>(pipelineFetcher, params)

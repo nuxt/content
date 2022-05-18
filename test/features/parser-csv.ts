@@ -16,8 +16,8 @@ export const testCSVParser = () => {
         }
       })
 
-      expect(parsed).toHaveProperty('$id')
-      assert(parsed.$id === 'content:index.csv')
+      expect(parsed).toHaveProperty('_id')
+      assert(parsed._id === 'content:index.csv')
 
       expect(parsed).toHaveProperty('body')
       expect(Array.isArray(parsed.body)).toBeTruthy()

@@ -30,22 +30,22 @@ exports[`fixtures:basic > Get contents index > basic-index-body 1`] = `
 exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-cats 1`] = `
 [
   {
-    "$path": "/cats",
+    "_path": "/cats",
     "children": [
       {
-        "$path": "/cats/bombay",
+        "_path": "/cats/bombay",
         "title": "Bombay",
       },
       {
-        "$path": "/cats",
+        "_path": "/cats",
         "title": "Cats list",
       },
       {
-        "$path": "/cats/persian",
+        "_path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "$path": "/cats/ragdoll",
+        "_path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
     ],
@@ -57,14 +57,14 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
 exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-dogs 1`] = `
 [
   {
-    "$path": "/dogs",
+    "_path": "/dogs",
     "children": [
       {
-        "$path": "/dogs/bulldog",
+        "_path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "$path": "/dogs/german-shepherd",
+        "_path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
@@ -77,36 +77,36 @@ exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-do
 exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
 [
   {
-    "$path": "/cats",
+    "_path": "/cats",
     "children": [
       {
-        "$path": "/cats/bombay",
+        "_path": "/cats/bombay",
         "title": "Bombay",
       },
       {
-        "$path": "/cats",
+        "_path": "/cats",
         "title": "Cats list",
       },
       {
-        "$path": "/cats/persian",
+        "_path": "/cats/persian",
         "title": "Persian",
       },
       {
-        "$path": "/cats/ragdoll",
+        "_path": "/cats/ragdoll",
         "title": "Ragdoll",
       },
     ],
     "title": "Cats list",
   },
   {
-    "$path": "/dogs",
+    "_path": "/dogs",
     "children": [
       {
-        "$path": "/dogs/bulldog",
+        "_path": "/dogs/bulldog",
         "title": "Bulldog",
       },
       {
-        "$path": "/dogs/german-shepherd",
+        "_path": "/dogs/german-shepherd",
         "title": "German Shepherd",
       },
     ],
@@ -114,20 +114,20 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
     "title": "Dogs List",
   },
   {
-    "$path": "/",
+    "_path": "/",
     "children": [
       {
-        "$path": "/",
+        "_path": "/",
         "title": "سلام",
       },
     ],
     "title": "سلام",
   },
   {
-    "$path": "/",
+    "_path": "/",
     "children": [
       {
-        "$path": "/",
+        "_path": "/",
         "title": "Index",
       },
     ],

@@ -4,35 +4,35 @@ export interface ParsedContentMeta {
   /**
    * Content id
    */
-  $id: string
+  _id: string
   /**
    * Content source
    */
-  $source?: string
+  _source?: string
   /**
    * Content path, this path is source agnostic and it the content my live in any source
    */
-  $path?: string
+  _path?: string
   /**
    * Content slug
    */
-  $slug?: string
+  _slug?: string
   /**
    * Content title
    */
-  $title?: string
+  _title?: string
   /**
    * Content draft status
    */
-  $draft?: boolean
+  _draft?: boolean
   /**
    * Content partial status
    */
-  $partial?: boolean
+  _partial?: boolean
   /**
    * Content locale
    */
-  $locale?: boolean
+  _locale?: boolean
 
   [key: string]: any
 }
