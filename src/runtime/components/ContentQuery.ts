@@ -117,7 +117,7 @@ export default defineComponent({
 
         if (skip.value) { queryBuilder = queryBuilder.skip(skip.value) }
 
-        if (locale.value) { queryBuilder = queryBuilder.where({ locale: locale.value }) }
+        if (locale.value) { queryBuilder = queryBuilder.where({ _locale: locale.value }) }
 
         if (find.value === 'one') { return queryBuilder.findOne() as Promise<ParsedContent> }
 
