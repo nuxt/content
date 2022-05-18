@@ -39,7 +39,7 @@ export function queryContent<T = ParsedContent> (query?: string | QueryBuilderPa
   if (typeof query === 'string') {
     const path = withLeadingSlash(joinURL(query, ...pathParts))
 
-    return createQuery<T>(queryFetch).where({ path: new RegExp(`^${path}`) })
+    return createQuery<T>(queryFetch).where({ _path: new RegExp(`^${path}`) })
   }
 
   return createQuery<T>(queryFetch, query)
