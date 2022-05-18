@@ -61,7 +61,8 @@ export default defineComponent({
         {
           value,
           excerpt,
-          tag
+          tag,
+          ...this.$attrs
         }
       )
     }

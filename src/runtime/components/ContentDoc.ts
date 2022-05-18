@@ -72,7 +72,7 @@ export default defineComponent({
           ? ({ data, refresh, isPartial }) => slots?.default({ doc: data, refresh, isPartial })
           : ({ data }) => h(
               ContentRenderer,
-              { value: data, excerpt, tag },
+              { value: data, excerpt, tag, ...this.$attrs },
               // Forward local `empty` slots to ContentRenderer if it is used.
               { empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', data) }
             ),

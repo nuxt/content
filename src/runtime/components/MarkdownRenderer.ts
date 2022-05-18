@@ -93,7 +93,8 @@ export default defineComponent({
         component as any,
         {
           ...contentProps,
-          ...meta.component?.props
+          ...meta.component?.props,
+          ...this.$attrs
         },
         {
           default: createSlotFunction(children)
