@@ -22,8 +22,7 @@ watch(qs, (value) => {
 })
 
 const { data: docs } = await useAsyncData('query', () => {
-  return queryContent().where(query.value.where).find()
-  // return queryContent(query.value.path).where(query.value.where).find()
+  return queryContent(query.value.path).where(query.value.where).find()
 }, { watch: [query] })
 
 const tabber = (event) => {
