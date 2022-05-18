@@ -16,7 +16,7 @@ import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
-import { debounce } from 'perfect-debounce'
+// import { debounce } from 'perfect-debounce'
 import { name, version } from '../package.json'
 import {
   createWebSocket,
