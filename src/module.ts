@@ -385,7 +385,10 @@ export default defineNuxtModule<ModuleOptions>({
       wsUrl: ''
     })
     // Context will use in server
-    nuxt.options.runtimeConfig.content = contentContext as any
+    nuxt.options.runtimeConfig.content = {
+      version,
+      ...contentContext as any
+    }
 
     // Setup content dev module
     if (!nuxt.options.dev || !options.watch) {
@@ -433,7 +436,9 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 }
 
-interface ModulePrivateRuntimeConfig {}
+interface ModulePrivateRuntimeConfig {
+  version: string;
+}
 
 declare module '@nuxt/schema' {
   interface ConfigSchema {
