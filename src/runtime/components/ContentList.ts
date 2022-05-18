@@ -44,7 +44,7 @@ export default defineComponent({
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => slots?.default({ list: data, refresh, isPartial })
+          ? ({ data, refresh, isPartial }) => slots?.default({ list: data, refresh, isPartial, ...this.$attrs })
           : ({ data }) => emptyNode('default', data),
         // Empty slot
         empty: bindings => slots?.empty ? slots.empty(bindings) : ({ data }) => emptyNode('default', data),

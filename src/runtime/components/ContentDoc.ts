@@ -69,7 +69,7 @@ export default defineComponent({
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => slots?.default({ doc: data, refresh, isPartial })
+          ? ({ data, refresh, isPartial }) => slots?.default({ doc: data, refresh, isPartial, ...this.$attrs })
           : ({ data }) => h(
               ContentRenderer,
               { value: data, excerpt, tag, ...this.$attrs },
