@@ -15,7 +15,9 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxthq/admin'],
   alias,
-  extends: ['./node_modules/@docus/docs-theme'],
+  extends: [
+    (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
+  ],
   github: {
     repo: 'nuxt/content'
   },
