@@ -4,6 +4,7 @@ url: "https://content.nuxtjs.org"
 debug: false
 socials:
   twitter: "@nuxt_js"
+  github: "nuxt/content"
 github:
   repository: "nuxt/content"
   branch: "main"
