@@ -23,9 +23,9 @@ defineProps({
   <section class="py-12 lg:py-24">
     <Container padded class="my-16 flex flex-col lg:flex-row">
       <div class="mb-8 flex flex-col items-center pr-0 lg:mb-0 lg:w-2/3 lg:items-start lg:pr-8">
-        <NuxtLink v-if="announcement" :to="announcement[1]" class="hover:bg-primary-200 bg-primary-100 border-2 border-primary-400 mb-8 px-4 py-2 rounded-md  flex gap-x-2 flex items-center justify-center">
-          <Icon name="heroicons-solid:sparkles" class="h-5 w-5 text-gray-800 " />
-          <span class="font-semibold text-gray-800">{{ announcement[0] }}</span>
+        <NuxtLink v-if="announcement" :to="announcement[1]" class="hover:bg-primary-200 text-primary-900 bg-primary-100 transition dark:bg-transparent hover:dark:bg-primary-900 dark:border-primary-700 dark:text-primary-100 border border-primary-400 mb-8 px-4 py-2 rounded-md flex gap-x-1 flex items-center justify-center">
+          <Icon name="heroicons-solid:sparkles" class="h-4 w-4" />
+          <span class="font-medium text-sm">{{ announcement[0] }}</span>
         </NuxtLink>
 
         <h2 class="mb-8 text-center text-5xl font-semibold tracking-tighter text-gray-900 dark:text-gray-100 sm:text-6xl sm:leading-none lg:text-left lg:text-7xl">

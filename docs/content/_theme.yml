@@ -19,8 +19,9 @@ header:
   logo: true
 footer:
   credits:
-    icon: IconNuxtLabs
-    text: Made by Nuxt
+    icon: IconDocus
+    text: Powered by Docus
+    href: https://docus.com
   icons:
   - label: NuxtJS
     href: https://nuxtjs.org
