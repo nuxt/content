@@ -101,7 +101,8 @@ function sortAndClear (nav: PrivateNavItem[]) {
  * Returns a new object with the specified keys
  **/
 function pick (keys?: string[]) {
-  return (obj: any = {}) => {
+  return (obj: any) => {
+    obj = obj || {}
     if (keys && keys.length) {
       return keys
         .filter(key => typeof obj[key] !== 'undefined')
