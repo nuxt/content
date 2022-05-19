@@ -454,9 +454,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27549538.8186622"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549538.8186622.tgz#5e9b2cca193af04521a6b4fe06ab24e779106241"
-  integrity sha512-qnD0GFgb8jQ1gZxibG3jsBOITTUw2tX4qaw3WjZY2Rg2yYV3enXRdbyRQ1umii51RXDie/dMqbq9toEwdGa85Q==
+  version "2.0.0-27549526.86fa3e5"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549526.86fa3e5.tgz#c689f8e4d153b2e8f890733b22fd66506e5399c9"
+  integrity sha512-Fx3U+4wjWgMLMOiyQlQnk9Cy77LNVgyj0Zvq2b4LS/oeJxA6X+ufNwMvbmpvGf3kk5DwDY6/8SWg+Zb1Bc/XKg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"

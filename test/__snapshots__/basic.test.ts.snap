@@ -124,6 +124,10 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
     "title": "سلام",
   },
   {
+    "_path": "/head",
+    "title": "Basic Head",
+  },
+  {
     "_path": "/",
     "children": [
       {
