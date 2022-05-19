@@ -17,6 +17,7 @@ defineProps({
   button {
     padding: .5rem;
     border-radius: 4px;
+    color: #000;
   }
   .info {
     background-color: blue

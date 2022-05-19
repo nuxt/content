@@ -1,21 +1,21 @@
 ---
-layout: article
+layout: blogpost
 navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
 cover: /announcing-v2.png
 date: 2022-05-19
 authors:
-  - name: Sebastien Chopin
+  - name: "Sébastien Chopin"
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
     link: https://twitter.com/Atinux
-  - name: Yael Guilloux
+  - name: "Yaël Guilloux"
     avatarUrl: https://pbs.twimg.com/profile_images/1227208659572269056/Yo6GUjZw_400x400.jpg
     link: https://twitter.com/yaeeelglx
-  - name: Farnabaz 
+  - name: "Ahad Birang"
     avatarUrl: https://pbs.twimg.com/profile_images/780374165136244736/x5HfdWA1_400x400.jpg
     link: https://twitter.com/a_birang
-  - name: Clement Ollivier 
+  - name: "Clément Ollivier" 
     avatarUrl: https://pbs.twimg.com/profile_images/1370286658432724996/ZMSDzzIi_400x400.jpg
     link: https://twitter.com/clemcodes
 tags:
