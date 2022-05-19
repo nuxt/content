@@ -15,11 +15,18 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 - [Install Nuxt Content](/docs/getting-started)
 - [Explore the MDC syntax](/docs/syntax)
 `
-
+const shiki = await useShiki()
 const content = ref(INITIAL_CODE)
 
 const { data: doc, refresh } = await useAsyncData('playground', async () => {
   try {
+    // const startParse = Date.now()
+    let parsed = await parse(content.value)
+    // const startHighlight = Date.now()
+    parsed = await shiki(parsed)
+
+    // console.log(`Parsed: ${startHighlight - startParse}ms, Highlighted: ${Date.now() - startHighlight}ms`)
+
     return {
       _id: 'content:index.md',
       _path: '/',
@@ -28,7 +35,7 @@ const { data: doc, refresh } = await useAsyncData('playground', async () => {
       _draft: false,
       _type: 'markdown',
       updatedAt: new Date().toISOString(),
-      ...(await parse(content.value))
+      ...parsed
     }
   } catch (e) {
     return doc.value
