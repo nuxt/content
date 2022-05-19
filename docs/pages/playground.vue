@@ -21,6 +21,7 @@ const { data: doc, refresh } = await useAsyncData('playground', async () => {
       _extension: 'md',
       _draft: false,
       _type: 'markdown',
+      updatedAt: new Date().toISOString(),
       ...(await parse(content.value))
     }
   } catch (e) {
@@ -53,7 +54,7 @@ const tabs = ref(['Preview', 'AST'])
         <textarea v-model="content" @input="refresh" />
       </div>
       <div class="content">
-        <ContentRenderer v-if="tab === 'Preview'" :key="content" :value="doc">
+        <ContentRenderer v-if="tab === 'Preview'" :key="doc.updatedAt" :value="doc">
           <template #empty>
             <div>Content is empty.</div>
           </template>
