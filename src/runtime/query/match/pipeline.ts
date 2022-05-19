@@ -10,7 +10,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
    * Exctract surrounded items of specific condition
    */
   const surround = (data: any[], { query, before, after }: QueryBuilderParams['surround']) => {
-    const matchQuery = typeof query === 'string' ? { path: query } : query
+    const matchQuery = typeof query === 'string' ? { _path: query } : query
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
 
