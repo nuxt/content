@@ -141,33 +141,33 @@ describe('Database Provider', () => {
   })
 
   test('Surround with path (default)', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b')
 
-    assert(result[0].path === '/a')
-    assert(result[1].path === '/c')
+    assert(result[0]._path === '/a')
+    assert(result[1]._path === '/c')
   })
 
   test('Surround more that 1 item with path', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround('/b', { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
     assert(result[0] === null)
-    assert(result[1].path === '/a')
-    assert(result[2].path === '/c')
+    assert(result[1]._path === '/a')
+    assert(result[2]._path === '/c')
   })
 
   test('Surround with object', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
     const result = await createQuery(fetcher)
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
-    assert(result[0].path === '/a')
-    assert(result[1].path === '/b')
+    assert(result[0]._path === '/a')
+    assert(result[1]._path === '/b')
     assert(result[2] === null)
   })
 
