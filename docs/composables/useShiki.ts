@@ -58,7 +58,6 @@ export const useShiki = async () => {
   async function highlightCode (params: Partial<HighlightParams>): Promise<HighlightThemedToken[][]> {
     const { code, lang, theme } = resolveBody(params)
     if (!cache[`${code}-${lang}-${theme}`]) {
-
       // Skip highlight if lang is not supported
       if (!lang) {
         return [[{ content: code }]]
@@ -77,7 +76,7 @@ export const useShiki = async () => {
       // Highlight code
       const highlightedCode = highlighter.codeToThemedTokens(code, lang, theme)
 
-      cache[`${code}-${lang}-${theme}`]= highlightedCode
+      cache[`${code}-${lang}-${theme}`] = highlightedCode
     }
 
     return cache[`${code}-${lang}-${theme}`]
