@@ -37,7 +37,7 @@ export const useDefaultOptions = (): MarkdownOptions => ({
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {
   const options = defu(userOptions, useDefaultOptions()) as MarkdownOptions
 
-  const { content, data, ...rest } = await parseFrontMatter(file)
+  const { content, data } = await parseFrontMatter(file)
 
   // Compile markdown from file content to JSON
   const body = await generateBody(content, { ...options, data })
@@ -51,10 +51,10 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
     toc = generateToc(body, tocOption)
   }
 
-  let excerpt
-  if (rest.excerpt) {
-    excerpt = await generateBody(rest.excerpt, { ...options, data })
-  }
+  const excerptString = useExcerpt(content)
+  const excerpt = excerptString
+    ? await generateBody(excerptString, { ...options, data })
+    : undefined
 
   /**
    * Process content headings
@@ -74,6 +74,18 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
       ...data
     }
   }
+}
+
+function useExcerpt (content: string, delimiter = '<!--more-->') {
+  if (!delimiter) {
+    return ''
+  }
+  // if enabled, get the excerpt defined after front-matter
+  const idx = content.indexOf(delimiter)
+  if (idx !== -1) {
+    return content.slice(0, idx)
+  }
+  return content
 }
 
 export * from './frontmatter'

@@ -1,7 +1,9 @@
-import * as matter from 'gray-matter'
+import yaml from 'js-yaml'
 import flat from 'flat'
 
-export function stringify (data: any, content: string = '') {
+const FRONTMATTER_DELIMITER = '---'
+
+export function stringifyFrontMatter (data: any, content: string = '') {
   // flatten frontmatter data
   // convert `parent: { child: ... }` into flat keys `parent.child`
   data = flat.flatten(data, {
@@ -10,22 +12,26 @@ export function stringify (data: any, content: string = '') {
     safe: true
   })
 
-  return matter.stringify(content, data)
+  return [
+    FRONTMATTER_DELIMITER,
+    yaml.dump(data, { lineWidth: -1 }),
+    FRONTMATTER_DELIMITER,
+    content
+  ].join('\n')
 }
 
-export function parseFrontMatter (file: string) {
-  const { data, content, ...rest } = matter.default(file, {
-    excerpt: true,
-    excerpt_separator: '<!--more-->'
-  })
-
-  // unflatten frontmatter data
-  // convert `parent.child` keys into `parent: { child: ... }`
-  const unflattenData: any = flat.unflatten(data || {}, {})
+export function parseFrontMatter (content: string) {
+  let data = {}
+  if (content.startsWith(FRONTMATTER_DELIMITER + '\n')) {
+    const idx = content.indexOf('\n' + FRONTMATTER_DELIMITER)
+    if (idx !== -1) {
+      data = yaml.load(content.slice(4, idx))
+    }
+  }
 
   return {
     content,
-    data: unflattenData,
-    ...rest
+    // unflatten frontmatter data. convert `parent.child` keys into `parent: { child: ... }`
+    data: flat.unflatten(data || {}, {}) as Record<string, any>
   }
 }
