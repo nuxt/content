@@ -282,10 +282,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-1.0.0.tgz#91c560df2ed8d9700e4c7ed4ac21a3a322c9d975"
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
-"@docus/base@npm:@docus/base-edge@3.0.0-1a33690":
-  version "3.0.0-1a33690"
-  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-1a33690.tgz#b097a5d6fab5645a334196c65480827861191b08"
-  integrity sha512-+z8M/p8hDVSbM2LRUxpI/iwVVMWba0/wdGdEXrXrZtW7q1rMwboyYNkjUE/gzZgWKV952X/GIXxWKYK/TsC0rg==
+"@docus/base@npm:@docus/base-edge@3.0.0-f45e671":
+  version "3.0.0-f45e671"
+  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-f45e671.tgz#739bc12a49d7cadc2e05bf2b0cfc4d17e3be07ef"
+  integrity sha512-Q26amMoWGWhJJmEwppVA/j4RQxw8ciFCqneim02Z1VymYhu1Xj1lRTJ1+KeDlPi/zZHoJIDzbv+qY5+IhU/gMQ==
   dependencies:
     "@nuxt/content" "npm:@nuxt/content-edge@latest"
     "@nuxthq/admin" "npm:@nuxthq/admin-edge@latest"
@@ -295,11 +295,11 @@
     nuxt "^3.0.0-rc.3"
 
 "@docus/docs-theme@npm:@docus/docs-theme-edge@latest":
-  version "3.0.0-1a33690"
-  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-1a33690.tgz#417af6792c7bb2e66e53ac3f3a99f879048d1422"
-  integrity sha512-xI/otQ3Ee1GcCgemKfhRBqhAx2kOcnlvaaDdssg9ow0NR/5gMniVCDGwDAIacT198l+O7VlR0FX9vQcEO5AQWw==
+  version "3.0.0-f45e671"
+  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-f45e671.tgz#ea216bedc65fe4dc126397709a94bba1e7804a56"
+  integrity sha512-9lj6p4wR121q5nFQQI9oEgzzWvnMSApZ9f8TcPYxvRUujRtV3mG6yNuE1hv1RUXm8P0G1gqRHl3Hj0xpnw681w==
   dependencies:
-    "@docus/base" "npm:@docus/base-edge@3.0.0-1a33690"
+    "@docus/base" "npm:@docus/base-edge@3.0.0-f45e671"
     "@docus/github" latest
     "@iconify/vue" "^3.2.1"
     "@nuxtjs/color-mode" "^3.0.3"
@@ -321,14 +321,33 @@
     remark-github "^11.2.2"
 
 "@docus/github@npm:@docus/github-edge@latest":
-  version "1.2.6-1a33690"
-  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-1a33690.tgz#6e9aa4bf0968c794d8efb28a792e341fdc5e6058"
-  integrity sha512-7R7DKhrfPobSoR72SZZ1IKVWK/belVxVFKUJldFchChQ53fQc0+xfrTVVv6EXgx+mgg+s4o+2PQ+ZSp1S0mzwQ==
+  version "1.2.6-f45e671"
+  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-f45e671.tgz#2f24ac9cf7b0afee781f4a73b07b5fa267cb473c"
+  integrity sha512-8ByoDYWW2dyoBP384rdlSE96S1gd8zZPI6VbrhZRGCN/9WgXyaX8zf5Juw21b+rE7B1MYt3dZYebag+anoOtAA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     "@octokit/graphql" "^4.8.0"
     "@octokit/rest" "^18.12.0"
     remark-github "^11.2.3"
+
+"@emmetio/abbreviation@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@emmetio/abbreviation/-/abbreviation-2.2.3.tgz#2b3c0383c1a4652f677d5b56fb3f1616fe16ef10"
+  integrity sha512-87pltuCPt99aL+y9xS6GPZ+Wmmyhll2WXH73gG/xpGcQ84DRnptBsI2r0BeIQ0EB/SQTOe2ANPqFqj3Rj5FOGA==
+  dependencies:
+    "@emmetio/scanner" "^1.0.0"
+
+"@emmetio/css-abbreviation@^2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@emmetio/css-abbreviation/-/css-abbreviation-2.1.4.tgz#90362e8a1122ce3b76f6c3157907d30182f53f54"
+  integrity sha512-qk9L60Y+uRtM5CPbB0y+QNl/1XKE09mSO+AhhSauIfr2YOx/ta3NJw2d8RtCFxgzHeRqFRr8jgyzThbu+MZ4Uw==
+  dependencies:
+    "@emmetio/scanner" "^1.0.0"
+
+"@emmetio/scanner@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@emmetio/scanner/-/scanner-1.0.0.tgz#065b2af6233fe7474d44823e3deb89724af42b5f"
+  integrity sha512-8HqW8EVqjnCmWXVpqAOZf+EGESdkR27odcMMMGefgKXtar00SoYNSryGv//TELI4T3QFsECo78p+0lmalk/CFA==
 
 "@iconify/vue@^3.2.1":
   version "3.2.1"
@@ -1019,6 +1038,11 @@
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.6.tgz#250a7b16c3b91f672a24552ec64678eeb1d3a08d"
   integrity sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==
+
+"@typescript/ata@^0.9.3":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@typescript/ata/-/ata-0.9.3.tgz#3ee8f4a43d071a156f7d0a819442db64025cfce5"
+  integrity sha512-/mETZakA5iOT8j8N8/ZUPLEsvSgMJz+cWt9Le1Q9dEwRXwDzekKXw3tpgrq77gaSxgE/Mn/nvtx8uzS41CmZKQ==
 
 "@vercel/nft@^0.18.2":
   version "0.18.2"
@@ -2269,6 +2293,21 @@ electron-to-chromium@^1.4.118:
   version "1.4.137"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.137.tgz#186180a45617283f1c012284458510cd99d6787f"
   integrity sha512-0Rcpald12O11BUogJagX3HsCN3FE83DSqWjgXoHo5a72KUKMSfI39XBgJpgNNxS9fuGzytaFjE06kZkiVFy2qA==
+
+emmet-monaco-es@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/emmet-monaco-es/-/emmet-monaco-es-5.1.0.tgz#f25ffdd9c22a92d3b9f716e15405299fb296f6b6"
+  integrity sha512-muRcP2MsDLoHkjs9xEfE3qClyACpFanZT+UGDLgkS/dDGg6p1wndm1W7zGvx/NWUgPjeUxG4XNN6wRpV6O31TA==
+  dependencies:
+    emmet "^2.3.6"
+
+emmet@^2.3.6:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/emmet/-/emmet-2.3.6.tgz#1d93c1ac03164da9ddf74864c1f341ed6ff6c336"
+  integrity sha512-pLS4PBPDdxuUAmw7Me7+TcHbykTsBKN/S9XJbUOMFQrNv9MoshzyMFK/R57JBm94/6HSL4vHnDeEmxlC82NQ4A==
+  dependencies:
+    "@emmetio/abbreviation" "^2.2.3"
+    "@emmetio/css-abbreviation" "^2.1.4"
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4318,6 +4357,11 @@ mlly@^0.5.1, mlly@^0.5.2:
   dependencies:
     pathe "^0.2.0"
     pkg-types "^0.3.2"
+
+monaco-editor@^0.33.0:
+  version "0.33.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.33.0.tgz#842e244f3750a2482f8a29c676b5684e75ff34af"
+  integrity sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==
 
 mri@^1.1.0, mri@^1.2.0:
   version "1.2.0"
@@ -6722,6 +6766,11 @@ xtend@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
+
+xterm@^4.18.0:
+  version "4.18.0"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-4.18.0.tgz#a1f6ab2c330c3918fb094ae5f4c2562987398ea1"
+  integrity sha512-JQoc1S0dti6SQfI0bK1AZvGnAxH4MVw45ZPFSO6FHTInAiau3Ix77fSxNx3mX4eh9OL4AYa8+4C8f5UvnSfppQ==
 
 xxhashjs@~0.2.2:
   version "0.2.2"
