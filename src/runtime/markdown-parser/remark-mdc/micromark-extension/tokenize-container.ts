@@ -1,41 +1,15 @@
-import type { Effects, State, TokenizeContext } from 'micromark-util-types'
+import type { Effects, State, Code, TokenizeContext } from 'micromark-util-types'
 import { factorySpace } from 'micromark-factory-space'
 import { markdownLineEnding, asciiAlpha, markdownSpace } from 'micromark-util-character'
-import { sizeChunks } from './utils'
-import { Codes, ContainerSequenceSize, SectionSequenceSize } from './constants'
+import { linePrefixSize, useTokenState } from './utils'
+import { Codes, ContainerSequenceSize, slotSeparatorCode, slotSeparatorLength } from './constants'
 import createName from './factory-name'
 import createLabel from './factory-label'
 import createAttributes from './factory-attributes'
+import { tokenizeFrontMatter } from './tokenize-frontmatter'
+
 const label: any = { tokenize: tokenizeLabel, partial: true }
 const attributes: any = { tokenize: tokenizeAttributes, partial: true }
-
-// section sparator
-const sectionSeparatorCode = Codes.hash
-const sectionSeparatorLength = 1
-
-/**
- * Calculate line indention size, line indention could be consists of multiple `linePrefix` events
- * @param events parser tokens
- * @returns line indention size
- */
-function linePrefixSize (events: any[]) {
-  let size = 0
-  let index = events.length - 1
-  let tail = events[index]
-  while (index >= 0 && tail && tail[1].type === 'linePrefix' && tail[0] === 'exit') {
-    size += sizeChunks(tail[2].sliceStream(tail[1]))
-    index -= 1
-    tail = events[index]
-  }
-
-  return size
-}
-
-enum MarkDownDataSectionState {
-  NotSeen = 0,
-  Open = 1,
-  Closed = 2
-}
 
 function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
   const self = this
@@ -43,15 +17,16 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   let sizeOpen = 0
   let previous: any
   const containerSequenceSize: number[] = []
+  let containerFirstLine = true
+
+  const section = useTokenState('componentContainerSection')
 
   /**
    * data tokenizer
    */
-  const data: any = tokenizeData.call(this, effects, lineStart as State)
-
   return start
 
-  function start (code: number) {
+  function start (code: Code): State | void {
     /* istanbul ignore if - handled by mm */
     if (code !== Codes.colon) { throw new Error('expected `:`') }
     effects.enter('componentContainer')
@@ -63,28 +38,43 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   function tokenizeSectionClosing (effects: Effects, ok: State, nok: State) {
     let size = 0
     let sectionIndentSize = 0
-
+    let revertSectionState: () => void
     return closingPrefixAfter
 
-    function closingPrefixAfter (code: number) {
+    function closingPrefixAfter (code: Code): State | void {
       sectionIndentSize = linePrefixSize(self.events)
-      effects.exit('componentContainerSection')
+
+      // Close section
+      revertSectionState = section.exit(effects)
+
       effects.enter('componentContainerSectionSequence')
       return closingSectionSequence(code)
     }
 
-    function closingSectionSequence (code: number) {
-      if (code === sectionSeparatorCode) {
+    function closingSectionSequence (code: Code): State | void {
+      if (code === slotSeparatorCode) {
         effects.consume(code)
         size++
         return closingSectionSequence
       }
 
-      if (size !== sectionSeparatorLength) { return nok(code) }
-      if (sectionIndentSize !== initialPrefix) { return nok(code) }
+      if (size !== slotSeparatorLength) {
+        // Revert section state to inital value before failing
+        revertSectionState()
+        return nok(code)
+      }
+      if (sectionIndentSize !== initialPrefix) {
+        // Revert sect to inital value before failing
+        revertSectionState()
+        return nok(code)
+      }
 
       // non ascii chars are invalid
-      if (!asciiAlpha(code)) { return nok(code) }
+      if (!asciiAlpha(code)) {
+        // Revert sect to inital value before failing
+        revertSectionState()
+        return nok(code)
+      }
 
       effects.exit('componentContainerSectionSequence')
       return factorySpace(effects, ok, 'whitespace')(code)
@@ -92,17 +82,18 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   }
 
   function sectionOpen (code: number): void | State {
-    effects.enter('componentContainerSection')
+    // Open new Section
+    section.enter(effects)
 
     if (markdownLineEnding(code)) {
       return factorySpace(effects, lineStart as State, 'whitespace')(code)
     }
 
     effects.enter('componentContainerSectionTitle')
-    return sectionTitle as State
+    return sectionTitle(code) as State
   }
 
-  function sectionTitle (code: number) {
+  function sectionTitle (code: Code): State | void {
     if (markdownLineEnding(code)) {
       effects.exit('componentContainerSectionTitle')
       return factorySpace(effects, lineStart as State, 'linePrefix', 4)(code)
@@ -111,7 +102,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
     return sectionTitle
   }
 
-  function sequenceOpen (code: number) {
+  function sequenceOpen (code: Code): State | void {
     if (code === Codes.colon) {
       effects.consume(code)
       sizeOpen++
@@ -126,23 +117,23 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
     return createName.call(self, effects, afterName as State, nok, 'componentContainerName')(code)
   }
 
-  function afterName (code: number) {
+  function afterName (code: Code): State | void {
     return code === Codes.openingSquareBracket
       ? effects.attempt(label, afterLabel as State, afterLabel as State)(code)
       : afterLabel(code)
   }
 
-  function afterLabel (code: number) {
+  function afterLabel (code: Code): State | void {
     return code === Codes.openingCurlyBracket
       ? effects.attempt(attributes, afterAttributes as State, afterAttributes as State)(code)
       : afterAttributes(code)
   }
 
-  function afterAttributes (code: number) {
+  function afterAttributes (code: Code): State | void {
     return factorySpace(effects, openAfter as State, 'whitespace')(code)
   }
 
-  function openAfter (code: number) {
+  function openAfter (code: Code): State | void {
     effects.exit('componentContainerFence')
 
     if (code === null) {
@@ -154,88 +145,72 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
       effects.enter('lineEnding')
       effects.consume(code)
       effects.exit('lineEnding')
+
       return self.interrupt ? ok : contentStart
     }
 
     return nok(code)
   }
 
-  function contentStart (code: number) {
+  function contentStart (code: Code): State | void {
     if (code === null) {
       effects.exit('componentContainer')
       return ok(code)
     }
-
-    effects.enter('componentContainerContent')
-
-    if (!containerSequenceSize.length && !data.isClosed() && (code === Codes.dash || markdownSpace(code))) {
-      function _chunkStart (code: number) {
-        data.close()
-        effects.enter('componentContainerSection')
-
-        return lineStart(code)
-      }
-      return effects.attempt(data.tokenize, data.sectionOpen as State, _chunkStart as State)
-    } else {
-      data.close()
+    if (containerFirstLine && (code === Codes.dash || markdownSpace(code))) {
+      containerFirstLine = false
+      return tokenizeFrontMatter(effects, ok, nok, contentStart, initialPrefix)(code)
     }
 
-    effects.enter('componentContainerSection')
+    effects.enter('componentContainerContent')
     return lineStart(code)
   }
 
-  function lineStartAfterPrefix (code: number) {
+  function lineStartAfterPrefix (code: Code): State | void {
     if (code === null) {
       return after(code)
     }
 
     // detect slots
-    if (!containerSequenceSize.length && (code === sectionSeparatorCode || code === Codes.space)) {
+    if (!containerSequenceSize.length && (code === slotSeparatorCode || code === Codes.space)) {
       return effects.attempt(
         { tokenize: tokenizeSectionClosing, partial: true } as any,
         sectionOpen as State,
         chunkStart as State
       )(code)
     }
-    // detect slots
-    if (!containerSequenceSize.length && !data.isClosed() && (code === Codes.dash || code === Codes.space)) {
-      return effects.attempt(data.tokenize, data.sectionOpen as State, chunkStart as State)(code)
-    }
-
-    const attempt = effects.attempt(
-      { tokenize: tokenizeClosingFence, partial: true } as any,
-      after as State,
-      chunkStart as State
-    )
 
     /**
      * disbale spliting inner sections
      */
     if (code === Codes.colon) {
-      return effects.check(
-        { tokenize: detectContainer, partial: true } as any,
-        chunkStart as State,
-        attempt(code) as unknown as State
-      )
+      return effects.attempt(
+        { tokenize: tokenizeClosingFence, partial: true } as any,
+        after as State,
+        chunkStart as State
+      )(code)
     }
 
-    return attempt(code)
+    return chunkStart(code)
   }
 
-  function lineStart (code: number) {
+  function lineStart (code: Code): State | void {
     if (code === null) {
       return after(code)
     }
 
     return initialPrefix
-      ? factorySpace(effects, lineStartAfterPrefix as State, 'linePrefix', initialPrefix + 1)
+      ? factorySpace(effects, lineStartAfterPrefix as State, 'linePrefix', initialPrefix + 1)(code)
       : lineStartAfterPrefix(code)
   }
 
-  function chunkStart (code: number) {
+  function chunkStart (code: Code): State | void {
     if (code === null) {
       return after(code)
     }
+
+    // Open new Section
+    section.enterOnce(effects)
 
     // @ts-ignore
     const token = effects.enter('chunkDocument', {
@@ -247,7 +222,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
     return contentContinue(code)
   }
 
-  function contentContinue (code: number) {
+  function contentContinue (code: Code): State | void {
     if (code === null) {
       effects.exit('chunkDocument')
       return after(code)
@@ -263,8 +238,9 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
     return contentContinue
   }
 
-  function after (code: number) {
-    effects.exit('componentContainerSection')
+  function after (code: Code): State | void {
+    // Close section
+    section.exit(effects)
     effects.exit('componentContainerContent')
     effects.exit('componentContainer')
     return ok(code)
@@ -275,13 +251,13 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
     return factorySpace(effects, closingPrefixAfter as State, 'linePrefix', 4)
 
-    function closingPrefixAfter (code: number) {
+    function closingPrefixAfter (code: Code): State | void {
       effects.enter('componentContainerFence')
       effects.enter('componentContainerSequence')
       return closingSequence(code)
     }
 
-    function closingSequence (code: number) {
+    function closingSequence (code: Code): State | void {
       if (code === Codes.colon) {
         effects.consume(code)
         size++
@@ -301,7 +277,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
       return factorySpace(effects, closingSequenceEnd as State, 'whitespace')(code)
     }
 
-    function closingSequenceEnd (code: number) {
+    function closingSequenceEnd (code: Code): State | void {
       if (code === null || markdownLineEnding(code)) {
         effects.exit('componentContainerFence')
         return ok(code)
@@ -309,104 +285,6 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
       return nok(code)
     }
-  }
-  function detectContainer (effects: Effects, ok: State, nok: State) {
-    let size = 0
-
-    return openingSequence
-
-    function openingSequence (code: number) {
-      if (code === Codes.colon) {
-        effects.consume(code)
-        size++
-        return openingSequence
-      }
-
-      if (size < ContainerSequenceSize) { return nok(code) }
-
-      return openingSequenceEnd
-    }
-
-    function openingSequenceEnd (code: number) {
-      if (code === null || markdownLineEnding(code)) {
-        return nok(code)
-      }
-
-      // memorize cotainer sequence
-      containerSequenceSize.push(size)
-
-      return ok(code)
-    }
-  }
-}
-
-function tokenizeData (this: TokenizeContext, effects: Effects, ok: State) {
-  const initialPrefix = linePrefixSize(this.events)
-  let sectionState: MarkDownDataSectionState = MarkDownDataSectionState.NotSeen
-  const data = {
-    state: () => sectionState,
-    close: () => {
-      sectionState = MarkDownDataSectionState.Closed
-    },
-    isClosed: () => sectionState === MarkDownDataSectionState.Closed,
-    tokenize: { tokenize: tokenizeDataSection, partial: true } as any,
-    sectionOpen
-  }
-  return data
-  function tokenizeDataSection (this: TokenizeContext, effects: Effects, ok: State, nok: State) {
-    const self = this
-    let size = 0
-    let sectionIndentSize = 0
-
-    return closingPrefixAfter
-
-    function closingPrefixAfter (code: number) {
-      if (data.isClosed()) {
-        return nok(code)
-      }
-      if (markdownSpace(code)) {
-        effects.consume(code)
-        sectionIndentSize += 1
-        return closingPrefixAfter
-      }
-      if (sectionIndentSize === 0) {
-        sectionIndentSize = linePrefixSize(self.events)
-      }
-      if (sectionState === MarkDownDataSectionState.Open) {
-        effects.exit('componentContainerDataSection')
-      }
-
-      effects.enter('componentContainerSectionSequence')
-      return closingSectionSequence(code)
-    }
-
-    function closingSectionSequence (code: number) {
-      if (code === Codes.dash || markdownSpace(code)) {
-        effects.consume(code)
-        size++
-        return closingSectionSequence
-      }
-
-      if (size < SectionSequenceSize) { return nok(code) }
-
-      if (sectionIndentSize !== initialPrefix) { return nok(code) }
-      if (!markdownLineEnding(code)) { return nok(code) }
-
-      effects.exit('componentContainerSectionSequence')
-      return factorySpace(effects, ok, 'whitespace')(code)
-    }
-  }
-
-  function sectionOpen (code: number) {
-    if (sectionState === MarkDownDataSectionState.NotSeen) {
-      effects.enter('componentContainerDataSection')
-      sectionState = MarkDownDataSectionState.Open
-    } else {
-      sectionState = MarkDownDataSectionState.Closed
-      effects.enter('componentContainerSection')
-    }
-
-    return factorySpace(effects, ok, 'whitespace')(code)
   }
 }
 

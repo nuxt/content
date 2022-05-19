@@ -2,6 +2,10 @@ export const ContainerSequenceSize = 2
 
 export const SectionSequenceSize = 3
 
+export const slotSeparatorCode = 35 // '#'
+
+export const slotSeparatorLength = 1
+
 export const Codes = {
   /**
    * null
@@ -24,7 +28,7 @@ export const Codes = {
    */
   backTick: 96,
   /**
-   * '\\'
+   * '\'
    */
   backSlash: 92,
   /**

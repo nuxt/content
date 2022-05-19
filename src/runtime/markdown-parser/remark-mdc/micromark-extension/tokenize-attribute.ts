@@ -1,4 +1,4 @@
-import type { Effects, State, TokenizeContext } from 'micromark-util-types'
+import type { Effects, State, Code, TokenizeContext } from 'micromark-util-types'
 import { markdownLineEnding } from 'micromark-util-character'
 import { Codes } from './constants'
 import createAttributes from './factory-attributes'
@@ -33,7 +33,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
   return start
 
-  function start (code: number) {
+  function start (code: Code): void | State {
     if (code !== Codes.openingCurlyBracket) { throw new Error('expected `{`') }
 
     /**
