@@ -195,11 +195,11 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
         { tokenize: tokenizeSectionClosing, partial: true } as any,
         sectionOpen as State,
         chunkStart as State
-      )
+      )(code)
     }
     // detect slots
     if (!containerSequenceSize.length && !data.isClosed() && (code === Codes.dash || code === Codes.space)) {
-      return effects.attempt(data.tokenize, data.sectionOpen as State, chunkStart as State)
+      return effects.attempt(data.tokenize, data.sectionOpen as State, chunkStart as State)(code)
     }
 
     const attempt = effects.attempt(
@@ -212,10 +212,14 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
      * disbale spliting inner sections
      */
     if (code === Codes.colon) {
-      return effects.check({ tokenize: detectContainer, partial: true } as any, chunkStart as State, attempt)(code)
+      return effects.check(
+        { tokenize: detectContainer, partial: true } as any,
+        chunkStart as State,
+        attempt(code) as unknown as State
+      )
     }
 
-    return attempt
+    return attempt(code)
   }
 
   function lineStart (code: number) {
@@ -225,7 +229,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
     return initialPrefix
       ? factorySpace(effects, lineStartAfterPrefix as State, 'linePrefix', initialPrefix + 1)
-      : lineStartAfterPrefix
+      : lineStartAfterPrefix(code)
   }
 
   function chunkStart (code: number) {
