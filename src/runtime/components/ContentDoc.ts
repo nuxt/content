@@ -3,7 +3,7 @@ import { PropType, defineComponent, h, useSlots } from 'vue'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
 import ContentQuery from './ContentQuery'
-import { useRoute } from '#imports'
+import { useRoute, useHead } from '#imports'
 
 export default defineComponent({
   props: {
@@ -69,13 +69,20 @@ export default defineComponent({
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => slots?.default({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
-          : ({ data }) => h(
-              ContentRenderer,
-              { value: data, excerpt, tag, ...this.$attrs },
-              // Forward local `empty` slots to ContentRenderer if it is used.
-              { empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', data) }
-            ),
+          ? ({ data, refresh, isPartial }) => slots.default({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
+          : ({ data }) => {
+              // Add headers if no slot provided and path is equal to current route path
+              if (path === useRoute().path) {
+                data.title && useHead({ title: data.title })
+                data.description && useHead({ meta: [{ name: 'description', content: data.description }] })
+              }
+              return h(
+                ContentRenderer,
+                { value: data, excerpt, tag, ...this.$attrs },
+                // Forward local `empty` slots to ContentRenderer if it is used.
+                { empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', data) }
+              )
+            },
         // Empty slot
         empty: bindings => slots?.empty?.(bindings),
         // Not Found slot
