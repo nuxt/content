@@ -35,6 +35,8 @@ export const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams
  * Query contents from path
  */
 export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
+export function queryContent<T = ParsedContent>(query: string, ...pathParts: string[]): QueryBuilder<T>;
+export function queryContent<T = ParsedContent> (query: QueryBuilderParams): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | QueryBuilderParams, ...pathParts: string[]) {
   if (typeof query === 'string') {
     const path = withLeadingSlash(joinURL(query, ...pathParts))
