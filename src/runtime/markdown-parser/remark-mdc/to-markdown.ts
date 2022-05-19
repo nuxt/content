@@ -6,7 +6,7 @@
 import { stringifyEntitiesLight } from 'stringify-entities'
 import type { Parent } from 'mdast-util-to-markdown/lib/types'
 import { containerFlow, containerPhrasing, checkQuote } from './mdast-util-to-markdown'
-import { stringify } from './frontmatter'
+import { stringifyFrontMatter } from './frontmatter'
 
 const own = {}.hasOwnProperty
 
@@ -66,7 +66,7 @@ function containerComponent (node: NodeContainerComponent, _: any, context: any)
 
   // Convert attributes to YAML FrontMatter format
   if (node.fmAttributes) {
-    value += '\n' + stringify(node.fmAttributes).trim()
+    value += '\n' + stringifyFrontMatter(node.fmAttributes).trim()
   }
 
   if ((node.type as string) === 'containerComponent') {
