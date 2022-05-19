@@ -435,9 +435,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27549316.b8a3715"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549316.b8a3715.tgz#40318f79e9de3276ac37cfbdc62d4890979772d9"
-  integrity sha512-m3lJ/dAEG5oaOJ9gg4B4KYtLloN91vYfolaXf7h10/FmM7YPekyaprGwjlwm9Yz9EyQDEZ5aRP+2O1gJhAnJSg==
+  version "2.0.0-27549526.86fa3e5"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549526.86fa3e5.tgz#c689f8e4d153b2e8f890733b22fd66506e5399c9"
+  integrity sha512-Fx3U+4wjWgMLMOiyQlQnk9Cy77LNVgyj0Zvq2b4LS/oeJxA6X+ufNwMvbmpvGf3kk5DwDY6/8SWg+Zb1Bc/XKg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -984,9 +984,9 @@
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
 "@types/node@*":
-  version "17.0.34"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.34.tgz#3b0b6a50ff797280b8d000c6281d229f9c538cef"
-  integrity sha512-XImEz7XwTvDBtzlTnm8YvMqGW/ErMWBsKZ+hMTvnDIjGCKxwK5Xpc+c/oQjOauwq8M4OS11hEkpjX8rrI/eEgA==
+  version "17.0.35"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.35.tgz#635b7586086d51fb40de0a2ec9d1014a5283ba4a"
+  integrity sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
