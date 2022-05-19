@@ -21,6 +21,11 @@ export default defineNuxtConfig({
   github: {
     repo: 'nuxt/content'
   },
+  vite: {
+    define: {
+      'process.env': {}
+    }
+  },
   tailwindcss: {
     config: {
       theme: {
