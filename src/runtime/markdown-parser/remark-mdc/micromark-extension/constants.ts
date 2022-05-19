@@ -82,5 +82,13 @@ export const Codes = {
   /**
    * '_'
    */
-  underscore: 95
+  underscore: 95,
+  /**
+   * 'X'
+   */
+  uppercaseX: 88,
+  /**
+   * 'x'
+   */
+  lowercaseX: 120
 }
