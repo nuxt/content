@@ -1,5 +1,5 @@
 import type { QueryBuilderParams, QueryPipe } from '../../types'
-import { apply, ensureArray, omit, pick, sortByKey } from './utils'
+import { apply, ensureArray, sortList, withoutKeys, withKeys } from './utils'
 import { createMatch } from '.'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
@@ -10,7 +10,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
    * Exctract surrounded items of specific condition
    */
   const surround = (data: any[], { query, before, after }: QueryBuilderParams['surround']) => {
-    const matchQuery = typeof query === 'string' ? { path: query } : query
+    const matchQuery = typeof query === 'string' ? { _path: query } : query
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
 
@@ -25,7 +25,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     // Conditions
     (data, params) => data.filter(item => ensureArray(params.where).every(matchQuery => match(item, matchQuery))),
     // Sort data
-    (data, params) => ensureArray(params.sortBy).forEach(([key, direction]) => sortByKey(data, key, direction)),
+    (data, params) => ensureArray(params.sort).forEach(options => sortList(data, options)),
     // Surround logic
     (data, params) => params.surround ? surround(data, params.surround) : data,
     // Skip first items
@@ -33,9 +33,9 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     // Pick first items
     (data, params) => (params.limit ? data.slice(0, params.limit) : data),
     // Remove unwanted fields
-    (data, params) => apply(omit(params.without))(data),
+    (data, params) => apply(withoutKeys(params.without))(data),
     // Select only wanted fields
-    (data, params) => apply(pick(params.only))(data),
+    (data, params) => apply(withKeys(params.only))(data),
     // Evaluate result
     (data, params) => params.first ? data[0] : data
   ]

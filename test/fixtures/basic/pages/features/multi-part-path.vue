@@ -1,7 +1,3 @@
 <template>
-  <Document :value="doc" />
+  <ContentDoc path="/cats/persian" />
 </template>
-
-<script setup lang="ts">
-const { data: doc } = await useAsyncData('multi-part-slug', () => queryContent('cats', 'persian').findOne())
-</script>

@@ -1,3 +1,5 @@
+import { SortOptions } from '../../types'
+
 /**
  * Retrive nested value from object by path
  */
@@ -24,36 +26,56 @@ export const omit = (keys?: string[]) => (obj: any) =>
  */
 export const apply = (fn: (d: any) => any) => (data: any) => Array.isArray(data) ? data.map(item => fn(item)) : fn(data)
 
-/**
- * Comperator to sort array of objects based on a property
- */
-export const sortComparable = (key: string, direction: string | boolean) => (a: any, b: any) => {
-  const values = [get(a, key), get(b, key)]
-  if (direction === 'desc' || direction === true) {
-    values.reverse()
+export const detectProperties = (keys: string[]) => {
+  const prefixes = []
+  const properties = []
+  for (const key of keys) {
+    if (['$', '_'].includes(key)) {
+      prefixes.push(key)
+    } else {
+      properties.push(key)
+    }
   }
-
-  if (values[0] === undefined) {
-    return 1
-  }
-  if (values[1] === undefined) {
-    return -1
-  }
-
-  if (values[0] > values[1]) {
-    return 1
-  }
-  if (values[0] < values[1]) {
-    return -1
-  }
-  return 0
+  return { prefixes, properties }
 }
 
+export const withoutKeys = (keys: string[] = []) => (obj: any) => {
+  if (keys.length === 0) {
+    return obj
+  }
+  const { prefixes, properties } = detectProperties(keys)
+  return _pick(obj, key => !properties.includes(key) && !prefixes.includes(key[0]))
+}
+
+export const withKeys = (keys: string[] = []) => (obj: any) => {
+  if (keys.length === 0) {
+    return obj
+  }
+  const { prefixes, properties } = detectProperties(keys)
+  return _pick(obj, key => properties.includes(key) || prefixes.includes(key[0]))
+}
 /**
- * Sort an array based on a key
+ * Sort list of items by givin options
  */
-export const sortByKey = (data: any[], key: string, direction: string | boolean) =>
-  data.sort(sortComparable(key, direction))
+export const sortList = (data: any[], params: SortOptions) => {
+  const comperable = new Intl.Collator(params.$locale as string, {
+    numeric: params.$numeric as boolean,
+    caseFirst: params.$caseFirst as string,
+    sensitivity: params.$sensitivity as string
+  })
+  const keys = Object.keys(params).filter(key => !key.startsWith('$'))
+  for (const key of keys) {
+    data = data.sort((a, b) => {
+      const values = [get(a, key), get(b, key)]
+      if (params[key] === 0) {
+        values.reverse()
+      }
+      return comperable.compare(values[0], values[1])
+    })
+  }
+
+  return data
+}
 
 /**
  * Raise TypeError if value is not an array
@@ -67,4 +89,5 @@ export const assertArray = (value: any, message = 'Expected an array') => {
 /**
  * Ensure result is an array
  */
-export const ensureArray = (value: any) => (Array.isArray(value) ? value : value ? [value] : [])
+export const ensureArray = <T>(value: T) =>
+(Array.isArray(value) ? value : value ? [value] : []) as T extends Array<any> ? T : T[]

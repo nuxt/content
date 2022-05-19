@@ -3,6 +3,6 @@
     <template #icon>
       Nuxt/content
     </template>
-    <Content :key="$route.path" />
+    <ContentDoc />
   </Nuxtexamplelayout>
 </template>

@@ -67,7 +67,7 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
       toc
     },
     meta: {
-      empty: content.trim().length === 0,
+      _empty: content.trim().length === 0,
       title: heading.title,
       description: heading.description,
       excerpt,

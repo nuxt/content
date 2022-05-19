@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     }
   },
   rootDir: __dirname,
-  modules: [contentModule],
+  modules: [contentModule, '@nuxthq/admin'],
   content: {
     navigation: {
       fields: ['icon']
