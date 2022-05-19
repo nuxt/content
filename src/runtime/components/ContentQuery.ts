@@ -1,17 +1,16 @@
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
-import { useRoute, computed, useAsyncData, queryContent } from '#imports'
+import { computed, useAsyncData, queryContent } from '#imports'
 
 export default defineComponent({
   props: {
     /**
      * The path of the content to load from content source.
-     * @default useRoute().path
      */
     path: {
       type: String,
       required: false,
-      default: () => useRoute().path
+      default: undefined
     },
     /**
      * Select a subset of fields

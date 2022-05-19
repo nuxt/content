@@ -282,10 +282,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-1.0.0.tgz#91c560df2ed8d9700e4c7ed4ac21a3a322c9d975"
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
-"@docus/base@npm:@docus/base-edge@3.0.0-813ef99":
-  version "3.0.0-813ef99"
-  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-813ef99.tgz#a5767a479ad147b6fa04be40fe2c788e0938adf2"
-  integrity sha512-vVfKEkijjklzV2PNb6W2Oudcc2wgmcy3Jox26LYlnajuie0hPDRETLXQoW44+j7u6/M3sxjlG5BES3OO8rJQIw==
+"@docus/base@npm:@docus/base-edge@3.0.0-1a33690":
+  version "3.0.0-1a33690"
+  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-1a33690.tgz#b097a5d6fab5645a334196c65480827861191b08"
+  integrity sha512-+z8M/p8hDVSbM2LRUxpI/iwVVMWba0/wdGdEXrXrZtW7q1rMwboyYNkjUE/gzZgWKV952X/GIXxWKYK/TsC0rg==
   dependencies:
     "@nuxt/content" "npm:@nuxt/content-edge@latest"
     "@nuxthq/admin" "npm:@nuxthq/admin-edge@latest"
@@ -295,11 +295,11 @@
     nuxt "^3.0.0-rc.3"
 
 "@docus/docs-theme@npm:@docus/docs-theme-edge@latest":
-  version "3.0.0-813ef99"
-  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-813ef99.tgz#c1da2d808ad5325bfe52ddcd53f3bde0f84c31fd"
-  integrity sha512-0+rHal5O8cKYLlD1fD0bUCXwQMtI9UFTKdbBvlHaZu40eU2vt4XuqUp5AY7L0j6IRN1LtWhP5U2AJRmVaRsLQQ==
+  version "3.0.0-1a33690"
+  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-1a33690.tgz#417af6792c7bb2e66e53ac3f3a99f879048d1422"
+  integrity sha512-xI/otQ3Ee1GcCgemKfhRBqhAx2kOcnlvaaDdssg9ow0NR/5gMniVCDGwDAIacT198l+O7VlR0FX9vQcEO5AQWw==
   dependencies:
-    "@docus/base" "npm:@docus/base-edge@3.0.0-813ef99"
+    "@docus/base" "npm:@docus/base-edge@3.0.0-1a33690"
     "@docus/github" latest
     "@iconify/vue" "^3.2.1"
     "@nuxtjs/color-mode" "^3.0.3"
@@ -321,9 +321,9 @@
     remark-github "^11.2.2"
 
 "@docus/github@npm:@docus/github-edge@latest":
-  version "1.2.6-813ef99"
-  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-813ef99.tgz#9ff1403ab46888ecdadeeb00b186ab962a004ace"
-  integrity sha512-NY4+dL5OP35CTmG4wgtJqJvZiFiwgnQczHmbf0NqAoVHMjDC/M5Fdfq2fE9pgfNiPYv9Wyu5M5lk+lDzb+toJg==
+  version "1.2.6-1a33690"
+  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-1a33690.tgz#6e9aa4bf0968c794d8efb28a792e341fdc5e6058"
+  integrity sha512-7R7DKhrfPobSoR72SZZ1IKVWK/belVxVFKUJldFchChQ53fQc0+xfrTVVv6EXgx+mgg+s4o+2PQ+ZSp1S0mzwQ==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     "@octokit/graphql" "^4.8.0"
@@ -435,9 +435,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27549133.c37417c"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549133.c37417c.tgz#d3643214e207c4d0929eda9e213db76362774dc3"
-  integrity sha512-iro2yH+6A9kyOSaiRji9PlygMbrP43RnJyFhNmffry1JsYd/wvKnsFxMfpRjvIfyUpRV34+ts/R7AeOfoFK3uQ==
+  version "2.0.0-27549316.b8a3715"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27549316.b8a3715.tgz#40318f79e9de3276ac37cfbdc62d4890979772d9"
+  integrity sha512-m3lJ/dAEG5oaOJ9gg4B4KYtLloN91vYfolaXf7h10/FmM7YPekyaprGwjlwm9Yz9EyQDEZ5aRP+2O1gJhAnJSg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -674,9 +674,9 @@
     vite-plugin-checker "^0.4.6"
 
 "@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
-  version "0.0.1-27547729.5c0f515"
-  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27547729.5c0f515.tgz#cd8eedc9ff3df377d7e427efd92d960f71d7d02f"
-  integrity sha512-G34kn0cdYhb+qOu90lalCBFVrwDU5EvZcwC3OTTbWETFPkVDue9goUekRtQqMi41/8bVb14cFSEPI9xqow73LQ==
+  version "0.0.1-27549305.d2c61b7"
+  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27549305.d2c61b7.tgz#f374219e75a85f65143b0e15ab578621813a7a7b"
+  integrity sha512-l7QZsmAyp0RreT7+Hb60CIsbusCl9LRmRSWc+rkEBsP9/I+sJolq7pLV09e/Whmtjj0DsQ89Meh/WoNU9Y5TQA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     nuxt-component-meta "^0.1.5"

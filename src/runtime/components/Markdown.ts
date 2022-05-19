@@ -52,15 +52,24 @@ export default defineComponent({
 
       const unwrapped = flatUnwrap(slot(), tags)
 
-      return between
-        ? unwrapped.flatMap((vnode, index) => index === 0 ? [vnode] : [between(), vnode])
-        : unwrapped.reduce((acc, item) => {
-        // Concat raw texts to prevent hydration mismatches
-          (typeof item.children === 'string' && acc.length && typeof acc[acc.length - 1].children === 'string')
-            ? acc[acc.length - 1].children += item.children
-            : acc.push(item)
-          return acc
-        }, [])
+      if (between) {
+        return unwrapped.flatMap(
+          (vnode, index) => index === 0 ? [vnode] : [between(), vnode]
+        )
+      }
+
+      return unwrapped.reduce((acc, item) => {
+        if (typeof item.children === 'string') {
+          if (typeof acc[acc.length - 1] === 'string') {
+            acc[acc.length - 1] += item.children
+          } else {
+            acc.push(item.children)
+          }
+        } else {
+          acc.push(item)
+        }
+        return acc
+      }, [])
     } catch (e) {
       // Catching errors to allow content reactivity
       return h('div')
