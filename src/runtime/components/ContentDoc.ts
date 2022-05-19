@@ -1,5 +1,5 @@
 
-import { PropType, defineComponent, h, useSlots } from 'vue'
+import { PropType, defineComponent, h, useSlots, nextTick } from 'vue'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
 import ContentQuery from './ContentQuery'
@@ -63,19 +63,41 @@ export default defineComponent({
 
     const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentDoc>', slot, data }, null, 2))
 
+    const addHead = (doc: any) => {
+      if (path !== useRoute().path) { return }
+      const head = Object.assign({}, doc.head)
+      head.title = head.title || doc.title
+      head.meta = head.meta || []
+      const description = head.description || doc.description
+      // Shortcut for head.description
+      if (description && head.meta.filter(m => m.name === 'description').length === 0) {
+        head.meta.push({
+          name: 'description',
+          content: description
+        })
+      }
+      // Shortcut for head.image to og:image in meta
+      if (head.image && head.meta.filter(m => m.property === 'og:image').length === 0) {
+        head.meta.push({
+          property: 'og:image',
+          content: head.image
+        })
+      }
+      if (process.client) { nextTick(() => useHead(head)) } else { useHead(head) }
+    }
+
     return h(
       ContentQuery,
       contentQueryProps,
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => slots.default({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
+          ? ({ data, refresh, isPartial }) => {
+              addHead(data)
+              return slots.default({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
+            }
           : ({ data }) => {
-              // Add headers if no slot provided and path is equal to current route path
-              if (path === useRoute().path) {
-                data.title && useHead({ title: data.title })
-                data.description && useHead({ meta: [{ name: 'description', content: data.description }] })
-              }
+              addHead(data)
               return h(
                 ContentRenderer,
                 { value: data, excerpt, tag, ...this.$attrs },
