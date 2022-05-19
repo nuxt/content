@@ -25,8 +25,11 @@ export function parseFrontMatter (content: string) {
   if (content.startsWith(FRONTMATTER_DELIMITER + '\n')) {
     const idx = content.indexOf('\n' + FRONTMATTER_DELIMITER)
     if (idx !== -1) {
-      data = yaml.load(content.slice(4, idx - 4))
-      content = content.slice(idx + 4)
+      const frontmatter = content.slice(4, idx)
+      if (frontmatter) {
+        data = yaml.load(frontmatter)
+        content = content.slice(idx + 4)
+      }
     }
   }
 
