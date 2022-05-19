@@ -9,7 +9,7 @@ const { page } = useDocus()
   <div id="docus-page" class="flex min-h-screen w-full flex-col">
     <Navbar />
     <ArticleHero :page="page" />
-    <div class="px-4 sm:px-6 mx-auto max-w-full lg:max-w-7xl flex h-full pb-6">
+    <div class="px-4 sm:px-6 mx-auto max-w-full lg:max-w-7xl h-full pb-6">
       <NuxtPage />
     </div>
     <Footer />
