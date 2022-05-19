@@ -34,7 +34,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
 
   function exit (code: Code): void | State {
     // prevent conflict with link syntax
-    if (code === Codes.openingParentheses) {
+    if (code === Codes.openingParentheses || code === Codes.openingSquareBracket) {
       return nok(code)
     }
     effects.exit('textSpan')
