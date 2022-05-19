@@ -24,16 +24,6 @@ export default defineNuxtConfig({
   vite: {
     define: {
       'process.env': {}
-    },
-    build: {
-      rollupOptions: {
-        external: ['monaco-editor']
-      }
-    }
-  },
-  nitro: {
-    externals: {
-      external: ['monaco-editor']
     }
   },
   tailwindcss: {

@@ -1,0 +1,5 @@
+---
+layout: fluid
+---
+
+::playground
