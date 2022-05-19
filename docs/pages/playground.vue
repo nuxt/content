@@ -1,6 +1,10 @@
 <script setup>
 import { parse } from '../../src/runtime/markdown-parser'
 
+definePageMeta({
+  layout: 'fluid'
+})
+
 const INITIAL_CODE = `# MDC
 
 MDC stands for _**M**ark**D**own **C**omponents_.
@@ -11,7 +15,9 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 - [Install Nuxt Content](/docs/getting-started)
 - [Explore the MDC syntax](/docs/syntax)
 `
+
 const content = ref(INITIAL_CODE)
+
 const { data: doc, refresh } = await useAsyncData('playground', async () => {
   try {
     return {
@@ -29,82 +35,42 @@ const { data: doc, refresh } = await useAsyncData('playground', async () => {
   }
 })
 
-const tab = ref('Preview')
+const tab = ref(0)
 
-const tabs = ref(['Preview', 'AST'])
+const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
+
+const updateTab = (index) => {
+  tab.value = index
+}
+
+const editorComponent = shallowRef()
+
+onMounted(async () => {
+  const { default: component } = await import('~/editor/Editor.vue')
+
+  editorComponent.value = component
+})
+
+watch(content, refresh)
 </script>
 
 <template>
-  <div class="playground">
-    <div class="header">
-      <div class="tabs">
-        <button
-          v-for="name in tabs"
-          :key="name"
-          class="outline"
-          :class="{ active: name === tab }"
-          @click="tab = name"
-        >
-          {{ name }}
-        </button>
+  <div class="h-page max-h-page flex flex-col">
+    <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
+    <div class="flex overflow-hidden flex-1">
+      <div ref="editor" class="w-1/2 flex-1">
+        <component :is="editorComponent" v-if="editorComponent" v-model="content" />
       </div>
-    </div>
-    <div class="main">
-      <div class="editor">
-        <textarea v-model="content" @input="refresh" />
-      </div>
-      <div class="content">
-        <ContentRenderer v-if="tab === 'Preview'" :key="doc.updatedAt" :value="doc">
+      <div class="w-1/2 flex-1 overflow-y-auto">
+        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-2" :value="doc">
           <template #empty>
             <div>Content is empty.</div>
           </template>
         </ContentRenderer>
-        <pre v-if="tab === 'AST'" style="padding: 1rem;">{{ doc }}</pre>
+        <div class="p-2 text-sm">
+          <pre v-if="tab === 1">{{ doc }}</pre>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.main {
-  display: flex;
-  align-items: stretch;
-}
-
-.editor {
-  display: flex;
-  flex: 1;
-  min-height: 100vh;
-  width: 50%;
-  border-radius: 0;
-  color: black;
-}
-
-textarea {
-  flex: 1;
-  padding: 1rem;
-}
-
-.content {
-  flex: 1;
-  width: 50%;
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-.tabs {
-  display: flex;
-  flex-direction: row;
-  padding: 1rem;
-  gap: 1rem;
-}
-
-.tabs > button {
-  opacity: 0.75;
-}
-
-.tabs > button.active {
-  border-width: 2px;
-  opacity: 1;
-}
-</style>

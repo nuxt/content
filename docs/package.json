@@ -12,5 +12,11 @@
     "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
     "@docus/github": "npm:@docus/github-edge@latest",
     "nuxt": "^3.0.0-rc.3"
+  },
+  "dependencies": {
+    "@typescript/ata": "^0.9.3",
+    "emmet-monaco-es": "^5.1.0",
+    "monaco-editor": "^0.33.0",
+    "xterm": "^4.18.0"
   }
 }
