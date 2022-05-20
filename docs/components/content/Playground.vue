@@ -1,5 +1,6 @@
 <script setup>
 import { parse } from '../../../src/runtime/markdown-parser'
+import { useShiki } from '../../editor/useShiki.ts'
 
 definePageMeta({
   layout: 'fluid'
@@ -96,7 +97,17 @@ watch(content, refresh)
         <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
         <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
           <template #empty>
-            <div>Content is empty.</div>
+            <div class="p-8">
+              <Alert type="warning">
+                <p class="font-semibold">
+                  Content is empty!
+                </p>
+                <br><br>
+                <p>
+                  Type any <span class="font-semibold">Markdown</span> or <span class="font-semibold">MDC code</span> in editor to see it replaced by rendered nodes in this panel.
+                </p>
+              </Alert>
+            </div>
           </template>
         </ContentRenderer>
         <component
