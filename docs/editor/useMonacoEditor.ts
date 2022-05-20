@@ -59,7 +59,7 @@ const setupMonaco = createSingletonPromise(async () => {
 
 export function useMonaco (
   target: Ref,
-  options: { code: string; language: string; onChanged?: (content: string) => void }
+  options: { readOnly?: boolean, code: string; language: string; onChanged?: (content: string) => void }
 ) {
   const isSetup = ref(false)
   let editor: Editor.IStandaloneCodeEditor
@@ -90,6 +90,7 @@ export function useMonaco (
         )
 
         editor = monaco.editor.create(el, {
+          readOnly: options.readOnly,
           model,
           tabSize: 2,
           wordWrap: 'on',

@@ -2,7 +2,7 @@
 
 const emit = defineEmits<(e: 'change', content: string) => void>()
 
-const props = defineProps<{ language: string; value: string }>()
+const props = defineProps<{ language: string; value: string, readOnly: boolean }>()
 
 const target = ref()
 
@@ -13,6 +13,7 @@ onMounted(
     const { setContent } = useMonaco(target, {
       language: props.language,
       code: props.value,
+      readOnly: props.readOnly,
       onChanged (content: string) {
         emit('change', content)
       }

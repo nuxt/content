@@ -46,8 +46,17 @@ const tab = ref(0)
 
 const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
 
-const updateTab = (index) => {
+const astEditorComponent = shallowRef()
+const docJSON = computed(() => {
+  return JSON.stringify(doc.value, null, 2)
+})
+const updateTab = async (index) => {
   tab.value = index
+  if (tab.value === 1 && !astEditorComponent.value) {
+    const { default: component } = await import('~/editor/Editor.vue')
+
+    astEditorComponent.value = component
+  }
 }
 
 const editorComponent = shallowRef()
@@ -74,9 +83,14 @@ watch(content, refresh)
             <div>Content is empty.</div>
           </template>
         </ContentRenderer>
-        <div class="p-2 text-sm">
-          <pre v-if="tab === 1">{{ doc }}</pre>
-        </div>
+        <component
+          :is="astEditorComponent"
+          v-else-if="astEditorComponent"
+          language="json"
+          read-only
+          :model-value="docJSON"
+        />
+        <!-- <pre v-if="tab === 1">{{ doc }}</pre> -->
       </div>
     </div>
   </div>
