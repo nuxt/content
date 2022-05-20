@@ -88,13 +88,15 @@ watch(content, refresh)
 
 <template>
   <div class="h-page max-h-page flex flex-col">
+    <div class="flex items-center">
+      <TabsHeader class="flex-1 w-1/2" :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
+      <TabsHeader class="flex-1 w-1/2" :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
+    </div>
     <div class="flex overflow-hidden flex-1">
       <div ref="editor" class="w-1/2 flex-1">
-        <TabsHeader :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
       </div>
       <div class="w-1/2 flex-1 overflow-y-auto">
-        <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
         <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
           <template #empty>
             <div class="p-8">
