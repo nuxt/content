@@ -87,7 +87,7 @@ function getNodeData (node: ComponentNode) {
     return {}
   }
 
-  const yaml = node.rawData
+  const yaml = node.rawData.replace(/\s-+$/, '')
   const { data } = parseFrontMatter(toFrontMatter(yaml))
 
   return data
