@@ -23,7 +23,10 @@ export default defineNuxtConfig({
   },
   vite: {
     define: {
-      'process.env': {}
+      'process.env.FORCE_COLOR': {},
+      'process.env.NODE_DISABLE_COLORS': {},
+      'process.env.NO_COLOR': {},
+      'process.env.FORCE_TERM': {}
     }
   },
   nitro: {

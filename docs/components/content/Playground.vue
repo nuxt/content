@@ -92,7 +92,7 @@ watch(content, refresh)
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
       </div>
       <div class="w-1/2 flex-1 overflow-y-auto">
-        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-2" :value="doc">
+        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
           <template #empty>
             <div>Content is empty.</div>
           </template>
