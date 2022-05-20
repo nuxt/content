@@ -58,38 +58,38 @@ const tabs = ref(['Preview', 'AST'])
   </div>
 </template>
 
-<style>
+<style lang="postcss" scoped>
 .playground {
   display: flex;
   align-items: stretch;
 }
 
-textarea {
+.playground textarea {
   flex: 1;
   min-height: 100vh;
   width: 50%;
   border-radius: 0;
 }
 
-.content {
+.playground .content {
   flex: 1;
   width: 50%;
   min-height: 100vh;
   padding: 1rem;
 }
 
-.tabs {
+.playground .tabs {
   display: flex;
   flex-direction: row;
   padding: 1rem;
   gap: 1rem;
 }
 
-.tabs > button {
+.playground .tabs > button {
   opacity: 0.75;
 }
 
-.tabs > button.active {
+.playground .tabs > button.active {
   border-width: 2px;
   opacity: 1;
 }
