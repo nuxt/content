@@ -91,6 +91,18 @@ describe('Database Provider', () => {
     })
   })
 
+  test('Sort Nullable fields', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, name: 'Saman' }, { id: 2, name: 'Ebi' }, { id: 3, name: 'Narges' }, { id: 4, name: null }] as any[]))
+    const result = await createQuery(fetcher)
+      .sort({ name: 1 })
+      .find()
+
+    assert(result[0].name === 'Ebi')
+    assert(result[1].name === 'Narges')
+    assert(result[2].name === 'Saman')
+    assert(result[3].name === null)
+  })
+
   test('Apply $in', async () => {
     const result = await createQuery(pipelineFetcher)
       .where({
