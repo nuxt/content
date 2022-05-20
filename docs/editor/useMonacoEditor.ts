@@ -1,9 +1,9 @@
 import { watch, Ref, unref, ref/*, watchEffect */ } from 'vue'
 import type { editor as Editor } from 'monaco-editor'
-import * as monaco from 'monaco-editor'
 import { createSingletonPromise } from '@vueuse/core'
 
 const setupMonaco = createSingletonPromise(async () => {
+  const monaco = await import('monaco-editor')
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
     ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
     noUnusedLocals: false,

@@ -26,6 +26,12 @@ export default defineNuxtConfig({
       'process.env': {}
     }
   },
+  nitro: {
+    externals: {
+      traceInclude: ['monaco-editor'],
+      external: ['monaco-editor']
+    }
+  },
   tailwindcss: {
     config: {
       theme: {
