@@ -12,8 +12,9 @@ MDC stands for _**M**ark**D**own **C**omponents_.
 This syntax supercharges regular Markdown to write documents interacting deeply with any Vue component from your \`components/content/\` directory or provided by a module.
 
 ## Next steps
-- [Install Nuxt Content](/docs/getting-started)
-- [Explore the MDC syntax](/docs/syntax)
+
+- [Install Nuxt Content](/get-started)
+- [Explore the MDC syntax](/guide/writing/mdc)
 
 ::code-group
   \`\`\`markdown [Source]
@@ -86,12 +87,13 @@ watch(content, refresh)
 
 <template>
   <div class="h-page max-h-page flex flex-col">
-    <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
     <div class="flex overflow-hidden flex-1">
       <div ref="editor" class="w-1/2 flex-1">
+        <TabsHeader :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
       </div>
       <div class="w-1/2 flex-1 overflow-y-auto">
+        <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
         <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
           <template #empty>
             <div>Content is empty.</div>
