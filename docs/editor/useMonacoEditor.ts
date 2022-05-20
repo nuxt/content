@@ -1,10 +1,45 @@
-import { watch, Ref, unref, ref/*, watchEffect */ } from 'vue'
-import type { editor as Editor } from 'monaco-editor'
+import { watch, Ref, unref, ref } from 'vue'
+import type { editor as Editor } from 'monaco-editor-core'
 import { createSingletonPromise } from '@vueuse/core'
 import { language as mdcLanguage } from './mdc.tmLanguage'
 
+declare global {
+  interface Window {
+    require: any
+    MonacoEnvironment: {
+      getWorkerUrl: (moduleId: string, label: string) => string
+    }
+  }
+}
+const MONACO_CDN_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/'
+
+const loadMonacoScript = (src: string) => {
+  return new Promise((resolve, reject) => {
+    const loaderScript = window.document.createElement('script')
+    loaderScript.type = 'text/javascript'
+    loaderScript.src = MONACO_CDN_BASE + src
+    loaderScript.addEventListener('load', resolve)
+    loaderScript.addEventListener('error', reject)
+    window.document.body.appendChild(loaderScript)
+  })
+}
+
 const setupMonaco = createSingletonPromise(async () => {
-  const monaco = await import('monaco-editor')
+  await loadMonacoScript('vs/loader.min.js')
+  window.require.config({ paths: { vs: `${MONACO_CDN_BASE}/vs` } })
+  const monaco = await new Promise<any>(resolve => window.require(['vs/editor/editor.main'], resolve))
+
+  window.MonacoEnvironment = {
+    getWorkerUrl: function () {
+      return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+        self.MonacoEnvironment = {
+          baseUrl: '${MONACO_CDN_BASE}'
+        };
+        importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`
+      )}`
+    }
+  }
+
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
     ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
     noUnusedLocals: false,
@@ -14,50 +49,9 @@ const setupMonaco = createSingletonPromise(async () => {
     strict: true
   })
 
-  await Promise.all([
-    // load workers
-    (async () => {
-      const [
-        { default: EditorWorker },
-        { default: JsonWorker },
-        { default: CssWorker },
-        { default: HtmlWorker },
-        { default: TsWorker }
-      ] = await Promise.all([
-        // @ts-expect-error
-        import('monaco-editor/esm/vs/editor/editor.worker?worker'),
-        // @ts-expect-error
-        import('monaco-editor/esm/vs/language/json/json.worker?worker'),
-        // @ts-expect-error
-        import('monaco-editor/esm/vs/language/css/css.worker?worker'),
-        // @ts-expect-error
-        import('monaco-editor/esm/vs/language/html/html.worker?worker'),
-        // @ts-expect-error
-        import('monaco-editor/esm/vs/language/typescript/ts.worker?worker')
-      ])
-
-      // @ts-expect-error
-      window.MonacoEnvironment = {
-        getWorker (_: any, label: string) {
-          if (label === 'json') { return new JsonWorker() }
-          if (label === 'css' || label === 'scss' || label === 'less') { return new CssWorker() }
-          if (label === 'html' || label === 'handlebars' || label === 'razor' || label === 'vue3') { return new HtmlWorker() }
-          if (label === 'typescript' || label === 'javascript') { return new TsWorker() }
-          return new EditorWorker()
-        }
-      }
-
-      /* Todo: Manage themes
-      watchEffect(() => {
-        monaco.editor.setTheme(isDark.value ? 'vs-dark' : 'vs')
-      })
-      */
-    })()
-  ])
-
-  monaco.languages.register({ id: 'markdown' })
+  monaco.languages.register({ id: 'mdc' })
   // Register a tokens provider for the language
-  monaco.languages.setMonarchTokensProvider('markdown', mdcLanguage)
+  monaco.languages.setMonarchTokensProvider('mdc', mdcLanguage)
 
   return { monaco }
 })

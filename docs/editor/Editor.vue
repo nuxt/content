@@ -12,7 +12,7 @@ const props = defineProps({
   },
   language: {
     type: String,
-    default: 'markdown'
+    default: 'mdc'
   },
   readOnly: {
     type: Boolean,
