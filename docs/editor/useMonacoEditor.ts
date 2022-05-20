@@ -58,7 +58,7 @@ const setupMonaco = createSingletonPromise(async () => {
 
 export function useMonaco (
   target: Ref,
-  options: { readOnly?: boolean, code: string; language: string; onChanged?: (content: string) => void }
+  options: { readOnly?: boolean, code: string; language: string; onChanged?: (content: string) => void, onDidCreateEditor?: () => void }
 ) {
   const isSetup = ref(false)
   let editor: Editor.IStandaloneCodeEditor
@@ -104,7 +104,8 @@ export function useMonaco (
           theme: 'vs-dark',
           minimap: {
             enabled: false
-          }
+          },
+          onDidCreateEditor: options?.onDidCreateEditor
         })
 
         isSetup.value = true

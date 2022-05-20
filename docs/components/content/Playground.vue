@@ -2,10 +2,6 @@
 import { parse } from '../../../src/runtime/markdown-parser'
 import { useShiki } from '../../editor/useShiki.ts'
 
-definePageMeta({
-  layout: 'fluid'
-})
-
 const INITIAL_CODE = `# MDC
 
 MDC stands for _**M**ark**D**own **C**omponents_.
@@ -32,6 +28,7 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 ::
 `
 const shiki = await useShiki()
+
 const content = ref(INITIAL_CODE)
 
 const { data: doc, refresh } = await useAsyncData('playground', async () => {
@@ -63,9 +60,11 @@ const tab = ref(0)
 const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
 
 const astEditorComponent = shallowRef()
+
 const docJSON = computed(() => {
   return JSON.stringify(doc.value, null, 2)
 })
+
 const updateTab = async (index) => {
   tab.value = index
   if (tab.value === 1 && !astEditorComponent.value) {
@@ -93,8 +92,14 @@ watch(content, refresh)
       <TabsHeader class="flex-1 w-1/2" :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
     </div>
     <div class="flex overflow-hidden flex-1">
-      <div ref="editor" class="w-1/2 flex-1">
+      <div ref="editor" class="relative w-1/2 flex-1">
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
+        <div v-else class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+          <Alert type="primary">
+            <span>Editor is loading</span>
+            <Icon name="file-icons:sandbox" class="ml-2 inline" />
+          </Alert>
+        </div>
       </div>
       <div class="w-1/2 flex-1 overflow-y-auto">
         <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
