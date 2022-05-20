@@ -1,6 +1,7 @@
 import { watch, Ref, unref, ref/*, watchEffect */ } from 'vue'
 import type { editor as Editor } from 'monaco-editor'
 import { createSingletonPromise } from '@vueuse/core'
+import { language as mdcLanguage } from './mdc.tmLanguage'
 
 const setupMonaco = createSingletonPromise(async () => {
   const monaco = await import('monaco-editor')
@@ -53,6 +54,10 @@ const setupMonaco = createSingletonPromise(async () => {
       */
     })()
   ])
+
+  monaco.languages.register({ id: 'markdown' })
+  // Register a tokens provider for the language
+  monaco.languages.setMonarchTokensProvider('markdown', mdcLanguage)
 
   return { monaco }
 })

@@ -14,6 +14,20 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 ## Next steps
 - [Install Nuxt Content](/docs/getting-started)
 - [Explore the MDC syntax](/docs/syntax)
+
+::code-group
+  \`\`\`markdown [Source]
+  ::alert{type="success"}
+    Hooray!
+  ::
+  \`\`\`
+
+  ::code-block{label="Preview"}
+    ::alert{type="success"}
+      Hooray!
+    ::
+  ::
+::
 `
 const shiki = await useShiki()
 const content = ref(INITIAL_CODE)
