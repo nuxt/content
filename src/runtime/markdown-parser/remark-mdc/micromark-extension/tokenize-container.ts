@@ -16,7 +16,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   const initialPrefix = linePrefixSize(this.events)
   let sizeOpen = 0
   let previous: any
-  const containerSequenceSize: number[] = []
+  const childContainersSequenceSize: number[] = []
   let containerFirstLine = true
 
   const section = useTokenState('componentContainerSection')
@@ -172,7 +172,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
     }
 
     // detect slots
-    if (!containerSequenceSize.length && (code === slotSeparatorCode || code === Codes.space)) {
+    if (!childContainersSequenceSize.length && (code === slotSeparatorCode || code === Codes.space)) {
       return effects.attempt(
         { tokenize: tokenizeSectionClosing, partial: true } as any,
         sectionOpen as State,
@@ -264,9 +264,9 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
         return closingSequence
       }
 
-      if (containerSequenceSize.length) {
-        if (size === containerSequenceSize[containerSequenceSize.length - 1]) {
-          containerSequenceSize.pop()
+      if (childContainersSequenceSize.length) {
+        if (size === childContainersSequenceSize[childContainersSequenceSize.length - 1]) {
+          childContainersSequenceSize.pop()
         }
         return nok(code)
       }
@@ -282,7 +282,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
         effects.exit('componentContainerFence')
         return ok(code)
       }
-
+      childContainersSequenceSize.push(size)
       return nok(code)
     }
   }
