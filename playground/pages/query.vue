@@ -77,20 +77,20 @@ const enterer = (event) => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .query-builder {
   display: flex;
   align-items: stretch;
 }
 
-textarea {
+.query-builder textarea {
   flex: 1;
   min-height: 100vh;
   width: 50%;
   border-radius: 0;
 }
 
-pre {
+.query-builder pre {
   flex: 1;
   width: 50%;
   min-height: 100vh;
