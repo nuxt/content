@@ -116,11 +116,11 @@ export interface ModuleOptions {
     /**
      * Default theme that will be used for highlighting code blocks.
      */
-    theme: ShikiTheme,
+    theme?: ShikiTheme,
     /**
      * Preloaded languages that will be available for highlighting code blocks.
      */
-    preload: ShikiLang[]
+    preload?: ShikiLang[]
   },
   /**
    * Options for yaml parser.
