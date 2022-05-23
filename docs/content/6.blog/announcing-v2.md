@@ -226,3 +226,7 @@ We are thankful for all the contributions we received in Content v1 and are impa
 ::alert
 The repository is open source under the MIT license and available on GitHub: [nuxt/content](https://github.com/nuxt/content)
 ::
+
+Head over to the [Get started](/get-started) section to start playing with Content v2 :sparkles:
+
+Bonus, we created [Content Wind](https://github.com/Atinux/content-wind), a lightweight Nuxt template to write a Markdown driven website powered by Nuxt Content and TailwindCSS. The code is available on Github: [Atinux/content-wind](https://github.com/Atinux/content-wind) and its demo on [content-wind.nuxt.dev](https://content-wind.nuxt.dev).
