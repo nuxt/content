@@ -34,7 +34,8 @@
     "prepack": "yarn build",
     "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
-    "test:unit": "nuxi prepare test/fixtures/basic && vitest run"
+    "test:unit": "vitest run",
+    "test:unit:dev": "NUXT_TEST_DEV=true vitest run"
   },
   "dependencies": {
     "@nuxt/kit": "^3.0.0-rc.3",
@@ -98,6 +99,7 @@
     "jiti": "^1.13.0",
     "lint-staged": "^12.4.1",
     "nuxt": "^3.0.0-rc.3",
+    "playwright": "^1.22.2",
     "vitest": "^0.12.9"
   }
 }

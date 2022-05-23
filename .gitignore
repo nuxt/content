@@ -73,4 +73,4 @@ cypress/videos
 cypress/screenshots
 
 # Fake contents in test directories
-fake
+test/fixtures/basic/content-tests

@@ -23,6 +23,7 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn test:unit
+      - run: yarn test:unit:dev
       - name: Release Edge
         if: |
           github.event_name == 'push' &&

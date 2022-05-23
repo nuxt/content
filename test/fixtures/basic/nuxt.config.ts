@@ -20,6 +20,12 @@ export default defineNuxtConfig({
         prefix: '/fa',
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
+      },
+      {
+        name: '_tests',
+        prefix: '/_tests',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-tests')
       }
     ],
     navigation: {
