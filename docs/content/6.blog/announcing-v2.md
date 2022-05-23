@@ -84,88 +84,89 @@ You can also query the `hello.md` file by using the `queryContent()` composable:
 const file = await queryContent('hello').findOne()
 ```
 
-::alert
-  ::details
-    :summary[The returned file won't be Markdown or HTML, but a JSON representing the abtract syntax tree.]
-    ```json [document value]
-    {
-      "_type": "markdown",
-      "_id": "content:hello.md",
-      "_source": "content",
-      "_file": "hello.md",
-      "_extension": "md",
-      "_path": "/hello",
-      "_draft": false,
-      "_partial": false,
-      "_empty": false,
-      "title": "Hello World",
-      "description": "My first paragraph.",
-      "body": {
-        "type": "root",
+
+::callout
+#summary
+The returned file won't be Markdown or HTML, but a JSON representing the abtract syntax tree.
+
+#content
+```json [document value]
+{
+  "_type": "markdown",
+  "_id": "content:hello.md",
+  "_source": "content",
+  "_file": "hello.md",
+  "_extension": "md",
+  "_path": "/hello",
+  "_draft": false,
+  "_partial": false,
+  "_empty": false,
+  "title": "Hello World",
+  "description": "My first paragraph.",
+  "body": {
+    "type": "root",
+    "children": [
+      {
+        "type": "element",
+        "tag": "h1",
+        "props": {
+          "id": "hello-world"
+        },
+        "children": [
+          {
+            "type": "text",
+            "value": "Hello World"
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "tag": "p",
+        "props": {},
+        "children": [
+          {
+            "type": "text",
+            "value": "My first paragraph."
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "tag": "p",
+        "props": {},
         "children": [
           {
             "type": "element",
-            "tag": "h1",
+            "tag": "a",
             "props": {
-              "id": "hello-world"
+              "href": "https://content.nuxtjs.org",
+              "rel": [
+                "nofollow",
+                "noopener",
+                "noreferrer"
+              ],
+              "target": "_blank"
             },
             "children": [
               {
                 "type": "text",
-                "value": "Hello World"
-              }
-            ]
-          },
-          {
-            "type": "element",
-            "tag": "p",
-            "props": {},
-            "children": [
-              {
-                "type": "text",
-                "value": "My first paragraph."
-              }
-            ]
-          },
-          {
-            "type": "element",
-            "tag": "p",
-            "props": {},
-            "children": [
-              {
-                "type": "element",
-                "tag": "a",
-                "props": {
-                  "href": "https://content.nuxtjs.org",
-                  "rel": [
-                    "nofollow",
-                    "noopener",
-                    "noreferrer"
-                  ],
-                  "target": "_blank"
-                },
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "https://content.nuxtjs.org"
-                  }
-                ]
+                "value": "https://content.nuxtjs.org"
               }
             ]
           }
-        ],
-        "toc": {
-          "title": "",
-          "searchDepth": 2,
-          "depth": 2,
-          "links": []
-        }
+        ]
       }
+    ],
+    "toc": {
+      "title": "",
+      "searchDepth": 2,
+      "depth": 2,
+      "links": []
     }
-    ```
-  ::
+  }
+}
+```
 ::
-
 You can do much more than fetch only one file, take a look at the [querying content](/guide/displaying/querying) section to discover its full potential.
 
 ## Introducing MDC

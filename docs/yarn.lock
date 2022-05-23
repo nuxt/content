@@ -282,10 +282,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-1.0.0.tgz#91c560df2ed8d9700e4c7ed4ac21a3a322c9d975"
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
-"@docus/base@npm:@docus/base-edge@3.0.0-f68d9c2":
-  version "3.0.0-f68d9c2"
-  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-f68d9c2.tgz#e020385958379709cce32e4cf51105a5129f3a35"
-  integrity sha512-aTgtrNhx/fng2MCgPowytKYtxdiVqB+h6zU40IRxouBeUPVqN1THAb8B3fjBRzBPVUWlQw8GJeSiTWLP2AaXqw==
+"@docus/base@npm:@docus/base-edge@3.0.0-05ebe75":
+  version "3.0.0-05ebe75"
+  resolved "https://registry.yarnpkg.com/@docus/base-edge/-/base-edge-3.0.0-05ebe75.tgz#9b07785f60971f8a2847834b43ee93724070160e"
+  integrity sha512-IiDahIgRYhHl31odIheQMNJw52dOWeqXP6mZ/A/hIcj61Er6/pmQJQE8kpT3yHkXZRurail8I9zU1AweQvQRmg==
   dependencies:
     "@nuxt/content" "npm:@nuxt/content-edge@latest"
     "@nuxthq/admin" "npm:@nuxthq/admin-edge@latest"
@@ -295,11 +295,11 @@
     nuxt "^3.0.0-rc.3"
 
 "@docus/docs-theme@npm:@docus/docs-theme-edge@latest":
-  version "3.0.0-f68d9c2"
-  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-f68d9c2.tgz#a9c3d48f11327406d591a5b299c2a0d6c890e580"
-  integrity sha512-asD5lPTZ0jAEoKKAL4pcuMNMWjUquUQL0AyABL/gS25W5MBFakCGaLMigg2PCxuozAcgffDbRL6Q7mmYM5B6zQ==
+  version "3.0.0-05ebe75"
+  resolved "https://registry.yarnpkg.com/@docus/docs-theme-edge/-/docs-theme-edge-3.0.0-05ebe75.tgz#bf7e81a8586e324cb7f8e2d4b1c3f4c81dde18e9"
+  integrity sha512-7vGdgEGLgV/Y7NPm9HMd//ewLr00oY8qvUA4aNjonVEFt50J/oBlKPJV+nd51BvTvHMnKc2BHy5wuig2aj/3jQ==
   dependencies:
-    "@docus/base" "npm:@docus/base-edge@3.0.0-f68d9c2"
+    "@docus/base" "npm:@docus/base-edge@3.0.0-05ebe75"
     "@docus/github" latest
     "@iconify/vue" "^3.2.1"
     "@nuxtjs/color-mode" "^3.0.3"
@@ -321,9 +321,9 @@
     remark-github "^11.2.2"
 
 "@docus/github@npm:@docus/github-edge@latest":
-  version "1.2.6-f68d9c2"
-  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-f68d9c2.tgz#061f60c1710ded04dedffe8891dc469ab22c6323"
-  integrity sha512-dJWhWU7OzOv/3NhrsXnj3TrmsKRQG+g0MkvAms4AdHWCnEt9NAXYcpfpOGf8URUCtAbA4Sl/4TDax9cOOXuZLA==
+  version "1.2.6-05ebe75"
+  resolved "https://registry.yarnpkg.com/@docus/github-edge/-/github-edge-1.2.6-05ebe75.tgz#a5a91be9142c4981a654d6d1cd537b5b3e403b3e"
+  integrity sha512-Yc6ud4HpenaMmRQ9Jd9biVJtrh+ApdSSFtF2nvqWkXiX7wcBC1l8PurTUI4yw+rQ17mj1d3ZmCc7sGHoFkJMjw==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     "@octokit/graphql" "^4.8.0"
