@@ -103,7 +103,12 @@ export function createWebSocket () {
   return {
     serve,
     broadcast,
-    close: () => new Promise(resolve => wss.close(resolve))
+    close: () => {
+      // disconnect all clients
+      wss.clients.forEach(client => client.close())
+      // close the server
+      return new Promise(resolve => wss.close(resolve))
+    }
   }
 }
 
