@@ -76,12 +76,16 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
   }
 }
 
-function useExcerpt (content: string, delimiter = '<!--more-->') {
+function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   if (!delimiter) {
     return ''
   }
   // if enabled, get the excerpt defined after front-matter
-  const idx = content.indexOf(delimiter)
+  let idx = -1
+  const match = delimiter.exec(content)
+  if (match) {
+    idx = match.index
+  }
   if (idx !== -1) {
     return content.slice(0, idx)
   }
