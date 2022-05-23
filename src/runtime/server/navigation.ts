@@ -76,11 +76,12 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   return sortAndClear(nav)
 }
 
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 /**
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear (nav: PrivateNavItem[]) {
-  const sorted = nav.sort((a, b) => a._file.localeCompare(b._file))
+  const sorted = nav.sort((a, b) => collator.compare(a._file, b._file))
 
   for (const item of sorted) {
     if (item.children.length) {
