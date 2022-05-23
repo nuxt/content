@@ -38,7 +38,7 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
       },
       {
         "_path": "/cats",
-        "title": "Cats list",
+        "title": "Cats",
       },
       {
         "_path": "/cats/persian",
@@ -85,7 +85,7 @@ exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
       },
       {
         "_path": "/cats",
-        "title": "Cats list",
+        "title": "Cats",
       },
       {
         "_path": "/cats/persian",

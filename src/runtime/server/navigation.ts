@@ -34,9 +34,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         const indexItem = getNavItem(content)
         navItem.children.push(indexItem)
 
-        const p = indexItem._path.split('/').slice(0, -1).join('/') || '/'
-        const conf = configs[p]
-        Object.assign(indexItem, pickNavigationFields(conf))
+        Object.assign(
+          navItem,
+          pickNavigationFields(configs[navItem._path])
+        )
       }
 
       // First-level item, push it straight to nav
