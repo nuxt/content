@@ -16,6 +16,8 @@ cover:
   alt: "@nuxt/content cover image."
 aside:
   level: 1
+  filter:
+    - /v1
 header:
   title: false
   logo: true

@@ -1,3 +1,4 @@
+import { resolve } from 'pathe'
 import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
 import colors from 'tailwindcss/colors.js'
@@ -10,6 +11,19 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  content: {
+    sources: [
+      {
+        name: 'v1-en',
+        prefix: '/v1/en',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/en')
+      }
+    ],
+    highlight: {
+      preload: ['xml']
+    }
+  },
   generate: {
     routes: []
   },
