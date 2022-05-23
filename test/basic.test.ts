@@ -124,7 +124,9 @@ describe('fixtures:basic', async () => {
     return
   }
 
-  describe('hmr', () => {
+  describe('hmr', async () => {
+    await fsp.mkdir(join(fixturePath, 'content-tests'), { recursive: true })
+
     test('should work', async () => {
       await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello')
       await waitFor(1000)
