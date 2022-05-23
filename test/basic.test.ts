@@ -124,10 +124,10 @@ describe('fixtures:basic', async () => {
     return
   }
 
-  describe('hmr', async () => {
+  describe('HMR', async () => {
     await fsp.mkdir(join(fixturePath, 'content-tests'), { recursive: true })
 
-    test('should work', async () => {
+    test('Should work', async () => {
       await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello')
       await waitFor(1000)
 
@@ -147,7 +147,7 @@ describe('fixtures:basic', async () => {
       await page.close()
     })
 
-    test('should work with parentheses', async () => {
+    test('File with parentheses', async () => {
       await fsp.writeFile(join(fixturePath, 'content-tests/foo(bar).md'), '# Foo Bar')
       await waitFor(1000)
 
@@ -166,5 +166,51 @@ describe('fixtures:basic', async () => {
 
       await page.close()
     })
+
+    test('Update slot', async () => {
+      await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
+        '::FooSlot',
+        'Initial value for default slot',
+        '#foo',
+        'Initial value for foo slot',
+        '::'
+      ].join('\n'))
+      await waitFor(1000)
+
+      const { page, pageErrors, consoleLogs } = await renderPage('/_tests/default-slot')
+
+      expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Initial value for default slot')
+      expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
+
+      await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
+        '::FooSlot',
+        'Updated value for default slot',
+        '#foo',
+        'Initial value for foo slot',
+        '::'
+      ].join('\n'))
+      await pullingForHMR(async () => {
+        expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
+        expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
+      })
+
+      await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
+        '::FooSlot',
+        'Updated value for default slot',
+        '#foo',
+        'Updated value for foo slot',
+        '::'
+      ].join('\n'))
+
+      await pullingForHMR(async () => {
+        expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
+        expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Updated value for foo slot')
+      })
+
+      // ensure no errors
+      expectNoClientErrors(pageErrors, consoleLogs)
+
+      await page.close()
+    }, 0)
   })
 })
