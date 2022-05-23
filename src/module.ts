@@ -18,6 +18,7 @@ import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
 import {
+  CACHE_VERSION,
   createWebSocket,
   MOUNT_PREFIX,
   processMarkdownOptions,
@@ -386,7 +387,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
     // Context will use in server
     nuxt.options.runtimeConfig.content = {
-      version,
+      cacheVersion: CACHE_VERSION,
       ...contentContext as any
     }
 
@@ -437,7 +438,11 @@ interface ModulePublicRuntimeConfig {
 }
 
 interface ModulePrivateRuntimeConfig {
-  version: string;
+  /**
+   * Internal version that represents cache format.
+   * This is used to invalidate cache when the format changes.
+   */
+  cacheVersion: string;
 }
 
 declare module '@nuxt/schema' {
