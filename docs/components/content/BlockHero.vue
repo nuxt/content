@@ -20,7 +20,7 @@ defineProps({
 </script>
 
 <template>
-  <section class="py-6 sm:py-12 lg:py-24">
+  <section class="py-6 sm:py-12 lg:py-24 lg:pb-16">
     <Container padded class="my-16 flex flex-col lg:flex-row">
       <div class="mb-8 flex flex-col items-center pr-0 lg:mb-0 lg:w-2/3 lg:items-start lg:pr-8">
         <NuxtLink v-if="announcement" :to="announcement[1]" class="hover:bg-primary-200 text-primary-900 bg-primary-100 transition dark:bg-transparent hover:dark:bg-primary-900 dark:border-primary-700 dark:text-primary-100 border border-primary-400 mb-8 px-4 py-2 rounded-md flex gap-x-1 flex items-center justify-center">
