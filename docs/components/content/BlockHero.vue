@@ -43,7 +43,7 @@ defineProps({
           <a
             v-if="secondary"
             :href="(secondary[1] as any)"
-            class="text-secondary-active border-b-1 hover:border-primary-500 dark:hover:border-primary-400 mt-px border-transparent py-px font-medium"
+            class="text-secondary-active border-b border-gray-300 dark:bordwer-gray-500 hover:border-gray-800 dark:hover:border-gray-200 mt-px py-px font-medium"
           >
             {{ secondary[0] }}
           </a>

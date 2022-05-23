@@ -4,7 +4,7 @@ navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
 cover: /announcing-v2.png
-date: 2022-05-19
+date: 2022-05-24
 authors:
   - name: "Sébastien Chopin"
     avatarUrl: https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg
@@ -27,7 +27,7 @@ category: Announcements
 
 2 years after the [release of Content v1](https://github.com/nuxt/content/releases/tag/v1.0.0), we are proud to announce the second version of Nuxt Content built for [Nuxt 3](https://v3.nuxtjs.org).
 
-On top of the Nuxt 3 support, we couldn't help adding new features:
+On top of the Nuxt 3 support, it comes with new features:
 
 ::list{icon="heroicons-outline:badge-check"}
 - The [MDC Syntax](/guide/writing/mdc) for Components in Markdown
@@ -47,14 +47,14 @@ Let’s imagine a `content/` directory with the following structure:
 ::code-group
   ```[Directory Structure]
   content/
-    hello.md
+    index.md
   ```
-  ```md [hello.md]
+  ```md [index.md]
   # Hello World
 
   My first paragraph.
 
-  <https://content.nuxtjs.org>
+  https://content.nuxtjs.org
   ```
 ::
 
@@ -69,7 +69,7 @@ Create a `pages/[...slug].vue` file with the [`<ContentDoc>`](/guide/displaying/
 And voilà!
 
 ::code-group
-  ::code-block{label="https://wonderful-app.com/hello" preview}
+  ::code-block{label="Preview" preview}
     # Hello World
 
     My first paragraph.
@@ -188,34 +188,30 @@ MDC is Markdown, so nothing changes and you can keep using the `.md` extension.
 ### Show me how it works!
 
 ::code-group
-
   ```md [content/index.md]
   ::my-button{type="success"}
     ✏️ Start **writing!**
   ::
   ```
+  ```html [components/MyButton.vue]
+  <script setup>
+  defineProps({
+    type: {
+      type: String,
+      default: 'info'
+    }
+  })
+  </script>
 
-  ::code-block{label="Preview" preview}
+  <template>
+    <button :class="type">
+      <Markdown unwrap="p" />
+    </button>
+  </template>
+  ```
+    ::code-block{label="Preview" preview}
     <MyButton type="success">✏️ Start <strong>writing!</strong></MyButton>
   ::
-
-  ```vue [components/MyButton.vue]
-    <script setup>
-      defineProps({
-        type: {
-          type: String,
-          default: 'info'
-        }
-      })
-      </script>
-
-      <template>
-        <button :class="type">
-          <Markdown unwrap="p" />
-        </button>
-      </template>
-  ```
-
 ::
 
 Head over to the [MDC guide](/guide/writing/mdc) to discover the full power of Markdown with Vue components.
@@ -230,4 +226,6 @@ The repository is open source under the MIT license and available on GitHub: [nu
 
 Head over to the [Get started](/get-started) section to start playing with Content v2 :sparkles:
 
-Bonus, we created [Content Wind](https://github.com/Atinux/content-wind), a lightweight Nuxt template to write a Markdown driven website powered by Nuxt Content and TailwindCSS. The code is available on Github: [Atinux/content-wind](https://github.com/Atinux/content-wind) and its demo on [content-wind.nuxt.dev](https://content-wind.nuxt.dev).
+---
+
+Bonus, we created [Content Wind](https://github.com/Atinux/content-wind), a lightweight Nuxt template to write a Markdown driven website powered by Nuxt Content and TailwindCSS. It is available on [GitHub](https://github.com/Atinux/content-wind) and its demo on [content-wind.nuxt.dev](https://content-wind.nuxt.dev).
