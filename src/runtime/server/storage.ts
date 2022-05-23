@@ -98,7 +98,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   const hash = ohash({
     meta,
     // Add Content version to the hash, to revalidate the cache on content update
-    version: contentConfig.version
+    version: contentConfig.cacheVersion
   })
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
