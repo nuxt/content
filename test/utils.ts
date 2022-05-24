@@ -49,7 +49,7 @@ export function expectNoClientErrors (pageErrors: any[], consoleLogs: any[]) {
   expect(consoleLogWarnings).toEqual([])
 }
 
-export async function pullingForHMR (check: () => Promise<void> | void, retries = 50, delay = 500) {
+export async function pullingForHMR (check: () => Promise<void> | void, retries = 100, delay = 500) {
   try {
     return await check()
   } catch (e) {
