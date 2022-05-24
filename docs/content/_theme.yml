@@ -7,9 +7,8 @@ socials:
   twitter: "@nuxt_js"
   github: "nuxt/content"
 github:
-  repository: "nuxt/content"
-  branch: "main"
-  dir: docs
+  root: docs/content
+  edit: true
   releases: true
 cover:
   src: /cover_dark.png

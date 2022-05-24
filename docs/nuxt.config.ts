@@ -27,13 +27,15 @@ export default defineNuxtConfig({
   generate: {
     routes: []
   },
-  modules: ['@nuxthq/admin'],
+  modules: ['@nuxthq/admin', '@docus/github'],
   alias,
   extends: [
     (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
   ],
   github: {
-    repo: 'nuxt/content'
+    owner: 'nuxt',
+    repo: 'content',
+    branch: 'main'
   },
   vite: {
     define: {
