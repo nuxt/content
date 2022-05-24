@@ -17,6 +17,7 @@ aside:
   level: 1
   filter:
     - /v1
+    - /content-v1
 header:
   title: false
   logo: true

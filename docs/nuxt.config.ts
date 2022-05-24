@@ -18,6 +18,24 @@ export default defineNuxtConfig({
         prefix: '/v1/en',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/en')
+      },
+      {
+        name: 'v1-ru',
+        prefix: '/v1/ru',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/ru')
+      },
+      {
+        name: 'v1-ja',
+        prefix: '/v1/ja',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/ja')
+      },
+      {
+        name: 'v1-fr',
+        prefix: '/v1/fr',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/fr')
       }
     ],
     highlight: {
