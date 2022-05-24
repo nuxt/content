@@ -1,9 +1,7 @@
-import fsp from 'fs/promises'
 import { fileURLToPath } from 'url'
 import { assert, test, describe, expect } from 'vitest'
 import { setup, $fetch, isDev } from '@nuxt/test-utils'
 import { hash } from 'ohash'
-import { join } from 'pathe'
 import { testMarkdownParser } from './features/parser-markdown'
 import { testPathMetaTransformer } from './features/transformer-path-meta'
 import { testYamlParser } from './features/parser-yaml'
@@ -13,7 +11,7 @@ import { testJSONParser } from './features/parser-json'
 import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
-import { renderPage, pullingForHMR, expectNoClientErrors, waitFor } from './utils'
+import { testHMR } from './features/hmr'
 
 const fixturePath = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
 describe('fixtures:basic', async () => {
@@ -120,95 +118,7 @@ describe('fixtures:basic', async () => {
 
   testRegex()
 
-  if (!isDev()) {
-    return
+  if (isDev()) {
+    await testHMR(fixturePath)
   }
-
-  await fsp.mkdir(join(fixturePath, 'content-tests'), { recursive: true })
-
-  test('[HMR]: Should work', async () => {
-    await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello')
-    await waitFor(1000)
-
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests')
-
-    expect(await page.$('h1').then(r => r.textContent())).toBe('Hello')
-
-    await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello HMR')
-
-    await pullingForHMR(async () => {
-      expect(await page.$('h1').then(r => r.textContent())).toBe('Hello HMR')
-    })
-
-    // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
-  })
-
-  test('[HMR]: File with parentheses', async () => {
-    await fsp.writeFile(join(fixturePath, 'content-tests/foo(bar).md'), '# Foo Bar')
-    await waitFor(1000)
-
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests/foo(bar)')
-
-    expect(await page.$('h1').then(r => r.textContent())).toBe('Foo Bar')
-
-    await fsp.writeFile(join(fixturePath, 'content-tests/foo(bar).md'), '# Foo Bar Baz')
-
-    await pullingForHMR(async () => {
-      expect(await page.$('h1').then(r => r.textContent())).toBe('Foo Bar Baz')
-    })
-
-    // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
-  })
-
-  test('[HMR]: Update slot', async () => {
-    await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
-      '::FooSlot',
-      'Initial value for default slot',
-      '#foo',
-      'Initial value for foo slot',
-      '::'
-    ].join('\n'))
-    await waitFor(1000)
-
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests/default-slot')
-
-    expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Initial value for default slot')
-    expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
-
-    await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
-      '::FooSlot',
-      'Updated value for default slot',
-      '#foo',
-      'Initial value for foo slot',
-      '::'
-    ].join('\n'))
-    await pullingForHMR(async () => {
-      expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
-      expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
-    })
-
-    await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
-      '::FooSlot',
-      'Updated value for default slot',
-      '#foo',
-      'Updated value for foo slot',
-      '::'
-    ].join('\n'))
-    await waitFor(1000)
-    await pullingForHMR(async () => {
-      expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
-      expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Updated value for foo slot')
-    })
-
-    // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
-  }, 0)
 })

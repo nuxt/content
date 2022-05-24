@@ -1,7 +1,8 @@
 import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
+import type { Browser } from 'playwright'
 import { expect } from 'vitest'
 
-let browser = null
+let browser: Browser = null
 export async function renderPage (path) {
   const ctx = useTestContext()
   if (!ctx.options.browser) {
