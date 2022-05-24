@@ -38,7 +38,7 @@ export default defineComponent({
       refresh
     } = ctx
 
-    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentNavigation>!', slot, data }, null, 2))
+    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentNavigation>', slot, data }, null, 2))
 
     // Render empty data object
     if (slots?.empty && (!data || !data?.length)) {
