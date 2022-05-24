@@ -45,7 +45,7 @@ export default defineNuxtConfig({
   generate: {
     routes: []
   },
-  modules: ['@nuxthq/admin', '@docus/github'],
+  modules: ['@nuxthq/admin', '@docus/github', 'vue-plausible'],
   alias,
   extends: [
     (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
@@ -62,6 +62,9 @@ export default defineNuxtConfig({
       'process.env.NO_COLOR': {},
       'process.env.FORCE_TERM': {}
     }
+  },
+  plausible: {
+    domain: 'content.nuxtjs.org'
   },
   tailwindcss: {
     config: {
