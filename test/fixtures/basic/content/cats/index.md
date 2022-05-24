@@ -1,4 +1,4 @@
-# Cats list
+# Cats
 
 - [Persian](/persian)
 - [Ragdoll](/ragdoll)

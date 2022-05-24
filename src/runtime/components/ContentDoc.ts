@@ -106,7 +106,7 @@ export default defineComponent({
               )
             },
         // Empty slot
-        empty: bindings => slots?.empty?.(bindings),
+        empty: bindings => slots?.empty?.(bindings) || h('p', null, 'Document is empty, overwrite this content with #empty slot in <ContentDoc>.'),
         // Not Found slot
         'not-found': bindings => slots?.['not-found']?.(bindings) || h('p', null, 'Document not found, overwrite this content with #not-found slot in <ContentDoc>.')
       }
