@@ -1,11 +1,7 @@
 <script setup lang="ts">
-
 const emit = defineEmits<(e: 'change', content: string) => void>()
-
-const editorLoading = ref(true)
-
+const editorState = ref('loading')
 const props = defineProps<{ language: string; value: string, readOnly: boolean }>()
-
 const target = ref()
 
 onMounted(
@@ -21,7 +17,7 @@ onMounted(
           emit('change', content)
         },
         onDidCreateEditor () {
-          editorLoading.value = false
+          editorState.value = 'ready'
         }
       })
 
@@ -32,7 +28,7 @@ onMounted(
 
       emit('change', props.value)
     } catch (_) {
-      editorLoading.value = 'error'
+      editorState.value = 'error'
     }
   }
 )
@@ -40,14 +36,14 @@ onMounted(
 
 <template>
   <div class="relative h-full w-full">
-    <div v-if="editorLoading === true" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+    <div v-if="editorState === 'loading'" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
       <Alert type="primary">
-        <span>Editor is loading</span>
+        <span>Editor is loading...</span>
         <Icon name="file-icons:sandbox" class="ml-2 inline" />
       </Alert>
     </div>
 
-    <div v-else-if="editorLoading === 'error'" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+    <div v-else-if="editorState === 'error'" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
       <Alert type="warning">
         <span>Error while loading editor!</span>
         <Icon name="heroicons-outline:cog" class="inline ml-2" />

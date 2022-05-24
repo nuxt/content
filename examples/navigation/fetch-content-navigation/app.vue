@@ -6,9 +6,6 @@ const { data: navigation } = await useAsyncData('navigation', () => {
 
 <template>
   <NuxtExampleLayout example="navigation/fetch-content-navigation" repo="nuxt/content">
-    <template #icon>
-      Nuxt/content
-    </template>
     <main class="text-left">
       <nav>
         <AppNavigation :navigation-tree="navigation" />

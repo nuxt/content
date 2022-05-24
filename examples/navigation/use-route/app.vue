@@ -1,8 +1,5 @@
 <template>
   <NuxtExampleLayout example="queries/where" repo="nuxt/content">
-    <template #icon>
-      Nuxt/content
-    </template>
     <header>
       <nav>
         <ul>

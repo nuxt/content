@@ -6,9 +6,6 @@ const { data } = await useAsyncData('homepage', () => {
 
 <template>
   <NuxtExampleLayout example="queries/only" repo="nuxt/content">
-    <template #icon>
-      Nuxt/content
-    </template>
     <h1>{{ data.title }}</h1>
   </NuxtExampleLayout>
 </template>

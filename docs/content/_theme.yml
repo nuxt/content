@@ -12,8 +12,8 @@ github:
   dir: docs
   releases: true
 cover:
-  src: /cover_dark.png
-  alt: "@nuxt/content cover image."
+  src: /cover.jpg
+  alt: "Content made easy for Vue developers"
 aside:
   level: 1
 header:

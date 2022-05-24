@@ -1,12 +1,12 @@
-[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover.jpg "@nuxt/content cover")](https://content.nuxtjs.org)
 
 # Nuxt Content
 
-Write pages in markdown, use Vue components and enjoy the power of Nuxt Content. The files-based Headless CMS for modern websites.
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](/guide/writing/mdc).
 
-- [✨ &nbsp;Changelog](https://content.nuxtjs.org/changelog)
 - [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/nuxt/content/tree/main/examples/essentials/hello-world?file=app.vue)
+- [✨ &nbsp;Changelog](https://content.nuxtjs.org/changelog)
 
 ## Features
 
@@ -19,6 +19,7 @@ Write pages in markdown, use Vue components and enjoy the power of Nuxt Content.
 - Table of contents generation
 - Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
+- [...and more](https://content.nuxtjs.org)
 
 ## 💻 Development
 

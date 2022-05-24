@@ -19,9 +19,6 @@ const { data: inQuery } = await useAsyncData('in', () => {
 
 <template>
   <NuxtExampleLayout example="queries/where" repo="nuxt/content">
-    <template #icon>
-      Nuxt/content
-    </template>
     <header class="text-left">
       <p>The dataset in the <code class="inline">content/index.json</code> lists movies from Studio Ghibli. It is based on the <a href="https://ghibliapi.herokuapp.com/">Ghibli API</a></p>
       <hr class="m-2">
