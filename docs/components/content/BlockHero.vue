@@ -47,8 +47,9 @@ defineProps({
           </a>
         </div>
       </div>
+
       <div class="sm:w-580px mx-auto lg:w-1/3">
-        <VideoPlayer src="https://www.youtube.com/watch?v=o9e12WbKrd8" />
+        <VideoPlayer poster="/video-cover.jpeg" src="https://www.youtube.com/watch?v=o9e12WbKrd8" />
       </div>
     </Container>
   </section>
