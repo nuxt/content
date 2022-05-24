@@ -167,7 +167,7 @@ The returned file won't be Markdown or HTML, but a JSON representing the abtract
 }
 ```
 ::
-You can do much more than fetch only one file, take a look at the [querying content](/guide/displaying/querying) section to discover its full potential.
+You can do much more than fetching only one file. Take a look at the [querying content](/guide/displaying/querying) section to discover its full potential.
 
 ## Introducing MDC
 
