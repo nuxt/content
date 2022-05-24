@@ -1,13 +1,14 @@
 import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
 import { expect } from 'vitest'
 
+let browser = null
 export async function renderPage (path = '/') {
   const ctx = useTestContext()
   if (!ctx.options.browser) {
     return
   }
 
-  const browser = await getBrowser()
+  browser = browser || await getBrowser()
   const page = await browser.newPage({})
   const pageErrors = []
   const consoleLogs = []
