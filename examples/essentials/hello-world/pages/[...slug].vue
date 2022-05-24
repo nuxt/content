@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 1rem;">
+  <main class="prose">
     <ContentDoc />
-  </div>
+  </main>
 </template>

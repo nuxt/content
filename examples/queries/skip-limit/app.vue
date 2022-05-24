@@ -13,9 +13,6 @@ watch([skip, limit], () => {
 
 <template>
   <NuxtExampleLayout example="queries/skip-limit" repo="nuxt/content">
-    <template #icon>
-      Nuxt/content
-    </template>
     <label for="skip">Skip ({{ skip }})</label>
     <input id="skip" v-model="skip" type="range" min="0" max="5">
     <label for="skip">Limit ({{ limit }})</label>

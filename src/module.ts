@@ -12,6 +12,7 @@ import {
 } from '@nuxt/kit'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
+import { hash } from 'ohash'
 import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
@@ -375,6 +376,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
+    // Generate cache integerity based on content context
+    const cacheIntegerity = hash({
+      locales: options.locales,
+      options: options.defaultLocale,
+      markdown: options.markdown,
+      hightlight: options.highlight
+    })
+
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
@@ -388,6 +397,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Context will use in server
     nuxt.options.runtimeConfig.content = {
       cacheVersion: CACHE_VERSION,
+      cacheIntegerity,
       ...contentContext as any
     }
 
@@ -443,6 +453,7 @@ interface ModulePrivateRuntimeConfig {
    * This is used to invalidate cache when the format changes.
    */
   cacheVersion: string;
+  cacheIntegerity: string;
 }
 
 declare module '@nuxt/schema' {
