@@ -1,7 +1,7 @@
 import fsp from 'fs/promises'
 import { test, expect } from 'vitest'
 import { join } from 'pathe'
-import { renderPage, pullingForHMR, expectNoClientErrors, waitFor } from '../utils'
+import { renderPage, pullingForHMR, expectNoClientErrors } from '../utils'
 
 export const testHMR = async (fixturePath: string) => {
   await fsp.mkdir(join(fixturePath, 'content-tests'), { recursive: true })
