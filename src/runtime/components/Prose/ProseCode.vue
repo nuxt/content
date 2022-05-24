@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, useSlots, h } from '#imports'
+import { defineComponent } from '#imports'
 
 export default defineComponent({
   props: {
@@ -19,21 +19,17 @@ export default defineComponent({
       type: Array as () => number[],
       default: () => []
     }
-  },
-  render (ctx) {
-    const { code, language, filename, highlights } = ctx
-    const slots = useSlots()
-
-    // Render the default slot if present
-    return slots?.default
-      ? slots.default({
-        code,
-        language,
-        filename,
-        highlights,
-        ...this.$attrs
-      })
-      : h('pre')
   }
 })
 </script>
+
+<template>
+  <slot />
+</template>
+
+<style>
+pre code .line {
+  display: block;
+  min-height: 1rem;
+}
+</style>

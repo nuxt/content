@@ -38,7 +38,7 @@ exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-ca
       },
       {
         "_path": "/cats",
-        "title": "Cats list",
+        "title": "Cats",
       },
       {
         "_path": "/cats/persian",
@@ -70,72 +70,6 @@ exports[`fixtures:basic > navigation > Get dogs navigation > basic-navigation-do
     ],
     "icon": "🐶",
     "title": "Dogs List",
-  },
-]
-`;
-
-exports[`fixtures:basic > navigation > Get navigation > basic-navigation 1`] = `
-[
-  {
-    "_path": "/cats",
-    "children": [
-      {
-        "_path": "/cats/bombay",
-        "title": "Bombay",
-      },
-      {
-        "_path": "/cats",
-        "title": "Cats list",
-      },
-      {
-        "_path": "/cats/persian",
-        "title": "Persian",
-      },
-      {
-        "_path": "/cats/ragdoll",
-        "title": "Ragdoll",
-      },
-    ],
-    "title": "Cats list",
-  },
-  {
-    "_path": "/dogs",
-    "children": [
-      {
-        "_path": "/dogs/bulldog",
-        "title": "Bulldog",
-      },
-      {
-        "_path": "/dogs/german-shepherd",
-        "title": "German Shepherd",
-      },
-    ],
-    "icon": "🐶",
-    "title": "Dogs List",
-  },
-  {
-    "_path": "/",
-    "children": [
-      {
-        "_path": "/",
-        "title": "سلام",
-      },
-    ],
-    "title": "سلام",
-  },
-  {
-    "_path": "/head",
-    "title": "Basic Head",
-  },
-  {
-    "_path": "/",
-    "children": [
-      {
-        "_path": "/",
-        "title": "Index",
-      },
-    ],
-    "title": "Index",
   },
 ]
 `;
