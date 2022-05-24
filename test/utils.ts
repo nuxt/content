@@ -2,7 +2,7 @@ import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
 import { expect } from 'vitest'
 
 let browser = null
-export async function renderPage (path = '/') {
+export async function renderPage (path) {
   const ctx = useTestContext()
   if (!ctx.options.browser) {
     return
@@ -24,7 +24,7 @@ export async function renderPage (path = '/') {
   })
 
   if (path) {
-    await page.goto(url(path), { waitUntil: 'networkidle' })
+    await page.goto(url(path))
   }
 
   return {
