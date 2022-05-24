@@ -8,7 +8,7 @@ body:
         Please carefully read the contribution docs before creating a bug report
         👉 https://v3.nuxtjs.org/community/reporting-bugs
         Please use the template below to create a minimal reproduction
-        👉 https://stackblitz.com/github/nuxt/starter/tree/content-v2
+        👉 https://stackblitz.com/github/nuxt/starter/tree/content
   - type: textarea
     id: bug-env
     attributes:
