@@ -220,7 +220,7 @@ Head over to the [MDC guide](/guide/writing/mdc) to discover the full power of M
 
 Nuxt Content has many features, we built a video to showcase how to start using it in a Nuxt 3 application, in 3 minutes :sparkles:
 
-:video-player{src="https://www.youtube.com/watch?v=jIyiRT6zT8Q"}
+:video-player{src="https://www.youtube.com/watch?v=o9e12WbKrd8"}
 
 ## Thank you
 
