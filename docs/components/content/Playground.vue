@@ -96,7 +96,7 @@ watch(content, refresh)
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
         <div v-else class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
           <Alert type="primary">
-            <span>Editor is loading</span>
+            <span>Editor is loading...</span>
             <Icon name="file-icons:sandbox" class="ml-2 inline" />
           </Alert>
         </div>

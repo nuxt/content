@@ -28,9 +28,9 @@ defineProps({
           <span class="font-medium text-sm">{{ announcement[0] }}</span>
         </NuxtLink>
 
-        <h2 class="mb-8 text-center text-5xl font-semibold tracking-tighter text-gray-900 dark:text-gray-100 sm:text-6xl sm:leading-none lg:text-left lg:text-7xl">
+        <h1 class="mb-8 text-center text-5xl font-semibold tracking-tighter text-gray-900 dark:text-gray-100 sm:text-6xl sm:leading-none lg:text-left lg:text-7xl lg:pr-16">
           <Markdown use="title" unwrap="p" />
-        </h2>
+        </h1>
 
         <p class="leading-base mb-8 text-center text-lg font-medium tracking-tight text-gray-700 dark:text-gray-300 sm:text-xl lg:text-left xl:text-xl">
           <Markdown use="description" unwrap="p" />
