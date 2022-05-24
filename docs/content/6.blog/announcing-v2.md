@@ -3,7 +3,7 @@ layout: blogpost
 navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
-cover: /announcing-v2.png
+cover: /announcing_v2.png
 date: 2022-05-24
 authors:
   - name: "Sébastien Chopin"
@@ -215,6 +215,12 @@ MDC is Markdown, so nothing changes and you can keep using the `.md` extension.
 ::
 
 Head over to the [MDC guide](/guide/writing/mdc) to discover the full power of Markdown with Vue components.
+
+## An introduction video
+
+Nuxt Content has many features, we built a video to showcase how to start using it in a Nuxt 3 application, in 3 minutes :sparkles:
+
+:video-player{src="https://www.youtube.com/watch?v=jIyiRT6zT8Q"}
 
 ## Thank you
 
