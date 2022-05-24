@@ -127,9 +127,9 @@ export default defineComponent({
         if (find.value === 'surround') {
           if (!path.value) {
             // eslint-disable-next-line no-console
-            console.log('[Content] Surround queries requires `path` prop to be set!')
+            console.warn('[Content] Surround queries requires `path` prop to be set.')
             // eslint-disable-next-line no-console
-            console.log('[Content] Query without `path` will return regular `find()` results.')
+            console.warn('[Content] Query without `path` will return regular `find()` results.')
             return queryBuilder.find()
           }
 

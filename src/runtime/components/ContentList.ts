@@ -36,7 +36,7 @@ export default defineComponent({
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = Object.assign(query || {}, { path })
 
-    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>!', slot, data }, null, 2))
+    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))
 
     return h(
       ContentQuery,
