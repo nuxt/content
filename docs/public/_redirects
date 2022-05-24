@@ -1,0 +1,26 @@
+# V1
+
+/installation /v1/installation 302!
+/:locale/installation /:locale/v1/installation 302!
+/writing /v1/writing 302!
+/:locale/writing /:locale/v1/writing 302!
+/fetching /v1/fetching 302!
+/:locale/fetching /:locale/v1/fetching 302!
+/displaying /v1/displaying 302!
+/:locale/displaying /:locale/v1/displaying 302!
+/configuration /v1/configuration 302!
+/:locale/configuration /:locale/v1/configuration 302!
+/advanced /v1/advanced 302!
+/:locale/advanced /:locale/v1/advanced 302!
+/themes/docs /v1/themes/docs 302!
+/:locale/themes/docs /:locale/v1/themes/docs 302!
+/examples/tailwindcss-typography /v1/examples/tailwindcss-typography 302!
+/:locale/examples/tailwindcss-typography /:locale/v1/examples/tailwindcss-typography 302!
+/examples/docs-theme /v1/examples/docs-theme 302!
+/:locale/examples/docs-theme /:locale/v1/examples/docs-theme 302!
+/snippets /v1/snippets 302!
+/:locale/snippets /:locale/v1/snippets 302!
+/integrations /v1/integrations 302!
+/:locale/integrations /:locale/v1/integrations 302!
+/releases /v1/releases 302!
+/:locale/releases /:locale/v1/releases 302!
