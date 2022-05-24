@@ -3,7 +3,7 @@ layout: blogpost
 navigation: false
 title: 'Announcing Nuxt Content v2'
 description: '2 years after the release of Content v1, we are proud to announce the second version of Nuxt Content built for Nuxt 3.'
-cover: /announcing-v2.png
+cover: /announcing_v2.png
 date: 2022-05-24
 authors:
   - name: "Sébastien Chopin"
