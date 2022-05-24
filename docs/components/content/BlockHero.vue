@@ -21,7 +21,7 @@ defineProps({
 
 <template>
   <section class="py-6 sm:py-12 lg:py-24 lg:pb-16">
-    <Container padded class="my-16 flex flex-col lg:flex-row">
+    <Container padded class="my-16 flex flex-col lg:flex-row items-center">
       <div class="mb-8 flex flex-col items-center pr-0 lg:mb-0 lg:w-2/3 lg:items-start lg:pr-8">
         <NuxtLink v-if="announcement" :to="announcement[1]" class="hover:bg-primary-200 text-primary-900 bg-primary-100 transition dark:bg-transparent hover:dark:bg-primary-900 dark:border-primary-700 dark:text-primary-100 border border-primary-400 mb-8 px-4 py-2 rounded-md flex gap-x-1 flex items-center justify-center">
           <Icon name="heroicons-solid:sparkles" class="h-4 w-4" />
@@ -37,13 +37,14 @@ defineProps({
         </p>
 
         <div class="flex flex-col items-center space-y-4 sm:mb-4 sm:flex-row sm:space-y-0 sm:space-x-4 lg:space-x-6">
-          <ButtonLink v-if="cta" class="mx-auto md:mx-0" bold size="large" :href="(cta[1] as any)">
+          <ButtonLink v-if="cta" class="mx-auto md:mx-0 !mb-0" bold size="large" :href="(cta[1] as any)">
             {{ cta[0] }}
           </ButtonLink>
+
           <a
             v-if="secondary"
             :href="(secondary[1] as any)"
-            class="text-secondary-active border-b border-gray-300 dark:bordwer-gray-500 hover:border-gray-800 dark:hover:border-gray-200 mt-px py-px font-medium"
+            class="block transition-base transition-colors text-secondary-active border-b border-gray-300 dark:bordwer-gray-500 hover:border-gray-800 dark:hover:border-gray-200 mt-2 py-px font-medium"
           >
             {{ secondary[0] }}
           </a>
@@ -51,7 +52,7 @@ defineProps({
       </div>
 
       <div v-if="snippet" class="sm:w-580px mx-auto w-full lg:w-1/3">
-        <div class="md:mx md:pl-2">
+        <div class="md:mx md:pl-8">
           <Terminal :content="snippet" />
         </div>
       </div>

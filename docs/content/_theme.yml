@@ -18,6 +18,9 @@ aside:
   filter:
     - /v1
     - /content-v1
+    - /fr
+    - /ja
+    - /ru
 header:
   title: false
   logo: true
