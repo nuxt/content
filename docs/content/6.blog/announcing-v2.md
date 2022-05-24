@@ -216,6 +216,12 @@ MDC is Markdown, so nothing changes and you can keep using the `.md` extension.
 
 Head over to the [MDC guide](/guide/writing/mdc) to discover the full power of Markdown with Vue components.
 
+## An introduction video
+
+Nuxt Content has many features, we built a video to showcase how to start using it in a Nuxt 3 application, in 3 minutes :sparkles:
+
+:video-player{src="https://www.youtube.com/watch?v=jIyiRT6zT8Q"}
+
 ## Thank you
 
 We are thankful for all the contributions we received in Content v1 and are impatient to see what you will build with Nuxt 3 and Content v2 :blush:
