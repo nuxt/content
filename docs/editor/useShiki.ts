@@ -40,7 +40,7 @@ export const useShiki = async () => {
   const highlighter = await getHighlighter({
     theme: theme || 'dark-plus',
     langs: [
-      ...(preload || ['json', 'js', 'ts', 'css']),
+      ...(preload || ['json', 'js', 'ts', 'css', 'vue']),
       'shell',
       'html',
       'md',

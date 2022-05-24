@@ -7,6 +7,12 @@ import { WebSocketServer } from 'ws'
 import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
 
+/**
+ * Internal version that represents cache format.
+ * This is used to invalidate cache when the format changes.
+ */
+export const CACHE_VERSION = 2
+
 export const MOUNT_PREFIX = 'content:source:'
 
 export const PROSE_TAGS = [

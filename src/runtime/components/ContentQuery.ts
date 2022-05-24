@@ -1,4 +1,5 @@
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
+import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
@@ -102,7 +103,10 @@ export default defineComponent({
       () => {
         let queryBuilder: QueryBuilder = queryContent()
 
-        if (path.value) { queryBuilder = queryBuilder.where({ _path: path.value }) }
+        if (path.value) {
+          const _path = withLeadingSlash(withoutTrailingSlash(path.value))
+          queryBuilder = queryBuilder.where({ _path })
+        }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
 
@@ -123,9 +127,9 @@ export default defineComponent({
         if (find.value === 'surround') {
           if (!path.value) {
             // eslint-disable-next-line no-console
-            console.log('[Content] Surround queries requires `path` prop to be set!')
+            console.warn('[Content] Surround queries requires `path` prop to be set.')
             // eslint-disable-next-line no-console
-            console.log('[Content] Query without `path` will return regular `find()` results.')
+            console.warn('[Content] Query without `path` will return regular `find()` results.')
             return queryBuilder.find()
           }
 
