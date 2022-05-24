@@ -74,5 +74,8 @@ export default defineNuxtConfig({
       }
     }
   },
+  colorMode: {
+    preference: 'dark'
+  },
   theme: {}
 })

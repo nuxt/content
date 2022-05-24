@@ -6,7 +6,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 - [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/nuxt/content/tree/main/examples/essentials/hello-world?file=app.vue)
-- [✨ &nbsp;Changelog](https://content.nuxtjs.org/changelog)
+- [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
 
 ## Features
 
@@ -20,6 +20,10 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
 - [...and more](https://content.nuxtjs.org)
+
+## Nuxt 2
+
+Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.org/content-v1 and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
 
 ## 💻 Development
 
