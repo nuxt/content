@@ -21,6 +21,10 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Extend with hooks and content plugins
 - [...and more](https://content.nuxtjs.org)
 
+## Nuxt 2
+
+Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.org/content-v1 and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
+
 ## 💻 Development
 
 - Clone repository
