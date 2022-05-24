@@ -228,4 +228,6 @@ Head over to the [Get started](/get-started) section to start playing with Conte
 
 ---
 
-Bonus: We created [Content Wind](https://github.com/Atinux/content-wind) - a lightweight Nuxt template to write a Markdown-driven website powered by Nuxt Content and TailwindCSS. It is available on [GitHub](https://github.com/Atinux/content-wind). Check out the demo on [content-wind.nuxt.dev](https://content-wind.nuxt.dev).
+Bonus: We created [Content Wind](https://github.com/Atinux/content-wind) - a lightweight Nuxt template to write a Markdown-driven website powered by Nuxt Content and TailwindCSS.
+
+It is available on [GitHub](https://github.com/Atinux/content-wind). Check out the demo on [content-wind.nuxt.dev](https://content-wind.nuxt.dev).
