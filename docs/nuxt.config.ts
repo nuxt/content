@@ -1,3 +1,4 @@
+import { resolve } from 'pathe'
 import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
 import colors from 'tailwindcss/colors.js'
@@ -10,16 +11,49 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  content: {
+    sources: [
+      {
+        name: 'v1',
+        prefix: '/v1',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/en')
+      },
+      {
+        name: 'v1-ja',
+        prefix: '/ja/v1',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/ja')
+      },
+      {
+        name: 'v1-fr',
+        prefix: '/fr/v1',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/fr')
+      },
+      {
+        name: 'v1-ru',
+        prefix: '/ru/v1',
+        driver: 'fs',
+        base: resolve(__dirname, 'content-v1/ru')
+      }
+    ],
+    highlight: {
+      preload: ['xml']
+    }
+  },
   generate: {
     routes: []
   },
-  modules: ['@nuxthq/admin'],
+  modules: ['@nuxthq/admin', '@docus/github'],
   alias,
   extends: [
     (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
   ],
   github: {
-    repo: 'nuxt/content'
+    owner: 'nuxt',
+    repo: 'content',
+    branch: 'main'
   },
   vite: {
     define: {

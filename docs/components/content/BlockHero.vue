@@ -34,20 +34,22 @@ defineProps({
           <Markdown use="description" unwrap="p" />
         </p>
         <div class="flex flex-col items-center space-y-4 sm:mb-4 sm:flex-row sm:space-y-0 sm:space-x-4 lg:space-x-6">
-          <ButtonLink v-if="cta" class="mx-auto md:mx-0" bold size="large" :href="(cta[1] as any)">
+          <ButtonLink v-if="cta" class="mx-auto md:mx-0 !mb-0" bold size="large" :href="(cta[1] as any)">
             {{ cta[0] }}
           </ButtonLink>
+
           <a
             v-if="secondary"
             :href="(secondary[1] as any)"
-            class="text-secondary-active border-b border-gray-300 dark:bordwer-gray-500 hover:border-gray-800 dark:hover:border-gray-200 mt-px py-px font-medium"
+            class="block transition-base transition-colors text-secondary-active border-b border-gray-300 dark:bordwer-gray-500 hover:border-gray-800 dark:hover:border-gray-200 mt-2 py-px font-medium"
           >
             {{ secondary[0] }}
           </a>
         </div>
       </div>
+
       <div class="sm:w-580px mx-auto lg:w-1/3">
-        <VideoPlayer src="https://www.youtube.com/watch?v=o9e12WbKrd8" />
+        <VideoPlayer poster="/video-cover.jpeg" src="https://www.youtube.com/watch?v=o9e12WbKrd8" />
       </div>
     </Container>
   </section>

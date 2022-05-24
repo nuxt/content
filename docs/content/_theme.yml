@@ -7,15 +7,20 @@ socials:
   twitter: "@nuxt_js"
   github: "nuxt/content"
 github:
-  repository: "nuxt/content"
-  branch: "main"
-  dir: docs
+  root: docs/content
+  edit: true
   releases: true
 cover:
   src: /cover.jpg
   alt: "Content made easy for Vue developers"
 aside:
   level: 1
+  filter:
+    - /v1
+    - /content-v1
+    - /fr
+    - /ja
+    - /ru
 header:
   title: false
   logo: true
