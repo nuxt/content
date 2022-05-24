@@ -200,7 +200,7 @@ describe('fixtures:basic', async () => {
       'Updated value for foo slot',
       '::'
     ].join('\n'))
-
+    await waitFor(1000)
     await pullingForHMR(async () => {
       expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
       expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Updated value for foo slot')
