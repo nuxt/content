@@ -1,4 +1,4 @@
-import { joinURL, withLeadingSlash } from 'ufo'
+import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
 import { useHead, useCookie } from '#app'
 import { createQuery } from '../query/query'
@@ -39,7 +39,7 @@ export function queryContent<T = ParsedContent>(query: string, ...pathParts: str
 export function queryContent<T = ParsedContent> (query: QueryBuilderParams): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | QueryBuilderParams, ...pathParts: string[]) {
   if (typeof query === 'string') {
-    const path = withLeadingSlash(joinURL(query, ...pathParts))
+    const path = withLeadingSlash(withoutTrailingSlash(joinURL(query, ...pathParts)))
 
     return createQuery<T>(queryFetch).where({ _path: new RegExp(`^${path}`) })
   }
