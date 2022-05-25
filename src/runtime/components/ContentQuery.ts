@@ -1,5 +1,4 @@
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
-import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
