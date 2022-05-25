@@ -1,5 +1,10 @@
 [![nuxt-content](/docs/public/cover.jpg "@nuxt/content cover")](https://content.nuxtjs.org)
 
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
+[![License][license-src]][license-href]
+
 # Nuxt Content
 
 Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](/guide/writing/mdc).
@@ -35,3 +40,16 @@ Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.
 ## License
 
 [MIT](./LICENSE) - Made with 💚
+
+
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg
+[npm-version-href]: https://npmjs.com/package/@nuxt/content
+
+[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxt/content.svg
+[npm-downloads-href]: https://npmjs.com/package/@nuxt/content
+
+[github-actions-ci-src]: https://github.com/nuxt/content/workflows/ci/badge.svg
+[github-actions-ci-href]: https://github.com/nuxt/content/actions?query=workflow%3Aci
+
+[license-src]: https://img.shields.io/npm/l/@nuxt/content.svg
+[license-href]: https://npmjs.com/package/@nuxt/content
