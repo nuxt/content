@@ -105,7 +105,7 @@ export default defineComponent({
 
         if (path.value) {
           const _path = withLeadingSlash(withoutTrailingSlash(path.value))
-          queryBuilder = queryBuilder.where({ _path: { $regex: _path } })
+          queryBuilder = queryBuilder.where({ _path: { $regex: `^${_path}` } })
         }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
