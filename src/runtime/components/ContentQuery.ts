@@ -1,5 +1,4 @@
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
-import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
@@ -101,11 +100,12 @@ export default defineComponent({
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
       `content-doc-${path.value}`,
       () => {
-        let queryBuilder: QueryBuilder = queryContent()
+        let queryBuilder: QueryBuilder
 
         if (path.value) {
-          const _path = withLeadingSlash(withoutTrailingSlash(path.value))
-          queryBuilder = queryBuilder.where({ _path })
+          queryBuilder = queryContent(path.value)
+        } else {
+          queryBuilder = queryContent()
         }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
