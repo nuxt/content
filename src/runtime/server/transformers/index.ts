@@ -1,7 +1,7 @@
 import { extname } from 'pathe'
 import type { ParsedContent, ContentTransformer } from '../../types'
 import { getParser, getTransformers } from '#content/virtual/transformers'
-
+import { useNitroApp } from '#imports'
 /**
  * Parse content file using registered plugins
  */
