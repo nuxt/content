@@ -10,7 +10,7 @@ export async function parseContent (id: string, content: string) {
   const nitroApp = useNitroApp()
 
   // Call hook before parsing the file
-  const file = { id, content }
+  const file = { _id: id, content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
   const ext = extname(id)
@@ -18,13 +18,10 @@ export async function parseContent (id: string, content: string) {
   if (!plugin) {
     // eslint-disable-next-line no-console
     console.warn(`${ext} files are not supported, "${id}" falling back to raw content`)
-    return {
-      _id: id,
-      body: content
-    }
+    return file
   }
 
-  const parsed: ParsedContent = await plugin.parse!(id, content)
+  const parsed: ParsedContent = await plugin.parse!(file._id, file.content)
 
   const transformers = getTransformers(ext)
   const result = await transformers.reduce(async (prev, cur) => {
