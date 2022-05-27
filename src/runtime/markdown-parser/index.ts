@@ -9,7 +9,7 @@ import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
 import { MarkdownOptions, Toc } from '../types'
-import { parseFrontMatter } from './frontmatter'
+import { parseFrontMatter } from './remark-mdc/frontmatter'
 import { generateToc } from './toc'
 import { contentHeading, generateBody } from './content'
 
@@ -92,4 +92,4 @@ function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   return content
 }
 
-export * from './frontmatter'
+export * from './remark-mdc/frontmatter'

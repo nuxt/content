@@ -22,7 +22,7 @@ export function stringifyFrontMatter (data: any, content: string = '') {
 
 export function parseFrontMatter (content: string) {
   let data = {}
-  if (content.startsWith(FRONTMATTER_DELIMITER + '\n')) {
+  if (content.startsWith(FRONTMATTER_DELIMITER)) {
     const idx = content.indexOf('\n' + FRONTMATTER_DELIMITER)
     if (idx !== -1) {
       const frontmatter = content.slice(4, idx)
