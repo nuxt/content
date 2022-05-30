@@ -1,3 +1,4 @@
+import { hash } from 'ohash'
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
@@ -98,7 +99,7 @@ export default defineComponent({
     const isPartial = computed(() => path.value.includes('/_'))
 
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
-      `content-doc-${path.value}`,
+      `content-query-${hash(props)}`,
       () => {
         let queryBuilder: QueryBuilder
 
