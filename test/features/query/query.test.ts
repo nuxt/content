@@ -91,7 +91,7 @@ describe('Database Provider', () => {
       expect(sortedByDate1[index].date).toBe(date)
     })
 
-    const sortedByDate0 = await createQuery(fetcher).sort({ date: 0 }).find()
+    const sortedByDate0 = await createQuery(fetcher).sort({ date: -1 }).find()
     dates.forEach(({ date }, index) => {
       expect(sortedByDate0[index].date).toBe(date)
     })
