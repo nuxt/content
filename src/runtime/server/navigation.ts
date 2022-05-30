@@ -31,8 +31,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
 
       // Push index
       if (isIndex) {
-        const indexItem = getNavItem(content)
-        navItem.children.push(indexItem)
+        if (content._path !== '/') {
+          const indexItem = getNavItem(content)
+          navItem.children.push(indexItem)
+        }
 
         Object.assign(
           navItem,
