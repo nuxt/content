@@ -67,9 +67,18 @@ export const sortList = (data: any[], params: SortOptions) => {
   for (const key of keys) {
     data = data.sort((a, b) => {
       const values = [get(a, key), get(b, key)]
-        // `null` values are treated as `"null"` strings and ordered alphabetically
-        // Turn `null` values into `undefined` so they place at the end of the list
-        .map(value => value === null ? undefined : value)
+        .map((value) => {
+          // `null` values are treated as `"null"` strings and ordered alphabetically
+          // Turn `null` values into `undefined` so they place at the end of the list
+          if (value === null) {
+            return undefined
+          }
+          // Convert Date object to ISO string
+          if (value instanceof Date) {
+            return value.toISOString()
+          }
+          return value
+        })
       if (params[key] === -1) {
         values.reverse()
       }

@@ -75,6 +75,28 @@ describe('Database Provider', () => {
     })
   })
 
+  test('Apply sort Date', async () => {
+    const dates = [
+      { date: new Date('2022-01-01 00:00:00.001Z') },
+      { date: new Date('2021-01-01 00:00:00.001Z') },
+      { date: new Date('2020-01-01 00:00:00.001Z') },
+      { date: new Date('2019-01-01 00:00:00.001Z') },
+      { date: new Date('2018-01-01 00:00:00.001Z') },
+      { date: new Date('1900-01-01 00:00:00.001Z') }
+    ]
+    const fetcher = createPipelineFetcher(() => Promise.resolve(dates.sort(() => 1 - Math.random())))
+
+    const sortedByDate1 = await createQuery(fetcher).sort({ date: 1 }).find()
+    ;([...dates].reverse()).forEach(({ date }, index) => {
+      expect(sortedByDate1[index].date).toBe(date)
+    })
+
+    const sortedByDate0 = await createQuery(fetcher).sort({ date: -1 }).find()
+    dates.forEach(({ date }, index) => {
+      expect(sortedByDate0[index].date).toBe(date)
+    })
+  })
+
   test('Apply sort $numeric', async () => {
     // sort string alphabetically
     const nonNumericSort = await createQuery(pipelineFetcher).sort({ numberString: 1 }).find()
