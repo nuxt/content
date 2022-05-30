@@ -20,7 +20,7 @@ export interface ParsedContentMeta {
   /**
    * Content title
    */
-  _title?: string
+  title?: string
   /**
    * Content draft status
    */
