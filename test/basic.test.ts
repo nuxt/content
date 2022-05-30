@@ -11,6 +11,7 @@ import { testJSONParser } from './features/parser-json'
 import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
+import { testParserHooks } from './features/parser-hooks'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -114,4 +115,6 @@ describe('fixtures:basic', async () => {
   // testMDCComponent()
 
   testRegex()
+
+  testParserHooks()
 })
