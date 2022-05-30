@@ -6,9 +6,14 @@ import { jsonStringify } from '../../src/runtime/utils/json'
 export const testNavigation = () => {
   describe('navigation', () => {
     test('Get navigation', async () => {
-      const list = await $fetch('/api/_content/navigation/')
-
+      const query = { where: [{ _locale: 'en' }] }
+      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+        params: {
+          _params: jsonStringify(query)
+        }
+      })
       expect(list.find(item => item._path === '/')).toBeTruthy()
+      expect(list.find(item => item._path === '/').children).toBeUndefined()
     })
 
     test('Get cats navigation', async () => {
