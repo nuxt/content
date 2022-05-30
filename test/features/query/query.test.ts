@@ -43,7 +43,7 @@ describe('Database Provider', () => {
     const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).find()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(pipelineFetcher).sort({ name: 0 }).find()
+    const nameDesc = await createQuery(pipelineFetcher).sort({ name: -1 }).find()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 

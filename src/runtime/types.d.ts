@@ -148,7 +148,7 @@ export interface SortParams {
 }
 
 export interface SortFields {
-  [field: string]: 0 | 1
+  [field: string]: -1 | 1
 }
 
 export type SortOptions = SortParams | SortFields
