@@ -87,7 +87,7 @@ const file = await queryContent('hello').findOne()
 
 ::callout
 #summary
-The returned file won't be Markdown or HTML, but a JSON representing the abtract syntax tree.
+The returned file won't be Markdown or HTML, but a JSON representing the abstract syntax tree.
 
 #content
 ```json [document value]
