@@ -1,12 +1,12 @@
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('content:file:beforeParse', (file) => {
     if (file._id.endsWith('.md')) {
-      if (file.content.startsWith('---')) {
-        const lines = file.content.split('\n')
+      if (file.body.startsWith('---')) {
+        const lines = file.body.split('\n')
         lines.splice(1, 0, '__beforeParse: true')
-        file.content = lines.join('\n')
+        file.body = lines.join('\n')
       } else {
-        file.content = '---\n__beforeParse: true\n---\n' + file.content
+        file.body = '---\n__beforeParse: true\n---\n' + file.content
       }
     }
   })

@@ -10,7 +10,7 @@ export async function parseContent (id: string, content: string) {
   const nitroApp = useNitroApp()
 
   // Call hook before parsing the file
-  const file = { _id: id, content }
+  const file = { _id: id, body: content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
   const ext = extname(id)
@@ -21,7 +21,7 @@ export async function parseContent (id: string, content: string) {
     return file
   }
 
-  const parsed: ParsedContent = await plugin.parse!(file._id, file.content)
+  const parsed: ParsedContent = await plugin.parse!(file._id, file.body)
 
   const transformers = getTransformers(ext)
   const result = await transformers.reduce(async (prev, cur) => {
