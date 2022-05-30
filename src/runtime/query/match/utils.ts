@@ -73,13 +73,13 @@ export const sortList = (data: any[], params: SortOptions) => {
           if (value === null) {
             return undefined
           }
-          // Conver Date object to ISO string
+          // Convert Date object to ISO string
           if (value instanceof Date) {
             return value.toISOString()
           }
           return value
         })
-      if (params[key] === 0) {
+      if (params[key] === -1) {
         values.reverse()
       }
       return comperable.compare(values[0], values[1])
