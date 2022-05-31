@@ -1,13 +1,14 @@
 import fsp from 'fs/promises'
 import { test, expect } from 'vitest'
 import { join } from 'pathe'
-import { renderPage, pullingForHMR, expectNoClientErrors } from '../utils'
+import { url } from '@nuxt/test-utils'
+import { renderPage, pullingForHMR, expectNoClientErrors, waitFor } from '../utils'
 
 export const testHMR = async (fixturePath: string) => {
   await fsp.mkdir(join(fixturePath, 'content-tests'), { recursive: true })
-  await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello')
-  await fsp.writeFile(join(fixturePath, 'content-tests/foo(bar).md'), '# Foo Bar')
-  await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
+  await fsp.writeFile(join(fixturePath, 'content-tests/1.index.md'), '# Hello')
+  await fsp.writeFile(join(fixturePath, 'content-tests/2.foo(bar).md'), '# Foo Bar')
+  await fsp.writeFile(join(fixturePath, 'content-tests/3.default-slot.md'), [
     '::FooSlot',
     'Initial value for default slot',
     '#foo',
@@ -15,47 +16,44 @@ export const testHMR = async (fixturePath: string) => {
     '::'
   ].join('\n'))
 
+  let renderer
+
   test('[HMR]: Should work', async () => {
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests')
+    renderer = await renderPage('/_tests')
+    expect(await renderer.page.$('h1').then(r => r.textContent())).toBe('Hello')
 
-    expect(await page.$('h1').then(r => r.textContent())).toBe('Hello')
-
-    await fsp.writeFile(join(fixturePath, 'content-tests/index.md'), '# Hello HMR')
+    await fsp.writeFile(join(fixturePath, 'content-tests/1.index.md'), '# Hello HMR')
 
     await pullingForHMR(async () => {
-      expect(await page.$('h1').then(r => r.textContent())).toBe('Hello HMR')
+      expect(await renderer.page.$('h1').then(r => r.textContent())).toBe('Hello HMR')
     })
 
     // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
+    expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
   })
 
   test('[HMR]: File with parentheses', async () => {
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests/foo(bar)')
+    await renderer.page.goto(url('/_tests/foo(bar)'))
 
-    expect(await page.$('h1').then(r => r.textContent())).toBe('Foo Bar')
+    expect(await renderer.page.$('h1').then(r => r.textContent())).toBe('Foo Bar')
 
-    await fsp.writeFile(join(fixturePath, 'content-tests/foo(bar).md'), '# Foo Bar Baz')
+    await fsp.writeFile(join(fixturePath, 'content-tests/2.foo(bar).md'), '# Foo Bar Baz')
 
     await pullingForHMR(async () => {
-      expect(await page.$('h1').then(r => r.textContent())).toBe('Foo Bar Baz')
+      expect(await renderer.page.$('h1').then(r => r.textContent())).toBe('Foo Bar Baz')
     })
 
     // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
+    expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
   })
 
   test('[HMR]: Update slot', async () => {
-    const { page, pageErrors, consoleLogs } = await renderPage('/_tests/default-slot')
+    await renderer.page.goto(url('/_tests/default-slot'))
 
-    expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Initial value for default slot')
-    expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
+    expect(await renderer.page.$('#default-slot').then(r => r.textContent())).toBe('Initial value for default slot')
+    expect(await renderer.page.$('#foo-slot').then(r => r.textContent())).toBe('Initial value for foo slot')
 
-    await fsp.writeFile(join(fixturePath, 'content-tests/default-slot.md'), [
+    await fsp.writeFile(join(fixturePath, 'content-tests/3.default-slot.md'), [
       '::FooSlot',
       'Updated value for default slot',
       '#foo',
@@ -63,13 +61,11 @@ export const testHMR = async (fixturePath: string) => {
       '::'
     ].join('\n'))
     await pullingForHMR(async () => {
-      expect(await page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
-      expect(await page.$('#foo-slot').then(r => r.textContent())).toBe('Updated value for foo slot')
+      expect(await renderer.page.$('#default-slot').then(r => r.textContent())).toBe('Updated value for default slot')
+      expect(await renderer.page.$('#foo-slot').then(r => r.textContent())).toBe('Updated value for foo slot')
     })
 
     // ensure no errors
-    expectNoClientErrors(pageErrors, consoleLogs)
-
-    await page.close()
-  }, 0)
+    expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
+  })
 }
