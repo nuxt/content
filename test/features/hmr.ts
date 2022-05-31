@@ -30,7 +30,7 @@ export const testHMR = async (fixturePath: string) => {
 
     // ensure no errors
     expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
-  })
+  }, 0)
 
   test('[HMR]: File with parentheses', async () => {
     await renderer.page.goto(url('/_tests/foo(bar)'))
@@ -45,7 +45,7 @@ export const testHMR = async (fixturePath: string) => {
 
     // ensure no errors
     expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
-  })
+  }, 0)
 
   test('[HMR]: Update slot', async () => {
     await renderer.page.goto(url('/_tests/default-slot'))
@@ -67,5 +67,5 @@ export const testHMR = async (fixturePath: string) => {
 
     // ensure no errors
     expectNoClientErrors(renderer.pageErrors, renderer.consoleLogs)
-  })
+  }, 0)
 }
