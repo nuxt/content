@@ -128,6 +128,9 @@ export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent
   let params = (path || {}) as Partial<QueryBuilderParams>
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
+    // escape regex special chars
+    path = path.replace(/[-[\]{}()*+.,^$\s]/g, '\\$&')
+
     params = {
       where: [{ _path: new RegExp(`^${path}`) }]
     }
