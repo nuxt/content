@@ -39,7 +39,9 @@ export function queryContent<T = ParsedContent>(query: string, ...pathParts: str
 export function queryContent<T = ParsedContent> (query: QueryBuilderParams): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | QueryBuilderParams, ...pathParts: string[]) {
   if (typeof query === 'string') {
-    const path = withLeadingSlash(withoutTrailingSlash(joinURL(query, ...pathParts)))
+    let path = withLeadingSlash(withoutTrailingSlash(joinURL(query, ...pathParts)))
+    // escape regex special chars
+    path = path.replace(/[-[\]{}()*+.,^$\s]/g, '\\$&')
 
     return createQuery<T>(queryFetch).where({ _path: new RegExp(`^${path}`) })
   }

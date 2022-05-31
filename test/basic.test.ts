@@ -102,6 +102,10 @@ describe('fixtures:basic', async () => {
     expect(html).not.contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
 
+  test('partial:specials-chars', async () => {
+    const html = await $fetch('/_partial/content-(v2)')
+    expect(html).contains('Content (v2)')
+  })
   testNavigation()
 
   testMarkdownParser()
