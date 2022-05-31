@@ -43,7 +43,7 @@ describe('Database Provider', () => {
     const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).find()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(pipelineFetcher).sort({ name: 0 }).find()
+    const nameDesc = await createQuery(pipelineFetcher).sort({ name: -1 }).find()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 
@@ -72,6 +72,28 @@ describe('Database Provider', () => {
     const caseUpper = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'upper' }).find()
     textOrder.reverse().forEach((text, index) => {
       expect(caseUpper[index].text).toBe(text)
+    })
+  })
+
+  test('Apply sort Date', async () => {
+    const dates = [
+      { date: new Date('2022-01-01 00:00:00.001Z') },
+      { date: new Date('2021-01-01 00:00:00.001Z') },
+      { date: new Date('2020-01-01 00:00:00.001Z') },
+      { date: new Date('2019-01-01 00:00:00.001Z') },
+      { date: new Date('2018-01-01 00:00:00.001Z') },
+      { date: new Date('1900-01-01 00:00:00.001Z') }
+    ]
+    const fetcher = createPipelineFetcher(() => Promise.resolve(dates.sort(() => 1 - Math.random())))
+
+    const sortedByDate1 = await createQuery(fetcher).sort({ date: 1 }).find()
+    ;([...dates].reverse()).forEach(({ date }, index) => {
+      expect(sortedByDate1[index].date).toBe(date)
+    })
+
+    const sortedByDate0 = await createQuery(fetcher).sort({ date: -1 }).find()
+    dates.forEach(({ date }, index) => {
+      expect(sortedByDate0[index].date).toBe(date)
     })
   })
 

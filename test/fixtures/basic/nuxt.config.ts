@@ -3,6 +3,11 @@ import { resolve } from 'pathe'
 import contentModule from '../../..'
 
 export default defineNuxtConfig({
+  nitro: {
+    plugins: [
+      '~/addons/nitro-plugin.ts'
+    ]
+  },
   components: {
     dirs: [
       {

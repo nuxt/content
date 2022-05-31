@@ -139,7 +139,7 @@ export interface ModuleOptions {
   /**
    * Enable/Disable navigation.
    *
-   * @defaul {}
+   * @default {}
    */
   navigation: false | {
     fields: Array<string>
