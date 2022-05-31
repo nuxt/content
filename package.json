@@ -82,7 +82,7 @@
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
     "unstorage": "^0.4.1",
-    "ws": "^8.6.0"
+    "ws": "^8.7.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
@@ -97,9 +97,9 @@
     "globby": "^13.1.1",
     "husky": "^8.0.1",
     "jiti": "^1.13.0",
-    "lint-staged": "^12.4.1",
+    "lint-staged": "^12.4.3",
     "nuxt": "^3.0.0-rc.3",
     "playwright": "^1.22.2",
-    "vitest": "^0.12.9"
+    "vitest": "^0.13.0"
   }
 }

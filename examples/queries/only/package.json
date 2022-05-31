@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
-    "@nuxt/ui": "^0.1.0",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "nuxt": "npm:nuxt3@latest"
   }
 }

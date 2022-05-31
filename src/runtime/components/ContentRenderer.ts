@@ -81,7 +81,7 @@ export default defineComponent({
     return h(
       'pre',
       null,
-      JSON.stringify({ message: 'You should use slots with <ContentRenderer>!', value, excerpt, tag }, null, 2)
+      JSON.stringify({ message: 'You should use slots with <ContentRenderer>', value, excerpt, tag }, null, 2)
     )
   }
 })

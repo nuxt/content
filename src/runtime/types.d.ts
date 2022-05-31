@@ -20,7 +20,7 @@ export interface ParsedContentMeta {
   /**
    * Content title
    */
-  _title?: string
+  title?: string
   /**
    * Content draft status
    */
@@ -148,7 +148,7 @@ export interface SortParams {
 }
 
 export interface SortFields {
-  [field: string]: 0 | 1
+  [field: string]: -1 | 1
 }
 
 export type SortOptions = SortParams | SortFields

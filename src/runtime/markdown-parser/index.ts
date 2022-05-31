@@ -9,7 +9,7 @@ import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
 import { MarkdownOptions, Toc } from '../types'
-import { parseFrontMatter } from './frontmatter'
+import { parseFrontMatter } from './remark-mdc/frontmatter'
 import { generateToc } from './toc'
 import { contentHeading, generateBody } from './content'
 
@@ -76,16 +76,20 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
   }
 }
 
-function useExcerpt (content: string, delimiter = '<!--more-->') {
+function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   if (!delimiter) {
     return ''
   }
   // if enabled, get the excerpt defined after front-matter
-  const idx = content.indexOf(delimiter)
+  let idx = -1
+  const match = delimiter.exec(content)
+  if (match) {
+    idx = match.index
+  }
   if (idx !== -1) {
     return content.slice(0, idx)
   }
   return content
 }
 
-export * from './frontmatter'
+export * from './remark-mdc/frontmatter'

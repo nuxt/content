@@ -1,3 +1,4 @@
+import { hash } from 'ohash'
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
@@ -98,11 +99,15 @@ export default defineComponent({
     const isPartial = computed(() => path.value.includes('/_'))
 
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
-      `content-doc-${path.value}`,
+      `content-query-${hash(props)}`,
       () => {
-        let queryBuilder: QueryBuilder = queryContent()
+        let queryBuilder: QueryBuilder
 
-        if (path.value) { queryBuilder = queryBuilder.where({ _path: path.value }) }
+        if (path.value) {
+          queryBuilder = queryContent(path.value)
+        } else {
+          queryBuilder = queryContent()
+        }
 
         if (only.value) { queryBuilder = queryBuilder.only(only.value) }
 
@@ -123,9 +128,9 @@ export default defineComponent({
         if (find.value === 'surround') {
           if (!path.value) {
             // eslint-disable-next-line no-console
-            console.log('[Content] Surround queries requires `path` prop to be set!')
+            console.warn('[Content] Surround queries requires `path` prop to be set.')
             // eslint-disable-next-line no-console
-            console.log('[Content] Query without `path` will return regular `find()` results.')
+            console.warn('[Content] Query without `path` will return regular `find()` results.')
             return queryBuilder.find()
           }
 

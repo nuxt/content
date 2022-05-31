@@ -31,12 +31,15 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
 
       // Push index
       if (isIndex) {
-        const indexItem = getNavItem(content)
-        navItem.children.push(indexItem)
+        if (content._path !== '/') {
+          const indexItem = getNavItem(content)
+          navItem.children.push(indexItem)
+        }
 
-        const p = indexItem._path.split('/').slice(0, -1).join('/') || '/'
-        const conf = configs[p]
-        Object.assign(indexItem, pickNavigationFields(conf))
+        Object.assign(
+          navItem,
+          pickNavigationFields(configs[navItem._path])
+        )
       }
 
       // First-level item, push it straight to nav
@@ -76,11 +79,12 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   return sortAndClear(nav)
 }
 
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 /**
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear (nav: PrivateNavItem[]) {
-  const sorted = nav.sort((a, b) => a._file.localeCompare(b._file))
+  const sorted = nav.sort((a, b) => collator.compare(a._file, b._file))
 
   for (const item of sorted) {
     if (item.children.length) {

@@ -12,6 +12,7 @@ import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testHMR } from './features/hmr'
+import { testParserHooks } from './features/parser-hooks'
 
 const fixturePath = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
 describe('fixtures:basic', async () => {
@@ -117,6 +118,8 @@ describe('fixtures:basic', async () => {
   // testMDCComponent()
 
   testRegex()
+
+  testParserHooks()
 
   if (isDev()) {
     await testHMR(fixturePath)
