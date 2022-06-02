@@ -34,7 +34,7 @@ export interface ParsedContentMeta {
    */
   _type?: boolean
   /**
-   * Path to the file relative to the content directory.
+   * Path to the file relative to the content directory
    */
   _file?: string
   /**
@@ -45,7 +45,7 @@ export interface ParsedContentMeta {
   [key: string]: any
 }
 
-export interface ParsedContent extends ParsedContentMeta{
+export interface ParsedContent extends ParsedContentMeta {
   /**
    * Excerpt
    */
