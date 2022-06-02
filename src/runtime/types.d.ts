@@ -174,12 +174,14 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder<T>
+  only<K extends keyof T | string>(keys: K): QueryBuilder<Pick<T, K>>
+  only<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder<T>
+  without<K extends keyof T | string>(keys: K): QueryBuilder<Omit<T, K>>
+  without<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Omit<T, K[number]>>
 
   /**
    * Sort results

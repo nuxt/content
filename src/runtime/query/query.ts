@@ -29,7 +29,7 @@ export const createQuery = <T>(
 
   const query: QueryBuilder<T> = {
     params: () => Object.freeze(params),
-    only: $set('only', ensureArray),
+    only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...ensureArray(params.where), q]),
     sort: $set('sort', (sort: SortOptions) => [...ensureArray(params.sort), ...ensureArray(sort)]),
