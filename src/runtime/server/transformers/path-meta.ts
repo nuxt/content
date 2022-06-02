@@ -6,14 +6,14 @@ import { useRuntimeConfig } from '#imports'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
-const describeId = (_id: string): Partial<ParsedContentMeta> => {
+const describeId = (_id: string) => {
   const [_source, ...parts] = _id.split(':')
 
   const [, filename, _extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
   parts[parts.length - 1] = filename
   const _path = parts.join('/')
 
-  return {
+  return <Pick<ParsedContentMeta, '_source' | '_path' | '_extension' | '_file'>> {
     _source,
     _path,
     _extension,
