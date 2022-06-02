@@ -14,10 +14,6 @@ export interface ParsedContentMeta {
    */
   _path?: string
   /**
-   * Content slug
-   */
-  _slug?: string
-  /**
    * Content title
    */
   title?: string
@@ -33,6 +29,22 @@ export interface ParsedContentMeta {
    * Content locale
    */
   _locale?: boolean
+  /**
+   * Content is empty
+   */
+  _empty?: boolean
+  /**
+   * File type of the content, i.e `markdown`
+   */
+  _type?: boolean
+  /**
+   * Path to the file relative to the content directory.
+   */
+  _file?: string
+  /**
+   * Extension of the file
+   */
+  _extension?: string
 
   [key: string]: any
 }

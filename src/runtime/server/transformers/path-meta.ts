@@ -1,11 +1,12 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
+import { ParsedContentMeta } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
-const describeId = (_id: string) => {
+const describeId = (_id: string): Partial<ParsedContentMeta> => {
   const [_source, ...parts] = _id.split(':')
 
   const [, filename, _extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
@@ -33,7 +34,7 @@ export default {
 
     const filePath = parts.join('/')
 
-    return {
+    return <ParsedContentMeta> {
       _path: generatePath(filePath),
       _draft: isDraft(filePath),
       _partial: isPartial(filePath),
