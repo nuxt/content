@@ -113,7 +113,13 @@ export interface MarkdownParsedContent extends ParsedContent {
    * Content description
    */
   description: string
+  /**
+   * Content excerpt, generated from content
+   */
   excerpt?: MarkdownRoot
+  /**
+   * Parsed Markdown body with included table of contents.
+   */
   body: MarkdownRoot & {
     toc?: Toc
   }
