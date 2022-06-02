@@ -108,7 +108,7 @@ export interface MarkdownParsedContent extends ParsedContent {
   /**
    * Content is empty
    */
-  _empty?: boolean
+  _empty: boolean
   /**
    * Content description
    */
