@@ -30,10 +30,6 @@ export interface ParsedContentMeta {
    */
   _locale?: boolean
   /**
-   * Content is empty
-   */
-  _empty?: boolean
-  /**
    * File type of the content, i.e `markdown`
    */
   _type?: boolean
