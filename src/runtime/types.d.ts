@@ -103,6 +103,22 @@ export interface Toc {
   links: TocLink[]
 }
 
+export interface MarkdownParsedContent extends ParsedContent {
+  _type: 'markdown',
+  /**
+   * Content is empty
+   */
+  _empty?: boolean
+  /**
+   * Content description
+   */
+  description: string
+  excerpt?: MarkdownRoot
+  body: MarkdownRoot & {
+    toc?: Toc
+  }
+}
+
 export interface ContentTransformer {
   name: string
   extentions: string[]
