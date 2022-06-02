@@ -32,7 +32,7 @@ export interface ParsedContentMeta {
   /**
    * File type of the content, i.e `markdown`
    */
-  _type?: boolean
+  _type?: string
   /**
    * Path to the file relative to the content directory
    */
