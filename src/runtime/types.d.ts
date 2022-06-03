@@ -153,15 +153,15 @@ export interface SortFields {
 
 export type SortOptions = SortParams | SortFields
 
-export interface QueryBuilderSchema {
-  first: boolean
-  skip: number
-  limit: number
-  only: string[]
-  without: string[]
-  sort: SortOptions[]
-  where: object[]
-  surround: {
+export interface QueryBuilderParams {
+  first?: boolean
+  skip?: number
+  limit?: number
+  only?: string[]
+  without?: string[]
+  sort?: SortOptions[]
+  where?: object[]
+  surround?: {
     query: string | object
     before?: number
     after?: number
@@ -169,8 +169,6 @@ export interface QueryBuilderSchema {
 
   [key: string]: any
 }
-
-export type QueryBuilderParams = Partial<QueryBuilderSchema>
 
 export interface QueryBuilder<T = ParsedContentMeta> {
   /**
