@@ -13,7 +13,13 @@ export default defineEventHandler(async (event) => {
        * Partial contents are not included in the navigation
        * A partial content is a content that has `_` prefix in its path
        */
-      _partial: false
+      _partial: false,
+      /**
+       * Exclude any pages which have opted out of navigation via frontmatter.
+       */
+      navigation: {
+        $ne: false
+      }
     })
     .find()
 

@@ -53,5 +53,11 @@ export const testNavigation = () => {
         expect(item.title).toEqual(String(fibo[index]))
       })
     })
+
+    test('Should remove `navigation-disabled.md` content', async () => {
+      const list = await $fetch('/api/_content/navigation/')
+      const hidden = list.find(i => i._path === '/navigation-disabled')
+      expect(hidden).toBeUndefined()
+    })
   })
 }
