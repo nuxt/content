@@ -2,7 +2,7 @@ import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams } from '../types'
 import { QueryBuilder } from '../types'
-import { useAsyncData, fetchContentNavigation } from '#imports'
+import { useAsyncData, queryContent, fetchContentNavigation } from '#imports'
 
 export default defineComponent({
   props: {
@@ -22,17 +22,19 @@ export default defineComponent({
 
     const queryBuilder = computed(() => {
       /*
-       * We need to extract params from a possible QueryBuilder beforehand
-       * so we don't end up with a duplicate useAsyncData key.
+       * `fetchContentNavigation` accepts a QueryBuilder instance.
+       *
+       * If `query` is a QueryBuilder instance, we use it directly.
+       *
+       * Otherwise, cast the QueryBuilderParams into a QueryBuilder instance.
        */
-      if (typeof query.value.params === 'function') {
-        return query.value.params()
-      }
-      return query.value
+      if (typeof query.value?.params === 'function') { return query.value }
+
+      return queryContent(query.value || {})
     })
 
     const { data, refresh } = await useAsyncData<NavItem[]>(
-      `content-navigation-${hash(queryBuilder.value)}`,
+      `content-navigation-${hash(queryBuilder.value.params())}`,
       () => fetchContentNavigation(queryBuilder.value)
     )
 

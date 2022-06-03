@@ -28,6 +28,7 @@
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "dev:docs": "(cd docs && nuxi dev)",
+    "dev:fixtures": "nuxi dev test/fixtures/basic",
     "build:docs": "(cd docs && nuxi build)",
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",

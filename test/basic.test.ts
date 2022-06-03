@@ -103,9 +103,11 @@ describe('fixtures:basic', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
   })
+
   testNavigation()
 
   testMarkdownParser()
+
   testMarkdownParserExcerpt()
 
   testYamlParser()
