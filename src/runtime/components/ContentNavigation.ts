@@ -2,7 +2,7 @@ import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams } from '../types'
 import { QueryBuilder } from '../types'
-import { useAsyncData, queryContent, fetchContentNavigation } from '#imports'
+import { useAsyncData, fetchContentNavigation } from '#imports'
 
 export default defineComponent({
   props: {
