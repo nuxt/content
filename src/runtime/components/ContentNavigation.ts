@@ -22,19 +22,18 @@ export default defineComponent({
 
     const queryBuilder = computed(() => {
       /*
-       * `fetchContentNavigation` accepts a QueryBuilder instance.
-       *
-       * If `query` is a QueryBuilder instance, we use it directly.
-       *
-       * Otherwise, cast the QueryBuilderParams into a QueryBuilder instance.
+       * We need to extract params from a possible QueryBuilder beforehand
+       * so we don't end up with a duplicate useAsyncData key.
        */
-      if (typeof query.value?.params === 'function') { return query.value }
+      if (typeof query.value?.params === 'function') {
+        return query.value.params()
+      }
 
-      return queryContent(query.value || {})
+      return query.value
     })
 
     const { data, refresh } = await useAsyncData<NavItem[]>(
-      `content-navigation-${hash(queryBuilder.value.params())}`,
+      `content-navigation-${hash(queryBuilder.value)}`,
       () => fetchContentNavigation(queryBuilder.value)
     )
 
