@@ -1,4 +1,5 @@
 import { useQuery, CompatibilityEvent, createError } from 'h3'
+import { QueryBuilderParams } from '../types'
 import { jsonParse } from './json'
 
 const parseQueryParams = (body: string) => {
@@ -10,7 +11,7 @@ const parseQueryParams = (body: string) => {
 }
 
 const memory = {}
-export const getContentQuery = (event: CompatibilityEvent) => {
+export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams => {
   const { qid } = event.context.params
   const query: any = useQuery(event) || {}
 

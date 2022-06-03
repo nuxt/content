@@ -184,14 +184,14 @@ export interface SortFields {
 export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
-  first: boolean
-  skip: number
-  limit: number
-  only: string[]
-  without: string[]
-  sort: SortOptions[]
-  where: object[]
-  surround: {
+  first?: boolean
+  skip?: number
+  limit?: number
+  only?: string[]
+  without?: string[]
+  sort?: SortOptions[]
+  where?: object[]
+  surround?: {
     query: string | object
     before?: number
     after?: number

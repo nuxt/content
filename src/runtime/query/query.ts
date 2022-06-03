@@ -6,7 +6,7 @@ const arrayParams = ['sort', 'where', 'only', 'without']
 
 export const createQuery = <T = ParsedContent>(
   fetcher: DatabaseFetcher<T>,
-  queryParams?: Partial<QueryBuilderParams>
+  queryParams?: QueryBuilderParams
 ): QueryBuilder<T> => {
   const params = {
     ...queryParams
