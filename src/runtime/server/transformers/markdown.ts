@@ -1,5 +1,6 @@
 import { parse } from '../../markdown-parser'
 import type { MarkdownOptions } from '../../types'
+import { MarkdownParsedContent } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
 const importPlugin = async (p: [string, any]) => ([
@@ -17,7 +18,7 @@ export default {
 
     const parsed = await parse(content, config)
 
-    return {
+    return <MarkdownParsedContent> {
       ...parsed.meta,
       body: parsed.body,
       _type: 'markdown',
