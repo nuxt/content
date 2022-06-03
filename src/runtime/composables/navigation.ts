@@ -1,11 +1,15 @@
 import { hash } from 'ohash'
 import { useHead, useCookie } from '#app'
-import type { NavItem, QueryBuilder } from '../types'
+import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
 
-export const fetchContentNavigation = (queryBuilder?: QueryBuilder) => {
-  const params = queryBuilder?.params()
+export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams) => {
+  let params = queryBuilder
+
+  // When params is an instance of QueryBuilder then we need to pick the params explicitly
+  if (typeof params?.params === 'function') { params = params.params() }
+
   const apiPath = withContentBase(params ? `/navigation/${hash(params)}` : '/navigation')
 
   if (!process.dev && process.server) {
