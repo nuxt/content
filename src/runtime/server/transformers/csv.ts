@@ -2,7 +2,7 @@ import { useRuntimeConfig } from '#imports'
 
 export default {
   name: 'csv',
-  extentions: ['.csv'],
+  extensions: ['.csv'],
   parse: async (_id, content) => {
     const config = { ...useRuntimeConfig().content?.csv || {} }
 
