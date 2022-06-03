@@ -10,10 +10,9 @@ const dogsQuery = {
 
 <template>
   <ContentNavigation v-for="(q, key) in [dogsQuery, catsQuery, numbers]" v-slot="{ navigation }" :key="key" :query="q">
-    <div>
+    <div v-if="navigation">
       {{ navigation }}
       <NuxtLink
-        v-if="navigation"
         v-for="link of navigation[0].children"
         :key="link._path"
         :to="link._path"
