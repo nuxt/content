@@ -1,9 +1,10 @@
 import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
+import { ParsedContent } from '../types'
 import { ensureArray } from './match/utils'
 
 const arrayParams = ['sort', 'where', 'only', 'without']
 
-export const createQuery = <T>(
+export const createQuery = <T = ParsedContent>(
   fetcher: DatabaseFetcher<T>,
   queryParams?: Partial<QueryBuilderParams>
 ): QueryBuilder<T> => {
@@ -29,7 +30,7 @@ export const createQuery = <T>(
 
   const query: QueryBuilder<T> = {
     params: () => Object.freeze(params),
-    only: $set('only', ensureArray),
+    only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...ensureArray(params.where), q]),
     sort: $set('sort', (sort: SortOptions) => [...ensureArray(params.sort), ...ensureArray(sort)]),
