@@ -6,6 +6,7 @@ import { withContentBase } from './utils'
 
 export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams) => {
   let params = queryBuilder
+  // when params is an instance of QueryBuilder then we need to pick the params explicitly
   if (typeof params?.params === 'function') {
     params = params.params()
   }
