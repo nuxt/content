@@ -1,10 +1,10 @@
 import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
-import { ParsedContentMeta } from '../types'
+import { ParsedContent } from '../types'
 import { ensureArray } from './match/utils'
 
 const arrayParams = ['sort', 'where', 'only', 'without']
 
-export const createQuery = <T = ParsedContentMeta>(
+export const createQuery = <T = ParsedContent>(
   fetcher: DatabaseFetcher<T>,
   queryParams?: Partial<QueryBuilderParams>
 ): QueryBuilder<T> => {
