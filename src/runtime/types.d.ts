@@ -153,7 +153,7 @@ export interface SortFields {
 
 export type SortOptions = SortParams | SortFields
 
-export interface QueryBuilderParams {
+export interface QueryBuilderSchema {
   first: boolean
   skip: number
   limit: number
@@ -169,6 +169,8 @@ export interface QueryBuilderParams {
 
   [key: string]: any
 }
+
+export type QueryBuilderParams = Partial<QueryBuilderSchema>
 
 export interface QueryBuilder<T = ParsedContentMeta> {
   /**

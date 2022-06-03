@@ -122,10 +122,10 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
  * Query contents
  */
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: Partial<QueryBuilderParams>): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: QueryBuilderParams): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, path?: string | Partial<QueryBuilderParams>, ...pathParts: string[]) {
-  let params = (path || {}) as Partial<QueryBuilderParams>
+export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, path?: string | QueryBuilderParams, ...pathParts: string[]) {
+  let params = (path || {}) as QueryBuilderParams
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
     // escape regex special chars

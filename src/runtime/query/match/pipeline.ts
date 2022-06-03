@@ -1,4 +1,4 @@
-import type { QueryBuilderParams, QueryPipe } from '../../types'
+import type { QueryBuilderParams, QueryBuilderSchema, QueryPipe } from '../../types'
 import { apply, ensureArray, sortList, withoutKeys, withKeys } from './utils'
 import { createMatch } from '.'
 
@@ -9,7 +9,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   /**
    * Exctract surrounded items of specific condition
    */
-  const surround = (data: any[], { query, before, after }: QueryBuilderParams['surround']) => {
+  const surround = (data: any[], { query, before, after }: QueryBuilderSchema['surround']) => {
     const matchQuery = typeof query === 'string' ? { _path: query } : query
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
