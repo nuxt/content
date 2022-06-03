@@ -1,5 +1,6 @@
 import { parse } from '../../markdown-parser'
 import type { MarkdownOptions } from '../../types'
+import { MarkdownParsedContent } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
 const importPlugin = async (p: [string, any]) => ([
@@ -9,7 +10,7 @@ const importPlugin = async (p: [string, any]) => ([
 
 export default {
   name: 'markdown',
-  extentions: ['.md'],
+  extensions: ['.md'],
   parse: async (_id, content) => {
     const config: MarkdownOptions = { ...useRuntimeConfig().content?.markdown || {} }
     config.rehypePlugins = await Promise.all((config.rehypePlugins || []).map(importPlugin))
@@ -17,7 +18,7 @@ export default {
 
     const parsed = await parse(content, config)
 
-    return {
+    return <MarkdownParsedContent> {
       ...parsed.meta,
       body: parsed.body,
       _type: 'markdown',
