@@ -6,7 +6,7 @@ import { withContentBase } from './utils'
 
 export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams) => {
   let params = queryBuilder
-  if (typeof params.params === 'function') {
+  if (typeof params?.params === 'function') {
     params = params.params()
   }
   const apiPath = withContentBase(params ? `/navigation/${hash(params)}` : '/navigation')
