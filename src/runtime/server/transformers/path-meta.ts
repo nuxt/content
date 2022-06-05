@@ -23,7 +23,7 @@ const describeId = (_id: string) => {
 
 export default {
   name: 'path-meta',
-  extentions: ['.*'],
+  extensions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = useRuntimeConfig().content || {}
     const { _source, _file, _path, _extension } = describeId(content._id)

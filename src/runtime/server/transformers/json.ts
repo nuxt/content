@@ -2,7 +2,7 @@ import destr from 'destr'
 
 export default {
   name: 'Json',
-  extentions: ['.json', '.json5'],
+  extensions: ['.json', '.json5'],
   parse: async (_id, content) => {
     let parsed = content
 
