@@ -53,5 +53,50 @@ export const testNavigation = () => {
         expect(item.title).toEqual(String(fibo[index]))
       })
     })
+
+    test('Should remove `navigation-disabled.md` content', async () => {
+      const list = await $fetch('/api/_content/navigation/')
+      const hidden = list.find(i => i._path === '/navigation-disabled')
+      expect(hidden).toBeUndefined()
+    })
+
+    test('ContentNavigation should work with both QueryBuilder and QueryBuilderParams', async () => {
+      /* These are local replicas of the queries made in `nav-with-query.vue` */
+      const catsQuery = {
+        where: {
+          _path: /^\/cats/
+        }
+      }
+      const numbersQuery = {
+        where: {
+          _path: /^\/numbers/
+        }
+      }
+      const dogsQuery = {
+        where: { _path: /^\/dogs/ }
+      }
+
+      const queryNav = async (query) => {
+        const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+          params: {
+            _params: jsonStringify(query)
+          }
+        })
+
+        return list
+      }
+
+      const [catsData, numbersData, dogsData] = await Promise.all([
+        queryNav(catsQuery),
+        queryNav(numbersQuery),
+        queryNav(dogsQuery)
+      ])
+
+      const html = await $fetch('/nav-with-query')
+
+      catsData[0].children.forEach(({ title }) => expect(html).contains(title))
+      numbersData[0].children.forEach(({ title }) => expect(html).contains(title))
+      dogsData[0].children.forEach(({ title }) => expect(html).contains(title))
+    })
   })
 }

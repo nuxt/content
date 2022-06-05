@@ -1,6 +1,7 @@
-import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
+import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams } from '../types'
+import { QueryBuilder } from '../types'
 import { useAsyncData, fetchContentNavigation } from '#imports'
 
 export default defineComponent({
@@ -9,7 +10,7 @@ export default defineComponent({
      * A query to be passed to `fetchContentNavigation()`.
      */
     query: {
-      type: Object as PropType<QueryBuilderParams>,
+      type: Object as PropType<QueryBuilderParams | QueryBuilder>,
       required: false,
       default: undefined
     }
@@ -19,9 +20,21 @@ export default defineComponent({
       query
     } = toRefs(props)
 
+    const queryBuilder = computed(() => {
+      /*
+       * We need to extract params from a possible QueryBuilder beforehand
+       * so we don't end up with a duplicate useAsyncData key.
+       */
+      if (typeof query.value?.params === 'function') {
+        return query.value.params()
+      }
+
+      return query.value
+    })
+
     const { data, refresh } = await useAsyncData<NavItem[]>(
-      `content-navigation-${hash(query.value)}`,
-      () => fetchContentNavigation(query.value)
+      `content-navigation-${hash(queryBuilder.value)}`,
+      () => fetchContentNavigation(queryBuilder.value)
     )
 
     return {

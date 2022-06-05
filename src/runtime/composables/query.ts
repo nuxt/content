@@ -9,7 +9,7 @@ import { withContentBase } from './utils'
 /**
  * Query fetcher
  */
-export const queryFetch = <T = ParsedContent>(params: Partial<QueryBuilderParams>) => {
+export const queryFetch = <T = ParsedContent>(params: QueryBuilderParams) => {
   const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}`)
 
   // Prefetch the query

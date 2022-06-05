@@ -8,7 +8,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
-import { MarkdownOptions, Toc } from '../types'
+import { MarkdownOptions, MarkdownParsedContent, Toc } from '../types'
 import { parseFrontMatter } from './remark-mdc/frontmatter'
 import { generateToc } from './toc'
 import { contentHeading, generateBody } from './content'
@@ -61,7 +61,7 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
    */
   const heading = contentHeading(body)
 
-  return {
+  return <{ meta: Partial<MarkdownParsedContent>, body: MarkdownParsedContent['body'] }> {
     body: {
       ...body,
       toc

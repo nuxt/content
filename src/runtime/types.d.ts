@@ -14,10 +14,6 @@ export interface ParsedContentMeta {
    */
   _path?: string
   /**
-   * Content slug
-   */
-  _slug?: string
-  /**
    * Content title
    */
   title?: string
@@ -33,11 +29,23 @@ export interface ParsedContentMeta {
    * Content locale
    */
   _locale?: boolean
+  /**
+   * File type of the content, i.e `markdown`
+   */
+  _type?: string
+  /**
+   * Path to the file relative to the content directory
+   */
+  _file?: string
+  /**
+   * Extension of the file
+   */
+  _extension?: string
 
   [key: string]: any
 }
 
-export interface ParsedContent extends ParsedContentMeta{
+export interface ParsedContent extends ParsedContentMeta {
   /**
    * Excerpt
    */
@@ -103,6 +111,28 @@ export interface Toc {
   links: TocLink[]
 }
 
+export interface MarkdownParsedContent extends ParsedContent {
+  _type: 'markdown',
+  /**
+   * Content is empty
+   */
+  _empty: boolean
+  /**
+   * Content description
+   */
+  description: string
+  /**
+   * Content excerpt, generated from content
+   */
+  excerpt?: MarkdownRoot
+  /**
+   * Parsed Markdown body with included table of contents.
+   */
+  body: MarkdownRoot & {
+    toc?: Toc
+  }
+}
+
 export interface ContentTransformer {
   name: string
   /**
@@ -158,14 +188,14 @@ export interface SortFields {
 export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
-  first: boolean
-  skip: number
-  limit: number
-  only: string[]
-  without: string[]
-  sort: SortOptions[]
-  where: object[]
-  surround: {
+  first?: boolean
+  skip?: number
+  limit?: number
+  only?: string[]
+  without?: string[]
+  sort?: SortOptions[]
+  where?: object[]
+  surround?: {
     query: string | object
     before?: number
     after?: number
@@ -178,12 +208,14 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder<T>
+  only<K extends keyof T | string>(keys: K): QueryBuilder<Pick<T, K>>
+  only<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder<T>
+  without<K extends keyof T | string>(keys: K): QueryBuilder<Omit<T, K>>
+  without<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Omit<T, K[number]>>
 
   /**
    * Sort results

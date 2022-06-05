@@ -107,6 +107,7 @@ describe('fixtures:basic', async () => {
   testNavigation()
 
   testMarkdownParser()
+
   testMarkdownParserExcerpt()
 
   testYamlParser()

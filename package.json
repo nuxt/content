@@ -28,6 +28,7 @@
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
     "dev:docs": "(cd docs && nuxi dev)",
+    "dev:fixtures": "nuxi dev test/fixtures/basic",
     "build:docs": "(cd docs && nuxi build)",
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",
@@ -73,7 +74,7 @@
     "scule": "^0.2.1",
     "shiki-es": "^0.1.2",
     "slugify": "^1.6.5",
-    "stringify-entities": "^4.0.2",
+    "stringify-entities": "^4.0.3",
     "ufo": "^0.8.4",
     "unctx": "^1.1.4",
     "unified": "^10.1.2",
@@ -96,8 +97,8 @@
     "globby": "^13.1.1",
     "husky": "^8.0.1",
     "jiti": "^1.13.0",
-    "lint-staged": "^12.5.0",
+    "lint-staged": "^13.0.0",
     "nuxt": "^3.0.0-rc.3",
-    "vitest": "^0.13.0"
+    "vitest": "^0.13.1"
   }
 }
