@@ -89,7 +89,7 @@ Parsers and Transformers can be defined using `defineContentPlugin`:
 ```ts
 export default defineContentPlugin({
   name: 'plugin-name',
-  extensions: ['.md'],
+  extentions: ['.md'],
   parse: async (id, content) => {},
   transform: async content => {}
 })

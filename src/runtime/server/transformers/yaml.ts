@@ -2,7 +2,7 @@ import { parseFrontMatter } from '../../markdown-parser'
 
 export default {
   name: 'Yaml',
-  extensions: ['.yml', '.yaml'],
+  extentions: ['.yml', '.yaml'],
   parse: async (_id, content) => {
     const { data } = await parseFrontMatter(`---\n${content}\n---`)
 
