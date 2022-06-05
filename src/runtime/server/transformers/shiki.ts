@@ -8,7 +8,7 @@ const withContentBase = (url: string) => {
 
 export default {
   name: 'markdown',
-  extentions: ['.md'],
+  extensions: ['.md'],
   transform: async (content) => {
     const codeBlocks = []
     visit(

@@ -105,7 +105,11 @@ export interface Toc {
 
 export interface ContentTransformer {
   name: string
+  /**
+   * @deprecated Misspelled, use `extensions`
+   */
   extentions: string[]
+  extensions: string[]
   parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
   transform?: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
 }

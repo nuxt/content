@@ -16,7 +16,10 @@ export default defineNuxtConfig({
       }
     ]
   },
-  buildModules: [contentModule],
+  buildModules: [
+    '~/modules/content-helper',
+    contentModule
+  ],
   content: {
     locales: ['en', 'fa'],
     sources: [

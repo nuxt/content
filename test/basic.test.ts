@@ -103,6 +103,7 @@ describe('fixtures:basic', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
   })
+
   testNavigation()
 
   testMarkdownParser()
@@ -115,7 +116,10 @@ describe('fixtures:basic', async () => {
   testJSONParser()
 
   testPathMetaTransformer()
-
+  test('transformers:custom', async () => {
+    const index = await fetchDocument('content:index.md')
+    expect(index._customTransformed).toBeTruthy()
+  })
   // testMDCComponent()
 
   testRegex()

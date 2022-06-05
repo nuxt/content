@@ -279,8 +279,9 @@ export default defineNuxtModule<ModuleOptions>({
         // TODO: remove kit usage
         templateUtils.importSources(contentContext.transformers),
         `const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
-        'export const getParser = (ext) => transformers.find(p => ext.match(new RegExp(p.extentions.join("|"),  "i")) && p.parse)',
-        'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extentions.join("|"),  "i")) && p.transform)',
+        'const matchExtensionPattern = (p) => new RegExp((p.extensions || p.extentions).join("|"),  "i")',
+        'export const getParser = (ext) => transformers.find(p => ext.match(matchExtensionPattern(p)) && p.parse)',
+        'export const getTransformers = (ext) => transformers.filter(p => ext.match(matchExtensionPattern(p)) && p.transform)',
         'export default () => {}'
       ].join('\n')
     })
