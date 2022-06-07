@@ -44,8 +44,8 @@ export const Codes = {
    */
   dash: 45,
   /**
-    * '.'
-    */
+   * '.'
+   */
   dot: 46,
   /**
    * ':'
@@ -56,12 +56,12 @@ export const Codes = {
    */
   LessThan: 60,
   /**
-    * '='
-    */
+   * '='
+   */
   equals: 61,
   /**
-    * '>'
-    */
+   * '>'
+   */
   greaterThan: 62,
   /**
    * 'X'
