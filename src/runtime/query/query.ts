@@ -6,15 +6,15 @@ const arrayParams = ['sort', 'where', 'only', 'without']
 
 export const createQuery = <T = ParsedContent>(
   fetcher: DatabaseFetcher<T>,
-  queryParams?: QueryBuilderParams
+  intitialParams?: QueryBuilderParams
 ): QueryBuilder<T> => {
-  const params = {
-    ...queryParams
+  const queryParams = {
+    ...intitialParams
   } as QueryBuilderParams
 
   for (const key of arrayParams) {
-    if (params[key]) {
-      params[key] = ensureArray(params[key])
+    if (queryParams[key]) {
+      queryParams[key] = ensureArray(queryParams[key])
     }
   }
 
@@ -23,23 +23,29 @@ export const createQuery = <T = ParsedContent>(
    */
   const $set = (key: string, fn: (...values: any[]) => any = v => v) => {
     return (...values: []) => {
-      params[key] = fn(...values)
+      queryParams[key] = fn(...values)
       return query
     }
   }
 
   const query: QueryBuilder<T> = {
-    params: () => Object.freeze(params),
+    params: () => queryParams,
     only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
     without: $set('without', ensureArray),
-    where: $set('where', (q: any) => [...ensureArray(params.where), q]),
-    sort: $set('sort', (sort: SortOptions) => [...ensureArray(params.sort), ...ensureArray(sort)]),
+    where: $set('where', (q: any) => [...ensureArray(queryParams.where), q]),
+    sort: $set('sort', (sort: SortOptions) => [...ensureArray(queryParams.sort), ...ensureArray(sort)]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
     // find
-    findOne: () => fetcher({ ...params, first: true }) as Promise<T>,
-    find: () => fetcher(params) as Promise<Array<T>>,
-    findSurround: (query, options) => fetcher({ ...params, surround: { query, ...options } }) as Promise<Array<T>>,
+    find: () => fetcher(query) as Promise<Array<T>>,
+    findOne: () => {
+      queryParams.first = true
+      return fetcher(query) as Promise<T>
+    },
+    findSurround: (surroundQuery, options) => {
+      queryParams.surround = { query: surroundQuery, ...options }
+      return fetcher(query) as Promise<Array<T>>
+    },
     // locale
     locale: (_locale: string) => query.where({ _locale })
   }
