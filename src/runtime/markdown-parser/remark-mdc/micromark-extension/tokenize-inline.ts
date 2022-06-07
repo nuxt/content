@@ -78,7 +78,7 @@ function tokenize (this: TokenizeContext, effects: Effects, ok: State, nok: Stat
   }
 
   function exit (code: Code): void | State {
-    if (!markdownLineEndingOrSpace(code) && code !== null && ![Codes.closingSquareBracket].includes(code)) {
+    if (!markdownLineEndingOrSpace(code) && ![Codes.EOF, Codes.closingSquareBracket, Codes.dot, Codes.comma].includes(code)) {
       return nok(code)
     }
     effects.exit('componentText')
