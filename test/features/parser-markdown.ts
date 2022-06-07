@@ -1,5 +1,6 @@
 import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
+import { visit } from 'unist-util-visit'
 
 export const testMarkdownParser = () => {
   describe('parser:markdown', () => {
@@ -67,6 +68,22 @@ export const testMarkdownParser = () => {
 
       expect(parsed.body).toHaveProperty('children')
       expect(parsed.body.children.length).toEqual(0)
+    })
+
+    test('inline component followed by dot or comma', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: 'Inline component `:Comp` :Comp[works] beautifully, unless I put it before a :Comp[comma], or a :Comp[period].'
+        }
+      })
+
+      let compComponentCount = 0
+      visit(parsed.body, node => (node as any).tag === 'comp', () => {
+        compComponentCount += 1
+      })
+      expect(compComponentCount).toEqual(3)
     })
   })
 }
