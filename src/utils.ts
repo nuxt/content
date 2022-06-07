@@ -4,8 +4,8 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
-import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
+import type { MarkdownPlugin } from './runtime/types'
 
 /**
  * Internal version that represents cache format.
@@ -119,20 +119,20 @@ export function createWebSocket () {
 }
 
 export function processMarkdownOptions (options: ModuleOptions['markdown']) {
-  options.rehypePlugins = (options.rehypePlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
-  options.remarkPlugins = (options.remarkPlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
-
-  return options
-
-  function resolveMarkdownPlugin (plugin: string | [string, any]): [string, any] {
-    if (typeof plugin === 'string') { plugin = [plugin, {}] }
-
-    if (!Array.isArray(plugin)) {
-      useLogger('@nuxt/content').warn('Plugin silently ignored:', (plugin as any).name || plugin)
-      return
-    }
-
-    // TODO: Add support for local custom plugins
-    return plugin
+  return {
+    ...options,
+    remarkPlugins: resolveMarkdownPlugins(options.remarkPlugins),
+    rehypePlugins: resolveMarkdownPlugins(options.rehypePlugins)
   }
+}
+
+function resolveMarkdownPlugins (plugins): Record<string, false | MarkdownPlugin> {
+  if (Array.isArray(plugins)) {
+    return Object.entries(plugins).reduce((plugins, plugin) => {
+      const [name, pluginOptions] = Array.isArray(plugin) ? plugin : [plugin, {}]
+      plugins[name] = pluginOptions
+      return plugins
+    }, {})
+  }
+  return plugins || {}
 }

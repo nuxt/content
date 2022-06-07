@@ -26,6 +26,7 @@ import {
   PROSE_TAGS,
   useContentMounts
 } from './utils'
+import type { MarkdownPlugin } from './runtime/types'
 
 export type MountOptions = {
   name: string
@@ -101,14 +102,14 @@ export interface ModuleOptions {
      *
      * @default []
      */
-    remarkPlugins?: Array<string | [string, any]>
+    remarkPlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
     /**
      * Register custom remark plugin to provide new feature into your markdown contents.
      * Checkout: https://github.com/rehypejs/rehype/blob/main/doc/plugins.md
      *
      * @default []
      */
-    rehypePlugins?: Array<string | [string, any]>
+    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
   }
   /**
    * Content module uses `shiki` to highlight code blocks.
