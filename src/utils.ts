@@ -128,7 +128,7 @@ export function processMarkdownOptions (options: ModuleOptions['markdown']) {
 
 function resolveMarkdownPlugins (plugins): Record<string, false | MarkdownPlugin> {
   if (Array.isArray(plugins)) {
-    return Object.entries(plugins).reduce((plugins, plugin) => {
+    return Object.values(plugins).reduce((plugins, plugin) => {
       const [name, pluginOptions] = Array.isArray(plugin) ? plugin : [plugin, {}]
       plugins[name] = pluginOptions
       return plugins
