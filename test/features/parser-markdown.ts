@@ -70,20 +70,30 @@ export const testMarkdownParser = () => {
       expect(parsed.body.children.length).toEqual(0)
     })
 
-    test('inline component followed by dot or comma', async () => {
+    test('inline component followed by non-space characters', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
           id: 'content:index.md',
-          content: 'Inline component `:Comp` :Comp[works] beautifully, unless I put it before a :Comp[comma], or a :Comp[period].'
+          content: [
+            ':hello', // valid
+            ':hello,', // valid
+            ':hello-world', // valid but with different name
+            ':hello{}-world', // valid
+            ':hello:', // invalid
+            ':rocket:' // emoji
+          ].join('\n')
         }
       })
 
       let compComponentCount = 0
-      visit(parsed.body, node => (node as any).tag === 'comp', () => {
+      visit(parsed.body, node => (node as any).tag === 'hello', () => {
         compComponentCount += 1
       })
       expect(compComponentCount).toEqual(3)
+
+      // Check conflict between inline compoenent and emoji
+      expect(parsed.body.children[0].children.pop().value).toContain('🚀')
     })
   })
 }
