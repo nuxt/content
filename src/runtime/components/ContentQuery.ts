@@ -187,7 +187,7 @@ export default defineComponent({
       if (!data && slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
 
       // Empty slots for `one` if type is "markdown" refers to an empty `body.children` key.
-      if (data._type && data._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
+      if (data?._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
     } else if (!data || !data.length) {
       // Handle `find()` and `findSurround()`
 

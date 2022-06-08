@@ -6,7 +6,7 @@ import { getTagName } from './utils'
 export default function html (h: H, node: any) {
   const tagName = getTagName(node.value)
 
-  if (tagName) {
+  if (tagName && /[A-Z]/.test(tagName)) {
     node.value = node.value.replace(tagName, kebabCase(tagName))
   }
 
