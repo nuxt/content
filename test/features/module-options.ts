@@ -41,5 +41,19 @@ export const testModuleOption = () => {
       })
       expect(parsed.body.children[0].props.className).toContain('remark-oembed-you-tube')
     })
+
+    test('add `rehype-figure`', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '![Alt](https://nuxtjs.org/design-kit/colored-logo.svg)'
+          ].join('\n')
+        }
+      })
+      expect(parsed.body.children[0].props.className).toContain('rehype-figure')
+      expect(parsed.body.children[0].tag).toContain('figure')
+    })
   })
 }

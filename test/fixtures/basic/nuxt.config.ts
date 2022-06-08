@@ -41,7 +41,11 @@ export default defineNuxtConfig({
         'remark-gfm': false,
         // add remark-oembed
         'remark-oembed': {}
-      }
+      },
+      // Array syntax can be used to add plugins
+      rehypePlugins: [
+        'rehype-figure'
+      ]
     }
   }
 })

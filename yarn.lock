@@ -6270,6 +6270,14 @@ rehype-external-links@^1.0.1:
     unified "^10.0.0"
     unist-util-visit "^4.0.0"
 
+rehype-figure@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/rehype-figure/-/rehype-figure-1.0.1.tgz#6fac89f0ec6042ce8b99163b4cc796a934267be0"
+  integrity sha512-g7DJuK8R8xHIaPI3QJ6/OoWiKepn92RF2CV3z4dO7lRO6ZHo48Tu9X3KgnZUKK035srFHqWQx93AybBy12XqmQ==
+  dependencies:
+    hastscript "^6.0.0"
+    unist-util-visit "^2.0.3"
+
 rehype-raw@^6.1.1:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/rehype-raw/-/rehype-raw-6.1.1.tgz#81bbef3793bd7abacc6bf8335879d1b6c868c9d4"
@@ -7413,7 +7421,7 @@ unist-util-visit-parents@^5.0.0:
     "@types/unist" "^2.0.0"
     unist-util-is "^5.0.0"
 
-unist-util-visit@^2.0.0:
+unist-util-visit@^2.0.0, unist-util-visit@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-2.0.3.tgz#c3703893146df47203bb8a9795af47d7b971208c"
   integrity sha512-iJ4/RczbJMkD0712mGktuGpm/U4By4FfDonL7N/9tATGIF4imikjOuagyMY53tnZq3NP6BcmlrHhEKAfGWjh7Q==
