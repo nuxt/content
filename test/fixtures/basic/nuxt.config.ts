@@ -29,6 +29,19 @@ export default defineNuxtConfig({
     ],
     navigation: {
       fields: ['icon']
+    },
+    markdown: {
+      // Object syntax can be used to override default options
+      remarkPlugins: {
+        // override remark-emoji options
+        'remark-emoji': {
+          emoticon: true
+        },
+        // disable remark-gfm
+        'remark-gfm': false,
+        // add remark-oembed
+        'remark-oembed': {}
+      }
     }
   }
 })

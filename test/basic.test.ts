@@ -12,6 +12,7 @@ import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testParserHooks } from './features/parser-hooks'
+import { testModuleOption } from './features/module-options'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -123,4 +124,6 @@ describe('fixtures:basic', async () => {
   testRegex()
 
   testParserHooks()
+
+  testModuleOption()
 })
