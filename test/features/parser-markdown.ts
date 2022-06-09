@@ -1,5 +1,6 @@
 import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
+import { visit } from 'unist-util-visit'
 
 export const testMarkdownParser = () => {
   describe('parser:markdown', () => {
@@ -67,6 +68,42 @@ export const testMarkdownParser = () => {
 
       expect(parsed.body).toHaveProperty('children')
       expect(parsed.body.children.length).toEqual(0)
+    })
+
+    test('inline component followed by non-space characters', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            ':hello', // valid
+            ':hello,', // valid
+            ':hello :hello', // valid
+            ':hello{}-world', // valid
+            ':hello:hello', // invalid
+            ':hello-world', // valid but with different name
+            ':hello:', // invalid
+            '`:hello`', // code
+            ':rocket:' // emoji
+          ].join('\n')
+        }
+      })
+
+      let compComponentCount = 0
+      visit(parsed.body, node => (node as any).tag === 'hello', () => {
+        compComponentCount += 1
+      })
+      expect(compComponentCount).toEqual(5)
+
+      const paragraph = parsed.body.children[0]
+      expect(paragraph.children[0].tag).toEqual('hello')
+      expect(paragraph.children[1].tag).toEqual('hello')
+      expect(paragraph.children[3].tag).toEqual('hello')
+      expect(paragraph.children[5].tag).toEqual('hello')
+      expect(paragraph.children[6].tag).toEqual('hello')
+
+      // Check conflict between inline compoenent and emoji
+      expect(parsed.body.children[0].children.pop().value).toContain('🚀')
     })
 
     test('h1 tags', async () => {

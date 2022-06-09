@@ -13,6 +13,7 @@ import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testParserHooks } from './features/parser-hooks'
 import { testModuleOption } from './features/module-options'
+import { testContentQuery } from './features/content-query'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -45,7 +46,7 @@ describe('fixtures:basic', async () => {
     assert(ids.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
     assert(ids.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
 
-    assert(ids.includes('fa-ir:fa:index.md') === true, 'Files with `fa-ir` prefix should be listed')
+    assert(ids.includes('fa-ir:fa:hello.md') === true, 'Files with `fa-ir` prefix should be listed')
   })
 
   test('Get contents index', async () => {
@@ -65,12 +66,12 @@ describe('fixtures:basic', async () => {
   test('Search contents using `locale` helper', async () => {
     const fa = await $fetch('/locale-fa')
 
-    expect(fa).toContain('fa-ir:fa:index.md')
+    expect(fa).toContain('fa-ir:fa:hello.md')
     expect(fa).not.toContain('content:index.md')
 
     const en = await $fetch('/locale-en')
 
-    expect(en).not.toContain('fa-ir:fa:index.md')
+    expect(en).not.toContain('fa-ir:fa:hello.md')
     expect(en).toContain('content:index.md')
   })
 
@@ -104,6 +105,8 @@ describe('fixtures:basic', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
   })
+
+  testContentQuery()
 
   testNavigation()
 

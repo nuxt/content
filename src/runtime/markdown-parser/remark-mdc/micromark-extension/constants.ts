@@ -12,6 +12,10 @@ export const Codes = {
    */
   EOF: null,
   /**
+   * ' '
+   */
+  space: 32,
+  /**
    * '"'
    */
   quotationMark: 34,
@@ -24,13 +28,25 @@ export const Codes = {
    */
   apostrophe: 39,
   /**
-   * '`'
+   * '('
    */
-  backTick: 96,
+  openingParentheses: 40,
   /**
-   * '\'
+   * ')'
    */
-  backSlash: 92,
+  closingParentheses: 41,
+  /**
+   * ','
+   **/
+  comma: 44,
+  /**
+   * '-'
+   */
+  dash: 45,
+  /**
+   * '.'
+   */
+  dot: 46,
   /**
    * ':'
    */
@@ -48,25 +64,33 @@ export const Codes = {
    */
   greaterThan: 62,
   /**
-   * '-'
+   * 'X'
    */
-  dash: 45,
-  /**
-   * '.'
-   */
-  dot: 46,
-  /**
-   * ' '
-   */
-  space: 32,
+  uppercaseX: 88,
   /**
    * '['
    */
   openingSquareBracket: 91,
   /**
+   * '\'
+   */
+  backSlash: 92,
+  /**
    * ']'
    */
   closingSquareBracket: 93,
+  /**
+   * '_'
+   */
+  underscore: 95,
+  /**
+   * '`'
+   */
+  backTick: 96,
+  /**
+   * 'x'
+   */
+  lowercaseX: 120,
   /**
    * '{'
    */
@@ -74,25 +98,5 @@ export const Codes = {
   /**
    * '}'
    */
-  closingCurlyBracket: 125,
-  /**
-   * '('
-   */
-  openingParentheses: 40,
-  /**
-   * ')'
-   */
-  closingParentheses: 41,
-  /**
-   * '_'
-   */
-  underscore: 95,
-  /**
-   * 'X'
-   */
-  uppercaseX: 88,
-  /**
-   * 'x'
-   */
-  lowercaseX: 120
+  closingCurlyBracket: 125
 }

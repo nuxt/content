@@ -1,5 +1,5 @@
 import { prefixStorage } from 'unstorage'
-import { joinURL, withLeadingSlash } from 'ufo'
+import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
@@ -118,6 +118,25 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
   return parsed
 }
 
+export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEvent, path?: string) => (query: QueryBuilder<T>) => {
+  if (path) {
+    if (query.params().first) {
+      query.where({ _path: withoutTrailingSlash(path) })
+    } else {
+      query.where({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
+    }
+  }
+
+  // Provide default sort order
+  if (!query.params().sort?.length) {
+    query.sort({ _file: 1, $numeric: true })
+  }
+
+  return createPipelineFetcher<T>(
+    () => getContentsList(event) as unknown as Promise<T[]>
+  )(query)
+}
+
 /**
  * Query contents
  */
@@ -125,24 +144,10 @@ export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent)
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: QueryBuilderParams): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, path?: string | QueryBuilderParams, ...pathParts: string[]) {
-  let params = (path || {}) as QueryBuilderParams
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
-    // escape regex special chars
-    path = path.replace(/[-[\]{}()*+.,^$\s]/g, '\\$&')
-
-    params = {
-      where: [{ _path: new RegExp(`^${path}`) }]
-    }
-  }
-  const pipelineFetcher = createPipelineFetcher<T>(
-    () => getContentsList(event) as unknown as Promise<T[]>
-  )
-
-  // Provide default sort order
-  if (!params.sort?.length) {
-    params.sort = [{ _file: 1, $numeric: true }]
+    return createQuery<T>(createServerQueryFetch(event, path))
   }
 
-  return createQuery<T>(pipelineFetcher, params)
+  return createQuery<T>(createServerQueryFetch(event), path || {})
 }
