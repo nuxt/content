@@ -74,6 +74,7 @@ export const testMarkdownParser = () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
+          id: 'content:index.md',
           content: [
             ':hello', // valid
             ':hello,', // valid
