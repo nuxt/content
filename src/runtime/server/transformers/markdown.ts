@@ -1,20 +1,15 @@
 import { parse } from '../../markdown-parser'
-import type { MarkdownOptions } from '../../types'
+import type { MarkdownOptions, MarkdownPlugin } from '../../types'
 import { MarkdownParsedContent } from '../../types'
 import { useRuntimeConfig } from '#imports'
-
-const importPlugin = async (p: [string, any]) => ([
-  await import(p[0]).then(res => res.default || res),
-  typeof p[1] === 'object' ? { ...p[1] } : p[1]
-])
 
 export default {
   name: 'markdown',
   extensions: ['.md'],
   parse: async (_id, content) => {
     const config: MarkdownOptions = { ...useRuntimeConfig().content?.markdown || {} }
-    config.rehypePlugins = await Promise.all((config.rehypePlugins || []).map(importPlugin))
-    config.remarkPlugins = await Promise.all((config.remarkPlugins || []).map(importPlugin))
+    config.rehypePlugins = await importPlugins(config.rehypePlugins)
+    config.remarkPlugins = await importPlugins(config.remarkPlugins)
 
     const parsed = await parse(content, config)
 
@@ -25,4 +20,19 @@ export default {
       _id
     }
   }
+}
+
+async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = {}) {
+  const resolvedPlugins = {}
+  for (const [name, plugin] of Object.entries(plugins)) {
+    if (plugin) {
+      resolvedPlugins[name] = {
+        instance: await import(name).then(m => m.default || m),
+        ...plugin
+      }
+    } else {
+      resolvedPlugins[name] = false
+    }
+  }
+  return resolvedPlugins
 }

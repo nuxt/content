@@ -2,15 +2,21 @@ import type { Processor } from 'unified'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remark2rehype from 'remark-rehype'
-import { MarkdownOptions, MarkdownRoot } from '../types'
+import { MarkdownOptions, MarkdownPlugin, MarkdownRoot } from '../types'
 import remarkMDC from './remark-mdc'
 import handlers from './handler'
 import compiler from './compiler'
 import { flattenNodeText } from './utils/ast'
 import { nodeTextContent } from './utils/node'
 
-const usePlugins = (plugins: any[], stream: Processor) =>
-  plugins.reduce((stream, plugin) => stream.use(plugin[0] || plugin, plugin[1] || undefined), stream)
+const usePlugins = (plugins: Record<string, false | MarkdownPlugin>, stream: Processor) => {
+  for (const plugin of Object.values(plugins)) {
+    if (plugin) {
+      const { instance, ...options } = plugin
+      stream.use(instance, options)
+    }
+  }
+}
 
 /**
  * Generate text excerpt summary

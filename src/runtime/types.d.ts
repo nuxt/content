@@ -80,6 +80,8 @@ export interface MarkdownRoot {
   props?: Record<string, any>
 }
 
+export interface MarkdownPlugin extends Record<string, any> {}
+
 export interface MarkdownOptions {
   /**
    * Enable/Disable MDC components.
@@ -93,8 +95,8 @@ export interface MarkdownOptions {
     searchDepth: number
   }
   tags: Record<string, string>
-  remarkPlugins: Array<any | [any, any]>
-  rehypePlugins: Array<any | [any, any]>
+  remarkPlugins: Record<string, false | (MarkdownPlugin & { instance: any })>
+  rehypePlugins: Record<string, false | (MarkdownPlugin & { instance: any })>
 }
 
 export interface TocLink {
