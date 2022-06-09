@@ -1,5 +1,6 @@
 import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
+import { visit } from 'unist-util-visit'
 
 export const testMarkdownParser = () => {
   describe('parser:markdown', () => {
@@ -67,6 +68,46 @@ export const testMarkdownParser = () => {
 
       expect(parsed.body).toHaveProperty('children')
       expect(parsed.body.children.length).toEqual(0)
+    })
+
+    test('inline component followed by non-space characters', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            ':hello', // valid
+            ':hello,', // valid
+            ':hello-world', // valid but with different name
+            ':hello{}-world', // valid
+            ':hello:', // invalid
+            ':rocket:' // emoji
+          ].join('\n')
+        }
+      })
+
+      let compComponentCount = 0
+      visit(parsed.body, node => (node as any).tag === 'hello', () => {
+        compComponentCount += 1
+      })
+      expect(compComponentCount).toEqual(3)
+
+      // Check conflict between inline compoenent and emoji
+      expect(parsed.body.children[0].children.pop().value).toContain('🚀')
+    })
+
+    test('h1 tags', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: '<h1>Hello</h1>'
+        }
+      })
+
+      expect(parsed.body).toHaveProperty('children')
+      expect(parsed.body.children.length).toEqual(1)
+      expect(parsed.body.children[0].tag).toEqual('h1')
     })
   })
 }
