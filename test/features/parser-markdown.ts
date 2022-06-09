@@ -74,7 +74,6 @@ export const testMarkdownParser = () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
-          id: 'content:index.md',
           content: [
             ':hello', // valid
             ':hello,', // valid
@@ -94,6 +93,20 @@ export const testMarkdownParser = () => {
 
       // Check conflict between inline compoenent and emoji
       expect(parsed.body.children[0].children.pop().value).toContain('🚀')
+    })
+
+    test('h1 tags', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: '<h1>Hello</h1>'
+        }
+      })
+
+      expect(parsed.body).toHaveProperty('children')
+      expect(parsed.body.children.length).toEqual(1)
+      expect(parsed.body.children[0].tag).toEqual('h1')
     })
   })
 }
