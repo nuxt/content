@@ -82,7 +82,7 @@
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
     "unstorage": "^0.4.1",
-    "ws": "^8.7.0"
+    "ws": "^8.8.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
