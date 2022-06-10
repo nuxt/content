@@ -205,6 +205,30 @@ describe('Database Provider', () => {
     assert(result[2] === null)
   })
 
+  test('Surround and using only method', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
+    const result = await createQuery(fetcher)
+      .only(['_path'])
+      .findSurround({ id: 3 }, { before: 2, after: 1 })
+
+    assert((result as Array<any>).length === 3)
+    assert(result[0]._path === '/a')
+    assert(result[1]._path === '/b')
+    assert(result[2] === null)
+  })
+
+  test('Surround and using without method', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
+    const result = await createQuery(fetcher)
+      .without('id')
+      .findSurround({ id: 3 }, { before: 2, after: 1 })
+
+    assert((result as Array<any>).length === 3)
+    assert(result[0]._path === '/a')
+    assert(result[1]._path === '/b')
+    assert(result[2] === null)
+  })
+
   test('Chain multiple where conditions', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })
