@@ -40,7 +40,7 @@ export const detectProperties = (keys: string[]) => {
 }
 
 export const withoutKeys = (keys: string[] = []) => (obj: any) => {
-  if (keys.length === 0) {
+  if (keys.length === 0 || !obj) {
     return obj
   }
   const { prefixes, properties } = detectProperties(keys)
@@ -48,7 +48,7 @@ export const withoutKeys = (keys: string[] = []) => (obj: any) => {
 }
 
 export const withKeys = (keys: string[] = []) => (obj: any) => {
-  if (keys.length === 0) {
+  if (keys.length === 0 || !obj) {
     return obj
   }
   const { prefixes, properties } = detectProperties(keys)
