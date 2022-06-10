@@ -99,7 +99,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     meta,
     // Add Content version to the hash, to revalidate the cache on content update
     version: contentConfig.cacheVersion,
-    integerity: contentConfig.cacheIntegrity
+    integrity: contentConfig.cacheIntegrity
   })
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
