@@ -158,6 +158,19 @@ export interface ModuleOptions {
    * @default undefined
    */
   defaultLocale: string
+  /**
+   * WebSocket server configuration.
+   */
+  ws: {
+    /**
+     * @default 4000
+     */
+    port: number
+    /**
+     * @default false
+     */
+    showUrl: boolean
+  }
 }
 
 interface ContentContext extends ModuleOptions {
@@ -181,6 +194,10 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     base: '_content',
     watch: true,
+    ws: {
+      port: 4000,
+      showUrl: false
+    },
     sources: ['content'],
     ignores: ['\\.', '-'],
     locales: [],
@@ -416,7 +433,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Listen dev server
-      const { server, url } = await listen(() => 'Nuxt Content', { port: 4000, showURL: false })
+      const { server, url } = await listen(() => 'Nuxt Content', options.ws)
       server.on('upgrade', ws.serve)
 
       // Register ws url
