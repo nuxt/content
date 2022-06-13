@@ -283,10 +283,10 @@ export interface NavItem {
 export interface HighlightParams {
   code: string
   lang: string
-  theme: Theme
+  theme: Theme | Record<string, Theme>
 }
 
 export interface HighlightThemedToken {
   content: string
-  color?: string
+  color?: string | Record<string, string>
 }
