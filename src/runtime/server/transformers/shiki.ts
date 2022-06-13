@@ -38,7 +38,7 @@ export default {
           if (variant === 'default') {
             colors.unshift(`.${colorClass.className}{color:${color}}`)
           } else {
-            colors.push(`.${variant} .${colorClass.className}{color: ${color}}`)
+            colors.push(`.${variant} .${colorClass.className}{color:${color}}`)
           }
         })
       }
