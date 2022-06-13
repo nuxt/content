@@ -10,6 +10,7 @@ import {
   useLogger,
   addTemplate
 } from '@nuxt/kit'
+import type { ListenOptions } from 'listhen'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { hash } from 'ohash'
@@ -48,7 +49,9 @@ export interface ModuleOptions {
    *
    * @default true
    */
-  watch: boolean
+  watch: false | {
+    ws: Partial<ListenOptions>
+  }
   /**
    * Contents can located in multiple places, in multiple directories or even in remote git repositories.
    * Using sources option you can tell Content module where to look for contents.
@@ -158,19 +161,6 @@ export interface ModuleOptions {
    * @default undefined
    */
   defaultLocale: string
-  /**
-   * WebSocket server configuration.
-   */
-  ws: {
-    /**
-     * @default 4000
-     */
-    port: number
-    /**
-     * @default false
-     */
-    showUrl: boolean
-  }
 }
 
 interface ContentContext extends ModuleOptions {
@@ -193,10 +183,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     base: '_content',
-    watch: true,
-    ws: {
-      port: 4000,
-      showUrl: false
+    watch: {
+      ws: {
+        port: 4000,
+        showURL: false
+      }
     },
     sources: ['content'],
     ignores: ['\\.', '-'],
@@ -420,11 +411,11 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Setup content dev module
-    if (!nuxt.options.dev || !options.watch) {
-      return
-    }
+    if (!nuxt.options.dev) { return }
 
     nuxt.hook('nitro:init', async (nitro) => {
+      if (!options.watch || !options.watch.ws) { return }
+
       const ws = createWebSocket()
 
       // Dispose storage on nuxt close
@@ -433,7 +424,8 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Listen dev server
-      const { server, url } = await listen(() => 'Nuxt Content', options.ws)
+      const { server, url } = await listen(() => 'Nuxt Content', options.watch.ws)
+
       server.on('upgrade', ws.serve)
 
       // Register ws url
