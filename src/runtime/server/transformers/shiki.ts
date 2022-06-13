@@ -89,10 +89,7 @@ export default {
         body: {
           code,
           lang,
-          theme: {
-            default: highlightConfig.theme,
-            dark: 'github-light'
-          }
+          theme: highlightConfig.theme
         }
       })
 
