@@ -4,7 +4,6 @@
   </div>
 </template>
 
-
 <style lang="postcss" scoped>
 .ellipsis {
   @apply h-[160px] md:w-[600px];
