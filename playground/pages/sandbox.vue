@@ -22,7 +22,5 @@
         </div>
       </template>
     </ContentDoc>
-
-    <ContentList />
   </div>
 </template>
