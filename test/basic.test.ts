@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'url'
-import { assert, test, describe, expect } from 'vitest'
+import { assert, test, describe, expect, vi } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { hash } from 'ohash'
 import { testMarkdownParser } from './features/parser-markdown'
@@ -14,6 +14,8 @@ import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testParserHooks } from './features/parser-hooks'
 import { testModuleOption } from './features/module-options'
 import { testContentQuery } from './features/content-query'
+
+const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -104,6 +106,11 @@ describe('fixtures:basic', async () => {
   test('partial:specials-chars', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
+  })
+
+  test('warn invalid file name', () => {
+    expect(spyConsoleWarn).toHaveBeenCalled()
+    expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
   })
 
   testContentQuery()

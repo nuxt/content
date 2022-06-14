@@ -17,18 +17,34 @@ export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:par
 const isProduction = process.env.NODE_ENV === 'production'
 
 const contentConfig = useRuntimeConfig().content
+
 /**
  * Content ignore patterns
  */
-export const contentIgnores = contentConfig.ignores.map((p: any) =>
-  typeof p === 'string' ? new RegExp(`^${p}`) : p
+export const contentIgnores: Array<RegExp> = contentConfig.ignores.map((p: any) =>
+  typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
 )
+
+/**
+ * Invalid key characters
+ */
+const invalidKeyCharacters = "'\"?#/".split('')
 
 /**
  * Filter predicate for ignore patterns
  */
-const contentIgnorePredicate = (key: string) =>
-  !key.startsWith('preview:') && !contentIgnores.some((prefix: RegExp) => key.split(':').some(k => prefix.test(k)))
+const contentIgnorePredicate = (key: string) => {
+  if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+    return false
+  }
+  if (invalidKeyCharacters.some(ik => key.includes(ik))) {
+    // eslint-disable-next-line no-console
+    console.warn(`Ignoring [${key}]. File name should not contain any of the following characters: ${invalidKeyCharacters.join(', ')}`)
+    return false
+  }
+
+  return true
+}
 
 export const getContentsIds = async (event: CompatibilityEvent, prefix?: string) => {
   let keys = []
