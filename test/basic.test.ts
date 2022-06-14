@@ -14,6 +14,7 @@ import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testParserHooks } from './features/parser-hooks'
 import { testModuleOption } from './features/module-options'
 import { testContentQuery } from './features/content-query'
+import { testHighlighter } from './features/highlighter'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -136,4 +137,6 @@ describe('fixtures:basic', async () => {
   testParserHooks()
 
   testModuleOption()
+
+  testHighlighter()
 })
