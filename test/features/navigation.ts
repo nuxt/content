@@ -1,3 +1,4 @@
+import path from 'path'
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 import { hash } from 'ohash'
@@ -36,6 +37,24 @@ export const testNavigation = () => {
       })
 
       expect(list).toMatchSnapshot('basic-navigation-dogs')
+    })
+
+    test('_dir.yml should be able to filter navigation tree', async () => {
+      const query = { where: [{ _path: /^\/test-navigation/ }] }
+      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+        params: {
+          _params: jsonStringify(query)
+        }
+      })
+
+      // page.md, index.md, /not-hidden-dir
+      expect(list[0].children).toHaveLength(3)
+
+      // /hidden-dir should not exist
+      expect(list[0].children.find(item => item._path.includes('/hidden-dir'))).toBe(undefined)
+
+      // /not-hidden-dir should exist
+      expect(list[0].children.find(item => item._path.includes('/not-hidden-dir'))).toBeTruthy()
     })
 
     test('Get numbers navigation', async () => {
