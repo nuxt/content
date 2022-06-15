@@ -27,6 +27,31 @@ exports[`fixtures:basic > Get contents index > basic-index-body 1`] = `
 }
 `;
 
+exports[`fixtures:basic > navigation > _dir.yml should be able to filter navigation tree > basic-navigation-dogs 1`] = `
+[
+  {
+    "_path": "/navigation",
+    "children": [
+      {
+        "_path": "/navigation/hidden-dir",
+        "children": [
+          {
+            "_path": "/navigation/hidden-dir",
+            "title": "Hello World!",
+          },
+        ],
+        "title": "Hello World!",
+      },
+      {
+        "_path": "/navigation",
+        "title": "Hello World",
+      },
+    ],
+    "title": "Hello World",
+  },
+]
+`;
+
 exports[`fixtures:basic > navigation > Get cats navigation > basic-navigation-cats 1`] = `
 [
   {

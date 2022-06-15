@@ -24,7 +24,6 @@ export const testHighlighter = () => {
       const styleElement = parsed.body.children.pop()
       expect(styleElement.tag).toBe('style')
       const style = styleElement.children[0].value
-      console.log(style)
 
       const code = parsed.body.children[0].children[0].children[0].children[0].children
 
