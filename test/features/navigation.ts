@@ -1,4 +1,3 @@
-import path from 'path'
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 import { hash } from 'ohash'
