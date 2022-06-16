@@ -1,4 +1,4 @@
-import { describe, test, expect, assert } from 'vitest'
+import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 const content = `---
