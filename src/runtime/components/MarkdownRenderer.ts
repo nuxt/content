@@ -5,7 +5,7 @@ import { find, html } from 'property-information'
 // eslint-disable-next-line import/no-named-as-default
 import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
-import { useRuntimeConfig } from '#app'
+import { useRuntimeConfig, useRoute } from '#app'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
@@ -106,11 +106,7 @@ export default defineComponent({
 /**
  * Render a markdown node
  */
-function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta): ContentVNode {
-  const originalTag = node.tag
-  // `_ignoreMap` is an special prop to disables tag-mapper
-  const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[node.tag]) || node.tag
-
+function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): ContentVNode {
   /**
    * Render Text node
    */
@@ -118,46 +114,78 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
     return h(Text, node.value)
   }
 
+  const originalTag = node.tag!
+  // `_ignoreMap` is an special prop to disables tag-mapper
+  const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[originalTag]) || originalTag
+
+  if (node.tag === 'binding') {
+    return renderBinding(node, h, documentMeta, parentScope)
+  }
+
   const component = resolveVueComponent(renderTag)
   if (typeof component === 'object') {
     component.tag = originalTag
   }
 
+  const props = propsToData(node, documentMeta)
   return h(
     component as any,
-    propsToData(node, documentMeta),
-    renderSlots(node, h, documentMeta)
+    props,
+    renderSlots(node, h, documentMeta, { ...parentScope, ...props })
   )
+}
+
+function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): ContentVNode {
+  const data = {
+    ...parentScope,
+    $route: () => useRoute(),
+    $document: documentMeta,
+    $doc: documentMeta
+  }
+  const splitter = /\.|\[(\d+)\]/
+  const keys = node.props?.value.trim().split(splitter).filter(Boolean)
+  const value = keys.reduce((data, key) => {
+    if (key in data) {
+      if (typeof data[key] === 'function') {
+        return data[key]()
+      } else {
+        return data[key]
+      }
+    }
+    return {}
+  }, data)
+
+  return h(Text, value)
 }
 
 /**
  * Create slots from `node` template children.
  */
-function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta) {
+function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentProps: any): ContentVNode[] {
   const children: MarkdownNode[] = node.children || []
 
   const slots: Record<string, Array<VNode | string>> = children.reduce((data, node) => {
     if (!isTemplate(node)) {
-      data[DEFAULT_SLOT].push(renderNode(node, h, documentMeta))
+      data[DEFAULT_SLOT].push(renderNode(node, h, documentMeta, parentProps))
       return data
     }
 
     if (isDefaultTemplate(node)) {
-      data[DEFAULT_SLOT].push(...node.children.map(child => renderNode(child, h, documentMeta)))
+      data[DEFAULT_SLOT].push(...(node.children || []).map(child => renderNode(child, h, documentMeta, parentProps)))
       return data
     }
 
     const slotName = getSlotName(node)
-    data[slotName] = node.children.map(child => renderNode(child, h, documentMeta))
+    data[slotName] = (node.children || []).map(child => renderNode(child, h, documentMeta, parentProps))
 
     return data
   }, {
-    [DEFAULT_SLOT]: []
+    [DEFAULT_SLOT]: [] as any[]
   })
 
-  return Object.fromEntries(
-    Object.entries(slots).map(([name, vDom]) => ([name, createSlotFunction(vDom)]))
-  )
+  const slotEntries = Object.entries(slots).map(([name, vDom]) => ([name, createSlotFunction(vDom)]))
+
+  return Object.fromEntries(slotEntries)
 }
 
 /**
