@@ -96,7 +96,7 @@ export default defineComponent({
      *
      * Might be skipping `partial: true` marked in Markdown contents front-matter.
      */
-    const isPartial = computed(() => path.value.includes('/_'))
+    const isPartial = computed(() => path.value?.includes('/_'))
 
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
       `content-query-${hash(props)}`,

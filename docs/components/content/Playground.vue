@@ -1,4 +1,5 @@
 <script setup>
+import { ref, useAsyncData, shallowRef, computed, onMounted, watch } from '#imports'
 import { parse } from '../../../src/runtime/markdown-parser'
 import { useShiki } from '../../editor/useShiki.ts'
 

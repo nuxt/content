@@ -30,6 +30,12 @@ export default defineNuxtConfig({
     navigation: {
       fields: ['icon']
     },
+    highlight: {
+      theme: {
+        default: 'github-light',
+        dark: 'github-dark'
+      }
+    },
     markdown: {
       // Object syntax can be used to override default options
       remarkPlugins: {

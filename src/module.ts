@@ -122,7 +122,10 @@ export interface ModuleOptions {
     /**
      * Default theme that will be used for highlighting code blocks.
      */
-    theme?: ShikiTheme,
+    theme?: ShikiTheme | {
+      default: ShikiTheme
+      [theme: string]: ShikiTheme
+    },
     /**
      * Preloaded languages that will be available for highlighting code blocks.
      */
