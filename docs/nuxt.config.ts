@@ -12,32 +12,28 @@ if (process.env.NODE_ENV === 'development') {
 
 export default defineNuxtConfig({
   content: {
-    sources: [
-      {
-        name: 'v1',
+    sources: {
+      v1: {
         prefix: '/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/en')
       },
-      {
-        name: 'v1-ja',
+      'v1-ja': {
         prefix: '/ja/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/ja')
       },
-      {
-        name: 'v1-fr',
+      'v1-fr': {
         prefix: '/fr/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/fr')
       },
-      {
-        name: 'v1-ru',
+      'v1-ru': {
         prefix: '/ru/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/ru')
       }
-    ],
+    },
     highlight: {
       preload: ['xml']
     }

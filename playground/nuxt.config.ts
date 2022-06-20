@@ -19,14 +19,13 @@ export default defineNuxtConfig({
     navigation: {
       fields: ['icon']
     },
-    sources: [
-      {
-        name: 'translation-fa',
+    sources: {
+      'translation-fa': {
         prefix: '/fa',
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
       }
-    ],
+    },
     highlight: {
       theme: 'one-dark-pro',
       preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
