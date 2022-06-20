@@ -68,7 +68,7 @@ export function getMountDriver (mount: MountOptions) {
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions>) {
   const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
-  return storages.reduce((mounts, storage) => {
+  const mounts = storages.reduce((mounts, storage) => {
     if (typeof storage === 'string') {
       mounts[key(storage)] = {
         name: storage,
@@ -84,6 +84,17 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
 
     return mounts
   }, {} as Record<string, MountOptions>)
+
+  const defaultStorage = key('content')
+  if (!mounts[defaultStorage]) {
+    mounts[defaultStorage] = {
+      name: defaultStorage,
+      driver: 'fs',
+      base: resolve(nuxt.options.srcDir, 'content')
+    }
+  }
+
+  return mounts
 }
 /**
  * WebSocket server useful for live content reload.

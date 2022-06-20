@@ -192,7 +192,7 @@ export default defineNuxtModule<ModuleOptions>({
         showURL: false
       }
     },
-    sources: ['content'],
+    sources: [],
     ignores: ['\\.', '-'],
     locales: [],
     defaultLocale: undefined,
@@ -238,9 +238,10 @@ export default defineNuxtModule<ModuleOptions>({
     // Tell Nuxt to ignore content dir for app build
     options.sources.forEach((source) => {
       if (typeof source === 'string') {
-        nuxt.options.ignore.push(join('content', '**'))
+        nuxt.options.ignore.push(join(source, '**'))
+      } else if (source.driver === 'fs') {
+        nuxt.options.ignore.push(join(source.base, '**'))
       }
-      // TODO: handle object format and make sure to ignore urls
     })
 
     // Add Content plugin

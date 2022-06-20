@@ -32,8 +32,6 @@ describe('Content sources', () => {
       }
     ])
 
-    assert(Object.keys(mounts).length === 1)
-
     expect(mounts).toMatchObject({
       'content:source:repo1': { driver: 'http', base: 'https://cdn.com' }
     })
@@ -58,6 +56,21 @@ describe('Content sources', () => {
       'content:source:_repo1_docs': { driver: 'fs', base: '/repo1/docs' },
       'content:source:repo2_docs': { driver: 'fs', base: '/test/repo2/docs' },
       'content:source:repo1': { driver: 'http', base: 'https://cdn.com' }
+    })
+  })
+  test('overwrite default source', () => {
+    const mounts = useContentMounts(nuxtDummy, [
+      {
+        name: 'content',
+        driver: 'http',
+        base: 'https://cdn.com'
+      }
+    ])
+
+    assert(Object.keys(mounts).length === 1)
+
+    expect(mounts).toMatchObject({
+      'content:source:content': { driver: 'http', base: 'https://cdn.com' }
     })
   })
 })
