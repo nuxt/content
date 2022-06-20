@@ -7,7 +7,6 @@ import {
   addAutoImport,
   addComponentsDir,
   templateUtils,
-  useLogger,
   addTemplate
 } from '@nuxt/kit'
 import type { ListenOptions } from 'listhen'
@@ -22,6 +21,7 @@ import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
   createWebSocket,
+  logger,
   MOUNT_PREFIX,
   processMarkdownOptions,
   PROSE_TAGS,
@@ -30,9 +30,9 @@ import {
 import type { MarkdownPlugin } from './runtime/types'
 
 export type MountOptions = {
-  name: string
-  prefix?: string
   driver: 'fs' | 'http' | string
+  name?: string
+  prefix?: string
   [options: string]: any
 }
 
@@ -58,7 +58,7 @@ export interface ModuleOptions {
    *
    * @default ['content']
    */
-  sources: Array<string | MountOptions>
+  sources: Array<string | MountOptions> | Record<string, MountOptions>
   /**
    * List of ignore pattern that will be used for excluding content from parsing and rendering.
    *
@@ -209,9 +209,6 @@ export default defineNuxtModule<ModuleOptions>({
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
-
-    const logger = useLogger('@nuxt/content')
-
     const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
@@ -235,14 +232,6 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
     }
-    // Tell Nuxt to ignore content dir for app build
-    options.sources.forEach((source) => {
-      if (typeof source === 'string') {
-        nuxt.options.ignore.push(join(source, '**'))
-      } else if (source.driver === 'fs') {
-        nuxt.options.ignore.push(join(source.base, '**'))
-      }
-    })
 
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugin'))
@@ -250,31 +239,37 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('nitro:config', (nitroConfig) => {
       // Add server handlers
       nitroConfig.handlers = nitroConfig.handlers || []
-      nitroConfig.handlers.push({
-        method: 'get',
-        route: `/api/${options.base}/query/:qid`,
-        handler: resolveRuntimeModule('./server/api/query')
-      })
-      nitroConfig.handlers.push({
-        method: 'get',
-        route: `/api/${options.base}/query`,
-        handler: resolveRuntimeModule('./server/api/query')
-      })
-      nitroConfig.handlers.push({
-        method: 'get',
-        route: `/api/${options.base}/cache`,
-        handler: resolveRuntimeModule('./server/api/cache')
-      })
+      nitroConfig.handlers.push(
+        {
+          method: 'get',
+          route: `/api/${options.base}/query/:qid`,
+          handler: resolveRuntimeModule('./server/api/query')
+        }, {
+          method: 'get',
+          route: `/api/${options.base}/query`,
+          handler: resolveRuntimeModule('./server/api/query')
+        }, {
+          method: 'get',
+          route: `/api/${options.base}/cache`,
+          handler: resolveRuntimeModule('./server/api/cache')
+        }
+      )
 
       if (!nuxt.options.dev) {
         nitroConfig.prerender.routes.push('/api/_content/cache')
       }
+
       // Register source storages
-      const sources = useContentMounts(nuxt, contentContext.sources || [])
-      nitroConfig.devStorage = Object.assign(
-        nitroConfig.devStorage || {},
-        sources
-      )
+      const sources = useContentMounts(nuxt, contentContext.sources)
+      nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
+
+      // Tell Nuxt to ignore content dir for app build
+      for (const source of Object.values(sources)) {
+        if (source.driver === 'fs') {
+          nuxt.options.ignore.push(join(source.base, '**'))
+        }
+      }
+
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
