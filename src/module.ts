@@ -58,7 +58,7 @@ export interface ModuleOptions {
    *
    * @default ['content']
    */
-  sources: Array<string | MountOptions> | Record<string, MountOptions>
+  sources: Record<string, MountOptions> | Array<string | MountOptions>
   /**
    * List of ignore pattern that will be used for excluding content from parsing and rendering.
    *
@@ -192,7 +192,7 @@ export default defineNuxtModule<ModuleOptions>({
         showURL: false
       }
     },
-    sources: [],
+    sources: {},
     ignores: ['\\.', '-'],
     locales: [],
     defaultLocale: undefined,
