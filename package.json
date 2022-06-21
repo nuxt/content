@@ -101,6 +101,6 @@
     "nuxt": "^3.0.0-rc.4",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.15.1"
+    "vitest": "^0.15.2"
   }
 }
