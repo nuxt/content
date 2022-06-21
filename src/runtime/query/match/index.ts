@@ -69,7 +69,9 @@ function createOperators (match: (...args: any[]) => boolean, operators: Record<
     /**
      * Match if item is in condition array
      **/
-    $in: (item, condition) => ensureArray(condition).some(cond => match(item, cond)),
+    $in: (item, condition) => ensureArray(condition).some(
+      cond => Array.isArray(item) ? match(item, { $contains: cond }) : match(item, cond)
+    ),
 
     /**
      * Match if item contains every condition or math every rule in condition array
