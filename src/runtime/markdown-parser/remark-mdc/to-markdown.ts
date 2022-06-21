@@ -46,10 +46,18 @@ function componentContainerSection (node: NodeComponentContainerSection, _: any,
 
 type NodeTextComponent = Parent & { name: string; rawData: string }
 function textComponent (node: NodeTextComponent, _: any, context: any) {
+  let value
   context.indexStack = context.stack
+
   const exit = context.enter(node.type)
-  let value = ':' + (node.name || '') + label(node, context) + attributes(node, context)
-  value += '\n' + content(node, context)
+
+  if (node.name === 'span') {
+    // Handle span suger syntax
+    value = `[${content(node, context)}]${attributes(node, context)}`
+  } else {
+    value = ':' + (node.name || '') + label(node, context) + attributes(node, context)
+  }
+
   exit()
   return value
 }
