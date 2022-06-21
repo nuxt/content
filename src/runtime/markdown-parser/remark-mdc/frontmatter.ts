@@ -12,9 +12,13 @@ export function stringifyFrontMatter (data: any, content: string = '') {
     safe: true
   })
 
+  if (!Object.keys(data).length) {
+    return ''
+  }
+
   return [
     FRONTMATTER_DELIMITER,
-    yaml.dump(data, { lineWidth: -1 }),
+    yaml.dump(data, { lineWidth: -1 }).trim(),
     FRONTMATTER_DELIMITER,
     content
   ].join('\n')
