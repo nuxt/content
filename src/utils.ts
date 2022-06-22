@@ -103,7 +103,6 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
       base: resolve(nuxt.options.srcDir, 'content')
     }
   }
-console.log(storages);
 
   return storages
 }
