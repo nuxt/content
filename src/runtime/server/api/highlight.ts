@@ -56,6 +56,7 @@ export default defineLazyEventHandler(async () => {
     theme: theme?.default || theme || 'dark-plus',
     langs: [
       ...(preload || []),
+      'diff',
       'json',
       'js',
       'ts',
