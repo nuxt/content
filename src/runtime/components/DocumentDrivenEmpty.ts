@@ -8,7 +8,8 @@ import { ParsedContent } from '../types'
 export default defineComponent({
   props: {
     value: {
-      type: Object as PropType<ParsedContent>
+      type: Object as PropType<ParsedContent>,
+      required: true
     }
   },
   render ({ value }) {

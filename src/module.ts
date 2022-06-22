@@ -457,8 +457,6 @@ export default defineNuxtModule<ModuleOptions>({
             file: resolveRuntimeModule('./pages/document-driven.vue'),
             children: []
           })
-
-          console.log(pages)
         })
       }
     }

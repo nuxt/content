@@ -58,7 +58,8 @@ export default defineNuxtPlugin((nuxt) => {
             navigation.value = _navigation
             return _navigation
           })
-          .catch((e) => {
+          .catch((_) => {
+            // eslint-disable-next-line no-console
             console.log('Could not fetch navigation!')
           })
       }
@@ -76,6 +77,7 @@ export default defineNuxtPlugin((nuxt) => {
         if (
           typeof moduleOptions.globals === 'object' && Array.isArray(moduleOptions.globals)
         ) {
+          // eslint-disable-next-line no-console
           console.log('Globals must be a list of keys with QueryBuilderParams as a value.')
           return
         }
@@ -91,6 +93,7 @@ export default defineNuxtPlugin((nuxt) => {
               if (query?.type) { type = query.type }
 
               return queryContent(query)[type]().catch(() => {
+                // eslint-disable-next-line no-console
                 console.log(`Could not find globals key: ${key}`)
               })
             }
@@ -128,6 +131,7 @@ export default defineNuxtPlugin((nuxt) => {
           .where({ _path: to.path })
           .findOne()
           .catch(() => {
+            // eslint-disable-next-line no-console
             console.log(`Could not find page: ${to.path}`)
           })
       }
@@ -154,6 +158,7 @@ export default defineNuxtPlugin((nuxt) => {
           .without(['body'])
           .findSurround(to.path)
           .catch(() => {
+            // eslint-disable-next-line no-console
             console.log(`Could not find surrounding pages for: ${to.path}`)
           })
       }
