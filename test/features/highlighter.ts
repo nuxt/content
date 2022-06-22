@@ -8,7 +8,7 @@ const content = [
 ].join('\n')
 
 export const testHighlighter = () => {
-  describe('highlighter', () => {
+  describe('Highlighter', () => {
     test('themed', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',

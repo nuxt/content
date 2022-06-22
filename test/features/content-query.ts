@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 export const testContentQuery = () => {
-  describe('content-query', () => {
+  describe('Content Queries', () => {
     test('Find index', async () => {
       const content = await $fetch('/')
 

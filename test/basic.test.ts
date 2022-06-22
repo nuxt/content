@@ -12,13 +12,13 @@ import { testCSVParser } from './features/parser-csv'
 import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testParserHooks } from './features/parser-hooks'
-import { testModuleOption } from './features/module-options'
+import { testModuleOptions } from './features/module-options'
 import { testContentQuery } from './features/content-query'
 import { testHighlighter } from './features/highlighter'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
-describe('fixtures:basic', async () => {
+describe('Basic usage', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     server: true
@@ -86,30 +86,30 @@ describe('fixtures:basic', async () => {
     })
   })
 
-  test('features:multi-part-path', async () => {
+  test('Multi part path', async () => {
     const html = await $fetch('/features/multi-part-path')
     expect(html).contains('Persian')
   })
 
-  test('features:<ContentDoc> head management (if same path)', async () => {
+  test('<ContentDoc> head management (if same path)', async () => {
     const html = await $fetch('/head')
     expect(html).contains('<title>Head overwritten</title>')
     expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
     expect(html).contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
-  test('features:<ContentDoc> head management (not same path)', async () => {
+  test('<ContentDoc> head management (not same path)', async () => {
     const html = await $fetch('/bypass-head')
     expect(html).not.contains('<title>Head overwritten</title>')
     expect(html).not.contains('<meta property="og:image" content="https://picsum.photos/200/300">')
     expect(html).not.contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
 
-  test('partial:specials-chars', async () => {
+  test('Partials specials chars', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
   })
 
-  test('warn invalid file name', () => {
+  test('Warning for invalid file name', () => {
     expect(spyConsoleWarn).toHaveBeenCalled()
     expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
   })
@@ -136,7 +136,7 @@ describe('fixtures:basic', async () => {
 
   testParserHooks()
 
-  testModuleOption()
+  testModuleOptions()
 
   testHighlighter()
 })

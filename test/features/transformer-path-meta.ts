@@ -57,7 +57,7 @@ const testCases = {
 }
 
 export const testPathMetaTransformer = () => {
-  describe('transformer:path-meta', () => {
+  describe('Transformer (path-meta)', () => {
     Object.entries(testCases).forEach(([id, expected]) => {
       test(id, async () => {
         const transformed = await $fetch('/api/parse', {

@@ -4,7 +4,7 @@ import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testNavigation = () => {
-  describe('navigation', () => {
+  describe('Navigation', () => {
     test('Get navigation', async () => {
       const query = { where: [{ _locale: 'en' }] }
       const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {

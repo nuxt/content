@@ -1,9 +1,9 @@
 import { describe, test, expect } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
-export const testModuleOption = () => {
-  describe('module options', () => {
-    test('overwrite `remark-emoji` options: enable emoticon', async () => {
+export const testModuleOptions = () => {
+  describe('Module Options', () => {
+    test('Overwrite `remark-emoji` options: enable emoticon', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
@@ -16,7 +16,7 @@ export const testModuleOption = () => {
       expect(parsed.body.children[0].children[0].value).toContain('😃')
     })
 
-    test('disable `remark-gfm`', async () => {
+    test('Disable `remark-gfm`', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
@@ -29,7 +29,7 @@ export const testModuleOption = () => {
       expect(parsed.body.children[0].children[0].value).toBe('~one~')
     })
 
-    test('add `remark-oembed`', async () => {
+    test('Add `remark-oembed`', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
@@ -42,7 +42,7 @@ export const testModuleOption = () => {
       expect(parsed.body.children[0].props.className).toContain('remark-oembed-you-tube')
     })
 
-    test('add `rehype-figure`', async () => {
+    test('Add `rehype-figure`', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {

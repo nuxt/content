@@ -24,18 +24,19 @@
   ],
   "scripts": {
     "build": "nuxt-module-build",
-    "dev": "nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "dev": "./scripts/playground.sh",
+    "dev:build": "nuxi build playground/${$1 || 'basic'}",
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
     "dev:docs": "(cd docs && nuxi dev)",
-    "dev:fixtures": "nuxi dev test/fixtures/basic",
+    "dev:fixtures": "./scripts/fixture.sh",
     "build:docs": "(cd docs && nuxi build)",
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",
     "prepack": "yarn build",
     "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
-    "test:unit": "nuxi prepare test/fixtures/basic && vitest run"
+    "test": "./scripts/test.sh",
+    "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
     "@nuxt/kit": "^3.0.0-rc.4",
@@ -96,11 +97,11 @@
     "eslint": "^8.18.0",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
-    "jiti": "^1.13.0",
+    "jiti": "^1.14.0",
     "lint-staged": "^13.0.2",
     "nuxt": "^3.0.0-rc.4",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.15.1"
+    "vitest": "^0.15.2"
   }
 }

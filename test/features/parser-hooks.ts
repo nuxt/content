@@ -2,7 +2,7 @@ import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 export const testParserHooks = () => {
-  describe('parser:hooks', () => {
+  describe('Parser (hooks)', () => {
     test('beforeParse', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',

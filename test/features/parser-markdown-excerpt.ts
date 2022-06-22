@@ -2,7 +2,7 @@ import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 export const testMarkdownParserExcerpt = () => {
-  describe('parser:markdown:excerpt', () => {
+  describe('Parser (.md excerpt)', () => {
     test('Index file', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',

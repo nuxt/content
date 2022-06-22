@@ -27,7 +27,7 @@ import {
   PROSE_TAGS,
   useContentMounts
 } from './utils'
-import type { MarkdownPlugin } from './runtime/types'
+import type { MarkdownPlugin, QueryBuilderParams } from './runtime/types'
 
 export type MountOptions = {
   name: string
@@ -163,7 +163,20 @@ export interface ModuleOptions {
    *
    * @default undefined
    */
-  defaultLocale: string
+  defaultLocale?: string
+  /**
+   * Document-driven mode config
+   */
+  documentDriven: boolean | {
+    page: boolean
+    navigation: boolean
+    surround: boolean
+    globals: {
+      [key: string]: QueryBuilderParams
+    }
+    layoutFallbacks: string[]
+    injectPage: boolean
+  }
 }
 
 interface ContentContext extends ModuleOptions {
@@ -204,7 +217,8 @@ export default defineNuxtModule<ModuleOptions>({
     csv: {},
     navigation: {
       fields: []
-    }
+    },
+    documentDriven: false
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -235,6 +249,7 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
     }
+
     // Tell Nuxt to ignore content dir for app build
     options.sources.forEach((source) => {
       if (typeof source === 'string') {
@@ -244,11 +259,15 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Add Content plugin
-    addPlugin(resolveRuntimeModule('./plugin'))
+    addPlugin(resolveRuntimeModule('./plugins/ws'))
 
     nuxt.hook('nitro:config', (nitroConfig) => {
-      // Add server handlers
+      // Init Nitro context
+      nitroConfig.prerender = nitroConfig.prerender || {}
+      nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
       nitroConfig.handlers = nitroConfig.handlers || []
+
+      // Add server handlers
       nitroConfig.handlers.push({
         method: 'get',
         route: `/api/${options.base}/query/:qid`,
@@ -277,6 +296,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
+      // @ts-ignore
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle
@@ -284,6 +304,7 @@ export default defineNuxtModule<ModuleOptions>({
         ]
       })
 
+      nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
 
       nitroConfig.virtual = nitroConfig.virtual || {}
@@ -300,6 +321,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Register composables
     addAutoImport([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
+      { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
     ])
@@ -357,6 +379,7 @@ export default defineNuxtModule<ModuleOptions>({
       addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
 
       nuxt.hook('nitro:config', (nitroConfig) => {
+        nitroConfig.handlers = nitroConfig.handlers || []
         nitroConfig.handlers.push({
           method: 'get',
           route: `/api/${options.base}/navigation/:qid`,
@@ -375,12 +398,72 @@ export default defineNuxtModule<ModuleOptions>({
       contentContext.transformers.push(resolveRuntimeModule('./server/transformers/shiki'))
 
       nuxt.hook('nitro:config', (nitroConfig) => {
+        nitroConfig.handlers = nitroConfig.handlers || []
         nitroConfig.handlers.push({
           method: 'post',
           route: `/api/${options.base}/highlight`,
           handler: resolveRuntimeModule('./server/api/highlight')
         })
       })
+    }
+
+    // Register document-driven
+    if (options.documentDriven) {
+      // Enable every feature by default
+      const defaultDocumentDrivenConfig = {
+        page: true,
+        navigation: true,
+        surround: true,
+        globals: {
+          theme: {
+            where: [
+              {
+                _id: 'content:_theme.yml'
+              }
+            ],
+            without: ['_']
+          }
+        },
+        layoutFallbacks: ['theme'],
+        injectPage: true
+      }
+
+      // If set to true, use defaults else merge defaults with user config
+      if (options.documentDriven === true) {
+        options.documentDriven = defaultDocumentDrivenConfig
+      } else {
+        options.documentDriven = {
+          ...defaultDocumentDrivenConfig,
+          ...options.documentDriven
+        }
+      }
+
+      // Support layout field by default
+      if (options.navigation) {
+        options.navigation.fields.push('layout')
+      }
+
+      addAutoImport([
+        { name: 'useDocumentDrivenState', as: 'useDocumentDrivenState', from: resolveRuntimeModule('./composables/documentDriven') },
+        { name: 'useDocumentDriven', as: 'useDocumentDriven', from: resolveRuntimeModule('./composables/documentDriven') }
+      ])
+
+      addPlugin(resolveRuntimeModule('./plugins/documentDriven'))
+
+      if (options.documentDriven.injectPage) {
+        nuxt.options.pages = true
+
+        nuxt.hook('pages:extend', (pages) => {
+          pages.unshift({
+            name: 'slug',
+            path: '/:slug(.*)*',
+            file: resolveRuntimeModule('./pages/document-driven.vue'),
+            children: []
+          })
+
+          console.log(pages)
+        })
+      }
     }
 
     // @ts-ignore
@@ -404,8 +487,11 @@ export default defineNuxtModule<ModuleOptions>({
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
-      wsUrl: ''
+      wsUrl: '',
+      // Document-driven configuration
+      documentDriven: options.documentDriven as ModuleOptions['documentDriven']
     })
+
     // Context will use in server
     nuxt.options.runtimeConfig.content = {
       cacheVersion: CACHE_VERSION,
