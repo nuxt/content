@@ -48,7 +48,7 @@ export default <Plugin<Array<RemarkMDCOptions>, Root, Root>> function ({ compone
     return async (tree: ComponentNode, { data }: { data: Record<string, any> }) => {
       const jobs: Promise<unknown>[] = []
       visit<ComponentNode, string[]>(tree, ['textComponent', 'leafComponent', 'containerComponent'], (node) => {
-        bindNode(node, data)
+        bindNode(node)
         const { instance: handler, options } = components.find(c => c.name === node.name) || {}
         if (handler) {
           jobs.push(handler(options)(node, data))
