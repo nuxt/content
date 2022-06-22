@@ -19,13 +19,14 @@ export default defineNuxtConfig({
   buildModules: [contentModule],
   content: {
     locales: ['en', 'fa'],
-    sources: {
-      'fa-ir': {
+    sources: [
+      {
+        name: 'fa-ir',
         prefix: '/fa',
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
       }
-    },
+    ],
     navigation: {
       fields: ['icon']
     },

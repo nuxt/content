@@ -90,7 +90,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
     }, {} as Record<string, MountOptions>)
   } else {
     storages = Object.entries(storages).reduce((mounts, [name, storage]) => {
-      mounts[key(name, storage.prefix)] = storage
+      mounts[key(storage.name || name, storage.prefix)] = storage
       return mounts
     }, {})
   }
@@ -103,6 +103,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
       base: resolve(nuxt.options.srcDir, 'content')
     }
   }
+console.log(storages);
 
   return storages
 }
