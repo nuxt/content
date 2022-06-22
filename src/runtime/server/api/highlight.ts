@@ -55,7 +55,12 @@ export default defineLazyEventHandler(async () => {
   const highlighter = await getHighlighter({
     theme: theme?.default || theme || 'dark-plus',
     langs: [
-      ...(preload || ['json', 'js', 'ts', 'css']),
+      ...(preload || []),
+      'diff',
+      'json',
+      'js',
+      'ts',
+      'css',
       'shell',
       'html',
       'md',
