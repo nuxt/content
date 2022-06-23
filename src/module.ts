@@ -459,6 +459,12 @@ export default defineNuxtModule<ModuleOptions>({
           })
         })
       }
+    } else {
+      // Noop useContent
+      addAutoImport([
+        { name: 'useContentDisabled', as: 'useContentState', from: resolveRuntimeModule('./composables/utils') },
+        { name: 'useContentDisabled', as: 'useContent', from: resolveRuntimeModule('./composables/utils') }
+      ])
     }
 
     // @ts-ignore
