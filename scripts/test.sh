@@ -13,7 +13,9 @@ done
 
 if [[ $ARG1 ]]
 then
-  (npx vitest run -t $ARG1)
+  echo "npx vitest run -t $ARG1"
+  (npx vitest run -t $ARG1.test)
 else
+  echo "npx vitest run"
   (npx vitest run)
 fi

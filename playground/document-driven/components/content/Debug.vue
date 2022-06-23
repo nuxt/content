@@ -1,22 +1,22 @@
 <template>
   <div>
     <h3 style="margin: 0 !important;">
-      useDocumentDriven().navigation
+      useContent().navigation
     </h3>
     <pre style="padding: 1rem; border-radius: 16px;">{{ navigation }}</pre>
 
     <h3 style="margin: 0 !important;">
-      useDocumentDriven().page
+      useContent().page
     </h3>
     <pre style="padding: 1rem; border-radius: 16px;">{{ page }}</pre>
 
     <h3 style="margin: 0 !important;">
-      useDocumentDriven().surround
+      useContent().surround
     </h3>
     <pre style="padding: 1rem; border-radius: 16px;">{{ surround }}</pre>
 
     <h3 style="margin: 0 !important;">
-      useDocumentDriven().globals
+      useContent().globals
     </h3>
     <pre style="padding: 1rem; border-radius: 16px;">{{ globals }}</pre>
 
@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { useDocumentDriven, useTheme } from '#imports'
+import { useContent, useTheme } from '#imports'
 
-const { globals, surround, page, navigation } = useDocumentDriven()
+const { globals, surround, page, navigation } = useContent()
 
 const theme = useTheme()
 </script>

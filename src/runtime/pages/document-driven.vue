@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, useDocumentDriven, useHead } from '#imports'
+import { computed, useContent, useHead } from '#imports'
 
-const { page } = useDocumentDriven()
+const { page } = useContent()
 
 const cover = computed(() => {
   const cover = page.value?.cover /* || theme.value?.cover */

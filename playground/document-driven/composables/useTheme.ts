@@ -1,7 +1,7 @@
-import { useDocumentDriven } from '#imports'
+import { useContent } from '#imports'
 
 export const useTheme = () => {
-  const { globals } = useDocumentDriven()
+  const { globals } = useContent()
 
   const theme = computed(() => globals.value?.theme)
 

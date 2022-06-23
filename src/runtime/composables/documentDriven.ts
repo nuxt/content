@@ -1,7 +1,7 @@
 import type { NavItem, ParsedContent } from '../types'
 import { computed, useState } from '#imports'
 
-export const useDocumentDrivenState = () => {
+export const useContentState = () => {
   /**
    * Current page complete data.
    */
@@ -32,8 +32,8 @@ export const useDocumentDrivenState = () => {
   }
 }
 
-export const useDocumentDriven = () => {
-  const { navigation, page, surround, globals } = useDocumentDrivenState()
+export const useContent = () => {
+  const { navigation, page, surround, globals } = useContentState()
 
   /**
    * Table of contents from `page`.

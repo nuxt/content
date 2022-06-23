@@ -3,7 +3,7 @@ import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue
 import { useRuntimeConfig, addRouteMiddleware } from '#app'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
-import { defineNuxtPlugin, queryContent, useContentHelpers, useDocumentDrivenState, fetchContentNavigation, useRoute } from '#imports'
+import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -40,7 +40,7 @@ export default defineNuxtPlugin((nuxt) => {
   }
 
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
-    const { navigation, page, globals, surround } = useDocumentDrivenState()
+    const { navigation, page, globals, surround } = useContentState()
 
     const promises: (() => Promise<any> | undefined)[] = []
 
@@ -49,7 +49,7 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.navigation) {
       const navigationQuery = () => {
-        const { navigation } = useDocumentDrivenState()
+        const { navigation } = useContentState()
 
         if (navigation.value && !force) { return navigation.value }
 
@@ -72,7 +72,7 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.globals) {
       const globalsQuery = () => {
-        const { globals } = useDocumentDrivenState()
+        const { globals } = useContentState()
 
         if (
           typeof moduleOptions.globals === 'object' && Array.isArray(moduleOptions.globals)
@@ -120,7 +120,7 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.page) {
       const pageQuery = () => {
-        const { page } = useDocumentDrivenState()
+        const { page } = useContentState()
 
         // Return same page as page is already loaded
         if (!force && page.value && page.value._path === to.path) {

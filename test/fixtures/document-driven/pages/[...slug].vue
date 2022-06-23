@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, useDocumentDriven, useHead, useTheme } from '#imports'
+import { computed, useContent, useHead, useTheme } from '#imports'
 
-const { page } = useDocumentDriven()
+const { page } = useContent()
 
 const theme = useTheme()
 
