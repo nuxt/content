@@ -1,9 +1,14 @@
 <script setup>
 import { ref, useAsyncData } from '#imports'
+const PARSE_SERVER = 'http://localhost:3000/api/parse'
 
-const PARSE_SERVER = 'https://mdc.nuxt.dev/api/parse'
+const INITIAL_CODE = `---
+title: MDC
+cover: https://nuxtjs.org/design-kit/colored-logo.svg
+---
+:img{:src="cover"}
 
-const INITIAL_CODE = `# MDC
+# {{ $doc.title }}
 
 MDC stands for _**M**ark**D**own **C**omponents_.
 
@@ -12,6 +17,23 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 ## Next steps
 - [Install Nuxt Content](/get-started)
 - [Explore the MDC syntax](/guide/writing/mdc)
+
+
+You are visiting document: **{{ $doc._id }}**.
+Current route is: **{{ $route.path }}**
+
+
+::alert
+---
+type: success
+---
+This is an alert for _**{{ type }}**_
+::
+
+::alert{type="danger"}
+This is an alert for _**{{ type }}**_
+::
+
 `
 const content = ref(INITIAL_CODE)
 

@@ -6,6 +6,7 @@
 
 import tokenizeSpan from './tokenize-span'
 import tokenizeAttribute from './tokenize-attribute'
+import tokenizeBinding from './tokenize-binding'
 import tokenizeInline from './tokenize-inline'
 import tokenizeContainer from './tokenize-container'
 import tokenizeContainerIndented from './tokenize-container-indented'
@@ -16,7 +17,7 @@ export default function micromarkComponentsExtension () {
     text: {
       [Codes.colon]: tokenizeInline,
       [Codes.openingSquareBracket]: [tokenizeSpan],
-      [Codes.openingCurlyBracket]: tokenizeAttribute
+      [Codes.openingCurlyBracket]: [tokenizeBinding, tokenizeAttribute]
     },
     flow: {
       [Codes.colon]: [tokenizeContainer]
