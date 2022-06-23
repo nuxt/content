@@ -1,5 +1,5 @@
 import type { NavItem, ParsedContent } from '../types'
-import { computed, useState, useRuntimeConfig } from '#imports'
+import { computed, useState } from '#imports'
 
 export const useContentState = () => {
   /**
