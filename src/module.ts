@@ -441,8 +441,8 @@ export default defineNuxtModule<ModuleOptions>({
       }
 
       addAutoImport([
-        { name: 'useContentState', as: 'useContentState', from: resolveRuntimeModule('./composables/documentDriven') },
-        { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/documentDriven') }
+        { name: 'useContentState', as: 'useContentState', from: resolveRuntimeModule('./composables/content') },
+        { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
 
       addPlugin(resolveRuntimeModule('./plugins/documentDriven'))
