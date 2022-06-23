@@ -11,7 +11,9 @@ export const useUnwrap = () => ({
 
 export const useContentDisabled = () => {
   // Console warnings
+  // eslint-disable-next-line no-console
   console.warn('useContent is only accessible when you are using `documentDriven` mode.')
+  // eslint-disable-next-line no-console
   console.warn('Learn more by visiting: https://content.nuxtjs.org/guide/writing/document-driven')
 
   // Break app
