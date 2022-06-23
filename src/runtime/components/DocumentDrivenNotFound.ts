@@ -5,6 +5,6 @@ import { defineComponent, h } from 'vue'
  */
 export default defineComponent({
   render () {
-    return h('div', 'We could not find that document!')
+    return h('div', 'Document not found')
   }
 })

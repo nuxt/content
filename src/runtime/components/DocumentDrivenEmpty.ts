@@ -14,8 +14,8 @@ export default defineComponent({
   },
   render ({ value }) {
     return h('div', undefined, [
-      h('p', 'That document is currently empty!'),
-      h('p', `You can add content to it by opening ${value._source}/${value._file} file.`)
+      h('p', 'Document is empty'),
+      h('p', `Add content to it by opening ${value._source}/${value._file} file.`)
     ])
   }
 })
