@@ -1,0 +1,15 @@
+{
+  "name": "example-hello-world",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "@nuxt/content": "npm:@nuxt/content-edge@latest",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
+    "nuxt": "npm:nuxt3@latest"
+  }
+}

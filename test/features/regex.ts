@@ -4,7 +4,7 @@ import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testRegex = () => {
-  describe('regex', () => {
+  describe('Regex queries', () => {
     test('Get cats with regex', async () => {
       const params = { where: { _path: /^\/cats/ } }
       const list = await $fetch(`/api/_content/query/${hash(params)}`, {

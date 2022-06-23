@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 export const testMDCComponent = () => {
-  describe('mdc-component', () => {
-    test('normal/binded props', async () => {
+  describe('MDC Components', () => {
+    test('Normal or binded props', async () => {
       const content = await $fetch('/_partial/mdc-props')
 
       // Normal Prop
@@ -17,7 +17,7 @@ export const testMDCComponent = () => {
       ].join('\n'))
     })
 
-    test('normal/binded props (inline component)', async () => {
+    test('Normal or binded props (inline component)', async () => {
       const content = await $fetch('/_partial/mdc-props-inline')
 
       // Normal Prop

@@ -3,7 +3,7 @@ import { $fetch } from '@nuxt/test-utils'
 import { visit } from 'unist-util-visit'
 
 export const testMarkdownParser = () => {
-  describe('parser:markdown', () => {
+  describe('Parser (.md)', () => {
     test('Index file', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',

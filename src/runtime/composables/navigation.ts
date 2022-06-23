@@ -12,6 +12,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilde
 
   const apiPath = withContentBase(params ? `/navigation/${hash(params)}` : '/navigation')
 
+  // Add `prefetch` to `<head>` in production
   if (!process.dev && process.server) {
     useHead({
       link: [
@@ -19,6 +20,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilde
       ]
     })
   }
+
   return $fetch<Array<NavItem>>(apiPath, {
     method: 'GET',
     responseType: 'json',

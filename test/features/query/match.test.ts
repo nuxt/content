@@ -13,7 +13,7 @@ describe('Match', () => {
     nested: { users: ['Mahatma', 'Steve', 'Woodrow'] }
   }
 
-  describe('string contains', () => {
+  describe('String contains', () => {
     test('$contains string', () => {
       expect(match(item, { name: { $contains: 'a' } })).toBe(true)
       expect(match(item, { 'nested.users.0': { $contains: 'Maha' } })).toBe(true)

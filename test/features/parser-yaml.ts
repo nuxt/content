@@ -2,7 +2,7 @@ import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
 
 export const testYamlParser = () => {
-  describe('parser:yaml', () => {
+  describe('Parser (.yml)', () => {
     test('key:value', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
