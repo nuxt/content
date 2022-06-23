@@ -3,7 +3,11 @@ import { ref, useAsyncData, shallowRef, computed, onMounted, watch } from '#impo
 import { parse } from '../../../src/runtime/markdown-parser'
 import { useShiki } from '../../editor/useShiki.ts'
 
-const INITIAL_CODE = `# MDC
+const INITIAL_CODE = `---
+title: MDC
+---
+
+# {{ $doc.title}}
 
 MDC stands for _**M**ark**D**own **C**omponents_.
 
@@ -49,6 +53,7 @@ const { data: doc, refresh } = await useAsyncData('playground', async () => {
       _draft: false,
       _type: 'markdown',
       updatedAt: new Date().toISOString(),
+      ...parsed.meta || {},
       ...parsed
     }
   } catch (e) {

@@ -15,7 +15,7 @@ const enter = {
   componentContainerDataSection: enterContainerDataSection,
   componentContainerAttributes: enterAttributes,
   componentContainerLabel: enterContainerLabel,
-
+  bindingContent: enterBindingContent,
   componentLeaf: enterLeaf,
   componentLeafAttributes: enterAttributes,
 
@@ -24,6 +24,7 @@ const enter = {
   componentTextAttributes: enterAttributes
 }
 const exit = {
+  bindingContent: exitBindingContent,
   componentContainerSectionTitle: exitContainerSectionTitle,
   listUnordered: conditionalExit,
   listOrdered: conditionalExit,
@@ -61,6 +62,21 @@ const exit = {
   componentTextAttributeValue: exitAttributeValue,
   componentTextAttributes: exitAttributes,
   componentTextName: exitName
+}
+
+// Bindings
+function enterBindingContent (token) {
+  this.enter({
+    type: 'textComponent',
+    name: 'binding',
+    attributes: {
+      value: this.sliceSerialize(token).trim()
+    }
+  }, token)
+}
+
+function exitBindingContent (token) {
+  this.exit(token)
 }
 
 function enterContainer (token: Token) {
