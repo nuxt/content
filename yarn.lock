@@ -4149,11 +4149,6 @@ jiti@^1.12.14, jiti@^1.12.9, jiti@^1.13.0, jiti@^1.14.0:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.14.0.tgz#5350fff532a4d891ca4bcd700c47c1f40e6ee326"
   integrity sha512-4IwstlaKQc9vCTC+qUXLM1hajy2ImiL9KnLvVYiaHOtS/v3wRjhLlGl121AmgDgx/O43uKmxownJghS5XMya2A==
 
-jiti@^1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.14.0.tgz#5350fff532a4d891ca4bcd700c47c1f40e6ee326"
-  integrity sha512-4IwstlaKQc9vCTC+qUXLM1hajy2ImiL9KnLvVYiaHOtS/v3wRjhLlGl121AmgDgx/O43uKmxownJghS5XMya2A==
-
 joycon@^3.0.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/joycon/-/joycon-3.1.1.tgz#bce8596d6ae808f8b68168f5fc69280996894f03"
@@ -7512,10 +7507,10 @@ unstorage@^0.5.0:
     ufo "^0.8.4"
     ws "^8.8.0"
 
-unstorage@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.5.1.tgz#0c5a737b96aab28e9e45e8eb3cc286940dc00fa3"
-  integrity sha512-K6FGEeZrECiVieo5hysFXCBd6HKmu1RFQczbf5j0DcbxQgK66zeJCL+cc2F2zgqhGuW5K52nI0F5HFd8zuuZtA==
+unstorage@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.5.2.tgz#b7d0dc39a73bf1ccb1a7d39caf96e5c437f2988f"
+  integrity sha512-TgSkgTsHNWkXfFHA6zKmjSqHPn8uvpTj0SOgpLKyR15SWakCqnMUo3Yl3lQ5NBP61chJtCKAHwTB/27YvsZCjw==
   dependencies:
     anymatch "^3.1.2"
     chokidar "^3.5.3"
