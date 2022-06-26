@@ -21,6 +21,7 @@ examples/*/**/yarn.lock
 
 # Generated dirs
 dist
+web-types
 .nuxt
 .nuxt-*
 .output

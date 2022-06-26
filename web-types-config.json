@@ -1,0 +1,3 @@
+{
+  "components": "src/runtime/components/*.ts"
+}
