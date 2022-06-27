@@ -17,6 +17,7 @@ import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
+import { withTrailingSlash } from 'ufo'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
@@ -285,8 +286,12 @@ export default defineNuxtModule<ModuleOptions>({
 
       // Tell Nuxt to ignore content dir for app build
       for (const source of Object.values(sources)) {
-        if (source.driver === 'fs') {
-          nuxt.options.ignore.push(join(source.base, '**'))
+        // Only targets directories inside the srcDir
+        if (source.driver === 'fs' && source.base.includes(nuxt.options.srcDir)) {
+          nuxt.options.ignore.push(
+            // Remove `srcDir` from the path
+            join(source.base, '**/*').replace(withTrailingSlash(nuxt.options.srcDir), '')
+          )
         }
       }
 
