@@ -157,10 +157,12 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(to.path)
+          .findSurround(
+            withoutTrailingSlash(to.path)
+          )
           .catch(() => {
             // eslint-disable-next-line no-console
-            console.log(`Could not find surrounding pages for: ${to.path}`)
+            // console.log(`Could not find surrounding pages for: ${to.path}`)
           })
       }
 
