@@ -2,6 +2,7 @@ import { createError, defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
+import { logger } from '../../../utils'
 import { useRuntimeConfig } from '#imports'
 
 /**
@@ -87,10 +88,12 @@ export default defineLazyEventHandler(async () => {
 
     // Load supported language on-demand
     if (!highlighter.getLoadedLanguages().includes(lang)) {
-      // eslint-disable-next-line no-console
-      console.warn(`[Nuxt] [Content] Language "${lang}" is not loaded Shiki. Falling back to plain code.`)
-      // eslint-disable-next-line no-console
-      console.warn(`[Nuxt] [Content] Please make sure you add "${lang}" to the 'preload' list in your Nuxt config. See https://content.nuxtjs.org/api/configuration#highlight`)
+      let message = 'Content Highlighter Error\n\n'
+      message = message + `Language "${lang}" is not loaded Shiki. Falling back to plain code.\n\n`
+      message = message + `Please make sure you add "${lang}" to the 'preload' list in your Nuxt config.\n\n`
+      message = message + 'See: https://content.nuxtjs.org/api/configuration#highlight'
+      logger.warn(message)
+
       // TODO: Enable autoloading of language when upstream Shiki supports it\
       // See: https://github.com/nuxt/content/issues/1225#issuecomment-1148786924
       // await highlighter.loadLanguage(lang)
