@@ -4,7 +4,7 @@ import { useRuntimeConfig, addRouteMiddleware } from '#app'
 import { withoutTrailingSlash } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
-import { defineNuxtPlugin, queryContent, useContentHelpers, useContentHead, useContentState, fetchContentNavigation, useRoute } from '#imports'
+import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -42,6 +42,9 @@ export default defineNuxtPlugin((nuxt) => {
 
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
     const { navigation, page, globals, surround } = useContentState()
+
+    // Normalize route path
+    const _path = withoutTrailingSlash(to.path)
 
     const promises: (() => Promise<any> | any)[] = []
 
@@ -124,12 +127,12 @@ export default defineNuxtPlugin((nuxt) => {
         const { page } = useContentState()
 
         // Return same page as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return page.value
         }
 
         return queryContent()
-          .where({ _path: withoutTrailingSlash(to.path) })
+          .where({ _path })
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
@@ -146,7 +149,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (moduleOptions.surround) {
       const surroundQuery = () => {
         // Return same surround as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return surround.value
         }
 
@@ -157,9 +160,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(
-            withoutTrailingSlash(to.path)
-          )
+          .findSurround(_path)
           .catch(() => {
             // eslint-disable-next-line no-console
             // console.log(`Could not find surrounding pages for: ${to.path}`)
