@@ -1,6 +1,7 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
 import { useRuntimeConfig, addRouteMiddleware } from '#app'
+import { withoutTrailingSlash } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
 import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
@@ -60,7 +61,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
           .catch((_) => {
             // eslint-disable-next-line no-console
-            console.log('Could not fetch navigation!')
+            // console.log('Could not fetch navigation!')
           })
       }
 
@@ -94,7 +95,7 @@ export default defineNuxtPlugin((nuxt) => {
 
               return queryContent(query)[type]().catch(() => {
                 // eslint-disable-next-line no-console
-                console.log(`Could not find globals key: ${key}`)
+                // console.log(`Could not find globals key: ${key}`)
               })
             }
           )
@@ -128,11 +129,11 @@ export default defineNuxtPlugin((nuxt) => {
         }
 
         return queryContent()
-          .where({ _path: to.path })
+          .where({ _path: withoutTrailingSlash(to.path) })
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
-            console.log(`Could not find page: ${to.path}`)
+            // console.log(`Could not find page: ${to.path}`)
           })
       }
 
@@ -156,10 +157,12 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(to.path)
+          .findSurround(
+            withoutTrailingSlash(to.path)
+          )
           .catch(() => {
             // eslint-disable-next-line no-console
-            console.log(`Could not find surrounding pages for: ${to.path}`)
+            // console.log(`Could not find surrounding pages for: ${to.path}`)
           })
       }
 
@@ -174,20 +177,14 @@ export default defineNuxtPlugin((nuxt) => {
     ]) => {
       if (_navigation) {
         navigation.value = _navigation
-      } else {
-        navigation.value = []
       }
 
       if (_globals) {
         globals.value = _globals
-      } else {
-        globals.value = {}
       }
 
       if (_surround) {
         surround.value = _surround
-      } else {
-        surround.value = []
       }
 
       if (_page) {
@@ -196,8 +193,6 @@ export default defineNuxtPlugin((nuxt) => {
 
         // Update values
         page.value = _page
-      } else {
-        page.value = undefined
       }
 
       // Find used layout
