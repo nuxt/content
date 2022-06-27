@@ -9,6 +9,7 @@ import type { ModuleOptions, MountOptions } from './module'
 import type { MarkdownPlugin } from './runtime/types'
 
 export const logger = useLogger('@nuxt/content')
+
 /**
  * Internal version that represents cache format.
  * This is used to invalidate cache when the format changes.
