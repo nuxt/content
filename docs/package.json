@@ -8,9 +8,6 @@
     "preview": "nuxi preview",
     "generate": "nuxi generate"
   },
-  "resolutions": {
-    "@nuxt/content": "file:../"
-  },
   "devDependencies": {
     "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
     "@docus/github": "npm:@docus/github-edge@latest",
