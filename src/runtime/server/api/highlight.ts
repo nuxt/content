@@ -42,8 +42,8 @@ const resolveBody = (body: Partial<HighlightParams>) => {
     // Remove trailing carriage returns
     code: body.code.replace(/\n+$/, ''),
     // Resolve lang & theme (i.e check if shiki supports them)
-    lang: resolveLang(body.lang),
-    theme: resolveTheme(body.theme)
+    lang: resolveLang(body.lang || ''),
+    theme: resolveTheme(body.theme || '')
   }
 }
 
@@ -87,7 +87,14 @@ export default defineLazyEventHandler(async () => {
 
     // Load supported language on-demand
     if (!highlighter.getLoadedLanguages().includes(lang)) {
-      await highlighter.loadLanguage(lang)
+      // eslint-disable-next-line no-console
+      console.warn(`[Nuxt] [Content] Language "${lang}" is not loaded Shiki. Falling back to plain code.`)
+      // eslint-disable-next-line no-console
+      console.warn(`[Nuxt] [Content] Please make sure you add "${lang}" to the 'preload' list in your Nuxt config. See https://content.nuxtjs.org/api/configuration#highlight`)
+      // TODO: Enable autoloading of language when upstream Shiki supports it\
+      // See: https://github.com/nuxt/content/issues/1225#issuecomment-1148786924
+      // await highlighter.loadLanguage(lang)
+      return [[{ content: code }]]
     }
 
     // Load supported theme on-demand
@@ -119,15 +126,20 @@ export default defineLazyEventHandler(async () => {
           key: color.key,
           tokens: color.tokens[line]
         })
-      }, coloredTokens[0].tokens[line])
+      }, coloredTokens[0].tokens[line] as HighlightThemedToken[])
     }
 
     return highlightedCode
   }
 })
 
-function mergeLines (line1, line2) {
-  const mergedTokens = []
+interface HighlightThemedTokenLine {
+  key: string
+  tokens: HighlightThemedToken[]
+}
+
+function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedTokenLine) {
+  const mergedTokens: HighlightThemedToken[] = []
   const getColors = (h, i) => typeof h.tokens[i].color === 'string' ? { [h.key]: h.tokens[i].color } : h.tokens[i].color
 
   const [big, small] = line1.tokens.length > line2.tokens.length ? [line1, line2] : [line2, line1]
