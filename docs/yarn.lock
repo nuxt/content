@@ -451,10 +451,8 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.1-27601186.8c7a185"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.1-27601186.8c7a185.tgz#7e9ee06fd93043860bf9b7e6f7686606994f084c"
-  integrity sha512-5CuHDupLFIBs0BlvPtHrkE99SiJVjYDX514DgaJizSs4gmz+iekyyw9f0GBbI+Os+IB+zZ64VebbxsB1n/aoXw==
+"@nuxt/content@file:../", "@nuxt/content@npm:@nuxt/content-edge@latest":
+  version "2.0.1"
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.4"
     csvtojson "^2.0.10"
