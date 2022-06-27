@@ -14,9 +14,12 @@ export default defineNuxtPlugin((nuxt) => {
   /**
    * Finds a layout value from a cascade of objects.
    */
-  const findLayout = (page: ParsedContent, navigation: NavItem[], globals: Record<string, any>) => {
+  const findLayout = (to: RouteLocationNormalized, page: ParsedContent, navigation: NavItem[], globals: Record<string, any>) => {
     // Page `layout` key has priority
     if (page && page?.layout) { return page.layout }
+
+    // Resolve key from .vue page meta
+    if (to.matched.length && to.matched[0].meta?.layout) { return to.matched[0].meta.layout }
 
     // Resolve key from navigation
     if (navigation && page) {
@@ -197,7 +200,7 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       // Find used layout
-      const layoutName = findLayout(_page, _navigation, _globals)
+      const layoutName = findLayout(to, _page, _navigation, _globals)
 
       // Prefetch layout component
       const layout = layouts[layoutName]
