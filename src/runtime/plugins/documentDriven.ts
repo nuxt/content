@@ -1,6 +1,7 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
 import { useRuntimeConfig, addRouteMiddleware } from '#app'
+import { withoutTrailingSlash } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
 import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
@@ -42,7 +43,10 @@ export default defineNuxtPlugin((nuxt) => {
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
     const { navigation, page, globals, surround } = useContentState()
 
-    const promises: (() => Promise<any> | undefined)[] = []
+    // Normalize route path
+    const _path = withoutTrailingSlash(to.path)
+
+    const promises: (() => Promise<any> | any)[] = []
 
     /**
      * `navigation`
@@ -60,7 +64,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
           .catch((_) => {
             // eslint-disable-next-line no-console
-            console.log('Could not fetch navigation!')
+            // console.log('Could not fetch navigation!')
           })
       }
 
@@ -94,7 +98,7 @@ export default defineNuxtPlugin((nuxt) => {
 
               return queryContent(query)[type]().catch(() => {
                 // eslint-disable-next-line no-console
-                console.log(`Could not find globals key: ${key}`)
+                // console.log(`Could not find globals key: ${key}`)
               })
             }
           )
@@ -123,16 +127,16 @@ export default defineNuxtPlugin((nuxt) => {
         const { page } = useContentState()
 
         // Return same page as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return page.value
         }
 
         return queryContent()
-          .where({ _path: to.path })
+          .where({ _path })
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
-            console.log(`Could not find page: ${to.path}`)
+            // console.log(`Could not find page: ${to.path}`)
           })
       }
 
@@ -145,7 +149,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (moduleOptions.surround) {
       const surroundQuery = () => {
         // Return same surround as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return surround.value
         }
 
@@ -156,10 +160,10 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(to.path)
+          .findSurround(_path)
           .catch(() => {
             // eslint-disable-next-line no-console
-            console.log(`Could not find surrounding pages for: ${to.path}`)
+            // console.log(`Could not find surrounding pages for: ${to.path}`)
           })
       }
 
@@ -174,20 +178,14 @@ export default defineNuxtPlugin((nuxt) => {
     ]) => {
       if (_navigation) {
         navigation.value = _navigation
-      } else {
-        navigation.value = []
       }
 
       if (_globals) {
         globals.value = _globals
-      } else {
-        globals.value = {}
       }
 
       if (_surround) {
         surround.value = _surround
-      } else {
-        surround.value = []
       }
 
       if (_page) {
@@ -196,8 +194,6 @@ export default defineNuxtPlugin((nuxt) => {
 
         // Update values
         page.value = _page
-      } else {
-        page.value = undefined
       }
 
       // Find used layout
