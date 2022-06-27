@@ -3,7 +3,7 @@ import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue
 import { useRuntimeConfig, addRouteMiddleware } from '#app'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
-import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
+import { defineNuxtPlugin, queryContent, useContentHelpers, useContentHead, useContentState, fetchContentNavigation, useRoute } from '#imports'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -42,7 +42,7 @@ export default defineNuxtPlugin((nuxt) => {
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
     const { navigation, page, globals, surround } = useContentState()
 
-    const promises: (() => Promise<any> | undefined)[] = []
+    const promises: (() => Promise<any> | any)[] = []
 
     /**
      * `navigation`
