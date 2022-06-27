@@ -1,7 +1,8 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
+import { withoutTrailingSlash } from 'ufo'
 // @ts-ignore
-import { useRuntimeConfig, addRouteMiddleware } from '#app'
 import { NavItem, ParsedContent } from '../types'
+import { useRuntimeConfig, addRouteMiddleware } from '#app'
 // @ts-ignore
 import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
 // @ts-ignore
@@ -128,7 +129,7 @@ export default defineNuxtPlugin((nuxt) => {
         }
 
         return queryContent()
-          .where({ _path: to.path })
+          .where({ _path: withoutTrailingSlash(to.path) })
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
@@ -156,7 +157,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(to.path)
+          .findSurround(withoutTrailingSlash(to.path))
           .catch(() => {
             // eslint-disable-next-line no-console
             console.log(`Could not find surrounding pages for: ${to.path}`)
