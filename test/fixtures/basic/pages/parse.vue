@@ -12,7 +12,7 @@ const { data } = await useAsyncData(content, async () => {
     cors: true,
     body: {
       id: 'content:index.md',
-      content
+      content: decodeURIComponent(content)
     }
   })
 })

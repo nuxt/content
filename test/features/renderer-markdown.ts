@@ -40,7 +40,7 @@ export const testMarkdownRenderer = () => {
     test('bindings', async () => {
       const rendered = await $fetch('/parse', {
         params: {
-          content
+          content: encodeURIComponent(content)
         }
       })
 
