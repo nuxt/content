@@ -5,8 +5,9 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/ui'
   ],
-  components: [{
-    path: '~/components',
-    global: true
-  }]
+  content: {
+    highlight: {
+      theme: 'one-dark-pro'
+    }
+  }
 })
