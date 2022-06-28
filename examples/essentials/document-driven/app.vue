@@ -1,5 +1,7 @@
 <template>
   <NuxtExampleLayout example="document-driven" repo="nuxt/content">
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage class="prose text-left" />
+    </NuxtLayout>
   </NuxtExampleLayout>
 </template>
