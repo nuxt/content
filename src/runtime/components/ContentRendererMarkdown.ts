@@ -331,7 +331,7 @@ function getSlotName (node: MarkdownNode) {
  * Create a factory function if there is a node in the list
  */
 function createSlotFunction (nodes: Array<VNode | string>) {
-  return (nodes.length ? () => nodes : undefined)
+  return (nodes.length ? () => mergeTextNodes(nodes as VNode[]) : undefined)
 }
 
 /**
@@ -346,4 +346,20 @@ function isDefaultTemplate (node: MarkdownNode) {
  */
 function isTemplate (node: MarkdownNode) {
   return node.tag === 'template'
+}
+
+/**
+ * Merge consequent Text nodes into single node
+ */
+function mergeTextNodes (nodes: Array<VNode>) {
+  const mergedNodes: Array<VNode> = []
+  for (const node of nodes) {
+    const previousNode = mergedNodes[mergedNodes.length - 1]
+    if (node.type === Text && previousNode?.type === Text) {
+      previousNode.children = (previousNode.children as string) + node.children
+    } else {
+      mergedNodes.push(node)
+    }
+  }
+  return mergedNodes
 }
