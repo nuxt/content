@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     {
       global: true,
       path: resolveThemeDir('./components')
+    },
+    {
+      global: true,
+      path: resolveThemeDir('./components/content')
     }
   ],
   modules: [contentModule, '@nuxthq/admin'],

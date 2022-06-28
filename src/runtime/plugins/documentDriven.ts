@@ -52,6 +52,7 @@ export default defineNuxtPlugin((nuxt) => {
     const promises: (() => Promise<any> | any)[] = []
 
     /**
+     *
      * `navigation`
      */
     if (moduleOptions.navigation) {

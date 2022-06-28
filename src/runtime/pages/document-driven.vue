@@ -13,7 +13,6 @@ useContentHead(page)
         <DocumentDrivenEmpty :value="value" />
       </template>
     </ContentRenderer>
-
     <DocumentDrivenNotFound v-else />
   </div>
 </template>

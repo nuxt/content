@@ -1,4 +1,4 @@
-import { h, resolveComponent, Text, defineComponent, toRefs } from 'vue'
+import { h, resolveComponent, Text, defineComponent } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
@@ -46,19 +46,13 @@ export default defineComponent({
       default: 'div'
     }
   },
-  setup (props) {
+  setup () {
     const { content: { tags = {} } } = useRuntimeConfig().public
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { tag: _t, value: _d, ...contentProps } = toRefs(props)
-
-    return {
-      tags,
-      contentProps
-    }
+    return { tags }
   },
   render (ctx) {
-    const { tags, tag, value, contentProps } = ctx
+    const { tags, tag, value } = ctx
 
     if (!value) {
       return null
@@ -66,7 +60,7 @@ export default defineComponent({
 
     // Get body from value
     let body = (value.body || value) as MarkdownNode
-    if (this.excerpt && value.excerpt) {
+    if (ctx.excerpt && value.excerpt) {
       body = value.excerpt
     }
     const meta: ParsedContentMeta = {
@@ -92,7 +86,6 @@ export default defineComponent({
     return h(
         component as any,
         {
-          ...contentProps,
           ...meta.component?.props,
           ...this.$attrs
         },

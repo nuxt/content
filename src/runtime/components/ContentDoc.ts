@@ -6,6 +6,7 @@ import ContentQuery from './ContentQuery'
 import { useRoute, useContentHead } from '#imports'
 
 export default defineComponent({
+  name: 'ContentDoc',
   props: {
     /**
      * Renderer props

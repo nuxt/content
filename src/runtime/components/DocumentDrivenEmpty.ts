@@ -6,6 +6,7 @@ import { ParsedContent } from '../types'
  * Used in `src/runtime/pages/document-driven.vue`
  */
 export default defineComponent({
+  name: 'DocumentDrivenEmpty',
   props: {
     value: {
       type: Object as PropType<ParsedContent>,
