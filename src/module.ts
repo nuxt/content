@@ -417,16 +417,7 @@ export default defineNuxtModule<ModuleOptions>({
         page: true,
         navigation: true,
         surround: true,
-        globals: {
-          theme: {
-            where: [
-              {
-                _id: 'content:_theme.yml'
-              }
-            ],
-            without: ['_']
-          }
-        },
+        globals: {},
         layoutFallbacks: ['theme'],
         injectPage: true
       }
