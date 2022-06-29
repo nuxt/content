@@ -10,6 +10,8 @@ import layouts from '#build/layouts'
 
 export default defineNuxtPlugin((nuxt) => {
   const { documentDriven: moduleOptions } = useRuntimeConfig()?.public?.content
+  const pagesCache = new Map<string, ParsedContent>()
+  const surroundCache = new Map<string, ParsedContent>()
 
   /**
    * Finds a layout value from a cascade of objects.
@@ -134,6 +136,9 @@ export default defineNuxtPlugin((nuxt) => {
         if (!force && page.value && page.value._path === _path) {
           return page.value
         }
+        if (!force && process.client && pagesCache.has(_path)) {
+          return pagesCache.get(_path)
+        }
 
         return queryContent()
           .where({ _path })
@@ -155,6 +160,9 @@ export default defineNuxtPlugin((nuxt) => {
         // Return same surround as page is already loaded
         if (!force && page.value && page.value._path === _path) {
           return surround.value
+        }
+        if (!force && process.client && surroundCache.has(_path)) {
+          return surroundCache.get(_path)
         }
 
         return queryContent()
@@ -180,6 +188,13 @@ export default defineNuxtPlugin((nuxt) => {
       _page,
       _surround
     ]) => {
+      if (_navigation) {
+        navigation.value = _navigation
+      }
+
+      if (_globals) {
+        globals.value = _globals
+      }
       // Find used layout
       const layoutName = findLayout(to, _page, _navigation, _globals)
 
@@ -192,24 +207,18 @@ export default defineNuxtPlugin((nuxt) => {
       // Apply layout
       to.meta.layout = layoutName
 
-      if (_navigation) {
-        navigation.value = _navigation
-      }
-
-      if (_globals) {
-        globals.value = _globals
-      }
-
-      if (_surround) {
-        surround.value = _surround
-      }
-
       // Use `redirect` key to redirect to another page
       if (_page?.redirect) { return _page?.redirect }
 
       if (_page) {
         // Update values
         page.value = _page
+        process.client && pagesCache.set(_path, _page)
+      }
+
+      if (_surround) {
+        surround.value = _surround
+        process.client && surroundCache.set(_path, _surround)
       }
     })
   }
