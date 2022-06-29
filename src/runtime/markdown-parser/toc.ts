@@ -3,7 +3,7 @@ import { flattenNode, flattenNodeText } from './utils/ast'
 
 const TOC_TAGS = ['h2', 'h3', 'h4', 'h5', 'h6']
 
-const TOC_TAGS_DEPTH = ['h2', 'h3', 'h4'].reduce((tags: any, tag: string) => {
+const TOC_TAGS_DEPTH = TOC_TAGS.reduce((tags: any, tag: string) => {
   tags[tag] = Number(tag.charAt(tag.length - 1))
   return tags
 }, {})

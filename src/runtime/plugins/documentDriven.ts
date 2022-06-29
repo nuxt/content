@@ -14,9 +14,12 @@ export default defineNuxtPlugin((nuxt) => {
   /**
    * Finds a layout value from a cascade of objects.
    */
-  const findLayout = (page: ParsedContent, navigation: NavItem[], globals: Record<string, any>) => {
+  const findLayout = (to: RouteLocationNormalized, page: ParsedContent, navigation: NavItem[], globals: Record<string, any>) => {
     // Page `layout` key has priority
     if (page && page?.layout) { return page.layout }
+
+    // Resolve key from .vue page meta
+    if (to.matched.length && to.matched[0].meta?.layout) { return to.matched[0].meta.layout }
 
     // Resolve key from navigation
     if (navigation && page) {
@@ -43,7 +46,10 @@ export default defineNuxtPlugin((nuxt) => {
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
     const { navigation, page, globals, surround } = useContentState()
 
-    const promises: (() => Promise<any> | undefined)[] = []
+    // Normalize route path
+    const _path = withoutTrailingSlash(to.path)
+
+    const promises: (() => Promise<any> | any)[] = []
 
     /**
      * `navigation`
@@ -124,12 +130,12 @@ export default defineNuxtPlugin((nuxt) => {
         const { page } = useContentState()
 
         // Return same page as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return page.value
         }
 
         return queryContent()
-          .where({ _path: withoutTrailingSlash(to.path) })
+          .where({ _path })
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
@@ -146,7 +152,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (moduleOptions.surround) {
       const surroundQuery = () => {
         // Return same surround as page is already loaded
-        if (!force && page.value && page.value._path === to.path) {
+        if (!force && page.value && page.value._path === _path) {
           return surround.value
         }
 
@@ -157,9 +163,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(
-            withoutTrailingSlash(to.path)
-          )
+          .findSurround(_path)
           .catch(() => {
             // eslint-disable-next-line no-console
             // console.log(`Could not find surrounding pages for: ${to.path}`)
@@ -196,7 +200,7 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       // Find used layout
-      const layoutName = findLayout(_page, _navigation, _globals)
+      const layoutName = findLayout(to, _page, _navigation, _globals)
 
       // Prefetch layout component
       const layout = layouts[layoutName]

@@ -1,3 +1,3 @@
 <template>
-  <ContentDoc path="/head" />
+  <ContentDoc path="/head" :head="false" />
 </template>
