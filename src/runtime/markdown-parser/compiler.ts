@@ -24,9 +24,9 @@ export default function (this: any, _options: MarkdownOptions) {
 
     /**
      * If Current Element is p and Its Only Child is img then
-     * unwrapping img from it to avoid unwated p tags around img tag.
+     * unwrapping img from it to avoid unwated p tags around img
      */
-    if(node.type === 'element' && node.tagName === 'p' && node.children.length === 1 && node.children[0].tagName === 'img') {
+    if(node.type === 'element' && node.tagName === 'p' && node.children?.length === 1 && node.children[0].tagName === 'img') {
       node = parseAsJSON(node.children[0])
       return node as MarkdownNode;
     }
