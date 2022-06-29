@@ -42,8 +42,13 @@ export default defineNuxtConfig({
       preload: ['xml']
     }
   },
-  generate: {
-    routes: []
+  nitro: {
+    prerender: {
+      routes: [
+        '/',
+        '/blog/announcing-v2'
+      ]
+    }
   },
   modules: ['@nuxthq/admin', '@docus/github', 'vue-plausible'],
   alias,
