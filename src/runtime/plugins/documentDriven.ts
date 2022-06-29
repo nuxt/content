@@ -180,6 +180,18 @@ export default defineNuxtPlugin((nuxt) => {
       _page,
       _surround
     ]) => {
+      // Find used layout
+      const layoutName = findLayout(to, _page, _navigation, _globals)
+
+      // Prefetch layout component
+      const layout = layouts[layoutName]
+
+      if (layout && layout?.__asyncLoader && !layout.__asyncResolved) {
+        await layout.__asyncLoader()
+      }
+      // Apply layout
+      to.meta.layout = layoutName
+
       if (_navigation) {
         navigation.value = _navigation
       }
@@ -192,25 +204,13 @@ export default defineNuxtPlugin((nuxt) => {
         surround.value = _surround
       }
 
-      if (_page) {
-        // Use `redirect` key to redirect to another page
-        if (_page?.redirect) { return _page?.redirect }
+      // Use `redirect` key to redirect to another page
+      if (_page?.redirect) { return _page?.redirect }
 
+      if (_page) {
         // Update values
         page.value = _page
       }
-
-      // Find used layout
-      const layoutName = findLayout(to, _page, _navigation, _globals)
-
-      // Prefetch layout component
-      const layout = layouts[layoutName]
-      if (layout && layout?.__asyncLoader && !layout.__asyncResolved) {
-        await layout.__asyncLoader()
-      }
-
-      // Apply layout
-      to.meta.layout = layoutName
     })
   }
 
