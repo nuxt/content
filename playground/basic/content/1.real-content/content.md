@@ -46,7 +46,7 @@ const { data } = await useAsyncData(`doc-${route.path}`, () => queryContent(rout
 </template>
 ```
 
-### `<MarkdownRenderer>`
+### `<ContentRendererMarkdown>`
 
 > This component is used by `<ContentRenderer>` under the hood.
 
@@ -54,7 +54,7 @@ Render a markdown content.
 
 ```vue
 <template>
-  <MarkdownRenderer :value="data" />
+  <ContentRendererMarkdown :value="data" />
 </template>
 ```
 

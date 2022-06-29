@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MarkdownRenderer :value="data" />
+    <ContentRendererMarkdown :value="data" />
   </div>
 </template>
 
@@ -12,7 +12,7 @@ const { data } = await useAsyncData(content, async () => {
     cors: true,
     body: {
       id: 'content:index.md',
-      content
+      content: decodeURIComponent(content)
     }
   })
 })
