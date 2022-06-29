@@ -46,8 +46,15 @@ export default defineComponent({
       default: 'div'
     }
   },
-  setup () {
+  async setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
+
+    await resolveContentComponents(props.value.body, {
+      tags: {
+        ...tags,
+        ...props.value?.tags || {}
+      }
+    })
 
     return { tags }
   },
@@ -362,4 +369,29 @@ function mergeTextNodes (nodes: Array<VNode>) {
     }
   }
   return mergedNodes
+}
+
+async function resolveContentComponents (body, meta) {
+  const components = Array.from(new Set(loadComponents(body, meta)))
+  await Promise.all(components.map(async (c) => {
+    const resolvedComponent = resolveComponent(c) as any
+    if (resolvedComponent?.__asyncLoader && !resolvedComponent.__asyncResolved) {
+      await resolvedComponent.__asyncLoader()
+    }
+  }))
+
+  function loadComponents (node, documentMeta) {
+    if (node.type === 'text' || node.tag === 'binding') {
+      return []
+    }
+    const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[node.tag!]) || node.tag!
+    const components: string[] = []
+    if (node.type !== 'root' && !htmlTags.includes(renderTag as any)) {
+      components.push(renderTag)
+    }
+    for (const child of (node.children || [])) {
+      components.push(...loadComponents(child, documentMeta))
+    }
+    return components
+  }
 }
