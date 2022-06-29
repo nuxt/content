@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MarkdownRenderer :value="data" />
+    <ContentRendererMarkdown :value="data" />
   </div>
 </template>
 
