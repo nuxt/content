@@ -7,7 +7,7 @@ useContentHead(page)
 </script>
 
 <template>
-  <div class="document-driven-content">
+  <div class="document-driven-page">
     <ContentRenderer v-if="page" :key="page._id" :value="page">
       <template #empty="{ value }">
         <DocumentDrivenEmpty :value="value" />
@@ -16,9 +16,3 @@ useContentHead(page)
     <DocumentDrivenNotFound v-else />
   </div>
 </template>
-
-<style>
-.document-driven-content {
-  padding: 1rem;
-}
-</style>
