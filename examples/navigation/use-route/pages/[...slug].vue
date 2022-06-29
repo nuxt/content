@@ -7,7 +7,7 @@ const { data } = await useAsyncData(`content-${path}`, () => {
 </script>
 
 <template>
-  <main>
+  <main class="prose text-left">
     <ContentRenderer v-if="data" :value="data" />
   </main>
 </template>
