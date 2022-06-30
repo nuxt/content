@@ -4,6 +4,7 @@ import type { QueryBuilderParams } from '../types'
 import ContentQuery from './ContentQuery'
 
 export default defineComponent({
+  name: 'ContentList',
   props: {
     /**
      * Query props

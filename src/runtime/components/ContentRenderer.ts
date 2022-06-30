@@ -1,7 +1,8 @@
 import { defineComponent, watch, h, useSlots } from 'vue'
-import MarkdownRenderer from './MarkdownRenderer'
+import ContentRendererMarkdown from './ContentRendererMarkdown'
 
 export default defineComponent({
+  name: 'ContentRenderer',
   props: {
     /**
      * The document to render.
@@ -58,10 +59,10 @@ export default defineComponent({
 
     const { value, excerpt, tag } = ctx
 
-    // Use built-in MarkdownRenderer
+    // Use built-in ContentRendererMarkdown
     if (value && value?._type === 'markdown' && value?.body?.children?.length) {
       return h(
-        MarkdownRenderer,
+        ContentRendererMarkdown,
         {
           value,
           excerpt,

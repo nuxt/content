@@ -1,11 +1,12 @@
 
-import { PropType, defineComponent, h, useSlots, nextTick } from 'vue'
+import { PropType, defineComponent, h, useSlots } from 'vue'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
 import ContentQuery from './ContentQuery'
-import { useRoute, useHead } from '#imports'
+import { useRoute, useContentHead } from '#imports'
 
 export default defineComponent({
+  name: 'ContentDoc',
   props: {
     /**
      * Renderer props
@@ -51,6 +52,15 @@ export default defineComponent({
       type: Object as PropType<QueryBuilderParams>,
       required: false,
       default: undefined
+    },
+
+    /**
+     * Whether or not to map the document data to the `head` property.
+     */
+    head: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
 
@@ -65,35 +75,12 @@ export default defineComponent({
   render (ctx) {
     const slots = useSlots()
 
-    const { tag, excerpt, path, query } = ctx
+    const { tag, excerpt, path, query, head } = ctx
 
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = Object.assign(query || {}, { path, find: 'one' })
 
     const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentDoc>', slot, data }, null, 2))
-
-    const addHead = (doc: any) => {
-      if (path !== useRoute().path) { return }
-      const head = Object.assign({}, doc.head)
-      head.title = head.title || doc.title
-      head.meta = head.meta || []
-      const description = head.description || doc.description
-      // Shortcut for head.description
-      if (description && head.meta.filter(m => m.name === 'description').length === 0) {
-        head.meta.push({
-          name: 'description',
-          content: description
-        })
-      }
-      // Shortcut for head.image to og:image in meta
-      if (head.image && head.meta.filter(m => m.property === 'og:image').length === 0) {
-        head.meta.push({
-          property: 'og:image',
-          content: head.image
-        })
-      }
-      if (process.client) { nextTick(() => useHead(head)) } else { useHead(head) }
-    }
 
     return h(
       ContentQuery,
@@ -102,11 +89,13 @@ export default defineComponent({
         // Default slot
         default: slots?.default
           ? ({ data, refresh, isPartial }) => {
-              addHead(data)
-              return slots.default({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
+              if (head) { useContentHead(data) }
+
+              return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
           : ({ data }) => {
-              addHead(data)
+              if (head) { useContentHead(data) }
+
               return h(
                 ContentRenderer,
                 { value: data, excerpt, tag, ...this.$attrs },

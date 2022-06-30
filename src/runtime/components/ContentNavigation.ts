@@ -5,6 +5,7 @@ import { QueryBuilder } from '../types'
 import { useAsyncData, fetchContentNavigation } from '#imports'
 
 export default defineComponent({
+  name: 'ContentNavigation',
   props: {
     /**
      * A query to be passed to `fetchContentNavigation()`.
