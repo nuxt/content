@@ -4,6 +4,7 @@ import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
 export default defineComponent({
+  name: 'ContentQuery',
   props: {
     /**
      * The path of the content to load from content source.

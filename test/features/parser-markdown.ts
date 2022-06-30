@@ -119,5 +119,26 @@ export const testMarkdownParser = () => {
       expect(parsed.body.children.length).toEqual(1)
       expect(parsed.body.children[0].tag).toEqual('h1')
     })
+
+    test('span attributes', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '# Hello [World]{.text-green}',
+            'The answer to life the universe and everything: [42]{.font-bold .text-green}'
+          ].join('\n')
+        }
+      })
+
+      expect(parsed.body).toHaveProperty('children')
+      expect(parsed.body.children.length).toEqual(2)
+      expect(parsed.body.children[0].tag).toEqual('h1')
+      expect(parsed.body.children[0].children[1].props.class).toEqual('text-green')
+
+      expect(parsed.body.children[1].tag).toEqual('p')
+      expect(parsed.body.children[1].children[1].props.class).toEqual('font-bold text-green')
+    })
   })
 }

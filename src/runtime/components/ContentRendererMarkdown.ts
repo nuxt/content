@@ -1,4 +1,4 @@
-import { h, resolveComponent, Text, defineComponent, toRefs } from 'vue'
+import { h, resolveComponent, Text, defineComponent } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
@@ -46,19 +46,20 @@ export default defineComponent({
       default: 'div'
     }
   },
-  setup (props) {
+  async setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { tag: _t, value: _d, ...contentProps } = toRefs(props)
+    await resolveContentComponents(props.value.body, {
+      tags: {
+        ...tags,
+        ...props.value?.tags || {}
+      }
+    })
 
-    return {
-      tags,
-      contentProps
-    }
+    return { tags }
   },
   render (ctx) {
-    const { tags, tag, value, contentProps } = ctx
+    const { tags, tag, value } = ctx
 
     if (!value) {
       return null
@@ -66,7 +67,7 @@ export default defineComponent({
 
     // Get body from value
     let body = (value.body || value) as MarkdownNode
-    if (this.excerpt && value.excerpt) {
+    if (ctx.excerpt && value.excerpt) {
       body = value.excerpt
     }
     const meta: ParsedContentMeta = {
@@ -92,7 +93,6 @@ export default defineComponent({
     return h(
         component as any,
         {
-          ...contentProps,
           ...meta.component?.props,
           ...this.$attrs
         },
@@ -338,7 +338,7 @@ function getSlotName (node: MarkdownNode) {
  * Create a factory function if there is a node in the list
  */
 function createSlotFunction (nodes: Array<VNode | string>) {
-  return (nodes.length ? () => nodes : undefined)
+  return (nodes.length ? () => mergeTextNodes(nodes as VNode[]) : undefined)
 }
 
 /**
@@ -353,4 +353,45 @@ function isDefaultTemplate (node: MarkdownNode) {
  */
 function isTemplate (node: MarkdownNode) {
   return node.tag === 'template'
+}
+
+/**
+ * Merge consequent Text nodes into single node
+ */
+function mergeTextNodes (nodes: Array<VNode>) {
+  const mergedNodes: Array<VNode> = []
+  for (const node of nodes) {
+    const previousNode = mergedNodes[mergedNodes.length - 1]
+    if (node.type === Text && previousNode?.type === Text) {
+      previousNode.children = (previousNode.children as string) + node.children
+    } else {
+      mergedNodes.push(node)
+    }
+  }
+  return mergedNodes
+}
+
+async function resolveContentComponents (body, meta) {
+  const components = Array.from(new Set(loadComponents(body, meta)))
+  await Promise.all(components.map(async (c) => {
+    const resolvedComponent = resolveComponent(c) as any
+    if (resolvedComponent?.__asyncLoader && !resolvedComponent.__asyncResolved) {
+      await resolvedComponent.__asyncLoader()
+    }
+  }))
+
+  function loadComponents (node, documentMeta) {
+    if (node.type === 'text' || node.tag === 'binding') {
+      return []
+    }
+    const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[node.tag!]) || node.tag!
+    const components: string[] = []
+    if (node.type !== 'root' && !htmlTags.includes(renderTag as any)) {
+      components.push(renderTag)
+    }
+    for (const child of (node.children || [])) {
+      components.push(...loadComponents(child, documentMeta))
+    }
+    return components
+  }
 }
