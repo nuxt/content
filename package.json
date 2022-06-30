@@ -59,7 +59,7 @@
     "micromark-util-character": "^1.1.0",
     "ohash": "^0.1.0",
     "parse-entities": "^4.0.0",
-    "pathe": "^0.3.0",
+    "pathe": "^0.3.1",
     "property-information": "^6.1.1",
     "rehype-external-links": "^1.0.1",
     "rehype-raw": "^6.1.1",
@@ -97,10 +97,10 @@
     "globby": "^13.1.2",
     "husky": "^8.0.1",
     "jiti": "^1.14.0",
-    "lint-staged": "^13.0.2",
+    "lint-staged": "^13.0.3",
     "nuxt": "^3.0.0-rc.4",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.15.2"
+    "vitest": "^0.16.0"
   }
 }
