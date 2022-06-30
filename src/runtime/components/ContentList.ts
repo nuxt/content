@@ -29,6 +29,15 @@ export default defineComponent({
       default: undefined
     }
   },
+
+  /**
+   * Content empty fallback
+   * @slot empty
+   */
+  /**
+   * Content not found fallback
+   * @slot not-found
+   */
   render (ctx) {
     const slots = useSlots()
 

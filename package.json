@@ -19,16 +19,18 @@
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
   "types": "./dist/types.d.ts",
+  "web-types": "./dist/web-types.json",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "nuxt-module-build",
     "dev": "./scripts/playground.sh",
     "dev:build": "nuxi build playground/basic",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
+    "build": "nuxt-module-build && yarn build:web-types",
     "build:docs": "(cd docs && nuxi build)",
+    "build:web-types": "vue-docgen-web-types src/runtime/components/ ./dist/web-types.json",
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",
     "prepack": "yarn build",
@@ -101,6 +103,7 @@
     "nuxt": "^3.0.0-rc.4",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.16.0"
+    "vitest": "^0.16.0",
+    "vue-docgen-web-types": "^0.1.7"
   }
 }

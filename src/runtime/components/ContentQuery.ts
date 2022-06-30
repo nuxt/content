@@ -148,6 +148,11 @@ export default defineComponent({
       refresh
     }
   },
+
+  /**
+   * Content not found fallback
+   * @slot not-found
+   */
   render (ctx) {
     const slots = useSlots()
 

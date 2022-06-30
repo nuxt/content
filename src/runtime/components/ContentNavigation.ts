@@ -43,6 +43,11 @@ export default defineComponent({
       refresh
     }
   },
+
+  /**
+   * Navigation empty fallback
+   * @slot empty
+   */
   render (ctx) {
     const slots = useSlots()
 
