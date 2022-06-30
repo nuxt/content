@@ -1,4 +1,4 @@
-import { parseFrontMatter } from '../../markdown-parser'
+import { parseFrontMatter } from 'remark-mdc'
 
 export default {
   name: 'Yaml',
