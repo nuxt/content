@@ -7215,7 +7215,7 @@ unstorage@^0.4.1:
     ufo "^0.8.3"
     ws "^8.6.0"
 
-unstorage@^0.5.2, unstorage@^0.5.3:
+unstorage@^0.5.3, unstorage@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-0.5.4.tgz#7d49047228e2a406625412a8fcfa6e7d3d583f38"
   integrity sha512-yihAdJiYzkmwJGBO9IV7XIlc9NpCBHlT9ZJxlMmPj+8uqkYvCkwwBO/c98+JCDLkmmdUPS0hnstl+q5bALsS+Q==

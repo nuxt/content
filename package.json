@@ -59,7 +59,7 @@
     "micromark-util-character": "^1.1.0",
     "ohash": "^0.1.0",
     "parse-entities": "^4.0.0",
-    "pathe": "^0.3.1",
+    "pathe": "^0.3.2",
     "property-information": "^6.1.1",
     "rehype-external-links": "^1.0.1",
     "rehype-raw": "^6.1.1",
@@ -81,7 +81,7 @@
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
-    "unstorage": "^0.5.2",
+    "unstorage": "^0.5.4",
     "ws": "^8.8.0"
   },
   "devDependencies": {
