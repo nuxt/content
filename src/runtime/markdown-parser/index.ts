@@ -8,8 +8,8 @@ import remarkGfm from 'remark-gfm'
 import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
+import { parseFrontMatter } from 'remark-mdc'
 import { MarkdownOptions, MarkdownParsedContent, Toc } from '../types'
-import { parseFrontMatter } from './remark-mdc/frontmatter'
 import { generateToc } from './toc'
 import { contentHeading, generateBody } from './content'
 
@@ -108,5 +108,3 @@ function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   }
   return content
 }
-
-export * from './remark-mdc/frontmatter'
