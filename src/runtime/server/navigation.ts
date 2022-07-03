@@ -31,6 +31,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         _file: content._file,
         children: [],
         ...pickNavigationFields(content),
+        ...(isObject(content.navigation) ? content.navigation : {}),
         ...(content._draft ? { _draft: true } : {})
       })
 
@@ -56,7 +57,8 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         // Merge navigation fields with navItem
         Object.assign(
           navItem,
-          pickNavigationFields(dirConfig)
+          pickNavigationFields(dirConfig),
+          dirConfig && isObject(dirConfig.navigation) ? content.navigation : {}
         )
       }
 
@@ -89,7 +91,8 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
             _path: currentPathPart,
             _file: content._file,
             children: [],
-            ...pickNavigationFields(conf)
+            ...pickNavigationFields(conf),
+            ...(isObject(conf.navigation) ? conf.navigation : {})
           }
           nodes.push(parent)
         }
@@ -141,4 +144,8 @@ function pick (keys?: string[]) {
     }
     return obj
   }
+}
+
+function isObject (obj: any) {
+  return Object.prototype.toString.call(obj) === '[object Object]'
 }

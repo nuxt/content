@@ -72,8 +72,8 @@ export function contentHeading (body: MarkdownRoot) {
   let title = ''
   let description = ''
   const children = body.children
-    // top level `text` can be ignored
-    .filter(node => node.type !== 'text')
+    // top level `text` and `hr` can be ignored
+    .filter(node => node.type !== 'text' && node.tag !== 'hr')
 
   if (children.length && children[0].tag === 'h1') {
     /**
