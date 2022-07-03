@@ -84,7 +84,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.3",
     "c8": "^7.11.3",
-    "eslint": "^8.18.0",
+    "eslint": "^8.19.0",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
     "jiti": "^1.14.0",
@@ -92,7 +92,7 @@
     "nuxt": "^3.0.0-rc.4",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.16.0",
+    "vitest": "^0.17.0",
     "vue-docgen-web-types": "^0.1.7"
   }
 }
