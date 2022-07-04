@@ -48,7 +48,7 @@
     "html-tags": "^3.2.0",
     "json5": "^2.2.1",
     "listhen": "^0.2.13",
-    "mdast-util-to-hast": "^12.1.1",
+    "mdast-util-to-hast": "^12.1.2",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.0",
     "pathe": "^0.3.2",
