@@ -12,7 +12,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   const { navigation } = useRuntimeConfig().content
 
   // Navigation fields picker
-  const pickNavigationFields = pick(['title', ...navigation.fields])
+  const pickNavigationFields = (content: ParsedContentMeta) => ({
+    ...pick(['title', ...navigation.fields])(content),
+    ...(isObject(content?.navigation) ? content.navigation : {})
+  })
 
   // Create navigation object
   const nav = contents
@@ -31,7 +34,6 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         _file: content._file,
         children: [],
         ...pickNavigationFields(content),
-        ...(isObject(content.navigation) ? content.navigation : {}),
         ...(content._draft ? { _draft: true } : {})
       })
 
@@ -57,8 +59,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         // Merge navigation fields with navItem
         Object.assign(
           navItem,
-          pickNavigationFields(dirConfig),
-          dirConfig && isObject(dirConfig.navigation) ? content.navigation : {}
+          pickNavigationFields(dirConfig)
         )
       }
 
@@ -91,8 +92,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
             _path: currentPathPart,
             _file: content._file,
             children: [],
-            ...pickNavigationFields(conf),
-            ...(isObject(conf.navigation) ? conf.navigation : {})
+            ...pickNavigationFields(conf)
           }
           nodes.push(parent)
         }
