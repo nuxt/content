@@ -82,6 +82,7 @@ export function refineUrlPart (name: string): string {
   if (SEMVER_REGEX.test(name)) {
     return name
   }
+
   return (
     name
       /**
@@ -91,10 +92,10 @@ export function refineUrlPart (name: string): string {
       /**
        * Remove index keyword
        */
-      .replace(/^index/, '')
+      .replace(/^index(\.draft)?$/, '')
       /**
        * Remove draft keyword
        */
-      .replace(/\.draft/, '')
+      .replace(/\.draft$/, '')
   )
 }
