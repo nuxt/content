@@ -9,11 +9,13 @@ useContentHead(page)
 
 <template>
   <div class="document-driven-page">
-    <ContentRenderer v-if="currentPage" :key="currentPage._id" :value="currentPage">
-      <template #empty="{ value }">
-        <DocumentDrivenEmpty :value="value" />
-      </template>
-    </ContentRenderer>
+    <NuxtLayout v-if="currentPage" :name="currentPage.layout || 'default'">
+      <ContentRenderer :key="currentPage._id" :value="currentPage">
+        <template #empty="{ value }">
+          <DocumentDrivenEmpty :value="value" />
+        </template>
+      </ContentRenderer>
+    </NuxtLayout>
     <DocumentDrivenNotFound v-else />
   </div>
 </template>
