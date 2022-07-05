@@ -2,7 +2,8 @@ import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams } from '../types'
 import { QueryBuilder } from '../types'
-import { useAsyncData, fetchContentNavigation } from '#imports'
+import { useAsyncData, fetchContentNavigation, useState, useContent } from '#imports'
+import { NuxtLink } from '#components'
 
 export default defineComponent({
   name: 'ContentNavigation',
@@ -33,15 +34,17 @@ export default defineComponent({
       return query.value
     })
 
-    const { data, refresh } = await useAsyncData<NavItem[]>(
+    // If doc driven mode and no query given, re-use the fetched navigation
+    if (!queryBuilder.value && useState('dd-navigation').value) {
+      const { navigation } = useContent()
+
+      return { navigation }
+    }
+    const { data: navigation } = await useAsyncData<NavItem[]>(
       `content-navigation-${hash(queryBuilder.value)}`,
       () => fetchContentNavigation(queryBuilder.value)
     )
-
-    return {
-      data,
-      refresh
-    }
+    return { navigation }
   },
 
   /**
@@ -51,22 +54,24 @@ export default defineComponent({
   render (ctx) {
     const slots = useSlots()
 
-    const {
-      query,
-      data,
-      refresh
-    } = ctx
-
-    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentNavigation>', slot, data }, null, 2))
-
-    // Render empty data object
-    if (slots?.empty && (!data || !data?.length)) {
-      return slots?.empty?.({ query, ...this.$attrs }) || emptyNode('empty', { query, data })
-    }
+    const { navigation } = ctx
+    const renderLink = (link: NavItem) => h(NuxtLink, { to: link._path }, () => link.title)
+    const renderLinks = (data: NavItem[], level: number) =>
+      h(
+        'ul',
+        level ? { 'data-level': level } : null,
+        data.map((link) => {
+          if (link.children) {
+            return h('li', null, [renderLink(link), renderLinks(link.children, level + 1)])
+          }
+          return h('li', null, renderLink(link))
+        })
+      )
+    const defaultNode = (data: NavItem[]) => renderLinks(data, 0)
 
     // Render default slot with navigation as `data`
     return slots?.default
-      ? slots.default({ navigation: data, refresh, ...this.$attrs })
-      : emptyNode('default', data)
+      ? slots.default({ navigation, ...this.$attrs })
+      : defaultNode(navigation)
   }
 })
