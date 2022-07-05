@@ -5,24 +5,24 @@ export const useContentState = () => {
   /**
    * Current page complete data.
    */
-  const page = useState<ParsedContent>('content-document-driven-page')
+  const page = useState<ParsedContent>('dd-page')
 
   /**
    * Navigation tree from root of app.
    */
-  const navigation = useState<NavItem[]>('content-document-driven-navigation')
+  const navigation = useState<NavItem[]>('dd-navigation')
 
   /**
    * Previous and next page data.
    * Format: [prev, next]
    */
-  const surround = useState<Omit<ParsedContent, 'body'>[]>('content-document-driven-page-surround')
+  const surround = useState<Omit<ParsedContent, 'body'>[]>('dd-surround')
 
   /**
    * Globally loaded content files.
    * Format: { [key: string]: ParsedContent }
    */
-  const globals = useState<Record<string, ParsedContent>>('content-document-driven-globals', () => ({}))
+  const globals = useState<Record<string, ParsedContent>>('dd-globals', () => ({}))
 
   return {
     page,
