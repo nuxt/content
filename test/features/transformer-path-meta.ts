@@ -53,6 +53,20 @@ const testCases = {
     _draft: false,
     _partial: false,
     _path: '/one/fileparamvaluehash'
+  },
+  'content:indexer.md': {
+    __description: 'non-index file with index substring',
+    title: 'Indexer',
+    _draft: false,
+    _partial: false,
+    _path: '/indexer'
+  },
+  'content:indexer.draft.md': {
+    __description: 'non-index file with index substring',
+    title: 'Indexer',
+    _draft: true,
+    _partial: false,
+    _path: '/indexer'
   }
 }
 
