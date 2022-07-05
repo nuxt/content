@@ -47,7 +47,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
     const routeConfig = (to.meta.documentDriven || {}) as any
-    // Document drive disabled on route
+    // Disabled document driven mode on next route
     if (to.meta.documentDriven === false) {
       return
     }
