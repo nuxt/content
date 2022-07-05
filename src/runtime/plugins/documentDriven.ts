@@ -46,6 +46,12 @@ export default defineNuxtPlugin((nuxt) => {
   }
 
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
+    const routeConfig = (to.meta.documentDriven || {}) as any
+    // Document drive disabled on route
+    if (to.meta.documentDriven === false) {
+      return
+    }
+
     const { navigation, page, globals, surround } = useContentState()
 
     // Normalize route path
@@ -57,7 +63,7 @@ export default defineNuxtPlugin((nuxt) => {
      *
      * `navigation`
      */
-    if (moduleOptions.navigation) {
+    if (moduleOptions.navigation && routeConfig.navigation !== false) {
       const navigationQuery = () => {
         const { navigation } = useContentState()
 
@@ -128,7 +134,7 @@ export default defineNuxtPlugin((nuxt) => {
     /**
      * `page`
      */
-    if (moduleOptions.page) {
+    if (moduleOptions.page && routeConfig.page !== false) {
       const pageQuery = () => {
         const { page } = useContentState()
 
@@ -155,7 +161,7 @@ export default defineNuxtPlugin((nuxt) => {
     /**
      * `surround`
      */
-    if (moduleOptions.surround) {
+    if (moduleOptions.surround && routeConfig.surround !== false) {
       const surroundQuery = () => {
         // Return same surround as page is already loaded
         if (!force && page.value && page.value._path === _path) {
@@ -195,22 +201,23 @@ export default defineNuxtPlugin((nuxt) => {
       if (_globals) {
         globals.value = _globals
       }
-      // Find used layout
-      const layoutName = findLayout(to, _page, _navigation, _globals)
-
-      // Prefetch layout component
-      const layout = layouts[layoutName]
-
-      if (layout && layout?.__asyncLoader && !layout.__asyncResolved) {
-        await layout.__asyncLoader()
-      }
-      // Apply layout
-      to.meta.layout = layoutName
 
       // Use `redirect` key to redirect to another page
       if (_page?.redirect) { return _page?.redirect }
 
       if (_page) {
+        // Find used layout
+        const layoutName = findLayout(to, _page, _navigation, _globals)
+
+        // Prefetch layout component
+        const layout = layouts[layoutName]
+
+        if (layout && layout?.__asyncLoader && !layout.__asyncResolved) {
+          await layout.__asyncLoader()
+        }
+        // Apply layout
+        to.meta.layout = layoutName
+
         // Update values
         page.value = _page
         process.client && pagesCache.set(_path, _page)
