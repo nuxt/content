@@ -1,5 +1,6 @@
 ---
 navTitle: 'Home'
+layout: full-width
 ---
 
 # Content Wind Second :icon{name="carbon:sailboat-coastal" class="text-indigo-400"}
