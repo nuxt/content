@@ -1,9 +1,6 @@
 <template>
   <div>
-    <NuxtLoadingBar />
-
     <PageNav />
-
     <slot />
   </div>
 </template>
