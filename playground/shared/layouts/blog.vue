@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="max-width: 680px; margin: 0 auto">
     <NuxtLoadingBar />
 
     <PageNav />

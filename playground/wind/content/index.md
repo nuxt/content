@@ -1,1 +1,0 @@
-[First](/first) - [Second](/second)

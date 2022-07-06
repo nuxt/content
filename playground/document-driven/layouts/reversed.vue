@@ -2,7 +2,7 @@
   <div>
     <NuxtLoadingBar />
 
-    <NuxtPage />
+    <slot />
 
     <PageNav />
   </div>
