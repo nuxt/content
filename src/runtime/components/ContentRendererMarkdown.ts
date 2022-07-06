@@ -55,7 +55,6 @@ export default defineComponent({
         ...props.value?.tags || {}
       }
     })
-    await new Promise(resolve => setTimeout(resolve, 500))
 
     return { tags }
   },

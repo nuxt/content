@@ -448,12 +448,20 @@ export default defineNuxtModule<ModuleOptions>({
         nuxt.options.pages = true
 
         nuxt.hook('pages:extend', (pages) => {
-          pages.unshift({
-            name: 'slug',
-            path: '/:slug(.*)*',
-            file: resolveRuntimeModule('./pages/document-driven.vue'),
-            children: []
-          })
+          // Respect user's custom catch-all page
+          if (!pages.find(page => page.path === '/:slug(.*)*')) {
+            pages.unshift({
+              name: 'slug',
+              path: '/:slug(.*)*',
+              file: resolveRuntimeModule('./pages/document-driven.vue'),
+              children: []
+            })
+          }
+        })
+        nuxt.hook('app:resolve', (app) => {
+          if (app.mainComponent?.includes('@nuxt/ui-templates')) {
+            app.mainComponent = resolveRuntimeModule('./app.vue')
+          }
         })
       }
     } else {
