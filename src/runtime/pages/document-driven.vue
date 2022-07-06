@@ -2,7 +2,13 @@
 import { useContent, useContentHead } from '#imports'
 
 const { page } = useContent()
-const currentPage = page.value
+const currentPage = ref(page.value)
+
+watch(page, (v) => {
+  if (v._id === currentPage.value._id) {
+    currentPage.value = v
+  }
+})
 
 useContentHead(page)
 </script>
