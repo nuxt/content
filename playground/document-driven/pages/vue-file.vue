@@ -1,6 +1,8 @@
 <script setup>
 definePageMeta({
-  layout: 'reversed'
+  documentDriven: {
+    surround: false
+  }
 })
 
 const { page } = useContent()
@@ -8,5 +10,7 @@ useContentHead(page)
 </script>
 
 <template>
-  <ContentRenderer :value="page" />
+  <NuxtLayout name="reversed">
+    <ContentRenderer :value="page" />
+  </NuxtLayout>
 </template>
