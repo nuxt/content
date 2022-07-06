@@ -13,4 +13,18 @@ describe('fixtures:document-driven', async () => {
 
     expect(html).contains('Home | Document Driven Fixture')
   })
+
+  test('disabled document driven', async () => {
+    const html = await $fetch('/disabled')
+
+    expect(html).contains('<div>surround: </div>')
+    expect(html).contains('<div>page: </div>')
+  })
+
+  test('disabled surround document driven', async () => {
+    const html = await $fetch('/no-surround')
+
+    expect(html).contains('<div>surround: </div>')
+    expect(html).contains('<div>page: {')
+  })
 })
