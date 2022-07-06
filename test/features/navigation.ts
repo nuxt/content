@@ -12,8 +12,15 @@ export const testNavigation = () => {
           _params: jsonStringify(query)
         }
       })
+
       expect(list.find(item => item._path === '/')).toBeTruthy()
       expect(list.find(item => item._path === '/').children).toBeUndefined()
+
+      // Check navigation data in front-matter
+      const testNavigation = list.find(item => item._path === '/test-navigation')
+      expect(testNavigation['custom-field']).toEqual('_dir file')
+      expect(testNavigation.children[0]['custom-field']).toEqual('index file')
+      expect(testNavigation.children[1]['custom-field']).toEqual('page file')
     })
 
     test('Get cats navigation', async () => {

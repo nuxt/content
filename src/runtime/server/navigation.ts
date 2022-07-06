@@ -12,7 +12,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   const { navigation } = useRuntimeConfig().content
 
   // Navigation fields picker
-  const pickNavigationFields = pick(['title', ...navigation.fields])
+  const pickNavigationFields = (content: ParsedContentMeta) => ({
+    ...pick(['title', ...navigation.fields])(content),
+    ...(isObject(content?.navigation) ? content.navigation : {})
+  })
 
   // Create navigation object
   const nav = contents
@@ -141,4 +144,8 @@ function pick (keys?: string[]) {
     }
     return obj
   }
+}
+
+function isObject (obj: any) {
+  return Object.prototype.toString.call(obj) === '[object Object]'
 }
