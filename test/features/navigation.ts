@@ -12,7 +12,6 @@ export const testNavigation = () => {
           _params: jsonStringify(query)
         }
       })
-      console.log(JSON.stringify(list, null, 2))
 
       expect(list.find(item => item._path === '/')).toBeTruthy()
       expect(list.find(item => item._path === '/').children).toBeUndefined()
