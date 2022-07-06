@@ -77,7 +77,6 @@
     "ws": "^8.8.0"
   },
   "devDependencies": {
-    "@iconify/vue": "^3.2.1",
     "@nuxt/module-builder": "^0.1.7",
     "@nuxt/schema": "^3.0.0-rc.4",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
