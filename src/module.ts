@@ -458,9 +458,17 @@ export default defineNuxtModule<ModuleOptions>({
             })
           }
         })
-        nuxt.hook('app:resolve', (app) => {
+        nuxt.hook('app:resolve', async (app) => {
           if (app.mainComponent?.includes('@nuxt/ui-templates')) {
             app.mainComponent = resolveRuntimeModule('./app.vue')
+          } else {
+            const appContent = await fs.promises.readFile(app.mainComponent!, { encoding: 'utf-8' })
+            if (appContent.includes('<NuxtLayout') || appContent.includes('<nuxt-layout')) {
+              logger.warn([
+                'Using `<NuxtLayout>` inside `app.vue` will cause unwanted layout shifting in your application.',
+                'Consider removing `<NuxtLayout>` from `app.vue` and using it in your pages.'
+              ].join(''))
+            }
           }
         })
       }
