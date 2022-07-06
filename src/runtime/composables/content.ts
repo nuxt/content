@@ -1,22 +1,23 @@
+import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '../types'
-import { computed, useState } from '#imports'
+import { computed, useState, useRoute } from '#imports'
 
 export const useContentState = () => {
   /**
-   * Current page complete data.
+   * Map of loaded pages.
    */
-  const page = useState<ParsedContent>('dd-page')
-
-  /**
-   * Navigation tree from root of app.
-   */
-  const navigation = useState<NavItem[]>('dd-navigation')
+  const pages = useState<Record<string, ParsedContent>>('dd-pages', () => ({}))
 
   /**
    * Previous and next page data.
    * Format: [prev, next]
    */
-  const surround = useState<Omit<ParsedContent, 'body'>[]>('dd-surround')
+  const surrounds = useState<Record<string, Omit<ParsedContent, 'body'>>>('dd-surrounds', () => ({}))
+
+  /**
+   * Navigation tree from root of app.
+   */
+  const navigation = useState<NavItem[]>('dd-navigation')
 
   /**
    * Globally loaded content files.
@@ -25,15 +26,35 @@ export const useContentState = () => {
   const globals = useState<Record<string, ParsedContent>>('dd-globals', () => ({}))
 
   return {
-    page,
+    pages,
+    surrounds,
     navigation,
-    surround,
     globals
   }
 }
 
 export const useContent = () => {
-  const { navigation, page, surround, globals } = useContentState()
+  const { navigation, pages, surrounds, globals } = useContentState()
+
+  const _path = computed(() => withoutTrailingSlash(useRoute().path))
+
+  /**
+   * Current `page` key, computed from path and content state.
+   */
+  const page = computed(
+    () => {
+      return pages.value[_path.value]
+    }
+  )
+
+  /**
+   * Current `surround` key, computed from path and content state.
+   */
+  const surround = computed(
+    () => {
+      return surrounds.value[_path.value]
+    }
+  )
 
   /**
    * Table of contents from `page`.

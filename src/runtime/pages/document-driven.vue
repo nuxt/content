@@ -2,21 +2,14 @@
 import { useContent, useContentHead } from '#imports'
 
 const { page } = useContent()
-const currentPage = ref(page.value)
-
-watch(page, (v) => {
-  if (v._id === currentPage.value._id) {
-    currentPage.value = v
-  }
-})
 
 useContentHead(page)
 </script>
 
 <template>
   <div class="document-driven-page">
-    <NuxtLayout v-if="currentPage" :name="currentPage.layout || 'default'">
-      <ContentRenderer :key="currentPage._id" :value="currentPage">
+    <NuxtLayout v-if="page" :name="page.layout || 'default'">
+      <ContentRenderer :key="page._id" :value="page">
         <template #empty="{ value }">
           <DocumentDrivenEmpty :value="value" />
         </template>
