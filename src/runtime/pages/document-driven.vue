@@ -8,13 +8,13 @@ useContentHead(page)
 
 <template>
   <div class="document-driven-page">
-    <NuxtLayout v-if="page" :name="page.layout || 'default'">
-      <ContentRenderer :key="page._id" :value="page">
+    <NuxtLayout :name="page?.layout || 'default'">
+      <ContentRenderer v-if="page" :key="page._id" :value="page">
         <template #empty="{ value }">
           <DocumentDrivenEmpty :value="value" />
         </template>
       </ContentRenderer>
+      <DocumentDrivenNotFound v-else />
     </NuxtLayout>
-    <DocumentDrivenNotFound v-else />
   </div>
 </template>
