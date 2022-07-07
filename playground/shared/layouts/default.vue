@@ -1,10 +1,7 @@
 <template>
   <div>
-    <NuxtLoadingBar />
-
     <PageNav />
-
-    <NuxtPage />
+    <slot />
   </div>
 </template>
 

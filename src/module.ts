@@ -448,12 +448,28 @@ export default defineNuxtModule<ModuleOptions>({
         nuxt.options.pages = true
 
         nuxt.hook('pages:extend', (pages) => {
-          pages.unshift({
-            name: 'slug',
-            path: '/:slug(.*)*',
-            file: resolveRuntimeModule('./pages/document-driven.vue'),
-            children: []
-          })
+          // Respect user's custom catch-all page
+          if (!pages.find(page => page.path === '/:slug(.*)*')) {
+            pages.unshift({
+              name: 'slug',
+              path: '/:slug(.*)*',
+              file: resolveRuntimeModule('./pages/document-driven.vue'),
+              children: []
+            })
+          }
+        })
+        nuxt.hook('app:resolve', async (app) => {
+          if (app.mainComponent?.includes('@nuxt/ui-templates')) {
+            app.mainComponent = resolveRuntimeModule('./app.vue')
+          } else {
+            const appContent = await fs.promises.readFile(app.mainComponent!, { encoding: 'utf-8' })
+            if (appContent.includes('<NuxtLayout') || appContent.includes('<nuxt-layout')) {
+              logger.warn([
+                'Using `<NuxtLayout>` inside `app.vue` will cause unwanted layout shifting in your application.',
+                'Consider removing `<NuxtLayout>` from `app.vue` and using it in your pages.'
+              ].join(''))
+            }
+          }
         })
       }
     } else {

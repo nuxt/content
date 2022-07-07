@@ -10,8 +10,6 @@ import layouts from '#build/layouts'
 
 export default defineNuxtPlugin((nuxt) => {
   const { documentDriven: moduleOptions } = useRuntimeConfig()?.public?.content
-  const pagesCache = new Map<string, ParsedContent>()
-  const surroundCache = new Map<string, ParsedContent>()
 
   /**
    * Finds a layout value from a cascade of objects.
@@ -52,11 +50,12 @@ export default defineNuxtPlugin((nuxt) => {
       return
     }
 
-    const { navigation, page, globals, surround } = useContentState()
+    const { navigation, pages, globals, surrounds } = useContentState()
 
     // Normalize route path
     const _path = withoutTrailingSlash(to.path)
 
+    // Promises array to be executed all at once
     const promises: (() => Promise<any> | any)[] = []
 
     /**
@@ -136,14 +135,11 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.page && routeConfig.page !== false) {
       const pageQuery = () => {
-        const { page } = useContentState()
+        const { pages } = useContentState()
 
         // Return same page as page is already loaded
-        if (!force && page.value && page.value._path === _path) {
-          return page.value
-        }
-        if (!force && process.client && pagesCache.has(_path)) {
-          return pagesCache.get(_path)
+        if (!force && pages.value[_path] && pages.value[_path]._path === _path) {
+          return pages.value[_path]
         }
 
         return queryContent()
@@ -163,12 +159,11 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.surround && routeConfig.surround !== false) {
       const surroundQuery = () => {
+        const { surrounds } = useContentState()
+
         // Return same surround as page is already loaded
-        if (!force && page.value && page.value._path === _path) {
-          return surround.value
-        }
-        if (!force && process.client && surroundCache.has(_path)) {
-          return surroundCache.get(_path)
+        if (!force && surrounds.value[_path]) {
+          return surrounds.value[_path]
         }
 
         return queryContent()
@@ -219,13 +214,11 @@ export default defineNuxtPlugin((nuxt) => {
         to.meta.layout = layoutName
 
         // Update values
-        page.value = _page
-        process.client && pagesCache.set(_path, _page)
+        pages.value[_path] = _page
       }
 
       if (_surround) {
-        surround.value = _surround
-        process.client && surroundCache.set(_path, _surround)
+        surrounds.value[_path] = _surround
       }
     })
   }
