@@ -1,12 +1,12 @@
 import { createError, defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
-import { useLogger } from '@nuxt/kit'
+import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
 import { useRuntimeConfig } from '#imports'
 
 // Re-create logger locally as utils cannot be imported from here
-export const logger = useLogger('@nuxt/content')
+export const logger = consola.withScope('@nuxt/content')
 
 /**
  * Resolve Shiki compatible lang from string.
