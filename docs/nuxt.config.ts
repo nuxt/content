@@ -50,16 +50,18 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxthq/admin', '@docus/github', 'vue-plausible'],
+  modules: ['@nuxthq/admin'/*, '@nuxtlabs/github-module' */, 'vue-plausible'],
   alias,
   extends: [
-    (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
+    (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
   ],
+  /*
   github: {
     owner: 'nuxt',
     repo: 'content',
     branch: 'main'
   },
+  */
   vite: {
     define: {
       'process.env.FORCE_COLOR': {},
