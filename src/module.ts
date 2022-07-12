@@ -545,6 +545,13 @@ export default defineNuxtModule<ModuleOptions>({
         ws.broadcast({ event, key })
       })
     })
+
+    // @nuxtjs/tailwindcss support
+    // @ts-ignore - Module might not exist
+    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      tailwindConfig.content = tailwindConfig.content ?? []
+      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
+    })
   }
 })
 
