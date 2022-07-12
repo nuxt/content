@@ -178,15 +178,6 @@ export interface ModuleOptions {
     layoutFallbacks: string[]
     injectPage: boolean
   }
-  /**
-   * Integrations config
-   */
-  integrations: {
-    /**
-     * Support tailwindcss classes usage in content files.
-     */
-    tailwindcss: boolean
-  }
 }
 
 interface ContentContext extends ModuleOptions {
@@ -228,10 +219,7 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    documentDriven: false,
-    integrations: {
-      tailwindcss: true
-    }
+    documentDriven: false
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -558,16 +546,12 @@ export default defineNuxtModule<ModuleOptions>({
       })
     })
 
-    if (options.integrations) {
-      // @nuxtjs/tailwindcss support
-      if (options.integrations.tailwindcss) {
-        // @ts-ignore - Module might not exist
-        nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-          tailwindConfig.content = tailwindConfig.content ?? []
-          tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
-        })
-      }
-    }
+    // @nuxtjs/tailwindcss support
+    // @ts-ignore - Module might not exist
+    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      tailwindConfig.content = tailwindConfig.content ?? []
+      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
+    })
   }
 })
 
