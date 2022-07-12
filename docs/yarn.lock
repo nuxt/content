@@ -412,9 +412,9 @@
     fastq "^1.6.0"
 
 "@nuxt-themes/docus@npm:@nuxt-themes/docus-edge@latest":
-  version "3.0.0-acdb336"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus-edge/-/docus-edge-3.0.0-acdb336.tgz#b4baf97ac2ac7714e451ef3a094afb4ee4d9f5e2"
-  integrity sha512-7+W8eyd/DPVddlzqt2Z+J95DbekpB877vvYfztrwDvGmul7os5sVnbl9Vm8oHkdGtwj3TFGSMUsr50tCingLJw==
+  version "3.0.0-8c249fa"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus-edge/-/docus-edge-3.0.0-8c249fa.tgz#ba9ba5a35445e61be320f4dc1dd97f93f695a9eb"
+  integrity sha512-lTLd647C8g6WEWZu3Xn/E8drJc9YKl91D5JAGkhYbfKnY8vaKyxdveAHi7FyO4OYzC+c/f9Pjmg1CLgeAtYIpg==
   dependencies:
     "@iconify/vue" "^3.2.1"
     "@nuxt-themes/kit" "npm:@nuxt-themes/kit-edge@latest"
@@ -422,19 +422,19 @@
     "@nuxt/kit" "^3.0.0-rc.4"
     "@nuxthq/admin" "npm:@nuxthq/admin-edge@latest"
     "@nuxtjs/color-mode" "^3.1.4"
-    "@nuxtjs/tailwindcss" "^5.1.3"
+    "@nuxtjs/tailwindcss" "^5.2.0"
     "@tailwindcss/aspect-ratio" "^0.4.0"
     "@tailwindcss/forms" "^0.5.2"
     "@tailwindcss/line-clamp" "^0.4.0"
-    "@tailwindcss/typography" "^0.5.2"
-    "@vueuse/core" "^8.7.5"
+    "@tailwindcss/typography" "^0.5.3"
+    "@vueuse/core" "^8.9.1"
     "@vueuse/motion" "2.0.0-beta.12"
-    "@vueuse/nuxt" "^8.7.5"
+    "@vueuse/nuxt" "^8.9.1"
     browser-style-dictionary "^3.1.1-browser.1"
     defu "^6.0.0"
     nuxt "npm:nuxt3@latest"
     pkg-types "^0.3.3"
-    tailwindcss "^3.1.4"
+    tailwindcss "^3.1.5"
     vue-plausible "^1.3.1"
 
 "@nuxt-themes/kit@npm:@nuxt-themes/kit-edge@latest":
@@ -700,7 +700,7 @@
     lodash.template "^4.5.0"
     pathe "^0.3.0"
 
-"@nuxtjs/tailwindcss@^5.1.3":
+"@nuxtjs/tailwindcss@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-5.2.0.tgz#2a2f7e4cdac84a1023223461ff96d8bde35407be"
   integrity sha512-eUXxYz/1Nu5c05889eewBFukzXegDbYaBQ/yVEA4ybhBs5TXj8U2vIZuzj+A7ZROifv0NmLIS7ZnMfD3GvE73g==
@@ -931,7 +931,7 @@
   resolved "https://registry.yarnpkg.com/@tailwindcss/line-clamp/-/line-clamp-0.4.0.tgz#03353e31e77636b785f2336e8c978502cec1de81"
   integrity sha512-HQZo6gfx1D0+DU3nWlNLD5iA6Ef4JAXh0LeD8lOGrJwEDBwwJNKQza6WoXhhY1uQrxOuU8ROxV7CqiQV4CoiLw==
 
-"@tailwindcss/typography@^0.5.2":
+"@tailwindcss/typography@^0.5.3":
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.3.tgz#80c3419db470cc34b0d1442d05d82a1984bc66b7"
   integrity sha512-Cn4MufL/xiTh2Npw26xiL7gP3GFkJH+zWM8DAm/NNEr4gF5N9D6gY9zMNNQUu27m8g0IIk665BUuoU92wVUBkA==
@@ -1209,7 +1209,7 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.37.tgz#8e6adc3f2759af52f0e85863dfb0b711ecc5c702"
   integrity sha512-4rSJemR2NQIo9Klm1vabqWjD8rs/ZaJSzMxkMNeJS6lHiUjjUeYFbooN19NgFjztubEKh3WlZUeOLVdbbUWHsw==
 
-"@vueuse/core@8.9.2", "@vueuse/core@^8.0.1", "@vueuse/core@^8.7.5":
+"@vueuse/core@8.9.2", "@vueuse/core@^8.0.1", "@vueuse/core@^8.9.1":
   version "8.9.2"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-8.9.2.tgz#49499abc4db31232d21574cf0d996bd5581dfc13"
   integrity sha512-dE3/JgwqIHmmtmRBdZAnq87rZCSFbYVps2t3gWy9Jv/+Qp6sHSSKuPFtwguJVZ2OnaGnB/AMRmx4CuFRxFin3A==
@@ -1241,7 +1241,7 @@
     style-value-types "^5.1.0"
     vue-demi "*"
 
-"@vueuse/nuxt@^8.7.5":
+"@vueuse/nuxt@^8.9.1":
   version "8.9.2"
   resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-8.9.2.tgz#df186b8b034c53ace214e710bfa83549b2ff4d0f"
   integrity sha512-Yu2/aW86T5AL4bJaKY9MQUXqUHfEh8PqNOZDikSbV9IFmVNKkANNLJjHFPe2vCYlEe2XFEHodB3Oq4j5AIun0Q==
@@ -6074,7 +6074,7 @@ tailwind-config-viewer@^1.7.1:
     portfinder "^1.0.26"
     replace-in-file "^6.1.0"
 
-tailwindcss@*, tailwindcss@^3.1.4, tailwindcss@^3.1.5:
+tailwindcss@*, tailwindcss@^3.1.5:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.1.6.tgz#bcb719357776c39e6376a8d84e9834b2b19a49f1"
   integrity sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==

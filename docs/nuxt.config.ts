@@ -11,6 +11,17 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      script: [
+        {
+          defer: true,
+          'data-domain': 'content.nuxtjs.org',
+          src: 'https://plausible.io/js/script.js'
+        }
+      ]
+    }
+  },
   content: {
     sources: [
       {
@@ -50,38 +61,22 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxthq/admin'/*, '@nuxtlabs/github-module' */, 'vue-plausible'],
+  modules: ['@nuxthq/admin', '@nuxtlabs/github-module'],
   alias,
   extends: [
     (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
   ],
-  /*
   github: {
     owner: 'nuxt',
     repo: 'content',
     branch: 'main'
   },
-  */
   vite: {
     define: {
       'process.env.FORCE_COLOR': {},
       'process.env.NODE_DISABLE_COLORS': {},
       'process.env.NO_COLOR': {},
       'process.env.FORCE_TERM': {}
-    }
-  },
-  plausible: {
-    domain: 'content.nuxtjs.org'
-  },
-  tailwindcss: {
-    config: {
-      theme: {
-        extend: {
-          colors: {
-            primary: colors.emerald
-          }
-        }
-      }
     }
   },
   colorMode: {
