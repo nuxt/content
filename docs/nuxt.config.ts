@@ -1,7 +1,6 @@
 import { resolve } from 'pathe'
 import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
-import colors from 'tailwindcss/colors.js'
 
 const alias = {}
 
