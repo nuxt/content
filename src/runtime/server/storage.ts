@@ -140,17 +140,21 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
  */
 export async function parseContent (id: string, content: string) {
   const nitroApp = useNitroApp()
-  const { markdown, csv, yaml } = useRuntimeConfig().content
+  const { markdown, csv, yaml, defaultLocale, locales } = useRuntimeConfig().content
 
   // Call hook before parsing the file
   const file = { _id: id, body: content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
-  const result = transformContent(id, file.body, {
+  const result = await transformContent(id, file.body, {
     transformers,
     markdown,
     csv,
-    yaml
+    yaml,
+    pathMeta: {
+      defaultLocale,
+      locales
+    }
   })
 
   // Call hook after parsing the file

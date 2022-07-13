@@ -1,5 +1,5 @@
 import { extname } from 'pathe'
-import { pascalCase } from 'scule'
+import { camelCase } from 'scule'
 import type { ContentTransformer, TransformContentOptions } from './types'
 import csv from './csv'
 import markdown from './markdown'
@@ -24,11 +24,10 @@ function getParser (ext, additionalTransformers: ContentTransformer[] = []): Con
 }
 
 function getTransformers (ext, additionalTransformers: ContentTransformer[] = []) {
-  const transformr = additionalTransformers.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform)
-  if (transformr) {
-    return transformr
-  }
-  return TRANSFORMERS.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform)
+  return [
+    ...additionalTransformers.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform),
+    ...TRANSFORMERS.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform)
+  ]
 }
 
 /**
@@ -47,14 +46,14 @@ export async function transformContent (id, content, options: TransformContentOp
     return file
   }
 
-  const parserOptions = options[pascalCase(parser.name)] || {}
+  const parserOptions = options[camelCase(parser.name)] || {}
   const parsed = await parser.parse!(file._id, file.body, parserOptions)
 
   const matchedTransformers = getTransformers(ext, transformers)
   const result = await matchedTransformers.reduce(async (prev, cur) => {
     const next = (await prev) || parsed
 
-    const transformOptions = options[pascalCase(cur.name)] || {}
+    const transformOptions = options[camelCase(cur.name)] || {}
     return cur.transform!(next, transformOptions)
   }, Promise.resolve(parsed))
 

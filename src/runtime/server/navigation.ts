@@ -1,5 +1,5 @@
 import { NavItem, ParsedContentMeta } from '../types'
-import { generateTitle } from './transformers/path-meta'
+import { generateTitle } from '../transformers/path-meta'
 import { useRuntimeConfig } from '#imports'
 
 type PrivateNavItem = NavItem & { path?: string }
