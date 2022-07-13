@@ -225,14 +225,7 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
     const contentContext: ContentContext = {
-      transformers: [
-        // Register internal content plugins
-        // resolveRuntimeModule('./server/transformers/markdown'),
-        // resolveRuntimeModule('./server/transformers/yaml'),
-        // resolveRuntimeModule('./server/transformers/json'),
-        // resolveRuntimeModule('./server/transformers/csv'),
-        // resolveRuntimeModule('./server/transformers/path-meta')
-      ],
+      transformers: [],
       ...options
     }
 
