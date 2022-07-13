@@ -16,11 +16,12 @@ const TRANSFORMERS = [
 ]
 
 function getParser (ext, additionalTransformers: ContentTransformer[] = []): ContentTransformer {
-  const parser = additionalTransformers.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
-  if (parser) {
-    return parser
+  let parser = additionalTransformers.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
+  if (!parser) {
+    parser = TRANSFORMERS.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
   }
-  return TRANSFORMERS.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
+
+  return parser
 }
 
 function getTransformers (ext, additionalTransformers: ContentTransformer[] = []) {
