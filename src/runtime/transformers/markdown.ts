@@ -1,13 +1,13 @@
-import { parse } from '../../markdown-parser'
-import type { MarkdownOptions, MarkdownPlugin } from '../../types'
-import { MarkdownParsedContent } from '../../types'
-import { useRuntimeConfig } from '#imports'
+import { parse } from '../markdown-parser'
+import type { MarkdownOptions, MarkdownPlugin } from '../types'
+import { MarkdownParsedContent } from '../types'
+import { defineTransformer } from './utils'
 
-export default {
+export default defineTransformer({
   name: 'markdown',
   extensions: ['.md'],
-  parse: async (_id, content) => {
-    const config: MarkdownOptions = { ...useRuntimeConfig().content?.markdown || {} }
+  parse: async (_id, content, options = {}) => {
+    const config = { ...options } as MarkdownOptions
     config.rehypePlugins = await importPlugins(config.rehypePlugins)
     config.remarkPlugins = await importPlugins(config.remarkPlugins)
 
@@ -20,7 +20,7 @@ export default {
       _id
     }
   }
-}
+})
 
 async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = {}) {
   const resolvedPlugins = {}

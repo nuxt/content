@@ -1,6 +1,7 @@
 import { parseFrontMatter } from 'remark-mdc'
+import { defineTransformer } from './utils'
 
-export default {
+export default defineTransformer({
   name: 'Yaml',
   extensions: ['.yml', '.yaml'],
   parse: async (_id, content) => {
@@ -20,4 +21,4 @@ export default {
       _type: 'yaml'
     }
   }
-}
+})

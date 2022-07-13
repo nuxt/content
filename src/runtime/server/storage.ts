@@ -5,10 +5,11 @@ import type { CompatibilityEvent } from 'h3'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parseContent } from './transformers'
+import { transformContent } from '../transformers'
 import { getPreview, isPreview } from './preview'
 // eslint-disable-next-line import/named
-import { useRuntimeConfig, useStorage } from '#imports'
+import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
+import { transformers } from '#content/virtual/transformers'
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
@@ -127,11 +128,35 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     return { _id: contentId, body: null }
   }
 
-  const parsed = await parseContent(contentId, body as string)
+  const parsed = await parseContent(contentId, body as string) as ParsedContent
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
   return parsed
+}
+
+/**
+ * Parse content file using registered plugins
+ */
+export async function parseContent (id: string, content: string) {
+  const nitroApp = useNitroApp()
+  const { markdown, csv, yaml } = useRuntimeConfig().content
+
+  // Call hook before parsing the file
+  const file = { _id: id, body: content }
+  await nitroApp.hooks.callHook('content:file:beforeParse', file)
+
+  const result = transformContent(id, file.body, {
+    transformers,
+    markdown,
+    csv,
+    yaml
+  })
+
+  // Call hook after parsing the file
+  await nitroApp.hooks.callHook('content:file:afterParse', result)
+
+  return result
 }
 
 export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEvent, path?: string) => (query: QueryBuilder<T>) => {

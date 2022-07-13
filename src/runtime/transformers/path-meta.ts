@@ -1,8 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { ParsedContentMeta } from '../../types'
-import { useRuntimeConfig } from '#imports'
+import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 
@@ -13,7 +12,7 @@ const describeId = (_id: string) => {
   parts[parts.length - 1] = filename
   const _path = parts.join('/')
 
-  return <Pick<ParsedContentMeta, '_source' | '_path' | '_extension' | '_file'>> {
+  return {
     _source,
     _path,
     _extension,
@@ -21,11 +20,11 @@ const describeId = (_id: string) => {
   }
 }
 
-export default {
+export default defineTransformer({
   name: 'path-meta',
   extensions: ['.*'],
-  transform (content) {
-    const { locales, defaultLocale } = useRuntimeConfig().content || {}
+  transform (content, options: any = {}) {
+    const { locales = [], defaultLocale = 'en' } = options
     const { _source, _file, _path, _extension } = describeId(content._id)
     const parts = _path.split('/')
 
@@ -34,7 +33,7 @@ export default {
 
     const filePath = parts.join('/')
 
-    return <ParsedContentMeta> {
+    return {
       _path: generatePath(filePath),
       _draft: isDraft(filePath),
       _partial: isPartial(filePath),
@@ -47,7 +46,7 @@ export default {
       _extension
     }
   }
-}
+})
 
 /**
  * When file name ends with `.draft` then it will mark as draft.

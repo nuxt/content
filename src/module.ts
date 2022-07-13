@@ -227,11 +227,11 @@ export default defineNuxtModule<ModuleOptions>({
     const contentContext: ContentContext = {
       transformers: [
         // Register internal content plugins
-        resolveRuntimeModule('./server/transformers/markdown'),
-        resolveRuntimeModule('./server/transformers/yaml'),
-        resolveRuntimeModule('./server/transformers/json'),
-        resolveRuntimeModule('./server/transformers/csv'),
-        resolveRuntimeModule('./server/transformers/path-meta')
+        // resolveRuntimeModule('./server/transformers/markdown'),
+        // resolveRuntimeModule('./server/transformers/yaml'),
+        // resolveRuntimeModule('./server/transformers/json'),
+        // resolveRuntimeModule('./server/transformers/csv'),
+        // resolveRuntimeModule('./server/transformers/path-meta')
       ],
       ...options
     }
@@ -313,7 +313,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.virtual['#content/virtual/transformers'] = [
         // TODO: remove kit usage
         templateUtils.importSources(contentContext.transformers),
-        `const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
+        `export const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
         'export const getParser = (ext) => transformers.find(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.parse)',
         'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.transform)',
         'export default () => {}'

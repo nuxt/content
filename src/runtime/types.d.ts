@@ -135,13 +135,6 @@ export interface MarkdownParsedContent extends ParsedContent {
   }
 }
 
-export interface ContentTransformer {
-  name: string
-  extensions: string[]
-  parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
-  transform?: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
-}
-
 /**
  * Query
  */
