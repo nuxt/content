@@ -391,7 +391,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register highlighter
     if (options.highlight) {
-      contentContext.transformers.push(resolveRuntimeModule('./server/transformers/shiki'))
+      contentContext.transformers.push(resolveRuntimeModule('./transformers/shiki'))
+      // @ts-ignore
+      contentContext.highlight.apiURL = `/api/${options.base}/highlight`
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []

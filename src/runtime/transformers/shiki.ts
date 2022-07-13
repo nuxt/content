@@ -1,17 +1,10 @@
 import { visit } from 'unist-util-visit'
-import { withBase } from 'ufo'
-import { useRuntimeConfig } from '#imports'
+import { defineTransformer } from './utils'
 
-const highlightConfig = useRuntimeConfig().content.highlight
-
-const withContentBase = (url: string) => {
-  return withBase(url, `/api/${useRuntimeConfig().public.content.base}`)
-}
-
-export default {
-  name: 'markdown',
+export default defineTransformer({
+  name: 'highlight',
   extensions: ['.md'],
-  transform: async (content) => {
+  transform: async (content, options = {}) => {
     const tokenColors: Record<string, {colors: any, className: string}> = {}
     const codeBlocks: any[] = []
     const inlineCodes: any = []
@@ -59,12 +52,12 @@ export default {
       const code = node.children[0].value
 
       // Fetch highlighted tokens
-      const lines = await $fetch<any[]>(withContentBase('highlight'), {
+      const lines = await $fetch<any[]>(options.apiURL, {
         method: 'POST',
         body: {
           code,
           lang: node.props.lang || node.props.language,
-          theme: highlightConfig.theme
+          theme: options.theme
         }
       })
 
@@ -84,12 +77,12 @@ export default {
       const { code, language: lang, highlights = [] } = node.props
 
       // Fetch highlighted tokens
-      const lines = await $fetch<any[]>(withContentBase('highlight'), {
+      const lines = await $fetch<any[]>(options.apiURL, {
         method: 'POST',
         body: {
           code,
           lang,
-          theme: highlightConfig.theme
+          theme: options.theme
         }
       })
 
@@ -130,4 +123,4 @@ export default {
       }
     }
   }
-}
+})

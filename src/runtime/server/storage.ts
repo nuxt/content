@@ -140,7 +140,7 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
  */
 export async function parseContent (id: string, content: string) {
   const nitroApp = useNitroApp()
-  const { markdown, csv, yaml, defaultLocale, locales } = useRuntimeConfig().content
+  const { markdown, csv, yaml, defaultLocale, locales, highlight } = useRuntimeConfig().content
 
   // Call hook before parsing the file
   const file = { _id: id, body: content }
@@ -154,7 +154,8 @@ export async function parseContent (id: string, content: string) {
     pathMeta: {
       defaultLocale,
       locales
-    }
+    },
+    highlight
   })
 
   // Call hook after parsing the file

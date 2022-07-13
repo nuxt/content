@@ -6,13 +6,15 @@ import markdown from './markdown'
 import yaml from './yaml'
 import pathMeta from './path-meta'
 import json from './json'
+import highlight from './shiki'
 
 const TRANSFORMERS = [
   csv,
   markdown,
   json,
   yaml,
-  pathMeta
+  pathMeta,
+  highlight
 ]
 
 function getParser (ext, additionalTransformers: ContentTransformer[] = []): ContentTransformer {
