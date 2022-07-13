@@ -1,6 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
+import { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
@@ -33,7 +34,7 @@ export default defineTransformer({
 
     const filePath = parts.join('/')
 
-    return {
+    return <ParsedContent> {
       _path: generatePath(filePath),
       _draft: isDraft(filePath),
       _partial: isPartial(filePath),

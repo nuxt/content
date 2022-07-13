@@ -1,3 +1,4 @@
+import { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({
@@ -9,7 +10,7 @@ export default defineTransformer({
     const parsed = await csvToJson({ output: 'json', ...options })
       .fromString(content)
 
-    return {
+    return <ParsedContent> {
       _id,
       _type: 'csv',
       body: parsed

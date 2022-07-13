@@ -1,4 +1,5 @@
 import destr from 'destr'
+import { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({
@@ -25,7 +26,7 @@ export default defineTransformer({
       }
     }
 
-    return {
+    return <ParsedContent> {
       ...parsed,
       _id,
       _type: 'json'
