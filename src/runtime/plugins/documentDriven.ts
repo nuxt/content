@@ -80,6 +80,8 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       promises.push(navigationQuery)
+    } else {
+      promises.push(() => Promise.resolve(null))
     }
 
     /**
@@ -128,6 +130,8 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       promises.push(globalsQuery)
+    } else {
+      promises.push(() => Promise.resolve(null))
     }
 
     /**
@@ -152,6 +156,8 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       promises.push(pageQuery)
+    } else {
+      promises.push(() => Promise.resolve(null))
     }
 
     /**
@@ -181,6 +187,8 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       promises.push(surroundQuery)
+    } else {
+      promises.push(() => Promise.resolve(null))
     }
 
     return await Promise.all(promises.map(promise => promise())).then(async ([
