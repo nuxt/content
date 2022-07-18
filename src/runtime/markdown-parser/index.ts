@@ -8,8 +8,8 @@ import remarkGfm from 'remark-gfm'
 import rehypeSortAttributeValues from 'rehype-sort-attribute-values'
 import rehypeSortAttributes from 'rehype-sort-attributes'
 import rehypeRaw from 'rehype-raw'
-import { MarkdownOptions, Toc } from '../types'
-import { parseFrontMatter } from './remark-mdc/frontmatter'
+import { parseFrontMatter } from 'remark-mdc'
+import { MarkdownOptions, MarkdownParsedContent, Toc } from '../types'
 import { generateToc } from './toc'
 import { contentHeading, generateBody } from './content'
 
@@ -20,18 +20,35 @@ export const useDefaultOptions = (): MarkdownOptions => ({
     searchDepth: 2
   },
   tags: {},
-  remarkPlugins: [
-    remarkEmoji,
-    remarkSqueezeParagraphs,
-    remarkGfm
-  ],
-  rehypePlugins: [
-    rehypeSlug,
-    rehypeExternalLinks,
-    rehypeSortAttributeValues,
-    rehypeSortAttributes,
-    [rehypeRaw, { passThrough: ['element'] }]
-  ]
+  remarkPlugins: {
+    'remark-emoji': {
+      instance: remarkEmoji
+    },
+    'remark-squeeze-paragraphs': {
+      instance: remarkSqueezeParagraphs
+    },
+    'remark-gfm': {
+      instance: remarkGfm
+    }
+  },
+  rehypePlugins: {
+    'rehype-slug': {
+      instance: rehypeSlug
+    },
+    'rehype-external-links': {
+      instance: rehypeExternalLinks
+    },
+    'rehype-sort-attribute-values': {
+      instance: rehypeSortAttributeValues
+    },
+    'rehype-sort-attributes': {
+      instance: rehypeSortAttributes
+    },
+    'rehype-raw': {
+      instance: rehypeRaw,
+      passThrough: ['element']
+    }
+  }
 })
 
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {
@@ -61,7 +78,7 @@ export async function parse (file: string, userOptions: Partial<MarkdownOptions>
    */
   const heading = contentHeading(body)
 
-  return {
+  return <{ meta: Partial<MarkdownParsedContent>, body: MarkdownParsedContent['body'] }> {
     body: {
       ...body,
       toc
@@ -91,5 +108,3 @@ function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   }
   return content
 }
-
-export * from './remark-mdc/frontmatter'

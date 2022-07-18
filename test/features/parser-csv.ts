@@ -6,8 +6,8 @@ const csv = `a,b,c
 4,5,6`
 
 export const testCSVParser = () => {
-  describe('parser:csv', () => {
-    test('simple', async () => {
+  describe('Parser (.csv)', () => {
+    test('Basic usage', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {

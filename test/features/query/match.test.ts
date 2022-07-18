@@ -13,7 +13,7 @@ describe('Match', () => {
     nested: { users: ['Mahatma', 'Steve', 'Woodrow'] }
   }
 
-  describe('string contains', () => {
+  describe('String contains', () => {
     test('$contains string', () => {
       expect(match(item, { name: { $contains: 'a' } })).toBe(true)
       expect(match(item, { 'nested.users.0': { $contains: 'Maha' } })).toBe(true)
@@ -72,17 +72,6 @@ describe('Match', () => {
       expect(match(item, { 'nested.users': { $type: 'object' } })).toBe(true)
       expect(match(item, { 'nested.users.0': { $type: 'string' } })).toBe(true)
     })
-  })
-
-  test('$in', () => {
-    const item = { id: 1, name: 'a', to: 'a', category: 'c1', nested: { users: ['Mahatma', 'Steve', 'Woodrow'] } }
-
-    expect(match(item, { name: { $in: ['a', 'b'] } })).toBe(true)
-    expect(match(item, { category: { $in: 'c1' } })).toBe(true)
-    expect(match(item, { category: { $in: ['c1', 'c2'] } })).toBe(true)
-    expect(match(item, { category: { $in: ['c2', 'c3'] } })).toBe(false)
-
-    expect(match(item, { id: { $in: [1, 2] } })).toBe(true)
   })
 
   test('$eq', () => {
@@ -185,6 +174,44 @@ describe('Match', () => {
     test('$lte', () => {
       expect(match(item, { id: { $lte: 1 } })).toBe(true)
       expect(match(item, { id: { $lte: 0 } })).toBe(false)
+    })
+  })
+
+  describe('$in ', () => {
+    test('string filed', () => {
+      const item = { id: 1, name: 'a', to: 'a', category: 'c1', nested: { users: ['Mahatma', 'Steve', 'Woodrow'] } }
+
+      expect(match(item, { name: { $in: ['a', 'b'] } })).toBe(true)
+      expect(match(item, { category: { $in: 'c1' } })).toBe(true)
+      expect(match(item, { category: { $in: ['c1', 'c2'] } })).toBe(true)
+      expect(match(item, { category: { $in: ['c2', 'c3'] } })).toBe(false)
+
+      expect(match(item, { id: { $in: [1, 2] } })).toBe(true)
+    })
+
+    test('array field', () => {
+      const data = [
+        {
+          name: 'post1',
+          tags: ['school', 'office']
+        },
+        {
+          name: 'post2',
+          tags: ['school', 'home']
+        },
+        {
+          item: 'Maps',
+          tags: ['office', 'storage']
+        }
+      ]
+
+      const condition = { tags: { $in: ['school', 'home'] } }
+      data.forEach((item) => {
+        expect(match(item, condition)).toBe(
+          item.tags.includes(condition.tags.$in[0]) ||
+          item.tags.includes(condition.tags.$in[1])
+        )
+      })
     })
   })
 })

@@ -1,7 +1,6 @@
 import { resolve } from 'pathe'
 import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
-import colors from 'tailwindcss/colors.js'
 
 const alias = {}
 
@@ -11,6 +10,17 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      script: [
+        {
+          defer: true,
+          'data-domain': 'content.nuxtjs.org',
+          src: 'https://plausible.io/js/script.js'
+        }
+      ]
+    }
+  },
   content: {
     sources: [
       {
@@ -42,13 +52,18 @@ export default defineNuxtConfig({
       preload: ['xml']
     }
   },
-  generate: {
-    routes: []
+  nitro: {
+    prerender: {
+      routes: [
+        '/',
+        '/blog/announcing-v2'
+      ]
+    }
   },
-  modules: ['@nuxthq/admin', '@docus/github', 'vue-plausible'],
+  modules: ['@nuxthq/admin', '@nuxtlabs/github-module'],
   alias,
   extends: [
-    (process.env.DOCUS_THEME_PATH || './node_modules/@docus/docs-theme')
+    (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
   ],
   github: {
     owner: 'nuxt',
@@ -61,20 +76,6 @@ export default defineNuxtConfig({
       'process.env.NODE_DISABLE_COLORS': {},
       'process.env.NO_COLOR': {},
       'process.env.FORCE_TERM': {}
-    }
-  },
-  plausible: {
-    domain: 'content.nuxtjs.org'
-  },
-  tailwindcss: {
-    config: {
-      theme: {
-        extend: {
-          colors: {
-            primary: colors.emerald
-          }
-        }
-      }
     }
   },
   colorMode: {

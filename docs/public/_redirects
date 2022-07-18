@@ -8,7 +8,6 @@
 /:locale/fetching /:locale/v1/getting-started/fetching 302!
 /displaying /v1/getting-started/displaying 302!
 /:locale/displaying /:locale/v1/getting-started/displaying 302!
-/:locale/configuration /:locale/v1/getting-started/configuration 302!
 /examples/basic /v1/examples/basic 302!
 /:locale/examples/basic /:locale/v1/examples/basic 302!
 /examples/tailwindcss-typography /v1/examples/tailwindcss-typography 302!

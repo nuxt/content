@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { apply, get, omit, pick, sortList } from '../../../src/runtime/query/match/utils'
 
-describe('query utils', () => {
+describe('Query utils', () => {
   test('Omit', () => {
     const obj = {
       a: 1,

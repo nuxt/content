@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'url'
-import { assert, test, describe, expect } from 'vitest'
+import { assert, test, describe, expect, vi } from 'vitest'
 import { setup, $fetch, isDev } from '@nuxt/test-utils'
 import { hash } from 'ohash'
 import { testMarkdownParser } from './features/parser-markdown'
@@ -13,9 +13,15 @@ import { testRegex } from './features/regex'
 import { testMarkdownParserExcerpt } from './features/parser-markdown-excerpt'
 import { testHMR } from './features/hmr'
 import { testParserHooks } from './features/parser-hooks'
+import { testModuleOptions } from './features/module-options'
+import { testContentQuery } from './features/content-query'
+import { testHighlighter } from './features/highlighter'
+import { testMarkdownRenderer } from './features/renderer-markdown'
 
 const fixturePath = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
-describe('fixtures:basic', async () => {
+
+describe('Basic usage', async () => {
+  const spyConsoleWarn = vi.spyOn(global.console, 'warn')
   await setup({
     rootDir: fixturePath,
     browser: true,
@@ -47,7 +53,7 @@ describe('fixtures:basic', async () => {
     assert(ids.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
     assert(ids.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
 
-    assert(ids.includes('fa-ir:fa:index.md') === true, 'Files with `fa-ir` prefix should be listed')
+    assert(ids.includes('fa-ir:fa:hello.md') === true, 'Files with `fa-ir` prefix should be listed')
   })
 
   test('Get contents index', async () => {
@@ -67,12 +73,12 @@ describe('fixtures:basic', async () => {
   test('Search contents using `locale` helper', async () => {
     const fa = await $fetch('/locale-fa')
 
-    expect(fa).toContain('fa-ir:fa:index.md')
+    expect(fa).toContain('fa-ir:fa:hello.md')
     expect(fa).not.toContain('content:index.md')
 
     const en = await $fetch('/locale-en')
 
-    expect(en).not.toContain('fa-ir:fa:index.md')
+    expect(en).not.toContain('fa-ir:fa:hello.md')
     expect(en).toContain('content:index.md')
   })
 
@@ -84,31 +90,36 @@ describe('fixtures:basic', async () => {
     })
   })
 
-  test('features:multi-part-path', async () => {
+  test('Multi part path', async () => {
     const html = await $fetch('/features/multi-part-path')
     expect(html).contains('Persian')
   })
 
-  test('features:<ContentDoc> head management (if same path)', async () => {
+  test('<ContentDoc> head management (if same path)', async () => {
     const html = await $fetch('/head')
     expect(html).contains('<title>Head overwritten</title>')
     expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
     expect(html).contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
-  test('features:<ContentDoc> head management (not same path)', async () => {
+  test('<ContentDoc> head management (not same path)', async () => {
     const html = await $fetch('/bypass-head')
     expect(html).not.contains('<title>Head overwritten</title>')
     expect(html).not.contains('<meta property="og:image" content="https://picsum.photos/200/300">')
     expect(html).not.contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
 
-  test('partial:specials-chars', async () => {
+  test('Partials specials chars', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
   })
+
+  testContentQuery()
+
   testNavigation()
 
   testMarkdownParser()
+  testMarkdownRenderer()
+
   testMarkdownParserExcerpt()
 
   testYamlParser()
@@ -125,7 +136,17 @@ describe('fixtures:basic', async () => {
 
   testParserHooks()
 
+  testModuleOptions()
+
+  testHighlighter()
+
   if (isDev()) {
     await testHMR(fixturePath)
+    return
   }
+
+  test('Warning for invalid file name', () => {
+    expect(spyConsoleWarn).toHaveBeenCalled()
+    expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
+  })
 })

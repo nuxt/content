@@ -14,10 +14,6 @@ export interface ParsedContentMeta {
    */
   _path?: string
   /**
-   * Content slug
-   */
-  _slug?: string
-  /**
    * Content title
    */
   title?: string
@@ -33,11 +29,23 @@ export interface ParsedContentMeta {
    * Content locale
    */
   _locale?: boolean
+  /**
+   * File type of the content, i.e `markdown`
+   */
+  _type?: string
+  /**
+   * Path to the file relative to the content directory
+   */
+  _file?: string
+  /**
+   * Extension of the file
+   */
+  _extension?: string
 
   [key: string]: any
 }
 
-export interface ParsedContent extends ParsedContentMeta{
+export interface ParsedContent extends ParsedContentMeta {
   /**
    * Excerpt
    */
@@ -72,6 +80,8 @@ export interface MarkdownRoot {
   props?: Record<string, any>
 }
 
+export interface MarkdownPlugin extends Record<string, any> {}
+
 export interface MarkdownOptions {
   /**
    * Enable/Disable MDC components.
@@ -85,8 +95,8 @@ export interface MarkdownOptions {
     searchDepth: number
   }
   tags: Record<string, string>
-  remarkPlugins: Array<any | [any, any]>
-  rehypePlugins: Array<any | [any, any]>
+  remarkPlugins: Record<string, false | (MarkdownPlugin & { instance: any })>
+  rehypePlugins: Record<string, false | (MarkdownPlugin & { instance: any })>
 }
 
 export interface TocLink {
@@ -103,9 +113,31 @@ export interface Toc {
   links: TocLink[]
 }
 
+export interface MarkdownParsedContent extends ParsedContent {
+  _type: 'markdown',
+  /**
+   * Content is empty
+   */
+  _empty: boolean
+  /**
+   * Content description
+   */
+  description: string
+  /**
+   * Content excerpt, generated from content
+   */
+  excerpt?: MarkdownRoot
+  /**
+   * Parsed Markdown body with included table of contents.
+   */
+  body: MarkdownRoot & {
+    toc?: Toc
+  }
+}
+
 export interface ContentTransformer {
   name: string
-  extentions: string[]
+  extensions: string[]
   parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
   transform?: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
 }
@@ -154,14 +186,14 @@ export interface SortFields {
 export type SortOptions = SortParams | SortFields
 
 export interface QueryBuilderParams {
-  first: boolean
-  skip: number
-  limit: number
-  only: string[]
-  without: string[]
-  sort: SortOptions[]
-  where: object[]
-  surround: {
+  first?: boolean
+  skip?: number
+  limit?: number
+  only?: string[]
+  without?: string[]
+  sort?: SortOptions[]
+  where?: object[]
+  surround?: {
     query: string | object
     before?: number
     after?: number
@@ -174,12 +206,14 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only(keys: string | string[]): QueryBuilder<T>
+  only<K extends keyof T | string>(keys: K): QueryBuilder<Pick<T, K>>
+  only<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
 
   /**
    * Remove a subset of fields
    */
-  without(keys: string | string[]): QueryBuilder<T>
+  without<K extends keyof T | string>(keys: K): QueryBuilder<Omit<T, K>>
+  without<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Omit<T, K[number]>>
 
   /**
    * Sort results
@@ -230,7 +264,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void
 
-export type DatabaseFetcher<T> = (params: QueryBuilderParams) => Promise<Array<T> | T>
+export type DatabaseFetcher<T> = (quey: QueryBuilder<T>) => Promise<Array<T> | T>
 
 export type QueryMatchOperator = (item: any, condition: any) => boolean
 
@@ -249,10 +283,10 @@ export interface NavItem {
 export interface HighlightParams {
   code: string
   lang: string
-  theme: Theme
+  theme: Theme | Record<string, Theme>
 }
 
 export interface HighlightThemedToken {
   content: string
-  color?: string
+  color?: string | Record<string, string>
 }

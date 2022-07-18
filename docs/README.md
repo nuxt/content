@@ -2,7 +2,7 @@
 
 # Documentation
 
-This documentation uses [Docus](https://github.com/nuxtlabs/docus).
+This documentation uses [Docus](https://github.com/nuxt-themes/docus).
 
 ## 💻 Development
 

@@ -22,13 +22,12 @@ jobs:
       - run: yarn dev:prepare
       - run: yarn lint
       - run: yarn build
-      - run: yarn test:unit
-      - run: yarn test:unit:dev
+      - run: yarn test
+      - run: yarn test:dev
       - name: Release Edge
         if: |
           github.event_name == 'push' &&
-          !contains(github.event.head_commit.message, '[skip-release]') &&
-          !contains(github.event.head_commit.message, 'docs')
+          !contains(github.event.head_commit.message, '[skip-release]')
         run: ./scripts/release-edge.sh
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

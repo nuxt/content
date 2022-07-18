@@ -6,6 +6,9 @@ import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
 import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
+import type { MarkdownPlugin } from './runtime/types'
+
+export const logger = useLogger('@nuxt/content')
 
 /**
  * Internal version that represents cache format.
@@ -65,25 +68,44 @@ export function getMountDriver (mount: MountOptions) {
 /**
  * Generate mounts for content storages
  */
-export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions>) {
+export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
-  return storages.reduce((mounts, storage) => {
-    if (typeof storage === 'string') {
-      mounts[key(storage)] = {
-        name: storage,
-        driver: 'fs',
-        prefix: '',
-        base: resolve(nuxt.options.srcDir, storage)
+  if (Array.isArray(storages)) {
+    logger.warn('Using array syntax to define sources is deprecated. Consider using object syntax.')
+    storages = storages.reduce((mounts, storage) => {
+      if (typeof storage === 'string') {
+        mounts[key(storage)] = {
+          name: storage,
+          driver: 'fs',
+          prefix: '',
+          base: resolve(nuxt.options.srcDir, storage)
+        }
       }
-    }
 
-    if (typeof storage === 'object') {
-      mounts[key(storage.name, storage.prefix)] = storage
-    }
+      if (typeof storage === 'object') {
+        mounts[key(storage.name, storage.prefix)] = storage
+      }
 
-    return mounts
-  }, {} as Record<string, MountOptions>)
+      return mounts
+    }, {} as Record<string, MountOptions>)
+  } else {
+    storages = Object.entries(storages).reduce((mounts, [name, storage]) => {
+      mounts[key(storage.name || name, storage.prefix)] = storage
+      return mounts
+    }, {})
+  }
+
+  const defaultStorage = key('content')
+  if (!storages[defaultStorage]) {
+    storages[defaultStorage] = {
+      name: defaultStorage,
+      driver: 'fs',
+      base: resolve(nuxt.options.srcDir, 'content')
+    }
+  }
+
+  return storages
 }
 /**
  * WebSocket server useful for live content reload.
@@ -119,20 +141,20 @@ export function createWebSocket () {
 }
 
 export function processMarkdownOptions (options: ModuleOptions['markdown']) {
-  options.rehypePlugins = (options.rehypePlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
-  options.remarkPlugins = (options.remarkPlugins || []).map(resolveMarkdownPlugin).filter(Boolean)
-
-  return options
-
-  function resolveMarkdownPlugin (plugin: string | [string, any]): [string, any] {
-    if (typeof plugin === 'string') { plugin = [plugin, {}] }
-
-    if (!Array.isArray(plugin)) {
-      useLogger('@nuxt/content').warn('Plugin silently ignored:', (plugin as any).name || plugin)
-      return
-    }
-
-    // TODO: Add support for local custom plugins
-    return plugin
+  return {
+    ...options,
+    remarkPlugins: resolveMarkdownPlugins(options.remarkPlugins),
+    rehypePlugins: resolveMarkdownPlugins(options.rehypePlugins)
   }
+}
+
+function resolveMarkdownPlugins (plugins): Record<string, false | MarkdownPlugin> {
+  if (Array.isArray(plugins)) {
+    return Object.values(plugins).reduce((plugins, plugin) => {
+      const [name, pluginOptions] = Array.isArray(plugin) ? plugin : [plugin, {}]
+      plugins[name] = pluginOptions
+      return plugins
+    }, {})
+  }
+  return plugins || {}
 }

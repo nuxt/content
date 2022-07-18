@@ -1,11 +1,11 @@
 import { defineEventHandler } from 'h3'
 import { serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
-import { ParsedContentMeta, QueryBuilderParams } from '../../types'
+import { ParsedContentMeta } from '../../types'
 import { getContentQuery } from '../../utils/query'
 
 export default defineEventHandler(async (event) => {
-  const query: Partial<QueryBuilderParams> = getContentQuery(event)
+  const query = getContentQuery(event)
 
   const contents = await serverQueryContent(event, query)
     .where({
@@ -13,11 +13,18 @@ export default defineEventHandler(async (event) => {
        * Partial contents are not included in the navigation
        * A partial content is a content that has `_` prefix in its path
        */
-      _partial: false
+      _partial: false,
+      /**
+       * Exclude any pages which have opted out of navigation via frontmatter.
+       */
+      navigation: {
+        $ne: false
+      }
     })
     .find()
 
   const dirConfigs = await serverQueryContent(event).where({ _path: /\/_dir$/i, _partial: true }).find()
+
   const configs = dirConfigs.reduce((configs, conf) => {
     if (conf.title.toLowerCase() === 'dir') {
       conf.title = undefined

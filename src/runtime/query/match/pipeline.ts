@@ -1,4 +1,4 @@
-import type { QueryBuilderParams, QueryPipe } from '../../types'
+import type { QueryBuilder, QueryBuilderParams, QueryPipe } from '../../types'
 import { apply, ensureArray, sortList, withoutKeys, withKeys } from './utils'
 import { createMatch } from '.'
 
@@ -40,9 +40,9 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     (data, params) => params.first ? data[0] : data
   ]
 
-  return async (params: QueryBuilderParams): Promise<T | T[]> => {
+  return async (query: QueryBuilder<T>): Promise<T | T[]> => {
     const data = await getContentsList()
 
-    return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, params) || $data, data)
+    return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, query.params()) || $data, data)
   }
 }

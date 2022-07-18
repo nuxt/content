@@ -4,6 +4,7 @@ import type { QueryBuilderParams } from '../types'
 import ContentQuery from './ContentQuery'
 
 export default defineComponent({
+  name: 'ContentList',
   props: {
     /**
      * Query props
@@ -28,6 +29,15 @@ export default defineComponent({
       default: undefined
     }
   },
+
+  /**
+   * Content empty fallback
+   * @slot empty
+   */
+  /**
+   * Content not found fallback
+   * @slot not-found
+   */
   render (ctx) {
     const slots = useSlots()
 

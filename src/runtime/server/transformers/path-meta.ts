@@ -1,6 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
+import { ParsedContentMeta } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
@@ -12,7 +13,7 @@ const describeId = (_id: string) => {
   parts[parts.length - 1] = filename
   const _path = parts.join('/')
 
-  return {
+  return <Pick<ParsedContentMeta, '_source' | '_path' | '_extension' | '_file'>> {
     _source,
     _path,
     _extension,
@@ -22,7 +23,7 @@ const describeId = (_id: string) => {
 
 export default {
   name: 'path-meta',
-  extentions: ['.*'],
+  extensions: ['.*'],
   transform (content) {
     const { locales, defaultLocale } = useRuntimeConfig().content || {}
     const { _source, _file, _path, _extension } = describeId(content._id)
@@ -33,7 +34,7 @@ export default {
 
     const filePath = parts.join('/')
 
-    return {
+    return <ParsedContentMeta> {
       _path: generatePath(filePath),
       _draft: isDraft(filePath),
       _partial: isPartial(filePath),
@@ -81,6 +82,7 @@ export function refineUrlPart (name: string): string {
   if (SEMVER_REGEX.test(name)) {
     return name
   }
+
   return (
     name
       /**
@@ -90,10 +92,10 @@ export function refineUrlPart (name: string): string {
       /**
        * Remove index keyword
        */
-      .replace(/^index/, '')
+      .replace(/^index(\.draft)?$/, '')
       /**
        * Remove draft keyword
        */
-      .replace(/\.draft/, '')
+      .replace(/\.draft$/, '')
   )
 }

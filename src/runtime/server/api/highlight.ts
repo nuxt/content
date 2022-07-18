@@ -1,8 +1,12 @@
 import { createError, defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
+import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
 import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
 import { useRuntimeConfig } from '#imports'
+
+// Re-create logger locally as utils cannot be imported from here
+export const logger = consola.withScope('@nuxt/content')
 
 /**
  * Resolve Shiki compatible lang from string.
@@ -15,13 +19,26 @@ const resolveLang = (lang: string): Lang | undefined =>
 /**
  * Resolve Shiki compatible theme from string.
  */
-const resolveTheme = (theme: string): Theme | undefined =>
-  BUNDLED_THEMES.find(t => t === theme)
+const resolveTheme = (theme: string | Record<string, string>): Record<string, Theme> | undefined => {
+  if (!theme) {
+    return
+  }
+  if (typeof theme === 'string') {
+    theme = {
+      default: theme
+    }
+  }
+
+  return Object.entries(theme).reduce((acc, [key, value]) => {
+    acc[key] = BUNDLED_THEMES.find(t => t === value)
+    return acc
+  }, {})
+}
 
 /**
  * Resolve Shiki highlighter compatible payload from request body.
  */
-const resolveBody = (body: Partial<HighlightParams>): { code: string, lang?: Lang, theme?: Theme } => {
+const resolveBody = (body: Partial<HighlightParams>) => {
   // Assert body schema
   if (typeof body.code !== 'string') { throw createError({ statusMessage: 'Bad Request', statusCode: 400, message: 'Missing code key.' }) }
 
@@ -29,8 +46,8 @@ const resolveBody = (body: Partial<HighlightParams>): { code: string, lang?: Lan
     // Remove trailing carriage returns
     code: body.code.replace(/\n+$/, ''),
     // Resolve lang & theme (i.e check if shiki supports them)
-    lang: resolveLang(body.lang),
-    theme: resolveTheme(body.theme)
+    lang: resolveLang(body.lang || ''),
+    theme: resolveTheme(body.theme || '')
   }
 }
 
@@ -40,9 +57,14 @@ export default defineLazyEventHandler(async () => {
 
   // Initialize highlighter with defaults
   const highlighter = await getHighlighter({
-    theme: theme || 'dark-plus',
+    theme: theme?.default || theme || 'dark-plus',
     langs: [
-      ...(preload || ['json', 'js', 'ts', 'css']),
+      ...(preload || []),
+      'diff',
+      'json',
+      'js',
+      'ts',
+      'css',
       'shell',
       'html',
       'md',
@@ -60,7 +82,7 @@ export default defineLazyEventHandler(async () => {
   return async (event): Promise<HighlightThemedToken[][]> => {
     const params = await useBody<Partial<HighlightParams>>(event)
 
-    const { code, lang, theme } = resolveBody(params)
+    const { code, lang, theme = { default: highlighter.getTheme() } } = resolveBody(params)
 
     // Skip highlight if lang is not supported
     if (!lang) {
@@ -69,25 +91,106 @@ export default defineLazyEventHandler(async () => {
 
     // Load supported language on-demand
     if (!highlighter.getLoadedLanguages().includes(lang)) {
-      await highlighter.loadLanguage(lang)
+      let message = 'Content Highlighter Error\n\n'
+      message = message + `Language "${lang}" is not loaded Shiki. Falling back to plain code.\n\n`
+      message = message + `Please make sure you add "${lang}" to the 'preload' list in your Nuxt config.\n\n`
+      message = message + 'See: https://content.nuxtjs.org/api/configuration#highlight'
+      logger.warn(message)
+
+      // TODO: Enable autoloading of language when upstream Shiki supports it\
+      // See: https://github.com/nuxt/content/issues/1225#issuecomment-1148786924
+      // await highlighter.loadLanguage(lang)
+      return [[{ content: code }]]
     }
 
     // Load supported theme on-demand
-    if (theme && !highlighter.getLoadedThemes().includes(theme)) {
-      await highlighter.loadTheme(theme)
-    }
+    await Promise.all(
+      Object.values(theme).map(async (theme) => {
+        if (!highlighter.getLoadedThemes().includes(theme)) {
+          await highlighter.loadTheme(theme)
+        }
+      })
+    )
 
     // Highlight code
-    const highlightedCode = highlighter.codeToThemedTokens(code, lang, theme)
-
-    // Clean up to shorten response payload
-    for (const line of highlightedCode) {
-      for (const token of line) {
-        delete token.fontStyle
-        delete token.explanation
+    const coloredTokens = Object.entries(theme).map(([key, theme]) => {
+      const tokens = highlighter.codeToThemedTokens(code, lang, theme)
+      return {
+        key,
+        theme,
+        tokens
       }
+    })
+
+    const highlightedCode: HighlightThemedToken[][] = []
+    for (const line in coloredTokens[0].tokens) {
+      highlightedCode[line] = coloredTokens.reduce((acc, color) => {
+        return mergeLines({
+          key: coloredTokens[0].key,
+          tokens: acc
+        }, {
+          key: color.key,
+          tokens: color.tokens[line]
+        })
+      }, coloredTokens[0].tokens[line] as HighlightThemedToken[])
     }
 
     return highlightedCode
   }
 })
+
+interface HighlightThemedTokenLine {
+  key: string
+  tokens: HighlightThemedToken[]
+}
+
+function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedTokenLine) {
+  const mergedTokens: HighlightThemedToken[] = []
+  const getColors = (h, i) => typeof h.tokens[i].color === 'string' ? { [h.key]: h.tokens[i].color } : h.tokens[i].color
+
+  const [big, small] = line1.tokens.length > line2.tokens.length ? [line1, line2] : [line2, line1]
+  let targetToken = 0
+  let targetTokenCharIndex = 0
+  big.tokens.forEach((t, i) => {
+    if (targetTokenCharIndex === 0) {
+      if (t.content === small.tokens[i]?.content) {
+        mergedTokens.push({
+          content: t.content,
+          color: {
+            ...getColors(big, i),
+            ...getColors(small, i)
+          }
+        })
+        targetToken = i + 1
+        return
+      }
+      if (t.content === small.tokens[targetToken]?.content) {
+        mergedTokens.push({
+          content: t.content,
+          color: {
+            ...getColors(big, i),
+            ...getColors(small, targetToken)
+          }
+        })
+        targetToken += 1
+        return
+      }
+    }
+
+    if (small.tokens[targetToken]?.content?.substring(targetTokenCharIndex, targetTokenCharIndex + t.content.length) === t.content) {
+      targetTokenCharIndex += t.content.length
+      mergedTokens.push({
+        content: t.content,
+        color: {
+          ...getColors(big, i),
+          ...getColors(small, targetToken)
+        }
+      })
+    }
+    if (small.tokens[targetToken]?.content.length <= targetTokenCharIndex) {
+      targetToken += 1
+      targetTokenCharIndex = 0
+    }
+  })
+  return mergedTokens
+}

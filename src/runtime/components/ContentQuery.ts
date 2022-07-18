@@ -4,6 +4,7 @@ import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
 export default defineComponent({
+  name: 'ContentQuery',
   props: {
     /**
      * The path of the content to load from content source.
@@ -96,7 +97,7 @@ export default defineComponent({
      *
      * Might be skipping `partial: true` marked in Markdown contents front-matter.
      */
-    const isPartial = computed(() => path.value.includes('/_'))
+    const isPartial = computed(() => path.value?.includes('/_'))
 
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
       `content-query-${hash(props)}`,
@@ -147,6 +148,11 @@ export default defineComponent({
       refresh
     }
   },
+
+  /**
+   * Content not found fallback
+   * @slot not-found
+   */
   render (ctx) {
     const slots = useSlots()
 
@@ -187,7 +193,7 @@ export default defineComponent({
       if (!data && slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
 
       // Empty slots for `one` if type is "markdown" refers to an empty `body.children` key.
-      if (data._type && data._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
+      if (data?._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
     } else if (!data || !data.length) {
       // Handle `find()` and `findSurround()`
 

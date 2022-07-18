@@ -23,7 +23,7 @@ No \\n's!",
 }`
 
 export const testJSONParser = () => {
-  describe('parser:json', () => {
+  describe('Parser (json)', () => {
     test('key:value', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
@@ -37,6 +37,7 @@ export const testJSONParser = () => {
       assert(parsed._id === 'content:index.json')
       assert(parsed.key === 'value')
     })
+
     test('array', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
