@@ -36,7 +36,7 @@ export const testParserOptions = () => {
         }
       })
       expect(parsed).toHaveProperty('_id')
-      expect(parsed.locale).toBe('jp')
+      expect(parsed._locale).toBe('jp')
     })
   })
 }
