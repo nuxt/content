@@ -1,3 +1,4 @@
+<script lang="ts">
 import { h, resolveComponent, Text, defineComponent } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
@@ -395,3 +396,4 @@ async function resolveContentComponents (body, meta) {
     return components
   }
 }
+</script>
