@@ -1,3 +1,4 @@
+<script lang="ts">
 import type { Slot } from 'vue'
 import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h } from '#imports'
 
@@ -76,3 +77,4 @@ export default defineComponent({
     }
   }
 })
+</script>

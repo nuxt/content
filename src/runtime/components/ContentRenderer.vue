@@ -1,3 +1,4 @@
+<script lang="ts">
 import { defineComponent, watch, h, useSlots } from 'vue'
 import ContentRendererMarkdown from './ContentRendererMarkdown'
 
@@ -90,3 +91,4 @@ export default defineComponent({
     )
   }
 })
+</script>

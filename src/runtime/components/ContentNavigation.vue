@@ -1,3 +1,4 @@
+<script lang="ts">
 import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams } from '../types'
@@ -75,3 +76,4 @@ export default defineComponent({
       : defaultNode(navigation)
   }
 })
+</script>

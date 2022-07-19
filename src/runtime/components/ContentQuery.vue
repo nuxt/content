@@ -1,3 +1,4 @@
+<script lang="ts">
 import { hash } from 'ohash'
 import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
@@ -210,3 +211,4 @@ export default defineComponent({
     return emptyNode('default', { data, props, isPartial })
   }
 })
+</script>
