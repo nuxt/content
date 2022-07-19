@@ -17,10 +17,14 @@ interface ParseContentOptions {
   csv?: ModuleOptions['csv']
   yaml?: ModuleOptions['yaml']
   highlight?: ModuleOptions['highlight']
-  locales?: ModuleOptions['locales']
-  defaultLocale?: ModuleOptions['defaultLocale']
   markdown?: ModuleOptions['markdown']
   transformers?: ContentTransformer[]
+  pathMeta?: {
+    locales?: ModuleOptions['locales']
+    defaultLocale?: ModuleOptions['defaultLocale']
+  }
+  // Allow passing options for custom transformers
+  [key: string]: any
 }
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
@@ -150,18 +154,20 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent (id: string, content: string, options: ParseContentOptions = {}) {
+export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
-  const { transformers, markdown, csv, yaml, defaultLocale, locales, highlight } = defu(
-    options,
+  const options = defu(
+    opts,
     {
       markdown: contentConfig.markdown,
       csv: contentConfig.csv,
       yaml: contentConfig.yaml,
-      defaultLocale: contentConfig.defaultLocale,
-      locales: contentConfig.locales,
       highlight: contentConfig.highlight,
-      transformers: customTransformers
+      transformers: customTransformers,
+      pathMeta: {
+        defaultLocale: contentConfig.defaultLocale,
+        locales: contentConfig.locales
+      }
     }
   )
 
@@ -169,17 +175,7 @@ export async function parseContent (id: string, content: string, options: ParseC
   const file = { _id: id, body: content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
-  const result = await transformContent(id, file.body, {
-    transformers,
-    markdown,
-    csv,
-    yaml,
-    pathMeta: {
-      defaultLocale,
-      locales
-    },
-    highlight
-  })
+  const result = await transformContent(id, file.body, options)
 
   // Call hook after parsing the file
   await nitroApp.hooks.callHook('content:file:afterParse', result)
