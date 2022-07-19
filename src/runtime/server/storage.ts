@@ -2,14 +2,26 @@ import { prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { CompatibilityEvent } from 'h3'
-import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
+import defu from 'defu'
+import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { transformContent } from '../transformers'
+import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
 // eslint-disable-next-line import/named
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
-import { transformers } from '#content/virtual/transformers'
+import { transformers as customTransformers } from '#content/virtual/transformers'
+
+interface ParseContentOptions {
+  csv?: ModuleOptions['csv']
+  yaml?: ModuleOptions['yaml']
+  highlight?: ModuleOptions['highlight']
+  locales?: ModuleOptions['locales']
+  defaultLocale?: ModuleOptions['defaultLocale']
+  markdown?: ModuleOptions['markdown']
+  transformers?: ContentTransformer[]
+}
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
@@ -138,9 +150,20 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent (id: string, content: string) {
+export async function parseContent (id: string, content: string, options: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
-  const { markdown, csv, yaml, defaultLocale, locales, highlight } = useRuntimeConfig().content
+  const { transformers, markdown, csv, yaml, defaultLocale, locales, highlight } = defu(
+    options,
+    {
+      markdown: contentConfig.markdown,
+      csv: contentConfig.csv,
+      yaml: contentConfig.yaml,
+      defaultLocale: contentConfig.defaultLocale,
+      locales: contentConfig.locales,
+      highlight: contentConfig.highlight,
+      transformers: customTransformers
+    }
+  )
 
   // Call hook before parsing the file
   const file = { _id: id, body: content }
