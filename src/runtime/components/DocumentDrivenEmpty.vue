@@ -1,3 +1,4 @@
+<script lang="ts">
 import { defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
 import { ParsedContent } from '../types'
@@ -20,3 +21,4 @@ export default defineComponent({
     ])
   }
 })
+</script>
