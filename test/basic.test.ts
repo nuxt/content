@@ -16,6 +16,7 @@ import { testModuleOptions } from './features/module-options'
 import { testContentQuery } from './features/content-query'
 import { testHighlighter } from './features/highlighter'
 import { testMarkdownRenderer } from './features/renderer-markdown'
+import { testParserOptions } from './features/parser-options'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -141,4 +142,6 @@ describe('Basic usage', async () => {
   testModuleOptions()
 
   testHighlighter()
+
+  testParserOptions()
 })
