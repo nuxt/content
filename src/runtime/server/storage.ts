@@ -10,7 +10,9 @@ import { transformContent } from '../transformers'
 import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
 // eslint-disable-next-line import/named
+// @ts-ignore
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
+// @ts-ignore
 import { transformers as customTransformers } from '#content/virtual/transformers'
 
 interface ParseContentOptions {
