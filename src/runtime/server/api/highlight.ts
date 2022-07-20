@@ -1,4 +1,4 @@
-import { createError, defineLazyEventHandler, useBody } from 'h3'
+import { /* createError, */defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
