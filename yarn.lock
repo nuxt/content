@@ -6477,10 +6477,10 @@ regexpp@^3.0.0, regexpp@^3.2.0:
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
 
-rehype-external-links@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/rehype-external-links/-/rehype-external-links-1.0.1.tgz#9e5d21c606b04d8098012e2d3c811919762d0ba2"
-  integrity sha512-SrMMtIO2tPLWDfvibhECAn9cuEMW6Fi40ZVK2UQSPTnDEv3LraLzGVyKGb/vrDlUy4RCYTcmm0rq/ss9nPqrsw==
+rehype-external-links@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rehype-external-links/-/rehype-external-links-2.0.0.tgz#594d7a8727f04758d2e760752ee29d964d44def3"
+  integrity sha512-Nhq4Wq2TpNdZ1rYec0LThCOoVLkIz5CLhDSo7k4nFhhlwE5vYcRleAM92ozZx6CcWTvzalLCpxq4PQLMucI1Vw==
   dependencies:
     "@types/hast" "^2.0.0"
     extend "^3.0.0"
