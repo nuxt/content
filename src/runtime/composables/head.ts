@@ -2,7 +2,7 @@ import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-rout
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
 import { ParsedContent } from '../types'
-import { useRoute, nextTick, useHead, unref, nextTick, watch } from '#imports'
+import { useRoute, nextTick, useHead, unref, watch } from '#imports'
 
 export const useContentHead = (
   _content: ParsedContent | Ref<ParsedContent>,
@@ -19,7 +19,7 @@ export const useContentHead = (
 
     // Great basic informations from the data
     head.title = head.title || data?.title
-    head.meta = head.meta || []
+    head.meta = [...(head.meta || [])]
 
     // Grab description from `head.description` or fallback to `data.description`
     // @ts-ignore - We expect `head.description` from Nuxt configurations...

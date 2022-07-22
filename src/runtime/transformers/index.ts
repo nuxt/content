@@ -6,18 +6,16 @@ import markdown from './markdown'
 import yaml from './yaml'
 import pathMeta from './path-meta'
 import json from './json'
-import highlight from './shiki'
 
 const TRANSFORMERS = [
   csv,
   markdown,
   json,
   yaml,
-  pathMeta,
-  highlight
+  pathMeta
 ]
 
-function getParser (ext, additionalTransformers: ContentTransformer[] = []): ContentTransformer {
+function getParser (ext, additionalTransformers: ContentTransformer[] = []): ContentTransformer | undefined {
   let parser = additionalTransformers.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
   if (!parser) {
     parser = TRANSFORMERS.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
@@ -42,7 +40,7 @@ export async function transformContent (id, content, options: TransformContentOp
   const file = { _id: id, body: content }
 
   const ext = extname(id)
-  const parser: ContentTransformer = getParser(ext, transformers)
+  const parser = getParser(ext, transformers)
   if (!parser) {
     // eslint-disable-next-line no-console
     console.warn(`${ext} files are not supported, "${id}" falling back to raw content`)
