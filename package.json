@@ -14,7 +14,9 @@
     ".": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
-    }
+    },
+    "./transformers": "./dist/runtime/transformers/index.mjs",
+    "./transformers/*": "./dist/runtime/transformers/*.mjs"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
