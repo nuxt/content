@@ -1,6 +1,6 @@
-import { defineTokens } from '@nuxtjs/design-tokens'
+import { defineThemeTokens } from '@nuxt-themes/kit'
 
-export default defineTokens({
+export default defineThemeTokens({
   colors: {
     primary: {
       50: { value: '#ecfdf5' },
