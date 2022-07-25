@@ -173,7 +173,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (moduleOptions.surround && routeConfig.surround !== false) {
       let surround: any = _path
       if (['string', 'object'].includes(typeof routeConfig.page)) {
-        surround = { _path: routeConfig.page }
+        surround = routeConfig.page
       }
       if (['string', 'object'].includes(typeof routeConfig.surround)) {
         surround = routeConfig.surround
