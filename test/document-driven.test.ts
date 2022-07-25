@@ -21,10 +21,29 @@ describe('fixtures:document-driven', async () => {
     expect(html).contains('<div>page: </div>')
   })
 
-  test('disabled surround document driven', async () => {
+  test('disabled surround', async () => {
     const html = await $fetch('/no-surround')
 
     expect(html).contains('<div>surround: </div>')
     expect(html).contains('<div>page: {')
+  })
+
+  test('custom content with path', async () => {
+    const html = await $fetch('/home')
+
+    expect(html).contains('Home')
+    expect(html).contains('Hello World!')
+
+    expect(html).contains('with previous link /')
+    expect(html).contains('with next link /layout')
+  })
+
+  test('custom content with condition', async () => {
+    const html = await $fetch('/custom-search')
+
+    expect(html).contains('FM Data')
+
+    expect(html).contains('with previous link /layout')
+    expect(html).contains('with next link /no-surround')
   })
 })
