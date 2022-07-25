@@ -1,4 +1,4 @@
-import { createError, defineLazyEventHandler, useBody } from 'h3'
+import { /* createError, */defineLazyEventHandler, useBody } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
@@ -40,7 +40,13 @@ const resolveTheme = (theme: string | Record<string, string>): Record<string, Th
  */
 const resolveBody = (body: Partial<HighlightParams>) => {
   // Assert body schema
-  if (typeof body.code !== 'string') { throw createError({ statusMessage: 'Bad Request', statusCode: 400, message: 'Missing code key.' }) }
+  if (typeof body.code !== 'string') {
+    // TODO: Maybe remove this hotfix?
+    // I could not reproduce the issue with local content, but it might happen when using `parseContent` or external content sources.
+    body.code = ''
+
+    // throw createError({ statusMessage: 'Bad Request', statusCode: 400, message: 'Missing code key.' })
+  }
 
   return {
     // Remove trailing carriage returns

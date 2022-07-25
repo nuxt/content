@@ -2,13 +2,33 @@ import { prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { CompatibilityEvent } from 'h3'
-import type { QueryBuilderParams, ParsedContent, QueryBuilder } from '../types'
+// eslint-disable-next-line import/no-named-as-default
+import defu from 'defu'
+import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { parseContent } from './transformers'
+import { transformContent } from '../transformers'
+import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
 // eslint-disable-next-line import/named
-import { useRuntimeConfig, useStorage } from '#imports'
+// @ts-ignore
+import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
+// @ts-ignore
+import { transformers as customTransformers } from '#content/virtual/transformers'
+
+interface ParseContentOptions {
+  csv?: ModuleOptions['csv']
+  yaml?: ModuleOptions['yaml']
+  highlight?: ModuleOptions['highlight']
+  markdown?: ModuleOptions['markdown']
+  transformers?: ContentTransformer[]
+  pathMeta?: {
+    locales?: ModuleOptions['locales']
+    defaultLocale?: ModuleOptions['defaultLocale']
+  }
+  // Allow passing options for custom transformers
+  [key: string]: any
+}
 
 export const sourceStorage = prefixStorage(useStorage(), 'content:source')
 export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
@@ -127,11 +147,43 @@ export const getContent = async (event: CompatibilityEvent, id: string): Promise
     return { _id: contentId, body: null }
   }
 
-  const parsed = await parseContent(contentId, body as string)
+  const parsed = await parseContent(contentId, body as string) as ParsedContent
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
   return parsed
+}
+
+/**
+ * Parse content file using registered plugins
+ */
+export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
+  const nitroApp = useNitroApp()
+  const options = defu(
+    opts,
+    {
+      markdown: contentConfig.markdown,
+      csv: contentConfig.csv,
+      yaml: contentConfig.yaml,
+      highlight: contentConfig.highlight,
+      transformers: customTransformers,
+      pathMeta: {
+        defaultLocale: contentConfig.defaultLocale,
+        locales: contentConfig.locales
+      }
+    }
+  )
+
+  // Call hook before parsing the file
+  const file = { _id: id, body: content }
+  await nitroApp.hooks.callHook('content:file:beforeParse', file)
+
+  const result = await transformContent(id, file.body, options)
+
+  // Call hook after parsing the file
+  await nitroApp.hooks.callHook('content:file:afterParse', result)
+
+  return result
 }
 
 export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEvent, path?: string) => (query: QueryBuilder<T>) => {

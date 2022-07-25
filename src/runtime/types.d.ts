@@ -1,6 +1,6 @@
 import type { Theme } from 'shiki-es'
 
-export interface ParsedContentMeta {
+export interface ParsedContentInternalMeta {
   /**
    * Content id
    */
@@ -41,7 +41,9 @@ export interface ParsedContentMeta {
    * Extension of the file
    */
   _extension?: string
+}
 
+export interface ParsedContentMeta extends ParsedContentInternalMeta {
   [key: string]: any
 }
 
@@ -138,8 +140,14 @@ export interface MarkdownParsedContent extends ParsedContent {
 export interface ContentTransformer {
   name: string
   extensions: string[]
-  parse?(id: string, content: string): Promise<ParsedContent> | ParsedContent
-  transform?: ((content: ParsedContent) => Promise<ParsedContent>) | ((content: ParsedContent) => ParsedContent)
+  parse?(id: string, content: string, options: any): Promise<ParsedContent> | ParsedContent
+  transform?(content: ParsedContent, options: any): Promise<ParsedContent> | ParsedContent
+}
+
+export interface TransformContentOptions {
+  transformers?: ContentTransformer[]
+
+  [key: string]: any
 }
 
 /**
@@ -185,6 +193,221 @@ export interface SortFields {
 
 export type SortOptions = SortParams | SortFields
 
+export interface QueryBuilderWhere extends Partial<Record<keyof ParsedContentInternalMeta, string | number | boolean | RegExp | QueryBuilderWhere>> {
+  /**
+   * Match only if all of nested conditions are true
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      $and: [
+        { score: { $gte: 5 } },
+        { score: { $lte: 10 } }
+      ]
+    })
+    ```
+   **/
+  $and?: QueryBuilderWhere[]
+  /**
+   * Match if any of nested conditions is true
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      $or: [
+        { score: { $gt: 5 } },
+        { score: { $lt: 3 } }
+      ]
+    })
+    ```
+   **/
+  $or?: QueryBuilderWhere[]
+  /**
+   * Match is condition is false
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $not: 'Hello World'
+      }
+    })
+    ```
+   **/
+  $not?: string | number | boolean | RegExp | QueryBuilderWhere
+  /**
+   * Match if item equals condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $eq: 'Hello World'
+      }
+    })
+    ```
+   **/
+  $eq?: string | number | boolean | RegExp
+  /**
+   * Match if item not equals condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      score: {
+        $ne: 100
+      }
+    })
+    ```
+   **/
+  $ne?: string | number | boolean | RegExp
+  /**
+   * Check if item is greater than condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      score: {
+        $gt: 99.5
+      }
+    })
+    ```
+   */
+  $gt?: number
+  /**
+   * Check if item is greater than or equal to condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      score: {
+        $gte: 99.5
+      }
+    })
+    ```
+   */
+  $gte?: number
+  /**
+   * Check if item is less than condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      score: {
+        $lt: 99.5
+      }
+    })
+    ```
+   */
+  $lt?: number
+  /**
+   * Check if item is less than or equal to condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      score: {
+        $lte: 99.5
+      }
+    })
+    ```
+   */
+  $lte?: number
+  /**
+   * Provides regular expression capabilities for pattern matching strings.
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $regex: /^foo/
+      }
+    })
+    ```
+   */
+  $regex?: RegExp | string
+  /**
+   * Match if type of item equals condition
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      field: {
+        $type: 'boolean'
+      }
+    })
+    ```
+   */
+  $type?: string
+  /**
+   * Check key existence
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      tag: {
+        $exists: false
+      }
+    })
+    ```
+   */
+  $exists?: boolean
+  /**
+   * Match if item contains every condition or math every rule in condition array
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $contains: ['Hello', 'World']
+      }
+    })
+    ```
+   **/
+  $contains?: Array<string | number | boolean> | string | number | boolean
+  /**
+   * Match if item contains at least one rule from condition array
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $containsAny: ['Hello', 'World']
+      }
+    })
+    ```
+   */
+  $containsAny?: Array<string | number | boolean>
+  /**
+   * Ignore case contains
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      title: {
+        $icontains: 'hello world'
+      }
+    })
+    ```
+   **/
+  $icontains?: string
+  /**
+   * Match if item is in condition array
+   *
+   * @example
+    ```ts
+    queryContent().where({
+      category: {
+        $in: ['sport', 'nature', 'travel']
+      }
+    })
+    ```
+   **/
+  $in?: Array<string | number | boolean>
+
+  [key: string]: string | number | boolean | RegExp | QueryBuilderWhere | Array<string | number | boolean | QueryBuilderWhere>
+}
+
 export interface QueryBuilderParams {
   first?: boolean
   skip?: number
@@ -192,9 +415,9 @@ export interface QueryBuilderParams {
   only?: string[]
   without?: string[]
   sort?: SortOptions[]
-  where?: object[]
+  where?: QueryBuilderWhere[]
   surround?: {
-    query: string | object
+    query: string | QueryBuilderWhere
     before?: number
     after?: number
   }
@@ -223,7 +446,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Filter results
    */
-  where(query: any): QueryBuilder<T>
+  where(query: QueryBuilderWhere): QueryBuilder<T>
 
   /**
    * Limit number of results

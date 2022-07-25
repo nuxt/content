@@ -14,7 +14,9 @@
     ".": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
-    }
+    },
+    "./transformers": "./dist/runtime/transformers/index.mjs",
+    "./transformers/*": "./dist/runtime/transformers/*.mjs"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
@@ -41,7 +43,7 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.5",
+    "@nuxt/kit": "^3.0.0-rc.6",
     "consola": "^2.15.3",
     "csvtojson": "^2.0.10",
     "defu": "^6.0.0",
@@ -52,10 +54,10 @@
     "listhen": "^0.2.13",
     "mdast-util-to-hast": "^12.1.2",
     "mdurl": "^1.0.1",
-    "ohash": "^0.1.0",
+    "ohash": "^0.1.4",
     "pathe": "^0.3.2",
     "property-information": "^6.1.1",
-    "rehype-external-links": "^1.0.1",
+    "rehype-external-links": "^2.0.0",
     "rehype-raw": "^6.1.1",
     "rehype-slug": "^5.0.1",
     "rehype-sort-attribute-values": "^4.0.0",
@@ -75,27 +77,27 @@
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.0",
-    "unstorage": "^0.5.4",
-    "ws": "^8.8.0"
+    "unstorage": "^0.5.5",
+    "ws": "^8.8.1"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
-    "@nuxt/schema": "^3.0.0-rc.5",
+    "@nuxt/schema": "^3.0.0-rc.6",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.3",
-    "c8": "^7.11.3",
-    "eslint": "^8.19.0",
+    "c8": "^7.12.0",
+    "eslint": "^8.20.0",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
     "jiti": "^1.14.0",
     "lint-staged": "^13.0.3",
-    "nuxt": "^3.0.0-rc.5",
+    "nuxt": "^3.0.0-rc.6",
     "playwright": "^1.22.2",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.18.1",
+    "vitest": "^0.19.0",
     "vue-docgen-web-types": "^0.1.7"
   }
 }

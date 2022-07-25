@@ -1,4 +1,4 @@
-
+<script lang="ts">
 import { PropType, defineComponent, h, useSlots } from 'vue'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
@@ -111,3 +111,4 @@ export default defineComponent({
     )
   }
 })
+</script>

@@ -225,14 +225,7 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
     const contentContext: ContentContext = {
-      transformers: [
-        // Register internal content plugins
-        resolveRuntimeModule('./server/transformers/markdown'),
-        resolveRuntimeModule('./server/transformers/yaml'),
-        resolveRuntimeModule('./server/transformers/json'),
-        resolveRuntimeModule('./server/transformers/csv'),
-        resolveRuntimeModule('./server/transformers/path-meta')
-      ],
+      transformers: [],
       ...options
     }
 
@@ -313,7 +306,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.virtual['#content/virtual/transformers'] = [
         // TODO: remove kit usage
         templateUtils.importSources(contentContext.transformers),
-        `const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
+        `export const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
         'export const getParser = (ext) => transformers.find(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.parse)',
         'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.transform)',
         'export default () => {}'
@@ -398,7 +391,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register highlighter
     if (options.highlight) {
-      contentContext.transformers.push(resolveRuntimeModule('./server/transformers/shiki'))
+      contentContext.transformers.push(resolveRuntimeModule('./transformers/shiki'))
+      // @ts-ignore
+      contentContext.highlight.apiURL = `/api/${options.base}/highlight`
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []

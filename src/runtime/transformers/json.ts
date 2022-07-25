@@ -1,10 +1,12 @@
 import destr from 'destr'
+import { ParsedContent } from '../types'
+import { defineTransformer } from './utils'
 
-export default {
+export default defineTransformer({
   name: 'Json',
   extensions: ['.json', '.json5'],
   parse: async (_id, content) => {
-    let parsed = content
+    let parsed
 
     if (typeof content === 'string') {
       if (_id.endsWith('json5')) {
@@ -24,10 +26,10 @@ export default {
       }
     }
 
-    return {
+    return <ParsedContent> {
       ...parsed,
       _id,
       _type: 'json'
     }
   }
-}
+})
