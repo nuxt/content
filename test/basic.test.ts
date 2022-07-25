@@ -143,7 +143,6 @@ describe('Basic usage', async () => {
 
   testParserOptions()
 
-
   if (isDev()) {
     await testHMR(fixturePath)
     return
