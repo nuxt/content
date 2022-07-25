@@ -60,3 +60,5 @@ export async function transformContent (id, content, options: TransformContentOp
 
   return result
 }
+
+export { defineTransformer } from './utils'
