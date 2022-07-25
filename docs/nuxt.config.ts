@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default defineNuxtConfig({
+  alias,
   app: {
     head: {
       script: [
@@ -60,8 +61,7 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxthq/admin', '@nuxtlabs/github-module'],
-  alias,
+  modules: ['@nuxtlabs/github-module'],
   extends: [
     (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
   ],
