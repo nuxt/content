@@ -63,7 +63,7 @@
     "rehype-sort-attributes": "^4.0.0",
     "remark-emoji": "^3.0.2",
     "remark-gfm": "^3.0.1",
-    "remark-mdc": "^1.0.1",
+    "remark-mdc": "^1.0.2",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
     "remark-squeeze-paragraphs": "^5.0.1",
@@ -95,7 +95,7 @@
     "nuxt": "npm:nuxt3@latest",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.19.0",
+    "vitest": "^0.19.1",
     "vue-docgen-web-types": "^0.1.7"
   }
 }
