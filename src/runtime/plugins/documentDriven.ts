@@ -138,6 +138,13 @@ export default defineNuxtPlugin((nuxt) => {
      * `page`
      */
     if (moduleOptions.page && routeConfig.page !== false) {
+      let where = { _path }
+      if (typeof routeConfig.page === 'string') {
+        where = { _path: routeConfig.page }
+      }
+      if (typeof routeConfig.page === 'object') {
+        where = routeConfig.page
+      }
       const pageQuery = () => {
         const { pages } = useContentState()
 
@@ -147,7 +154,7 @@ export default defineNuxtPlugin((nuxt) => {
         }
 
         return queryContent()
-          .where({ _path })
+          .where(where)
           .findOne()
           .catch(() => {
             // eslint-disable-next-line no-console
@@ -164,6 +171,13 @@ export default defineNuxtPlugin((nuxt) => {
      * `surround`
      */
     if (moduleOptions.surround && routeConfig.surround !== false) {
+      let surround: any = _path
+      if (['string', 'object'].includes(typeof routeConfig.page)) {
+        surround = routeConfig.page
+      }
+      if (['string', 'object'].includes(typeof routeConfig.surround)) {
+        surround = routeConfig.surround
+      }
       const surroundQuery = () => {
         const { surrounds } = useContentState()
 
@@ -179,7 +193,7 @@ export default defineNuxtPlugin((nuxt) => {
           })
         // Exclude `body` for `surround`
           .without(['body'])
-          .findSurround(_path)
+          .findSurround(surround)
           .catch(() => {
             // eslint-disable-next-line no-console
             // console.log(`Could not find surrounding pages for: ${to.path}`)
