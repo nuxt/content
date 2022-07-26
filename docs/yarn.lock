@@ -420,9 +420,9 @@
     untyped "^0.4.4"
 
 "@nuxt-themes/docus@npm:@nuxt-themes/docus-edge@latest":
-  version "3.0.0-296cb26"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus-edge/-/docus-edge-3.0.0-296cb26.tgz#7227804de13bd6affa8f042d5af85749def5da91"
-  integrity sha512-hM8YC5nmfTPnMP2T2gxWqGgLdSoBz8cKhVYQE17RoGSDpvupV2/aJT3xQ1O8qOJir+y/2SVoo0HR3i7+vliL2Q==
+  version "3.0.0-b893b13"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus-edge/-/docus-edge-3.0.0-b893b13.tgz#3497bccb741624388b5887f1cbded719e45668ce"
+  integrity sha512-4QerD8qLZwbjjljdUm/NXgdEFNDsdfvniWZ/GsbusehHTz5A3TpKu28yC84ONiB6t2RIQRKoftC6hsNApwn+nA==
   dependencies:
     "@iconify/vue" "^3.2.1"
     "@nuxt-themes/config" "npm:@nuxt-themes/config-edge@latest"
@@ -2300,9 +2300,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.188:
-  version "1.4.200"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.200.tgz#6e4c5266106688965b4ea7caa11f0dd315586854"
-  integrity sha512-nPyI7oHc8T64oSqRXrAt99gNMpk0SAgPHw/o+hkNKyb5+bcdnFtZcSO9FUJES5cVkVZvo8u4qiZ1gQILl8UXsA==
+  version "1.4.201"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.201.tgz#b018802ace20ce2567842d52b9e1c9d090fda674"
+  integrity sha512-87D0gEHbhLZgZxZl2e9/rC/I2BicPC/y9wR/cuaJSqvkgN41s5EImi89S7YExHc7F0OBXiKsABZt9mmb9bqFcQ==
 
 emmet-monaco-es@^5.1.0:
   version "5.1.0"
@@ -5432,9 +5432,9 @@ remark-github@^11.2.4:
     unist-util-visit "^4.0.0"
 
 remark-mdc@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.0.1.tgz#006a17672161b4edc3746b49bed8f38fbba91d9c"
-  integrity sha512-KxIMQOUtlSNL5Ycwe2de5X9HiN+aQ5/gsi9DRRShdxTt0DUtTvR8D+dTBQWZzieaJQKqJ4E/TbTJf3aG1+Q+QQ==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.0.2.tgz#f417adac00c7dbd062d8f842c4115e545b131335"
+  integrity sha512-D4G4c4tb+dFnmbo7LE0og21cF04ZOk3dSd0jSKvUSkiprd/qKclFKT+fEeXa2WqG8c7W6aCn36eSwPbzkCWb2A==
   dependencies:
     flat "^5.0.2"
     js-yaml "^4.1.0"
@@ -5578,9 +5578,9 @@ rollup-pluginutils@^2.8.2:
     estree-walker "^0.6.1"
 
 rollup@^2.59.0, rollup@^2.75.6, rollup@^2.76.0, rollup@^2.77.0:
-  version "2.77.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.77.0.tgz#749eaa5ac09b6baa52acc076bc46613eddfd53f4"
-  integrity sha512-vL8xjY4yOQEw79DvyXLijhnhh+R/O9zpF/LEgkCebZFtb6ELeN9H3/2T0r8+mp+fFTBHZ5qGpOpW2ela2zRt3g==
+  version "2.77.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.77.1.tgz#63463ebdbc04232fc42630ec72d137cd4400975d"
+  integrity sha512-GhutNJrvTYD6s1moo+kyq7lD9DeR5HDyXo4bDFlDSkepC9kVKY+KK/NSZFzCmeXeia3kEzVuToQmHRdugyZHxw==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -6559,9 +6559,9 @@ vue-bundle-renderer@^0.3.9:
     bundle-runner "^0.0.1"
 
 vue-demi@*:
-  version "0.13.5"
-  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.13.5.tgz#d5eddbc9eaefb89ce5995269d1fa6b0486312092"
-  integrity sha512-tO3K2bML3AwiHmVHeKCq6HLef2st4zBXIV5aEkoJl6HZ+gJWxWv2O8wLH8qrA3SX3lDoTDHNghLX1xZg83MXvw==
+  version "0.13.6"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.13.6.tgz#f9433cbd75e68a970dec066647f4ba6c08ced48f"
+  integrity sha512-02NYpxgyGE2kKGegRPYlNQSL1UWfA/+JqvzhGCOYjhfbLWXU5QQX0+9pAm/R2sCOPKr5NBxVIab7fvFU0B1RxQ==
 
 vue-plausible@^1.3.2:
   version "1.3.2"
