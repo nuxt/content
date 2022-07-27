@@ -4,7 +4,7 @@ import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
 import { WebSocketServer } from 'ws'
-import { useLogger } from '@nuxt/kit'
+import { createResolver, resolveModule, useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
 import type { MarkdownPlugin } from './runtime/types'
 
@@ -104,6 +104,20 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
       base: resolve(nuxt.options.srcDir, 'content')
     }
   }
+
+  const resolver = createResolver(import.meta.url)
+  const singleFileDriver = resolveModule('./server/storage/single-file-driver.mjs', { paths: resolver.resolve('./runtime/') })
+  Object.keys(storages).forEach((key) => {
+    const storage = storages[key]
+    if (storage.fileName) {
+      storages[key] = {
+        ...storage,
+        driver: singleFileDriver,
+        sourceDriver: storage.driver,
+        source: storage.fileName
+      }
+    }
+  })
 
   return storages
 }
