@@ -17,6 +17,7 @@ import { testContentQuery } from './features/content-query'
 import { testHighlighter } from './features/highlighter'
 import { testMarkdownRenderer } from './features/renderer-markdown'
 import { testParserOptions } from './features/parser-options'
+import { testSingleFileDriver } from './features/single-file-driver'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -134,6 +135,8 @@ describe('Basic usage', async () => {
   testPathMetaTransformer()
 
   // testMDCComponent()
+
+  testSingleFileDriver()
 
   testRegex()
 
