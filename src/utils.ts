@@ -114,7 +114,8 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
         ...storage,
         driver: singleFileDriver,
         sourceDriver: storage.driver,
-        source: storage.fileName
+        source: storage.fileName,
+        alias: storage.prefix ? `${storage.prefix}/${storage.alias || storage.fileName}` : storage.alias
       }
     }
   })
