@@ -1,7 +1,19 @@
 <script setup lang="ts">
+import { throwError } from '#app'
+import { createError } from 'h3'
 import { useContent, useContentHead } from '#imports'
 
 const { page } = useContent()
+
+// Page not found
+if (!page.value) {
+  throwError(
+    createError({
+      statusCode: 404,
+      statusMessage: `Page not found: ${useRoute().path}`
+    })
+  )
+}
 
 useContentHead(page)
 </script>
