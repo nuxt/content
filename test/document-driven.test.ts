@@ -11,7 +11,7 @@ describe('fixtures:document-driven', async () => {
   test('<title> from front-matter', async () => {
     const html = await $fetch('/')
 
-    expect(html).contains('Home | Document Driven Fixture')
+    expect(html).contains('<title>Home</title>')
   })
 
   test('disabled document driven', async () => {
@@ -45,5 +45,14 @@ describe('fixtures:document-driven', async () => {
 
     expect(html).contains('with previous link /layout')
     expect(html).contains('with next link /no-surround')
+  })
+
+  test('404 page', async () => {
+    try {
+      await $fetch('/page-not-found')
+    } catch (e) {
+      expect(e.response.status).toBe(404)
+      expect(e.response.statusText).toBe('Page not found: /page-not-found')
+    }
   })
 })
