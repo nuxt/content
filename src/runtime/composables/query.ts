@@ -24,7 +24,12 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: Qu
 
   const params = query.params()
 
-  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}`)
+  let apiPath
+  if (params.where?.length === 1 && Object.keys(params.where[0]).length === 1 && typeof params.where[0]._path === 'string') {
+    apiPath = withContentBase(`/find_one/${hash(params)}/${params.where[0]._path}`)
+  } else {
+    apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}`)
+  }
 
   // Prefetch the query
   if (!process.dev && process.server) {
@@ -35,7 +40,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: Qu
     })
   }
 
-  return $fetch<T | T[]>(apiPath as any, {
+  return $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: {
