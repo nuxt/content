@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createError } from 'h3'
-import { useContent, useContentHead } from '#imports'
+import { useContent, useContentHead, useRoute } from '#imports'
 
 const { page } = useContent()
 
