@@ -44,7 +44,12 @@ export default defineComponent({
   },
   render ({ use, unwrap, fallbackSlot, between, tags, parent }) {
     try {
-      const slot: Slot = typeof use === 'string' ? parent?.slots[use] || parent?.parent?.slots[use] : use
+      let slot: Slot = use
+      if (typeof use === 'string') {
+        slot = parent?.slots[use] || parent?.parent?.slots[use]
+        // eslint-disable-next-line no-console
+        console.warn(`Please set :use="$slots.${use}" in <Markdown> component to enable reactivity`)
+      }
 
       if (!slot) { return fallbackSlot ? fallbackSlot() : h('div') }
 
