@@ -52,7 +52,7 @@ describe('fixtures:document-driven', async () => {
       await $fetch('/page-not-found')
     } catch (e) {
       expect(e.response.status).toBe(404)
-      expect(e.response.statusText).toBe('Page not found: /page-not-found')
+      expect(e.response.statusText).toBe('Not Found')
     }
   })
 })
