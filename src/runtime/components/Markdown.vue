@@ -14,8 +14,8 @@ export default defineComponent({
       * A slot name or function
      */
     use: {
-      type: [String, Function],
-      default: 'default'
+      type: Function,
+      default: undefined
     },
     /**
      * Tags to unwrap separated by spaces
@@ -28,7 +28,7 @@ export default defineComponent({
   },
   setup (props) {
     const { parent } = getCurrentInstance()
-    const { between } = useSlots()
+    const { between, default: fallbackSlot } = useSlots()
 
     const tags = computed(() => {
       if (typeof props.unwrap === 'string') { return props.unwrap.split(' ') }
@@ -36,16 +36,17 @@ export default defineComponent({
     })
 
     return {
+      fallbackSlot,
       tags,
       between,
       parent
     }
   },
-  render ({ use, unwrap, between, tags, parent }) {
+  render ({ use, unwrap, fallbackSlot, between, tags, parent }) {
     try {
       const slot: Slot = typeof use === 'string' ? parent?.slots[use] || parent?.parent?.slots[use] : use
 
-      if (!slot) { return h('div') }
+      if (!slot) { return fallbackSlot ? fallbackSlot() : h('div') }
 
       if (!unwrap) { return [slot()] }
 
