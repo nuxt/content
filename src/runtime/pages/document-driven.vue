@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { createError } from 'h3'
-import { useContent, useContentHead, useRoute } from '#imports'
+import { useNuxtApp, useContent, useContentHead } from '#imports'
 
 const { page } = useContent()
 
-// Page not found
-if (!page.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: `Page not found: ${useRoute().path}`
-  })
+// Page not found, set correct status code on SSR
+const nuxtApp = useNuxtApp()
+if (!page.value && process.server && nuxtApp.ssrContext) {
+  nuxtApp.ssrContext.res.statusCode = 404
 }
 
 useContentHead(page)
