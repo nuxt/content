@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useNuxtApp, useContent, useContentHead } from '#imports'
+import { useContent, useContentHead, useRequestEvent } from '#imports'
 
 const { page } = useContent()
 
 // Page not found, set correct status code on SSR
-const nuxtApp = useNuxtApp()
-if (!page.value && process.server && nuxtApp.ssrContext) {
-  nuxtApp.ssrContext.res.statusCode = 404
+if (!page.value && process.server) {
+  const event = useRequestEvent()
+  event.res.statusCode = 404
 }
 
 useContentHead(page)
