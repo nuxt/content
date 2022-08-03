@@ -17,11 +17,13 @@ import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
+import { createStorage } from 'unstorage'
 import { withTrailingSlash } from 'ufo'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
   createWebSocket,
+  getMountDriver,
   logger,
   MOUNT_PREFIX,
   processMarkdownOptions,
@@ -511,8 +513,35 @@ export default defineNuxtModule<ModuleOptions>({
       ...contentContext as any
     }
 
+    // @nuxtjs/tailwindcss support
+    // @ts-ignore - Module might not exist
+    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      tailwindConfig.content = tailwindConfig.content ?? []
+      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
+    })
+
     // Setup content dev module
-    if (!nuxt.options.dev) { return }
+    if (!nuxt.options.dev) {
+      nuxt.hook('build:before', async () => {
+        const storage = createStorage()
+        const sources = useContentMounts(nuxt, contentContext.sources)
+        sources.cache = {
+          driver: 'fs',
+          base: resolve(nuxt.options.buildDir, 'cache')
+        }
+        for (const [key, source] of Object.entries(sources)) {
+          storage.mount(key, getMountDriver(source))
+        }
+        const keys = await storage.getKeys()
+        await Promise.all(
+          keys.map(async (key) => {
+            const content = await storage.getItem(key)
+            await storage.setItem(`cache:content:parsed:${key.substring(14)}`, content)
+          })
+        )
+      })
+      return
+    }
 
     nuxt.hook('nitro:init', async (nitro) => {
       if (!options.watch || !options.watch.ws) { return }
@@ -542,13 +571,6 @@ export default defineNuxtModule<ModuleOptions>({
         // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
       })
-    })
-
-    // @nuxtjs/tailwindcss support
-    // @ts-ignore - Module might not exist
-    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      tailwindConfig.content = tailwindConfig.content ?? []
-      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
     })
   }
 })
