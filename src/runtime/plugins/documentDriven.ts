@@ -51,7 +51,7 @@ export default defineNuxtPlugin((nuxt) => {
     }
 
     // Expose hook to be used for loading indicators
-    nuxt.callHook('page:content:start')
+    !force && nuxt.callHook('content:middleware:start')
 
     const { navigation, pages, globals, surrounds } = useContentState()
 
