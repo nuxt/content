@@ -533,12 +533,16 @@ export default defineNuxtModule<ModuleOptions>({
       nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
       // Watch contents
-      await nitro.storage.watch((event: WatchEvent, key: string) => {
+      await nitro.storage.watch(async (event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
         if (!key.startsWith(MOUNT_PREFIX)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)
+
+        // Remove content Index
+        await nitro.storage.removeItem('cache:content:content-index.json')
+
         // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
       })

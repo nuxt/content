@@ -10,6 +10,7 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import { transformContent } from '../transformers'
 import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
+import { getIndexedContentsList } from './content-index'
 // eslint-disable-next-line import/named
 // @ts-ignore
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
@@ -200,9 +201,7 @@ export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEv
     query.sort({ _file: 1, $numeric: true })
   }
 
-  return createPipelineFetcher<T>(
-    () => getContentsList(event) as unknown as Promise<T[]>
-  )(query)
+  return createPipelineFetcher<T>(() => getIndexedContentsList<T>(event, query))(query)
 }
 
 /**
