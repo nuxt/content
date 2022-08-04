@@ -221,16 +221,15 @@ export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEv
     const params = query.params()
     const path = params?.where?.find(wh => wh._path)?._path
 
-    if (path) {
+    // Index is available for string and RegExp paths
+    if ((typeof path === 'string' || path instanceof RegExp)) {
       const index = await getIndex(event)
       const keys = Object.keys(index)
         .filter(key => (path as any).test ? (path as any).test(path) : key === String(path))
         .map(key => index[key])
 
-      if (keys.length) {
-        const contents = await Promise.all(keys.map(key => getContent(event, key)))
-        return contents
-      }
+      const contents = await Promise.all(keys.map(key => getContent(event, key)))
+      return contents
     }
 
     return getContentsList(event)
