@@ -28,7 +28,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: Compatib
   if ((typeof path === 'string' || path instanceof RegExp)) {
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
-      .filter(key => (path as any).test ? (path as any).test(path) : key === String(path))
+      .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
       .map(key => index[key])
 
     const contents = await Promise.all(keys.map(key => getContent(event, key)))
