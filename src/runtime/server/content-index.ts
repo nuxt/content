@@ -2,9 +2,8 @@ import type { CompatibilityEvent } from 'h3'
 import type { ParsedContent, QueryBuilder } from '../types'
 import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
 
-let contentIndex: Record<string, string>
 export async function getContentIndex (event: CompatibilityEvent) {
-  contentIndex = contentIndex || await cacheStorage.getItem('content-index.json') as Record<string, string>
+  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string>
   if (!contentIndex) {
     // Fetch all content
     const data = await serverQueryContent(event).find()
