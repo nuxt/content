@@ -10,6 +10,7 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import { transformContent } from '../transformers'
 import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
+import { getIndexedContentsList } from './content-index'
 // eslint-disable-next-line import/named
 // @ts-ignore
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
@@ -186,23 +187,6 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   return result
 }
 
-export async function getIndex (event: CompatibilityEvent) {
-  let index = await cacheStorage.getItem('index.json') as Record<string, string>
-  if (!index) {
-    // Fetch all content
-    const data = await serverQueryContent(event).find()
-
-    index = data.reduce((acc, item) => {
-      acc[item._path!] = item._id
-      return acc
-    }, {} as Record<string, string>)
-
-    await cacheStorage.setItem('index.json', index)
-  }
-
-  return index
-}
-
 export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEvent, path?: string) => (query: QueryBuilder<T>) => {
   if (path) {
     if (query.params().first) {
@@ -217,27 +201,7 @@ export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEv
     query.sort({ _file: 1, $numeric: true })
   }
 
-  async function getList () {
-    const params = query.params()
-    const path = params?.where?.find(wh => wh._path)?._path
-
-    // Index is available for string and RegExp paths
-    if ((typeof path === 'string' || path instanceof RegExp)) {
-      const index = await getIndex(event)
-      const keys = Object.keys(index)
-        .filter(key => (path as any).test ? (path as any).test(path) : key === String(path))
-        .map(key => index[key])
-
-      const contents = await Promise.all(keys.map(key => getContent(event, key)))
-      return contents
-    }
-
-    return getContentsList(event)
-  }
-
-  return createPipelineFetcher<T>(
-    getList as unknown as () => Promise<T[]>
-  )(query)
+  return createPipelineFetcher<T>(() => getIndexedContentsList<T>(event, query))(query)
 }
 
 /**
