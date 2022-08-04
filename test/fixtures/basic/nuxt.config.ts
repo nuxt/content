@@ -25,6 +25,19 @@ export default defineNuxtConfig({
         prefix: '/fa',
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
+      },
+      {
+        name: 'readme',
+        driver: 'fs',
+        base: resolve(__dirname),
+        fileName: 'README.md'
+      },
+      {
+        name: 'readme-prefixed',
+        prefix: '_partial',
+        driver: 'fs',
+        base: resolve(__dirname),
+        fileName: 'README.md'
       }
     ],
     navigation: {
