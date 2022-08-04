@@ -10,7 +10,11 @@ export async function getContentIndex (event: CompatibilityEvent) {
     const data = await serverQueryContent(event).find()
 
     contentIndex = data.reduce((acc, item) => {
-      acc[item._path!] = item._id
+      if (!acc[item._path!]) {
+        acc[item._path!] = item._id
+      } else if (item._id.startsWith('content:')) {
+        acc[item._path!] = item._id
+      }
       return acc
     }, {} as Record<string, string>)
 
