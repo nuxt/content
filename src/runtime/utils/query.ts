@@ -40,15 +40,21 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
     query.without = query.without.split(',').map(s => s.trim())
   }
 
-  query.where = query.where || {}
+  const where = query.where || {}
   // ?partial=true|false&draft=true|false&empty=true|false
   for (const key of ['draft', 'partial', 'empty']) {
     // ?partial=true|false
     if (query[key] && ['true', 'false'].includes(query[key])) {
-      query.where[key] = query[key] === 'true'
+      where[key] = query[key] === 'true'
       delete query[key]
     }
   }
+  if (Object.keys(where).length > 0) {
+    query.where = [where]
+  } else {
+    delete query.where
+  }
+
   // ?sortyBy=size:1
   if (query.sort) {
     query.sort = query.sort.split(',').map((s) => {
