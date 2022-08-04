@@ -1,5 +1,6 @@
 import type { CompatibilityEvent } from 'h3'
 import type { ParsedContent, QueryBuilder } from '../types'
+import { isPreview } from './preview'
 import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
 
 export async function getContentIndex (event: CompatibilityEvent) {
@@ -24,7 +25,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: Compatib
   const path = params?.where?.find(wh => wh._path)?._path
 
   // Index is available for string and RegExp paths
-  if ((typeof path === 'string' || path instanceof RegExp)) {
+  if (!isPreview(event) && (typeof path === 'string' || path instanceof RegExp)) {
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
