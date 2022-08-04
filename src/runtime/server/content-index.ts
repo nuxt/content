@@ -24,7 +24,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: Compatib
   const params = query.params()
   const path = params?.where?.find(wh => wh._path)?._path
 
-  // Index is available for string and RegExp paths
+  // Read from Index is not preview and path is string or RegExp
   if (!isPreview(event) && (typeof path === 'string' || path instanceof RegExp)) {
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
