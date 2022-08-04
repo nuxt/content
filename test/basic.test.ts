@@ -114,6 +114,17 @@ describe('Basic usage', async () => {
     expect(html).contains('Content (v2)')
   })
 
+  test('Partials specials chars', async () => {
+    const html = await $fetch('/_partial/markdown')
+    expect(html).contains('><!--[--> Default title <!--]--></h1>')
+    expect(html).contains('<p><!--[-->p1<!--]--></p>')
+  })
+
+  test('Warning for invalid file name', () => {
+    expect(spyConsoleWarn).toHaveBeenCalled()
+    expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
+  })
+
   testContentQuery()
 
   testNavigation()

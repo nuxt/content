@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { useContent, useContentHead } from '#imports'
+import { useContent, useContentHead, useRequestEvent } from '#imports'
 
 const { page } = useContent()
+
+// Page not found, set correct status code on SSR
+if (!page.value && process.server) {
+  const event = useRequestEvent()
+  event.res.statusCode = 404
+}
 
 useContentHead(page)
 </script>

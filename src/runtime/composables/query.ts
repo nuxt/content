@@ -35,7 +35,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: Qu
     })
   }
 
-  return $fetch<T | T[]>(apiPath as any, {
+  return $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: {

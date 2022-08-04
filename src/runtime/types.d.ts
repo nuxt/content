@@ -471,7 +471,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Fetch sorround contents
    */
-  findSurround(query: string | object, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
+  findSurround(query: string | QueryBuilderWhere, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
 
   /**
    * Filter contents based on locale

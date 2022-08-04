@@ -346,27 +346,30 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register user global components
-    const globalComponents = resolve(nuxt.options.srcDir, 'components/content')
-    const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
-    if (dirStat && dirStat.isDirectory()) {
-      logger.success('Using `~/components/content` for components in Markdown')
-      nuxt.hook('components:dirs', (dirs) => {
-        // Unshift to make it before ~/components
-        dirs.unshift({
-          path: globalComponents,
-          global: true,
-          pathPrefix: false,
-          prefix: ''
+    for (const layer of nuxt.options._layers) {
+      const srcDir = layer.config.srcDir
+      const globalComponents = resolve(srcDir, 'components/content')
+      const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
+      if (dirStat && dirStat.isDirectory()) {
+        if (nuxt.options._layers.length === 1) {
+          logger.success('Using `~/components/content` for components in Markdown')
+        }
+        nuxt.hook('components:dirs', (dirs) => {
+          dirs.unshift({
+            path: globalComponents,
+            global: true,
+            pathPrefix: false,
+            prefix: ''
+          })
         })
-      })
-    } else {
-      const componentsDir = resolve(nuxt.options.srcDir, 'components/')
-      const componentsDirStat = await fs.promises.stat(componentsDir).catch(() => null)
-
-      if (componentsDirStat && componentsDirStat.isDirectory()) {
-        // TODO: watch for file creation and tell Nuxt to restart
-        // Not possible for now since directories are hard-coded: https://github.com/nuxt/framework/blob/5b63ae8ad54eeb3cb49479da8f32eacc1a743ca0/packages/nuxi/src/commands/dev.ts#L94
-        logger.info('Please create `~/components/content` and restart the Nuxt server to use components in Markdown')
+      } else if (nuxt.options._layers.length === 1) {
+        const componentsDir = resolve(srcDir, 'components/')
+        const componentsDirStat = await fs.promises.stat(componentsDir).catch(() => null)
+        if (componentsDirStat && componentsDirStat.isDirectory()) {
+          // TODO: watch for file creation and tell Nuxt to restart
+          // Not possible for now since directories are hard-coded: https://github.com/nuxt/framework/blob/5b63ae8ad54eeb3cb49479da8f32eacc1a743ca0/packages/nuxi/src/commands/dev.ts#L94
+          logger.info('Please create `~/components/content` and restart the Nuxt server to use components in Markdown')
+        }
       }
     }
 
@@ -530,12 +533,16 @@ export default defineNuxtModule<ModuleOptions>({
       nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
       // Watch contents
-      await nitro.storage.watch((event: WatchEvent, key: string) => {
+      await nitro.storage.watch(async (event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
         if (!key.startsWith(MOUNT_PREFIX)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)
+
+        // Remove content Index
+        await nitro.storage.removeItem('cache:content:content-index.json')
+
         // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
       })

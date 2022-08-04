@@ -1,5 +1,5 @@
 <template>
   <div>
-    <Markdown />
+    <Markdown :use="$slots.default" />
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { defineTheme } from '@nuxt-themes/kit'
+import { defineTheme } from '@nuxt-themes/config'
 
 export default defineTheme({
   title: 'Nuxt Content',
