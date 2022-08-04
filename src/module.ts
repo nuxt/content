@@ -264,11 +264,6 @@ export default defineNuxtModule<ModuleOptions>({
         },
         {
           method: 'get',
-          route: `/api/${options.base}/find_one/:qid/**:slug`,
-          handler: resolveRuntimeModule('./server/api/findOne')
-        },
-        {
-          method: 'get',
           route: `/api/${options.base}/cache`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
