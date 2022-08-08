@@ -4326,10 +4326,10 @@ mlly@^0.5.2, mlly@^0.5.3, mlly@^0.5.4, mlly@^0.5.5:
     pathe "^0.3.2"
     pkg-types "^0.3.3"
 
-monaco-editor-core@^0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor-core/-/monaco-editor-core-0.33.0.tgz#1a6631932f5239c9ccdb26b437d333cf9bb85d31"
-  integrity sha512-Kzxak8jnMS8vI08DcseBuOfeQlcVPpGXO210D8M+QnaNR92s4IYzgUeiow/Hld9Gi5pGvjDbPsdUXkPewoTA5g==
+monaco-editor-core@^0.34.0:
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor-core/-/monaco-editor-core-0.34.0.tgz#7c1727d88c3fb70f48cea0e13aac8c05c0b44700"
+  integrity sha512-vyKwADMPe0oNGg+NgxWQCj00IvweeyEGeu0ZiJ14L8HUc5hNvkPAzc8RcSf9lRSpgy4Nc/S63AeqAvARsofObg==
 
 mri@^1.1.0, mri@^1.2.0:
   version "1.2.0"

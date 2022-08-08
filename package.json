@@ -51,7 +51,7 @@
     "html-tags": "^3.2.0",
     "json5": "^2.2.1",
     "knitwork": "^0.1.2",
-    "listhen": "^0.2.13",
+    "listhen": "^0.2.15",
     "mdast-util-to-hast": "^12.2.0",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.5",
@@ -95,7 +95,7 @@
     "nuxt": "npm:nuxt3@latest",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.20.3",
+    "vitest": "^0.21.0",
     "vue-docgen-web-types": "^0.1.7"
   }
 }
