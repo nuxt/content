@@ -536,7 +536,7 @@ export default defineNuxtModule<ModuleOptions>({
         for (const [key, source] of Object.entries(sources)) {
           storage.mount(key, getMountDriver(source))
         }
-        let keys = await storage.getKeys()
+        let keys = await storage.getKeys('content:source')
 
         // Filter invalid characters & ignore patterns
         const invalidKeyCharacters = "'\"?#/".split('')
@@ -554,7 +554,7 @@ export default defineNuxtModule<ModuleOptions>({
         })
         await Promise.all(
           keys.map(async key => await storage.setItem(
-            `cache:content:parsed:${key.substring(14)}`,
+            `cache:content:parsed:${key.substring(15)}`,
             await storage.getItem(key)
           ))
         )
