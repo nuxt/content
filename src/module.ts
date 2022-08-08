@@ -280,7 +280,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
       nitroConfig.devStorage['cache:content'] = {
         driver: 'fs',
-        base: resolve(nuxt.options.rootDir, '.nuxt', 'content-cache')
+        base: resolve(nuxt.options.buildDir, 'content-cache')
       }
 
       // Tell Nuxt to ignore content dir for app build
@@ -521,7 +521,7 @@ export default defineNuxtModule<ModuleOptions>({
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
       tailwindConfig.content = tailwindConfig.content ?? []
-      tailwindConfig.content.push(resolve(nuxt.options.rootDir, '.nuxt', 'content-cache', 'parsed/**/*.md'))
+      tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
 
     // Setup content dev module
@@ -531,7 +531,7 @@ export default defineNuxtModule<ModuleOptions>({
         const sources = useContentMounts(nuxt, contentContext.sources)
         sources['cache:content'] = {
           driver: 'fs',
-          base: resolve(nuxt.options.rootDir, '.nuxt', 'content-cache')
+          base: resolve(nuxt.options.buildDir, 'content-cache')
         }
         for (const [key, source] of Object.entries(sources)) {
           storage.mount(key, getMountDriver(source))
