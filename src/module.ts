@@ -6,14 +6,14 @@ import {
   createResolver,
   addAutoImport,
   addComponentsDir,
-  templateUtils,
   addTemplate
 } from '@nuxt/kit'
+import { genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { hash } from 'ohash'
-import { join } from 'pathe'
+import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
@@ -308,11 +308,15 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
 
+      const transformers = contentContext.transformers.map((t) => {
+        const name = genSafeVariableName(relative(nuxt.options.rootDir, t)).replace(/_(45|46|47)/g, '_') + '_' + hash(t)
+        return { name, import: genImport(t, name) }
+      })
+
       nitroConfig.virtual = nitroConfig.virtual || {}
       nitroConfig.virtual['#content/virtual/transformers'] = [
-        // TODO: remove kit usage
-        templateUtils.importSources(contentContext.transformers),
-        `export const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
+        ...transformers.map(t => t.import),
+        `export const transformers = [${transformers.map(t => t.name).join(', ')}]`,
         'export const getParser = (ext) => transformers.find(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.parse)',
         'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.transform)',
         'export default () => {}'
