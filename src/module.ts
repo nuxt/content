@@ -532,28 +532,27 @@ export default defineNuxtModule<ModuleOptions>({
         for (const [key, source] of Object.entries(sources)) {
           storage.mount(key, getMountDriver(source))
         }
-        /**
-         * Invalid key characters
-         */
+        let keys = await storage.getKeys()
+
+        // Filter invalid characters & ignore patterns
         const invalidKeyCharacters = "'\"?#/".split('')
-        /**
-         * Content ignore patterns
-         */
         const contentIgnores: Array<RegExp> = contentContext.ignores.map((p: any) =>
           typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
         )
-        const keys = await storage.getKeys()
+        keys = keys.filter((key) => {
+          if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+            return false
+          }
+          if (invalidKeyCharacters.some(ik => key.includes(ik))) {
+            return false
+          }
+          return true
+        })
         await Promise.all(
-          keys.map(async (key) => {
-            if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
-              return
-            }
-            if (invalidKeyCharacters.some(ik => key.includes(ik))) {
-              return
-            }
-            const content = await storage.getItem(key)
-            await storage.setItem(`cache:content:parsed:${key.substring(14)}`, content)
-          })
+          keys.map(async key => await storage.setItem(
+            `cache:content:parsed:${key.substring(14)}`,
+            await storage.getItem(key)
+          ))
         )
       })
       return
