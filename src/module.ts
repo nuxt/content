@@ -346,7 +346,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register user global components
-    for (const layer of nuxt.options._layers) {
+    for (const layer of nuxt.options._layers.reverse()) {
       const srcDir = layer.config.srcDir
       const globalComponents = resolve(srcDir, 'components/content')
       const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
