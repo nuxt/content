@@ -17,11 +17,13 @@ import { join } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
+import { createStorage } from 'unstorage'
 import { withTrailingSlash } from 'ufo'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
   createWebSocket,
+  getMountDriver,
   logger,
   MOUNT_PREFIX,
   processMarkdownOptions,
@@ -276,6 +278,10 @@ export default defineNuxtModule<ModuleOptions>({
       // Register source storages
       const sources = useContentMounts(nuxt, contentContext.sources)
       nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
+      nitroConfig.devStorage['cache:content'] = {
+        driver: 'fs',
+        base: resolve(nuxt.options.buildDir, 'content-cache')
+      }
 
       // Tell Nuxt to ignore content dir for app build
       for (const source of Object.values(sources)) {
@@ -511,8 +517,50 @@ export default defineNuxtModule<ModuleOptions>({
       ...contentContext as any
     }
 
+    // @nuxtjs/tailwindcss support
+    // @ts-ignore - Module might not exist
+    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      tailwindConfig.content = tailwindConfig.content ?? []
+      tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
+    })
+
     // Setup content dev module
-    if (!nuxt.options.dev) { return }
+    if (!nuxt.options.dev) {
+      nuxt.hook('build:before', async () => {
+        const storage = createStorage()
+        const sources = useContentMounts(nuxt, contentContext.sources)
+        sources['cache:content'] = {
+          driver: 'fs',
+          base: resolve(nuxt.options.buildDir, 'content-cache')
+        }
+        for (const [key, source] of Object.entries(sources)) {
+          storage.mount(key, getMountDriver(source))
+        }
+        let keys = await storage.getKeys('content:source')
+
+        // Filter invalid characters & ignore patterns
+        const invalidKeyCharacters = "'\"?#/".split('')
+        const contentIgnores: Array<RegExp> = contentContext.ignores.map((p: any) =>
+          typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
+        )
+        keys = keys.filter((key) => {
+          if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+            return false
+          }
+          if (invalidKeyCharacters.some(ik => key.includes(ik))) {
+            return false
+          }
+          return true
+        })
+        await Promise.all(
+          keys.map(async key => await storage.setItem(
+            `cache:content:parsed:${key.substring(15)}`,
+            await storage.getItem(key)
+          ))
+        )
+      })
+      return
+    }
 
     nuxt.hook('nitro:init', async (nitro) => {
       if (!options.watch || !options.watch.ws) { return }
@@ -546,13 +594,6 @@ export default defineNuxtModule<ModuleOptions>({
         // Broadcast a message to the server to refresh the page
         ws.broadcast({ event, key })
       })
-    })
-
-    // @nuxtjs/tailwindcss support
-    // @ts-ignore - Module might not exist
-    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      tailwindConfig.content = tailwindConfig.content ?? []
-      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
     })
   }
 })
