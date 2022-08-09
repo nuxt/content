@@ -95,7 +95,7 @@
     "nuxt": "npm:nuxt3@latest",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.21.0",
+    "vitest": "^0.21.1",
     "vue-docgen-web-types": "^0.1.7"
   }
 }
