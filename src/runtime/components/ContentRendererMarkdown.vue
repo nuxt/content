@@ -53,7 +53,7 @@ export default defineComponent({
     await resolveContentComponents(props.value.body, {
       tags: {
         ...tags,
-        ...props.value?.tags || {}
+        ...props.value?._components || {}
       }
     })
 
@@ -75,7 +75,7 @@ export default defineComponent({
       ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...value?.tags || {}
+        ...value?._components || {}
       }
     }
 
