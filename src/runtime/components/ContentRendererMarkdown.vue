@@ -45,6 +45,13 @@ export default defineComponent({
     tag: {
       type: String,
       default: 'div'
+    },
+    /**
+     * The map of custom components to use for rendering.
+     */
+    components: {
+      type: Object,
+      default: () => ({})
     }
   },
   async setup (props) {
@@ -53,14 +60,15 @@ export default defineComponent({
     await resolveContentComponents(props.value.body, {
       tags: {
         ...tags,
-        ...props.value?._components || {}
+        ...props.value?._components || {},
+        ...props.components
       }
     })
 
     return { tags }
   },
   render (ctx) {
-    const { tags, tag, value } = ctx
+    const { tags, tag, value, components } = ctx
 
     if (!value) {
       return null
@@ -75,7 +83,8 @@ export default defineComponent({
       ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...value?._components || {}
+        ...value?._components || {},
+        ...components
       }
     }
 

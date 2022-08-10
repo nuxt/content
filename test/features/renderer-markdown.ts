@@ -53,8 +53,13 @@ export const testMarkdownRenderer = () => {
       expect(rendered).toContain('This is an alert for danger')
     })
 
-    test('per-page component', async () => {
+    test('per-page custom component', async () => {
       const html = await $fetch('/_partial/custom-paragraph')
+      expect(html).contains('[Paragraph]')
+    })
+
+    test('renderer custom component', async () => {
+      const html = await $fetch('/features/custom-paragraph')
       expect(html).contains('[Paragraph]')
     })
   })
