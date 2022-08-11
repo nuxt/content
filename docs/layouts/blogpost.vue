@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // eslint-disable-next-line import/named
-import { useDocus } from '#imports'
+import { useContent } from '#imports'
 
-const { page } = useDocus()
+const { page } = useContent()
 </script>
 
 <template>
