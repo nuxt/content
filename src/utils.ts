@@ -3,6 +3,7 @@ import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import fsDriver from 'unstorage/drivers/fs'
 import httpDriver from 'unstorage/drivers/http'
+import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
@@ -45,16 +46,17 @@ export const PROSE_TAGS = [
   'tr'
 ]
 
+const unstorageDrivers = {
+  fs: fsDriver,
+  http: httpDriver,
+  github: githubDriver
+}
 /**
  * Resolve driver of a mount.
  */
 export function getMountDriver (mount: MountOptions) {
-  if (mount.driver === 'fs') {
-    return fsDriver(mount as any)
-  }
-
-  if (mount.driver === 'http') {
-    return httpDriver(mount as any)
+  if (unstorageDrivers[mount.driver]) {
+    return unstorageDrivers[mount.driver](mount as any)
   }
 
   try {
