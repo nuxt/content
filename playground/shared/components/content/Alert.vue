@@ -1,6 +1,6 @@
 <template>
   <div class="alert">
-    <Markdown :use="$slots.default" unwrap="p" />
+    <ContentRichSlot :use="$slots.default" unwrap="p" />
   </div>
 </template>
 

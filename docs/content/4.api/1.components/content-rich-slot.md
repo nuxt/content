@@ -1,13 +1,9 @@
 ---
-title: '<Markdown>'
+title: '<ContentRichSlot>'
 description: 'The fastest way to inject Markdown into your Vue components.'
 ---
 
-::alert{type=warn}
-As of Content@2.1.0 this component is deprecated and replaced by [`<ContentRichSlot>`]('./content-rich-slot').
-::
-
-The `<Markdown>`{lang=html} component makes it easier to use Markdown syntax in your Vue components.
+The `<ContentRichSlot>`{lang=html} component makes it easier to use Markdown syntax in your Vue components.
 
 It is useful when creating components that you want to use in your Markdown content.
 
@@ -25,7 +21,7 @@ It is useful when creating components that you want to use in your Markdown cont
 
 ```html [components/FancyHeader.vue]
 <template>
-  <h2 class="fancy-header"><Markdown :use="$slots.default" unwrap="p" /></h2>
+  <h2 class="fancy-header"><ContentRichSlot :use="$slots.default" unwrap="p" /></h2>
 </template>
 ```
 
