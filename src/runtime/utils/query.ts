@@ -66,7 +66,7 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
   const reservedKeys = ['partial', 'draft', 'only', 'without', 'where', 'sort', 'limit', 'skip']
   for (const key of Object.keys(query)) {
     if (reservedKeys.includes(key)) { continue }
-
+    query.where = query.where || {}
     query.where[key] = query[key]
   }
 
