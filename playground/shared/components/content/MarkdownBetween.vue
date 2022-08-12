@@ -1,5 +1,5 @@
 <template>
-  <Markdown unwrap="ul li">
+  <Markdown :use="$slots.default" unwrap="ul li">
     <template #between>
       <br>
     </template>

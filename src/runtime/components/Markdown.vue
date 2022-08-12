@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { Slot } from 'vue'
-import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h } from '#imports'
+import ContentRichSlot from './ContentRichSlot'
+import { defineComponent, getCurrentInstance, useSlots, computed } from '#imports'
 
 /**
  * Markdown component
@@ -8,25 +8,12 @@ import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h }
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Markdown',
-  functional: true,
-  props: {
-    /**
-      * A slot name or function
-     */
-    use: {
-      type: Function,
-      default: undefined
-    },
-    /**
-     * Tags to unwrap separated by spaces
-     * Example: 'ul li'
-     */
-    unwrap: {
-      type: [Boolean, String],
-      default: false
-    }
-  },
+  extends: ContentRichSlot,
   setup (props) {
+    if (process.dev) {
+      // eslint-disable-next-line no-console
+      console.warn('[deprecation] <Markdown> component is deprecated. Please use <ContentRichSlot> instead.')
+    }
     const { parent } = getCurrentInstance()
     const { between, default: fallbackSlot } = useSlots()
 
@@ -40,46 +27,6 @@ export default defineComponent({
       tags,
       between,
       parent
-    }
-  },
-  render ({ use, unwrap, fallbackSlot, between, tags, parent }) {
-    try {
-      let slot: Slot = use
-      if (typeof use === 'string') {
-        slot = parent?.slots[use] || parent?.parent?.slots[use]
-        // eslint-disable-next-line no-console
-        console.warn(`Please set :use="$slots.${use}" in <Markdown> component to enable reactivity`)
-      }
-
-      if (!slot) { return fallbackSlot ? fallbackSlot() : h('div') }
-
-      if (!unwrap) { return [slot()] }
-
-      const { flatUnwrap } = useUnwrap()
-
-      const unwrapped = flatUnwrap(slot(), tags)
-
-      if (between) {
-        return unwrapped.flatMap(
-          (vnode, index) => index === 0 ? [vnode] : [between(), vnode]
-        )
-      }
-
-      return unwrapped.reduce((acc, item) => {
-        if (typeof item.children === 'string') {
-          if (typeof acc[acc.length - 1] === 'string') {
-            acc[acc.length - 1] += item.children
-          } else {
-            acc.push(item.children)
-          }
-        } else {
-          acc.push(item)
-        }
-        return acc
-      }, [])
-    } catch (e) {
-      // Catching errors to allow content reactivity
-      return h('div')
     }
   }
 })
