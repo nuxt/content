@@ -15,6 +15,8 @@ export default defineTransformer({
       } else if (_id.endsWith('json')) {
         parsed = destr(content)
       }
+    } else {
+      parsed = content
     }
 
     // Keep array contents under `body` key

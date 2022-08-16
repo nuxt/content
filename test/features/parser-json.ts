@@ -55,6 +55,12 @@ export const testJSONParser = () => {
       expect(parsed.body).toHaveLength(2)
       expect(parsed.body).toMatchObject(['item 1', 'item 2'])
     })
+
+    test('unstorage json', async () => {
+      const parsed = await $fetch('/_partial/simple-json')
+
+      expect(parsed).contains('&quot;test&quot;: &quot;test content&quot;')
+    })
   })
 
   describe('parser:json5', () => {
