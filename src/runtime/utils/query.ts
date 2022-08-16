@@ -12,7 +12,7 @@ const parseQueryParams = (body: string) => {
 
 const memory = {}
 export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams => {
-  const { qid } = event.context.params
+  const qid = event.context.params.qid?.replace(/.json$/, '')
   const query: any = useQuery(event) || {}
 
   // Using /api/_content/query/:qid?_params=....

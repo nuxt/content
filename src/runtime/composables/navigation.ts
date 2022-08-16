@@ -4,13 +4,13 @@ import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
 import { withContentBase } from './utils'
 
-export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams) => {
+export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   let params = queryBuilder
 
   // When params is an instance of QueryBuilder then we need to pick the params explicitly
   if (typeof params?.params === 'function') { params = params.params() }
 
-  const apiPath = withContentBase(params ? `/navigation/${hash(params)}` : '/navigation')
+  const apiPath = withContentBase(params ? `/navigation/${hash(params)}.json` : '/navigation')
 
   // Add `prefetch` to `<head>` in production
   if (!process.dev && process.server) {
@@ -21,7 +21,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilde
     })
   }
 
-  return $fetch<Array<NavItem>>(apiPath, {
+  return $fetch(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
