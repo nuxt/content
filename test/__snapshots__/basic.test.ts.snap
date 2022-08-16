@@ -16,6 +16,17 @@ exports[`Basic usage > Get contents index > basic-index-body 1`] = `
       "tag": "h1",
       "type": "element",
     },
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Hello World",
+        },
+      ],
+      "props": {},
+      "tag": "p",
+      "type": "element",
+    },
   ],
   "toc": {
     "depth": 2,
