@@ -8,7 +8,7 @@ const { flatUnwrap } = useUnwrap()
   <ul>
     <li v-for="(item, index) of flatUnwrap($slots.default(), ['ul'])" :key="index">
       ☑︎
-      <span><ContentRichSlot :use="() => item" unwrap="li" /></span>
+      <span><ContentSlot :use="() => item" unwrap="li" /></span>
     </li>
   </ul>
 </template>

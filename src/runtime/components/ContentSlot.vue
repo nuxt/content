@@ -3,10 +3,10 @@ import type { Slot } from 'vue'
 import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h } from '#imports'
 
 /**
- * ContentRichSlot component
+ * ContentSlot component
  */
 export default defineComponent({
-  name: 'ContentRichSlot',
+  name: 'ContentSlot',
   functional: true,
   props: {
     /**
@@ -47,7 +47,7 @@ export default defineComponent({
       if (typeof use === 'string') {
         slot = parent?.slots[use] || parent?.parent?.slots[use]
         // eslint-disable-next-line no-console
-        console.warn(`Please set :use="$slots.${use}" in <ContentRichSlot> component to enable reactivity`)
+        console.warn(`Please set :use="$slots.${use}" in <ContentSlot> component to enable reactivity`)
       }
 
       if (!slot) { return fallbackSlot ? fallbackSlot() : h('div') }

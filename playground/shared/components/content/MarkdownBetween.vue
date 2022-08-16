@@ -1,7 +1,7 @@
 <template>
-  <ContentRichSlot :use="$slots.default" unwrap="ul li">
+  <ContentSlot :use="$slots.default" unwrap="ul li">
     <template #between>
       <br>
     </template>
-  </ContentRichSlot>
+  </ContentSlot>
 </template>

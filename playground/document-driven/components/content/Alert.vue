@@ -6,10 +6,10 @@
       </div>
       <div>
         <h3 style="margin: 0">
-          <ContentRichSlot :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p" />
         </h3>
         <div>
-          <ContentRichSlot :use="$slots.default" unwrap="p" />
+          <ContentSlot :use="$slots.default" unwrap="p" />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
   <div>
-    <ContentRichSlot :use="$slots.default" />
+    <ContentSlot :use="$slots.default" />
   </div>
 </template>

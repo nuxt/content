@@ -1,5 +1,5 @@
 <script lang="ts">
-import ContentRichSlot from './ContentRichSlot'
+import ContentSlot from './ContentSlot'
 import { defineComponent, getCurrentInstance, useSlots, computed } from '#imports'
 
 /**
@@ -8,11 +8,11 @@ import { defineComponent, getCurrentInstance, useSlots, computed } from '#import
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Markdown',
-  extends: ContentRichSlot,
+  extends: ContentSlot,
   setup (props) {
     if (process.dev) {
       // eslint-disable-next-line no-console
-      console.warn('[deprecation] <Markdown> component is deprecated. Please use <ContentRichSlot> instead.')
+      console.warn('[deprecation] <Markdown> component is deprecated. Please use <ContentSlot> instead.')
     }
     const { parent } = getCurrentInstance()
     const { between, default: fallbackSlot } = useSlots()
