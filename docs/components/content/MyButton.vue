@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <button :class="type">
-    <ContentSlot :use="$slots.default" unwrap="p" />
+    <Markdown :use="$slots.default" unwrap="p" />
   </button>
 </template>
 
