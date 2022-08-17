@@ -44,7 +44,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: head.image
+          content: image
         })
       }
 
@@ -70,7 +70,7 @@ export const useContentHead = (
             })
           } else if (image[key]) {
             head.meta.push({
-              property: `og:${key}`,
+              property: `og:image:${key}`,
               content: image[key]
             })
           }
