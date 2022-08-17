@@ -60,6 +60,15 @@ export default defineComponent({
 
     const { value, excerpt, tag } = ctx
 
+    if (!value && slots?.empty) {
+      // Fallback on `empty` slot.
+      return slots.empty({ value, excerpt, tag, ...this.$attrs })
+    }
+
+    if (slots?.default) {
+      return slots.default({ value, excerpt, tag, ...this.$attrs })
+    }
+
     // Use built-in ContentRendererMarkdown
     if (value && value?._type === 'markdown' && value?.body?.children?.length) {
       return h(
@@ -71,16 +80,6 @@ export default defineComponent({
           ...this.$attrs
         }
       )
-    }
-
-    if (value && slots?.default) {
-      return slots.default({ value, excerpt, tag, ...this.$attrs })
-    } else if (slots?.empty) {
-      // Fallback on `empty` slot.
-      return slots.empty({ value, excerpt, tag, ...this.$attrs })
-    } else if (slots?.default) {
-      // Fallback on `default` slot with undefined `value` if no `empty` slot.
-      return slots.default({ value, excerpt, tag, ...this.$attrs })
     }
 
     // Fallback on JSON.stringify if no slot at all.

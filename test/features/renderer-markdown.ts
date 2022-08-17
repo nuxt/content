@@ -62,5 +62,10 @@ export const testMarkdownRenderer = () => {
       const html = await $fetch('/features/custom-paragraph')
       expect(html).contains('[Paragraph]')
     })
+
+    test('override default slot', async () => {
+      const html = await $fetch('/features/slotted-content-renderer')
+      expect(html).contains('The default slot is overridden')
+    })
   })
 }
