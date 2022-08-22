@@ -2,6 +2,7 @@ import { markdownLineEnding, markdownSpace } from 'micromark-util-character'
 import { createTokenizer } from './create-tokenizer'
 
 function initializeDocument (effects) {
+  const self = this
   const delimiter = (this.parser.delimiter || ',').charCodeAt(0)
 
   return enterRow
@@ -36,6 +37,13 @@ function initializeDocument (effects) {
       return quotedData(code)
     }
     if (code === delimiter) {
+      // Hanlde:
+      // - "1,,3,4"
+      // - ",2,3,4"
+      if (self.previous === delimiter || markdownLineEnding(self.previous) || self.previous === null) {
+        effects.enter('data')
+        effects.exit('data')
+      }
       effects.exit('column')
       effects.enter('columnSeparator')
       effects.consume(code)

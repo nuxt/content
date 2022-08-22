@@ -48,12 +48,12 @@ export default defineTransformer({
       delimiter: ',',
       json: true
     })
-    const data = await stream.process(content)
+    const { result } = await stream.process(content)
 
     return <ParsedContent> {
       _id,
       _type: 'csv',
-      body: data
+      body: result
     }
   }
 })
