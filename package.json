@@ -42,10 +42,10 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.6",
+    "@nuxt/kit": "^3.0.0-rc.8",
     "consola": "^2.15.3",
     "csvtojson": "^2.0.10",
-    "defu": "^6.0.0",
+    "defu": "^6.1.0",
     "destr": "^1.1.1",
     "detab": "^3.0.1",
     "html-tags": "^3.2.0",
@@ -55,7 +55,7 @@
     "mdast-util-to-hast": "^12.2.0",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.5",
-    "pathe": "^0.3.3",
+    "pathe": "^0.3.5",
     "property-information": "^6.1.1",
     "rehype-external-links": "^2.0.0",
     "rehype-raw": "^6.1.1",
@@ -64,7 +64,7 @@
     "rehype-sort-attributes": "^4.0.0",
     "remark-emoji": "^3.0.2",
     "remark-gfm": "^3.0.1",
-    "remark-mdc": "^1.0.4",
+    "remark-mdc": "^1.0.7",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
     "remark-squeeze-paragraphs": "^5.0.1",
@@ -75,19 +75,19 @@
     "unified": "^10.1.2",
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
-    "unist-util-visit": "^4.1.0",
+    "unist-util-visit": "^4.1.1",
     "unstorage": "^0.5.6",
     "ws": "^8.8.1"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
-    "@nuxt/schema": "^3.0.0-rc.6",
+    "@nuxt/schema": "^3.0.0-rc.8",
     "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.3",
     "c8": "^7.12.0",
-    "eslint": "^8.21.0",
+    "eslint": "^8.22.0",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
     "jiti": "^1.14.0",
@@ -95,7 +95,7 @@
     "nuxt": "npm:nuxt3@latest",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.21.1",
+    "vitest": "^0.22.1",
     "vue-docgen-web-types": "^0.1.7"
   }
 }

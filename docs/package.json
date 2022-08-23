@@ -12,12 +12,12 @@
     "@nuxt-themes/docus": "npm:@nuxt-themes/docus-edge@latest",
     "@nuxtlabs/github-module": "npm:@nuxtlabs/github-module-edge@latest",
     "monaco-editor-core": "^0.34.0",
-    "nuxt": "3.0.0-rc.6",
+    "nuxt": "3.0.0-rc.8",
     "vue-plausible": "^1.3.2"
   },
   "dependencies": {
     "@typescript/ata": "^0.9.3",
-    "emmet-monaco-es": "^5.1.0",
+    "emmet-monaco-es": "^5.1.2",
     "xterm": "^4.19.0"
   }
 }
