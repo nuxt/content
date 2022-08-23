@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@typescript/ata": "^0.9.3",
-    "emmet-monaco-es": "^5.1.0",
+    "emmet-monaco-es": "^5.1.2",
     "xterm": "^4.19.0"
   }
 }

@@ -2304,10 +2304,10 @@ electron-to-chromium@^1.4.188:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.201.tgz#b018802ace20ce2567842d52b9e1c9d090fda674"
   integrity sha512-87D0gEHbhLZgZxZl2e9/rC/I2BicPC/y9wR/cuaJSqvkgN41s5EImi89S7YExHc7F0OBXiKsABZt9mmb9bqFcQ==
 
-emmet-monaco-es@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/emmet-monaco-es/-/emmet-monaco-es-5.1.0.tgz#f25ffdd9c22a92d3b9f716e15405299fb296f6b6"
-  integrity sha512-muRcP2MsDLoHkjs9xEfE3qClyACpFanZT+UGDLgkS/dDGg6p1wndm1W7zGvx/NWUgPjeUxG4XNN6wRpV6O31TA==
+emmet-monaco-es@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/emmet-monaco-es/-/emmet-monaco-es-5.1.2.tgz#25c58c02349637e4f117932496ebf3ca3a5b0031"
+  integrity sha512-P+GwbRfzCAN9socNCLj7hdlmjV1J535wYZX9uoXERRGbbfkzcmfz4i43ClDecqCVt6IsbP0RK8AgX370ClMcJA==
   dependencies:
     emmet "^2.3.6"
 

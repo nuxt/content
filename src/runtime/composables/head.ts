@@ -18,7 +18,10 @@ export const useContentHead = (
     const head: HeadObjectPlain = Object.assign({}, data?.head || {})
 
     // Great basic informations from the data
-    head.title = head.title || data?.title
+    const title = head.title || data?.title
+    if (title) {
+      head.title = title
+    }
     head.meta = [...(head.meta || [])]
 
     // Grab description from `head.description` or fallback to `data.description`
@@ -44,7 +47,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: head.image
+          content: image
         })
       }
 
@@ -70,7 +73,7 @@ export const useContentHead = (
             })
           } else if (image[key]) {
             head.meta.push({
-              property: `og:${key}`,
+              property: `og:image:${key}`,
               content: image[key]
             })
           }
