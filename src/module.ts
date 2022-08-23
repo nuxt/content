@@ -145,7 +145,10 @@ export interface ModuleOptions {
    *
    * @default {}
    */
-  csv: false | Record<string, any>
+  csv: false | {
+    json?: boolean
+    delimeter?: string
+  }
   /**
    * Enable/Disable navigation.
    *
@@ -217,7 +220,10 @@ export default defineNuxtModule<ModuleOptions>({
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
     },
     yaml: {},
-    csv: {},
+    csv: {
+      delimeter: ',',
+      json: true
+    },
     navigation: {
       fields: []
     },
