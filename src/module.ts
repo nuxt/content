@@ -287,13 +287,14 @@ export default defineNuxtModule<ModuleOptions>({
       for (const source of Object.values(sources)) {
         // Only targets directories inside the srcDir
         if (source.driver === 'fs' && source.base.includes(nuxt.options.srcDir)) {
+          const wildcard = join(source.base, '**/*').replace(withTrailingSlash(nuxt.options.srcDir), '')
           nuxt.options.ignore.push(
             // Remove `srcDir` from the path
-            join(source.base, '**/*').replace(withTrailingSlash(nuxt.options.srcDir), '')
+            wildcard,
+            `!${wildcard}.vue`
           )
         }
       }
-
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
