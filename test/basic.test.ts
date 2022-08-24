@@ -17,6 +17,7 @@ import { testContentQuery } from './features/content-query'
 import { testHighlighter } from './features/highlighter'
 import { testMarkdownRenderer } from './features/renderer-markdown'
 import { testParserOptions } from './features/parser-options'
+import { testComponents } from './features/components'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -99,6 +100,7 @@ describe('Basic usage', async () => {
     expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
     expect(html).contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
   })
+
   test('<ContentDoc> head management (not same path)', async () => {
     const html = await $fetch('/bypass-head')
     expect(html).not.contains('<title>Head overwritten</title>')
@@ -122,11 +124,14 @@ describe('Basic usage', async () => {
     expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
   })
 
+  testComponents()
+
   testContentQuery()
 
   testNavigation()
 
   testMarkdownParser()
+
   testMarkdownRenderer()
 
   testMarkdownParserExcerpt()
