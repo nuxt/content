@@ -13,6 +13,12 @@ export default defineNuxtConfig({
       {
         path: resolve(__dirname, './components'),
         global: true
+      },
+      {
+        path: resolve(__dirname, './content'),
+        global: true,
+        pathPrefix: false,
+        prefix: ''
       }
     ]
   },
@@ -27,6 +33,7 @@ export default defineNuxtConfig({
         base: resolve(__dirname, 'content-fa')
       }
     ],
+    ignores: ['.*\\.vue'],
     navigation: {
       fields: ['icon']
     },
