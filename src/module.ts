@@ -4,7 +4,7 @@ import {
   defineNuxtModule,
   resolveModule,
   createResolver,
-  addAutoImport,
+  addImports,
   addComponentsDir,
   addTemplate
 } from '@nuxt/kit'
@@ -331,7 +331,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register composables
-    addAutoImport([
+    addImports([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
       { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
@@ -393,7 +393,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register navigation
     if (options.navigation) {
-      addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
+      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []
@@ -453,7 +453,7 @@ export default defineNuxtModule<ModuleOptions>({
         options.navigation.fields.push('layout')
       }
 
-      addAutoImport([
+      addImports([
         { name: 'useContentState', as: 'useContentState', from: resolveRuntimeModule('./composables/content') },
         { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
@@ -490,7 +490,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     } else {
       // Noop useContent
-      addAutoImport([
+      addImports([
         { name: 'useContentDisabled', as: 'useContentState', from: resolveRuntimeModule('./composables/utils') },
         { name: 'useContentDisabled', as: 'useContent', from: resolveRuntimeModule('./composables/utils') }
       ])
