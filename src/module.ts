@@ -348,7 +348,7 @@ export default defineNuxtModule<ModuleOptions>({
       global: true
     })
 
-    addTemplate({
+    const typesPath = addTemplate({
       filename: 'types/content.d.ts',
       getContents: () => [
         'declare module \'#content/server\' {',
@@ -356,10 +356,10 @@ export default defineNuxtModule<ModuleOptions>({
         `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
         '}'
       ].join('\n')
-    })
+    }).dst
 
     nuxt.hook('prepare:types', (options) => {
-      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/content.d.ts') })
+      options.references.push({ path: typesPath })
     })
 
     // Register user global components
