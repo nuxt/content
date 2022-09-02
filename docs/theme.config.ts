@@ -26,7 +26,8 @@ export default defineTheme({
       '/content-v1',
       '/fr',
       '/ja',
-      '/ru'
+      '/ru',
+      '/pt'
     ]
   },
   header: {
