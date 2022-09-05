@@ -55,7 +55,8 @@ const { data: doc, refresh } = await useAsyncData('playground-' + content.value,
       _type: 'markdown',
       updatedAt: new Date().toISOString(),
       ...parsed.meta || {},
-      ...parsed
+      ...parsed,
+      meta: undefined
     }
   } catch (e) {
     return doc.value
