@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useAsyncData, shallowRef, computed, onMounted, watch } from '#imports'
+import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
 import { parse } from '../../../src/runtime/markdown-parser'
 import { useShiki } from '../../editor/useShiki.ts'
 
@@ -33,8 +33,9 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 ::
 `
 const shiki = await useShiki()
+const route = useRoute()
 
-const content = ref(INITIAL_CODE)
+const content = ref(route.query.content || INITIAL_CODE)
 
 const { data: doc, refresh } = await useAsyncData('playground', async () => {
   try {
