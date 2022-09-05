@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const { navItem } = defineProps<{
+const props = defineProps<{
   navItem: any
 }>()
 const icon = computed(() => {
-  if (navItem.icon) { return navItem.icon }
-  if (navItem.children && navItem.children.length) { return '📁' }
+  if (props.navItem.icon) { return props.navItem.icon }
+  if (props.navItem.children && props.navItem.children.length) { return '📁' }
   return '📄'
 })
 </script>
