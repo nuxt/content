@@ -2,6 +2,8 @@
 import ContentSlot from './ContentSlot'
 import { defineComponent, getCurrentInstance, useSlots, computed } from '#imports'
 
+let showDeprecatedMessage = true
+
 /**
  * Markdown component
  */
@@ -10,9 +12,10 @@ export default defineComponent({
   name: 'Markdown',
   extends: ContentSlot,
   setup (props) {
-    if (process.dev) {
+    if (process.dev && showDeprecatedMessage) {
       // eslint-disable-next-line no-console
       console.warn('[deprecation] <Markdown> component is deprecated. Please use <ContentSlot> instead.')
+      showDeprecatedMessage = false
     }
     const { parent } = getCurrentInstance()
     const { between, default: fallbackSlot } = useSlots()
