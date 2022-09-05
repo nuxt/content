@@ -37,7 +37,7 @@ const route = useRoute()
 
 const content = ref(route.query.content || INITIAL_CODE)
 
-const { data: doc, refresh } = await useAsyncData('playground', async () => {
+const { data: doc, refresh } = await useAsyncData('playground-' + content.value, async () => {
   try {
     // const startParse = Date.now()
     let parsed = await parse(content.value)
