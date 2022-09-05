@@ -182,7 +182,13 @@ export interface ModuleOptions {
     }
     layoutFallbacks: string[]
     injectPage: boolean
-  }
+  },
+  /**
+   * Toggle meta `prefetch` tags being added to the head when making fetch requests.
+   *
+   * @default true
+   */
+  prefetch: boolean
 }
 
 interface ContentContext extends ModuleOptions {
@@ -227,7 +233,8 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    documentDriven: false
+    documentDriven: false,
+    prefetch: true
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)

@@ -1,10 +1,10 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useHead, useCookie } from '#app'
+import { useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
-import { withContentBase } from './utils'
+import { withContentBase, useContentPrefetch } from './utils'
 
 /**
  * Query fetcher
@@ -26,14 +26,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: Qu
 
   const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.json`)
 
-  // Prefetch the query
-  if (!process.dev && process.server) {
-    useHead({
-      link: [
-        { rel: 'prefetch', href: apiPath }
-      ]
-    })
-  }
+  useContentPrefetch(apiPath)
 
   return $fetch(apiPath as any, {
     method: 'GET',

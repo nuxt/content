@@ -1,8 +1,8 @@
 import { hash } from 'ohash'
-import { useHead, useCookie } from '#app'
+import { useCookie } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
-import { withContentBase } from './utils'
+import { withContentBase, useContentPrefetch } from './utils'
 
 export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   let params = queryBuilder
@@ -12,14 +12,7 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilde
 
   const apiPath = withContentBase(params ? `/navigation/${hash(params)}.json` : '/navigation')
 
-  // Add `prefetch` to `<head>` in production
-  if (!process.dev && process.server) {
-    useHead({
-      link: [
-        { rel: 'prefetch', href: apiPath }
-      ]
-    })
-  }
+  useContentPrefetch(apiPath)
 
   return $fetch(apiPath, {
     method: 'GET',

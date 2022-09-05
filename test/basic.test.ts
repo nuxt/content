@@ -124,6 +124,11 @@ describe('Basic usage', async () => {
     expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
   })
 
+  test('Query preload tag is added', async () => {
+    const html = await $fetch('/')
+    expect(html).contains('<link rel="prefetch" href="/api/_content/query/')
+  })
+
   testComponents()
 
   testContentQuery()

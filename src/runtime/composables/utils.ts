@@ -1,8 +1,20 @@
 import { withBase } from 'ufo'
-import { useRuntimeConfig } from '#app'
+import { useHead, useRuntimeConfig } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
+
+export const useContentPrefetch = (href: string) => {
+  const { prefetch } = useRuntimeConfig().content
+  // Add `prefetch` to `<head>` in production
+  if (!process.dev && process.server && prefetch) {
+    useHead({
+      link: [
+        { rel: 'prefetch', href }
+      ]
+    })
+  }
+}
 
 export const useUnwrap = () => ({
   unwrap,
