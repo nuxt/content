@@ -348,6 +348,17 @@ export default defineNuxtModule<ModuleOptions>({
       global: true
     })
 
+    // Use single components chunk
+    nuxt.hook('vite:extendConfig', (config, { isServer }) => {
+      if (Array.isArray(config.build.rollupOptions.output) || isServer) { return }
+      const moduleComponentsDir = resolve('./runtime/components')
+      config.build.rollupOptions.output.manualChunks = (id) => {
+        if (id.includes(moduleComponentsDir)) {
+          return 'content-components'
+        }
+      }
+    })
+
     const typesPath = addTemplate({
       filename: 'types/content.d.ts',
       getContents: () => [
