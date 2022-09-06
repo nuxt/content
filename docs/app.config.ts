@@ -1,6 +1,4 @@
-import { defineTheme } from '@nuxt-themes/config'
-
-export default defineTheme({
+export default defineAppConfig({
   title: 'Nuxt Content',
   description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
   layout: 'docs',
