@@ -11,7 +11,5 @@ const { page } = useContent()
     <div class="px-4 sm:px-6 mx-auto max-w-full lg:max-w-7xl h-full pb-6">
       <slot />
     </div>
-
-    <AppFooter />
   </div>
 </template>
