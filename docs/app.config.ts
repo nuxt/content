@@ -3,6 +3,7 @@ export default defineAppConfig({
     title: 'Nuxt Content',
     description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
     layout: 'docs',
+    image: 'https://content.nuxtjs.org/preview.png',
     url: 'https://content.nuxtjs.org',
     debug: false,
     socials: {
