@@ -1,5 +1,5 @@
 <template>
-  <Monaco :value="raw" :language="language" :read-only="readOnly" @change="update" />
+  <Monaco :value="readOnly? modelValue : raw" :language="language" :read-only="readOnly" @change="update" />
 </template>
 
 <script setup lang="ts">

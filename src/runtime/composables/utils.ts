@@ -1,5 +1,5 @@
 import { withBase } from 'ufo'
-import { useRuntimeConfig } from '#app'
+import { useRuntimeConfig, useRequestEvent } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
@@ -18,4 +18,15 @@ export const useContentDisabled = () => {
 
   // Break app
   throw new Error('useContent is only accessible when you are using `documentDriven` mode.')
+}
+
+export const addPrerenderPath = (path: string) => {
+  const event = useRequestEvent()
+  event.res.setHeader(
+    'x-nitro-prerender',
+    [
+      event.res.getHeader('x-nitro-prerender'),
+      path
+    ].filter(Boolean).join(',')
+  )
 }

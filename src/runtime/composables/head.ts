@@ -18,7 +18,10 @@ export const useContentHead = (
     const head: HeadObjectPlain = Object.assign({}, data?.head || {})
 
     // Great basic informations from the data
-    head.title = head.title || data?.title
+    const title = head.title || data?.title
+    if (title) {
+      head.title = title
+    }
     head.meta = [...(head.meta || [])]
 
     // Grab description from `head.description` or fallback to `data.description`
