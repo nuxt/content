@@ -62,24 +62,13 @@ export default defineNuxtConfig({
     }
   },
   modules: ['@nuxtlabs/github-module'],
-  extends: [
-    (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
-  ],
+  extends: process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus',
   github: {
     owner: 'nuxt',
     repo: 'content',
     branch: 'main'
   },
-  vite: {
-    define: {
-      'process.env.FORCE_COLOR': {},
-      'process.env.NODE_DISABLE_COLORS': {},
-      'process.env.NO_COLOR': {},
-      'process.env.FORCE_TERM': {}
-    }
-  },
   colorMode: {
     preference: 'dark'
-  },
-  theme: {}
+  }
 })
