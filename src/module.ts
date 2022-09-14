@@ -188,6 +188,7 @@ export interface ModuleOptions {
 interface ContentContext extends ModuleOptions {
   base: Readonly<string>
   transformers: Array<string>
+  spa: boolean
 }
 
 export interface ModuleHooks {
@@ -234,6 +235,7 @@ export default defineNuxtModule<ModuleOptions>({
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
     const contentContext: ContentContext = {
       transformers: [],
+      spa: nuxt.options.ssr === false,
       ...options
     }
 
@@ -513,6 +515,7 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      spa: contentContext.spa,
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
@@ -611,6 +614,8 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 interface ModulePublicRuntimeConfig {
+  spa: boolean
+
   tags: Record<string, string>
 
   base: string;

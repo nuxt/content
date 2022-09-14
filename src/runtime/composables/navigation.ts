@@ -4,7 +4,7 @@ import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, withContentBase } from './utils'
 
-export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
+export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   let params = queryBuilder
 
   // When params is an instance of QueryBuilder then we need to pick the params explicitly
@@ -15,6 +15,11 @@ export const fetchContentNavigation = (queryBuilder?: QueryBuilder | QueryBuilde
   // Add `prefetch` to `<head>` in production
   if (!process.dev && process.server) {
     addPrerenderPath(apiPath)
+  }
+
+  if (process.client && useRuntimeConfig().content.spa) {
+    const db = await import('../query/spa').then(m => m.useContentDatabase())
+    return db.storage.getItem('content-navigation.json')
   }
 
   return $fetch(apiPath, {
