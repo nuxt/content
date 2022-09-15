@@ -42,7 +42,7 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.9",
+    "@nuxt/kit": "^3.0.0-rc.10",
     "consola": "^2.15.3",
     "defu": "^6.1.0",
     "destr": "^1.1.1",
@@ -51,7 +51,7 @@
     "json5": "^2.2.1",
     "knitwork": "^0.1.2",
     "listhen": "^0.2.15",
-    "mdast-util-to-hast": "^12.2.1",
+    "mdast-util-to-hast": "^12.2.2",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.5",
     "pathe": "^0.3.7",
@@ -80,22 +80,22 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
-    "@nuxt/schema": "^3.0.0-rc.9",
-    "@nuxt/test-utils": "^3.0.0-rc.9",
+    "@nuxt/schema": "^3.0.0-rc.10",
+    "@nuxt/test-utils": "^3.0.0-rc.10",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.3",
     "c8": "^7.12.0",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.23.0",
+    "eslint": "^8.23.1",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
     "jiti": "^1.15.0",
     "lint-staged": "^13.0.3",
-    "nuxt": "^3.0.0-rc.9",
+    "nuxt": "^3.0.0-rc.10",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.23.1",
+    "vitest": "^0.23.2",
     "vue-docgen-web-types": "^0.1.8"
   }
 }

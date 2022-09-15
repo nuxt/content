@@ -12,7 +12,8 @@ export default defineNuxtConfig({
           },
           without: ['_']
         }
-      }
+      },
+      layoutFallbacks: ['theme']
     }
   }
 })
