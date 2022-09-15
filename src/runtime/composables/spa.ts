@@ -3,6 +3,8 @@ import LSDriver from 'unstorage/drivers/localstorage'
 import { createStorage, prefixStorage } from 'unstorage'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
+import { ParsedContentMeta, QueryBuilderParams } from '../types'
+import { createNav } from '../server/navigation'
 
 export const contentStorage = prefixStorage(createStorage({ driver: LSDriver() }), '@content')
 
@@ -14,7 +16,7 @@ export function createDB (storage: Storage) {
   return {
     storage,
     fetch: createPipelineFetcher(getItems),
-    query: () => createQuery(createPipelineFetcher(getItems))
+    query: (query?: QueryBuilderParams) => createQuery(createPipelineFetcher(getItems), query)
   }
 }
 
@@ -31,4 +33,45 @@ export async function useContentDatabase () {
     await contentDatabase.storage.setItem('navigation.json', navigation)
   }
   return contentDatabase
+}
+
+export async function generateNavigation (query) {
+  const db = await useContentDatabase()
+
+  if (!query || Object.keys(query).length === 0) {
+    return db.storage.getItem('navigation.json')
+  }
+
+  const contents = await db.query(query)
+    .where({
+    /**
+     * Partial contents are not included in the navigation
+     * A partial content is a content that has `_` prefix in its path
+     */
+      _partial: false,
+      /**
+     * Exclude any pages which have opted out of navigation via frontmatter.
+     */
+      navigation: {
+        $ne: false
+      }
+    })
+    .find()
+
+  const dirConfigs = await db.query().where({ _path: /\/_dir$/i, _partial: true }).find()
+
+  const configs = dirConfigs.reduce((configs, conf) => {
+    if (conf.title.toLowerCase() === 'dir') {
+      conf.title = undefined
+    }
+    const key = conf._path.split('/').slice(0, -1).join('/') || '/'
+    configs[key] = {
+      ...conf,
+      // Extract meta from body. (non MD files)
+      ...conf.body
+    }
+    return configs
+  }, {} as Record<string, ParsedContentMeta>)
+
+  return createNav(contents as ParsedContentMeta[], configs)
 }

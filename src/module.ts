@@ -516,6 +516,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       spa: contentContext.spa,
+      navigation: contentContext.navigation,
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
@@ -625,6 +626,8 @@ interface ModulePublicRuntimeConfig {
 
   // Shiki config
   highlight: ModuleOptions['highlight']
+
+  navigation: ModuleOptions['navigation']
 }
 
 interface ModulePrivateRuntimeConfig {
