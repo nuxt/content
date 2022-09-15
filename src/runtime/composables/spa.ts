@@ -23,7 +23,7 @@ export function createDB (storage: Storage) {
 let contentDatabase
 export async function useContentDatabase () {
   if (!contentDatabase) {
-    const { contents, navigation } = await $fetch(withContentBase('cache'))
+    const { contents, navigation } = await $fetch(withContentBase('cache.json'))
     contentDatabase = createDB(contentStorage)
 
     for (const content of contents) {

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const contents = await serverQueryContent(event).find()
 
   // Generate Index
-  const index = await getContentIndex(event)
+  await getContentIndex(event)
 
   const navigation = await $fetch('/api/_content/navigation')
   await cacheStorage.setItem('content-navigation.json', navigation)
@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
       generatedAt: now,
       generateTime: Date.now() - now,
       contents,
-      index,
       navigation
     }
   }
