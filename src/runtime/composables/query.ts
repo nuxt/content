@@ -32,7 +32,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
   }
 
   if (process.client && useRuntimeConfig().content.spa) {
-    const db = await import('../query/spa').then(m => m.useContentDatabase())
+    const db = await import('./spa').then(m => m.useContentDatabase())
     return db.fetch(query)
   }
 

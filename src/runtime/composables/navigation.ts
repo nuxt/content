@@ -18,8 +18,8 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   }
 
   if (process.client && useRuntimeConfig().content.spa) {
-    const db = await import('../query/spa').then(m => m.useContentDatabase())
-    return db.storage.getItem('content-navigation.json')
+    const db = await import('./spa').then(m => m.useContentDatabase())
+    return db.storage.getItem('navigation.json')
   }
 
   return $fetch(apiPath, {
