@@ -23,14 +23,19 @@ export function createDB (storage: Storage) {
 let contentDatabase
 export async function useContentDatabase () {
   if (!contentDatabase) {
-    const { contents, navigation } = await $fetch(withContentBase('cache.json'))
     contentDatabase = createDB(contentStorage)
+    const iv = await contentDatabase.storage.getItem('integrity')
+    if (useRuntimeConfig().public.content.spa.iv !== +iv) {
+      const { contents, navigation } = await $fetch(withContentBase('cache.json'))
 
-    for (const content of contents) {
-      await contentDatabase.storage.setItem(content._id, content)
+      for (const content of contents) {
+        await contentDatabase.storage.setItem(content._id, content)
+      }
+
+      await contentDatabase.storage.setItem('navigation', navigation)
+
+      await contentDatabase.storage.setItem('integrity', useRuntimeConfig().content.spa.iv)
     }
-
-    await contentDatabase.storage.setItem('navigation.json', navigation)
   }
   return contentDatabase
 }
@@ -39,7 +44,7 @@ export async function generateNavigation (query) {
   const db = await useContentDatabase()
 
   if (!query || Object.keys(query).length === 0) {
-    return db.storage.getItem('navigation.json')
+    return db.storage.getItem('navigation')
   }
 
   const contents = await db.query(query)

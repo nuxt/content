@@ -518,7 +518,7 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
-      spa: nuxt.options.ssr === false,
+      spa: nuxt.options.ssr === false ? { iv: Date.now() } : false,
       navigation: contentContext.navigation,
       base: options.base,
       // Tags will use in markdown renderer for component replacement
@@ -619,7 +619,7 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 interface ModulePublicRuntimeConfig {
-  spa: boolean
+  spa: false | { iv: number }
 
   tags: Record<string, string>
 
