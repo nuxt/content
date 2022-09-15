@@ -237,6 +237,7 @@ export default defineNuxtPlugin((nuxt) => {
         }
         // Apply layout
         to.meta.layout = layoutName
+        _page.layout = layoutName
 
         // Update values
         pages.value[_path] = _page
