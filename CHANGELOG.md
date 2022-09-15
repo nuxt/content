@@ -1,6 +1,27 @@
 # Changelog
 
 
+## main (v2.1.0..v2.1.1)
+
+
+### 🩹 Fixes
+
+  - **document-driven:** Sync page layout (#1519)
+  - **document-driven:** Disable static payload (#1526)
+
+### 📖 Documentation
+
+  - **document-driven:** Remove edge channel info (#1462)
+  - Update title & description (#1505)
+  - **document-driven:** Fix typo (#1512)
+
+### ❤️  Contributors
+
+- Ahad Birang
+- Nobkd
+- Okoro Redemption
+- Sébastien Chopin
+
 ## main (v2.0.1..v2.1.0)
 
 
