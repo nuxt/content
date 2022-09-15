@@ -1,5 +1,5 @@
 import { hash } from 'ohash'
-import { useCookie } from '#app'
+import { useCookie, useRuntimeConfig } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, withContentBase } from './utils'
