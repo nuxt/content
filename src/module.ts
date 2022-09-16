@@ -278,7 +278,7 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.push('/api/_content/cache')
+        nitroConfig.prerender.routes.unshift('/api/_content/cache')
       }
 
       // Register source storages
