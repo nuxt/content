@@ -172,6 +172,8 @@ export interface ModuleOptions {
   defaultLocale?: string
   /**
    * Document-driven mode config
+   *
+   * @default false
    */
   documentDriven: boolean | {
     page?: boolean
