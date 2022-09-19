@@ -174,14 +174,14 @@ export interface ModuleOptions {
    * Document-driven mode config
    */
   documentDriven: boolean | {
-    page: boolean
-    navigation: boolean
-    surround: boolean
-    globals: {
+    page?: boolean
+    navigation?: boolean
+    surround?: boolean
+    globals?: {
       [key: string]: QueryBuilderParams
     }
-    layoutFallbacks: string[]
-    injectPage: boolean
+    layoutFallbacks?: string[]
+    injectPage?: boolean
   }
 }
 
