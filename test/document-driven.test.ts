@@ -69,4 +69,13 @@ describe('fixtures:document-driven', async () => {
       expect(e.response.statusText).toBe('Not Found')
     }
   })
+
+  test('redirect in `_dir.yml`', async () => {
+    await $fetch('/redirect', {
+      onResponse (ctx) {
+        expect(ctx.response.status).toBe(302)
+        return Promise.resolve()
+      }
+    })
+  })
 })

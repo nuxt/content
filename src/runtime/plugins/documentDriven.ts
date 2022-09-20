@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
-import { useRuntimeConfig, addRouteMiddleware } from '#app'
-import { withoutTrailingSlash } from 'ufo'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo } from '#app'
+import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
 import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
@@ -224,6 +224,7 @@ export default defineNuxtPlugin((nuxt) => {
 
       // Use `redirect` key to redirect to another page
       if (_page?.redirect) { return _page?.redirect }
+      if (_page?._dir?.navigation?.redirect) { return _page?._dir?.navigation?.redirect }
 
       if (_page) {
         // Find used layout
@@ -258,7 +259,13 @@ export default defineNuxtPlugin((nuxt) => {
 
     const redirect = await refresh(to, false)
 
-    if (redirect) { return redirect }
+    if (redirect) {
+      if (hasProtocol(redirect)) {
+        callWithNuxt(nuxt, navigateTo, [redirect, { external: true }])
+      } else {
+        return redirect
+      }
+    }
   })
 
   if (process.server) {
