@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { test, describe, expect } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
+import { setup, $fetch, url } from '@nuxt/test-utils'
 
 describe('fixtures:document-driven', async () => {
   await setup({
@@ -71,11 +71,7 @@ describe('fixtures:document-driven', async () => {
   })
 
   test('redirect in `_dir.yml`', async () => {
-    await $fetch('/redirect', {
-      onResponse (ctx) {
-        expect(ctx.response.status).toBe(302)
-        return Promise.resolve()
-      }
-    })
+    const response = await fetch(url('/redirect'))
+    expect(response.url).toBe('https://nuxtjs.org/')
   })
 })

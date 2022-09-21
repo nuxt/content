@@ -261,7 +261,7 @@ export default defineNuxtPlugin((nuxt) => {
 
     if (redirect) {
       if (hasProtocol(redirect)) {
-        callWithNuxt(nuxt, navigateTo, [redirect, { external: true }])
+        return callWithNuxt(nuxt, navigateTo, [redirect, { external: true }])
       } else {
         return redirect
       }
