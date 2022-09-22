@@ -11,17 +11,6 @@ if (process.env.NODE_ENV === 'development') {
 
 export default defineNuxtConfig({
   alias,
-  app: {
-    head: {
-      script: [
-        {
-          defer: true,
-          'data-domain': 'content.nuxtjs.org',
-          src: 'https://plausible.io/js/script.js'
-        }
-      ]
-    }
-  },
   content: {
     sources: [
       {
@@ -61,7 +50,7 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxtlabs/github-module'],
+  modules: ['@nuxtlabs/github-module', '@huntersofbook/plausible-nuxt'],
   extends: process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus',
   github: {
     owner: 'nuxt',
@@ -70,5 +59,11 @@ export default defineNuxtConfig({
   },
   colorMode: {
     preference: 'dark'
+  },
+  huntersofbookPlausible: {
+    init: {
+      domain: 'content.nuxtjs.org',
+      trackLocalhost: true
+    }
   }
 })
