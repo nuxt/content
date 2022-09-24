@@ -28,8 +28,8 @@ export default function link (h: H, node: Node) {
 }
 
 function normalizeLink (link: string) {
-  if (isRelative(link) && link.endsWith('.md')) {
-    return link.slice(0, -3)
+  if (isRelative(link)) {
+    return link.replace(/^[0-9]*\./g, '').replace(/\.md$/g, '')
   } else {
     return link
   }
