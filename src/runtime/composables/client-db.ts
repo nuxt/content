@@ -45,7 +45,7 @@ export async function useContentDatabase () {
     contentDatabase = createDB(contentStorage)
     const iv = await contentDatabase.storage.getItem('integrity')
     if (useRuntimeConfig().public.content.spa.iv !== +iv) {
-      const { contents, navigation } = await $fetch<any>(withContentBase('cache.json'))
+      const { contents, navigation } = await $fetch(withContentBase('cache.json'))
 
       for (const content of contents) {
         await contentDatabase.storage.setItem(`cache:${content._id}`, content)
