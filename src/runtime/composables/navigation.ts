@@ -1,8 +1,8 @@
 import { hash } from 'ohash'
-import { useCookie, useRuntimeConfig } from '#app'
+import { useCookie } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
-import { addPrerenderPath, withContentBase } from './utils'
+import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   let params = queryBuilder
@@ -17,12 +17,12 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     addPrerenderPath(apiPath)
   }
 
-  if (process.client && useRuntimeConfig().content.spa) {
-    const generateNavigation = await import('./spa').then(m => m.generateNavigation)
+  if (shouldUseClientDB()) {
+    const generateNavigation = await import('./client-db').then(m => m.generateNavigation)
     return generateNavigation(params || {})
   }
 
-  return $fetch(apiPath, {
+  return $fetch<Array<NavItem>>(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {

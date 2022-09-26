@@ -1,17 +1,36 @@
 import type { Storage } from 'unstorage'
+// @ts-ignore
 import LSDriver from 'unstorage/drivers/localstorage'
 import { createStorage, prefixStorage } from 'unstorage'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
-import { ParsedContentMeta, QueryBuilderParams } from '../types'
+import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
 
 export const contentStorage = prefixStorage(createStorage({ driver: LSDriver() }), '@content')
 
+export const getPreview = () => {
+  return useCookie('previewToken').value
+}
+
 export function createDB (storage: Storage) {
   async function getItems () {
-    const keys = await storage.getKeys()
-    return await Promise.all(keys.map(key => storage.getItem(key)))
+    const keys = new Set(await storage.getKeys('cache:'))
+
+    // Merge preview items
+    const previewToken = getPreview()
+    if (previewToken) {
+      const previewKeys = await storage.getKeys(`${previewToken}:`)
+      const previewContents = await Promise.all(previewKeys.map(key => storage.getItem(key) as Promise<ParsedContent>))
+      for (const pItem of previewContents) {
+        keys.delete(`cache:${pItem._id}`)
+        if (!pItem.__deleted) {
+          keys.add(`${previewToken}:${pItem._id}`)
+        }
+      }
+    }
+
+    return Promise.all(Array.from(keys).map(key => storage.getItem(key) as Promise<ParsedContent>))
   }
   return {
     storage,
@@ -26,10 +45,10 @@ export async function useContentDatabase () {
     contentDatabase = createDB(contentStorage)
     const iv = await contentDatabase.storage.getItem('integrity')
     if (useRuntimeConfig().public.content.spa.iv !== +iv) {
-      const { contents, navigation } = await $fetch(withContentBase('cache.json'))
+      const { contents, navigation } = await $fetch<any>(withContentBase('cache.json'))
 
       for (const content of contents) {
-        await contentDatabase.storage.setItem(content._id, content)
+        await contentDatabase.storage.setItem(`cache:${content._id}`, content)
       }
 
       await contentDatabase.storage.setItem('navigation', navigation)
@@ -40,10 +59,10 @@ export async function useContentDatabase () {
   return contentDatabase
 }
 
-export async function generateNavigation (query) {
+export async function generateNavigation (query): Promise<Array<NavItem>> {
   const db = await useContentDatabase()
 
-  if (!query || Object.keys(query).length === 0) {
+  if (!getPreview() && Object.keys(query || {}).length === 0) {
     return db.storage.getItem('navigation')
   }
 

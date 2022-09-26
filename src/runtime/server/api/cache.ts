@@ -1,7 +1,6 @@
 import { defineEventHandler } from 'h3'
 import { getContentIndex } from '../content-index'
 import { cacheStorage, serverQueryContent } from '../storage'
-import { useRuntimeConfig } from '#imports'
 
 // This route is used to cache all the parsed content
 export default defineEventHandler(async (event) => {
@@ -15,17 +14,10 @@ export default defineEventHandler(async (event) => {
   const navigation = await $fetch('/api/_content/navigation')
   await cacheStorage.setItem('content-navigation.json', navigation)
 
-  if (useRuntimeConfig().content.spa) {
-    return {
-      generatedAt: now,
-      generateTime: Date.now() - now,
-      contents,
-      navigation
-    }
-  }
-
   return {
     generatedAt: now,
-    generateTime: Date.now() - now
+    generateTime: Date.now() - now,
+    contents,
+    navigation
   }
 })

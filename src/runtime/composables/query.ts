@@ -1,10 +1,10 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useCookie, useRuntimeConfig } from '#app'
+import { useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
-import { addPrerenderPath, withContentBase } from './utils'
+import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 /**
  * Query fetcher
@@ -31,8 +31,8 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     addPrerenderPath(apiPath)
   }
 
-  if (process.client && useRuntimeConfig().content.spa) {
-    const db = await import('./spa').then(m => m.useContentDatabase())
+  if (shouldUseClientDB()) {
+    const db = await import('./client-db').then(m => m.useContentDatabase())
     return db.fetch(query)
   }
 

@@ -1,5 +1,5 @@
 import { withBase } from 'ufo'
-import { useRuntimeConfig, useRequestEvent } from '#app'
+import { useRuntimeConfig, useRequestEvent, useCookie, useRoute } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 
 export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
@@ -29,4 +29,12 @@ export const addPrerenderPath = (path: string) => {
       path
     ].filter(Boolean).join(',')
   )
+}
+
+export const shouldUseClientDB = () => {
+  if (!process.client) { return false }
+  if (useRuntimeConfig().content.spa) { return true }
+  if (useRoute().query?.preview) { return true }
+  if (useCookie('previewToken').value) { return true }
+  return false
 }
