@@ -172,16 +172,18 @@ export interface ModuleOptions {
   defaultLocale?: string
   /**
    * Document-driven mode config
+   *
+   * @default false
    */
   documentDriven: boolean | {
-    page: boolean
-    navigation: boolean
-    surround: boolean
-    globals: {
+    page?: boolean
+    navigation?: boolean
+    surround?: boolean
+    globals?: {
       [key: string]: QueryBuilderParams
     }
-    layoutFallbacks: string[]
-    injectPage: boolean
+    layoutFallbacks?: string[]
+    injectPage?: boolean
   }
 }
 
@@ -283,7 +285,7 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.push('/api/_content/cache.json')
+        nitroConfig.prerender.routes.push(`/api/${options.base}/cache.json`)
       }
 
       // Register source storages
