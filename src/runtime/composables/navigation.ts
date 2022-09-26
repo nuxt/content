@@ -22,7 +22,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     return generateNavigation(params || {})
   }
 
-  return $fetch<Array<NavItem>>(apiPath, {
+  return $fetch(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
