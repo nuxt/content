@@ -28,8 +28,8 @@ export default function link (h: H, node: Node) {
 }
 
 function normalizeLink (link: string) {
-  if (isRelative(link)) {
-    return link.replace(/^[0-9]*\./g, '').replace(/\.md$/g, '')
+  if (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/'))) {
+    return link.replace(/^(..?\/)?[0-9]*\./g, '$1').replace(/\.md$/g, '')
   } else {
     return link
   }
