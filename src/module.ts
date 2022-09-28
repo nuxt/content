@@ -190,7 +190,7 @@ export interface ModuleOptions {
    *
    * @default {}
    */
-  anchorLinks: boolean | {
+  anchorLinks?: boolean | {
     /**
      * Sets the maximal depth for anchor link generation.
      *
@@ -522,25 +522,23 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register anchor link generation
-    if (options.anchorLinks) {
-      if (options.anchorLinks === true) {
-        options.anchorLinks = {
-          depth: 6,
-          exclude: []
-        }
-      } else if (options.anchorLinks === false) {
-        options.anchorLinks = {
-          depth: 0,
-          exclude: []
-        }
-      } else {
-        options.anchorLinks = {
-          ...{
-            depth: 4,
-            exclude: [1]
-          },
-          ...options.anchorLinks
-        }
+    if (options.anchorLinks === true) {
+      options.anchorLinks = {
+        depth: 6,
+        exclude: []
+      }
+    } else if (options.anchorLinks === false) {
+      options.anchorLinks = {
+        depth: 0,
+        exclude: []
+      }
+    } else {
+      options.anchorLinks = {
+        ...{
+          depth: 4,
+          exclude: [1]
+        },
+        ...options.anchorLinks
       }
     }
 
