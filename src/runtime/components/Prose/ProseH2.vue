@@ -11,5 +11,5 @@
 defineProps<{ id: string }>()
 const heading = 2
 const { anchorLinks } = useRuntimeConfig().public.content
-const generate = anchorLinks?.depth <= heading && !anchorLinks?.exclude.includes(heading)
+const generate = anchorLinks?.depth >= heading && !anchorLinks?.exclude.includes(heading)
 </script>
