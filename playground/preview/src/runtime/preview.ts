@@ -37,7 +37,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (!query.preview && !previewToken.value) {
       return
     }
-    if (!previewToken.value) {
+    if (query.preview && previewToken.value !== query.preview) {
       previewToken.value = String(query.preview)
     }
 
