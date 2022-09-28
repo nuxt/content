@@ -184,6 +184,25 @@ export interface ModuleOptions {
     }
     layoutFallbacks?: string[]
     injectPage?: boolean
+  },
+  /**
+   * Anchor link generation config
+   *
+   * @default {}
+   */
+  anchorLinks: boolean | {
+    /**
+     * Sets the maximal depth for anchor link generation.
+     *
+     * @default 4
+     */
+    depth?: number,
+    /**
+     * Excludes headings from link generation when they are in the depth range.
+     *
+     * @default [1]
+     */
+    exclude?: number[]
   }
 }
 
@@ -229,7 +248,11 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    documentDriven: false
+    documentDriven: false,
+    anchorLinks: {
+      depth: 4,
+      exclude: [1]
+    }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -498,6 +521,28 @@ export default defineNuxtModule<ModuleOptions>({
       ])
     }
 
+    if (options.anchorLinks) {
+      if (options.anchorLinks === true) {
+        options.anchorLinks = {
+          depth: 6,
+          exclude: []
+        }
+      } else if (options.anchorLinks === false) {
+        options.anchorLinks = {
+          depth: 0,
+          exclude: []
+        }
+      } else {
+        options.anchorLinks = {
+          ...{
+            depth: 4,
+            exclude: [1]
+          },
+          ...options.anchorLinks
+        }
+      }
+    }
+
     // @ts-ignore
     await nuxt.callHook('content:context', contentContext)
 
@@ -521,7 +566,9 @@ export default defineNuxtModule<ModuleOptions>({
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
-      documentDriven: options.documentDriven as ModuleOptions['documentDriven']
+      documentDriven: options.documentDriven as ModuleOptions['documentDriven'],
+      // Anchor link generation config
+      anchorLinks: options.anchorLinks as ModuleOptions['anchorLinks']
     })
 
     // Context will use in server
