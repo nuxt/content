@@ -2,7 +2,8 @@ import {
   addPlugin,
   defineNuxtModule,
   resolveModule,
-  createResolver
+  createResolver,
+  addComponent
 } from '@nuxt/kit'
 
 export interface ModuleOptions {
@@ -17,7 +18,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   defaults: {
-    baseURL: 'http://localhost:1337/api'
+    baseURL: 'http://localhost:1337'
   },
   setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -27,5 +28,10 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.studio = {
       baseURL: options.baseURL
     }
+
+    addComponent({
+      name: 'ContentPreviewMode',
+      filePath: resolveRuntimeModule('./components/ContentPreviewMode.vue')
+    })
   }
 })
