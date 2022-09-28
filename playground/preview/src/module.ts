@@ -3,8 +3,7 @@ import {
   defineNuxtModule,
   resolveModule,
   createResolver,
-  addComponent,
-  useLogger
+  addComponent
 } from '@nuxt/kit'
 
 export interface ModuleOptions {
@@ -26,13 +25,8 @@ export default defineNuxtModule<ModuleOptions>({
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
     // Enable preview mode under experimental flag
-    if (!process.env.EXPERIMENTAL_LIVE_PREVIEW) {
+    if (!process.env.EXPERIMENTAL_LIVE_PREVIEW_URL) {
       return
-    }
-
-    const logger = useLogger('Preview')
-    if (!options.baseURL) {
-      logger.warn('Live editing is disabled. Please set `studio.baseURL` in your nuxt.config.')
     }
 
     // Add preview plugin
@@ -45,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     nuxt.options.runtimeConfig.public.studio = {
-      baseURL: options.baseURL
+      baseURL: options.baseURL || process.env.EXPERIMENTAL_LIVE_PREVIEW_URL
     }
   }
 })
