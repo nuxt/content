@@ -29,7 +29,11 @@ export default function link (h: H, node: Node) {
 
 function normalizeLink (link: string) {
   if (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/'))) {
-    return link.replace(/^(..?\/)?[0-9]*\./g, '$1').replace(/\.md$/g, '')
+    return link.split('/')
+      .map(x => x
+        .replace(/^[0-9]*\./g, '')
+        .replace(/\.md$/g, ''))
+      .join('/')
   } else {
     return link
   }
