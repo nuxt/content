@@ -521,6 +521,7 @@ export default defineNuxtModule<ModuleOptions>({
       ])
     }
 
+    // Register anchor link generation
     if (options.anchorLinks) {
       if (options.anchorLinks === true) {
         options.anchorLinks = {
