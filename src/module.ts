@@ -6,7 +6,8 @@ import {
   createResolver,
   addImports,
   addComponentsDir,
-  addTemplate
+  addTemplate,
+  addComponent
 } from '@nuxt/kit'
 import { genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
@@ -184,6 +185,9 @@ export interface ModuleOptions {
     }
     layoutFallbacks?: string[]
     injectPage?: boolean
+  },
+  experimental: {
+    clientDB: boolean
   }
 }
 
@@ -229,7 +233,10 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    documentDriven: false
+    documentDriven: false,
+    experimental: {
+      clientDB: false
+    }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -274,13 +281,13 @@ export default defineNuxtModule<ModuleOptions>({
         },
         {
           method: 'get',
-          route: `/api/${options.base}/cache`,
+          route: `/api/${options.base}/cache.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.unshift('/api/_content/cache')
+        nitroConfig.prerender.routes.unshift(`/api/${options.base}/cache.json`)
       }
 
       // Register source storages
@@ -515,6 +522,12 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      clientDB: {
+        isSPA: options.experimental.clientDB && nuxt.options.ssr === false,
+        // Disable cache in dev mode
+        integrity: nuxt.options.dev ? undefined : Date.now()
+      },
+      navigation: contentContext.navigation,
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
@@ -537,6 +550,23 @@ export default defineNuxtModule<ModuleOptions>({
       tailwindConfig.content = tailwindConfig.content ?? []
       tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
+
+    // Experimental preview mode
+    if (process.env.NUXT_PREVIEW_API) {
+      // Add preview plugin
+      addPlugin(resolveRuntimeModule('./preview/preview-plugin'))
+
+      // Add preview components
+      addComponent({
+        name: 'ContentPreviewMode',
+        filePath: resolveRuntimeModule('./preview/components/ContentPreviewMode.vue')
+      })
+
+      // @ts-ignore
+      nuxt.options.runtimeConfig.public.content.previewAPI = process.env.NUXT_PREVIEW_API
+      // @ts-ignore
+      nuxt.options.runtimeConfig.content.previewAPI = process.env.NUXT_PREVIEW_API
+    }
 
     // Setup content dev module
     if (!nuxt.options.dev) {
@@ -613,6 +643,14 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 interface ModulePublicRuntimeConfig {
+  /**
+   * @experimental
+   */
+  clientDB: {
+    isSPA: boolean
+    integrity: number
+  }
+
   tags: Record<string, string>
 
   base: string;
@@ -622,6 +660,8 @@ interface ModulePublicRuntimeConfig {
 
   // Shiki config
   highlight: ModuleOptions['highlight']
+
+  navigation: ModuleOptions['navigation']
 }
 
 interface ModulePrivateRuntimeConfig {
@@ -631,6 +671,8 @@ interface ModulePrivateRuntimeConfig {
    */
   cacheVersion: string;
   cacheIntegrity: string;
+
+  previewAPI?: string
 }
 
 declare module '@nuxt/schema' {

@@ -4,12 +4,12 @@ import { useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
-import { addPrerenderPath, withContentBase } from './utils'
+import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 /**
  * Query fetcher
  */
-export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: QueryBuilder<T>) => {
+export const createQueryFetch = <T = ParsedContent>(path?: string) => async (query: QueryBuilder<T>) => {
   if (path) {
     if (query.params().first) {
       query.where({ _path: withoutTrailingSlash(path) })
@@ -29,6 +29,11 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => (query: Qu
   // Prefetch the query
   if (!process.dev && process.server) {
     addPrerenderPath(apiPath)
+  }
+
+  if (shouldUseClientDB()) {
+    const db = await import('./client-db').then(m => m.useContentDatabase())
+    return db.fetch(query)
   }
 
   return $fetch(apiPath as any, {
