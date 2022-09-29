@@ -566,6 +566,17 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.runtimeConfig.public.content.previewAPI = process.env.NUXT_PREVIEW_API
       // @ts-ignore
       nuxt.options.runtimeConfig.content.previewAPI = process.env.NUXT_PREVIEW_API
+
+      if (nuxt.options.vite !== false) {
+        nuxt.options.vite = defu(
+          nuxt.options.vite === true ? {} : nuxt.options.vite,
+          {
+            optimizeDeps: {
+              include: ['socket.io-client', 'slugify']
+            }
+          }
+        )
+      }
     }
 
     // Setup content dev module

@@ -2,10 +2,14 @@ import type { Storage } from 'unstorage'
 // @ts-ignore
 import LSDriver from 'unstorage/drivers/localstorage'
 import { createStorage, prefixStorage } from 'unstorage'
+import { useRuntimeConfig, useCookie } from '#app'
+import { withBase } from 'ufo'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
+
+const withContentBase = url => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
 
 export const contentStorage = prefixStorage(createStorage({ driver: LSDriver() }), '@content')
 
