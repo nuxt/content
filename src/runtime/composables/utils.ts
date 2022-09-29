@@ -32,9 +32,15 @@ export const addPrerenderPath = (path: string) => {
 }
 
 export const shouldUseClientDB = () => {
+  const { previewAPI, clientDB } = useRuntimeConfig().content
   if (!process.client) { return false }
-  if (useRuntimeConfig().content.spa) { return true }
-  if (useRoute().query?.preview) { return true }
-  if (useCookie('previewToken').value) { return true }
+  if (clientDB?.isSPA) { return true }
+
+  // Disable clientDB when preview mode is disabled
+  if (!previewAPI) { return false }
+  if (useRoute().query?.preview || useCookie('previewToken').value) {
+    return true
+  }
+
   return false
 }

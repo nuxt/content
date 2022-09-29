@@ -42,9 +42,10 @@ export function createDB (storage: Storage) {
 let contentDatabase
 export async function useContentDatabase () {
   if (!contentDatabase) {
+    const { clientDB } = useRuntimeConfig().public.content
     contentDatabase = createDB(contentStorage)
-    const iv = await contentDatabase.storage.getItem('integrity')
-    if (useRuntimeConfig().public.content.spa.iv !== +iv) {
+    const integrity = await contentDatabase.storage.getItem('integrity')
+    if (clientDB.integrity !== +integrity) {
       const { contents, navigation } = await $fetch(withContentBase('cache.json'))
 
       for (const content of contents) {
@@ -53,7 +54,7 @@ export async function useContentDatabase () {
 
       await contentDatabase.storage.setItem('navigation', navigation)
 
-      await contentDatabase.storage.setItem('integrity', useRuntimeConfig().content.spa.iv)
+      await contentDatabase.storage.setItem('integrity', clientDB.integrity)
     }
   }
   return contentDatabase
