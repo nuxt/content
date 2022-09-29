@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, onUnmounted } from 'vue'
 import { refreshNuxtData } from '#imports'
-const { previewToken, apiURL } = defineProps({
+const props = defineProps({
   previewToken: {
     type: Object,
     required: true
@@ -31,7 +31,7 @@ const closePreviewMode = async () => {
 }
 onMounted(async () => {
   const io = await import('socket.io-client')
-  const socket = io.connect(`${apiURL}/preview:${previewToken.value}`, {
+  const socket = io.connect(`${props.apiURL}/preview:${props.previewToken.value}`, {
     transports: ['websocket', 'polling']
   })
   ready.value = true
