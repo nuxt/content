@@ -1,6 +1,6 @@
-import { defineTokens } from '@nuxtjs/design-tokens'
+import { defineTheme } from 'pinceau'
 
-export default defineTokens({
+export default defineTheme({
   colors: {
     primary: {
       50: { value: '#ecfdf5' },

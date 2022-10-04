@@ -20,18 +20,12 @@ export default defineAppConfig({
       alt: 'Content made easy for Vue developers'
     },
     aside: {
-      level: 1,
-      filter: [
-        '/v1',
-        '/content-v1',
-        '/fr',
-        '/ja',
-        '/ru'
-      ]
+      level: 1
     },
     header: {
       title: false,
-      logo: true
+      logo: true,
+      exclude: ['/v1', '/content-v1', '/fr', '/ja', '/ru']
     },
     footer: {
       credits: {
