@@ -1,5 +1,4 @@
 import { resolve } from 'pathe'
-import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
 
 const alias = {}
@@ -70,5 +69,17 @@ export default defineNuxtConfig({
   },
   colorMode: {
     preference: 'dark'
+  },
+  runtimeConfig: {
+    public: {
+      algolia: {
+        applicationId: 'Q46Q8609QS',
+        apiKey: '4cbb8e2d6fa15cba2968c88a331eeb1e',
+        langAttribute: 'lang',
+        docSearch: {
+          indexName: 'content-nuxtjs'
+        }
+      }
+    }
   }
 })
