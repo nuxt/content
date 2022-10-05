@@ -6,7 +6,7 @@ import { cacheStorage, serverQueryContent } from '../storage'
 export default defineEventHandler(async (event) => {
   const now = Date.now()
   // Fetch all content
-  await serverQueryContent(event).find()
+  const contents = await serverQueryContent(event).find()
 
   // Generate Index
   await getContentIndex(event)
@@ -16,6 +16,8 @@ export default defineEventHandler(async (event) => {
 
   return {
     generatedAt: now,
-    generateTime: Date.now() - now
+    generateTime: Date.now() - now,
+    contents,
+    navigation
   }
 })

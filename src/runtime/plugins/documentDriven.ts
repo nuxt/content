@@ -9,7 +9,7 @@ import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fet
 import layouts from '#build/layouts'
 
 export default defineNuxtPlugin((nuxt) => {
-  const { documentDriven: moduleOptions } = useRuntimeConfig()?.public?.content
+  const { documentDriven: moduleOptions, clientDB } = useRuntimeConfig()?.public?.content
 
   /**
    * Finds a layout value from a cascade of objects.
@@ -255,7 +255,7 @@ export default defineNuxtPlugin((nuxt) => {
     // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
     if (to.path.includes('favicon.ico')) { return }
     // Avoid calling on hash change
-    if (process.client && to.path === from.path) { return }
+    if (process.client && !clientDB.isSPA && to.path === from.path) { return }
 
     const redirect = await refresh(to, false)
 
