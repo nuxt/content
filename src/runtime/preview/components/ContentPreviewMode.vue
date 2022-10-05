@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue'
-import { refreshNuxtData } from '#imports'
+import { onMounted, ref, onUnmounted, nextTick } from 'vue'
+import { refreshNuxtData, useCookie, useRoute, navigateTo } from '#imports'
 const props = defineProps({
   previewToken: {
     type: Object,
