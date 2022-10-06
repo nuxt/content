@@ -637,9 +637,9 @@
     vue-plausible "^1.3.2"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.1.1-27750804.7950573"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.1-27750804.7950573.tgz#861d34d00b2ccd3dd90af57cc1c0e1422024ecb0"
-  integrity sha512-zCm9JuALG2k+djagh63MPPZ6PCuSQgiqual7hnNFIM4zrFBnI8c8N+xdVJdQXOkFYVF4DFbDLkM6heAMT5sOjQ==
+  version "2.1.1-27751011.1dba43f"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.1-27751011.1dba43f.tgz#3066709c03a62b1036fb56ee544b052163cf2dfc"
+  integrity sha512-e783oAYPkt7p3K51w3NgbLCRO+XCT2qf9uHoseTYQCTUSjKG1HRQCmbXQ1OsqpeFGckIATjwxFET5sL/1dvNWg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.11"
     consola "^2.15.3"
@@ -2956,7 +2956,7 @@ esbuild@^0.14.47:
     esbuild-windows-64 "0.14.54"
     esbuild-windows-arm64 "0.14.54"
 
-esbuild@^0.15.6, esbuild@^0.15.8:
+esbuild@^0.15.6, esbuild@^0.15.8, esbuild@^0.15.9:
   version "0.15.10"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.15.10.tgz#85c2f8446e9b1fe04fae68daceacba033eedbd42"
   integrity sha512-N7wBhfJ/E5fzn/SpNgX+oW2RLRjwaL8Y0ezqNqhjD6w0H2p0rDuEz2FKZqpqLnO8DCaWumKe8dsC/ljvVSSxng==
@@ -7166,11 +7166,11 @@ vite-plugin-checker@^0.5.1:
     vscode-uri "^3.0.2"
 
 "vite@^2.9.12 || ^3.0.0-0", vite@~3.1.3:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-3.1.4.tgz#b75824b819d8354a6f36e4b988943c7e4947e155"
-  integrity sha512-JoQI08aBjY9lycL7jcEq4p9o1xUjq5aRvdH4KWaXtkSx7e7RpAh9D3IjzDWRD4Fg44LS3oDAIOG/Kq1L+82psA==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-3.1.5.tgz#fb650af04334ddb1b0769adfdfab93c702df93d6"
+  integrity sha512-V4Avke0b7h2zTWVJf8vq6TE3aH061NQ3b1ixHQyqdoE/5HIVsxVLCyTLjJtHVcsJ5fIKSHvOtflWpgavHS8RPw==
   dependencies:
-    esbuild "^0.15.6"
+    esbuild "^0.15.9"
     postcss "^8.4.16"
     resolve "^1.22.1"
     rollup "~2.78.0"
