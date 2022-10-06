@@ -23,9 +23,19 @@ export default defineNuxtPlugin((nuxt) => {
 
     // Fill store with preview content
     const items = [
+      ...(data.files || []),
       ...data.additions,
       ...data.deletions.map(d => ({ ...d, parsed: { _id: d.path.replace(/\//g, ':'), __deleted: true } }))
     ]
+
+    // Set preview meta
+    window.localStorage.setItem(
+      `@content:${token}$`,
+      JSON.stringify({
+        ignoreBuiltContents: (data.files || []).length !== 0
+      })
+    )
+
     for (const item of items) {
       window.localStorage.setItem(`@content:${token}:${item.parsed._id}`, JSON.stringify(item.parsed))
     }

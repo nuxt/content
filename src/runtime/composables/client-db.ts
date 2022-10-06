@@ -24,6 +24,12 @@ export function createDB (storage: Storage) {
     // Merge preview items
     const previewToken = getPreview()
     if (previewToken) {
+      // Ignore cache content if preview requires it
+      const previewMeta: any = await storage.getItem(`${previewToken}$`).then(data => data || {})
+      if (previewMeta.ignoreBuiltContents) {
+        keys.clear()
+      }
+
       const previewKeys = await storage.getKeys(`${previewToken}:`)
       const previewContents = await Promise.all(previewKeys.map(key => storage.getItem(key) as Promise<ParsedContent>))
       for (const pItem of previewContents) {
