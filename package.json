@@ -50,11 +50,11 @@
     "html-tags": "^3.2.0",
     "json5": "^2.2.1",
     "knitwork": "^0.1.2",
-    "listhen": "^0.2.15",
-    "mdast-util-to-hast": "^12.2.2",
+    "listhen": "^0.3.4",
+    "mdast-util-to-hast": "^12.2.4",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.5",
-    "pathe": "^0.3.7",
+    "pathe": "^0.3.8",
     "property-information": "^6.1.1",
     "rehype-external-links": "^2.0.1",
     "rehype-raw": "^6.1.1",
@@ -76,7 +76,7 @@
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.1",
     "unstorage": "^0.5.6",
-    "ws": "^8.8.1"
+    "ws": "^8.9.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.1.7",
@@ -87,15 +87,15 @@
     "@types/ws": "^8.5.3",
     "c8": "^7.12.0",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "globby": "^13.1.2",
     "husky": "^8.0.1",
-    "jiti": "^1.15.0",
+    "jiti": "^1.16.0",
     "lint-staged": "^13.0.3",
     "nuxt": "npm:nuxt3@latest",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.23.2",
+    "vitest": "^0.23.4",
     "vue-docgen-web-types": "^0.1.8"
   }
 }
