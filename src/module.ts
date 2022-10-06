@@ -417,6 +417,8 @@ export default defineNuxtModule<ModuleOptions>({
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })
+    } else {
+      addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
     }
 
     // Register highlighter

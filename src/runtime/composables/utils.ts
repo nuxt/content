@@ -20,6 +20,17 @@ export const useContentDisabled = () => {
   throw new Error('useContent is only accessible when you are using `documentDriven` mode.')
 }
 
+export const navigationDisabled = () => {
+  // Console warnings
+  // eslint-disable-next-line no-console
+  console.warn('Navigation is only accessible when you enable it in module options.')
+  // eslint-disable-next-line no-console
+  console.warn('Learn more by visiting: https://content.nuxtjs.org/api/configuration#navigation')
+
+  // Break app
+  throw new Error('Navigation is only accessible when you enable it in module options.')
+}
+
 export const addPrerenderPath = (path: string) => {
   const event = useRequestEvent()
   event.res.setHeader(
