@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { contentStorage } from '../composables/client-db'
 import { defineNuxtPlugin, useRoute, useCookie, refreshNuxtData, useRuntimeConfig } from '#imports'
 import { ContentPreviewMode } from '#components'
 
@@ -14,12 +15,8 @@ export default defineNuxtPlugin((nuxt) => {
       }
     })
     // Remove previous preview data
-    Object.keys(window.localStorage)
-      .forEach((key) => {
-        if (key.startsWith(`@content:${token}:`)) {
-          window.localStorage.removeItem(key)
-        }
-      })
+    const keys = await contentStorage.getKeys(`${token}:`)
+    keys.forEach(key => contentStorage.removeItem(key))
 
     // Fill store with preview content
     const items = [
@@ -29,15 +26,15 @@ export default defineNuxtPlugin((nuxt) => {
     ]
 
     // Set preview meta
-    window.localStorage.setItem(
-      `@content:${token}$`,
+    await contentStorage.setItem(
+      `${token}$`,
       JSON.stringify({
         ignoreBuiltContents: (data.files || []).length !== 0
       })
     )
 
     for (const item of items) {
-      window.localStorage.setItem(`@content:${token}:${item.parsed._id}`, JSON.stringify(item.parsed))
+      await contentStorage.setItem(`${token}:${item.parsed._id}`, JSON.stringify(item.parsed))
     }
   }
 

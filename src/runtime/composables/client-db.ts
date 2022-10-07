@@ -1,6 +1,6 @@
 import type { Storage } from 'unstorage'
 // @ts-ignore
-import LSDriver from 'unstorage/drivers/localstorage'
+import memoryDriver from 'unstorage/drivers/memory'
 import { createStorage, prefixStorage } from 'unstorage'
 import { useRuntimeConfig, useCookie } from '#app'
 import { withBase } from 'ufo'
@@ -11,7 +11,7 @@ import { createNav } from '../server/navigation'
 
 const withContentBase = url => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
 
-export const contentStorage = prefixStorage(createStorage({ driver: LSDriver() }), '@content')
+export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
 
 export const getPreview = () => {
   return useCookie('previewToken').value
