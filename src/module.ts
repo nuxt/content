@@ -116,7 +116,26 @@ export interface ModuleOptions {
      *
      * @default []
      */
-    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
+    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>,
+    /**
+     * Anchor link generation config
+     *
+     * @default {}
+     */
+    anchorLinks?: boolean | {
+     /**
+       * Sets the maximal depth for anchor link generation
+       *
+       * @default 4
+       */
+      depth?: number,
+      /**
+       * Excludes headings from link generation when they are in the depth range.
+       *
+       * @default [1]
+       */
+      exclude?: number[]
+    }
   }
   /**
    * Content module uses `shiki` to highlight code blocks.
@@ -186,25 +205,6 @@ export interface ModuleOptions {
     layoutFallbacks?: string[]
     injectPage?: boolean
   },
-  /**
-   * Anchor link generation config
-   *
-   * @default {}
-   */
-  anchorLinks?: boolean | {
-    /**
-     * Sets the maximal depth for anchor link generation.
-     *
-     * @default 4
-     */
-    depth?: number,
-    /**
-     * Excludes headings from link generation when they are in the depth range.
-     *
-     * @default [1]
-     */
-    exclude?: number[]
-  },
   experimental: {
     clientDB: boolean
   }
@@ -242,7 +242,11 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
+      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      anchorLinks: {
+        depth: 4,
+        exclude: [1]
+      }
     },
     yaml: {},
     csv: {
@@ -253,10 +257,6 @@ export default defineNuxtModule<ModuleOptions>({
       fields: []
     },
     documentDriven: false,
-    anchorLinks: {
-      depth: 4,
-      exclude: [1]
-    },
     experimental: {
       clientDB: false
     }
@@ -529,23 +529,23 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register anchor link generation
-    if (options.anchorLinks === true) {
-      options.anchorLinks = {
+    if (options.markdown.anchorLinks === true) {
+      options.markdown.anchorLinks = {
         depth: 6,
         exclude: []
       }
-    } else if (options.anchorLinks === false) {
-      options.anchorLinks = {
+    } else if (options.markdown.anchorLinks === false) {
+      options.markdown.anchorLinks = {
         depth: 0,
         exclude: []
       }
     } else {
-      options.anchorLinks = {
+      options.markdown.anchorLinks = {
         ...{
           depth: 4,
           exclude: [1]
         },
-        ...options.anchorLinks
+        ...options.markdown.anchorLinks
       }
     }
 
@@ -580,7 +580,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Document-driven configuration
       documentDriven: options.documentDriven as ModuleOptions['documentDriven'],
       // Anchor link generation config
-      anchorLinks: options.anchorLinks as ModuleOptions['anchorLinks']
+      anchorLinks: options.markdown.anchorLinks as ModuleOptions['markdown.anchorLinks']
     })
 
     // Context will use in server
