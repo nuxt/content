@@ -540,11 +540,11 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Context will use in server
-    nuxt.options.runtimeConfig.content = {
+    nuxt.options.runtimeConfig.content = defu(nuxt.options.runtimeConfig.content, {
       cacheVersion: CACHE_VERSION,
       cacheIntegrity,
       ...contentContext as any
-    }
+    })
 
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist

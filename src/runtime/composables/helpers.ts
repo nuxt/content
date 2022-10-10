@@ -48,7 +48,7 @@ const navKeyFromPath = (path: string, key: string, tree: NavItem[]) => {
 
   const goDeep = (path: string, tree: NavItem[]) => {
     for (const file of tree) {
-      if (path.startsWith(file._path) && file[key]) { value = file[key] }
+      if (path?.startsWith(file._path) && file[key]) { value = file[key] }
 
       if (file._path === path) { return }
 
