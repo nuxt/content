@@ -17,7 +17,7 @@ export default defineComponent({
     path: {
       type: String,
       required: false,
-      default: '/'
+      default: undefined
     },
 
     /**
@@ -44,7 +44,10 @@ export default defineComponent({
     const { path, query } = ctx
 
     // Merge local `path` props and apply `findOne` query default.
-    const contentQueryProps = Object.assign(query || {}, { path })
+    const contentQueryProps = {
+      ...query || {},
+      path: path || query?.path || '/'
+    }
 
     const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))
 
