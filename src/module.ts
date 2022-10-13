@@ -116,7 +116,26 @@ export interface ModuleOptions {
      *
      * @default []
      */
-    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
+    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>,
+    /**
+     * Anchor link generation config
+     *
+     * @default {}
+     */
+    anchorLinks?: boolean | {
+     /**
+       * Sets the maximal depth for anchor link generation
+       *
+       * @default 4
+       */
+      depth?: number,
+      /**
+       * Excludes headings from link generation when they are in the depth range.
+       *
+       * @default [1]
+       */
+      exclude?: number[]
+    }
   }
   /**
    * Content module uses `shiki` to highlight code blocks.
@@ -223,7 +242,11 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
+      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      anchorLinks: {
+        depth: 4,
+        exclude: [1]
+      }
     },
     yaml: {},
     csv: {
@@ -504,6 +527,27 @@ export default defineNuxtModule<ModuleOptions>({
       ])
     }
 
+    // Register anchor link generation
+    if (options.markdown.anchorLinks === true) {
+      options.markdown.anchorLinks = {
+        depth: 6,
+        exclude: []
+      }
+    } else if (options.markdown.anchorLinks === false) {
+      options.markdown.anchorLinks = {
+        depth: 0,
+        exclude: []
+      }
+    } else {
+      options.markdown.anchorLinks = {
+        ...{
+          depth: 4,
+          exclude: [1]
+        },
+        ...options.markdown.anchorLinks
+      }
+    }
+
     // @ts-ignore
     await nuxt.callHook('content:context', contentContext)
 
@@ -533,7 +577,9 @@ export default defineNuxtModule<ModuleOptions>({
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
-      documentDriven: options.documentDriven as ModuleOptions['documentDriven']
+      documentDriven: options.documentDriven as ModuleOptions['documentDriven'],
+      // Anchor link generation config
+      anchorLinks: options.markdown.anchorLinks
     })
 
     // Context will use in server

@@ -1,3 +1,15 @@
 <template>
-  <h6><slot /></h6>
+  <h6 :id="id">
+    <a v-if="generate" :href="`#${id}`">
+      <slot />
+    </a>
+    <slot v-else />
+  </h6>
 </template>
+
+<script setup lang="ts">
+defineProps<{ id: string }>()
+const heading = 6
+const { anchorLinks } = useRuntimeConfig().public.content
+const generate = anchorLinks?.depth >= heading && !anchorLinks?.exclude.includes(heading)
+</script>
