@@ -579,7 +579,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Document-driven configuration
       documentDriven: options.documentDriven as ModuleOptions['documentDriven'],
       // Anchor link generation config
-      anchorLinks: options.markdown.anchorLinks as ModuleOptions['markdown.anchorLinks']
+      anchorLinks: options.markdown.anchorLinks
     })
 
     // Context will use in server
