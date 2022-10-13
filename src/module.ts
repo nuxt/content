@@ -7,7 +7,7 @@ import {
   addImports,
   addComponentsDir,
   addTemplate,
-  addComponent
+  extendViteConfig
 } from '@nuxt/kit'
 import { genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
@@ -270,16 +270,13 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Add Vite configurations
-    if (nuxt.options.vite !== false) {
-      nuxt.options.vite = defu(
-        nuxt.options.vite === true ? {} : nuxt.options.vite,
-        {
-          optimizeDeps: {
-            include: ['html-tags']
-          }
-        }
+    extendViteConfig((config) => {
+      config.optimizeDeps = config.optimizeDeps || {}
+      config.optimizeDeps.include = config.optimizeDeps.include || []
+      config.optimizeDeps.include.push(
+        'html-tags'
       )
-    }
+    })
 
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugins/ws'))
@@ -440,6 +437,8 @@ export default defineNuxtModule<ModuleOptions>({
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })
+    } else {
+      addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
     }
 
     // Register highlighter
@@ -584,11 +583,11 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Context will use in server
-    nuxt.options.runtimeConfig.content = {
+    nuxt.options.runtimeConfig.content = defu(nuxt.options.runtimeConfig.content, {
       cacheVersion: CACHE_VERSION,
       cacheIntegrity,
       ...contentContext as any
-    }
+    })
 
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist
@@ -596,34 +595,6 @@ export default defineNuxtModule<ModuleOptions>({
       tailwindConfig.content = tailwindConfig.content ?? []
       tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
-
-    // Experimental preview mode
-    if (process.env.NUXT_PREVIEW_API) {
-      // Add preview plugin
-      addPlugin(resolveRuntimeModule('./preview/preview-plugin'))
-
-      // Add preview components
-      addComponent({
-        name: 'ContentPreviewMode',
-        filePath: resolveRuntimeModule('./preview/components/ContentPreviewMode.vue')
-      })
-
-      // @ts-ignore
-      nuxt.options.runtimeConfig.public.content.previewAPI = process.env.NUXT_PREVIEW_API
-      // @ts-ignore
-      nuxt.options.runtimeConfig.content.previewAPI = process.env.NUXT_PREVIEW_API
-
-      if (nuxt.options.vite !== false) {
-        nuxt.options.vite = defu(
-          nuxt.options.vite === true ? {} : nuxt.options.vite,
-          {
-            optimizeDeps: {
-              include: ['socket.io-client', 'slugify']
-            }
-          }
-        )
-      }
-    }
 
     // Setup content dev module
     if (!nuxt.options.dev) {
@@ -728,8 +699,6 @@ interface ModulePrivateRuntimeConfig {
    */
   cacheVersion: string;
   cacheIntegrity: string;
-
-  previewAPI?: string
 }
 
 declare module '@nuxt/schema' {

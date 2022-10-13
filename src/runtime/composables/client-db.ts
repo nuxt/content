@@ -1,8 +1,8 @@
 import type { Storage } from 'unstorage'
 // @ts-ignore
-import LSDriver from 'unstorage/drivers/localstorage'
+import memoryDriver from 'unstorage/drivers/memory'
 import { createStorage, prefixStorage } from 'unstorage'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig, useCookie, useNuxtApp } from '#app'
 import { withBase } from 'ufo'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
@@ -11,7 +11,7 @@ import { createNav } from '../server/navigation'
 
 const withContentBase = url => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
 
-export const contentStorage = prefixStorage(createStorage({ driver: LSDriver() }), '@content')
+export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
 
 export const getPreview = () => {
   return useCookie('previewToken').value
@@ -24,6 +24,12 @@ export function createDB (storage: Storage) {
     // Merge preview items
     const previewToken = getPreview()
     if (previewToken) {
+      // Ignore cache content if preview requires it
+      const previewMeta: any = await storage.getItem(`${previewToken}$`).then(data => data || {})
+      if (previewMeta.ignoreBuiltContents) {
+        keys.clear()
+      }
+
       const previewKeys = await storage.getKeys(`${previewToken}:`)
       const previewContents = await Promise.all(previewKeys.map(key => storage.getItem(key) as Promise<ParsedContent>))
       for (const pItem of previewContents) {
@@ -33,8 +39,8 @@ export function createDB (storage: Storage) {
         }
       }
     }
-
-    return Promise.all(Array.from(keys).map(key => storage.getItem(key) as Promise<ParsedContent>))
+    const items = await Promise.all(Array.from(keys).map(key => storage.getItem(key) as Promise<ParsedContent>))
+    return items
   }
   return {
     storage,
@@ -44,24 +50,45 @@ export function createDB (storage: Storage) {
 }
 
 let contentDatabase
+let contentDatabaseInitPromise
 export async function useContentDatabase () {
-  if (!contentDatabase) {
-    const { clientDB } = useRuntimeConfig().public.content
-    contentDatabase = createDB(contentStorage)
-    const integrity = await contentDatabase.storage.getItem('integrity')
-    if (clientDB.integrity !== +integrity) {
-      const { contents, navigation } = await $fetch(withContentBase('cache.json'))
-
-      for (const content of contents) {
-        await contentDatabase.storage.setItem(`cache:${content._id}`, content)
-      }
-
-      await contentDatabase.storage.setItem('navigation', navigation)
-
-      await contentDatabase.storage.setItem('integrity', clientDB.integrity)
-    }
+  if (contentDatabaseInitPromise) {
+    await contentDatabaseInitPromise
+  } else if (!contentDatabase) {
+    contentDatabaseInitPromise = initContentDatabase()
+    contentDatabase = await contentDatabaseInitPromise
   }
   return contentDatabase
+}
+
+/**
+ * Initialize content database
+ * - Fetch content from cache api
+ * - Call `content:storage` hook to allow plugins to fill storage
+ */
+async function initContentDatabase () {
+  const nuxtApp = useNuxtApp()
+  const { clientDB } = useRuntimeConfig().public.content
+
+  const _contentDatabase = createDB(contentStorage)
+  const integrity = await _contentDatabase.storage.getItem('integrity')
+  if (clientDB.integrity !== +integrity) {
+    const { contents, navigation } = await $fetch(withContentBase('cache.json')) as any
+
+    await Promise.all(
+      contents.map(content => _contentDatabase.storage.setItem(`cache:${content._id}`, content))
+    )
+
+    await _contentDatabase.storage.setItem('navigation', navigation)
+
+    await _contentDatabase.storage.setItem('integrity', clientDB.integrity)
+  }
+
+  // call `content:storage` hook to allow plugins to fill storage
+  // @ts-ignore
+  await nuxtApp.callHook('content:storage', _contentDatabase.storage)
+
+  return _contentDatabase
 }
 
 export async function generateNavigation (query): Promise<Array<NavItem>> {
