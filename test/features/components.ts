@@ -9,4 +9,11 @@ export const testComponents = () => {
       expect(index).toContain('Lorem ipsum dolor sit, amet consectetur adipisicing elit.')
     })
   })
+
+  describe('<ContentList>', () => {
+    test('custom query', async () => {
+      const index = await $fetch('/dogs-list')
+      expect(index).toContain('[Bulldog,German Shepherd]')
+    })
+  })
 }
