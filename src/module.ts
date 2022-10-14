@@ -570,14 +570,14 @@ export default defineNuxtModule<ModuleOptions>({
         // Disable cache in dev mode
         integrity: nuxt.options.dev ? undefined : Date.now()
       },
-      navigation: contentContext.navigation,
+      navigation: contentContext.navigation as any,
       base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
-      documentDriven: options.documentDriven as ModuleOptions['documentDriven'],
+      documentDriven: options.documentDriven as any,
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks
     })
