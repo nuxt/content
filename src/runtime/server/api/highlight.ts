@@ -1,4 +1,4 @@
-import { /* createError, */defineLazyEventHandler, useBody } from 'h3'
+import { /* createError, */defineEventHandler, readBody, lazyEventHandler } from 'h3'
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
 import consola from 'consola'
 import { HighlightParams, HighlightThemedToken } from '../../types'
@@ -57,7 +57,7 @@ const resolveBody = (body: Partial<HighlightParams>) => {
   }
 }
 
-export default defineLazyEventHandler(async () => {
+export default lazyEventHandler(async () => {
   // Grab highlighter config from publicRuntimeConfig
   const { theme, preload } = useRuntimeConfig().content.highlight
 
@@ -85,8 +85,8 @@ export default defineLazyEventHandler(async () => {
     ] as any[]
   })
 
-  return async (event): Promise<HighlightThemedToken[][]> => {
-    const params = await useBody<Partial<HighlightParams>>(event)
+  return defineEventHandler(async (event): Promise<HighlightThemedToken[][]> => {
+    const params = await readBody<Partial<HighlightParams>>(event)
 
     const { code, lang, theme = { default: highlighter.getTheme() } } = resolveBody(params)
 
@@ -142,7 +142,7 @@ export default defineLazyEventHandler(async () => {
     }
 
     return highlightedCode
-  }
+  })
 })
 
 interface HighlightThemedTokenLine {
