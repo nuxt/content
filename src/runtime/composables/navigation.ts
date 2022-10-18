@@ -22,7 +22,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     return generateNavigation(params || {})
   }
 
-  return $fetch(apiPath, {
+  const data = await $fetch(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
@@ -30,4 +30,12 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
       previewToken: useCookie('previewToken').value
     }
   })
+
+  // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
+  // to know if the response is a valid JSON or not
+  if (typeof data === 'string' && data.startsWith('<!DOCTYPE html>')) {
+    throw new Error('Not found')
+  }
+
+  return data
 }
