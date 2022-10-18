@@ -87,7 +87,6 @@ export const testPathMetaTransformer = () => {
           method: 'POST',
           body: { id, content: 'Index' }
         })
-console.log(transformed);
 
         const fullPath = id.replace(/:/g, '/')
         expect(transformed).toHaveProperty('_id')
