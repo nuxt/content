@@ -36,7 +36,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     return db.fetch(query)
   }
 
-  return $fetch(apiPath as any, {
+  const data = await $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: {
@@ -44,6 +44,14 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
       previewToken: useCookie('previewToken').value
     }
   })
+
+  // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
+  // to know if the response is a valid JSON or not
+  if (typeof data === 'string' && data.startsWith('<!DOCTYPE html>')) {
+    throw new Error('Not found')
+  }
+
+  return data
 }
 
 /**

@@ -1,6 +1,13 @@
 <template>
   <div class="content-page">
-    <ContentDoc />
+    <ContentDoc>
+      <template #not-found>
+        Back
+        <NuxtLink to="/">
+          Home page
+        </NuxtLink>
+      </template>
+    </ContentDoc>
   </div>
 </template>
 
