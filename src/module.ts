@@ -233,6 +233,7 @@ export default defineNuxtModule<ModuleOptions>({
     watch: {
       ws: {
         port: 4000,
+        hostname: 'localhost',
         showURL: false
       }
     },
