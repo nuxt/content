@@ -30,9 +30,9 @@ export default function link (h: H, node: Node) {
 function normalizeLink (link: string) {
   if (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/'))) {
     return link.split('/')
-      .map(x => x.replace(/^[0-9]*\./g, ''))
+      .map(x => x.replace(/^[0-9]+\./, ''))
       .join('/')
-      .replace(/\.md$/g, '')
+      .replace(/\.md$/, '')
   } else {
     return link
   }
