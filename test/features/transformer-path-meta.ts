@@ -7,28 +7,32 @@ const testCases = {
     title: '',
     _draft: false,
     _partial: false,
-    _path: '/'
+    _path: '/',
+    _dir: ''
   },
   'content:3.index.draft.md': {
     __description: 'Index file with position [Draft]',
     title: '',
     _draft: true,
     _partial: false,
-    _path: '/'
+    _path: '/',
+    _dir: ''
   },
   'content:1.blog:3.index.draft.md': {
     __description: 'Blog Index file with position [Draft]',
     title: '',
     _draft: true,
     _partial: false,
-    _path: '/blog'
+    _path: '/blog',
+    _dir: ''
   },
   'content:1.blog:_4.the-post.md': {
     __description: 'Blog post file with position [Partial]',
     title: '4The Post',
     _draft: false,
     _partial: true,
-    _path: '/blog/_4.the-post'
+    _path: '/blog/_4.the-post',
+    _dir: 'blog'
   },
   ...['1.0.0', '1.1', '1', '1.x', '1.0.x', '1.0.0.x'].reduce((map, semver) => {
     map[`content:${semver}:doc.md`] = {
@@ -36,7 +40,8 @@ const testCases = {
       _draft: false,
       _partial: false,
       _path: `/${semver}/doc`,
-      _source: 'content'
+      _source: 'content',
+      _dir: semver
     }
     return map
   }, {}),
@@ -45,28 +50,32 @@ const testCases = {
     title: 'Doc',
     _draft: false,
     _partial: false,
-    _path: '/one/two/three/four/five/doc'
+    _path: '/one/two/three/four/five/doc',
+    _dir: 'five'
   },
   'content:1.one:file?param=value#hash.md': {
     __description: 'Handle special chars in file name',
     title: 'File?param=value#hash',
     _draft: false,
     _partial: false,
-    _path: '/one/fileparamvaluehash'
+    _path: '/one/fileparamvaluehash',
+    _dir: 'one'
   },
   'content:indexer.md': {
     __description: 'non-index file with index substring',
     title: 'Indexer',
     _draft: false,
     _partial: false,
-    _path: '/indexer'
+    _path: '/indexer',
+    _dir: ''
   },
   'content:indexer.draft.md': {
     __description: 'non-index file with index substring',
     title: 'Indexer',
     _draft: true,
     _partial: false,
-    _path: '/indexer'
+    _path: '/indexer',
+    _dir: ''
   }
 }
 
@@ -108,6 +117,12 @@ export const testPathMetaTransformer = () => {
         assert(
           fullPath.startsWith(`${transformed._source}/`),
           `source is not equal, recieved: ${transformed._source}`
+        )
+
+        expect(transformed).toHaveProperty('_dir')
+        assert(
+          transformed._dir === expected._dir,
+          `directory is not equal, recieved: ${transformed._dir}`
         )
 
         expect(transformed).toHaveProperty('_path')

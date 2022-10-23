@@ -1,8 +1,80 @@
 # Changelog
 
 
-## main (v2.1.0..v2.1.1)
+## v2.2.0
 
+[compare changes](https://github.com/nuxt/content/compare/v2.1.1...v2.2.0)
+
+
+### 🚀 Enhancements
+
+  - **document-driven:** Support `navigation.redirect` from `_dir` files ([#1545](https://github.com/nuxt/content/pull/1545))
+  - Spa mode ([#1525](https://github.com/nuxt/content/pull/1525))
+  - Config for anchor link generation of headings ([#1564](https://github.com/nuxt/content/pull/1564))
+  - **parser:** Introduce `_dir` field in contents ([#1613](https://github.com/nuxt/content/pull/1613))
+
+### 🔥 Performance
+
+  - **build:** Build caches before pre-rendering contents ([#1530](https://github.com/nuxt/content/pull/1530))
+
+### 🩹 Fixes
+
+  - **module:** Make `documentDriven` configs optional ([#1539](https://github.com/nuxt/content/pull/1539))
+  - Add missing imports ([451b000e](https://github.com/nuxt/content/commit/451b000e))
+  - Missing imports on preview mode ([f9f161b1](https://github.com/nuxt/content/commit/f9f161b1))
+  - Use relative `.md` link ([#1556](https://github.com/nuxt/content/pull/1556))
+  - **module:** Multi-source array ([#1578](https://github.com/nuxt/content/pull/1578))
+  - **navigation:** Missing composable when navigation is disabled ([#1577](https://github.com/nuxt/content/pull/1577))
+  - Ignore built content in preview mode ([bc01cde3](https://github.com/nuxt/content/commit/bc01cde3))
+  - **ClientDB:** Drop LocalStorage ([7afd857b](https://github.com/nuxt/content/commit/7afd857b))
+  - **client-db:** Race-condition on multiple calls ([c11a4800](https://github.com/nuxt/content/commit/c11a4800))
+  - **`<ContentList>`:** Respect `query.path` when `path` is missing ([#1598](https://github.com/nuxt/content/pull/1598))
+  - **`<ContentDoc>`:** Render blink in SSG ([#1600](https://github.com/nuxt/content/pull/1600))
+  - Update h3 usage with explicit `defineEventHandler` ([#1603](https://github.com/nuxt/content/pull/1603))
+  - **anchorLinks:** Add useRuntimeConfig imports ([#1605](https://github.com/nuxt/content/pull/1605))
+  - **runtime:** Detect 404 api responses in SSG ([#1608](https://github.com/nuxt/content/pull/1608))
+  - **`queryContent`:** Use path argument as prefix if there is another condition ([#1612](https://github.com/nuxt/content/pull/1612))
+
+### 📖 Documentation
+
+  - Fix type `client only` -> `client-only` ([#1535](https://github.com/nuxt/content/pull/1535))
+  - **content-list:** Updated query reference and added example ([#1548](https://github.com/nuxt/content/pull/1548))
+  - Add search ([#1575](https://github.com/nuxt/content/pull/1575))
+  - Update algolia key ([9e91948e](https://github.com/nuxt/content/commit/9e91948e))
+  - Cleanup deps ([#1582](https://github.com/nuxt/content/pull/1582))
+  - Upgrade Content version ([c76c5a75](https://github.com/nuxt/content/commit/c76c5a75))
+  - Broken link on Markdown API page ([#1588](https://github.com/nuxt/content/pull/1588))
+  - **composables:** Fix close tag ContentRenderer ([#1597](https://github.com/nuxt/content/pull/1597))
+  - Update badge style ([49b1c4cc](https://github.com/nuxt/content/commit/49b1c4cc))
+  - Update cover ([ba2aeb45](https://github.com/nuxt/content/commit/ba2aeb45))
+  - No need to register manually nitro plugin ([b6bbb42c](https://github.com/nuxt/content/commit/b6bbb42c))
+  - Fix nitro plugins link ([0259a901](https://github.com/nuxt/content/commit/0259a901))
+  - Update `findSurround` usage ([#1609](https://github.com/nuxt/content/pull/1609))
+  - Guidance on using local images ([#1617](https://github.com/nuxt/content/pull/1617))
+
+### 🏡 Chore
+
+  - Update deps ([d3e9aa70](https://github.com/nuxt/content/commit/d3e9aa70))
+  - Update Docus ([428cf8f8](https://github.com/nuxt/content/commit/428cf8f8))
+  - Add missing dep ([5d29a377](https://github.com/nuxt/content/commit/5d29a377))
+  - Remove preview plugin ([558add0c](https://github.com/nuxt/content/commit/558add0c))
+
+### ❤️  Contributors
+
+- Ahad Birang
+- Jan-Henrik Damaschke
+- Michel EDIGHOFFER
+- Nobkd
+- Percy Ma
+- Pooya Parsa
+- Ramses Garate
+- Remiconnesson
+- Sai Deepesh
+- Sébastien Chopin
+
+## v2.1.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.1.0...v2.1.1)
 
 ### 🩹 Fixes
 
@@ -22,8 +94,7 @@
 - Okoro Redemption
 - Sébastien Chopin
 
-## main (v2.0.1..v2.1.0)
-
+## v2.1.0
 
 ### 🚀 Enhancements
 

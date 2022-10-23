@@ -11,7 +11,9 @@ import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
  */
 export const createQueryFetch = <T = ParsedContent>(path?: string) => async (query: QueryBuilder<T>) => {
   if (path) {
-    if (query.params().first) {
+    if (query.params().first && (query.params().where || []).length === 0) {
+      // If query contains `path` and does not contain any `where` condition
+      // Then can use `path` as `where` condition to find exact match
       query.where({ _path: withoutTrailingSlash(path) })
     } else {
       query.where({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
@@ -36,7 +38,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     return db.fetch(query)
   }
 
-  return $fetch(apiPath as any, {
+  const data = await $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: {
@@ -44,6 +46,14 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
       previewToken: useCookie('previewToken').value
     }
   })
+
+  // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
+  // to know if the response is a valid JSON or not
+  if (typeof data === 'string' && data.startsWith('<!DOCTYPE html>')) {
+    throw new Error('Not found')
+  }
+
+  return data
 }
 
 /**

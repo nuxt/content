@@ -73,10 +73,11 @@ export function getMountDriver (mount: MountOptions) {
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
+  const storageKeys = Object.keys(storages)
   if (
     Array.isArray(storages) ||
     // Detect object representation of array `{ '0': 'source1' }`. Nuxt converts this array to object when using `nuxt.config.ts`
-    Object.keys(storages).every(i => i === String(+i))
+    (storageKeys.length > 0 && storageKeys.every(i => i === String(+i)))
   ) {
     storages = Object.values(storages)
     logger.warn('Using array syntax to define sources is deprecated. Consider using object syntax.')

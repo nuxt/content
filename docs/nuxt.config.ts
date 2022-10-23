@@ -73,8 +73,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       algolia: {
-        applicationId: 'Q46Q8609QS',
-        apiKey: '1661c72375532f074aedd9452a1270be',
+        applicationId: '',
+        apiKey: '',
         langAttribute: 'lang',
         docSearch: {
           indexName: 'content-nuxtjs'
