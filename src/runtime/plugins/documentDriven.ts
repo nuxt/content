@@ -233,8 +233,8 @@ export default defineNuxtPlugin((nuxt) => {
         // Prefetch layout component
         const layout = layouts[layoutName]
 
-        if (layout && layout?.__asyncLoader && !layout.__asyncResolved) {
-          await layout.__asyncLoader()
+        if (layout && typeof layout === 'function') {
+          await layout()
         }
         // Apply layout
         to.meta.layout = layoutName
