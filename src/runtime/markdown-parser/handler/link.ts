@@ -5,6 +5,7 @@ import { all } from 'mdast-util-to-hast'
 import { encode } from 'mdurl'
 import type { MdastNode } from 'mdast-util-to-hast/lib'
 import { isRelative } from 'ufo'
+import { generatePath } from '../../transformers/path-meta'
 
 type Node = MdastNode & {
   title: string
@@ -28,11 +29,8 @@ export default function link (h: H, node: Node) {
 }
 
 function normalizeLink (link: string) {
-  if (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/'))) {
-    return link.split('/')
-      .map(x => x.replace(/^[0-9]+\./, ''))
-      .join('/')
-      .replace(/\.md$/, '')
+  if (link.endsWith('.md') && (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/')))) {
+    return generatePath(link.replace(/\.md$/, ''), { forceLeadingSlash: false })
   } else {
     return link
   }
