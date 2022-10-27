@@ -142,5 +142,42 @@ export const testMarkdownParser = () => {
       expect(parsed.body.children[1].tag).toEqual('p')
       expect(parsed.body.children[1].children[1].props.class).toEqual('font-bold text-green')
     })
+
+    test('handle markdown file path as link', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '[link1](3.x)',
+            '[link1](./3.x)',
+            '[link1](foo)',
+            '[link1](foo.md)',
+            '[link1](01.foo.md)',
+            '[link1](./01.foo.md)',
+            '[link1](./../01.foo.md)',
+            '[link1](../01.foo.md)',
+            '[link1](../../01.foo.md)',
+            '[link1](../../01.foo#bar.md)',
+            '[link1](../../01.foo.draft.md)',
+            '[link1](../../_foo.draft.md)'
+          ].join('\n')
+        }
+      })
+
+      const nodes = parsed.body.children[0].children
+      expect(nodes.shift().props.href).toEqual('3.x')
+      expect(nodes.shift().props.href).toEqual('./3.x')
+      expect(nodes.shift().props.href).toEqual('foo')
+      expect(nodes.shift().props.href).toEqual('foo')
+      expect(nodes.shift().props.href).toEqual('foo')
+      expect(nodes.shift().props.href).toEqual('./foo')
+      expect(nodes.shift().props.href).toEqual('./../foo')
+      expect(nodes.shift().props.href).toEqual('../foo')
+      expect(nodes.shift().props.href).toEqual('../../foo')
+      expect(nodes.shift().props.href).toEqual('../../foobar')
+      expect(nodes.shift().props.href).toEqual('../../foo')
+      expect(nodes.shift().props.href).toEqual('../../_foo')
+    })
   })
 }

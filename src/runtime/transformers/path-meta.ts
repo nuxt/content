@@ -66,8 +66,10 @@ const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => par
  * @param path file full path
  * @returns generated slug
  */
-const generatePath = (path: string): string =>
-  withLeadingSlash(withoutTrailingSlash(path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')))
+export const generatePath = (path: string, { forceLeadingSlash = true } = {}): string => {
+  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')
+  return forceLeadingSlash ? withLeadingSlash(withoutTrailingSlash(path)) : path
+}
 
 /**
  * generate title from file path
