@@ -1,6 +1,37 @@
 # Changelog
 
 
+## v2.2.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.2.0...v2.2.1)
+
+
+### 🩹 Fixes
+
+  - **module:** Do not warn when sources is empty ([42fffc98](https://github.com/nuxt/content/commit/42fffc98))
+  - **module:** Set default hostname for dev socket ([#1624](https://github.com/nuxt/content/pull/1624))
+  - **Document Driven:** Layout prefetching ([#1637](https://github.com/nuxt/content/pull/1637))
+  - **MarkdownParser:** Refine content path in anchor link ([#1629](https://github.com/nuxt/content/pull/1629))
+
+### 📖 Documentation
+
+  - Fix typo ([#1632](https://github.com/nuxt/content/pull/1632))
+  - Fix apostrophe character ([#1633](https://github.com/nuxt/content/pull/1633))
+  - Fix typo ([#1634](https://github.com/nuxt/content/pull/1634))
+
+### 🏡 Chore
+
+  - Move algolia keys to env ([138bb7d4](https://github.com/nuxt/content/commit/138bb7d4))
+  - Upgrade remark-mdc ([#1627](https://github.com/nuxt/content/pull/1627))
+  - Upgrade deps ([#1640](https://github.com/nuxt/content/pull/1640))
+
+### ❤️  Contributors
+
+- Ahad Birang
+- Nobkd
+- Selemondev
+- Sébastien Chopin
+
 ## v2.2.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.1.1...v2.2.0)
