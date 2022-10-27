@@ -77,11 +77,11 @@ export const testMarkdownParser = () => {
           id: 'content:index.md',
           content: [
             ':hello', // valid
+            ':hello-world', // valid but with different name
             ':hello,', // valid
             ':hello :hello', // valid
             ':hello{}-world', // valid
             ':hello:hello', // invalid
-            ':hello-world', // valid but with different name
             ':hello:', // invalid
             '`:hello`', // code
             ':rocket:' // emoji
@@ -95,15 +95,17 @@ export const testMarkdownParser = () => {
       })
       expect(compComponentCount).toEqual(5)
 
-      const paragraph = parsed.body.children[0]
+      expect(parsed.body.children[0].tag).toEqual('hello')
+      expect(parsed.body.children[1].tag).toEqual('hello-world')
+
+      const paragraph = parsed.body.children[2]
       expect(paragraph.children[0].tag).toEqual('hello')
-      expect(paragraph.children[1].tag).toEqual('hello')
-      expect(paragraph.children[3].tag).toEqual('hello')
+      expect(paragraph.children[2].tag).toEqual('hello')
+      expect(paragraph.children[4].tag).toEqual('hello')
       expect(paragraph.children[5].tag).toEqual('hello')
-      expect(paragraph.children[6].tag).toEqual('hello')
 
       // Check conflict between inline compoenent and emoji
-      expect(parsed.body.children[0].children.pop().value).toContain('🚀')
+      expect(paragraph.children.pop().value).toContain('🚀')
     })
 
     test('h1 tags', async () => {
