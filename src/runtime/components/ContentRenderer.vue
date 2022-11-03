@@ -60,7 +60,7 @@ export default defineComponent({
 
     const { value, excerpt, tag } = ctx
 
-    if (!value && slots?.empty) {
+    if ((!value || !value?.body?.children?.length) && slots?.empty) {
       // Fallback on `empty` slot.
       return slots.empty({ value, excerpt, tag, ...this.$attrs })
     }
