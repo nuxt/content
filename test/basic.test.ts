@@ -94,6 +94,11 @@ describe('Basic usage', async () => {
     expect(html).contains('Persian')
   })
 
+  test('Empty slot', async () => {
+    const html = await $fetch('/features/empty-slot')
+    expect(html).contains('Empty!!!')
+  })
+
   test('<ContentDoc> head management (if same path)', async () => {
     const html = await $fetch('/head')
     expect(html).contains('<title>Head overwritten</title>')
