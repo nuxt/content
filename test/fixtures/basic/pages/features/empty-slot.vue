@@ -6,7 +6,7 @@
   </ContentRenderer>
 </template>
 
-<script>
+<script setup>
 const emptyDocument = {
   _path: '/_markdown',
   _dir: '',
