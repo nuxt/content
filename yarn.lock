@@ -6438,10 +6438,10 @@ remark-gfm@^3.0.1:
     micromark-extension-gfm "^2.0.0"
     unified "^10.0.0"
 
-remark-mdc@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.1.0.tgz#e957acd19c98089fdf60e1ab1679cead1ee863ae"
-  integrity sha512-mUGNjzOqT6bBk4MyQjGHQzLWMmjEaxnomB5ZM8FFL7uSlPzUlQsVnwv9NpG4+usU6BA6YJoGNnSAws840+oq9A==
+remark-mdc@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.1.1.tgz#182bf90f0ada0f94d2752155898e98aa7fb96cf0"
+  integrity sha512-gqpNtzkJfe+UN6flCD2ByJYK7z5z1Hk6q61P/a5TD15kYEwrGNiXeJjs4rmhp1KhSdCh+dz2knwWQ6A0JYw8ZA==
   dependencies:
     flat "^5.0.2"
     js-yaml "^4.1.0"

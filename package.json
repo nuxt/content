@@ -63,7 +63,7 @@
     "rehype-sort-attributes": "^4.0.0",
     "remark-emoji": "^3.0.2",
     "remark-gfm": "^3.0.1",
-    "remark-mdc": "^1.1.0",
+    "remark-mdc": "^1.1.1",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
     "remark-squeeze-paragraphs": "^5.0.1",
