@@ -1,9 +1,9 @@
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 import type { ParsedContent, QueryBuilder } from '../types'
 import { isPreview } from './preview'
 import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
 
-export async function getContentIndex (event: CompatibilityEvent) {
+export async function getContentIndex (event: H3Event) {
   let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string>
   if (!contentIndex) {
     // Fetch all content
@@ -24,7 +24,7 @@ export async function getContentIndex (event: CompatibilityEvent) {
   return contentIndex
 }
 
-export async function getIndexedContentsList<T = ParsedContent> (event: CompatibilityEvent, query: QueryBuilder<T>): Promise<T[]> {
+export async function getIndexedContentsList<T = ParsedContent> (event: H3Event, query: QueryBuilder<T>): Promise<T[]> {
   const params = query.params()
   const path = params?.where?.find(wh => wh._path)?._path
 
