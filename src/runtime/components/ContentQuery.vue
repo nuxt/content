@@ -1,6 +1,6 @@
 <script lang="ts">
 import { hash } from 'ohash'
-import { PropType, toRefs, defineComponent, h, useSlots } from 'vue'
+import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
 import type { ParsedContent, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
@@ -143,6 +143,8 @@ export default defineComponent({
       }
     )
 
+    watch(() => props, () => refresh(), { deep: true })
+
     return {
       isPartial,
       data,
@@ -194,7 +196,7 @@ export default defineComponent({
       if (!data && slots?.['not-found']) { return slots['not-found']({ props, ...this.$attrs }) }
 
       // Empty slots for `one` if type is "markdown" refers to an empty `body.children` key.
-      if (data?._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
+      if (slots?.empty && data?._type === 'markdown' && !data?.body?.children.length) { return slots.empty({ props, ...this.$attrs }) }
     } else if (!data || !data.length) {
       // Handle `find()` and `findSurround()`
 

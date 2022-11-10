@@ -60,9 +60,9 @@ export default defineComponent({
           ? ({ data, refresh, isPartial }) => slots?.default({ list: data, refresh, isPartial, ...this.$attrs })
           : ({ data }) => emptyNode('default', data),
         // Empty slot
-        empty: bindings => slots?.empty ? slots.empty(bindings) : ({ data }) => emptyNode('default', data),
+        empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', bindings?.data),
         // Not Found slot
-        'not-found': bindings => slots?.['not-found'] ? slots?.['not-found']?.(bindings) : ({ data }) => emptyNode('not-found', data)
+        'not-found': bindings => slots?.['not-found'] ? slots?.['not-found']?.(bindings) : emptyNode('not-found', bindings?.data)
       }
     )
   }
