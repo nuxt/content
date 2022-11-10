@@ -1,7 +1,7 @@
 import { prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransformer } from '../types'
@@ -67,7 +67,7 @@ const contentIgnorePredicate = (key: string) => {
   return true
 }
 
-export const getContentsIds = async (event: CompatibilityEvent, prefix?: string) => {
+export const getContentsIds = async (event: H3Event, prefix?: string) => {
   let keys = []
 
   if (isProduction) {
@@ -103,14 +103,14 @@ export const getContentsIds = async (event: CompatibilityEvent, prefix?: string)
   return keys.filter(contentIgnorePredicate)
 }
 
-export const getContentsList = async (event: CompatibilityEvent, prefix?: string) => {
+export const getContentsList = async (event: H3Event, prefix?: string) => {
   const keys = await getContentsIds(event, prefix)
   const contents = await Promise.all(keys.map(key => getContent(event, key)))
 
   return contents
 }
 
-export const getContent = async (event: CompatibilityEvent, id: string): Promise<ParsedContent> => {
+export const getContent = async (event: H3Event, id: string): Promise<ParsedContent> => {
   const contentId = id
   // Handle ignored id
   if (!contentIgnorePredicate(id)) {
@@ -187,7 +187,7 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   return result
 }
 
-export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEvent, path?: string) => (query: QueryBuilder<T>) => {
+export const createServerQueryFetch = <T = ParsedContent>(event: H3Event, path?: string) => (query: QueryBuilder<T>) => {
   if (path) {
     if (query.params().first) {
       query.where({ _path: withoutTrailingSlash(path) })
@@ -207,10 +207,10 @@ export const createServerQueryFetch = <T = ParsedContent>(event: CompatibilityEv
 /**
  * Query contents
  */
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, params?: QueryBuilderParams): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: CompatibilityEvent, path?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: CompatibilityEvent, path?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event, path?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (event: H3Event, path?: string | QueryBuilderParams, ...pathParts: string[]) {
   if (typeof path === 'string') {
     path = withLeadingSlash(joinURL(path, ...pathParts))
     return createQuery<T>(createServerQueryFetch(event, path))

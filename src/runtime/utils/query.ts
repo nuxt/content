@@ -1,4 +1,4 @@
-import { getQuery, CompatibilityEvent, createError } from 'h3'
+import { getQuery, H3Event, createError } from 'h3'
 import { QueryBuilderParams } from '../types'
 import { jsonParse } from './json'
 
@@ -11,7 +11,7 @@ const parseQueryParams = (body: string) => {
 }
 
 const memory = {}
-export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams => {
+export const getContentQuery = (event: H3Event): QueryBuilderParams => {
   const qid = event.context.params.qid?.replace(/.json$/, '')
   const query: any = getQuery(event) || {}
 
@@ -49,11 +49,6 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
       delete query[key]
     }
   }
-  if (Object.keys(where).length > 0) {
-    query.where = [where]
-  } else {
-    delete query.where
-  }
 
   // ?sortyBy=size:1
   if (query.sort) {
@@ -68,6 +63,12 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
     if (reservedKeys.includes(key)) { continue }
     query.where = query.where || {}
     query.where[key] = query[key]
+  }
+
+  if (Object.keys(where).length > 0) {
+    query.where = [where]
+  } else {
+    delete query.where
   }
 
   return query
