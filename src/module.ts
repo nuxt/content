@@ -358,7 +358,6 @@ export default defineNuxtModule<ModuleOptions>({
         'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.transform)',
         'export default () => {}'
       ].join('\n')
-      nitroConfig.virtual['#content/context'] = `export default ${JSON.stringify(contentContext)}`
     })
 
     // Register composables
