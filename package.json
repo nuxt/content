@@ -67,7 +67,7 @@
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
     "remark-squeeze-paragraphs": "^5.0.1",
-    "scule": "^0.3.2",
+    "scule": "^1.0.0",
     "shiki-es": "^0.1.2",
     "slugify": "^1.6.5",
     "socket.io-client": "^4.5.3",
