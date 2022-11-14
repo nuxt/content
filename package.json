@@ -54,7 +54,7 @@
     "mdast-util-to-hast": "^12.2.4",
     "mdurl": "^1.0.1",
     "ohash": "^0.1.5",
-    "pathe": "^0.3.9",
+    "pathe": "^1.0.0",
     "property-information": "^6.1.1",
     "rehype-external-links": "^2.0.1",
     "rehype-raw": "^6.1.1",
