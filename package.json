@@ -71,7 +71,7 @@
     "shiki-es": "^0.1.2",
     "slugify": "^1.6.5",
     "socket.io-client": "^4.5.3",
-    "ufo": "^0.8.6",
+    "ufo": "^1.0.0",
     "unified": "^10.1.2",
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
