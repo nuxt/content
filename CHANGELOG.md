@@ -1,6 +1,39 @@
 # Changelog
 
 
+## v2.2.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.2.1...v2.2.2)
+
+
+### 🩹 Fixes
+
+  - **ContentRenderer:** Empty content detection ([#1653](https://github.com/nuxt/content/pull/1653))
+  - **ContentList:** Handle props change and fix slots default ([#1668](https://github.com/nuxt/content/pull/1668))
+
+### 💅 Refactors
+
+  - Improve typings and simplify logic ([#1669](https://github.com/nuxt/content/pull/1669))
+
+### 📖 Documentation
+
+  - Fix error in ContentQuery where clause example ([#1643](https://github.com/nuxt/content/pull/1643))
+  - Update sources ([#1664](https://github.com/nuxt/content/pull/1664))
+  - **a11y:** Use list for nav example ([#1670](https://github.com/nuxt/content/pull/1670))
+
+### 🏡 Chore
+
+  - Add #content/context virtual file ([6e205703](https://github.com/nuxt/content/commit/6e205703))
+  - No need for virtual file ([37e2caf9](https://github.com/nuxt/content/commit/37e2caf9))
+  - Upgrade deps ([#1682](https://github.com/nuxt/content/pull/1682))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Novellac 
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Brett Ormsby
+
 ## v2.2.1
 
 [compare changes](https://github.com/nuxt/content/compare/v2.2.0...v2.2.1)
