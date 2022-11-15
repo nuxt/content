@@ -76,7 +76,7 @@
     "unist-builder": "^3.0.0",
     "unist-util-position": "^4.0.3",
     "unist-util-visit": "^4.1.1",
-    "unstorage": "^0.6.0",
+    "unstorage": "^1.0.0",
     "ws": "^8.11.0"
   },
   "devDependencies": {
