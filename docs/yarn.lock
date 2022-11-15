@@ -676,7 +676,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@3.0.0-rc.13", "@nuxt/kit@^3.0.0-rc.11", "@nuxt/kit@^3.0.0-rc.13", "@nuxt/kit@^3.0.0-rc.5", "@nuxt/kit@^3.0.0-rc.9":
+"@nuxt/kit@3.0.0-rc.13", "@nuxt/kit@^3.0.0-rc.11", "@nuxt/kit@^3.0.0-rc.12", "@nuxt/kit@^3.0.0-rc.13", "@nuxt/kit@^3.0.0-rc.5", "@nuxt/kit@^3.0.0-rc.9":
   version "3.0.0-rc.13"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.0.0-rc.13.tgz#e043f099d713152a4197b8d79cfbe2a500b6aa5e"
   integrity sha512-FYEnMRm4LvIUxygmBX/p5kykzSeBleUqCOfxervQFONkz5PVVYXEp1DDBINGR3xk01yuPElENuf+l59iEQ4q7g==
@@ -714,7 +714,7 @@
     postcss-url "^10.1.1"
     semver "^7.3.4"
 
-"@nuxt/schema@3.0.0-rc.13":
+"@nuxt/schema@3.0.0-rc.13", "@nuxt/schema@^3.0.0-rc.13":
   version "3.0.0-rc.13"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.13.tgz#0cc01b695697007999cef4492901cdf1f6b1d04c"
   integrity sha512-yfNPvUkOQ1/8aKHX8OtU7stANAaZ3B8Rty7HPuo1KHv0R3wNqlRdoRXwFuf4D+jcsS+R5Kccr7i8YYD5IG56Iw==
@@ -801,6 +801,18 @@
     vite-node "^0.24.5"
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^0.5.0"
+
+"@nuxthq/studio@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.2.tgz#2d2e496ab45899292c6a255453be4f31b5ada010"
+  integrity sha512-1pQ7A8f3sP2YN1/b5e9GsBJdvLVU4qhRSl3D4KFKfi/L+QmY0+Je+L7fRIZIhlc0gSn3IyZGvOw8l28/svG66w==
+  dependencies:
+    "@nuxt/kit" "^3.0.0-rc.13"
+    "@nuxt/schema" "^3.0.0-rc.13"
+    defu "^6.1.0"
+    nuxt-component-meta "^0.3.3"
+    socket.io-client "^4.5.3"
+    ufo "^0.8.6"
 
 "@nuxtjs/algolia@^1.1.1":
   version "1.1.4"
@@ -1264,7 +1276,7 @@
   dependencies:
     muggle-string "^0.1.0"
 
-"@volar/vue-language-core@^1.0.9":
+"@volar/vue-language-core@1.0.9", "@volar/vue-language-core@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@volar/vue-language-core/-/vue-language-core-1.0.9.tgz#9eb7c30652c80f210fca071aeeea794873835eda"
   integrity sha512-tofNoR8ShPFenHT1YVMuvoXtXWwoQE+fiXVqSmW0dSKZqEDjWQ3YeXSd0a6aqyKaIbvR7kWWGp34WbpQlwf9Ww==
@@ -5120,6 +5132,15 @@ nuxi@3.0.0-rc.13:
   optionalDependencies:
     fsevents "~2.3.2"
 
+nuxt-component-meta@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.3.3.tgz#27268e4f519d81f57375fed6a85a416d4961e1a9"
+  integrity sha512-TPeNnK6Uofr6ygbfqwVjbh3M0huqpLBsJP+HsHPjp31jqzuOW/mQboKcPfRLiMFPURPXoQZJRQYIdKcqtRZcRA==
+  dependencies:
+    "@nuxt/kit" "^3.0.0-rc.12"
+    scule "^0.3.2"
+    vue-component-meta "^1.0.9"
+
 nuxt@^3.0.0-rc.13:
   version "3.0.0-rc.13"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.0.0-rc.13.tgz#30a14dbf4da1aa61b369c7ea93759e9e9b87d42c"
@@ -6826,6 +6847,11 @@ type-is@^1.6.16:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
+typesafe-path@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/typesafe-path/-/typesafe-path-0.2.2.tgz#91a436681b2f514badb114061b6a5e5c2b8943b1"
+  integrity sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==
+
 typescript@^4.8.4:
   version "4.8.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
@@ -7218,6 +7244,15 @@ vue-bundle-renderer@^0.5.0:
   integrity sha512-EZBp4TZ5oamgg+JL7kih5xO/qLCPlC6Dz4BH9ymoNP6xM2urZazql3PCAdztgnzBkOgmoOegEw4kp7Hgp8qaaA==
   dependencies:
     ufo "^0.8.6"
+
+vue-component-meta@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/vue-component-meta/-/vue-component-meta-1.0.9.tgz#af46b70e9cc10e75ce288074a5ad0e6a433271cc"
+  integrity sha512-uJmfospCBGdDKtSIpmtBrw1L960IxQBJADu4SigVA/lbYGhgZXYQjBBTdxzGx2tFlR6bDrj/a3H53lEv5ZxNzQ==
+  dependencies:
+    "@volar/language-core" "1.0.9"
+    "@volar/vue-language-core" "1.0.9"
+    typesafe-path "^0.2.2"
 
 vue-demi@*:
   version "0.13.11"

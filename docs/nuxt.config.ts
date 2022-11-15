@@ -56,7 +56,7 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxtlabs/github-module'],
+  modules: ['@nuxtlabs/github-module', '@nuxthq/studio'],
   extends: process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus',
   github: {
     owner: 'nuxt',
