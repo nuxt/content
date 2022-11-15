@@ -103,7 +103,8 @@ describe('Basic usage', async () => {
     const html = await $fetch('/head')
     expect(html).contains('<title>Head overwritten</title>')
     expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
-    expect(html).contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
+    expect(html).contains('<meta name="description" content="Description overwritten">')
+    expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
   })
 
   test('<ContentDoc> head management (not same path)', async () => {
