@@ -37,6 +37,7 @@ coverage
 
 # VSCode
 .vscode
+.history
 
 # Intellij idea
 *.iml
