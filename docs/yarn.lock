@@ -802,10 +802,10 @@
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^0.5.0"
 
-"@nuxthq/studio@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.3.tgz#e42778a991356676bc1d90d199c8d09306b4bd23"
-  integrity sha512-X5K0UOu/7633m8xJY1bq0K3sd55ERSPBAzSTv2dhoLBPOvwC3HfIvDx29BqRmh9sxsZ/dmJVQP8ZCnGAAbQYVw==
+"@nuxthq/studio@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.2.tgz#2d2e496ab45899292c6a255453be4f31b5ada010"
+  integrity sha512-1pQ7A8f3sP2YN1/b5e9GsBJdvLVU4qhRSl3D4KFKfi/L+QmY0+Je+L7fRIZIhlc0gSn3IyZGvOw8l28/svG66w==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.13"
     "@nuxt/schema" "^3.0.0-rc.13"

@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@nuxt-themes/docus": "npm:@nuxt-themes/docus-edge@latest",
-    "@nuxthq/studio": "^0.2.3",
+    "@nuxthq/studio": "0.2.2",
     "@nuxtlabs/github-module": "npm:@nuxtlabs/github-module-edge@latest",
     "monaco-editor-core": "^0.34.1",
     "nuxt": "^3.0.0-rc.13",
