@@ -23,26 +23,21 @@ export default defineAppConfig({
       level: 1
     },
     header: {
-      title: false,
+      title: '',
       logo: true,
       exclude: ['/v1', '/content-v1', '/fr', '/ja', '/ru']
     },
     footer: {
-      credits: {
-        icon: 'IconDocus',
-        text: 'Powered by Docus',
-        href: 'https://docus.com'
-      },
-      icons: [
+      iconLinks: [
         {
           label: 'NuxtJS',
           href: 'https://nuxtjs.org',
-          component: 'IconNuxt'
+          icon: 'IconNuxt'
         },
         {
           label: 'Vue Telescope',
           href: 'https://vuetelescope.com',
-          component: 'IconVueTelescope'
+          icon: 'IconVueTelescope'
         }
       ]
     }
