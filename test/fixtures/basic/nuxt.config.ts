@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt'
+import { defineNuxtConfig } from 'nuxt/config'
 import { resolve } from 'pathe'
 import contentModule from '../../..'
 

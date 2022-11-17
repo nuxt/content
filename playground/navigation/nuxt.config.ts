@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt'
+import { defineNuxtConfig } from 'nuxt/config'
 import contentModule from '../../src/module' // eslint-disable-line
 
 export default defineNuxtConfig({
