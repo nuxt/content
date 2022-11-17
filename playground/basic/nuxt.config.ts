@@ -1,4 +1,3 @@
-import { defineNuxtConfig } from 'nuxt/config'
 import { resolve } from 'pathe'
 
 export default defineNuxtConfig({

@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'url'
-import { defineNuxtConfig } from 'nuxt/config'
 import { resolve } from 'pathe'
 import contentModule from '../../src/module' // eslint-disable-line
 
