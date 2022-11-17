@@ -374,7 +374,6 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
-      level: 999,
       global: true
     })
 
