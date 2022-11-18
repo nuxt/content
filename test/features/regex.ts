@@ -1,13 +1,15 @@
 import { describe, test, expect } from 'vitest'
-import { $fetch } from '@nuxt/test-utils'
+import { $fetch, useTestContext } from '@nuxt/test-utils'
 import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testRegex = () => {
+  // @ts-ignore
+  const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   describe('Regex queries', () => {
     test('Get cats with regex', async () => {
       const params = { where: { _path: /^\/cats/ } }
-      const list = await $fetch(`/api/_content/query/${hash(params)}`, {
+      const list = await $fetch(`${apiBaseUrl}/query/${hash(params)}`, {
         params: {
           _params: jsonStringify(params)
         }
@@ -21,7 +23,7 @@ export const testRegex = () => {
 
     test('Get cats navigation with regex', async () => {
       const params = { where: { _path: /^\/cats/ } }
-      const list = await $fetch(`/api/_content/navigation/${hash(params)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(params)}`, {
         params: {
           _params: jsonStringify(params)
         }

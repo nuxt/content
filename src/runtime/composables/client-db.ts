@@ -9,7 +9,7 @@ import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
 
-const withContentBase = url => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
+const withContentBase = url => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
 export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
 
