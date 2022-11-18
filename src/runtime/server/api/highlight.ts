@@ -13,8 +13,8 @@ export const logger = consola.withScope('@nuxt/content')
  *
  * Used to resolve lang from both languages id's and aliases.
  */
-const resolveLang = (lang: string): Lang | undefined =>
-  BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang))?.id as Lang
+const resolveLang = (lang: string): Lang =>
+  (BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang))?.id || lang) as Lang
 
 /**
  * Resolve Shiki compatible theme from string.
@@ -79,7 +79,7 @@ export default lazyEventHandler(async () => {
         id: 'md',
         scopeName: 'text.markdown.mdc',
         path: 'mdc.tmLanguage.json',
-        aliases: ['markdown'],
+        aliases: ['markdown', 'md', 'mdc'],
         grammar: mdcTMLanguage
       }
     ] as any[]
