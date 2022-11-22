@@ -152,51 +152,54 @@ interface HighlightThemedTokenLine {
 
 function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedTokenLine) {
   const mergedTokens: HighlightThemedToken[] = []
-  const getColors = (h, i) => typeof h.tokens[i].color === 'string' ? { [h.key]: h.tokens[i].color } : h.tokens[i].color
+  const getColors = (h: HighlightThemedTokenLine, i: number) => typeof h.tokens[i].color === 'string' ? { [h.key]: h.tokens[i].color } : h.tokens[i].color as object
 
-  const [big, small] = line1.tokens.length > line2.tokens.length ? [line1, line2] : [line2, line1]
-  let targetToken = 0
-  let targetTokenCharIndex = 0
-  big.tokens.forEach((t, i) => {
-    if (targetTokenCharIndex === 0) {
-      if (t.content === small.tokens[i]?.content) {
-        mergedTokens.push({
-          content: t.content,
-          color: {
-            ...getColors(big, i),
-            ...getColors(small, i)
-          }
-        })
-        targetToken = i + 1
-        return
-      }
-      if (t.content === small.tokens[targetToken]?.content) {
-        mergedTokens.push({
-          content: t.content,
-          color: {
-            ...getColors(big, i),
-            ...getColors(small, targetToken)
-          }
-        })
-        targetToken += 1
-        return
-      }
-    }
+  const right = {
+    key: line1.key,
+    tokens: line1.tokens.slice()
+  }
+  const left = {
+    key: line2.key,
+    tokens: line2.tokens.slice()
+  }
+  let index = 0
+  while (index < right.tokens.length) {
+    const rightToken = right.tokens[index]
+    const leftToken = left.tokens[index]
 
-    if (small.tokens[targetToken]?.content?.substring(targetTokenCharIndex, targetTokenCharIndex + t.content.length) === t.content) {
-      targetTokenCharIndex += t.content.length
+    if (rightToken.content === leftToken.content) {
       mergedTokens.push({
-        content: t.content,
+        content: rightToken.content,
         color: {
-          ...getColors(big, i),
-          ...getColors(small, targetToken)
+          ...getColors(right, index),
+          ...getColors(left, index)
         }
       })
+      index += 1
+      continue
     }
-    if (small.tokens[targetToken]?.content.length <= targetTokenCharIndex) {
-      targetToken += 1
-      targetTokenCharIndex = 0
+
+    if (rightToken.content.startsWith(leftToken.content)) {
+      const nextRightToken = {
+        ...rightToken,
+        content: rightToken.content.slice(leftToken.content.length)
+      }
+      rightToken.content = leftToken.content
+      right.tokens.splice(index + 1, 0, nextRightToken)
+      continue
     }
-  })
+
+    if (leftToken.content.startsWith(rightToken.content)) {
+      const nextLeftToken = {
+        ...leftToken,
+        content: leftToken.content.slice(rightToken.content.length)
+      }
+      leftToken.content = rightToken.content
+      left.tokens.splice(index + 1, 0, nextLeftToken)
+      continue
+    }
+
+    throw new Error('Unexpected token')
+  }
   return mergedTokens
 }
