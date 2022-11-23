@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { cacheStorage, serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
-import { ParsedContentMeta } from '../../types'
+import { ParsedContent, ParsedContentMeta } from '../../types'
 import { getContentQuery } from '../../utils/query'
 import { isPreview } from '../preview'
 
@@ -34,11 +34,11 @@ export default defineEventHandler(async (event) => {
 
   const dirConfigs = await serverQueryContent(event).where({ _path: /\/_dir$/i, _partial: true }).find()
 
-  const configs = dirConfigs.reduce((configs, conf) => {
-    if (conf.title.toLowerCase() === 'dir') {
+  const configs = dirConfigs.reduce((configs, conf: ParsedContent) => {
+    if (conf.title?.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf._path.split('/').slice(0, -1).join('/') || '/'
+    const key = conf._path!.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)

@@ -581,14 +581,16 @@ export default defineNuxtModule<ModuleOptions>({
       hightlight: options.highlight
     })
 
+    // Disable cache in dev mode
+    const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
+
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      integrity: buildIntegrity,
       clientDB: {
-        isSPA: options.experimental.clientDB && nuxt.options.ssr === false,
-        // Disable cache in dev mode
-        integrity: nuxt.options.dev ? undefined : Date.now()
+        isSPA: options.experimental.clientDB && nuxt.options.ssr === false
       },
       api: {
         baseURL: options.api.baseURL
