@@ -5,7 +5,6 @@ export default defineAppConfig({
     layout: 'docs',
     image: 'https://content.nuxtjs.org/preview.png',
     url: 'https://content.nuxtjs.org',
-    debug: false,
     socials: {
       twitter: '@nuxt_js',
       github: 'nuxt/content'
@@ -23,8 +22,7 @@ export default defineAppConfig({
       level: 1
     },
     header: {
-      title: '',
-      logo: true,
+      logo: 'Logo',
       exclude: ['/v1', '/content-v1', '/fr', '/ja', '/ru']
     },
     footer: {

@@ -12,8 +12,49 @@ defineProps({
 </script>
 
 <template>
-  <NuxtLink :to="to" class="hover:bg-primary-200 text-primary-900 bg-primary-100 transition dark:bg-transparent hover:dark:bg-primary-900 dark:border-primary-700 dark:text-primary-100 border border-primary-400 mb-8 px-4 py-2 rounded-md flex gap-x-1 inline-flex items-center justify-center">
-    <Icon name="heroicons-solid:sparkles" class="h-4 w-4" />
-    <span class="font-medium text-sm">{{ label }}</span>
+  <NuxtLink :to="to" class="link">
+    <Icon name="heroicons-solid:sparkles" class="icon" />
+    <span>{{ label }}</span>
   </NuxtLink>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.link': {
+    color: '{colors.primary.900}',
+    backgroundColor: '{colors.primary.100}',
+    borderColor: '{colors.primary.400}',
+    borderRadius: '{radii.md}',
+    borderWidth: '{borderWidths.sm}',
+    borderStyle: 'solid',
+    display: 'inline-flex',
+    padding: '{space.2} {space.4}',
+    marginBottom: '{space.4}',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '{space.1}',
+
+    '@dark': {
+      color: '{colors.primary.100}',
+      backgroundColor: 'transparent',
+      borderColor: '{colors.primary.700}'
+    },
+
+    '&:hover': {
+      backgroundColor: '{colors.primary.200}',
+      '@dark': {
+        backgroundColor: '{colors.primary.900}'
+      },
+    }
+  },
+  '.link span': {
+    // font-medium text-sm
+    fontWeight: '{fontWeights.medium}',
+    fontSize: '{fontSizes.sm}'
+  },
+  '.link .icon': {
+    width: '{space.4}',
+    height: '{space.4}'
+  }
+})
+</style>
