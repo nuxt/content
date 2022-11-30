@@ -2,7 +2,7 @@ import { withBase } from 'ufo'
 import { useRuntimeConfig, useRequestEvent, useCookie, useRoute } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 
-export const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().public.content.base)
+export const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
 export const useUnwrap = () => ({
   unwrap,
@@ -47,8 +47,13 @@ export const shouldUseClientDB = () => {
   if (!process.client) { return false }
   if (clientDB?.isSPA) { return true }
 
+  const query = useRoute().query
+  // Disable clientDB when `?preview` is set in query, and it has falsy value
+  if (Object.prototype.hasOwnProperty.call(query, 'preview') && !query.preview) {
+    return false
+  }
   // Disable clientDB when preview mode is disabled
-  if (useRoute().query?.preview || useCookie('previewToken').value) {
+  if (query.preview || useCookie('previewToken').value) {
     return true
   }
 

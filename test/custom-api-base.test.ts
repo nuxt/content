@@ -20,14 +20,23 @@ import { testParserOptions } from './features/parser-options'
 import { testComponents } from './features/components'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
+const apiBaseURL = '/my-content-api'
 
-describe('Basic usage', async () => {
+describe('Custom api baseURL', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
-    server: true
+    server: true,
+    nuxtConfig: {
+      // @ts-ignore
+      content: {
+        api: {
+          baseURL: apiBaseURL
+        }
+      }
+    }
   })
 
-  const QUERY_ENDPOINT = '/api/_content/query'
+  const QUERY_ENDPOINT = `${apiBaseURL}/query`
   const fetchDocument = (_id: string) => {
     const params = { first: true, where: { _id } }
     const qid = hash(params)

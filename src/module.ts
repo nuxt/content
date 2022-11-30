@@ -19,7 +19,7 @@ import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { createStorage } from 'unstorage'
-import { withTrailingSlash } from 'ufo'
+import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
@@ -45,8 +45,17 @@ export interface ModuleOptions {
    * Base route that will be used for content api
    *
    * @default '_content'
+   * @deprecated Use `api.base` instead
    */
   base: string
+  api: {
+    /**
+     * Base route that will be used for content api
+     *
+     * @default '/api/_content'
+     */
+    baseURL: string
+  }
   /**
    * Disable content watcher and hot content reload.
    * Note: Watcher is a development feature and will not includes in the production.
@@ -229,7 +238,11 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   defaults: {
-    base: '_content',
+    // @deprecated
+    base: '',
+    api: {
+      baseURL: '/api/_content'
+    },
     watch: {
       ws: {
         port: 4000,
@@ -265,6 +278,12 @@ export default defineNuxtModule<ModuleOptions>({
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
+
+    if (options.base) {
+      logger.warn('content.base is deprecated. Use content.api.baseURL instead.')
+      options.api.baseURL = withLeadingSlash(joinURL('api', options.base))
+    }
+
     const contentContext: ContentContext = {
       transformers: [],
       ...options
@@ -292,23 +311,23 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers.push(
         {
           method: 'get',
-          route: `/api/${options.base}/query/:qid`,
+          route: `${options.api.baseURL}/query/:qid`,
           handler: resolveRuntimeModule('./server/api/query')
         },
         {
           method: 'get',
-          route: `/api/${options.base}/query`,
+          route: `${options.api.baseURL}/query`,
           handler: resolveRuntimeModule('./server/api/query')
         },
         {
           method: 'get',
-          route: `/api/${options.base}/cache.json`,
+          route: `${options.api.baseURL}/cache.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.unshift(`/api/${options.base}/cache.json`)
+        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.json`)
       }
 
       // Register source storages
@@ -428,12 +447,12 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.handlers = nitroConfig.handlers || []
         nitroConfig.handlers.push({
           method: 'get',
-          route: `/api/${options.base}/navigation/:qid`,
+          route: `${options.api.baseURL}/navigation/:qid`,
           handler: resolveRuntimeModule('./server/api/navigation')
         })
         nitroConfig.handlers.push({
           method: 'get',
-          route: `/api/${options.base}/navigation`,
+          route: `${options.api.baseURL}/navigation`,
           handler: resolveRuntimeModule('./server/api/navigation')
         })
       })
@@ -445,13 +464,13 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.highlight) {
       contentContext.transformers.push(resolveRuntimeModule('./transformers/shiki'))
       // @ts-ignore
-      contentContext.highlight.apiURL = `/api/${options.base}/highlight`
+      contentContext.highlight.apiURL = `${options.api.baseURL}/highlight`
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []
         nitroConfig.handlers.push({
           method: 'post',
-          route: `/api/${options.base}/highlight`,
+          route: `${options.api.baseURL}/highlight`,
           handler: resolveRuntimeModule('./server/api/highlight')
         })
       })
@@ -570,8 +589,10 @@ export default defineNuxtModule<ModuleOptions>({
         // Disable cache in dev mode
         integrity: nuxt.options.dev ? undefined : Date.now()
       },
+      api: {
+        baseURL: options.api.baseURL
+      },
       navigation: contentContext.navigation as any,
-      base: options.base,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
