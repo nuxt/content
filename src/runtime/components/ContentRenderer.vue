@@ -60,7 +60,7 @@ export default defineComponent({
 
     const { value, excerpt, tag } = ctx
 
-    if ((!value || !value?.body?.children?.length) && slots?.empty) {
+    if (!value?.body?.children?.length && slots?.empty) {
       // Fallback on `empty` slot.
       return slots.empty({ value, excerpt, tag, ...this.$attrs })
     }
@@ -70,7 +70,7 @@ export default defineComponent({
     }
 
     // Use built-in ContentRendererMarkdown
-    if (value && value?._type === 'markdown' && value?.body?.children?.length) {
+    if (value?._type === 'markdown' && value?.body?.children?.length) {
       return h(
         ContentRendererMarkdown,
         {
