@@ -1,9 +1,9 @@
-import { /* createError, */defineEventHandler, readBody, lazyEventHandler } from 'h3'
-import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme } from 'shiki-es'
+import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme, Highlighter } from 'shiki-es'
 import consola from 'consola'
-import { HighlightParams, HighlightThemedToken } from '../../types'
-import mdcTMLanguage from '../../assets/mdc.tmLanguage.json'
-import { useRuntimeConfig } from '#imports'
+import type { ModuleOptions } from '../../../module'
+import { HighlightThemedToken } from '../../types'
+import { createSingleton } from '../utils'
+import mdcTMLanguage from './languages/mdc.tmLanguage.json'
 
 // Re-create logger locally as utils cannot be imported from here
 export const logger = consola.withScope('@nuxt/content')
@@ -35,60 +35,46 @@ const resolveTheme = (theme: string | Record<string, string>): Record<string, Th
   }, {} as Record<string, Theme>)
 }
 
-/**
- * Resolve Shiki highlighter compatible payload from request body.
- */
-const resolveBody = (body: Partial<HighlightParams>) => {
-  // Assert body schema
-  if (typeof body.code !== 'string') {
-    // TODO: Maybe remove this hotfix?
-    // I could not reproduce the issue with local content, but it might happen when using `parseContent` or external content sources.
-    body.code = ''
-
-    // throw createError({ statusMessage: 'Bad Request', statusCode: 400, message: 'Missing code key.' })
-  }
-
-  return {
-    // Remove trailing carriage returns
-    code: body.code.replace(/\n+$/, ''),
-    // Resolve lang & theme (i.e check if shiki supports them)
-    lang: resolveLang(body.lang || ''),
-    theme: resolveTheme(body.theme || '')
-  }
-}
-
-export default lazyEventHandler(async () => {
+export const useShikiHighlighter = createSingleton((opts: Exclude<ModuleOptions['highlight'], false>) => {
   // Grab highlighter config from publicRuntimeConfig
-  const { theme, preload } = useRuntimeConfig().content.highlight
+  const { theme, preload } = opts
 
-  // Initialize highlighter with defaults
-  const highlighter = await getHighlighter({
-    theme: theme?.default || theme || 'dark-plus',
-    langs: [
-      ...(preload || []),
-      'diff',
-      'json',
-      'js',
-      'ts',
-      'css',
-      'shell',
-      'html',
-      'md',
-      'yaml',
-      {
-        id: 'md',
-        scopeName: 'text.markdown.mdc',
-        path: 'mdc.tmLanguage.json',
-        aliases: ['markdown', 'md', 'mdc'],
-        grammar: mdcTMLanguage
-      }
-    ] as any[]
-  })
-
-  return defineEventHandler(async (event): Promise<HighlightThemedToken[][]> => {
-    const params = await readBody<Partial<HighlightParams>>(event)
-
-    const { code, lang, theme = { default: highlighter.getTheme() } } = resolveBody(params)
+  let promise: Promise<Highlighter> | undefined
+  const getShikiHighlighter = () => {
+    if (!promise) {
+      // Initialize highlighter with defaults
+      promise = getHighlighter({
+        theme: (theme as any)?.default || theme || 'dark-plus',
+        langs: [
+          ...(preload || []),
+          'diff',
+          'json',
+          'js',
+          'ts',
+          'css',
+          'shell',
+          'html',
+          'md',
+          'yaml',
+          {
+            id: 'md',
+            scopeName: 'text.markdown.mdc',
+            path: 'mdc.tmLanguage.json',
+            aliases: ['markdown', 'md', 'mdc'],
+            grammar: mdcTMLanguage
+          }
+        ] as any[]
+      })
+    }
+    return promise
+  }
+  const getHighlightedTokens = async (code: string, lang: Lang, theme: Theme | Record<string, Theme>) => {
+    const highlighter = await getShikiHighlighter()
+    // Remove trailing carriage returns
+    code = code.replace(/\n+$/, '')
+    // Resolve lang & theme (i.e check if shiki supports them)
+    lang = resolveLang(lang || '')
+    theme = resolveTheme(theme || '') || { default: highlighter.getTheme() as any as Theme }
 
     // Skip highlight if lang is not supported
     if (!lang) {
@@ -142,7 +128,11 @@ export default lazyEventHandler(async () => {
     }
 
     return highlightedCode
-  })
+  }
+
+  return {
+    getHighlightedTokens
+  }
 })
 
 interface HighlightThemedTokenLine {

@@ -1,10 +1,7 @@
 import { describe, test, expect, assert } from 'vitest'
-import { $fetch, useTestContext } from '@nuxt/test-utils'
+import { $fetch } from '@nuxt/test-utils'
 
 export const testHighlighter = () => {
-  // @ts-ignore
-  const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
-
   describe('Highlighter', () => {
     test('themed', async () => {
       const parsed = await $fetch('/api/parse', {
@@ -60,7 +57,7 @@ export const testHighlighter = () => {
     })
 
     test('highlight multi-theme with different tokenizer', async () => {
-      const tokens = await $fetch(`${apiBaseUrl}/highlight`, {
+      const tokens = await $fetch('/api/highlight', {
         method: 'POST',
         body: {
           lang: 'ts',

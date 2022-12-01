@@ -24,7 +24,7 @@ const raw = ref(props.modelValue)
 
 const emit = defineEmits(['update:modelValue'])
 
-function update (content) {
+function update (content: string) {
   emit('update:modelValue', content)
 }
 </script>
