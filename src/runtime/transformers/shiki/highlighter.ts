@@ -35,9 +35,9 @@ const resolveTheme = (theme: string | Record<string, string>): Record<string, Th
   }, {} as Record<string, Theme>)
 }
 
-export const useShikiHighlighter = createSingleton((opts: Exclude<ModuleOptions['highlight'], false>) => {
+export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions['highlight'], false>) => {
   // Grab highlighter config from publicRuntimeConfig
-  const { theme, preload } = opts
+  const { theme, preload } = opts || {}
 
   let promise: Promise<Highlighter> | undefined
   const getShikiHighlighter = () => {
