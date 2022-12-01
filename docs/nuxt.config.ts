@@ -52,7 +52,9 @@ export default defineNuxtConfig({
     prerender: {
       routes: [
         '/',
-        '/blog/announcing-v2'
+        '/blog/announcing-v2',
+        // TODO: move to github module
+        '/api/_github/releases/.json'
       ]
     }
   },

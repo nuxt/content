@@ -49,6 +49,7 @@ css({
       fontSize: '{fontSizes.2xl}',
       fontWeight: '{fontWeights.bold}',
       color: '{colors.gray.900}',
+      marginTop: '{space.8}',
       '@dark': {
         color: '{colors.gray.100}'
       }
@@ -57,7 +58,7 @@ css({
   '.content': {
     paddingLeft: '{space.8}',
     paddingRight: '{space.8}',
-    paddingBottom: '{space.40}',
+    paddingBottom: '{space.24}',
   }
 })
 </style>
