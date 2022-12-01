@@ -1,7 +1,7 @@
 <script lang="ts">
 import { hash } from 'ohash'
 import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
-import type { ParsedContent, QueryBuilder, SortParams } from '../types'
+import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent } from '#imports'
 
 export default defineComponent({
@@ -100,6 +100,8 @@ export default defineComponent({
      */
     const isPartial = computed(() => path.value?.includes('/_'))
 
+    watch(() => props, () => refresh(), { deep: true })
+
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
       `content-query-${hash(props)}`,
       () => {
@@ -111,9 +113,9 @@ export default defineComponent({
           queryBuilder = queryContent()
         }
 
-        if (only.value) { queryBuilder = queryBuilder.only(only.value) }
+        if (only.value) { queryBuilder = queryBuilder.only(only.value) as QueryBuilder<ParsedContentMeta> }
 
-        if (without.value) { queryBuilder = queryBuilder.without(without.value) }
+        if (without.value) { queryBuilder = queryBuilder.without(without.value) as QueryBuilder<ParsedContentMeta> }
 
         if (where.value) { queryBuilder = queryBuilder.where(where.value) }
 
@@ -136,14 +138,12 @@ export default defineComponent({
             return queryBuilder.find()
           }
 
-          return queryBuilder.findSurround(path) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
+          return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
         }
 
         return queryBuilder.find() as Promise<ParsedContent[]>
       }
     )
-
-    watch(() => props, () => refresh(), { deep: true })
 
     return {
       isPartial,

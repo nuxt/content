@@ -96,7 +96,8 @@ describe('Basic usage', async () => {
 
   test('Empty slot', async () => {
     const html = await $fetch('/features/empty-slot')
-    expect(html).contains('Empty!!!')
+    expect(html).contains('Nullish Document!!!')
+    expect(html).contains('Empty Child!!!')
   })
 
   test('<ContentDoc> head management (if same path)', async () => {

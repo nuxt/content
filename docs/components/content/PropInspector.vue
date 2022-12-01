@@ -10,12 +10,14 @@ const propType = computed(() => Array.isArray(props.prop) ? 'array' : typeof pro
 Type: {{ propType }}
 Value:
 {{ prop }}
-    </pre>
+  </pre>
 </template>
 
-<style scoped>
-pre {
-  padding: 1rem 1rem 0 1rem;
-  border-radius: 4px;
-}
+<style scoped lang="ts">
+css({
+  pre: {
+    padding: '1rem 1rem 0 1rem',
+    borderRadius: '4px'
+  }
+})
 </style>

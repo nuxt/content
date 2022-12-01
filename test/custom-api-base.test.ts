@@ -22,7 +22,7 @@ import { testComponents } from './features/components'
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 const apiBaseURL = '/my-content-api'
 
-describe('Custom api baaseURL', async () => {
+describe('Custom api baseURL', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     server: true,
@@ -105,7 +105,8 @@ describe('Custom api baaseURL', async () => {
 
   test('Empty slot', async () => {
     const html = await $fetch('/features/empty-slot')
-    expect(html).contains('Empty!!!')
+    expect(html).contains('Nullish Document!!!')
+    expect(html).contains('Empty Child!!!')
   })
 
   test('<ContentDoc> head management (if same path)', async () => {

@@ -1,11 +1,15 @@
 export default defineAppConfig({
+  github: {
+    owner: 'nuxt',
+    repo: 'content',
+    branch: 'main'
+  },
   docus: {
     title: 'Nuxt Content',
     description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
     layout: 'docs',
     image: 'https://content.nuxtjs.org/preview.png',
     url: 'https://content.nuxtjs.org',
-    debug: false,
     socials: {
       twitter: '@nuxt_js',
       github: 'nuxt/content'
@@ -23,26 +27,20 @@ export default defineAppConfig({
       level: 1
     },
     header: {
-      title: false,
-      logo: true,
+      logo: 'Logo',
       exclude: ['/v1', '/content-v1', '/fr', '/ja', '/ru']
     },
     footer: {
-      credits: {
-        icon: 'IconDocus',
-        text: 'Powered by Docus',
-        href: 'https://docus.com'
-      },
-      icons: [
+      iconLinks: [
         {
           label: 'NuxtJS',
           href: 'https://nuxtjs.org',
-          component: 'IconNuxt'
+          icon: 'IconNuxt'
         },
         {
           label: 'Vue Telescope',
           href: 'https://vuetelescope.com',
-          component: 'IconVueTelescope'
+          icon: 'IconVueTelescope'
         }
       ]
     }

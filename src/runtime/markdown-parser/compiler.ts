@@ -20,6 +20,12 @@ export default function (this: any, _options: MarkdownOptions) {
     if (Array.isArray(node)) {
       return node.map(parseAsJSON).filter(Boolean)
     }
+
+    // Remove double dashes and trailing dash from heading ids
+    if (node.tagName?.startsWith('h') && node.properties.id) {
+      node.properties.id = node.properties.id.replace(/-+/g, '-').replace(/-$/, '')
+    }
+
     /**
      * Element node creates an isolated children array to
      * allow nested elements

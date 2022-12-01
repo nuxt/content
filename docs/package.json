@@ -9,11 +9,11 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "npm:@nuxt-themes/docus-edge@latest",
+    "@nuxt-themes/docus": "^1.0.3",
     "@nuxthq/studio": "^0.2.3",
-    "@nuxtlabs/github-module": "npm:@nuxtlabs/github-module-edge@latest",
+    "@nuxtlabs/github-module": "^1.5.3",
     "monaco-editor-core": "^0.34.1",
-    "nuxt": "^3.0.0-rc.13",
+    "nuxt": "v3.0.0",
     "vue-plausible": "^1.3.2"
   }
 }

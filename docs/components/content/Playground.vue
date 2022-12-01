@@ -94,23 +94,23 @@ watch(content, refresh)
 </script>
 
 <template>
-  <div class="h-page max-h-page flex flex-col">
-    <div class="flex items-center">
-      <TabsHeader class="flex-1 w-1/2" :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
-      <TabsHeader class="flex-1 w-1/2" :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
+  <div class="playground">
+    <div class="tab-container">
+      <TabsHeader :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
+      <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
     </div>
-    <div class="flex overflow-hidden flex-1">
-      <div ref="editor" class="relative w-1/2 flex-1">
+    <div class="playground-main">
+      <div ref="editor">
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
-        <div v-else class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+        <div v-else class="loading">
           <Alert type="primary">
             <span>Editor is loading...</span>
             <Icon name="file-icons:sandbox" class="ml-2 inline" />
           </Alert>
         </div>
       </div>
-      <div class="w-1/2 flex-1 overflow-y-auto">
-        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
+      <div>
+        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="content" :value="doc">
           <template #empty>
             <div class="p-8">
               <Alert type="warning">
@@ -119,7 +119,10 @@ watch(content, refresh)
                 </p>
                 <br><br>
                 <p>
-                  Type any <span class="font-semibold">Markdown</span> or <span class="font-semibold">MDC code</span> in editor to see it replaced by rendered nodes in this panel.
+                  Type any
+                  <span class="font-semibold">Markdown</span> or
+                  <span class="font-semibold">MDC code</span>
+                  in editor to see it replaced by rendered nodes in this panel.
                 </p>
               </Alert>
             </div>
@@ -132,8 +135,53 @@ watch(content, refresh)
           read-only
           :model-value="docJSON"
         />
-        <!-- <pre v-if="tab === 1">{{ doc }}</pre> -->
       </div>
     </div>
   </div>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.flex': { display: 'flex' },
+  '.flex-1': { flex: 1 },
+  '.p-8': { padding: '{space.8}' },
+  '.overflow-hidden': { overflow: 'hidden' },
+  '.relative': { position: 'relative' },
+  '.playground': {
+    height: 'calc(100vh - 114px)',
+    maxHeight: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  '.tab-container': {
+    display: 'flex',
+    alignItems: 'center',
+    '> div': {
+      flex: 1
+    }
+  },
+  '.playground-main': {
+    display: 'flex',
+    overflow: 'hidden',
+    flex: 1,
+  },
+  '.playground-main > div': {
+    flex: 1,
+    overflowY: 'auto',
+    position: 'relative',
+  },
+  '.loading': {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  '.content': {
+    padding: '{space.8}',
+  }
+})
+</style>

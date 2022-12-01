@@ -35,20 +35,44 @@ onMounted(
 </script>
 
 <template>
-  <div class="relative h-full w-full">
-    <div v-if="editorState === 'loading'" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+  <div class="editor">
+    <div v-if="editorState === 'loading'" class="overlay">
       <Alert type="primary">
         <span>Editor is loading...</span>
         <Icon name="file-icons:sandbox" class="ml-2 inline" />
       </Alert>
     </div>
 
-    <div v-else-if="editorState === 'error'" class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+    <div v-else-if="editorState === 'error'" class="overlay">
       <Alert type="warning">
         <span>Error while loading editor!</span>
         <Icon name="heroicons-outline:cog" class="inline ml-2" />
       </Alert>
     </div>
-    <div ref="target" class="h-full w-full" />
+    <div ref="target" class="editor-target" />
   </div>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.editor': {
+    position: 'relative',
+    height: '100%',
+    width: '100%'
+  },
+  '.editor-target': {
+    height: '100%',
+    width: '100%'
+  },
+  '.overlay': {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+})
+</style>

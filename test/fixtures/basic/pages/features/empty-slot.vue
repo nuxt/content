@@ -1,13 +1,23 @@
 <template>
-  <ContentRenderer :value="emptyDocument">
-    <template #empty>
-      Empty!!!
-    </template>
-  </ContentRenderer>
+  <div>
+    <ContentRenderer :value="nullishDocument">
+      <template #empty>
+        Nullish Document!!!
+      </template>
+    </ContentRenderer>
+
+    <ContentRenderer :value="emptyChild">
+      <template #empty>
+        Empty Child!!!
+      </template>
+    </ContentRenderer>
+  </div>
 </template>
 
 <script setup>
-const emptyDocument = {
+const nullishDocument = null
+
+const emptyChild = {
   _path: '/_markdown',
   _dir: '',
   _draft: false,
