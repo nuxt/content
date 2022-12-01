@@ -96,11 +96,11 @@ watch(content, refresh)
 <template>
   <div class="playground">
     <div class="tab-container">
-      <TabsHeader class="flex-1" :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
-      <TabsHeader class="flex-1" :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
+      <TabsHeader :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
+      <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
     </div>
     <div class="playground-main">
-      <div ref="editor" class="relative flex-1">
+      <div ref="editor">
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
         <div v-else class="loading">
           <Alert type="primary">
@@ -109,7 +109,7 @@ watch(content, refresh)
           </Alert>
         </div>
       </div>
-      <div class="flex-1 overflow-y-auto">
+      <div>
         <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="content" :value="doc">
           <template #empty>
             <div class="p-8">
@@ -135,7 +135,6 @@ watch(content, refresh)
           read-only
           :model-value="docJSON"
         />
-        <!-- <pre v-if="tab === 1">{{ doc }}</pre> -->
       </div>
     </div>
   </div>
@@ -165,6 +164,11 @@ css({
     display: 'flex',
     overflow: 'hidden',
     flex: 1,
+  },
+  '.playground-main > div': {
+    flex: 1,
+    overflowY: 'auto',
+    position: 'relative',
   },
   '.loading': {
     position: 'absolute',
