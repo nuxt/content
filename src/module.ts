@@ -244,7 +244,10 @@ export default defineNuxtModule<ModuleOptions>({
     },
     watch: {
       ws: {
-        port: 4000,
+        port: {
+          port: 4000,
+          portRange: [4000, 4040]
+        },
         hostname: 'localhost',
         showURL: false
       }
