@@ -9,7 +9,7 @@ import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
 
-const withContentBase = url => withBase(url, useRuntimeConfig().public.content.api.baseURL)
+const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
 export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
 
@@ -49,8 +49,8 @@ export function createDB (storage: Storage) {
   }
 }
 
-let contentDatabase
-let contentDatabaseInitPromise
+let contentDatabase: ReturnType<typeof createDB> | null = null
+let contentDatabaseInitPromise: ReturnType<typeof initContentDatabase> | null = null
 export async function useContentDatabase () {
   if (contentDatabaseInitPromise) {
     await contentDatabaseInitPromise
@@ -58,7 +58,7 @@ export async function useContentDatabase () {
     contentDatabaseInitPromise = initContentDatabase()
     contentDatabase = await contentDatabaseInitPromise
   }
-  return contentDatabase
+  return contentDatabase!
 }
 
 /**
@@ -68,20 +68,20 @@ export async function useContentDatabase () {
  */
 async function initContentDatabase () {
   const nuxtApp = useNuxtApp()
-  const { clientDB } = useRuntimeConfig().public.content
+  const { content } = useRuntimeConfig().public
 
   const _contentDatabase = createDB(contentStorage)
   const integrity = await _contentDatabase.storage.getItem('integrity')
-  if (clientDB.integrity !== +integrity) {
-    const { contents, navigation } = await $fetch(withContentBase('cache.json')) as any
+  if (content.integrity !== +(integrity || 0)) {
+    const { contents, navigation } = await $fetch(withContentBase(`cache.${content.integrity}.json`)) as any
 
     await Promise.all(
-      contents.map(content => _contentDatabase.storage.setItem(`cache:${content._id}`, content))
+      contents.map((content: ParsedContent) => _contentDatabase.storage.setItem(`cache:${content._id}`, content))
     )
 
     await _contentDatabase.storage.setItem('navigation', navigation)
 
-    await _contentDatabase.storage.setItem('integrity', clientDB.integrity)
+    await _contentDatabase.storage.setItem('integrity', content.integrity)
   }
 
   // call `content:storage` hook to allow plugins to fill storage
@@ -91,11 +91,11 @@ async function initContentDatabase () {
   return _contentDatabase
 }
 
-export async function generateNavigation (query): Promise<Array<NavItem>> {
+export async function generateNavigation (query?: QueryBuilderParams): Promise<Array<NavItem>> {
   const db = await useContentDatabase()
 
   if (!getPreview() && Object.keys(query || {}).length === 0) {
-    return db.storage.getItem('navigation')
+    return db.storage.getItem('navigation') as Promise<Array<NavItem>>
   }
 
   const contents = await db.query(query)
@@ -116,11 +116,11 @@ export async function generateNavigation (query): Promise<Array<NavItem>> {
 
   const dirConfigs = await db.query().where({ _path: /\/_dir$/i, _partial: true }).find()
 
-  const configs = dirConfigs.reduce((configs, conf) => {
-    if (conf.title.toLowerCase() === 'dir') {
+  const configs = dirConfigs.reduce((configs, conf: ParsedContent) => {
+    if (conf.title?.toLowerCase() === 'dir') {
       conf.title = undefined
     }
-    const key = conf._path.split('/').slice(0, -1).join('/') || '/'
+    const key = conf._path!.split('/').slice(0, -1).join('/') || '/'
     configs[key] = {
       ...conf,
       // Extract meta from body. (non MD files)

@@ -1,16 +1,16 @@
 import { hash } from 'ohash'
-import { useCookie } from '#app'
+import { useCookie, useRuntimeConfig } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
-  let params = queryBuilder
+  const { content } = useRuntimeConfig().public
 
   // When params is an instance of QueryBuilder then we need to pick the params explicitly
-  if (typeof params?.params === 'function') { params = params.params() }
+  const params: QueryBuilderParams = typeof queryBuilder?.params === 'function' ? queryBuilder.params() : queryBuilder
 
-  const apiPath = withContentBase(params ? `/navigation/${hash(params)}.json` : '/navigation')
+  const apiPath = withContentBase(params ? `/navigation/${hash(params)}.${content.integerity}.json` : '/navigation')
 
   // Add `prefetch` to `<head>` in production
   if (!process.dev && process.server) {
@@ -19,10 +19,10 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
 
   if (shouldUseClientDB()) {
     const generateNavigation = await import('./client-db').then(m => m.generateNavigation)
-    return generateNavigation(params || {})
+    return generateNavigation(params)
   }
 
-  const data = await $fetch(apiPath, {
+  const data = await $fetch<NavItem[]>(apiPath, {
     method: 'GET',
     responseType: 'json',
     params: {
@@ -33,7 +33,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
 
   // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
   // to know if the response is a valid JSON or not
-  if (typeof data === 'string' && data.startsWith('<!DOCTYPE html>')) {
+  if (typeof data === 'string' && (data as string).startsWith('<!DOCTYPE html>')) {
     throw new Error('Not found')
   }
 

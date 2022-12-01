@@ -30,9 +30,9 @@ const resolveTheme = (theme: string | Record<string, string>): Record<string, Th
   }
 
   return Object.entries(theme).reduce((acc, [key, value]) => {
-    acc[key] = BUNDLED_THEMES.find(t => t === value)
+    acc[key] = BUNDLED_THEMES.find(t => t === value)!
     return acc
-  }, {})
+  }, {} as Record<string, Theme>)
 }
 
 /**

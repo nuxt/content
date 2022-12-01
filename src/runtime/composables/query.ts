@@ -1,6 +1,6 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useCookie } from '#app'
+import { useCookie, useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { jsonStringify } from '../utils/json'
@@ -10,6 +10,7 @@ import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
  * Query fetcher
  */
 export const createQueryFetch = <T = ParsedContent>(path?: string) => async (query: QueryBuilder<T>) => {
+  const { content } = useRuntimeConfig().public
   if (path) {
     if (query.params().first && (query.params().where || []).length === 0) {
       // If query contains `path` and does not contain any `where` condition
@@ -26,7 +27,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   const params = query.params()
 
-  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.json`)
+  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integerity}.json`)
 
   // Prefetch the query
   if (!process.dev && process.server) {
@@ -35,7 +36,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   if (shouldUseClientDB()) {
     const db = await import('./client-db').then(m => m.useContentDatabase())
-    return db.fetch(query)
+    return db.fetch(query as QueryBuilder<ParsedContent>)
   }
 
   const data = await $fetch(apiPath as any, {

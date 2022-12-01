@@ -278,6 +278,9 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
+    // Disable cache in dev mode
+    const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
+
     if (options.base) {
       logger.warn('content.base is deprecated. Use content.api.baseURL instead.')
       options.api.baseURL = withLeadingSlash(joinURL('api', options.base))
@@ -326,7 +329,7 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.json`)
+        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
       // Register source storages
@@ -583,10 +586,9 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      integrity: buildIntegrity,
       clientDB: {
-        isSPA: options.experimental.clientDB && nuxt.options.ssr === false,
-        // Disable cache in dev mode
-        integrity: nuxt.options.dev ? undefined : Date.now()
+        isSPA: options.experimental.clientDB && nuxt.options.ssr === false
       },
       api: {
         baseURL: options.api.baseURL
