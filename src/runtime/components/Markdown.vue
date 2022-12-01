@@ -8,7 +8,6 @@ let showDeprecatedMessage = true
  * Markdown component
  */
 export default defineComponent({
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Markdown',
   extends: ContentSlot,
   setup (props) {

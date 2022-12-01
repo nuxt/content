@@ -1,8 +1,11 @@
 import type { IncomingMessage } from 'http'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
+// @ts-ignore
 import fsDriver from 'unstorage/drivers/fs'
+// @ts-ignore
 import httpDriver from 'unstorage/drivers/http'
+// @ts-ignore
 import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { useLogger } from '@nuxt/kit'
@@ -55,11 +58,13 @@ const unstorageDrivers = {
  * Resolve driver of a mount.
  */
 export function getMountDriver (mount: MountOptions) {
-  if (unstorageDrivers[mount.driver]) {
-    return unstorageDrivers[mount.driver](mount as any)
+  const dirverName = mount.driver as keyof typeof unstorageDrivers
+  if (unstorageDrivers[dirverName]) {
+    return unstorageDrivers[dirverName](mount as any)
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(mount.driver).default(mount as any)
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -71,7 +76,7 @@ export function getMountDriver (mount: MountOptions) {
  * Generate mounts for content storages
  */
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
-  const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
+  const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
   const storageKeys = Object.keys(storages)
   if (
@@ -92,7 +97,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
       }
 
       if (typeof storage === 'object') {
-        mounts[key(storage.name, storage.prefix)] = storage
+        mounts[key(storage.name!, storage.prefix)] = storage
       }
 
       return mounts
@@ -101,7 +106,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
     storages = Object.entries(storages).reduce((mounts, [name, storage]) => {
       mounts[key(storage.name || name, storage.prefix)] = storage
       return mounts
-    }, {})
+    }, {} as Record<string, MountOptions>)
   }
 
   const defaultStorage = key('content')
@@ -156,13 +161,13 @@ export function processMarkdownOptions (options: ModuleOptions['markdown']) {
   }
 }
 
-function resolveMarkdownPlugins (plugins): Record<string, false | MarkdownPlugin> {
+function resolveMarkdownPlugins (plugins: ModuleOptions['markdown']['remarkPlugins']): Record<string, false | MarkdownPlugin> {
   if (Array.isArray(plugins)) {
     return Object.values(plugins).reduce((plugins, plugin) => {
       const [name, pluginOptions] = Array.isArray(plugin) ? plugin : [plugin, {}]
       plugins[name] = pluginOptions
       return plugins
-    }, {})
+    }, {} as Record<string, false | MarkdownPlugin>)
   }
   return plugins || {}
 }

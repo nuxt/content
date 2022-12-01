@@ -1,5 +1,4 @@
 
-import { defineNuxtConfig } from 'nuxt'
 import contentModule from '../../..'
 
 export default defineNuxtConfig({

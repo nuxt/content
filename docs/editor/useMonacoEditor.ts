@@ -108,6 +108,10 @@ export function useMonaco (
           onDidCreateEditor: options?.onDidCreateEditor
         })
 
+        setTimeout(() => {
+          options?.onDidCreateEditor?.()
+        }, 1000)
+
         isSetup.value = true
 
         editor.getModel()?.onDidChangeContent(() => {

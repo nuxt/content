@@ -8,8 +8,8 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "@nuxt/content": "npm:@nuxt/content-edge@latest",
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
-    "nuxt": "npm:nuxt3@latest"
+    "@nuxt/content": "latest",
+    "@nuxt/ui": "latest",
+    "nuxt": "latest"
   }
 }
