@@ -24,7 +24,7 @@ export default defineNuxtPlugin((nuxt) => {
     // Resolve key from navigation
     if (navigation && page) {
       const { navKeyFromPath } = useContentHelpers()
-      const layoutFromNav = navKeyFromPath(page._path, 'layout', navigation)
+      const layoutFromNav = navKeyFromPath(page._path!, 'layout', navigation)
       if (layoutFromNav) { return layoutFromNav }
     }
 
@@ -43,7 +43,7 @@ export default defineNuxtPlugin((nuxt) => {
     return 'default'
   }
 
-  const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force: boolean = false) => {
+  const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, force = false) => {
     const routeConfig = (to.meta.documentDriven || {}) as any
     // Disabled document driven mode on next route
     if (to.meta.documentDriven === false) {
@@ -51,6 +51,7 @@ export default defineNuxtPlugin((nuxt) => {
     }
 
     // Expose hook to be used for loading indicators
+    // @ts-ignore
     !force && nuxt.callHook('content:middleware:start')
 
     const { navigation, pages, globals, surrounds } = useContentState()
@@ -76,10 +77,7 @@ export default defineNuxtPlugin((nuxt) => {
             navigation.value = _navigation
             return _navigation
           })
-          .catch((_) => {
-            // eslint-disable-next-line no-console
-            // console.log('Could not fetch navigation!')
-          })
+          .catch(() => null)
       }
 
       promises.push(navigationQuery)
@@ -112,10 +110,7 @@ export default defineNuxtPlugin((nuxt) => {
               let type = 'findOne'
               if (query?.type) { type = query.type }
 
-              return queryContent(query)[type]().catch(() => {
-                // eslint-disable-next-line no-console
-                // console.log(`Could not find globals key: ${key}`)
-              })
+              return (queryContent(query) as any)[type]().catch(() => null)
             }
           )
         ).then(
@@ -159,10 +154,7 @@ export default defineNuxtPlugin((nuxt) => {
         return queryContent()
           .where(where)
           .findOne()
-          .catch(() => {
-            // eslint-disable-next-line no-console
-            // console.log(`Could not find page: ${to.path}`)
-          })
+          .catch(() => null)
       }
 
       promises.push(pageQuery)
@@ -197,10 +189,7 @@ export default defineNuxtPlugin((nuxt) => {
         // Exclude `body` for `surround`
           .without(['body'])
           .findSurround(surround)
-          .catch(() => {
-            // eslint-disable-next-line no-console
-            // console.log(`Could not find surrounding pages for: ${to.path}`)
-          })
+          .catch(() => null)
       }
 
       promises.push(surroundQuery)

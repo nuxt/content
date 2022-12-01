@@ -11,7 +11,6 @@ import {
 } from '@nuxt/kit'
 import { genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'

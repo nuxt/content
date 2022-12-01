@@ -49,7 +49,7 @@ onMounted(
         <Icon name="heroicons-outline:cog" class="inline ml-2" />
       </Alert>
     </div>
-    <div ref="target" class="editor-target"  />
+    <div ref="target" class="editor-target" />
   </div>
 </template>
 

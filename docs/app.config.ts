@@ -1,4 +1,9 @@
 export default defineAppConfig({
+  github: {
+    owner: 'nuxt',
+    repo: 'content',
+    branch: 'main'
+  },
   docus: {
     title: 'Nuxt Content',
     description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
