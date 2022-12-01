@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@nuxt-themes/docus": "^1.0.3",
-    "@nuxthq/studio": "^0.2.3",
+    "@nuxthq/studio": "^0.3.1",
     "@nuxtlabs/github-module": "^1.5.3",
     "monaco-editor-core": "^0.34.1",
     "nuxt": "v3.0.0",

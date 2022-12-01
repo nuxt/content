@@ -704,7 +704,7 @@
     unimport "^1.0.1"
     untyped "^1.0.0"
 
-"@nuxt/schema@3.0.0", "@nuxt/schema@^3.0.0", "@nuxt/schema@^3.0.0-rc.13":
+"@nuxt/schema@3.0.0", "@nuxt/schema@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0.tgz#d499fd7d8309f9bd3403411b32c19e726969cd71"
   integrity sha512-5fwsidhs5NjFzR8sIzHMXO0WFGkI3tCH3ViANn2W4N5qCwoYZ0n1sZBkQ9Esn1VoEed6RsIlTpWrPZPVtqNkGQ==
@@ -791,18 +791,6 @@
     vite-node "^0.25.2"
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^1.0.0"
-
-"@nuxthq/studio@^0.2.3":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.7.tgz#5302b15d376f9d6857148fd1aad301a28ec7f6ba"
-  integrity sha512-WTNO0hUHmyrxCIcPl8ltT022YZ2RmzFvMaHbQ+FpsjuF/wILOAM/i6kOiRcd/5+0xOkOssz+ZwoWElmNad+5RA==
-  dependencies:
-    "@nuxt/kit" "^3.0.0-rc.13"
-    "@nuxt/schema" "^3.0.0-rc.13"
-    defu "^6.1.0"
-    nuxt-component-meta "^0.3.3"
-    socket.io-client "^4.5.3"
-    ufo "^0.8.6"
 
 "@nuxthq/studio@^0.3.1":
   version "0.3.1"
@@ -2246,7 +2234,7 @@ define-lazy-prop@^2.0.0:
   resolved "https://registry.yarnpkg.com/define-lazy-prop/-/define-lazy-prop-2.0.0.tgz#3f7ae421129bcaaac9bc74905c98a0009ec9ee7f"
   integrity sha512-Ds09qNh8yw3khSjiJjiUInaGX9xlqZDY7JVryGxdxV7NPeuqQfplOpQ66yJFZut3jLa5zOwkXw1g9EI2uKh4Og==
 
-defu@^6.0.0, defu@^6.1.0, defu@^6.1.1:
+defu@^6.0.0, defu@^6.1.1:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/defu/-/defu-6.1.1.tgz#a12c712349197c545dc61d3cd3b607b4cc7ef0c1"
   integrity sha512-aA964RUCsBt0FGoNIlA3uFgo2hO+WWC0fiC6DBps/0SFzkKcYoM/3CzVLIa5xSsrFjdioMdYgAIbwo80qp2MoA==
@@ -4502,7 +4490,7 @@ nuxi@3.0.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt-component-meta@^0.3.3, nuxt-component-meta@^0.3.5:
+nuxt-component-meta@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.3.5.tgz#8b631ddc0a56dc792270b1bb74ea76ff25d01a10"
   integrity sha512-1pknzvuZWpj8qASTqJo6mC4KDX1/qRgk68FchzoRVIoxgisrgQ0/dlWDj/XZ+1HTecxZufTWc5ckrPUzZgWkQg==
