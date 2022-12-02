@@ -585,16 +585,16 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt-themes/docus@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.0.3.tgz#e3db8cb0112e51e233906e45969af9c93e403057"
-  integrity sha512-mco66YNGIBGCqi/iI/HXys4ZoqA2NVakNrZLXxS3Krxm9xruq3hiUslKXbJEn6FNxuncB6e9mS+mnQI/Pa1WAQ==
+"@nuxt-themes/docus@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.1.1.tgz#9a5bad83ba2fd5a9b527cff43be15da65eda4111"
+  integrity sha512-BQcQ3nkP18qeZJk5pALZM5T9fqAujO+Odifn9Di7oE8cyME3GffFZOzpOcMv0Ss68lzwzGIzW6GLwzOfV/x5Vg==
   dependencies:
     "@docsearch/css" "^3.3.0"
     "@docsearch/js" "^3.3.0"
     "@fontsource/inter" "^4.5.14"
     "@iconify/vue" "^4.0.1"
-    "@nuxt-themes/elements" "^0.1.0"
+    "@nuxt-themes/elements" "^0.2.0"
     "@nuxt-themes/tokens" latest
     "@nuxt-themes/typography" latest
     "@nuxt/content" "^2.2.2"
@@ -605,10 +605,10 @@
     "@vueuse/nuxt" "^9.6.0"
     pinceau latest
 
-"@nuxt-themes/elements@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/elements/-/elements-0.1.0.tgz#56031a7fc8068017fa27ed9e30b7afab10ef2842"
-  integrity sha512-OndK0hf2vy/4MoUOGE9FuRZDZuMBGgUaKcThkiWhlfXzqV7zz/Kjv8v1oQbAWlF/ISePmMCkVMmPh1Aq/8dLdQ==
+"@nuxt-themes/elements@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/elements/-/elements-0.2.0.tgz#2c1b2becd66099471efe831bde88e5b1ff22ffc9"
+  integrity sha512-1QMw+f7jI5b4GjiAsD2we2woZ181YYACn8TZoA+UHAo4wM5CVpN+Nw+ds4eYdmW4hQc5pVx1fj0lc15/l/5GOQ==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@vueuse/core" "^9.6.0"
@@ -828,12 +828,12 @@
     lodash.template "^4.5.0"
     pathe "^1.0.0"
 
-"@nuxtlabs/github-module@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.3.tgz#9aa50c96b88f023dc73f2c3c5461abcdc8d13c71"
-  integrity sha512-dxjhyCRkcCHw73lQriIdertjIk6VAt6VTtdh25pBtFtEW9yGNiG20QrF7CT5Rl20PiKLHNa4jrQfnPNkJPRvHQ==
+"@nuxtlabs/github-module@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.4.tgz#4ca66b69facaec00305ad2d97431fd59274b3a0d"
+  integrity sha512-hjseUtQQ2wwloqHPopAIz0C3QxjE/+H+xyCNB7cY3mXt9jqFvIq1fn+hGOMCCGGdB5qKXoul2OnqosKqyvcMXA==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.13"
+    "@nuxt/kit" "^3.0.0"
     "@octokit/graphql" "^5.0.1"
     "@octokit/rest" "^19.0.4"
     remark-gfm "^3.0.1"
