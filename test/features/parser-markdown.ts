@@ -181,20 +181,23 @@ export const testMarkdownParser = () => {
     })
 
     test('No trailing dashes in heading ids', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.md',
-          content: [
-            '# `<Alert />` ',
-            '## `<Alert />` -',
-            '### `<Alert />` \\#',
-            '### `<Alert />`.'
-          ].join('\n')
-        }
-      })
-      expect(parsed.body.children[0].props.id).toEqual('alert')
-      expect(parsed.body.children[1].props.id).toEqual('alert')
+      const headings = [
+        '# `<Alert />` ',
+        '## `<Alert />` -',
+        '### `<Alert />` \\#',
+        '### `<Alert />`.',
+        '### 🎨 Alert'
+      ]
+      for (const heading of headings) {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: heading
+          }
+        })
+        expect(parsed.body.children[0].props.id).toEqual('alert')
+      }
     })
   })
 }

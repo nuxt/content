@@ -23,7 +23,10 @@ export default function (this: any, _options: MarkdownOptions) {
 
     // Remove double dashes and trailing dash from heading ids
     if (node.tagName?.startsWith('h') && node.properties.id) {
-      node.properties.id = node.properties.id.replace(/-+/g, '-').replace(/-$/, '')
+      node.properties.id = node.properties.id
+        .replace(/-+/g, '-')
+        .replace(/-$/, '')
+        .replace(/^-/, '')
     }
 
     /**
