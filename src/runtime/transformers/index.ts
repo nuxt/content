@@ -5,6 +5,7 @@ import csv from './csv'
 import markdown from './markdown'
 import yaml from './yaml'
 import pathMeta from './path-meta'
+import shiki from './shiki'
 import json from './json'
 
 const TRANSFORMERS = [
@@ -12,10 +13,11 @@ const TRANSFORMERS = [
   markdown,
   json,
   yaml,
+  shiki,
   pathMeta
 ]
 
-function getParser (ext, additionalTransformers: ContentTransformer[] = []): ContentTransformer | undefined {
+function getParser (ext: string, additionalTransformers: ContentTransformer[] = []): ContentTransformer | undefined {
   let parser = additionalTransformers.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
   if (!parser) {
     parser = TRANSFORMERS.find(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.parse)
@@ -24,7 +26,7 @@ function getParser (ext, additionalTransformers: ContentTransformer[] = []): Con
   return parser
 }
 
-function getTransformers (ext, additionalTransformers: ContentTransformer[] = []) {
+function getTransformers (ext: string, additionalTransformers: ContentTransformer[] = []) {
   return [
     ...additionalTransformers.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform),
     ...TRANSFORMERS.filter(p => ext.match(new RegExp(p.extensions.join('|'), 'i')) && p.transform)
@@ -34,7 +36,7 @@ function getTransformers (ext, additionalTransformers: ContentTransformer[] = []
 /**
  * Parse content file using registered plugins
  */
-export async function transformContent (id, content, options: TransformContentOptions = {}) {
+export async function transformContent (id: string, content: string, options: TransformContentOptions = {}) {
   const { transformers = [] } = options
   // Call hook before parsing the file
   const file = { _id: id, body: content }
@@ -54,8 +56,14 @@ export async function transformContent (id, content, options: TransformContentOp
   const result = await matchedTransformers.reduce(async (prev, cur) => {
     const next = (await prev) || parsed
 
-    const transformOptions = options[camelCase(cur.name)] || {}
-    return cur.transform!(next, transformOptions)
+    const transformOptions = options[camelCase(cur.name)]
+
+    // disable transformer if options is false
+    if (transformOptions === false) {
+      return next
+    }
+
+    return cur.transform!(next, transformOptions || {})
   }, Promise.resolve(parsed))
 
   return result

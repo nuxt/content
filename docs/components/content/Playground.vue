@@ -1,7 +1,6 @@
 <script setup>
 import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
-import { parse } from '../../../src/runtime/markdown-parser'
-import { useShiki } from '../../editor/useShiki.ts'
+import { transformContent } from '../../../src/runtime/transformers'
 
 const INITIAL_CODE = `---
 title: MDC
@@ -32,32 +31,15 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
   ::
 ::
 `
-const shiki = await useShiki()
+
 const route = useRoute()
 
 const content = ref(route.query.content || INITIAL_CODE)
 
 const { data: doc, refresh } = await useAsyncData('playground-' + content.value, async () => {
   try {
-    // const startParse = Date.now()
-    let parsed = await parse(content.value)
-    // const startHighlight = Date.now()
-    parsed = await shiki(parsed)
-
-    // console.log(`Parsed: ${startHighlight - startParse}ms, Highlighted: ${Date.now() - startHighlight}ms`)
-
-    return {
-      _id: 'content:index.md',
-      _path: '/',
-      _file: 'index.md',
-      _extension: 'md',
-      _draft: false,
-      _type: 'markdown',
-      updatedAt: new Date().toISOString(),
-      ...parsed.meta || {},
-      ...parsed,
-      meta: undefined
-    }
+    const parsed = await transformContent('content:index.md', content.value)
+    return parsed
   } catch (e) {
     return doc.value
   }

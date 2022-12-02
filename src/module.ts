@@ -465,22 +465,6 @@ export default defineNuxtModule<ModuleOptions>({
       addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
     }
 
-    // Register highlighter
-    if (options.highlight) {
-      contentContext.transformers.push(resolveRuntimeModule('./transformers/shiki'))
-      // @ts-ignore
-      contentContext.highlight.apiURL = `${options.api.baseURL}/highlight`
-
-      nuxt.hook('nitro:config', (nitroConfig) => {
-        nitroConfig.handlers = nitroConfig.handlers || []
-        nitroConfig.handlers.push({
-          method: 'post',
-          route: `${options.api.baseURL}/highlight`,
-          handler: resolveRuntimeModule('./server/api/highlight')
-        })
-      })
-    }
-
     // Register document-driven
     if (options.documentDriven) {
       // Enable every feature by default

@@ -1,10 +1,13 @@
 import { visit } from 'unist-util-visit'
-import { defineTransformer } from './utils'
+import { MarkdownNode } from '../../types'
+import { defineTransformer } from '../utils'
+import { useShikiHighlighter } from './highlighter'
 
 export default defineTransformer({
   name: 'highlight',
   extensions: ['.md'],
   transform: async (content, options = {}) => {
+    const shikiHighlighter = useShikiHighlighter(options)
     const tokenColors: Record<string, {colors: any, className: string}> = {}
     const codeBlocks: any[] = []
     const inlineCodes: any = []
@@ -48,18 +51,11 @@ export default defineTransformer({
     /**
      * Highlight inline code
      */
-    async function highlightInline (node) {
-      const code = node.children[0].value
+    async function highlightInline (node: MarkdownNode) {
+      const code = node.children![0].value!
 
       // Fetch highlighted tokens
-      const lines = await $fetch<any[]>(options.apiURL, {
-        method: 'POST',
-        body: {
-          code,
-          lang: node.props.lang || node.props.language,
-          theme: options.theme
-        }
-      })
+      const lines = await shikiHighlighter.getHighlightedTokens(code, node.props!.lang || node.props!.language, options.theme)
 
       // Generate highlighted children
       node.children = lines[0].map(tokenSpan)
@@ -73,21 +69,14 @@ export default defineTransformer({
     /**
      * Highlight a code block
      */
-    async function highlightBlock (node) {
-      const { code, language: lang, highlights = [] } = node.props
+    async function highlightBlock (node: MarkdownNode) {
+      const { code, language: lang, highlights = [] } = node.props!
 
       // Fetch highlighted tokens
-      const lines = await $fetch<any[]>(options.apiURL, {
-        method: 'POST',
-        body: {
-          code,
-          lang,
-          theme: options.theme
-        }
-      })
+      const lines = await shikiHighlighter.getHighlightedTokens(code, lang, options.theme)
 
       // Generate highlighted children
-      const innerCodeNode = node.children[0].children[0]
+      const innerCodeNode = node.children![0].children![0]
       innerCodeNode.children = lines.map((line, lineIndex) => ({
         type: 'element',
         tag: 'span',
@@ -97,7 +86,7 @@ export default defineTransformer({
       return node
     }
 
-    function getColorProps (token) {
+    function getColorProps (token: { color?: string | object }) {
       if (!token.color) {
         return {}
       }
@@ -114,7 +103,7 @@ export default defineTransformer({
       return { class: tokenColors[key].className }
     }
 
-    function tokenSpan (token) {
+    function tokenSpan (token: { content: string, color?: string | object }) {
       return {
         type: 'element',
         tag: 'span',
