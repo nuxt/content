@@ -326,7 +326,9 @@ export default defineNuxtModule<ModuleOptions>({
         },
         {
           method: 'get',
-          route: `${options.api.baseURL}/cache.json`,
+          route: nuxt.options.dev
+            ? `${options.api.baseURL}/cache.json`
+            : `${options.api.baseURL}/cache.${buildIntegrity}.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
