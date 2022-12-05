@@ -561,7 +561,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
-    // Generate cache integerity based on content context
+    // Generate cache integrity based on content context
     const cacheIntegrity = hash({
       locales: options.locales,
       options: options.defaultLocale,

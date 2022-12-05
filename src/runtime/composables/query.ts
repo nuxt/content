@@ -27,7 +27,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   const params = query.params()
 
-  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integerity}.json`)
+  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
   // Prefetch the query
   if (!process.dev && process.server) {
