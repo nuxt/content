@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
 import { useShikiHighlighter } from '../../../../../src/runtime/transformers/shiki/highlighter'
-import type { HighlightParams } from '../../../../../src/runtime/types'
+import type { HighlightParams } from '../../../../../src/runtime/transformers/shiki/types'
 import { useRuntimeConfig } from '#imports'
 
 const resolveBody = (body: Partial<HighlightParams>) => {

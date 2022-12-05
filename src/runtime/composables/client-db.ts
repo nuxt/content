@@ -73,7 +73,7 @@ async function initContentDatabase () {
   const _contentDatabase = createDB(contentStorage)
   const integrity = await _contentDatabase.storage.getItem('integrity')
   if (content.integrity !== +(integrity || 0)) {
-    const { contents, navigation } = await $fetch(withContentBase(`cache.${content.integrity}.json`)) as any
+    const { contents, navigation } = await $fetch(withContentBase(content.integrity ? `cache.${content.integrity}.json` : 'cache.json')) as any
 
     await Promise.all(
       contents.map((content: ParsedContent) => _contentDatabase.storage.setItem(`cache:${content._id}`, content))

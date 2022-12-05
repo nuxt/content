@@ -1,12 +1,12 @@
-import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme, Highlighter } from 'shiki-es'
+import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as ShikiTheme, Highlighter } from 'shiki-es'
 import consola from 'consola'
 import type { ModuleOptions } from '../../../module'
-import { HighlightThemedToken } from '../../types'
 import { createSingleton } from '../utils'
 import mdcTMLanguage from './languages/mdc.tmLanguage.json'
+import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenColorMap } from './types'
 
 // Re-create logger locally as utils cannot be imported from here
-export const logger = consola.withScope('@nuxt/content')
+const logger = consola.withScope('@nuxt/content')
 
 /**
  * Resolve Shiki compatible lang from string.
@@ -19,7 +19,7 @@ const resolveLang = (lang: string): Lang =>
 /**
  * Resolve Shiki compatible theme from string.
  */
-const resolveTheme = (theme: string | Record<string, string>): Record<string, Theme> | undefined => {
+const resolveTheme = (theme: string | Record<string, string>): Record<string, ShikiTheme> | undefined => {
   if (!theme) {
     return
   }
@@ -32,7 +32,7 @@ const resolveTheme = (theme: string | Record<string, string>): Record<string, Th
   return Object.entries(theme).reduce((acc, [key, value]) => {
     acc[key] = BUNDLED_THEMES.find(t => t === value)!
     return acc
-  }, {} as Record<string, Theme>)
+  }, {} as Record<string, ShikiTheme>)
 }
 
 export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions['highlight'], false>) => {
@@ -56,6 +56,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
           'html',
           'md',
           'yaml',
+          'vue',
           {
             id: 'md',
             scopeName: 'text.markdown.mdc',
@@ -68,13 +69,14 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     }
     return promise
   }
-  const getHighlightedTokens = async (code: string, lang: Lang, theme: Theme | Record<string, Theme>) => {
+
+  const getHighlightedTokens = async (code: string, lang: Lang, theme: Theme) => {
     const highlighter = await getShikiHighlighter()
     // Remove trailing carriage returns
     code = code.replace(/\n+$/, '')
     // Resolve lang & theme (i.e check if shiki supports them)
     lang = resolveLang(lang || '')
-    theme = resolveTheme(theme || '') || { default: highlighter.getTheme() as any as Theme }
+    theme = resolveTheme(theme || '') || { default: highlighter.getTheme() as any as ShikiTheme }
 
     // Skip highlight if lang is not supported
     if (!lang) {
@@ -130,15 +132,84 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     return highlightedCode
   }
 
+  const getHighlightedAST = async (code: string, lang: Lang, theme: Theme, opts?: Partial<HighlighterOptions>): Promise<Array<MarkdownNode>> => {
+    const lines = await getHighlightedTokens(code, lang, theme)
+    const { highlights = [], colorMap = {} } = opts || {}
+
+    return lines.map((line, lineIndex) => ({
+      type: 'element',
+      tag: 'span',
+      props: { class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim() },
+      children: line.map(tokenSpan)
+    }))
+
+    function getColorProps (token: { color?: string | object }) {
+      if (!token.color) {
+        return {}
+      }
+      if (typeof token.color === 'string') {
+        return { style: { color: token.color } }
+      }
+      const key = Object.values(token.color).join('')
+      if (!colorMap[key]) {
+        colorMap[key] = {
+          colors: token.color,
+          className: 'ct-' + Math.random().toString(16).substring(2, 8) // hash(key)
+        }
+      }
+      return { class: colorMap[key].className }
+    }
+
+    function tokenSpan (token: { content: string, color?: string | object }) {
+      return {
+        type: 'element',
+        tag: 'span',
+        props: getColorProps(token),
+        children: [{ type: 'text', value: token.content }]
+      }
+    }
+  }
+
+  const getHighlightedCode = async (code: string, lang: Lang, theme: Theme, opts?: Partial<HighlighterOptions>) => {
+    const colorMap = opts?.colorMap || {}
+    const highlights = opts?.highlights || []
+    const ast = await getHighlightedAST(code, lang, theme, { colorMap, highlights })
+
+    function renderNode (node: any) {
+      if (node.type === 'text') {
+        return node.value
+      }
+      const children = node.children.map(renderNode).join('')
+      return `<${node.tag} class="${node.props.class}">${children}</${node.tag}>`
+    }
+
+    return {
+      code: ast.map(renderNode).join(''),
+      styles: generateStyles(colorMap)
+    }
+  }
+
+  const generateStyles = (colorMap: TokenColorMap) => {
+    const colors: string[] = []
+    for (const colorClass of Object.values(colorMap)) {
+      Object.entries(colorClass.colors).forEach(([variant, color]) => {
+        if (variant === 'default') {
+          colors.unshift(`.${colorClass.className}{color:${color}}`)
+        } else {
+          colors.push(`.${variant} .${colorClass.className}{color:${color}}`)
+        }
+      })
+    }
+    return colors.join('\n')
+  }
+
   return {
-    getHighlightedTokens
+    getHighlightedTokens,
+    getHighlightedAST,
+    getHighlightedCode,
+    generateStyles
   }
 })
-
-interface HighlightThemedTokenLine {
-  key: string
-  tokens: HighlightThemedToken[]
-}
 
 function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedTokenLine) {
   const mergedTokens: HighlightThemedToken[] = []
