@@ -585,16 +585,16 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt-themes/docus@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.0.3.tgz#e3db8cb0112e51e233906e45969af9c93e403057"
-  integrity sha512-mco66YNGIBGCqi/iI/HXys4ZoqA2NVakNrZLXxS3Krxm9xruq3hiUslKXbJEn6FNxuncB6e9mS+mnQI/Pa1WAQ==
+"@nuxt-themes/docus@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.1.3.tgz#e7dd236855341329692672b9d0f273ab8e33856b"
+  integrity sha512-iMNCl7Ju58/355c5pHSoGMBIrXyTUgxpABo6WFzzg4k3MsrxXCoYxGHf5Z41y2ram1spxa7luPRBfYC+efuW6w==
   dependencies:
     "@docsearch/css" "^3.3.0"
     "@docsearch/js" "^3.3.0"
     "@fontsource/inter" "^4.5.14"
     "@iconify/vue" "^4.0.1"
-    "@nuxt-themes/elements" "^0.1.0"
+    "@nuxt-themes/elements" "^0.2.0"
     "@nuxt-themes/tokens" latest
     "@nuxt-themes/typography" latest
     "@nuxt/content" "^2.2.2"
@@ -605,10 +605,10 @@
     "@vueuse/nuxt" "^9.6.0"
     pinceau latest
 
-"@nuxt-themes/elements@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/elements/-/elements-0.1.0.tgz#56031a7fc8068017fa27ed9e30b7afab10ef2842"
-  integrity sha512-OndK0hf2vy/4MoUOGE9FuRZDZuMBGgUaKcThkiWhlfXzqV7zz/Kjv8v1oQbAWlF/ISePmMCkVMmPh1Aq/8dLdQ==
+"@nuxt-themes/elements@^0.2.0":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/elements/-/elements-0.2.2.tgz#4d7e73718e120ea31f905f1505f997ac01fa35b3"
+  integrity sha512-tChOl9qLm+QkzUx5LJDPiB2RWW2lr11BimWKuT10x7ky5MvDKCn3XzyI4GZO3Xvf4x7Tx/DmGCum183Vtfsw+Q==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@vueuse/core" "^9.6.0"
@@ -805,6 +805,19 @@
     socket.io-client "^4.5.4"
     ufo "^1.0.1"
 
+"@nuxthq/studio@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.3.5.tgz#0d6f51a58442a44e3bcf1751c00a5903042ff923"
+  integrity sha512-FAAB36wqfGVMDCagVN2HEBj4wFcp9Fm5Im02/21nVicWnwPfA3XVTyrqKe1cKE1H1rM5we+M8GKiTVNOgtBcUA==
+  dependencies:
+    "@nuxt/kit" "^3.0.0"
+    "@nuxt/schema" "^3.0.0"
+    defu "^6.1.1"
+    nuxt-component-meta "^0.3.8"
+    nuxt-config-schema "^0.3.4"
+    socket.io-client "^4.5.4"
+    ufo "^1.0.1"
+
 "@nuxtjs/algolia@^1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@nuxtjs/algolia/-/algolia-1.3.1.tgz#8a30fc59ed9c8764385dee9bbac5cae541243e7a"
@@ -828,12 +841,12 @@
     lodash.template "^4.5.0"
     pathe "^1.0.0"
 
-"@nuxtlabs/github-module@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.3.tgz#9aa50c96b88f023dc73f2c3c5461abcdc8d13c71"
-  integrity sha512-dxjhyCRkcCHw73lQriIdertjIk6VAt6VTtdh25pBtFtEW9yGNiG20QrF7CT5Rl20PiKLHNa4jrQfnPNkJPRvHQ==
+"@nuxtlabs/github-module@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.4.tgz#4ca66b69facaec00305ad2d97431fd59274b3a0d"
+  integrity sha512-hjseUtQQ2wwloqHPopAIz0C3QxjE/+H+xyCNB7cY3mXt9jqFvIq1fn+hGOMCCGGdB5qKXoul2OnqosKqyvcMXA==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.13"
+    "@nuxt/kit" "^3.0.0"
     "@octokit/graphql" "^5.0.1"
     "@octokit/rest" "^19.0.4"
     remark-gfm "^3.0.1"
@@ -4500,7 +4513,17 @@ nuxt-component-meta@^0.3.5:
     typescript "^4.9.3"
     vue-component-meta "^1.0.9"
 
-nuxt-config-schema@^0.3.3:
+nuxt-component-meta@^0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.3.8.tgz#49bd171764368c9fcb40df64c3b528df0f605381"
+  integrity sha512-r1nQ7aKE7ib4YYjSTmqnoGaMNtlqOLvVkGcGPqn5kKJEaWssmAdk6ahzHByV/SRS5+NVEwFIB3GpKCVP1A58DQ==
+  dependencies:
+    "@nuxt/kit" "^3.0.0"
+    scule "^1.0.0"
+    typescript "^4.9.3"
+    vue-component-meta "^1.0.9"
+
+nuxt-config-schema@^0.3.3, nuxt-config-schema@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/nuxt-config-schema/-/nuxt-config-schema-0.3.4.tgz#dd01f9ec0a13e1c067722954fa86804620cda9b9"
   integrity sha512-VYmV6vVkg3QAuMNC0H/goSi7RQN/DoKoICvQy9ycuKxePc/XOYvWdDI3aIlc4XHrN1qWPdtujmE87lj6RL2r9Q==
