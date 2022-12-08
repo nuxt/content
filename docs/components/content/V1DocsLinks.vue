@@ -38,9 +38,9 @@ css({
     justifyContent: 'center'
   },
   '.links-wrapper a': {
-    color: '{colors.black}',
+    color: '{color.black}',
     '@dark': {
-      color: '{colors.white}'
+      color: '{color.white}'
     }
   }
 })

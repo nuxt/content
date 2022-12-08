@@ -46,12 +46,12 @@ css({
     paddingBottom: '{space.4}',
 
     'h2': {
-      fontSize: '{fontSizes.2xl}',
-      fontWeight: '{fontWeights.bold}',
-      color: '{colors.gray.900}',
+      fontSize: '{fontSize.2xl}',
+      fontWeight: '{fontWeight.bold}',
+      color: '{color.gray.900}',
       marginTop: '{space.8}',
       '@dark': {
-        color: '{colors.gray.100}'
+        color: '{color.gray.100}'
       }
     }
   },
