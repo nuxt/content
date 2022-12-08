@@ -35,15 +35,15 @@ css({
     gap: '{space.1}',
 
     '@dark': {
-      color: '{colors.primary.100}',
+      color: '{color.primary.100}',
       backgroundColor: 'transparent',
-      borderColor: '{colors.primary.700}'
+      borderColor: '{color.primary.700}'
     },
 
     '&:hover': {
-      backgroundColor: '{colors.primary.200}',
+      backgroundColor: '{color.primary.200}',
       '@dark': {
-        backgroundColor: '{colors.primary.900}'
+        backgroundColor: '{color.primary.900}'
       },
     }
   },
