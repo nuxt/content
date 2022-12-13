@@ -1,17 +1,23 @@
 import type { H3Event } from 'h3'
 import type { ParsedContent, QueryBuilder } from '../types'
 import { isPreview } from './preview'
-import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
+import { cacheStorage, getContent, getContentsList } from './storage'
+import { useRuntimeConfig } from '#imports'
 
 export async function getContentIndex (event: H3Event) {
+  const defaultLocale = useRuntimeConfig().content.defaultLocale
   let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string[]>
   if (!contentIndex) {
     // Fetch all contents
-    const data = await serverQueryContent(event).find()
+    const data = await getContentsList(event)
 
     contentIndex = data.reduce((acc, item) => {
       acc[item._path!] = acc[item._path!] || []
-      acc[item._path!].push(item._id)
+      if (item._locale === defaultLocale) {
+        acc[item._path!].unshift(item._id)
+      } else {
+        acc[item._path!].push(item._id)
+      }
       return acc
     }, {} as Record<string, string[]>)
 

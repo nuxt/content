@@ -18,6 +18,7 @@ import { testHighlighter } from './features/highlighter'
 import { testMarkdownRenderer } from './features/renderer-markdown'
 import { testParserOptions } from './features/parser-options'
 import { testComponents } from './features/components'
+import { testLocales } from './features/locales'
 
 const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -130,6 +131,8 @@ describe('Basic usage', async () => {
     expect(spyConsoleWarn).toHaveBeenCalled()
     expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')
   })
+
+  testLocales()
 
   testComponents()
 

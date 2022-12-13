@@ -281,6 +281,9 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
+    // Ensure default locale alway is the first item of locales
+    options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
+
     // Disable cache in dev mode
     const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
 
