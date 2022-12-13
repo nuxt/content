@@ -4,19 +4,16 @@ import { isPreview } from './preview'
 import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
 
 export async function getContentIndex (event: H3Event) {
-  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string>
+  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string[]>
   if (!contentIndex) {
-    // Fetch all content
+    // Fetch all contents
     const data = await serverQueryContent(event).find()
 
     contentIndex = data.reduce((acc, item) => {
-      if (!acc[item._path!]) {
-        acc[item._path!] = item._id
-      } else if (item._id.startsWith('content:')) {
-        acc[item._path!] = item._id
-      }
+      acc[item._path!] = acc[item._path!] || []
+      acc[item._path!].push(item._id)
       return acc
-    }, {} as Record<string, string>)
+    }, {} as Record<string, string[]>)
 
     await cacheStorage.setItem('content-index.json', contentIndex)
   }
@@ -33,9 +30,10 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
-      .map(key => index[key])
+      .flatMap(key => index[key])
 
     const contents = await Promise.all(keys.map(key => getContent(event, key)))
+
     return contents as unknown as Promise<T[]>
   }
 
