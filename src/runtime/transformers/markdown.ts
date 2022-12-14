@@ -23,7 +23,7 @@ export default defineTransformer({
 })
 
 async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = {}) {
-  const resolvedPlugins = {}
+  const resolvedPlugins: Record<string, false | MarkdownPlugin & { instance: any }> = {}
   for (const [name, plugin] of Object.entries(plugins)) {
     if (plugin) {
       resolvedPlugins[name] = {

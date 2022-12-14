@@ -281,6 +281,9 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
 
+    // Ensure default locale alway is the first item of locales
+    options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
+
     // Disable cache in dev mode
     const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
 
@@ -564,6 +567,8 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      locales: options.locales,
+      defaultLocale: contentContext.defaultLocale,
       integrity: buildIntegrity,
       clientDB: {
         isSPA: options.experimental.clientDB && nuxt.options.ssr === false
@@ -678,6 +683,10 @@ interface ModulePublicRuntimeConfig {
     isSPA: boolean
     integrity: number
   }
+
+  defaultLocale: ModuleOptions['defaultLocale']
+
+  locales: ModuleOptions['locales']
 
   tags: Record<string, string>
 

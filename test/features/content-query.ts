@@ -1,8 +1,52 @@
-import { describe, expect, test } from 'vitest'
-import { $fetch } from '@nuxt/test-utils'
+import { describe, expect, test, assert } from 'vitest'
+import { $fetch, useTestContext } from '@nuxt/test-utils'
+import { hash } from 'ohash'
 
 export const testContentQuery = () => {
+  // @ts-ignore
+  const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
+
   describe('Content Queries', () => {
+    const fetchDocument = (_id: string) => {
+      const params = { first: true, where: { _id } }
+      const qid = hash(params)
+      return $fetch(`${apiBaseUrl}/query/${qid}`, {
+        params: { _params: JSON.stringify(params) }
+      })
+    }
+    test('List contents', async () => {
+      const params = { only: '_id' }
+      const qid = hash(params)
+      const docs = await $fetch(`${apiBaseUrl}/query/${qid}`, {
+        params: { _params: JSON.stringify(params) }
+      })
+
+      const ids = docs.map(doc => doc._id)
+
+      assert(ids.length > 0)
+      assert(ids.includes('content:index.md'))
+
+      // Ignored files should be listed
+      assert(ids.includes('content:.dot-ignored.md') === false, 'Ignored files with `.` should not be listed')
+      assert(ids.includes('content:-dash-ignored.md') === false, 'Ignored files with `-` should not be listed')
+
+      assert(ids.includes('fa-ir:fa:hello.md') === false, 'Files with `fa-ir` prefix should be listed')
+    })
+
+    test('Get contents index', async () => {
+      const index = await fetchDocument('content:index.md')
+
+      expect(index).toHaveProperty('body')
+
+      expect(index.body).toMatchSnapshot('basic-index-body')
+    })
+
+    test('Get ignored contents', async () => {
+      const ignored = await fetchDocument('content:.dot-ignored.md').catch(_err => null)
+
+      expect(ignored).toBeNull()
+    })
+
     test('Find index', async () => {
       const content = await $fetch('/')
 
