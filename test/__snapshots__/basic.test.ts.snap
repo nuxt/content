@@ -1,5 +1,43 @@
 // Vitest Snapshot v1
 
+exports[`Basic usage > Content Queries > Get contents index > basic-index-body 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Index",
+        },
+      ],
+      "props": {
+        "id": "index",
+      },
+      "tag": "h1",
+      "type": "element",
+    },
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Hello World",
+        },
+      ],
+      "props": {},
+      "tag": "p",
+      "type": "element",
+    },
+  ],
+  "toc": {
+    "depth": 2,
+    "links": [],
+    "searchDepth": 2,
+    "title": "",
+  },
+  "type": "root",
+}
+`;
+
 exports[`Basic usage > Get contents index > basic-index-body 1`] = `
 {
   "children": [

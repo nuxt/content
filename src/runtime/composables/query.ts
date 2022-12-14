@@ -25,6 +25,15 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     query.sort({ _file: 1, $numeric: true })
   }
 
+  // Filter by locale if:
+  // - locales are defined
+  // - query doesn't already have a locale filter
+  if (content.locales.length) {
+    const queryLocale = query.params().where?.find(w => w._locale)?._locale
+    const locale = queryLocale || content.defaultLocale
+    query.locale(locale)
+  }
+
   const params = query.params()
 
   const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)

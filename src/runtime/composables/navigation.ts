@@ -10,6 +10,16 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   // When params is an instance of QueryBuilder then we need to pick the params explicitly
   const params: QueryBuilderParams = typeof queryBuilder?.params === 'function' ? queryBuilder.params() : queryBuilder
 
+  // Filter by locale if:
+  // - locales are defined
+  // - query doesn't already have a locale filter
+  if (content.locales.length) {
+    const queryLocale = params.where?.find(w => w._locale)?._locale
+    const locale = queryLocale || content.defaultLocale
+    params.where = params.where || []
+    params.where.push({ _locale: locale })
+  }
+
   const _apiPath = params ? `/navigation/${hash(params)}` : '/navigation/'
   const apiPath = withContentBase(process.dev ? _apiPath : `${_apiPath}.${content.integrity}.json`)
 

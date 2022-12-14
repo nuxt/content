@@ -567,6 +567,8 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
+      locales: options.locales,
+      defaultLocale: contentContext.defaultLocale,
       integrity: buildIntegrity,
       clientDB: {
         isSPA: options.experimental.clientDB && nuxt.options.ssr === false
@@ -681,6 +683,10 @@ interface ModulePublicRuntimeConfig {
     isSPA: boolean
     integrity: number
   }
+
+  defaultLocale: ModuleOptions['defaultLocale']
+
+  locales: ModuleOptions['locales']
 
   tags: Record<string, string>
 
