@@ -23,7 +23,8 @@ export default defineNuxtConfig({
   },
   modules: [contentModule],
   content: {
-    locales: ['en', 'fa'],
+    locales: ['fa', 'en'],
+    defaultLocale: 'en',
     sources: [
       {
         name: 'fa-ir',
