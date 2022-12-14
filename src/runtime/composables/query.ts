@@ -30,8 +30,9 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
   // - query doesn't already have a locale filter
   if (content.locales.length) {
     const queryLocale = query.params().where?.find(w => w._locale)?._locale
-    const locale = queryLocale || content.defaultLocale
-    query.locale(locale)
+    if (!queryLocale) {
+      query.locale(content.defaultLocale)
+    }
   }
 
   const params = query.params()

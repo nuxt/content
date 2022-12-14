@@ -15,9 +15,10 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   // - query doesn't already have a locale filter
   if (content.locales.length) {
     const queryLocale = params.where?.find(w => w._locale)?._locale
-    const locale = queryLocale || content.defaultLocale
-    params.where = params.where || []
-    params.where.push({ _locale: locale })
+    if (!queryLocale) {
+      params.where = params.where || []
+      params.where.push({ _locale: content.defaultLocale })
+    }
   }
 
   const _apiPath = params ? `/navigation/${hash(params)}` : '/navigation/'

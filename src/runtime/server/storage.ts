@@ -204,8 +204,9 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event, path?:
   // - query doesn't already have a locale filter
   if (contentConfig.locales.length) {
     const queryLocale = query.params().where?.find(w => w._locale)?._locale
-    const locale = queryLocale || contentConfig.defaultLocale
-    query.locale(locale)
+    if (!queryLocale) {
+      query.locale(contentConfig.defaultLocale)
+    }
   }
 
   return createPipelineFetcher<T>(() => getIndexedContentsList<T>(event, query))(query)
