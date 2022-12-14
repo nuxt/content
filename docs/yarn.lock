@@ -585,10 +585,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt-themes/docus@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.1.3.tgz#e7dd236855341329692672b9d0f273ab8e33856b"
-  integrity sha512-iMNCl7Ju58/355c5pHSoGMBIrXyTUgxpABo6WFzzg4k3MsrxXCoYxGHf5Z41y2ram1spxa7luPRBfYC+efuW6w==
+"@nuxt-themes/docus@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.1.4.tgz#5b96617793eb8bad08067fe53cd025178fce3018"
+  integrity sha512-GTM4V7NkA2T9L73AvcaV6FNbDptBCOpO2RQSjkyFBy2fcpJT/RrwtjYEUo5XQsG7lFrAiJNK1u36H4t8coBnhg==
   dependencies:
     "@docsearch/css" "^3.3.0"
     "@docsearch/js" "^3.3.0"
