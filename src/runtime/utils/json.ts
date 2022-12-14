@@ -27,7 +27,7 @@ function regExpReplacer (_key: string, value: any) {
 /**
  * A function that transforms RegExp string representation back to RegExp objects.
  */
-function regExpReviver (_key, value) {
+function regExpReviver (_key: string, value: any) {
   const withOperator = (typeof value === 'string' && value.match(/^--([A-Z]+) (.+)$/)) || []
 
   if (withOperator[1] === 'REGEX') {
