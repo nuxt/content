@@ -1,6 +1,68 @@
 # Changelog
 
 
+## v2.3.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.2.2...v2.3.0)
+
+
+### 🚀 Enhancements
+
+  - **module:** Introduce `api.baseURL` and deprecate `base` ([#1695](https://github.com/nuxt/content/pull/1695))
+  - Unique api calls per build ([#1705](https://github.com/nuxt/content/pull/1705))
+  - **shiki:** Expose highlighting utils ([#1727](https://github.com/nuxt/content/pull/1727))
+  - **document-driven:** Introduce `start` and `finish` hooks ([#1744](https://github.com/nuxt/content/pull/1744))
+  - **query:** Fully cacheable api ([#1752](https://github.com/nuxt/content/pull/1752))
+
+### 🩹 Fixes
+
+  - **markdown:** Resolve custom shiki languages ([#1692](https://github.com/nuxt/content/pull/1692))
+  - **clientDB:** Disable clientDB if token is set and has falsy value ([#1700](https://github.com/nuxt/content/pull/1700))
+  - **shiki:** Issue with merging multiple themes ([#1703](https://github.com/nuxt/content/pull/1703))
+  - **query:** Invalid response on missing content ([#1706](https://github.com/nuxt/content/pull/1706))
+  - **test:** Typo ([#1707](https://github.com/nuxt/content/pull/1707))
+  - **markdown:** Remove double and trailing dashes from heading ids ([#1711](https://github.com/nuxt/content/pull/1711))
+  - **ws:** Prevent port conflict on running multiple instances ([#1721](https://github.com/nuxt/content/pull/1721))
+  - **markdown:** Remove extra dash from heading id ([4c376587](https://github.com/nuxt/content/commit/4c376587))
+  - Typo ([a7912af1](https://github.com/nuxt/content/commit/a7912af1))
+  - **build:** Invalid cache route handler ([ae138a87](https://github.com/nuxt/content/commit/ae138a87))
+  - **ContentRendererMarkdown:** Recreate vNodes in render function ([#1734](https://github.com/nuxt/content/pull/1734))
+  - **query:** Fallback to default locale if query has no filter on `_locale` ([#1748](https://github.com/nuxt/content/pull/1748))
+  - **module:** Put query parameters removal under an experimental flag ([#1757](https://github.com/nuxt/content/pull/1757))
+  - Add missing imports ([5285db01](https://github.com/nuxt/content/commit/5285db01))
+
+### 💅 Refactors
+
+  - **ContentRenderer:** Simplify conditions ([#1715](https://github.com/nuxt/content/pull/1715))
+  - **Shiki:** Prepare Shiki highlighter for external usage ([#1720](https://github.com/nuxt/content/pull/1720))
+
+### 📖 Documentation
+
+  - Update deps ([#1684](https://github.com/nuxt/content/pull/1684))
+  - Update studio module ([fe55ff28](https://github.com/nuxt/content/commit/fe55ff28))
+  - Revert studio module to 0.2.2 ([e26ffd01](https://github.com/nuxt/content/commit/e26ffd01))
+  - Update studio module ([#1686](https://github.com/nuxt/content/pull/1686))
+  - Fix typo ([#1693](https://github.com/nuxt/content/pull/1693))
+  - Upgrade studio module ([ff2edddc](https://github.com/nuxt/content/commit/ff2edddc))
+  - Update code inline ([#1730](https://github.com/nuxt/content/pull/1730))
+  - Update module options ([#1755](https://github.com/nuxt/content/pull/1755))
+
+### 🏡 Chore
+
+  - Upgrade deps ([#1691](https://github.com/nuxt/content/pull/1691))
+  - **logging:** Cleanup logging ([#1733](https://github.com/nuxt/content/pull/1733))
+
+### ❤️  Contributors
+
+- Ahad Birang <farnabaz@gmail.com>
+- Farnabaz <farnabaz@gmail.com>
+- Yaël Guilloux <yael.guilloux@gmail.com>
+- Sébastien Chopin <seb@nuxtjs.com>
+- Levi (Nguyễn Lương Huy) <huy.nguyen.luong96@gmail.com>
+- Nobkd 
+- Onur Dumangöz 
+- Baptiste Leproux <leproux.baptiste@gmail.com>
+
 ## v2.2.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.2.1...v2.2.2)
