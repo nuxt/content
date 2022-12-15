@@ -1,9 +1,9 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useCookie, useRuntimeConfig } from '#app'
+import { useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
-import { jsonStringify } from '../utils/json'
+import { encodeQueryParams } from '../utils/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 /**
@@ -37,7 +37,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   const params = query.params()
 
-  const apiPath = withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
+  const apiPath = withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
 
   // Prefetch the query
   if (!process.dev && process.server) {
@@ -49,14 +49,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     return db.fetch(query as QueryBuilder<ParsedContent>)
   }
 
-  const data = await $fetch(apiPath as any, {
-    method: 'GET',
-    responseType: 'json',
-    params: {
-      _params: jsonStringify(params),
-      previewToken: useCookie('previewToken').value
-    }
-  })
+  const data = await $fetch(apiPath as any, { method: 'GET', responseType: 'json' })
 
   // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
   // to know if the response is a valid JSON or not

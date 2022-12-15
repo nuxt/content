@@ -1,14 +1,14 @@
 import { hash } from 'ohash'
-import { useCookie, useRuntimeConfig } from '#app'
+import { useRuntimeConfig } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
-import { jsonStringify } from '../utils/json'
+import { encodeQueryParams } from '../utils/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   const { content } = useRuntimeConfig().public
 
   // When params is an instance of QueryBuilder then we need to pick the params explicitly
-  const params: QueryBuilderParams = typeof queryBuilder?.params === 'function' ? queryBuilder.params() : queryBuilder
+  const params: QueryBuilderParams = typeof queryBuilder?.params === 'function' ? queryBuilder.params() : queryBuilder || {}
 
   // Filter by locale if:
   // - locales are defined
@@ -21,8 +21,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     }
   }
 
-  const _apiPath = params ? `/navigation/${hash(params)}` : '/navigation/'
-  const apiPath = withContentBase(process.dev ? _apiPath : `${_apiPath}.${content.integrity}.json`)
+  const apiPath = withContentBase(`/navigation/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
 
   // Add `prefetch` to `<head>` in production
   if (!process.dev && process.server) {
@@ -34,14 +33,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     return generateNavigation(params)
   }
 
-  const data = await $fetch<NavItem[]>(apiPath, {
-    method: 'GET',
-    responseType: 'json',
-    params: {
-      _params: jsonStringify(params || {}),
-      previewToken: useCookie('previewToken').value
-    }
-  })
+  const data = await $fetch<NavItem[]>(apiPath, { method: 'GET', responseType: 'json' })
 
   // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
   // to know if the response is a valid JSON or not

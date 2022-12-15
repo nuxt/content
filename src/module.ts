@@ -319,6 +319,11 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers.push(
         {
           method: 'get',
+          route: `${options.api.baseURL}/query/:qid/**:params`,
+          handler: resolveRuntimeModule('./server/api/query')
+        },
+        {
+          method: 'get',
           route: `${options.api.baseURL}/query/:qid`,
           handler: resolveRuntimeModule('./server/api/query')
         },
@@ -444,16 +449,22 @@ export default defineNuxtModule<ModuleOptions>({
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: `${options.api.baseURL}/navigation/:qid`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        })
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: `${options.api.baseURL}/navigation`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        })
+        nitroConfig.handlers.push(
+          {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation/:qid/**:params`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          }, {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation/:qid`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          },
+          {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          }
+        )
       })
     } else {
       addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
