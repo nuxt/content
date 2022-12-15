@@ -1,5 +1,5 @@
 import { hash } from 'ohash'
-import { useRuntimeConfig } from '#app'
+import { useRuntimeConfig, useCookie } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
