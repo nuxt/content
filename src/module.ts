@@ -215,7 +215,7 @@ export interface ModuleOptions {
   },
   experimental: {
     clientDB: boolean
-    noQueryParameters: boolean
+    stripQueryParameters: boolean
   }
 }
 
@@ -276,7 +276,7 @@ export default defineNuxtModule<ModuleOptions>({
     documentDriven: false,
     experimental: {
       clientDB: false,
-      noQueryParameters: false
+      stripQueryParameters: false
     }
   },
   async setup (options, nuxt) {
@@ -583,7 +583,7 @@ export default defineNuxtModule<ModuleOptions>({
       defaultLocale: contentContext.defaultLocale,
       integrity: buildIntegrity,
       experimental: {
-        noQueryParameters: options.experimental.noQueryParameters,
+        stripQueryParameters: options.experimental.stripQueryParameters,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
       api: {
@@ -690,7 +690,7 @@ export default defineNuxtModule<ModuleOptions>({
 
 interface ModulePublicRuntimeConfig {
   experimental: {
-    noQueryParameters: boolean
+    stripQueryParameters: boolean
     clientDB: boolean
   }
 

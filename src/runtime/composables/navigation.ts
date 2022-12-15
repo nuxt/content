@@ -22,7 +22,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     }
   }
 
-  const apiPath = content.experimental.noQueryParameters
+  const apiPath = content.experimental.stripQueryParameters
     ? withContentBase(`/navigation/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
     : withContentBase(process.dev ? `/navigation/${hash(params)}` : `/navigation/${hash(params)}.${content.integrity}.json`)
 
@@ -39,7 +39,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   const data = await $fetch<NavItem[]>(apiPath as any, {
     method: 'GET',
     responseType: 'json',
-    params: content.experimental.noQueryParameters
+    params: content.experimental.stripQueryParameters
       ? undefined
       : {
           _params: jsonStringify(params),

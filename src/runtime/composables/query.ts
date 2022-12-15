@@ -38,7 +38,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   const params = query.params()
 
-  const apiPath = content.experimental.noQueryParameters
+  const apiPath = content.experimental.stripQueryParameters
     ? withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
     : withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
@@ -55,7 +55,7 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
   const data = await $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
-    params: content.experimental.noQueryParameters
+    params: content.experimental.stripQueryParameters
       ? undefined
       : {
           _params: jsonStringify(params),
