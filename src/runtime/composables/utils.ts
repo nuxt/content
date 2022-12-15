@@ -43,9 +43,9 @@ export const addPrerenderPath = (path: string) => {
 }
 
 export const shouldUseClientDB = () => {
-  const { clientDB } = useRuntimeConfig().content
+  const { experimental } = useRuntimeConfig().content
   if (!process.client) { return false }
-  if (clientDB?.isSPA) { return true }
+  if (experimental.clientDB) { return true }
 
   const query = useRoute().query
   // Disable clientDB when `?preview` is set in query, and it has falsy value

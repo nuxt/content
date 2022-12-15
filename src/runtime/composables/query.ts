@@ -4,6 +4,7 @@ import { useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
+import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 
 /**
@@ -37,7 +38,9 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
 
   const params = query.params()
 
-  const apiPath = withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
+  const apiPath = content.experimental.stripQueryParameters
+    ? withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
+    : withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
   // Prefetch the query
   if (!process.dev && process.server) {
@@ -49,7 +52,16 @@ export const createQueryFetch = <T = ParsedContent>(path?: string) => async (que
     return db.fetch(query as QueryBuilder<ParsedContent>)
   }
 
-  const data = await $fetch(apiPath as any, { method: 'GET', responseType: 'json' })
+  const data = await $fetch(apiPath as any, {
+    method: 'GET',
+    responseType: 'json',
+    params: content.experimental.stripQueryParameters
+      ? undefined
+      : {
+          _params: jsonStringify(params),
+          previewToken: useCookie('previewToken').value
+        }
+  })
 
   // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
   // to know if the response is a valid JSON or not

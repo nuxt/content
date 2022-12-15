@@ -215,6 +215,7 @@ export interface ModuleOptions {
   },
   experimental: {
     clientDB: boolean
+    stripQueryParameters: boolean
   }
 }
 
@@ -274,13 +275,13 @@ export default defineNuxtModule<ModuleOptions>({
     },
     documentDriven: false,
     experimental: {
-      clientDB: false
+      clientDB: false,
+      stripQueryParameters: false
     }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
-
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
@@ -581,8 +582,9 @@ export default defineNuxtModule<ModuleOptions>({
       locales: options.locales,
       defaultLocale: contentContext.defaultLocale,
       integrity: buildIntegrity,
-      clientDB: {
-        isSPA: options.experimental.clientDB && nuxt.options.ssr === false
+      experimental: {
+        stripQueryParameters: options.experimental.stripQueryParameters,
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
       api: {
         baseURL: options.api.baseURL
@@ -687,12 +689,9 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 interface ModulePublicRuntimeConfig {
-  /**
-   * @experimental
-   */
-  clientDB: {
-    isSPA: boolean
-    integrity: number
+  experimental: {
+    stripQueryParameters: boolean
+    clientDB: boolean
   }
 
   defaultLocale: ModuleOptions['defaultLocale']
