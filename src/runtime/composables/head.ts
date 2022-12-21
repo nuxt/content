@@ -74,7 +74,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: host ? new URL(joinURL(config.app.baseURL, image), url).href : image
+          content: host && !hasProtocol(image) ? new URL(joinURL(config.app.baseURL, image), url).href : image
         })
       }
 
