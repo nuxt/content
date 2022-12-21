@@ -17,12 +17,19 @@ export const useContentHead = (
     // Default head to `data?.head`
     const head: HeadObjectPlain = Object.assign({}, data?.head || {})
 
+    head.meta = [...(head.meta || [])]
+
     // Great basic informations from the data
     const title = head.title || data?.title
     if (title) {
       head.title = title
+      if (!head.meta.some(m => m.property === 'og:title')) {
+        head.meta.push({
+          name: 'og:title',
+          content: title
+        })
+      }
     }
-    head.meta = [...(head.meta || [])]
 
     // Grab description from `head.description` or fallback to `data.description`
     // @ts-ignore - We expect `head.description` from Nuxt configurations...
@@ -42,7 +49,7 @@ export const useContentHead = (
 
     // Shortcut for head.image to og:image in meta
     if (image && head.meta.filter(m => m.property === 'og:image').length === 0) {
-    // Handles `image: '/image/src.jpg'`
+      // Handles `image: '/image/src.jpg'`
       if (typeof image === 'string') {
         head.meta.push({
           property: 'og:image',
@@ -53,7 +60,7 @@ export const useContentHead = (
 
       // Handles: `image.src: '/image/src.jpg'` & `image.alt: 200`...
       if (typeof image === 'object') {
-      // https://ogp.me/#structured
+        // https://ogp.me/#structured
         const imageKeys = [
           'src',
           'secure_url',
@@ -65,7 +72,7 @@ export const useContentHead = (
 
         // Look on available keys
         for (const key of imageKeys) {
-        // `src` is a shorthand for the URL.
+          // `src` is a shorthand for the URL.
           if (key === 'src' && image.src) {
             head.meta.push({
               property: 'og:image',
