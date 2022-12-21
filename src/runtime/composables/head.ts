@@ -1,7 +1,7 @@
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
-import { joinURL } from 'ufo'
+import { hasProtocol, joinURL } from 'ufo'
 import { ParsedContent } from '../types'
 import { useRoute, nextTick, useHead, unref, watch } from '#imports'
 
@@ -94,10 +94,11 @@ export const useContentHead = (
         for (const key of imageKeys) {
           // `src` is a shorthand for the URL.
           if (key === 'src' && image.src) {
-            const imageURL = joinURL(config.app.baseURL, image.src ?? '/')
+            const isAbsoluteURL = hasProtocol(image.src)
+            const imageURL = isAbsoluteURL ? image.src : joinURL(config.app.baseURL, image.src ?? '/')
             head.meta.push({
               property: 'og:image',
-              content: host ? new URL(imageURL, url).href : imageURL
+              content: host && !isAbsoluteURL ? new URL(imageURL, url).href : imageURL
             })
           } else if (image[key]) {
             head.meta.push({
