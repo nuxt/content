@@ -1,6 +1,7 @@
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
+import { joinURL } from 'ufo'
 import { ParsedContent } from '../types'
 import { useRoute, nextTick, useHead, unref, watch } from '#imports'
 
@@ -9,6 +10,7 @@ export const useContentHead = (
   to: RouteLocationNormalized | RouteLocationNormalizedLoaded = useRoute()
 ) => {
   const content = unref(_content)
+  const config = useRuntimeConfig()
 
   const refreshHead = (data: ParsedContent = content) => {
     // Don't call this function if no route is yet available
@@ -18,6 +20,7 @@ export const useContentHead = (
     const head: HeadObjectPlain = Object.assign({}, data?.head || {})
 
     head.meta = [...(head.meta || [])]
+    head.link = [...(head.link || [])]
 
     // Great basic informations from the data
     const title = head.title || data?.title
@@ -29,6 +32,22 @@ export const useContentHead = (
           content: title
         })
       }
+    }
+
+    const host = config.public.content.host
+    if (host && !head.link.some(m => m.rel === 'canonical')) {
+      head.link.push({
+        rel: 'canonical',
+        href: joinURL(host, config.app.baseURL, to.fullPath)
+      })
+    }
+    const url = joinURL(host, config.app.baseURL, to.fullPath)
+    if (host && !head.meta.some(m => m.property === 'og:url')) {
+      head.meta.push({
+        name: 'og:url',
+        // TODO: support configuration for trailing slash
+        content: url
+      })
     }
 
     // Grab description from `head.description` or fallback to `data.description`
@@ -54,7 +73,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: image
+          content: new URL(joinURL(config.app.baseURL, image), url).href
         })
       }
 
@@ -76,12 +95,12 @@ export const useContentHead = (
           if (key === 'src' && image.src) {
             head.meta.push({
               property: 'og:image',
-              content: image[key]
+              content: new URL(joinURL(config.app.baseURL, image[key]), url).href
             })
           } else if (image[key]) {
             head.meta.push({
               property: `og:image:${key}`,
-              content: image[key]
+              content: new URL(joinURL(config.app.baseURL, image[key]), url).href
             })
           }
         }

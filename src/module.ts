@@ -204,6 +204,7 @@ export interface ModuleOptions {
    * @default false
    */
   documentDriven: boolean | {
+    host?: string
     page?: boolean
     navigation?: boolean
     surround?: boolean
@@ -572,6 +573,7 @@ export default defineNuxtModule<ModuleOptions>({
       wsUrl: '',
       // Document-driven configuration
       documentDriven: options.documentDriven as any,
+      host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks
     })
