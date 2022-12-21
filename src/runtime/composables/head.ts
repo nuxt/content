@@ -62,6 +62,12 @@ export const useContentHead = (
         content: description
       })
     }
+    if (description && !head.meta.some(m => m.property === 'og:description')) {
+      head.meta.push({
+        name: 'og:description',
+        content: description
+      })
+    }
 
     // Grab description from `head` or fallback to `data.description`
     // @ts-ignore - We expect `head.image` from Nuxt configurations...
