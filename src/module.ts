@@ -307,9 +307,6 @@ export default defineNuxtModule<ModuleOptions>({
       )
     })
 
-    // Add Content plugin
-    addPlugin(resolveRuntimeModule('./plugins/ws'))
-
     nuxt.hook('nitro:config', (nitroConfig) => {
       // Init Nitro context
       nitroConfig.prerender = nitroConfig.prerender || {}
@@ -541,27 +538,6 @@ export default defineNuxtModule<ModuleOptions>({
       ])
     }
 
-    // Register anchor link generation
-    if (options.markdown.anchorLinks === true) {
-      options.markdown.anchorLinks = {
-        depth: 6,
-        exclude: []
-      }
-    } else if (options.markdown.anchorLinks === false) {
-      options.markdown.anchorLinks = {
-        depth: 0,
-        exclude: []
-      }
-    } else {
-      options.markdown.anchorLinks = {
-        ...{
-          depth: 4,
-          exclude: [1]
-        },
-        ...options.markdown.anchorLinks
-      }
-    }
-
     // @ts-ignore
     await nuxt.callHook('content:context', contentContext)
 
@@ -651,6 +627,10 @@ export default defineNuxtModule<ModuleOptions>({
       })
       return
     }
+    // ~~ DEV ~~ //
+
+    // Add Content plugin
+    addPlugin(resolveRuntimeModule('./plugins/ws'))
 
     nuxt.hook('nitro:init', async (nitro) => {
       if (!options.watch || !options.watch.ws) { return }

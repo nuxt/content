@@ -154,8 +154,14 @@ export function createWebSocket () {
 }
 
 export function processMarkdownOptions (options: ModuleOptions['markdown']) {
+  // Refine anchor link generation
+  const anchorLinks = typeof options.anchorLinks === 'boolean'
+    ? { depth: options.anchorLinks ? 6 : 0, exclude: [] }
+    : { depth: 4, exclude: [1], ...options.anchorLinks }
+
   return {
     ...options,
+    anchorLinks,
     remarkPlugins: resolveMarkdownPlugins(options.remarkPlugins),
     rehypePlugins: resolveMarkdownPlugins(options.rehypePlugins)
   }
