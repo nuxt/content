@@ -35,12 +35,6 @@ export const useContentHead = (
     }
 
     const host = config.public.content.host
-    if (host && !head.link.some(m => m.rel === 'canonical')) {
-      head.link.push({
-        rel: 'canonical',
-        href: joinURL(host, config.app.baseURL, to.fullPath)
-      })
-    }
     const url = joinURL(host, config.app.baseURL, to.fullPath)
     if (host && !head.meta.some(m => m.property === 'og:url')) {
       head.meta.push({
@@ -49,6 +43,13 @@ export const useContentHead = (
         content: url
       })
     }
+    // TODO: add support for rel=canonical once trailing slash config
+    // if (host && !head.link.some(m => m.rel === 'canonical')) {
+    //   head.link.push({
+    //     rel: 'canonical',
+    //     href: joinURL(host, config.app.baseURL, to.fullPath)
+    //   })
+    // }
 
     // Grab description from `head.description` or fallback to `data.description`
     // @ts-ignore - We expect `head.description` from Nuxt configurations...
