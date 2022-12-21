@@ -35,7 +35,7 @@ export const useContentHead = (
     }
 
     const host = config.public.content.host
-    const url = joinURL(host, config.app.baseURL, to.fullPath)
+    const url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
     if (host && !head.meta.some(m => m.property === 'og:url')) {
       head.meta.push({
         name: 'og:url',
@@ -74,7 +74,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: new URL(joinURL(config.app.baseURL, image), url).href
+          content: host ? new URL(joinURL(config.app.baseURL, image), url).href : image
         })
       }
 
@@ -94,14 +94,15 @@ export const useContentHead = (
         for (const key of imageKeys) {
           // `src` is a shorthand for the URL.
           if (key === 'src' && image.src) {
+            const imageURL = joinURL(config.app.baseURL, image.src ?? '/')
             head.meta.push({
               property: 'og:image',
-              content: new URL(joinURL(config.app.baseURL, image[key]), url).href
+              content: host ? new URL(imageURL, url).href : imageURL
             })
           } else if (image[key]) {
             head.meta.push({
               property: `og:image:${key}`,
-              content: new URL(joinURL(config.app.baseURL, image[key]), url).href
+              content: image[key]
             })
           }
         }
