@@ -212,9 +212,18 @@ export default defineNuxtPlugin((nuxt: NuxtApp) => {
         globals.value = _globals
       }
 
+      if (_surround) {
+        surrounds.value[_path] = _surround
+      }
+
       // Use `redirect` key to redirect to another page
-      if (_page?.redirect) { return _page?.redirect }
-      if (_page?._dir?.navigation?.redirect) { return _page?._dir?.navigation?.redirect }
+      const redirectTo = _page?.redirect || _page?._dir?.navigation?.redirect
+      if (redirectTo) {
+        // In case of redirection, it is not necessary to fetch page layout
+        // Just fill the page state with the redirect path
+        pages.value[_path] = _page
+        return redirectTo
+      }
 
       if (_page) {
         // Find used layout
@@ -232,10 +241,6 @@ export default defineNuxtPlugin((nuxt: NuxtApp) => {
 
         // Update values
         pages.value[_path] = _page
-      }
-
-      if (_surround) {
-        surrounds.value[_path] = _surround
       }
 
       // Call hook after content is fetched
