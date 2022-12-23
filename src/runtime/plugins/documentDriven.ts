@@ -1,7 +1,6 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
 import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo } from '#app'
-import type { NuxtApp } from 'nuxt/app'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
 // @ts-ignore
@@ -9,7 +8,7 @@ import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fet
 // @ts-ignore
 import layouts from '#build/layouts'
 
-export default defineNuxtPlugin((nuxt: NuxtApp) => {
+export default defineNuxtPlugin((nuxt) => {
   const { documentDriven: moduleOptions, experimental } = useRuntimeConfig()?.public?.content
 
   /**
