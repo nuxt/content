@@ -185,30 +185,7 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   return result
 }
 
-export const createServerQueryFetch = <T = ParsedContent>(event: H3Event, path?: string) => (query: QueryBuilder<T>) => {
-  if (path) {
-    if (query.params().first) {
-      query.where({ _path: withoutTrailingSlash(path) })
-    } else {
-      query.where({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
-    }
-  }
-
-  // Provide default sort order
-  if (!query.params().sort?.length) {
-    query.sort({ _file: 1, $numeric: true })
-  }
-
-  // Filter by locale if:
-  // - locales are defined
-  // - query doesn't already have a locale filter
-  if (contentConfig.locales.length) {
-    const queryLocale = query.params().where?.find(w => w._locale)?._locale
-    if (!queryLocale) {
-      query.locale(contentConfig.defaultLocale)
-    }
-  }
-
+export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (query: QueryBuilder<T>) => {
   return createPipelineFetcher<T>(() => getIndexedContentsList<T>(event, query))(query)
 }
 
@@ -217,12 +194,49 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event, path?:
  */
 export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, path?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: H3Event, path?: string | QueryBuilderParams, ...pathParts: string[]) {
-  if (typeof path === 'string') {
-    path = withLeadingSlash(joinURL(path, ...pathParts))
-    return createQuery<T>(createServerQueryFetch(event, path))
+export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
+  const queryBuilder = createQuery<T>(createServerQueryFetch(event), typeof query !== 'string' ? query || {} : {})
+  let path: string
+
+  if (typeof query === 'string') {
+    path = withLeadingSlash(joinURL(query, ...pathParts))
   }
 
-  return createQuery<T>(createServerQueryFetch(event), path || {})
+  const originalParamsFn = queryBuilder.params
+  queryBuilder.params = () => {
+    const params = originalParamsFn()
+
+    // Add `path` as `where` condition
+    if (path) {
+      params.where = params.where || []
+      if (params.first && (params.where || []).length === 0) {
+      // If query contains `path` and does not contain any `where` condition
+      // Then can use `path` as `where` condition to find exact match
+        params.where.push({ _path: withoutTrailingSlash(path) })
+      } else {
+        params.where.push({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
+      }
+    }
+
+    // Provide default sort order
+    if (!params.sort?.length) {
+      params.sort = [{ _file: 1, $numeric: true }]
+    }
+
+    // Filter by locale if:
+    // - locales are defined
+    // - query doesn't already have a locale filter
+    if (contentConfig.locales.length) {
+      const queryLocale = params.where?.find(w => w._locale)?._locale
+      if (!queryLocale) {
+        params.where = params.where || []
+        params.where.push({ _locale: contentConfig.defaultLocale })
+      }
+    }
+
+    return params
+  }
+
+  return queryBuilder
 }
