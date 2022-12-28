@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const path = content?._path || query.where?.find(w => w._path)?._path as string
     if (path) {
       const _dir = await serverQueryContent(event).where({ _path: join(path, '_dir') }).without('_').findOne()
-      if (_dir && !Array.isArray(_dir)) {
+      if (_dir && !Array.isArray(_dir) && content) {
         return {
           _path: path,
           ...(content || {}),
