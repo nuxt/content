@@ -8,19 +8,13 @@ import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   const { content } = useRuntimeConfig().public
 
-  // When params is an instance of QueryBuilder then we need to pick the params explicitly
-  const params: QueryBuilderParams = typeof queryBuilder?.params === 'function' ? queryBuilder.params() : queryBuilder || {}
-
-  // Filter by locale if:
-  // - locales are defined
-  // - query doesn't already have a locale filter
-  if (content.locales.length) {
-    const queryLocale = params.where?.find(w => w._locale)?._locale
-    if (!queryLocale) {
-      params.where = params.where || []
-      params.where.push({ _locale: content.defaultLocale })
-    }
+  // Ensure that queryBuilder is an instance of QueryBuilder
+  if (typeof queryBuilder?.params !== 'function') {
+    queryBuilder = queryContent(queryBuilder as QueryBuilderParams)
   }
+
+  // Get query params from queryBuilder instance to ensure default values are applied
+  const params: QueryBuilderParams = queryBuilder.params()
 
   const apiPath = content.experimental.stripQueryParameters
     ? withContentBase(`/navigation/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)

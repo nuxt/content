@@ -10,31 +10,8 @@ import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 /**
  * Query fetcher
  */
-export const createQueryFetch = <T = ParsedContent>(path?: string) => async (query: QueryBuilder<T>) => {
+export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuilder<T>) => {
   const { content } = useRuntimeConfig().public
-  if (path) {
-    if (query.params().first && (query.params().where || []).length === 0) {
-      // If query contains `path` and does not contain any `where` condition
-      // Then can use `path` as `where` condition to find exact match
-      query.where({ _path: withoutTrailingSlash(path) })
-    } else {
-      query.where({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
-    }
-  }
-  // Provide default sort order
-  if (!query.params().sort?.length) {
-    query.sort({ _file: 1, $numeric: true })
-  }
-
-  // Filter by locale if:
-  // - locales are defined
-  // - query doesn't already have a locale filter
-  if (content.locales.length) {
-    const queryLocale = query.params().where?.find(w => w._locale)?._locale
-    if (!queryLocale) {
-      query.locale(content.defaultLocale)
-    }
-  }
 
   const params = query.params()
 
@@ -79,9 +56,48 @@ export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
 export function queryContent<T = ParsedContent>(query: string, ...pathParts: string[]): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query: QueryBuilderParams): QueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | QueryBuilderParams, ...pathParts: string[]) {
+  const { content } = useRuntimeConfig().public
+  const queryBuilder = createQuery<T>(createQueryFetch(), typeof query !== 'string' ? query : {})
+  let path: string
+
   if (typeof query === 'string') {
-    return createQuery<T>(createQueryFetch(withLeadingSlash(joinURL(query, ...pathParts))))
+    path = withLeadingSlash(joinURL(query, ...pathParts))
   }
 
-  return createQuery<T>(createQueryFetch(), query)
+  const originalParamsFn = queryBuilder.params
+  queryBuilder.params = () => {
+    const params = originalParamsFn()
+
+    // Add `path` as `where` condition
+    if (path) {
+      params.where = params.where || []
+      if (params.first && (params.where || []).length === 0) {
+      // If query contains `path` and does not contain any `where` condition
+      // Then can use `path` as `where` condition to find exact match
+        params.where.push({ _path: withoutTrailingSlash(path) })
+      } else {
+        params.where.push({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
+      }
+    }
+
+    // Provide default sort order
+    if (!params.sort?.length) {
+      params.sort = [{ _file: 1, $numeric: true }]
+    }
+
+    // Filter by locale if:
+    // - locales are defined
+    // - query doesn't already have a locale filter
+    if (content.locales.length) {
+      const queryLocale = params.where?.find(w => w._locale)?._locale
+      if (!queryLocale) {
+        params.where = params.where || []
+        params.where.push({ _locale: content.defaultLocale })
+      }
+    }
+
+    return params
+  }
+
+  return queryBuilder
 }
