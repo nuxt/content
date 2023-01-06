@@ -1,4 +1,5 @@
 import { visit } from 'unist-util-visit'
+import type { MarkdownRoot } from '../../types'
 import { defineTransformer } from '../utils'
 import { useShikiHighlighter } from './highlighter'
 import type { TokenColorMap, MarkdownNode } from './types'
@@ -8,39 +9,54 @@ export default defineTransformer({
   extensions: ['.md'],
   transform: async (content, options = {}) => {
     const shikiHighlighter = useShikiHighlighter(options)
-    const colorMap: TokenColorMap = {}
-    const codeBlocks: any[] = []
-    const inlineCodes: any = []
-    visit(
-      content.body,
-      (node: any) => (node.tag === 'code' && node?.props.code) || (node.tag === 'code-inline' && (node.props?.lang || node.props?.language)),
-      (node) => {
-        if (node.tag === 'code') {
-          codeBlocks.push(node)
-        } else if (node.tag === 'code-inline') {
-          inlineCodes.push(node)
-        }
-      }
-    )
 
-    await Promise.all(codeBlocks.map(highlightBlock))
-    await Promise.all(inlineCodes.map(highlightInline))
-
-    // Inject token colors at the end of the document
-    if (Object.values(colorMap).length) {
-      content.body.children.push({
-        type: 'element',
-        tag: 'style',
-        children: [{ type: 'text', value: shikiHighlighter.generateStyles(colorMap) }]
-      })
-    }
+    await Promise.all([
+      highlight(content.body),
+      highlight(content.excerpt)
+    ])
 
     return content
 
     /**
+     * Highlight document with code nodes
+     * @param document tree
+     */
+    async function highlight (document: MarkdownRoot) {
+      if (!document) {
+        return
+      }
+      const colorMap: TokenColorMap = {}
+      const codeBlocks: any[] = []
+      const inlineCodes: any = []
+      visit(
+        document,
+        (node: any) => (node?.tag === 'code' && node?.props.code) || (node?.tag === 'code-inline' && (node.props?.lang || node.props?.language)),
+        (node: MarkdownNode) => {
+          if (node?.tag === 'code') {
+            codeBlocks.push(node)
+          } else if (node?.tag === 'code-inline') {
+            inlineCodes.push(node)
+          }
+        }
+      )
+
+      await Promise.all(codeBlocks.map((node: MarkdownNode) => highlightBlock(node, colorMap)))
+      await Promise.all(inlineCodes.map((node: MarkdownNode) => highlightInline(node, colorMap)))
+
+      // Inject token colors at the end of the document
+      if (Object.values(colorMap).length) {
+        document?.children.push({
+          type: 'element',
+          tag: 'style',
+          children: [{ type: 'text', value: shikiHighlighter.generateStyles(colorMap) }]
+        })
+      }
+    }
+
+    /**
      * Highlight inline code
      */
-    async function highlightInline (node: MarkdownNode) {
+    async function highlightInline (node: MarkdownNode, colorMap: TokenColorMap) {
       const code = node.children![0].value!
 
       // Fetch highlighted tokens
@@ -56,7 +72,7 @@ export default defineTransformer({
     /**
      * Highlight a code block
      */
-    async function highlightBlock (node: MarkdownNode) {
+    async function highlightBlock (node: MarkdownNode, colorMap: TokenColorMap) {
       const { code, language: lang, highlights = [] } = node.props!
 
       const innerCodeNode = node.children![0].children![0]
