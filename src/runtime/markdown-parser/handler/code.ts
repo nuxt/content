@@ -15,6 +15,7 @@ export default (h: H, node: any) => {
       language,
       filename,
       highlights,
+      meta: node.meta,
       code
     },
     [h(node, 'pre', {}, [h(node, 'code', { __ignoreMap: '' }, [u('text', code)])])]
