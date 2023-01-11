@@ -402,11 +402,22 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     // Register components
+    const moduleComponentsDir = resolve('./runtime/components')
     await addComponentsDir({
-      path: resolve('./runtime/components'),
+      path: moduleComponentsDir,
       pathPrefix: false,
       prefix: '',
       global: true
+    })
+
+    // Use single components chunk
+    nuxt.hook('vite:extendConfig', (config, { isServer }) => {
+      if (Array.isArray(config.build.rollupOptions.output) || config.build.rollupOptions.output.manualChunks || isServer) { return }
+      config.build.rollupOptions.output.manualChunks = (id) => {
+        if (id.includes(moduleComponentsDir)) {
+          return 'content-components'
+        }
+      }
     })
 
     const typesPath = addTemplate({
