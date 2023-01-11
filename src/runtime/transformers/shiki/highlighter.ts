@@ -177,7 +177,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     function renderNode (node: any) {
       if (node.type === 'text') {
-        return node.value
+        return node.value.replace(/</g, '&lt;').replace(/>/g, '&gt;')
       }
       const children = node.children.map(renderNode).join('')
       return `<${node.tag} class="${node.props.class}">${children}</${node.tag}>`
