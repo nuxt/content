@@ -45,10 +45,10 @@ export const testMarkdownParser = () => {
         body: {
           id: 'content:index.md',
           content: [
-          '``` ts [file.ts]{4-6,7} other code block info',
-          'let code = undefined;',
-          'return code;',
-          '```'
+            '```ts [file.ts]{4-6,7} other code block info',
+            'let code = undefined;',
+            'return code;',
+            '```'
           ].join('\n')
         }
       })
