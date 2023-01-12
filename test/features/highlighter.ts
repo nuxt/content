@@ -160,5 +160,26 @@ export const testHighlighter = () => {
         ]
       `)
     })
+
+    test('highlight excerpt', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '```ts',
+            'const a: number = 1',
+            '```',
+            '<!--more-->',
+            'Second block'
+          ].join('\n')
+        }
+      })
+
+      const styleExcerpt = parsed.excerpt.children.pop()
+      expect(styleExcerpt.tag).toBe('style')
+      const styleBody = parsed.body.children.pop()
+      expect(styleBody.tag).toBe('style')
+    })
   })
 }
