@@ -39,6 +39,31 @@ export const testMarkdownParser = () => {
       expect(parsed.body).toHaveProperty('children[0].children[0].tag', 'code-inline')
     })
 
+    test('Keep meta from fenced code block', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '```ts [file.ts]{4-6,7} other code block info',
+            'let code = undefined;',
+            'return code;',
+            '```'
+          ].join('\n')
+        }
+      })
+
+      expect(parsed).toHaveProperty('body')
+      expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+      expect(parsed.body).toHaveProperty('children[0].props')
+      const props = parsed.body.children[0].props
+      expect(props).toHaveProperty('meta')
+      expect(props.meta).toBe('[file.ts]{4-6,7} other code block info')
+      expect(props.language).toBe('ts')
+      expect(props.filename).toBe('file.ts')
+      expect(props.highlights).toEqual([4, 5, 6, 7])
+    })
+
     test('comment', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
