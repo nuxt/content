@@ -57,5 +57,22 @@ export const testMarkdownParserExcerpt = () => {
         }
       `)
     })
+
+    test('When no <!--more--> then excerpt is undefined', async () => {
+      const parsed = await $fetch('/api/parse', {
+        method: 'POST',
+        body: {
+          id: 'content:index.md',
+          content: [
+            '# Index',
+            'First paragraph',
+            '',
+            'Second paragraph'
+          ].join('\n')
+        }
+      })
+
+      expect(parsed.excerpt).not.toBeDefined()
+    })
   })
 }
