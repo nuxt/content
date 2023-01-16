@@ -9,6 +9,7 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
+    "@docsearch/js": "^3.3.2",
     "@nuxt-themes/docus": "^1.4.5",
     "@nuxthq/studio": "^0.5.5",
     "@nuxtlabs/github-module": "^1.6.0",
