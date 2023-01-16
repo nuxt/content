@@ -213,6 +213,7 @@ export interface ModuleOptions {
     }
     layoutFallbacks?: string[]
     injectPage?: boolean
+    trailingSlash?: boolean
   },
   experimental: {
     clientDB: boolean
@@ -574,6 +575,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Document-driven configuration
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
+      trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks
     })

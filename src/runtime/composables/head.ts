@@ -1,7 +1,7 @@
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
-import { hasProtocol, joinURL } from 'ufo'
+import { hasProtocol, joinURL, withTrailingSlash, withoutTrailingSlash } from 'ufo'
 import { ParsedContent } from '../types'
 import { useRoute, nextTick, useHead, unref, watch } from '#imports'
 
@@ -34,22 +34,30 @@ export const useContentHead = (
       }
     }
 
-    const host = config.public.content.host
-    const url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
-    if (host && !head.meta.some(m => m.property === 'og:url')) {
-      head.meta.push({
-        name: 'og:url',
-        // TODO: support configuration for trailing slash
-        content: url
-      })
+    let host = config.public.content.host
+    if (process.server && !host) {
+      const req = useRequestEvent().node?.req
+      if (req) {
+        const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
+        host = `${protocol}://${req.headers.host}`
+      }
     }
-    // TODO: add support for rel=canonical once trailing slash config
-    // if (host && !head.link.some(m => m.rel === 'canonical')) {
-    //   head.link.push({
-    //     rel: 'canonical',
-    //     href: joinURL(host, config.app.baseURL, to.fullPath)
-    //   })
-    // }
+    if (process.server && host) {
+      const _url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
+      const url = config.public.content.trailingSlash ? withTrailingSlash(_url) : withoutTrailingSlash(_url)
+      if (!head.meta.some(m => m.property === 'og:url')) {
+        head.meta.push({
+          name: 'og:url',
+          content: url
+        })
+      }
+      if (!head.link.some(m => m.rel === 'canonical')) {
+        head.link.push({
+          rel: 'canonical',
+          href: url
+        })
+      }
+    }
 
     // Grab description from `head.description` or fallback to `data.description`
     // @ts-ignore - We expect `head.description` from Nuxt configurations...
