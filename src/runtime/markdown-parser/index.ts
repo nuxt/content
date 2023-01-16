@@ -105,5 +105,4 @@ function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   if (idx !== -1) {
     return content.slice(0, idx)
   }
-  return content
 }
