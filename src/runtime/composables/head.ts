@@ -26,7 +26,7 @@ export const useContentHead = (
     const title = head.title || data?.title
     if (title) {
       head.title = title
-      if (!head.meta.some(m => m.property === 'og:title')) {
+      if (process.server && !head.meta.some(m => m.property === 'og:title')) {
         head.meta.push({
           name: 'og:title',
           content: title
@@ -62,7 +62,7 @@ export const useContentHead = (
         content: description
       })
     }
-    if (description && !head.meta.some(m => m.property === 'og:description')) {
+    if (process.server && description && !head.meta.some(m => m.property === 'og:description')) {
       head.meta.push({
         name: 'og:description',
         content: description
@@ -74,7 +74,7 @@ export const useContentHead = (
     const image = head?.image || data?.image
 
     // Shortcut for head.image to og:image in meta
-    if (image && head.meta.filter(m => m.property === 'og:image').length === 0) {
+    if (process.server && image && head.meta.filter(m => m.property === 'og:image').length === 0) {
       // Handles `image: '/image/src.jpg'`
       if (typeof image === 'string') {
         head.meta.push({
