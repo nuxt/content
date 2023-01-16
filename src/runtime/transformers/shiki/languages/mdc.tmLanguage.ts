@@ -1,4 +1,7 @@
-{
+// see microsoft/vscode-textmate#185
+// import { IRawGrammar } from 'vscode-textmate/release/rawGrammar';
+
+const grammar /*: IRawGrammar */ = {
   "information_for_contributors": [
     "This file has been converted from https://github.com/docusgen/vscode-extension/blob/main/syntaxes/mdc.tmLanguage.json",
     "If you want to provide a fix or improvement, please create a pull request against the original repository.",
@@ -64,7 +67,7 @@
           "include": "#markdown_attributes"
         }
       ]
-    }, 
+    },
     "markdown_attributes": {
       "match": "(?x)([^ ])(               # attributes\n    ({)\n      ([^{]*)\n    (})\n  )",
       "name": "markup.component.attribute",
@@ -571,3 +574,5 @@
     }
   }
 }
+
+export default grammar;
