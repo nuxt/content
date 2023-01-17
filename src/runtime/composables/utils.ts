@@ -52,7 +52,7 @@ export const shouldUseClientDB = () => {
   if (Object.prototype.hasOwnProperty.call(query, 'preview') && !query.preview) {
     return false
   }
-  // Disable clientDB when preview mode is disabled
+  // Enable clientDB when preview mode is enabled
   if (query.preview || useCookie('previewToken').value) {
     return true
   }
