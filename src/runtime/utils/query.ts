@@ -21,7 +21,7 @@ export const encodeQueryParams = (params: QueryBuilderParams) => {
   return chunks.join('/')
 }
 
-export const decodeQuryParams = (encoded: string) => {
+export const decodeQueryParams = (encoded: string) => {
   // remove chunks
   encoded = encoded.replace(/\//g, '')
 
@@ -36,7 +36,7 @@ const memory: Record<string, QueryBuilderParams> = {}
 export const getContentQuery = (event: H3Event): QueryBuilderParams => {
   const { params } = event.context.params || {}
   if (params) {
-    return decodeQuryParams(params.replace(/.json$/, ''))
+    return decodeQueryParams(params.replace(/.json$/, ''))
   }
 
   const qid = event.context.params.qid?.replace(/.json$/, '')

@@ -18,6 +18,10 @@ export default defineComponent({
     highlights: {
       type: Array as () => number[],
       default: () => []
+    },
+    meta: {
+      type: String,
+      default: null
     }
   }
 })

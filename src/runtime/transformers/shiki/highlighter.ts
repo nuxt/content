@@ -13,8 +13,8 @@ const logger = consola.withScope('@nuxt/content')
  *
  * Used to resolve lang from both languages id's and aliases.
  */
-const resolveLang = (lang: string): Lang =>
-  (BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang))?.id || lang) as Lang
+const resolveLang = (lang: string) =>
+  (BUNDLED_LANGUAGES.find(l => l.id === lang || l.aliases?.includes(lang)))
 
 /**
  * Resolve Shiki compatible theme from string.
@@ -65,6 +65,16 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
             grammar: mdcTMLanguage
           }
         ] as any[]
+      }).then((highlighter) => {
+        // Load all themes on-demand
+        const themes = Object.values(typeof theme === 'string' ? { default: theme } : (theme || {}))
+
+        if (themes.length) {
+          return Promise
+            .all(themes.map(theme => highlighter.loadTheme(theme)))
+            .then(() => highlighter)
+        }
+        return highlighter
       })
     }
     return promise
@@ -75,7 +85,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     // Remove trailing carriage returns
     code = code.replace(/\n+$/, '')
     // Resolve lang & theme (i.e check if shiki supports them)
-    lang = resolveLang(lang || '')
+    lang = (resolveLang(lang || '')?.id || lang) as Lang
     theme = resolveTheme(theme || '') || { default: highlighter.getTheme() as any as ShikiTheme }
 
     // Skip highlight if lang is not supported
@@ -85,30 +95,25 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     // Load supported language on-demand
     if (!highlighter.getLoadedLanguages().includes(lang)) {
-      let message = 'Content Highlighter Error\n\n'
-      message = message + `Language "${lang}" is not loaded Shiki. Falling back to plain code.\n\n`
-      message = message + `Please make sure you add "${lang}" to the 'preload' list in your Nuxt config.\n\n`
-      message = message + 'See: https://content.nuxtjs.org/api/configuration#highlight'
-      logger.warn(message)
+      const languageRegistration = resolveLang(lang)
 
-      // TODO: Enable autoloading of language when upstream Shiki supports it\
-      // See: https://github.com/nuxt/content/issues/1225#issuecomment-1148786924
-      // await highlighter.loadLanguage(lang)
-      return [[{ content: code }]]
+      if (languageRegistration) {
+        await highlighter.loadLanguage(languageRegistration)
+      } else {
+        logger.warn(`Language '${lang}' is not supported by shiki. Skipping highlight.`)
+        return [[{ content: code }]]
+      }
     }
 
     // Load supported theme on-demand
-    await Promise.all(
-      Object.values(theme).map(async (theme) => {
-        if (!highlighter.getLoadedThemes().includes(theme)) {
-          await highlighter.loadTheme(theme)
-        }
-      })
-    )
+    const newThemes = Object.values(theme).filter(t => !highlighter.getLoadedThemes().includes(t))
+    if (newThemes.length) {
+      await Promise.all(newThemes.map(highlighter.loadTheme))
+    }
 
     // Highlight code
     const coloredTokens = Object.entries(theme).map(([key, theme]) => {
-      const tokens = highlighter.codeToThemedTokens(code, lang, theme)
+      const tokens = highlighter.codeToThemedTokens(code, lang, theme, { includeExplanation: false })
       return {
         key,
         theme,
@@ -177,7 +182,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     function renderNode (node: any) {
       if (node.type === 'text') {
-        return node.value
+        return node.value.replace(/</g, '&lt;').replace(/>/g, '&gt;')
       }
       const children = node.children.map(renderNode).join('')
       return `<${node.tag} class="${node.props.class}">${children}</${node.tag}>`
