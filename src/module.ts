@@ -300,6 +300,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Vite configurations
     extendViteConfig((config) => {
+      config.define = config.define || {}
+      config.define['process.env.VSCODE_TEXTMATE_DEBUG'] = false
+
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
       config.optimizeDeps.include.push(
