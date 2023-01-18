@@ -4,15 +4,16 @@ defineProps({
     type: String,
     default: ''
   },
-  blank: {
-    type: Boolean,
-    default: false
+  target: {
+    type: String,
+    default: undefined,
+    required: false
   }
 })
 </script>
 
 <template>
-  <NuxtLink :href="href">
+  <NuxtLink :href="href" :target="target">
     <slot />
   </NuxtLink>
 </template>
