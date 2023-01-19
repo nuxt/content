@@ -2,7 +2,7 @@ import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as Shiki
 import consola from 'consola'
 import type { ModuleOptions } from '../../../module'
 import { createSingleton } from '../utils'
-import mdcTMLanguage from './languages/mdc.tmLanguage.json'
+import mdcTMLanguage from './languages/mdc.tmLanguage'
 import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenColorMap } from './types'
 
 // Re-create logger locally as utils cannot be imported from here
