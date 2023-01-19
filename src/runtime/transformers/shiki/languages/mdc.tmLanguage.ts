@@ -1,4 +1,4 @@
-// @ts-nocheck
+/* eslint-disable */
 // see microsoft/vscode-textmate#185
 // import { IRawGrammar } from 'vscode-textmate/release/rawGrammar';
 
