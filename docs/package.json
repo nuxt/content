@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@docsearch/js": "^3.3.2",
-    "@nuxt-themes/docus": "^1.4.5",
-    "@nuxthq/studio": "^0.5.5",
-    "@nuxtlabs/github-module": "^1.6.0",
+    "@nuxt-themes/docus": "^1.4.6",
+    "@nuxthq/studio": "^0.6.3",
+    "@nuxtlabs/github-module": "^1.6.1",
     "monaco-editor-core": "^0.34.1",
     "nuxt": "v3.0.0",
     "vue-plausible": "^1.3.2"
