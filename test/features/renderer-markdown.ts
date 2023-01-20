@@ -91,7 +91,7 @@ export const testMarkdownRenderer = () => {
 
     test('XSS Prevention', async () => {
       const html = await $fetch('/_partial/xss')
-      expect(html).not.contains("&lt;script&gt;console.log('xss')&lt;/script&gt;")
+      expect(html).contains('&lt;script&gt;console.log(&#39;xss&#39;)&lt;/script&gt;')
     })
   })
 }
