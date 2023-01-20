@@ -88,5 +88,10 @@ export const testMarkdownRenderer = () => {
       expect(html).not.contains('<meta property="og:image" content="https://picsum.photos/200/300">')
       expect(html).not.contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
     })
+
+    test('XSS Prevention', async () => {
+      const html = await $fetch('/_partial/xss')
+      expect(html).not.contains("&lt;script&gt;console.log('xss')&lt;/script&gt;")
+    })
   })
 }
