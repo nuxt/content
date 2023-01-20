@@ -115,6 +115,10 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
     return h(Text, node.value)
   }
 
+  if (node.tag === 'script') {
+    return renderToText(node)
+  }
+
   const originalTag = node.tag!
   // `_ignoreMap` is an special prop to disables tag-mapper
   const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[originalTag]) || originalTag
@@ -135,6 +139,18 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
     props,
     renderSlots(node, h, documentMeta, { ...parentScope, ...props })
   )
+}
+
+function renderToText (node: MarkdownNode) {
+  if (node.type === 'text') {
+    return node.value
+  }
+
+  if (!node.children?.length) {
+    return `<${node.tag}>`
+  }
+
+  return `<${node.tag}>${node.children?.map(renderToText).join('') || ''}</${node.tag}>`
 }
 
 function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): VNode {
