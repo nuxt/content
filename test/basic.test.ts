@@ -32,6 +32,11 @@ describe('Basic usage', async () => {
     expect(html).contains('Persian')
   })
 
+  test('Japanese path', async () => {
+    const html = await $fetch('/こんにちは')
+    expect(html).contains('🎨 こんにちは')
+  })
+
   test('Partials specials chars', async () => {
     const html = await $fetch('/_partial/content-(v2)')
     expect(html).contains('Content (v2)')
