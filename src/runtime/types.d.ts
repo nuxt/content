@@ -85,7 +85,7 @@ export interface MarkdownRoot {
   props?: Record<string, any>
 }
 
-export interface MarkdownPlugin extends Record<string, any> { }
+export interface MarkdownPlugin extends Record<string, any> {}
 
 export interface MarkdownOptions {
   /**
