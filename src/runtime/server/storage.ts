@@ -161,7 +161,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent(id: string, content: string, opts: ParseContentOptions = {}) {
+export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
   const options = defu(
     opts,
@@ -200,7 +200,7 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (qu
 export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
   const queryBuilder = createQuery<T>(createServerQueryFetch(event), typeof query !== 'string' ? query || {} : {})
   let path: string
 

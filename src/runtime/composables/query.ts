@@ -1,11 +1,11 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useRuntimeConfig, useCookie } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
+import { useRuntimeConfig, useCookie } from '#app'
 
 /**
  * Query fetcher
