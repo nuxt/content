@@ -143,7 +143,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { _id: contentId, body: null, _modified: meta.mtime }
+    return { _id: contentId, body: null, _updatedAt: meta.mtime } as ParsedContent
   }
 
   const parsed = await parseContent(contentId, body as string, meta)
