@@ -156,7 +156,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent(id: string, content: string, meta: StorageMeta, opts: ParseContentOptions = {}) {
+export async function parseContent (id: string, content: string, meta: StorageMeta, opts: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
   const options = defu(
     opts,
