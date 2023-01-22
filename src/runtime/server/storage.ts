@@ -214,8 +214,8 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
     if (path) {
       params.where = params.where || []
       if (params.first && (params.where || []).length === 0) {
-        // If query contains `path` and does not contain any `where` condition
-        // Then can use `path` as `where` condition to find exact match
+      // If query contains `path` and does not contain any `where` condition
+      // Then can use `path` as `where` condition to find exact match
         params.where.push({ _path: withoutTrailingSlash(path) })
       } else {
         params.where.push({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
