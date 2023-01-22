@@ -148,7 +148,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 
   const parsed = await parseContent(contentId, body as string, meta)
 
-  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => { })
+  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
   return parsed
 }
