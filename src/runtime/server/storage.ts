@@ -1,4 +1,4 @@
-import { prefixStorage } from 'unstorage'
+import { StorageMeta, prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
@@ -143,10 +143,10 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { _id: contentId, body: null }
+    return { _id: contentId, body: null, _modified: meta.mtime }
   }
 
-  const parsed = await parseContent(contentId, body as string) as ParsedContent
+  const parsed = await parseContent(contentId, body as string, meta)
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
@@ -156,7 +156,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
+export async function parseContent(id: string, content: string, meta: StorageMeta, opts: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
   const options = defu(
     opts,
@@ -177,7 +177,10 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   const file = { _id: id, body: content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
-  const result = await transformContent(id, file.body, options)
+  const result = await transformContent(id, file.body, options) as ParsedContent
+
+  // Add meta
+  result._updatedAt = meta.mtime
 
   // Call hook after parsing the file
   await nitroApp.hooks.callHook('content:file:afterParse', result)

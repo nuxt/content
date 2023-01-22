@@ -41,6 +41,10 @@ export interface ParsedContentInternalMeta {
    * Extension of the file
    */
   _extension?: string
+  /**
+   * Content update date
+   */
+  _updatedAt?: Date
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
@@ -82,7 +86,7 @@ export interface MarkdownRoot {
   props?: Record<string, any>
 }
 
-export interface MarkdownPlugin extends Record<string, any> {}
+export interface MarkdownPlugin extends Record<string, any> { }
 
 export interface MarkdownOptions {
   /**
