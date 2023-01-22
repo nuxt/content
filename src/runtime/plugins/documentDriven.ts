@@ -1,8 +1,8 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo } from '#app'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { NavItem, ParsedContent } from '../types'
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo } from '#app'
 // @ts-ignore
 import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
 // @ts-ignore

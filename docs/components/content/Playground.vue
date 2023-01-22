@@ -1,6 +1,6 @@
 <script setup>
-import { transformContent } from '../../../src/runtime/transformers'
 import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
+import { transformContent } from '../../../src/runtime/transformers'
 
 const INITIAL_CODE = `---
 title: MDC
