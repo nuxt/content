@@ -143,7 +143,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   const body = await sourceStorage.getItem(id)
 
   if (body === null) {
-    return { _id: contentId, body: null, _updatedAt: meta.mtime } as ParsedContent
+    return { _id: contentId, body: null, _updatedAt: meta.mtime.toISOString() } as ParsedContent
   }
 
   const parsed = await parseContent(contentId, body as string, meta)
@@ -180,7 +180,7 @@ export async function parseContent (id: string, content: string, meta: StorageMe
   const result = await transformContent(id, file.body, options) as ParsedContent
 
   // Add meta
-  result._updatedAt = meta.mtime
+  result._updatedAt = meta.mtime.toISOString()
 
   // Call hook after parsing the file
   await nitroApp.hooks.callHook('content:file:afterParse', result)

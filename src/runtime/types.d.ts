@@ -1,4 +1,3 @@
-import type { Theme } from 'shiki-es'
 
 export interface ParsedContentInternalMeta {
   /**
@@ -44,7 +43,7 @@ export interface ParsedContentInternalMeta {
   /**
    * Content update date
    */
-  _updatedAt?: Date
+  _updatedAt?: string
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
@@ -86,7 +85,7 @@ export interface MarkdownRoot {
   props?: Record<string, any>
 }
 
-export interface MarkdownPlugin extends Record<string, any> {}
+export interface MarkdownPlugin extends Record<string, any> { }
 
 export interface MarkdownOptions {
   /**
