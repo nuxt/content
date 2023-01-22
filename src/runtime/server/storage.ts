@@ -198,7 +198,7 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (qu
 export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
   const queryBuilder = createQuery<T>(createServerQueryFetch(event), typeof query !== 'string' ? query || {} : {})
   let path: string
 
