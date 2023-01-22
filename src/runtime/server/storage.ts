@@ -148,7 +148,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 
   const parsed = await parseContent(contentId, body as string, meta)
 
-  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => { })
 
   return parsed
 }
@@ -198,7 +198,7 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (qu
 export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
   const queryBuilder = createQuery<T>(createServerQueryFetch(event), typeof query !== 'string' ? query || {} : {})
   let path: string
 
@@ -214,8 +214,8 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
     if (path) {
       params.where = params.where || []
       if (params.first && (params.where || []).length === 0) {
-      // If query contains `path` and does not contain any `where` condition
-      // Then can use `path` as `where` condition to find exact match
+        // If query contains `path` and does not contain any `where` condition
+        // Then can use `path` as `where` condition to find exact match
         params.where.push({ _path: withoutTrailingSlash(path) })
       } else {
         params.where.push({ _path: new RegExp(`^${path.replace(/[-[\]{}()*+.,^$\s/]/g, '\\$&')}`) })
