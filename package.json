@@ -51,10 +51,10 @@
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
     "listhen": "^1.0.1",
-    "mdast-util-to-hast": "^12.2.5",
+    "mdast-util-to-hast": "^12.2.6",
     "mdurl": "^1.0.1",
     "ohash": "^1.0.0",
-    "pathe": "^1.0.0",
+    "pathe": "^1.1.0",
     "property-information": "^6.2.0",
     "rehype-external-links": "^2.0.1",
     "rehype-raw": "^6.1.1",
@@ -73,8 +73,8 @@
     "socket.io-client": "^4.5.4",
     "ufo": "^1.0.1",
     "unified": "^10.1.2",
-    "unist-builder": "^3.0.0",
-    "unist-util-position": "^4.0.3",
+    "unist-builder": "^3.0.1",
+    "unist-util-position": "^4.0.4",
     "unist-util-visit": "^4.1.1",
     "unstorage": "^1.0.1",
     "ws": "^8.12.0"
@@ -96,7 +96,7 @@
     "nuxt": "v3.0.0",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.27.2",
+    "vitest": "^0.28.1",
     "vue-docgen-web-types": "^0.1.8"
   }
 }

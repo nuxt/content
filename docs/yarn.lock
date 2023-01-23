@@ -658,7 +658,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt-themes/docus@^1.4.6":
+"@nuxt-themes/docus@^1.4.7":
   version "1.4.7"
   resolved "https://registry.yarnpkg.com/@nuxt-themes/docus/-/docus-1.4.7.tgz#e98ae8d6c63a6f395d2a60c6f059f8b77f605af4"
   integrity sha512-YOUnOky2QFKSZnSASMBHQmObhdEnRny0e+BxKOx2F++qMHKXx9vNpVWfl+2mYjpYEQihSERJ7WZiOhHo0QBLTg==
@@ -856,7 +856,7 @@
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^1.0.0"
 
-"@nuxthq/studio@^0.6.3":
+"@nuxthq/studio@^0.6.3", "@nuxthq/studio@^0.6.5":
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.6.5.tgz#922d30f1903dce57e44623dfac40b460b02f44b4"
   integrity sha512-kGb8abgTRJi0gcvTQcawEol5CR6uXS4bpCwEEk0+b3LSvyiM6k22Opb29KkSatprTkFrAPHDKSaUve8PiX22sw==
