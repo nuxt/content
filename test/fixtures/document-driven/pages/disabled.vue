@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+import { definePageMeta, useContent } from '#imports'
+
 definePageMeta({
   documentDriven: false
 })

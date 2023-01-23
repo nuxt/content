@@ -5,6 +5,8 @@
 </template>
 
 <script setup>
+import { useRoute, useAsyncData } from '#imports'
+
 const { content } = useRoute().query
 const { data } = await useAsyncData(content, async () => {
   return await $fetch('/api/parse', {

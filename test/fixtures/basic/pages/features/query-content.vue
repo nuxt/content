@@ -4,7 +4,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { queryContent, useRoute, useAsyncData } from '#imports'
+
 const route = useRoute()
 const prefix = route.query.prefix === undefined ? '/_partial' : ''
 const path = route.query.path || ''

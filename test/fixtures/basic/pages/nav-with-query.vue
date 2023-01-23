@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { queryContent } from '#imports'
+
 const catsQuery = queryContent('cats')
 
 const numbersQuery = queryContent('numbers')
