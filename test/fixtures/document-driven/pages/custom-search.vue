@@ -1,4 +1,6 @@
 <script setup>
+import { definePageMeta, useContent, useContentHead } from '#imports'
+
 definePageMeta({
   documentDriven: {
     page: {
