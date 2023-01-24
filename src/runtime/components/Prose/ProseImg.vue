@@ -1,9 +1,12 @@
 <template>
-  <img :src="src" :alt="alt" :width="width" :height="height">
+  <img :src="refinedSrc" :alt="alt" :width="width" :height="height">
 </template>
 
 <script setup lang="ts">
-defineProps({
+import { withBase } from 'ufo'
+import { useRuntimeConfig, computed } from '#imports'
+
+const props = defineProps({
   src: {
     type: String,
     default: ''
@@ -20,5 +23,12 @@ defineProps({
     type: [String, Number],
     default: undefined
   }
+})
+
+const refinedSrc = computed(() => {
+  if (props.src?.startsWith('/') && !props.src.startsWith('//')) {
+    return withBase(props.src, useRuntimeConfig().app.baseURL)
+  }
+  return props.src
 })
 </script>
