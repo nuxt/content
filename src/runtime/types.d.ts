@@ -487,7 +487,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void
 
-export type DatabaseFetcher<T> = (quey: QueryBuilder<T>) => Promise<Array<T> | T>
+export type DatabaseFetcher<T> = (query: QueryBuilder<T>) => Promise<Array<T> | T>
 
 export type QueryMatchOperator = (item: any, condition: any) => boolean
 
@@ -500,16 +500,4 @@ export interface NavItem {
   children?: NavItem[]
 
   [key: string]: any
-}
-
-// Highlight
-export interface HighlightParams {
-  code: string
-  lang: string
-  theme: Theme | Record<string, Theme>
-}
-
-export interface HighlightThemedToken {
-  content: string
-  color?: string | Record<string, string>
 }

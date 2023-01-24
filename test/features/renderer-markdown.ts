@@ -52,5 +52,46 @@ export const testMarkdownRenderer = () => {
       expect(rendered).toContain('This is an alert for success')
       expect(rendered).toContain('This is an alert for danger')
     })
+
+    test('per-page custom component', async () => {
+      const html = await $fetch('/_partial/custom-paragraph')
+      expect(html).contains('[Paragraph]')
+    })
+
+    test('renderer custom component', async () => {
+      const html = await $fetch('/features/custom-paragraph')
+      expect(html).contains('[Paragraph]')
+    })
+
+    test('override default slot', async () => {
+      const html = await $fetch('/features/slotted-content-renderer')
+      expect(html).contains('The default slot is overridden')
+    })
+
+    test('Empty slot', async () => {
+      const html = await $fetch('/features/empty-slot')
+      expect(html).contains('Nullish Document!!!')
+      expect(html).contains('Empty Child!!!')
+    })
+
+    test('<ContentDoc> head management (if same path)', async () => {
+      const html = await $fetch('/head')
+      expect(html).contains('<title>Head overwritten</title>')
+      expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
+      expect(html).contains('<meta name="description" content="Description overwritten">')
+      expect(html).contains('<meta property="og:image" content="https://picsum.photos/200/300">')
+    })
+
+    test('<ContentDoc> head management (not same path)', async () => {
+      const html = await $fetch('/bypass-head')
+      expect(html).not.contains('<title>Head overwritten</title>')
+      expect(html).not.contains('<meta property="og:image" content="https://picsum.photos/200/300">')
+      expect(html).not.contains('<meta name="description" content="Description overwritten"><meta property="og:image" content="https://picsum.photos/200/300">')
+    })
+
+    test('XSS Prevention', async () => {
+      const html = await $fetch('/_partial/xss')
+      expect(html).contains('&lt;script&gt;console.log(&#39;xss&#39;)&lt;/script&gt;')
+    })
   })
 }

@@ -4,6 +4,8 @@ import type { H } from 'mdast-util-to-hast'
 import { all } from 'mdast-util-to-hast'
 import { encode } from 'mdurl'
 import type { MdastNode } from 'mdast-util-to-hast/lib'
+import { isRelative } from 'ufo'
+import { generatePath } from '../../transformers/path-meta'
 
 type Node = MdastNode & {
   title: string
@@ -16,7 +18,7 @@ type Node = MdastNode & {
 export default function link (h: H, node: Node) {
   const props: any = {
     ...((node.attributes || {}) as object),
-    href: encode(node.url)
+    href: encode(normalizeLink(node.url))
   }
 
   if (node.title !== null && node.title !== undefined) {
@@ -24,4 +26,12 @@ export default function link (h: H, node: Node) {
   }
 
   return h(node, 'a', props, all(h, node))
+}
+
+function normalizeLink (link: string) {
+  if (link.endsWith('.md') && (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/')))) {
+    return generatePath(link.replace(/\.md$/, ''), { forceLeadingSlash: false })
+  } else {
+    return link
+  }
 }

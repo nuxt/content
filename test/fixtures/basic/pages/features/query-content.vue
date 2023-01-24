@@ -4,17 +4,25 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { queryContent, useRoute, useAsyncData } from '#imports'
+
 const route = useRoute()
-const path = route.query.path
-const findOne = route.query.findOne
+const prefix = route.query.prefix === undefined ? '/_partial' : ''
+const path = route.query.path || ''
+const findOne = route.query.findOne || false
+const where = route.query.where ? JSON.parse(route.query.where) : false
 
 const { data } = await useAsyncData('foo', () => {
-  const q = queryContent('/_partial/prefix' + path)
-  return findOne ? q.findOne() : q.find()
-}, {
-  transform: (data) => {
-    return findOne ? data._id : data.map(d => d._id)
+  let q = queryContent(prefix + path || undefined)
+
+  if (where) {
+    q = q.where(where)
   }
+
+  return findOne ? q.findOne() : q.find()
+},
+{
+  transform: data => findOne ? data._id : data.map(d => d._id)
 })
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <Markdown unwrap="ul li">
+  <ContentSlot :use="$slots.default" unwrap="ul li">
     <template #between>
       <br>
     </template>
-  </Markdown>
+  </ContentSlot>
 </template>

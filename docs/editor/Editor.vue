@@ -1,5 +1,5 @@
 <template>
-  <Monaco :value="raw" :language="language" :read-only="readOnly" @change="update" />
+  <Monaco :value="readOnly? modelValue : raw" :language="language" :read-only="readOnly" @change="update" />
 </template>
 
 <script setup lang="ts">
@@ -24,7 +24,7 @@ const raw = ref(props.modelValue)
 
 const emit = defineEmits(['update:modelValue'])
 
-function update (content) {
+function update (content: string) {
   emit('update:modelValue', content)
 }
 </script>

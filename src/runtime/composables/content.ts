@@ -41,20 +41,12 @@ export const useContent = () => {
   /**
    * Current `page` key, computed from path and content state.
    */
-  const page = computed(
-    () => {
-      return pages.value[_path.value]
-    }
-  )
+  const page = computed(() => pages.value[_path.value])
 
   /**
    * Current `surround` key, computed from path and content state.
    */
-  const surround = computed(
-    () => {
-      return surrounds.value[_path.value]
-    }
-  )
+  const surround = computed(() => surrounds.value[_path.value])
 
   /**
    * Table of contents from `page`.
@@ -64,7 +56,7 @@ export const useContent = () => {
   /**
    * Content type from `page`.
    */
-  const type = computed(() => page.value?.meta?.type)
+  const type = computed(() => page.value?.type)
 
   /**
    * Excerpt from `page`.
@@ -74,7 +66,7 @@ export const useContent = () => {
   /**
    * Layout type from `page`.
    */
-  const layout = computed(() => page.value?.meta?.layout)
+  const layout = computed(() => page.value?.layout)
 
   /**
    * Next page from `surround`.

@@ -1,18 +1,25 @@
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 import type { ParsedContent, QueryBuilder } from '../types'
 import { isPreview } from './preview'
-import { cacheStorage, getContent, getContentsList, serverQueryContent } from './storage'
+import { cacheStorage, getContent, getContentsList } from './storage'
+import { useRuntimeConfig } from '#imports'
 
-export async function getContentIndex (event: CompatibilityEvent) {
-  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string>
+export async function getContentIndex (event: H3Event) {
+  const defaultLocale = useRuntimeConfig().content.defaultLocale
+  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string[]>
   if (!contentIndex) {
-    // Fetch all content
-    const data = await serverQueryContent(event).find()
+    // Fetch all contents
+    const data = await getContentsList(event)
 
     contentIndex = data.reduce((acc, item) => {
-      acc[item._path!] = item._id
+      acc[item._path!] = acc[item._path!] || []
+      if (item._locale === defaultLocale) {
+        acc[item._path!].unshift(item._id)
+      } else {
+        acc[item._path!].push(item._id)
+      }
       return acc
-    }, {} as Record<string, string>)
+    }, {} as Record<string, string[]>)
 
     await cacheStorage.setItem('content-index.json', contentIndex)
   }
@@ -20,7 +27,7 @@ export async function getContentIndex (event: CompatibilityEvent) {
   return contentIndex
 }
 
-export async function getIndexedContentsList<T = ParsedContent> (event: CompatibilityEvent, query: QueryBuilder<T>): Promise<T[]> {
+export async function getIndexedContentsList<T = ParsedContent> (event: H3Event, query: QueryBuilder<T>): Promise<T[]> {
   const params = query.params()
   const path = params?.where?.find(wh => wh._path)?._path
 
@@ -29,9 +36,10 @@ export async function getIndexedContentsList<T = ParsedContent> (event: Compatib
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
-      .map(key => index[key])
+      .flatMap(key => index[key])
 
     const contents = await Promise.all(keys.map(key => getContent(event, key)))
+
     return contents as unknown as Promise<T[]>
   }
 

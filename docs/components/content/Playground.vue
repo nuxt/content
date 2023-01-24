@@ -1,7 +1,6 @@
 <script setup>
-import { ref, useAsyncData, shallowRef, computed, onMounted, watch } from '#imports'
-import { parse } from '../../../src/runtime/markdown-parser'
-import { useShiki } from '../../editor/useShiki.ts'
+import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
+import { transformContent } from '../../../src/runtime/transformers'
 
 const INITIAL_CODE = `---
 title: MDC
@@ -32,30 +31,15 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
   ::
 ::
 `
-const shiki = await useShiki()
 
-const content = ref(INITIAL_CODE)
+const route = useRoute()
 
-const { data: doc, refresh } = await useAsyncData('playground', async () => {
+const content = ref(route.query.content || INITIAL_CODE)
+
+const { data: doc, refresh } = await useAsyncData('playground-' + content.value, async () => {
   try {
-    // const startParse = Date.now()
-    let parsed = await parse(content.value)
-    // const startHighlight = Date.now()
-    parsed = await shiki(parsed)
-
-    // console.log(`Parsed: ${startHighlight - startParse}ms, Highlighted: ${Date.now() - startHighlight}ms`)
-
-    return {
-      _id: 'content:index.md',
-      _path: '/',
-      _file: 'index.md',
-      _extension: 'md',
-      _draft: false,
-      _type: 'markdown',
-      updatedAt: new Date().toISOString(),
-      ...parsed.meta || {},
-      ...parsed
-    }
+    const parsed = await transformContent('content:index.md', content.value)
+    return parsed
   } catch (e) {
     return doc.value
   }
@@ -92,23 +76,23 @@ watch(content, refresh)
 </script>
 
 <template>
-  <div class="h-page max-h-page flex flex-col">
-    <div class="flex items-center">
-      <TabsHeader class="flex-1 w-1/2" :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
-      <TabsHeader class="flex-1 w-1/2" :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
+  <div class="playground">
+    <div class="tab-container">
+      <TabsHeader :tabs="[{ label: 'Editor' }]" :active-tab-index="0" />
+      <TabsHeader :tabs="tabs" :active-tab-index="tab" @update:active-tab-index="updateTab" />
     </div>
-    <div class="flex overflow-hidden flex-1">
-      <div ref="editor" class="relative w-1/2 flex-1">
+    <div class="playground-main">
+      <div ref="editor">
         <component :is="editorComponent" v-if="editorComponent" v-model="content" />
-        <div v-else class="absolute left-0 top-0 h-full w-full flex justify-center items-center">
+        <div v-else class="loading">
           <Alert type="primary">
             <span>Editor is loading...</span>
             <Icon name="file-icons:sandbox" class="ml-2 inline" />
           </Alert>
         </div>
       </div>
-      <div class="w-1/2 flex-1 overflow-y-auto">
-        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="docus-content p-8" :value="doc">
+      <div>
+        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="content" :value="doc">
           <template #empty>
             <div class="p-8">
               <Alert type="warning">
@@ -117,7 +101,10 @@ watch(content, refresh)
                 </p>
                 <br><br>
                 <p>
-                  Type any <span class="font-semibold">Markdown</span> or <span class="font-semibold">MDC code</span> in editor to see it replaced by rendered nodes in this panel.
+                  Type any
+                  <span class="font-semibold">Markdown</span> or
+                  <span class="font-semibold">MDC code</span>
+                  in editor to see it replaced by rendered nodes in this panel.
                 </p>
               </Alert>
             </div>
@@ -130,8 +117,53 @@ watch(content, refresh)
           read-only
           :model-value="docJSON"
         />
-        <!-- <pre v-if="tab === 1">{{ doc }}</pre> -->
       </div>
     </div>
   </div>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.flex': { display: 'flex' },
+  '.flex-1': { flex: 1 },
+  '.p-8': { padding: '{space.8}' },
+  '.overflow-hidden': { overflow: 'hidden' },
+  '.relative': { position: 'relative' },
+  '.playground': {
+    height: 'calc(100vh - 114px)',
+    maxHeight: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  '.tab-container': {
+    display: 'flex',
+    alignItems: 'center',
+    '> div': {
+      flex: 1
+    }
+  },
+  '.playground-main': {
+    display: 'flex',
+    overflow: 'hidden',
+    flex: 1,
+  },
+  '.playground-main > div': {
+    flex: 1,
+    overflowY: 'auto',
+    position: 'relative',
+  },
+  '.loading': {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  '.content': {
+    padding: '{space.8}',
+  }
+})
+</style>

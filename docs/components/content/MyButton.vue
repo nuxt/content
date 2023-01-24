@@ -9,24 +9,27 @@ defineProps({
 
 <template>
   <button :class="type">
-    <Markdown :use="$slots.default" unwrap="p" />
+    <ContentSlot :use="$slots.default" unwrap="p" />
   </button>
 </template>
 
-<style scoped>
-  button {
-    padding: .5rem;
-    border-radius: 4px;
-    color: #000;
+<style scoped lang="ts">
+css({
+  'button': {
+    padding: '.5rem',
+    borderRadius: '4px',
+    color: '#000'
+  },
+  '.info': {
+    'backgroundColor': 'blue'
+  },
+  '.warning': {
+    'backgroundColor': 'orange'
+  },
+  '.success': {
+    backgroundColor: 'rgb(209, 250, 229)',
+    border: '1px solid rgb(52, 211, 153)'
   }
-  .info {
-    background-color: blue
-  }
-  .warning {
-    background-color: orange
-  }
-  .success {
-    background-color: rgb(209, 250, 229);
-    border: 1px solid rgb(52, 211, 153)
-  }
+
+})
 </style>

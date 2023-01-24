@@ -1,8 +1,12 @@
 import type { IncomingMessage } from 'http'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
+// @ts-ignore
 import fsDriver from 'unstorage/drivers/fs'
+// @ts-ignore
 import httpDriver from 'unstorage/drivers/http'
+// @ts-ignore
+import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { useLogger } from '@nuxt/kit'
 import type { ModuleOptions, MountOptions } from './module'
@@ -45,19 +49,22 @@ export const PROSE_TAGS = [
   'tr'
 ]
 
+const unstorageDrivers = {
+  fs: fsDriver,
+  http: httpDriver,
+  github: githubDriver
+}
 /**
  * Resolve driver of a mount.
  */
 export function getMountDriver (mount: MountOptions) {
-  if (mount.driver === 'fs') {
-    return fsDriver(mount as any)
-  }
-
-  if (mount.driver === 'http') {
-    return httpDriver(mount as any)
+  const dirverName = mount.driver as keyof typeof unstorageDrivers
+  if (unstorageDrivers[dirverName]) {
+    return unstorageDrivers[dirverName](mount as any)
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(mount.driver).default(mount as any)
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -69,9 +76,15 @@ export function getMountDriver (mount: MountOptions) {
  * Generate mounts for content storages
  */
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
-  const key = (path: string, prefix: string = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
+  const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
 
-  if (Array.isArray(storages)) {
+  const storageKeys = Object.keys(storages)
+  if (
+    Array.isArray(storages) ||
+    // Detect object representation of array `{ '0': 'source1' }`. Nuxt converts this array to object when using `nuxt.config.ts`
+    (storageKeys.length > 0 && storageKeys.every(i => i === String(+i)))
+  ) {
+    storages = Object.values(storages)
     logger.warn('Using array syntax to define sources is deprecated. Consider using object syntax.')
     storages = storages.reduce((mounts, storage) => {
       if (typeof storage === 'string') {
@@ -84,7 +97,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
       }
 
       if (typeof storage === 'object') {
-        mounts[key(storage.name, storage.prefix)] = storage
+        mounts[key(storage.name!, storage.prefix)] = storage
       }
 
       return mounts
@@ -93,7 +106,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
     storages = Object.entries(storages).reduce((mounts, [name, storage]) => {
       mounts[key(storage.name || name, storage.prefix)] = storage
       return mounts
-    }, {})
+    }, {} as Record<string, MountOptions>)
   }
 
   const defaultStorage = key('content')
@@ -141,20 +154,26 @@ export function createWebSocket () {
 }
 
 export function processMarkdownOptions (options: ModuleOptions['markdown']) {
+  // Refine anchor link generation
+  const anchorLinks = typeof options.anchorLinks === 'boolean'
+    ? { depth: options.anchorLinks ? 6 : 0, exclude: [] }
+    : { depth: 4, exclude: [1], ...options.anchorLinks }
+
   return {
     ...options,
+    anchorLinks,
     remarkPlugins: resolveMarkdownPlugins(options.remarkPlugins),
     rehypePlugins: resolveMarkdownPlugins(options.rehypePlugins)
   }
 }
 
-function resolveMarkdownPlugins (plugins): Record<string, false | MarkdownPlugin> {
+function resolveMarkdownPlugins (plugins: ModuleOptions['markdown']['remarkPlugins']): Record<string, false | MarkdownPlugin> {
   if (Array.isArray(plugins)) {
     return Object.values(plugins).reduce((plugins, plugin) => {
       const [name, pluginOptions] = Array.isArray(plugin) ? plugin : [plugin, {}]
       plugins[name] = pluginOptions
       return plugins
-    }, {})
+    }, {} as Record<string, false | MarkdownPlugin>)
   }
   return plugins || {}
 }

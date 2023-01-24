@@ -4,24 +4,26 @@ import {
   defineNuxtModule,
   resolveModule,
   createResolver,
-  addAutoImport,
+  addImports,
   addComponentsDir,
-  templateUtils,
-  addTemplate
+  addTemplate,
+  extendViteConfig
 } from '@nuxt/kit'
+import { genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { hash } from 'ohash'
-import { join } from 'pathe'
+import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
-import { withTrailingSlash } from 'ufo'
+import { createStorage } from 'unstorage'
+import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
   createWebSocket,
+  getMountDriver,
   logger,
   MOUNT_PREFIX,
   processMarkdownOptions,
@@ -42,8 +44,17 @@ export interface ModuleOptions {
    * Base route that will be used for content api
    *
    * @default '_content'
+   * @deprecated Use `api.base` instead
    */
   base: string
+  api: {
+    /**
+     * Base route that will be used for content api
+     *
+     * @default '/api/_content'
+     */
+    baseURL: string
+  }
   /**
    * Disable content watcher and hot content reload.
    * Note: Watcher is a development feature and will not includes in the production.
@@ -113,7 +124,26 @@ export interface ModuleOptions {
      *
      * @default []
      */
-    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
+    rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>,
+    /**
+     * Anchor link generation config
+     *
+     * @default {}
+     */
+    anchorLinks?: boolean | {
+     /**
+       * Sets the maximal depth for anchor link generation
+       *
+       * @default 4
+       */
+      depth?: number,
+      /**
+       * Excludes headings from link generation when they are in the depth range.
+       *
+       * @default [1]
+       */
+      exclude?: number[]
+    }
   }
   /**
    * Content module uses `shiki` to highlight code blocks.
@@ -143,7 +173,10 @@ export interface ModuleOptions {
    *
    * @default {}
    */
-  csv: false | Record<string, any>
+  csv: false | {
+    json?: boolean
+    delimeter?: string
+  }
   /**
    * Enable/Disable navigation.
    *
@@ -167,16 +200,24 @@ export interface ModuleOptions {
   defaultLocale?: string
   /**
    * Document-driven mode config
+   *
+   * @default false
    */
   documentDriven: boolean | {
-    page: boolean
-    navigation: boolean
-    surround: boolean
-    globals: {
+    host?: string
+    page?: boolean
+    navigation?: boolean
+    surround?: boolean
+    globals?: {
       [key: string]: QueryBuilderParams
     }
-    layoutFallbacks: string[]
-    injectPage: boolean
+    layoutFallbacks?: string[]
+    injectPage?: boolean
+    trailingSlash?: boolean
+  },
+  experimental: {
+    clientDB: boolean
+    stripQueryParameters: boolean
   }
 }
 
@@ -199,10 +240,18 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   defaults: {
-    base: '_content',
+    // @deprecated
+    base: '',
+    api: {
+      baseURL: '/api/_content'
+    },
     watch: {
       ws: {
-        port: 4000,
+        port: {
+          port: 4000,
+          portRange: [4000, 4040]
+        },
+        hostname: 'localhost',
         showURL: false
       }
     },
@@ -212,37 +261,56 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`]))
+      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      anchorLinks: {
+        depth: 4,
+        exclude: [1]
+      }
     },
     yaml: {},
-    csv: {},
+    csv: {
+      delimeter: ',',
+      json: true
+    },
     navigation: {
       fields: []
     },
-    documentDriven: false
+    documentDriven: false,
+    experimental: {
+      clientDB: false,
+      stripQueryParameters: false
+    }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
+    // Ensure default locale alway is the first item of locales
+    options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
+
+    // Disable cache in dev mode
+    const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
+
+    if (options.base) {
+      logger.warn('content.base is deprecated. Use content.api.baseURL instead.')
+      options.api.baseURL = withLeadingSlash(joinURL('api', options.base))
+    }
+
     const contentContext: ContentContext = {
       transformers: [],
       ...options
     }
 
     // Add Vite configurations
-    if (nuxt.options.vite !== false) {
-      nuxt.options.vite = defu(
-        nuxt.options.vite === true ? {} : nuxt.options.vite,
-        {
-          optimizeDeps: {
-            include: ['html-tags']
-          }
-        }
-      )
-    }
+    extendViteConfig((config) => {
+      config.define = config.define || {}
+      config.define['process.env.VSCODE_TEXTMATE_DEBUG'] = false
 
-    // Add Content plugin
-    addPlugin(resolveRuntimeModule('./plugins/ws'))
+      config.optimizeDeps = config.optimizeDeps || {}
+      config.optimizeDeps.include = config.optimizeDeps.include || []
+      config.optimizeDeps.include.push(
+        'html-tags', 'slugify'
+      )
+    })
 
     nuxt.hook('nitro:config', (nitroConfig) => {
       // Init Nitro context
@@ -254,40 +322,52 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.handlers.push(
         {
           method: 'get',
-          route: `/api/${options.base}/query/:qid`,
+          route: `${options.api.baseURL}/query/:qid/**:params`,
           handler: resolveRuntimeModule('./server/api/query')
         },
         {
           method: 'get',
-          route: `/api/${options.base}/query`,
+          route: `${options.api.baseURL}/query/:qid`,
           handler: resolveRuntimeModule('./server/api/query')
         },
         {
           method: 'get',
-          route: `/api/${options.base}/cache`,
+          route: `${options.api.baseURL}/query`,
+          handler: resolveRuntimeModule('./server/api/query')
+        },
+        {
+          method: 'get',
+          route: nuxt.options.dev
+            ? `${options.api.baseURL}/cache.json`
+            : `${options.api.baseURL}/cache.${buildIntegrity}.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
 
       if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.push('/api/_content/cache')
+        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
       // Register source storages
       const sources = useContentMounts(nuxt, contentContext.sources)
       nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
+      nitroConfig.devStorage['cache:content'] = {
+        driver: 'fs',
+        base: resolve(nuxt.options.buildDir, 'content-cache')
+      }
 
       // Tell Nuxt to ignore content dir for app build
       for (const source of Object.values(sources)) {
         // Only targets directories inside the srcDir
         if (source.driver === 'fs' && source.base.includes(nuxt.options.srcDir)) {
+          const wildcard = join(source.base, '**/*').replace(withTrailingSlash(nuxt.options.srcDir), '')
           nuxt.options.ignore.push(
             // Remove `srcDir` from the path
-            join(source.base, '**/*').replace(withTrailingSlash(nuxt.options.srcDir), '')
+            wildcard,
+            `!${wildcard}.vue`
           )
         }
       }
-
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
@@ -302,11 +382,15 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
 
+      const transformers = contentContext.transformers.map((t) => {
+        const name = genSafeVariableName(relative(nuxt.options.rootDir, t)).replace(/_(45|46|47)/g, '_') + '_' + hash(t)
+        return { name, import: genImport(t, name) }
+      })
+
       nitroConfig.virtual = nitroConfig.virtual || {}
       nitroConfig.virtual['#content/virtual/transformers'] = [
-        // TODO: remove kit usage
-        templateUtils.importSources(contentContext.transformers),
-        `export const transformers = [${contentContext.transformers.map(templateUtils.importName).join(', ')}]`,
+        ...transformers.map(t => t.import),
+        `export const transformers = [${transformers.map(t => t.name).join(', ')}]`,
         'export const getParser = (ext) => transformers.find(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.parse)',
         'export const getTransformers = (ext) => transformers.filter(p => ext.match(new RegExp(p.extensions.join("|"),  "i")) && p.transform)',
         'export default () => {}'
@@ -314,7 +398,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Register composables
-    addAutoImport([
+    addImports([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
       { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
@@ -327,11 +411,10 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
-      level: 999,
       global: true
     })
 
-    addTemplate({
+    const typesPath = addTemplate({
       filename: 'types/content.d.ts',
       getContents: () => [
         'declare module \'#content/server\' {',
@@ -339,21 +422,19 @@ export default defineNuxtModule<ModuleOptions>({
         `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
         '}'
       ].join('\n')
-    })
+    }).dst
 
     nuxt.hook('prepare:types', (options) => {
-      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/content.d.ts') })
+      options.references.push({ path: typesPath })
     })
 
     // Register user global components
-    for (const layer of nuxt.options._layers) {
+    const _layers = [...nuxt.options._layers].reverse()
+    for (const layer of _layers) {
       const srcDir = layer.config.srcDir
       const globalComponents = resolve(srcDir, 'components/content')
       const dirStat = await fs.promises.stat(globalComponents).catch(() => null)
       if (dirStat && dirStat.isDirectory()) {
-        if (nuxt.options._layers.length === 1) {
-          logger.success('Using `~/components/content` for components in Markdown')
-        }
         nuxt.hook('components:dirs', (dirs) => {
           dirs.unshift({
             path: globalComponents,
@@ -362,50 +443,34 @@ export default defineNuxtModule<ModuleOptions>({
             prefix: ''
           })
         })
-      } else if (nuxt.options._layers.length === 1) {
-        const componentsDir = resolve(srcDir, 'components/')
-        const componentsDirStat = await fs.promises.stat(componentsDir).catch(() => null)
-        if (componentsDirStat && componentsDirStat.isDirectory()) {
-          // TODO: watch for file creation and tell Nuxt to restart
-          // Not possible for now since directories are hard-coded: https://github.com/nuxt/framework/blob/5b63ae8ad54eeb3cb49479da8f32eacc1a743ca0/packages/nuxi/src/commands/dev.ts#L94
-          logger.info('Please create `~/components/content` and restart the Nuxt server to use components in Markdown')
-        }
       }
     }
 
     // Register navigation
     if (options.navigation) {
-      addAutoImport({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
+      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: `/api/${options.base}/navigation/:qid`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        })
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: `/api/${options.base}/navigation`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        })
+        nitroConfig.handlers.push(
+          {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation/:qid/**:params`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          }, {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation/:qid`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          },
+          {
+            method: 'get',
+            route: `${options.api.baseURL}/navigation`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          }
+        )
       })
-    }
-
-    // Register highlighter
-    if (options.highlight) {
-      contentContext.transformers.push(resolveRuntimeModule('./transformers/shiki'))
-      // @ts-ignore
-      contentContext.highlight.apiURL = `/api/${options.base}/highlight`
-
-      nuxt.hook('nitro:config', (nitroConfig) => {
-        nitroConfig.handlers = nitroConfig.handlers || []
-        nitroConfig.handlers.push({
-          method: 'post',
-          route: `/api/${options.base}/highlight`,
-          handler: resolveRuntimeModule('./server/api/highlight')
-        })
-      })
+    } else {
+      addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
     }
 
     // Register document-driven
@@ -435,7 +500,7 @@ export default defineNuxtModule<ModuleOptions>({
         options.navigation.fields.push('layout')
       }
 
-      addAutoImport([
+      addImports([
         { name: 'useContentState', as: 'useContentState', from: resolveRuntimeModule('./composables/content') },
         { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
@@ -472,7 +537,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     } else {
       // Noop useContent
-      addAutoImport([
+      addImports([
         { name: 'useContentDisabled', as: 'useContentState', from: resolveRuntimeModule('./composables/utils') },
         { name: 'useContentDisabled', as: 'useContent', from: resolveRuntimeModule('./composables/utils') }
       ])
@@ -483,7 +548,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
-    // Generate cache integerity based on content context
+    // Generate cache integrity based on content context
     const cacheIntegrity = hash({
       locales: options.locales,
       options: options.defaultLocale,
@@ -495,24 +560,84 @@ export default defineNuxtModule<ModuleOptions>({
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
-      base: options.base,
+      locales: options.locales,
+      defaultLocale: contentContext.defaultLocale,
+      integrity: buildIntegrity,
+      experimental: {
+        stripQueryParameters: options.experimental.stripQueryParameters,
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
+      },
+      api: {
+        baseURL: options.api.baseURL
+      },
+      navigation: contentContext.navigation as any,
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
-      documentDriven: options.documentDriven as ModuleOptions['documentDriven']
+      documentDriven: options.documentDriven as any,
+      host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
+      trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
+      // Anchor link generation config
+      anchorLinks: options.markdown.anchorLinks
     })
 
     // Context will use in server
-    nuxt.options.runtimeConfig.content = {
+    nuxt.options.runtimeConfig.content = defu(nuxt.options.runtimeConfig.content, {
       cacheVersion: CACHE_VERSION,
       cacheIntegrity,
       ...contentContext as any
-    }
+    })
+
+    // @nuxtjs/tailwindcss support
+    // @ts-ignore - Module might not exist
+    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      tailwindConfig.content = tailwindConfig.content ?? []
+      tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
+    })
 
     // Setup content dev module
-    if (!nuxt.options.dev) { return }
+    if (!nuxt.options.dev) {
+      nuxt.hook('build:before', async () => {
+        const storage = createStorage()
+        const sources = useContentMounts(nuxt, contentContext.sources)
+        sources['cache:content'] = {
+          driver: 'fs',
+          base: resolve(nuxt.options.buildDir, 'content-cache')
+        }
+        for (const [key, source] of Object.entries(sources)) {
+          storage.mount(key, getMountDriver(source))
+        }
+        let keys = await storage.getKeys('content:source')
+
+        // Filter invalid characters & ignore patterns
+        const invalidKeyCharacters = "'\"?#/".split('')
+        const contentIgnores: Array<RegExp> = contentContext.ignores.map((p: any) =>
+          typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
+        )
+        keys = keys.filter((key) => {
+          if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+            return false
+          }
+          if (invalidKeyCharacters.some(ik => key.includes(ik))) {
+            return false
+          }
+          return true
+        })
+        await Promise.all(
+          keys.map(async key => await storage.setItem(
+            `cache:content:parsed:${key.substring(15)}`,
+            await storage.getItem(key)
+          ))
+        )
+      })
+      return
+    }
+    // ~~ DEV ~~ //
+
+    // Add Content plugin
+    addPlugin(resolveRuntimeModule('./plugins/ws'))
 
     nuxt.hook('nitro:init', async (nitro) => {
       if (!options.watch || !options.watch.ws) { return }
@@ -547,17 +672,19 @@ export default defineNuxtModule<ModuleOptions>({
         ws.broadcast({ event, key })
       })
     })
-
-    // @nuxtjs/tailwindcss support
-    // @ts-ignore - Module might not exist
-    nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      tailwindConfig.content = tailwindConfig.content ?? []
-      tailwindConfig.content.push(`${nuxt.options.buildDir}/cache/content/parsed/**/*.md`)
-    })
   }
 })
 
 interface ModulePublicRuntimeConfig {
+  experimental: {
+    stripQueryParameters: boolean
+    clientDB: boolean
+  }
+
+  defaultLocale: ModuleOptions['defaultLocale']
+
+  locales: ModuleOptions['locales']
+
   tags: Record<string, string>
 
   base: string;
@@ -567,6 +694,8 @@ interface ModulePublicRuntimeConfig {
 
   // Shiki config
   highlight: ModuleOptions['highlight']
+
+  navigation: ModuleOptions['navigation']
 }
 
 interface ModulePrivateRuntimeConfig {

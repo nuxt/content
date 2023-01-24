@@ -6,10 +6,10 @@
       </div>
       <div>
         <h3 style="margin: 0">
-          <Markdown :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p" />
         </h3>
         <div>
-          <Markdown :use="$slots.default" unwrap="p" />
+          <ContentSlot :use="$slots.default" unwrap="p" />
         </div>
       </div>
     </div>

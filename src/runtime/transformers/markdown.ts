@@ -23,11 +23,11 @@ export default defineTransformer({
 })
 
 async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = {}) {
-  const resolvedPlugins = {}
+  const resolvedPlugins: Record<string, false | MarkdownPlugin & { instance: any }> = {}
   for (const [name, plugin] of Object.entries(plugins)) {
     if (plugin) {
       resolvedPlugins[name] = {
-        instance: await import(name).then(m => m.default || m),
+        instance: plugin.instance || await import(/* @vite-ignore */ name).then(m => m.default || m),
         ...plugin
       }
     } else {

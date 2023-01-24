@@ -28,7 +28,7 @@ export function parseThematicBlock (lang: string) {
   }
 }
 
-function parseHighlightedLines (lines?: string) {
+function parseHighlightedLines (lines?: string | null) {
   const lineArray = String(lines || '')
     .split(',')
     .filter(Boolean)
@@ -51,7 +51,7 @@ export function getTagName (value: string) {
  * Wrap `nodes` with line feeds between each entry.
  * Optionally adds line feeds at the start and end.
  */
-export function wrap (nodes: any[], loose: boolean = false) {
+export function wrap (nodes: any[], loose = false) {
   const result = []
   let index = -1
 

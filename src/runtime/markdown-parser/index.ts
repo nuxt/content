@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import remarkEmoji from 'remark-emoji'
 import rehypeSlug from 'rehype-slug'
@@ -106,5 +105,4 @@ function useExcerpt (content: string, delimiter = /<!--\s*?more\s*?-->/i) {
   if (idx !== -1) {
     return content.slice(0, idx)
   }
-  return content
 }

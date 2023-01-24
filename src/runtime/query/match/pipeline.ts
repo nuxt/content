@@ -35,14 +35,20 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     // Remove unwanted fields
     (data, params) => apply(withoutKeys(params.without))(data),
     // Select only wanted fields
-    (data, params) => apply(withKeys(params.only))(data),
-    // Evaluate result
-    (data, params) => params.first ? data[0] : data
+    (data, params) => apply(withKeys(params.only))(data)
   ]
 
   return async (query: QueryBuilder<T>): Promise<T | T[]> => {
     const data = await getContentsList()
+    const params = query.params()
 
-    return pipelines.reduce(($data: Array<T>, pipe: any) => pipe($data, query.params()) || $data, data)
+    const filteredData = pipelines.reduce(($data: Array<T>, pipe: QueryPipe) => pipe($data, params) || $data, data)
+
+    // return first item if query is for single item
+    if (params.first) {
+      return filteredData[0]
+    }
+
+    return filteredData
   }
 }

@@ -1,13 +1,13 @@
-[![nuxt-content](/docs/public/cover.jpg "@nuxt/content cover")](https://content.nuxtjs.org)
+[![nuxt-content](https://user-images.githubusercontent.com/904724/195312457-e43879c3-f1cc-4b95-9531-e54582aaff47.png "@nuxt/content cover")](https://content.nuxtjs.org)
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![Github Actions CI][github-actions-ci-src]][github-actions-ci-href]
 [![License][license-src]][license-href]
+[![Volta][volta-src]][volta-href]
 
 # Nuxt Content
 
-Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](/guide/writing/mdc).
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxtjs.org/guide/writing/mdc).
 
 - [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/nuxt/content/tree/main/examples/essentials/hello-world?file=app.vue)
@@ -42,14 +42,15 @@ Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.
 [MIT](./LICENSE) - Made with 💚
 
 
-[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
 
-[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxt/content.svg
+[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-downloads-href]: https://npmjs.com/package/@nuxt/content
 
-[github-actions-ci-src]: https://github.com/nuxt/content/workflows/ci/badge.svg
-[github-actions-ci-href]: https://github.com/nuxt/content/actions?query=workflow%3Aci
+[license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://github.com/nuxt/content/blob/main/LICENSE
 
-[license-src]: https://img.shields.io/npm/l/@nuxt/content.svg
-[license-href]: https://npmjs.com/package/@nuxt/content
+
+[volta-src]: https://user-images.githubusercontent.com/904724/209143798-32345f6c-3cf8-4e06-9659-f4ace4a6acde.svg
+[volta-href]: https://volta.net/nuxt/content?utm_source=readme_nuxt_content

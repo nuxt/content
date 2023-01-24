@@ -1,13 +1,15 @@
 import { describe, test, expect } from 'vitest'
-import { $fetch } from '@nuxt/test-utils'
+import { $fetch, useTestContext } from '@nuxt/test-utils'
 import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testNavigation = () => {
+  // @ts-ignore
+  const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   describe('Navigation', () => {
     test('Get navigation', async () => {
       const query = { where: [{ _locale: 'en' }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
         params: {
           _params: jsonStringify(query)
         }
@@ -25,7 +27,7 @@ export const testNavigation = () => {
 
     test('Get cats navigation', async () => {
       const query = { where: [{ _path: /^\/cats/ }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
         params: {
           _params: jsonStringify(query)
         }
@@ -36,7 +38,7 @@ export const testNavigation = () => {
 
     test('Get dogs navigation', async () => {
       const query = { where: [{ _path: /^\/dogs/ }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
         params: {
           _params: jsonStringify(query)
         }
@@ -47,7 +49,7 @@ export const testNavigation = () => {
 
     test('_dir.yml should be able to filter navigation tree', async () => {
       const query = { where: [{ _path: /^\/test-navigation/ }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
         params: {
           _params: jsonStringify(query)
         }
@@ -65,7 +67,7 @@ export const testNavigation = () => {
 
     test('Get numbers navigation', async () => {
       const query = { where: [{ _path: /^\/numbers/ }] }
-      const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+      const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
         params: {
           _params: jsonStringify(query)
         }
@@ -80,7 +82,8 @@ export const testNavigation = () => {
     })
 
     test('Should remove `navigation-disabled.md` content', async () => {
-      const list = await $fetch('/api/_content/navigation/')
+      const list = await $fetch(`${apiBaseUrl}/navigation/`)
+
       const hidden = list.find(i => i._path === '/navigation-disabled')
       expect(hidden).toBeUndefined()
     })
@@ -102,7 +105,7 @@ export const testNavigation = () => {
       }
 
       const queryNav = async (query) => {
-        const list = await $fetch(`/api/_content/navigation/${hash(query)}`, {
+        const list = await $fetch(`${apiBaseUrl}/navigation/${hash(query)}`, {
           params: {
             _params: jsonStringify(query)
           }

@@ -1,8 +1,8 @@
-import { useQuery, CompatibilityEvent, createError } from 'h3'
-import { QueryBuilderParams } from '../types'
-import { jsonParse } from './json'
+import { getQuery, H3Event, createError } from 'h3'
+import { QueryBuilderParams, QueryBuilderWhere } from '../types'
+import { jsonParse, jsonStringify } from './json'
 
-const parseQueryParams = (body: string) => {
+const parseJSONQueryParams = (body: string) => {
   try {
     return jsonParse(body)
   } catch (e) {
@@ -10,14 +10,45 @@ const parseQueryParams = (body: string) => {
   }
 }
 
-const memory = {}
-export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams => {
-  const { qid } = event.context.params
-  const query: any = useQuery(event) || {}
+export const encodeQueryParams = (params: QueryBuilderParams) => {
+  let encoded = jsonStringify(params)
+  encoded = typeof Buffer !== 'undefined' ? Buffer.from(encoded).toString('base64') : btoa(encoded)
+
+  encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+
+  // split to chunks of 100 chars
+  const chunks = encoded.match(/.{1,100}/g) || []
+  return chunks.join('/')
+}
+
+export const decodeQueryParams = (encoded: string) => {
+  // remove chunks
+  encoded = encoded.replace(/\//g, '')
+
+  // revert base64
+  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/')
+  encoded = encoded.padEnd(encoded.length + (4 - (encoded.length % 4)) % 4, '=')
+
+  return parseJSONQueryParams(typeof Buffer !== 'undefined' ? Buffer.from(encoded, 'base64').toString() : atob(encoded))
+}
+
+const memory: Record<string, QueryBuilderParams> = {}
+export const getContentQuery = (event: H3Event): QueryBuilderParams => {
+  const { params } = event.context.params || {}
+  if (params) {
+    return decodeQueryParams(params.replace(/.json$/, ''))
+  }
+
+  const qid = event.context.params.qid?.replace(/.json$/, '')
+  const query: any = getQuery(event) || {}
 
   // Using /api/_content/query/:qid?_params=....
   if (qid && query._params) {
-    memory[qid] = parseQueryParams(query._params)
+    memory[qid] = parseJSONQueryParams(query._params)
+
+    if (memory[qid].where && !Array.isArray(memory[qid].where)) {
+      memory[qid].where = [memory[qid].where as any as QueryBuilderWhere]
+    }
 
     return memory[qid]
   }
@@ -27,31 +58,32 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
 
   // Using /api/_content/query?_params={{JSON_FORMAT}}
   if (query._params) {
-    return parseQueryParams(query._params)
+    return parseJSONQueryParams(query._params)
   }
 
   // Using /api/_content/query?path=...&only=...
 
   // Support both ?only=path,title and ?only=path&only=title
   if (typeof query.only === 'string' && query.only.includes(',')) {
-    query.only = query.only.split(',').map(s => s.trim())
+    query.only = (query.only as string).split(',').map(s => s.trim())
   }
   if (typeof query.without === 'string' && query.without.includes(',')) {
-    query.without = query.without.split(',').map(s => s.trim())
+    query.without = (query.without as string).split(',').map(s => s.trim())
   }
 
-  query.where = query.where || {}
+  const where = query.where || {}
   // ?partial=true|false&draft=true|false&empty=true|false
   for (const key of ['draft', 'partial', 'empty']) {
     // ?partial=true|false
     if (query[key] && ['true', 'false'].includes(query[key])) {
-      query.where[key] = query[key] === 'true'
+      where[key] = query[key] === 'true'
       delete query[key]
     }
   }
+
   // ?sortyBy=size:1
   if (query.sort) {
-    query.sort = query.sort.split(',').map((s) => {
+    query.sort = String(query.sort).split(',').map((s) => {
       const [key, order] = s.split(':')
       return [key, +order]
     })
@@ -60,8 +92,14 @@ export const getContentQuery = (event: CompatibilityEvent): QueryBuilderParams =
   const reservedKeys = ['partial', 'draft', 'only', 'without', 'where', 'sort', 'limit', 'skip']
   for (const key of Object.keys(query)) {
     if (reservedKeys.includes(key)) { continue }
-
+    query.where = query.where || {}
     query.where[key] = query[key]
+  }
+
+  if (Object.keys(where).length > 0) {
+    query.where = [where]
+  } else {
+    delete query.where
   }
 
   return query

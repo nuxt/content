@@ -32,12 +32,13 @@ export default defineTransformer({
     // Check first part for locale name
     const _locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
 
-    const filePath = parts.join('/')
+    const filePath = generatePath(parts.join('/'))
 
     return <ParsedContent> {
-      _path: generatePath(filePath),
-      _draft: isDraft(filePath),
-      _partial: isPartial(filePath),
+      _path: filePath,
+      _dir: filePath.split('/').slice(-2)[0],
+      _draft: isDraft(_path),
+      _partial: isPartial(_path),
       _locale,
       ...content,
       // TODO: move title to Markdown parser
@@ -65,8 +66,10 @@ const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => par
  * @param path file full path
  * @returns generated slug
  */
-const generatePath = (path: string): string =>
-  withLeadingSlash(withoutTrailingSlash(path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')))
+export const generatePath = (path: string, { forceLeadingSlash = true } = {}): string => {
+  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')
+  return forceLeadingSlash ? withLeadingSlash(withoutTrailingSlash(path)) : path
+}
 
 /**
  * generate title from file path

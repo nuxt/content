@@ -1,5 +1,4 @@
 import { resolve } from 'pathe'
-import { defineNuxtConfig } from 'nuxt'
 import consola from 'consola'
 
 const alias = {}
@@ -23,32 +22,28 @@ export default defineNuxtConfig({
     }
   },
   content: {
-    sources: [
-      {
-        name: 'v1',
+    sources: {
+      v1: {
         prefix: '/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/en')
       },
-      {
-        name: 'v1-ja',
+      'v1-ja': {
         prefix: '/ja/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/ja')
       },
-      {
-        name: 'v1-fr',
+      'v1-fr': {
         prefix: '/fr/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/fr')
       },
-      {
-        name: 'v1-ru',
+      'v1-ru': {
         prefix: '/ru/v1',
         driver: 'fs',
         base: resolve(__dirname, 'content-v1/ru')
       }
-    ],
+    },
     highlight: {
       preload: ['xml']
     }
@@ -57,29 +52,32 @@ export default defineNuxtConfig({
     prerender: {
       routes: [
         '/',
-        '/blog/announcing-v2'
+        '/blog/announcing-v2',
+        // TODO: move to github module
+        '/api/_github/releases/.json'
       ]
     }
   },
-  modules: ['@nuxtlabs/github-module'],
-  extends: [
-    (process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus')
-  ],
+  modules: ['@nuxtlabs/github-module', '@nuxthq/studio'],
+  extends: process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus',
   github: {
     owner: 'nuxt',
     repo: 'content',
     branch: 'main'
   },
-  vite: {
-    define: {
-      'process.env.FORCE_COLOR': {},
-      'process.env.NODE_DISABLE_COLORS': {},
-      'process.env.NO_COLOR': {},
-      'process.env.FORCE_TERM': {}
-    }
-  },
   colorMode: {
     preference: 'dark'
   },
-  theme: {}
+  runtimeConfig: {
+    public: {
+      algolia: {
+        applicationId: '',
+        apiKey: '',
+        langAttribute: 'lang',
+        docSearch: {
+          indexName: 'content-nuxtjs'
+        }
+      }
+    }
+  }
 })

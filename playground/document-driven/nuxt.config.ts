@@ -1,5 +1,3 @@
-import { defineNuxtConfig } from 'nuxt'
-
 export default defineNuxtConfig({
   extends: ['../shared'],
   content: {
@@ -11,7 +9,8 @@ export default defineNuxtConfig({
           },
           without: ['_']
         }
-      }
+      },
+      layoutFallbacks: ['theme']
     }
   }
 })

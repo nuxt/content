@@ -10,7 +10,6 @@ import { useRuntimeConfig, useRoute } from '#app'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
-type ContentVNode = VNode | string
 
 /**
  *  Default slot name
@@ -45,6 +44,13 @@ export default defineComponent({
     tag: {
       type: String,
       default: 'div'
+    },
+    /**
+     * The map of custom components to use for rendering.
+     */
+    components: {
+      type: Object,
+      default: () => ({})
     }
   },
   async setup (props) {
@@ -53,14 +59,15 @@ export default defineComponent({
     await resolveContentComponents(props.value.body, {
       tags: {
         ...tags,
-        ...props.value?.tags || {}
+        ...props.value?._components || {},
+        ...props.components
       }
     })
 
     return { tags }
   },
   render (ctx) {
-    const { tags, tag, value } = ctx
+    const { tags, tag, value, components } = ctx
 
     if (!value) {
       return null
@@ -75,7 +82,8 @@ export default defineComponent({
       ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...value?.tags || {}
+        ...value?._components || {},
+        ...components
       }
     }
 
@@ -87,19 +95,11 @@ export default defineComponent({
     // Resolve component if it's a Vue component
     component = resolveVueComponent(component as string)
 
-    // Process children
-    const children = (body.children || []).map(child => renderNode(child, h, meta))
-
     // Return Vue component
     return h(
-        component as any,
-        {
-          ...meta.component?.props,
-          ...this.$attrs
-        },
-        {
-          default: createSlotFunction(children)
-        }
+      component as any,
+      { ...meta.component?.props, ...this.$attrs },
+      renderSlots(body, h, meta, meta)
     )
   }
 })
@@ -107,12 +107,16 @@ export default defineComponent({
 /**
  * Render a markdown node
  */
-function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): ContentVNode {
+function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): VNode {
   /**
    * Render Text node
    */
   if (node.type === 'text') {
     return h(Text, node.value)
+  }
+
+  if (node.tag === 'script') {
+    return renderToText(node)
   }
 
   const originalTag = node.tag!
@@ -129,6 +133,7 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   }
 
   const props = propsToData(node, documentMeta)
+
   return h(
     component as any,
     props,
@@ -136,7 +141,19 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   )
 }
 
-function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): ContentVNode {
+function renderToText (node: MarkdownNode) {
+  if (node.type === 'text') {
+    return node.value
+  }
+
+  if (!node.children?.length) {
+    return `<${node.tag}>`
+  }
+
+  return `<${node.tag}>${node.children?.map(renderToText).join('') || ''}</${node.tag}>`
+}
+
+function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): VNode {
   const data = {
     ...parentScope,
     $route: () => useRoute(),
@@ -162,31 +179,37 @@ function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: Pars
 /**
  * Create slots from `node` template children.
  */
-function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentProps: any): ContentVNode[] {
+function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentProps: any): Record<string, () => VNode[]> {
   const children: MarkdownNode[] = node.children || []
 
-  const slots: Record<string, Array<VNode | string>> = children.reduce((data, node) => {
+  const slotNodes: Record<string, MarkdownNode[]> = children.reduce((data, node) => {
     if (!isTemplate(node)) {
-      data[DEFAULT_SLOT].push(renderNode(node, h, documentMeta, parentProps))
-      return data
-    }
-
-    if (isDefaultTemplate(node)) {
-      data[DEFAULT_SLOT].push(...(node.children || []).map(child => renderNode(child, h, documentMeta, parentProps)))
+      data[DEFAULT_SLOT].push(node)
       return data
     }
 
     const slotName = getSlotName(node)
-    data[slotName] = (node.children || []).map(child => renderNode(child, h, documentMeta, parentProps))
+    data[slotName] = data[slotName] || []
+    // Append children to slot
+    data[slotName].push(...(node.children || []))
 
     return data
   }, {
     [DEFAULT_SLOT]: [] as any[]
   })
 
-  const slotEntries = Object.entries(slots).map(([name, vDom]) => ([name, createSlotFunction(vDom)]))
+  const slots = Object.entries(slotNodes).reduce((slots, [name, children]) => {
+    if (!children.length) { return slots }
 
-  return Object.fromEntries(slotEntries)
+    slots[name] = () => {
+      const vNodes = children.map(child => renderNode(child, h, documentMeta, parentProps))
+      return mergeTextNodes(vNodes)
+    }
+
+    return slots
+  }, {} as Record<string, () => VNode[]>)
+
+  return slots
 }
 
 /**
@@ -333,20 +356,6 @@ function getSlotName (node: MarkdownNode) {
     break
   }
   return name || DEFAULT_SLOT
-}
-
-/**
- * Create a factory function if there is a node in the list
- */
-function createSlotFunction (nodes: Array<VNode | string>) {
-  return (nodes.length ? () => mergeTextNodes(nodes as VNode[]) : undefined)
-}
-
-/**
- * Check if node is root
- */
-function isDefaultTemplate (node: MarkdownNode) {
-  return isTemplate(node) && getSlotName(node) === DEFAULT_SLOT
 }
 
 /**

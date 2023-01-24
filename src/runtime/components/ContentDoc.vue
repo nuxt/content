@@ -1,5 +1,6 @@
 <script lang="ts">
 import { PropType, defineComponent, h, useSlots } from 'vue'
+import { withTrailingSlash } from 'ufo'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer'
 import ContentQuery from './ContentQuery'
@@ -42,7 +43,7 @@ export default defineComponent({
     path: {
       type: String,
       required: false,
-      default: () => useRoute().path
+      default: undefined
     },
 
     /**
@@ -78,7 +79,11 @@ export default defineComponent({
     const { tag, excerpt, path, query, head } = ctx
 
     // Merge local `path` props and apply `findOne` query default.
-    const contentQueryProps = Object.assign(query || {}, { path, find: 'one' })
+    const contentQueryProps = {
+      ...query || {},
+      path: path || query?.path || withTrailingSlash(useRoute().path),
+      find: 'one'
+    }
 
     const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentDoc>', slot, data }, null, 2))
 
