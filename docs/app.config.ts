@@ -17,7 +17,10 @@ export default defineAppConfig({
     github: {
       root: 'docs/content',
       edit: true,
-      releases: true
+      releases: true,
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main'
     },
     cover: {
       src: '/cover.jpg',
