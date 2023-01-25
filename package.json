@@ -42,15 +42,15 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "v3.0.0",
+    "@nuxt/kit": "3.1.0",
     "consola": "^2.15.3",
-    "defu": "^6.1.1",
+    "defu": "^6.1.2",
     "destr": "^1.2.2",
     "detab": "^3.0.2",
     "html-tags": "^3.2.0",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
-    "listhen": "^1.0.1",
+    "listhen": "^1.0.2",
     "mdast-util-to-hast": "^12.2.6",
     "mdurl": "^1.0.1",
     "ohash": "^1.0.0",
@@ -75,14 +75,14 @@
     "unified": "^10.1.2",
     "unist-builder": "^3.0.1",
     "unist-util-position": "^4.0.4",
-    "unist-util-visit": "^4.1.1",
+    "unist-util-visit": "^4.1.2",
     "unstorage": "^1.0.1",
     "ws": "^8.12.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.2.1",
-    "@nuxt/schema": "v3.0.0",
-    "@nuxt/test-utils": "v3.0.0",
+    "@nuxt/schema": "3.1.0",
+    "@nuxt/test-utils": "3.1.0",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.4",
@@ -93,10 +93,10 @@
     "husky": "^8.0.3",
     "jiti": "^1.16.2",
     "lint-staged": "^13.1.0",
-    "nuxt": "v3.0.0",
+    "nuxt": "3.1.0",
     "rehype-figure": "^1.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.28.1",
+    "vitest": "^0.28.2",
     "vue-docgen-web-types": "^0.1.8"
   }
 }
