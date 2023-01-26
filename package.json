@@ -111,9 +111,6 @@
     },
     "hooks": {
       "after:bump": "npx changelogen@latest --no-commit --no-tag --output --r $(node -p \"require('./package.json').version\")"
-    },
-    "npm": {
-      "publish": false
     }
   }
 }
