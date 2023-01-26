@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v2.4.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.0...v2.4.1)
+
+
+### 🩹 Fixes
+
+  - **useContentHead:** `undefined` url ([b157500b](https://github.com/nuxt/content/commit/b157500b))
+
+### 📖 Documentation
+
+  - Update edit path ([#1853](https://github.com/nuxt/content/pull/1853))
+
+### 🏡 Chore
+
+  - Update changelog ([8e7733a0](https://github.com/nuxt/content/commit/8e7733a0))
+  - Update release config ([1bb477d8](https://github.com/nuxt/content/commit/1bb477d8))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Barbapapazes <e.soubiran25@gmail.com>
+
 ## v2.4.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.3.0...v2.4.0)
