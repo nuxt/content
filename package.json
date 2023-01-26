@@ -100,5 +100,20 @@
     "remark-oembed": "^1.2.2",
     "vitest": "^0.28.2",
     "vue-docgen-web-types": "^0.1.8"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): release v${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}"
+    },
+    "hooks": {
+      "after:bump": "npx changelogen@latest --no-commit --no-tag --output --r $(node -p \"require('./package.json').version\")"
+    },
+    "npm": {
+      "publish": false
+    }
   }
 }
