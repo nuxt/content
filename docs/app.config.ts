@@ -15,6 +15,7 @@ export default defineAppConfig({
       github: 'nuxt/content'
     },
     github: {
+      dir: 'docs/content',
       root: 'docs/content',
       edit: true,
       releases: true,
