@@ -34,14 +34,14 @@ export const useContentHead = (
       }
     }
 
-    let host = config.public.content.host
-    if (process.server && !host) {
-      const req = useRequestEvent().node?.req
-      if (req) {
-        const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
-        host = `${protocol}://${req.headers.host}`
-      }
-    }
+    const host = config.public.content.host
+    // if (process.server && !host) {
+    //   const req = useRequestEvent().node?.req
+    //   if (req && req.headers.host !== 'localhost') {
+    //     const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
+    //     host = `${protocol}://${req.headers.host}`
+    //   }
+    // }
     if (process.server && host) {
       const _url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
       const url = config.public.content.trailingSlash ? withTrailingSlash(_url) : withoutTrailingSlash(_url)
