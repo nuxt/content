@@ -1,5 +1,5 @@
 import { resolve } from 'pathe'
-import consola from 'consola'
+// import consola from 'consola'
 
 const alias = {}
 
