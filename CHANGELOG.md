@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v2.4.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.1...v2.4.2)
+
+
+### 🩹 Fixes
+
+  - **useContentHead:** Disable host detection ([f6a429dc](https://github.com/nuxt/content/commit/f6a429dc))
+
+### 📖 Documentation
+
+  - Improvements ([f1991939](https://github.com/nuxt/content/commit/f1991939))
+  - Lint fix ([a11e908d](https://github.com/nuxt/content/commit/a11e908d))
+
+### 🏡 Chore
+
+  - Update release config ([801535d2](https://github.com/nuxt/content/commit/801535d2))
+
+### ❤️  Contributors
+
+- Sébastien Chopin <seb@nuxtjs.com>
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.4.1
 
 [compare changes](https://github.com/nuxt/content/compare/v2.4.0...v2.4.1)
