@@ -3,10 +3,10 @@ import consola from 'consola'
 
 const alias = {}
 
-if (process.env.NODE_ENV === 'development') {
-  consola.warn('Using local @nuxt/content!')
-  alias['@nuxt/content'] = '../src/module.ts'
-}
+// if (process.env.NODE_ENV === 'development') {
+//   consola.warn('Using local @nuxt/content!')
+//   alias['@nuxt/content'] = '../src/module.ts'
+// }
 
 export default defineNuxtConfig({
   alias,
@@ -69,6 +69,9 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   runtimeConfig: {
+    content: {
+      host: 'https://content.nuxtjs.org'
+    },
     public: {
       algolia: {
         applicationId: '',
