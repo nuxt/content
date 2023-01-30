@@ -30,13 +30,13 @@
     "dev:build": "nuxi build playground/basic",
     "prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
-    "build": "nuxt-module-build && yarn build:web-types",
+    "build": "nuxt-module-build && pnpm build:web-types",
     "build:docs": "(cd docs && nuxi build)",
     "build:web-types": "vue-docgen-web-types src/runtime/components/ ./dist/web-types.json",
     "example": "./scripts/example.sh",
     "lint": "eslint --ext .js,.ts,.vue .",
     "release": "npm run lint; release-it",
-    "prepack": "yarn build",
+    "prepack": "pnpm build",
     "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
     "test": "./scripts/test.sh",
@@ -83,7 +83,6 @@
     "@nuxt/module-builder": "^0.2.1",
     "@nuxt/schema": "3.1.1",
     "@nuxt/test-utils": "3.1.1",
-    "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.4",
     "c8": "^7.12.0",
@@ -99,6 +98,17 @@
     "remark-oembed": "^1.2.2",
     "vitest": "^0.28.3",
     "vue-docgen-web-types": "^0.1.8"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "vue": "^3.2.45"
+      },
+      "ignoreMissing": [
+        "webpack",
+        "vue"
+      ]
+    }
   },
   "release-it": {
     "git": {
