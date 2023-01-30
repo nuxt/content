@@ -3,10 +3,9 @@ import { h, resolveComponent, Text, defineComponent } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
-// eslint-disable-next-line import/no-named-as-default
-import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig, useRoute } from '#app'
+import htmlTags from '../utils/html-tags'
 import type { MarkdownNode, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h

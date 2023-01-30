@@ -10,5 +10,8 @@ export default defineNuxtConfig({
         base: resolve(__dirname, 'content-fa')
       }
     }
+  },
+  typescript: {
+    includeWorkspace: true
   }
 })
