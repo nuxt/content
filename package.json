@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "./scripts/playground.sh",
     "dev:build": "nuxi build playground/basic",
-    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
+    "prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
     "build": "nuxt-module-build && yarn build:web-types",
     "build:docs": "(cd docs && nuxi build)",
@@ -40,7 +40,6 @@
     "test:coverage": "vitest --coverage",
     "test:types": "tsc --build tsconfig.json",
     "test": "./scripts/test.sh",
-    "prepare": "nuxi prepare playground/basic",
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
