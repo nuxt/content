@@ -44,7 +44,7 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
 
   // Using /api/_content/query/:qid?_params=....
   if (qid && query._params) {
-    memory[qid] = parseJSONQueryParams(query._params)
+    memory[qid] = parseJSONQueryParams(decodeURIComponent(query._params))
 
     if (memory[qid].where && !Array.isArray(memory[qid].where)) {
       memory[qid].where = [memory[qid].where as any as QueryBuilderWhere]
@@ -58,7 +58,7 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
 
   // Using /api/_content/query?_params={{JSON_FORMAT}}
   if (query._params) {
-    return parseJSONQueryParams(query._params)
+    return parseJSONQueryParams(decodeURIComponent(query._params))
   }
 
   // Using /api/_content/query?path=...&only=...

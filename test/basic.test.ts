@@ -33,7 +33,7 @@ describe('Basic usage', async () => {
   })
 
   test('Japanese path', async () => {
-    const html = await $fetch('/こんにちは')
+    const html = await $fetch('/' + encodeURIComponent('こんにちは'))
     expect(html).contains('🎨 こんにちは')
   })
 
