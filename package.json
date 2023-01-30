@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "./scripts/playground.sh",
     "dev:build": "nuxi build playground/basic",
-    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
+    "prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
     "build": "nuxt-module-build && yarn build:web-types",
     "build:docs": "(cd docs && nuxi build)",
@@ -48,7 +48,6 @@
     "defu": "^6.1.2",
     "destr": "^1.2.2",
     "detab": "^3.0.2",
-    "html-tags": "^3.2.0",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
     "listhen": "^1.0.2",
