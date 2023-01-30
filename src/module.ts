@@ -307,9 +307,7 @@ export default defineNuxtModule<ModuleOptions>({
 
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
-      config.optimizeDeps.include.push(
-        'html-tags', 'slugify'
-      )
+      config.optimizeDeps.include.push('slugify')
     })
 
     nuxt.hook('nitro:config', (nitroConfig) => {

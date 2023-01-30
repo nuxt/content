@@ -1,9 +1,8 @@
 import type { H } from 'mdast-util-to-hast'
 import { all } from 'mdast-util-to-hast'
-// eslint-disable-next-line import/no-named-as-default
-import htmlTags from 'html-tags'
 import { kebabCase } from 'scule'
 import { getTagName } from './utils'
+import htmlTags from '../../utils/html-tags'
 
 export default function paragraph (h: H, node: any) {
   if (node.children && node.children[0] && node.children[0].type === 'html') {
