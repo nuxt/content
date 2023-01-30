@@ -2,5 +2,11 @@
   "extends": ["@nuxtjs"],
   "lockFileMaintenance": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": ["remark-emoji"],
+      "allowedVersions": "!/3\\.1\\.0$/"
+    }
+  ]
 }
