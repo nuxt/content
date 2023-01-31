@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "./scripts/playground.sh",
     "dev:build": "nuxi build playground/basic",
-    "prepare": "nuxt-module-build --stub && nuxi prepare playground/basic",
+    "prepare": "nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
     "build": "nuxt-module-build && pnpm build:web-types",
     "build:docs": "(cd docs && nuxi build)",
