@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v2.4.3
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.2...v2.4.3)
+
+
+### 🚀 Enhancements
+
+  - **pnpm:** Switch to pnpm (local / ci) ([#1868](https://github.com/nuxt/content/pull/1868))
+
+### 🩹 Fixes
+
+  - **query:** Decode unicode params ([#1871](https://github.com/nuxt/content/pull/1871))
+
+### 🏡 Chore
+
+  - **scripts:** Prepare script ([66e22c5d](https://github.com/nuxt/content/commit/66e22c5d))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Yaël Guilloux <yael.guilloux@gmail.com>
+
 ## v2.4.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.4.1...v2.4.2)
