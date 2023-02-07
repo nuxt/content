@@ -9,12 +9,12 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "@docsearch/js": "^3.3.2",
-    "@nuxt-themes/docus": "^1.6.3",
-    "@nuxthq/studio": "^0.6.5",
+    "@docsearch/js": "^3.3.3",
+    "@nuxt-themes/docus": "^1.8.1",
+    "@nuxthq/studio": "^0.7.2",
     "@nuxtlabs/github-module": "^1.6.1",
     "monaco-editor-core": "^0.34.1",
-    "nuxt": "3.1.1",
+    "nuxt": "3.1.2",
     "vue-plausible": "^1.3.2"
   }
 }
