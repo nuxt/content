@@ -579,7 +579,7 @@ export default defineNuxtModule<ModuleOptions>({
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
       // Anchor link generation config
-      anchorLinks: options.markdown.anchorLinks
+      anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
 
     // Context will use in server
