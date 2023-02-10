@@ -36,5 +36,7 @@ export const testLocales = () => {
         _locale: 'en'
       })
     })
+
+    test('custom getLocaleFromPath helper', async () => {})
   })
 }

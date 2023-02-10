@@ -25,12 +25,13 @@ export default defineTransformer({
   name: 'path-meta',
   extensions: ['.*'],
   transform (content, options: any = {}) {
-    const { locales = [], defaultLocale = 'en' } = options
+    const { locales = [], defaultLocale = 'en', getLocaleFromPath } = options
     const { _source, _file, _path, _extension } = describeId(content._id)
     const parts = _path.split('/')
 
-    // Check first part for locale name
-    const _locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
+    const _locale = content._locale || getLocaleFromPath(_path, { locales, defaultLocale })
+    // Seems that content._locale already overwrites, so perhaps above line and default `getLocaleFromPath` may not be required
+    // const _locale = getLocaleFromPath ? getLocaleFromPath(_path) : locales.includes(parts[0]) ? parts.shift() : defaultLocale
 
     const filePath = generatePath(parts.join('/'))
 

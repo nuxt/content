@@ -200,6 +200,16 @@ export interface ModuleOptions {
    */
   defaultLocale?: string
   /**
+   * Custom function to extract the locale for a file.
+   * Note: `_locale` in file takes precedence.
+   *
+   * @default (path, { locales, defaultLocale }) => {
+   *   const parts = path.split('/')
+   *   return locales.includes(parts[0]) ? parts.shift() : defaultLocale
+   * }
+   */
+  getLocaleFromPath?: (path: string, localeOptions: { locales: Array<string>, defaultLocale: string }) => string
+  /**
    * Document-driven mode config
    *
    * @default false
@@ -260,6 +270,10 @@ export default defineNuxtModule<ModuleOptions>({
     ignores: ['\\.', '-'],
     locales: [],
     defaultLocale: undefined,
+    getLocaleFromPath: (path, { locales, defaultLocale }) => {
+      const parts = path.split('/')
+      return locales.includes(parts[0]) ? parts.shift() : defaultLocale
+    },
     highlight: false,
     markdown: {
       tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),

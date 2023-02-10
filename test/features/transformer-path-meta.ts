@@ -1,7 +1,8 @@
 import { describe, test, expect, assert } from 'vitest'
 import { $fetch } from '@nuxt/test-utils'
+import type { ParsedContent } from '../../src/runtime/types'
 
-const testCases = {
+const testCases: Record<string, Partial<ParsedContent>> = {
   'content:3.index.md': {
     __description: 'Index file',
     title: '',
@@ -76,7 +77,23 @@ const testCases = {
     _partial: false,
     _path: '/indexer',
     _dir: ''
+  },
+  'content:1.en:2.blog:3.hello.md': {
+    _path: '/en/blog/hello',
+    _locale: 'en'
+  },
+  'content:1.fr:2.blog:3.bonjour.md': {
+    _path: '/fr/blog/benjour',
+    _locale: 'fr'
   }
+  // 'content:1.blog:2.hello:3.en.md': {
+  //   _path: '/blog/hello/en',
+  //   _locale: 'en'
+  // },
+  // 'content:1.blog:2.hello:3.fr.md': {
+  //   _path: '/blog/hello/fr',
+  //   _locale: 'fr'
+  // }
 }
 
 export const testPathMetaTransformer = () => {
