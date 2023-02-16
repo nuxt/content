@@ -414,9 +414,9 @@ export default defineNuxtModule<ModuleOptions>({
       global: true
     })
 
-    const componsntsContext = { components: [] as Component[] }
+    const componentsContext = { components: [] as Component[] }
     nuxt.hook('components:extend', (newComponents) => {
-      componsntsContext.components = newComponents.filter((c) => {
+      componentsContext.components = newComponents.filter((c) => {
         if (c.pascalName.startsWith('Prose') || c.pascalName === 'NuxtLink') {
           return true
         }
@@ -445,7 +445,7 @@ export default defineNuxtModule<ModuleOptions>({
         })
         return components.join('\n')
       },
-      options: { getComponents: () => componsntsContext.components }
+      options: { getComponents: () => componentsContext.components }
     })
 
     const typesPath = addTemplate({
