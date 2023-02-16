@@ -9,7 +9,7 @@ async function resolveContentComponents (body: ParsedContent['body'], meta: Reco
   const manifest = await import('#build/content-components').catch(() => ({}))
   const resolvedComponentsEntries = await Promise.all(components.map(async ([t, c]) => {
     const componentImporter = manifest[pascalCase(c)]
-    if (componentImporter) {
+    if (typeof componentImporter === 'function') {
       return [t, await componentImporter()]
     }
     return [t, c]
