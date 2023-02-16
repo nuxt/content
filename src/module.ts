@@ -9,7 +9,7 @@ import {
   addTemplate,
   extendViteConfig
 } from '@nuxt/kit'
-import { genImport, genSafeVariableName } from 'knitwork'
+import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
@@ -20,6 +20,7 @@ import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
+import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
@@ -411,6 +412,40 @@ export default defineNuxtModule<ModuleOptions>({
       pathPrefix: false,
       prefix: '',
       global: true
+    })
+
+    const componsntsContext = { components: [] as Component[] }
+    nuxt.hook('components:extend', (newComponents) => {
+      componsntsContext.components = newComponents.filter((c) => {
+        if (c.pascalName.startsWith('Prose') || c.pascalName === 'NuxtLink') {
+          return true
+        }
+
+        if (
+          c.filePath.includes('@nuxt/content/dist') ||
+          c.filePath.includes('nuxt/dist/app') ||
+          c.filePath.includes('NuxtWelcome')
+        ) {
+          return false
+        }
+
+        return true
+      })
+    })
+    addTemplate({
+      filename: 'content-components.mjs',
+      getContents ({ options }) {
+        const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
+          const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+          const isClient = c.mode === 'client'
+          const definitions = []
+
+          definitions.push(`export const ${c.pascalName} = ${genDynamicImport(c.filePath)}.then(c => ${isClient ? `createClientOnly(${exp})` : exp})`)
+          return definitions
+        })
+        return components.join('\n')
+      },
+      options: { getComponents: () => componsntsContext.components }
     })
 
     const typesPath = addTemplate({
