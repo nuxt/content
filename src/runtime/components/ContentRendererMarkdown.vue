@@ -1,5 +1,5 @@
 <script lang="ts">
-import { h, resolveComponent, Text, defineComponent } from 'vue'
+import { h, resolveComponent, Text, defineComponent, toRaw } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
@@ -58,7 +58,7 @@ export default defineComponent({
     await resolveContentComponents(props.value.body, {
       tags: {
         ...tags,
-        ...props.value?._components || {},
+        ...toRaw(props.value?._components || {}),
         ...props.components
       }
     })
@@ -81,7 +81,7 @@ export default defineComponent({
       ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...value?._components || {},
+        ...toRaw(value?._components || {}),
         ...components
       }
     }
@@ -316,9 +316,9 @@ function propsToDataRxBind (key: string, value: any, data: any, documentMeta: Pa
 /**
  * Resolve component if it's a Vue component
  */
-const resolveVueComponent = (component: string) => {
+const resolveVueComponent = (component: any) => {
   // Check if node is not a native HTML tag
-  if (!htmlTags.includes(component as any)) {
+  if (!htmlTags.includes(component) && !component?.render) {
     const componentFn = resolveComponent(pascalCase(component), false)
     // If component exists
     if (typeof componentFn === 'object') {
@@ -383,6 +383,9 @@ function mergeTextNodes (nodes: Array<VNode>) {
 async function resolveContentComponents (body, meta) {
   const components = Array.from(new Set(loadComponents(body, meta)))
   await Promise.all(components.map(async (c) => {
+    if ((c as any)?.render) {
+      return
+    }
     const resolvedComponent = resolveComponent(c) as any
     if (resolvedComponent?.__asyncLoader && !resolvedComponent.__asyncResolved) {
       await resolvedComponent.__asyncLoader()
