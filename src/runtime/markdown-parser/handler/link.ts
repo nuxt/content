@@ -3,11 +3,11 @@
 import type { H } from 'mdast-util-to-hast'
 import { all } from 'mdast-util-to-hast'
 import { encode } from 'mdurl'
-import type { MdastNode } from 'mdast-util-to-hast/lib'
+import type { MdastContent } from 'mdast-util-to-hast/lib'
 import { isRelative } from 'ufo'
 import { generatePath } from '../../transformers/path-meta'
 
-type Node = MdastNode & {
+type Node = MdastContent & {
   title: string
   url: string
   attributes?: any

@@ -1,7 +1,10 @@
 import contentModule from '../../src/module'
 
 export default defineNuxtConfig({
-  modules: [contentModule],
+  modules: [
+    // @ts-ignore
+    contentModule
+  ],
   content: {
     documentDriven: true
   }

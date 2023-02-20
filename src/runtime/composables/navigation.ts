@@ -31,7 +31,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     return generateNavigation(params)
   }
 
-  const data = await $fetch<NavItem[]>(apiPath as any, {
+  const data = await $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: content.experimental.stripQueryParameters

@@ -1,8 +1,8 @@
 <script lang="ts">
-import { PropType, toRefs, defineComponent, h, useSlots, computed } from 'vue'
+import { toRefs, defineComponent, h, useSlots, computed } from 'vue'
+import type { PropType, VNode } from 'vue'
 import { hash } from 'ohash'
-import type { NavItem, QueryBuilderParams } from '../types'
-import { QueryBuilder } from '../types'
+import type { NavItem, QueryBuilderParams, QueryBuilder } from '../types'
 import { useAsyncData, fetchContentNavigation, useState, useContent } from '#imports'
 import { NuxtLink } from '#components'
 
@@ -52,12 +52,12 @@ export default defineComponent({
    * Navigation empty fallback
    * @slot empty
    */
-  render (ctx) {
+  render (ctx: any) {
     const slots = useSlots()
 
     const { navigation } = ctx
     const renderLink = (link: NavItem) => h(NuxtLink, { to: link._path }, () => link.title)
-    const renderLinks = (data: NavItem[], level: number) =>
+    const renderLinks = (data: NavItem[], level: number): VNode =>
       h(
         'ul',
         level ? { 'data-level': level } : null,

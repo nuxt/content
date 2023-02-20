@@ -70,7 +70,7 @@ function createOperators (match: (...args: any[]) => boolean, operators: Record<
      * Match if item is in condition array
      **/
     $in: (item, condition) => ensureArray(condition).some(
-      cond => Array.isArray(item) ? match(item, { $contains: cond }) : match(item, cond)
+      (cond: any) => Array.isArray(item) ? match(item, { $contains: cond }) : match(item, cond)
     ),
 
     /**

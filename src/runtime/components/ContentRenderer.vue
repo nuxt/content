@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, watch, h, useSlots } from 'vue'
-import ContentRendererMarkdown from './ContentRendererMarkdown'
+import ContentRendererMarkdown from './ContentRendererMarkdown.vue'
 
 export default defineComponent({
   name: 'ContentRenderer',
@@ -55,7 +55,7 @@ export default defineComponent({
    * Content empty fallback
    * @slot empty
    */
-  render (ctx) {
+  render (ctx: any) {
     const slots = useSlots()
 
     const { value, excerpt, tag } = ctx

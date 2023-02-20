@@ -1,7 +1,9 @@
 <script lang="ts">
 import { PropType, defineComponent, h, useSlots } from 'vue'
 import type { QueryBuilderParams } from '../types'
-import ContentQuery from './ContentQuery'
+import ContentQuery from './ContentQuery.vue'
+
+const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))
 
 export default defineComponent({
   name: 'ContentList',
@@ -38,7 +40,7 @@ export default defineComponent({
    * Content not found fallback
    * @slot not-found
    */
-  render (ctx) {
+  render (ctx: any) {
     const slots = useSlots()
 
     const { path, query } = ctx
@@ -49,20 +51,18 @@ export default defineComponent({
       path: path || query?.path || '/'
     }
 
-    const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))
-
     return h(
       ContentQuery,
       contentQueryProps,
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => slots?.default({ list: data, refresh, isPartial, ...this.$attrs })
-          : ({ data }) => emptyNode('default', data),
+          ? ({ data, refresh, isPartial }: any) => slots.default!({ list: data, refresh, isPartial, ...this.$attrs })
+          : (bindings: any) => emptyNode('default', bindings.data),
         // Empty slot
-        empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', bindings?.data),
+        empty: (bindings: any) => slots?.empty ? slots.empty(bindings) : emptyNode('default', bindings?.data),
         // Not Found slot
-        'not-found': bindings => slots?.['not-found'] ? slots?.['not-found']?.(bindings) : emptyNode('not-found', bindings?.data)
+        'not-found': (bindings: any) => slots?.['not-found'] ? slots?.['not-found']?.(bindings) : emptyNode('not-found', bindings?.data)
       }
     )
   }

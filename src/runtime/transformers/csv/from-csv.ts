@@ -1,3 +1,5 @@
+// @ts-nocheck
+// TODO: fix types
 // Based on mdast-util-from-markdown
 // See: https://github.com/syntax-tree/mdast-util-from-markdown/blob/05875cde264253f0d6a725791f10f55eb8d8c267/dev/lib/index.js
 import { toString } from 'mdast-util-to-string'

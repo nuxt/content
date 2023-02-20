@@ -695,6 +695,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  documentDriven: ModuleOptions['documentDriven']
 }
 
 interface ModulePrivateRuntimeConfig {

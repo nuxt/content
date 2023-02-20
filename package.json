@@ -84,6 +84,7 @@
     "@nuxt/schema": "3.1.2",
     "@nuxt/test-utils": "3.1.2",
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/mdurl": "^1.0.2",
     "@types/ws": "^8.5.4",
     "c8": "^7.12.0",
     "csvtojson": "^2.0.10",

@@ -1,3 +1,7 @@
 {
-  "extends": "./playground/basic/.nuxt/tsconfig.json"
+  "extends": "./playground/basic/.nuxt/tsconfig.json",
+  "exclude": [
+    "test",
+    "node_modules"
+  ]
 }

@@ -45,7 +45,7 @@ export function nodeChildren (node: VNode | MarkdownNode) {
     return node.children
   }
   // Vue3 VNode children
-  if (typeof node.children.default === 'function') {
+  if (typeof node.children?.default === 'function') {
     return node.children.default()
   }
   return []
@@ -65,7 +65,7 @@ export function nodeTextContent (node: VNode | MarkdownNode): string {
   }
 
   if (isText(node)) {
-    return node.children as string || (node as MarkdownNode).value
+    return node.children as string || (node as MarkdownNode).value!
   }
 
   // Walk through node children

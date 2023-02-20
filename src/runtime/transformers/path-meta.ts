@@ -9,7 +9,7 @@ const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 const describeId = (_id: string) => {
   const [_source, ...parts] = _id.split(':')
 
-  const [, filename, _extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)
+  const [, filename, _extension] = parts[parts.length - 1].match(/(.*)\.([^.]+)$/)!
   parts[parts.length - 1] = filename
   const _path = parts.join('/')
 

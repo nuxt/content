@@ -2,19 +2,15 @@
 import { ref, useAsyncData, queryContent } from '#imports'
 
 const query = ref({
-  where: {
+  where: [{
     _partial: false
-  },
-  sort: {
-    _path: 1
-  },
-  only: [],
+  }],
   without: ['body', 'excerpt'],
   skip: 0,
   limit: 10
 })
 
-const qs = ref(JSON.stringify(query.value, null, 2, ''))
+const qs = ref(JSON.stringify(query.value, null, 2))
 const parseError = ref(null)
 const textarea = ref(null)
 
@@ -22,7 +18,7 @@ watch(qs, (value) => {
   try {
     query.value = JSON.parse(value)
     parseError.value = null
-  } catch (e) {
+  } catch (e: any) {
     parseError.value = e.message
   }
 })
@@ -31,7 +27,7 @@ const { data: docs } = await useAsyncData('query', () => {
   return queryContent(query.value).find()
 }, { watch: [query] })
 
-const tabber = (event) => {
+const tabber = (event: any) => {
   const originalSelectionStart = event.target.selectionStart
   const startText = qs.value.slice(0, event.target.selectionStart)
   const endText = qs.value.slice(event.target.selectionStart)
@@ -42,7 +38,7 @@ const tabber = (event) => {
   })
 }
 
-const enterer = (event) => {
+const enterer = (event: any) => {
   const originalSelectionStart = event.target.selectionStart
   const startText = qs.value.slice(0, event.target.selectionStart)
   const endText = qs.value.slice(event.target.selectionStart)

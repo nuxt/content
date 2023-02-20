@@ -6,7 +6,7 @@ import { find, html } from 'property-information'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig, useRoute } from '#app'
 import htmlTags from '../utils/html-tags'
-import type { MarkdownNode, ParsedContentMeta } from '../types'
+import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
 
@@ -65,7 +65,7 @@ export default defineComponent({
 
     return { tags }
   },
-  render (ctx) {
+  render (ctx: any) {
     const { tags, tag, value, components } = ctx
 
     if (!value) {
@@ -115,7 +115,7 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   }
 
   if (node.tag === 'script') {
-    return renderToText(node)
+    return h(Text, renderToText(node))
   }
 
   const originalTag = node.tag!
@@ -140,9 +140,9 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   )
 }
 
-function renderToText (node: MarkdownNode) {
+function renderToText (node: MarkdownNode): string {
   if (node.type === 'text') {
-    return node.value
+    return node.value!
   }
 
   if (!node.children?.length) {
@@ -160,7 +160,7 @@ function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: Pars
     $doc: documentMeta
   }
   const splitter = /\.|\[(\d+)\]/
-  const keys = node.props?.value.trim().split(splitter).filter(Boolean)
+  const keys: string[] = node.props?.value.trim().split(splitter).filter(Boolean)
   const value = keys.reduce((data, key) => {
     if (key in data) {
       if (typeof data[key] === 'function') {
@@ -195,7 +195,7 @@ function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: Parsed
     return data
   }, {
     [DEFAULT_SLOT]: [] as any[]
-  })
+  } as Record<string, any[]>)
 
   const slots = Object.entries(slotNodes).reduce((slots, [name, children]) => {
     if (!children.length) { return slots }
@@ -380,7 +380,7 @@ function mergeTextNodes (nodes: Array<VNode>) {
   return mergedNodes
 }
 
-async function resolveContentComponents (body, meta) {
+async function resolveContentComponents (body: ParsedContent['body'], meta: Record<string, any>) {
   const components = Array.from(new Set(loadComponents(body, meta)))
   await Promise.all(components.map(async (c) => {
     const resolvedComponent = resolveComponent(c) as any
@@ -389,7 +389,7 @@ async function resolveContentComponents (body, meta) {
     }
   }))
 
-  function loadComponents (node, documentMeta) {
+  function loadComponents (node: MarkdownNode, documentMeta: Record<string, any>) {
     if (node.type === 'text' || node.tag === 'binding') {
       return []
     }
