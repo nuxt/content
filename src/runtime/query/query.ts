@@ -32,7 +32,7 @@ export const createQuery = <T = ParsedContent>(
     params: () => queryParams,
     only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
     without: $set('without', ensureArray),
-    where: $set('where', (q: any) => [...ensureArray(queryParams.where), q]),
+    where: $set('where', (q: any) => [...ensureArray(queryParams.where), ...ensureArray(q)]),
     sort: $set('sort', (sort: SortOptions) => [...ensureArray(queryParams.sort), ...ensureArray(sort)]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
