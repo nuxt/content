@@ -29,7 +29,7 @@ export const useContentHead = (
       if (process.server && !head.meta.some(m => m.property === 'og:title')) {
         head.meta.push({
           name: 'og:title',
-          content: title
+          content: title as string
         })
       }
     }

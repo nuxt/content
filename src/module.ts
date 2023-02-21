@@ -438,7 +438,7 @@ export default defineNuxtModule<ModuleOptions>({
         const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
           const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
           const isClient = c.mode === 'client'
-          const definitions = []
+          const definitions: string[] = []
 
           definitions.push(`export const ${c.pascalName} = ${genDynamicImport(c.filePath)}.then(c => ${isClient ? `createClientOnly(${exp})` : exp})`)
           return definitions
@@ -730,6 +730,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  documentDriven: ModuleOptions['documentDriven']
 }
 
 interface ModulePrivateRuntimeConfig {

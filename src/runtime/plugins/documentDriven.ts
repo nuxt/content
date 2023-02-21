@@ -1,15 +1,19 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 // @ts-ignore
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo } from '#app'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin } from '#app'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
-import { NavItem, ParsedContent } from '../types'
-// @ts-ignore
-import { defineNuxtPlugin, queryContent, useContentHelpers, useContentState, fetchContentNavigation, useRoute } from '#imports'
+import type { NavItem, ParsedContent } from '../types'
+import type { ModuleOptions } from '../../module'
+import { useContentState } from '../composables/content'
+import { useContentHelpers } from '../composables/helpers'
+import { fetchContentNavigation } from '../composables/navigation'
+import { queryContent } from '../composables/query'
 // @ts-ignore
 import layouts from '#build/layouts'
 
 export default defineNuxtPlugin((nuxt) => {
-  const { documentDriven: moduleOptions, experimental } = useRuntimeConfig()?.public?.content
+  const moduleOptions = useRuntimeConfig()?.public?.content.documentDriven as unknown as Exclude<ModuleOptions['documentDriven'], boolean>
+  const isClientDBEnabled = useRuntimeConfig()?.public?.content.experimental.clientDB
 
   /**
    * Finds a layout value from a cascade of objects.
@@ -101,7 +105,7 @@ export default defineNuxtPlugin((nuxt) => {
         }
 
         return Promise.all(
-          Object.entries(moduleOptions.globals).map(
+          Object.entries(moduleOptions.globals!).map(
             ([key, query]: [string, any]) => {
               // Avoid fetching same file twice
               if (!dedup && globals.value[key]) { return globals.value[key] }
@@ -117,7 +121,7 @@ export default defineNuxtPlugin((nuxt) => {
           (values) => {
             return values.reduce(
               (acc, value, index) => {
-                const key = Object.keys(moduleOptions.globals)[index]
+                const key = Object.keys(moduleOptions.globals!)[index]
 
                 acc[key] = value
 
@@ -237,10 +241,10 @@ export default defineNuxtPlugin((nuxt) => {
         // Apply layout
         to.meta.layout = layoutName
         _page.layout = layoutName
-
-        // Update values
-        pages.value[_path] = _page
       }
+
+      // Update values
+      pages.value[_path] = _page
 
       // Call hook after content is fetched
       // @ts-ignore
@@ -253,7 +257,7 @@ export default defineNuxtPlugin((nuxt) => {
     // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
     if (to.path.includes('favicon.ico')) { return }
     // Avoid calling on hash change
-    if (process.client && !experimental.clientDB && to.path === from.path) { return }
+    if (process.client && !isClientDBEnabled && to.path === from.path) { return }
 
     const redirect = await refresh(to, false)
 

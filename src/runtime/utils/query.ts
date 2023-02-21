@@ -39,7 +39,7 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
     return decodeQueryParams(params.replace(/.json$/, ''))
   }
 
-  const qid = event.context.params.qid?.replace(/.json$/, '')
+  const qid = event.context.params?.qid?.replace(/.json$/, '')
   const query: any = getQuery(event) || {}
 
   // Using /api/_content/query/:qid?_params=....
@@ -52,7 +52,7 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
 
     return memory[qid]
   }
-  if (memory[qid]) {
+  if (qid && memory[qid]) {
     return memory[qid]
   }
 

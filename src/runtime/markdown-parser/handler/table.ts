@@ -1,9 +1,15 @@
 import type { H } from 'mdast-util-to-hast'
 import { position } from 'unist-util-position'
 import { all } from 'mdast-util-to-hast'
+import type { MdastContent } from 'mdast-util-to-hast/lib'
 import { wrap } from './utils'
 
-export default function table (h: H, node: any) {
+type Node = MdastContent & {
+  align?: any
+  children: MdastContent[]
+}
+
+export default function table (h: H, node: Node) {
   const rows = node.children
   const align = node.align || []
 

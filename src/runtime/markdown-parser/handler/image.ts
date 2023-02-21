@@ -1,11 +1,15 @@
 import type { H } from 'mdast-util-to-hast'
 import { encode } from 'mdurl'
+import type { MdastContent } from 'mdast-util-to-hast/lib'
 
-/**
- * @type {Handler}
- * @param {Image} node
- */
-export default function image (h: H, node: any) {
+type Node = MdastContent & {
+  url: string
+  alt: string
+  title: string
+  attributes?: any
+}
+
+export default function image (h: H, node: Node) {
   const props: any = {
     ...node.attributes,
     src: encode(node.url),

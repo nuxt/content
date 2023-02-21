@@ -2,8 +2,8 @@
 import { PropType, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
 import type { QueryBuilderParams } from '../types'
-import ContentRenderer from './ContentRenderer'
-import ContentQuery from './ContentQuery'
+import ContentRenderer from './ContentRenderer.vue'
+import ContentQuery from './ContentQuery.vue'
 import { useRoute, useContentHead } from '#imports'
 
 export default defineComponent({
@@ -73,7 +73,7 @@ export default defineComponent({
    * Document not found fallback
    * @slot not-found
    */
-  render (ctx) {
+  render (ctx: any) {
     const slots = useSlots()
 
     const { tag, excerpt, path, query, head } = ctx
@@ -93,25 +93,25 @@ export default defineComponent({
       {
         // Default slot
         default: slots?.default
-          ? ({ data, refresh, isPartial }) => {
+          ? ({ data, refresh, isPartial }: any) => {
               if (head) { useContentHead(data) }
 
               return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
-          : ({ data }) => {
+          : ({ data }: any) => {
               if (head) { useContentHead(data) }
 
               return h(
                 ContentRenderer,
                 { value: data, excerpt, tag, ...this.$attrs },
                 // Forward local `empty` slots to ContentRenderer if it is used.
-                { empty: bindings => slots?.empty ? slots.empty(bindings) : emptyNode('default', data) }
+                { empty: (bindings: any) => slots?.empty ? slots.empty(bindings) : emptyNode('default', data) }
               )
             },
         // Empty slot
-        empty: bindings => slots?.empty?.(bindings) || h('p', null, 'Document is empty, overwrite this content with #empty slot in <ContentDoc>.'),
+        empty: (bindings: any) => slots?.empty?.(bindings) || h('p', null, 'Document is empty, overwrite this content with #empty slot in <ContentDoc>.'),
         // Not Found slot
-        'not-found': bindings => slots?.['not-found']?.(bindings) || h('p', null, 'Document not found, overwrite this content with #not-found slot in <ContentDoc>.')
+        'not-found': (bindings: any) => slots?.['not-found']?.(bindings) || h('p', null, 'Document not found, overwrite this content with #not-found slot in <ContentDoc>.')
       }
     )
   }

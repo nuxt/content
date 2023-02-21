@@ -70,7 +70,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     content: {
-      host: 'https://content.nuxtjs.org'
+      // @ts-ignore
+      // TODO: fix types
+      documentDriven: {
+        host: 'https://content.nuxtjs.org'
+      }
     },
     public: {
       algolia: {

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Slot } from 'vue'
+import type { Slot, VNode } from 'vue'
 import { defineComponent, getCurrentInstance, useSlots, computed, useUnwrap, h } from '#imports'
 
 /**
@@ -26,7 +26,7 @@ export default defineComponent({
     }
   },
   setup (props) {
-    const { parent } = getCurrentInstance()
+    const { parent } = getCurrentInstance()!
     const { between, default: fallbackSlot } = useSlots()
 
     const tags = computed(() => {
@@ -41,7 +41,7 @@ export default defineComponent({
       parent
     }
   },
-  render ({ use, unwrap, fallbackSlot, between, tags, parent }) {
+  render ({ use, unwrap, fallbackSlot, between, tags, parent }: any) {
     try {
       let slot: Slot = use
       if (typeof use === 'string') {
@@ -75,7 +75,7 @@ export default defineComponent({
           acc.push(item)
         }
         return acc
-      }, [])
+      }, [] as Array<VNode | string>)
     } catch (e) {
       // Catching errors to allow content reactivity
       return h('div')

@@ -1,6 +1,7 @@
 import { withBase } from 'ufo'
 import { useRuntimeConfig, useRequestEvent, useCookie, useRoute } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
+import type { useContent } from './content'
 
 export const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
@@ -9,7 +10,7 @@ export const useUnwrap = () => ({
   flatUnwrap
 })
 
-export const useContentDisabled = () => {
+export const useContentDisabled = (): ReturnType<typeof useContent> => {
   // Console warnings
   // eslint-disable-next-line no-console
   console.warn('useContent is only accessible when you are using `documentDriven` mode.')

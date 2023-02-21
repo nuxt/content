@@ -1,9 +1,14 @@
 import type { H } from 'mdast-util-to-hast'
 import { kebabCase } from 'scule'
 import { u } from 'unist-builder'
+import type { MdastContent } from 'mdast-util-to-hast/lib'
 import { getTagName } from './utils'
 
-export default function html (h: H, node: any) {
+type Node = MdastContent & {
+  value: string
+}
+
+export default function html (h: H, node: Node) {
   const tagName = getTagName(node.value)
 
   if (tagName && /[A-Z]/.test(tagName)) {

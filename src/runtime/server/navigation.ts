@@ -19,10 +19,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
 
   // Create navigation object
   const nav = contents
-    .sort((a, b) => a._path.localeCompare(b._path))
+    .sort((a, b) => a._path!.localeCompare(b._path!))
     .reduce((nav, content) => {
       // Resolve path and id parts
-      const parts = content._path.substring(1).split('/')
+      const parts = content._path!.substring(1).split('/')
       const idParts = content._id.split(':').slice(1)
 
       // Check if node is `*:index.md`
@@ -53,7 +53,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         // Skip root `index.md` as it has to be pushed as a page
         if (content._path !== '/') {
           const indexItem = getNavItem(content)
-          navItem.children.push(indexItem)
+          navItem.children!.push(indexItem)
         }
 
         // Merge navigation fields with navItem
@@ -72,7 +72,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
       // Find siblings of current item and push them to parent children key
       const siblings = parts.slice(0, -1).reduce((nodes, part, i) => {
         // Part of current path
-        const currentPathPart = '/' + parts.slice(0, i + 1).join('/')
+        const currentPathPart: string = '/' + parts.slice(0, i + 1).join('/')
 
         // Get current node _dir.yml config
         const conf = configs[currentPathPart]
@@ -83,7 +83,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
         }
 
         // Find parent node
-        let parent: PrivateNavItem = nodes.find(n => n._path === currentPathPart)
+        let parent: PrivateNavItem | undefined = nodes.find(n => n._path === currentPathPart)
 
         // Create dummy parent if not found
         if (!parent) {
@@ -94,10 +94,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
             children: [],
             ...pickNavigationFields(conf)
           }
-          nodes.push(parent)
+          nodes.push(parent!)
         }
 
-        return parent.children
+        return parent!.children!
       }, nav)
 
       siblings.push(navItem)
@@ -117,7 +117,7 @@ function sortAndClear (nav: PrivateNavItem[]) {
   const sorted = nav.sort((a, b) => collator.compare(a._file, b._file))
 
   for (const item of sorted) {
-    if (item.children.length) {
+    if (item.children?.length) {
       // Sort children
       sortAndClear(item.children)
     } else {

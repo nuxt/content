@@ -3,7 +3,7 @@ import type { NavItem } from '../types'
 /**
  * Find first child link from a navigation node.
  */
-const navBottomLink = (link: NavItem) => {
+const navBottomLink = (link: NavItem): string | undefined => {
   if (!link.children) { return link._path }
 
   for (const child of link?.children || []) {
@@ -15,7 +15,7 @@ const navBottomLink = (link: NavItem) => {
 /**
  * Find current navigation directory node from a path.
  */
-const navDirFromPath = (path: string, tree: NavItem[]) => {
+const navDirFromPath = (path: string, tree: NavItem[]): NavItem[] | undefined => {
   for (const file of tree) {
     if (file._path === path && !file._id) { return file.children }
 
@@ -29,7 +29,7 @@ const navDirFromPath = (path: string, tree: NavItem[]) => {
 /**
  * Find a navigation page node from a path.
  */
-const navPageFromPath = (path: string, tree: NavItem[]) => {
+const navPageFromPath = (path: string, tree: NavItem[]): NavItem | undefined => {
   for (const file of tree) {
     if (file._path === path) { return file }
 
