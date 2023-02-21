@@ -131,8 +131,13 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   }
 
   const meta = await sourceStorage.getMeta(id)
+  const mtime = meta.mtime
+  const size = meta.size || 0
   const hash = ohash({
-    meta,
+    // Last modified time
+    mtime,
+    // File size
+    size,
     // Add Content version to the hash, to revalidate the cache on content update
     version: contentConfig.cacheVersion,
     integrity: contentConfig.cacheIntegrity
