@@ -5,8 +5,8 @@ overrides:
 
 specifiers:
   '@docsearch/js': ^3.3.3
-  '@nuxt-themes/docus': 1.8.1
-  '@nuxthq/studio': 0.7.2
+  '@nuxt-themes/docus': ^1.8.2
+  '@nuxthq/studio': ^0.7.5
   '@nuxtlabs/github-module': ^1.6.1
   monaco-editor-core: ^0.35.0
   nuxt: 3.1.2
@@ -14,8 +14,8 @@ specifiers:
 
 devDependencies:
   '@docsearch/js': 3.3.3
-  '@nuxt-themes/docus': 1.8.1_nuxt@3.1.2
-  '@nuxthq/studio': 0.7.2
+  '@nuxt-themes/docus': 1.8.2_nuxt@3.1.2
+  '@nuxthq/studio': 0.7.5
   '@nuxtlabs/github-module': 1.6.1
   monaco-editor-core: 0.35.0
   nuxt: 3.1.2
@@ -1016,14 +1016,14 @@ packages:
       fastq: 1.15.0
     dev: true
 
-  /@nuxt-themes/docus/1.8.1_nuxt@3.1.2:
-    resolution: {integrity: sha512-UrsqD24e5hewHKDvqfgDNV0I6dGpKieaZoUG7aaCPP0glAqNlWMw8SFHlM7KFBx9iREmWed1XxCkN7wAcJPIUQ==}
+  /@nuxt-themes/docus/1.8.2_nuxt@3.1.2:
+    resolution: {integrity: sha512-edMlr2nXU6V0Yl0nyHM2Q37hLabnup9iMpaBWHXSG790Qp5diyAZhC+hcyizmBZDBjDp7/ZVKZnewzUKRzvi8Q==}
     dependencies:
-      '@nuxt-themes/elements': 0.7.2
+      '@nuxt-themes/elements': 0.8.0
       '@nuxt-themes/tokens': 1.8.2
       '@nuxt-themes/typography': 0.8.3
       '@nuxt/content': 2.4.3
-      '@nuxthq/studio': 0.7.2
+      '@nuxthq/studio': 0.7.5
       '@vueuse/nuxt': 9.13.0_nuxt@3.1.2
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -1037,8 +1037,8 @@ packages:
       - vue
     dev: true
 
-  /@nuxt-themes/elements/0.7.2:
-    resolution: {integrity: sha512-tix0nXchdMMyfSdp+x7VtQE0unNWrQ/xDxxHX/p8JzZMDs4jnXnfJnpdIljhZCyIlFe+9KM5wAZuzb4C0lsGrg==}
+  /@nuxt-themes/elements/0.8.0:
+    resolution: {integrity: sha512-J/k/+dbH43kufARtO9NI60+xNCFr4cUECYuIDMmjBmdvoq1fR+JoqIzvcdx584o00y4nphMK4VWAeEcCBB1T9g==}
     dependencies:
       '@nuxt-themes/tokens': 1.8.2
       '@vueuse/core': 9.13.0
@@ -1421,8 +1421,8 @@ packages:
       - vue-tsc
     dev: true
 
-  /@nuxthq/studio/0.7.2:
-    resolution: {integrity: sha512-8TRUJra53nl+P3XyjcHUKOh/nFo+6MqCy+OXqscKG7MuY8DZ9GNKO8mIIMkyjwseJTGPhSDNqVAsHiHQ0SFfwQ==}
+  /@nuxthq/studio/0.7.5:
+    resolution: {integrity: sha512-9yt75e5v2yT7nODh0IUT0/Ksljk+gCVmrZ4ZAojxMSdS4Rsce5PDzK+PchhH8/Ba0BsGcjmE85Hugg//M5XsuA==}
     dependencies:
       '@nuxt/kit': 3.2.2
       '@nuxt/schema': 3.2.2
