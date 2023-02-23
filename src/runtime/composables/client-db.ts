@@ -19,15 +19,21 @@ export const getPreview = () => {
 
 export function createDB (storage: Storage) {
   async function getItems () {
-    const keys = new Set(await storage.getKeys('cache:'))
+    const keys = new Set<string>(await storage.getKeys('cache:'))
 
     // Merge preview items
     const previewToken = getPreview()
     if (previewToken) {
       // Ignore cache content if preview requires it
       const previewMeta: any = await storage.getItem(`${previewToken}$`).then(data => data || {})
-      if (previewMeta.ignoreBuiltContents) {
-        keys.clear()
+      if (previewMeta.ignoreSources) {
+        const sources = previewMeta.ignoreSources.split(',').map(s => `cache:${s.trim()}:`)
+        // Remove all keys that starts with ignored sources
+        for (const key of keys) {
+          if (sources.some(s => key.startsWith(s))) {
+            keys.delete(key)
+          }
+        }
       }
 
       const previewKeys = await storage.getKeys(`${previewToken}:`)
