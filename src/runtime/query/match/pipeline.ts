@@ -49,6 +49,11 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
       return filteredData[0]
     }
 
+    // return count if query is for count
+    if (params.count) {
+      return (filteredData.length ?? 0) as unknown as T
+    }
+
     return filteredData
   }
 }
