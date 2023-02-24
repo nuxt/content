@@ -1,8 +1,9 @@
-[![nuxt-content](https://user-images.githubusercontent.com/904724/195312457-e43879c3-f1cc-4b95-9531-e54582aaff47.png "@nuxt/content cover")](https://content.nuxtjs.org)
+[![nuxt-content](https://user-images.githubusercontent.com/904724/221176888-d9efefbe-0a8a-4d6b-beb2-5cc7d7dcad05.png)](https://content.nuxtjs.org)
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
+[![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
 
 # Nuxt Content
@@ -45,12 +46,14 @@ Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.
 [npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
 
-[npm-downloads-src]: https://img.shields.io/npm/dt/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-src]: https://img.shields.io/npm/dm/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-downloads-href]: https://npmjs.com/package/@nuxt/content
 
 [license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [license-href]: https://github.com/nuxt/content/blob/main/LICENSE
 
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-href]: https://nuxt.com
 
 [volta-src]: https://user-images.githubusercontent.com/904724/209143798-32345f6c-3cf8-4e06-9659-f4ace4a6acde.svg
 [volta-href]: https://volta.net/nuxt/content?utm_source=readme_nuxt_content
