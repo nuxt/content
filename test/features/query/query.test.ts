@@ -200,7 +200,7 @@ describe('Database Provider', () => {
       .findSurround('/b', { before: 0, after: 1 })
 
     assert((result as Array<any>).length === 1)
-    assert(result[0] === '/c')
+    assert(result[0]._path === '/c')
   })
 
   test('Surround with 0 item after', async () => {
@@ -209,7 +209,7 @@ describe('Database Provider', () => {
       .findSurround('/b', { before: 1, after: 0 })
 
     assert((result as Array<any>).length === 1)
-    assert(result[0] === '/a')
+    assert(result[0]._path === '/a')
   })
 
   test('Surround with object', async () => {
