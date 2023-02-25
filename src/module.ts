@@ -79,6 +79,12 @@ export interface ModuleOptions {
    * @default ['\\.', '-']
    */
   ignores: Array<string>
+
+  /**
+   * A predicate used for excluding content from parsing and rendering.
+   * Parsing and rendering will be skipped when this returns false.
+   */
+  ignorePredicate?: (key: string) => boolean
   /**
    * Content module uses `remark` and `rehype` under the hood to compile markdown files.
    * You can modify this options to control its behavior.
@@ -651,6 +657,9 @@ export default defineNuxtModule<ModuleOptions>({
           typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
         )
         keys = keys.filter((key) => {
+          if (!contentContext.ignorePredicate?.(key)) {
+            return false
+          }
           if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
             return false
           }

@@ -54,6 +54,9 @@ const invalidKeyCharacters = "'\"?#/".split('')
  * Filter predicate for ignore patterns
  */
 const contentIgnorePredicate = (key: string) => {
+  if (!contentConfig.ignorePredicate?.(key)) {
+    return false
+  }
   if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
     return false
   }
