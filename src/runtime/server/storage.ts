@@ -152,7 +152,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return { _id: contentId, body: null }
   }
 
-  const parsed = await parseContent(contentId, body as string) as ParsedContent
+  const parsed = await parseContent(contentId, body as string, meta) as ParsedContent
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
@@ -162,7 +162,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
+export async function parseContent (id: string, content: string, meta: StorageMeta, opts: ParseContentOptions = {}) {
   const nitroApp = useNitroApp()
   const options = defu(
     opts,
@@ -183,7 +183,7 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   const file = { _id: id, body: content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
-  const result = await transformContent(id, file.body, options)
+  const result = await transformContent(id, file.body, meta, options)
 
   // Call hook after parsing the file
   await nitroApp.hooks.callHook('content:file:afterParse', result)
