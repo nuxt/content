@@ -37,7 +37,7 @@ function getTransformers (ext: string, additionalTransformers: ContentTransforme
 /**
  * Parse content file using registered plugins
  */
-export async function transformContent (id: string, content: string, meta: StorageMeta, options: TransformContentOptions = {}) {
+export async function transformContent (id: string, content: string, meta: StorageMeta = {}, options: TransformContentOptions = {}) {
   const { transformers = [] } = options
   // Call hook before parsing the file
   const file = { _id: id, body: content }
