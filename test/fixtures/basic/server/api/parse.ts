@@ -5,7 +5,7 @@ export default eventHandler(async (event) => {
   const { id, content, options } = await readBody(event)
 
   // @ts-ignore
-  const parsedContent = await parseContent(id, content, options)
+  const parsedContent = await parseContent(id, content, {}, options)
 
   return parsedContent
 })

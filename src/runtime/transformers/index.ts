@@ -68,7 +68,7 @@ export async function transformContent (id: string, content: string, meta: Stora
   }, Promise.resolve(parsed))
 
   // Add meta
-  if (meta.mtime) {
+  if (meta && meta.mtime) {
     result._updatedAt = meta.mtime.toISOString()
   }
 
