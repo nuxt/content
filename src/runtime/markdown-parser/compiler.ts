@@ -16,9 +16,9 @@ export default function (this: any, _options: MarkdownOptions) {
    * Parses nodes for JSON structure. Attempts to drop
    * unwanted properties.
    */
-  function parseAsJSON (node: Node | Node[]) {
+  function parseAsJSON (node: Node | Node[]): MarkdownNode | MarkdownNode[] | undefined {
     if (Array.isArray(node)) {
-      return node.map(parseAsJSON).filter(Boolean)
+      return node.map(parseAsJSON).filter(Boolean) as MarkdownNode[]
     }
 
     // Remove double dashes and trailing dash from heading ids
@@ -37,11 +37,11 @@ export default function (this: any, _options: MarkdownOptions) {
       if (node.tagName === 'li') {
         // unwrap unwanted paragraphs around `<li>` children
         let hasPreviousParagraph = false
-        node.children = node.children.flatMap((child) => {
+        node.children = node.children?.flatMap((child) => {
           if (child.tagName === 'p') {
             if (hasPreviousParagraph) {
               // Insert line break before new paragraph
-              child.children.unshift({
+              child.children!.unshift({
                 type: 'element',
                 tagName: 'br',
                 properties: {}
@@ -76,7 +76,7 @@ export default function (this: any, _options: MarkdownOptions) {
     if (node.type === 'text') {
       // Remove new line nodes
       if (node.value === '\n') {
-        return null
+        return undefined
       }
       return <MarkdownNode> {
         type: 'text',
@@ -86,10 +86,10 @@ export default function (this: any, _options: MarkdownOptions) {
 
     // Remove comment nodes from AST tree
     if (node.type === 'comment') {
-      return null
+      return undefined
     }
 
-    node.children = parseAsJSON(node.children || [])
+    node.children = parseAsJSON(node.children || []) as Node[]
 
     return node as MarkdownNode
   }
@@ -102,7 +102,7 @@ export default function (this: any, _options: MarkdownOptions) {
      */
     return {
       type: 'root',
-      children: parseAsJSON(root.children || [])
+      children: parseAsJSON(root.children || []) as MarkdownNode[]
     }
   }
 }

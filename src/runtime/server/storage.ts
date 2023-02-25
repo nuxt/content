@@ -2,6 +2,7 @@ import { StorageMeta, prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
+// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
@@ -130,8 +131,13 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   }
 
   const meta = await sourceStorage.getMeta(id)
+  const mtime = meta.mtime
+  const size = meta.size || 0
   const hash = ohash({
-    meta,
+    // Last modified time
+    mtime,
+    // File size
+    size,
     // Add Content version to the hash, to revalidate the cache on content update
     version: contentConfig.cacheVersion,
     integrity: contentConfig.cacheIntegrity

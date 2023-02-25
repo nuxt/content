@@ -57,7 +57,7 @@ async function loadWorkspace (dir: string) {
   const rename = (from: string, to: string) => {
     find(from).data.name = to
     for (const pkg of packages) {
-      pkg.updateDeps((dep) => {
+      pkg.updateDeps((dep: any) => {
         if (dep.name === from && !dep.range.startsWith('npm:')) {
           dep.range = 'npm:' + to + '@' + dep.range
         }
@@ -68,7 +68,7 @@ async function loadWorkspace (dir: string) {
   const setVersion = (name: string, newVersion: string) => {
     find(name).data.version = newVersion
     for (const pkg of packages) {
-      pkg.updateDeps((dep) => {
+      pkg.updateDeps((dep: any) => {
         if (dep.name === name) {
           dep.range = newVersion
         }

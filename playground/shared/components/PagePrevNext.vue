@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex; align-items: center; justify-content: space-between;">
-    <div v-if="prevNext[0]">
+    <div v-if="prevNext?.[0]">
       <NuxtLink :to="prevNext[0]._path">
         {{ prevNext[0].title }}
       </NuxtLink>
@@ -9,7 +9,7 @@
       No previous page!
     </div>
 
-    <div v-if="prevNext[1]">
+    <div v-if="prevNext?.[1]">
       <NuxtLink :to="prevNext[1]._path">
         {{ prevNext[1].title }}
       </NuxtLink>

@@ -1,9 +1,9 @@
 import type { H } from 'mdast-util-to-hast'
 import { all } from 'mdast-util-to-hast'
-import type { MdastNode } from 'mdast-util-to-hast/lib'
+import type { MdastContent } from 'mdast-util-to-hast/lib'
 import { wrap } from './utils'
 
-type Node = MdastNode & {
+type Node = MdastContent & {
   ordered?: boolean
   start?: number,
   checked?: boolean

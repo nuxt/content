@@ -3,7 +3,7 @@ import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
 import { hasProtocol, joinURL, withTrailingSlash, withoutTrailingSlash } from 'ufo'
 import { ParsedContent } from '../types'
-import { useRoute, nextTick, useHead, unref, watch } from '#imports'
+import { useRoute, nextTick, useHead, unref, watch, useRuntimeConfig } from '#imports'
 
 export const useContentHead = (
   _content: ParsedContent | Ref<ParsedContent>,
@@ -29,19 +29,19 @@ export const useContentHead = (
       if (process.server && !head.meta.some(m => m.property === 'og:title')) {
         head.meta.push({
           name: 'og:title',
-          content: title
+          content: title as string
         })
       }
     }
 
-    let host = config.public.content.host
-    if (process.server && !host) {
-      const req = useRequestEvent().node?.req
-      if (req) {
-        const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
-        host = `${protocol}://${req.headers.host}`
-      }
-    }
+    const host = config.public.content.host
+    // if (process.server && !host) {
+    //   const req = useRequestEvent().node?.req
+    //   if (req && req.headers.host !== 'localhost') {
+    //     const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
+    //     host = `${protocol}://${req.headers.host}`
+    //   }
+    // }
     if (process.server && host) {
       const _url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
       const url = config.public.content.trailingSlash ? withTrailingSlash(_url) : withoutTrailingSlash(_url)
@@ -88,7 +88,7 @@ export const useContentHead = (
         head.meta.push({
           property: 'og:image',
           // @ts-ignore - We expect `head.image` from Nuxt configurations...
-          content: host && !hasProtocol(image) ? new URL(joinURL(config.app.baseURL, image), url).href : image
+          content: host && !hasProtocol(image) ? new URL(joinURL(config.app.baseURL, image), host).href : image
         })
       }
 
@@ -112,7 +112,7 @@ export const useContentHead = (
             const imageURL = isAbsoluteURL ? image.src : joinURL(config.app.baseURL, image.src ?? '/')
             head.meta.push({
               property: 'og:image',
-              content: host && !isAbsoluteURL ? new URL(imageURL, url).href : imageURL
+              content: host && !isAbsoluteURL ? new URL(imageURL, host).href : imageURL
             })
           } else if (image[key]) {
             head.meta.push({

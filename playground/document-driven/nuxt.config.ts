@@ -4,9 +4,9 @@ export default defineNuxtConfig({
     documentDriven: {
       globals: {
         theme: {
-          where: {
+          where: [{
             _id: 'content:_theme.yml'
-          },
+          }],
           without: ['_']
         }
       },

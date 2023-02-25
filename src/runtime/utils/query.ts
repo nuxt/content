@@ -39,12 +39,12 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
     return decodeQueryParams(params.replace(/.json$/, ''))
   }
 
-  const qid = event.context.params.qid?.replace(/.json$/, '')
+  const qid = event.context.params?.qid?.replace(/.json$/, '')
   const query: any = getQuery(event) || {}
 
   // Using /api/_content/query/:qid?_params=....
   if (qid && query._params) {
-    memory[qid] = parseJSONQueryParams(query._params)
+    memory[qid] = parseJSONQueryParams(decodeURIComponent(query._params))
 
     if (memory[qid].where && !Array.isArray(memory[qid].where)) {
       memory[qid].where = [memory[qid].where as any as QueryBuilderWhere]
@@ -52,13 +52,13 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
 
     return memory[qid]
   }
-  if (memory[qid]) {
+  if (qid && memory[qid]) {
     return memory[qid]
   }
 
   // Using /api/_content/query?_params={{JSON_FORMAT}}
   if (query._params) {
-    return parseJSONQueryParams(query._params)
+    return parseJSONQueryParams(decodeURIComponent(query._params))
   }
 
   // Using /api/_content/query?path=...&only=...

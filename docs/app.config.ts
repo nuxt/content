@@ -7,7 +7,6 @@ export default defineAppConfig({
   docus: {
     title: 'Nuxt Content',
     description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
-    layout: 'docs',
     image: 'https://content.nuxtjs.org/preview.png',
     url: 'https://content.nuxtjs.org',
     socials: {
@@ -15,9 +14,13 @@ export default defineAppConfig({
       github: 'nuxt/content'
     },
     github: {
+      dir: 'docs/content',
       root: 'docs/content',
       edit: true,
-      releases: true
+      releases: true,
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main'
     },
     cover: {
       src: '/cover.jpg',
@@ -25,6 +28,9 @@ export default defineAppConfig({
     },
     aside: {
       level: 1
+    },
+    layout: {
+      fluid: true
     },
     header: {
       logo: 'Logo',

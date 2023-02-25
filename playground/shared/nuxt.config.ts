@@ -26,7 +26,10 @@ export default defineNuxtConfig({
       path: resolveThemeDir('./components/content')
     }
   ],
-  modules: [contentModule],
+  modules: [
+    // @ts-ignore
+    contentModule
+  ],
   content: {
     navigation: {
       fields: ['icon']

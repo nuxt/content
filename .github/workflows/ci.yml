@@ -17,12 +17,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: yarn
-      - run: yarn install
-      - run: yarn dev:prepare
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn test
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - run: pnpm install
+      - run: pnpm prepare
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test
       - name: Release Edge
         if: |
           github.event_name == 'push' &&

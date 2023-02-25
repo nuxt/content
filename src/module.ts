@@ -9,8 +9,9 @@ import {
   addTemplate,
   extendViteConfig
 } from '@nuxt/kit'
-import { genImport, genSafeVariableName } from 'knitwork'
+import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
+// eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
@@ -19,6 +20,7 @@ import { listen } from 'listhen'
 import type { WatchEvent } from 'unstorage'
 import { createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
+import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
 import {
   CACHE_VERSION,
@@ -307,9 +309,7 @@ export default defineNuxtModule<ModuleOptions>({
 
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
-      config.optimizeDeps.include.push(
-        'html-tags', 'slugify'
-      )
+      config.optimizeDeps.include.push('slugify')
     })
 
     nuxt.hook('nitro:config', (nitroConfig) => {
@@ -412,6 +412,40 @@ export default defineNuxtModule<ModuleOptions>({
       pathPrefix: false,
       prefix: '',
       global: true
+    })
+
+    const componentsContext = { components: [] as Component[] }
+    nuxt.hook('components:extend', (newComponents) => {
+      componentsContext.components = newComponents.filter((c) => {
+        if (c.pascalName.startsWith('Prose') || c.pascalName === 'NuxtLink') {
+          return true
+        }
+
+        if (
+          c.filePath.includes('@nuxt/content/dist') ||
+          c.filePath.includes('nuxt/dist/app') ||
+          c.filePath.includes('NuxtWelcome')
+        ) {
+          return false
+        }
+
+        return true
+      })
+    })
+    addTemplate({
+      filename: 'content-components.mjs',
+      getContents ({ options }) {
+        const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
+          const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+          const isClient = c.mode === 'client'
+          const definitions: string[] = []
+
+          definitions.push(`export const ${c.pascalName} = ${genDynamicImport(c.filePath)}.then(c => ${isClient ? `createClientOnly(${exp})` : exp})`)
+          return definitions
+        })
+        return components.join('\n')
+      },
+      options: { getComponents: () => componentsContext.components }
     })
 
     const typesPath = addTemplate({
@@ -580,7 +614,7 @@ export default defineNuxtModule<ModuleOptions>({
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
       // Anchor link generation config
-      anchorLinks: options.markdown.anchorLinks
+      anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
 
     // Context will use in server
@@ -696,6 +730,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  documentDriven: ModuleOptions['documentDriven']
 }
 
 interface ModulePrivateRuntimeConfig {

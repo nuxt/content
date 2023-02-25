@@ -1,13 +1,12 @@
 <script lang="ts">
-import { h, resolveComponent, Text, defineComponent } from 'vue'
+import { h, resolveComponent, Text, defineComponent, toRaw } from 'vue'
 import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
-// eslint-disable-next-line import/no-named-as-default
-import htmlTags from 'html-tags'
 import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig, useRoute } from '#app'
-import type { MarkdownNode, ParsedContentMeta } from '../types'
+import htmlTags from '../utils/html-tags'
+import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
 
 type CreateElement = typeof h
 
@@ -59,14 +58,14 @@ export default defineComponent({
     await resolveContentComponents(props.value.body, {
       tags: {
         ...tags,
-        ...props.value?._components || {},
+        ...toRaw(props.value?._components || {}),
         ...props.components
       }
     })
 
     return { tags }
   },
-  render (ctx) {
+  render (ctx: any) {
     const { tags, tag, value, components } = ctx
 
     if (!value) {
@@ -82,7 +81,7 @@ export default defineComponent({
       ...(value as ParsedContentMeta),
       tags: {
         ...tags,
-        ...value?._components || {},
+        ...toRaw(value?._components || {}),
         ...components
       }
     }
@@ -116,7 +115,7 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   }
 
   if (node.tag === 'script') {
-    return renderToText(node)
+    return h(Text, renderToText(node))
   }
 
   const originalTag = node.tag!
@@ -141,9 +140,9 @@ function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedC
   )
 }
 
-function renderToText (node: MarkdownNode) {
+function renderToText (node: MarkdownNode): string {
   if (node.type === 'text') {
-    return node.value
+    return node.value!
   }
 
   if (!node.children?.length) {
@@ -161,7 +160,7 @@ function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: Pars
     $doc: documentMeta
   }
   const splitter = /\.|\[(\d+)\]/
-  const keys = node.props?.value.trim().split(splitter).filter(Boolean)
+  const keys: string[] = node.props?.value.trim().split(splitter).filter(Boolean)
   const value = keys.reduce((data, key) => {
     if (key in data) {
       if (typeof data[key] === 'function') {
@@ -196,7 +195,7 @@ function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: Parsed
     return data
   }, {
     [DEFAULT_SLOT]: [] as any[]
-  })
+  } as Record<string, any[]>)
 
   const slots = Object.entries(slotNodes).reduce((slots, [name, children]) => {
     if (!children.length) { return slots }
@@ -317,9 +316,9 @@ function propsToDataRxBind (key: string, value: any, data: any, documentMeta: Pa
 /**
  * Resolve component if it's a Vue component
  */
-const resolveVueComponent = (component: string) => {
+const resolveVueComponent = (component: any) => {
   // Check if node is not a native HTML tag
-  if (!htmlTags.includes(component as any)) {
+  if (!htmlTags.includes(component) && !component?.render) {
     const componentFn = resolveComponent(pascalCase(component), false)
     // If component exists
     if (typeof componentFn === 'object') {
@@ -381,16 +380,19 @@ function mergeTextNodes (nodes: Array<VNode>) {
   return mergedNodes
 }
 
-async function resolveContentComponents (body, meta) {
+async function resolveContentComponents (body: ParsedContent['body'], meta: Record<string, any>) {
   const components = Array.from(new Set(loadComponents(body, meta)))
   await Promise.all(components.map(async (c) => {
+    if ((c as any)?.render) {
+      return
+    }
     const resolvedComponent = resolveComponent(c) as any
     if (resolvedComponent?.__asyncLoader && !resolvedComponent.__asyncResolved) {
       await resolvedComponent.__asyncLoader()
     }
   }))
 
-  function loadComponents (node, documentMeta) {
+  function loadComponents (node: MarkdownNode, documentMeta: Record<string, any>) {
     if (node.type === 'text' || node.tag === 'binding') {
       return []
     }

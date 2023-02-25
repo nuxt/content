@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+// @ts-ignore
 import { useContent, useTheme } from '#imports'
 
 const { globals, surround, page, navigation } = useContent()

@@ -143,7 +143,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     return lines.map((line, lineIndex) => ({
       type: 'element',
-      tag: 'span',
+      tag: 'div',
       props: { class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim() },
       children: line.map(tokenSpan)
     }))

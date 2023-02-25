@@ -8,10 +8,10 @@ set -xe
 git restore -s@ -SW  -- .
 
 # Bump versions to edge
-yarn jiti ./scripts/bump-edge
+pnpm jiti ./scripts/bump-edge
 
 # Resolve yarn
-YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
+pnpm install
 
 # Update token
 if [[ ! -z ${NODE_AUTH_TOKEN} ]] ; then

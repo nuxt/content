@@ -21,7 +21,7 @@ export const testContentQuery = () => {
         params: { _params: JSON.stringify(params) }
       })
 
-      const ids = docs.map(doc => doc._id)
+      const ids = docs.map((doc: any) => doc._id)
 
       assert(ids.length > 0)
       assert(ids.includes('content:index.md'))
@@ -59,6 +59,16 @@ export const testContentQuery = () => {
 
       // empty
       expect(content).includes('$$$$')
+    })
+
+    test('find `_path` and explude `index`', async () => {
+      const content = await $fetch('/features/query-content?prefix=&path=/cats&where={"_path":{"$ne":"/cats"}}')
+
+      expect(content).not.includes('cats:index.md')
+      expect(content).includes('cats:_dir.yml')
+      expect(content).includes('cats:bombay.md')
+      expect(content).includes('cats:persian.md')
+      expect(content).includes('cats:ragdoll.md')
     })
 
     // test `queryContent( PREFIX ).findOne()`

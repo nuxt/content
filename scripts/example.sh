@@ -3,7 +3,7 @@
 EXAMPLE_PATH=examples/$1
 
 if [[ ! -d "$EXAMPLE_PATH/node_modules" ]] ; then
-  (cd $EXAMPLE_PATH && yarn install)
+  (cd $EXAMPLE_PATH && pnpm install)
 fi
 
-(cd $EXAMPLE_PATH && yarn dev)
+(cd $EXAMPLE_PATH && pnpm dev)

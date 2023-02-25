@@ -1,6 +1,141 @@
 # Changelog
 
 
+## v2.4.3
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.2...v2.4.3)
+
+
+### 🚀 Enhancements
+
+  - **pnpm:** Switch to pnpm (local / ci) ([#1868](https://github.com/nuxt/content/pull/1868))
+
+### 🩹 Fixes
+
+  - **query:** Decode unicode params ([#1871](https://github.com/nuxt/content/pull/1871))
+
+### 🏡 Chore
+
+  - **scripts:** Prepare script ([66e22c5d](https://github.com/nuxt/content/commit/66e22c5d))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Yaël Guilloux <yael.guilloux@gmail.com>
+
+## v2.4.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.1...v2.4.2)
+
+
+### 🩹 Fixes
+
+  - **useContentHead:** Disable host detection ([f6a429dc](https://github.com/nuxt/content/commit/f6a429dc))
+
+### 📖 Documentation
+
+  - Improvements ([f1991939](https://github.com/nuxt/content/commit/f1991939))
+  - Lint fix ([a11e908d](https://github.com/nuxt/content/commit/a11e908d))
+
+### 🏡 Chore
+
+  - Update release config ([801535d2](https://github.com/nuxt/content/commit/801535d2))
+
+### ❤️  Contributors
+
+- Sébastien Chopin <seb@nuxtjs.com>
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.4.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.0...v2.4.1)
+
+
+### 🩹 Fixes
+
+  - **useContentHead:** `undefined` url ([b157500b](https://github.com/nuxt/content/commit/b157500b))
+
+### 📖 Documentation
+
+  - Update edit path ([#1853](https://github.com/nuxt/content/pull/1853))
+
+### 🏡 Chore
+
+  - Update changelog ([8e7733a0](https://github.com/nuxt/content/commit/8e7733a0))
+  - Update release config ([1bb477d8](https://github.com/nuxt/content/commit/1bb477d8))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Barbapapazes <e.soubiran25@gmail.com>
+
+## v2.4.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.3.0...v2.4.0)
+
+
+### 🚀 Enhancements
+
+  - **shiki-highlighter:** Improve performance & auto load new languages ([#1775](https://github.com/nuxt/content/pull/1775))
+  - **shiki:** Highlight excerpt ([#1802](https://github.com/nuxt/content/pull/1802))
+  - **markdown:** Keep meta from fenced code block ([#1800](https://github.com/nuxt/content/pull/1800))
+  - **markdown:** Don't create excerpt if there is no `<!--more-->` ([#1801](https://github.com/nuxt/content/pull/1801))
+
+### 🩹 Fixes
+
+  - **build:** Do not register web-socket plugin on non-dev env ([#1768](https://github.com/nuxt/content/pull/1768))
+  - **document-driven:** Prevent `404` error on redirected pages ([#1770](https://github.com/nuxt/content/pull/1770))
+  - **query:** Ensure default values always apply to query params ([#1778](https://github.com/nuxt/content/pull/1778))
+  - **examples:** Layout duplication ([#1808](https://github.com/nuxt/content/pull/1808))
+  - **Shiki:** Sanitize highlighted text ([#1818](https://github.com/nuxt/content/pull/1818))
+  - **markdown-link:** Replacing `blank` prop with `target` ([#1828](https://github.com/nuxt/content/pull/1828))
+  - **highlighter:** Define missing env in Vite ([#1830](https://github.com/nuxt/content/pull/1830))
+  - **shiki:** Issue with JSON import ([#1824](https://github.com/nuxt/content/pull/1824))
+  - **markdown:** XSS Prevention ([#1832](https://github.com/nuxt/content/pull/1832))
+  - Handle uri encoded `_path `query ([#1794](https://github.com/nuxt/content/pull/1794))
+  - Add `og:title,url,description` meta tags and prefix `og:image` with host ([#1769](https://github.com/nuxt/content/pull/1769))
+  - **navigation:** Missing import ([6a1e854e](https://github.com/nuxt/content/commit/6a1e854e))
+  - **navigation:** Missing import ([1f7d3a2b](https://github.com/nuxt/content/commit/1f7d3a2b))
+  - **markdown:** Images src with `baseURL` ([#1833](https://github.com/nuxt/content/pull/1833))
+
+### 📖 Documentation
+
+  - Update badges ([5a2d2871](https://github.com/nuxt/content/commit/5a2d2871))
+  - Update outdated link in `sitemap.md` ([#1772](https://github.com/nuxt/content/pull/1772))
+  - Fix broken quickstart link ([#1785](https://github.com/nuxt/content/pull/1785))
+  - Fix `ContentRenderer` source link ([#1790](https://github.com/nuxt/content/pull/1790))
+  - Fix broken nuxt link ([#1789](https://github.com/nuxt/content/pull/1789))
+  - Fix ContentDoc multi-slot example ([#1815](https://github.com/nuxt/content/pull/1815))
+  - Add note about transformer ([#1826](https://github.com/nuxt/content/pull/1826))
+  - Update logo ([f77d7703](https://github.com/nuxt/content/commit/f77d7703))
+
+### 🏡 Chore
+
+  - Fix typos ([b4750ed0](https://github.com/nuxt/content/commit/b4750ed0))
+  - Update favicon ([1cb91f5d](https://github.com/nuxt/content/commit/1cb91f5d))
+  - Add release-it ([9a565fde](https://github.com/nuxt/content/commit/9a565fde))
+
+### ✅ Tests
+
+  - Disable `autoImport` ([#1842](https://github.com/nuxt/content/pull/1842))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Daniel Roe <daniel@roe.dev>
+- ハン / Han 
+- Sébastien Chopin <seb@nuxtjs.com>
+- SheetJSDev <dev@sheetjs.com>
+- Arash 
+- Horu 
+- Valery Qwertovsky 
+- GanymedeNil <ganymedenil@gmail.com>
+- Nobkd 
+- Issayah <github.me.mzu5a@simplelogin.com>
+- PickleNik 
+- Philipp Wagner <mail@philipp-wagner.com>
+- Yuki Inoue <inoueyuworks@gmail.com>
+
 ## v2.3.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.2.2...v2.3.0)

@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { queryContent, useAsyncData } from '#imports'
+
 const path = '/'
 const { data } = await useAsyncData(`content-${path}`, () => queryContent().where({ _path: path, draft: { $ne: true } }).findOne())
 </script>

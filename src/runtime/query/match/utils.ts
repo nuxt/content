@@ -79,7 +79,7 @@ export const sortList = (data: any[], params: SortOptions) => {
           }
           return value
         })
-      if (params[key] === -1) {
+      if (params[key as keyof SortOptions] === -1) {
         values.reverse()
       }
       return comperable.compare(values[0], values[1])

@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const createTitle = (title?: string, link: string) => (title || link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API'))
+const createTitle = (title: string | undefined, link: string) => (title || link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API'))
 
 const computedTitle = computed(() => createTitle(props.title, props.link))
 </script>

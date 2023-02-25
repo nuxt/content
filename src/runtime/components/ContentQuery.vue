@@ -102,7 +102,7 @@ export default defineComponent({
 
     watch(() => props, () => refresh(), { deep: true })
 
-    const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[]>(
+    const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[] | [ParsedContent | undefined, ParsedContent | undefined]>(
       `content-query-${hash(props)}`,
       () => {
         let queryBuilder: QueryBuilder
@@ -135,7 +135,7 @@ export default defineComponent({
             console.warn('[Content] Surround queries requires `path` prop to be set.')
             // eslint-disable-next-line no-console
             console.warn('[Content] Query without `path` will return regular `find()` results.')
-            return queryBuilder.find()
+            return queryBuilder.find() as Promise<ParsedContent[]>
           }
 
           return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
@@ -156,7 +156,7 @@ export default defineComponent({
    * Content not found fallback
    * @slot not-found
    */
-  render (ctx) {
+  render (ctx: any) {
     const slots = useSlots()
 
     const {
