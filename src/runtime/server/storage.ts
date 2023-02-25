@@ -1,4 +1,4 @@
-import { prefixStorage } from 'unstorage'
+import { StorageMeta, prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
