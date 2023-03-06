@@ -691,6 +691,9 @@ export default defineNuxtModule<ModuleOptions>({
       // Register ws url
       nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
 
+      // Remove content Index to force fresh index when nitro start (after a pull or a change without started Nuxt)
+      await nitro.storage.removeItem('cache:content:content-index.json')
+
       // Watch contents
       await nitro.storage.watch(async (event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
