@@ -229,47 +229,6 @@ describe('Database Provider', () => {
     assert(result[2] === null)
   })
 
-  test('Count items', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-
-    const result = await createQuery(fetcher)
-      .count()
-
-    assert(result === 3)
-  })
-
-  test('Count items with where condition', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-
-    const result = await createQuery(fetcher)
-      .where({ _path: { $contains: 'b' } })
-      .count()
-
-    assert(result === 1)
-  })
-
-  test('Count items with where condition and without method', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-
-    const result = await createQuery(fetcher)
-      .where({ _path: { $contains: 'b' } })
-      .without('id')
-      .count()
-
-    assert(result === 1)
-  })
-
-  test('Count items with where condition and only method', async () => {
-    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-
-    const result = await createQuery(fetcher)
-      .where({ _path: { $contains: 'b' } })
-      .only(['_path'])
-      .count()
-
-    assert(result === 1)
-  })
-
   test('Chain multiple where conditions', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
     const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })

@@ -37,11 +37,6 @@ export default defineEventHandler(async (event) => {
     return content
   }
 
-  if (query.count) {
-    const count = await serverQueryContent(event, query).count()
-    return count
-  }
-
   const contents = await serverQueryContent(event, query).find()
 
   return contents

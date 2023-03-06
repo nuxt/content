@@ -46,10 +46,6 @@ export const createQuery = <T = ParsedContent>(
       queryParams.surround = { query: surroundQuery, ...options }
       return fetcher(query) as Promise<Array<T>>
     },
-    count: () => {
-      queryParams.count = true
-      return fetcher(query) as Promise<number>
-    },
     // locale
     locale: (_locale: string) => query.where({ _locale })
   }
