@@ -14,8 +14,8 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
 
-    before = before || 1
-    after = after || 1
+    before = before ?? 1
+    after = after ?? 1
     const slice = new Array(before + after).fill(null, 0)
 
     return index === -1 ? slice : slice.map((_, i) => data[index - before! + i + Number(i >= before!)] || null)
