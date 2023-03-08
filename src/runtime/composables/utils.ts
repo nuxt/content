@@ -45,7 +45,7 @@ export const addPrerenderPath = (path: string) => {
 
 export const shouldUseClientDB = () => {
   const { experimental } = useRuntimeConfig().content
-  if (!process.client) { return false }
+  if (process.server) { return false }
   if (experimental.clientDB) { return true }
 
   const query = useRoute().query
@@ -55,6 +55,9 @@ export const shouldUseClientDB = () => {
   }
   // Enable clientDB when preview mode is enabled
   if (query.preview || useCookie('previewToken').value) {
+    if (process.dev) {
+      console.warn('[content] Client DB enabled since a preview token is set (either in query or cookie).')
+    }
     return true
   }
 
