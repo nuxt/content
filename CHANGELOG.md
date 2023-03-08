@@ -1,6 +1,51 @@
 # Changelog
 
 
+## v2.5.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.3...v2.5.0)
+
+
+### 🚀 Enhancements
+
+  - Introduce `component-resolver` transformer ([#1907](https://github.com/nuxt/content/pull/1907))
+  - **client-db:** Allow possibility to ignore some sources from client storage ([#1917](https://github.com/nuxt/content/pull/1917))
+
+### 🩹 Fixes
+
+  - Add anchorLinks type ([#1894](https://github.com/nuxt/content/pull/1894))
+  - **headings:** Don't generate link if `id` is missing ([#1893](https://github.com/nuxt/content/pull/1893))
+  - **code block:** Use div instead of span ([#1885](https://github.com/nuxt/content/pull/1885))
+  - Types ([#1912](https://github.com/nuxt/content/pull/1912))
+  - Db access time issue ([#1838](https://github.com/nuxt/content/pull/1838))
+  - Refresh content-index on nitro start ([#1947](https://github.com/nuxt/content/pull/1947))
+  - **findSurround:** Allow before and after to be 0 ([#1922](https://github.com/nuxt/content/pull/1922))
+  - **module:** Close dev server on nitro close ([#1952](https://github.com/nuxt/content/pull/1952))
+
+### 📖 Documentation
+
+  - Remove extraneous comma ([#1878](https://github.com/nuxt/content/pull/1878))
+  - Update link to useHead ([#1895](https://github.com/nuxt/content/pull/1895))
+  - Update get-started description ([13a2e1cf](https://github.com/nuxt/content/commit/13a2e1cf))
+  - Update content list query example ([#1901](https://github.com/nuxt/content/pull/1901))
+  - Fix deployment ([#1913](https://github.com/nuxt/content/pull/1913))
+  - Update documentDriven config ([#1915](https://github.com/nuxt/content/pull/1915))
+  - Add examples for JSON string for inline props ([#1882](https://github.com/nuxt/content/pull/1882))
+  - Update badges ([737d5c54](https://github.com/nuxt/content/commit/737d5c54))
+  - Add github in sources ([#1946](https://github.com/nuxt/content/pull/1946))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Barbapapazes ([@Barbapapazes](http://github.com/Barbapapazes))
+- Sébastien Chopin <seb@nuxtjs.com>
+- Wolfgang Drescher <drescher.wolfgang@gmail.com>
+- Estéban 
+- Patrik 
+- Nobkd 
+- Clément Ollivier ([@clemcode](http://github.com/clemcode))
+- Ben Hong ([@bencodezen](http://github.com/bencodezen))
+
 ## v2.4.3
 
 [compare changes](https://github.com/nuxt/content/compare/v2.4.2...v2.4.3)
