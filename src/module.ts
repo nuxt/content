@@ -678,13 +678,14 @@ export default defineNuxtModule<ModuleOptions>({
 
       const ws = createWebSocket()
 
+      // Listen dev server
+      const { server, url } = await listen(() => 'Nuxt Content', options.watch.ws)
+
       // Dispose storage on nuxt close
       nitro.hooks.hook('close', async () => {
         await ws.close()
+        await server.close()
       })
-
-      // Listen dev server
-      const { server, url } = await listen(() => 'Nuxt Content', options.watch.ws)
 
       server.on('upgrade', ws.serve)
 
