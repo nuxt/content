@@ -26,8 +26,8 @@ export function createDB (storage: Storage) {
     if (previewToken) {
       // Ignore cache content if preview requires it
       const previewMeta: any = await storage.getItem(`${previewToken}$`).then(data => data || {})
-      if (previewMeta.ignoreSources) {
-        const sources = previewMeta.ignoreSources.split(',').map(s => `cache:${s.trim()}:`)
+      if (Array.isArray(previewMeta.ignoreSources)) {
+        const sources = (previewMeta.ignoreSources as Array<string>).map(s => `cache:${s.trim()}:`)
         // Remove all keys that starts with ignored sources
         for (const key of keys) {
           if (sources.some(s => key.startsWith(s))) {
