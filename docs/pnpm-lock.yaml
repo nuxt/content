@@ -6,7 +6,7 @@ overrides:
 specifiers:
   '@docsearch/js': ^3.3.3
   '@nuxt-themes/docus': ^1.9.1
-  '@nuxthq/studio': ^0.8.1
+  '@nuxthq/studio': ^0.8.2
   '@nuxtlabs/github-module': ^1.6.1
   monaco-editor-core: ^0.36.1
   nuxt: 3.2.3
@@ -15,7 +15,7 @@ specifiers:
 devDependencies:
   '@docsearch/js': 3.3.3
   '@nuxt-themes/docus': 1.9.1_nuxt@3.2.3
-  '@nuxthq/studio': 0.8.1
+  '@nuxthq/studio': 0.8.2
   '@nuxtlabs/github-module': 1.6.1
   monaco-editor-core: 0.36.1
   nuxt: 3.2.3
@@ -1439,8 +1439,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@nuxthq/studio/0.8.1:
-    resolution: {integrity: sha512-DwAept7C7pFsbDTMzPdKWW71ftZD0Y0Fq9dsnDm8aay+nFuCaOBjC8yIdXpOZsol1eB0JueSTPcAzy5oKrAvoQ==}
+  /@nuxthq/studio/0.8.2:
+    resolution: {integrity: sha512-XQA6j3udN0B7R0vD9KNvCGdCI1Uv6UPHoO8mMWnse73yd8KuUxAeYXibgzMJF2xKndVlUR4Sv2Gzmb9MKpLbJQ==}
     dependencies:
       '@nuxt/kit': 3.2.3
       defu: 6.1.2

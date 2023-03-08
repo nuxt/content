@@ -17,7 +17,7 @@ specifiers:
   eslint: ^8.35.0
   globby: ^13.1.3
   husky: ^8.0.3
-  jiti: ^1.17.1
+  jiti: ^1.17.2
   json5: ^2.2.3
   knitwork: ^1.0.0
   lint-staged: ^13.1.2
@@ -51,7 +51,7 @@ specifiers:
   unist-builder: ^3.0.1
   unist-util-position: ^4.0.4
   unist-util-visit: ^4.1.2
-  unstorage: ^1.2.0
+  unstorage: ^1.3.0
   vitest: ^0.29.2
   vue-docgen-web-types: ^0.1.8
   ws: ^8.12.1
@@ -90,7 +90,7 @@ dependencies:
   unist-builder: 3.0.1
   unist-util-position: 4.0.4
   unist-util-visit: 4.1.2
-  unstorage: 1.2.0
+  unstorage: 1.3.0
   ws: 8.12.1
 
 devDependencies:
@@ -105,7 +105,7 @@ devDependencies:
   eslint: 8.35.0
   globby: 13.1.3
   husky: 8.0.3
-  jiti: 1.17.1
+  jiti: 1.17.2
   lint-staged: 13.1.2
   nuxt: 3.2.3_eslint@8.35.0
   rehype-figure: 1.0.1
@@ -1265,7 +1265,7 @@ packages:
       globby: 13.1.3
       hash-sum: 2.0.0
       ignore: 5.2.4
-      jiti: 1.17.1
+      jiti: 1.17.2
       knitwork: 1.0.0
       lodash.template: 4.5.0
       mlly: 1.1.1
@@ -1291,7 +1291,7 @@ packages:
       globby: 13.1.3
       hash-sum: 2.0.0
       ignore: 5.2.4
-      jiti: 1.17.1
+      jiti: 1.17.2
       knitwork: 1.0.0
       lodash.template: 4.5.0
       mlly: 1.1.1
@@ -1329,7 +1329,7 @@ packages:
       create-require: 1.1.1
       defu: 6.1.2
       hookable: 5.4.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       pathe: 1.1.0
       pkg-types: 1.0.2
       postcss-import-resolver: 2.0.0
@@ -1350,7 +1350,7 @@ packages:
       create-require: 1.1.1
       defu: 6.1.2
       hookable: 5.4.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       pathe: 1.1.0
       pkg-types: 1.0.2
       postcss-import-resolver: 2.0.0
@@ -1380,7 +1380,7 @@ packages:
       git-url-parse: 13.1.0
       inquirer: 9.1.4
       is-docker: 3.0.0
-      jiti: 1.17.1
+      jiti: 1.17.2
       mri: 1.2.0
       nanoid: 4.0.1
       node-fetch: 3.3.0
@@ -1408,7 +1408,7 @@ packages:
       defu: 6.1.2
       execa: 7.0.0
       get-port-please: 3.0.1
-      jiti: 1.17.1
+      jiti: 1.17.2
       ofetch: 1.0.1
       pathe: 1.1.0
     transitivePeerDependencies:
@@ -1654,8 +1654,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@planetscale/database/1.5.0:
-    resolution: {integrity: sha512-Qwh7Or1W5dB5mZ9EQqDkgvkDKhBBmQe58KIVUy0SGocNtr5fP4JAWtvZ6EdLAV6C6hVpzNlCA2xIg9lKTswm1Q==}
+  /@planetscale/database/1.6.0:
+    resolution: {integrity: sha512-eb02567S706Xme/nVwx+EN/wyoHhHBXl1a7+67R/Xm91myEpLn0vZNl58TvLZztBxje4gga16lc8dLt0elNrJA==}
     engines: {node: '>=16'}
     requiresBuild: true
     optional: true
@@ -2817,7 +2817,7 @@ packages:
       defu: 6.1.2
       dotenv: 16.0.3
       giget: 1.1.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       mlly: 1.1.1
       pathe: 1.1.0
       pkg-types: 1.0.2
@@ -5698,8 +5698,8 @@ packages:
       iterate-iterator: 1.0.2
     dev: true
 
-  /jiti/1.17.1:
-    resolution: {integrity: sha512-NZIITw8uZQFuzQimqjUxIrIcEdxYDFIe/0xYfIlVXTkiBjjyBEvgasj5bb0/cHtPRD/NziPbT312sFrkI5ALpw==}
+  /jiti/1.17.2:
+    resolution: {integrity: sha512-Xf0nU8+8wuiQpLcqdb2HRyHqYwGk2Pd+F7kstyp20ZuqTyCmB9dqpX2NxaxFc1kovraa2bG6c1RL3W7XfapiZg==}
     hasBin: true
 
   /js-sdsl/4.3.0:
@@ -6657,7 +6657,7 @@ packages:
       esbuild: 0.17.10
       fs-extra: 11.1.0
       globby: 13.1.3
-      jiti: 1.17.1
+      jiti: 1.17.2
       mri: 1.2.0
       pathe: 1.1.0
       typescript: 4.9.5
@@ -6757,7 +6757,7 @@ packages:
       hookable: 5.4.2
       http-proxy: 1.18.1
       is-primitive: 3.0.1
-      jiti: 1.17.1
+      jiti: 1.17.2
       klona: 2.0.6
       knitwork: 1.0.0
       listhen: 1.0.3
@@ -6783,7 +6783,7 @@ packages:
       ufo: 1.1.1
       unenv: 1.2.1
       unimport: 2.2.4_rollup@3.18.0
-      unstorage: 1.2.0
+      unstorage: 1.3.0
     transitivePeerDependencies:
       - debug
       - encoding
@@ -6949,7 +6949,7 @@ packages:
       h3: 1.5.0
       hash-sum: 2.0.0
       hookable: 5.4.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       knitwork: 1.0.0
       magic-string: 0.30.0
       mlly: 1.1.1
@@ -9184,7 +9184,7 @@ packages:
       esbuild: 0.17.10
       globby: 13.1.3
       hookable: 5.4.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       magic-string: 0.29.0
       mkdist: 1.1.1_typescript@4.9.5
       mlly: 1.1.1
@@ -9376,8 +9376,8 @@ packages:
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.5.0
 
-  /unstorage/1.2.0:
-    resolution: {integrity: sha512-QRCcetx19ug1QiYkWk7M5SyrQkjMy2NKY1LsbzdQhSEhIp7Td+tUkAJc64XeCHhzqiHDZ/69S0xseQs6gByESA==}
+  /unstorage/1.3.0:
+    resolution: {integrity: sha512-2ux0UDXBTR7VzJHZFBiLM1b5sB9XEXMlqoG8cd6lkBIxrD8jhj5tZGkRXTD2RgNXp+ndCgSOs9oUmEV5VpR8WQ==}
     dependencies:
       anymatch: 3.1.3
       chokidar: 3.5.3
@@ -9397,7 +9397,7 @@ packages:
       '@azure/identity': 3.1.3
       '@azure/keyvault-secrets': 4.6.0
       '@azure/storage-blob': 12.13.0
-      '@planetscale/database': 1.5.0
+      '@planetscale/database': 1.6.0
     transitivePeerDependencies:
       - encoding
       - supports-color
