@@ -48,7 +48,7 @@ const navKeyFromPath = (path: string, key: string, tree: NavItem[]) => {
 
   const goDeep = (path: string, tree: NavItem[]) => {
     for (const file of tree) {
-      if (file._path !== '/') {
+      if (file._path === '/') {
         // Ignore root page
         continue
       }
