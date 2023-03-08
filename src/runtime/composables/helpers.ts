@@ -17,7 +17,7 @@ const navBottomLink = (link: NavItem): string | undefined => {
  */
 const navDirFromPath = (path: string, tree: NavItem[]): NavItem[] | undefined => {
   for (const file of tree) {
-    if (file._path === path && !file._id) { return tree }
+    if (file._path === path && !file._id) { return file.children }
 
     if (file.children) {
       const result = navDirFromPath(path, file.children)
