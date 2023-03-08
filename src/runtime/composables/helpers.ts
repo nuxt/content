@@ -17,7 +17,7 @@ const navBottomLink = (link: NavItem): string | undefined => {
  */
 const navDirFromPath = (path: string, tree: NavItem[]): NavItem[] | undefined => {
   for (const file of tree) {
-    if (file._path === path && !file._id) { return file.children }
+    if (file._path === path && !file._id) { return tree }
 
     if (file.children) {
       const result = navDirFromPath(path, file.children)
@@ -48,6 +48,10 @@ const navKeyFromPath = (path: string, key: string, tree: NavItem[]) => {
 
   const goDeep = (path: string, tree: NavItem[]) => {
     for (const file of tree) {
+      if (file._path !== '/') {
+        // Ignore root page
+        continue
+      }
       if (path?.startsWith(file._path) && file[key]) { value = file[key] }
 
       if (file._path === path) { return }
