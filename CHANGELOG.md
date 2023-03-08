@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v2.5.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.1...v2.5.2)
+
+
+### 🩹 Fixes
+
+  - Revert navDirFromPath behavior ([049c356d](https://github.com/nuxt/content/commit/049c356d))
+
+### ❤️  Contributors
+
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+
 ## v2.5.1
 
 [compare changes](https://github.com/nuxt/content/compare/v2.5.0...v2.5.1)
