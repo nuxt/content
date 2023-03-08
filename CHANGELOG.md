@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v2.5.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.0...v2.5.1)
+
+
+### 🩹 Fixes
+
+  - **client-db:** Ensure `ignoreSources` is an array ([45b44a69](https://github.com/nuxt/content/commit/45b44a69))
+  - **document-driven:** Page layout detection ([#1955](https://github.com/nuxt/content/pull/1955))
+
+### 🏡 Chore
+
+  - **release:** Release v2.5.0 ([2bce04c8](https://github.com/nuxt/content/commit/2bce04c8))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.5.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.4.3...v2.5.0)
