@@ -13,6 +13,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/nuxt/content/tree/main/examples/essentials/hello-world?file=app.vue)
 - [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
+- [✍️ &nbsp;Nuxt Studio](https://nuxt.studio)
 
 ## Features
 
