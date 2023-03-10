@@ -22,11 +22,13 @@ export default function (this: any, _options: MarkdownOptions) {
     }
 
     // Remove double dashes and trailing dash from heading ids
+    // Insert underscore if id start with a digit
     if (node.tagName?.startsWith('h') && node.properties.id) {
       node.properties.id = node.properties.id
         .replace(/-+/g, '-')
         .replace(/-$/, '')
         .replace(/^-/, '')
+        .replace(/^(\d)/, '_$1')
     }
 
     /**
