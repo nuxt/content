@@ -9,7 +9,7 @@ specifiers:
   '@types/mdurl': ^1.0.2
   '@types/ws': ^8.5.4
   c8: ^7.13.0
-  consola: ^2.15.3
+  consola: ^3.0.1
   csvtojson: ^2.0.10
   defu: ^6.1.2
   destr: ^1.2.2
@@ -58,7 +58,7 @@ specifiers:
 
 dependencies:
   '@nuxt/kit': 3.2.3
-  consola: 2.15.3
+  consola: 3.0.1
   defu: 6.1.2
   destr: 1.2.2
   detab: 3.0.2
@@ -3228,6 +3228,10 @@ packages:
 
   /consola/2.15.3:
     resolution: {integrity: sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==}
+
+  /consola/3.0.1:
+    resolution: {integrity: sha512-08E7bC2N6gaFdzPU/qtBi4ulVvJitYnfrDdxEiwElC3jSNICbOvkcE+8N56EfIrBoxp37O9Qnn5ZZPElov83UQ==}
+    dev: false
 
   /console-control-strings/1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
