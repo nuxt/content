@@ -4,5 +4,4 @@ description: 'Пример использования Nuxt Content на CodeSand
 toc: false
 ---
 
-::sandbox{src="https://codesandbox.io/embed/nuxt-content-playground-l164h?hidenavigation=1&theme=dark"}
-::
+:sandbox{src="https://codesandbox.io/embed/nuxt-content-playground-l164h?hidenavigation=1&theme=dark"}
