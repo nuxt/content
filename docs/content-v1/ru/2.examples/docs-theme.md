@@ -4,5 +4,4 @@ description: 'Пример использования темы документ�
 toc: false
 ---
 
-::sandbox{src="https://codesandbox.io/embed/nuxt-content-docs-theme-playground-inwxb?hidenavigation=1&theme=dark"}
-::
+:sandbox{src="https://codesandbox.io/embed/nuxt-content-docs-theme-playground-inwxb?hidenavigation=1&theme=dark"}

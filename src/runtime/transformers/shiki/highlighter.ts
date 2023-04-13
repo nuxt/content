@@ -80,6 +80,11 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     return promise
   }
 
+  const splitCodeToLines = (code: string) => {
+    const lines = code.split(/\r\n|\r|\n/)
+    return [...lines.map((line: string) => [{ content: line }])]
+  }
+
   const getHighlightedTokens = async (code: string, lang: Lang, theme: Theme) => {
     const highlighter = await getShikiHighlighter()
     // Remove trailing carriage returns
@@ -90,7 +95,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     // Skip highlight if lang is not supported
     if (!lang) {
-      return [[{ content: code }]]
+      return splitCodeToLines(code)
     }
 
     // Load supported language on-demand
@@ -101,7 +106,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
         await highlighter.loadLanguage(languageRegistration)
       } else {
         logger.warn(`Language '${lang}' is not supported by shiki. Skipping highlight.`)
-        return [[{ content: code }]]
+        return splitCodeToLines(code)
       }
     }
 
@@ -144,7 +149,10 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     return lines.map((line, lineIndex) => ({
       type: 'element',
       tag: 'div',
-      props: { class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim() },
+      props: {
+        class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim(),
+        line: lineIndex + 1
+      },
       children: line.map(tokenSpan)
     }))
 

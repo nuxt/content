@@ -44,7 +44,7 @@ export const addPrerenderPath = (path: string) => {
 }
 
 export const shouldUseClientDB = () => {
-  const { experimental } = useRuntimeConfig().content
+  const { experimental } = useRuntimeConfig().public.content
   if (process.server) { return false }
   if (experimental.clientDB) { return true }
 
