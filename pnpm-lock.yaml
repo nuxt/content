@@ -119,7 +119,7 @@ devDependencies:
     version: 3.4.1(rollup@3.20.4)
   '@nuxthq/studio':
     specifier: ^0.10.1
-    version: 0.10.1(rollup@3.20.2)
+    version: 0.10.1(rollup@3.20.4)
   '@nuxtjs/eslint-config-typescript':
     specifier: latest
     version: 12.0.0(eslint@8.38.0)(typescript@5.0.4)
@@ -998,13 +998,13 @@ packages:
       - vue-tsc
     dev: true
 
-  /@nuxthq/studio@0.10.1(rollup@3.20.2):
+  /@nuxthq/studio@0.10.1(rollup@3.20.4):
     resolution: {integrity: sha512-EWzk3HkE6QuiqVxqZ7jsAc/8GxSDKRO+jnTBv1wlOAvPKJNPsHrlYGP8EyR6S1NaB3pQTJ9iVBhmskAtrKIsYQ==}
     dependencies:
-      '@nuxt/kit': 3.4.0(rollup@3.20.2)
+      '@nuxt/kit': 3.4.1(rollup@3.20.4)
       defu: 6.1.2
-      nuxt-component-meta: 0.5.1(rollup@3.20.2)
-      nuxt-config-schema: 0.4.5(rollup@3.20.2)
+      nuxt-component-meta: 0.5.1(rollup@3.20.4)
+      nuxt-config-schema: 0.4.5(rollup@3.20.4)
       socket.io-client: 4.6.1
       ufo: 1.1.1
     transitivePeerDependencies:
@@ -2779,6 +2779,10 @@ packages:
       unique-string: 3.0.0
       write-file-atomic: 3.0.3
       xdg-basedir: 5.1.0
+    dev: true
+
+  /consola@2.15.3:
+    resolution: {integrity: sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==}
     dev: true
 
   /consola@3.0.2:
@@ -6501,10 +6505,10 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /nuxt-component-meta@0.5.1(rollup@3.20.2):
+  /nuxt-component-meta@0.5.1(rollup@3.20.4):
     resolution: {integrity: sha512-vwx5wySyVX+QbFrNb3wLYNMPlADho8E66MO45d5i5fTlEkmhopVpQ9YXwlAvM3pLCPjupxG3R3D5rKpLDeitkw==}
     dependencies:
-      '@nuxt/kit': 3.4.0(rollup@3.20.2)
+      '@nuxt/kit': 3.4.1(rollup@3.20.4)
       scule: 1.0.0
       typescript: 5.0.4
       vue-component-meta: 1.2.0(typescript@5.0.4)
@@ -6513,10 +6517,10 @@ packages:
       - supports-color
     dev: true
 
-  /nuxt-config-schema@0.4.5(rollup@3.20.2):
+  /nuxt-config-schema@0.4.5(rollup@3.20.4):
     resolution: {integrity: sha512-Y5anu5puDfMJfDP7IYjXsn6Dvj262HtjZqa73jCBbFRCc5jnjrs+BEpJJmtPG32ZsqzO2+RL4oTNb3H6IfKZLQ==}
     dependencies:
-      '@nuxt/kit': 3.4.0(rollup@3.20.2)
+      '@nuxt/kit': 3.4.1(rollup@3.20.4)
       changelogen: 0.4.1
       defu: 6.1.2
       jiti: 1.18.2
@@ -6854,7 +6858,7 @@ packages:
       got: 12.6.0
       registry-auth-token: 5.0.2
       registry-url: 6.0.1
-      semver: 7.3.8
+      semver: 7.4.0
     dev: true
 
   /param-case@3.0.4:
@@ -8061,7 +8065,7 @@ packages:
     resolution: {integrity: sha512-0Ju4+6A8iOnpL/Thra7dZsSlOHYAHIeMxfhWQRI1/VLcT3WDBZKKtQt/QkBOsiIN9ZpuvHE6cGZ0x4glCMmfiA==}
     engines: {node: '>=12'}
     dependencies:
-      semver: 7.3.8
+      semver: 7.4.0
     dev: true
 
   /semver@5.7.1:
@@ -9074,7 +9078,7 @@ packages:
       is-yarn-global: 0.4.1
       latest-version: 7.0.0
       pupa: 3.1.0
-      semver: 7.3.8
+      semver: 7.4.0
       semver-diff: 4.0.0
       xdg-basedir: 5.1.0
     dev: true
