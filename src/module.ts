@@ -22,6 +22,7 @@ import { createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
+import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
   createWebSocket,
@@ -76,7 +77,7 @@ export interface ModuleOptions {
   /**
    * List of ignore pattern that will be used for excluding content from parsing and rendering.
    *
-   * @default ['\\.', '-']
+   * @default ['^[.-]|:[.-]']
    */
   ignores: Array<string>
   /**
@@ -258,7 +259,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     },
     sources: {},
-    ignores: ['\\.', '-'],
+    ignores: ['^[.-]|:[.-]'],
     locales: [],
     defaultLocale: undefined,
     highlight: false,
@@ -631,6 +632,9 @@ export default defineNuxtModule<ModuleOptions>({
       tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
 
+    // ignore files
+    const isIgnored = makeIgnored(contentContext.ignores)
+
     // Setup content dev module
     if (!nuxt.options.dev) {
       nuxt.hook('build:before', async () => {
@@ -647,11 +651,8 @@ export default defineNuxtModule<ModuleOptions>({
 
         // Filter invalid characters & ignore patterns
         const invalidKeyCharacters = "'\"?#/".split('')
-        const contentIgnores: Array<RegExp> = contentContext.ignores.map((p: any) =>
-          typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
-        )
         keys = keys.filter((key) => {
-          if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+          if (key.startsWith('preview:') || isIgnored(key)) {
             return false
           }
           if (invalidKeyCharacters.some(ik => key.includes(ik))) {
@@ -698,7 +699,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Watch contents
       await nitro.storage.watch(async (event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
-        if (!key.startsWith(MOUNT_PREFIX)) {
+        if (!key.startsWith(MOUNT_PREFIX) || isIgnored(key)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)

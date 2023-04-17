@@ -15,6 +15,7 @@ import { getIndexedContentsList } from './content-index'
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
 // @ts-ignore
 import { transformers as customTransformers } from '#content/virtual/transformers'
+import { makeIgnored } from '../utils/config'
 
 interface ParseContentOptions {
   csv?: ModuleOptions['csv']
@@ -41,9 +42,7 @@ const contentConfig = useRuntimeConfig().content
 /**
  * Content ignore patterns
  */
-export const contentIgnores: Array<RegExp> = contentConfig.ignores.map((p: any) =>
-  typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
-)
+const isIgnored = makeIgnored(contentConfig.ignores)
 
 /**
  * Invalid key characters
@@ -54,7 +53,7 @@ const invalidKeyCharacters = "'\"?#/".split('')
  * Filter predicate for ignore patterns
  */
 const contentIgnorePredicate = (key: string) => {
-  if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+  if (key.startsWith('preview:') || isIgnored(key)) {
     return false
   }
   if (invalidKeyCharacters.some(ik => key.includes(ik))) {
