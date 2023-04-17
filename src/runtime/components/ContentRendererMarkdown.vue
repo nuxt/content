@@ -55,28 +55,29 @@ export default defineComponent({
   async setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
 
-    await resolveContentComponents(props.value.body, {
-      tags: {
-        ...tags,
-        ...toRaw(props.value?._components || {}),
-        ...props.components
-      }
-    })
+    let body = (props.value?.body || props.value) as MarkdownNode
+    if (props.excerpt && props.value?.excerpt) {
+      body = props.value.excerpt as MarkdownNode
+    }
+    if (body) {
+      await resolveContentComponents(body, {
+        tags: {
+          ...tags,
+          ...toRaw(props.value?._components || {}),
+          ...props.components
+        }
+      })
+    }
 
-    return { tags }
+    return { tags, body }
   },
   render (ctx: any) {
-    const { tags, tag, value, components } = ctx
+    const { tags, tag, value, body, components } = ctx
 
-    if (!value) {
+    if (!body) {
       return null
     }
 
-    // Get body from value
-    let body = (value.body || value) as MarkdownNode
-    if (ctx.excerpt && value.excerpt) {
-      body = value.excerpt
-    }
     const meta: ParsedContentMeta = {
       ...(value as ParsedContentMeta),
       tags: {
