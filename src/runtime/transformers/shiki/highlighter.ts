@@ -146,15 +146,21 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     const lines = await getHighlightedTokens(code, lang, theme)
     const { highlights = [], colorMap = {} } = opts || {}
 
-    return lines.map((line, lineIndex) => ({
-      type: 'element',
-      tag: 'span',
-      props: {
-        class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim(),
-        line: lineIndex + 1
-      },
-      children: [...line.map(tokenSpan), { type: 'text', value: '\n' }]
-    }))
+    return lines.map((line, lineIndex) => {
+      if (lineIndex !== lines.length - 1) {
+        line[line.length - 1].content += '\n'
+      }
+
+      return {
+        type: 'element',
+        tag: 'span',
+        props: {
+          class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim(),
+          line: lineIndex + 1
+        },
+        children: line.map(tokenSpan)
+      }
+    })
 
     function getColorProps (token: { color?: string | object }) {
       if (!token.color) {
