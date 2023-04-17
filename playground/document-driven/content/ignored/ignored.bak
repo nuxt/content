@@ -1,0 +1,4 @@
+This file is ignored:
+
+- reason: custom `ignores` pattern `\\.bak$`
+- because: it matches the file extension
