@@ -71,13 +71,18 @@ export default defineComponent({
       })
     }
 
-    return { body, debug, tags }
+    return { debug, tags }
   },
   render (ctx: any) {
-    const { tags, tag, value, components, body, debug } = ctx
+    const { tags, tag, value, excerpt, components, debug } = ctx
 
-    if (!body) {
+    if (!value) {
       return null
+    }
+
+    let body = (value?.body || value) as MarkdownNode
+    if (excerpt && value?.excerpt) {
+      body = value.excerpt as MarkdownNode
     }
 
     const meta: ParsedContentMeta = {
