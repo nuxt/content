@@ -8,6 +8,7 @@ import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransforme
 import { createQuery } from '../query/query'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { transformContent } from '../transformers'
+import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
@@ -15,7 +16,6 @@ import { getIndexedContentsList } from './content-index'
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
 // @ts-ignore
 import { transformers as customTransformers } from '#content/virtual/transformers'
-import { makeIgnored } from '../utils/config'
 
 interface ParseContentOptions {
   csv?: ModuleOptions['csv']

@@ -3,7 +3,14 @@
     <ContentDoc>
       <template #not-found>
         <p>Not found!</p>
-        <p>Go: <NuxtLink to="#" @click="$router.go(-1)">Back</NuxtLink> or <NuxtLink to="/">Home</NuxtLink></p>
+        <p>
+          Go:
+          <NuxtLink to="#" @click="$router.go(-1)">
+            Back</NuxtLink>
+          or
+          <NuxtLink to="/">
+            Home</NuxtLink>
+        </p>
       </template>
     </ContentDoc>
   </div>
