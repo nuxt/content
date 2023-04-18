@@ -1,12 +1,12 @@
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as ShikiTheme, Highlighter } from 'shiki-es'
-import consola from 'consola'
+import { consola } from 'consola'
 import type { ModuleOptions } from '../../../module'
 import { createSingleton } from '../utils'
 import mdcTMLanguage from './languages/mdc.tmLanguage'
 import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenColorMap } from './types'
 
 // Re-create logger locally as utils cannot be imported from here
-const logger = consola.withScope('@nuxt/content')
+const logger = consola.withTag('@nuxt/content')
 
 /**
  * Resolve Shiki compatible lang from string.
@@ -147,7 +147,12 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     const { highlights = [], colorMap = {} } = opts || {}
 
     return lines.map((line, lineIndex) => {
+      // Add line break to all lines except last
       if (lineIndex !== lines.length - 1) {
+        // Add line break to empty lines
+        if (line.length === 0) {
+          line.push({ content: '' })
+        }
         line[line.length - 1].content += '\n'
       }
 
