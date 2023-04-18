@@ -9,6 +9,13 @@ export default defineNuxtConfig({
         driver: 'fs',
         base: resolve(__dirname, 'content-fa')
       }
+    },
+    ignores: ['blah'],
+    experimental: {
+      ignores: [
+        '\\.bak$',
+        'ignored/folder'
+      ]
     }
   },
   typescript: {

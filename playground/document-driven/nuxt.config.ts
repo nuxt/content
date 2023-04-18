@@ -11,10 +11,6 @@ export default defineNuxtConfig({
         }
       },
       layoutFallbacks: ['theme']
-    },
-    ignores: [
-      '\\.bak$',
-      'ignored:hidden'
-    ]
+    }
   }
 })
