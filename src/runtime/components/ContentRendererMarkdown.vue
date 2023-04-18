@@ -7,6 +7,7 @@ import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig, useRoute } from '#app'
 import htmlTags from '../utils/html-tags'
 import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
+import { useContentPreview } from '../composables/preview'
 
 type CreateElement = typeof h
 
@@ -54,6 +55,7 @@ export default defineComponent({
   },
   async setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
+    const debug = process.dev || useContentPreview().isEnabled()
 
     let body = (props.value?.body || props.value) as MarkdownNode
     if (props.excerpt && props.value?.excerpt) {
@@ -69,10 +71,10 @@ export default defineComponent({
       })
     }
 
-    return { tags, body }
+    return { body, debug, tags }
   },
   render (ctx: any) {
-    const { tags, tag, value, body, components } = ctx
+    const { tags, tag, value, components, body, debug } = ctx
 
     if (!body) {
       return null
@@ -98,7 +100,11 @@ export default defineComponent({
     // Return Vue component
     return h(
       component as any,
-      { ...meta.component?.props, ...this.$attrs },
+      {
+        ...meta.component?.props,
+        ...this.$attrs,
+        'data-content-id': debug ? value._id : undefined
+      },
       renderSlots(body, h, meta, meta)
     )
   }

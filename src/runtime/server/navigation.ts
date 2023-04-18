@@ -9,7 +9,7 @@ type PrivateNavItem = NavItem & { path?: string }
  */
 export function createNav (contents: ParsedContentMeta[], configs: Record<string, ParsedContentMeta>) {
   // Get navigation config from runtimeConfig
-  const { navigation } = useRuntimeConfig().content
+  const { navigation } = useRuntimeConfig().public.content
 
   // Navigation fields picker
   const pickNavigationFields = (content: ParsedContentMeta) => ({
