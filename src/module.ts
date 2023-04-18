@@ -606,7 +606,7 @@ export default defineNuxtModule<ModuleOptions>({
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
-        ignores: options.experimental.ignores
+        advancedIgnoresPattern: options.experimental.advancedIgnoresPattern
       },
       api: {
         baseURL: options.api.baseURL
