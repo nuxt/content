@@ -223,7 +223,7 @@ export interface ModuleOptions {
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean,
-    ignores?: string[]
+    advancedIgnoresPattern: boolean
   }
 }
 
@@ -285,7 +285,7 @@ export default defineNuxtModule<ModuleOptions>({
     experimental: {
       clientDB: false,
       stripQueryParameters: false,
-      ignores: []
+      advancedIgnoresPattern: false
     }
   },
   async setup (options, nuxt) {
@@ -640,7 +640,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // ignore files
     const isIgnored = makeIgnored(contentContext)
-    if (contentContext.ignores.length) {
+    if (contentContext.ignores.length && !contentContext.experimental) {
       logger.warn('The `ignores` config is being made more flexible in version 2.7. See the docs for more information: `https://content.nuxtjs.org/api/configuration#ignores`')
     }
 
@@ -727,7 +727,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
-    ignores: string[]
+    advancedIgnoresPattern: boolean
   }
 
   defaultLocale: ModuleOptions['defaultLocale']

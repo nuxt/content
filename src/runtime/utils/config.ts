@@ -1,10 +1,10 @@
 /**
  * Creates a predicate to test storage keys `foo:bar:baz` against configured `ignores` patterns
  */
-export function makeIgnored (content: { ignores: string[], experimental: { ignores?: string[] } }): (key: string) => boolean {
+export function makeIgnored (content: { ignores: string[], experimental: { advancedIgnoresPattern: boolean } }): (key: string) => boolean {
   // 2.7+ supports free regexp + slashes
-  if (content.experimental.ignores) {
-    const rxAll = ['/\\.', '/-', ...content.experimental.ignores].map(p => new RegExp(p))
+  if (content.experimental.advancedIgnoresPattern) {
+    const rxAll = ['/\\.', '/-', ...content.ignores].map(p => new RegExp(p))
     return function isIgnored (key: string): boolean {
       const path = '/' + key.replaceAll(':', '/')
       return rxAll.some(rx => rx.test(path))

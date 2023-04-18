@@ -10,13 +10,15 @@ export default defineNuxtConfig({
         base: resolve(__dirname, 'content-fa')
       }
     },
-    ignores: ['blah'],
+
     experimental: {
-      ignores: [
-        '\\.bak$',
-        'ignored/folder'
-      ]
-    }
+      advancedIgnoresPattern: true
+    },
+
+    ignores: [
+      '\\.bak$',
+      'ignored/folder'
+    ]
   },
   typescript: {
     includeWorkspace: true
