@@ -1,10 +1,11 @@
 import { hash } from 'ohash'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 import { queryContent } from './query'
+import { useContentPreview } from './preview'
 
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams): Promise<Array<NavItem>> => {
   const { content } = useRuntimeConfig().public
@@ -38,7 +39,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
       ? undefined
       : {
           _params: jsonStringify(params),
-          previewToken: useCookie('previewToken').value
+          previewToken: useContentPreview().getPreviewToken()
         }
   })
 

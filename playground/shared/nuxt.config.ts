@@ -28,7 +28,8 @@ export default defineNuxtConfig({
   ],
   modules: [
     // @ts-ignore
-    contentModule
+    contentModule,
+    '@nuxthq/studio'
   ],
   content: {
     navigation: {

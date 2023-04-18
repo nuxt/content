@@ -2,27 +2,24 @@ import type { Storage } from 'unstorage'
 // @ts-ignore
 import memoryDriver from 'unstorage/drivers/memory'
 import { createStorage, prefixStorage } from 'unstorage'
-import { useRuntimeConfig, useCookie, useNuxtApp } from '#app'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 import { withBase } from 'ufo'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
+import { useContentPreview } from './preview'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
 export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
-
-export const getPreview = () => {
-  return useCookie('previewToken').value
-}
 
 export function createDB (storage: Storage) {
   async function getItems () {
     const keys = new Set<string>(await storage.getKeys('cache:'))
 
     // Merge preview items
-    const previewToken = getPreview()
+    const previewToken = useContentPreview().getPreviewToken()
     if (previewToken) {
       // Ignore cache content if preview requires it
       const previewMeta: any = await storage.getItem(`${previewToken}$`).then(data => data || {})
@@ -100,7 +97,7 @@ async function initContentDatabase () {
 export async function generateNavigation (query?: QueryBuilderParams): Promise<Array<NavItem>> {
   const db = await useContentDatabase()
 
-  if (!getPreview() && Object.keys(query || {}).length === 0) {
+  if (!useContentPreview().getPreviewToken() && Object.keys(query || {}).length === 0) {
     return db.storage.getItem('navigation') as Promise<Array<NavItem>>
   }
 
