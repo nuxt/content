@@ -42,7 +42,7 @@ const contentConfig = useRuntimeConfig().content
 /**
  * Content ignore patterns
  */
-const isIgnored = makeIgnored(contentConfig.ignores)
+const isIgnored = makeIgnored(contentConfig)
 
 /**
  * Invalid key characters

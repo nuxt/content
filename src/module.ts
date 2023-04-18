@@ -68,16 +68,18 @@ export interface ModuleOptions {
     ws: Partial<ListenOptions>
   }
   /**
-   * Contents can located in multiple places, in multiple directories or even in remote git repositories.
+   * Contents can be located in multiple places, in multiple directories or even in remote git repositories.
    * Using sources option you can tell Content module where to look for contents.
    *
    * @default ['content']
    */
   sources: Record<string, MountOptions> | Array<string | MountOptions>
   /**
-   * List of ignore pattern that will be used for excluding content from parsing and rendering.
+   * List of ignore patterns that will be used to exclude content from parsing, rendering and watching.
    *
-   * @default ['^[.-]|:[.-]']
+   * Note that files with a leading . or - are ignored by default
+   *
+   * @default []
    */
   ignores: Array<string>
   /**
@@ -220,7 +222,8 @@ export interface ModuleOptions {
   },
   experimental: {
     clientDB: boolean
-    stripQueryParameters: boolean
+    stripQueryParameters: boolean,
+    ignores?: string[]
   }
 }
 
@@ -259,7 +262,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     },
     sources: {},
-    ignores: ['^[.-]|:[.-]'],
+    ignores: [],
     locales: [],
     defaultLocale: undefined,
     highlight: false,
@@ -281,7 +284,8 @@ export default defineNuxtModule<ModuleOptions>({
     documentDriven: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false
+      stripQueryParameters: false,
+      ignores: []
     }
   },
   async setup (options, nuxt) {
@@ -601,7 +605,8 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
-        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
+        ignores: options.experimental.ignores
       },
       api: {
         baseURL: options.api.baseURL
@@ -634,7 +639,10 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // ignore files
-    const isIgnored = makeIgnored(contentContext.ignores)
+    const isIgnored = makeIgnored(contentContext)
+    if (contentContext.ignores.length) {
+      logger.warn('The `ignores` config is being made more flexible in version 2.7. See the docs for more information: `https://content.nuxtjs.org/api/configuration#ignores`')
+    }
 
     // Setup content dev module
     if (!nuxt.options.dev) {
@@ -719,6 +727,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
+    ignores: string[]
   }
 
   defaultLocale: ModuleOptions['defaultLocale']
