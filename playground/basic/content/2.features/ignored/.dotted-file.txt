@@ -1,0 +1,4 @@
+This file is ignored:
+
+- reason: default `ignores` pattern `^[.-]|:[.-]`
+- because: it matches the leading .

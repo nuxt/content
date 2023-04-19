@@ -22,6 +22,7 @@ import { createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
+import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
   createWebSocket,
@@ -67,16 +68,18 @@ export interface ModuleOptions {
     ws: Partial<ListenOptions>
   }
   /**
-   * Contents can located in multiple places, in multiple directories or even in remote git repositories.
+   * Contents can be located in multiple places, in multiple directories or even in remote git repositories.
    * Using sources option you can tell Content module where to look for contents.
    *
    * @default ['content']
    */
   sources: Record<string, MountOptions> | Array<string | MountOptions>
   /**
-   * List of ignore pattern that will be used for excluding content from parsing and rendering.
+   * List of ignore patterns that will be used to exclude content from parsing, rendering and watching.
    *
-   * @default ['\\.', '-']
+   * Note that files with a leading . or - are ignored by default
+   *
+   * @default []
    */
   ignores: Array<string>
   /**
@@ -219,7 +222,8 @@ export interface ModuleOptions {
   },
   experimental: {
     clientDB: boolean
-    stripQueryParameters: boolean
+    stripQueryParameters: boolean,
+    advancedIgnoresPattern: boolean
   }
 }
 
@@ -258,7 +262,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     },
     sources: {},
-    ignores: ['\\.', '-'],
+    ignores: [],
     locales: [],
     defaultLocale: undefined,
     highlight: false,
@@ -280,7 +284,8 @@ export default defineNuxtModule<ModuleOptions>({
     documentDriven: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false
+      stripQueryParameters: false,
+      advancedIgnoresPattern: false
     }
   },
   async setup (options, nuxt) {
@@ -600,7 +605,8 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
-        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
+        advancedIgnoresPattern: options.experimental.advancedIgnoresPattern
       },
       api: {
         baseURL: options.api.baseURL
@@ -632,6 +638,13 @@ export default defineNuxtModule<ModuleOptions>({
       tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
 
+    // ignore files
+    const { advancedIgnoresPattern } = contentContext.experimental
+    const isIgnored = makeIgnored(contentContext.ignores, advancedIgnoresPattern)
+    if (contentContext.ignores.length && !advancedIgnoresPattern) {
+      logger.warn('The `ignores` config is being made more flexible in version 2.7. See the docs for more information: `https://content.nuxtjs.org/api/configuration#ignores`')
+    }
+
     // Setup content dev module
     if (!nuxt.options.dev) {
       nuxt.hook('build:before', async () => {
@@ -648,11 +661,8 @@ export default defineNuxtModule<ModuleOptions>({
 
         // Filter invalid characters & ignore patterns
         const invalidKeyCharacters = "'\"?#/".split('')
-        const contentIgnores: Array<RegExp> = contentContext.ignores.map((p: any) =>
-          typeof p === 'string' ? new RegExp(`^${p}|:${p}`) : p
-        )
         keys = keys.filter((key) => {
-          if (key.startsWith('preview:') || contentIgnores.some(prefix => prefix.test(key))) {
+          if (key.startsWith('preview:') || isIgnored(key)) {
             return false
           }
           if (invalidKeyCharacters.some(ik => key.includes(ik))) {
@@ -699,7 +709,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Watch contents
       await nitro.storage.watch(async (event: WatchEvent, key: string) => {
         // Ignore events that are not related to content
-        if (!key.startsWith(MOUNT_PREFIX)) {
+        if (!key.startsWith(MOUNT_PREFIX) || isIgnored(key)) {
           return
         }
         key = key.substring(MOUNT_PREFIX.length)
@@ -718,6 +728,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
+    advancedIgnoresPattern: boolean
   }
 
   defaultLocale: ModuleOptions['defaultLocale']
