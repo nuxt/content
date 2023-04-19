@@ -18,6 +18,7 @@ import { testMarkdownRenderer } from './features/renderer-markdown'
 import { testParserOptions } from './features/parser-options'
 import { testComponents } from './features/components'
 import { testLocales } from './features/locales'
+import { testIgnores } from './features/ignores'
 
 // const spyConsoleWarn = vi.spyOn(global.console, 'warn')
 
@@ -86,4 +87,6 @@ describe('Basic usage', async () => {
   testHighlighter()
 
   testParserOptions()
+
+  testIgnores()
 })
