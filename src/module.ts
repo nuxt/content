@@ -639,8 +639,9 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // ignore files
-    const isIgnored = makeIgnored(contentContext)
-    if (contentContext.ignores.length && !contentContext.experimental.advancedIgnoresPattern) {
+    const { advancedIgnoresPattern } = contentContext.experimental
+    const isIgnored = makeIgnored(contentContext.ignores, advancedIgnoresPattern)
+    if (contentContext.ignores.length && !advancedIgnoresPattern) {
       logger.warn('The `ignores` config is being made more flexible in version 2.7. See the docs for more information: `https://content.nuxtjs.org/api/configuration#ignores`')
     }
 
