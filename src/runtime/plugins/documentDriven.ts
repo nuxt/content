@@ -14,6 +14,7 @@ import layouts from '#build/layouts'
 export default defineNuxtPlugin((nuxt) => {
   const moduleOptions = useRuntimeConfig()?.public?.content.documentDriven as unknown as Exclude<ModuleOptions['documentDriven'], boolean>
   const isClientDBEnabled = useRuntimeConfig()?.public?.content.experimental.clientDB
+  const { navigation, pages, globals, surrounds } = useContentState()
 
   /**
    * Finds a layout value from a cascade of objects.
@@ -57,8 +58,6 @@ export default defineNuxtPlugin((nuxt) => {
     if (to.meta.documentDriven === false) {
       return
     }
-
-    const { navigation, pages, globals, surrounds } = useContentState()
 
     // Normalize route path
     const _path = withoutTrailingSlash(to.path)
@@ -257,7 +256,15 @@ export default defineNuxtPlugin((nuxt) => {
     // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
     if (to.path.includes('favicon.ico')) { return }
     // Avoid calling on hash change
-    if (process.client && !isClientDBEnabled && to.path === from.path) { return }
+    if (process.client && !isClientDBEnabled && to.path === from.path) {
+      if (!to.meta.layout) {
+        const _path = withoutTrailingSlash(to.path)
+        if (pages.value[_path]) {
+          to.meta.layout = pages.value[_path].layout
+        }
+      }
+      return
+    }
 
     const redirect = await refresh(to, false)
 
