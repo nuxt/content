@@ -32,8 +32,8 @@ dependencies:
     specifier: ^1.0.1
     version: 1.0.1
   ohash:
-    specifier: ^1.0.0
-    version: 1.0.0
+    specifier: ^1.1.1
+    version: 1.1.1
   pathe:
     specifier: ^1.1.0
     version: 1.1.0
@@ -962,7 +962,7 @@ packages:
       knitwork: 1.0.0
       magic-string: 0.30.0
       mlly: 1.2.0
-      ohash: 1.0.0
+      ohash: 1.1.1
       pathe: 1.1.0
       perfect-debounce: 0.1.3
       pkg-types: 1.0.2
@@ -6344,7 +6344,7 @@ packages:
       mri: 1.2.0
       node-fetch-native: 1.1.0
       ofetch: 1.0.1
-      ohash: 1.0.0
+      ohash: 1.1.1
       pathe: 1.1.0
       perfect-debounce: 0.1.3
       pkg-types: 1.0.2
@@ -6570,7 +6570,7 @@ packages:
       nuxi: 3.4.1
       nypm: 0.2.0
       ofetch: 1.0.1
-      ohash: 1.0.0
+      ohash: 1.1.1
       pathe: 1.1.0
       perfect-debounce: 0.1.3
       prompts: 2.4.2
@@ -6668,8 +6668,8 @@ packages:
       node-fetch-native: 1.1.0
       ufo: 1.1.1
 
-  /ohash@1.0.0:
-    resolution: {integrity: sha512-kxSyzq6tt+6EE/xCnD1XaFhCCjUNUaz3X30rJp6mnjGLXAAvuPFqohMdv0aScWzajR45C29HyBaXZ8jXBwnh9A==}
+  /ohash@1.1.1:
+    resolution: {integrity: sha512-N9UDJn2IV6oO6pNclJ80tRXraNNJqw/asscr3Lu7+ibRQdEswejJuuXNclMQTJVTsVhQs+ZJThVziy6t2v2KXA==}
 
   /on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
