@@ -1,6 +1,48 @@
 # Changelog
 
 
+## v2.6.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.2...v2.6.0)
+
+
+### 🚀 Enhancements
+
+  - **CodeBlock:** Add line number attribute to code block lines ([#1973](https://github.com/nuxt/content/pull/1973))
+  - More flexible ignores configuration ([#2022](https://github.com/nuxt/content/pull/2022))
+
+### 🩹 Fixes
+
+  - **type:** Content locale ([#1965](https://github.com/nuxt/content/pull/1965))
+  - **markdown:** Html ids in markdown headings should not start with a digit ([#1961](https://github.com/nuxt/content/pull/1961))
+  - **useContentHead:** Set `property` instead of `name` for OG metadata ([#1981](https://github.com/nuxt/content/pull/1981))
+  - Access config from `public` key ([#2005](https://github.com/nuxt/content/pull/2005))
+  - **ContentRendererMarkdown:** Prevent `undefiend` error on component resolve ([#2021](https://github.com/nuxt/content/pull/2021))
+  - **code-block:** Use span with `\n`  instead of div for lines ([#2008](https://github.com/nuxt/content/pull/2008))
+  - **preview:** Use `sessionStorage` to keep token ([#2020](https://github.com/nuxt/content/pull/2020))
+  - **shiki:** Add `\n` to empty lines ([46f3d79f](https://github.com/nuxt/content/commit/46f3d79f))
+  - **markdown-renderer:** Document reactivity ([e46309fe](https://github.com/nuxt/content/commit/e46309fe))
+  - **query:** Prevent adding duplicate conditions to query ([#2027](https://github.com/nuxt/content/pull/2027))
+  - **document-driven:** Ensure layout is set on hydration ([#2032](https://github.com/nuxt/content/pull/2032))
+
+### 📖 Documentation
+
+  - Add Nuxt Studio link ([bc329334](https://github.com/nuxt/content/commit/bc329334))
+  - Fix link to nitro plugins ([#1969](https://github.com/nuxt/content/pull/1969))
+  - Format docs & update links & fix mistakes ([#1982](https://github.com/nuxt/content/pull/1982))
+  - Fix template syntax ([9d8478de](https://github.com/nuxt/content/commit/9d8478de))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Dave Stewart <info@davestewart.co.uk>
+- Nobkd 
+- Daniel Roe <daniel@roe.dev>
+- Thomas Lamant 
+- Electrolinux <electrolinux@gmail.com>
+- Artyom 
+- Sébastien Chopin <seb@nuxtjs.com>
+
 ## v2.5.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.5.1...v2.5.2)
