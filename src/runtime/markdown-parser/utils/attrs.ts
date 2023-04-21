@@ -107,7 +107,8 @@ export const safeSink = [
   'value',
   'width',
   'xmlns',
-  'slot'
+  'slot',
+  'meta'
 ]
 
 export const unsafeLinkPrefix = [
