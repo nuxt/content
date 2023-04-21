@@ -183,7 +183,8 @@ export const testMarkdownParser = () => {
             '[link1](./../01.foo.md)',
             '[link1](../01.foo.md)',
             '[link1](../../01.foo.md)',
-            '[link1](../../01.foo#bar.md)',
+            '[link1](../../01.foo.md#bar)',
+            '[link1](../../01.foo/file.md#bar)',
             '[link1](../../01.foo.draft.md)',
             '[link1](../../_foo.draft.md)'
           ].join('\n')
@@ -200,7 +201,8 @@ export const testMarkdownParser = () => {
       expect(nodes.shift().props.href).toEqual('./../foo')
       expect(nodes.shift().props.href).toEqual('../foo')
       expect(nodes.shift().props.href).toEqual('../../foo')
-      expect(nodes.shift().props.href).toEqual('../../foobar')
+      expect(nodes.shift().props.href).toEqual('../../foo#bar')
+      expect(nodes.shift().props.href).toEqual('../../foo/file#bar')
       expect(nodes.shift().props.href).toEqual('../../foo')
       expect(nodes.shift().props.href).toEqual('../../_foo')
     })
