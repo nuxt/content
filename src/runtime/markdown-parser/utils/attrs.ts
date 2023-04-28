@@ -9,8 +9,6 @@ export const unsafeLinkPrefix = [
   'data:text/xml'
 ]
 
-
-
 export const isSafeAttribute = (attribute: string, value: string) => {
   if (attribute.startsWith('on')) {
     console.warn(`[@nuxt/content] removing unsafe attribute: ${attribute}="${value}"`)

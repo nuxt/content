@@ -44,7 +44,7 @@ describe('XSS', () => {
       if (child.tag === 'p') {
         child = child.children[0]
       }
-      expect(child.tag).toBe('img')      
+      expect(child.tag).toBe('img')
       expect(Object.entries(child.props as Record<string, any>).every(([k, v]) => isSafeAttribute(k, v))).toBeTruthy()
     }
   })
