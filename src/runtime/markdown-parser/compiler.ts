@@ -1,6 +1,6 @@
 import { Node as UnistNode } from 'unist'
 import type { MarkdownRoot, MarkdownNode, MarkdownOptions } from '../types'
-import { safeSink, unsafeLinkPrefix } from './utils/attrs'
+import { isSafeAttribute } from './utils/attrs'
 
 type Node = UnistNode & {
   tagName?: string
@@ -25,7 +25,7 @@ export default function (this: any, _options: MarkdownOptions) {
     // Drop unsafe properties
     if (node.properties) {
       node.properties = Object.entries(node.properties).reduce((acc, [key, value]) => {
-        if (safeSink.includes(key)) {
+        if (isSafeAttribute(key, value)) {
           acc[key] = value
         }
         return acc
@@ -75,22 +75,6 @@ export default function (this: any, _options: MarkdownOptions) {
         case 'component-slot':
           node.tagName = 'template'
           break
-        case 'a':
-        case 'prose-a':{
-          const href = (node.properties.href || '').toLowerCase()
-          if (unsafeLinkPrefix.some(prefix => href.startsWith(prefix))) {
-            node.properties.href = ''
-          }
-          break
-        }
-        case 'img':
-        case 'prose-img':{
-          const src = (node.properties.src || '').toLowerCase()
-          if (unsafeLinkPrefix.some(prefix => src.startsWith(prefix))) {
-            node.properties.src = ''
-          }
-          break
-        }
       }
 
       return <MarkdownNode> {

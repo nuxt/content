@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest'
 import { transformContent } from '../src/runtime/transformers'
-import { safeSink, unsafeLinkPrefix } from '../src/runtime/markdown-parser/utils/attrs'
+import { isSafeAttribute } from '../src/runtime/markdown-parser/utils/attrs'
 
 describe('XSS', () => {
   test('anchor', async () => {
@@ -20,8 +20,7 @@ describe('XSS', () => {
         child = child.children[0]
       }
       expect(child.tag).toBe('a')
-      expect(Object.keys(child.props).every(p => safeSink.includes(p))).toBeTruthy()
-      expect(unsafeLinkPrefix.some(p => child.props.href.startsWith(p))).toBeFalsy()
+      expect(Object.entries(child.props as Record<string, any>).every(([k, v]) => isSafeAttribute(k, v))).toBeTruthy()
     }
   })
   test('image', async () => {
@@ -45,9 +44,8 @@ describe('XSS', () => {
       if (child.tag === 'p') {
         child = child.children[0]
       }
-      expect(child.tag).toBe('img')
-      expect(Object.keys(child.props).every(p => safeSink.includes(p))).toBeTruthy()
-      expect(unsafeLinkPrefix.some(p => child.props.src?.startsWith(p))).toBeFalsy()
+      expect(child.tag).toBe('img')      
+      expect(Object.entries(child.props as Record<string, any>).every(([k, v]) => isSafeAttribute(k, v))).toBeTruthy()
     }
   })
 
@@ -65,7 +63,7 @@ describe('XSS', () => {
         child = child.children[0]
       }
       expect(child.tag).toBe('iframe')
-      expect(Object.keys(child.props).every(p => safeSink.includes(p))).toBeTruthy()
+      expect(Object.entries(child.props as Record<string, any>).every(([k, v]) => isSafeAttribute(k, v))).toBeTruthy()
     }
   })
 })
