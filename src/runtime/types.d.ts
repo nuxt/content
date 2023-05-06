@@ -28,7 +28,7 @@ export interface ParsedContentInternalMeta {
   /**
    * Content locale
    */
-  _locale?: boolean
+  _locale?: string
   /**
    * File type of the content, i.e `markdown`
    */

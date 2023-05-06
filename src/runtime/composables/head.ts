@@ -28,7 +28,7 @@ export const useContentHead = (
       head.title = title
       if (process.server && !head.meta.some(m => m.property === 'og:title')) {
         head.meta.push({
-          name: 'og:title',
+          property: 'og:title',
           content: title as string
         })
       }
@@ -47,7 +47,7 @@ export const useContentHead = (
       const url = config.public.content.trailingSlash ? withTrailingSlash(_url) : withoutTrailingSlash(_url)
       if (!head.meta.some(m => m.property === 'og:url')) {
         head.meta.push({
-          name: 'og:url',
+          property: 'og:url',
           content: url
         })
       }
@@ -72,7 +72,7 @@ export const useContentHead = (
     }
     if (process.server && description && !head.meta.some(m => m.property === 'og:description')) {
       head.meta.push({
-        name: 'og:description',
+        property: 'og:description',
         content: description
       })
     }

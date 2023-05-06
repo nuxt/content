@@ -4,5 +4,4 @@ description: 'Пример использования плагина TailwindCSS
 toc: false
 ---
 
-::sandbox{src="https://codesandbox.io/embed/nuxt-content-tailwindcss-typography-twhtf?hidenavigation=1&theme=dark"}
-::
+:sandbox{src="https://codesandbox.io/embed/nuxt-content-tailwindcss-typography-twhtf?hidenavigation=1&theme=dark"}

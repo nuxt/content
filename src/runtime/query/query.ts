@@ -29,7 +29,11 @@ export const createQuery = <T = ParsedContent>(
   }
 
   const query: QueryBuilder<T> = {
-    params: () => queryParams,
+    params: () => ({
+      ...queryParams,
+      ...(queryParams.where ? { where: [...ensureArray(queryParams.where)] } : {}),
+      ...(queryParams.sort ? { sort: [...ensureArray(queryParams.sort)] } : {})
+    }),
     only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...ensureArray(queryParams.where), ...ensureArray(q)]),

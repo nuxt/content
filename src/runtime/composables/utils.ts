@@ -1,7 +1,8 @@
 import { withBase } from 'ufo'
-import { useRuntimeConfig, useRequestEvent, useCookie, useRoute } from '#app'
+import { useRuntimeConfig, useRequestEvent } from '#app'
 import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 import type { useContent } from './content'
+import { useContentPreview } from './preview'
 
 export const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
@@ -34,29 +35,19 @@ export const navigationDisabled = () => {
 
 export const addPrerenderPath = (path: string) => {
   const event = useRequestEvent()
-  event.res.setHeader(
+  event.node.res.setHeader(
     'x-nitro-prerender',
     [
-      event.res.getHeader('x-nitro-prerender'),
+      event.node.res.getHeader('x-nitro-prerender'),
       path
     ].filter(Boolean).join(',')
   )
 }
 
 export const shouldUseClientDB = () => {
-  const { experimental } = useRuntimeConfig().content
-  if (!process.client) { return false }
+  const { experimental } = useRuntimeConfig().public.content
+  if (process.server) { return false }
   if (experimental.clientDB) { return true }
 
-  const query = useRoute().query
-  // Disable clientDB when `?preview` is set in query, and it has falsy value
-  if (Object.prototype.hasOwnProperty.call(query, 'preview') && !query.preview) {
-    return false
-  }
-  // Enable clientDB when preview mode is enabled
-  if (query.preview || useCookie('previewToken').value) {
-    return true
-  }
-
-  return false
+  return useContentPreview().isEnabled()
 }

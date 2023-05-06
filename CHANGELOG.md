@@ -1,6 +1,124 @@
 # Changelog
 
 
+## v2.6.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.2...v2.6.0)
+
+
+### 🚀 Enhancements
+
+  - **CodeBlock:** Add line number attribute to code block lines ([#1973](https://github.com/nuxt/content/pull/1973))
+  - More flexible ignores configuration ([#2022](https://github.com/nuxt/content/pull/2022))
+
+### 🩹 Fixes
+
+  - **type:** Content locale ([#1965](https://github.com/nuxt/content/pull/1965))
+  - **markdown:** Html ids in markdown headings should not start with a digit ([#1961](https://github.com/nuxt/content/pull/1961))
+  - **useContentHead:** Set `property` instead of `name` for OG metadata ([#1981](https://github.com/nuxt/content/pull/1981))
+  - Access config from `public` key ([#2005](https://github.com/nuxt/content/pull/2005))
+  - **ContentRendererMarkdown:** Prevent `undefiend` error on component resolve ([#2021](https://github.com/nuxt/content/pull/2021))
+  - **code-block:** Use span with `\n`  instead of div for lines ([#2008](https://github.com/nuxt/content/pull/2008))
+  - **preview:** Use `sessionStorage` to keep token ([#2020](https://github.com/nuxt/content/pull/2020))
+  - **shiki:** Add `\n` to empty lines ([46f3d79f](https://github.com/nuxt/content/commit/46f3d79f))
+  - **markdown-renderer:** Document reactivity ([e46309fe](https://github.com/nuxt/content/commit/e46309fe))
+  - **query:** Prevent adding duplicate conditions to query ([#2027](https://github.com/nuxt/content/pull/2027))
+  - **document-driven:** Ensure layout is set on hydration ([#2032](https://github.com/nuxt/content/pull/2032))
+
+### 📖 Documentation
+
+  - Add Nuxt Studio link ([bc329334](https://github.com/nuxt/content/commit/bc329334))
+  - Fix link to nitro plugins ([#1969](https://github.com/nuxt/content/pull/1969))
+  - Format docs & update links & fix mistakes ([#1982](https://github.com/nuxt/content/pull/1982))
+  - Fix template syntax ([9d8478de](https://github.com/nuxt/content/commit/9d8478de))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Dave Stewart <info@davestewart.co.uk>
+- Nobkd 
+- Daniel Roe <daniel@roe.dev>
+- Thomas Lamant 
+- Electrolinux <electrolinux@gmail.com>
+- Artyom 
+- Sébastien Chopin <seb@nuxtjs.com>
+
+## v2.5.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.1...v2.5.2)
+
+
+### 🩹 Fixes
+
+  - Revert navDirFromPath behavior ([049c356d](https://github.com/nuxt/content/commit/049c356d))
+
+### ❤️  Contributors
+
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+
+## v2.5.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.5.0...v2.5.1)
+
+
+### 🩹 Fixes
+
+  - **client-db:** Ensure `ignoreSources` is an array ([45b44a69](https://github.com/nuxt/content/commit/45b44a69))
+  - **document-driven:** Page layout detection ([#1955](https://github.com/nuxt/content/pull/1955))
+
+### 🏡 Chore
+
+  - **release:** Release v2.5.0 ([2bce04c8](https://github.com/nuxt/content/commit/2bce04c8))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.5.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.4.3...v2.5.0)
+
+
+### 🚀 Enhancements
+
+  - Introduce `component-resolver` transformer ([#1907](https://github.com/nuxt/content/pull/1907))
+  - **client-db:** Allow possibility to ignore some sources from client storage ([#1917](https://github.com/nuxt/content/pull/1917))
+
+### 🩹 Fixes
+
+  - Add anchorLinks type ([#1894](https://github.com/nuxt/content/pull/1894))
+  - **headings:** Don't generate link if `id` is missing ([#1893](https://github.com/nuxt/content/pull/1893))
+  - **code block:** Use div instead of span ([#1885](https://github.com/nuxt/content/pull/1885))
+  - Types ([#1912](https://github.com/nuxt/content/pull/1912))
+  - Db access time issue ([#1838](https://github.com/nuxt/content/pull/1838))
+  - Refresh content-index on nitro start ([#1947](https://github.com/nuxt/content/pull/1947))
+  - **findSurround:** Allow before and after to be 0 ([#1922](https://github.com/nuxt/content/pull/1922))
+  - **module:** Close dev server on nitro close ([#1952](https://github.com/nuxt/content/pull/1952))
+
+### 📖 Documentation
+
+  - Remove extraneous comma ([#1878](https://github.com/nuxt/content/pull/1878))
+  - Update link to useHead ([#1895](https://github.com/nuxt/content/pull/1895))
+  - Update get-started description ([13a2e1cf](https://github.com/nuxt/content/commit/13a2e1cf))
+  - Update content list query example ([#1901](https://github.com/nuxt/content/pull/1901))
+  - Fix deployment ([#1913](https://github.com/nuxt/content/pull/1913))
+  - Update documentDriven config ([#1915](https://github.com/nuxt/content/pull/1915))
+  - Add examples for JSON string for inline props ([#1882](https://github.com/nuxt/content/pull/1882))
+  - Update badges ([737d5c54](https://github.com/nuxt/content/commit/737d5c54))
+  - Add github in sources ([#1946](https://github.com/nuxt/content/pull/1946))
+
+### ❤️  Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Barbapapazes ([@Barbapapazes](http://github.com/Barbapapazes))
+- Sébastien Chopin <seb@nuxtjs.com>
+- Wolfgang Drescher <drescher.wolfgang@gmail.com>
+- Estéban 
+- Patrik 
+- Nobkd 
+- Clément Ollivier ([@clemcode](http://github.com/clemcode))
+- Ben Hong ([@bencodezen](http://github.com/bencodezen))
+
 ## v2.4.3
 
 [compare changes](https://github.com/nuxt/content/compare/v2.4.2...v2.4.3)

@@ -41,13 +41,17 @@ const navPageFromPath = (path: string, tree: NavItem[]): NavItem | undefined => 
 }
 
 /**
- * Find a nav field node from a path.
+ * Find a navigation field node from a path.
  */
 const navKeyFromPath = (path: string, key: string, tree: NavItem[]) => {
   let value: any
 
   const goDeep = (path: string, tree: NavItem[]) => {
     for (const file of tree) {
+      if (path !== '/' && file._path === '/') {
+        // Ignore root page
+        continue
+      }
       if (path?.startsWith(file._path) && file[key]) { value = file[key] }
 
       if (file._path === path) { return }

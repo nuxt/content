@@ -1,12 +1,12 @@
 import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as ShikiTheme, Highlighter } from 'shiki-es'
-import consola from 'consola'
+import { consola } from 'consola'
 import type { ModuleOptions } from '../../../module'
 import { createSingleton } from '../utils'
 import mdcTMLanguage from './languages/mdc.tmLanguage'
 import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenColorMap } from './types'
 
 // Re-create logger locally as utils cannot be imported from here
-const logger = consola.withScope('@nuxt/content')
+const logger = consola.withTag('@nuxt/content')
 
 /**
  * Resolve Shiki compatible lang from string.
@@ -80,6 +80,11 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     return promise
   }
 
+  const splitCodeToLines = (code: string) => {
+    const lines = code.split(/\r\n|\r|\n/)
+    return [...lines.map((line: string) => [{ content: line }])]
+  }
+
   const getHighlightedTokens = async (code: string, lang: Lang, theme: Theme) => {
     const highlighter = await getShikiHighlighter()
     // Remove trailing carriage returns
@@ -90,7 +95,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     // Skip highlight if lang is not supported
     if (!lang) {
-      return [[{ content: code }]]
+      return splitCodeToLines(code)
     }
 
     // Load supported language on-demand
@@ -101,7 +106,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
         await highlighter.loadLanguage(languageRegistration)
       } else {
         logger.warn(`Language '${lang}' is not supported by shiki. Skipping highlight.`)
-        return [[{ content: code }]]
+        return splitCodeToLines(code)
       }
     }
 
@@ -141,12 +146,26 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     const lines = await getHighlightedTokens(code, lang, theme)
     const { highlights = [], colorMap = {} } = opts || {}
 
-    return lines.map((line, lineIndex) => ({
-      type: 'element',
-      tag: 'div',
-      props: { class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim() },
-      children: line.map(tokenSpan)
-    }))
+    return lines.map((line, lineIndex) => {
+      // Add line break to all lines except last
+      if (lineIndex !== lines.length - 1) {
+        // Add line break to empty lines
+        if (line.length === 0) {
+          line.push({ content: '' })
+        }
+        line[line.length - 1].content += '\n'
+      }
+
+      return {
+        type: 'element',
+        tag: 'span',
+        props: {
+          class: ['line', highlights.includes(lineIndex + 1) ? 'highlight' : ''].join(' ').trim(),
+          line: lineIndex + 1
+        },
+        children: line.map(tokenSpan)
+      }
+    })
 
     function getColorProps (token: { color?: string | object }) {
       if (!token.color) {

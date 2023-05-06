@@ -194,6 +194,24 @@ describe('Database Provider', () => {
     assert(result[2]._path === '/c')
   })
 
+  test('Surround with 0 item before', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
+    const result = await createQuery(fetcher)
+      .findSurround('/b', { before: 0, after: 1 })
+
+    assert((result as Array<any>).length === 1)
+    assert(result[0]._path === '/c')
+  })
+
+  test('Surround with 0 item after', async () => {
+    const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
+    const result = await createQuery(fetcher)
+      .findSurround('/b', { before: 1, after: 0 })
+
+    assert((result as Array<any>).length === 1)
+    assert(result[0]._path === '/a')
+  })
+
   test('Surround with object', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
     const result = await createQuery(fetcher)

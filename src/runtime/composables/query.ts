@@ -1,11 +1,12 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
+import { useContentPreview } from './preview'
 
 /**
  * Query fetcher
@@ -36,7 +37,7 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
       ? undefined
       : {
           _params: jsonStringify(params),
-          previewToken: useCookie('previewToken').value
+          previewToken: useContentPreview().getPreviewToken()
         }
   })
 

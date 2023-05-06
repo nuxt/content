@@ -7,6 +7,7 @@ import type { VNode, ConcreteComponent } from 'vue'
 import { useRuntimeConfig, useRoute } from '#app'
 import htmlTags from '../utils/html-tags'
 import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
+import { useContentPreview } from '../composables/preview'
 
 type CreateElement = typeof h
 
@@ -54,29 +55,36 @@ export default defineComponent({
   },
   async setup (props) {
     const { content: { tags = {} } } = useRuntimeConfig().public
+    const debug = process.dev || useContentPreview().isEnabled()
 
-    await resolveContentComponents(props.value.body, {
-      tags: {
-        ...tags,
-        ...toRaw(props.value?._components || {}),
-        ...props.components
-      }
-    })
+    let body = (props.value?.body || props.value) as MarkdownNode
+    if (props.excerpt && props.value?.excerpt) {
+      body = props.value.excerpt as MarkdownNode
+    }
+    if (body) {
+      await resolveContentComponents(body, {
+        tags: {
+          ...tags,
+          ...toRaw(props.value?._components || {}),
+          ...props.components
+        }
+      })
+    }
 
-    return { tags }
+    return { debug, tags }
   },
   render (ctx: any) {
-    const { tags, tag, value, components } = ctx
+    const { tags, tag, value, excerpt, components, debug } = ctx
 
     if (!value) {
       return null
     }
 
-    // Get body from value
-    let body = (value.body || value) as MarkdownNode
-    if (ctx.excerpt && value.excerpt) {
-      body = value.excerpt
+    let body = (value?.body || value) as MarkdownNode
+    if (excerpt && value?.excerpt) {
+      body = value.excerpt as MarkdownNode
     }
+
     const meta: ParsedContentMeta = {
       ...(value as ParsedContentMeta),
       tags: {
@@ -97,7 +105,11 @@ export default defineComponent({
     // Return Vue component
     return h(
       component as any,
-      { ...meta.component?.props, ...this.$attrs },
+      {
+        ...meta.component?.props,
+        ...this.$attrs,
+        'data-content-id': debug ? value._id : undefined
+      },
       renderSlots(body, h, meta, meta)
     )
   }
