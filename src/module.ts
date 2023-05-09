@@ -635,9 +635,7 @@ export default defineNuxtModule<ModuleOptions>({
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
       tailwindConfig.content = tailwindConfig.content ?? []
-      (Array.isArray(tailwindConfig.content) ? tailwindConfig.content : tailwindConfig.content.files).push(
-        resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md')
-      )
+      (Array.isArray(tailwindConfig.content) ? tailwindConfig.content : tailwindConfig.content.files).push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
     })
 
     // ignore files
