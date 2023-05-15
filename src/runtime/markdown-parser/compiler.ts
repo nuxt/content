@@ -1,5 +1,6 @@
 import { Node as UnistNode } from 'unist'
 import type { MarkdownRoot, MarkdownNode, MarkdownOptions } from '../types'
+import { isSafeAttribute } from './utils/attrs'
 
 type Node = UnistNode & {
   tagName?: string
@@ -21,6 +22,16 @@ export default function (this: any, _options: MarkdownOptions) {
       return node.map(parseAsJSON).filter(Boolean) as MarkdownNode[]
     }
 
+    // Drop unsafe properties
+    if (node.properties) {
+      node.properties = Object.entries(node.properties).reduce((acc, [key, value]) => {
+        if (isSafeAttribute(key, value)) {
+          acc[key] = value
+        }
+        return acc
+      }, {} as Record<string, any>)
+    }
+
     // Remove double dashes and trailing dash from heading ids
     // Insert underscore if id start with a digit
     if (node.tagName?.startsWith('h') && node.properties.id) {
@@ -36,32 +47,34 @@ export default function (this: any, _options: MarkdownOptions) {
      * allow nested elements
      */
     if (node.type === 'element') {
-      if (node.tagName === 'li') {
-        // unwrap unwanted paragraphs around `<li>` children
-        let hasPreviousParagraph = false
-        node.children = node.children?.flatMap((child) => {
-          if (child.tagName === 'p') {
-            if (hasPreviousParagraph) {
+      switch (node.tagName) {
+        case 'li':{
+          // unwrap unwanted paragraphs around `<li>` children
+          let hasPreviousParagraph = false
+          node.children = node.children?.flatMap((child) => {
+            if (child.tagName === 'p') {
+              if (hasPreviousParagraph) {
               // Insert line break before new paragraph
               child.children!.unshift({
                 type: 'element',
                 tagName: 'br',
                 properties: {}
               })
+              }
+
+              hasPreviousParagraph = true
+              return child.children
             }
-
-            hasPreviousParagraph = true
-            return child.children
-          }
-          return child
-        }) as Node[]
-      }
-
-      /**
-       * Rename component slots tags name
-       */
-      if (node.tagName === 'component-slot') {
-        node.tagName = 'template'
+            return child
+          }) as Node[]
+          break
+        }
+        /**
+        * Rename component slots tags name
+        */
+        case 'component-slot':
+          node.tagName = 'template'
+          break
       }
 
       return <MarkdownNode> {
