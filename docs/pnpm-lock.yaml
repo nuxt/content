@@ -14,8 +14,8 @@ devDependencies:
     specifier: ^0.12.1
     version: 0.12.1(rollup@3.21.5)
   '@nuxtlabs/github-module':
-    specifier: ^1.6.2
-    version: 1.6.2(rollup@3.21.5)
+    specifier: ^1.6.3
+    version: 1.6.3(rollup@3.21.5)
   monaco-editor-core:
     specifier: ^0.38.0
     version: 0.38.0
@@ -1188,14 +1188,17 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtlabs/github-module@1.6.2(rollup@3.21.5):
-    resolution: {integrity: sha512-piHpTQ2SjVJhcBEesHcvRkRmCfAQKsID4UtlH53tnfRBnmbmWCMYPTOWleJJqKeS9dY3ytObgP4MkcDiOznZhA==}
+  /@nuxtlabs/github-module@1.6.3(rollup@3.21.5):
+    resolution: {integrity: sha512-oeZKBToETzJJGK9tB3vy6+pTdN6e9p8KIUHBK3kObO9VJZOeOuB4t9kK9jC6ld3LIB2CwWUT5WVkEB+TATdIMw==}
     dependencies:
       '@nuxt/kit': 3.4.3(rollup@3.21.5)
       '@octokit/graphql': 5.0.5
       '@octokit/rest': 19.0.7
+      defu: 6.1.2
+      h3: 1.6.5
       remark-gfm: 3.0.1
       remark-github: 11.2.4
+      ufo: 1.1.2
     transitivePeerDependencies:
       - encoding
       - rollup
