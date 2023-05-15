@@ -23,7 +23,8 @@ export default (h: H, node: Node) => {
       filename,
       highlights,
       meta: node.meta,
-      code
+      code,
+      className: [`language-${language}`]
     },
     [h(node, 'pre', {}, [h(node, 'code', { __ignoreMap: '' }, [u('text', code)])])]
   )
