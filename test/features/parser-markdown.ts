@@ -58,7 +58,7 @@ export const testMarkdownParser = () => {
       expect(parsed.body).toHaveProperty('children[0].props')
       const props = parsed.body.children[0].props
       expect(props).toHaveProperty('meta')
-      expect(props.meta).toBe('[file.ts]{4-6,7} other code block info')
+      expect(props.meta).toBe('other code block info')
       expect(props.language).toBe('ts')
       expect(props.filename).toBe('file.ts')
       expect(props.highlights).toEqual([4, 5, 6, 7])

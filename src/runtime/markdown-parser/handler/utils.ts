@@ -20,11 +20,13 @@ export function parseThematicBlock (lang: string) {
   const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
   const highlightTokens = lang.match(/{([^}]+)}/)
   const filenameTokens = lang.match(/\[(.+)\]/)
+  const meta = lang.replace(/^\w+\s+(\[[^\]]+\])?\s*(\{[^}]+\})?\s*/g, '')
 
   return {
     language: language ? language[0] : undefined,
     highlights: parseHighlightedLines(highlightTokens && highlightTokens[1]),
-    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : undefined
+    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : undefined,
+    meta
   }
 }
 
