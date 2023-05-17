@@ -9,11 +9,12 @@ export function parseThematicBlock (lang: string) {
   /**
    * Language property on node is missing
    */
-  if (!lang) {
+  if (!lang?.trim()) {
     return {
       language: undefined,
       highlights: undefined,
-      fileName: undefined
+      fileName: undefined,
+      meta: undefined
     }
   }
 
