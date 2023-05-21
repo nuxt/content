@@ -51,7 +51,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
 
   const { defaultLocale } = content
   const queryLocale = params.where?.find(w => w._locale)?._locale
-  if (defaultLocale !== queryLocale) {
+  if (defaultLocale && defaultLocale !== queryLocale) {
     const addLocalePrefix = (item) => {
       item._path = `/${queryLocale}${item._path}`
       if (item.children?.length > 0) {

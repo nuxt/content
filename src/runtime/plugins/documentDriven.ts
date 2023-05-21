@@ -70,9 +70,14 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.navigation && routeConfig.navigation !== false) {
       const navigationQuery = () => {
-        const { _locale } = to.meta.documentDriven.page
+        let query = { }
 
-        const queryBuilder = queryContent({ where: [{ _locale }] })
+        const _locale = to.meta?.documentDriven?.page?._locale
+        if (_locale) {
+          query = { where: [{ _locale }] }
+        }
+
+        const queryBuilder = queryContent(query)
         return fetchContentNavigation(queryBuilder)
           .then((_navigation) => {
             navigation.value = _navigation
