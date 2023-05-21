@@ -61,7 +61,6 @@ export default defineNuxtPlugin((nuxt) => {
 
     // Normalize route path
     const _path = withoutTrailingSlash(to.path)
-
     // Promises array to be executed all at once
     const promises: (() => Promise<any> | any)[] = []
 
@@ -71,11 +70,10 @@ export default defineNuxtPlugin((nuxt) => {
      */
     if (moduleOptions.navigation && routeConfig.navigation !== false) {
       const navigationQuery = () => {
-        const { navigation } = useContentState()
+        const { _locale } = to.meta.documentDriven.page
 
-        if (navigation.value && !dedup) { return navigation.value }
-
-        return fetchContentNavigation()
+        const queryBuilder = queryContent({ where: [{ _locale }] })
+        return fetchContentNavigation(queryBuilder)
           .then((_navigation) => {
             navigation.value = _navigation
             return _navigation
@@ -146,6 +144,7 @@ export default defineNuxtPlugin((nuxt) => {
       if (typeof routeConfig.page === 'object') {
         where = routeConfig.page
       }
+
       const pageQuery = () => {
         const { pages } = useContentState()
 
@@ -252,6 +251,26 @@ export default defineNuxtPlugin((nuxt) => {
   }
 
   // Route middleware
+  addRouteMiddleware((to) => {
+    const { content } = useRuntimeConfig()
+
+    if (!content || !(content?.locales?.length > 0)) {
+      return
+    }
+
+    const { parseLocale } = useI18n()
+    const { _path, _locale } = parseLocale(to.path)
+
+    const page = {
+      _path,
+      _locale
+    }
+
+    to.meta.documentDriven = {
+      page,
+      navigation: true
+    }
+  })
   addRouteMiddleware(async (to, from) => {
     // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
     if (to.path.includes('favicon.ico')) { return }

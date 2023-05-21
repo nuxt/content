@@ -32,7 +32,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     return generateNavigation(params)
   }
 
-  const data = await $fetch(apiPath as any, {
+  let data = await $fetch(apiPath as any, {
     method: 'GET',
     responseType: 'json',
     params: content.experimental.stripQueryParameters
@@ -47,6 +47,19 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   // to know if the response is a valid JSON or not
   if (typeof data === 'string' && (data as string).startsWith('<!DOCTYPE html>')) {
     throw new Error('Not found')
+  }
+
+  const { defaultLocale } = content
+  const queryLocale = params.where?.find(w => w._locale)?._locale
+  if (defaultLocale !== queryLocale) {
+    const addLocalePrefix = (item) => {
+      item._path = `/${queryLocale}${item._path}`
+      if (item.children?.length > 0) {
+        item.children = item.children.map(addLocalePrefix)
+      }
+      return item
+    }
+    data = data.map(addLocalePrefix)
   }
 
   return data

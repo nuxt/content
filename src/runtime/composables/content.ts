@@ -37,7 +37,6 @@ export const useContent = () => {
   const { navigation, pages, surrounds, globals } = useContentState()
 
   const _path = computed(() => withoutTrailingSlash(useRoute().path))
-
   /**
    * Current `page` key, computed from path and content state.
    */

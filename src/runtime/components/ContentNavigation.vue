@@ -38,7 +38,6 @@ export default defineComponent({
     // If doc driven mode and no query given, re-use the fetched navigation
     if (!queryBuilder.value && useState('dd-navigation').value) {
       const { navigation } = useContent()
-
       return { navigation }
     }
     const { data: navigation } = await useAsyncData<NavItem[]>(
