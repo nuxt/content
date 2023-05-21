@@ -8,12 +8,12 @@ export default defineNuxtConfig({
   content: {
     documentDriven: true,
     locales: ['en', 'zh'],
-    defaultLocale: 'zh'
+    defaultLocale: 'en'
   },
   app: {
     head: {
       htmlAttrs: {
-        lang: 'zh'
+        lang: 'en'
       }
     }
   },
