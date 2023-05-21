@@ -21,10 +21,11 @@ export const useI18n = () => {
   const getLocaleSwitcherLinkList = (path) => {
     const { content } = useRuntimeConfig()
     const { defaultLocale, locales } = content
-    const { _path } = parseLocale(path)
+    const { _path, _locale } = parseLocale(path)
     return locales.map((locale) => {
       return {
         to: locale === defaultLocale ? _path : `/${locale}${_path}`,
+        isCurrent: _locale === locale,
         locale
       }
     })
