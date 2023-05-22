@@ -9,22 +9,25 @@ export function parseThematicBlock (lang: string) {
   /**
    * Language property on node is missing
    */
-  if (!lang) {
+  if (!lang?.trim()) {
     return {
       language: undefined,
       highlights: undefined,
-      fileName: undefined
+      fileName: undefined,
+      meta: undefined
     }
   }
 
   const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
-  const highlightTokens = lang.match(/{([^}]+)}/)
-  const filenameTokens = lang.match(/\[(.+)\]/)
+  const highlightTokens = lang.match(/{([^}]*)}/)
+  const filenameTokens = lang.match(/\[([^\]]*)\]/)
+  const meta = lang.replace(/^\w*\s*(\[[^\]]*\]|\{[^}]*\})?\s*(\[[^\]]*\]|\{[^}]*\})?\s*/, '')
 
   return {
     language: language ? language[0] : undefined,
     highlights: parseHighlightedLines(highlightTokens && highlightTokens[1]),
-    filename: Array.isArray(filenameTokens) ? filenameTokens[1] : undefined
+    filename: Array.isArray(filenameTokens) && filenameTokens[1] ? filenameTokens[1] : undefined,
+    meta
   }
 }
 
