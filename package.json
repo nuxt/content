@@ -28,7 +28,6 @@
   "scripts": {
     "dev": "./scripts/playground.sh",
     "dev:i18n": "./scripts/playground.sh i18n",
-    "dev:i18n-build": "nuxi build playground/i18n",
     "dev:build": "nuxi build playground/basic",
     "prepare": "nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
