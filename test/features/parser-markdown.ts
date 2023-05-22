@@ -110,7 +110,7 @@ export const testMarkdownParser = () => {
       expect(props).toHaveProperty('meta')
       expect(props.meta).toBe('other code block info')
       expect(props.language).toBe(undefined)
-      expect(props.filename).toBe('')
+      expect(props.filename).toBe(undefined)
       expect(props.highlights).toEqual([4, 5, 6, 7])
     })
 
