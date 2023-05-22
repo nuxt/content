@@ -8,6 +8,7 @@ import { useContentState } from '../composables/content'
 import { useContentHelpers } from '../composables/helpers'
 import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
+import { useContentI18n } from '../composables/contentI18n'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -263,7 +264,7 @@ export default defineNuxtPlugin((nuxt) => {
       return
     }
 
-    const { parseLocale } = useI18n()
+    const { parseLocale } = useContentI18n()
     const { _path, _locale } = parseLocale(to.path)
 
     const page = {

@@ -2,7 +2,7 @@
 const route = useRoute()
 
 const localeLinks = ref([])
-const { getLocaleSwitcherLinkList } = useI18n()
+const { getLocaleSwitcherLinkList } = useContentI18n()
 const labelMap = {
   en: 'English',
   zh: '中文'

@@ -1,4 +1,4 @@
-export const useI18n = () => {
+export const useContentI18n = () => {
   const parseLocale = (_path) => {
     const { content } = useRuntimeConfig()
     const { defaultLocale, locales } = content
