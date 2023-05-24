@@ -22,96 +22,164 @@ export const testMarkdownParser = () => {
       expect(parsed.body).toHaveProperty('children[0].children[0].value', 'Index')
     })
 
-    test('Html `<code>` should render as inline code', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.md',
-          content: '`code`'
-        }
+    describe('Code Block', () => {
+      test('Html `<code>` should render as inline code', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: '`code`'
+          }
+        })
+
+        expect(parsed).toHaveProperty('_id')
+        assert(parsed._id === 'content:index.md')
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('type', 'root')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'p')
+        expect(parsed.body).toHaveProperty('children[0].children[0].tag', 'code-inline')
       })
 
-      expect(parsed).toHaveProperty('_id')
-      assert(parsed._id === 'content:index.md')
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('type', 'root')
-      expect(parsed.body).toHaveProperty('children[0].tag', 'p')
-      expect(parsed.body).toHaveProperty('children[0].children[0].tag', 'code-inline')
+      test('Keep meta from fenced code block', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```ts [file.ts]{4-6,7} other code block info',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('other code block info')
+        expect(props.language).toBe('ts')
+        expect(props.filename).toBe('file.ts')
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
+
+      test('Keep meta from fenced code block without space', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```ts[file.ts]{4-6,7}other code block info',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('other code block info')
+        expect(props.language).toBe('ts')
+        expect(props.filename).toBe('file.ts')
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
+
+      test('Keep meta from fenced code block without language', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```[] {4-6,7} other code block info',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('other code block info')
+        expect(props.language).toBe(undefined)
+        expect(props.filename).toBe(undefined)
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
     })
 
-    test('Keep meta from fenced code block', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.md',
-          content: [
-            '```ts [file.ts]{4-6,7} other code block info',
-            'let code = undefined;',
-            'return code;',
-            '```'
-          ].join('\n')
-        }
+    describe('Frontmatter', () => {
+      test('missing `_draft` key without `.draft` postfix', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '---',
+              'title: Index',
+              '---',
+              '# Hello'
+            ].join('\n')
+          }
+        })
+        expect(parsed._draft).toBe(false)
       })
 
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('children[0].tag', 'code')
-      expect(parsed.body).toHaveProperty('children[0].props')
-      const props = parsed.body.children[0].props
-      expect(props).toHaveProperty('meta')
-      expect(props.meta).toBe('other code block info')
-      expect(props.language).toBe('ts')
-      expect(props.filename).toBe('file.ts')
-      expect(props.highlights).toEqual([4, 5, 6, 7])
-    })
-
-    test('Keep meta from fenced code block without space', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.md',
-          content: [
-            '```ts[file.ts]{4-6,7}other code block info',
-            'let code = undefined;',
-            'return code;',
-            '```'
-          ].join('\n')
-        }
+      test('missing `_draft` key with `.draft` postfix', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.draft.md',
+            content: [
+              '---',
+              'title: Index',
+              '---',
+              '# Hello'
+            ].join('\n')
+          }
+        })
+        expect(parsed._draft).toBe(true)
       })
 
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('children[0].tag', 'code')
-      expect(parsed.body).toHaveProperty('children[0].props')
-      const props = parsed.body.children[0].props
-      expect(props).toHaveProperty('meta')
-      expect(props.meta).toBe('other code block info')
-      expect(props.language).toBe('ts')
-      expect(props.filename).toBe('file.ts')
-      expect(props.highlights).toEqual([4, 5, 6, 7])
-    })
-
-    test('Keep meta from fenced code block without language', async () => {
-      const parsed = await $fetch('/api/parse', {
-        method: 'POST',
-        body: {
-          id: 'content:index.md',
-          content: [
-            '```[] {4-6,7} other code block info',
-            'let code = undefined;',
-            'return code;',
-            '```'
-          ].join('\n')
-        }
+      test('mark content as draft', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '---',
+              '_draft: true',
+              '---',
+              '# Draft'
+            ].join('\n')
+          }
+        })
+        expect(parsed._draft).toBe(true)
       })
 
-      expect(parsed).toHaveProperty('body')
-      expect(parsed.body).toHaveProperty('children[0].tag', 'code')
-      expect(parsed.body).toHaveProperty('children[0].props')
-      const props = parsed.body.children[0].props
-      expect(props).toHaveProperty('meta')
-      expect(props.meta).toBe('other code block info')
-      expect(props.language).toBe(undefined)
-      expect(props.filename).toBe(undefined)
-      expect(props.highlights).toEqual([4, 5, 6, 7])
+      test('mark content as non draft', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.draft.md',
+            content: [
+              '---',
+              '_draft: false',
+              '---',
+              '# Draft'
+            ].join('\n')
+          }
+        })
+        expect(parsed._draft).toBe(false)
+      })
     })
 
     test('comment', async () => {
