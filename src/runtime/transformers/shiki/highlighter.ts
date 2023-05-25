@@ -235,7 +235,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
       const hasUnderline = isUnderline(defaultStyle)
       const themeStyles = Object.entries(styleToken.style).map(([variant, style]) => {
         const styleText = [
-          // If the default theme has a style, but the current theme does not have one, 
+          // If the default theme has a style, but the current theme does not have one,
           // we need to override to reset style
           ['color', style.color || (hasColor ? 'unset' : '')],
           ['font-weight', isBold(style) ? 'bold' : hasBold ? 'unset' : ''],
