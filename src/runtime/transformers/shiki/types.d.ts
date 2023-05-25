@@ -1,9 +1,14 @@
-import { Theme as ShikiTheme } from 'shiki-es'
+import { Theme as ShikiTheme, IThemedToken } from 'shiki-es'
 export type { MarkdownNode } from '../../types'
 
 export type Theme = ShikiTheme | Record<string, ShikiTheme>
 
-export type TokenColorMap = Record<string, {colors: any, className: string}>
+export type HighlightThemedTokenStyle = Pick<IThemedToken, 'color' | 'fontStyle'>
+
+export type TokenStyleMap = Record<string, { 
+  style: Record<string, HighlightThemedTokenStyle>
+  className: string
+}>
 
 export interface HighlightParams {
   code: string
@@ -12,13 +17,13 @@ export interface HighlightParams {
 }
 
 export interface HighlighterOptions {
-  colorMap: TokenColorMap
+  styleMap: TokenStyleMap
   highlights: Array<number>
 }
 
 export interface HighlightThemedToken {
   content: string
-  color?: string | Record<string, string>
+  style?: Record<string, HighlightThemedTokenStyle>
 }
 
 export interface HighlightThemedTokenLine {
