@@ -405,6 +405,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Register composables
     addImports([
       { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
+      { name: 'useContentI18n', as: 'useContentI18n', from: resolveRuntimeModule('./composables/contentI18n') },
       { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
       { name: 'useContentPreview', as: 'useContentPreview', from: resolveRuntimeModule('./composables/preview') },

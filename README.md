@@ -26,6 +26,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Table of contents generation
 - Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
+- I18n support
 - [...and more](https://content.nuxtjs.org)
 
 ## Nuxt 2
