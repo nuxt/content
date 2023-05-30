@@ -7,8 +7,9 @@ body:
       value: |
         Please carefully read the contribution docs before creating a bug report
         👉 https://nuxt.com/docs/community/reporting-bugs
-        Please use the template below to create a minimal reproduction
-        👉 https://stackblitz.com/github/nuxt/starter/tree/content
+        Please use one of the templates below to create a minimal reproduction:
+        👉 https://stackblitz.com/github/nuxt/starter/tree/content for general issues
+        👉 https://stackblitz.com/github/nuxt/starter/tree/doc-driven for document-driven mode issues
   - type: textarea
     id: bug-env
     attributes:
@@ -37,11 +38,11 @@ body:
     id: additonal
     attributes:
       label: Additional context
-      description: If applicable, add any other context about the problem here`
+      description: If applicable, add any other context about the problem here.
   - type: textarea
     id: logs
     attributes:
       label: Logs
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
-      render: shell
+      render: Shell
