@@ -6,9 +6,10 @@ body:
     attributes:
       value: |
         Please carefully read the contribution docs before creating a bug report
-        👉 https://v3.nuxtjs.org/community/reporting-bugs
-        Please use the template below to create a minimal reproduction
-        👉 https://stackblitz.com/github/nuxt/starter/tree/content
+        👉 https://nuxt.com/docs/community/reporting-bugs
+        Please use one of the templates below to create a minimal reproduction:
+        👉 https://stackblitz.com/github/nuxt/starter/tree/content for general issues
+        👉 https://stackblitz.com/github/nuxt/starter/tree/doc-driven for document-driven mode issues
   - type: textarea
     id: bug-env
     attributes:
@@ -21,7 +22,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: Please provide a link to a repo that can reproduce the problem you ran into. A [**minimal reproduction**](https://v3.nuxtjs.org/community/reporting-bugs#create-a-minimal-reproduction) is required unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "need reproduction" label. If no reproduction is provided we might close it.
+      description: Please provide a link to a repo that can reproduce the problem you ran into. A [**minimal reproduction**](https://nuxt.com/docs/community/reporting-bugs#create-a-minimal-reproduction) is required unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "need reproduction" label. If no reproduction is provided we might close it.
       placeholder: Reproduction
     validations:
       required: true
@@ -37,11 +38,11 @@ body:
     id: additonal
     attributes:
       label: Additional context
-      description: If applicable, add any other context about the problem here`
+      description: If applicable, add any other context about the problem here.
   - type: textarea
     id: logs
     attributes:
       label: Logs
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
-      render: shell
+      render: Shell
