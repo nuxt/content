@@ -12,15 +12,15 @@
     "nitropack": "2.4.1"
   },
   "devDependencies": {
-    "@docsearch/js": "^3.3.5",
-    "@nuxt-themes/docus": "^1.12.0",
-    "@nuxthq/studio": "^0.12.1",
+    "@docsearch/js": "^3.5.0",
+    "@nuxt-themes/docus": "^1.12.3",
+    "@nuxthq/studio": "^0.13.2",
     "@nuxtlabs/github-module": "^1.6.3",
-    "monaco-editor-core": "^0.38.0",
-    "nuxt": "3.5.1",
+    "monaco-editor-core": "^0.39.0",
+    "nuxt": "3.5.3",
     "vue-plausible": "^1.3.2"
   },
-  "packageManager": "pnpm@8.5.1",
+  "packageManager": "pnpm@8.6.1",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
