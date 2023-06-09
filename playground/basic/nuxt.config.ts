@@ -11,10 +11,6 @@ export default defineNuxtConfig({
       }
     },
 
-    experimental: {
-      advancedIgnoresPattern: true
-    },
-
     ignores: [
       '\\.bak$',
       'ignored/folder'
