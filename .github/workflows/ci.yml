@@ -21,7 +21,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 7
+          version: 8
       - run: pnpm install
       - run: pnpm prepare
       - run: pnpm lint
