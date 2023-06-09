@@ -72,6 +72,6 @@ describe('fixtures:document-driven', async () => {
 
   test('redirect in `_dir.yml`', async () => {
     const response = await fetch(url('/redirect'))
-    expect(response.url).toBe('https://nuxtjs.org/')
+    expect(response.url).toBe('https://v2.nuxt.com/')
   })
 })

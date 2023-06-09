@@ -6,10 +6,12 @@
         <p>
           Go:
           <NuxtLink to="#" @click="$router.go(-1)">
-            Back</NuxtLink>
+            Back
+          </NuxtLink>
           or
           <NuxtLink to="/">
-            Home</NuxtLink>
+            Home
+          </NuxtLink>
         </p>
       </template>
     </ContentDoc>

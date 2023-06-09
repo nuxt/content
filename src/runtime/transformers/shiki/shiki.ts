@@ -2,7 +2,7 @@ import { visit } from 'unist-util-visit'
 import type { MarkdownRoot } from '../../types'
 import { defineTransformer } from '../utils'
 import { useShikiHighlighter } from './highlighter'
-import type { TokenColorMap, MarkdownNode } from './types'
+import type { MarkdownNode, TokenStyleMap } from './types'
 
 export default defineTransformer({
   name: 'highlight',
@@ -25,7 +25,7 @@ export default defineTransformer({
       if (!document) {
         return
       }
-      const colorMap: TokenColorMap = {}
+      const styleMap: TokenStyleMap = {}
       const codeBlocks: any[] = []
       const inlineCodes: any = []
       visit(
@@ -40,15 +40,15 @@ export default defineTransformer({
         }
       )
 
-      await Promise.all(codeBlocks.map((node: MarkdownNode) => highlightBlock(node, colorMap)))
-      await Promise.all(inlineCodes.map((node: MarkdownNode) => highlightInline(node, colorMap)))
+      await Promise.all(codeBlocks.map((node: MarkdownNode) => highlightBlock(node, styleMap)))
+      await Promise.all(inlineCodes.map((node: MarkdownNode) => highlightInline(node, styleMap)))
 
       // Inject token colors at the end of the document
-      if (Object.values(colorMap).length) {
+      if (Object.values(styleMap).length) {
         document?.children.push({
           type: 'element',
           tag: 'style',
-          children: [{ type: 'text', value: shikiHighlighter.generateStyles(colorMap) }]
+          children: [{ type: 'text', value: shikiHighlighter.generateStyles(styleMap) }]
         })
       }
     }
@@ -56,11 +56,11 @@ export default defineTransformer({
     /**
      * Highlight inline code
      */
-    async function highlightInline (node: MarkdownNode, colorMap: TokenColorMap) {
+    async function highlightInline (node: MarkdownNode, styleMap: TokenStyleMap) {
       const code = node.children![0].value!
 
       // Fetch highlighted tokens
-      const lines = await shikiHighlighter.getHighlightedAST(code, node.props!.lang || node.props!.language, options.theme, { colorMap })
+      const lines = await shikiHighlighter.getHighlightedAST(code, node.props!.lang || node.props!.language, options.theme, { styleMap })
 
       // Generate highlighted children
       node.children = lines[0].children
@@ -72,11 +72,11 @@ export default defineTransformer({
     /**
      * Highlight a code block
      */
-    async function highlightBlock (node: MarkdownNode, colorMap: TokenColorMap) {
+    async function highlightBlock (node: MarkdownNode, styleMap: TokenStyleMap) {
       const { code, language: lang, highlights = [] } = node.props!
 
       const innerCodeNode = node.children![0].children![0]
-      innerCodeNode.children = await shikiHighlighter.getHighlightedAST(code, lang, options.theme, { colorMap, highlights })
+      innerCodeNode.children = await shikiHighlighter.getHighlightedAST(code, lang, options.theme, { styleMap, highlights })
 
       return node
     }
