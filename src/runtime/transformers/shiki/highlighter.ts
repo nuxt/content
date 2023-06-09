@@ -1,9 +1,9 @@
-import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as ShikiTheme, Highlighter } from 'shiki-es'
+import { getHighlighter, BUNDLED_LANGUAGES, BUNDLED_THEMES, Lang, Theme as ShikiTheme, Highlighter, FontStyle } from 'shiki-es'
 import { consola } from 'consola'
 import type { ModuleOptions } from '../../../module'
 import { createSingleton } from '../utils'
 import mdcTMLanguage from './languages/mdc.tmLanguage'
-import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenColorMap } from './types'
+import type { MarkdownNode, HighlighterOptions, Theme, HighlightThemedToken, HighlightThemedTokenLine, TokenStyleMap, HighlightThemedTokenStyle } from './types'
 
 // Re-create logger locally as utils cannot be imported from here
 const logger = consola.withTag('@nuxt/content')
@@ -119,6 +119,15 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
     // Highlight code
     const coloredTokens = Object.entries(theme).map(([key, theme]) => {
       const tokens = highlighter.codeToThemedTokens(code, lang, theme, { includeExplanation: false })
+        .map(line => line.map(token => ({
+          content: token.content,
+          style: {
+            [key]: {
+              color: token.color,
+              fontStyle: token.fontStyle
+            }
+          }
+        })))
       return {
         key,
         theme,
@@ -144,7 +153,7 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
   const getHighlightedAST = async (code: string, lang: Lang, theme: Theme, opts?: Partial<HighlighterOptions>): Promise<Array<MarkdownNode>> => {
     const lines = await getHighlightedTokens(code, lang, theme)
-    const { highlights = [], colorMap = {} } = opts || {}
+    const { highlights = [], styleMap = {} } = opts || {}
 
     return lines.map((line, lineIndex) => {
       // Add line break to all lines except last
@@ -167,37 +176,40 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
       }
     })
 
-    function getColorProps (token: { color?: string | object }) {
-      if (!token.color) {
+    function getSpanProps (token: HighlightThemedToken) {
+      if (!token.style) {
         return {}
       }
-      if (typeof token.color === 'string') {
-        return { style: { color: token.color } }
-      }
-      const key = Object.values(token.color).join('')
-      if (!colorMap[key]) {
-        colorMap[key] = {
-          colors: token.color,
-          className: 'ct-' + Math.random().toString(16).substring(2, 8) // hash(key)
+      // TODO: generate unique key for style
+      // Or simply using `JSON.stringify(token.style)` would be easier to understand,
+      // but not sure about the impact on performance
+      const key = Object.values(token.style).map(themeStyle => Object.values(themeStyle).join('')).join('')
+      if (!styleMap[key]) {
+        styleMap[key] = {
+          style: token.style,
+          // Using the hash value of the style as the className,
+          // ensure that the className remains stable over multiple compilations,
+          // which facilitates content caching.
+          className: 'ct-' + hash(key)
         }
       }
-      return { class: colorMap[key].className }
+      return { class: styleMap[key].className }
     }
 
-    function tokenSpan (token: { content: string, color?: string | object }) {
+    function tokenSpan (token: HighlightThemedToken) {
       return {
         type: 'element',
         tag: 'span',
-        props: getColorProps(token),
+        props: getSpanProps(token),
         children: [{ type: 'text', value: token.content }]
       }
     }
   }
 
   const getHighlightedCode = async (code: string, lang: Lang, theme: Theme, opts?: Partial<HighlighterOptions>) => {
-    const colorMap = opts?.colorMap || {}
+    const styleMap = opts?.styleMap || {}
     const highlights = opts?.highlights || []
-    const ast = await getHighlightedAST(code, lang, theme, { colorMap, highlights })
+    const ast = await getHighlightedAST(code, lang, theme, { styleMap, highlights })
 
     function renderNode (node: any) {
       if (node.type === 'text') {
@@ -209,22 +221,44 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
     return {
       code: ast.map(renderNode).join(''),
-      styles: generateStyles(colorMap)
+      styles: generateStyles(styleMap)
     }
   }
 
-  const generateStyles = (colorMap: TokenColorMap) => {
-    const colors: string[] = []
-    for (const colorClass of Object.values(colorMap)) {
-      Object.entries(colorClass.colors).forEach(([variant, color]) => {
-        if (variant === 'default') {
-          colors.unshift(`.${colorClass.className}{color:${color}}`)
-        } else {
-          colors.push(`.${variant} .${colorClass.className}{color:${color}}`)
+  const generateStyles = (styleMap: TokenStyleMap) => {
+    const styles: string[] = []
+    for (const styleToken of Object.values(styleMap)) {
+      const defaultStyle = styleToken.style.default
+      const hasColor = !!defaultStyle?.color
+      const hasBold = isBold(defaultStyle)
+      const hasItalic = isItalic(defaultStyle)
+      const hasUnderline = isUnderline(defaultStyle)
+      const themeStyles = Object.entries(styleToken.style).map(([variant, style]) => {
+        const styleText = [
+          // If the default theme has a style, but the current theme does not have one,
+          // we need to override to reset style
+          ['color', style.color || (hasColor ? 'unset' : '')],
+          ['font-weight', isBold(style) ? 'bold' : hasBold ? 'unset' : ''],
+          ['font-style', isItalic(style) ? 'italic' : hasItalic ? 'unset' : ''],
+          ['text-decoration', isUnderline(style) ? 'bold' : hasUnderline ? 'unset' : '']
+        ]
+          .filter(kv => kv[1])
+          .map(kv => kv.join(':') + ';')
+          .join('')
+        return { variant, styleText }
+      })
+
+      const defaultThemeStyle = themeStyles.find(themeStyle => themeStyle.variant === 'default')
+      themeStyles.forEach((themeStyle) => {
+        if (themeStyle.variant === 'default') {
+          styles.push(`.${styleToken.className}{${themeStyle.styleText}}`)
+        } else if (themeStyle.styleText !== defaultThemeStyle?.styleText) {
+          // Skip if same as default theme
+          styles.push(`.${themeStyle.variant} .${styleToken.className}{${themeStyle.styleText}}`)
         }
       })
     }
-    return colors.join('\n')
+    return styles.join('\n')
   }
 
   return {
@@ -237,7 +271,6 @@ export const useShikiHighlighter = createSingleton((opts?: Exclude<ModuleOptions
 
 function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedTokenLine) {
   const mergedTokens: HighlightThemedToken[] = []
-  const getColors = (h: HighlightThemedTokenLine, i: number) => typeof h.tokens[i].color === 'string' ? { [h.key]: h.tokens[i].color } : h.tokens[i].color as object
 
   const right = {
     key: line1.key,
@@ -255,9 +288,9 @@ function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedToke
     if (rightToken.content === leftToken.content) {
       mergedTokens.push({
         content: rightToken.content,
-        color: {
-          ...getColors(right, index),
-          ...getColors(left, index)
+        style: {
+          ...right.tokens[index].style,
+          ...left.tokens[index].style
         }
       })
       index += 1
@@ -287,4 +320,27 @@ function mergeLines (line1: HighlightThemedTokenLine, line2: HighlightThemedToke
     throw new Error('Unexpected token')
   }
   return mergedTokens
+}
+
+function isBold (style?: HighlightThemedTokenStyle) {
+  return style && style.fontStyle === FontStyle.Bold
+}
+
+function isItalic (style?: HighlightThemedTokenStyle) {
+  return style && style.fontStyle === FontStyle.Italic
+}
+
+function isUnderline (style?: HighlightThemedTokenStyle) {
+  return style && style.fontStyle === FontStyle.Underline
+}
+
+/**
+ * An insecure but simple and fast hash method.
+ * https://gist.github.com/hyamamoto/fd435505d29ebfa3d9716fd2be8d42f0?permalink_comment_id=4261728#gistcomment-4261728
+ */
+function hash (str: string) {
+  return Array.from(str)
+    .reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0)
+    .toString()
+    .slice(-6)
 }
