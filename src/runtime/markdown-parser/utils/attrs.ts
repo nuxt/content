@@ -11,6 +11,7 @@ export const unsafeLinkPrefix = [
 
 export const isSafeAttribute = (attribute: string, value: string) => {
   if (attribute.startsWith('on')) {
+    // eslint-disable-next-line no-console
     console.warn(`[@nuxt/content] removing unsafe attribute: ${attribute}="${value}"`)
     return false
   }
