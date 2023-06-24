@@ -17,7 +17,7 @@ export const useContentState = () => {
   /**
    * Navigation tree from root of app.
    */
-  const navigation = useState<NavItem[]>('dd-navigation')
+  const navigation = useState<NavItem[]>('dd-navigation', () => shallowRef([]))
 
   /**
    * Globally loaded content files.
