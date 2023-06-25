@@ -179,7 +179,7 @@ export async function parseContent (id: string, content: string, opts: ParseCont
   )
 
   // Call hook before parsing the file
-  const file = { _id: id, body: content.replace(/\r\n|\r/g, '\n') }
+  const file = { _id: id, body: typeof content === 'string' ? content.replace(/\r\n|\r/g, '\n') : content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
   const result = await transformContent(id, file.body, options)
