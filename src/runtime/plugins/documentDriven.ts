@@ -1,6 +1,4 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
-// @ts-ignore
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { pascalCase } from 'scule'
 import type { MarkdownNode, NavItem, ParsedContent } from '../types'
@@ -10,6 +8,7 @@ import { useContentHelpers } from '../composables/helpers'
 import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
 import { componentNames } from '#components'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 

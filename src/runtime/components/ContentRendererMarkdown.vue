@@ -4,10 +4,10 @@ import destr from 'destr'
 import { pascalCase } from 'scule'
 import { find, html } from 'property-information'
 import type { VNode, ConcreteComponent } from 'vue'
-import { useRuntimeConfig, useRoute } from '#app'
 import htmlTags from '../utils/html-tags'
 import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
 import { useContentPreview } from '../composables/preview'
+import { useRuntimeConfig, useRoute } from '#app'
 
 type CreateElement = typeof h
 
