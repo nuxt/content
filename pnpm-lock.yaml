@@ -15,8 +15,8 @@ dependencies:
     specifier: ^6.1.2
     version: 6.1.2
   destr:
-    specifier: ^1.2.2
-    version: 1.2.2
+    specifier: ^2.0.0
+    version: 2.0.0
   detab:
     specifier: ^3.0.2
     version: 3.0.2
@@ -3510,6 +3510,7 @@ packages:
 
   /destr@1.2.2:
     resolution: {integrity: sha512-lrbCJwD9saUQrqUfXvl6qoM+QN3W7tLV5pAOs+OqOmopCCz/JkE05MHedJR1xfk4IAnZuJXPVuN5+7jNA2ZCiA==}
+    dev: true
 
   /destr@2.0.0:
     resolution: {integrity: sha512-FJ9RDpf3GicEBvzI3jxc2XhHzbqD8p4ANw/1kPsFBfTvP1b7Gn/Lg1vO7R9J4IVgoMbyUmFrFGZafJ1hPZpvlg==}
