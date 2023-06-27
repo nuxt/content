@@ -137,8 +137,8 @@ devDependencies:
     specifier: ^8.5.5
     version: 8.5.5
   c8:
-    specifier: ^7.14.0
-    version: 7.14.0
+    specifier: ^8.0.0
+    version: 8.0.0
   csvtojson:
     specifier: ^2.0.10
     version: 2.0.10
@@ -2729,9 +2729,9 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /c8@7.14.0:
-    resolution: {integrity: sha512-i04rtkkcNcCf7zsQcSv/T9EbUn4RXQ6mropeMcjFOsQXQ0iGLAr/xT6TImQg4+U9hmNpN9XdvPkjUL1IzbgxJw==}
-    engines: {node: '>=10.12.0'}
+  /c8@8.0.0:
+    resolution: {integrity: sha512-XHA5vSfCLglAc0Xt8eLBZMv19lgiBSjnb1FLAQgnwkuhJYEonpilhEB4Ea3jPAbm0FhD6VVJrc0z73jPe7JyGQ==}
+    engines: {node: '>=12'}
     hasBin: true
     dependencies:
       '@bcoe/v8-coverage': 0.2.3
