@@ -3,12 +3,12 @@ import type { Storage } from 'unstorage'
 import memoryDriver from 'unstorage/drivers/memory'
 import { createStorage, prefixStorage } from 'unstorage'
 import { withBase } from 'ufo'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
 import { createNav } from '../server/navigation'
 import { useContentPreview } from './preview'
-import { useRuntimeConfig, useNuxtApp } from '#app'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
