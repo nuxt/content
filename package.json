@@ -97,6 +97,7 @@
     "lint-staged": "^13.2.2",
     "nuxt": "3.5.3",
     "rehype-figure": "^1.0.1",
+    "rehype-wrap-all": "^1.1.0",
     "release-it": "^15.11.0",
     "remark-oembed": "^1.2.2",
     "vitest": "^0.32.0",
