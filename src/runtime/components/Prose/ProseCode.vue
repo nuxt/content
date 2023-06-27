@@ -22,17 +22,13 @@ export default defineComponent({
     meta: {
       type: String,
       default: null
-    },
-    class: {
-      type: String,
-      default: "",
     }
   }
 })
 </script>
 
 <template>
-  <div :class="class">
+  <div>
     <slot />
   </div>
 </template>
