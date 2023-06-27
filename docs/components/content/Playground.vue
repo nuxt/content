@@ -1,6 +1,6 @@
 <script setup>
-import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
 import { transformContent } from '@nuxt/content/transformers'
+import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
 
 const INITIAL_CODE = `---
 title: MDC
