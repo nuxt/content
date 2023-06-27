@@ -1,13 +1,14 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
-// @ts-ignore
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
-import type { NavItem, ParsedContent } from '../types'
+import { pascalCase } from 'scule'
+import type { MarkdownNode, NavItem, ParsedContent } from '../types'
 import type { ModuleOptions } from '../../module'
 import { useContentState } from '../composables/content'
 import { useContentHelpers } from '../composables/helpers'
 import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin } from '#app'
+import { componentNames } from '#components'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -251,6 +252,25 @@ export default defineNuxtPlugin((nuxt) => {
     })
   }
 
+  // Prefetch page content
+  if (process.client) {
+    const router = useRouter()
+    nuxt.hook('link:prefetch', (link) => {
+      if (!(link in pages.value) && !hasProtocol(link)) {
+        const route = router.resolve(link)
+        if (route.matched.length > 0) {
+          refresh(route)
+        }
+      }
+    })
+    // @ts-expect-error hook is not typed
+    nuxt.hooks.hook('content:document-driven:finish', ({ page }) => {
+      if (page?.body?.children) {
+        prefetchBodyComponents(page.body.children)
+      }
+    })
+  }
+
   // Route middleware
   addRouteMiddleware(async (to, from) => {
     // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
@@ -284,3 +304,19 @@ export default defineNuxtPlugin((nuxt) => {
   // @ts-ignore - Refresh on client-side
   nuxt.hook('app:data:refresh', async () => process.client && await refresh(useRoute(), true))
 })
+
+function prefetchBodyComponents (nodes: MarkdownNode[]) {
+  for (const node of nodes) {
+    if (node.children) {
+      prefetchBodyComponents(node.children)
+    }
+    if (node.type === 'element' && node.tag) {
+      const el = pascalCase(node.tag)
+      for (const name of ['Prose' + el, el]) {
+        if (componentNames.includes(name)) {
+          prefetchComponents(name)
+        }
+      }
+    }
+  }
+}
