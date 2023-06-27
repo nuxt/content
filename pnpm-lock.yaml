@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.6.1
     version: 3.6.1(rollup@3.25.3)
   consola:
-    specifier: ^3.1.0
-    version: 3.1.0
+    specifier: ^3.2.0
+    version: 3.2.0
   defu:
     specifier: ^6.1.2
     version: 6.1.2
@@ -1028,7 +1028,7 @@ packages:
     dependencies:
       '@nuxt/schema': 3.6.1(rollup@3.25.3)
       c12: 1.4.2
-      consola: 3.1.0
+      consola: 3.2.0
       defu: 6.1.2
       globby: 13.2.0
       hash-sum: 2.0.0
@@ -1055,7 +1055,7 @@ packages:
       nuxi: ^3.5.0
     dependencies:
       '@nuxt/kit': 3.6.1(rollup@3.25.3)
-      consola: 3.1.0
+      consola: 3.2.0
       mlly: 1.4.0
       mri: 1.2.0
       nuxi: 3.6.1
@@ -1090,7 +1090,7 @@ packages:
       '@nuxt/kit': 3.6.1(rollup@3.25.3)
       chalk: 5.2.0
       ci-info: 3.8.0
-      consola: 3.1.0
+      consola: 3.2.0
       create-require: 1.1.1
       defu: 6.1.2
       destr: 1.2.2
@@ -1132,7 +1132,7 @@ packages:
     dependencies:
       '@nuxt/kit': 3.6.1(rollup@3.25.3)
       '@nuxt/schema': 3.6.1(rollup@3.25.3)
-      consola: 3.1.0
+      consola: 3.2.0
       defu: 6.1.2
       execa: 7.1.1
       get-port-please: 3.0.1
@@ -1164,7 +1164,7 @@ packages:
       '@vitejs/plugin-vue-jsx': 3.0.1(vite@4.3.9)(vue@3.3.4)
       autoprefixer: 10.4.14(postcss@8.4.24)
       clear: 0.1.0
-      consola: 3.1.0
+      consola: 3.2.0
       cssnano: 6.0.1(postcss@8.4.24)
       defu: 6.1.2
       esbuild: 0.18.10
@@ -3079,8 +3079,8 @@ packages:
       xdg-basedir: 5.1.0
     dev: true
 
-  /consola@3.1.0:
-    resolution: {integrity: sha512-rrrJE6rP0qzl/Srg+C9x/AE5Kxfux7reVm1Wh0wCjuXvih6DqZgqDZe8auTD28fzJ9TF0mHlSDrPpWlujQRo1Q==}
+  /consola@3.2.0:
+    resolution: {integrity: sha512-NLgzNbAYHKIeCi+wrymxkwZX42jAMBDB/8gtR+JCgHzegj92hXNoLmYrfA78mfmvopmg/z0PNgYyFAwY5emnZg==}
 
   /console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
@@ -6655,7 +6655,7 @@ packages:
       chalk: 5.2.0
       chokidar: 3.5.3
       citty: 0.1.1
-      consola: 3.1.0
+      consola: 3.2.0
       cookie-es: 1.0.0
       defu: 6.1.2
       destr: 2.0.0
@@ -7234,7 +7234,7 @@ packages:
       got: 12.6.1
       registry-auth-token: 5.0.2
       registry-url: 6.0.1
-      semver: 7.5.1
+      semver: 7.5.3
     dev: true
 
   /param-case@3.0.4:
@@ -8427,7 +8427,7 @@ packages:
     resolution: {integrity: sha512-0Ju4+6A8iOnpL/Thra7dZsSlOHYAHIeMxfhWQRI1/VLcT3WDBZKKtQt/QkBOsiIN9ZpuvHE6cGZ0x4glCMmfiA==}
     engines: {node: '>=12'}
     dependencies:
-      semver: 7.5.1
+      semver: 7.5.3
     dev: true
 
   /semver@5.7.1:
@@ -9172,7 +9172,7 @@ packages:
       '@rollup/plugin-replace': 5.0.2(rollup@3.25.3)
       '@rollup/pluginutils': 5.0.2(rollup@3.25.3)
       chalk: 5.2.0
-      consola: 3.1.0
+      consola: 3.2.0
       defu: 6.1.2
       esbuild: 0.17.19
       globby: 13.2.0
@@ -9216,7 +9216,7 @@ packages:
   /unenv@1.5.1:
     resolution: {integrity: sha512-tQHlmQUPyIoyGc2bF8phugmQd6wVatkVe5FqxxhM1vHfmPKWTiogSVTHA0mO8gNztDKZLpBEJx3M3CJrTZyExg==}
     dependencies:
-      consola: 3.1.0
+      consola: 3.2.0
       defu: 6.1.2
       mime: 3.0.0
       node-fetch-native: 1.2.0
@@ -9469,7 +9469,7 @@ packages:
       is-yarn-global: 0.4.1
       latest-version: 7.0.0
       pupa: 3.1.0
-      semver: 7.5.1
+      semver: 7.5.3
       semver-diff: 4.0.0
       xdg-basedir: 5.1.0
     dev: true
