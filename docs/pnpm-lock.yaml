@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  nitropack: 2.5.1
+  nitropack: npm:nitropack-edge@latest
 
 devDependencies:
   '@docsearch/js':
@@ -3631,6 +3631,18 @@ packages:
       uncrypto: 0.1.3
     dev: true
 
+  /h3@1.7.1:
+    resolution: {integrity: sha512-A9V2NEDNHet7v1gCg7CMwerSigLi0SRbhTy7C3lGb0N4YKIpPmLDjedTUopqp4dnn7COHfqUjjaz3zbtz4QduA==}
+    dependencies:
+      cookie-es: 1.0.0
+      defu: 6.1.2
+      destr: 2.0.0
+      iron-webcrypto: 0.7.1
+      radix3: 1.0.1
+      ufo: 1.1.2
+      uncrypto: 0.1.3
+    dev: true
+
   /has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -4911,8 +4923,8 @@ packages:
     hasBin: true
     dev: true
 
-  /nitropack@2.5.1:
-    resolution: {integrity: sha512-RKq++lLrs7m/hlkEkYezL119Lu7LzseaDh/6UzmXqYD8/fx896Bou4CJpe775iHiHDzASiCmVKtlkBJxSiRi5w==}
+  /nitropack-edge@2.5.2-28132662.126574d:
+    resolution: {integrity: sha512-ktnzzwJB4hKqHKzdxlT3EQ2hayUHFMoT8QdOtKgOI87c6Zfi2SEzLNMyL83W5S6/viwq92+7glmMZkmi0rGdoQ==}
     engines: {node: ^14.16.0 || ^16.11.0 || >=17.0.0}
     hasBin: true
     dependencies:
@@ -4934,7 +4946,7 @@ packages:
       chalk: 5.2.0
       chokidar: 3.5.3
       citty: 0.1.1
-      consola: 3.1.0
+      consola: 3.2.2
       cookie-es: 1.0.0
       defu: 6.1.2
       destr: 2.0.0
@@ -4945,7 +4957,7 @@ packages:
       fs-extra: 11.1.1
       globby: 13.2.0
       gzip-size: 7.0.0
-      h3: 1.7.0
+      h3: 1.7.1
       hookable: 5.5.3
       http-graceful-shutdown: 3.1.13
       http-proxy: 1.18.1
@@ -5184,7 +5196,7 @@ packages:
       local-pkg: 0.4.3
       magic-string: 0.30.0
       mlly: 1.4.0
-      nitropack: 2.5.1
+      nitropack: /nitropack-edge@2.5.2-28132662.126574d
       nuxi: 3.6.1
       nypm: 0.2.1
       ofetch: 1.1.1

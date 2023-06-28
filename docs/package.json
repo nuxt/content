@@ -9,7 +9,7 @@
     "generate": "nuxi generate"
   },
   "resolutions": {
-    "nitropack": "2.5.1"
+    "nitropack": "npm:nitropack-edge@latest"
   },
   "devDependencies": {
     "@docsearch/js": "^3.5.1",
