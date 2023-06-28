@@ -58,7 +58,7 @@ export default defineNuxtConfig({
       // Array syntax can be used to add plugins
       rehypePlugins: [
         'rehype-figure',
-        ['rehype-wrap-all', [{selector: 'ol', wrapper: 'p' }, {selector: 'ul', wrapper: 'p' }]],
+        ['rehype-wrap-all', [{ selector: 'ol', wrapper: 'p' }, { selector: 'ul', wrapper: 'p' }]]
       ]
     }
   }
