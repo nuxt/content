@@ -75,16 +75,6 @@ export default defineNuxtConfig({
       documentDriven: {
         host: 'https://content.nuxtjs.org'
       }
-    },
-    public: {
-      algolia: {
-        applicationId: '',
-        apiKey: '',
-        langAttribute: 'lang',
-        docSearch: {
-          indexName: 'content-nuxtjs'
-        }
-      }
     }
   }
 })

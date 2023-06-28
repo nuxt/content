@@ -2,17 +2,16 @@
   <div class="wrapper">
     <h4>Looking for v1 documentation ?</h4>
     <div class="links-wrapper">
-      <button-link href="/v1/getting-started/introduction" :transparent="true" color="false" size="large">
+      <button-link href="/v1/getting-started/introduction" :transparent="true" size="large">
         English
       </button-link>
-      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" class="ml-2" size="large">
         French
       </button-link>
-      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" class="ml-2" size="large">
         Japanese
       </button-link>
     </div>
-    <ellipsis />
   </div>
 </template>
 
