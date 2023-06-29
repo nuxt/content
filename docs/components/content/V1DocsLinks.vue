@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper">
-    <h4>Looking for v1 documentation ?</h4>
+    <h4>Looking for v1 documentation?</h4>
     <div class="links-wrapper">
-      <button-link href="/v1/getting-started/introduction" :transparent="true" size="large">
+      <button-link href="/v1/getting-started/introduction" size="small">
         English
       </button-link>
-      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" class="ml-2" size="large">
+      <button-link href="/fr/v1/getting-started/introduction" size="small">
         French
       </button-link>
-      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" class="ml-2" size="large">
+      <button-link href="/ja/v1/getting-started/introduction" size="small">
         Japanese
       </button-link>
     </div>
@@ -36,11 +36,5 @@ css({
     gap: '2rem',
     justifyContent: 'center'
   },
-  '.links-wrapper a': {
-    color: '{color.black}',
-    '@dark': {
-      color: '{color.white}'
-    }
-  }
 })
 </style>
