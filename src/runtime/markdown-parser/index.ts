@@ -54,7 +54,7 @@ export const useDefaultOptions = (): MarkdownOptions => ({
 export async function parse (file: string, userOptions: Partial<MarkdownOptions> = {}) {
   const options = defu(userOptions, useDefaultOptions()) as MarkdownOptions
 
-  const { content, data } = await parseFrontMatter(file)
+  const { content, data } = parseFrontMatter(file)
 
   // Compile markdown from file content to JSON
   const body = await generateBody(content, { ...options, data })
