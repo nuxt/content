@@ -1,5 +1,6 @@
 import { extname } from 'pathe'
 import { camelCase } from 'scule'
+import type { StorageValue } from 'unstorage'
 import type { ContentTransformer, TransformContentOptions } from '../types'
 import csv from './csv'
 import markdown from './markdown'
@@ -36,7 +37,7 @@ function getTransformers (ext: string, additionalTransformers: ContentTransforme
 /**
  * Parse content file using registered plugins
  */
-export async function transformContent (id: string, content: string, options: TransformContentOptions = {}) {
+export async function transformContent (id: string, content: StorageValue, options: TransformContentOptions = {}) {
   const { transformers = [] } = options
   // Call hook before parsing the file
   const file = { _id: id, body: content }
