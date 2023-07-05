@@ -1,6 +1,57 @@
 # Changelog
 
 
+## v2.7.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.6.0...v2.7.0)
+
+
+### 🚀 Enhancements
+
+  - **shiki:** Support italic, bold and underline styles ([#2079](https://github.com/nuxt/content/pull/2079))
+  - **config:** Update ignores to advanced pattern ([#2035](https://github.com/nuxt/content/pull/2035))
+
+### 🩹 Fixes
+
+  - **link:** Remove hash before checking if ending by '.md' ([#2033](https://github.com/nuxt/content/pull/2033))
+  - **markdown:** Prevent script execution ([#2040](https://github.com/nuxt/content/pull/2040))
+  - **code-block:** Pass language as class name ([#2064](https://github.com/nuxt/content/pull/2064))
+  - **tailwind-integration:** Allow content as object ([#2060](https://github.com/nuxt/content/pull/2060))
+  - **code-block:** Meta property ([#2067](https://github.com/nuxt/content/pull/2067))
+  - **markdown:** Respect `_draft` key in frontmatter ([#2077](https://github.com/nuxt/content/pull/2077))
+
+### 📖 Documentation
+
+  - Guide for adding custom grammars for syntax highlighting ([7da9b286](https://github.com/nuxt/content/commit/7da9b286))
+  - Add example of additional sorting options for queryContent ([#2042](https://github.com/nuxt/content/pull/2042))
+  - Explain useasyncdata wrapping ([#2054](https://github.com/nuxt/content/pull/2054))
+  - Update url ([#2055](https://github.com/nuxt/content/pull/2055))
+  - Add latest to nuxi command ([2939b793](https://github.com/nuxt/content/commit/2939b793))
+  - Update `Content Wind` live demo url ([#2080](https://github.com/nuxt/content/pull/2080))
+  - Update links ([#2085](https://github.com/nuxt/content/pull/2085))
+  - Remove outdated description ([#2098](https://github.com/nuxt/content/pull/2098))
+
+### 🏡 Chore
+
+  - Use caret dependency for kit ([#2044](https://github.com/nuxt/content/pull/2044))
+
+### ❤️  Contributors
+
+- TomatoGuy0502 <H34066131@gs.ncku.edu.tw>
+- Dave Stewart <dave@davestewart.co.uk>
+- Kricsleo 
+- Nobkd 
+- Mukund Shah 
+- Farnabaz <farnabaz@gmail.com>
+- Inesh Bose 
+- Stefanprobst <stefanprobst@posteo.de>
+- Sébastien Chopin <seb@nuxtlabs.com>
+- Clément Ollivier ([@clemcode](http://github.com/clemcode))
+- YannC 
+- James Tyner 
+- Ashour <ashour.mohammad@gmail.com>
+- Daniel Roe <daniel@roe.dev>
+
 ## v2.6.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.5.2...v2.6.0)

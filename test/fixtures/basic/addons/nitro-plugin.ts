@@ -1,3 +1,5 @@
+import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('content:file:beforeParse', (file) => {
     if (file._id.endsWith('.md')) {

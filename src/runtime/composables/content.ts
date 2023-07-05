@@ -1,18 +1,18 @@
 import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '../types'
-import { computed, useState, useRoute } from '#imports'
+import { computed, shallowReactive, shallowRef, useState, useRoute } from '#imports'
 
 export const useContentState = () => {
   /**
    * Map of loaded pages.
    */
-  const pages = useState<Record<string, ParsedContent>>('dd-pages', () => ({}))
+  const pages = useState<Record<string, ParsedContent>>('dd-pages', () => shallowRef(shallowReactive({})))
 
   /**
    * Previous and next page data.
    * Format: [prev, next]
    */
-  const surrounds = useState<Record<string, Omit<ParsedContent, 'body'>>>('dd-surrounds', () => ({}))
+  const surrounds = useState<Record<string, Omit<ParsedContent, 'body'>>>('dd-surrounds', () => shallowRef(shallowReactive({})))
 
   /**
    * Navigation tree from root of app.
@@ -23,7 +23,7 @@ export const useContentState = () => {
    * Globally loaded content files.
    * Format: { [key: string]: ParsedContent }
    */
-  const globals = useState<Record<string, ParsedContent>>('dd-globals', () => ({}))
+  const globals = useState<Record<string, ParsedContent>>('dd-globals', () => shallowRef(shallowReactive({})))
 
   return {
     pages,

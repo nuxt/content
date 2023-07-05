@@ -17,7 +17,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 ## Features
 
-- [**Nuxt 3**](https://v3.nuxtjs.org) support
+- [**Nuxt 3**](https://nuxt.com) support
 - A Markdown syntax made for Vue components ([**MDC**](https://content.nuxtjs.org/guide/writing/mdc))
 - Navigation generation
 - Code highlighting with [**Shiki**](https://shiki.matsu.io)
@@ -26,23 +26,23 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Table of contents generation
 - Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
-- [...and more](https://content.nuxtjs.org)
+- [... and more](https://content.nuxtjs.org)
 
 ## Nuxt 2
 
-Nuxt 2 is supported with Content v1, documentation is on https://content.nuxtjs.org/content-v1 and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
+Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxtjs.org/content-v1> and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
 
 ## 💻 Development
 
 - Clone repository
-- Install dependencies using `yarn install`
-- Prepare using `yarn prepare`
-- Try playground using `yarn dev`
+- Install dependencies using `pnpm install`
+- Prepare using `pnpm prepare`
+- Prepare using `pnpm build`
+- Try playground using `pnpm dev`
 
 ## License
 
 [MIT](./LICENSE) - Made with 💚
-
 
 [npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/@nuxt/content

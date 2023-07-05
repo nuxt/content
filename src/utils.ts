@@ -8,11 +8,12 @@ import httpDriver from 'unstorage/drivers/http'
 // @ts-ignore
 import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
-import { useLogger } from '@nuxt/kit'
+import { consola } from 'consola'
+
 import type { ModuleOptions, MountOptions } from './module'
 import type { MarkdownPlugin } from './runtime/types'
 
-export const logger = useLogger('@nuxt/content')
+export const logger = consola.withTag('@nuxt/content')
 
 /**
  * Internal version that represents cache format.

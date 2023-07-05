@@ -12,7 +12,7 @@ type Node = MdastContent & {
 
 export default (h: H, node: Node) => {
   const lang = (node.lang || '') + ' ' + (node.meta || '')
-  const { language, highlights, filename } = parseThematicBlock(lang)
+  const { language, highlights, filename, meta } = parseThematicBlock(lang)
   const code = node.value ? detab(node.value + '\n') : ''
 
   return h(
@@ -22,8 +22,9 @@ export default (h: H, node: Node) => {
       language,
       filename,
       highlights,
-      meta: node.meta,
-      code
+      meta,
+      code,
+      className: [`language-${language}`]
     },
     [h(node, 'pre', {}, [h(node, 'code', { __ignoreMap: '' }, [u('text', code)])])]
   )

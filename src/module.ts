@@ -222,8 +222,7 @@ export interface ModuleOptions {
   },
   experimental: {
     clientDB: boolean
-    stripQueryParameters: boolean,
-    advancedIgnoresPattern: boolean
+    stripQueryParameters: boolean
   }
 }
 
@@ -284,8 +283,7 @@ export default defineNuxtModule<ModuleOptions>({
     documentDriven: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false,
-      advancedIgnoresPattern: false
+      stripQueryParameters: false
     }
   },
   async setup (options, nuxt) {
@@ -605,8 +603,7 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
-        clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
-        advancedIgnoresPattern: options.experimental.advancedIgnoresPattern
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
       api: {
         baseURL: options.api.baseURL
@@ -634,16 +631,19 @@ export default defineNuxtModule<ModuleOptions>({
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
+      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md')
       tailwindConfig.content = tailwindConfig.content ?? []
-      tailwindConfig.content.push(resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md'))
+
+      if (Array.isArray(tailwindConfig.content)) {
+        tailwindConfig.content.push(contentPath)
+      } else {
+        tailwindConfig.content.files = tailwindConfig.content.files ?? []
+        tailwindConfig.content.files.push(contentPath)
+      }
     })
 
     // ignore files
-    const { advancedIgnoresPattern } = contentContext.experimental
-    const isIgnored = makeIgnored(contentContext.ignores, advancedIgnoresPattern)
-    if (contentContext.ignores.length && !advancedIgnoresPattern) {
-      logger.warn('The `ignores` config is being made more flexible in version 2.7. See the docs for more information: `https://content.nuxtjs.org/api/configuration#ignores`')
-    }
+    const isIgnored = makeIgnored(contentContext.ignores)
 
     // Setup content dev module
     if (!nuxt.options.dev) {
@@ -728,7 +728,6 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
-    advancedIgnoresPattern: boolean
   }
 
   defaultLocale: ModuleOptions['defaultLocale']
