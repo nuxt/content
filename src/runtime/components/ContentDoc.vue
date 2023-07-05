@@ -1,6 +1,7 @@
 <script lang="ts">
 import { PropType, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
+import { useRuntimeConfig } from '#app'
 import type { QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
@@ -74,6 +75,8 @@ export default defineComponent({
    * @slot not-found
    */
   render (ctx: any) {
+    const { enableContentHead } = useRuntimeConfig().public.content
+
     const slots = useSlots()
 
     const { tag, excerpt, path, query, head } = ctx
@@ -94,12 +97,12 @@ export default defineComponent({
         // Default slot
         default: slots?.default
           ? ({ data, refresh, isPartial }: any) => {
-              if (head) { useContentHead(data) }
+              if (head && enableContentHead) { useContentHead(data) }
 
               return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
           : ({ data }: any) => {
-              if (head) { useContentHead(data) }
+              if (head && enableContentHead) { useContentHead(data) }
 
               return h(
                 ContentRenderer,
