@@ -20,9 +20,6 @@ dependencies:
   detab:
     specifier: ^3.0.2
     version: 3.0.2
-  fuse.js:
-    specifier: ^6.6.2
-    version: 6.6.2
   json5:
     specifier: ^2.2.3
     version: 2.2.3
@@ -4526,11 +4523,6 @@ packages:
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
-
-  /fuse.js@6.6.2:
-    resolution: {integrity: sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==}
-    engines: {node: '>=10'}
-    dev: false
 
   /gauge@3.0.2:
     resolution: {integrity: sha512-+5J6MS/5XksCuXq++uFRsnUd7Ovu1XenbeuIuNRJxYWjgQbPuFhT14lAvsWfqfAmnwluf1OwMjz39HjfLPci0Q==}
