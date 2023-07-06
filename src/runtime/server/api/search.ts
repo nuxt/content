@@ -10,12 +10,16 @@ export default defineEventHandler(async (event) => {
 
   const files = await serverQueryContent(event).find()
 
+  const { extensions, draft, empty } = search.filter
   const docs = await Promise.all(
     files
       .filter((file) => {
-        // TODO: add configuration for filtering
-        return file?._extension === 'md' &&
-      file?._draft === false && file?._empty === false
+        const keepExtension = extensions.includes(file?._extension)
+        // If empty or draft, we look at the configuration to know if we keep it
+        const keepEmpty = file?._empty ? empty : true
+        const keepDraft = file?._draft ? draft : true
+
+        return keepExtension && keepEmpty && keepDraft
       })
       .map(
         ({ _id: id, _path: path, _dir: dir, title = '', description = '', body = undefined }) => {
@@ -27,11 +31,12 @@ export default defineEventHandler(async (event) => {
             title,
             description,
             keywords: body?.toc?.links.map(link => link?.text),
-            body: isFullTextMode ? extractTextFromAst(body, search.noExtractionFromTags ?? []) : ''
+            body: isFullTextMode && body ? extractTextFromAst(body, search.noExtractionFromTags ?? []) : ''
           }
         }
       )
   )
+
   return docs
 })
 
@@ -54,5 +59,6 @@ function extractTextFromAst (node: any, tagsToRemove: string[] = []) {
       text += ' ' + extractTextFromAst(child, tagsToRemove)
     }
   }
+
   return text
 }

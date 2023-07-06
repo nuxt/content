@@ -199,7 +199,28 @@ export interface ModuleOptions {
     /**
      * Used to determine how to search content.
      */
-    mode: 'meta' | 'full-text',
+    mode: 'meta' | 'full-text'
+
+    filter: {
+      /**
+       * Extensions to keep for text extraction.
+       *
+       * @default []
+       */
+      extensions?: Array<string>
+      /**
+       * Keep draft contents.
+       *
+       * @default false
+       */
+      draft?: boolean
+      /**
+       * Keep empty contents.
+       *
+       * @default false
+       */
+      empty?: boolean
+    }
     /**
      * List of tags where text must not be extracted. Only works with `full-text` mode.
     *
@@ -448,6 +469,17 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     if (options.search) {
+      // Add default search options
+      const defaultSearchOptions: Partial<ModuleOptions['search']> = {
+        filter: {
+          draft: false,
+          empty: false,
+          extensions: ['md']
+        }
+      }
+
+      options.search = defu(options.search, defaultSearchOptions)
+
       nuxt.options.modules.push('@vueuse/nuxt')
 
       addImports([
