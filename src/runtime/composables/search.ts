@@ -9,14 +9,14 @@ export const useSearch = async <DataItem>(search: MaybeRefOrGetter<string>, opti
   const runtimeConfig = useRuntimeConfig()
   const integrity = runtimeConfig.public.content.integrity
   const baseAPI = runtimeConfig.public.content.api.baseURL
-  const { indexedSearch } = runtimeConfig.public.content.search
+  const { indexedSearch, options: configOptions } = runtimeConfig.public.content.search
 
   const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 
   if (!data.value) { return [] }
 
   if (indexedSearch) {
-    const { results } = useIndexedMiniSearch(search, data as unknown as string, options)
+    const { results } = useIndexedMiniSearch(search, data as unknown as string, configOptions)
     return results
   }
 

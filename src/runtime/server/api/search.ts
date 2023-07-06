@@ -22,7 +22,7 @@ const isHeading = (tag: string) => HEADING.test(tag)
 
 export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig()
-  const { indexedSearch, ignoredTags } = runtimeConfig.public.content.search
+  const { indexedSearch, ignoredTags, options } = runtimeConfig.public.content.search
 
   const files = await serverQueryContent(event).find()
 
@@ -35,11 +35,7 @@ export default defineEventHandler(async (event) => {
 
   if (indexedSearch) {
     // Add an option to enable index
-    const miniSearch = new MiniSearch({
-      // TODO: move to options
-      fields: ['title', 'content', 'titles'],
-      storeFields: ['title', 'content', 'titles']
-    })
+    const miniSearch = new MiniSearch(options)
 
     // Index the documents
     miniSearch.addAll(sections)

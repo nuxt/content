@@ -9,6 +9,7 @@ import {
   addTemplate,
   extendViteConfig
 } from '@nuxt/kit'
+import { type Options as MiniSearchOptions } from 'minisearch'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
 // eslint-disable-next-line import/no-named-as-default
@@ -214,6 +215,29 @@ export interface ModuleOptions {
      * @default true
      */
     indexedSearch: boolean
+    /**
+     * MiniSearch Options. When using `indexedSearch` option,
+     * this options will be used to configure MiniSearch
+     * in order to have the same options on both server and client side.
+     *
+     * @default
+     * {
+     *   fields: ['title', 'content', 'titles'],
+     *   storeFields: ['title', 'content', 'titles'],
+     *   searchOptions: {
+     *     prefix: true,
+     *     fuzzy: 0.2,
+     *     boost: {
+     *       title: 4,
+     *       content: 2,
+     *       titles: 1
+     *     }
+     *   }
+     * }
+     *
+     * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
+     */
+    options: MiniSearchOptions
   }
   /**
    * List of locale codes.
@@ -458,7 +482,20 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.search) {
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
         indexedSearch: true,
-        ignoredTags: ['style', 'code']
+        ignoredTags: ['style', 'code'],
+        options: {
+          fields: ['title', 'content', 'titles'],
+          storeFields: ['title', 'content', 'titles'],
+          searchOptions: {
+            prefix: true,
+            fuzzy: 0.2,
+            boost: {
+              title: 4,
+              content: 2,
+              titles: 1
+            }
+          }
+        }
       }
 
       options.search = {
