@@ -205,7 +205,7 @@ export interface ModuleOptions {
       /**
        * Extensions to keep for text extraction.
        *
-       * @default []
+       * @default ['md']
        */
       extensions?: Array<string>
       /**
