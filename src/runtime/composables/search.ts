@@ -8,7 +8,6 @@ export const useSearch = async <DataItem>(query: MaybeRefOrGetter<string>, optio
 
   const { data } = await useLazyFetch(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 
-  // TODO: add a way to configure the search (using options from search?)
   const { results } = useFuse(query, data, options)
 
   return results
