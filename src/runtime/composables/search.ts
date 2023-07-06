@@ -1,11 +1,12 @@
 import { useFuse } from '@vueuse/integrations/useFuse'
-import { toValue } from '@vueuse/shared'
 import { useRuntimeConfig, useLazyFetch } from '#imports'
 
 export const useSearch = async (query: MaybeRefOrGetter<string>) => {
-  const baseAPI = useRuntimeConfig().public.content.api.baseURL
+  const runtimeConfig = useRuntimeConfig()
+  const integrity = runtimeConfig.public.content.integrity
+  const baseAPI = runtimeConfig.public.content.api.baseURL
 
-  const { data } = await useLazyFetch(`${baseAPI}/search.json`)
+  const { data } = await useLazyFetch(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 
   // TODO: add a way to configure the search (using options from search?)
   const { results } = useFuse(query,
