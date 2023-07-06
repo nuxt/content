@@ -211,6 +211,9 @@ export interface ModuleOptions {
     ignoredTags?: Array<string>
     /**
      * API return indexed contents to improve client-side load time.
+     * This option will use MiniSearch to create the index.
+     * If you disable this option, API will return raw contents instead
+     * you can use with any client-side search.
      *
      * @default true
      */
@@ -398,19 +401,38 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (options.search) {
-        nitroConfig.handlers.push({
-          method: 'get',
-          route: nuxt.options.dev
-            ? `${options.api.baseURL}/search.json`
-            : `${options.api.baseURL}/search.${buildIntegrity}.json`,
-          handler: resolveRuntimeModule('./server/api/search')
-        })
+        if (options.search.indexedSearch) {
+          // Will return a string
+          nitroConfig.handlers.push({
+            method: 'get',
+            route: nuxt.options.dev
+              ? `${options.api.baseURL}/indexed-search.txt`
+              : `${options.api.baseURL}/indexed-search.${buildIntegrity}.txt`,
+            handler: resolveRuntimeModule('./server/api/indexed-search')
+          })
+        } else {
+          nitroConfig.handlers.push({
+            method: 'get',
+            route: nuxt.options.dev
+              ? `${options.api.baseURL}/search.json`
+              : `${options.api.baseURL}/search.${buildIntegrity}.json`,
+            handler: resolveRuntimeModule('./server/api/search')
+          })
+        }
 
         nitroConfig.routeRules = nitroConfig.routeRules || {}
 
         if (!nuxt.options.dev) {
-          nitroConfig.routeRules[`${options.api.baseURL}/search.${buildIntegrity}.json`] = {
-            prerender: true
+          if (options.search.indexedSearch) {
+            nitroConfig.routeRules[`${options.api.baseURL}/indexed-search.${buildIntegrity}.txt`] = {
+              prerender: true,
+              // Use text/plain to avoid Nitro render an index.html
+              headers: { 'Content-Type': 'text/plain' }
+            }
+          } else {
+            nitroConfig.routeRules[`${options.api.baseURL}/search.${buildIntegrity}.json`] = {
+              prerender: true
+            }
           }
         }
       }
@@ -504,18 +526,28 @@ export default defineNuxtModule<ModuleOptions>({
 
       nuxt.options.modules.push('@vueuse/nuxt')
 
-      addImports([
-        {
-          name: 'defineMiniSearchOptions',
-          as: 'defineMiniSearchOptions',
-          from: resolveRuntimeModule('./composables/search')
-        },
-        {
-          name: 'useSearch',
-          as: 'useSearch',
-          from: resolveRuntimeModule('./composables/search')
-        }
-      ])
+      if (options.search.indexedSearch) {
+        addImports([
+          {
+            name: 'useIndexedSearch',
+            as: 'useIndexedSearch',
+            from: resolveRuntimeModule('./composables/search')
+          }
+        ])
+      } else {
+        addImports([
+          {
+            name: 'defineMiniSearchOptions',
+            as: 'defineMiniSearchOptions',
+            from: resolveRuntimeModule('./composables/search')
+          },
+          {
+            name: 'useSearch',
+            as: 'useSearch',
+            from: resolveRuntimeModule('./composables/search')
+          }
+        ])
+      }
     }
 
     // Register components

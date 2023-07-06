@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const search = ref('')
 
-const result = await useSearch(search)
+const result = await useIndexedSearch(search)
 </script>
 
 <template>
