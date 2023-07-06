@@ -3,7 +3,8 @@ export default defineNuxtConfig({
 
   content: {
     search: {
-      mode: 'full-text'
+      mode: 'full-text',
+      noExtractionFromTags: ['style', 'code']
     }
   },
 

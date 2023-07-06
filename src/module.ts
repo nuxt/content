@@ -199,7 +199,13 @@ export interface ModuleOptions {
     /**
      * Used to determine how to search content.
      */
-    mode: 'full-text' | 'meta'
+    mode: 'meta' | 'full-text',
+    /**
+     * List of tags where text must not be extracted. Only works with `full-text` mode.
+    *
+    * By default, will extract text from each tag.
+    */
+    noExtractionFromTags?: Array<string>
   }
   /**
    * List of locale codes.
