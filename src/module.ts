@@ -191,6 +191,17 @@ export interface ModuleOptions {
     fields: Array<string>
   }
   /**
+   * Search mode.
+   *
+   * @default false
+   */
+  search: false | {
+    /**
+     * Used to determine how to search content.
+     */
+    mode: 'full-text' | 'meta'
+  }
+  /**
    * List of locale codes.
    * This codes will be used to detect contents locale.
    *
@@ -280,6 +291,7 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
+    search: false,
     documentDriven: false,
     experimental: {
       clientDB: false,
@@ -347,6 +359,14 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
 
+      if (options.search) {
+        nitroConfig.handlers.push({
+          method: 'get',
+          route: `${options.api.baseURL}/search`,
+          handler: resolveRuntimeModule('./server/api/search')
+        })
+      }
+
       if (!nuxt.options.dev) {
         nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
@@ -409,6 +429,18 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
     ])
+
+    if (options.search) {
+      nuxt.options.modules.push('@vueuse/nuxt')
+
+      addImports([
+        {
+          name: 'useSearch',
+          as: 'useSearch',
+          from: resolveRuntimeModule('./composables/search')
+        }
+      ])
+    }
 
     // Register components
     await addComponentsDir({
@@ -617,6 +649,7 @@ export default defineNuxtModule<ModuleOptions>({
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
+      search: options.search,
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
@@ -745,6 +778,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  search: ModuleOptions['search']
 
   documentDriven: ModuleOptions['documentDriven']
 }

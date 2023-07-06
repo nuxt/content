@@ -88,6 +88,9 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/mdurl": "^1.0.2",
     "@types/ws": "^8.5.5",
+    "@vueuse/core": "^10.2.1",
+    "@vueuse/integrations": "^10.2.1",
+    "@vueuse/nuxt": "^10.2.1",
     "c8": "^8.0.0",
     "csvtojson": "^2.0.10",
     "eslint": "^8.43.0",
@@ -101,6 +104,9 @@
     "remark-oembed": "^1.2.2",
     "vitest": "^0.32.2",
     "vue-docgen-web-types": "^0.1.8"
+  },
+  "peerDependencies": {
+    "fuse.js": "^6.6.2"
   },
   "packageManager": "pnpm@8.6.5",
   "pnpm": {
