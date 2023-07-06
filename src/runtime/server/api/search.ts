@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
       file?._draft === false && file?._empty === false
       })
       .map(
-        async ({ _id: id, _path: path, _dir: dir, title = '', description = '', body = undefined, ...rest }) => {
+        ({ _id: id, _path: path, _dir: dir, title = '', description = '', body = undefined }) => {
           // TODO: add configuration to choose which fields to index
           return {
             id,
