@@ -9,17 +9,52 @@ export const useSearch = async <DataItem>(search: MaybeRefOrGetter<string>, opti
   const runtimeConfig = useRuntimeConfig()
   const integrity = runtimeConfig.public.content.integrity
   const baseAPI = runtimeConfig.public.content.api.baseURL
+  const { indexedSearch } = runtimeConfig.public.content.search
 
   const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 
   if (!data.value) { return [] }
 
-  const { results } = useMiniSearch(search, data as unknown as DataItem[], options)
+  if (indexedSearch) {
+    const { results } = useIndexedMiniSearch(search, data as unknown as string, options)
+    return results
+  }
 
+  const { results } = useMiniSearch(search, data as unknown as DataItem[], options)
   return results
 }
 
-// Could be move to @vueuse/integrations if it's useful and efficient
+// Could be moved to @vueuse/integrations if it's useful and efficient
+const useIndexedMiniSearch = <DataItem>(search: MaybeRefOrGetter<string>, indexedData: MaybeRefOrGetter<string>, options: MiniSearchOptions<DataItem>) => {
+  const createIndexedMiniSearch = () => {
+    return MiniSearch.loadJSON(toValue(indexedData), toValue(options))
+  }
+
+  const indexedMiniSearch = ref(createIndexedMiniSearch())
+
+  watch(
+    () => toValue(options),
+    () => { indexedMiniSearch.value = createIndexedMiniSearch() },
+    { deep: true }
+  )
+
+  watch(
+    () => toValue(indexedData),
+    () => { indexedMiniSearch.value = createIndexedMiniSearch() },
+    { deep: true }
+  )
+
+  const results = computed(() => {
+    return indexedMiniSearch.value.search(toValue(search))
+  })
+
+  return {
+    results,
+    indexedMiniSearch
+  }
+}
+
+// Could be moved to @vueuse/integrations if it's useful and efficient
 const useMiniSearch = function <T = any> (search: MaybeRefOrGetter<string>, data: MaybeRefOrGetter<T[]>, options: MaybeRefOrGetter<MiniSearchOptions<T>>) {
   const createMiniSearch = () => {
     return new MiniSearch(toValue(options))

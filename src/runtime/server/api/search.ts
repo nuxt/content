@@ -1,4 +1,5 @@
 import { defineEventHandler } from 'h3'
+import MiniSearch from 'minisearch'
 import { ParsedContent } from '../../types'
 import { useRuntimeConfig } from '#imports'
 import { serverQueryContent } from '#content/server'
@@ -20,26 +21,37 @@ const HEADING = /^h([1-6])$/
 const isHeading = (tag: string) => HEADING.test(tag)
 
 export default defineEventHandler(async (event) => {
-  // TODO: we could use an index to speed up the search
-
   const runtimeConfig = useRuntimeConfig()
-  const { search } = runtimeConfig.public.content
-
-  const isFullTextMode = search?.mode === 'full-text'
+  const { indexedSearch, ignoredTags } = runtimeConfig.public.content.search
 
   const files = await serverQueryContent(event).find()
 
-  const { extensions, draft, empty } = search.filter
-
-  // A document is a content that have a title. A file is composed by multiple documents.
-
   // Only works for MD
-  const sections = (await Promise.all(files.filter(file => file._extension === 'md').map(page => splitPageIntoSections(page)))).flat()
+  const sections = (await Promise.all(
+    files
+      .filter(file => file._extension === 'md' && !file?._draft && !file?.empty)
+      .map(page => splitPageIntoSections(page, { ignoredTags }))))
+    .flat()
+
+  if (indexedSearch) {
+    // Add an option to enable index
+    const miniSearch = new MiniSearch({
+      // TODO: move to options
+      fields: ['title', 'content', 'titles'],
+      storeFields: ['title', 'content', 'titles']
+    })
+
+    // Index the documents
+    miniSearch.addAll(sections)
+
+    // Send the index to the client
+    return JSON.stringify(miniSearch)
+  }
 
   return sections
 })
 
-function splitPageIntoSections (page: ParsedContent) {
+function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { ignoredTags: string[] }) {
   const path = page._path ?? ''
 
   const sections: Section[] = []
@@ -100,7 +112,7 @@ function splitPageIntoSections (page: ParsedContent) {
         }
       }
 
-      sections[section].content += extractTextFromAst(item).trim()
+      sections[section].content += extractTextFromAst(item, ignoredTags).trim()
     }
   }
 
@@ -108,7 +120,7 @@ function splitPageIntoSections (page: ParsedContent) {
 }
 
 // TODO: Should be tested
-function extractTextFromAst (node: any, tagsToRemove: string[] = []) {
+function extractTextFromAst (node: any, ignoredTags: string[] = []) {
   let text = ''
 
   // Get text from markdown AST
@@ -117,7 +129,7 @@ function extractTextFromAst (node: any, tagsToRemove: string[] = []) {
   }
 
   // Do not explore children
-  if (tagsToRemove.includes(node.tag ?? '')) {
+  if (ignoredTags.includes(node.tag ?? '')) {
     return ''
   }
 
@@ -128,7 +140,7 @@ function extractTextFromAst (node: any, tagsToRemove: string[] = []) {
   // Explore children
   if (node.children) {
     for (const child of node.children) {
-      text += ' ' + extractTextFromAst(child, tagsToRemove)
+      text += ' ' + extractTextFromAst(child, ignoredTags)
     }
   }
 

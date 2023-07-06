@@ -105,9 +105,6 @@
     "vitest": "^0.32.2",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "peerDependencies": {
-    "fuse.js": "^6.6.2"
-  },
   "packageManager": "pnpm@8.6.5",
   "pnpm": {
     "peerDependencyRules": {

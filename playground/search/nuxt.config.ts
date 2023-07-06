@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   content: {
     search: {
       mode: 'full-text',
-      noExtractionFromTags: ['style', 'code']
+      indexedSearch: true
     }
   },
 

@@ -199,43 +199,21 @@ export interface ModuleOptions {
     /**
      * Used to determine how to search content.
      */
-    mode: 'meta' | 'full-text'
-
-    filter: {
-      /**
-       * Extensions to keep for text extraction.
-       *
-       * @default ['md']
-       */
-      extensions?: Array<string>
-      /**
-       * Keep draft contents.
-       *
-       * @default false
-       */
-      draft?: boolean
-      /**
-       * Keep empty contents.
-       *
-       * @default false
-       */
-      empty?: boolean
-    }
+    mode: 'full-text'
     /**
      * List of tags where text must not be extracted. Only works with `full-text` mode.
     *
     * By default, will extract text from each tag.
     *
-    * @default []
+    * @default ['style', 'code']
     */
-    noExtractionFromTags?: Array<string>
-
+    ignoredTags?: Array<string>
     /**
-     * List of fields return by the API.
+     * API return indexed contents to improve client-side load time.
      *
-     * @default ['path', 'title', 'description', 'body']
+     * @default true
      */
-    returnedFields: Array<string>
+    indexedSearch: boolean
   }
   /**
    * List of locale codes.
@@ -478,25 +456,14 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     if (options.search) {
-      // Add default search options
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
-        // TODO: flatten options and rework this
-        filter: {
-          draft: false,
-          empty: false,
-          extensions: ['md']
-        },
-        noExtractionFromTags: [],
-        returnedFields: ['path', 'title', 'description', 'body']
+        indexedSearch: true,
+        ignoredTags: ['style', 'code']
       }
 
       options.search = {
         ...defaultSearchOptions,
-        ...options.search,
-        filter: {
-          ...defaultSearchOptions.filter,
-          ...options.search.filter
-        }
+        ...options.search
       }
 
       nuxt.options.modules.push('@vueuse/nuxt')

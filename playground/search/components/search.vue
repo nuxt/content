@@ -2,6 +2,7 @@
 const search = ref('')
 
 const options = defineMiniSearchOptions({
+  // TODO: could be define in config
   fields: ['title', 'content', 'titles'],
   storeFields: ['title', 'content', 'titles'],
   searchOptions: {
