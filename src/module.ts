@@ -225,8 +225,17 @@ export interface ModuleOptions {
      * List of tags where text must not be extracted. Only works with `full-text` mode.
     *
     * By default, will extract text from each tag.
+    *
+    * @default []
     */
     noExtractionFromTags?: Array<string>
+
+    /**
+     * List of fields return by the API.
+     *
+     * @default ['path', 'title', 'description', 'body']
+     */
+    returnedFields: Array<string>
   }
   /**
    * List of locale codes.
@@ -471,18 +480,33 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.search) {
       // Add default search options
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
+        // TODO: flatten options and rework this
         filter: {
           draft: false,
           empty: false,
           extensions: ['md']
-        }
+        },
+        noExtractionFromTags: [],
+        returnedFields: ['path', 'title', 'description', 'body']
       }
 
-      options.search = defu(options.search, defaultSearchOptions)
+      options.search = {
+        ...defaultSearchOptions,
+        ...options.search,
+        filter: {
+          ...defaultSearchOptions.filter,
+          ...options.search.filter
+        }
+      }
 
       nuxt.options.modules.push('@vueuse/nuxt')
 
       addImports([
+        {
+          name: 'defineMiniSearchOptions',
+          as: 'defineMiniSearchOptions',
+          from: resolveRuntimeModule('./composables/search')
+        },
         {
           name: 'useSearch',
           as: 'useSearch',
