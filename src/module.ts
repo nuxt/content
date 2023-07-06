@@ -410,8 +410,7 @@ export default defineNuxtModule<ModuleOptions>({
 
         if (!nuxt.options.dev) {
           nitroConfig.routeRules[`${options.api.baseURL}/search.${buildIntegrity}.json`] = {
-            prerender: true,
-            swr: true
+            prerender: true
           }
         }
       }
