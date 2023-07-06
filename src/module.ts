@@ -204,7 +204,7 @@ export interface ModuleOptions {
    */
   defaultLocale?: string
   /**
-   * Ignore automatic usage of `useContentHead`
+   * Enable automatic usage of `useContentHead`
    *
    * @default true
    */
