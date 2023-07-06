@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
-import { serverQueryContent } from '../storage'
 import { useRuntimeConfig } from '#imports'
+import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event) => {
   const { search } = useRuntimeConfig().public.content

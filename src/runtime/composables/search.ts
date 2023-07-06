@@ -1,11 +1,11 @@
 import { useFuse } from '@vueuse/integrations/useFuse'
+import { toValue } from '@vueuse/shared'
 import { useRuntimeConfig, useLazyFetch } from '#imports'
 
-export const useSearch = async (query: string) => {
+export const useSearch = async (query: MaybeRefOrGetter<string>) => {
   const baseAPI = useRuntimeConfig().public.content.api.baseURL
 
-  // TODO: find a way to avoid fetching every time all the content
-  const { data } = await useLazyFetch(`${baseAPI}/search`)
+  const { data } = await useLazyFetch(`${baseAPI}/search.json`)
 
   // TODO: add a way to configure the search (using options from search?)
   const { results } = useFuse(query,

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-const search = ref('')
-const result = await useSearch(search)
+const open = ref(false)
 </script>
 
 <template>
   <div>
     <h1>Search</h1>
-    <p>Search page</p>
 
-    <input v-model="search">
+    <button @click="open = !open">
+      {{ open ? 'Close' : 'Open' }} Search
+    </button>
 
-    <pre>{{ result }} </pre>
+    <Search v-if="open" />
   </div>
 </template>

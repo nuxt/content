@@ -362,9 +362,14 @@ export default defineNuxtModule<ModuleOptions>({
       if (options.search) {
         nitroConfig.handlers.push({
           method: 'get',
-          route: `${options.api.baseURL}/search`,
+          route: `${options.api.baseURL}/search.json`,
           handler: resolveRuntimeModule('./server/api/search')
         })
+        nitroConfig.routeRules = nitroConfig.routeRules || {}
+        nitroConfig.routeRules[`${options.api.baseURL}/search.json`] = {
+          prerender: true,
+          swr: true
+        }
       }
 
       if (!nuxt.options.dev) {
