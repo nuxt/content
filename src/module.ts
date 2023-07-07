@@ -757,7 +757,7 @@ export default defineNuxtModule<ModuleOptions>({
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
-      search: options.search,
+      search: options.search as any,
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
