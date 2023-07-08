@@ -33,7 +33,7 @@ export const useContentState = <G extends object = Record<string, unknown>>() =>
   }
 }
 
-export const useContent = <T extends ParsedContent, G extends object>() => {
+export const useContent = <T extends ParsedContent, G extends object = Record<string, unknown>>() => {
   const { navigation, pages, surrounds, globals } = useContentState<G>()
 
   const _path = computed(() => withoutTrailingSlash(useRoute().path))
