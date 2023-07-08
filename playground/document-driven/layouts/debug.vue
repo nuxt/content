@@ -1,5 +1,5 @@
 <script setup>
-const { layout, surround } = useContent()
+const { layout } = useContent()
 </script>
 <template>
   <div>
