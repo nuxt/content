@@ -32,7 +32,7 @@ export interface ParsedContentInternalMeta {
   /**
    * File type of the content, i.e `markdown`
    */
-  _type?: string
+  _type?: 'markdown' | 'yaml' | 'json' | 'csv'
   /**
    * Path to the file relative to the content directory
    */
@@ -40,7 +40,7 @@ export interface ParsedContentInternalMeta {
   /**
    * Extension of the file
    */
-  _extension?: string
+  _extension?: 'md' | 'yaml' | 'yml' | 'json' | 'json5' | 'csv'
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
@@ -48,14 +48,18 @@ export interface ParsedContentMeta extends ParsedContentInternalMeta {
 }
 
 export interface ParsedContent extends ParsedContentMeta {
+  layout: string
   /**
    * Excerpt
    */
-  excerpt?: any
+  excerpt?: MarkdownRoot
+  // use generic with body
   /**
    * Content body
    */
-  body: any
+  body: {
+    toc: Toc
+  }
 }
 
 //
@@ -108,6 +112,7 @@ export interface TocLink {
   children?: TocLink[]
 }
 
+// TODO: use in Content
 export interface Toc {
   title: string
   depth: number
@@ -499,5 +504,6 @@ export interface NavItem {
   _draft?: boolean
   children?: NavItem[]
 
+  // TODO: used types generated from the config file
   [key: string]: any
 }
