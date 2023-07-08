@@ -57,9 +57,7 @@ export interface ParsedContent extends ParsedContentMeta {
   /**
    * Content body
    */
-  body: {
-    toc: Toc
-  }
+  body: MarkdownRoot
 }
 
 //
@@ -84,6 +82,7 @@ export interface MarkdownRoot {
   type: 'root'
   children: MarkdownNode[]
   props?: Record<string, any>
+  toc?: Toc
 }
 
 export interface MarkdownPlugin extends Record<string, any> {}
