@@ -48,12 +48,14 @@ export interface ParsedContentMeta extends ParsedContentInternalMeta {
 }
 
 export interface ParsedContent extends ParsedContentMeta {
+  /**
+   * Layout
+   */
   layout: string
   /**
    * Excerpt
    */
   excerpt?: MarkdownRoot
-  // use generic with body
   /**
    * Content body
    */
