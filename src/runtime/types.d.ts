@@ -112,7 +112,6 @@ export interface TocLink {
   children?: TocLink[]
 }
 
-// TODO: use in Content
 export interface Toc {
   title: string
   depth: number
@@ -504,6 +503,5 @@ export interface NavItem {
   _draft?: boolean
   children?: NavItem[]
 
-  // TODO: used types generated from the config file
   [key: string]: any
 }
