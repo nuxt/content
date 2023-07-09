@@ -630,7 +630,7 @@ export default defineNuxtModule<ModuleOptions>({
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md')
+      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.{md,yml,yaml,json}')
       tailwindConfig.content = tailwindConfig.content ?? []
 
       if (Array.isArray(tailwindConfig.content)) {
