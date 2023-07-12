@@ -223,6 +223,7 @@ export interface ModuleOptions {
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
+    keepUppercase: boolean
   }
 }
 
@@ -283,7 +284,8 @@ export default defineNuxtModule<ModuleOptions>({
     documentDriven: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false
+      stripQueryParameters: false,
+      keepUppercase: false
     }
   },
   async setup (options, nuxt) {
@@ -603,7 +605,8 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
-        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
+        keepUppercase: options.experimental.keepUppercase ?? false
       },
       api: {
         baseURL: options.api.baseURL
@@ -728,6 +731,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
+    keepUppercase: boolean
   }
 
   defaultLocale: ModuleOptions['defaultLocale']
