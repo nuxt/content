@@ -220,10 +220,15 @@ export interface ModuleOptions {
     injectPage?: boolean
     trailingSlash?: boolean
   },
+  /**
+   * Enable to keep uppercase characters in the generated routes.
+   *
+   * @default false
+   */
+  keepUppercase: boolean
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
-    keepUppercase: boolean
   }
 }
 
@@ -282,10 +287,10 @@ export default defineNuxtModule<ModuleOptions>({
       fields: []
     },
     documentDriven: false,
+    keepUppercase: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false,
-      keepUppercase: false
+      stripQueryParameters: false
     }
   },
   async setup (options, nuxt) {
@@ -605,9 +610,9 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
-        clientDB: options.experimental.clientDB && nuxt.options.ssr === false,
-        keepUppercase: options.experimental.keepUppercase ?? false
+        clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
+      keepUppercase: options.keepUppercase ?? false,
       api: {
         baseURL: options.api.baseURL
       },
@@ -731,8 +736,8 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
-    keepUppercase: boolean
   }
+  keepUppercase: boolean
 
   defaultLocale: ModuleOptions['defaultLocale']
 
