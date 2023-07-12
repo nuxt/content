@@ -5,7 +5,7 @@ const preferNoBanner = ref(false)
 <template>
   <div v-show="!preferNoBanner" class="banner-wrapper template-banner">
     <div class="content-wrapper">
-      <NuxtLink to="https://nuxt.studio/" target="_blank">
+      <NuxtLink to="https://nuxt.studio/?utm_source=content-site&utm_medium=banner&utm_campaign=home" target="_blank">
         <svg width="80" height="17" viewBox="0 0 80 17" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M14.264 16.5H23.1858C23.4692 16.5 23.7476 16.4261 23.993 16.2857C24.2384 16.1452 24.4422 15.9432 24.5838 15.7C24.7254 15.4567 24.7999 15.1808 24.7998 14.8999C24.7997 14.6191 24.7249 14.3432 24.5831 14.1001L18.5915 3.81436C18.4498 3.57116 18.2461 3.3692 18.0008 3.22878C17.7554 3.08836 17.4771 3.01443 17.1938 3.01443C16.9104 3.01443 16.6321 3.08836 16.3868 3.22878C16.1414 3.3692 15.9377 3.57116 15.7961 3.81436L14.264 6.44611L11.2686 1.29981C11.1269 1.05663 10.9231 0.854695 10.6777 0.714302C10.4322 0.573909 10.1539 0.5 9.8705 0.5C9.58713 0.5 9.30876 0.573909 9.06334 0.714302C8.81792 0.854695 8.6141 1.05663 8.47236 1.29981L1.01651 14.1001C0.874669 14.3432 0.799928 14.6191 0.799805 14.8999C0.799682 15.1808 0.874181 15.4567 1.01581 15.7C1.15744 15.9432 1.3612 16.1452 1.6066 16.2857C1.85201 16.4261 2.1304 16.5 2.41378 16.5H8.01415C10.2331 16.5 11.8695 15.534 12.9954 13.6494L15.7291 8.95721L17.1933 6.44611L21.5877 13.9889H15.7291L14.264 16.5ZM7.92285 13.9863L4.0145 13.9854L9.87311 3.92897L12.7963 8.95721L10.8391 12.318C10.0914 13.5408 9.24186 13.9863 7.92285 13.9863Z" fill="url(#paint0_linear_2964_17006)" />
           <path d="M32.7066 16.5C35.4333 16.5 37.2742 15.0642 37.2742 12.7703C37.2742 7.91998 30.883 9.98619 30.883 7.42969C30.883 6.71177 31.5256 6.22148 32.5503 6.22148C33.7139 6.22148 34.4433 6.85185 34.5302 7.81492H37.0137C36.9443 5.48605 35.1728 3.96266 32.5503 3.96266C30.0841 3.96266 28.3473 5.3985 28.3473 7.42969C28.3473 12.245 34.6517 10.4064 34.6517 12.8053C34.6517 13.7334 33.8702 14.2237 32.7066 14.2237C31.4214 14.2237 30.6051 13.4357 30.5009 12.1925H28C28.1042 14.8015 29.9452 16.5 32.7066 16.5Z" fill="currentColor" />
@@ -30,12 +30,12 @@ const preferNoBanner = ref(false)
         </svg>
       </NuxtLink>
       <p>
-        <NuxtLink to="https://nuxt.studio/" target="_blank">
+        <NuxtLink to="https://nuxt.studio/?utm_source=content-site&utm_medium=banner&utm_campaign=home" target="_blank">
           Edit your Nuxt Content websites in production with live preview
         </NuxtLink>
       </p>
 
-      <NuxtLink to="https://nuxt.studio/" target="_blank" class="link">
+      <NuxtLink to="https://nuxt.studio/?utm_source=content-site&utm_medium=banner&utm_campaign=home" target="_blank" class="link">
         Try it now!
       </NuxtLink>
     </div>
