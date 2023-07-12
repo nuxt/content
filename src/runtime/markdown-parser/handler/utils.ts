@@ -20,7 +20,7 @@ export function parseThematicBlock (lang: string) {
 
   const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
   const highlightTokens = lang.match(/{([^}]*)}/)
-  const filenameTokens = lang.match(/\[([^\]]*)\]/)
+  const filenameTokens = lang.match(/\[(.*)\]/) /** Allow ']' in filename. @see https://regex101.com/r/Hm0t5m/1 */
   const meta = lang.replace(/^\w*\s*(\[[^\]]*\]|\{[^}]*\})?\s*(\[[^\]]*\]|\{[^}]*\})?\s*/, '')
 
   return {
