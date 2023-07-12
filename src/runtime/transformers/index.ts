@@ -1,5 +1,6 @@
 import { extname } from 'pathe'
 import { camelCase } from 'scule'
+import { StorageMeta } from 'unstorage'
 import type { ContentTransformer, TransformContentOptions } from '../types'
 import csv from './csv'
 import markdown from './markdown'
@@ -36,7 +37,7 @@ function getTransformers (ext: string, additionalTransformers: ContentTransforme
 /**
  * Parse content file using registered plugins
  */
-export async function transformContent (id: string, content: string, options: TransformContentOptions = {}) {
+export async function transformContent (id: string, content: string, meta: StorageMeta = {}, options: TransformContentOptions = {}) {
   const { transformers = [] } = options
   // Call hook before parsing the file
   const file = { _id: id, body: content }
@@ -65,6 +66,11 @@ export async function transformContent (id: string, content: string, options: Tr
 
     return cur.transform!(next, transformOptions || {})
   }, Promise.resolve(parsed))
+
+  // Add meta
+  if (meta && meta.mtime) {
+    result._updatedAt = meta.mtime.toISOString()
+  }
 
   return result
 }

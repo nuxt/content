@@ -41,6 +41,10 @@ export interface ParsedContentInternalMeta {
    * Extension of the file
    */
   _extension?: string
+  /**
+   * Last update date
+   */
+  _updatedAt?: string
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
