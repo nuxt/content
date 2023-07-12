@@ -46,7 +46,7 @@ if (process.server) {
     '.banner-wrapper': {
       display: 'flex',
       position: 'relative',
-      zIndex: 9999,
+      zIndex: 50,
       borderBottom: '1px solid',
       background: 'white',
       minHeight: '43px',
