@@ -1,21 +1,6 @@
 import MiniSearch, { type Options as MiniSearchOptions } from 'minisearch'
 import { useRuntimeConfig, useFetch } from '#imports'
 
-export const useIndexedSearch = async <DataItem>(search: MaybeRefOrGetter<string>) => {
-  const runtimeConfig = useRuntimeConfig()
-  const integrity = runtimeConfig.public.content.integrity
-  const baseAPI = runtimeConfig.public.content.api.baseURL
-  const { options } = runtimeConfig.public.content.search
-
-  const { data } = await useFetch<DataItem[]>(`${baseAPI}/indexed-search${integrity ? '.' + integrity : ''}.txt`)
-
-  if (!data.value) { return [] }
-
-  const { results } = useIndexedMiniSearch(search, data as unknown as string, options)
-
-  return results
-}
-
 export const defineMiniSearchOptions = <DataItem>(options: MiniSearchOptions<DataItem>) => {
   return ref(options)
 }
@@ -24,6 +9,19 @@ export const useSearch = async <DataItem>(search: MaybeRefOrGetter<string>, opti
   const runtimeConfig = useRuntimeConfig()
   const integrity = runtimeConfig.public.content.integrity
   const baseAPI = runtimeConfig.public.content.api.baseURL
+  const useIndexedSearch = runtimeConfig.public.content.search?.indexedSearch ?? false
+
+  if (useIndexedSearch) {
+    const { options } = runtimeConfig.public.content.search
+
+    const { data } = await useFetch<DataItem[]>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`)
+
+    if (!data.value) { return [] }
+
+    const { results } = useIndexedMiniSearch(search, data as unknown as string, options)
+
+    return results
+  }
 
   const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 

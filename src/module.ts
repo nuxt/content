@@ -12,7 +12,7 @@ import {
 import { type Options as MiniSearchOptions } from 'minisearch'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-// eslint-disable-next-line import/no-named-as-default
+
 import defu from 'defu'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
@@ -194,9 +194,9 @@ export interface ModuleOptions {
   /**
    * Search mode.
    *
-   * @default false
+   * @default undefined
    */
-  search: false | {
+  search?: {
     /**
      * Used to determine how to search content.
      */
@@ -332,7 +332,7 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    search: false,
+    search: undefined,
     documentDriven: false,
     experimental: {
       clientDB: false,
@@ -406,8 +406,8 @@ export default defineNuxtModule<ModuleOptions>({
           nitroConfig.handlers.push({
             method: 'get',
             route: nuxt.options.dev
-              ? `${options.api.baseURL}/indexed-search.txt`
-              : `${options.api.baseURL}/indexed-search.${buildIntegrity}.txt`,
+              ? `${options.api.baseURL}/indexed-search`
+              : `${options.api.baseURL}/indexed-search-${buildIntegrity}`,
             handler: resolveRuntimeModule('./server/api/indexed-search')
           })
         } else {
@@ -424,7 +424,7 @@ export default defineNuxtModule<ModuleOptions>({
 
         if (!nuxt.options.dev) {
           if (options.search.indexedSearch) {
-            nitroConfig.routeRules[`${options.api.baseURL}/indexed-search.${buildIntegrity}.txt`] = {
+            nitroConfig.routeRules[`${options.api.baseURL}/indexed-search-${buildIntegrity}`] = {
               prerender: true,
               // Use text/plain to avoid Nitro render an index.html
               headers: { 'Content-Type': 'text/plain' }
@@ -504,6 +504,7 @@ export default defineNuxtModule<ModuleOptions>({
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
         indexedSearch: true,
         ignoredTags: ['style', 'code'],
+        // maybe, we could rename it "indexedSearchOptions" since this will only be used for indexed search
         options: {
           fields: ['title', 'content', 'titles'],
           storeFields: ['title', 'content', 'titles'],
@@ -526,28 +527,18 @@ export default defineNuxtModule<ModuleOptions>({
 
       nuxt.options.modules.push('@vueuse/nuxt')
 
-      if (options.search.indexedSearch) {
-        addImports([
-          {
-            name: 'useIndexedSearch',
-            as: 'useIndexedSearch',
-            from: resolveRuntimeModule('./composables/search')
-          }
-        ])
-      } else {
-        addImports([
-          {
-            name: 'defineMiniSearchOptions',
-            as: 'defineMiniSearchOptions',
-            from: resolveRuntimeModule('./composables/search')
-          },
-          {
-            name: 'useSearch',
-            as: 'useSearch',
-            from: resolveRuntimeModule('./composables/search')
-          }
-        ])
-      }
+      addImports([
+        {
+          name: 'defineMiniSearchOptions',
+          as: 'defineMiniSearchOptions',
+          from: resolveRuntimeModule('./composables/search')
+        },
+        {
+          name: 'useSearch',
+          as: 'useSearch',
+          from: resolveRuntimeModule('./composables/search')
+        }
+      ])
     }
 
     // Register components

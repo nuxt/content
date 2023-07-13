@@ -44,6 +44,8 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.6.1",
+    "@vueuse/core": "^10.2.1",
+    "@vueuse/nuxt": "^10.2.1",
     "consola": "^3.2.0",
     "defu": "^6.1.2",
     "destr": "^2.0.0",
@@ -89,8 +91,6 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/mdurl": "^1.0.2",
     "@types/ws": "^8.5.5",
-    "@vueuse/core": "^10.2.1",
-    "@vueuse/nuxt": "^10.2.1",
     "c8": "^8.0.0",
     "csvtojson": "^2.0.10",
     "eslint": "^8.43.0",
