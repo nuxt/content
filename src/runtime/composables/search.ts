@@ -14,7 +14,7 @@ export const useSearch = async <DataItem>(search: MaybeRefOrGetter<string>, opti
   if (useIndexedSearch) {
     const { options } = runtimeConfig.public.content.search
 
-    const { data } = await useFetch<DataItem[]>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`)
+    const { data } = await useFetch<string>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`, { responseType: 'text' }) as unknown as string
 
     if (!data.value) { return [] }
 
