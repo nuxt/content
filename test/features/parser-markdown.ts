@@ -114,6 +114,81 @@ export const testMarkdownParser = () => {
         expect(props.filename).toBe(undefined)
         expect(props.highlights).toEqual([4, 5, 6, 7])
       })
+
+      test('Extract filename with "[" or "]"', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```ts[[...page].vue] {4-6,7} other code block info',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('other code block info')
+        expect(props.language).toBe('ts')
+        expect(props.filename).toBe('[...page].vue')
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
+
+      test('Extract filename with "[" or "]" in the name without language in code block', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```[[...page].vue] {4-6,7} other code block info',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('other code block info')
+        expect(props.language).toBe(undefined)
+        expect(props.filename).toBe('[...page].vue')
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
+
+      test.fails('Extract filename with "[" or "]" with "[" in meta', async () => {
+        const parsed = await $fetch('/api/parse', {
+          method: 'POST',
+          body: {
+            id: 'content:index.md',
+            content: [
+              '```ts[[...page].vue] {4-6,7} meta=[]',
+              'let code = undefined;',
+              'return code;',
+              '```'
+            ].join('\n')
+          }
+        })
+
+        expect(parsed).toHaveProperty('body')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].props')
+        const props = parsed.body.children[0].props
+        expect(props).toHaveProperty('meta')
+        expect(props.meta).toBe('[]')
+        expect(props.language).toBe(undefined)
+        expect(props.filename).toBe('[...page].vue')
+        expect(props.highlights).toEqual([4, 5, 6, 7])
+      })
     })
 
     describe('Frontmatter', () => {

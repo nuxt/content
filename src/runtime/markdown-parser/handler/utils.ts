@@ -18,15 +18,19 @@ export function parseThematicBlock (lang: string) {
     }
   }
 
-  const language = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
-  const highlightTokens = lang.match(/{([^}]*)}/)
-  const filenameTokens = lang.match(/\[(.*)\]/) /** Allow ']' in filename. @see https://regex101.com/r/Hm0t5m/1 */
-  const meta = lang.replace(/^\w*\s*(\[[^\]]*\]|\{[^}]*\})?\s*(\[[^\]]*\]|\{[^}]*\})?\s*/, '')
+  const languageMatches = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
+  const highlightTokensMatches = lang.match(/{([^}]*)}/)
+  const filenameMatches = lang.match(/\[((\S)*)\]/) /** Allow ']' in filename. */
+  const meta = lang
+    .replace(languageMatches?.[0] ?? '', '')
+    .replace(highlightTokensMatches?.[0] ?? '', '')
+    .replace(filenameMatches?.[0] ?? '', '')
+    .trim()
 
   return {
-    language: language ? language[0] : undefined,
-    highlights: parseHighlightedLines(highlightTokens && highlightTokens[1]),
-    filename: Array.isArray(filenameTokens) && filenameTokens[1] ? filenameTokens[1] : undefined,
+    language: languageMatches?.[0],
+    highlights: parseHighlightedLines(highlightTokensMatches?.[1]),
+    filename: filenameMatches?.[1],
     meta
   }
 }

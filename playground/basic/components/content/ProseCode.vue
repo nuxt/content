@@ -9,7 +9,22 @@ defineProps<{
 </script>
 
 <template>
-  <span v-if="filename"> {{ filename }} </span>
+  <div v-if="language">
+    language <br>
+    {{ language }}
+  </div>
+  <div v-if="filename">
+    filename <br>
+    {{ filename }}
+  </div>
+  <div v-if="highlights">
+    highlights <br>
+    {{ highlights }}
+  </div>
+  <div v-if="meta">
+    meta <br>
+    {{ meta }}
+  </div>
   <slot />
 </template>
 
