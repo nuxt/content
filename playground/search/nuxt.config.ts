@@ -4,6 +4,8 @@ export default defineNuxtConfig({
   content: {
     search: {
       mode: 'full-text',
+      ignorePartials: true,
+      ignoreEmpty: true,
     }
   },
 

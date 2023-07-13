@@ -19,7 +19,12 @@ const isHeading = (tag: string) => HEADING.test(tag)
 export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { ignoredTags: string[] }) {
   const path = page._path ?? ''
 
+  // TODO: title in frontmatter must be added
   const sections: Section[] = []
+
+  if (!page?.body?.children) {
+    return sections
+  }
 
   // No section
   let section = -1

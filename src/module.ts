@@ -210,6 +210,30 @@ export interface ModuleOptions {
     */
     ignoredTags?: Array<string>
     /**
+     * Filter drafts files returned by the API.
+     *
+     * If true, draft content files will not be returned for search queries.
+     *
+     * @default true
+     */
+    ignoreDrafts?: boolean
+    /**
+     * Filter partials files returned by the API.
+     *
+     * If true, partial files will not be returned for search queries.
+     *
+     * @default true
+     */
+    ignorePartials?: boolean
+    /**
+     * Filter empty files returned by the API.
+     *
+     * If true, empty files will not be returned for search queries.
+     *
+     * @default true
+     */
+    ignoreEmpty?: boolean
+    /**
      * API return indexed contents to improve client-side load time.
      * This option will use MiniSearch to create the index.
      * If you disable this option, API will return raw contents instead
@@ -504,7 +528,10 @@ export default defineNuxtModule<ModuleOptions>({
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
         indexedSearch: true,
         ignoredTags: ['style', 'code'],
-        // maybe, we could rename it "indexedSearchOptions" since this will only be used for indexed search
+        ignoreDrafts: true,
+        ignoreEmpty: true,
+        ignorePartials: true,
+        // Maybe, we could rename it "indexedSearchOptions" since this will only be used for indexed search
         options: {
           fields: ['title', 'content', 'titles'],
           storeFields: ['title', 'content', 'titles'],
