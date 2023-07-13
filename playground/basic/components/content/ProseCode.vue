@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
     code: string,
     language?: string,
     filename?: string,
     highlights: number[],
     meta?: string
   }>()
+
+console.log(props)
 </script>
 
 <template>

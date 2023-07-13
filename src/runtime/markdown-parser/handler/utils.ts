@@ -28,9 +28,9 @@ export function parseThematicBlock (lang: string) {
     .trim()
 
   return {
-    language: languageMatches?.[0] ?? undefined,
-    highlights: parseHighlightedLines(highlightTokensMatches?.[1] ?? undefined),
-    filename: filenameMatches?.[1] ?? undefined,
+    language: languageMatches?.[0] || undefined,
+    highlights: parseHighlightedLines(highlightTokensMatches?.[1] || undefined),
+    filename: filenameMatches?.[1] || undefined,
     meta
   }
 }
