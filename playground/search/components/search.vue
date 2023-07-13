@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const search = ref('')
 
-// Usage for indexed search
+// Usage for non indexed search
 // const options = defineMiniSearchOptions({
 //   fields: ['title', 'content', 'titles'],
 //   storeFields: ['title', 'content', 'titles'],

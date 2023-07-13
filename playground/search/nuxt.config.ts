@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     search: {
       mode: 'full-text',
       ignorePartials: true,
-      ignoreEmpty: true,
+      ignoreEmpty: true
     }
   },
 

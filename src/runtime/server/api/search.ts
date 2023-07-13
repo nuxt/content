@@ -5,7 +5,7 @@ import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig()
-  const { ignoredTags, ignoreDrafts, ignorePartials, ignoreEmpty, options } = runtimeConfig.public.content.search
+  const { ignoredTags, ignoreDrafts, ignorePartials, ignoreEmpty } = runtimeConfig.public.content.search
 
   const files = await serverQueryContent(event).find()
 
