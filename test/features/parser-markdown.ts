@@ -121,8 +121,7 @@ export const testMarkdownParser = () => {
           body: {
             id: 'content:index.md',
             content: [
-              // eslint-disable-next-line no-useless-escape
-              '```ts[[...page\].vue] {4-6,7} other code block info',
+              '```ts[[...page\\].vue] {4-6,7} other code block info',
               'let code = undefined;',
               'return code;',
               '```'
@@ -147,8 +146,8 @@ export const testMarkdownParser = () => {
           body: {
             id: 'content:index.md',
             content: [
-              // eslint-disable-next-line no-useless-escape
-              '```[[...page\].vue] {4-6,7} other code block info',
+
+              '```[[...page\\].vue] {4-6,7} other code block info',
               'let code = undefined;',
               'return code;',
               '```'
