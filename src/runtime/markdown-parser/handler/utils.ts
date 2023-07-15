@@ -29,7 +29,7 @@ export function parseThematicBlock (lang: string) {
 
   return {
     language: languageMatches?.[0] || undefined,
-    highlights: parseHighlightedLines(highlightTokensMatches?.[1] || undefined),
+    highlights: parseHighlightedLines(highlightTokensMatches?.[1].replace(/\\]/g, ']') || undefined),
     filename: filenameMatches?.[1] || undefined,
     meta
   }
