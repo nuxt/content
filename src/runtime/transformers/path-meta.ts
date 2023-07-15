@@ -68,7 +68,7 @@ const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => par
  */
 export const generatePath = (path: string, { forceLeadingSlash = true } = {}): string => {
   const { content } = useRuntimeConfig().public
-  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: !content.keepUppercase })).join('/')
+  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: !content.respectPathCase })).join('/')
   return forceLeadingSlash ? withLeadingSlash(withoutTrailingSlash(path)) : path
 }
 
