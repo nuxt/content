@@ -20,7 +20,8 @@ export function parseThematicBlock (lang: string) {
 
   const languageMatches = lang.replace(/[{|[](.+)/, '').match(/^[^ \t]+(?=[ \t]|$)/)
   const highlightTokensMatches = lang.match(/{([^}]*)}/)
-  const filenameMatches = lang.match(\[((\\]|[^\]])*)\]/)
+  const filenameMatches = lang.match(/\[((\\]|[^\]])*)\]/)
+
   const meta = lang
     .replace(languageMatches?.[0] ?? '', '')
     .replace(highlightTokensMatches?.[0] ?? '', '')
@@ -29,8 +30,8 @@ export function parseThematicBlock (lang: string) {
 
   return {
     language: languageMatches?.[0] || undefined,
-    highlights: parseHighlightedLines(highlightTokensMatches?.[1].replace(/\\]/g, ']') || undefined),
-    filename: filenameMatches?.[1] || undefined,
+    highlights: parseHighlightedLines(highlightTokensMatches?.[1] || undefined),
+    filename: filenameMatches?.[1].replace(/\\]/g, ']') || undefined,
     meta
   }
 }
