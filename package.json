@@ -97,7 +97,7 @@
     "lint-staged": "^13.2.2",
     "nuxt": "3.6.1",
     "rehype-figure": "^1.0.1",
-    "release-it": "^15.11.0",
+    "release-it": "^16.1.2",
     "remark-oembed": "^1.2.2",
     "vitest": "^0.32.2",
     "vue-docgen-web-types": "^0.1.8"
