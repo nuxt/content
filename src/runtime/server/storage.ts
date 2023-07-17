@@ -26,6 +26,7 @@ interface ParseContentOptions {
   pathMeta?: {
     locales?: ModuleOptions['locales']
     defaultLocale?: ModuleOptions['defaultLocale']
+    respectPathCase?: ModuleOptions['respectPathCase']
   }
   // Allow passing options for custom transformers
   [key: string]: any
@@ -173,7 +174,8 @@ export const parseContent = async (id: string, content: StorageValue, opts: Pars
       transformers: customTransformers,
       pathMeta: {
         defaultLocale: contentConfig.defaultLocale,
-        locales: contentConfig.locales
+        locales: contentConfig.locales,
+        respectPathCase: contentConfig.respectPathCase
       }
     }
   )
