@@ -411,7 +411,7 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     // Register components
-    await addComponentsDir({
+    addComponentsDir({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
