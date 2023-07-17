@@ -99,8 +99,8 @@ dependencies:
     specifier: ^4.0.0
     version: 4.0.0
   unist-util-position:
-    specifier: ^4.0.4
-    version: 4.0.4
+    specifier: ^5.0.0
+    version: 5.0.0
   unist-util-stringify-position:
     specifier: ^4.0.0
     version: 4.0.0
@@ -4666,7 +4666,7 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.0
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
@@ -9313,6 +9313,12 @@ packages:
     resolution: {integrity: sha512-kUBE91efOWfIVBo8xzh/uZQ7p9ffYRtUbMRZBNFYwf0RK8koUMx6dGUfwylLOKmaT2cs4wSW96QoYUSXAyEtpg==}
     dependencies:
       '@types/unist': 2.0.6
+    dev: false
+
+  /unist-util-position@5.0.0:
+    resolution: {integrity: sha512-fucsC7HjXvkB5R3kTCO7kUjRdrS0BJt3M/FPxmHMBOm8JQi2BsHAHFsy27E0EolP8rp0NzXsJ+jNPyDWvOJZPA==}
+    dependencies:
+      '@types/unist': 3.0.0
     dev: false
 
   /unist-util-stringify-position@3.0.3:

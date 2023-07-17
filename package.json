@@ -74,7 +74,7 @@
     "ufo": "^1.1.2",
     "unified": "^10.1.2",
     "unist-builder": "^4.0.0",
-    "unist-util-position": "^4.0.4",
+    "unist-util-position": "^5.0.0",
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "unstorage": "^1.7.0",
