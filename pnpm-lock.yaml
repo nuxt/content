@@ -96,8 +96,8 @@ dependencies:
     specifier: ^10.1.2
     version: 10.1.2
   unist-builder:
-    specifier: ^3.0.1
-    version: 3.0.1
+    specifier: ^4.0.0
+    version: 4.0.0
   unist-util-position:
     specifier: ^4.0.4
     version: 4.0.4
@@ -9283,10 +9283,10 @@ packages:
       crypto-random-string: 4.0.0
     dev: true
 
-  /unist-builder@3.0.1:
-    resolution: {integrity: sha512-gnpOw7DIpCA0vpr6NqdPvTWnlPTApCTRzr+38E6hCWx3rz/cjo83SsKIlS1Z+L5ttScQ2AwutNnb8+tAvpb6qQ==}
+  /unist-builder@4.0.0:
+    resolution: {integrity: sha512-wmRFnH+BLpZnTKpc5L7O67Kac89s9HMrtELpnNaE6TAobq5DTZZs5YaTQfAZBA9bFPECx2uVAPO31c+GVug8mg==}
     dependencies:
-      '@types/unist': 2.0.6
+      '@types/unist': 3.0.0
     dev: false
 
   /unist-util-generated@2.0.1:
