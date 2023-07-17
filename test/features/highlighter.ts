@@ -25,35 +25,35 @@ export const testHighlighter = () => {
 
       const code = parsed.body.children[0].children[0].children[0].children[0].children
 
-      expect(style).toContain(`.${code[0].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[0].props.class}{color:#FF7B72;}`)
+      expect(style).toContain(`.${code[0].props.class}{color:#D73A49;}`)
+      expect(style).toContain(`.dark .${code[0].props.class}{color:#F97583;}`)
 
-      expect(style).toContain(`.${code[1].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[1].props.class}{color:#C9D1D9;}`)
+      expect(style).toContain(`.${code[1].props.class}{color:#24292E;}`)
+      expect(style).toContain(`.dark .${code[1].props.class}{color:#E1E4E8;}`)
 
-      expect(style).toContain(`.${code[2].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[2].props.class}{color:#79C0FF;}`)
+      expect(style).toContain(`.${code[2].props.class}{color:#005CC5;}`)
+      expect(style).toContain(`.dark .${code[2].props.class}{color:#79B8FF;}`)
 
-      expect(style).toContain(`.${code[3].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[3].props.class}{color:#FF7B72;}`)
+      expect(style).toContain(`.${code[3].props.class}{color:#D73A49;}`)
+      expect(style).toContain(`.dark .${code[3].props.class}{color:#F97583;}`)
 
-      expect(style).toContain(`.${code[4].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[4].props.class}{color:#C9D1D9;}`)
+      expect(style).toContain(`.${code[4].props.class}{color:#24292E;}`)
+      expect(style).toContain(`.dark .${code[4].props.class}{color:#E1E4E8;}`)
 
-      expect(style).toContain(`.${code[5].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[5].props.class}{color:#79C0FF;}`)
+      expect(style).toContain(`.${code[5].props.class}{color:#005CC5;}`)
+      expect(style).toContain(`.dark .${code[5].props.class}{color:#79B8FF;}`)
 
-      expect(style).toContain(`.${code[6].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[6].props.class}{color:#C9D1D9;}`)
+      expect(style).toContain(`.${code[6].props.class}{color:#24292E;}`)
+      expect(style).toContain(`.dark .${code[6].props.class}{color:#E1E4E8;}`)
 
-      expect(style).toContain(`.${code[7].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[7].props.class}{color:#FF7B72;}`)
+      expect(style).toContain(`.${code[7].props.class}{color:#D73A49;}`)
+      expect(style).toContain(`.dark .${code[7].props.class}{color:#F97583;}`)
 
-      expect(style).toContain(`.${code[8].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[8].props.class}{color:#C9D1D9;}`)
+      expect(style).toContain(`.${code[8].props.class}{color:#24292E;}`)
+      expect(style).toContain(`.dark .${code[8].props.class}{color:#E1E4E8;}`)
 
-      expect(style).toContain(`.${code[9].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[9].props.class}{color:#79C0FF;}`)
+      expect(style).toContain(`.${code[9].props.class}{color:#005CC5;}`)
+      expect(style).toContain(`.dark .${code[9].props.class}{color:#79B8FF;}`)
     })
 
     test('highlight multi-theme with different tokenizer', async () => {
@@ -62,7 +62,7 @@ export const testHighlighter = () => {
         body: {
           lang: 'ts',
           theme: {
-            dark: 'material-palenight', // Theme containing italic
+            dark: 'material-theme-palenight', // Theme containing italic
             default: 'github-light'
           },
           code: 'export type UseFetchOptions = { key?: string }'
@@ -80,7 +80,7 @@ export const testHighlighter = () => {
                   "fontStyle": 1,
                 },
                 "default": {
-                  "color": "#CF222E",
+                  "color": "#D73A49",
                   "fontStyle": 0,
                 },
               },
@@ -93,7 +93,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -106,7 +106,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#CF222E",
+                  "color": "#D73A49",
                   "fontStyle": 0,
                 },
               },
@@ -119,7 +119,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -132,7 +132,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#953800",
+                  "color": "#6F42C1",
                   "fontStyle": 0,
                 },
               },
@@ -145,7 +145,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -158,7 +158,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#CF222E",
+                  "color": "#D73A49",
                   "fontStyle": 0,
                 },
               },
@@ -171,7 +171,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -184,7 +184,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -197,7 +197,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -210,7 +210,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#953800",
+                  "color": "#E36209",
                   "fontStyle": 0,
                 },
               },
@@ -223,7 +223,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#CF222E",
+                  "color": "#D73A49",
                   "fontStyle": 0,
                 },
               },
@@ -236,7 +236,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -249,7 +249,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#0550AE",
+                  "color": "#005CC5",
                   "fontStyle": 0,
                 },
               },
@@ -262,7 +262,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
@@ -275,7 +275,7 @@ export const testHighlighter = () => {
                   "fontStyle": 0,
                 },
                 "default": {
-                  "color": "#24292F",
+                  "color": "#24292E",
                   "fontStyle": 0,
                 },
               },
