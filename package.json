@@ -75,7 +75,7 @@
     "unified": "^10.1.2",
     "unist-builder": "^3.0.1",
     "unist-util-position": "^4.0.4",
-    "unist-util-stringify-position": "^3.0.3",
+    "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "unstorage": "^1.7.0",
     "ws": "^8.13.0"
