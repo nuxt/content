@@ -50,7 +50,7 @@
     "detab": "^3.0.2",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
-    "listhen": "^1.0.4",
+    "listhen": "^1.1.1",
     "mdast-util-to-hast": "^12.3.0",
     "mdurl": "^1.0.1",
     "ohash": "^1.1.2",
@@ -103,7 +103,7 @@
     "vitest": "^0.33.0",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.6.8",
+  "packageManager": "pnpm@8.6.9",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {

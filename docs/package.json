@@ -17,10 +17,10 @@
     "@nuxthq/studio": "^0.13.4",
     "@nuxtlabs/github-module": "^1.6.3",
     "monaco-editor-core": "^0.40.0",
-    "nuxt": "3.6.1",
+    "nuxt": "3.6.3",
     "vue-plausible": "^1.3.2"
   },
-  "packageManager": "pnpm@8.6.8",
+  "packageManager": "pnpm@8.6.9",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
