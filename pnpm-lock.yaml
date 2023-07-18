@@ -27,8 +27,8 @@ dependencies:
     specifier: ^1.0.0
     version: 1.0.0
   listhen:
-    specifier: ^1.0.4
-    version: 1.0.4
+    specifier: ^1.1.1
+    version: 1.1.1
   mdast-util-to-hast:
     specifier: ^12.3.0
     version: 12.3.0
@@ -2897,7 +2897,6 @@ packages:
     resolution: {integrity: sha512-Me9nf0/BEmMOnuQzMOVXgpzkMUNbd0Am8lTl/13p0aRGAoLGk5T5sdet/42CrIGmWdG67BgHUhcKK1my1ujUEg==}
     dependencies:
       consola: 3.2.3
-    dev: true
 
   /clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
@@ -5177,10 +5176,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /ip-regex@5.0.0:
-    resolution: {integrity: sha512-fOCG6lhoKKakwv+C6KdsOnGvgXnmgfmp0myi3bcNwj3qfwPAxRKWEuFhvEFF7ceYIz6+1jRZ+yguLFAmUNPEfw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
   /ip@1.1.8:
     resolution: {integrity: sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==}
     dev: true
@@ -5747,16 +5742,20 @@ packages:
       - supports-color
     dev: true
 
-  /listhen@1.0.4:
-    resolution: {integrity: sha512-r94k7kmXHb8e8wpv7+UP/qqhhD+j/9TgX19QKim2cEJuWCLwlTw+5BkCFmYyjhQ7Bt8KdVun/2DcD7MF2Fe3+g==}
+  /listhen@1.1.1:
+    resolution: {integrity: sha512-p5fntsbu69TY3f6s56FzvwCUK3pt0fO3SKTtQdkdAHd4HGjN519U00OLM5eGgtraEig7ebwc4eGKCeDC6C/rXA==}
+    hasBin: true
     dependencies:
+      citty: 0.1.2
       clipboardy: 3.0.0
-      colorette: 2.0.20
+      consola: 3.2.3
       defu: 6.1.2
       get-port-please: 3.0.1
       http-shutdown: 1.2.2
-      ip-regex: 5.0.0
+      jiti: 1.19.1
+      mlly: 1.4.0
       node-forge: 1.3.1
+      pathe: 1.1.1
       ufo: 1.1.2
 
   /listr2@5.0.8:
@@ -6634,7 +6633,7 @@ packages:
       jiti: 1.19.1
       klona: 2.0.6
       knitwork: 1.0.0
-      listhen: 1.0.4
+      listhen: 1.1.1
       magic-string: 0.30.1
       mime: 3.0.0
       mlly: 1.4.0
@@ -9446,7 +9445,7 @@ packages:
       destr: 2.0.0
       h3: 1.7.1
       ioredis: 5.3.2
-      listhen: 1.0.4
+      listhen: 1.1.1
       lru-cache: 10.0.0
       mri: 1.2.0
       node-fetch-native: 1.2.0
