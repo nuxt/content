@@ -38,6 +38,9 @@ describe('Match', () => {
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve'] } })).toBe(true)
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve', 'Mahatma'] } })).toBe(true)
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve', 'Mahatma', 'John'] } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: '' } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: null } })).toBe(true)
+      expect(match(item, { 'nested.users': { $contains: undefined } })).toBe(true)
     })
 
     test('$containsAny', () => {
