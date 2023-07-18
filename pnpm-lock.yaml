@@ -163,6 +163,9 @@ devDependencies:
   rehype-figure:
     specifier: ^1.0.1
     version: 1.0.1
+  rehype-wrap-all:
+    specifier: ^1.1.0
+    version: 1.1.0
   release-it:
     specifier: ^16.1.2
     version: 16.1.2
@@ -8081,6 +8084,15 @@ packages:
       unified: 10.1.2
       unist-util-visit: 4.1.2
     dev: false
+
+  /rehype-wrap-all@1.1.0:
+    resolution: {integrity: sha512-AFiCZqyJXnD2NF4ZjuVpW9aZuD+bz5YdkIF+bL66jmExdh6efgb9LAtUx+Rw1puMwRPGPqBXXYl9bEzi59Cq8g==}
+    engines: {node: '>=8.0'}
+    dependencies:
+      hast-util-parse-selector: 2.2.5
+      hast-util-select: 4.0.2
+      unist-util-visit: 2.0.3
+    dev: true
 
   /release-it@16.1.2:
     resolution: {integrity: sha512-dRamWBWMLJcsPl0G3M7q/hkwPv4i0buUEKWwNp/MY9mBIBcUmBSCvm4B1CdN28LUgqrBzWVurnnNCcz6IPeQKQ==}

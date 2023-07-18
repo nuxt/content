@@ -12,8 +12,11 @@ import { nodeTextContent } from './utils/node'
 const usePlugins = (plugins: Record<string, false | MarkdownPlugin>, stream: Processor) => {
   for (const plugin of Object.values(plugins)) {
     if (plugin) {
-      const { instance, ...options } = plugin
-      stream.use(instance, options)
+      const { instance, options, ...deprecatedOptions } = plugin
+      if (Object.keys(deprecatedOptions).length) {
+        console.warn('[Markdown] Deprecated syntax. Please use `options` key in order to pass option to remark/rehype plugins.')
+      }
+      stream.use(instance, options || deprecatedOptions)
     }
   }
 }
