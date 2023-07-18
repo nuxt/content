@@ -99,7 +99,9 @@ export const assertArray = (value: any, message = 'Expected an array') => {
 }
 
 /**
- * Ensure result is an array
+ * Ensure result is an array.
  */
-export const ensureArray = <T>(value: T) =>
-(Array.isArray(value) ? value : value ? [value] : []) as T extends Array<any> ? T : T[]
+export const ensureArray = <T>(value: T) => {
+  if (value === '') { return [''] } // Special case for empty string which is a valid value in an array
+  return (Array.isArray(value) ? value : value ? [value] : []) as T extends Array<any> ? T : T[]
+}
