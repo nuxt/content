@@ -1,5 +1,16 @@
 export default defineNuxtConfig({
   extends: ['../shared'],
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/ico',
+          href: '/favicon.ico'
+        }
+      ]
+    }
+  },
   content: {
     documentDriven: {
       globals: {
