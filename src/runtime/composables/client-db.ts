@@ -1,9 +1,8 @@
-import type { Storage } from 'unstorage'
 // @ts-ignore
 import memoryDriver from 'unstorage/drivers/memory'
-import { createStorage, prefixStorage } from 'unstorage'
-import { useRuntimeConfig, useNuxtApp } from '#app'
+import { type Storage, createStorage, prefixStorage } from 'unstorage'
 import { withBase } from 'ufo'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'

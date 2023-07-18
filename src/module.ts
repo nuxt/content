@@ -17,8 +17,7 @@ import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
-import type { WatchEvent } from 'unstorage'
-import { createStorage } from 'unstorage'
+import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
@@ -220,6 +219,12 @@ export interface ModuleOptions {
     injectPage?: boolean
     trailingSlash?: boolean
   },
+  /**
+   * Enable to keep uppercase characters in the generated routes.
+   *
+   * @default false
+   */
+  respectPathCase: boolean
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
@@ -281,6 +286,7 @@ export default defineNuxtModule<ModuleOptions>({
       fields: []
     },
     documentDriven: false,
+    respectPathCase: false,
     experimental: {
       clientDB: false,
       stripQueryParameters: false
@@ -411,7 +417,7 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     // Register components
-    await addComponentsDir({
+    addComponentsDir({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
@@ -605,6 +611,7 @@ export default defineNuxtModule<ModuleOptions>({
         stripQueryParameters: options.experimental.stripQueryParameters,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
+      respectPathCase: options.respectPathCase ?? false,
       api: {
         baseURL: options.api.baseURL
       },
@@ -631,7 +638,7 @@ export default defineNuxtModule<ModuleOptions>({
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md')
+      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.{md,yml,yaml,json}')
       tailwindConfig.content = tailwindConfig.content ?? []
 
       if (Array.isArray(tailwindConfig.content)) {
@@ -729,6 +736,7 @@ interface ModulePublicRuntimeConfig {
     stripQueryParameters: boolean
     clientDB: boolean
   }
+  respectPathCase: boolean
 
   defaultLocale: ModuleOptions['defaultLocale']
 

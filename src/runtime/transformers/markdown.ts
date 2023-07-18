@@ -11,7 +11,7 @@ export default defineTransformer({
     config.rehypePlugins = await importPlugins(config.rehypePlugins)
     config.remarkPlugins = await importPlugins(config.remarkPlugins)
 
-    const parsed = await parse(content, config)
+    const parsed = await parse(content as string, config)
 
     return <MarkdownParsedContent> {
       ...parsed.meta,

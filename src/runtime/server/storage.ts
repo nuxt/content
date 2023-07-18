@@ -1,4 +1,4 @@
-import { prefixStorage } from 'unstorage'
+import { type StorageValue, prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
@@ -26,6 +26,7 @@ interface ParseContentOptions {
   pathMeta?: {
     locales?: ModuleOptions['locales']
     defaultLocale?: ModuleOptions['defaultLocale']
+    respectPathCase?: ModuleOptions['respectPathCase']
   }
   // Allow passing options for custom transformers
   [key: string]: any
@@ -151,7 +152,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return { _id: contentId, body: null }
   }
 
-  const parsed = await parseContent(contentId, body as string) as ParsedContent
+  const parsed = await parseContent(contentId, body) as ParsedContent
 
   await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
@@ -161,7 +162,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 /**
  * Parse content file using registered plugins
  */
-export async function parseContent (id: string, content: string, opts: ParseContentOptions = {}) {
+export const parseContent = async (id: string, content: StorageValue, opts: ParseContentOptions = {}) => {
   const nitroApp = useNitroApp()
   const options = defu(
     opts,
@@ -173,13 +174,14 @@ export async function parseContent (id: string, content: string, opts: ParseCont
       transformers: customTransformers,
       pathMeta: {
         defaultLocale: contentConfig.defaultLocale,
-        locales: contentConfig.locales
+        locales: contentConfig.locales,
+        respectPathCase: contentConfig.respectPathCase
       }
     }
   )
 
   // Call hook before parsing the file
-  const file = { _id: id, body: content }
+  const file = { _id: id, body: typeof content === 'string' ? content.replace(/\r\n|\r/g, '\n') : content }
   await nitroApp.hooks.callHook('content:file:beforeParse', file)
 
   const result = await transformContent(id, file.body, options)
