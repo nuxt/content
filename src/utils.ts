@@ -27,7 +27,6 @@ export const PROSE_TAGS = [
   'p',
   'a',
   'blockquote',
-  'code-inline',
   'code',
   'em',
   'h1',
@@ -47,7 +46,8 @@ export const PROSE_TAGS = [
   'tbody',
   'td',
   'th',
-  'tr'
+  'tr',
+  'pre'
 ]
 
 const unstorageDrivers = {

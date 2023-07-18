@@ -1,24 +1,21 @@
-import type { H } from 'mdast-util-to-hast'
+import { type State, type Raw } from 'mdast-util-to-hast'
+import { type Html } from 'mdast'
 import { kebabCase } from 'scule'
-import { u } from 'unist-builder'
-import type { MdastContent } from 'mdast-util-to-hast/lib'
 import { getTagName } from './utils'
 
-type Node = MdastContent & {
-  value: string
-}
-
-export default function html (h: H, node: Node) {
+export default function html (state: State, node: Html) {
   const tagName = getTagName(node.value)
 
   if (tagName && /[A-Z]/.test(tagName)) {
     node.value = node.value.replace(tagName, kebabCase(tagName))
   }
 
-  // Html `<code>` tags should parse and render as inline code
-  if (tagName === 'code') {
-    node.value = node.value.replace(tagName, 'code-inline')
+  if ((state as any).dangerous || state.options?.allowDangerousHtml) {
+    /** @type {Raw} */
+    const result: Raw = { type: 'raw', value: node.value }
+    state.patch(node, result)
+    return state.applyData(node, result)
   }
 
-  return h.dangerous ? h.augment(node, u('raw', node.value)) : null
+  return undefined
 }

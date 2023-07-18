@@ -1,11 +1,14 @@
-import type { H } from 'mdast-util-to-hast'
-import { all } from 'mdast-util-to-hast'
-import { MdastContent } from 'mdast-util-to-hast/lib'
+import { type State } from 'mdast-util-to-hast'
+import { type Element, type Properties } from 'hast'
+import { type Strong } from 'mdast'
 
-type Node = MdastContent & {
-  attributes?: any
-}
-
-export default function strong (h: H, node: Node) {
-  return h(node, 'strong', node.attributes, all(h, node))
+export default function strong (state: State, node: Strong & { attributes?: Properties }) {
+  const result: Element = {
+    type: 'element',
+    tagName: 'strong',
+    properties: node.attributes || {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }

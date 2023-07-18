@@ -1,5 +1,3 @@
-import { u } from 'unist-builder'
-
 /**
  * Parses the value defined next to 3 back ticks
  * in a codeblock and set line-highlights or
@@ -47,29 +45,4 @@ export function getTagName (value: string) {
   const result = String(value).match(TAG_NAME_REGEXP)
 
   return result && result[1]
-}
-
-// mdast-util-to-hast/lib/wrap.js
-/**
- * Wrap `nodes` with line feeds between each entry.
- * Optionally adds line feeds at the start and end.
- */
-export function wrap (nodes: any[], loose = false) {
-  const result = []
-  let index = -1
-
-  if (loose) {
-    result.push(u('text', '\n'))
-  }
-
-  while (++index < nodes.length) {
-    if (index) { result.push(u('text', '\n')) }
-    result.push(nodes[index])
-  }
-
-  if (loose && nodes.length > 0) {
-    result.push(u('text', '\n'))
-  }
-
-  return result
 }

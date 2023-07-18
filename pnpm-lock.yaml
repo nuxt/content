@@ -32,9 +32,9 @@ dependencies:
   mdast-util-to-hast:
     specifier: ^13.0.0
     version: 13.0.0
-  mdurl:
-    specifier: ^1.0.1
-    version: 1.0.1
+  micromark-util-sanitize-uri:
+    specifier: ^2.0.0
+    version: 2.0.0
   ohash:
     specifier: ^1.1.2
     version: 1.1.2
@@ -6147,10 +6147,6 @@ packages:
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: true
-
-  /mdurl@1.0.1:
-    resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
-    dev: false
 
   /memory-fs@0.5.0:
     resolution: {integrity: sha512-jA0rdU5KoQMC0e6ppoNRtpp6vjFq6+NY7r8hywnC7V+1Xj/MtHwGIbB1QaK/dunyjWteJzmkpd7ooeWg10T7GA==}

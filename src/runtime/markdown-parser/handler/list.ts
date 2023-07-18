@@ -1,27 +1,43 @@
-import type { H } from 'mdast-util-to-hast'
-import { all } from 'mdast-util-to-hast'
-import type { MdastContent } from 'mdast-util-to-hast/lib'
-import { wrap } from './utils'
+import { type State } from 'mdast-util-to-hast'
+import { type Element, type Properties } from 'hast'
+import { type List } from 'mdast'
 
-type Node = MdastContent & {
-  ordered?: boolean
-  start?: number,
-  checked?: boolean
-  children: Node[]
-}
-
-export default function list (h: H, node: Node) {
-  const props: any = {}
-  const name = `${node.ordered ? 'ol' : 'ul'}`
+export default function list (state: State, node: List) {
+  const properties: Properties = {}
+  const results = state.all(node)
+  let index = -1
 
   if (typeof node.start === 'number' && node.start !== 1) {
-    props.start = node.start
+    properties.start = node.start
+  }
+
+  // Like GitHub, add a class for custom styling.
+  while (++index < results.length) {
+    const child = results[index]
+
+    if (
+      child.type === 'element' &&
+      child.tagName === 'li' &&
+      child.properties &&
+      Array.isArray(child.properties.className) &&
+      child.properties.className.includes('task-list-item')
+    ) {
+      properties.className = ['contains-task-list']
+      break
+    }
   }
 
   // Add class for task list. See: https://github.com/remarkjs/remark-gfm#use
   if ((node.children || []).some(child => typeof child.checked === 'boolean')) {
-    props.className = ['contains-task-list']
+    properties.className = ['contains-task-list']
   }
 
-  return h(node, name, props, wrap(all(h, node), true))
+  const result: Element = {
+    type: 'element',
+    tagName: node.ordered ? 'ol' : 'ul',
+    properties,
+    children: state.wrap(results, true)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }

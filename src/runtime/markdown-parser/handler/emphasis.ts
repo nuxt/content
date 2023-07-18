@@ -1,11 +1,14 @@
-import type { H } from 'mdast-util-to-hast'
-import { all } from 'mdast-util-to-hast'
-import type { MdastContent } from 'mdast-util-to-hast/lib'
+import { type State } from 'mdast-util-to-hast'
+import { type Element, type Properties } from 'hast'
+import { type Emphasis } from 'mdast'
 
-type Node = MdastContent & {
-  attributes?: any
-}
-
-export default function emphasis (h: H, node: Node) {
-  return h(node, 'em', node.attributes, all(h, node))
+export default function emphasis (state: State, node: Emphasis & { attributes?: Properties }) {
+  const result: Element = {
+    type: 'element',
+    tagName: 'em',
+    properties: node.attributes || {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }

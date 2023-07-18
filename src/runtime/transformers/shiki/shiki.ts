@@ -30,11 +30,11 @@ export default defineTransformer({
       const inlineCodes: any = []
       visit(
         document,
-        (node: any) => (node?.tag === 'code' && node?.props.code) || (node?.tag === 'code-inline' && (node.props?.lang || node.props?.language)),
+        (node: any) => (node?.tag === 'pre' && node?.props.code) || (node?.tag === 'code' && (node.props?.lang || node.props?.language)),
         (node: MarkdownNode) => {
-          if (node?.tag === 'code') {
+          if (node?.tag === 'pre') {
             codeBlocks.push(node)
-          } else if (node?.tag === 'code-inline') {
+          } else if (node?.tag === 'code') {
             inlineCodes.push(node)
           }
         }
@@ -75,7 +75,7 @@ export default defineTransformer({
     async function highlightBlock (node: MarkdownNode, styleMap: TokenStyleMap) {
       const { code, language: lang, highlights = [] } = node.props!
 
-      const innerCodeNode = node.children![0].children![0]
+      const innerCodeNode = node.children![0]
       innerCodeNode.children = await shikiHighlighter.getHighlightedAST(code, lang, options.theme, { styleMap, highlights })
 
       return node

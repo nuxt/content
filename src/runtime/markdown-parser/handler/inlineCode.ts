@@ -1,15 +1,17 @@
-import type { H } from 'mdast-util-to-hast'
-import { u } from 'unist-builder'
-import type { MdastContent } from 'mdast-util-to-hast/lib'
+import { type State } from 'mdast-util-to-hast'
+import { type Element, type Text } from 'hast'
+import { type InlineCode } from 'mdast'
 
-type Node = MdastContent & {
-  value: string
-  attributes?: any
-}
+export default function inlineCode (state: State, node: InlineCode & { attributes: any }) {
+  const text: Text = { type: 'text', value: node.value.replace(/\r?\n|\r/g, ' ') }
+  state.patch(node, text)
 
-export default function inlineCode (h: H, node: Node) {
-  return h(node, 'code-inline', node.attributes, [
-    // @ts-ignore
-    u('text', node.value.replace(/\r?\n|\r/g, ' '))
-  ])
+  const result: Element = {
+    type: 'element',
+    tagName: 'code',
+    properties: node.attributes,
+    children: [text]
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }

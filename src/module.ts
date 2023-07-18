@@ -271,7 +271,10 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      tags: {
+        ...Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+        code: 'ProseCodeInline'
+      },
       anchorLinks: {
         depth: 4,
         exclude: [1]
