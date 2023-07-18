@@ -36,7 +36,7 @@ export default defineNuxtConfig({
       fields: ['icon']
     },
     highlight: {
-      theme: 'material-palenight',
+      theme: 'material-theme-palenight',
       preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
     }
   }
