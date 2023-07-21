@@ -167,10 +167,12 @@ export const parseContent = async (id: string, content: StorageValue, opts: Pars
   const options = defu(
     opts,
     {
-      markdown: contentConfig.markdown,
+      markdown: {
+        ...contentConfig.markdown,
+        highlight: contentConfig.highlight
+      },
       csv: contentConfig.csv,
       yaml: contentConfig.yaml,
-      highlight: contentConfig.highlight,
       transformers: customTransformers,
       pathMeta: {
         defaultLocale: contentConfig.defaultLocale,
