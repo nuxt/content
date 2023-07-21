@@ -46,7 +46,9 @@ export const useDefaultOptions = (): MarkdownOptions => ({
     },
     'rehype-raw': {
       instance: rehypeRaw,
-      passThrough: ['element']
+      options: {
+        passThrough: ['element']
+      }
     }
   }
 })
