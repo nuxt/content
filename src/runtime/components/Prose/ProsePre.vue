@@ -29,7 +29,7 @@ defineProps({
   class: {
     type: String,
     default: null
-  },
+  }
 })
 </script>
 

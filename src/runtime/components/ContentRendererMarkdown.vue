@@ -45,7 +45,6 @@ const props = defineProps({
 
 const debug = process.dev || useContentPreview().isEnabled()
 
-
 const body = computed(() => {
   let body = props.value.body || props.value
   if (props.excerpt && props.value.excerpt) {
@@ -56,6 +55,7 @@ const body = computed(() => {
 })
 
 const data = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { body, excerpt, ...data } = props.value
   return data
 })

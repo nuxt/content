@@ -12,8 +12,8 @@ export const testModuleOptions = () => {
             '# Hello :-)'
           ].join('\n'),
           options: {
-            remark: {
-              plugins: {
+            markdown: {
+              remarkPlugins: {
                 'remark-emoji': false
               }
             }

@@ -55,7 +55,7 @@ export const testMarkdownParser = () => {
         })
 
         expect(parsed).toHaveProperty('body')
-        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body.children[0].tag).toBe('pre')
         expect(parsed.body).toHaveProperty('children[0].props')
         const props = parsed.body.children[0].props
         expect(props).toHaveProperty('meta')
@@ -80,7 +80,7 @@ export const testMarkdownParser = () => {
         })
 
         expect(parsed).toHaveProperty('body')
-        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'pre')
         expect(parsed.body).toHaveProperty('children[0].props')
         const props = parsed.body.children[0].props
         expect(props).toHaveProperty('meta')
@@ -105,7 +105,7 @@ export const testMarkdownParser = () => {
         })
 
         expect(parsed).toHaveProperty('body')
-        expect(parsed.body).toHaveProperty('children[0].tag', 'code')
+        expect(parsed.body).toHaveProperty('children[0].tag', 'pre')
         expect(parsed.body).toHaveProperty('children[0].props')
         const props = parsed.body.children[0].props
         expect(props).toHaveProperty('meta')
