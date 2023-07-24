@@ -6,8 +6,6 @@ const props = defineProps<{
     highlights: number[],
     meta?: string
   }>()
-
-console.log(props)
 </script>
 
 <template>
