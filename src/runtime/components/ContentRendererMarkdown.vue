@@ -3,7 +3,7 @@
     :body="body"
     :data="data"
     :tag="tag"
-    :components="components"
+    :components="mdcComponents"
     :data-content-id="debug ? value._id : undefined"
   />
 </template>
@@ -58,5 +58,12 @@ const data = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { body, excerpt, ...data } = props.value
   return data
+})
+
+const mdcComponents = computed(() => {
+  return {
+    ...props.components,
+    ...(data.value._components || {})
+  }
 })
 </script>

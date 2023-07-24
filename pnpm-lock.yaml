@@ -33,8 +33,8 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   nuxt-mdc:
-    specifier: npm:nuxt-mdc-edge@latest
-    version: /nuxt-mdc-edge@0.0.2-28162747.60aef57(rollup@3.26.3)
+    specifier: npm:nuxt-mdc-edge@0.0.2-28170006.46e0666
+    version: /nuxt-mdc-edge@0.0.2-28170006.46e0666(rollup@3.26.3)
   ohash:
     specifier: ^1.1.2
     version: 1.1.2
@@ -1000,6 +1000,32 @@ packages:
       - rollup
       - supports-color
 
+  /@nuxt/kit@3.6.5(rollup@3.26.3):
+    resolution: {integrity: sha512-uBI5I2Zx6sk+vRHU+nBmifwxg/nyXCGZ1g5hUKrUfgv1ZfiKB8JkN5T9iRoduDOaqbwM6XSnEl1ja73iloDcrw==}
+    engines: {node: ^14.18.0 || >=16.10.0}
+    dependencies:
+      '@nuxt/schema': 3.6.5(rollup@3.26.3)
+      c12: 1.4.2
+      consola: 3.2.3
+      defu: 6.1.2
+      globby: 13.2.2
+      hash-sum: 2.0.0
+      ignore: 5.2.4
+      jiti: 1.19.1
+      knitwork: 1.0.0
+      mlly: 1.4.0
+      pathe: 1.1.1
+      pkg-types: 1.0.3
+      scule: 1.0.0
+      semver: 7.5.4
+      unctx: 2.3.1
+      unimport: 3.0.14(rollup@3.26.3)
+      untyped: 1.3.2
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: false
+
   /@nuxt/module-builder@0.4.0(@nuxt/kit@3.6.4)(nuxi@3.6.4):
     resolution: {integrity: sha512-B+UAYgFV1Hkc2ZcD7GaiKZ3SNHhyxFlXzZoBWTc9ulE0Z/+rq6RTa9fNm13BZyGhVhDCl5FN/wF/yYa1O/D2iw==}
     hasBin: true
@@ -1035,6 +1061,24 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
+
+  /@nuxt/schema@3.6.5(rollup@3.26.3):
+    resolution: {integrity: sha512-UPUnMB0W5TZ/Pi1fiF71EqIsPlj8LGZqzhSf8wOeh538KHwxbA9r7cuvEUU92eXRksOZaylbea3fJxZWhOITVw==}
+    engines: {node: ^14.18.0 || >=16.10.0}
+    dependencies:
+      defu: 6.1.2
+      hookable: 5.5.3
+      pathe: 1.1.1
+      pkg-types: 1.0.3
+      postcss-import-resolver: 2.0.0
+      std-env: 3.3.3
+      ufo: 1.1.2
+      unimport: 3.0.14(rollup@3.26.3)
+      untyped: 1.3.2
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: false
 
   /@nuxt/telemetry@2.3.1(rollup@3.26.3):
     resolution: {integrity: sha512-7kr2VDirYIXqyTHqaiWCrfQLgUjAa4qAHzykJOspMCFJWalHU9SVfnv+cTOKGqoXQ4TWOCd09tEd7sLlMFTEqw==}
@@ -6826,10 +6870,10 @@ packages:
       - supports-color
     dev: true
 
-  /nuxt-mdc-edge@0.0.2-28162747.60aef57(rollup@3.26.3):
-    resolution: {integrity: sha512-ahrFlpxeFa4tE4HPIIcDjLrquqeqrI5DgsD35rgotgVBUG3JPPstLD1yXqXW8pT8dAVMgNpAZDcuObqQa17fRQ==}
+  /nuxt-mdc-edge@0.0.2-28170006.46e0666(rollup@3.26.3):
+    resolution: {integrity: sha512-ui4Ku8YMxfUrIxv/rlr7opWmyry387RxZasv3SSSVv5JC2xmGaBJgzg/UCXKiUPOis3qDnjtKApCr+r9ak1a8g==}
     dependencies:
-      '@nuxt/kit': 3.6.4(rollup@3.26.3)
+      '@nuxt/kit': 3.6.5(rollup@3.26.3)
       '@types/hast': 3.0.0
       '@types/mdast': 4.0.0
       '@vue/compiler-core': 3.3.4
