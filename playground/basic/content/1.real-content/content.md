@@ -35,7 +35,7 @@ export default defineNuxtConfig({
 
 Render any document content.
 
-```vue [pages/[...slug].vue]
+```vue [pages/[...slug\\].vue]
 <script setup>
 const route = useRoute()
 const { data } = await useAsyncData(`doc-${route.path}`, () => queryContent(route.path).findOne())
