@@ -33,7 +33,7 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   nuxt-mdc:
-    specifier: npm:nuxt-mdc-edge@0.0.2-28170006.46e0666
+    specifier: npm:nuxt-mdc-edge@latest
     version: /nuxt-mdc-edge@0.0.2-28170006.46e0666(rollup@3.26.3)
   ohash:
     specifier: ^1.1.2
