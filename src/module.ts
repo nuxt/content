@@ -662,7 +662,7 @@ export default defineNuxtModule<ModuleOptions>({
           base: resolve(nuxt.options.buildDir, 'content-cache')
         }
         for (const [key, source] of Object.entries(sources)) {
-          storage.mount(key, getMountDriver(source))
+          storage.mount(key, await getMountDriver(source))
         }
         let keys = await storage.getKeys('content:source')
 
