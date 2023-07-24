@@ -34,7 +34,7 @@ dependencies:
     version: 2.0.0
   nuxt-mdc:
     specifier: npm:nuxt-mdc-edge@latest
-    version: /nuxt-mdc-edge@0.0.2-28170006.46e0666(rollup@3.26.3)
+    version: /nuxt-mdc-edge@0.0.2-28170089.b3969dd(rollup@3.26.3)
   ohash:
     specifier: ^1.1.2
     version: 1.1.2
@@ -6870,8 +6870,8 @@ packages:
       - supports-color
     dev: true
 
-  /nuxt-mdc-edge@0.0.2-28170006.46e0666(rollup@3.26.3):
-    resolution: {integrity: sha512-ui4Ku8YMxfUrIxv/rlr7opWmyry387RxZasv3SSSVv5JC2xmGaBJgzg/UCXKiUPOis3qDnjtKApCr+r9ak1a8g==}
+  /nuxt-mdc-edge@0.0.2-28170089.b3969dd(rollup@3.26.3):
+    resolution: {integrity: sha512-Vqz/uzSJRxv6MeoKCE1tDaSrarQRuEP0J+Q0Zo9YLZNQBXvybh/bQ1sH9ujh6fIFtj/lk1cHplih0Rb7gmhvzg==}
     dependencies:
       '@nuxt/kit': 3.6.5(rollup@3.26.3)
       '@types/hast': 3.0.0
