@@ -619,7 +619,10 @@ export default defineNuxtModule<ModuleOptions>({
     await installModule('nuxt-mdc', {
       remarkPlugins: contentContext.markdown.remarkPlugins,
       rehypePlugins: contentContext.markdown.rehypePlugins,
-      highlight: contentContext.highlight
+      highlight: contentContext.highlight,
+      components: {
+        map: contentContext.markdown.tags
+      }
     })
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
