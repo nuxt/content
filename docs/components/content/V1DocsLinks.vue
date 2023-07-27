@@ -11,6 +11,9 @@
       <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         Japanese
       </button-link>
+      <button-link href="/ru/v1/getting-started/introduction" :transparent="true" color="false" size="large">
+        Russian
+      </button-link>
     </div>
     <ellipsis />
   </div>
