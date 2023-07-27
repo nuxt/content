@@ -5,10 +5,10 @@
       <button-link href="/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         English
       </button-link>
-      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         French
       </button-link>
-      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         Japanese
       </button-link>
     </div>
@@ -23,6 +23,7 @@ css({
     padding: '2rem',
     marginBottom: '2rem',
     display: 'flex',
+    flexWrap: 'wrap',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
