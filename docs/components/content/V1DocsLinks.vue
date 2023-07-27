@@ -26,7 +26,6 @@ css({
     padding: '2rem',
     marginBottom: '2rem',
     display: 'flex',
-    flexWrap: 'wrap',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
@@ -38,6 +37,7 @@ css({
   },
   '.links-wrapper': {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '2rem',
     justifyContent: 'center'
   },
