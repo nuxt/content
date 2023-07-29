@@ -2,7 +2,7 @@
 import { useRuntimeConfig } from '#app'
 import { useContent, useContentHead, useRequestEvent } from '#imports'
 
-const { enableContentHead } = useRuntimeConfig().public.content
+const { contentHead } = useRuntimeConfig().public.content
 const { page, layout } = useContent()
 
 // Page not found, set correct status code on SSR
@@ -11,7 +11,7 @@ if (!(page as any).value && process.server) {
   event.res.statusCode = 404
 }
 
-if (enableContentHead) {
+if (contentHead) {
   useContentHead(page)
 }
 </script>

@@ -62,7 +62,7 @@ export default defineComponent({
     head: {
       type: Boolean,
       required: false,
-      default: true
+      default: undefined
     }
   },
 
@@ -75,7 +75,10 @@ export default defineComponent({
    * @slot not-found
    */
   render (ctx: any) {
-    const { enableContentHead } = useRuntimeConfig().public.content
+    const { contentHead } = useRuntimeConfig().public.content
+
+    // Allow user to overwrite the global `contentHead` config.
+    const shouldInjectContentHead = props.head === undefined ? contentHead : props.head
 
     const slots = useSlots()
 
@@ -97,12 +100,12 @@ export default defineComponent({
         // Default slot
         default: slots?.default
           ? ({ data, refresh, isPartial }: any) => {
-              if (head && enableContentHead) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
           : ({ data }: any) => {
-              if (head && enableContentHead) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return h(
                 ContentRenderer,

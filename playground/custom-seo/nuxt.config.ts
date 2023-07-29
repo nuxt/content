@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   extends: ['../shared'],
 
   content: {
-    enableContentHead: false
+    contentHead: false
   },
 
   typescript: {

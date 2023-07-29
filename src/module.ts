@@ -208,7 +208,7 @@ export interface ModuleOptions {
    *
    * @default true
    */
-  enableContentHead?: boolean
+  contentHead?: boolean
   /**
    * Document-driven mode config
    *
@@ -286,7 +286,7 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    enableContentHead: true,
+    contentHead: true,
     documentDriven: false,
     experimental: {
       clientDB: false,
@@ -624,7 +624,7 @@ export default defineNuxtModule<ModuleOptions>({
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
-      enableContentHead: options.enableContentHead,
+      contentHead: options.contentHead,
       // Anchor link generation config
       anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
@@ -754,7 +754,7 @@ interface ModulePublicRuntimeConfig {
 
   navigation: ModuleOptions['navigation']
 
-  enableContentHead: ModuleOptions['enableContentHead']
+  contentHead: ModuleOptions['contentHead']
 
   documentDriven: ModuleOptions['documentDriven']
 }
