@@ -23,6 +23,10 @@ describe('Match', () => {
 
       // match multiple conditions
       expect(match(item, { 'nested.users.0': { $contains: ['Maha', 'tma'] } })).toBe(true)
+
+      expect(match({ values: [0, false, ''] }, { values: { $contains: '' } })).toBe(true)
+      expect(match({ values: [0, false, ''] }, { values: { $contains: 0 } })).toBe(true)
+      expect(match({ values: [0, false, ''] }, { values: { $contains: false } })).toBe(true)
     })
 
     test('$icontains string', () => {
@@ -38,6 +42,11 @@ describe('Match', () => {
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve'] } })).toBe(true)
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve', 'Mahatma'] } })).toBe(true)
       expect(match(item, { 'nested.users': { $contains: ['Woodrow', 'Steve', 'Mahatma', 'John'] } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: '' } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: 0 } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: false } })).toBe(false)
+      expect(match(item, { 'nested.users': { $contains: null } })).toBe(true)
+      expect(match(item, { 'nested.users': { $contains: undefined } })).toBe(true)
     })
 
     test('$containsAny', () => {

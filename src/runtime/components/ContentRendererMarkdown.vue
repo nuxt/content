@@ -1,422 +1,69 @@
-<script lang="ts">
-import { h, resolveComponent, Text, defineComponent, toRaw } from 'vue'
-import destr from 'destr'
-import { pascalCase } from 'scule'
-import { find, html } from 'property-information'
-import type { VNode, ConcreteComponent } from 'vue'
-import { useRuntimeConfig, useRoute } from '#app'
-import htmlTags from '../utils/html-tags'
-import type { MarkdownNode, ParsedContent, ParsedContentMeta } from '../types'
+<template>
+  <MDCRenderer
+    :body="body"
+    :data="data"
+    :tag="tag"
+    :components="mdcComponents"
+    :data-content-id="debug ? value._id : undefined"
+  />
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
 import { useContentPreview } from '../composables/preview'
 
-type CreateElement = typeof h
-
-/**
- *  Default slot name
- */
-const DEFAULT_SLOT = 'default'
-
-const rxOn = /^@|^v-on:/
-const rxBind = /^:|^v-bind:/
-const rxModel = /^v-model/
-const nativeInputs = ['select', 'textarea', 'input']
-
-export default defineComponent({
-  name: 'ContentRendererMarkdown',
-  props: {
-    /**
-     * Content to render
-     */
-    value: {
-      type: Object,
-      required: true
-    },
-    /**
-     * Render only the excerpt
-     */
-    excerpt: {
-      type: Boolean,
-      default: false
-    },
-    /**
-     * Root tag to use for rendering
-     */
-    tag: {
-      type: String,
-      default: 'div'
-    },
-    /**
-     * The map of custom components to use for rendering.
-     */
-    components: {
-      type: Object,
-      default: () => ({})
-    }
+const props = defineProps({
+  /**
+   * Content to render
+   */
+  value: {
+    type: Object,
+    required: true
   },
-  async setup (props) {
-    const { content: { tags = {} } } = useRuntimeConfig().public
-    const debug = process.dev || useContentPreview().isEnabled()
-
-    let body = (props.value?.body || props.value) as MarkdownNode
-    if (props.excerpt && props.value?.excerpt) {
-      body = props.value.excerpt as MarkdownNode
-    }
-    if (body) {
-      await resolveContentComponents(body, {
-        tags: {
-          ...tags,
-          ...toRaw(props.value?._components || {}),
-          ...props.components
-        }
-      })
-    }
-
-    return { debug, tags }
+  /**
+   * Render only the excerpt
+   */
+  excerpt: {
+    type: Boolean,
+    default: false
   },
-  render (ctx: any) {
-    const { tags, tag, value, excerpt, components, debug } = ctx
-
-    if (!value) {
-      return null
-    }
-
-    let body = (value?.body || value) as MarkdownNode
-    if (excerpt && value?.excerpt) {
-      body = value.excerpt as MarkdownNode
-    }
-
-    const meta: ParsedContentMeta = {
-      ...(value as ParsedContentMeta),
-      tags: {
-        ...tags,
-        ...toRaw(value?._components || {}),
-        ...components
-      }
-    }
-
-    let component: string | ConcreteComponent = meta.component || tag
-    if (typeof meta.component === 'object') {
-      component = meta.component.name
-    }
-
-    // Resolve component if it's a Vue component
-    component = resolveVueComponent(component as string)
-
-    // Return Vue component
-    return h(
-      component as any,
-      {
-        ...meta.component?.props,
-        ...this.$attrs,
-        'data-content-id': debug ? value._id : undefined
-      },
-      renderSlots(body, h, meta, meta)
-    )
+  /**
+   * Root tag to use for rendering
+   */
+  tag: {
+    type: String,
+    default: 'div'
+  },
+  /**
+   * The map of custom components to use for rendering.
+   */
+  components: {
+    type: Object,
+    default: () => ({})
   }
 })
 
-/**
- * Render a markdown node
- */
-function renderNode (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): VNode {
-  /**
-   * Render Text node
-   */
-  if (node.type === 'text') {
-    return h(Text, node.value)
+const debug = process.dev || useContentPreview().isEnabled()
+
+const body = computed(() => {
+  let body = props.value.body || props.value
+  if (props.excerpt && props.value.excerpt) {
+    body = props.value.excerpt
   }
 
-  if (node.tag === 'script') {
-    return h(Text, renderToText(node))
-  }
+  return body
+})
 
-  const originalTag = node.tag!
-  // `_ignoreMap` is an special prop to disables tag-mapper
-  const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[originalTag]) || originalTag
-
-  if (node.tag === 'binding') {
-    return renderBinding(node, h, documentMeta, parentScope)
-  }
-
-  const component = resolveVueComponent(renderTag)
-  if (typeof component === 'object') {
-    component.tag = originalTag
-  }
-
-  const props = propsToData(node, documentMeta)
-
-  return h(
-    component as any,
-    props,
-    renderSlots(node, h, documentMeta, { ...parentScope, ...props })
-  )
-}
-
-function renderToText (node: MarkdownNode): string {
-  if (node.type === 'text') {
-    return node.value!
-  }
-
-  if (!node.children?.length) {
-    return `<${node.tag}>`
-  }
-
-  return `<${node.tag}>${node.children?.map(renderToText).join('') || ''}</${node.tag}>`
-}
-
-function renderBinding (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentScope: any = {}): VNode {
-  const data = {
-    ...parentScope,
-    $route: () => useRoute(),
-    $document: documentMeta,
-    $doc: documentMeta
-  }
-  const splitter = /\.|\[(\d+)\]/
-  const keys: string[] = node.props?.value.trim().split(splitter).filter(Boolean)
-  const value = keys.reduce((data, key) => {
-    if (key in data) {
-      if (typeof data[key] === 'function') {
-        return data[key]()
-      } else {
-        return data[key]
-      }
-    }
-    return {}
-  }, data)
-
-  return h(Text, value)
-}
-
-/**
- * Create slots from `node` template children.
- */
-function renderSlots (node: MarkdownNode, h: CreateElement, documentMeta: ParsedContentMeta, parentProps: any): Record<string, () => VNode[]> {
-  const children: MarkdownNode[] = node.children || []
-
-  const slotNodes: Record<string, MarkdownNode[]> = children.reduce((data, node) => {
-    if (!isTemplate(node)) {
-      data[DEFAULT_SLOT].push(node)
-      return data
-    }
-
-    const slotName = getSlotName(node)
-    data[slotName] = data[slotName] || []
-    // Append children to slot
-    data[slotName].push(...(node.children || []))
-
-    return data
-  }, {
-    [DEFAULT_SLOT]: [] as any[]
-  } as Record<string, any[]>)
-
-  const slots = Object.entries(slotNodes).reduce((slots, [name, children]) => {
-    if (!children.length) { return slots }
-
-    slots[name] = () => {
-      const vNodes = children.map(child => renderNode(child, h, documentMeta, parentProps))
-      return mergeTextNodes(vNodes)
-    }
-
-    return slots
-  }, {} as Record<string, () => VNode[]>)
-
-  return slots
-}
-
-/**
- * Create component data from node props.
- */
-function propsToData (node: MarkdownNode, documentMeta: ParsedContentMeta) {
-  const { tag = '', props = {} } = node
-  return Object.keys(props).reduce(function (data, key) {
-    // Ignore internal `__ignoreMap` prop.
-    if (key === '__ignoreMap') { return data }
-
-    const value = props[key]
-
-    // `v-model="foo"`
-    if (rxModel.test(key) && !nativeInputs.includes(tag)) {
-      return propsToDataRxModel(key, value, data, documentMeta)
-    }
-
-    // `v-bind="{foo: 'bar'}"`
-    if (key === 'v-bind') {
-      return propsToDataVBind(key, value, data, documentMeta)
-    }
-
-    // `v-on="foo"`
-    if (rxOn.test(key)) {
-      return propsToDataRxOn(key, value, data, documentMeta)
-    }
-
-    // `:foo="bar"`, `v-bind:foo="bar"`
-    if (rxBind.test(key)) {
-      return propsToDataRxBind(key, value, data, documentMeta)
-    }
-
-    const { attribute } = find(html, key)
-
-    // Join string arrays using space, see: https://github.com/nuxt/content/issues/247
-    if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
-      data[attribute] = value.join(' ')
-      return data
-    }
-
-    data[attribute] = value
-
-    return data
-  }, {} as any)
-}
-
-/**
- * Handle `v-model`
- */
-function propsToDataRxModel (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
-  // Model modifiers
-  const number = (d: any) => +d
-  const trim = (d: any) => d.trim()
-  const noop = (d: any) => d
-
-  const mods = key
-    .replace(rxModel, '')
-    .split('.')
-    .filter(d => d)
-    .reduce((d, k) => {
-      d[k] = true
-      return d
-    }, {} as any)
-
-  // As of yet we don't resolve custom v-model field/event names from components
-  const field = 'value'
-  const event = mods.lazy ? 'change' : 'input'
-  const processor = mods.number ? number : mods.trim ? trim : noop
-  data[field] = evalInContext(value, documentMeta)
-  data.on = data.on || {}
-  data.on[event] = (e: any) => ((documentMeta as any)[value] = processor(e))
-
+const data = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { body, excerpt, ...data } = props.value
   return data
-}
+})
 
-/**
- * Handle object binding `v-bind`
- */
-function propsToDataVBind (_key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
-  const val = evalInContext(value, documentMeta)
-  data = Object.assign(data, val)
-  return data
-}
-
-/**
- * Handle `v-on` and `@`
- */
-function propsToDataRxOn (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
-  key = key.replace(rxOn, '')
-  data.on = data.on || {}
-  data.on[key] = () => evalInContext(value, documentMeta)
-  return data
-}
-
-/**
- * Handle single binding `v-bind:` and `:`
- */
-function propsToDataRxBind (key: string, value: any, data: any, documentMeta: ParsedContentMeta) {
-  key = key.replace(rxBind, '')
-  data[key] = evalInContext(value, documentMeta)
-  return data
-}
-
-/**
- * Resolve component if it's a Vue component
- */
-const resolveVueComponent = (component: any) => {
-  // Check if node is not a native HTML tag
-  if (!htmlTags.includes(component) && !component?.render) {
-    const componentFn = resolveComponent(pascalCase(component), false)
-    // If component exists
-    if (typeof componentFn === 'object') {
-      return componentFn
-    }
+const mdcComponents = computed(() => {
+  return {
+    ...props.components,
+    ...(data.value._components || {})
   }
-  return component
-}
-
-/**
- * Evaluate value in specific context
- */
-function evalInContext (code: string, context: any) {
-  // Retrive value from context
-  const result = code
-    .split('.')
-    .reduce((o: any, k) => typeof o === 'object' ? o[k] : undefined, context)
-
-  return typeof result === 'undefined' ? destr(code) : result
-}
-
-/**
- * Get slot name out of a node
- */
-function getSlotName (node: MarkdownNode) {
-  let name = ''
-  for (const propName of Object.keys(node.props || {})) {
-    // Check if prop name correspond to a slot
-    if (!propName.startsWith('#') && !propName.startsWith('v-slot:')) {
-      continue
-    }
-    // Get slot name
-    name = propName.split(/[:#]/, 2)[1]
-    break
-  }
-  return name || DEFAULT_SLOT
-}
-
-/**
- * Check if node is Vue template tag
- */
-function isTemplate (node: MarkdownNode) {
-  return node.tag === 'template'
-}
-
-/**
- * Merge consequent Text nodes into single node
- */
-function mergeTextNodes (nodes: Array<VNode>) {
-  const mergedNodes: Array<VNode> = []
-  for (const node of nodes) {
-    const previousNode = mergedNodes[mergedNodes.length - 1]
-    if (node.type === Text && previousNode?.type === Text) {
-      previousNode.children = (previousNode.children as string) + node.children
-    } else {
-      mergedNodes.push(node)
-    }
-  }
-  return mergedNodes
-}
-
-async function resolveContentComponents (body: ParsedContent['body'], meta: Record<string, any>) {
-  const components = Array.from(new Set(loadComponents(body, meta)))
-  await Promise.all(components.map(async (c) => {
-    if ((c as any)?.render) {
-      return
-    }
-    const resolvedComponent = resolveComponent(c) as any
-    if (resolvedComponent?.__asyncLoader && !resolvedComponent.__asyncResolved) {
-      await resolvedComponent.__asyncLoader()
-    }
-  }))
-
-  function loadComponents (node: MarkdownNode, documentMeta: Record<string, any>) {
-    if (node.type === 'text' || node.tag === 'binding') {
-      return []
-    }
-    const renderTag: string = (typeof node.props?.__ignoreMap === 'undefined' && documentMeta.tags[node.tag!]) || node.tag!
-    const components: string[] = []
-    if (node.type !== 'root' && !htmlTags.includes(renderTag as any)) {
-      components.push(renderTag)
-    }
-    for (const child of (node.children || [])) {
-      components.push(...loadComponents(child, documentMeta))
-    }
-    return components
-  }
-}
+})
 </script>

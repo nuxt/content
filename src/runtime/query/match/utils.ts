@@ -101,5 +101,6 @@ export const assertArray = (value: any, message = 'Expected an array') => {
 /**
  * Ensure result is an array
  */
-export const ensureArray = <T>(value: T) =>
-(Array.isArray(value) ? value : value ? [value] : []) as T extends Array<any> ? T : T[]
+export const ensureArray = <T>(value: T) => {
+  return (Array.isArray(value) ? value : [undefined, null].includes(value as any) ? [] : [value]) as T extends Array<any> ? T : T[]
+}

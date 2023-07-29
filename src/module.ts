@@ -7,7 +7,8 @@ import {
   addImports,
   addComponentsDir,
   addTemplate,
-  extendViteConfig
+  extendViteConfig,
+  installModule
 } from '@nuxt/kit'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
@@ -17,8 +18,7 @@ import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
-import type { WatchEvent } from 'unstorage'
-import { createStorage } from 'unstorage'
+import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
@@ -220,6 +220,12 @@ export interface ModuleOptions {
     injectPage?: boolean
     trailingSlash?: boolean
   },
+  /**
+   * Enable to keep uppercase characters in the generated routes.
+   *
+   * @default false
+   */
+  respectPathCase: boolean
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
@@ -266,7 +272,10 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      tags: {
+        ...Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+        code: 'ProseCodeInline'
+      },
       anchorLinks: {
         depth: 4,
         exclude: [1]
@@ -281,6 +290,7 @@ export default defineNuxtModule<ModuleOptions>({
       fields: []
     },
     documentDriven: false,
+    respectPathCase: false,
     experimental: {
       clientDB: false,
       stripQueryParameters: false
@@ -307,12 +317,21 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Vite configurations
     extendViteConfig((config) => {
-      config.define = config.define || {}
-      config.define['process.env.VSCODE_TEXTMATE_DEBUG'] = false
-
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
       config.optimizeDeps.include.push('slugify')
+
+      config.plugins?.push({
+        name: 'content-slot',
+        enforce: 'pre',
+        transform (code) {
+          if (code.includes('<ContentSlot')) {
+            code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-z]*)['"]|use=['"]([a-z]*)['"])/g, '<MDCSlot $1 name="$4"')
+            code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
+            return code
+          }
+        }
+      })
     })
 
     nuxt.hook('nitro:config', (nitroConfig) => {
@@ -407,11 +426,11 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
       { name: 'useContentPreview', as: 'useContentPreview', from: resolveRuntimeModule('./composables/preview') },
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
-      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
+      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/useUnwrap') }
     ])
 
     // Register components
-    await addComponentsDir({
+    addComponentsDir({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
@@ -597,6 +616,15 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
+    await installModule('nuxt-mdc', {
+      remarkPlugins: contentContext.markdown.remarkPlugins,
+      rehypePlugins: contentContext.markdown.rehypePlugins,
+      highlight: contentContext.highlight,
+      components: {
+        map: contentContext.markdown.tags
+      }
+    })
+
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
       defaultLocale: contentContext.defaultLocale,
@@ -605,6 +633,7 @@ export default defineNuxtModule<ModuleOptions>({
         stripQueryParameters: options.experimental.stripQueryParameters,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
+      respectPathCase: options.respectPathCase ?? false,
       api: {
         baseURL: options.api.baseURL
       },
@@ -631,7 +660,7 @@ export default defineNuxtModule<ModuleOptions>({
     // @nuxtjs/tailwindcss support
     // @ts-ignore - Module might not exist
     nuxt.hook('tailwindcss:config', (tailwindConfig) => {
-      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.md')
+      const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.{md,yml,yaml,json}')
       tailwindConfig.content = tailwindConfig.content ?? []
 
       if (Array.isArray(tailwindConfig.content)) {
@@ -729,6 +758,7 @@ interface ModulePublicRuntimeConfig {
     stripQueryParameters: boolean
     clientDB: boolean
   }
+  respectPathCase: boolean
 
   defaultLocale: ModuleOptions['defaultLocale']
 
@@ -759,14 +789,10 @@ interface ModulePrivateRuntimeConfig {
 }
 
 declare module '@nuxt/schema' {
-  interface ConfigSchema {
-    runtimeConfig: {
-      public?: {
-        content?: ModulePublicRuntimeConfig;
-      }
-      private?: {
-        content?: ModulePrivateRuntimeConfig & ContentContext;
-      }
-    }
+  interface PublicRuntimeConfig {
+    content: ModulePublicRuntimeConfig;
+  }
+  interface PrivateRuntimeConfig {
+    content: ModulePrivateRuntimeConfig & ContentContext;
   }
 }
