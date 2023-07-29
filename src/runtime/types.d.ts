@@ -45,14 +45,15 @@ export interface ParsedContentInternalMeta {
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
+  /**
+   * Layout
+   */
+  layout?: string
+
   [key: string]: any
 }
 
 export interface ParsedContent extends ParsedContentMeta {
-  /**
-   * Layout
-   */
-  layout: string
   /**
    * Excerpt
    */

@@ -71,12 +71,12 @@ export const useContent = <T extends ParsedContent, G extends object = Record<st
   /**
    * Next page from `surround`.
    */
-  const next = computed(() => surround.value[1])
+  const next = computed(() => surround?.value[1])
 
   /**
    * Previous page from `surround`.
    */
-  const prev = computed(() => surround.value[0])
+  const prev = computed(() => surround?.value[0])
 
   return {
     // Refs
