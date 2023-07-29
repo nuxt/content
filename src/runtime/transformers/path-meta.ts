@@ -25,14 +25,12 @@ export default defineTransformer({
   name: 'path-meta',
   extensions: ['.*'],
   transform (content, options: any = {}) {
-    const { locales = [], defaultLocale = 'en' } = options
+    const { locales = [], defaultLocale = 'en', respectPathCase = false } = options
     const { _source, _file, _path, _extension } = describeId(content._id)
     const parts = _path.split('/')
-
     // Check first part for locale name
     const _locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
-
-    const filePath = generatePath(parts.join('/'))
+    const filePath = generatePath(parts.join('/'), { respectPathCase })
 
     return <ParsedContent> {
       _path: filePath,
@@ -66,8 +64,8 @@ const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => par
  * @param path file full path
  * @returns generated slug
  */
-export const generatePath = (path: string, { forceLeadingSlash = true } = {}): string => {
-  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: true })).join('/')
+export const generatePath = (path: string, { forceLeadingSlash = true, respectPathCase = false } = {}): string => {
+  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: !respectPathCase })).join('/')
   return forceLeadingSlash ? withLeadingSlash(withoutTrailingSlash(path)) : path
 }
 

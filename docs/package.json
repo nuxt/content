@@ -9,18 +9,18 @@
     "generate": "nuxi generate"
   },
   "resolutions": {
-    "nitropack": "2.5.1"
+    "nitropack": "2.5.2"
   },
   "devDependencies": {
     "@docsearch/js": "^3.5.1",
-    "@nuxt-themes/docus": "^1.12.3",
-    "@nuxthq/studio": "^0.13.2",
+    "@nuxt-themes/docus": "^1.14.3",
+    "@nuxthq/studio": "^0.13.4",
     "@nuxtlabs/github-module": "^1.6.3",
-    "monaco-editor-core": "^0.39.0",
+    "monaco-editor-core": "^0.40.0",
     "nuxt": "3.6.1",
     "vue-plausible": "^1.3.2"
   },
-  "packageManager": "pnpm@8.6.5",
+  "packageManager": "pnpm@8.6.9",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {

@@ -273,8 +273,6 @@ export default defineNuxtPlugin((nuxt) => {
 
   // Route middleware
   addRouteMiddleware(async (to, from) => {
-    // TODO: Remove this (https://github.com/nuxt/framework/pull/5274)
-    if (to.path.includes('favicon.ico')) { return }
     // Avoid calling on hash change
     if (process.client && !isClientDBEnabled && to.path === from.path) {
       if (!to.meta.layout) {

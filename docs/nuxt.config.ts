@@ -50,11 +50,16 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
+      crawlLinks: true,
       routes: [
         '/',
-        '/blog/announcing-v2',
-        // TODO: move to github module
-        '/api/_github/releases/.json'
+        '/blog/announcing-v2'
+      ],
+      ignore: [
+        '/fr/v1/getting-started/&quot;',
+        '/ja/v1/getting-started/&quot;',
+        '/ru/v1/getting-started/&quot;',
+        '/v1/getting-started/&quot;'
       ]
     }
   },

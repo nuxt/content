@@ -1,4 +1,5 @@
 import type { Theme } from 'shiki-es'
+import type { StorageValue } from 'unstorage'
 
 export interface ParsedContentInternalMeta {
   /**
@@ -140,7 +141,7 @@ export interface MarkdownParsedContent extends ParsedContent {
 export interface ContentTransformer {
   name: string
   extensions: string[]
-  parse?(id: string, content: string, options: any): Promise<ParsedContent> | ParsedContent
+  parse?(id: string, content: StorageValue, options: any): Promise<ParsedContent> | ParsedContent
   transform?(content: ParsedContent, options: any): Promise<ParsedContent> | ParsedContent
 }
 
@@ -472,6 +473,11 @@ export interface QueryBuilder<T = ParsedContentMeta> {
    * Fetch sorround contents
    */
   findSurround(query: string | QueryBuilderWhere, options?: Partial<{ before: number; after: number }>): Promise<Array<T>>
+
+  /**
+   * Count matched contents
+   */
+  count(): Promise<number>
 
   /**
    * Filter contents based on locale

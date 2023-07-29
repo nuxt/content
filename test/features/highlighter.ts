@@ -22,265 +22,246 @@ export const testHighlighter = () => {
       const styleElement = parsed.body.children.pop()
       expect(styleElement.tag).toBe('style')
       const style = styleElement.children[0].value
+      const code = parsed.body.children[0].children[0].children
 
-      const code = parsed.body.children[0].children[0].children[0].children[0].children
-
-      expect(style).toContain(`.${code[0].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[0].props.class}{color:#FF7B72;}`)
-
-      expect(style).toContain(`.${code[1].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[1].props.class}{color:#C9D1D9;}`)
-
-      expect(style).toContain(`.${code[2].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[2].props.class}{color:#79C0FF;}`)
-
-      expect(style).toContain(`.${code[3].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[3].props.class}{color:#FF7B72;}`)
-
-      expect(style).toContain(`.${code[4].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[4].props.class}{color:#C9D1D9;}`)
-
-      expect(style).toContain(`.${code[5].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[5].props.class}{color:#79C0FF;}`)
-
-      expect(style).toContain(`.${code[6].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[6].props.class}{color:#C9D1D9;}`)
-
-      expect(style).toContain(`.${code[7].props.class}{color:#CF222E;}`)
-      expect(style).toContain(`.dark .${code[7].props.class}{color:#FF7B72;}`)
-
-      expect(style).toContain(`.${code[8].props.class}{color:#24292F;}`)
-      expect(style).toContain(`.dark .${code[8].props.class}{color:#C9D1D9;}`)
-
-      expect(style).toContain(`.${code[9].props.class}{color:#0550AE;}`)
-      expect(style).toContain(`.dark .${code[9].props.class}{color:#79C0FF;}`)
+      for (const token of code) {
+        expect(style).toContain(`.${token.props.class}`)
+        expect(style).toContain(`.dark .${token.props.class}`)
+      }
     })
 
     test('highlight multi-theme with different tokenizer', async () => {
-      const tokens = await $fetch('/api/highlight', {
-        method: 'POST',
-        body: {
+      const { tree } = await $fetch('/api/_mdc/highlight', {
+        params: {
           lang: 'ts',
-          theme: {
-            dark: 'material-palenight', // Theme containing italic
+          theme: JSON.stringify({
+            dark: 'material-theme-palenight', // Theme containing italic
             default: 'github-light'
-          },
+          }),
           code: 'export type UseFetchOptions = { key?: string }'
         }
       })
 
-      expect(tokens).toMatchInlineSnapshot(`
+      expect(tree).toMatchInlineSnapshot(`
         [
-          [
-            {
-              "content": "export",
-              "style": {
-                "dark": {
-                  "color": "#89DDFF",
-                  "fontStyle": 1,
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "export",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-510828",
                 },
-                "default": {
-                  "color": "#CF222E",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "type",
-              "style": {
-                "dark": {
-                  "color": "#C792EA",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "type",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-757323",
                 },
-                "default": {
-                  "color": "#CF222E",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "UseFetchOptions",
-              "style": {
-                "dark": {
-                  "color": "#FFCB6B",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "UseFetchOptions",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-941645",
                 },
-                "default": {
-                  "color": "#953800",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "=",
-              "style": {
-                "dark": {
-                  "color": "#89DDFF",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "=",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-943635",
                 },
-                "default": {
-                  "color": "#CF222E",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "{",
-              "style": {
-                "dark": {
-                  "color": "#89DDFF",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "{",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-695709",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "key",
-              "style": {
-                "dark": {
-                  "color": "#F07178",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "key",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-411742",
                 },
-                "default": {
-                  "color": "#953800",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "?:",
-              "style": {
-                "dark": {
-                  "color": "#89DDFF",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "?:",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-943635",
                 },
-                "default": {
-                  "color": "#CF222E",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "string",
-              "style": {
-                "dark": {
-                  "color": "#FFCB6B",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "string",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-559631",
                 },
-                "default": {
-                  "color": "#0550AE",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": " ",
-              "style": {
-                "dark": {
-                  "color": "#A6ACCD",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": " ",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-508774",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
-            },
-            {
-              "content": "}",
-              "style": {
-                "dark": {
-                  "color": "#89DDFF",
-                  "fontStyle": 0,
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "}",
+                  },
+                ],
+                "properties": {
+                  "class": "ct-695709",
                 },
-                "default": {
-                  "color": "#24292F",
-                  "fontStyle": 0,
-                },
+                "tagName": "span",
+                "type": "element",
               },
+            ],
+            "properties": {
+              "class": "line",
+              "line": 1,
             },
-          ],
+            "tagName": "span",
+            "type": "element",
+          },
         ]
       `)
     })
