@@ -77,12 +77,12 @@ export default defineComponent({
   render (ctx: any) {
     const { contentHead } = useRuntimeConfig().public.content
 
-    // Allow user to overwrite the global `contentHead` config.
-    const shouldInjectContentHead = props.head === undefined ? contentHead : props.head
-
     const slots = useSlots()
 
     const { tag, excerpt, path, query, head } = ctx
+
+    // Allow user to overwrite the global `contentHead` config.
+    const shouldInjectContentHead = head === undefined ? contentHead : head
 
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = {
