@@ -3,17 +3,24 @@ import { $fetch } from '@nuxt/test-utils'
 
 export const testModuleOptions = () => {
   describe('Module Options', () => {
-    test('Overwrite `remark-emoji` options: enable emoticon', async () => {
+    test('Overwrite `remark-emoji` options: disable emoticon', async () => {
       const parsed = await $fetch('/api/parse', {
         method: 'POST',
         body: {
           id: 'content:index.md',
           content: [
             '# Hello :-)'
-          ].join('\n')
+          ].join('\n'),
+          options: {
+            markdown: {
+              remarkPlugins: {
+                'remark-emoji': false
+              }
+            }
+          }
         }
       })
-      expect(parsed.body.children[0].children[0].value).toContain('😃')
+      expect(parsed.body.children[0].children[0].value).not.toContain('😃')
     })
 
     test('Disable `remark-gfm`', async () => {
@@ -40,7 +47,7 @@ export const testModuleOptions = () => {
         }
       })
       expect(parsed.body.children[0].props.className).toContain('remark-oembed-you-tube')
-    })
+    }, 10000)
 
     test('Add `rehype-figure`', async () => {
       const parsed = await $fetch('/api/parse', {
@@ -54,6 +61,6 @@ export const testModuleOptions = () => {
       })
       expect(parsed.body.children[0].props.className).toContain('rehype-figure')
       expect(parsed.body.children[0].tag).toContain('figure')
-    })
+    }, 10000)
   })
 }

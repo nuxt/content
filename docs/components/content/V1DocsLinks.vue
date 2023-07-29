@@ -5,11 +5,14 @@
       <button-link href="/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         English
       </button-link>
-      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/fr/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         French
       </button-link>
-      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" class="ml-2" size="large">
+      <button-link href="/ja/v1/getting-started/introduction" :transparent="true" color="false" size="large">
         Japanese
+      </button-link>
+      <button-link href="/ru/v1/getting-started/introduction" :transparent="true" color="false" size="large">
+        Russian
       </button-link>
     </div>
     <ellipsis />
@@ -34,6 +37,7 @@ css({
   },
   '.links-wrapper': {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '2rem',
     justifyContent: 'center'
   },

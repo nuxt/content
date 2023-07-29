@@ -1,3 +1,9 @@
+<template>
+  <NuxtLink :href="href" :target="target">
+    <slot />
+  </NuxtLink>
+</template>
+
 <script setup lang="ts">
 defineProps({
   href: {
@@ -11,9 +17,3 @@ defineProps({
   }
 })
 </script>
-
-<template>
-  <NuxtLink :href="href" :target="target">
-    <slot />
-  </NuxtLink>
-</template>

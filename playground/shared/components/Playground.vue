@@ -1,8 +1,32 @@
-<script setup>
-import { ref, useAsyncData } from '#imports'
-const PARSE_SERVER = 'http://localhost:3000/api/parse'
+<template>
+  <div class="playground">
+    <textarea v-model="content" />
+    <div class="content">
+      <div class="tabs">
+        <button
+          v-for="name in tabs"
+          :key="name"
+          class="outline"
+          :class="{ active: name === tab }"
+          @click="tab = name"
+        >
+          {{ name }}
+        </button>
+      </div>
 
-const INITIAL_CODE = `---
+      <MDC v-slot="{ data, body }" :value="content">
+        <MDCRenderer v-if="tab === 'Preview'" :body="body" :data="data" />
+        <pre v-if="tab === 'AST'" style="padding: 1rem;">{{ body }}</pre>
+      </MDC>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const tab = ref('Preview')
+const tabs = ref(['Preview', 'AST'])
+const content = ref(`
+---
 title: MDC
 cover: https://nuxtjs.org/design-kit/colored-logo.svg
 ---
@@ -33,92 +57,45 @@ This is an alert for _**{{ type }}**_
 ::alert{type="danger"}
 This is an alert for _**{{ type }}**_
 ::
-
-`
-const content = ref(INITIAL_CODE)
-
-const { data: doc, refresh } = await useAsyncData('playground', async () => {
-  try {
-    return await $fetch(PARSE_SERVER, {
-      method: 'POST',
-      cors: true,
-      body: {
-        id: 'content:_file.md',
-        content: content.value
-      }
-    })
-  } catch (e) {
-    return doc.value
-  }
-})
-
-const tab = ref('Preview')
-
-const tabs = ref(['Preview', 'AST'])
+`.trim())
 </script>
 
-<template>
-  <div class="playground">
-    <textarea v-model="content" @input="refresh" />
-    <div class="content">
-      <div class="tabs">
-        <button
-          v-for="name in tabs"
-          :key="name"
-          class="outline"
-          :class="{ active: name === tab }"
-          @click="tab = name"
-        >
-          {{ name }}
-        </button>
-      </div>
+ <style scoped>
+ .playground {
+   display: flex;
+   align-items: stretch;
+   flex: 1;
+   height: calc(100vh - 60px);
+   max-height: calc(100vh - 60px);
+ }
 
-      <ContentRenderer v-if="tab === 'Preview'" :value="doc">
-        <template #empty>
-          <div>Content is empty.</div>
-        </template>
-      </ContentRenderer>
-      <pre v-if="tab === 'AST'" style="padding: 1rem;">{{ doc }}</pre>
-    </div>
-  </div>
-</template>
+ .playground textarea {
+   flex: 1;
+   width: 100%;
+   height: 100%;
+   border-radius: 0;
+ }
 
-<style scoped>
-.playground {
-  display: flex;
-  align-items: stretch;
-  flex: 1;
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
-}
+ .playground .content {
+   flex: 1;
+   width: 50%;
+   overflow-y: auto;
+   padding: 1rem;
+ }
 
-.playground textarea {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-}
+ .playground .tabs {
+   display: flex;
+   flex-direction: row;
+   padding: 1rem;
+   gap: 1rem;
+ }
 
-.playground .content {
-  flex: 1;
-  width: 50%;
-  overflow-y: auto;
-  padding: 1rem;
-}
+ .playground .tabs > button {
+   opacity: 0.75;
+ }
 
-.playground .tabs {
-  display: flex;
-  flex-direction: row;
-  padding: 1rem;
-  gap: 1rem;
-}
-
-.playground .tabs > button {
-  opacity: 0.75;
-}
-
-.playground .tabs > button.active {
-  border-width: 2px;
-  opacity: 1;
-}
-</style>
+ .playground .tabs > button.active {
+   border-width: 2px;
+   opacity: 1;
+ }
+ </style>

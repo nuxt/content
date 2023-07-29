@@ -1,6 +1,69 @@
 # Changelog
 
 
+## v2.7.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.7.1...v2.7.2)
+
+### 🩹 Fixes
+
+- Remark plugins deprecated warning ([#2188](https://github.com/nuxt/content/pull/2188))
+- Allow `]` in filename code block ([#2169](https://github.com/nuxt/content/pull/2169))
+
+### 📖 Documentation
+
+- Update slots example for the `content-query` component ([#2190](https://github.com/nuxt/content/pull/2190))
+
+### ❤️  Contributors
+
+- Estéban <e.soubiran25@gmail.com>
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.7.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.7.0...v2.7.1)
+
+### 🚀 Enhancements
+
+- Add studio banner ([#2165](https://github.com/nuxt/content/pull/2165))
+
+### 🔥 Performance
+
+- Keep document-drive state in `shallowRef` and prefetch pages/components ([#2118](https://github.com/nuxt/content/pull/2118))
+
+### 🩹 Fixes
+
+- Replace crlf line endings with lf ([#2120](https://github.com/nuxt/content/pull/2120))
+- Use `consola.withTag` instead of `kit.useLogger` ([#2140](https://github.com/nuxt/content/pull/2140))
+- **module:** Add `yml` / `json` extensions to tailwind content files ([#2147](https://github.com/nuxt/content/pull/2147))
+- Remove unneeded await ([#2175](https://github.com/nuxt/content/pull/2175))
+- Use unstorage types ([#2136](https://github.com/nuxt/content/pull/2136))
+- Uppercase in path ([#2170](https://github.com/nuxt/content/pull/2170))
+- **markdown:** Allow plugin with array type option ([#2114](https://github.com/nuxt/content/pull/2114))
+- Allow empty string in `$contains` ([#2179](https://github.com/nuxt/content/pull/2179))
+- Remove favicon handling ([#2157](https://github.com/nuxt/content/pull/2157))
+
+### 📖 Documentation
+
+- Reorder document-driven page slots components description ([#2108](https://github.com/nuxt/content/pull/2108))
+- Add utm_source in banner link ([f9a0113e](https://github.com/nuxt/content/commit/f9a0113e))
+- Use lowercase typings, use ` ([` instead of `or` in type declaration (#2167)](https://github.com/nuxt/content/commit/` instead of `or` in type declaration (#2167)))
+- Add warning about windows development ([#2180](https://github.com/nuxt/content/pull/2180))
+
+### ❤️  Contributors
+
+- Estéban <e.soubiran25@gmail.com>
+- Maxime Pauvert ([@maximepvrt](http://github.com/maximepvrt))
+- Jianqi Pan ([@Jannchie](http://github.com/Jannchie))
+- Nobkd 
+- 12a90c4b ([@nobkd](http://github.com/nobkd))
+- Daniel Roe <daniel@roe.dev>
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Florent Delerue <florentdelerue@hotmail.com>
+- Benjamin Canac ([@benjamincanac](http://github.com/benjamincanac))
+- Farnabaz <farnabaz@gmail.com>
+- AnaelBonnafous
+
 ## v2.7.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.6.0...v2.7.0)
