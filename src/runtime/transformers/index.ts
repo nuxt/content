@@ -6,7 +6,6 @@ import csv from './csv'
 import markdown from './markdown'
 import yaml from './yaml'
 import pathMeta from './path-meta'
-import shiki from './shiki'
 import json from './json'
 
 const TRANSFORMERS = [
@@ -14,7 +13,6 @@ const TRANSFORMERS = [
   markdown,
   json,
   yaml,
-  shiki,
   pathMeta
 ]
 

@@ -1,15 +1,9 @@
 import { withBase } from 'ufo'
 import { useRuntimeConfig, useRequestEvent } from '#app'
-import { unwrap, flatUnwrap } from '../markdown-parser/utils/node'
 import type { useContent } from './content'
 import { useContentPreview } from './preview'
 
 export const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
-
-export const useUnwrap = () => ({
-  unwrap,
-  flatUnwrap
-})
 
 export const useContentDisabled = (): ReturnType<typeof useContent> => {
   // Console warnings

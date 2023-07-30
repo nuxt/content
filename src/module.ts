@@ -7,7 +7,8 @@ import {
   addImports,
   addComponentsDir,
   addTemplate,
-  extendViteConfig
+  extendViteConfig,
+  installModule
 } from '@nuxt/kit'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
@@ -271,7 +272,10 @@ export default defineNuxtModule<ModuleOptions>({
     defaultLocale: undefined,
     highlight: false,
     markdown: {
-      tags: Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+      tags: {
+        ...Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+        code: 'ProseCodeInline'
+      },
       anchorLinks: {
         depth: 4,
         exclude: [1]
@@ -313,12 +317,21 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Vite configurations
     extendViteConfig((config) => {
-      config.define = config.define || {}
-      config.define['process.env.VSCODE_TEXTMATE_DEBUG'] = false
-
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
       config.optimizeDeps.include.push('slugify')
+
+      config.plugins?.push({
+        name: 'content-slot',
+        enforce: 'pre',
+        transform (code) {
+          if (code.includes('<ContentSlot')) {
+            code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-z]*)['"]|use=['"]([a-z]*)['"])/g, '<MDCSlot $1 name="$4"')
+            code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
+            return code
+          }
+        }
+      })
     })
 
     nuxt.hook('nitro:config', (nitroConfig) => {
@@ -413,7 +426,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
       { name: 'useContentPreview', as: 'useContentPreview', from: resolveRuntimeModule('./composables/preview') },
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
-      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/utils') }
+      { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/useUnwrap') }
     ])
 
     // Register components
@@ -603,6 +616,15 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
+    await installModule('nuxt-mdc', {
+      remarkPlugins: contentContext.markdown.remarkPlugins,
+      rehypePlugins: contentContext.markdown.rehypePlugins,
+      highlight: contentContext.highlight,
+      components: {
+        map: contentContext.markdown.tags
+      }
+    })
+
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
       defaultLocale: contentContext.defaultLocale,
@@ -767,14 +789,10 @@ interface ModulePrivateRuntimeConfig {
 }
 
 declare module '@nuxt/schema' {
-  interface ConfigSchema {
-    runtimeConfig: {
-      public?: {
-        content?: ModulePublicRuntimeConfig;
-      }
-      private?: {
-        content?: ModulePrivateRuntimeConfig & ContentContext;
-      }
-    }
+  interface PublicRuntimeConfig {
+    content: ModulePublicRuntimeConfig;
+  }
+  interface PrivateRuntimeConfig {
+    content: ModulePrivateRuntimeConfig & ContentContext;
   }
 }
