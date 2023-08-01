@@ -1,5 +1,7 @@
 import { resolve } from 'pathe'
 import contentModule from '../../..'
+// import customDriver from './drivers/github.mjs'
+// resolve('drivers', 'github.mjs')
 
 export default defineNuxtConfig({
   nitro: {
@@ -21,19 +23,17 @@ export default defineNuxtConfig({
       }
     ]
   },
-  // @ts-ignore
   modules: [contentModule],
   content: {
-    sources: [
-      {
-        name: 'github',
+    sources: {
+      github: {
         prefix: '/',
-        driver: resolve('drivers', 'github.mjs'),
+        driver: resolve(__dirname, 'drivers', 'github.mjs'),
         repo: 'nuxt/content',
         branch: 'main',
         dir: '/test/fixtures/basic/content'
       }
-    ],
+    },
     ignores: ['.*\\.vue'],
     navigation: {
       fields: ['icon']
