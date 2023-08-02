@@ -13,9 +13,9 @@ export default defineEventHandler(async (event) => {
     if (!advanceQuery) {
       contentQuery = contentQuery.withDirConfig()
     }
-    
+
     const content = await contentQuery.findOne()
-    
+
     const _result = advanceQuery ? content?.result : content
     // @ts-ignore
     const missing = !_result && !content?.dirConfig?.navigation?.redirect && !content?._dir?.navigation?.redirect

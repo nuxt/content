@@ -1,8 +1,8 @@
+import { joinURL } from 'ufo'
 import type { ContentQueryFindResponse, ContentQueryResponse } from '../../types/api'
 import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../../types/query'
 import { apply, ensureArray, sortList, withoutKeys, withKeys, omit } from './utils'
 import { createMatch } from '.'
-import { joinURL } from 'ufo'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   // Create Matcher
@@ -73,7 +73,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
         const dirConfig = db.find((item: any) => item._path === joinURL(path, '_dir'))
         if (dirConfig) {
           // @ts-ignore
-          state.dirConfig = { _path: dirConfig._path, ...withoutKeys(["_"])(dirConfig) }
+          state.dirConfig = { _path: dirConfig._path, ...withoutKeys(['_'])(dirConfig) }
         }
       }
       return state
