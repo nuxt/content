@@ -220,7 +220,7 @@ export interface ModuleOptions {
     trailingSlash?: boolean
   },
   /**
-   * Live-content mode config
+   * Disable to dynamically render content in production.
    * @default true
    */
   useCache: boolean,
@@ -304,7 +304,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
-    // Disable cache in dev mode, or when 'useCache' is false.
+    // Cache content in production, when 'useCache' is enabled.
     const cacheContent = Boolean(!nuxt.options.dev && options.useCache)
     const buildIntegrity = cacheContent ? Date.now() : undefined
 
