@@ -155,6 +155,7 @@ export default defineComponent({
           if (legacy) {
             return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
           } else {
+            // @ts-ignore
             return queryBuilder.withSurround(path.value).findOne().then(resolveResult)
           }
         }

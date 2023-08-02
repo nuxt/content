@@ -478,7 +478,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'types/content.d.ts',
       getContents: () => [
         'declare module \'#content/server\' {',
-        `  const serverQueryContent: typeof import('${resolve('./runtime/server')}').serverQueryContent`,
+        `  const serverQueryContent: typeof import('${resolve(options.experimental.advanceQuery ? './runtime/server' : './runtime/legacy/types')}').serverQueryContent`,
         `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
         '}'
       ].join('\n')
@@ -565,9 +565,10 @@ export default defineNuxtModule<ModuleOptions>({
         { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
 
-      addPlugin(resolveRuntimeModule(options.experimental.advanceQuery
-        ? './plugins/documentDriven'
-        : './legacy/plugins/documentDriven'
+      addPlugin(resolveRuntimeModule(
+        options.experimental.advanceQuery
+          ? './plugins/documentDriven'
+          : './legacy/plugins/documentDriven'
       ))
 
       if (options.documentDriven.injectPage) {
