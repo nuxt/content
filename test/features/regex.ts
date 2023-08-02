@@ -38,7 +38,7 @@ export const testRegex = () => {
         params: {
           _params: jsonStringify(params)
         }
-      }).then(resolveResult)
+      })
 
       expect(list.length).greaterThan(0)
       expect(list[0]._path).toEqual('/cats')
