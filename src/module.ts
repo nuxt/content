@@ -305,8 +305,8 @@ export default defineNuxtModule<ModuleOptions>({
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
     // Cache content in production, when 'useCache' is enabled.
-    const cacheContent = Boolean(!nuxt.options.dev && options.useCache)
-    const buildIntegrity = cacheContent ? Date.now() : undefined
+    const useCache = Boolean(!nuxt.options.dev && options.useCache)
+    const buildIntegrity = useCache ? Date.now() : undefined
 
     if (options.base) {
       logger.warn('content.base is deprecated. Use content.api.baseURL instead.')
@@ -353,14 +353,14 @@ export default defineNuxtModule<ModuleOptions>({
         },
         {
           method: 'get',
-          route: cacheContent
+          route: useCache
             ? `${options.api.baseURL}/cache.${buildIntegrity}.json`
             : `${options.api.baseURL}/cache.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
 
-      if (cacheContent) {
+      if (useCache) {
         nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
@@ -660,7 +660,7 @@ export default defineNuxtModule<ModuleOptions>({
     const isIgnored = makeIgnored(contentContext.ignores)
 
     // Setup content dev module
-    if (cacheContent) {
+    if (useCache) {
       nuxt.hook('build:before', async () => {
         const storage = createStorage()
         const sources = useContentMounts(nuxt, contentContext.sources)
