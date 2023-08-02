@@ -1,4 +1,4 @@
-import { ContentQueryFindResponse, ContentQueryFindOneResponse, ContentQueryCountResponse, ContentQueryWithSurround } from './api'
+import { ContentQueryFindResponse, ContentQueryFindOneResponse, ContentQueryCountResponse, ContentQueryWithSurround, ContentQueryWithDirConfig } from './api'
 import { ContentQueryCountResponse, ContentQueryResponse, ParsedContentInternalMeta, ParsedContentMeta } from '.'
 /**
  * Query
@@ -343,7 +343,7 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
   /**
    * Fetch sorround contents
    */
-  withDirConfig(): ContentQueryBuilder<T, ContentQueryDirConfig<T>>
+  withDirConfig(): ContentQueryBuilder<T, ContentQueryWithDirConfig>
 }
 
 

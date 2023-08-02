@@ -158,7 +158,9 @@ export default defineNuxtPlugin((nuxt) => {
           }
         }
 
-        const query = queryContent().where(where)
+        const query = queryContent()
+          .where(where)
+          .withDirConfig()
 
         if (moduleOptions.surround && routeConfig.surround !== false) {
           let surround: any = _path
@@ -198,7 +200,7 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       // Use `redirect` key to redirect to another page
-      const redirectTo = _page?.result?.redirect || _page?.redirect || _page?._dir?.navigation?.redirect
+      const redirectTo = _page?.result?.redirect || _page?.dirConfig?.navigation?.redirect || _page?.redirect || _page?._dir?.navigation?.redirect
       if (redirectTo) {
         // In case of redirection, it is not necessary to fetch page layout
         // Just fill the page state with the redirect path

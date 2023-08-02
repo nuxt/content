@@ -33,7 +33,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
   const path = params?.where?.find(wh => wh._path)?._path
 
   // Read from Index is not preview and path is string or RegExp
-  if (!isPreview(event) && !params.surround && (typeof path === 'string' || path instanceof RegExp)) {
+  if (!isPreview(event) && !params.surround && !params.dirConfig && (typeof path === 'string' || path instanceof RegExp)) {
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))

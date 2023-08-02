@@ -19,6 +19,6 @@ export interface ContentQueryWithSurround<T> {
   surround: Array<T | null>
 }
 
-export interface ContentQueryDirConfig<T> {
-  dirConfig: T
+export interface ContentQueryWithDirConfig {
+  dirConfig: Record<string, any>
 }

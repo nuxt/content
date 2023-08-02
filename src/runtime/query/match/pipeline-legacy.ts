@@ -1,5 +1,5 @@
 import type { QueryBuilder } from '../../types'
-import { ContentQueryBuilder } from '../../types/query'
+import type { ContentQueryBuilder } from '../../types/query'
 import { createPipelineFetcher } from './pipeline'
 
 export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T[]>) {
@@ -14,6 +14,14 @@ export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T
       return result.surround
     }
 
-    return result.result as any
+    if ((result as any).dirConfig) {
+      result.result = {
+        _path: (result as any).dirConfig?._path,
+        ...(result.result as T),
+        _dir: (result as any).dirConfig
+      }
+    }
+
+    return result.result as T | T[]
   }
 }

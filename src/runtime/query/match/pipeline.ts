@@ -2,6 +2,7 @@ import type { ContentQueryFindResponse, ContentQueryResponse } from '../../types
 import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../../types/query'
 import { apply, ensureArray, sortList, withoutKeys, withKeys, omit } from './utils'
 import { createMatch } from '.'
+import { joinURL } from 'ufo'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   // Create Matcher
@@ -36,8 +37,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     },
     // Sort data
     (state, params) => ensureArray(params.sort).forEach(options => sortList(state.result, options!)),
-    // Surround logic
-    (state, params, db) => {
+    function fetchSurround (state, params, db) {
       if (params.surround) {
         // @ts-ignore
         state.surround = surround(db, params.surround)
@@ -66,6 +66,17 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
           limit: params.limit
         }
       }
+    },
+    function fetchDirConfig (state, params, db) {
+      if (params.dirConfig) {
+        const path = (state.result[0] as any)?._path || params.where?.find(w => w._path)?._path as string
+        const dirConfig = db.find((item: any) => item._path === joinURL(path, '_dir'))
+        if (dirConfig) {
+          // @ts-ignore
+          state.dirConfig = { _path: dirConfig._path, ...withoutKeys(["_"])(dirConfig) }
+        }
+      }
+      return state
     },
     // Remove unwanted fields
     (state, params) => ({
