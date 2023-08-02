@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
         return {
           _path: path,
           ...(content || {}),
-          _dir: _dir?.result || _dir
+          _dir: advanceQuery ? _dir?.result : _dir
         }
       }
     }

@@ -7,7 +7,7 @@ import type { ModuleOptions } from '../../../module'
 import { useContentState } from '../../composables/content'
 import { useContentHelpers } from '../../composables/helpers'
 import { fetchContentNavigation } from '../../composables/navigation'
-import { queryContent } from '../../composables/query'
+import { queryContent } from '../composables/query'
 import { componentNames } from '#components'
 // @ts-ignore
 import layouts from '#build/layouts'

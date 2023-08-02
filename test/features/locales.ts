@@ -5,7 +5,7 @@ export const testLocales = () => {
   // @ts-ignore
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   const resolveResult = (result: any) => {
-    if (!useTestContext().options.nuxtConfig.content.experimental.advanceQuery) {
+    if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {
       if (result?.surround) {
         return result.surround
       }

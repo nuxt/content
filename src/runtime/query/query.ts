@@ -35,7 +35,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
         return result.surround
       }
 
-      return result?._id || Array.isArray(result) ? result : result?.result
+      return result?._path || Array.isArray(result) ? result : result?.result
     }
 
     return result
