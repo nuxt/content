@@ -4,13 +4,13 @@ import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
-import type { QueryBuilderParams, ParsedContent, ContentTransformer } from '../types'
+import type { ParsedContent, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
 import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { ContentQueryBuilder } from '../types/query'
+import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-ignore
@@ -203,17 +203,13 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (qu
  * Query contents
  */
 export function serverQueryContent<T = ParsedContent>(event: H3Event): ContentQueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): ContentQueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: ContentQueryBuilderParams): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): ContentQueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
-  const queryBuilder = createQuery<T>(
-    createServerQueryFetch(event),
-    {
-      initialParams: typeof query !== 'string' ? query || {} : {},
-      legacy: !advanceQuery
-    }
-  )
+  const queryBuilder = advanceQuery
+    ? createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: false })
+    : createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: true })
   let path: string
 
   if (typeof query === 'string') {

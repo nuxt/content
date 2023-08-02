@@ -6,7 +6,7 @@ import type { NavItem, QueryBuilderParams, QueryBuilder } from '../types'
 import { useAsyncData, fetchContentNavigation, useState, useContent } from '#imports'
 import { NuxtLink } from '#components'
 
-export default defineComponent({
+const ContentNavigation = defineComponent({
   name: 'ContentNavigation',
   props: {
     /**
@@ -52,7 +52,7 @@ export default defineComponent({
    * Navigation empty fallback
    * @slot empty
    */
-  render (ctx: any) {
+  render (ctx: { navigation: NavItem[] }) {
     const slots = useSlots()
 
     const { navigation } = ctx
@@ -76,4 +76,12 @@ export default defineComponent({
       : defaultNode(navigation)
   }
 })
+
+export default ContentNavigation as typeof ContentNavigation & {
+  new (): {
+    $slots: {
+      default: ({ navigation }: { navigation: NavItem[] }) => any
+    }
+  }
+}
 </script>

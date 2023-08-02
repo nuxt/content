@@ -4,7 +4,7 @@ import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
 import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent, useRuntimeConfig } from '#imports'
 
-export default defineComponent({
+const ContentQuery = defineComponent({
   name: 'ContentQuery',
   props: {
     /**
@@ -232,4 +232,18 @@ export default defineComponent({
     return emptyNode('default', { data, props, isPartial })
   }
 })
+
+export interface ContentQueryDefaultSlotContext {
+  data: ParsedContent | Array<ParsedContent>
+  refresh: () => Promise<void>
+  isPartial: boolean
+}
+
+export default ContentQuery as typeof ContentQuery & {
+  new (): {
+    $slots: {
+      default: (context: ContentQueryDefaultSlotContext) => any
+    }
+  }
+}
 </script>

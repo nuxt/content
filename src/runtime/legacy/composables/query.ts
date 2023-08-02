@@ -17,7 +17,7 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
   const params = query.params()
 
   const apiPath = content.experimental.stripQueryParameters
-    ? withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
+    ? withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params as any)}.json`)
     : withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
   // Prefetch the query

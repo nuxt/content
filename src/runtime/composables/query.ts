@@ -59,10 +59,9 @@ export function queryContent<T = ParsedContent>(query: string, ...pathParts: str
 export function queryContent<T = ParsedContent> (query: ContentQueryBuilderParams): ContentQueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { content } = useRuntimeConfig().public
-  const queryBuilder = createQuery<T>(
-    createQueryFetch(),
-    { initialParams: typeof query !== 'string' ? query : {}, legacy: !content.experimental.advanceQuery }
-  )
+  const queryBuilder = content.experimental.advanceQuery
+    ? createQuery<T>(createQueryFetch(), { initialParams: typeof query !== 'string' ? query : {}, legacy: false })
+    : createQuery<T>(createQueryFetch(), { initialParams: typeof query !== 'string' ? query : {}, legacy: true })
   let path: string
 
   if (typeof query === 'string') {
