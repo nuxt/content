@@ -18,7 +18,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     before = before ?? 1
     after = after ?? 1
     const slice = new Array(before + after).fill(null, 0)
-    
+
     return index === -1 ? slice : slice.map((_, i) => data[index - before! + i + Number(i >= before!)] || null)
   }
 
@@ -41,7 +41,6 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
       if (params.surround) {
         // @ts-ignore
         state.surround = surround(db, params.surround)
-        
       }
       return state
     }
@@ -82,7 +81,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
 
   return async (query: ContentQueryBuilder<T>): Promise<ContentQueryResponse<T>> => {
     const db = await getContentsList()
-    
+
     const params = query.params()
 
     const result1: ContentQueryFindResponse<T> = {

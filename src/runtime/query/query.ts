@@ -12,7 +12,7 @@ interface QueryOptions {
 
 export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions & { legacy: true }): QueryBuilder<T>
 export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions & { legacy: false }): ContentQueryBuilder<T>
-export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions = {}) {
+export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>, opts: QueryOptions = {}) {
   const queryParams: ContentQueryBuilderParams = {}
 
   for (const key of Object.keys(opts.initialParams || {})) {

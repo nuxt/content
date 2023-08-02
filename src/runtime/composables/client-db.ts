@@ -7,8 +7,7 @@ import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta } from '../types'
 import { createNav } from '../server/navigation'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
-import { createPipelineFetcherLegacy } from '../query/match/pipeline-legacy'
+import { ContentQueryBuilderParams } from '../types/query'
 import { useContentPreview } from './preview'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)

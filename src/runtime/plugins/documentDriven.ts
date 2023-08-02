@@ -168,7 +168,7 @@ export default defineNuxtPlugin((nuxt) => {
           if (['string', 'object'].includes(typeof routeConfig.surround)) {
             surround = routeConfig.surround
           }
-          
+
           query.withSurround(surround)
         }
 
