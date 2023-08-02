@@ -1,4 +1,4 @@
-import { destr } from 'destr'
+import destr from 'destr'
 import { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 

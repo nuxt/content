@@ -1,62 +1,85 @@
-import type { DatabaseFetcher, QueryBuilder, QueryBuilderParams, SortOptions } from '../types'
+import type { QueryBuilder, SortOptions } from '../types'
 import { ParsedContent } from '../types'
+import { ContentQueryBuilder, ContentQueryBuilderParams, ContentQueryFetcher } from '../types/query'
 import { ensureArray } from './match/utils'
 
 const arrayParams = ['sort', 'where', 'only', 'without']
 
-export const createQuery = <T = ParsedContent>(
-  fetcher: DatabaseFetcher<T>,
-  intitialParams?: QueryBuilderParams
-): QueryBuilder<T> => {
-  const queryParams = {
-    ...intitialParams
-  } as QueryBuilderParams
+interface QueryOptions {
+  initialParams?: ContentQueryBuilderParams
+  legacy?: boolean
+}
 
-  for (const key of arrayParams) {
-    if (queryParams[key]) {
-      queryParams[key] = ensureArray(queryParams[key])
-    }
+export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions & { legacy: true }): QueryBuilder<T>
+export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions & { legacy: false }): ContentQueryBuilder<T>
+export function createQuery <T = ParsedContent>(fetcher: ContentQueryFetcher<T>, opts: QueryOptions = {}) {
+  const queryParams: ContentQueryBuilderParams = {}
+
+  for (const key of Object.keys(opts.initialParams || {})) {
+    queryParams[key] = arrayParams.includes(key) ? ensureArray(opts.initialParams![key]) : opts.initialParams![key]
   }
 
   /**
    * Factory function to create a parameter setter
    */
   const $set = (key: string, fn: (...values: any[]) => any = v => v) => {
-    return (...values: []) => {
+    return (...values: any[]) => {
       queryParams[key] = fn(...values)
       return query
     }
   }
 
-  const query: QueryBuilder<T> = {
+  const resolveResult = (result: any) => {
+    if (opts.legacy) {
+      if (result?.surround) {
+        return result.surround
+      }
+
+      return result?._id || Array.isArray(result) ? result : result?.result
+    }
+
+    return result
+  }
+
+  const query: any = {
     params: () => ({
       ...queryParams,
       ...(queryParams.where ? { where: [...ensureArray(queryParams.where)] } : {}),
       ...(queryParams.sort ? { sort: [...ensureArray(queryParams.sort)] } : {})
     }),
-    only: $set('only', ensureArray) as () => ReturnType<QueryBuilder<T>['only']>,
+    only: $set('only', ensureArray),
     without: $set('without', ensureArray),
     where: $set('where', (q: any) => [...ensureArray(queryParams.where), ...ensureArray(q)]),
     sort: $set('sort', (sort: SortOptions) => [...ensureArray(queryParams.sort), ...ensureArray(sort)]),
     limit: $set('limit', v => parseInt(String(v), 10)),
     skip: $set('skip', v => parseInt(String(v), 10)),
     // find
-    find: () => fetcher(query) as Promise<Array<T>>,
-    findOne: () => {
-      queryParams.first = true
-      return fetcher(query) as Promise<T>
-    },
-    findSurround: (surroundQuery, options) => {
-      queryParams.surround = { query: surroundQuery, ...options }
-      return fetcher(query) as Promise<Array<T>>
-    },
-    count: () => {
-      queryParams.count = true
-      return fetcher(query) as Promise<number>
-    },
+    find: () => fetcher(query as unknown as ContentQueryBuilder<T>).then(resolveResult),
+    findOne: () => fetcher($set('first')(true)).then(resolveResult),
+    count: () => fetcher($set('count')(true)).then(resolveResult),
     // locale
-    locale: (_locale: string) => query.where({ _locale })
+    locale: (_locale: string) => query.where({ _locale }),
+    withSurround: $set('surround', (surroundQuery, options) => ({ query: surroundQuery, ...options })),
+    withDirConfig: () => $set('dirConfig')(true)
   }
 
-  return query
+  if (opts.legacy) {
+    // @ts-ignore
+    delete query.withSurround
+    // @ts-ignore
+    query.findSurround = (surroundQuery, options) => {
+      const _query = $set('surround', (sq, opts) => ({ query: sq, ...opts }))(surroundQuery, options)
+      return fetcher(_query).then((result) => {
+        if (Array.isArray(result)) {
+          return result
+        }
+
+        return result.surround
+      })
+    }
+
+    return query as QueryBuilder<T>
+  }
+
+  return query as ContentQueryBuilder<T>
 }

@@ -1,5 +1,6 @@
-import type { QueryBuilder, QueryBuilderParams, QueryPipe } from '../../types'
-import { apply, ensureArray, sortList, withoutKeys, withKeys } from './utils'
+import type { ContentQueryFindResponse, ContentQueryResponse } from '../../types/api'
+import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../../types/query'
+import { apply, ensureArray, sortList, withoutKeys, withKeys, omit } from './utils'
 import { createMatch } from '.'
 
 export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
@@ -9,7 +10,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
   /**
    * Exctract surrounded items of specific condition
    */
-  const surround = (data: any[], { query, before, after }: Exclude<QueryBuilderParams['surround'], undefined>) => {
+  const surround = (data: any[], { query, before, after }: Exclude<ContentQueryBuilderParams['surround'], undefined>) => {
     const matchQuery = typeof query === 'string' ? { _path: query } : query
     // Find matched item index
     const index = data.findIndex(item => match(item, matchQuery))
@@ -17,43 +18,99 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     before = before ?? 1
     after = after ?? 1
     const slice = new Array(before + after).fill(null, 0)
-
+    
     return index === -1 ? slice : slice.map((_, i) => data[index - before! + i + Number(i >= before!)] || null)
   }
 
-  const pipelines: Array<QueryPipe> = [
+  type ContentQueryPipe<T, InputState = ContentQueryFindResponse<T>, OutputState = ContentQueryFindResponse<T>> = (state: InputState, params: ContentQueryBuilderParams, db: Array<T>) => OutputState | void
+
+  const matchingPipelines: Array<ContentQueryPipe<T>> = [
     // Conditions
-    (data, params) => data.filter(item => ensureArray(params.where!).every(matchQuery => match(item, matchQuery))),
+    (state, params) => {
+      const filtered = state.result.filter(item => ensureArray(params.where!).every(matchQuery => match(item, matchQuery)))
+      return {
+        ...state,
+        result: filtered,
+        total: filtered.length
+      }
+    },
     // Sort data
-    (data, params) => ensureArray(params.sort).forEach(options => sortList(data, options!)),
+    (state, params) => ensureArray(params.sort).forEach(options => sortList(state.result, options!)),
     // Surround logic
-    (data, params) => params.surround ? surround(data, params.surround) : data,
-    // Skip first items
-    (data, params) => (params.skip ? data.slice(params.skip) : data),
-    // Pick first items
-    (data, params) => (params.limit ? data.slice(0, params.limit) : data),
-    // Remove unwanted fields
-    (data, params) => apply(withoutKeys(params.without))(data),
-    // Select only wanted fields
-    (data, params) => apply(withKeys(params.only))(data)
+    (state, params, db) => {
+      if (params.surround) {
+        // @ts-ignore
+        state.surround = surround(db, params.surround)
+        
+      }
+      return state
+    }
   ]
 
-  return async (query: QueryBuilder<T>): Promise<T | T[]> => {
-    const data = await getContentsList()
+  const transformingPiples: Array<ContentQueryPipe<T>> = [
+    // Skip first items
+    (state, params) => {
+      if (params.skip) {
+        return {
+          ...state,
+          result: state.result.slice(params.skip),
+          skip: params.skip
+        }
+      }
+    },
+    // Pick first items
+    (state, params) => {
+      if (params.limit) {
+        return {
+          ...state,
+          result: state.result.slice(0, params.limit),
+          limit: params.limit
+        }
+      }
+    },
+    // Remove unwanted fields
+    (state, params) => ({
+      ...state,
+      result: apply(withoutKeys(params.without))(state.result)
+    }),
+    // Select only wanted fields
+    (state, params) => ({
+      ...state,
+      result: apply(withKeys(params.only))(state.result)
+    })
+  ]
+
+  return async (query: ContentQueryBuilder<T>): Promise<ContentQueryResponse<T>> => {
+    const db = await getContentsList()
+    
     const params = query.params()
 
-    const filteredData = pipelines.reduce(($data: Array<T>, pipe: QueryPipe) => pipe($data, params) || $data, data)
-
-    // return first item if query is for single item
-    if (params.first) {
-      return filteredData[0]
+    const result1: ContentQueryFindResponse<T> = {
+      result: db,
+      limit: 0,
+      skip: 0,
+      total: db.length
     }
+
+    const matchedData = matchingPipelines.reduce(($data, pipe) => pipe($data, params, db) || $data, result1)
 
     // return count if query is for count
     if (params.count) {
-      return (filteredData.length ?? 0) as unknown as T
+      return {
+        result: matchedData.result.length
+      }
     }
 
-    return filteredData
+    const result = transformingPiples.reduce(($data, pipe) => pipe($data, params, db) || $data, matchedData)
+
+    // return first item if query is for single item
+    if (params.first) {
+      return {
+        ...omit(['skip', 'limit', 'total'])(result),
+        result: result.result[0]
+      }
+    }
+
+    return result
   }
 }

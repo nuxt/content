@@ -4,12 +4,13 @@ import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
 // eslint-disable-next-line import/no-named-as-default
 import defu from 'defu'
-import type { QueryBuilderParams, ParsedContent, QueryBuilder, ContentTransformer } from '../types'
+import type { QueryBuilderParams, ParsedContent, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
-import { createPipelineFetcher } from '../query/match/pipeline'
 import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
+import { createPipelineFetcher } from '../query/match/pipeline'
+import { ContentQueryBuilder } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-ignore
@@ -194,18 +195,25 @@ export const parseContent = async (id: string, content: StorageValue, opts: Pars
   return result
 }
 
-export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (query: QueryBuilder<T>) => {
+export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (query: ContentQueryBuilder<T>) => {
   return createPipelineFetcher<T>(() => getIndexedContentsList<T>(event, query))(query)
 }
 
 /**
  * Query contents
  */
-export function serverQueryContent<T = ParsedContent>(event: H3Event): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): QueryBuilder<T>;
-export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): QueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event): ContentQueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: QueryBuilderParams): ContentQueryBuilder<T>;
+export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | QueryBuilderParams, ...pathParts: string[]) {
-  const queryBuilder = createQuery<T>(createServerQueryFetch(event), typeof query !== 'string' ? query || {} : {})
+  const { advanceQuery } = useRuntimeConfig().public.content.experimental
+  const queryBuilder = createQuery<T>(
+    createServerQueryFetch(event),
+    {
+      initialParams: typeof query !== 'string' ? query || {} : {},
+      legacy: !advanceQuery
+    }
+  )
   let path: string
 
   if (typeof query === 'string') {

@@ -3,10 +3,12 @@ import memoryDriver from 'unstorage/drivers/memory'
 import { type Storage, createStorage, prefixStorage } from 'unstorage'
 import { withBase } from 'ufo'
 import { useRuntimeConfig, useNuxtApp } from '#app'
-import { createPipelineFetcher } from '../query/match/pipeline'
 import { createQuery } from '../query/query'
-import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../types'
+import type { NavItem, ParsedContent, ParsedContentMeta } from '../types'
 import { createNav } from '../server/navigation'
+import { createPipelineFetcher } from '../query/match/pipeline'
+import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
+import { createPipelineFetcherLegacy } from '../query/match/pipeline-legacy'
 import { useContentPreview } from './preview'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
@@ -47,7 +49,10 @@ export function createDB (storage: Storage) {
   return {
     storage,
     fetch: createPipelineFetcher(getItems),
-    query: (query?: QueryBuilderParams) => createQuery(createPipelineFetcher(getItems), query)
+    query: (initialParams?: ContentQueryBuilderParams) => createQuery<ParsedContent>(
+      createPipelineFetcher(getItems),
+      { initialParams, legacy: false }
+    )
   }
 }
 
@@ -93,7 +98,7 @@ async function initContentDatabase () {
   return _contentDatabase
 }
 
-export async function generateNavigation (query?: QueryBuilderParams): Promise<Array<NavItem>> {
+export async function generateNavigation (query?: ContentQueryBuilderParams): Promise<Array<NavItem>> {
   const db = await useContentDatabase()
 
   if (!useContentPreview().getPreviewToken() && Object.keys(query || {}).length === 0) {
@@ -118,7 +123,7 @@ export async function generateNavigation (query?: QueryBuilderParams): Promise<A
 
   const dirConfigs = await db.query().where({ _path: /\/_dir$/i, _partial: true }).find()
 
-  const configs = dirConfigs.reduce((configs, conf: ParsedContent) => {
+  const configs = dirConfigs.result.reduce((configs, conf: ParsedContent) => {
     if (conf.title?.toLowerCase() === 'dir') {
       conf.title = undefined
     }
@@ -131,5 +136,5 @@ export async function generateNavigation (query?: QueryBuilderParams): Promise<A
     return configs
   }, {} as Record<string, ParsedContentMeta>)
 
-  return createNav(contents as ParsedContentMeta[], configs)
+  return createNav((contents?.result || contents), configs)
 }
