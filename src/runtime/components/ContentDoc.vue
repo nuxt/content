@@ -1,5 +1,5 @@
 <script lang="ts">
-import { PropType, defineComponent, h, useSlots } from 'vue'
+import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
 import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
@@ -120,7 +120,7 @@ const ContentDoc = defineComponent({
 export default ContentDoc as typeof ContentDoc & {
   new (): {
     $slots: {
-      default: (context: { doc: ParsedContent, refresh: () => Promise<void> }) => any
+      default: (context: { doc: ParsedContent, refresh: () => Promise<void> }) => VNode[] | undefined
     }
   }
 }

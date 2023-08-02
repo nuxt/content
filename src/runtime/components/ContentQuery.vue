@@ -1,6 +1,6 @@
 <script lang="ts">
 import { hash } from 'ohash'
-import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
+import { type PropType, type VNode, toRefs, defineComponent, h, useSlots, watch } from 'vue'
 import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '../types'
 import { computed, useAsyncData, queryContent, useRuntimeConfig } from '#imports'
 
@@ -242,7 +242,7 @@ export interface ContentQueryDefaultSlotContext {
 export default ContentQuery as typeof ContentQuery & {
   new (): {
     $slots: {
-      default: (context: ContentQueryDefaultSlotContext) => any
+      default: (context: ContentQueryDefaultSlotContext) => VNode[] | undefined
     }
   }
 }

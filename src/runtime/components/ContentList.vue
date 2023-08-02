@@ -1,5 +1,5 @@
 <script lang="ts">
-import { PropType, defineComponent, h, useSlots } from 'vue'
+import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentQuery from './ContentQuery.vue'
 
@@ -71,7 +71,7 @@ const ContentList = defineComponent({
 export default ContentList as typeof ContentList & {
   new (): {
     $slots: {
-      default: (context: { data: ParsedContent[], refresh: () => Promise<void> }) => any
+      default: (context: { data: ParsedContent[], refresh: () => Promise<void> }) => VNode[] | undefined
     }
   }
 }

@@ -1,6 +1,5 @@
 <script lang="ts">
-import { toRefs, defineComponent, h, useSlots, computed } from 'vue'
-import type { PropType, VNode } from 'vue'
+import { toRefs, defineComponent, h, useSlots, computed, type PropType, type VNode } from 'vue'
 import { hash } from 'ohash'
 import type { NavItem, QueryBuilderParams, QueryBuilder } from '../types'
 import { useAsyncData, fetchContentNavigation, useState, useContent } from '#imports'
@@ -80,7 +79,7 @@ const ContentNavigation = defineComponent({
 export default ContentNavigation as typeof ContentNavigation & {
   new (): {
     $slots: {
-      default: ({ navigation }: { navigation: NavItem[] }) => any
+      default: ({ navigation }: { navigation: NavItem[] }) => VNode[] | undefined
     }
   }
 }

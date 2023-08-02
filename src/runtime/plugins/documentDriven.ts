@@ -200,11 +200,11 @@ export default defineNuxtPlugin((nuxt) => {
       }
 
       // Use `redirect` key to redirect to another page
-      const redirectTo = _page?.result?.redirect || _page?.dirConfig?.navigation?.redirect || _page?.redirect || _page?._dir?.navigation?.redirect
+      const redirectTo = _page?.result?.redirect || _page?.dirConfig?.navigation?.redirect
       if (redirectTo) {
         // In case of redirection, it is not necessary to fetch page layout
         // Just fill the page state with the redirect path
-        pages.value[_path] = _page?.result
+        pages.value[_path] = _page.result
         return redirectTo
       }
 

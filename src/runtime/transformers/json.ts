@@ -1,5 +1,5 @@
 import destr from 'destr'
-import { ParsedContent } from '../types'
+import type { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({
