@@ -32,9 +32,11 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  const dirConfigs = await serverQueryContent(event).where({ _path: /\/_dir$/i, _partial: true }).find()
+  const dirConfigs = await serverQueryContent(event)
+    .where({ _path: /\/_dir$/i, _partial: true })
+    .find()
 
-  const configs = dirConfigs.reduce((configs, conf: ParsedContent) => {
+  const configs = (dirConfigs?.result || dirConfigs).reduce((configs, conf: ParsedContent) => {
     if (conf.title?.toLowerCase() === 'dir') {
       conf.title = undefined
     }
@@ -47,5 +49,5 @@ export default defineEventHandler(async (event) => {
     return configs
   }, {} as Record<string, ParsedContentMeta>)
 
-  return createNav(contents as ParsedContentMeta[], configs)
+  return createNav((contents?.result || contents) as ParsedContentMeta[], configs)
 })

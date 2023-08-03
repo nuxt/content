@@ -2,6 +2,19 @@ import type { Effects, State, Code, TokenizeContext } from 'micromark-util-types
 import { markdownLineEnding, markdownSpace } from 'micromark-util-character'
 import { createTokenizer } from './create-tokenizer'
 
+declare module 'micromark-util-types' {
+  interface TokenTypeMap {
+    row: 'row'
+    column: 'column'
+    columnSeparator: 'columnSeparator'
+    newline: 'newline'
+    quotedData: 'quotedData'
+    quotedDataChunk: 'quotedDataChunk'
+    quoteFence: 'quoteFence'
+    emptyLine: 'emptyLine'
+  }
+}
+
 function initializeDocument (this: TokenizeContext, effects: Effects) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const self = this
@@ -9,7 +22,7 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
 
   return enterRow
 
-  function enterRow (code: Code): State | void {
+  function enterRow (code: Code): State {
     return effects.attempt(
       { tokenize: attemptLastLine },
       (code) => {
@@ -20,15 +33,15 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
         effects.enter('row')
         return enterColumn(code)
       }
-    )(code)
+    )(code)!
   }
 
-  function enterColumn (code: Code): State | void {
+  function enterColumn (code: Code): State {
     effects.enter('column')
     return content(code)
   }
 
-  function content (code: Code): State | void {
+  function content (code: Code): State {
     if (code === null) {
       effects.exit('column')
       effects.exit('row')
@@ -66,12 +79,12 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
   }
 
   // data
-  function data (code: Code): State | void {
+  function data (code: Code): State {
     effects.enter('data')
     return dataChunk(code)
   }
 
-  function dataChunk (code: Code): State | void {
+  function dataChunk (code: Code): State {
     if (code === null || markdownLineEnding(code) || code === delimiter) {
       effects.exit('data')
       return content(code)
@@ -83,15 +96,15 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
     return dataChunk
   }
 
-  function escapeCharacter (code: Code): State | void {
+  function escapeCharacter (code: Code): State {
     effects.consume(code)
-    return function (code: Code): State | void {
+    return function (code: Code): State {
       effects.consume(code)
       return content
     }
   }
 
-  function quotedData (code: Code): State | void {
+  function quotedData (code: Code): State {
     effects.enter('quotedData')
     effects.enter('quotedDataChunk')
     effects.consume(code)
@@ -99,26 +112,26 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
     return quotedDataChunk
   }
 
-  function quotedDataChunk (code: Code): State | void {
+  function quotedDataChunk (code: Code): State {
     if (code === 92 /** \ */) {
       return escapeCharacter(code)
     }
     if (code === 34) {
       return effects.attempt(
         { tokenize: attemptDoubleQuote },
-        (code: Code): State | void => {
+        (code: Code): State => {
           effects.exit('quotedDataChunk')
           effects.enter('quotedDataChunk')
           return quotedDataChunk(code)
         },
-        (code: Code): State | void => {
+        (code: Code): State => {
           effects.consume(code)
           effects.exit('quotedDataChunk')
           effects.exit('quotedData')
 
           return content
         }
-      )(code)
+      )(code)!
     }
     effects.consume(code)
     return quotedDataChunk
@@ -128,46 +141,46 @@ function initializeDocument (this: TokenizeContext, effects: Effects) {
 function attemptDoubleQuote (effects: Effects, ok: State, nok: State) {
   return startSequence
 
-  function startSequence (code: Code): State | void {
+  function startSequence (code: Code): State {
     if (code !== 34) {
-      return nok(code)
+      return nok(code)!
     }
     effects.enter('quoteFence')
     effects.consume(code)
     return sequence
   }
 
-  function sequence (code: Code): State | void {
+  function sequence (code: Code): State {
     if (code !== 34) {
-      return nok(code)
+      return nok(code)!
     }
     effects.consume(code)
     effects.exit('quoteFence')
-    return (code: Code): State | void => ok(code)
+    return (code: Code): State => ok(code)!
   }
 }
 
 function attemptLastLine (effects: Effects, ok: State, nok: State) {
-  return enterLine
+  return enterLine as State
 
-  function enterLine (code: Code): State | void {
+  function enterLine (code: Code): State {
     if (!markdownSpace(code) && code !== null) {
-      return nok(code)
+      return nok(code)!
     }
     effects.enter('emptyLine')
     return continueLine(code)
   }
 
-  function continueLine (code: Code): State | void {
+  function continueLine (code: Code): State {
     if (markdownSpace(code)) {
       effects.consume(code)
       return continueLine
     }
     if (code === null) {
       effects.exit('emptyLine')
-      return ok(code)
+      return ok(code)!
     }
-    return nok(code)
+    return nok(code)!
   }
 }
 

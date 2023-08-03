@@ -1,0 +1,1 @@
+# Translated to Farsi

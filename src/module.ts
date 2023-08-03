@@ -229,6 +229,7 @@ export interface ModuleOptions {
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
+    advanceQuery: boolean
   }
 }
 
@@ -293,7 +294,8 @@ export default defineNuxtModule<ModuleOptions>({
     respectPathCase: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false
+      stripQueryParameters: false,
+      advanceQuery: false
     }
   },
   async setup (options, nuxt) {
@@ -328,6 +330,7 @@ export default defineNuxtModule<ModuleOptions>({
           if (code.includes('<ContentSlot')) {
             code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-z]*)['"]|use=['"]([a-z]*)['"])/g, '<MDCSlot $1 name="$4"')
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
+            code = code.replace(/<ContentSlot/g, '<MDCSlot')
             return code
           }
         }
@@ -421,7 +424,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register composables
     addImports([
-      { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
+      { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule(`./${options.experimental.advanceQuery ? '' : 'legacy/'}composables/query`) },
       { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
       { name: 'useContentPreview', as: 'useContentPreview', from: resolveRuntimeModule('./composables/preview') },
@@ -475,7 +478,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'types/content.d.ts',
       getContents: () => [
         'declare module \'#content/server\' {',
-        `  const serverQueryContent: typeof import('${resolve('./runtime/server')}').serverQueryContent`,
+        `  const serverQueryContent: typeof import('${resolve(options.experimental.advanceQuery ? './runtime/server' : './runtime/legacy/types')}').serverQueryContent`,
         `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
         '}'
       ].join('\n')
@@ -562,7 +565,11 @@ export default defineNuxtModule<ModuleOptions>({
         { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
 
-      addPlugin(resolveRuntimeModule('./plugins/documentDriven'))
+      addPlugin(resolveRuntimeModule(
+        options.experimental.advanceQuery
+          ? './plugins/documentDriven'
+          : './legacy/plugins/documentDriven'
+      ))
 
       if (options.documentDriven.injectPage) {
         nuxt.options.pages = true
@@ -631,6 +638,7 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
+        advanceQuery: options.experimental.advanceQuery === true,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
       respectPathCase: options.respectPathCase ?? false,
@@ -700,7 +708,7 @@ export default defineNuxtModule<ModuleOptions>({
           return true
         })
         await Promise.all(
-          keys.map(async key => await storage.setItem(
+          keys.map(async (key: string) => await storage.setItem(
             `cache:content:parsed:${key.substring(15)}`,
             await storage.getItem(key)
           ))
@@ -757,6 +765,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
+    advanceQuery: boolean
   }
   respectPathCase: boolean
 
