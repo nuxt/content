@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "@docsearch/js": "^3.5.1",
-    "@nuxt-themes/docus": "^1.14.4",
+    "@nuxt-themes/docus": "^1.14.6",
     "@nuxthq/studio": "^0.13.4",
     "@nuxtlabs/github-module": "^1.6.3",
-    "monaco-editor-core": "^0.40.0",
+    "monaco-editor-core": "^0.41.0",
     "nuxt": "3.6.5",
     "vue-plausible": "^1.3.2"
   },
