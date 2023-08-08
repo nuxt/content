@@ -3,6 +3,7 @@ import { resolve } from 'pathe'
 export default defineNuxtConfig({
   extends: ['../shared'],
   content: {
+    components: ['hello-world'],
     sources: {
       'translation-fa': {
         prefix: '/fa',

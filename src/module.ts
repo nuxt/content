@@ -8,7 +8,8 @@ import {
   addComponentsDir,
   addTemplate,
   extendViteConfig,
-  installModule
+  installModule,
+  addPluginTemplate
 } from '@nuxt/kit'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
@@ -20,6 +21,7 @@ import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
 import { listen } from 'listhen'
 import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
+import { pascalCase } from 'scule'
 import type { Component } from '@nuxt/schema'
 import { name, version } from '../package.json'
 import { makeIgnored } from './runtime/utils/config'
@@ -58,6 +60,12 @@ export interface ModuleOptions {
      */
     baseURL: string
   }
+  /**
+   * List the components that will be used in markdown.
+   *
+   * @default []
+   */
+  components: Array<string>
   /**
    * Disable content watcher and hot content reload.
    * Note: Watcher is a development feature and will not includes in the production.
@@ -267,6 +275,7 @@ export default defineNuxtModule<ModuleOptions>({
         showURL: false
       }
     },
+    components: [],
     sources: {},
     ignores: [],
     locales: [],
@@ -609,6 +618,21 @@ export default defineNuxtModule<ModuleOptions>({
 
     // @ts-ignore
     await nuxt.callHook('content:context', contentContext)
+
+    // Add sync components to use not global components
+    const components = (options.components || []).map(pascalCase)
+
+    addPluginTemplate({
+      filename: 'plugins/content-components.ts',
+      getContents: () => {
+        return `${genImport('#components', components)}
+
+export default defineNuxtPlugin((nuxtApp) => {
+  ${components.map(name => `nuxtApp.vueApp.component('${name}', ${name});`).join('\n')}
+})
+        `
+      }
+    })
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
 
