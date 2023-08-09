@@ -65,7 +65,7 @@ export interface ModuleOptions {
    *
    * @default []
    */
-  components: Array<string>
+  components: string[]
   /**
    * Disable content watcher and hot content reload.
    * Note: Watcher is a development feature and will not includes in the production.
