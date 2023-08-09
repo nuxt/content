@@ -327,10 +327,11 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'content-slot',
         enforce: 'pre',
         transform (code) {
-          if (code.includes('<ContentSlot')) {
+          if (code.includes('ContentSlot')) {
             code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-z]*)['"]|use=['"]([a-z]*)['"])/g, '<MDCSlot $1 name="$4"')
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
             code = code.replace(/<ContentSlot/g, '<MDCSlot')
+            code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
             return code
           }
         }
