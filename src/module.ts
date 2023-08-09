@@ -625,7 +625,8 @@ export default defineNuxtModule<ModuleOptions>({
     addPluginTemplate({
       filename: 'plugins/content-components.ts',
       getContents: () => {
-        return `${genImport('#components', components)}
+        return `import { defineNuxtPlugin } from '#app/nuxt'
+${genImport('#components', components)}
 
 export default defineNuxtPlugin((nuxtApp) => {
   ${components.map(name => `nuxtApp.vueApp.component('${name}', ${name});`).join('\n')}
