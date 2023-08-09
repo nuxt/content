@@ -60,8 +60,8 @@ dependencies:
     specifier: ^1.2.0
     version: 1.2.0
   unstorage:
-    specifier: ^1.8.0
-    version: 1.8.0
+    specifier: ^1.9.0
+    version: 1.9.0
   ws:
     specifier: ^8.13.0
     version: 8.13.0
@@ -6677,7 +6677,7 @@ packages:
       uncrypto: 0.1.3
       unenv: 1.5.2
       unimport: 3.0.14(rollup@3.26.3)
-      unstorage: 1.8.0
+      unstorage: 1.9.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -6685,11 +6685,13 @@ packages:
       - '@azure/identity'
       - '@azure/keyvault-secrets'
       - '@azure/storage-blob'
+      - '@capacitor/preferences'
       - '@planetscale/database'
       - '@upstash/redis'
       - '@vercel/kv'
       - debug
       - encoding
+      - idb-keyval
       - supports-color
     dev: true
 
@@ -6955,12 +6957,14 @@ packages:
       - '@azure/identity'
       - '@azure/keyvault-secrets'
       - '@azure/storage-blob'
+      - '@capacitor/preferences'
       - '@planetscale/database'
       - '@upstash/redis'
       - '@vercel/kv'
       - debug
       - encoding
       - eslint
+      - idb-keyval
       - less
       - lightningcss
       - meow
@@ -9431,8 +9435,8 @@ packages:
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.5.0
 
-  /unstorage@1.8.0:
-    resolution: {integrity: sha512-Wl6a0fYIIPx8yWIHAVNzsNRcIpagVnBV05UXeIFCNqPZ5tu0w0MPE+eTjpRe/yxCD60K7qX55K5Px/PeKvNntw==}
+  /unstorage@1.9.0:
+    resolution: {integrity: sha512-VpD8ZEYc/le8DZCrny3bnqKE4ZjioQxBRnWE+j5sGNvziPjeDlaS1NaFFHzl/kkXaO3r7UaF8MGQrs14+1B4pQ==}
     peerDependencies:
       '@azure/app-configuration': ^1.4.1
       '@azure/cosmos': ^3.17.3
@@ -9440,9 +9444,11 @@ packages:
       '@azure/identity': ^3.2.3
       '@azure/keyvault-secrets': ^4.7.0
       '@azure/storage-blob': ^12.14.0
-      '@planetscale/database': ^1.7.0
-      '@upstash/redis': ^1.21.0
+      '@capacitor/preferences': ^5.0.0
+      '@planetscale/database': ^1.8.0
+      '@upstash/redis': ^1.22.0
       '@vercel/kv': ^0.2.2
+      idb-keyval: ^6.2.1
     peerDependenciesMeta:
       '@azure/app-configuration':
         optional: true
@@ -9456,11 +9462,15 @@ packages:
         optional: true
       '@azure/storage-blob':
         optional: true
+      '@capacitor/preferences':
+        optional: true
       '@planetscale/database':
         optional: true
       '@upstash/redis':
         optional: true
       '@vercel/kv':
+        optional: true
+      idb-keyval:
         optional: true
     dependencies:
       anymatch: 3.1.3
