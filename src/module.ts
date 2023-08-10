@@ -332,7 +332,10 @@ export default defineNuxtModule<ModuleOptions>({
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
             code = code.replace(/<ContentSlot/g, '<MDCSlot')
             code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
-            return code
+            return {
+              code,
+              map: { mappings: '' }
+            }
           }
         }
       })
