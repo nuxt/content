@@ -726,16 +726,15 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugins/ws'))
 
     // Watch md files in the content directory
-    const watcher = chokidar.watch('./content/**/*.{md,yml,yaml,json}')
+    const watcher = chokidar.watch('./content/**/*.{md,yml,yaml,json,json5,csv}')
 
     nuxt.hook('vite:extend', (configs) => {
       configs.config.plugins?.push({
         name: 'content:config',
         configureServer (server) {
-          server.ws.on('connection', () => {
-            watcher.on('all', () => {
-              server.ws.send('content:updated')
-            })
+          watcher.on('all', () => {
+            logger.info('Content files changed.')
+            server.ws.send('content:updated')
           })
         }
       })
