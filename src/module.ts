@@ -722,6 +722,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     // ~~ DEV ~~ //
 
+    // TODO: must not go in production build
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugins/ws'))
 
