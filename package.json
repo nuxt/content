@@ -72,6 +72,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.5",
     "c8": "^8.0.1",
+    "chokidar": "^3.5.3",
     "csvtojson": "^2.0.10",
     "eslint": "^8.46.0",
     "globby": "^13.2.2",
@@ -83,6 +84,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.1.3",
     "remark-oembed": "^1.2.2",
+    "vite-hot-client": "^0.2.1",
     "vitest": "^0.34.1",
     "vue-docgen-web-types": "^0.1.8"
   },

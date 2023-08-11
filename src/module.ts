@@ -21,6 +21,7 @@ import { listen } from 'listhen'
 import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import type { Component } from '@nuxt/schema'
+import chokidar from 'chokidar'
 import { name, version } from '../package.json'
 import { makeIgnored } from './runtime/utils/config'
 import {
@@ -724,6 +725,35 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Content plugin
     addPlugin(resolveRuntimeModule('./plugins/ws'))
+
+    // Watch md files in the content directory
+    const watcher = chokidar.watch('./content/**/*.{md,yml,yaml,json}')
+
+    // let server: any
+    // watcher.on('all', () => {
+    //   console.log('content changed')
+    //   if (server) {
+    //     console.log('sending content:updated')
+    //     server.ws.send('content:updated', {})
+    //   }
+    // })
+
+    nuxt.hook('close', () => watcher.close())
+
+    nuxt.hook('vite:extend', (configs) => {
+      configs.config.plugins?.push({
+        name: 'content:config',
+        configureServer (server) {
+          server.ws.on('connection', () => {
+            console.log('connected')
+            watcher.on('all', () => {
+              console.log('content changed')
+              server.ws.send('content:updated', {})
+            })
+          })
+        }
+      })
+    })
 
     nuxt.hook('nitro:init', async (nitro) => {
       if (!options.watch || !options.watch.ws) { return }

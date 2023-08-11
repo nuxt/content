@@ -88,6 +88,9 @@ devDependencies:
   c8:
     specifier: ^8.0.1
     version: 8.0.1
+  chokidar:
+    specifier: ^3.5.3
+    version: 3.5.3
   csvtojson:
     specifier: ^2.0.10
     version: 2.0.10
@@ -121,6 +124,9 @@ devDependencies:
   remark-oembed:
     specifier: ^1.2.2
     version: 1.2.2
+  vite-hot-client:
+    specifier: ^0.2.1
+    version: 0.2.1(vite@4.4.4)
   vitest:
     specifier: ^0.34.1
     version: 0.34.1
@@ -9609,6 +9615,14 @@ packages:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
     dev: false
+
+  /vite-hot-client@0.2.1(vite@4.4.4):
+    resolution: {integrity: sha512-UqsQdw5PODnSrTDT85nr09RlhV0gkm2Xat74U2l8JZ5R8M/wTCggWSyPjxbLk5fbbVnWfr0JwW+vVoosjQnYrA==}
+    peerDependencies:
+      vite: ^2.6.0 || ^3.0.0 || ^4.0.0
+    dependencies:
+      vite: 4.4.4(@types/node@20.4.2)
+    dev: true
 
   /vite-node@0.33.0(@types/node@20.4.2):
     resolution: {integrity: sha512-19FpHYbwWWxDr73ruNahC+vtEdza52kA90Qb3La98yZ0xULqV8A5JLNPUff0f5zID4984tW7l3DH2przTJUZSw==}

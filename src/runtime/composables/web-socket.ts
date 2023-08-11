@@ -19,6 +19,7 @@ export function useContentWebSocket () {
   const onMessage = (message: any) => {
     try {
       const data = JSON.parse(message.data)
+      console.log(message)
 
       if (!data) { return }
 
