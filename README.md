@@ -1,4 +1,4 @@
-[![nuxt-content](https://user-images.githubusercontent.com/904724/221176888-d9efefbe-0a8a-4d6b-beb2-5cc7d7dcad05.png)](https://content.nuxtjs.org)
+[![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxtjs.org)
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
