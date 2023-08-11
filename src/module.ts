@@ -258,16 +258,16 @@ export default defineNuxtModule<ModuleOptions>({
     api: {
       baseURL: '/api/_content'
     },
-    watch: {
-      ws: {
-        port: {
-          port: 4000,
-          portRange: [4000, 4040]
-        },
-        hostname: 'localhost',
-        showURL: false
-      }
-    },
+    // watch: {
+    //   ws: {
+    //     port: {
+    //       port: 4000,
+    //       portRange: [4000, 4040]
+    //     },
+    //     hostname: 'localhost',
+    //     showURL: false
+    //   }
+    // },
     sources: {},
     ignores: [],
     locales: [],
@@ -654,7 +654,6 @@ export default defineNuxtModule<ModuleOptions>({
       // Tags will use in markdown renderer for component replacement
       tags: contentContext.markdown.tags as any,
       highlight: options.highlight as any,
-      wsUrl: '',
       // Document-driven configuration
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
@@ -729,68 +728,24 @@ export default defineNuxtModule<ModuleOptions>({
     // Watch md files in the content directory
     const watcher = chokidar.watch('./content/**/*.{md,yml,yaml,json}')
 
-    // let server: any
-    // watcher.on('all', () => {
-    //   console.log('content changed')
-    //   if (server) {
-    //     console.log('sending content:updated')
-    //     server.ws.send('content:updated', {})
-    //   }
-    // })
-
-    nuxt.hook('close', () => watcher.close())
-
     nuxt.hook('vite:extend', (configs) => {
       configs.config.plugins?.push({
         name: 'content:config',
         configureServer (server) {
           server.ws.on('connection', () => {
-            console.log('connected')
             watcher.on('all', () => {
-              console.log('content changed')
-              server.ws.send('content:updated', {})
+              server.ws.send('content:updated')
             })
           })
         }
       })
     })
 
+    nuxt.hook('close', () => watcher.close())
+
     nuxt.hook('nitro:init', async (nitro) => {
-      if (!options.watch || !options.watch.ws) { return }
-
-      const ws = createWebSocket()
-
-      // Listen dev server
-      const { server, url } = await listen(() => 'Nuxt Content', options.watch.ws)
-
-      // Dispose storage on nuxt close
-      nitro.hooks.hook('close', async () => {
-        await ws.close()
-        await server.close()
-      })
-
-      server.on('upgrade', ws.serve)
-
-      // Register ws url
-      nitro.options.runtimeConfig.public.content.wsUrl = url.replace('http', 'ws')
-
       // Remove content Index to force fresh index when nitro start (after a pull or a change without started Nuxt)
       await nitro.storage.removeItem('cache:content:content-index.json')
-
-      // Watch contents
-      await nitro.storage.watch(async (event: WatchEvent, key: string) => {
-        // Ignore events that are not related to content
-        if (!key.startsWith(MOUNT_PREFIX) || isIgnored(key)) {
-          return
-        }
-        key = key.substring(MOUNT_PREFIX.length)
-
-        // Remove content Index
-        await nitro.storage.removeItem('cache:content:content-index.json')
-
-        // Broadcast a message to the server to refresh the page
-        ws.broadcast({ event, key })
-      })
     })
   }
 })
@@ -810,9 +765,6 @@ interface ModulePublicRuntimeConfig {
   tags: Record<string, string>
 
   base: string;
-
-  // Websocket server URL
-  wsUrl?: string;
 
   // Shiki config
   highlight: ModuleOptions['highlight']
