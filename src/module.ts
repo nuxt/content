@@ -258,16 +258,17 @@ export default defineNuxtModule<ModuleOptions>({
     api: {
       baseURL: '/api/_content'
     },
-    // watch: {
-    //   ws: {
-    //     port: {
-    //       port: 4000,
-    //       portRange: [4000, 4040]
-    //     },
-    //     hostname: 'localhost',
-    //     showURL: false
-    //   }
-    // },
+    // @deprecated This option has no more effect on the module.
+    watch: {
+      ws: {
+        port: {
+          port: 4000,
+          portRange: [4000, 4040]
+        },
+        hostname: 'localhost',
+        showURL: false
+      }
+    },
     sources: {},
     ignores: [],
     locales: [],
