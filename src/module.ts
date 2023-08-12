@@ -1,40 +1,36 @@
 import fs from 'fs'
 import {
-  addPlugin,
-  defineNuxtModule,
-  resolveModule,
-  createResolver,
-  addImports,
   addComponentsDir,
+  addImports,
+  addPlugin,
   addTemplate,
+  createResolver,
+  defineNuxtModule,
   extendViteConfig,
-  installModule
+  installModule,
+  resolveModule
 } from '@nuxt/kit'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-// eslint-disable-next-line import/no-named-as-default
-import defu from 'defu'
+import type { Component } from '@nuxt/schema'
+import { watch } from 'chokidar'
+import { defu } from 'defu'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
-import { listen } from 'listhen'
-import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
-import type { Component } from '@nuxt/schema'
-import chokidar from 'chokidar'
+import { createStorage } from 'unstorage'
 import { name, version } from '../package.json'
+import type { MarkdownPlugin, QueryBuilderParams } from './runtime/types'
 import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
-  createWebSocket,
+  PROSE_TAGS,
   getMountDriver,
   logger,
-  MOUNT_PREFIX,
   processMarkdownOptions,
-  PROSE_TAGS,
   useContentMounts
 } from './utils'
-import type { MarkdownPlugin, QueryBuilderParams } from './runtime/types'
 
 export type MountOptions = {
   driver: 'fs' | 'http' | string
@@ -728,7 +724,7 @@ export default defineNuxtModule<ModuleOptions>({
     addPlugin(resolveRuntimeModule('./plugins/ws'))
 
     // Watch md files in the content directory
-    const watcher = chokidar.watch('./content/**/*.{md,yml,yaml,json,json5,csv}')
+    const watcher = watch('./content/**/*.{md,yml,yaml,json,json5,csv}')
 
     nuxt.hook('vite:extend', (configs) => {
       configs.config.plugins?.push({
