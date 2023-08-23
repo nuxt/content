@@ -1,6 +1,7 @@
 <script lang="ts">
 import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
+import { useRuntimeConfig } from '#app'
 import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
@@ -61,7 +62,7 @@ const ContentDoc = defineComponent({
     head: {
       type: Boolean,
       required: false,
-      default: true
+      default: undefined
     }
   },
 
@@ -74,9 +75,14 @@ const ContentDoc = defineComponent({
    * @slot not-found
    */
   render (ctx: any) {
+    const { contentHead } = useRuntimeConfig().public.content
+
     const slots = useSlots()
 
     const { tag, excerpt, path, query, head } = ctx
+
+    // Allow user to overwrite the global `contentHead` config.
+    const shouldInjectContentHead = head === undefined ? contentHead : head
 
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = {
@@ -94,12 +100,12 @@ const ContentDoc = defineComponent({
         // Default slot
         default: slots?.default
           ? ({ data, refresh, isPartial }: any) => {
-              if (head) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
           : ({ data }: any) => {
-              if (head) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return h(
                 ContentRenderer,
