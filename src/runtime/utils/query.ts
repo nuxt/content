@@ -1,5 +1,5 @@
-import { getQuery, H3Event, createError } from 'h3'
-import { QueryBuilderParams, QueryBuilderWhere } from '../types'
+import { getQuery, type H3Event, createError } from 'h3'
+import type { ContentQueryBuilderParams, ContentQueryBuilderWhere } from '../types/query'
 import { jsonParse, jsonStringify } from './json'
 
 const parseJSONQueryParams = (body: string) => {
@@ -10,7 +10,7 @@ const parseJSONQueryParams = (body: string) => {
   }
 }
 
-export const encodeQueryParams = (params: QueryBuilderParams) => {
+export const encodeQueryParams = (params: ContentQueryBuilderParams) => {
   let encoded = jsonStringify(params)
   encoded = typeof Buffer !== 'undefined' ? Buffer.from(encoded).toString('base64') : btoa(encoded)
 
@@ -32,8 +32,8 @@ export const decodeQueryParams = (encoded: string) => {
   return parseJSONQueryParams(typeof Buffer !== 'undefined' ? Buffer.from(encoded, 'base64').toString() : atob(encoded))
 }
 
-const memory: Record<string, QueryBuilderParams> = {}
-export const getContentQuery = (event: H3Event): QueryBuilderParams => {
+const memory: Record<string, ContentQueryBuilderParams> = {}
+export const getContentQuery = (event: H3Event): ContentQueryBuilderParams => {
   const { params } = event.context.params || {}
   if (params) {
     return decodeQueryParams(params.replace(/.json$/, ''))
@@ -47,7 +47,7 @@ export const getContentQuery = (event: H3Event): QueryBuilderParams => {
     memory[qid] = parseJSONQueryParams(decodeURIComponent(query._params))
 
     if (memory[qid].where && !Array.isArray(memory[qid].where)) {
-      memory[qid].where = [memory[qid].where as any as QueryBuilderWhere]
+      memory[qid].where = [memory[qid].where as any as ContentQueryBuilderWhere]
     }
 
     return memory[qid]

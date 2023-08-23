@@ -24,7 +24,7 @@ export default defineTransformer({
       rehype: {
         options: {
           handlers: {
-            link
+            link: link as any
           }
         },
         plugins: config.rehypePlugins

@@ -1,8 +1,8 @@
-import { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
+import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
 import { hasProtocol, joinURL, withTrailingSlash, withoutTrailingSlash } from 'ufo'
-import { ParsedContent } from '../types'
+import type { ParsedContent } from '../types'
 import { useRoute, nextTick, useHead, unref, watch, useRuntimeConfig } from '#imports'
 
 export const useContentHead = (

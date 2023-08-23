@@ -1,13 +1,13 @@
 <script lang="ts">
-import { PropType, defineComponent, h, useSlots } from 'vue'
+import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
 import { useRuntimeConfig } from '#app'
-import type { QueryBuilderParams } from '../types'
+import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
 import { useRoute, useContentHead } from '#imports'
 
-export default defineComponent({
+const ContentDoc = defineComponent({
   name: 'ContentDoc',
   props: {
     /**
@@ -122,4 +122,12 @@ export default defineComponent({
     )
   }
 })
+
+export default ContentDoc as typeof ContentDoc & {
+  new (): {
+    $slots: {
+      default: (context: { doc: ParsedContent, refresh: () => Promise<void> }) => VNode[] | undefined
+    }
+  }
+}
 </script>

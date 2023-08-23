@@ -404,7 +404,7 @@ export interface QueryBuilderWhere extends Partial<Record<keyof ParsedContentInt
     })
     ```
    **/
-  $in?: Array<string | number | boolean>
+  $in?: string | Array<string | number | boolean>
 
   [key: string]: string | number | boolean | RegExp | QueryBuilderWhere | Array<string | number | boolean | QueryBuilderWhere>
 }

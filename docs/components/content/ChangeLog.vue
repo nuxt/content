@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GithubReleases v-slot="{releases}">
+    <GithubReleases v-slot="{ releases }">
       <div v-for="release in releases" :key="release.name" class="release">
         <div class="release-name">
           <h2 class="">
