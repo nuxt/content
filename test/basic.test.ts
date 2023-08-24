@@ -49,6 +49,12 @@ describe('Basic usage', async () => {
     expect(html).contains('<p><!--[-->p1<!--]--></p>')
   })
 
+  test('Fetch only title and excerpt', async () => {
+    const html = await $fetch('/excerpt-only')
+    expect(html).contains('Excerpt paragraph')
+    expect(html).not.contains('Rest of the content')
+  })
+
   // test('Warning for invalid file name', () => {
   //   expect(spyConsoleWarn).toHaveBeenCalled()
   //   expect(spyConsoleWarn).toHaveBeenCalledWith('Ignoring [content:with-\'invalid\'-char.md]. File name should not contain any of the following characters: \', ", ?, #, /')

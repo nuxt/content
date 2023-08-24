@@ -43,7 +43,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
         }
       }
 
-      return result?._path || Array.isArray(result) ? result : result?.result
+      return result?._path || Array.isArray(result) || !Object.prototype.hasOwnProperty.call(result, 'result') ? result : result?.result
     }
 
     return result
