@@ -1,11 +1,11 @@
 <script lang="ts">
-import { PropType, defineComponent, h, useSlots } from 'vue'
-import type { QueryBuilderParams } from '../types'
+import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
+import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentQuery from './ContentQuery.vue'
 
 const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))
 
-export default defineComponent({
+const ContentList = defineComponent({
   name: 'ContentList',
   props: {
     /**
@@ -67,4 +67,12 @@ export default defineComponent({
     )
   }
 })
+
+export default ContentList as typeof ContentList & {
+  new (): {
+    $slots: {
+      default: (context: { data: ParsedContent[], refresh: () => Promise<void> }) => VNode[] | undefined
+    }
+  }
+}
 </script>

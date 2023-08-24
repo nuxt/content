@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
-import type { ParsedContent, QueryBuilder } from '../types'
+import type { ParsedContent } from '../types'
+import type { ContentQueryBuilder } from '../types/query'
 import { isPreview } from './preview'
 import { cacheStorage, getContent, getContentsList } from './storage'
 import { useRuntimeConfig } from '#imports'
@@ -27,12 +28,12 @@ export async function getContentIndex (event: H3Event) {
   return contentIndex
 }
 
-export async function getIndexedContentsList<T = ParsedContent> (event: H3Event, query: QueryBuilder<T>): Promise<T[]> {
+export async function getIndexedContentsList<T = ParsedContent> (event: H3Event, query: ContentQueryBuilder<T>): Promise<T[]> {
   const params = query.params()
   const path = params?.where?.find(wh => wh._path)?._path
 
   // Read from Index is not preview and path is string or RegExp
-  if (!isPreview(event) && (typeof path === 'string' || path instanceof RegExp)) {
+  if (!isPreview(event) && !params.surround && !params.dirConfig && (typeof path === 'string' || path instanceof RegExp)) {
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))

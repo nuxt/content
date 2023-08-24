@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useRuntimeConfig } from '#app'
 import { useContent, useContentHead, useRequestEvent } from '#imports'
 
+const { contentHead } = useRuntimeConfig().public.content
 const { page, layout } = useContent()
 
 // Page not found, set correct status code on SSR
@@ -9,7 +11,9 @@ if (!(page as any).value && process.server) {
   event.res.statusCode = 404
 }
 
-useContentHead(page)
+if (contentHead) {
+  useContentHead(page)
+}
 </script>
 
 <template>

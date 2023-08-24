@@ -64,7 +64,7 @@ describe('fixtures:document-driven', async () => {
   test('404 page', async () => {
     try {
       await $fetch('/page-not-found')
-    } catch (e) {
+    } catch (e: any) {
       expect(e.response.status).toBe(404)
       expect(e.response.statusText).toBe('Not Found')
     }
