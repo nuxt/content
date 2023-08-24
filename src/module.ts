@@ -460,6 +460,7 @@ export default defineNuxtModule<ModuleOptions>({
 
         if (
           c.filePath.includes('@nuxt/content/dist') ||
+          c.filePath.includes('nuxt-mdc/dist') ||
           c.filePath.includes('nuxt/dist/app') ||
           c.filePath.includes('NuxtWelcome')
         ) {
@@ -634,14 +635,30 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
-    await installModule('nuxt-mdc', {
+    const nuxtMDCOptions = {
       remarkPlugins: contentContext.markdown.remarkPlugins,
       rehypePlugins: contentContext.markdown.rehypePlugins,
       highlight: contentContext.highlight,
       components: {
+        prose: true,
         map: contentContext.markdown.tags
+      },
+      headings: {
+        anchorLinks: {
+          // Reset defaults
+          h2: false, h3: false, h4: false
+        } as Record<string, boolean>
       }
-    })
+    }
+
+    // Apply anchor link generation config
+    if (contentContext.markdown.anchorLinks) {
+      for (let i = 0; i < (contentContext.markdown.anchorLinks as any).depth; i++) {
+        nuxtMDCOptions.headings.anchorLinks[`h${i + 1}`] = !(contentContext.markdown.anchorLinks as any).exclude.includes(i + 1)
+      }
+    }
+
+    await installModule('nuxt-mdc', nuxtMDCOptions)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
@@ -658,7 +675,9 @@ export default defineNuxtModule<ModuleOptions>({
       },
       navigation: contentContext.navigation as any,
       // Tags will use in markdown renderer for component replacement
+      // @deprecated
       tags: contentContext.markdown.tags as any,
+      // @deprecated
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
@@ -667,6 +686,7 @@ export default defineNuxtModule<ModuleOptions>({
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
       contentHead: options.contentHead ?? true,
       // Anchor link generation config
+      // @deprecated
       anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
 
