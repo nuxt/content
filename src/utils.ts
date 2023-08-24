@@ -58,15 +58,14 @@ const unstorageDrivers = {
 /**
  * Resolve driver of a mount.
  */
-export function getMountDriver (mount: MountOptions) {
+export async function getMountDriver (mount: MountOptions) {
   const dirverName = mount.driver as keyof typeof unstorageDrivers
   if (unstorageDrivers[dirverName]) {
     return unstorageDrivers[dirverName](mount as any)
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(mount.driver).default(mount as any)
+    return (await import(mount.driver)).default(mount as any)
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("Couldn't load driver", mount.driver)
