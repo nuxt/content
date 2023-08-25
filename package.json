@@ -60,7 +60,7 @@
     "shiki-es": "^0.14.0",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.7.2",
-    "ufo": "^1.2.0",
+    "ufo": "^1.3.0",
     "unstorage": "^1.9.0",
     "ws": "^8.13.0"
   },
@@ -83,7 +83,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.1.5",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.34.2",
+    "vitest": "^0.34.3",
     "vue-docgen-web-types": "^0.1.8"
   },
   "packageManager": "pnpm@8.6.12",
