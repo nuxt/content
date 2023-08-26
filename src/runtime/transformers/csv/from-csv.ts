@@ -1,10 +1,9 @@
 // @ts-nocheck
 // TODO: fix types
 // Based on mdast-util-from-markdown
-// See: https://github.com/syntax-tree/mdast-util-from-markdown/blob/05875cde264253f0d6a725791f10f55eb8d8c267/dev/lib/index.js
+// See: https://github.com/syntax-tree/mdast-util-from-markdown/blob/03581b3ede92d3874a6689a96b8ae0a7c17b86af/dev/lib/index.js
 import { toString } from 'mdast-util-to-string'
-import { preprocess } from 'micromark/lib/preprocess.js'
-import { postprocess } from 'micromark/lib/postprocess.js'
+import { preprocess, postprocess } from 'micromark'
 import { stringifyPosition } from 'unist-util-stringify-position'
 import { Token, Event, Point as MPoint } from 'micromark-util-types'
 import { parse } from './parser'
