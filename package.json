@@ -52,6 +52,7 @@
     "knitwork": "^1.0.0",
     "listhen": "^1.4.0",
     "mdurl": "^1.0.1",
+    "micromark": "^3.2.0",
     "micromark-util-sanitize-uri": "^2.0.0",
     "nuxt-mdc": "npm:nuxt-mdc-edge@latest",
     "ohash": "^1.1.3",
