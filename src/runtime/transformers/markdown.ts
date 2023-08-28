@@ -1,4 +1,4 @@
-import { parseMarkdown } from 'nuxt-mdc/dist/runtime'
+import { parseMarkdown } from '@nuxtjs/mdc/dist/runtime'
 import { type State } from 'mdast-util-to-hast'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { type Properties, type Element } from 'hast'

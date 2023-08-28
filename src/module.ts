@@ -460,7 +460,7 @@ export default defineNuxtModule<ModuleOptions>({
 
         if (
           c.filePath.includes('@nuxt/content/dist') ||
-          c.filePath.includes('nuxt-mdc/dist') ||
+          c.filePath.includes('@nuxtjs/mdc/dist') ||
           c.filePath.includes('nuxt/dist/app') ||
           c.filePath.includes('NuxtWelcome')
         ) {
@@ -658,7 +658,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    await installModule('nuxt-mdc', nuxtMDCOptions)
+    await installModule('@nuxtjs/mdc', nuxtMDCOptions)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
