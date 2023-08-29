@@ -1,6 +1,5 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
 import type { ParsedContent } from '../types'
 import { encodeQueryParams } from '../utils/query'
@@ -8,6 +7,7 @@ import { jsonStringify } from '../utils/json'
 import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 import { useContentPreview } from './preview'
+import { useRuntimeConfig } from '#app'
 
 /**
  * Query fetcher
