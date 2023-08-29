@@ -35,7 +35,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
         return result.surround
       }
 
-      if ((result as any).dirConfig) {
+      if ((result as any)?.dirConfig) {
         result.result = {
           _path: (result as any).dirConfig?._path,
           ...(result.result as T),

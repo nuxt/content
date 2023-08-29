@@ -11,10 +11,10 @@ export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T
 
     if (params.surround) {
       // @ts-ignore
-      return result.surround
+      return result?.surround
     }
 
-    if ((result as any).dirConfig) {
+    if ((result as any)?.dirConfig) {
       result.result = {
         _path: (result as any).dirConfig?._path,
         ...(result.result as T),
@@ -22,6 +22,6 @@ export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T
       }
     }
 
-    return result.result as T | T[]
+    return result?.result as T | T[]
   }
 }
