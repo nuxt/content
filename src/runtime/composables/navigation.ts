@@ -1,5 +1,4 @@
 import { hash } from 'ohash'
-import { useRuntimeConfig } from '#app'
 import type { NavItem, QueryBuilder, QueryBuilderParams } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
@@ -7,6 +6,7 @@ import { ContentQueryBuilder } from '../types/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 import { queryContent } from './query'
 import { useContentPreview } from './preview'
+import { useRuntimeConfig } from '#app'
 
 export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | QueryBuilderParams | ContentQueryBuilder): Promise<Array<NavItem>> => {
   const { content } = useRuntimeConfig().public
