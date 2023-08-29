@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.7.0
     version: 3.7.0(rollup@3.28.1)
   '@nuxtjs/mdc':
-    specifier: ^0.1.1
-    version: 0.1.1(rollup@3.28.1)
+    specifier: ^0.1.2
+    version: 0.1.2(rollup@3.28.1)
   '@vueuse/head':
     specifier: ^1.3.1
     version: 1.3.1
@@ -1245,8 +1245,8 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtjs/mdc@0.1.1(rollup@3.28.1):
-    resolution: {integrity: sha512-3dgciTXCUJedpvFTdg1BQdAKjGW4KoiTMg/rzx7aZ9MS55v1f8p7OQXdak4F9ogpnidEtUCJT2DofGKAbGjEug==}
+  /@nuxtjs/mdc@0.1.2(rollup@3.28.1):
+    resolution: {integrity: sha512-f0N+5s8jktxWIEw3Gln0thq95DtGZi9R0V1n5Qj1U5ShdLMUKw2EuTGKPqfFFMsOrGK81KLn8fDaq7OBU0UFzg==}
     dependencies:
       '@nuxt/kit': 3.7.0(rollup@3.28.1)
       '@types/hast': 3.0.0
@@ -1484,6 +1484,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -7038,6 +7039,9 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
     dev: true
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
 
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
