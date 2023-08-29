@@ -1,6 +1,60 @@
 # Changelog
 
 
+## v2.8.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.7.2...v2.8.0)
+
+### 🚀 Enhancements
+
+- Add count method ([#1924](https://github.com/nuxt/content/pull/1924))
+- **nuxt-mdc:** Extract markdown parser ([#2187](https://github.com/nuxt/content/pull/2187))
+- Advanced query schema ([#2213](https://github.com/nuxt/content/pull/2213))
+- Allow to disable content head ([#2142](https://github.com/nuxt/content/pull/2142))
+
+### 🩹 Fixes
+
+- Markdown render compatiblity ([d81a08a2](https://github.com/nuxt/content/commit/d81a08a2))
+- **slot:** Rename ContentSlot to MDCSlot in render function ([efc60481](https://github.com/nuxt/content/commit/efc60481))
+- **module:** Slot transform sourcemap ([7558cf0d](https://github.com/nuxt/content/commit/7558cf0d))
+- **ProseImg:** Prevent conflict between `src` and baseURL ([#2242](https://github.com/nuxt/content/pull/2242))
+- Custom drivers failed on build ([#2193](https://github.com/nuxt/content/pull/2193))
+- **ContentRenderer:** Render contents only with excerpt ([#2246](https://github.com/nuxt/content/pull/2246))
+- **content-slot:** Better slot name regex ([329cf3bc](https://github.com/nuxt/content/commit/329cf3bc))
+
+### 📖 Documentation
+
+- Pre-render pages ([#2196](https://github.com/nuxt/content/pull/2196))
+- **v1:** Link button wrapping for small screens ([#2199](https://github.com/nuxt/content/pull/2199))
+- Add count method ([#2200](https://github.com/nuxt/content/pull/2200))
+- Add edge alert ([c582469c](https://github.com/nuxt/content/commit/c582469c))
+- Update README.md ([#2226](https://github.com/nuxt/content/pull/2226))
+- **mdc:** Fix `{attribute}` examples ([#2228](https://github.com/nuxt/content/pull/2228))
+- Add warning for `<NuxtPage/>` existence in `app.vue` ([#2244](https://github.com/nuxt/content/pull/2244))
+- `<ContentDoc>` slot example ([0bfc275d](https://github.com/nuxt/content/commit/0bfc275d))
+- Fix prose links ([aa61d9fd](https://github.com/nuxt/content/commit/aa61d9fd))
+- Update prose source links ([9720a333](https://github.com/nuxt/content/commit/9720a333))
+
+### 🏡 Chore
+
+- Upgrade `nuxt-mdc` ([1fef2137](https://github.com/nuxt/content/commit/1fef2137))
+- Update social card ([a7e308ae](https://github.com/nuxt/content/commit/a7e308ae))
+- Upgrade deps ([cf3e927c](https://github.com/nuxt/content/commit/cf3e927c))
+- Upgrade `nuxt-mdc` ([3db06b23](https://github.com/nuxt/content/commit/3db06b23))
+- Update to micromark v4 ([#2253](https://github.com/nuxt/content/pull/2253))
+- Use `@nuxtjs/mdc` ([ba4d0118](https://github.com/nuxt/content/commit/ba4d0118))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Cédric Exbrayat 
+- Yarrow 
+- Mathieu DARTIGUES ([@mdartic](http://github.com/mdartic))
+- Estéban <e.soubiran25@gmail.com>
+- Nobkd 
+- Maxime Pauvert ([@maximepvrt](http://github.com/maximepvrt))
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+
 ## v2.7.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.7.1...v2.7.2)
