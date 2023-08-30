@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.8.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.0...v2.8.1)
+
+### 🩹 Fixes
+
+- Cannot read properties of undefined ([11c3b09f](https://github.com/nuxt/content/commit/11c3b09f))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.8.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.7.2...v2.8.0)
