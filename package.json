@@ -50,7 +50,7 @@
     "destr": "^2.0.1",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
-    "listhen": "^1.4.3",
+    "listhen": "^1.4.4",
     "mdurl": "^1.0.1",
     "micromark": "^4.0.0",
     "micromark-util-sanitize-uri": "^2.0.0",
