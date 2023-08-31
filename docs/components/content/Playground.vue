@@ -1,6 +1,5 @@
 <script setup>
-import { transformContent } from '@nuxt/content/transformers'
-import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
+import { ref, shallowRef, onMounted, useRoute } from '#imports'
 
 const INITIAL_CODE = `---
 title: MDC
@@ -36,24 +35,11 @@ const route = useRoute()
 
 const content = ref(route.query.content || INITIAL_CODE)
 
-const { data: doc, refresh } = await useAsyncData('playground-' + content.value, async () => {
-  try {
-    const parsed = await transformContent('content:index.md', content.value)
-    return parsed
-  } catch (e) {
-    return doc.value
-  }
-})
-
 const tab = ref(0)
 
 const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
 
 const astEditorComponent = shallowRef()
-
-const docJSON = computed(() => {
-  return JSON.stringify(doc.value, null, 2)
-})
 
 const updateTab = async (index) => {
   tab.value = index
@@ -71,8 +57,6 @@ onMounted(async () => {
 
   editorComponent.value = component
 })
-
-watch(content, refresh)
 </script>
 
 <template>
@@ -91,33 +75,30 @@ watch(content, refresh)
           </Alert>
         </div>
       </div>
-      <div>
-        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="content" :value="doc">
-          <template #empty>
-            <div class="p-8">
-              <Alert type="warning">
-                <p class="font-semibold">
-                  Content is empty!
-                </p>
-                <br><br>
-                <p>
-                  Type any
-                  <span class="font-semibold">Markdown</span> or
-                  <span class="font-semibold">MDC code</span>
-                  in editor to see it replaced by rendered nodes in this panel.
-                </p>
-              </Alert>
-            </div>
-          </template>
-        </ContentRenderer>
+      <MDC v-slot="{ data, body }" :value="content">
+        <div v-if="body?.children?.length == 0" class="p-8">
+          <Alert type="warning">
+            <p class="font-semibold">
+              Content is empty!
+            </p>
+            <br><br>
+            <p>
+              Type any
+              <span class="font-semibold">Markdown</span> or
+              <span class="font-semibold">MDC code</span>
+              in editor to see it replaced by rendered nodes in this panel.
+            </p>
+          </Alert>
+        </div>
+        <MDCRenderer v-if="tab === 0" :key="data?.updatedAt" class="content" :body="body" :data="data" />
         <component
           :is="astEditorComponent"
           v-else-if="astEditorComponent"
           language="json"
           read-only
-          :model-value="docJSON"
+          :model-value="JSON.stringify(body, null, 2)"
         />
-      </div>
+      </MDC>
     </div>
   </div>
 </template>
