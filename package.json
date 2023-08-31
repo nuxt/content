@@ -66,7 +66,7 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "^0.5.0",
+    "@nuxt/module-builder": "^0.5.1",
     "@nuxt/schema": "3.7.0",
     "@nuxt/test-utils": "3.7.0",
     "@nuxthq/studio": "^0.13.4",
