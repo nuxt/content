@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.7.0
     version: 3.7.0(rollup@3.28.1)
   '@nuxtjs/mdc':
-    specifier: ^0.1.5
-    version: 0.1.5(rollup@3.28.1)
+    specifier: ^0.1.6
+    version: 0.1.6(rollup@3.28.1)
   '@vueuse/head':
     specifier: ^1.3.1
     version: 1.3.1
@@ -1245,8 +1245,8 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtjs/mdc@0.1.5(rollup@3.28.1):
-    resolution: {integrity: sha512-cI35QDyeeUN2bnFcO8T4sFZJ8G2oQ0+IxR6Zpt09VAfWtcQD+apUbeZhByYm+LMyhHP/a2bRu8ScguAySya14A==}
+  /@nuxtjs/mdc@0.1.6(rollup@3.28.1):
+    resolution: {integrity: sha512-zJuq5KwU3d1Dlh1sudnpVtIFoap09ZrvO9IAM1iP4tipzSRkgHFbCOTMEmK17Rx7KSdmvBbFP+/4MBaJdj1NqQ==}
     dependencies:
       '@nuxt/kit': 3.7.0(rollup@3.28.1)
       '@types/hast': 3.0.0
