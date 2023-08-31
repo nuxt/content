@@ -416,7 +416,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
+      nitroConfig.alias['#content/server'] = resolveRuntimeModule(options.experimental.advanceQuery ? './server' : './legacy/server')
 
       const transformers = contentContext.transformers.map((t) => {
         const name = genSafeVariableName(relative(nuxt.options.rootDir, t)).replace(/_(45|46|47)/g, '_') + '_' + hash(t)
