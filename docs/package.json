@@ -20,7 +20,7 @@
     "nuxt": "3.7.0",
     "vue-plausible": "^1.3.2"
   },
-  "packageManager": "pnpm@8.7.0",
+  "packageManager": "pnpm@8.7.1",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
