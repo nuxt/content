@@ -276,10 +276,6 @@ export default defineNuxtPlugin((nuxt) => {
     }
   })
 
-  if (process.server) {
-    delete nuxt.payload.prerenderedAt
-  }
-
   // @ts-ignore - Refresh on client-side
   nuxt.hook('app:data:refresh', async () => process.client && await refresh(useRoute(), true))
 })
