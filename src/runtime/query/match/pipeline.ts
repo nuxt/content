@@ -37,10 +37,10 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     },
     // Sort data
     (state, params) => ensureArray(params.sort).forEach(options => sortList(state.result, options!)),
-    function fetchSurround (state, params) {
+    function fetchSurround (state, params, db) {
       if (params.surround) {
         // @ts-ignore
-        state.surround = surround(state.result, params.surround)
+        state.surround = surround(state.result?.length == 1 ? db : state.result, params.surround)
       }
       return state
     }
