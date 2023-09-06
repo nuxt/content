@@ -78,7 +78,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
   if (opts.legacy) {
     // @ts-ignore
     query.findSurround = (surroundQuery, options) => {
-      return query.withSurround(surroundQuery, options).findOne().then(resolveResult)
+      return query.withSurround(surroundQuery, options).find().then(resolveResult)
     }
 
     return query as QueryBuilder<T>
