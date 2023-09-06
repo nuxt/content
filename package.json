@@ -69,7 +69,7 @@
     "@nuxt/module-builder": "^0.5.1",
     "@nuxt/schema": "3.7.1",
     "@nuxt/test-utils": "3.7.1",
-    "@nuxthq/studio": "^0.13.4",
+    "@nuxthq/studio": "^0.14.0",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.5",
     "c8": "^8.0.1",
