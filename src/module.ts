@@ -2,7 +2,6 @@ import fs from 'fs'
 import {
   addPlugin,
   defineNuxtModule,
-  resolveModule,
   createResolver,
   addImports,
   addComponentsDir,
@@ -307,7 +306,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-    const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
+    const resolveRuntimeModule = (path: string) => resolve('./runtime', path)
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
