@@ -50,7 +50,7 @@
     "destr": "^2.0.1",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
-    "listhen": "^1.4.4",
+    "listhen": "^1.5.0",
     "mdurl": "^1.0.1",
     "micromark": "^4.0.0",
     "micromark-util-sanitize-uri": "^2.0.0",
@@ -63,31 +63,31 @@
     "socket.io-client": "^4.7.2",
     "ufo": "^1.3.0",
     "unstorage": "^1.9.0",
-    "ws": "^8.13.0"
+    "ws": "^8.14.1"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.5.1",
     "@nuxt/schema": "3.7.1",
     "@nuxt/test-utils": "3.7.1",
-    "@nuxthq/studio": "^0.14.0",
+    "@nuxthq/studio": "^0.14.1",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/ws": "^8.5.5",
     "c8": "^8.0.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.48.0",
+    "eslint": "^8.49.0",
     "globby": "^13.2.2",
     "husky": "^8.0.3",
-    "jiti": "^1.19.3",
+    "jiti": "^1.20.0",
     "lint-staged": "^14.0.1",
     "nuxt": "3.7.1",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.1.5",
     "remark-oembed": "^1.2.2",
-    "vitest": "^0.34.3",
+    "vitest": "^0.34.4",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.7.4",
+  "packageManager": "pnpm@8.7.5",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
