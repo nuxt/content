@@ -40,7 +40,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     function fetchSurround (state, params, db) {
       if (params.surround) {
         // @ts-ignore
-        state.surround = surround(db, params.surround)
+        state.surround = surround(state.result?.length === 1 ? db : state.result, params.surround)
       }
       return state
     }

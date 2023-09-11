@@ -2,7 +2,6 @@ import fs from 'fs'
 import {
   addPlugin,
   defineNuxtModule,
-  resolveModule,
   createResolver,
   addImports,
   addComponentsDir,
@@ -307,7 +306,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-    const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
+    const resolveRuntimeModule = (path: string) => resolve('./runtime', path)
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
@@ -416,7 +415,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
+      nitroConfig.alias['#content/server'] = resolveRuntimeModule(options.experimental.advanceQuery ? './server' : './legacy/server')
 
       const transformers = contentContext.transformers.map((t) => {
         const name = genSafeVariableName(relative(nuxt.options.rootDir, t)).replace(/_(45|46|47)/g, '_') + '_' + hash(t)
@@ -520,7 +519,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register navigation
     if (options.navigation) {
-      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
+      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule(`./${options.experimental.advanceQuery ? '' : 'legacy/'}composables/navigation`) })
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []

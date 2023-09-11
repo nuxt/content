@@ -1,12 +1,12 @@
 [![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxtjs.org)
 
+# Nuxt Content
+
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
-
-# Nuxt Content
 
 Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxtjs.org/guide/writing/mdc).
 

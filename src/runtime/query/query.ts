@@ -35,7 +35,11 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
         return result.surround
       }
 
-      if ((result as any).dirConfig) {
+      if (!result) {
+        return result
+      }
+
+      if ((result as any)?.dirConfig) {
         result.result = {
           _path: (result as any).dirConfig?._path,
           ...(result.result as T),
@@ -74,7 +78,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
   if (opts.legacy) {
     // @ts-ignore
     query.findSurround = (surroundQuery, options) => {
-      return query.withSurround(surroundQuery, options).findOne().then(resolveResult)
+      return query.withSurround(surroundQuery, options).find().then(resolveResult)
     }
 
     return query as QueryBuilder<T>

@@ -1,6 +1,35 @@
 # Changelog
 
 
+## v2.8.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.1...v2.8.2)
+
+### 🩹 Fixes
+
+- **query:** Prevent `undefined` error ([b680b47c](https://github.com/nuxt/content/commit/b680b47c))
+- **navigation:** Prevent client-db conflict ([fd8e3b82](https://github.com/nuxt/content/commit/fd8e3b82))
+- **serverQueryContent:** Do not expose advanced query typing ([09e37c19](https://github.com/nuxt/content/commit/09e37c19))
+- **document-driven:** Invalid composable import ([e56f71dc](https://github.com/nuxt/content/commit/e56f71dc))
+- **ContentList:** Component slot typechecking ([#2277](https://github.com/nuxt/content/pull/2277))
+
+### ❤️ Contributors
+
+- Cédric Exbrayat 
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.8.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.0...v2.8.1)
+
+### 🩹 Fixes
+
+- Cannot read properties of undefined ([11c3b09f](https://github.com/nuxt/content/commit/11c3b09f))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.8.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.7.2...v2.8.0)

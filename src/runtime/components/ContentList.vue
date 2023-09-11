@@ -71,7 +71,7 @@ const ContentList = defineComponent({
 export default ContentList as typeof ContentList & {
   new (): {
     $slots: {
-      default: (context: { data: ParsedContent[], refresh: () => Promise<void> }) => VNode[] | undefined
+      default: (context: { list: ParsedContent[], refresh: () => Promise<void> }) => VNode[] | undefined
     }
   }
 }
