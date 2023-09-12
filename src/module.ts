@@ -447,7 +447,8 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolve('./runtime/components'),
       pathPrefix: false,
       prefix: '',
-      global: true
+      global: true,
+      priority: 1
     })
 
     const componentsContext = { components: [] as Component[] }
@@ -501,6 +502,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()
+    let priority = _layers.length + 2
     for (const layer of _layers) {
       const srcDir = layer.config.srcDir
       const globalComponents = resolve(srcDir, 'components/content')
@@ -511,7 +513,8 @@ export default defineNuxtModule<ModuleOptions>({
             path: globalComponents,
             global: true,
             pathPrefix: false,
-            prefix: ''
+            prefix: '',
+            priority: priority--
           })
         })
       }
