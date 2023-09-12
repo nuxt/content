@@ -19,33 +19,33 @@
   </div>
 </template>
 
-<style scoped lang="ts">
-css({
-  '.wrapper': {
-    position: 'relative',
-    padding: '2rem',
-    marginBottom: '2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  h4: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    marginBottom: '1rem'
-  },
-  '.links-wrapper': {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '2rem',
-    justifyContent: 'center'
-  },
-  '.links-wrapper a': {
-    color: '{color.black}',
-    '@dark': {
-      color: '{color.white}'
-    }
-  }
-})
-</style>
+<!-- <style scoped lang="ts">
+// css({
+//   '.wrapper': {
+//     position: 'relative',
+//     padding: '2rem',
+//     marginBottom: '2rem',
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignItems: 'center',
+//     justifyContent: 'center'
+//   },
+//   h4: {
+//     fontSize: '1.5rem',
+//     fontWeight: '600',
+//     marginBottom: '1rem'
+//   },
+//   '.links-wrapper': {
+//     display: 'flex',
+//     flexWrap: 'wrap',
+//     gap: '2rem',
+//     justifyContent: 'center'
+//   },
+//   '.links-wrapper a': {
+//     color: '{color.black}',
+//     '@dark': {
+//       color: '{color.white}'
+//     }
+//   }
+// })
+</style> -->

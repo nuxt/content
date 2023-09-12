@@ -1,0 +1,66 @@
+navigation: false
+hero:
+  title: 'Content made easy for<br><span class="text-primary-400">Vue Developers</span>'
+  description: 'Nuxt Content reads the <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">content/</span> directory in your project, parses <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.md</span>, <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.yml</span>,
+ <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.csv</span> and <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.json</span> files to create a powerful data layer for your application. Use Vue components in Markdown with the <a href="https://content.nuxtjs.org/guide/writing/mdc" target="_blank" class="underline font-bold text-gray-400 hover:text-gray-100 transition-color duration-200">MDC syntax.</a>'
+  button: Get started
+sections:
+  - title: Start your next project with<br><span class="text-primary-400">powerful features</span>
+    slot: features
+    class: 'dark:lg:bg-gray-950/50'
+    toolsCards:
+      - title: 'File-based CMS'
+        description: 'Write your content in Markdown, YML, CSV or JSON and query it in your components with powerful composables.'
+        icon: 'i-ph-files'
+        to: ''
+      - title: 'Query Builder'
+        description: 'Query your content with a MongoDB-like API to fetch the right data at the right time.'
+        icon: 'i-ph-funnel'
+        to: ''
+      - title: 'Flexible Database'
+        description: 'Add custom fields to your content, making it suitable for various types of projects and content structures.'
+        icon: 'i-ph-database'
+        to: ''
+      - title: 'Markdown with Components'
+        description: "Use Vue components in Markdown files, with props, slots and nested components with our improved Markdown syntax."
+        icon: 'i-simple-icons-markdown'
+        to: ''
+      - title: 'Code highlighting'
+        description: 'Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.'
+        icon: 'i-ph-code'
+        to: ''
+      - title: 'Deploy everywhere.'
+        description: "Nuxt Content support both Static Generation, Node.js hosting or even the Workers environements."
+        icon: 'i-ph-rocket-launch'
+        to: ''
+  - subTitle: 'Get started <span class="text-primary-400">Now</span>'
+    subDescription: "The Document-driven development mode gives a lot more power to Markdown-based websites. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi."
+    slot: get-started
+    button: 'Read the documentation'
+    external: 'Explore Content Themes'
+  - slot: cta
+    subTitle: Trusted and supported by our<br />amazing community
+    avatarText: Created and maintained by 180+ contributors
+  - slot: meet-studio
+    title: Meet studio <br /><span class="text-primary-400">The pro version of Nuxt Content</span>
+    description: 'Nuxt Studio lets you edit your websites made with Nuxt Content on any devices and by anyone. Opening a new door between git-based CMS and collaboration with your marketing teams.'
+    button: Try it now!
+    list:
+      - Sync with GitHub
+      - Preview links
+      - Enhanced Markdown Editor
+      - App Config Editor
+      - Live collaboration
+      - Edit on mobile
+      - Media Library
+      - Deployment
+  - slot: start-building
+    subTitle: Start building <span class="text-primary-400">Today</span>!
+    subDescription: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
+    cards:
+      - title: Getting Started
+        description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus
+        to: '/get-started'
+      - title: Documentation
+        description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus
+        to: '/'

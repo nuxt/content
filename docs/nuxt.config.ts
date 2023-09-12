@@ -1,26 +1,8 @@
 import { resolve } from 'pathe'
-// import consola from 'consola'
-
-const alias = {}
-
-// if (process.env.NODE_ENV === 'development') {
-//   consola.warn('Using local @nuxt/content!')
-//   alias['@nuxt/content'] = '../src/module.ts'
-// }
 
 export default defineNuxtConfig({
-  alias,
-  app: {
-    head: {
-      script: [
-        {
-          defer: true,
-          'data-domain': 'content.nuxtjs.org',
-          src: 'https://plausible.io/js/script.js'
-        }
-      ]
-    }
-  },
+  extends: process.env.NUXT_ELEMENTS_PATH || '@nuxthq/elements',
+
   content: {
     sources: {
       v1: {
@@ -53,7 +35,8 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: [
         '/',
-        '/blog/announcing-v2'
+        '/blog/announcing-v2',
+        '/api/search.json'
       ],
       ignore: [
         '/fr/v1/getting-started/&quot;',
@@ -63,16 +46,36 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxtlabs/github-module', '@nuxthq/studio'],
-  extends: process.env.DOCUS_THEME_PATH || '@nuxt-themes/docus',
-  github: {
-    owner: 'nuxt',
-    repo: 'content',
-    branch: 'main'
-  },
+  modules: [
+    '@nuxt/image',
+    '@nuxt/content',
+    '@nuxt/ui',
+    '@nuxthq/studio',
+    '@vueuse/nuxt',
+    '@nuxtjs/fontaine',
+    '@nuxtjs/google-fonts',
+    'nuxt-og-image',
+  ],
+
   colorMode: {
     preference: 'dark'
   },
+  ui: {
+    icons: ['heroicons', 'simple-icons', 'ph'],
+  },
+
+  fontMetrics: {
+    fonts: ['DM Sans'],
+  },
+
+  googleFonts: {
+    display: 'swap',
+    download: true,
+    families: {
+      'DM+Sans': [400, 500, 600, 700],
+    },
+  },
+
   runtimeConfig: {
     content: {
       // @ts-ignore
@@ -91,5 +94,20 @@ export default defineNuxtConfig({
         }
       }
     }
-  }
+  },
+
+  hooks: {
+    // Related to https://github.com/nuxt/nuxt/pull/22558
+    // Adding all global components to the main entry
+    // To avoid lagging during page navigation on client-side
+    // Downside: bigger JS bundle
+    // With sync: 465KB, gzip: 204KB
+    // Without: 418KB, gzip: 184KB
+    'components:extend': function (components) {
+      for (const comp of components) {
+        if (comp.global)
+          comp.global = 'sync'
+      }
+    },
+  },
 })

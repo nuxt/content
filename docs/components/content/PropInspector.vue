@@ -13,11 +13,11 @@ Value:
   </pre>
 </template>
 
-<style scoped lang="ts">
-css({
-  pre: {
-    padding: '1rem 1rem 0 1rem',
-    borderRadius: '4px'
-  }
-})
-</style>
+<!-- <style scoped lang="ts">
+// css({
+//   pre: {
+//     padding: '1rem 1rem 0 1rem',
+//     borderRadius: '4px'
+//   }
+// })
+</style> -->
