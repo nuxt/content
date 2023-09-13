@@ -9,7 +9,8 @@
     "generate": "nuxi generate"
   },
   "resolutions": {
-    "nitropack": "2.6.3"
+    "nitropack": "2.6.3",
+    "@nuxt/content": "npm:@nuxt/content@^2.8.2"
   },
   "devDependencies": {
     "@docsearch/js": "^3.5.2",
