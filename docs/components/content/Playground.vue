@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, shallowRef, onMounted, useRoute } from '#imports'
 
 const INITIAL_CODE = `---
@@ -17,7 +17,7 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 - [Explore the MDC syntax](/guide/writing/mdc)
 
 ::code-group
-  \`\`\`markdown [Source]
+  \`\`\`mdc [Source]
   ::alert{type="success"}
     Hooray!
   ::
@@ -41,7 +41,7 @@ const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
 
 const astEditorComponent = shallowRef()
 
-const updateTab = async (index) => {
+const updateTab = async (index: number) => {
   tab.value = index
   if (tab.value === 1 && !astEditorComponent.value) {
     const { default: component } = await import('~/editor/Editor.vue')
@@ -52,10 +52,27 @@ const updateTab = async (index) => {
 
 const editorComponent = shallowRef()
 
+const mdcOptions = shallowRef({})
 onMounted(async () => {
   const { default: component } = await import('~/editor/Editor.vue')
 
   editorComponent.value = component
+
+  // @ts-ignore
+  const { useShikiHighlighter } = await import('@nuxtjs/mdc/runtime')
+  const shikiHighlighter = useShikiHighlighter({})
+  mdcOptions.value = {
+    highlight: {
+      highlighter: (code: string, lang: string, theme: any, highlights: any) => {
+        return shikiHighlighter.getHighlightedAST(code, lang, theme, { highlights })
+      },
+      theme: {
+        light: 'material-theme-lighter',
+        default: 'material-theme',
+        dark: 'material-theme-palenight'
+      }
+    }
+  }
 })
 </script>
 
@@ -75,7 +92,7 @@ onMounted(async () => {
           </Alert>
         </div>
       </div>
-      <MDC v-slot="{ data, body }" :value="content">
+      <MDC v-slot="{ data, body }" :value="content" :parser-options="mdcOptions">
         <div v-if="body?.children?.length == 0" class="p-8">
           <Alert type="warning">
             <p class="font-semibold">
