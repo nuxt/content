@@ -5,6 +5,8 @@ const alias = {}
 
 if (process.env.NODE_ENV === 'development') {
   consola.warn('Using local @nuxt/content!')
+  alias['@nuxt/content/transformers/markdown'] = '../src/runtime/transformers/markdown.ts'
+  alias['@nuxt/content/runtime'] = '../src/runtime'
   alias['@nuxt/content'] = '../src'
 }
 
@@ -45,7 +47,11 @@ export default defineNuxtConfig({
       }
     },
     highlight: {
-      preload: ['xml']
+      preload: ['xml'],
+      theme: {
+        default: 'solarized-light',
+        dark: 'dark-plus'
+      }
     }
   },
   nitro: {
