@@ -9,7 +9,7 @@
     "generate": "nuxi generate"
   },
   "resolutions": {
-    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@0.1.7-28244929.dacd996",
     "@nuxt/content": "npm:@nuxt/content@^2.8.2"
   },
   "devDependencies": {
