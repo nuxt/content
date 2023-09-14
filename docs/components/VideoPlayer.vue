@@ -4,21 +4,30 @@ import type { PropType } from 'vue'
 defineProps({
   source: {
     type: Object as PropType<{ type: string; src: string }>,
-    default: () => ({}),
+    default: () => ({})
   },
   poster: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 })
 </script>
 
 <template>
-  <div ref="videoWrapper"
-    class="relative flex items-center justify-center border border-slate-200/10 rounded-xl bg-slate-700/20">
+  <div
+    ref="videoWrapper"
+    class="relative flex items-center justify-center border border-slate-200/10 rounded-xl bg-slate-700/20"
+  >
     <div class="p-4">
-      <video ref="videoPlayer" :poster="poster" :src="source.src" :type="source.type" controls
-        class="rounded-lg bg-slate-800" muted />
+      <video
+        ref="videoPlayer"
+        :poster="poster"
+        :src="source.src"
+        :type="source.type"
+        controls
+        class="rounded-lg bg-slate-800"
+        muted
+      />
     </div>
   </div>
 </template>

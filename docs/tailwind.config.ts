@@ -16,7 +16,7 @@ export default <Partial<Config>>{
           700: '#334155',
           800: '#1e293b',
           900: '#0f172a',
-          950: '#020420',
+          950: '#020420'
         },
         green: {
           50: '#EFFDF5',
@@ -29,12 +29,12 @@ export default <Partial<Config>>{
           700: '#007F45',
           800: '#016538',
           900: '#0A5331',
-          950: '#052e16',
-        },
+          950: '#052e16'
+        }
       },
       fontFamily: {
-        sans: ['DM Sans', 'DM Sans fallback', ...defaultTheme.fontFamily.sans],
-      },
-    },
-  },
+        sans: ['DM Sans', 'DM Sans fallback', ...defaultTheme.fontFamily.sans]
+      }
+    }
+  }
 }

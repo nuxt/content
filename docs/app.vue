@@ -7,33 +7,33 @@ const route = useRoute()
 
 useServerSeoMeta({
   ogSiteName: 'Nuxt Content',
-  twitterCard: 'summary_large_image',
+  twitterCard: 'summary_large_image'
 })
 
 useHead({
   htmlAttrs: {
-    lang: 'en',
+    lang: 'en'
   },
   link: () => [
-    { rel: 'canonical', href: `https://content.nuxtjs.org${withoutTrailingSlash(route.path)}` },
-  ],
+    { rel: 'canonical', href: `https://content.nuxtjs.org${withoutTrailingSlash(route.path)}` }
+  ]
 })
 
 const links = [{
   label: 'Documentation',
-  to: '/get-started',
+  to: '/get-started'
 }, {
   label: 'Playground',
-  to: '/playground',
+  to: '/playground'
 }, {
   label: 'Releases',
   to: 'https://github.com/nuxt/content/releases',
-  target: '_blank',
+  target: '_blank'
 }]
 
 const { data: files } = useLazyFetch('/api/search.json', {
   default: () => [],
-  server: false,
+  server: false
 })
 
 const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
@@ -52,8 +52,11 @@ provide('navigation', navigation)
       <UColorModeButton v-if="!$colorMode.forced" />
       <USocialButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" />
       <USocialButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" />
-      <USocialButton aria-label="Nuxt Content on GitHub" icon="i-simple-icons-github"
-        to="https://github.com/nuxt/content" />
+      <USocialButton
+        aria-label="Nuxt Content on GitHub"
+        icon="i-simple-icons-github"
+        to="https://github.com/nuxt/content"
+      />
     </template>
     <!-- Mobile panel -->
     <template v-if="$route.path !== '/'" #panel>
@@ -69,17 +72,20 @@ provide('navigation', navigation)
   <UFooter :links="links">
     <template #left>
       <span class="text-sm">
-                                                                                      Published under <NuxtLink to="https://github.com/nuxt/content" target="_blank" class="underline">
-                                                                                        MIT License
-                                                                                      </NuxtLink>
-                                                                                    </span>
+        Published under <NuxtLink to="https://github.com/nuxt/content" target="_blank" class="underline">
+          MIT License
+        </NuxtLink>
+      </span>
     </template>
     <template #right>
       <UColorModeButton v-if="!$colorMode.forced" />
       <USocialButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" />
       <USocialButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" />
-      <USocialButton aria-label="Nuxt Devtools on GitHub" icon="i-simple-icons-github"
-        to="https://github.com/nuxt/content" />
+      <USocialButton
+        aria-label="Nuxt Devtools on GitHub"
+        icon="i-simple-icons-github"
+        to="https://github.com/nuxt/content"
+      />
     </template>
   </UFooter>
   <ClientOnly>
