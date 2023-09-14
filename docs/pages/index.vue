@@ -300,16 +300,17 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         class="relative flex items-center justify-center border border-slate-200/10 rounded-xl bg-slate-700/20"
       >
         <div class="p-4">
-          <video
+          <!-- TODO: video -->
+          <!-- <video
             ref="videoPlayer"
             poster="/video/poster-studio.webp"
-            src="video/studio.mp4"
+            src="/video/studio.mp4"
             type="mp4"
             controls
             autoplay
             class="rounded-lg bg-slate-800"
             muted
-          />
+          /> -->
         </div>
       </div>
     </template>
