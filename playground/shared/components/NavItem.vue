@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { NavItem } from '../../../src/runtime/types'
+
 const props = defineProps<{
-  navItem: any
+  navItem: NavItem
 }>()
 const icon = computed(() => {
   if (props.navItem.icon) { return props.navItem.icon }

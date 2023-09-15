@@ -1,0 +1,86 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Basic usage > Content Queries > Get contents index > basic-index-body 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Index",
+        },
+      ],
+      "props": {
+        "id": "index",
+      },
+      "tag": "h1",
+      "type": "element",
+    },
+    {
+      "children": [
+        {
+          "type": "text",
+          "value": "Hello World",
+        },
+      ],
+      "props": {},
+      "tag": "p",
+      "type": "element",
+    },
+  ],
+  "toc": {
+    "depth": 2,
+    "links": [],
+    "searchDepth": 2,
+    "title": "",
+  },
+  "type": "root",
+}
+`;
+
+exports[`Basic usage > Navigation > Get cats navigation > basic-navigation-cats 1`] = `
+[
+  {
+    "_path": "/cats",
+    "children": [
+      {
+        "_path": "/cats/bombay",
+        "title": "Bombay",
+      },
+      {
+        "_path": "/cats",
+        "title": "Cats",
+      },
+      {
+        "_path": "/cats/persian",
+        "title": "Persian",
+      },
+      {
+        "_path": "/cats/ragdoll",
+        "title": "Ragdoll",
+      },
+    ],
+    "title": "Cats list",
+  },
+]
+`;
+
+exports[`Basic usage > Navigation > Get dogs navigation > basic-navigation-dogs 1`] = `
+[
+  {
+    "_path": "/dogs",
+    "children": [
+      {
+        "_path": "/dogs/bulldog",
+        "title": "Bulldog",
+      },
+      {
+        "_path": "/dogs/german-shepherd",
+        "title": "German Shepherd",
+      },
+    ],
+    "icon": "🐶",
+    "title": "Dogs List",
+  },
+]
+`;

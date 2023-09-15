@@ -1,17 +1,18 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
-import { useRuntimeConfig } from '#app'
 import { createQuery } from '../query/query'
-import type { ParsedContent, QueryBuilder, QueryBuilderParams } from '../types'
+import type { ParsedContent } from '../types'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
+import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 import { useContentPreview } from './preview'
+import { useRuntimeConfig } from '#app'
 
 /**
  * Query fetcher
  */
-export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuilder<T>) => {
+export const createQueryFetch = <T = ParsedContent>() => async (query: ContentQueryBuilder<T>) => {
   const { content } = useRuntimeConfig().public
 
   const params = query.params()
@@ -27,7 +28,7 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
 
   if (shouldUseClientDB()) {
     const db = await import('./client-db').then(m => m.useContentDatabase())
-    return db.fetch(query as QueryBuilder<ParsedContent>)
+    return db.fetch(query as ContentQueryBuilder<ParsedContent>)
   }
 
   const data = await $fetch(apiPath as any, {
@@ -53,12 +54,14 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
 /**
  * Query contents from path
  */
-export function queryContent<T = ParsedContent>(): QueryBuilder<T>;
-export function queryContent<T = ParsedContent>(query: string, ...pathParts: string[]): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (query: QueryBuilderParams): QueryBuilder<T>;
-export function queryContent<T = ParsedContent> (query?: string | QueryBuilderParams, ...pathParts: string[]) {
+export function queryContent<T = ParsedContent>(): ContentQueryBuilder<T>;
+export function queryContent<T = ParsedContent>(query: string, ...pathParts: string[]): ContentQueryBuilder<T>;
+export function queryContent<T = ParsedContent> (query: ContentQueryBuilderParams): ContentQueryBuilder<T>;
+export function queryContent<T = ParsedContent> (query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { content } = useRuntimeConfig().public
-  const queryBuilder = createQuery<T>(createQueryFetch(), typeof query !== 'string' ? query : {})
+  const queryBuilder = content.experimental.advanceQuery
+    ? createQuery<T>(createQueryFetch(), { initialParams: typeof query !== 'string' ? query : {}, legacy: false })
+    : createQuery<T>(createQueryFetch(), { initialParams: typeof query !== 'string' ? query : {}, legacy: true })
   let path: string
 
   if (typeof query === 'string') {
@@ -93,7 +96,7 @@ export function queryContent<T = ParsedContent> (query?: string | QueryBuilderPa
       const queryLocale = params.where?.find(w => w._locale)?._locale
       if (!queryLocale) {
         params.where = params.where || []
-        params.where.push({ _locale: content.defaultLocale })
+        params.where.push({ _locale: content.defaultLocale as string })
       }
     }
 

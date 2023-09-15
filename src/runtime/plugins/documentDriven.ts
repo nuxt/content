@@ -1,13 +1,13 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { pascalCase } from 'scule'
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
 import type { MarkdownNode, NavItem, ParsedContent } from '../types'
 import type { ModuleOptions } from '../../module'
 import { useContentState } from '../composables/content'
 import { useContentHelpers } from '../composables/helpers'
 import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
 import { componentNames } from '#components'
 // @ts-ignore
 import layouts from '#build/layouts'
@@ -152,13 +152,29 @@ export default defineNuxtPlugin((nuxt) => {
 
         // Return same page as page is already loaded
         if (!dedup && pages.value[_path] && pages.value[_path]._path === _path) {
-          return pages.value[_path]
+          return {
+            result: pages.value[_path],
+            surround: surrounds.value[_path]
+          }
         }
 
-        return queryContent()
+        const query = queryContent()
           .where(where)
-          .findOne()
-          .catch(() => null)
+          .withDirConfig()
+
+        if (moduleOptions.surround && routeConfig.surround !== false) {
+          let surround: any = _path
+          if (['string', 'object'].includes(typeof routeConfig.page)) {
+            surround = routeConfig.page
+          }
+          if (['string', 'object'].includes(typeof routeConfig.surround)) {
+            surround = routeConfig.surround
+          }
+
+          query.withSurround(surround)
+        }
+
+        return query.findOne().catch(() => null)
       }
 
       promises.push(pageQuery)
@@ -166,46 +182,10 @@ export default defineNuxtPlugin((nuxt) => {
       promises.push(() => Promise.resolve(null))
     }
 
-    /**
-     * `surround`
-     */
-    if (moduleOptions.surround && routeConfig.surround !== false) {
-      let surround: any = _path
-      if (['string', 'object'].includes(typeof routeConfig.page)) {
-        surround = routeConfig.page
-      }
-      if (['string', 'object'].includes(typeof routeConfig.surround)) {
-        surround = routeConfig.surround
-      }
-      const surroundQuery = () => {
-        const { surrounds } = useContentState()
-
-        // Return same surround as page is already loaded
-        if (!dedup && surrounds.value[_path]) {
-          return surrounds.value[_path]
-        }
-
-        return queryContent()
-          .where({
-            _partial: { $not: true },
-            navigation: { $not: false }
-          })
-        // Exclude `body` for `surround`
-          .without(['body'])
-          .findSurround(surround)
-          .catch(() => null)
-      }
-
-      promises.push(surroundQuery)
-    } else {
-      promises.push(() => Promise.resolve(null))
-    }
-
     return await Promise.all(promises.map(promise => promise())).then(async ([
       _navigation,
       _globals,
-      _page,
-      _surround
+      _page
     ]) => {
       if (_navigation) {
         navigation.value = _navigation
@@ -215,22 +195,22 @@ export default defineNuxtPlugin((nuxt) => {
         globals.value = _globals
       }
 
-      if (_surround) {
-        surrounds.value[_path] = _surround
+      if (_page?.surround) {
+        surrounds.value[_path] = _page.surround
       }
 
       // Use `redirect` key to redirect to another page
-      const redirectTo = _page?.redirect || _page?._dir?.navigation?.redirect
+      const redirectTo = _page?.result?.redirect || _page?.dirConfig?.navigation?.redirect
       if (redirectTo) {
         // In case of redirection, it is not necessary to fetch page layout
         // Just fill the page state with the redirect path
-        pages.value[_path] = _page
+        pages.value[_path] = _page.result
         return redirectTo
       }
 
-      if (_page) {
+      if (_page?.result) {
         // Find used layout
-        const layoutName = findLayout(to, _page, _navigation, _globals)
+        const layoutName = findLayout(to, _page.result, _navigation, _globals)
 
         // Prefetch layout component
         const layout = layouts[layoutName]
@@ -240,15 +220,16 @@ export default defineNuxtPlugin((nuxt) => {
         }
         // Apply layout
         to.meta.layout = layoutName
-        _page.layout = layoutName
+
+        _page.result.layout = layoutName
       }
 
       // Update values
-      pages.value[_path] = _page
+      pages.value[_path] = _page?.result
 
       // Call hook after content is fetched
       // @ts-ignore
-      await nuxt.callHook('content:document-driven:finish', { route: to, dedup, page: _page, navigation: _navigation, globals: _globals, surround: _surround })
+      await nuxt.callHook('content:document-driven:finish', { route: to, dedup, page: _page?.result, navigation: _navigation, globals: _globals, surround: _page?.surround })
     })
   }
 
@@ -294,10 +275,6 @@ export default defineNuxtPlugin((nuxt) => {
       }
     }
   })
-
-  if (process.server) {
-    delete nuxt.payload.prerenderedAt
-  }
 
   // @ts-ignore - Refresh on client-side
   nuxt.hook('app:data:refresh', async () => process.client && await refresh(useRoute(), true))

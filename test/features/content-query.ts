@@ -5,21 +5,31 @@ import { hash } from 'ohash'
 export const testContentQuery = () => {
   // @ts-ignore
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
+  const resolveResult = (result: any) => {
+    if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {
+      if (result?.surround) {
+        return result.surround
+      }
 
+      return result?._id || Array.isArray(result) ? result : result?.result
+    }
+
+    return result.result
+  }
   describe('Content Queries', () => {
     const fetchDocument = (_id: string) => {
       const params = { first: true, where: { _id } }
       const qid = hash(params)
       return $fetch(`${apiBaseUrl}/query/${qid}`, {
         params: { _params: JSON.stringify(params) }
-      })
+      }).then(resolveResult)
     }
     test('List contents', async () => {
       const params = { only: '_id' }
       const qid = hash(params)
       const docs = await $fetch(`${apiBaseUrl}/query/${qid}`, {
         params: { _params: JSON.stringify(params) }
-      })
+      }).then(resolveResult)
 
       const ids = docs.map((doc: any) => doc._id)
 

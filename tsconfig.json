@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "lib": [ "es2015" ]
+  },
   "extends": "./playground/basic/.nuxt/tsconfig.json",
   "exclude": [
     "test",

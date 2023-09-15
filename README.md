@@ -1,12 +1,12 @@
-[![nuxt-content](https://user-images.githubusercontent.com/904724/221176888-d9efefbe-0a8a-4d6b-beb2-5cc7d7dcad05.png)](https://content.nuxtjs.org)
+[![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxtjs.org)
+
+# Nuxt Content
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
-
-# Nuxt Content
 
 Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxtjs.org/guide/writing/mdc).
 
@@ -37,7 +37,7 @@ Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxtjs
 - Clone repository
 - Install dependencies using `pnpm install`
 - Prepare using `pnpm prepare`
-- Prepare using `pnpm build`
+- Build using `pnpm build`
 - Try playground using `pnpm dev`
 - Test using `pnpm test`
 
