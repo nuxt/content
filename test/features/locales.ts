@@ -4,11 +4,21 @@ import { $fetch, useTestContext } from '@nuxt/test-utils'
 export const testLocales = () => {
   // @ts-ignore
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
+  const resolveResult = (result: any) => {
+    if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {
+      if (result?.surround) {
+        return result.surround
+      }
 
+      return result?._id || Array.isArray(result) ? result : result?.result
+    }
+
+    return result.result
+  }
   describe('Locales', () => {
     test('Path with multiple locales', async () => {
       const params = { where: [{ _path: '/translated' }] }
-      const content = await $fetch(`${apiBaseUrl}/query`, { params: { _params: JSON.stringify(params) } })
+      const content = await $fetch(`${apiBaseUrl}/query`, { params: { _params: JSON.stringify(params) } }).then(resolveResult)
       assert(content.length === 1)
       assert(content[0]._locale === 'en')
     })
@@ -30,7 +40,7 @@ export const testLocales = () => {
         params: {
           _params: JSON.stringify({ first: true, where: { _id: 'content:index.md' } })
         }
-      })
+      }).then(resolveResult)
 
       expect(index).toMatchObject({
         _locale: 'en'

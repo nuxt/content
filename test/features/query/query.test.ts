@@ -1,6 +1,6 @@
 import { assert, describe, expect, test } from 'vitest'
-import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
 import { createQuery } from '../../../src/runtime/query/query'
+import { createPipelineFetcher } from '../../../src/runtime/query/match/pipeline'
 import database from './db.json'
 
 const shuffledDatabase: Array<any> = [...database].sort(() => Math.random() - 0.5)
@@ -8,7 +8,7 @@ const pipelineFetcher = createPipelineFetcher(() => Promise.resolve(shuffledData
 
 describe('Database Provider', () => {
   test('Matches nested exact match', async () => {
-    const result: Array<any> = await createQuery(pipelineFetcher)
+    const result = await createQuery<any>(pipelineFetcher, { legacy: true })
       .where({ 'nested.users.0': 'Ahad' })
       .find()
     assert(result.length > 0)
@@ -17,7 +17,7 @@ describe('Database Provider', () => {
 
   test('Matches nested with operator', async () => {
     // $contains
-    const result: Array<any> = await createQuery(pipelineFetcher)
+    const result: Array<any> = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         'nested.users': {
           $contains: 'Pooya'
@@ -29,33 +29,33 @@ describe('Database Provider', () => {
   })
 
   test('Apply limit', async () => {
-    const first3 = await createQuery(pipelineFetcher).limit(3).find()
+    const first3 = await createQuery(pipelineFetcher, { legacy: true }).limit(3).find()
     assert(first3.length === 3)
   })
 
   test('Apply skip', async () => {
-    const first3 = await createQuery(pipelineFetcher).limit(3).find()
-    const limit3skip2 = await createQuery(pipelineFetcher).skip(2).limit(3).find()
+    const first3 = await createQuery(pipelineFetcher, { legacy: true }).limit(3).find()
+    const limit3skip2 = await createQuery(pipelineFetcher, { legacy: true }).skip(2).limit(3).find()
     assert(limit3skip2[0].id === first3[2].id)
   })
 
   test('Apply sort', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).find()
+    const nameAsc = await createQuery(pipelineFetcher, { legacy: true }).sort({ name: 1 }).find()
     assert(nameAsc[0].name === database[0].name)
 
-    const nameDesc = await createQuery(pipelineFetcher).sort({ name: -1 }).find()
+    const nameDesc = await createQuery(pipelineFetcher, { legacy: true }).sort({ name: -1 }).find()
     assert(nameDesc[0].name === database[database.length - 1].name)
   })
 
   test('Apply sort and skip', async () => {
-    const nameAsc = await createQuery(pipelineFetcher).sort({ name: 1 }).skip(2).find()
+    const nameAsc = await createQuery(pipelineFetcher, { legacy: true }).sort({ name: 1 }).skip(2).find()
     assert(nameAsc[0].name === database[2].name)
   })
 
   test('Apply sort $sensitivity', async () => {
     const textOrder = ['aab', 'aaB', 'aAb', 'aAB', 'Aab', 'AaB', 'AAb', 'AAB']
 
-    const sensitivityCase = await createQuery(pipelineFetcher).sort({ text: 1, $sensitivity: 'case' }).find()
+    const sensitivityCase = await createQuery(pipelineFetcher, { legacy: true }).sort({ text: 1, $sensitivity: 'case' }).find()
     textOrder.forEach((text, index) => {
       expect(sensitivityCase[index].text).toBe(text)
     })
@@ -64,12 +64,12 @@ describe('Database Provider', () => {
   test('Apply sort $caseFirst', async () => {
     const textOrder = ['aab', 'aaB', 'aAb', 'aAB', 'Aab', 'AaB', 'AAb', 'AAB']
 
-    const caseLower = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'lower' }).find()
+    const caseLower = await createQuery(pipelineFetcher, { legacy: true }).sort({ text: 1, $caseFirst: 'lower' }).find()
     textOrder.forEach((text, index) => {
       expect(caseLower[index].text).toBe(text)
     })
     // upper case first
-    const caseUpper = await createQuery(pipelineFetcher).sort({ text: 1, $caseFirst: 'upper' }).find()
+    const caseUpper = await createQuery(pipelineFetcher, { legacy: true }).sort({ text: 1, $caseFirst: 'upper' }).find()
     textOrder.reverse().forEach((text, index) => {
       expect(caseUpper[index].text).toBe(text)
     })
@@ -86,12 +86,12 @@ describe('Database Provider', () => {
     ]
     const fetcher = createPipelineFetcher(() => Promise.resolve(dates.sort(() => 1 - Math.random())))
 
-    const sortedByDate1 = await createQuery(fetcher).sort({ date: 1 }).find()
+    const sortedByDate1 = await createQuery(fetcher, { legacy: true }).sort({ date: 1 }).find()
     ;([...dates].reverse()).forEach(({ date }, index) => {
       expect(sortedByDate1[index].date).toBe(date)
     })
 
-    const sortedByDate0 = await createQuery(fetcher).sort({ date: -1 }).find()
+    const sortedByDate0 = await createQuery(fetcher, { legacy: true }).sort({ date: -1 }).find()
     dates.forEach(({ date }, index) => {
       expect(sortedByDate0[index].date).toBe(date)
     })
@@ -99,14 +99,14 @@ describe('Database Provider', () => {
 
   test('Apply sort $numeric', async () => {
     // sort string alphabetically
-    const nonNumericSort = await createQuery(pipelineFetcher).sort({ numberString: 1 }).find()
+    const nonNumericSort = await createQuery(pipelineFetcher, { legacy: true }).sort({ numberString: 1 }).find()
     const nonNumericOrder = [1, 10, 100, 2, 20, 3, 30, 4]
     nonNumericOrder.forEach((number, index) => {
       expect(nonNumericSort[index].numberString).toBe(String(number))
     })
 
     // sort string numerically
-    const numericSort = await createQuery(pipelineFetcher).sort({ numberString: 1, $numeric: true }).find()
+    const numericSort = await createQuery(pipelineFetcher, { legacy: true }).sort({ numberString: 1, $numeric: true }).find()
     const numericOrder = [1, 2, 3, 4, 10, 20, 30, 100]
     numericOrder.forEach((number, index) => {
       expect(numericSort[index].numberString).toBe(String(number))
@@ -115,7 +115,7 @@ describe('Database Provider', () => {
 
   test('Sort Nullable fields', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, name: 'Saman' }, { id: 2, name: 'Ebi' }, { id: 3, name: 'Narges' }, { id: 4, name: null }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .sort({ name: 1 })
       .find()
 
@@ -126,7 +126,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $in', async () => {
-    const result = await createQuery(pipelineFetcher)
+    const result = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         category: { $in: 'c1' }
       })
@@ -135,7 +135,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $in array', async () => {
-    const result = await createQuery(pipelineFetcher)
+    const result = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         category: { $in: ['c1', 'c3'] }
       })
@@ -144,7 +144,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $or + $in', async () => {
-    const result = await createQuery(pipelineFetcher)
+    const result = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         $or: [{ category: { $in: 'c1' } }, { category: { $in: 'c2' } }]
       })
@@ -153,7 +153,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $contains string', async () => {
-    const result = await createQuery(pipelineFetcher)
+    const result = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         quote: { $contains: ['best', 'way'] }
       })
@@ -163,7 +163,7 @@ describe('Database Provider', () => {
   })
 
   test('Apply $containsAny string', async () => {
-    const result = await createQuery(pipelineFetcher)
+    const result = await createQuery(pipelineFetcher, { legacy: true })
       .where({
         author: { $containsAny: ['Wilson', 'William'] }
       })
@@ -176,7 +176,7 @@ describe('Database Provider', () => {
 
   test('Surround with path (default)', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .findSurround('/b')
 
     assert(result[0]._path === '/a')
@@ -185,7 +185,7 @@ describe('Database Provider', () => {
 
   test('Surround more that 1 item with path', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .findSurround('/b', { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
@@ -196,7 +196,7 @@ describe('Database Provider', () => {
 
   test('Surround with 0 item before', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .findSurround('/b', { before: 0, after: 1 })
 
     assert((result as Array<any>).length === 1)
@@ -205,7 +205,7 @@ describe('Database Provider', () => {
 
   test('Surround with 0 item after', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .findSurround('/b', { before: 1, after: 0 })
 
     assert((result as Array<any>).length === 1)
@@ -214,7 +214,7 @@ describe('Database Provider', () => {
 
   test('Surround with object', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
     assert((result as Array<any>).length === 3)
@@ -225,7 +225,7 @@ describe('Database Provider', () => {
 
   test('Surround and using only method', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .only(['_path'])
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
@@ -237,7 +237,7 @@ describe('Database Provider', () => {
 
   test('Surround and using without method', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .without('id')
       .findSurround({ id: 3 }, { before: 2, after: 1 })
 
@@ -250,7 +250,7 @@ describe('Database Provider', () => {
   test('Count items', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
 
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .count()
 
     assert(result === 3)
@@ -259,7 +259,7 @@ describe('Database Provider', () => {
   test('Count items with where condition', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
 
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .where({ _path: { $contains: 'b' } })
       .count()
 
@@ -269,7 +269,7 @@ describe('Database Provider', () => {
   test('Count items with where condition and without method', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
 
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .where({ _path: { $contains: 'b' } })
       .without('id')
       .count()
@@ -280,7 +280,7 @@ describe('Database Provider', () => {
   test('Count items with where condition and only method', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, _path: '/a' }, { id: 2, _path: '/b' }, { id: 3, _path: '/c' }] as any[]))
 
-    const result = await createQuery(fetcher)
+    const result = await createQuery(fetcher, { legacy: true })
       .where({ _path: { $contains: 'b' } })
       .only(['_path'])
       .count()
@@ -290,7 +290,7 @@ describe('Database Provider', () => {
 
   test('Chain multiple where conditions', async () => {
     const fetcher = createPipelineFetcher(() => Promise.resolve([{ id: 1, path: '/a' }, { id: 2, path: '/b' }, { id: 3, path: '/c' }] as any[]))
-    const query = createQuery(fetcher).where({ id: { $in: [1, 2] } })
+    const query = createQuery(fetcher, { legacy: true }).where({ id: { $in: [1, 2] } })
     const singleWhereResult = await query.find()
 
     assert((singleWhereResult as Array<any>).length === 2)
@@ -305,7 +305,7 @@ describe('Database Provider', () => {
   })
 
   test('Select specific keys', async () => {
-    const query = createQuery(pipelineFetcher)
+    const query = createQuery(pipelineFetcher, { legacy: true })
       .where({ id: { $in: [1, 2] } })
       .only(['name', 'id', '_'])
     const result = await query.find()
@@ -317,13 +317,13 @@ describe('Database Provider', () => {
   })
 
   test('Drop specific keys', async () => {
-    const query = createQuery(pipelineFetcher)
+    const query = createQuery(pipelineFetcher, { legacy: true })
       .where({ id: { $in: [1, 2] } })
       .without(['name', '_'])
     const result = await query.find()
 
     expect(result.length).toBeGreaterThan(0)
-    result.forEach((item) => {
+    result.forEach((item: any) => {
       expect(item.id).toBeDefined()
       expect(item.name).toBeUndefined()
       expect(item._deleted).toBeUndefined()

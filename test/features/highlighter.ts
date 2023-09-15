@@ -22,7 +22,7 @@ export const testHighlighter = () => {
       const styleElement = parsed.body.children.pop()
       expect(styleElement.tag).toBe('style')
       const style = styleElement.children[0].value
-      const code = parsed.body.children[0].children[0].children
+      const code = parsed.body.children[0].children[0].children[0].children
 
       for (const token of code) {
         expect(style).toContain(`.${token.props.class}`)

@@ -1,10 +1,10 @@
 <script lang="ts">
 import { hash } from 'ohash'
-import { PropType, toRefs, defineComponent, h, useSlots, watch } from 'vue'
+import { type PropType, type VNode, toRefs, defineComponent, h, useSlots, watch } from 'vue'
 import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '../types'
-import { computed, useAsyncData, queryContent } from '#imports'
+import { computed, useAsyncData, queryContent, useRuntimeConfig } from '#imports'
 
-export default defineComponent({
+const ContentQuery = defineComponent({
   name: 'ContentQuery',
   props: {
     /**
@@ -100,7 +100,21 @@ export default defineComponent({
      */
     const isPartial = computed(() => path.value?.includes('/_'))
 
+    const legacy = !useRuntimeConfig().public.content.experimental.advanceQuery
+
     watch(() => props, () => refresh(), { deep: true })
+
+    const resolveResult = (result: any) => {
+      if (legacy) {
+        if (result?.surround) {
+          return result.surround
+        }
+
+        return result?._id || Array.isArray(result) ? result : result?.result
+      }
+
+      return result.result
+    }
 
     const { data, refresh } = await useAsyncData<ParsedContent | ParsedContent[] | [ParsedContent | undefined, ParsedContent | undefined]>(
       `content-query-${hash(props)}`,
@@ -127,7 +141,7 @@ export default defineComponent({
 
         if (locale.value) { queryBuilder = queryBuilder.where({ _locale: locale.value }) }
 
-        if (find.value === 'one') { return queryBuilder.findOne() as Promise<ParsedContent> }
+        if (find.value === 'one') { return queryBuilder.findOne().then(resolveResult) as Promise<ParsedContent> }
 
         if (find.value === 'surround') {
           if (!path.value) {
@@ -135,13 +149,18 @@ export default defineComponent({
             console.warn('[Content] Surround queries requires `path` prop to be set.')
             // eslint-disable-next-line no-console
             console.warn('[Content] Query without `path` will return regular `find()` results.')
-            return queryBuilder.find() as Promise<ParsedContent[]>
+            return queryBuilder.find().then(resolveResult) as Promise<ParsedContent[]>
           }
 
-          return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
+          if (legacy) {
+            return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
+          } else {
+            // @ts-ignore
+            return queryBuilder.withSurround(path.value).findOne().then(resolveResult)
+          }
         }
 
-        return queryBuilder.find() as Promise<ParsedContent[]>
+        return queryBuilder.find().then(resolveResult) as Promise<ParsedContent[]>
       }
     )
 
@@ -213,4 +232,18 @@ export default defineComponent({
     return emptyNode('default', { data, props, isPartial })
   }
 })
+
+export interface ContentQueryDefaultSlotContext {
+  data: ParsedContent | Array<ParsedContent>
+  refresh: () => Promise<void>
+  isPartial: boolean
+}
+
+export default ContentQuery as typeof ContentQuery & {
+  new (): {
+    $slots: {
+      default: (context: ContentQueryDefaultSlotContext) => VNode[] | undefined
+    }
+  }
+}
 </script>

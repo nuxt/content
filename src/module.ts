@@ -2,7 +2,6 @@ import fs from 'fs'
 import {
   addPlugin,
   defineNuxtModule,
-  resolveModule,
   createResolver,
   addImports,
   addComponentsDir,
@@ -204,6 +203,12 @@ export interface ModuleOptions {
    */
   defaultLocale?: string
   /**
+   * Enable automatic usage of `useContentHead`
+   *
+   * @default true
+   */
+  contentHead?: boolean
+  /**
    * Document-driven mode config
    *
    * @default false
@@ -229,6 +234,7 @@ export interface ModuleOptions {
   experimental: {
     clientDB: boolean
     stripQueryParameters: boolean
+    advanceQuery: boolean
   }
 }
 
@@ -289,16 +295,18 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
+    contentHead: true,
     documentDriven: false,
     respectPathCase: false,
     experimental: {
       clientDB: false,
-      stripQueryParameters: false
+      stripQueryParameters: false,
+      advanceQuery: false
     }
   },
   async setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-    const resolveRuntimeModule = (path: string) => resolveModule(path, { paths: resolve('./runtime') })
+    const resolveRuntimeModule = (path: string) => resolve('./runtime', path)
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
@@ -325,10 +333,15 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'content-slot',
         enforce: 'pre',
         transform (code) {
-          if (code.includes('<ContentSlot')) {
-            code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-z]*)['"]|use=['"]([a-z]*)['"])/g, '<MDCSlot $1 name="$4"')
+          if (code.includes('ContentSlot')) {
+            code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot $1 name="$4"')
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
-            return code
+            code = code.replace(/<ContentSlot/g, '<MDCSlot')
+            code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
+            return {
+              code,
+              map: { mappings: '' }
+            }
           }
         }
       })
@@ -402,7 +415,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias['#content/server'] = resolveRuntimeModule('./server')
+      nitroConfig.alias['#content/server'] = resolveRuntimeModule(options.experimental.advanceQuery ? './server' : './legacy/server')
 
       const transformers = contentContext.transformers.map((t) => {
         const name = genSafeVariableName(relative(nuxt.options.rootDir, t)).replace(/_(45|46|47)/g, '_') + '_' + hash(t)
@@ -421,7 +434,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register composables
     addImports([
-      { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule('./composables/query') },
+      { name: 'queryContent', as: 'queryContent', from: resolveRuntimeModule(`./${options.experimental.advanceQuery ? '' : 'legacy/'}composables/query`) },
       { name: 'useContentHelpers', as: 'useContentHelpers', from: resolveRuntimeModule('./composables/helpers') },
       { name: 'useContentHead', as: 'useContentHead', from: resolveRuntimeModule('./composables/head') },
       { name: 'useContentPreview', as: 'useContentPreview', from: resolveRuntimeModule('./composables/preview') },
@@ -446,6 +459,7 @@ export default defineNuxtModule<ModuleOptions>({
 
         if (
           c.filePath.includes('@nuxt/content/dist') ||
+          c.filePath.includes('@nuxtjs/mdc/dist') ||
           c.filePath.includes('nuxt/dist/app') ||
           c.filePath.includes('NuxtWelcome')
         ) {
@@ -475,7 +489,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'types/content.d.ts',
       getContents: () => [
         'declare module \'#content/server\' {',
-        `  const serverQueryContent: typeof import('${resolve('./runtime/server')}').serverQueryContent`,
+        `  const serverQueryContent: typeof import('${resolve(options.experimental.advanceQuery ? './runtime/server' : './runtime/legacy/types')}').serverQueryContent`,
         `  const parseContent: typeof import('${resolve('./runtime/server')}').parseContent`,
         '}'
       ].join('\n')
@@ -505,7 +519,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Register navigation
     if (options.navigation) {
-      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/navigation') })
+      addImports({ name: 'fetchContentNavigation', as: 'fetchContentNavigation', from: resolveRuntimeModule(`./${options.experimental.advanceQuery ? '' : 'legacy/'}composables/navigation`) })
 
       nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.handlers = nitroConfig.handlers || []
@@ -562,7 +576,11 @@ export default defineNuxtModule<ModuleOptions>({
         { name: 'useContent', as: 'useContent', from: resolveRuntimeModule('./composables/content') }
       ])
 
-      addPlugin(resolveRuntimeModule('./plugins/documentDriven'))
+      addPlugin(resolveRuntimeModule(
+        options.experimental.advanceQuery
+          ? './plugins/documentDriven'
+          : './legacy/plugins/documentDriven'
+      ))
 
       if (options.documentDriven.injectPage) {
         nuxt.options.pages = true
@@ -616,14 +634,30 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resovle paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
-    await installModule('nuxt-mdc', {
+    const nuxtMDCOptions = {
       remarkPlugins: contentContext.markdown.remarkPlugins,
       rehypePlugins: contentContext.markdown.rehypePlugins,
       highlight: contentContext.highlight,
       components: {
+        prose: true,
         map: contentContext.markdown.tags
+      },
+      headings: {
+        anchorLinks: {
+          // Reset defaults
+          h2: false, h3: false, h4: false
+        } as Record<string, boolean>
       }
-    })
+    }
+
+    // Apply anchor link generation config
+    if (contentContext.markdown.anchorLinks) {
+      for (let i = 0; i < (contentContext.markdown.anchorLinks as any).depth; i++) {
+        nuxtMDCOptions.headings.anchorLinks[`h${i + 1}`] = !(contentContext.markdown.anchorLinks as any).exclude.includes(i + 1)
+      }
+    }
+
+    await installModule('@nuxtjs/mdc', nuxtMDCOptions)
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
@@ -631,6 +665,7 @@ export default defineNuxtModule<ModuleOptions>({
       integrity: buildIntegrity,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
+        advanceQuery: options.experimental.advanceQuery === true,
         clientDB: options.experimental.clientDB && nuxt.options.ssr === false
       },
       respectPathCase: options.respectPathCase ?? false,
@@ -639,14 +674,18 @@ export default defineNuxtModule<ModuleOptions>({
       },
       navigation: contentContext.navigation as any,
       // Tags will use in markdown renderer for component replacement
+      // @deprecated
       tags: contentContext.markdown.tags as any,
+      // @deprecated
       highlight: options.highlight as any,
       wsUrl: '',
       // Document-driven configuration
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
+      contentHead: options.contentHead ?? true,
       // Anchor link generation config
+      // @deprecated
       anchorLinks: options.markdown.anchorLinks as { depth?: number, exclude?: number[] }
     })
 
@@ -684,7 +723,7 @@ export default defineNuxtModule<ModuleOptions>({
           base: resolve(nuxt.options.buildDir, 'content-cache')
         }
         for (const [key, source] of Object.entries(sources)) {
-          storage.mount(key, getMountDriver(source))
+          storage.mount(key, await getMountDriver(source))
         }
         let keys = await storage.getKeys('content:source')
 
@@ -700,7 +739,7 @@ export default defineNuxtModule<ModuleOptions>({
           return true
         })
         await Promise.all(
-          keys.map(async key => await storage.setItem(
+          keys.map(async (key: string) => await storage.setItem(
             `cache:content:parsed:${key.substring(15)}`,
             await storage.getItem(key)
           ))
@@ -757,6 +796,7 @@ interface ModulePublicRuntimeConfig {
   experimental: {
     stripQueryParameters: boolean
     clientDB: boolean
+    advanceQuery: boolean
   }
   respectPathCase: boolean
 
@@ -775,6 +815,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  contentHead: ModuleOptions['contentHead']
 
   documentDriven: ModuleOptions['documentDriven']
 }

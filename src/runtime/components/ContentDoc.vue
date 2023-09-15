@@ -1,12 +1,13 @@
 <script lang="ts">
-import { PropType, defineComponent, h, useSlots } from 'vue'
+import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
-import type { QueryBuilderParams } from '../types'
+import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
+import { useRuntimeConfig } from '#app'
 import { useRoute, useContentHead } from '#imports'
 
-export default defineComponent({
+const ContentDoc = defineComponent({
   name: 'ContentDoc',
   props: {
     /**
@@ -61,7 +62,7 @@ export default defineComponent({
     head: {
       type: Boolean,
       required: false,
-      default: true
+      default: undefined
     }
   },
 
@@ -74,9 +75,14 @@ export default defineComponent({
    * @slot not-found
    */
   render (ctx: any) {
+    const { contentHead } = useRuntimeConfig().public.content
+
     const slots = useSlots()
 
     const { tag, excerpt, path, query, head } = ctx
+
+    // Allow user to overwrite the global `contentHead` config.
+    const shouldInjectContentHead = head === undefined ? contentHead : head
 
     // Merge local `path` props and apply `findOne` query default.
     const contentQueryProps = {
@@ -94,12 +100,12 @@ export default defineComponent({
         // Default slot
         default: slots?.default
           ? ({ data, refresh, isPartial }: any) => {
-              if (head) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return slots.default?.({ doc: data, refresh, isPartial, excerpt, ...this.$attrs })
             }
           : ({ data }: any) => {
-              if (head) { useContentHead(data) }
+              if (shouldInjectContentHead) { useContentHead(data) }
 
               return h(
                 ContentRenderer,
@@ -116,4 +122,12 @@ export default defineComponent({
     )
   }
 })
+
+export default ContentDoc as typeof ContentDoc & {
+  new (): {
+    $slots: {
+      default: (context: { doc: ParsedContent, refresh: () => Promise<void> }) => VNode[] | undefined
+    }
+  }
+}
 </script>
