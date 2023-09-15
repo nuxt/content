@@ -1,4 +1,15 @@
-import { ParsedContent } from '../types'
+import { ParsedContent, QueryBuilderWhere } from '../types'
+import { H3Event } from 'h3'
+import { serverQueryContent } from '#content/server'
+
+export async function serverSearchContent(event: H3Event, ignoreQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
+
+  if (ignoreQuery) {
+    return await serverQueryContent(event).where(ignoreQuery).find()
+  } else {
+    return await serverQueryContent(event).find()
+  }
+}
 
 type Section = {
   // Path to the section

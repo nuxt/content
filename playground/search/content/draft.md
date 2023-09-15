@@ -1,5 +1,5 @@
 ---
-draft: true
+_draft: true
 ---
 
 # Draft file
