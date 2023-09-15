@@ -580,8 +580,8 @@ export default defineNuxtModule<ModuleOptions>({
           from: resolveRuntimeModule('./composables/search')
         },
         {
-          name: 'useSearch',
-          as: 'useSearch',
+          name: 'searchContent',
+          as: 'searchContent',
           from: resolveRuntimeModule('./composables/search')
         }
       ])

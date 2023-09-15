@@ -15,10 +15,10 @@ const search = ref('')
 //     }
 //   }
 // })
-// const result = await useSearch(search, options)
+// const result = await searchContent(search, options)
 
 // Usage for indexed search
-const result = await useSearch(search)
+const result = await searchContent(search)
 </script>
 
 <template>
