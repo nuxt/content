@@ -1,4 +1,5 @@
 import { resolve } from 'pathe'
+import contentModule from '../../src/module'
 
 export default defineNuxtConfig({
   extends: ['../shared'],
@@ -18,5 +19,10 @@ export default defineNuxtConfig({
   },
   typescript: {
     includeWorkspace: true
-  }
+  },
+  modules: [
+    // @ts-ignore
+    contentModule
+    // '@nuxtjs/tailwindcss'
+  ]
 })
