@@ -34,7 +34,7 @@ import {
   PROSE_TAGS,
   useContentMounts
 } from './utils'
-import type { MarkdownPlugin, QueryBuilderParams } from './runtime/types'
+import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
 
 export type MountOptions = {
   driver: 'fs' | 'http' | string
@@ -209,30 +209,31 @@ export interface ModuleOptions {
     * @default ['style', 'code']
     */
     ignoredTags?: Array<string>
-    /**
-     * Filter drafts files returned by the API.
-     *
-     * If true, draft content files will not be returned for search queries.
-     *
-     * @default true
-     */
-    ignoreDrafts?: boolean
-    /**
-     * Filter partials files returned by the API.
-     *
-     * If true, partial files will not be returned for search queries.
-     *
-     * @default true
-     */
-    ignorePartials?: boolean
-    /**
-     * Filter empty files returned by the API.
-     *
-     * If true, empty files will not be returned for search queries.
-     *
-     * @default true
-     */
-    ignoreEmpty?: boolean
+    // /**
+    //  * Filter drafts files returned by the API.
+    //  *
+    //  * If true, draft content files will not be returned for search queries.
+    //  *
+    //  * @default true
+    //  */
+    // ignoreDrafts?: boolean
+    // /**
+    //  * Filter partials files returned by the API.
+    //  *
+    //  * If true, partial files will not be returned for search queries.
+    //  *
+    //  * @default true
+    //  */
+    // ignorePartials?: boolean
+    // /**
+    //  * Filter empty files returned by the API.
+    //  *
+    //  * If true, empty files will not be returned for search queries.
+    //  *
+    //  * @default true
+    //  */
+    // ignoreEmpty?: boolean
+    ignoreQuery?: QueryBuilderWhere
     /**
      * API return indexed contents to improve client-side load time.
      * This option will use MiniSearch to create the index.
@@ -547,9 +548,10 @@ export default defineNuxtModule<ModuleOptions>({
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
         indexedSearch: true,
         ignoredTags: ['style', 'code'],
-        ignoreDrafts: true,
-        ignoreEmpty: true,
-        ignorePartials: true,
+        ignoreQuery: {},
+        // ignoreDrafts: true,
+        // ignoreEmpty: true,
+        // ignorePartials: true,
         // Maybe, we could rename it "indexedSearchOptions" since this will only be used for indexed search
         options: {
           fields: ['title', 'content', 'titles'],

@@ -5,18 +5,19 @@ import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig()
-  const { ignoredTags, ignoreDrafts, ignorePartials, ignoreEmpty } = runtimeConfig.public.content.search
+  const { ignoredTags, ignoreWhere } = runtimeConfig.public.content.search
 
-  const files = await serverQueryContent(event).find()
+  const filesPromise = serverQueryContent(event)
+
+  if (ignoreWhere) {
+    serverQueryContent(event).where(ignoreWhere)
+  }
+
+  const files = await filesPromise
 
   // Only works for MD
   const sections = (await Promise.all(
     files
-      .filter(file => file._extension === 'md' &&
-      (!ignoreDrafts ? true : !file?._draft) &&
-      (!ignoreEmpty ? true : !file?._empty) &&
-      (!ignorePartials ? true : !file?._partial)
-      )
       .map(page => splitPageIntoSections(page, { ignoredTags }))))
     .flat()
 
