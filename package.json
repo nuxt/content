@@ -51,7 +51,7 @@
     "destr": "^2.0.1",
     "json5": "^2.2.3",
     "knitwork": "^1.0.0",
-    "listhen": "^1.5.2",
+    "listhen": "^1.5.3",
     "mdast-util-to-string": "^4.0.0",
     "mdurl": "^1.0.1",
     "micromark": "^4.0.0",
