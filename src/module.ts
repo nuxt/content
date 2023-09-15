@@ -734,7 +734,7 @@ export default defineNuxtModule<ModuleOptions>({
             ctx.server.moduleGraph.invalidateModule(mod, undefined, timestamp)
           }
 
-          // Wait 100ms to make sure HMR is ready
+          // Wait 100ms to make sure HMR is ready (content needs to be parsed first)
           // Without this, HMR will not work and user needs to save the file twice
           setTimeout(() => {
             ctx.server.ws.send({
