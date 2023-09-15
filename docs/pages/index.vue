@@ -112,8 +112,8 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         <iframe
           width="560"
           height="315"
-          src="https://www.youtube.com/embed/o9e12WbKrd8?si=BkxcagvrvXPsAWQh"
-          title="YouTube video player"
+          src="https://www.youtube-nocookie.com/embed/o9e12WbKrd8?si=BkxcagvrvXPsAWQh"
+          title="Nuxt Content in 3 minutes"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
@@ -263,7 +263,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         </template>
 
         <div class="flex flex-col items-center justify-center gap-8 sm:flex-row lg:gap-16">
-          <NuxtLink class="group text-center" to="https://npmjs.org/package/@nuxt/devtools" target="_blank">
+          <NuxtLink class="group text-center" to="https://npmjs.org/package/@nuxt/content" target="_blank">
             <p
               class="group-hover:text-primary-500 dark:group-hover:text-primary-400 text-6xl font-semibold text-gray-900 dark:text-white"
             >
@@ -272,7 +272,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
             <p>Monthly Downloads</p>
           </NuxtLink>
 
-          <NuxtLink class="group text-center" to="https://github.com/nuxt/devtools" target="_blank">
+          <NuxtLink class="group text-center" to="https://github.com/nuxt/content" target="_blank">
             <p
               class="group-hover:text-primary-500 dark:group-hover:text-primary-400 text-6xl font-semibold text-gray-900 dark:text-white"
             >

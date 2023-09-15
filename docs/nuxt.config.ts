@@ -1,7 +1,7 @@
 import { resolve } from 'pathe'
 
 export default defineNuxtConfig({
-  extends: process.env.NUXT_ELEMENTS_PATH || '@nuxthq/elements',
+  extends: '@nuxthq/elements',
 
   content: {
     sources: {
@@ -77,13 +77,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    content: {
-      // @ts-ignore
-      // TODO: fix types
-      documentDriven: {
-        host: 'https://content.nuxtjs.org'
-      }
-    },
     public: {
       algolia: {
         applicationId: '',
@@ -100,9 +93,6 @@ export default defineNuxtConfig({
     // Related to https://github.com/nuxt/nuxt/pull/22558
     // Adding all global components to the main entry
     // To avoid lagging during page navigation on client-side
-    // Downside: bigger JS bundle
-    // With sync: 465KB, gzip: 204KB
-    // Without: 418KB, gzip: 184KB
     'components:extend': function (components) {
       for (const comp of components) {
         if (comp.global) { comp.global = 'sync' }
