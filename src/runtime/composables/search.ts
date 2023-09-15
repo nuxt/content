@@ -14,6 +14,7 @@ export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, 
   if (useIndexedSearch) {
     const { options } = runtimeConfig.public.content.search
 
+    // TODO: allow fetch options like lazy or server to be passed
     const { data } = await useFetch<string>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`, { responseType: 'text' }) as unknown as string
 
     if (!data.value) { return [] }
@@ -23,6 +24,7 @@ export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, 
     return results
   }
 
+  // TODO: allow fetch options like lazy or server to be passed
   const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
 
   if (!data.value) { return [] }
