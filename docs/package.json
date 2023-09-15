@@ -8,9 +8,6 @@
     "preview": "nuxi preview",
     "generate": "nuxi generate"
   },
-  "resolutions": {
-    "nitropack": "2.6.2"
-  },
   "dependencies": {
     "nuxt": "3.7.3",
     "@iconify-json/ph": "^1.1.6",
@@ -25,16 +22,7 @@
     "nuxt-og-image": "^2.0.28",
     "@nuxthq/studio": "^0.14.1"
   },
-  "packageManager": "pnpm@8.7.4",
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "vue": "^3.2.45"
-      },
-      "ignoreMissing": [
-        "webpack",
-        "vue"
-      ]
-    }
+  "resolutions": {
+    "h3": "^1.8.1"
   }
 }
