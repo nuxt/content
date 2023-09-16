@@ -538,10 +538,6 @@ export default defineNuxtModule<ModuleOptions>({
         indexed: true,
         ignoredTags: ['style', 'code'],
         ignoreQuery: {},
-        // ignoreDrafts: true,
-        // ignoreEmpty: true,
-        // ignorePartials: true,
-        // Maybe, we could rename it "indexedOptions" since this will only be used for indexed search
         options: {
           fields: ['title', 'content', 'titles'],
           storeFields: ['title', 'content', 'titles'],
