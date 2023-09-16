@@ -1,5 +1,5 @@
 import MiniSearch, { type Options as MiniSearchOptions } from 'minisearch'
-import { UseFetchOptions } from 'nuxt/app'
+import type { UseFetchOptions } from 'nuxt/app'
 import { useRuntimeConfig, useFetch } from '#imports'
 
 export const defineMiniSearchOptions = <DataItem>(options: MiniSearchOptions<DataItem>) => {
