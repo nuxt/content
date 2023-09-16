@@ -43,7 +43,7 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.6.4",
+    "@nuxt/kit": "^3.7.3",
     "@vueuse/core": "^10.2.1",
     "@vueuse/nuxt": "^10.2.1",
     "@nuxtjs/mdc": "^0.1.6",
