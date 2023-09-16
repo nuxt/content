@@ -1,39 +1,38 @@
 import fs from 'fs'
 import {
-  addPlugin,
-  defineNuxtModule,
-  createResolver,
-  addImports,
   addComponentsDir,
+  addImports,
+  addPlugin,
   addTemplate,
+  createResolver,
+  defineNuxtModule,
   extendViteConfig,
   installModule
 } from '@nuxt/kit'
-import { type Options as MiniSearchOptions } from 'minisearch'
+import type { Component } from '@nuxt/schema'
+import { defu } from 'defu'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-
-import { defu } from 'defu'
+import { listen } from 'listhen'
+import { type Options as MiniSearchOptions } from 'minisearch'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
-import { listen } from 'listhen'
-import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
-import type { Component } from '@nuxt/schema'
+import { createStorage, type WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
+import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
 import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
+  MOUNT_PREFIX,
+  PROSE_TAGS,
   createWebSocket,
   getMountDriver,
   logger,
-  MOUNT_PREFIX,
   processMarkdownOptions,
-  PROSE_TAGS,
   useContentMounts
 } from './utils'
-import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
 
 export type MountOptions = {
   driver: 'fs' | 'http' | string
