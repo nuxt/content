@@ -11,5 +11,7 @@ const open = ref(false)
     </button>
 
     <Search v-if="open" />
+
+    <Search />
   </div>
 </template>

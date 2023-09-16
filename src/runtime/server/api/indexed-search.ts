@@ -9,8 +9,6 @@ export default defineEventHandler(async (event) => {
 
   const files = await serverSearchContent(event, ignoreQuery)
 
-  console.log("files",files)
-
   const sections = (await Promise.all(
     files
       .map(page => splitPageIntoSections(page, { ignoredTags }))))

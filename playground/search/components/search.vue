@@ -2,7 +2,7 @@
 const search = ref('')
 
 // Usage for non indexed search
-// const options = defineMiniSearchOptions({
+// const miniSearch = defineMiniSearchOptions({
 //   fields: ['title', 'content', 'titles'],
 //   storeFields: ['title', 'content', 'titles'],
 //   searchOptions: {
@@ -15,10 +15,10 @@ const search = ref('')
 //     }
 //   }
 // })
-// const result = await searchContent(search, options)
+// const result = await searchContent(search, { miniSearch })
 
 // Usage for indexed search
-const result = await searchContent(search)
+const result = await searchContent(search, { fetch: { lazy: true, server: false } })
 </script>
 
 <template>

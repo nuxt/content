@@ -1,41 +1,54 @@
 import MiniSearch, { type Options as MiniSearchOptions } from 'minisearch'
+import { UseFetchOptions } from 'nuxt/app'
 import { useRuntimeConfig, useFetch } from '#imports'
 
 export const defineMiniSearchOptions = <DataItem>(options: MiniSearchOptions<DataItem>) => {
   return ref(options)
 }
 
-export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, options: MiniSearchOptions<DataItem>) => {
+export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, options: { miniSearch?: MaybeRefOrGetter<MiniSearchOptions<DataItem>>, fetch?: MaybeRefOrGetter<UseFetchOptions<string | DataItem[]>> } = {}) => {
   const runtimeConfig = useRuntimeConfig()
-  const integrity = runtimeConfig.public.content.integrity
-  const baseAPI = runtimeConfig.public.content.api.baseURL
-  const useIndexedSearch = runtimeConfig.public.content.search?.indexedSearch ?? false
+  const { content } = runtimeConfig.public
+  const { integrity, api: { baseURL: baseAPI }, search: searchOptions } = content
+  const { indexedSearch: useIndexedSearch } = searchOptions || {}
 
   if (useIndexedSearch) {
-    const { options } = runtimeConfig.public.content.search
+    const { options: miniSearchOptions } = searchOptions || {}
 
-    // TODO: allow fetch options like lazy or server to be passed
-    const { data } = await useFetch<string>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`, { responseType: 'text' }) as unknown as string
+    const { data } = await useFetch<string>(`${baseAPI}/indexed-search${integrity ? '-' + integrity : ''}`, { responseType: 'text', ...options.fetch as MaybeRefOrGetter<UseFetchOptions<string>> | undefined })
 
-    if (!data.value) { return [] }
+    // We need for a computed since user can have a lazy fetch.
+    return computed(() => {
+      if (!data.value) {
+        return '[]'
+      }
 
-    const { results } = useIndexedMiniSearch(search, data as unknown as string, options)
+      const { results } = useIndexedMiniSearch(search, data as Ref<string>, miniSearchOptions!)
 
-    return results
+      return results.value
+    })
   }
 
-  // TODO: allow fetch options like lazy or server to be passed
-  const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`)
+  const { data } = await useFetch<DataItem[]>(`${baseAPI}/search${integrity ? '.' + integrity : ''}.json`, options.fetch as MaybeRefOrGetter<UseFetchOptions<DataItem[]>> | undefined)
 
-  if (!data.value) { return [] }
+  // We need for a computed since user can have a lazy fetch.
+  return computed(() => {
+    if (!data.value) {
+      return []
+    }
 
-  const { results } = useMiniSearch(search, data as unknown as DataItem[], options)
+    if (!options.miniSearch) {
+      throw new Error('You must provide a miniSearch option to searchContent if you don\'t use indexed search')
+    }
 
-  return results
+    const { results } = useMiniSearch(search, data as Ref<DataItem[]>, options.miniSearch)
+
+    return results.value
+  })
 }
 
 // Could be moved to @vueuse/integrations if it's useful and efficient
-const useIndexedMiniSearch = <DataItem>(search: MaybeRefOrGetter<string>, indexedData: MaybeRefOrGetter<string>, options: MiniSearchOptions<DataItem>) => {
+const useIndexedMiniSearch = <DataItem>(search: MaybeRefOrGetter<string>, indexedData: MaybeRefOrGetter<string>, options: MaybeRefOrGetter<MiniSearchOptions<DataItem>>) => {
   const createIndexedMiniSearch = () => {
     return MiniSearch.loadJSON(toValue(indexedData), toValue(options))
   }

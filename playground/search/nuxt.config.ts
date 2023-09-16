@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   content: {
     search: {
       mode: 'full-text',
+      indexedSearch: true,
       ignoreQuery: { _draft: false, _partial: true }
     }
   },
