@@ -10,7 +10,7 @@ export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, 
   const runtimeConfig = useRuntimeConfig()
   const { content } = runtimeConfig.public
   const { integrity, api: { baseURL: baseAPI }, search: searchOptions } = content
-  const { indexedSearch: useIndexedSearch } = searchOptions || {}
+  const { indexed: useIndexedSearch } = searchOptions || {}
 
   if (useIndexedSearch) {
     const { options: miniSearchOptions } = searchOptions || {}

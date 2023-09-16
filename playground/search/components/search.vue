@@ -24,5 +24,5 @@ const result = await searchContent(search, { fetch: { lazy: true, server: false 
 <template>
   <input v-model="search">
 
-  <pre>{{ result }} </pre>
+  <pre>{{ result }}</pre>
 </template>

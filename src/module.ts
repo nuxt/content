@@ -197,11 +197,7 @@ export interface ModuleOptions {
    */
   search?: {
     /**
-     * Used to determine how to search content.
-     */
-    mode: 'full-text'
-    /**
-     * List of tags where text must not be extracted. Only works with `full-text` mode.
+     * List of tags where text must not be extracted.
     *
     * By default, will extract text from each tag.
     *
@@ -221,9 +217,9 @@ export interface ModuleOptions {
      *
      * @default true
      */
-    indexedSearch: boolean
+    indexed: boolean
     /**
-     * MiniSearch Options. When using `indexedSearch` option,
+     * MiniSearch Options. When using `indexed` option,
      * this options will be used to configure MiniSearch
      * in order to have the same options on both server and client side.
      *
@@ -438,7 +434,7 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (options.search) {
-        if (options.search.indexedSearch) {
+        if (options.search.indexed) {
           // Will return a string
           nitroConfig.handlers.push({
             method: 'get',
@@ -460,7 +456,7 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.routeRules = nitroConfig.routeRules || {}
 
         if (!nuxt.options.dev) {
-          if (options.search.indexedSearch) {
+          if (options.search.indexed) {
             nitroConfig.routeRules[`${options.api.baseURL}/indexed-search-${buildIntegrity}`] = {
               prerender: true,
               // Use text/plain to avoid Nitro render an index.html
@@ -539,13 +535,13 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.search) {
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
-        indexedSearch: true,
+        indexed: true,
         ignoredTags: ['style', 'code'],
         ignoreQuery: {},
         // ignoreDrafts: true,
         // ignoreEmpty: true,
         // ignorePartials: true,
-        // Maybe, we could rename it "indexedSearchOptions" since this will only be used for indexed search
+        // Maybe, we could rename it "indexedOptions" since this will only be used for indexed search
         options: {
           fields: ['title', 'content', 'titles'],
           storeFields: ['title', 'content', 'titles'],
