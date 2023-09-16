@@ -13,7 +13,7 @@ import { type Options as MiniSearchOptions } from 'minisearch'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
 
-import defu from 'defu'
+import { defu } from 'defu'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
