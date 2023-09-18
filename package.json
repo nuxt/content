@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.7.3",
-    "@nuxtjs/mdc": "^0.1.6",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@0.1.7-28244929.dacd996",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
     "defu": "^6.1.2",

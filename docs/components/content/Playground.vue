@@ -1,6 +1,5 @@
-<script setup>
-import { transformContent } from '@nuxt/content/transformers'
-import { ref, useAsyncData, shallowRef, computed, onMounted, watch, useRoute } from '#imports'
+<script setup lang="ts">
+import { ref, shallowRef, onMounted, useRoute } from '#imports'
 
 const INITIAL_CODE = `---
 title: MDC
@@ -18,7 +17,7 @@ This syntax supercharges regular Markdown to write documents interacting deeply 
 - [Explore the MDC syntax](/guide/writing/mdc)
 
 ::code-group
-  \`\`\`markdown [Source]
+  \`\`\`mdc [Source]
   ::alert{type="success"}
     Hooray!
   ::
@@ -36,26 +35,13 @@ const route = useRoute()
 
 const content = ref(route.query.content || INITIAL_CODE)
 
-const { data: doc, refresh } = await useAsyncData('playground-' + content.value, async () => {
-  try {
-    const parsed = await transformContent('content:index.md', content.value)
-    return parsed
-  } catch (e) {
-    return doc.value
-  }
-})
-
 const tab = ref(0)
 
 const tabs = ref([{ label: 'Preview' }, { label: 'AST' }])
 
 const astEditorComponent = shallowRef()
 
-const docJSON = computed(() => {
-  return JSON.stringify(doc.value, null, 2)
-})
-
-const updateTab = async (index) => {
+const updateTab = async (index: number) => {
   tab.value = index
   if (tab.value === 1 && !astEditorComponent.value) {
     const { default: component } = await import('~/editor/Editor.vue')
@@ -66,13 +52,28 @@ const updateTab = async (index) => {
 
 const editorComponent = shallowRef()
 
+const mdcOptions = shallowRef({})
 onMounted(async () => {
   const { default: component } = await import('~/editor/Editor.vue')
 
   editorComponent.value = component
-})
 
-watch(content, refresh)
+  // @ts-ignore
+  const { useShikiHighlighter } = await import('@nuxtjs/mdc/runtime')
+  const shikiHighlighter = useShikiHighlighter({})
+  mdcOptions.value = {
+    highlight: {
+      highlighter: (code: string, lang: string, theme: any, highlights: any) => {
+        return shikiHighlighter.getHighlightedAST(code, lang, theme, { highlights })
+      },
+      theme: {
+        light: 'material-theme-lighter',
+        default: 'material-theme',
+        dark: 'material-theme-palenight'
+      }
+    }
+  }
+})
 </script>
 
 <template>
@@ -91,33 +92,30 @@ watch(content, refresh)
           </Alert>
         </div>
       </div>
-      <div>
-        <ContentRenderer v-if="tab === 0" :key="doc.updatedAt" class="content" :value="doc">
-          <template #empty>
-            <div class="p-8">
-              <Alert type="warning">
-                <p class="font-semibold">
-                  Content is empty!
-                </p>
-                <br><br>
-                <p>
-                  Type any
-                  <span class="font-semibold">Markdown</span> or
-                  <span class="font-semibold">MDC code</span>
-                  in editor to see it replaced by rendered nodes in this panel.
-                </p>
-              </Alert>
-            </div>
-          </template>
-        </ContentRenderer>
+      <MDC v-slot="{ data, body }" :value="content" :parser-options="mdcOptions">
+        <div v-if="body?.children?.length == 0" class="p-8">
+          <Alert type="warning">
+            <p class="font-semibold">
+              Content is empty!
+            </p>
+            <br><br>
+            <p>
+              Type any
+              <span class="font-semibold">Markdown</span> or
+              <span class="font-semibold">MDC code</span>
+              in editor to see it replaced by rendered nodes in this panel.
+            </p>
+          </Alert>
+        </div>
+        <MDCRenderer v-if="tab === 0" :key="data?.updatedAt" class="content" :body="body" :data="data" />
         <component
           :is="astEditorComponent"
           v-else-if="astEditorComponent"
           language="json"
           read-only
-          :model-value="docJSON"
+          :model-value="JSON.stringify(body, null, 2)"
         />
-      </div>
+      </MDC>
     </div>
   </div>
 </template>
