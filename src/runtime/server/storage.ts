@@ -11,7 +11,6 @@ import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
-import { chunksFromArray } from '../utils/chunks.js'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-ignore
@@ -102,6 +101,12 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
   }
 
   return keys.filter(contentIgnorePredicate)
+}
+
+export function* chunksFromArray<T> (arr: T[], n: number) : Generator<T[], void> {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n)
+  }
 }
 
 export const getContentsList = async (event: H3Event, prefix?: string) => {
