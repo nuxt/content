@@ -21,6 +21,9 @@ devDependencies:
   '@nuxtlabs/github-module':
     specifier: ^1.6.3
     version: 1.6.3(rollup@3.29.1)
+  '@nuxtlabs/monarch-mdc':
+    specifier: ^0.2.0
+    version: 0.2.0
   monaco-editor-core:
     specifier: ^0.43.0
     version: 0.43.0
@@ -1639,6 +1642,10 @@ packages:
       - encoding
       - rollup
       - supports-color
+    dev: true
+
+  /@nuxtlabs/monarch-mdc@0.2.0:
+    resolution: {integrity: sha512-4WrLWfMqzQzkmQV3gWAK87ziLOHSnm3Bk69+q2VSLAnKWk6GUhBDW41ggq6/T3x0Bdo21lkaE3v6wdVnbFwPDw==}
     dev: true
 
   /@octokit/auth-token@3.0.4:

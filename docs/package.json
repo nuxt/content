@@ -17,6 +17,7 @@
     "@nuxt-themes/docus": "^1.14.6",
     "@nuxthq/studio": "^0.14.1",
     "@nuxtlabs/github-module": "^1.6.3",
+    "@nuxtlabs/monarch-mdc": "^0.2.0",
     "monaco-editor-core": "^0.43.0",
     "nuxt": "3.7.3",
     "vue-plausible": "^1.3.2"
