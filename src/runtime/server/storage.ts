@@ -11,6 +11,7 @@ import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
+import { chunksFromArray } from '../utils/chunks.js'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-ignore
@@ -105,7 +106,14 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
 
 export const getContentsList = async (event: H3Event, prefix?: string) => {
   const keys = await getContentsIds(event, prefix)
-  const contents = await Promise.all(keys.map(key => getContent(event, key)))
+
+  const keyChunks = [...chunksFromArray(keys, 10)]
+
+  const contents: ParsedContent[] = []
+  for (const chunk of keyChunks) {
+    const result = await Promise.all(chunk.map(key => getContent(event, key)))
+    contents.push(...result)
+  }
 
   return contents
 }
