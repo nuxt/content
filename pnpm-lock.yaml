@@ -96,7 +96,7 @@ devDependencies:
     version: 12.1.0(eslint@8.49.0)(typescript@5.1.6)
   '@nuxtjs/tailwindcss':
     specifier: ^6.8.0
-    version: 6.8.0(rollup@3.29.1)
+    version: 6.8.0(rollup@3.28.1)
   '@types/ws':
     specifier: ^8.5.5
     version: 8.5.5
@@ -1121,7 +1121,7 @@ packages:
       - webpack
     dev: true
 
-  /@nuxt/schema@3.7.3(rollup@3.29.1):
+  /@nuxt/schema@3.7.3(rollup@3.28.1):
     resolution: {integrity: sha512-Uqe3Z9RnAROzv5owQo//PztD9d4csKK6ulwQO1hIAinCh34X7z2zrv9lhm14hlRYU1n7ISEi4S7UeHgL/r8d8A==}
     engines: {node: ^14.18.0 || >=16.10.0}
     dependencies:
@@ -1363,10 +1363,10 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxtjs/tailwindcss@6.8.0(rollup@3.29.1):
+  /@nuxtjs/tailwindcss@6.8.0(rollup@3.28.1):
     resolution: {integrity: sha512-jzuvD1nfA2BPnSbHtKK0aiI51ndMa7lNGL1iDEFuEPsltzilZ9ED7zOP6niGTrImg0n5Yt4GEJpixi6yWwp9Hw==}
     dependencies:
-      '@nuxt/kit': 3.7.3(rollup@3.29.1)
+      '@nuxt/kit': 3.7.3(rollup@3.28.1)
       '@nuxt/postcss8': 1.1.3
       autoprefixer: 10.4.15(postcss@8.4.29)
       chokidar: 3.5.3
@@ -5623,6 +5623,10 @@ packages:
   /html-void-elements@1.0.5:
     resolution: {integrity: sha512-uE/TxKuyNIcx44cIWnjr/rfIATDH7ZaOMmstu0CwhFG1Dunhlp4OC6/NMbhiwoq5BpW0ubi303qnEk/PZj614w==}
     dev: true
+
+  /html-void-elements@2.0.1:
+    resolution: {integrity: sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==}
+    dev: false
 
   /html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
