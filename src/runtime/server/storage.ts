@@ -103,9 +103,22 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
   return keys.filter(contentIgnorePredicate)
 }
 
+export function* chunksFromArray<T> (arr: T[], n: number) : Generator<T[], void> {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n)
+  }
+}
+
 export const getContentsList = async (event: H3Event, prefix?: string) => {
   const keys = await getContentsIds(event, prefix)
-  const contents = await Promise.all(keys.map(key => getContent(event, key)))
+
+  const keyChunks = [...chunksFromArray(keys, 10)]
+
+  const contents: ParsedContent[] = []
+  for (const chunk of keyChunks) {
+    const result = await Promise.all(chunk.map(key => getContent(event, key)))
+    contents.push(...result)
+  }
 
   return contents
 }
