@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.7.3",
-    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@0.1.7-28244929.dacd996",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@0.1.7-28250619.6d57b4d",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
     "defu": "^6.1.2",
@@ -91,7 +91,7 @@
     "vitest": "^0.34.4",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.7.5",
+  "packageManager": "pnpm@8.7.6",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
