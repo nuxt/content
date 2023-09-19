@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.7.3
     version: 3.7.3(rollup@3.28.1)
   '@nuxtjs/mdc':
-    specifier: npm:@nuxtjs/mdc-edge@0.1.7-28250619.6d57b4d
-    version: /@nuxtjs/mdc-edge@0.1.7-28250619.6d57b4d(rollup@3.28.1)
+    specifier: npm:@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c
+    version: /@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c(rollup@3.28.1)
   '@vueuse/head':
     specifier: ^2.0.0
     version: 2.0.0
@@ -1325,8 +1325,8 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtjs/mdc-edge@0.1.7-28250619.6d57b4d(rollup@3.28.1):
-    resolution: {integrity: sha512-1Pu2Fxx0lDtoBPTWAr0N/G/vtt3STyjZNm/CCGx0Rej4rgaulCTFFYdtSBtOibcrxWOr1IAj7ELVnumbc9zTww==}
+  /@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c(rollup@3.28.1):
+    resolution: {integrity: sha512-azp2/Or7TSAw1czh0uPTqCwTImOOi8TZVZIQLn7NOS10hJwWWze+guPF4vuoUGsSN2lSnBggcQljKE9B7FvGEA==}
     dependencies:
       '@nuxt/kit': 3.7.3(rollup@3.28.1)
       '@types/hast': 3.0.1
