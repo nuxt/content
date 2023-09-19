@@ -34,7 +34,7 @@ sections:
         icon: 'i-ph-rocket-launch'
         to: ''
   - subTitle: 'Get started <span class="text-primary-400">Now</span>'
-    subDescription: "The Document-driven development mode gives a lot more power to Markdown-based websites. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi."
+    subDescription: "Nuxt Content is a Git-based Headless CMS for Vue.js developers. It allows you to build your content with Markdown and JSON, and query it with a MongoDB-like API."
     slot: get-started
     button: 'Read the documentation'
     external: 'Explore Content Themes'
@@ -42,7 +42,7 @@ sections:
     subTitle: Trusted and supported by our<br />amazing community
     avatarText: Created and maintained by 180+ contributors
   - slot: meet-studio
-    title: Meet studio <br /><span class="text-primary-400">The pro version of Nuxt Content</span>
+    title: Meet Studio <br /><span class="text-primary-400">The pro version of Nuxt Content</span>
     description: 'Nuxt Studio lets you edit your websites made with Nuxt Content on any devices and by anyone. Opening a new door between git-based CMS and collaboration with your marketing teams.'
     button: Try it now!
     list:
@@ -55,12 +55,12 @@ sections:
       - Media Library
       - Deployment
   - slot: start-building
-    subTitle: Start building <span class="text-primary-400">Today</span>!
-    subDescription: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
+    subTitle: Start building <span class="text-primary-400">Today</span>
+    subDescription: Are you ready to start building your next project with Nuxt Content? Our documentation will help you get up and running in no time.
     cards:
       - title: Getting Started
-        description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus
-        to: '/get-started'
-      - title: Documentation
-        description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus
-        to: '/'
+        description: Create a new content-driven project with Nuxt Content or add it to your existing project.
+        to: '/get-started/installation'
+      - title: Playground
+        description: Play with Nuxt Content in the browser with our Stackblitz playground.
+        to: '/playground'

@@ -21,12 +21,15 @@ useHead({
 
 const links = [{
   label: 'Documentation',
-  to: '/get-started'
+  icon: 'i-heroicons-book-open-solid',
+  to: '/get-started/installation'
 }, {
   label: 'Playground',
+  icon: 'i-ph-play-duotone',
   to: '/playground'
 }, {
   label: 'Releases',
+  icon: 'i-heroicons-rocket-launch-solid',
   to: 'https://github.com/nuxt/content/releases',
   target: '_blank'
 }]
@@ -45,17 +48,19 @@ provide('navigation', navigation)
 <template>
   <UHeader :links="links">
     <template #logo>
-      <Logo class="h-6 w-auto" />
+      <Logo class="h-5 w-auto" />
     </template>
 
     <template #right>
       <UColorModeButton v-if="!$colorMode.forced" />
-      <USocialButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" />
-      <USocialButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" />
-      <USocialButton
+      <UButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" color="gray" variant="ghost" />
+      <UButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" color="gray" variant="ghost" />
+      <UButton
         aria-label="Nuxt Content on GitHub"
         icon="i-simple-icons-github"
         to="https://github.com/nuxt/content"
+        color="gray"
+        variant="ghost"
       />
     </template>
     <!-- Mobile panel -->
@@ -79,12 +84,26 @@ provide('navigation', navigation)
     </template>
     <template #right>
       <UColorModeButton v-if="!$colorMode.forced" />
-      <USocialButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" />
-      <USocialButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" />
-      <USocialButton
+      <UButton
+        aria-label="Nuxt Website"
+        icon="i-simple-icons-nuxtdotjs"
+        to="https://nuxt.com"
+        color="gray"
+        variant="ghost"
+      />
+      <UButton
+        aria-label="Nuxt on X"
+        icon="i-simple-icons-x"
+        to="https://x.com/nuxt_js"
+        color="gray"
+        variant="ghost"
+      />
+      <UButton
         aria-label="Nuxt Devtools on GitHub"
         icon="i-simple-icons-github"
         to="https://github.com/nuxt/content"
+        color="gray"
+        variant="ghost"
       />
     </template>
   </UFooter>

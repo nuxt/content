@@ -22,7 +22,7 @@ useSeoMeta({
 
 const { data } = await useAsyncData('landing', () => {
   return Promise.all([
-    queryContent('/home/get-started').findOne(),
+    queryContent('/_partials/get-started').findOne(),
     queryContent('/').findOne()
   ])
 })
@@ -75,8 +75,8 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         size="md"
         :ui="{ color: { primary: { solid: 'ring-1 ring-inset ring-primary-700/50 text-primary-400 bg-primary-900/10 hover:bg-primary-900/50 transition-color duration-200' } } }"
       >
-        <NuxtLink to="guide/writing/document-driven">
-          Discover the Document Driven Mode
+        <NuxtLink to="https://nuxt.studio/?utm_source=content-site&utm_medium=hero&utm_campaign=home" target="_blank" rel="noopener">
+          Discover Nuxt Studio: the pro version of Content
         </NuxtLink>
       </UBadge>
     </div>
@@ -89,22 +89,18 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
     </template>
     <template #links>
       <UButton
+        color="primary"
+        label="Get Started"
+        icon="i-ph-rocket-launch-duotone"
+        to="/get-started/installation"
+        size="xl"
+      />
+      <UButton
         size="xl"
         color="white"
         icon="i-ph-video-duotone"
         label="What is Nuxt Content?"
         @click="videoModalOpen = true"
-      />
-
-      <UButton
-        color="gray"
-        label="Star on GitHub"
-        variant="ghost"
-        trailing-icon="i-simple-icons-github"
-        to="https://github.com/nuxt/content"
-        target="_blank"
-        class="flex space-x-2 transition-color duration-200"
-        size="xl"
       />
     </template>
     <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-[560px]' }">
@@ -132,9 +128,8 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
     </template>
 
     <template #features>
-      <!-- TODO: link on card ? -->
       <UPageGrid>
-        <UPageCard
+        <ULandingCard
           v-for="card in section.toolsCards"
           :key="card.title"
           :to="card.to"
@@ -164,7 +159,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
 
           <UButton
             color="gray"
-            label="Explore content theme"
+            label="Explore content themes"
             variant="ghost"
             trailing-icon="i-ph-arrow-square-out"
             to="https://nuxt.new/themes"
@@ -177,7 +172,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         <div class="w-full flex flex-col items-center justify-center">
           <div class="flex flex-col space-y-6">
             <div class="flex space-x-4">
-              <div class="relative hidden flex-col justify-between pt-[20px] pb-[130px] md:flex">
+              <div class="relative hidden flex-col justify-between pt-[20px] pb-[70px] md:flex">
                 <svg
                   width="2"
                   height="295"
@@ -199,11 +194,6 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
                   class="h-8 w-8 flex items-center justify-center border border-1 border-gray-700 rounded-full bg-gray-800 px-4 py-2"
                 >
                   2
-                </div>
-                <div
-                  class="h-8 w-8 flex items-center justify-center border border-1 border-gray-700 rounded-full bg-gray-800 px-4 py-2"
-                >
-                  3
                 </div>
               </div>
               <div class="prose">
@@ -292,7 +282,14 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         </li>
       </ul>
       <div class="w-full flex justify-center sm:-mt-12">
-        <UButton size="xl" :label="section.button" to="https://nuxt.studio/" target="_blank" class="w-fit" />
+        <UButton
+          size="xl"
+          :label="section.button"
+          to="https://nuxt.studio/?utm_source=content-site&utm_medium=section&utm_campaign=home"
+          target="_blank"
+          rel="noopener"
+          class="w-fit"
+        />
       </div>
 
       <div
@@ -300,17 +297,15 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         class="relative flex items-center justify-center border border-slate-200/10 rounded-xl bg-slate-700/20"
       >
         <div class="p-4">
-          <!-- TODO: video -->
-          <!-- <video
-            ref="videoPlayer"
-            poster="/video/poster-studio.webp"
-            src="/video/studio.mp4"
-            type="mp4"
-            controls
-            autoplay
+          <video
             class="rounded-lg bg-slate-800"
+            src="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.mp4"
+            poster="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.jpg"
+            autoplay
             muted
-          /> -->
+            loop
+            controls
+          />
         </div>
       </div>
     </template>
@@ -357,15 +352,12 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
       </ULandingSection>
     </template>
   </ULandingSection>
-  <div class="relative">
-    <div class="gradient absolute -right-1/3 bottom-0" />
-  </div>
 </template>
 
 <style scoped lang="postcss">
 .gradient {
   position: absolute;
-  top: -5vh;
+  top: 25vh;
   width: 100%;
   height: 30vh;
   background: radial-gradient(50% 50% at 50% 50%, #00DC82 0%, rgba(0, 220, 130, 0) 100%);

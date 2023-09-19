@@ -12,8 +12,8 @@ dependencies:
     specifier: ^1.1.6
     version: 1.1.6
   '@iconify-json/simple-icons':
-    specifier: ^1.1.70
-    version: 1.1.70
+    specifier: ^1.1.71
+    version: 1.1.71
   '@nuxt/content':
     specifier: ^2.8.2
     version: 2.8.2(vue@3.3.4)
@@ -22,7 +22,7 @@ dependencies:
     version: 1.0.0-rc.1
   '@nuxthq/elements':
     specifier: npm:@nuxthq/elements-edge@latest
-    version: /@nuxthq/elements-edge@0.0.1-28246224.5395dca(vue@3.3.4)(webpack@5.88.2)
+    version: /@nuxthq/elements-edge@0.0.1-28250956.31b8365(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
     specifier: ^0.14.1
     version: 0.14.1
@@ -1002,8 +1002,8 @@ packages:
       '@iconify/types': 2.0.0
     dev: false
 
-  /@iconify-json/simple-icons@1.1.70:
-    resolution: {integrity: sha512-YZoHn180s0PELhjlMMTMVG8FxQOfP3AIn7P6KNV8xONzt/GwqMkYQ92DNYZbvSyQ4NhRajm27YkaOeSwNusr7A==}
+  /@iconify-json/simple-icons@1.1.71:
+    resolution: {integrity: sha512-3WVgJTaWBUOvq4G99v3Qs46zqnOJGNVMMlKCw+p8/gfbVz9mEAiwiqfGr+mpraotuwvUuQoJMi4SyseO8qjYDQ==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false
@@ -1454,8 +1454,8 @@ packages:
       - vue-tsc
     dev: false
 
-  /@nuxthq/elements-edge@0.0.1-28246224.5395dca(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-GOuFqa5QDAnTyXW2SJff0XT/cjTZNdepkMkdodZTduCKZy4/ZzNzXRQd6vOr/Knj3arMOc9VRKBe/ZeA89gE+Q==}
+  /@nuxthq/elements-edge@0.0.1-28250956.31b8365(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-7WWOhvBCiuj7Fq36q8IsldalNqSCEdJ36WSOH+8kQh2nIEdzftvcn5+t62ypbJo1AjbGxsagRYvrArM1z4f5Bg==}
     dependencies:
       '@nuxt/ui': 2.8.1(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.4.1(vue@3.3.4)
