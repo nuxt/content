@@ -227,6 +227,11 @@ export interface ModuleOptions {
     trailingSlash?: boolean
   },
   /**
+   * Disable to dynamically render content in production.
+   * @default true
+   */
+  buildCache: boolean,
+  /**
    * Enable to keep uppercase characters in the generated routes.
    *
    * @default false
@@ -298,6 +303,7 @@ export default defineNuxtModule<ModuleOptions>({
     },
     contentHead: true,
     documentDriven: false,
+    buildCache: true,
     respectPathCase: false,
     experimental: {
       clientDB: false,
@@ -311,8 +317,9 @@ export default defineNuxtModule<ModuleOptions>({
     // Ensure default locale alway is the first item of locales
     options.locales = Array.from(new Set([options.defaultLocale, ...options.locales].filter(Boolean))) as string[]
 
-    // Disable cache in dev mode
-    const buildIntegrity = nuxt.options.dev ? undefined : Date.now()
+    // Cache content in production, when 'buildCache' is enabled.
+    const buildCache = Boolean(!nuxt.options.dev && options.buildCache)
+    const buildIntegrity = buildCache ? Date.now() : undefined
 
     if (options.base) {
       logger.warn('content.base is deprecated. Use content.api.baseURL instead.')
@@ -350,11 +357,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('nitro:config', (nitroConfig) => {
       // Init Nitro context
-      nitroConfig.prerender = nitroConfig.prerender || {}
-      nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
-      nitroConfig.handlers = nitroConfig.handlers || []
 
       // Add server handlers
+      nitroConfig.handlers = nitroConfig.handlers || []
       nitroConfig.handlers.push(
         {
           method: 'get',
@@ -373,25 +378,21 @@ export default defineNuxtModule<ModuleOptions>({
         },
         {
           method: 'get',
-          route: nuxt.options.dev
-            ? `${options.api.baseURL}/cache.json`
-            : `${options.api.baseURL}/cache.${buildIntegrity}.json`,
+          route: buildCache
+            ? `${options.api.baseURL}/cache.${buildIntegrity}.json`
+            : `${options.api.baseURL}/cache.json`,
           handler: resolveRuntimeModule('./server/api/cache')
         }
       )
 
-      if (!nuxt.options.dev) {
+      if (buildCache) {
+        nitroConfig.prerender = nitroConfig.prerender || {}
+        nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
         nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
       // Register source storages
       const sources = useContentMounts(nuxt, contentContext.sources)
-      nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
-      nitroConfig.devStorage['cache:content'] = {
-        driver: 'fs',
-        base: resolve(nuxt.options.buildDir, 'content-cache')
-      }
-
       // Tell Nuxt to ignore content dir for app build
       for (const source of Object.values(sources)) {
         // Only targets directories inside the srcDir
@@ -404,8 +405,21 @@ export default defineNuxtModule<ModuleOptions>({
           )
         }
       }
-      nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
-      nitroConfig.bundledStorage.push('/cache/content')
+
+      if (buildCache) {
+        nitroConfig.devStorage = Object.assign(nitroConfig.devStorage || {}, sources)
+        nitroConfig.devStorage['cache:content'] = {
+          driver: 'fs',
+          base: resolve(nuxt.options.buildDir, 'content-cache')
+        }
+        nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
+        nitroConfig.bundledStorage.push('/cache/content')
+      } else {
+        nitroConfig.storage = Object.assign(nitroConfig.storage || {}, sources)
+        nitroConfig.storage['cache:content'] = {
+          driver: 'memory'
+        }
+      }
 
       // @ts-ignore
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
@@ -756,8 +770,8 @@ export default defineNuxtModule<ModuleOptions>({
     // ignore files
     const isIgnored = makeIgnored(contentContext.ignores)
 
-    // Setup content dev module
-    if (!nuxt.options.dev) {
+    // Prepare cache for build
+    if (buildCache) {
       nuxt.hook('build:before', async () => {
         const storage = createStorage()
         const sources = useContentMounts(nuxt, contentContext.sources)
