@@ -122,7 +122,7 @@ export const getContentsList = async (event: H3Event, prefix?: string) => {
 
   return contents
 }
-
+const pendingPromises: Record<string, Promise<ParsedContent>> = {}
 export const getContent = async (event: H3Event, id: string): Promise<ParsedContent> => {
   const contentId = id
   // Handle ignored id
@@ -160,17 +160,23 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return cached.parsed as ParsedContent
   }
 
-  const body = await sourceStorage.getItem(id)
+  const promise = pendingPromises[hash] || new Promise(async (resolve) => {
+    const body = await sourceStorage.getItem(id)
 
-  if (body === null) {
-    return { _id: contentId, body: null }
-  }
+    if (body === null) {
+      return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
+    }
 
-  const parsed = await parseContent(contentId, body) as ParsedContent
+    const parsed = await parseContent(contentId, body) as ParsedContent
 
-  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+    await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
-  return parsed
+    resolve(parsed)
+
+    delete pendingPromises[hash]
+  })
+
+  return promise
 }
 
 /**
