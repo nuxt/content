@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.7.3
     version: 3.7.3(rollup@3.28.1)
   '@nuxtjs/mdc':
-    specifier: npm:@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c
-    version: /@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c(rollup@3.28.1)
+    specifier: npm:@nuxtjs/mdc-edge@0.1.7-28253376.ea3e7d2
+    version: /@nuxtjs/mdc-edge@0.1.7-28253376.ea3e7d2(rollup@3.28.1)
   '@vueuse/head':
     specifier: ^2.0.0
     version: 2.0.0
@@ -75,8 +75,8 @@ dependencies:
     specifier: ^1.9.0
     version: 1.9.0
   ws:
-    specifier: ^8.14.1
-    version: 8.14.1
+    specifier: ^8.14.2
+    version: 8.14.2
 
 devDependencies:
   '@nuxt/module-builder':
@@ -1325,8 +1325,8 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtjs/mdc-edge@0.1.7-28252249.0330d2c(rollup@3.28.1):
-    resolution: {integrity: sha512-azp2/Or7TSAw1czh0uPTqCwTImOOi8TZVZIQLn7NOS10hJwWWze+guPF4vuoUGsSN2lSnBggcQljKE9B7FvGEA==}
+  /@nuxtjs/mdc-edge@0.1.7-28253376.ea3e7d2(rollup@3.28.1):
+    resolution: {integrity: sha512-Ciki4QyAY/QiHRu9HurdUfrHvvz4pB0Aul6cjl/PcHW9m7iFtUX5ZN4+xzkyb5C6LdRbLZd0LB19uUFXTHGSvQ==}
     dependencies:
       '@nuxt/kit': 3.7.3(rollup@3.28.1)
       '@types/hast': 3.0.1
@@ -11579,8 +11579,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  /ws@8.14.1:
-    resolution: {integrity: sha512-4OOseMUq8AzRBI/7SLMUwO+FEDnguetSk7KMb1sHwvF2w2Wv5Hoj0nlifx8vtGsftE/jWHojPy8sMMzYLJ2G/A==}
+  /ws@8.14.2:
+    resolution: {integrity: sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
