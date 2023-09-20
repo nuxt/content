@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
-
 const { mapContentNavigation } = useElementsHelpers()
 
 const route = useRoute()
@@ -13,10 +11,7 @@ useServerSeoMeta({
 useHead({
   htmlAttrs: {
     lang: 'en'
-  },
-  link: () => [
-    { rel: 'canonical', href: `https://content.nuxtjs.org${withoutTrailingSlash(route.path)}` }
-  ]
+  }
 })
 
 const links = [{

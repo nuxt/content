@@ -10,7 +10,7 @@ export const useContentDisabled = (): ReturnType<typeof useContent> => {
   // eslint-disable-next-line no-console
   console.warn('useContent is only accessible when you are using `documentDriven` mode.')
   // eslint-disable-next-line no-console
-  console.warn('Learn more by visiting: https://content.nuxtjs.org/guide/writing/document-driven')
+  console.warn('Learn more by visiting: https://content.nuxt.com/document-driven')
 
   // Break app
   throw new Error('useContent is only accessible when you are using `documentDriven` mode.')
@@ -21,7 +21,7 @@ export const navigationDisabled = () => {
   // eslint-disable-next-line no-console
   console.warn('Navigation is only accessible when you enable it in module options.')
   // eslint-disable-next-line no-console
-  console.warn('Learn more by visiting: https://content.nuxtjs.org/api/configuration#navigation')
+  console.warn('Learn more by visiting: https://content.nuxt.com/get-started/configuration#navigation')
 
   // Break app
   throw new Error('Navigation is only accessible when you enable it in module options.')

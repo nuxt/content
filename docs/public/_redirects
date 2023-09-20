@@ -10,7 +10,7 @@
 /integrations /v1/community/integrations 302!
 /releases /changelog 302!
 
-https://content-v1.nuxtjs.org/* https://content.nuxtjs.org/:splat 301!
+https://content-v1.nuxtjs.org/* https://content.nuxt.com/:splat 301!
 # FR
 /fr/installation /fr/v1/getting-started/installation 302!
 /fr/writing /fr/v1/getting-started/writing 302!
@@ -50,4 +50,4 @@ https://content-v1.nuxtjs.org/* https://content.nuxtjs.org/:splat 301!
 /ja/releases /changelog 302!
 
 
-https://content-v2.nuxtjs.org/* https://content.nuxtjs.org/:splat 301!
+https://content-v2.nuxtjs.org/* https://content.nuxt.com/:splat 301!

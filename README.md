@@ -1,4 +1,4 @@
-[![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxtjs.org)
+[![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxt.com)
 
 # Nuxt Content
 
@@ -8,9 +8,9 @@
 [![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
 
-Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxtjs.org/guide/writing/mdc).
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/usage/markdown).
 
-- [📖 &nbsp;Read the documentation](https://content.nuxtjs.org)
+- [📖 &nbsp;Read the documentation](https://content.nuxt.com)
 - [👾 &nbsp;Playground](https://stackblitz.com/github/nuxt/content/tree/main/examples/essentials/hello-world?file=app.vue)
 - [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
 - [✍️ &nbsp;Nuxt Studio](https://nuxt.studio)
@@ -18,7 +18,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 ## Features
 
 - [**Nuxt 3**](https://nuxt.com) support
-- A Markdown syntax made for Vue components ([**MDC**](https://content.nuxtjs.org/guide/writing/mdc))
+- A Markdown syntax made for Vue components ([**MDC**](https://content.nuxt.com/usage/markdown))
 - Navigation generation
 - Code highlighting with [**Shikiji**](https://github.com/antfu/shikiji)
 - Blazing fast hot module replacement in development
@@ -26,11 +26,11 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Table of contents generation
 - Also handles CSV, YAML and JSON(5)
 - Extend with hooks and content plugins
-- [... and more](https://content.nuxtjs.org)
+- [... and more](https://content.nuxt.com)
 
 ## Nuxt 2
 
-Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxtjs.org/content-v1> and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
+Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxt.com/v1> and the code on the [v1](https://github.com/nuxt/content/tree/v1) branch.
 
 ## 💻 Development
 

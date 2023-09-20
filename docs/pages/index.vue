@@ -12,8 +12,8 @@ useSeoMeta({
   ogTitle: title,
   description,
   ogDescription: description,
-  ogImage: 'https://content.nuxtjs.org/social-card.png',
-  twitterImage: 'https://content.nuxtjs.org/social-card.png'
+  ogImage: 'https://content.nuxt.com/social-card.png',
+  twitterImage: 'https://content.nuxt.com/social-card.png'
 })
 
 const { data } = await useAsyncData('landing', () => {

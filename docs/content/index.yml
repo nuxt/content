@@ -2,7 +2,7 @@ navigation: false
 hero:
   title: 'Content made easy for<br><span class="text-primary-400">Vue Developers</span>'
   description: 'Nuxt Content reads the <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">content/</span> directory in your project, parses <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.md</span>, <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.yml</span>,
- <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.csv</span> and <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.json</span> files to create a powerful data layer for your application. Use Vue components in Markdown with the <a href="https://content.nuxtjs.org/guide/writing/mdc" target="_blank" class="underline font-bold text-gray-400 hover:text-gray-100 transition-color duration-200">MDC syntax.</a>'
+ <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.csv</span> and <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.json</span> files to create a powerful data layer for your application. Use Vue components in Markdown with the MDC syntax.'
   button: Get started
 sections:
   - title: Start your next project with<br><span class="text-primary-400">powerful features</span>

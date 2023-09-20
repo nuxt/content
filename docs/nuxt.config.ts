@@ -22,7 +22,9 @@ export default defineNuxtConfig({
     '/guide/displaying/querying': { redirect: '/usage/querying' },
     '/guide/displaying/navigation': { redirect: '/usage/navigation' },
     '/guide/displaying/typescript': { redirect: '/usage/typescript' },
-    '/blog/announcing-v2': { redirect: '/' }
+    '/blog/announcing-v2': { redirect: '/' },
+    '/v1': { redirect: '/v1/getting-started/introduction' },
+    '/document-driven': { redirect: '/document-driven/introduction' }
   },
 
   content: {
