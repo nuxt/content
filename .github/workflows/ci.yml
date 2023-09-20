@@ -9,7 +9,25 @@ on:
       - main
 
 jobs:
-  ci:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: pnpm/action-setup@v2.4.0
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+      - run: pnpm install
+      - run: pnpm prepare
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test
+  ubuntu:
     runs-on: ubuntu-latest
 
     steps:
