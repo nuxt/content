@@ -160,6 +160,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return cached.parsed as ParsedContent
   }
 
+  // eslint-disable-next-line no-async-promise-executor
   const promise = pendingPromises[hash] || new Promise(async (resolve) => {
     const body = await sourceStorage.getItem(id)
 
