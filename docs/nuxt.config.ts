@@ -81,10 +81,6 @@ export default defineNuxtConfig({
     }
   },
 
-  experimental: {
-    appManifest: true
-  },
-
   hooks: {
     // Related to https://github.com/nuxt/nuxt/pull/22558
     // Adding all global components to the main entry

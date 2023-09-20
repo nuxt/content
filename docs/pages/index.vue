@@ -133,7 +133,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         </template>
 
         <template #links>
-          <UButton size="xl" color="transparent" variant="outline" label="Read the documentation" to="/get-started" />
+          <UButton size="xl" color="transparent" variant="outline" label="Read the documentation" to="/get-started/installation" />
 
           <UButton
             color="gray"
