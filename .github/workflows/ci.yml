@@ -26,7 +26,7 @@ jobs:
       - run: pnpm prepare
       - run: pnpm lint
       - run: pnpm build
-      - run: pnpm test
+      - run: pnpm vitest
   ubuntu:
     runs-on: ubuntu-latest
 
