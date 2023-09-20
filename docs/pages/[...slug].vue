@@ -18,10 +18,11 @@ const { data: surround } = await useAsyncData(`docs-${route.path}-surround`, () 
   }
 })
 
+const titleSuffix = `Nuxt Content${route.path.includes('/v1/') ? ' V1' : ''}`
+
 useSeoMeta({
-  titleTemplate: '%s - Nuxt Content',
-  title: page.value.title,
-  ogTitle: `${page.value.title} - 'Nuxt Content`,
+  title: `${page.value.title} - ${titleSuffix}`,
+  ogTitle: `${page.value.title} - ${titleSuffix}`,
   description: page.value.description,
   ogDescription: page.value.description
 })

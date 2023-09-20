@@ -39,7 +39,14 @@ const { data: files } = useLazyFetch('/api/search.json', {
   server: false
 })
 
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
+const { data: nav } = await useAsyncData('navigation', () => fetchContentNavigation())
+
+const navigation = computed(() => {
+  const main = nav.value.filter(item => item._path !== '/v1')
+  const v1 = nav.value.find(item => item._path === '/v1')?.children
+
+  return route.path.startsWith('/v1/') ? v1 : main
+})
 
 // Provide
 provide('navigation', navigation)
@@ -113,12 +120,6 @@ provide('navigation', navigation)
 </template>
 
 <style>
-.shiki {
-  padding: 0.6rem;
-  border-radius: 0.2rem;
-  border: 1px solid #8882;
-}
-
 html.dark .shiki,
 html.dark .shiki span {
   color: var(--s-dark) !important;

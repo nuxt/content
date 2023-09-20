@@ -3,15 +3,11 @@ definePageMeta({
   colorMode: 'dark'
 })
 
-const videoPlayer = ref()
-const studioSection = ref()
-const studioSectionIsVisible = ref()
 const videoModalOpen = ref(false)
 const title = 'Nuxt Content made easy for Vue Developers'
 const description = 'Nuxt Content reads the content/ directory in your project, parses .md, .yml, .csv and .json files to create a powerful data layer for your application. Use Vue components in Markdown with the MDC syntax.'
 
 useSeoMeta({
-  titleTemplate: '',
   title,
   ogTitle: title,
   description,
@@ -40,35 +36,18 @@ const { data: module } = await useFetch<{
 }>('https://api.nuxt.com/modules/content', {
   transform: ({ stats, contributors }) => ({ stats, contributors })
 })
-
-useIntersectionObserver(
-  studioSection,
-  ([{ isIntersecting }]) => {
-    studioSection.value = isIntersecting
-  }, { threshold: 0.5 }
-)
-
-watch(() => studioSectionIsVisible, () => {
-  if (!studioSectionIsVisible) {
-    videoPlayer.value.pause()
-  } else {
-    videoPlayer.value.play()
-  }
-})
-
 const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact' })
-
 </script>
 
 <template>
   <ULandingHero
     align="center"
     direction="vertical"
-    :ui="{ container: 'flex flex-col lg:gap-12', description: 'mt-6 text-lg/8 lg:px-28 text-gray-400' }"
+    :ui="{ container: 'flex flex-col lg:gap-8', description: 'mt-6 text-lg/8 lg:px-28 text-gray-400' }"
   >
     <span class="gradient" />
 
-    <div class="flex w-full justify-center order-first pb-4">
+    <div class="flex w-full justify-center order-first">
       <UBadge
         class="w-fit"
         color="primary"
@@ -275,7 +254,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
     </template>
 
     <template #meet-studio>
-      <ul ref="studioSection" class="flex flex-wrap space-x-4 lg:px-28 xl:px-40 items-center justify-center sm:-mt-16">
+      <ul class="flex flex-wrap space-x-4 lg:px-28 xl:px-40 items-center justify-center sm:-mt-16">
         <li v-for="(item, index) in section.list" :key="index" class="my-2">
           <UIcon name="i-ph-check" class="w-4 h-4 text-green-400 mr-2" />
           <span class="text-gray-200 text-lg">{{ item }}</span>

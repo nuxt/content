@@ -1,5 +1,3 @@
-import { resolve } from 'pathe'
-
 export default defineNuxtConfig({
   extends: '@nuxthq/elements',
 
@@ -22,49 +20,19 @@ export default defineNuxtConfig({
     '/guide/displaying/rendering': { redirect: '/usage/rendering' },
     '/guide/displaying/querying': { redirect: '/usage/querying' },
     '/guide/displaying/navigation': { redirect: '/usage/navigation' },
-    '/guide/displaying/typescript': { redirect: '/usage/typescript' }
+    '/guide/displaying/typescript': { redirect: '/usage/typescript' },
+    '/blog/announcing-v2': { redirect: '/' }
   },
 
   content: {
-    // sources: {
-    //   v1: {
-    //     prefix: '/v1',
-    //     driver: 'fs',
-    //     base: resolve(__dirname, 'content-v1/en')
-    //   },
-    //   'v1-ja': {
-    //     prefix: '/ja/v1',
-    //     driver: 'fs',
-    //     base: resolve(__dirname, 'content-v1/ja')
-    //   },
-    //   'v1-fr': {
-    //     prefix: '/fr/v1',
-    //     driver: 'fs',
-    //     base: resolve(__dirname, 'content-v1/fr')
-    //   },
-    //   'v1-ru': {
-    //     prefix: '/ru/v1',
-    //     driver: 'fs',
-    //     base: resolve(__dirname, 'content-v1/ru')
-    //   }
-    // },
     highlight: {
       preload: ['xml']
     }
   },
   nitro: {
     prerender: {
-      crawlLinks: true,
       routes: [
-        '/',
-        '/blog/announcing-v2',
         '/api/search.json'
-      ],
-      ignore: [
-        '/fr/v1/getting-started/&quot;',
-        '/ja/v1/getting-started/&quot;',
-        '/ru/v1/getting-started/&quot;',
-        '/v1/getting-started/&quot;'
       ]
     }
   },
