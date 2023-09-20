@@ -30,8 +30,8 @@ dependencies:
     specifier: ^1.0.0
     version: 1.0.0
   listhen:
-    specifier: ^1.5.3
-    version: 1.5.3
+    specifier: ^1.5.5
+    version: 1.5.5
   mdast-util-to-string:
     specifier: ^4.0.0
     version: 4.0.0
@@ -3338,12 +3338,6 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /citty@0.1.3:
-    resolution: {integrity: sha512-tb6zTEb2BDSrzFedqFYFUKUuKNaxVJWCm7o02K4kADGkBDyyiz7D40rDMpguczdZyAN3aetd5fhpB01HkreNyg==}
-    dependencies:
-      consola: 3.2.3
-    dev: true
-
   /citty@0.1.4:
     resolution: {integrity: sha512-Q3bK1huLxzQrvj7hImJ7Z1vKYJRPQCDnd0EjXfHMidcjecGOMuLrmuQmtWmFkuKLcMThlGh1yCKG8IEc6VeNXQ==}
     dependencies:
@@ -6501,8 +6495,8 @@ packages:
       - supports-color
     dev: true
 
-  /listhen@1.5.3:
-    resolution: {integrity: sha512-5SitrZRCH4XXHvKSAqwaLURfQ6ZS/BCv+kpPkage5PhSnQPlz5HIVROCEIcMw8YvIF8NhDUAj/HAI/OovJGEpQ==}
+  /listhen@1.5.5:
+    resolution: {integrity: sha512-LXe8Xlyh3gnxdv4tSjTjscD1vpr/2PRpzq8YIaMJgyKzRG8wdISlWVWnGThJfHnlJ6hmLt2wq1yeeix0TEbuoA==}
     hasBin: true
     dependencies:
       '@parcel/watcher': 2.3.0
@@ -7536,7 +7530,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      citty: 0.1.3
+      citty: 0.1.4
       defu: 6.1.2
       esbuild: 0.18.20
       fs-extra: 11.1.1
@@ -7679,7 +7673,7 @@ packages:
       jiti: 1.20.0
       klona: 2.0.6
       knitwork: 1.0.0
-      listhen: 1.5.3
+      listhen: 1.5.5
       magic-string: 0.30.3
       mime: 3.0.0
       mlly: 1.4.2
@@ -10561,7 +10555,7 @@ packages:
       '@rollup/plugin-replace': 5.0.2(rollup@3.28.1)
       '@rollup/pluginutils': 5.0.4(rollup@3.28.1)
       chalk: 5.3.0
-      citty: 0.1.3
+      citty: 0.1.4
       consola: 3.2.3
       defu: 6.1.2
       esbuild: 0.19.2
@@ -10570,7 +10564,7 @@ packages:
       jiti: 1.20.0
       magic-string: 0.30.3
       mkdist: 1.3.0(typescript@5.1.6)
-      mlly: 1.4.1
+      mlly: 1.4.2
       pathe: 1.1.1
       pkg-types: 1.0.3
       pretty-bytes: 6.1.1
@@ -10887,7 +10881,7 @@ packages:
       destr: 2.0.1
       h3: 1.8.0
       ioredis: 5.3.2
-      listhen: 1.5.3
+      listhen: 1.5.5
       lru-cache: 10.0.1
       mri: 1.2.0
       node-fetch-native: 1.4.0
