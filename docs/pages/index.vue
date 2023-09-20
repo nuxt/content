@@ -210,7 +210,8 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
             >
               <UAvatar
                 :alt="contributor.username"
-                :src="`https://github.com/${contributor.username}.png`"
+                :src="`https://ipx.nuxt.com/s_40x40/gh_avatar/${contributor.username}`"
+                :srcset="`https://ipx.nuxt.com/s_80x80/gh_avatar/${contributor.username} 2x`"
                 class="lg:hover:ring-primary-500 dark:lg:hover:ring-primary-400 transition-transform lg:hover:scale-125 lg:hover:ring-2"
                 size="md"
               >
@@ -279,7 +280,6 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
             class="rounded-lg bg-slate-800"
             src="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.mp4"
             poster="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.jpg"
-            autoplay
             muted
             loop
             controls
