@@ -40,13 +40,12 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
 </script>
 
 <template>
+  <span class="gradient" />
   <ULandingHero
     align="center"
     direction="vertical"
-    :ui="{ container: 'flex flex-col lg:gap-8', description: 'mt-6 text-lg/8 lg:px-28 text-gray-400' }"
+    :ui="{ container: 'flex flex-col gap-6 lg:gap-8', description: 'mt-6 text-lg/8 lg:px-28 text-gray-400' }"
   >
-    <span class="gradient" />
-
     <div class="flex w-full justify-center order-first">
       <UBadge
         class="w-fit"

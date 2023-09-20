@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
   extends: '@nuxthq/elements',
+  devtools: { enabled: true },
 
   routeRules: {
     '/get-started': { redirect: '/get-started/installation' },
@@ -44,7 +45,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
-    'nuxt-og-image'
+    'nuxt-og-image',
+    '@nuxtjs/plausible'
   ],
 
   colorMode: {
@@ -77,6 +79,10 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+
+  experimental: {
+    appManifest: true
   },
 
   hooks: {

@@ -21,7 +21,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-between items-start bg-[#020420] p-20 pt-32 pb-16">
+  <div class="w-full h-full flex flex-col justify-between items-start bg-[#020420] p-20 pt-26 pb-16">
     <div
       style="position: absolute;width: 1156px;height: 1000px;left: -215px;top: -337px;background: radial-gradient(50% 50% at 50% 50%, #00DC82 0%, rgba(0, 220, 130, 0) 100%);filter: blur(180.5px);opacity: 0.5;"
     />
@@ -34,7 +34,7 @@ defineProps({
         {{ description }}
       </p>
     </div>
-    <Logo class="w-[349px] h-[60px] text-white" />
+    <Logo class="w-[482px] h-[60px] text-white" />
   </div>
 </template>
 
