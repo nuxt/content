@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const { mapContentNavigation } = useElementsHelpers()
-
 const route = useRoute()
 
 useServerSeoMeta({
@@ -55,12 +53,27 @@ provide('navigation', navigation)
 
     <template #right>
       <UColorModeButton v-if="!$colorMode.forced" />
-      <UButton aria-label="Nuxt Website" icon="i-simple-icons-nuxtdotjs" to="https://nuxt.com" color="gray" variant="ghost" />
-      <UButton aria-label="Nuxt on X" icon="i-simple-icons-x" to="https://x.com/nuxt_js" color="gray" variant="ghost" />
+      <UButton
+        aria-label="Nuxt Website"
+        icon="i-simple-icons-nuxtdotjs"
+        to="https://nuxt.com"
+        target="_blank"
+        color="gray"
+        variant="ghost"
+      />
+      <UButton
+        aria-label="Nuxt on X"
+        icon="i-simple-icons-x"
+        to="https://x.com/nuxt_js"
+        target="_blank"
+        color="gray"
+        variant="ghost"
+      />
       <UButton
         aria-label="Nuxt Content on GitHub"
         icon="i-simple-icons-github"
         to="https://github.com/nuxt/content"
+        target="_blank"
         color="gray"
         variant="ghost"
       />
@@ -90,6 +103,7 @@ provide('navigation', navigation)
         aria-label="Nuxt Website"
         icon="i-simple-icons-nuxtdotjs"
         to="https://nuxt.com"
+        target="_blank"
         color="gray"
         variant="ghost"
       />
@@ -97,6 +111,7 @@ provide('navigation', navigation)
         aria-label="Nuxt on X"
         icon="i-simple-icons-x"
         to="https://x.com/nuxt_js"
+        target="_blank"
         color="gray"
         variant="ghost"
       />
@@ -104,6 +119,7 @@ provide('navigation', navigation)
         aria-label="Nuxt Devtools on GitHub"
         icon="i-simple-icons-github"
         to="https://github.com/nuxt/content"
+        target="_blank"
         color="gray"
         variant="ghost"
       />

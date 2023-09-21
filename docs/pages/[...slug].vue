@@ -3,8 +3,6 @@ definePageMeta({
   layout: 'docs'
 })
 const route = useRoute()
-const { findPageHeadline } = useElementsHelpers()
-
 const { data: page } = await useAsyncData(`docs-${route.path}`, () => queryContent(route.path).findOne())
 
 if (!page.value) { throw createError({ statusCode: 404, statusMessage: 'Page not found' }) }

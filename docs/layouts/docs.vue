@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
-const { mapContentNavigation } = useElementsHelpers()
 const navigation = inject('navigation')
 </script>
 
