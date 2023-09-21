@@ -103,13 +103,26 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
   return keys.filter(contentIgnorePredicate)
 }
 
+export function* chunksFromArray<T> (arr: T[], n: number) : Generator<T[], void> {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n)
+  }
+}
+
 export const getContentsList = async (event: H3Event, prefix?: string) => {
   const keys = await getContentsIds(event, prefix)
-  const contents = await Promise.all(keys.map(key => getContent(event, key)))
+
+  const keyChunks = [...chunksFromArray(keys, 10)]
+
+  const contents: ParsedContent[] = []
+  for (const chunk of keyChunks) {
+    const result = await Promise.all(chunk.map(key => getContent(event, key)))
+    contents.push(...result)
+  }
 
   return contents
 }
-
+const pendingPromises: Record<string, Promise<ParsedContent>> = {}
 export const getContent = async (event: H3Event, id: string): Promise<ParsedContent> => {
   const contentId = id
   // Handle ignored id
@@ -147,17 +160,24 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return cached.parsed as ParsedContent
   }
 
-  const body = await sourceStorage.getItem(id)
+  // eslint-disable-next-line no-async-promise-executor
+  const promise = pendingPromises[hash] || new Promise(async (resolve) => {
+    const body = await sourceStorage.getItem(id)
 
-  if (body === null) {
-    return { _id: contentId, body: null }
-  }
+    if (body === null) {
+      return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
+    }
 
-  const parsed = await parseContent(contentId, body) as ParsedContent
+    const parsed = await parseContent(contentId, body) as ParsedContent
 
-  await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+    await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
-  return parsed
+    resolve(parsed)
+
+    delete pendingPromises[hash]
+  })
+
+  return promise
 }
 
 /**

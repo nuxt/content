@@ -12,258 +12,39 @@ export const testHighlighter = () => {
             '```ts',
             'const a: number = 1',
             '```'
-          ].join('\n')
+          ].join('\n'),
+          options: {
+            markdown: {
+              highlight: {
+                theme: {
+                  dark: 'material-theme-palenight', // Theme containing italic
+                  default: 'github-light'
+                }
+              }
+            }
+          }
         }
       })
-
+      const colors = {
+        default: '#D73A49 #005CC5 #D73A49 #005CC5 #D73A49 #005CC5'.split(' '),
+        dark: '#C792EA #BABED8 #89DDFF #FFCB6B #89DDFF #F78C6C'.split(' ')
+      }
       expect(parsed).toHaveProperty('_id')
       assert(parsed._id === 'content:index.md')
 
       const styleElement = parsed.body.children.pop()
       expect(styleElement.tag).toBe('style')
       const style = styleElement.children[0].value
-      const code = parsed.body.children[0].children[0].children[0].children
-
-      for (const token of code) {
-        expect(style).toContain(`.${token.props.class}`)
-        expect(style).toContain(`.dark .${token.props.class}`)
-      }
-    })
-
-    test('highlight multi-theme with different tokenizer', async () => {
-      const { tree } = await $fetch('/api/_mdc/highlight', {
-        params: {
-          lang: 'ts',
-          theme: JSON.stringify({
-            dark: 'material-theme-palenight', // Theme containing italic
-            default: 'github-light'
-          }),
-          code: 'export type UseFetchOptions = { key?: string }'
+      const code = parsed.body.children[0].children[0].children[0].children as any[]
+      code.forEach((token, i) => {
+        if (token.props.style) {
+          expect(token.props.style).includes(`color:${colors.default[i]}`)
+          expect(token.props.style).includes(`--shiki-dark:${colors.dark[i]}`)
+        } else {
+          expect(style).toContain(`.${token.props.class}`)
+          expect(style).toContain(`.dark .${token.props.class}`)
         }
       })
-
-      expect(tree).toMatchInlineSnapshot(`
-        [
-          {
-            "children": [
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "export",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-510828",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "type",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-757323",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "UseFetchOptions",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-941645",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "=",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-943635",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "{",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-695709",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "key",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-411742",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "?:",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-943635",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "string",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-559631",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": " ",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-508774",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-              {
-                "children": [
-                  {
-                    "type": "text",
-                    "value": "}",
-                  },
-                ],
-                "properties": {
-                  "class": "ct-695709",
-                },
-                "tagName": "span",
-                "type": "element",
-              },
-            ],
-            "properties": {
-              "class": "line",
-              "line": 1,
-            },
-            "tagName": "span",
-            "type": "element",
-          },
-        ]
-      `)
     })
 
     test('highlight excerpt', async () => {

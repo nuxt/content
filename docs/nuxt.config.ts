@@ -49,7 +49,11 @@ export default defineNuxtConfig({
 
   content: {
     highlight: {
-      preload: ['xml']
+      preload: ['xml'],
+      theme: {
+        default: 'solarized-light',
+        dark: 'dark-plus'
+      }
     }
   },
   nitro: {

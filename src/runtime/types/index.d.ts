@@ -33,7 +33,7 @@ export interface ParsedContentInternalMeta {
   /**
    * File type of the content, i.e `markdown`
    */
-  _type?: string
+  _type?: 'markdown' | 'yaml' | 'json' | 'csv'
   /**
    * Path to the file relative to the content directory
    */
@@ -41,10 +41,15 @@ export interface ParsedContentInternalMeta {
   /**
    * Extension of the file
    */
-  _extension?: string
+  _extension?: 'md' | 'yaml' | 'yml' | 'json' | 'json5' | 'csv'
 }
 
 export interface ParsedContentMeta extends ParsedContentInternalMeta {
+  /**
+   * Layout
+   */
+  layout?: string
+
   [key: string]: any
 }
 
@@ -52,11 +57,11 @@ export interface ParsedContent extends ParsedContentMeta {
   /**
    * Excerpt
    */
-  excerpt?: any
+  excerpt?: MarkdownRoot
   /**
    * Content body
    */
-  body: any
+  body: MarkdownRoot
 }
 
 //
@@ -81,6 +86,7 @@ export interface MarkdownRoot {
   type: 'root'
   children: MarkdownNode[]
   props?: Record<string, any>
+  toc?: Toc
 }
 
 export interface MarkdownPlugin extends Record<string, any> {}
