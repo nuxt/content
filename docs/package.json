@@ -12,7 +12,6 @@
     "@iconify-json/ph": "^1.1.6",
     "@iconify-json/simple-icons": "^1.1.71",
     "@nuxt/content": "^2.8.2",
-    "@nuxt/image": "1.0.0-rc.1",
     "@nuxthq/elements": "npm:@nuxthq/elements-edge@latest",
     "@nuxthq/studio": "^0.14.1",
     "@nuxtjs/fontaine": "^0.4.1",

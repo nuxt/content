@@ -6,6 +6,7 @@ const route = useRoute()
 const { findPageHeadline } = useElementsHelpers()
 
 const { data: page } = await useAsyncData(`docs-${route.path}`, () => queryContent(route.path).findOne())
+
 if (!page.value) { throw createError({ statusCode: 404, statusMessage: 'Page not found' }) }
 
 const { data: surround } = await useAsyncData(`docs-${route.path}-surround`, () => {
@@ -66,6 +67,14 @@ const communityLinks = computed(() => [
     target: '_blank'
   }
 ])
+const ecosystemLinks = [
+  {
+    icon: 'i-simple-icons-nuxtdotjs',
+    label: 'Nuxt Studio',
+    to: 'https://nuxt.studio/?utm_source=content-site&utm_medium=aside&utm_campaign=docs',
+    target: '_blank'
+  }
+]
 </script>
 
 <template>
@@ -84,6 +93,8 @@ const communityLinks = computed(() => [
           <div class="hidden !mt-6 lg:block space-y-6">
             <UDivider v-if="page.body?.toc?.links?.length" dashed />
             <UPageLinks title="Community" :links="communityLinks" />
+            <UDivider dashed />
+            <UPageLinks title="Ecosystem" :links="ecosystemLinks" />
           </div>
         </template>
       </UDocsToc>
