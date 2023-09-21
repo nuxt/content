@@ -1,4 +1,4 @@
-[![nuxt-content-social-card](https://github.com/nuxt/content/assets/904724/1cedd2ef-94fc-4210-aa84-5ab0dc449228)](https://content.nuxt.com)
+[![nuxt-content-social-card](./docs/public/social-card.png)](https://content.nuxt.com)
 
 # Nuxt Content
 
