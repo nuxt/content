@@ -17,9 +17,9 @@ dependencies:
   '@nuxt/content':
     specifier: ^2.8.2
     version: 2.8.2(vue@3.3.4)
-  '@nuxthq/elements':
-    specifier: npm:@nuxthq/elements-edge@latest
-    version: /@nuxthq/elements-edge@0.0.1-28254903.be840dc(vue@3.3.4)(webpack@5.88.2)
+  '@nuxt/ui-pro':
+    specifier: npm:@nuxt/ui-pro-edge@latest
+    version: /@nuxt/ui-pro-edge@0.0.1-28255017.af7c0a2(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
     specifier: ^0.14.1
     version: 0.14.1
@@ -1466,8 +1466,8 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/ui-edge@2.8.1-28254892.86dc49e(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-eht/xy/5GLH++iwua8M+kLHQZuB6Fvca0ZMHS36aFyLoOkSYEha9hOE2xDEsMDc0EfsV/rLfCGAVyVSugD/LkQ==}
+  /@nuxt/ui-edge@2.8.1-28255083.853d58a(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-xVda07Sa5ySoR6PE/9GwTIOMVi6/bGSWyVL8lwXV4J2xep70EDzbMSPUrr0eOjiVcpa37IKnCX4wsMof323SlQ==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
@@ -1491,6 +1491,34 @@ packages:
       scule: 1.0.0
       tailwind-merge: 1.14.0
       tailwindcss: 3.3.3
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - focus-trap
+      - idb-keyval
+      - jwt-decode
+      - nprogress
+      - qrcode
+      - rollup
+      - sortablejs
+      - supports-color
+      - ts-node
+      - universal-cookie
+      - vue
+      - webpack
+    dev: false
+
+  /@nuxt/ui-pro-edge@0.0.1-28255017.af7c0a2(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-ULHT1oKXQJRqkduLePBO2livZ/hXJIxzUtEWjuMdXqHRcTBWvr8aShoJ4u6lHcpgr6URt6VxbhhlLixdlyb2WA==}
+    dependencies:
+      '@nuxt/ui': /@nuxt/ui-edge@2.8.1-28255083.853d58a(vue@3.3.4)(webpack@5.88.2)
+      '@vueuse/core': 10.4.1(vue@3.3.4)
+      ofetch: 1.3.3
+      pathe: 1.1.1
+      tailwind-merge: 1.14.0
     transitivePeerDependencies:
       - '@vue/composition-api'
       - async-validator
@@ -1574,34 +1602,6 @@ packages:
       - vls
       - vti
       - vue-tsc
-
-  /@nuxthq/elements-edge@0.0.1-28254903.be840dc(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-m775jQyi+Yet7MIaPAdN6paqPnWuwbGnYLQ+sphWYb58ZeJrBH3LEIoaCIFw2Blt1Xy2Yi2a0/AcAF7RG1E1WA==}
-    dependencies:
-      '@nuxt/ui': /@nuxt/ui-edge@2.8.1-28254892.86dc49e(vue@3.3.4)(webpack@5.88.2)
-      '@vueuse/core': 10.4.1(vue@3.3.4)
-      ofetch: 1.3.3
-      pathe: 1.1.1
-      tailwind-merge: 1.14.0
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - async-validator
-      - axios
-      - change-case
-      - drauu
-      - focus-trap
-      - idb-keyval
-      - jwt-decode
-      - nprogress
-      - qrcode
-      - rollup
-      - sortablejs
-      - supports-color
-      - ts-node
-      - universal-cookie
-      - vue
-      - webpack
-    dev: false
 
   /@nuxthq/studio@0.14.1:
     resolution: {integrity: sha512-9Pdkiph1D7AoWess+pcj4AOinTnpEKpB0F0zmcbZt05LZr1urEab6nvpWlhbaen5mtkqhXlWe6skbBrQVNv17w==}

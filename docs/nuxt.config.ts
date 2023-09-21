@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  extends: '@nuxthq/elements',
+  extends: '@nuxt/ui-pro',
   devtools: { enabled: true },
 
   routeRules: {
