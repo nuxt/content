@@ -1,54 +1,28 @@
 export default defineAppConfig({
-  github: {
-    owner: 'nuxt',
-    repo: 'content',
-    branch: 'main'
-  },
-  docus: {
-    title: 'Nuxt Content',
-    description: 'Write pages in markdown, use Vue components and enjoy the power of Nuxt with a blazing fast developer experience.',
-    image: 'https://content.nuxtjs.org/preview.png',
-    url: 'https://content.nuxtjs.org',
-    socials: {
-      twitter: '@nuxt_js',
-      github: 'nuxt/content'
-    },
-    github: {
-      dir: 'docs/content',
-      root: 'docs/content',
-      edit: true,
-      releases: true,
-      owner: 'nuxt',
-      repo: 'content',
-      branch: 'main'
-    },
-    cover: {
-      src: '/cover.jpg',
-      alt: 'Content made easy for Vue developers'
-    },
-    aside: {
-      level: 1
-    },
-    layout: {
-      fluid: true
-    },
-    header: {
-      logo: 'Logo',
-      exclude: ['/v1', '/content-v1', '/fr', '/ja', '/ru']
-    },
-    footer: {
-      iconLinks: [
-        {
-          label: 'NuxtJS',
-          href: 'https://nuxtjs.org',
-          icon: 'IconNuxt'
+  ui: {
+    primary: 'green',
+    gray: 'slate',
+    button: {
+      color: {
+        white: {
+          link: 'text-white dark:text-white hover:text-gray-300 dark:hover:text-gray-300 underline-offset-4 hover:underline focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-gray-500 dark:focus-visible:ring-gray-400 transition-all duration-200'
         },
-        {
-          label: 'Vue Telescope',
-          href: 'https://vuetelescope.com',
-          icon: 'IconVueTelescope'
+        transparent: {
+          outline: 'ring-1 ring-inset ring-gray-700 text-white dark:text-white hover:bg-gray-900 disabled:bg-gray-300 dark:hover:bg-gray-900 dark:disabled:bg-gray-300 focus-visible:ring-2 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-400'
         }
-      ]
+      }
+    }
+  },
+  elements: {
+    variables: {
+      light: {
+        background: '255 255 255',
+        foreground: 'var(--color-gray-700)'
+      },
+      dark: {
+        background: 'var(--color-gray-950)',
+        foreground: 'var(--color-gray-400)'
+      }
     }
   }
 })

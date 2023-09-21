@@ -1,3 +1,3 @@
-::alert{type="info"}
+::callout{type="info"}
 I am a partial
 ::
