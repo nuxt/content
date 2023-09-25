@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@iconify-json/ph": "^1.1.6",
-    "@iconify-json/simple-icons": "^1.1.71",
+    "@iconify-json/simple-icons": "^1.1.72",
     "@nuxt/content": "^2.8.2",
     "@nuxt/ui-pro": "npm:@nuxt/ui-pro-edge@latest",
     "@nuxthq/studio": "^0.14.1",
@@ -26,6 +26,6 @@
     "h3": "^1.8.1"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^0.8.4"
+    "@nuxt/devtools": "^0.8.5"
   }
 }
