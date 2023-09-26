@@ -43,7 +43,7 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.7.3",
+    "@nuxt/kit": "^3.7.4",
     "@nuxtjs/mdc": "^0.2.0",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
@@ -70,12 +70,12 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.5.1",
-    "@nuxt/schema": "3.7.3",
-    "@nuxt/test-utils": "3.7.3",
+    "@nuxt/schema": "3.7.4",
+    "@nuxt/test-utils": "3.7.4",
     "@nuxthq/studio": "^0.14.1",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@nuxtjs/tailwindcss": "^6.8.0",
-    "@types/ws": "^8.5.5",
+    "@types/ws": "^8.5.6",
     "c8": "^8.0.1",
     "csvtojson": "^2.0.10",
     "eslint": "^8.50.0",
@@ -83,7 +83,7 @@
     "husky": "^8.0.3",
     "jiti": "^1.20.0",
     "lint-staged": "^14.0.1",
-    "nuxt": "3.7.3",
+    "nuxt": "3.7.4",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.2.0",
