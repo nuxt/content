@@ -1,6 +1,55 @@
 # Changelog
 
 
+## v2.8.3
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.2...v2.8.3)
+
+### 🚀 Enhancements
+
+- Update types ([#2156](https://github.com/nuxt/content/pull/2156))
+- Docs rework with Nuxt UI ([#2310](https://github.com/nuxt/content/pull/2310))
+- Add binding for external data ([#2296](https://github.com/nuxt/content/pull/2296))
+
+### 🩹 Fixes
+
+- **findSurround:** Use filtered contents to find surround ([#2291](https://github.com/nuxt/content/pull/2291))
+- Remove deletion of `prerenderedAt` key ([#2280](https://github.com/nuxt/content/pull/2280))
+- **module:** Remove deprecated `resolveModule` ([#2298](https://github.com/nuxt/content/pull/2298))
+- **surround:** Respect `only` and `without` filters ([#2311](https://github.com/nuxt/content/pull/2311))
+- Add missing dependencies ([#2313](https://github.com/nuxt/content/pull/2313))
+- **tailwindcss:** Tailwindcss HMR support for content files ([#2315](https://github.com/nuxt/content/pull/2315))
+- Fetch content chunked ([#2321](https://github.com/nuxt/content/pull/2321))
+- **storage:** Prevent duplicate parsing ([#2326](https://github.com/nuxt/content/pull/2326))
+- Add regex to match ContentSlot in Pug templates ([#2344](https://github.com/nuxt/content/pull/2344))
+
+### 📖 Documentation
+
+- Remove `count` helper alert ([faff26bc](https://github.com/nuxt/content/commit/faff26bc))
+- Update badge position ([0b85e881](https://github.com/nuxt/content/commit/0b85e881))
+- Fix links ([#2267](https://github.com/nuxt/content/pull/2267))
+- Add warning about prettier compatibility ([#2325](https://github.com/nuxt/content/pull/2325))
+- Add link to image ([58e13b41](https://github.com/nuxt/content/commit/58e13b41))
+- Update .env.example ([5a483922](https://github.com/nuxt/content/commit/5a483922))
+- Fix page overflow ([#2332](https://github.com/nuxt/content/pull/2332))
+
+### 🏡 Chore
+
+- Upgrade @nuxtjs/mdc ([#2308](https://github.com/nuxt/content/pull/2308))
+- Upgrade `@nuxtjs/mdc` ([e3ffac95](https://github.com/nuxt/content/commit/e3ffac95))
+
+### ❤️ Contributors
+
+- Maxime Pauvert ([@maximepvrt](http://github.com/maximepvrt))
+- Jbmolle <jbmolle@hotmail.com>
+- Nobkd 
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Florent Delerue <florentdelerue@hotmail.com>
+- Farnabaz <farnabaz@gmail.com>
+- Patryk Padus <patryk@webo.agency>
+- Estéban <e.soubiran25@gmail.com>
+- Alexander Lichter ([@manniL](http://github.com/manniL))
+
 ## v2.8.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.8.1...v2.8.2)
