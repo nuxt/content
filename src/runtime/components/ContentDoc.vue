@@ -1,10 +1,10 @@
 <script lang="ts">
 import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
+import { useRuntimeConfig } from '#app'
 import type { ParsedContent, QueryBuilderParams } from '../types'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
-import { useRuntimeConfig } from '#app'
 import { useRoute, useContentHead } from '#imports'
 
 const ContentDoc = defineComponent({

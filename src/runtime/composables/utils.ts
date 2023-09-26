@@ -1,7 +1,7 @@
 import { withBase } from 'ufo'
+import { useRuntimeConfig, useRequestEvent } from '#app'
 import type { useContent } from './content'
 import { useContentPreview } from './preview'
-import { useRuntimeConfig, useRequestEvent } from '#app'
 
 export const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
