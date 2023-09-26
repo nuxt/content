@@ -51,7 +51,7 @@ export default defineNuxtConfig({
       remarkPlugins: {
         // override remark-emoji options
         'remark-emoji': {
-          emoticon: true
+          emoticon: false
         },
         // disable remark-gfm
         'remark-gfm': false,
