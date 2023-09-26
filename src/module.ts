@@ -305,7 +305,7 @@ export default defineNuxtModule<ModuleOptions>({
       advanceQuery: false
     }
   },
-  async setup(options, nuxt) {
+  async setup (options, nuxt) {
     const { resolve, resolvePath } = createResolver(import.meta.url)
     const resolveRuntimeModule = (path: string) => resolve('./runtime', path)
     // Ensure default locale alway is the first item of locales
@@ -333,13 +333,13 @@ export default defineNuxtModule<ModuleOptions>({
       config.plugins?.push({
         name: 'content-slot',
         enforce: 'pre',
-        transform(code) {
+        transform (code) {
           if (code.includes('ContentSlot')) {
             code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot $1 name="$4"')
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
             code = code.replace(/<ContentSlot/g, '<MDCSlot')
             code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
-            code = code.replace(/ContentSlot\(([^\(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^\)]*)/g, 'MDCSlot($1name="$4"$6')
+            code = code.replace(/ContentSlot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
             return {
               code,
               map: { mappings: '' }
@@ -473,7 +473,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
     addTemplate({
       filename: 'content-components.mjs',
-      getContents({ options }) {
+      getContents ({ options }) {
         const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
           const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
           const isClient = c.mode === 'client'
@@ -531,10 +531,10 @@ export default defineNuxtModule<ModuleOptions>({
             route: `${options.api.baseURL}/navigation/:qid/**:params`,
             handler: resolveRuntimeModule('./server/api/navigation')
           }, {
-          method: 'get',
-          route: `${options.api.baseURL}/navigation/:qid`,
-          handler: resolveRuntimeModule('./server/api/navigation')
-        },
+            method: 'get',
+            route: `${options.api.baseURL}/navigation/:qid`,
+            handler: resolveRuntimeModule('./server/api/navigation')
+          },
           {
             method: 'get',
             route: `${options.api.baseURL}/navigation`,
@@ -724,7 +724,7 @@ export default defineNuxtModule<ModuleOptions>({
       addVitePlugin({
         enforce: 'post',
         name: 'nuxt:content:tailwindcss',
-        handleHotUpdate(ctx) {
+        handleHotUpdate (ctx) {
           if (!contentSources.some(cs => ctx.file.startsWith(cs))) {
             return
           }
