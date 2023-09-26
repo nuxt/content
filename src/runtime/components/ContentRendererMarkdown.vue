@@ -40,6 +40,11 @@ const props = defineProps({
   components: {
     type: Object,
     default: () => ({})
+  },
+
+  data: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -57,7 +62,10 @@ const body = computed(() => {
 const data = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { body, excerpt, ...data } = props.value
-  return data
+  return {
+    ...data,
+    ...props.data
+  }
 })
 
 const mdcComponents = computed(() => {
