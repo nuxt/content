@@ -136,11 +136,11 @@ export interface ModuleOptions {
      * @default {}
      */
     anchorLinks?: boolean | {
-     /**
-       * Sets the maximal depth for anchor link generation
-       *
-       * @default 4
-       */
+      /**
+        * Sets the maximal depth for anchor link generation
+        *
+        * @default 4
+        */
       depth?: number,
       /**
        * Excludes headings from link generation when they are in the depth range.
@@ -339,6 +339,7 @@ export default defineNuxtModule<ModuleOptions>({
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
             code = code.replace(/<ContentSlot/g, '<MDCSlot')
             code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
+            code = code.replace(/ContentSlot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
             return {
               code,
               map: { mappings: '' }
