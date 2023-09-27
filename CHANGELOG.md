@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.8.4
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.3...v2.8.4)
+
+### 🩹 Fixes
+
+- **prose-pre:** Only wrap `slot` in `pre` ([#2348](https://github.com/nuxt/content/pull/2348))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.8.3
 
 [compare changes](https://github.com/nuxt/content/compare/v2.8.2...v2.8.3)
