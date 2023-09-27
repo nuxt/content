@@ -1,5 +1,7 @@
 <template>
-  <pre :class="$props.class"><ProseCode :code="code" :language="language" :filename="filename" :highlights="highlights" :meta="meta"><slot /></ProseCode></pre>
+  <ProseCode :code="code" :language="language" :filename="filename" :highlights="highlights" :meta="meta">
+    <pre :class="$props.class" :style="style"><slot /></pre>
+  </ProseCode>
 </template>
 
 <script setup lang="ts">
@@ -25,6 +27,10 @@ defineProps({
     default: null
   },
   class: {
+    type: String,
+    default: null
+  },
+  style: {
     type: String,
     default: null
   }
