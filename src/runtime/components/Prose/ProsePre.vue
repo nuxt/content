@@ -31,7 +31,7 @@ defineProps({
     default: null
   },
   style: {
-    type: String,
+    type: [String, Object],
     default: null
   }
 })
