@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.8.5
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.4...v2.8.5)
+
+### 🩹 Fixes
+
+- **prose-pre:** `style` prop type ([1edb3501](https://github.com/nuxt/content/commit/1edb3501))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.8.4
 
 [compare changes](https://github.com/nuxt/content/compare/v2.8.3...v2.8.4)
