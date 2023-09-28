@@ -19,7 +19,7 @@ dependencies:
     version: 2.8.4(vue@3.3.4)
   '@nuxt/ui-pro':
     specifier: npm:@nuxt/ui-pro-edge@latest
-    version: /@nuxt/ui-pro-edge@0.0.1-28262031.ce23416(vue@3.3.4)(webpack@5.88.2)
+    version: /@nuxt/ui-pro-edge@0.0.1-28265230.40bb224(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
     specifier: ^0.14.1
     version: 0.14.1
@@ -1072,7 +1072,7 @@ packages:
       shiki-es: 0.14.0
       slugify: 1.6.6
       socket.io-client: 4.7.2
-      ufo: 1.3.0
+      ufo: 1.3.1
       unist-util-stringify-position: 4.0.0
       unstorage: 1.9.0
       ws: 8.14.2
@@ -1318,8 +1318,8 @@ packages:
       - webpack
     dev: false
 
-  /@nuxt/ui-pro-edge@0.0.1-28262031.ce23416(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-uY5i9u2ll9gO7JpPqTtnCIKIB5e1IQzYLOVFVJ3c/wKVGq4jEI73AlSY6ay5TZkiPsl+Af1THhvomxkAdShuvw==}
+  /@nuxt/ui-pro-edge@0.0.1-28265230.40bb224(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-3fkeU9le/lnJbtVGnpeQUUYW1ezEDr1UUX7MmEQAxvZSdiORgcSKnooe7TA34I64s7YhaMcau3ss7DGSl3lMbQ==}
     dependencies:
       '@nuxt/ui': /@nuxt/ui-edge@2.8.1-28265224.a071e4b(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.4.1(vue@3.3.4)
@@ -1534,7 +1534,7 @@ packages:
       radix3: 1.1.0
       tailwind-config-viewer: 1.7.2(tailwindcss@3.3.3)
       tailwindcss: 3.3.3
-      ufo: 1.3.0
+      ufo: 1.3.1
       uncrypto: 0.1.3
     transitivePeerDependencies:
       - rollup
@@ -1621,6 +1621,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -2145,12 +2146,6 @@ packages:
     resolution: {integrity: sha512-DT+iNIRNX884cx0/Q1ja7NyUPpZuv0KPyL5rGNxm1WC1OtHstl7n4Jb7nk+xacNShQMbczJjt8uFzznpp6kYBg==}
     dependencies:
       '@types/unist': 2.0.8
-    dev: false
-
-  /@types/mdast@4.0.0:
-    resolution: {integrity: sha512-YLeG8CujC9adtj/kuDzq1N4tCDYKoZ5l/bnjq8d74+t/3q/tHquJOJKUQXJrLCflOHpKjXgcI/a929gpmLOEng==}
-    dependencies:
-      '@types/unist': 3.0.0
     dev: false
 
   /@types/mdast@4.0.1:
@@ -5676,7 +5671,7 @@ packages:
   /mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
     dependencies:
-      '@types/mdast': 4.0.0
+      '@types/mdast': 4.0.1
     dev: false
 
   /mdn-data@2.0.28:
@@ -6331,6 +6326,9 @@ packages:
     resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
 
   /negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
