@@ -74,11 +74,13 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     },
     function fetchDirConfig (state, params, db) {
       if (params.dirConfig) {
-        const path = (state.result[0] as any)?._path || params.where?.find(w => w._path)?._path as string
-        const dirConfig = db.find((item: any) => item._path === joinURL(path, '_dir'))
-        if (dirConfig) {
-          // @ts-ignore
-          state.dirConfig = { _path: dirConfig._path, ...withoutKeys(['_'])(dirConfig) }
+        const path = (state.result[0] as any)?._path || params.where?.find(w => w._path)?._path as (string | RegExp)
+        if (typeof path === 'string') {
+          const dirConfig = db.find((item: any) => item._path === joinURL(path, '_dir'))
+          if (dirConfig) {
+            // @ts-ignore
+            state.dirConfig = { _path: dirConfig._path, ...withoutKeys(['_'])(dirConfig) }
+          }
         }
       }
       return state
