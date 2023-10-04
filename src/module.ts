@@ -692,7 +692,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Context will use in server
-    nuxt.options.runtimeConfig.content = defu(nuxt.options.runtimeConfig.content, {
+    nuxt.options.runtimeConfig.content = defu(nuxt.options.runtimeConfig.content as any, {
       cacheVersion: CACHE_VERSION,
       cacheIntegrity,
       ...contentContext as any
