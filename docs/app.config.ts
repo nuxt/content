@@ -11,6 +11,15 @@ export default defineAppConfig({
           outline: 'ring-1 ring-inset ring-gray-700 text-white dark:text-white hover:bg-gray-900 disabled:bg-gray-300 dark:hover:bg-gray-900 dark:disabled:bg-gray-300 focus-visible:ring-2 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-400'
         }
       }
+    },
+    content: {
+      prose: {
+        code: {
+          icon: {
+            // terminal: 'i-ph-terminal'
+          }
+        }
+      }
     }
   },
   elements: {

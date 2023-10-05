@@ -12,17 +12,17 @@ dependencies:
     specifier: ^1.1.6
     version: 1.1.6
   '@iconify-json/simple-icons':
-    specifier: ^1.1.72
-    version: 1.1.72
+    specifier: ^1.1.73
+    version: 1.1.73
   '@nuxt/content':
     specifier: ^2.8.5
     version: 2.8.5(vue@3.3.4)
   '@nuxt/ui-pro':
-    specifier: npm:@nuxt/ui-pro-edge@latest
-    version: /@nuxt/ui-pro-edge@0.0.1-28265230.40bb224(vue@3.3.4)(webpack@5.88.2)
+    specifier: ^0.2.1
+    version: 0.2.1(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
-    specifier: ^0.14.1
-    version: 0.14.1
+    specifier: ^1.0.0
+    version: 1.0.0
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -42,8 +42,8 @@ dependencies:
     specifier: ^3.7.4
     version: 3.7.4
   nuxt-og-image:
-    specifier: ^2.0.28
-    version: 2.0.28
+    specifier: ^2.1.1
+    version: 2.1.1(vue@3.3.4)
 
 devDependencies:
   '@nuxt/devtools':
@@ -833,8 +833,8 @@ packages:
       '@iconify/types': 2.0.0
     dev: false
 
-  /@iconify-json/simple-icons@1.1.72:
-    resolution: {integrity: sha512-ylH9Q9CE61fcj8ZTeNeydC3wk8gEaoArUbkTdEpIHx4TRqr9ryhQ1XYMffuz1o636NWX/QhtR0sgpZHDjQg6WQ==}
+  /@iconify-json/simple-icons@1.1.73:
+    resolution: {integrity: sha512-L9ShYHhAkJ7KHx+6wM5HK2tnCkAIKjSIyDUtTexoG8LcZF7MgiUloNfDGPDa4Vt0Oy5yHlnFBiOvqy2ojKB/8Q==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false
@@ -854,6 +854,15 @@ packages:
       local-pkg: 0.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@iconify/vue@4.1.1(vue@3.3.4):
+    resolution: {integrity: sha512-RL85Bm/DAe8y6rT6pux7D2FJSiUEM/TPfyK7GrbAOfTSwrhvwJW+S5yijdGcmtXouA8MtuH9C7l4hiSE4mLMjg==}
+    peerDependencies:
+      vue: '>=3'
+    dependencies:
+      '@iconify/types': 2.0.0
+      vue: 3.3.4
     dev: false
 
   /@ioredis/commands@1.2.0:
@@ -1272,8 +1281,41 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/ui-edge@2.8.1-28265313.2fc9385(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-75eA4S8mpNKuNyTCU/MiTbBb+UKPOSaivFeBv/jUJtbq4Q7zwqAgfdP0kwSCxhe1t1vQqa8RinZR0SRYcOrtFg==}
+  /@nuxt/ui-pro@0.2.1(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-6vJaXmUE/vpPGwA59EbXocupONwdLdDhYwr+l9Ziz5iIgw3QWxfvOfR4mu3xSmeEXel2Ns6goZ4ktm8SDInXlw==}
+    dependencies:
+      '@nuxt/ui': 2.9.0(vue@3.3.4)(webpack@5.88.2)
+      '@vueuse/core': 10.4.1(vue@3.3.4)
+      defu: 6.1.2
+      nuxt-icon: 0.5.0(vue@3.3.4)
+      ofetch: 1.3.3
+      pathe: 1.1.1
+      tailwind-merge: 1.14.0
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - focus-trap
+      - idb-keyval
+      - jwt-decode
+      - nprogress
+      - qrcode
+      - rollup
+      - sortablejs
+      - supports-color
+      - ts-node
+      - universal-cookie
+      - vue
+      - webpack
+    dev: false
+
+  /@nuxt/ui-templates@1.3.1:
+    resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
+
+  /@nuxt/ui@2.9.0(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-e7Xo7xq9C71zdkLFO/IRMAxsX0ms3wMWxQq2kKUuh/ZiLD7/NjxeDle/XAwEAfzn5vdXCkygIK3w0R5UO9I5Pg==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.2.0(tailwindcss@3.3.3)
@@ -1317,37 +1359,6 @@ packages:
       - vue
       - webpack
     dev: false
-
-  /@nuxt/ui-pro-edge@0.0.1-28265230.40bb224(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-3fkeU9le/lnJbtVGnpeQUUYW1ezEDr1UUX7MmEQAxvZSdiORgcSKnooe7TA34I64s7YhaMcau3ss7DGSl3lMbQ==}
-    dependencies:
-      '@nuxt/ui': /@nuxt/ui-edge@2.8.1-28265313.2fc9385(vue@3.3.4)(webpack@5.88.2)
-      '@vueuse/core': 10.4.1(vue@3.3.4)
-      ofetch: 1.3.3
-      pathe: 1.1.1
-      tailwind-merge: 1.14.0
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - async-validator
-      - axios
-      - change-case
-      - drauu
-      - focus-trap
-      - idb-keyval
-      - jwt-decode
-      - nprogress
-      - qrcode
-      - rollup
-      - sortablejs
-      - supports-color
-      - ts-node
-      - universal-cookie
-      - vue
-      - webpack
-    dev: false
-
-  /@nuxt/ui-templates@1.3.1:
-    resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
 
   /@nuxt/vite-builder@3.7.4(vue@3.3.4):
     resolution: {integrity: sha512-EWZlUzYvkSfIZPA0pQoi7P++68Mlvf5s/G3GBPksS5JB/9l3yZTX+ZqGvLeORSBmoEpJ6E2oMn2WvCHV0W5y6Q==}
@@ -1410,15 +1421,15 @@ packages:
       - vti
       - vue-tsc
 
-  /@nuxthq/studio@0.14.1:
-    resolution: {integrity: sha512-9Pdkiph1D7AoWess+pcj4AOinTnpEKpB0F0zmcbZt05LZr1urEab6nvpWlhbaen5mtkqhXlWe6skbBrQVNv17w==}
+  /@nuxthq/studio@1.0.0:
+    resolution: {integrity: sha512-W4dUsj4ypJc2jG6cE8ECmnAx99SKX0qqzoAYqj1KJ9QmknLON/DIHdyhUtIoPMHlzcBgErTeUzy4prxsO5cHBg==}
     dependencies:
       '@nuxt/kit': 3.7.4
       defu: 6.1.2
       nuxt-component-meta: 0.5.4
       nuxt-config-schema: 0.4.6
       socket.io-client: 4.7.2
-      ufo: 1.3.0
+      ufo: 1.3.1
     transitivePeerDependencies:
       - bufferutil
       - rollup
@@ -3166,8 +3177,8 @@ packages:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
     engines: {node: '>=10'}
 
-  /chrome-launcher@1.0.0:
-    resolution: {integrity: sha512-74IMFVfgni/bQ4GotUNJpH2vDR+Sh9cXNPVhPXiedeiB0+5j7/8i8LAqS7WlyNSKqtxJ/CgbOpBDPLkzqDVhlw==}
+  /chrome-launcher@1.1.0:
+    resolution: {integrity: sha512-rJYWeEAERwWIr3c3mEVXwNiODPEdMRlRxHc47B1qHPOolHZnkj7rMv1QSUfPoG6MgatWj5AxSpnKKR4QEwEQIQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
     dependencies:
@@ -3412,8 +3423,8 @@ packages:
     dependencies:
       postcss: 8.4.30
 
-  /css-inline@0.10.5:
-    resolution: {integrity: sha512-+VR6TsMVu4rryyab/KhfLjIziqDlD4iVxSkvqTTie3+IV5dsMAh4hkBKAJ2z8vgYEIr5bMdlbCQ0xPBXuLgyZw==}
+  /css-inline@0.11.0:
+    resolution: {integrity: sha512-hZ8sTouIicEUhVqKEeeire6kePeCDoIBvWTSPbHc7dK4Za1odVmQ6gMgFcH701gkKGP6Uic3zcQACEqSP3sJig==}
     dev: false
 
   /css-loader@5.2.7(webpack@5.88.2):
@@ -6656,8 +6667,19 @@ packages:
       - supports-color
     dev: false
 
-  /nuxt-og-image@2.0.28:
-    resolution: {integrity: sha512-gUXOx5OhqGY8buHofOCOSebNTEfwNuSDmsRQ1fnNZw0yNmmBG9FBBMhovH5V9w/EJxLqfSO+MfOi3Rh37omFAA==}
+  /nuxt-icon@0.5.0(vue@3.3.4):
+    resolution: {integrity: sha512-ND4yh8kW4VyIbORP3cWjgVrOAvy6QSDFDTJltakdqmxVfVysNIs/bx2NzlkHeR1EOS8E/jVcemfTPmRsJ7WUVw==}
+    dependencies:
+      '@iconify/vue': 4.1.1(vue@3.3.4)
+      '@nuxt/kit': 3.7.4
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+      - vue
+    dev: false
+
+  /nuxt-og-image@2.1.1(vue@3.3.4):
+    resolution: {integrity: sha512-PL1Nqz4iW/CxEdrw96TFB3GSzUhEdipXInHzZsd2yMV0pCpl9vUvaikGelt5IOa8q9//2iSaX635dY3P66wR0w==}
     dependencies:
       '@nuxt/kit': 3.7.4
       '@resvg/resvg-js': 2.4.1
@@ -6665,8 +6687,8 @@ packages:
       '@types/fs-extra': 11.0.2
       birpc: 0.2.14
       chalk: 5.3.0
-      chrome-launcher: 1.0.0
-      css-inline: 0.10.5
+      chrome-launcher: 1.1.0
+      css-inline: 0.11.0
       defu: 6.1.2
       execa: 8.0.1
       fast-glob: 3.3.1
@@ -6675,15 +6697,15 @@ packages:
       globby: 13.2.2
       image-size: 1.0.2
       launch-editor: 2.6.0
-      nuxt-site-config: 1.3.0
-      nuxt-site-config-kit: 1.3.0
+      nuxt-site-config: 1.4.0(vue@3.3.4)
+      nuxt-site-config-kit: 1.4.0(vue@3.3.4)
       nypm: 0.3.3
       ofetch: 1.3.3
       ohash: 1.1.3
       pathe: 1.1.1
       playwright-core: 1.38.1
       radix3: 1.1.0
-      satori: 0.10.4
+      satori: 0.10.8
       satori-html: 0.3.2
       sirv: 2.0.3
       std-env: 3.4.3
@@ -6691,7 +6713,7 @@ packages:
       terminate: 2.6.1
       tinyws: 0.1.0(ws@8.14.2)
       twemoji: 14.0.2
-      ufo: 1.3.0
+      ufo: 1.3.1
       ws: 8.14.2
       yoga-wasm-web: 0.3.3
     transitivePeerDependencies:
@@ -6699,34 +6721,37 @@ packages:
       - rollup
       - supports-color
       - utf-8-validate
+      - vue
     dev: false
 
-  /nuxt-site-config-kit@1.3.0:
-    resolution: {integrity: sha512-y5o41zdeTJ/2ngKrF2PjeG4H1CMyXNNZmpNyhOGiXp7niTD17x5Uw5t+1+zIFfIMJeJ4yZje5gNaJtR+wHNgrg==}
+  /nuxt-site-config-kit@1.4.0(vue@3.3.4):
+    resolution: {integrity: sha512-zQDlpXMkhLYBTmi4P+dDmHvHdQ7RZC7lVWBxopX27RS9Pf6xRzQR1H7WN2kgjEkbZRVCvYaUS9BsYsVF6Yqu8A==}
     dependencies:
       '@nuxt/kit': 3.7.4
       '@nuxt/schema': 3.7.4
       pkg-types: 1.0.3
-      site-config-stack: 1.3.0
+      site-config-stack: 1.4.0(vue@3.3.4)
       std-env: 3.4.3
       ufo: 1.3.1
     transitivePeerDependencies:
       - rollup
       - supports-color
+      - vue
     dev: false
 
-  /nuxt-site-config@1.3.0:
-    resolution: {integrity: sha512-V8vGhyqif4J9nPI3FSVXwcGVSNtZZYHozfC+UV9RGtdYwRMdEbobkUROJVYEgm7pqPqKM1q2EbXEMEc5UQzG0A==}
+  /nuxt-site-config@1.4.0(vue@3.3.4):
+    resolution: {integrity: sha512-63JJy03qTwn+1tMXAt9Nff41fp3WsBd/NLv3/giAXUPiilgPH7Tdyf/2zKaMacXsZUJ3ySY8KgNHI6t2lJmwaQ==}
     dependencies:
       '@nuxt/kit': 3.7.4
       '@nuxt/schema': 3.7.4
-      nuxt-site-config-kit: 1.3.0
+      nuxt-site-config-kit: 1.4.0(vue@3.3.4)
       pathe: 1.1.1
-      site-config-stack: 1.3.0
+      site-config-stack: 1.4.0(vue@3.3.4)
       ufo: 1.3.1
     transitivePeerDependencies:
       - rollup
       - supports-color
+      - vue
     dev: false
 
   /nuxt@3.7.4:
@@ -7970,8 +7995,8 @@ packages:
       ultrahtml: 1.5.2
     dev: false
 
-  /satori@0.10.4:
-    resolution: {integrity: sha512-GJNIsuiXhiC9kWGLvz04Op5DZy2UFYZAWsuUtkTlQt3r15o0K96PeD+FMfGN4luMPUHc4uV9gXqAoPxOK0omSw==}
+  /satori@0.10.8:
+    resolution: {integrity: sha512-WlPLxgpx5kIyMuOO6qi98DhZGIbRk5XJRqENkt6D6gyDBWGyo3M5kcSl0X/oSFHUH+n4unlzwMejoPM47s4zug==}
     engines: {node: '>=16'}
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
@@ -8124,10 +8149,13 @@ packages:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
     dev: true
 
-  /site-config-stack@1.3.0:
-    resolution: {integrity: sha512-vO84sAGsUvAprX5YAAoZ2TGDDD+XnqougdwlMaJYeC63fS4D+ho5cA6Oss7KInIvqZBjJXWSGx1RPA8mmQsTbw==}
+  /site-config-stack@1.4.0(vue@3.3.4):
+    resolution: {integrity: sha512-768t6mk7024SnhtOQJNLWj+eSsUsGLcP5lnmD1ivNQip+mVnF6Xw+7ls08X6J9pF4IWkPdSNP+fR3GTXb7U3Vw==}
+    peerDependencies:
+      vue: ^3
     dependencies:
       ufo: 1.3.1
+      vue: 3.3.4
     dev: false
 
   /skin-tone@2.0.0:

@@ -46,16 +46,6 @@ export default defineNuxtConfig({
     // Shortcuts
     '/document-driven': { redirect: '/document-driven/introduction' }
   },
-
-  content: {
-    highlight: {
-      preload: ['xml'],
-      theme: {
-        default: 'solarized-light',
-        dark: 'dark-plus'
-      }
-    }
-  },
   nitro: {
     prerender: {
       routes: [
@@ -90,19 +80,6 @@ export default defineNuxtConfig({
     download: true,
     families: {
       'DM+Sans': [400, 500, 600, 700]
-    }
-  },
-
-  runtimeConfig: {
-    public: {
-      algolia: {
-        applicationId: '',
-        apiKey: '',
-        langAttribute: 'lang',
-        docSearch: {
-          indexName: 'content-nuxtjs'
-        }
-      }
     }
   },
 
