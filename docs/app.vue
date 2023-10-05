@@ -129,11 +129,3 @@ provide('navigation', navigation)
     <LazyUDocsSearch :files="files" :navigation="navigation" :links="links" />
   </ClientOnly>
 </template>
-
-<style>
-html.dark .shiki,
-html.dark .shiki span {
-  color: var(--s-dark) !important;
-  background-color: var(--s-dark-bg) !important;
-}
-</style>
