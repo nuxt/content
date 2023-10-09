@@ -89,8 +89,8 @@ devDependencies:
     specifier: 3.7.4
     version: 3.7.4(rollup@3.29.3)(vitest@0.34.6)
   '@nuxthq/studio':
-    specifier: ^0.14.1
-    version: 0.14.1(rollup@3.29.3)
+    specifier: ^1.0.0
+    version: 1.0.0(rollup@3.29.3)
   '@nuxtjs/eslint-config-typescript':
     specifier: latest
     version: 12.1.0(eslint@8.50.0)(typescript@5.2.2)
@@ -1269,8 +1269,8 @@ packages:
       - vue-tsc
     dev: true
 
-  /@nuxthq/studio@0.14.1(rollup@3.29.3):
-    resolution: {integrity: sha512-9Pdkiph1D7AoWess+pcj4AOinTnpEKpB0F0zmcbZt05LZr1urEab6nvpWlhbaen5mtkqhXlWe6skbBrQVNv17w==}
+  /@nuxthq/studio@1.0.0(rollup@3.29.3):
+    resolution: {integrity: sha512-W4dUsj4ypJc2jG6cE8ECmnAx99SKX0qqzoAYqj1KJ9QmknLON/DIHdyhUtIoPMHlzcBgErTeUzy4prxsO5cHBg==}
     dependencies:
       '@nuxt/kit': 3.7.4(rollup@3.29.3)
       defu: 6.1.2
