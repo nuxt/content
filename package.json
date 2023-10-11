@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.7.4",
-    "@nuxtjs/mdc": "^0.2.1",
+    "@nuxtjs/mdc": "^0.2.2",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
     "defu": "^6.1.2",
@@ -78,7 +78,7 @@
     "@types/ws": "^8.5.6",
     "c8": "^8.0.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "globby": "^13.2.2",
     "husky": "^8.0.3",
     "jiti": "^1.20.0",
@@ -91,7 +91,7 @@
     "vitest": "^0.34.6",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@8.9.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {

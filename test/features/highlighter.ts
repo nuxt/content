@@ -38,7 +38,7 @@ export const testHighlighter = () => {
       const code = parsed.body.children[0].children[0].children[0].children as any[]
       code.forEach((token, i) => {
         if (token.props.style) {
-          expect(token.props.style).includes(`color:${colors.default[i]}`)
+          expect(token.props.style).includes(`--shiki-default:${colors.default[i]}`)
           expect(token.props.style).includes(`--shiki-dark:${colors.dark[i]}`)
         } else {
           expect(style).toContain(`.${token.props.class}`)
