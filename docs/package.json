@@ -13,7 +13,7 @@
     "@iconify-json/simple-icons": "^1.1.74",
     "@nuxt/content": "^2.8.5",
     "@nuxt/ui-pro": "^0.2.1",
-    "@nuxthq/studio": "^1.0.0",
+    "@nuxthq/studio": "^1.0.2",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/plausible": "^0.2.3",
