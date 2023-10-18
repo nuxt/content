@@ -206,9 +206,9 @@ export interface ModuleOptions {
     ignoredTags?: Array<string>
     /**
      * Query used to filter contents that must be searched.
-     * @default {}
+     * @default { _partial: false, _draft: false}
      */
-    ignoreQuery?: QueryBuilderWhere
+    filterQuery?: QueryBuilderWhere
     /**
      * API return indexed contents to improve client-side load time.
      * This option will use MiniSearch to create the index.
@@ -435,39 +435,21 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (options.search) {
-        if (options.search.indexed) {
-          // Will return a string
-          nitroConfig.handlers.push({
-            method: 'get',
-            route: nuxt.options.dev
-              ? `${options.api.baseURL}/indexed-search`
-              : `${options.api.baseURL}/indexed-search-${buildIntegrity}`,
-            handler: resolveRuntimeModule('./server/api/indexed-search')
-          })
-        } else {
-          nitroConfig.handlers.push({
-            method: 'get',
-            route: nuxt.options.dev
-              ? `${options.api.baseURL}/search.json`
-              : `${options.api.baseURL}/search.${buildIntegrity}.json`,
+        const route =  nuxt.options.dev
+              ? `${options.api.baseURL}/search`
+              : `${options.api.baseURL}/search-${buildIntegrity}`
+
+        nitroConfig.handlers.push({
+          method: 'get',
+            route,
             handler: resolveRuntimeModule('./server/api/search')
-          })
-        }
+        })
 
         nitroConfig.routeRules = nitroConfig.routeRules || {}
-
-        if (!nuxt.options.dev) {
-          if (options.search.indexed) {
-            nitroConfig.routeRules[`${options.api.baseURL}/indexed-search-${buildIntegrity}`] = {
-              prerender: true,
-              // Use text/plain to avoid Nitro render an index.html
-              headers: { 'Content-Type': 'text/plain' }
-            }
-          } else {
-            nitroConfig.routeRules[`${options.api.baseURL}/search.${buildIntegrity}.json`] = {
-              prerender: true
-            }
-          }
+        nitroConfig.routeRules[route] = {
+          prerender: true,
+          // Use text/plain to avoid Nitro render an index.html
+          headers: options.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
         }
       }
 
@@ -538,7 +520,7 @@ export default defineNuxtModule<ModuleOptions>({
       const defaultSearchOptions: Partial<ModuleOptions['search']> = {
         indexed: true,
         ignoredTags: ['style', 'code'],
-        ignoreQuery: {},
+        filterQuery: { _draft: false, _partial: false },
         options: {
           fields: ['title', 'content', 'titles'],
           storeFields: ['title', 'content', 'titles'],

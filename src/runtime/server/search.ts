@@ -2,9 +2,9 @@ import { H3Event } from 'h3'
 import { ParsedContent, QueryBuilderWhere } from '../types'
 import { serverQueryContent } from '#content/server'
 
-export async function serverSearchContent (event: H3Event, ignoreQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
-  if (ignoreQuery) {
-    return await serverQueryContent(event).where(ignoreQuery).find()
+export async function serverSearchContent (event: H3Event, filterQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
+  if (filterQuery) {
+    return await serverQueryContent(event).where(filterQuery).find()
   } else {
     return await serverQueryContent(event).find()
   }
