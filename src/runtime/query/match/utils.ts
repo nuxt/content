@@ -1,4 +1,4 @@
-import { SortOptions } from '../../types'
+import type { SortOptions } from '../../types'
 
 /**
  * Retrive nested value from object by path

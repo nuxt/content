@@ -10,7 +10,8 @@ const { layout } = useContent()
 </template>
 
 <style>
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   min-height: 100vh;

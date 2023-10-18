@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url'
 import { resolve } from 'pathe'
 import contentModule from '../../..'
 // import customDriver from './drivers/github.mjs'
@@ -28,7 +29,7 @@ export default defineNuxtConfig({
     sources: {
       github: {
         prefix: '/',
-        driver: resolve(__dirname, 'drivers', 'github.mjs'),
+        driver: process.env.NODE_ENV === 'development' ? pathToFileURL(resolve(__dirname, 'drivers', 'github.mjs')).href : resolve(__dirname, 'drivers', 'github.mjs'),
         repo: 'nuxt/content',
         branch: 'main',
         dir: '/test/fixtures/basic/content'

@@ -1,7 +1,7 @@
 import { watch, Ref, unref, ref } from 'vue'
 import type { editor as Editor } from 'monaco-editor-core'
 import { createSingletonPromise } from '@vueuse/core'
-import { language as mdcLanguage } from './mdc.tmLanguage'
+import { language as mdcLanguage } from '@nuxtlabs/monarch-mdc'
 
 declare global {
   interface Window {

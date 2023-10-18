@@ -1,6 +1,6 @@
 contact_links:
   - name: 📚 Documentation
-    url: https://content.nuxtjs.org/
+    url: https://content.nuxt.com/
     about: Check documentation for usage
   - name: 💬 Discussions
     url: https://github.com/nuxt/content/discussions

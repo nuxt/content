@@ -22,14 +22,14 @@ You are visiting document: {{ $doc._id }}.
 Current route is: {{ $route.path }}
 
 
-::alert
+::callout
 ---
 type: success
 ---
 This is an alert for {{ type }}
 ::
 
-::alert{type="danger"}
+::callout{type="danger"}
 This is an alert for {{ type }}
 ::
 

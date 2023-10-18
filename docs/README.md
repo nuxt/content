@@ -1,8 +1,8 @@
-[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxtjs.org)
+[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxt.com)
 
 # Documentation
 
-This documentation uses [Docus](https://github.com/nuxt-themes/docus).
+This documentation uses [Nuxt UI](https://ui.nuxt.com) Pro.
 
 ## 💻 Development
 

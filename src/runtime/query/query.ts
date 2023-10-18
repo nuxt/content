@@ -1,6 +1,5 @@
-import type { QueryBuilder, SortOptions } from '../types'
-import { ParsedContent } from '../types'
-import { ContentQueryBuilder, ContentQueryBuilderParams, ContentQueryFetcher } from '../types/query'
+import type { QueryBuilder, SortOptions, ParsedContent } from '../types'
+import type { ContentQueryBuilder, ContentQueryBuilderParams, ContentQueryFetcher } from '../types/query'
 import { ensureArray } from './match/utils'
 
 const arrayParams = ['sort', 'where', 'only', 'without']

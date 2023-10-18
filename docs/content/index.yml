@@ -1,0 +1,66 @@
+navigation: false
+hero:
+  title: 'Content made easy for<br><span class="text-primary-400">Vue Developers</span>'
+  description: 'Nuxt Content reads the <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">content/</span> directory in your project, parses <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.md</span>, <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.yml</span>,
+ <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.csv</span> and <span class="font-mono border border-gray-700 bg-gray-800 px-1.5 py-0.5 rounded-md">.json</span> files to create a powerful data layer for your application. Use Vue components in Markdown with the MDC syntax.'
+  button: Get started
+sections:
+  - title: Start your next project with<br><span class="text-primary-400">powerful features</span>
+    slot: features
+    class: 'dark:lg:bg-gray-950/50'
+    toolsCards:
+      - title: 'File-based CMS'
+        description: 'Write your content in Markdown, YML, CSV or JSON and query it in your components with powerful composables.'
+        icon: 'i-ph-files'
+        to: '/usage/content-directory'
+      - title: 'Query Builder'
+        description: 'Query your content with a MongoDB-like API to fetch the right data at the right time.'
+        icon: 'i-ph-funnel'
+        to: '/composables/query-content'
+      - title: 'Flexible Database'
+        description: 'Add custom fields to your content, making it suitable for various types of projects and content structures.'
+        icon: 'i-ph-database'
+        to: '/usage/markdown#front-matter'
+      - title: 'Markdown with Components'
+        description: "Use Vue components in Markdown files, with props, slots and nested components with our improved Markdown syntax."
+        icon: 'i-simple-icons-markdown'
+        to: '/usage/markdown#vue-components'
+      - title: 'Code highlighting'
+        description: 'Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.'
+        icon: 'i-ph-code'
+        to: ''
+      - title: 'Deploy everywhere.'
+        description: "Nuxt Content support both Static Generation, Node.js hosting or even the Workers environements."
+        icon: 'i-ph-rocket-launch'
+        to: ''
+  - subTitle: 'Get started <span class="text-primary-400">Now</span>'
+    subDescription: "Nuxt Content is a Git-based Headless CMS for Vue.js developers. It allows you to build your content with Markdown and JSON, and query it with a MongoDB-like API."
+    slot: get-started
+    button: 'Read the documentation'
+    external: 'Explore Content Themes'
+  - slot: cta
+    subTitle: Trusted and supported by our<br />amazing community
+    avatarText: Created and maintained by 180+ contributors
+  - slot: meet-studio
+    title: Meet Studio <br /><span class="text-primary-400">The pro version of Nuxt Content</span>
+    description: 'Nuxt Studio lets you edit your websites made with Nuxt Content on any devices and by anyone. Opening a new door between git-based CMS and collaboration with your marketing teams.'
+    button: Try it now!
+    list:
+      - Sync with GitHub
+      - Preview links
+      - Enhanced Markdown Editor
+      - App Config Editor
+      - Live collaboration
+      - Edit on mobile
+      - Media Library
+      - Deployment
+  - slot: start-building
+    subTitle: Start building <span class="text-primary-400">Today</span>
+    subDescription: Are you ready to start building your next project with Nuxt Content? Our documentation will help you get up and running in no time.
+    cards:
+      - title: Getting Started
+        description: Create a new content-driven project with Nuxt Content or add it to your existing project.
+        to: '/get-started/installation'
+      - title: Playground
+        description: Play with Nuxt Content in the browser with our Stackblitz playground.
+        to: '/playground'
