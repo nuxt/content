@@ -30,7 +30,6 @@ export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, 
     return results
   }
 
-
   if (!options.miniSearch) {
     throw createError({
       statusCode: 500,
@@ -38,7 +37,7 @@ export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, 
     })
   }
 
-    const { data } = await useFetch<DataItem[]>(searchRoute)
+  const { data } = await useFetch<DataItem[]>(searchRoute)
 
   if (!data.value) {
     throw createError({

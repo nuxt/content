@@ -18,7 +18,7 @@ const search = ref('')
 // const result = await searchContent(search, { miniSearch })
 
 // Usage for indexed search
-const result = await searchContent(search, { fetch: { lazy: true, server: false } })
+const result = await searchContent(search)
 </script>
 
 <template>

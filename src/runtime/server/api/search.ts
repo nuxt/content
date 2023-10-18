@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
+import MiniSearch from 'minisearch'
 import { serverSearchContent, splitPageIntoSections } from '../search'
 import { useRuntimeConfig } from '#imports'
-import MiniSearch from 'minisearch'
 
 export default defineEventHandler(async (event) => {
   const runtimeConfig = useRuntimeConfig()

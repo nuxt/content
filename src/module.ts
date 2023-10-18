@@ -435,14 +435,14 @@ export default defineNuxtModule<ModuleOptions>({
       )
 
       if (options.search) {
-        const route =  nuxt.options.dev
-              ? `${options.api.baseURL}/search`
-              : `${options.api.baseURL}/search-${buildIntegrity}`
+        const route = nuxt.options.dev
+          ? `${options.api.baseURL}/search`
+          : `${options.api.baseURL}/search-${buildIntegrity}`
 
         nitroConfig.handlers.push({
           method: 'get',
-            route,
-            handler: resolveRuntimeModule('./server/api/search')
+          route,
+          handler: resolveRuntimeModule('./server/api/search')
         })
 
         nitroConfig.routeRules = nitroConfig.routeRules || {}
