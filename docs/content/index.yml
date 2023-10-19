@@ -7,7 +7,6 @@ hero:
 sections:
   - title: Start your next project with<br><span class="text-primary-400">powerful features</span>
     slot: features
-    class: 'dark:lg:bg-gray-950/50'
     toolsCards:
       - title: 'File-based CMS'
         description: 'Write your content in Markdown, YML, CSV or JSON and query it in your components with powerful composables.'
