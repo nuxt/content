@@ -27,7 +27,7 @@ sections:
       - title: 'Code highlighting'
         description: 'Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.'
         icon: 'i-ph-code'
-        to: ''
+        to: '/usage/markdown#code-highlighting'
       - title: 'Deploy everywhere.'
         description: "Nuxt Content support both Static Generation, Node.js hosting or even the Workers environements."
         icon: 'i-ph-rocket-launch'
