@@ -1,3 +1,4 @@
+import { LayoutKey } from '#build/types/layouts'
 import type { Theme } from 'shiki-es'
 import type { StorageValue } from 'unstorage'
 
@@ -48,7 +49,7 @@ export interface ParsedContentMeta extends ParsedContentInternalMeta {
   /**
    * Layout
    */
-  layout?: string
+  layout?: LayoutKey
 
   [key: string]: any
 }
