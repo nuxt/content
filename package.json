@@ -43,8 +43,8 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.7.4",
-    "@nuxtjs/mdc": "^0.2.2",
+    "@nuxt/kit": "^3.8.0",
+    "@nuxtjs/mdc": "^0.2.3",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
     "defu": "^6.1.2",
@@ -70,20 +70,20 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.5.2",
-    "@nuxt/schema": "3.7.4",
-    "@nuxt/test-utils": "3.7.4",
-    "@nuxthq/studio": "^1.0.0",
+    "@nuxt/schema": "3.8.0",
+    "@nuxt/test-utils": "3.8.0",
+    "@nuxthq/studio": "^1.0.2",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@nuxtjs/tailwindcss": "^6.8.0",
-    "@types/ws": "^8.5.6",
+    "@types/ws": "^8.5.8",
     "c8": "^8.0.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "globby": "^13.2.2",
     "husky": "^8.0.3",
     "jiti": "^1.20.0",
     "lint-staged": "^14.0.1",
-    "nuxt": "3.7.4",
+    "nuxt": "3.8.0",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.2.1",
@@ -91,7 +91,7 @@
     "vitest": "^0.34.6",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.9.0",
+  "packageManager": "pnpm@8.9.2",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
