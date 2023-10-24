@@ -30,7 +30,7 @@
     "dev:build": "nuxi build playground/basic",
     "prepare": "nuxi prepare playground/basic",
     "dev:fixtures": "./scripts/fixture.sh",
-    "build": "nuxt-module-build && pnpm build:web-types",
+    "build": "nuxt-module-build build && pnpm build:web-types",
     "build:docs": "(cd docs && nuxi build)",
     "build:web-types": "vue-docgen-web-types src/runtime/components/ ./dist/web-types.json",
     "example": "./scripts/example.sh",
@@ -114,5 +114,10 @@
     "hooks": {
       "after:bump": "npx changelogen@latest --no-commit --no-tag --output --r $(node -p \"require('./package.json').version\")"
     }
+  },
+  "build": {
+    "externals": [
+      "#build/types/layouts"
+    ]
   }
 }
