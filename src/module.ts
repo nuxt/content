@@ -233,9 +233,9 @@ export interface ModuleOptions {
    */
   respectPathCase: boolean
   experimental: {
-    clientDB: boolean
-    stripQueryParameters: boolean
-    advanceQuery: boolean
+    clientDB?: boolean
+    stripQueryParameters?: boolean
+    advanceQuery?: boolean
   }
 }
 
