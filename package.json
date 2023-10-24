@@ -82,7 +82,7 @@
     "globby": "^13.2.2",
     "husky": "^8.0.3",
     "jiti": "^1.20.0",
-    "lint-staged": "^14.0.1",
+    "lint-staged": "^15.0.2",
     "nuxt": "3.8.0",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
