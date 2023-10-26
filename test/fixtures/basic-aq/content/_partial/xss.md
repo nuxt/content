@@ -1,1 +1,1 @@
-<script>console.log('xss')</script>
+script: <script>console.log('xss')</script>

@@ -7,7 +7,6 @@ hero:
 sections:
   - title: Start your next project with<br><span class="text-primary-400">powerful features</span>
     slot: features
-    class: 'dark:lg:bg-gray-950/50'
     toolsCards:
       - title: 'File-based CMS'
         description: 'Write your content in Markdown, YML, CSV or JSON and query it in your components with powerful composables.'
@@ -28,7 +27,7 @@ sections:
       - title: 'Code highlighting'
         description: 'Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.'
         icon: 'i-ph-code'
-        to: ''
+        to: '/usage/markdown#code-highlighting'
       - title: 'Deploy everywhere.'
         description: "Nuxt Content support both Static Generation, Node.js hosting or even the Workers environements."
         icon: 'i-ph-rocket-launch'

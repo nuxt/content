@@ -40,12 +40,12 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
 </script>
 
 <template>
+  <div class="gradient" />
   <ULandingHero
     align="center"
     direction="vertical"
     :ui="{ base: 'relative z-[1]', container: 'flex flex-col gap-6 lg:gap-8', description: 'mt-6 text-lg/8 lg:px-28 text-gray-400' }"
   >
-    <div class="gradient" />
     <div class="flex w-full justify-center order-first">
       <UBadge
         class="w-fit"
@@ -334,13 +334,12 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
 
 <style scoped lang="postcss">
 .gradient {
-  position: absolute;
+  position: fixed;
   top: 25vh;
-  left: 0;
   width: 100%;
   height: 30vh;
   background: radial-gradient(50% 50% at 50% 50%, #00DC82 0%, rgba(0, 220, 130, 0) 100%);
-  filter: blur(150px);
+  filter: blur(180px);
   opacity: 0.6;
   z-index: -1;
 }
