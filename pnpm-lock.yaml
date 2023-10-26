@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.8.0
     version: 3.8.0(rollup@3.29.4)
   '@nuxtjs/mdc':
-    specifier: ^0.2.3
-    version: 0.2.3(rollup@3.29.4)
+    specifier: ^0.2.6
+    version: 0.2.6(rollup@3.29.4)
   '@vueuse/head':
     specifier: ^2.0.0
     version: 2.0.0
@@ -18,11 +18,11 @@ dependencies:
     specifier: ^3.2.3
     version: 3.2.3
   defu:
-    specifier: ^6.1.2
-    version: 6.1.2
+    specifier: ^6.1.3
+    version: 6.1.3
   destr:
-    specifier: ^2.0.1
-    version: 2.0.1
+    specifier: ^2.0.2
+    version: 2.0.2
   json5:
     specifier: ^2.2.3
     version: 2.2.3
@@ -95,8 +95,8 @@ devDependencies:
     specifier: latest
     version: 12.1.0(eslint@8.52.0)(typescript@5.2.2)
   '@nuxtjs/tailwindcss':
-    specifier: ^6.8.0
-    version: 6.8.0(rollup@3.29.4)
+    specifier: ^6.8.1
+    version: 6.8.1(rollup@3.29.4)
   '@types/ws':
     specifier: ^8.5.8
     version: 8.5.8
@@ -514,11 +514,11 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     dev: true
 
-  /@csstools/selector-specificity@2.2.0(postcss-selector-parser@6.0.13):
-    resolution: {integrity: sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==}
+  /@csstools/selector-specificity@3.0.0(postcss-selector-parser@6.0.13):
+    resolution: {integrity: sha512-hBI9tfBtuPIi885ZsZ32IMEU/5nlZH/KOVYJCOh7gyMxaVLGmLedYqFN6Ui1LXkI8JlC8IsuC0rF0btcRZKd5g==}
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
-      postcss-selector-parser: ^6.0.10
+      postcss-selector-parser: ^6.0.13
     dependencies:
       postcss-selector-parser: 6.0.13
     dev: true
@@ -1253,7 +1253,7 @@ packages:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
       birpc: 0.2.14
       consola: 3.2.3
-      destr: 2.0.1
+      destr: 2.0.2
       error-stack-parser-es: 0.1.1
       execa: 7.2.0
       fast-glob: 3.3.1
@@ -1315,7 +1315,7 @@ packages:
       '@nuxt/schema': 3.8.0(rollup@3.29.4)
       c12: 1.5.1
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       globby: 13.2.2
       hash-sum: 2.0.0
       ignore: 5.2.4
@@ -1375,7 +1375,7 @@ packages:
     dependencies:
       '@nuxt/ui-templates': 1.3.1
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       hookable: 5.5.3
       pathe: 1.1.1
       pkg-types: 1.0.3
@@ -1396,8 +1396,8 @@ packages:
       ci-info: 3.9.0
       consola: 3.2.3
       create-require: 1.1.1
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       dotenv: 16.3.1
       git-url-parse: 13.1.1
       is-docker: 3.0.0
@@ -1435,7 +1435,7 @@ packages:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
       '@nuxt/schema': 3.8.0(rollup@3.29.4)
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       execa: 8.0.1
       get-port-please: 3.1.1
       ofetch: 1.3.3
@@ -1467,7 +1467,7 @@ packages:
       clear: 0.1.0
       consola: 3.2.3
       cssnano: 6.0.1(postcss@8.4.31)
-      defu: 6.1.2
+      defu: 6.1.3
       esbuild: 0.19.5
       escape-string-regexp: 5.0.0
       estree-walker: 3.0.3
@@ -1519,7 +1519,7 @@ packages:
     resolution: {integrity: sha512-QoF6oYigr6IcHgNeQqAUBmCrSqnuPffoF9Tbg8cToF3oYU7WHkKgYCe+diICFdWuiH/SHTEfSm9kaone/Bp2gw==}
     dependencies:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
-      defu: 6.1.2
+      defu: 6.1.3
       nuxt-component-meta: 0.5.4(rollup@3.29.4)
       nuxt-config-schema: 0.4.6(rollup@3.29.4)
       socket.io-client: 4.7.2
@@ -1571,16 +1571,16 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxtjs/mdc@0.2.3(rollup@3.29.4):
-    resolution: {integrity: sha512-tMCEs6CRskhicjx+WU9E3lLA8BWC4X++WSPzoSlYJzsiPadnW4f+Si7vIXtFRU8IKyBoxG+grCh6fS+gjDZIZA==}
+  /@nuxtjs/mdc@0.2.6(rollup@3.29.4):
+    resolution: {integrity: sha512-FDjJXfvFsNgtt3lm7mxjPymv5lovdOMS5bHxnAS/Vcoqd8qC4nkiSnKpZD2eLf4UGQKKNOMSn1mlC2viQHu2sg==}
     dependencies:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
       '@types/hast': 3.0.2
       '@types/mdast': 4.0.2
-      '@vue/compiler-core': 3.3.6
+      '@vue/compiler-core': 3.3.7
       consola: 3.2.3
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       detab: 3.0.2
       github-slugger: 2.0.0
       hast-util-to-string: 3.0.0
@@ -1595,7 +1595,7 @@ packages:
       rehype-sort-attributes: 5.0.0
       remark-emoji: 4.0.0
       remark-gfm: 3.0.1
-      remark-mdc: 2.0.0
+      remark-mdc: 2.1.0
       remark-parse: 10.0.2
       remark-rehype: 10.1.0
       scule: 1.0.0
@@ -1609,8 +1609,8 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxtjs/tailwindcss@6.8.0(rollup@3.29.4):
-    resolution: {integrity: sha512-jzuvD1nfA2BPnSbHtKK0aiI51ndMa7lNGL1iDEFuEPsltzilZ9ED7zOP6niGTrImg0n5Yt4GEJpixi6yWwp9Hw==}
+  /@nuxtjs/tailwindcss@6.8.1(rollup@3.29.4):
+    resolution: {integrity: sha512-PU9dJtDIEiwBff2WKkWxKuZIfgn9+F9SYAc4io2n0tAmYL8bQr9gJgyf+xpCtMF7UJZ450xXAjSTkO6v8q5Obw==}
     dependencies:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
       '@nuxt/postcss8': 1.1.3
@@ -1619,18 +1619,18 @@ packages:
       clear-module: 4.1.2
       colorette: 2.0.20
       cookie-es: 1.0.0
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       h3: 1.8.2
-      iron-webcrypto: 0.7.1
+      iron-webcrypto: 1.0.0
       micromatch: 4.0.5
       pathe: 1.1.1
       postcss: 8.4.31
       postcss-custom-properties: 13.3.2(postcss@8.4.31)
-      postcss-nesting: 11.3.0(postcss@8.4.31)
+      postcss-nesting: 12.0.1(postcss@8.4.31)
       radix3: 1.1.0
-      tailwind-config-viewer: 1.7.2(tailwindcss@3.3.3)
-      tailwindcss: 3.3.3
+      tailwind-config-viewer: 1.7.2(tailwindcss@3.3.5)
+      tailwindcss: 3.3.5
       ufo: 1.3.1
       uncrypto: 0.1.3
     transitivePeerDependencies:
@@ -1842,6 +1842,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -2627,6 +2628,15 @@ packages:
       estree-walker: 2.0.2
       source-map-js: 1.0.2
 
+  /@vue/compiler-core@3.3.7:
+    resolution: {integrity: sha512-pACdY6YnTNVLXsB86YD8OF9ihwpolzhhtdLVHhBL6do/ykr6kKXNYABRtNMGrsQXpEXXyAdwvWWkuTbs4MFtPQ==}
+    dependencies:
+      '@babel/parser': 7.23.0
+      '@vue/shared': 3.3.7
+      estree-walker: 2.0.2
+      source-map-js: 1.0.2
+    dev: false
+
   /@vue/compiler-dom@3.3.6:
     resolution: {integrity: sha512-1MxXcJYMHiTPexjLAJUkNs/Tw2eDf2tY3a0rL+LfuWyiKN2s6jvSwywH3PWD8bKICjfebX3GWx2Os8jkRDq3Ng==}
     dependencies:
@@ -2717,6 +2727,10 @@ packages:
 
   /@vue/shared@3.3.6:
     resolution: {integrity: sha512-Xno5pEqg8SVhomD0kTSmfh30ZEmV/+jZtyh39q6QflrjdJCXah5lrnOLi9KB6a5k5aAHXMXjoMnxlzUkCNfWLQ==}
+
+  /@vue/shared@3.3.7:
+    resolution: {integrity: sha512-N/tbkINRUDExgcPTBvxNkvHGu504k8lzlNQRITVnm6YjOjwa4r0nnbd4Jb01sNpur5hAllyRJzSK5PvB9PPwRg==}
+    dev: false
 
   /@vueuse/head@2.0.0:
     resolution: {integrity: sha512-ykdOxTGs95xjD4WXE4na/umxZea2Itl0GWBILas+O4oqS7eXIods38INvk3XkJKjqMdWPcpCyLX/DioLQxU1KA==}
@@ -3314,7 +3328,7 @@ packages:
     resolution: {integrity: sha512-BWZRJgDEveT8uI+cliCwvYSSSSvb4xKoiiu5S0jaDbKBopQLQF7E+bq9xKk1pTcG+mUa3yXuFO7bD9d8Lr9Xxg==}
     dependencies:
       chokidar: 3.5.3
-      defu: 6.1.2
+      defu: 6.1.3
       dotenv: 16.3.1
       giget: 1.1.3
       jiti: 1.20.0
@@ -4195,8 +4209,8 @@ packages:
     resolution: {integrity: sha512-8UWj5lNv7HD+kB0e9w77Z7TdQlbUYDVWqITLHNqFIn6khrNHv5WQo38Dcm1f6HeNyZf0U7UbPf6WeZDSdCzGDQ==}
     dev: true
 
-  /defu@6.1.2:
-    resolution: {integrity: sha512-+uO4+qr7msjNNWKYPHqN/3+Dx3NFkmIzayk2L1MyZQlvgZb/J1A0fo410dpKrN2SnqFjt8n4JL8fDJE0wIgjFQ==}
+  /defu@6.1.3:
+    resolution: {integrity: sha512-Vy2wmG3NTkmHNg/kzpuvHhkqeIx3ODWqasgCRbKtbXEN0G+HpEEv9BtJLp7ZG1CZloFaC41Ah3ZFbq7aqCqMeQ==}
 
   /degenerator@5.0.1:
     resolution: {integrity: sha512-TllpMR/t0M5sqCXfj85i4XaAzxmS5tVA16dqvdkMwGmzI+dXLXnw3J+3Vdv7VKw+ThlTMboK6i9rnZ6Nntj5CQ==}
@@ -4234,8 +4248,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /destr@2.0.1:
-    resolution: {integrity: sha512-M1Ob1zPSIvlARiJUkKqvAZ3VAqQY6Jcuth/pBKQ2b1dX/Qx0OnJ8Vux6J2H5PTMQeRzWrrbTu70VxBfv/OPDJA==}
+  /destr@2.0.2:
+    resolution: {integrity: sha512-65AlobnZMiCET00KaFFjUefxDX0khFA/E4myqZ7a6Sq1yZtR8+FVIvilVX66vF2uobSumxooYZChiRPCKNqhmg==}
 
   /destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
@@ -5411,7 +5425,7 @@ packages:
     hasBin: true
     dependencies:
       colorette: 2.0.20
-      defu: 6.1.2
+      defu: 6.1.3
       https-proxy-agent: 7.0.2
       mri: 1.2.0
       node-fetch-native: 1.4.0
@@ -5632,8 +5646,8 @@ packages:
     resolution: {integrity: sha512-1Ca0orJJlCaiFY68BvzQtP2lKLk46kcLAxVM8JgYbtm2cUg6IY7pjpYgWMwUvDO9QI30N5JAukOKoT8KD3Q0PQ==}
     dependencies:
       cookie-es: 1.0.0
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       iron-webcrypto: 0.10.1
       radix3: 1.1.0
       ufo: 1.3.1
@@ -6241,8 +6255,8 @@ packages:
   /iron-webcrypto@0.10.1:
     resolution: {integrity: sha512-QGOS8MRMnj/UiOa+aMIgfyHcvkhqNUsUxb1XzskENvbo+rEfp6TOwqd1KPuDzXC4OnGHcMSVxDGRoilqB8ViqA==}
 
-  /iron-webcrypto@0.7.1:
-    resolution: {integrity: sha512-K/UmlEhPCPXEHV5hAtH5C0tI5JnFuOrv4yO/j7ODPl3HaiiHBLbOLTde+ieUaAyfCATe4LoAnclyF+hmSCOVmQ==}
+  /iron-webcrypto@1.0.0:
+    resolution: {integrity: sha512-anOK1Mktt8U1Xi7fCM3RELTuYbnFikQY5VtrDj7kPgpejV7d43tWKhzgioO0zpkazLEL/j/iayRqnJhrGfqUsg==}
     dev: true
 
   /is-absolute-url@4.0.1:
@@ -6907,7 +6921,7 @@ packages:
       citty: 0.1.4
       clipboardy: 3.0.0
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       get-port-please: 3.1.1
       h3: 1.8.2
       http-shutdown: 1.2.2
@@ -8031,7 +8045,7 @@ packages:
         optional: true
     dependencies:
       citty: 0.1.4
-      defu: 6.1.2
+      defu: 6.1.3
       esbuild: 0.18.20
       fs-extra: 11.1.1
       globby: 13.2.2
@@ -8098,6 +8112,9 @@ packages:
     hasBin: true
     dev: true
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
@@ -8149,8 +8166,8 @@ packages:
       citty: 0.1.4
       consola: 3.2.3
       cookie-es: 1.0.0
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       dot-prop: 8.0.2
       esbuild: 0.19.5
       escape-string-regexp: 5.0.0
@@ -8469,7 +8486,7 @@ packages:
     resolution: {integrity: sha512-kHLWJFynj5QrxVZ1MjY2xmDaTSN1BCMLGExA+hMMLoCb3wn9TJlDVqnE/nSdUJPMRkNn/NQ5WP9NLA9vlAXRUw==}
     dependencies:
       '@nuxt/kit': 3.8.0(rollup@3.29.4)
-      defu: 6.1.2
+      defu: 6.1.3
       jiti: 1.20.0
       pathe: 1.1.1
       untyped: 1.4.0
@@ -8506,8 +8523,8 @@ packages:
       c12: 1.5.1
       chokidar: 3.5.3
       cookie-es: 1.0.0
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       devalue: 4.3.2
       esbuild: 0.19.5
       escape-string-regexp: 5.0.0
@@ -8660,7 +8677,7 @@ packages:
   /ofetch@1.3.3:
     resolution: {integrity: sha512-s1ZCMmQWXy4b5K/TW9i/DtiN8Ku+xCiHcjQ6/J/nDdssirrQNOoB165Zu8EqLMA2lln1JUth9a0aW9Ap2ctrUg==}
     dependencies:
-      destr: 2.0.1
+      destr: 2.0.2
       node-fetch-native: 1.4.0
       ufo: 1.3.1
 
@@ -9362,13 +9379,13 @@ packages:
       postcss-selector-parser: 6.0.13
     dev: true
 
-  /postcss-nesting@11.3.0(postcss@8.4.31):
-    resolution: {integrity: sha512-JlS10AQm/RzyrUGgl5irVkAlZYTJ99mNueUl+Qab+TcHhVedLiylWVkKBhRale+rS9yWIJK48JVzQlq3LcSdeA==}
+  /postcss-nesting@12.0.1(postcss@8.4.31):
+    resolution: {integrity: sha512-6LCqCWP9pqwXw/njMvNK0hGY44Fxc4B2EsGbn6xDcxbNRzP8GYoxT7yabVVMLrX3quqOJ9hg2jYMsnkedOf8pA==}
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss: ^8.4
     dependencies:
-      '@csstools/selector-specificity': 2.2.0(postcss-selector-parser@6.0.13)
+      '@csstools/selector-specificity': 3.0.0(postcss-selector-parser@6.0.13)
       postcss: 8.4.31
       postcss-selector-parser: 6.0.13
     dev: true
@@ -9799,8 +9816,8 @@ packages:
   /rc9@2.1.1:
     resolution: {integrity: sha512-lNeOl38Ws0eNxpO3+wD1I9rkHGQyj1NU1jlzv4go2CtEnEQEUfqnIvZG7W+bC/aXdJ27n5x/yUjb6RoT9tko+Q==}
     dependencies:
-      defu: 6.1.2
-      destr: 2.0.1
+      defu: 6.1.3
+      destr: 2.0.2
       flat: 5.0.2
 
   /rc@1.2.8:
@@ -10071,8 +10088,8 @@ packages:
       - supports-color
     dev: false
 
-  /remark-mdc@2.0.0:
-    resolution: {integrity: sha512-zBonqJya1254h84GRLjJc1fU4aXng2cKaie5qk0T1edUIkP4lVY1kJD4TP+uoFaUziTeyR6LSvkmRcHDZiWtoA==}
+  /remark-mdc@2.1.0:
+    resolution: {integrity: sha512-N1jHp5fjzCvY6qXmhfoFOMjCauu6CfNz1q79vihtgwnUrp3/C0e6Nzkzm6QeoFLHhxrTRu0epWi6A3nQUUxOIA==}
     dependencies:
       '@types/mdast': 4.0.2
       '@types/unist': 3.0.1
@@ -10400,7 +10417,7 @@ packages:
   /serve-placeholder@2.0.1:
     resolution: {integrity: sha512-rUzLlXk4uPFnbEaIz3SW8VISTxMuONas88nYWjAWaM2W9VDbt9tyFOr3lq8RhVOFrT3XISoBw8vni5una8qMnQ==}
     dependencies:
-      defu: 6.1.2
+      defu: 6.1.3
     dev: true
 
   /serve-static@1.15.0:
@@ -10929,7 +10946,7 @@ packages:
       picocolors: 1.0.0
     dev: true
 
-  /tailwind-config-viewer@1.7.2(tailwindcss@3.3.3):
+  /tailwind-config-viewer@1.7.2(tailwindcss@3.3.5):
     resolution: {integrity: sha512-3JJCeAAlvG+i/EBj+tQb0x4weo30QjdSAo4hlcnVbtD+CkpzHi/UwU9InbPMcYH+ESActoa2kCyjpLEyjEkn0Q==}
     engines: {node: '>=8'}
     hasBin: true
@@ -10944,13 +10961,13 @@ packages:
       open: 7.4.2
       portfinder: 1.0.32
       replace-in-file: 6.3.5
-      tailwindcss: 3.3.3
+      tailwindcss: 3.3.5
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /tailwindcss@3.3.3:
-    resolution: {integrity: sha512-A0KgSkef7eE4Mf+nKJ83i75TMyq8HqY3qmFIJSWy8bNt0v1lG7jUcpGpoTFxAwYcWOphcTBLPPJg+bDfhDf52w==}
+  /tailwindcss@3.3.5:
+    resolution: {integrity: sha512-5SEZU4J7pxZgSkv7FP1zY8i2TIAOooNZ1e/OGtxIEv6GltpoiXUqWvLy89+a10qYTB1N5Ifkuw9lqQkN9sscvA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -11299,7 +11316,7 @@ packages:
       chalk: 5.3.0
       citty: 0.1.4
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       esbuild: 0.19.5
       globby: 13.2.2
       hookable: 5.5.3
@@ -11346,7 +11363,7 @@ packages:
     resolution: {integrity: sha512-fjYsXYi30It0YCQYqLOcT6fHfMXsBr2hw9XC7ycf8rTG7Xxpe3ZssiqUnD0khrjiZEmkBXWLwm42yCSCH46fMw==}
     dependencies:
       consola: 3.2.3
-      defu: 6.1.2
+      defu: 6.1.3
       mime: 3.0.0
       node-fetch-native: 1.4.0
       pathe: 1.1.1
@@ -11610,7 +11627,7 @@ packages:
     dependencies:
       anymatch: 3.1.3
       chokidar: 3.5.3
-      destr: 2.0.1
+      destr: 2.0.2
       h3: 1.8.2
       ioredis: 5.3.2
       listhen: 1.5.5
@@ -11642,7 +11659,7 @@ packages:
       '@babel/core': 7.23.2
       '@babel/standalone': 7.23.2
       '@babel/types': 7.23.0
-      defu: 6.1.2
+      defu: 6.1.3
       jiti: 1.20.0
       mri: 1.2.0
       scule: 1.0.0
