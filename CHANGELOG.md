@@ -1,6 +1,52 @@
 # Changelog
 
 
+## v2.9.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.8.5...v2.9.0)
+
+### 🚀 Enhancements
+
+- Add type to layout ([#2389](https://github.com/nuxt/content/pull/2389))
+- Add search ([#2146](https://github.com/nuxt/content/pull/2146))
+
+### 🩹 Fixes
+
+- **path-meta:** Prevent `undefined` error ([1257cb5c](https://github.com/nuxt/content/commit/1257cb5c))
+- Types import ([ee4ea3ad](https://github.com/nuxt/content/commit/ee4ea3ad))
+- Ignore regexes in fetchDirConfig ([#2362](https://github.com/nuxt/content/pull/2362))
+- Optional experimental options ([#2391](https://github.com/nuxt/content/pull/2391))
+- Update types and imports ([061192c5](https://github.com/nuxt/content/commit/061192c5))
+- Prevent duplicate parses ([a208567e](https://github.com/nuxt/content/commit/a208567e))
+- Prevent duplicate parses ([dae92681](https://github.com/nuxt/content/commit/dae92681))
+
+### 📖 Documentation
+
+- Update to latest ui-pro ([a08dc1b8](https://github.com/nuxt/content/commit/a08dc1b8))
+- Remove global style ([e58855fb](https://github.com/nuxt/content/commit/e58855fb))
+- Add terms ([798a0a8c](https://github.com/nuxt/content/commit/798a0a8c))
+- Add data pops in ContentRendererMarkdown and varaibles binding ([#2360](https://github.com/nuxt/content/pull/2360))
+- Update examples for content helpers composable ([b6ff9ba2](https://github.com/nuxt/content/commit/b6ff9ba2))
+- Upgrade deps ([feca11b6](https://github.com/nuxt/content/commit/feca11b6))
+- Improve home ([fe357920](https://github.com/nuxt/content/commit/fe357920))
+- Add links for shiki on home ([#2386](https://github.com/nuxt/content/pull/2386))
+- Update highlight.preload config ([#2395](https://github.com/nuxt/content/pull/2395))
+- Grammatical tweaks on markdown page ([#2394](https://github.com/nuxt/content/pull/2394))
+- Update bindings with default value ([#2397](https://github.com/nuxt/content/pull/2397))
+- Update 3.search.md ([40a2e5de](https://github.com/nuxt/content/commit/40a2e5de))
+
+### ❤️ Contributors
+
+- Farnabaz ([@farnabaz](http://github.com/farnabaz))
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Estéban <e.soubiran25@gmail.com>
+- Maxime Pauvert ([@maximepvrt](http://github.com/maximepvrt))
+- AaronBeaudoin <aaronjbeaudoin@gmail.com>
+- Ashour <ashour.mohammad@gmail.com>
+- Mathieu NICOLAS 
+- Benjamin Canac ([@benjamincanac](http://github.com/benjamincanac))
+- Vincent Giersch <vincent@giersch.fr>
+
 ## v2.8.5
 
 [compare changes](https://github.com/nuxt/content/compare/v2.8.4...v2.8.5)
