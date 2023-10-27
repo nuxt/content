@@ -94,7 +94,7 @@
     "vitest": "^0.34.6",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.9.2",
+  "packageManager": "pnpm@8.10.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
