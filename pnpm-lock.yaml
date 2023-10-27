@@ -12,13 +12,13 @@ dependencies:
     specifier: ^0.2.6
     version: 0.2.6(rollup@3.29.4)
   '@vueuse/core':
-    specifier: ^10.2.1
+    specifier: ^10.5.0
     version: 10.5.0
   '@vueuse/head':
     specifier: ^2.0.0
     version: 2.0.0
   '@vueuse/nuxt':
-    specifier: ^10.2.1
+    specifier: ^10.5.0
     version: 10.5.0(nuxt@3.8.0)(rollup@3.29.4)
   consola:
     specifier: ^3.2.3
@@ -54,8 +54,8 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   minisearch:
-    specifier: ^6.1.0
-    version: 6.1.0
+    specifier: ^6.2.0
+    version: 6.2.0
   ohash:
     specifier: ^1.1.3
     version: 1.1.3
@@ -90,7 +90,7 @@ dependencies:
 devDependencies:
   '@nuxt/module-builder':
     specifier: ^0.5.2
-    version: 0.5.2(@nuxt/kit@3.8.0)(nuxi@3.9.0)(typescript@5.2.2)
+    version: 0.5.2(@nuxt/kit@3.8.0)(nuxi@3.9.1)(typescript@5.2.2)
   '@nuxt/schema':
     specifier: 3.8.0
     version: 3.8.0(rollup@3.29.4)
@@ -1256,7 +1256,7 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/module-builder@0.5.2(@nuxt/kit@3.8.0)(nuxi@3.9.0)(typescript@5.2.2):
+  /@nuxt/module-builder@0.5.2(@nuxt/kit@3.8.0)(nuxi@3.9.1)(typescript@5.2.2):
     resolution: {integrity: sha512-MsnPTsa94VNrzV76RKCDS0C96uaKw9s3EbTtabI/BkAXOD4Ud1w6m0O20XUdI9tmRtE8Kbgyr4XUhD/YB3eeAw==}
     hasBin: true
     peerDependencies:
@@ -1267,7 +1267,7 @@ packages:
       citty: 0.1.4
       consola: 3.2.3
       mlly: 1.4.2
-      nuxi: 3.9.0
+      nuxi: 3.9.1
       pathe: 1.1.1
       unbuild: 2.0.0(typescript@5.2.2)
     transitivePeerDependencies:
@@ -7710,8 +7710,8 @@ packages:
     resolution: {integrity: sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==}
     engines: {node: '>=16 || 14 >=14.17'}
 
-  /minisearch@6.1.0:
-    resolution: {integrity: sha512-PNxA/X8pWk+TiqPbsoIYH0GQ5Di7m6326/lwU/S4mlo4wGQddIcf/V//1f9TB0V4j59b57b+HZxt8h3iMROGvg==}
+  /minisearch@6.2.0:
+    resolution: {integrity: sha512-BECkorDF1TY2rGKt9XHdSeP9TP29yUbrAaCh/C03wpyf1vx3uYcP/+8XlMcpTkgoU0rBVnHMAOaP83Rc9Tm+TQ==}
     dev: false
 
   /minizlib@2.1.2:
@@ -8137,14 +8137,6 @@ packages:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
     dependencies:
       boolbase: 1.0.0
-
-  /nuxi@3.9.0:
-    resolution: {integrity: sha512-roCfCnQsp/oaHm6PL3HFvvGrwm1d2y1n7G9KzIx+i91eiO4P7fBuaVKibB2e8uqEJBgTwN52KxFha6MJnDykJQ==}
-    engines: {node: ^14.18.0 || >=16.10.0}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
 
   /nuxi@3.9.1:
     resolution: {integrity: sha512-4R4tcC2uQ5QCnHxyKoX5nZm/YUesCcQM3bZBKYU/8ZWrWjK6aPG6Q5zOQG1aLPkAotyahNsqtSiU/CrRoenEgA==}
