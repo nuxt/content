@@ -62,7 +62,7 @@ export interface ParsedContent extends ParsedContentMeta {
   /**
    * Content body
    */
-  body: MarkdownRoot
+  body: MarkdownRoot | null
 }
 
 //

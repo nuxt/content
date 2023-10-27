@@ -10,7 +10,7 @@ import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
+import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-ignore

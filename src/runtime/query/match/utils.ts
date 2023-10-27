@@ -60,8 +60,8 @@ export const withKeys = (keys: string[] = []) => (obj: any) => {
 export const sortList = (data: any[], params: SortOptions) => {
   const comperable = new Intl.Collator(params.$locale as string, {
     numeric: params.$numeric as boolean,
-    caseFirst: params.$caseFirst as string,
-    sensitivity: params.$sensitivity as string
+    caseFirst: params.$caseFirst as any,
+    sensitivity: params.$sensitivity as any
   })
   const keys = Object.keys(params).filter(key => !key.startsWith('$'))
   for (const key of keys) {

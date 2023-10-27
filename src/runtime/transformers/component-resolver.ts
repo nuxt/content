@@ -1,5 +1,5 @@
 import { pascalCase } from 'scule'
-import { ParsedContent } from '../types'
+import type { ParsedContent } from '../types'
 import htmlTags from '../utils/html-tags'
 import { defineTransformer } from './utils'
 

@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import { ParsedContent } from '../types'
+import type { ParsedContent } from '../types'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/

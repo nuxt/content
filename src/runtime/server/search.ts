@@ -1,5 +1,5 @@
 import { H3Event } from 'h3'
-import { ParsedContent, QueryBuilderWhere } from '../types'
+import type { ParsedContent, QueryBuilderWhere } from '../types'
 import { serverQueryContent } from '#content/server'
 
 export async function serverSearchContent (event: H3Event, filterQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
@@ -41,8 +41,9 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
   let previousHeadingLevel = 0
   const titles = []
   for (const item of page.body.children) {
-    if (isHeading(item.tag)) {
-      const currentHeadingLevel: number = Number(item.tag.match(HEADING)?.[1]) ?? 0
+    const tag = item.tag || ''
+    if (isHeading(tag)) {
+      const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1]) ?? 0
 
       const title = extractTextFromAst(item).trim()
 
@@ -58,7 +59,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
       }
 
       sections.push({
-        id: `${path}#${item.props.id}`,
+        id: `${path}#${item.props?.id}`,
         title,
         titles: [...titles],
         content: '',
@@ -72,7 +73,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
       section += 1
     }
 
-    if (!isHeading(item.tag)) {
+    if (!isHeading(tag)) {
       if (!sections[section]) {
         sections[section] = {
           id: '',

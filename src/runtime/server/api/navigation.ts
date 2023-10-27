@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { cacheStorage, serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
-import { ParsedContent, ParsedContentMeta } from '../../types'
+import type { ParsedContent, ParsedContentMeta } from '../../types'
 import { getContentQuery } from '../../utils/query'
 import { isPreview } from '../preview'
 

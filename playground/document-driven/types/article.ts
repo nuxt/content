@@ -1,4 +1,4 @@
-import { ParsedContent } from '../../../src/runtime/types'
+import type { ParsedContent } from '../../../src/runtime/types'
 
 export interface ParsedArticle extends ParsedContent {
   cover: {

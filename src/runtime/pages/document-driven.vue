@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRuntimeConfig } from '#app'
+import type { LayoutKey } from '#build/types/layouts'
 import { useContent, useContentHead, useRequestEvent } from '#imports'
 
 const { contentHead } = useRuntimeConfig().public.content
@@ -18,7 +19,7 @@ if (contentHead) {
 
 <template>
   <div class="document-driven-page">
-    <NuxtLayout :name="layout as string || 'default'">
+    <NuxtLayout :name="layout as LayoutKey || 'default'">
       <ContentRenderer v-if="page" :key="(page as any)._id" :value="page">
         <template #empty="{ value }">
           <DocumentDrivenEmpty :value="value" />

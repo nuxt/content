@@ -8,7 +8,7 @@ import { createQuery } from '../../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../../types'
 import { createNav } from '../../server/navigation'
 import { useContentPreview } from '../../composables/preview'
-import { ContentQueryBuilderParams, ContentQueryFetcher } from '../../types/query'
+import type { ContentQueryBuilderParams, ContentQueryFetcher } from '../../types/query'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 

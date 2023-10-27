@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 const emit = defineEmits<(e: 'change', content: string) => void>()
 const editorState = ref('loading')
 const props = defineProps<{ language: string; value: string, readOnly: boolean }>()
