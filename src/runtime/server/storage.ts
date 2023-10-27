@@ -160,24 +160,26 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return cached.parsed as ParsedContent
   }
 
-  // eslint-disable-next-line no-async-promise-executor
-  const promise = pendingPromises[hash] || new Promise(async (resolve) => {
-    const body = await sourceStorage.getItem(id)
+  if (!pendingPromises[hash]) {
+    // eslint-disable-next-line no-async-promise-executor
+    pendingPromises[hash] = new Promise(async (resolve) => {
+      const body = await sourceStorage.getItem(id)
 
-    if (body === null) {
-      return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
-    }
+      if (body === null) {
+        return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
+      }
 
-    const parsed = await parseContent(contentId, body) as ParsedContent
+      const parsed = await parseContent(contentId, body) as ParsedContent
 
-    await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+      await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
 
-    resolve(parsed)
+      resolve(parsed)
 
-    delete pendingPromises[hash]
-  })
+      delete pendingPromises[hash]
+    })
+  }
 
-  return promise
+  return pendingPromises[hash]
 }
 
 /**
