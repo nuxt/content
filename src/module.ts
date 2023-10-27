@@ -1,39 +1,39 @@
 import fs from 'fs'
 import {
-  addPlugin,
-  defineNuxtModule,
-  createResolver,
-  addImports,
   addComponentsDir,
+  addImports,
+  addPlugin,
   addTemplate,
+  createResolver,
+  defineNuxtModule,
   extendViteConfig,
   installModule,
   addVitePlugin
 } from '@nuxt/kit'
+import type { Component } from '@nuxt/schema'
+import { defu } from 'defu'
 import { genDynamicImport, genImport, genSafeVariableName } from 'knitwork'
 import type { ListenOptions } from 'listhen'
-// eslint-disable-next-line import/no-named-as-default
-import defu from 'defu'
+import { listen } from 'listhen'
+import { type Options as MiniSearchOptions } from 'minisearch'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
 import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
-import { listen } from 'listhen'
-import { type WatchEvent, createStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
-import type { Component } from '@nuxt/schema'
+import { createStorage, type WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
+import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
 import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
+  MOUNT_PREFIX,
+  PROSE_TAGS,
   createWebSocket,
   getMountDriver,
   logger,
-  MOUNT_PREFIX,
   processMarkdownOptions,
-  PROSE_TAGS,
   useContentMounts
 } from './utils'
-import type { MarkdownPlugin, QueryBuilderParams } from './runtime/types'
 
 export type MountOptions = {
   driver: 'fs' | 'http' | string
@@ -235,7 +235,59 @@ export interface ModuleOptions {
   experimental: {
     clientDB?: boolean
     stripQueryParameters?: boolean
-    advanceQuery?: boolean
+    advanceQuery?: boolean,
+    /**
+     * Search mode.
+     *
+     * @default undefined
+     */
+    search?: {
+      /**
+       * List of tags where text must not be extracted.
+       *
+       * By default, will extract text from each tag.
+       *
+       * @default ['style', 'code']
+       */
+      ignoredTags?: Array<string>
+      /**
+       * Query used to filter contents that must be searched.
+       * @default { _partial: false, _draft: false}
+       */
+      filterQuery?: QueryBuilderWhere
+      /**
+       * API return indexed contents to improve client-side load time.
+       * This option will use MiniSearch to create the index.
+       * If you disable this option, API will return raw contents instead
+       * you can use with any client-side search.
+       *
+       * @default true
+       */
+      indexed: boolean
+      /**
+       * MiniSearch Options. When using `indexed` option,
+       * this options will be used to configure MiniSearch
+       * in order to have the same options on both server and client side.
+       *
+       * @default
+       * {
+       *   fields: ['title', 'content', 'titles'],
+       *   storeFields: ['title', 'content', 'titles'],
+       *   searchOptions: {
+       *     prefix: true,
+       *     fuzzy: 0.2,
+       *     boost: {
+       *       title: 4,
+       *       content: 2,
+       *       titles: 1
+       *     }
+       *   }
+       * }
+       *
+       * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
+       */
+      options: MiniSearchOptions
+    }
   }
 }
 
@@ -302,7 +354,8 @@ export default defineNuxtModule<ModuleOptions>({
     experimental: {
       clientDB: false,
       stripQueryParameters: false,
-      advanceQuery: false
+      advanceQuery: false,
+      search: undefined
     }
   },
   async setup (options, nuxt) {
@@ -381,6 +434,25 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
 
+      if (options.experimental?.search) {
+        const route = nuxt.options.dev
+          ? `${options.api.baseURL}/search`
+          : `${options.api.baseURL}/search-${buildIntegrity}`
+
+        nitroConfig.handlers.push({
+          method: 'get',
+          route,
+          handler: resolveRuntimeModule('./server/api/search')
+        })
+
+        nitroConfig.routeRules = nitroConfig.routeRules || {}
+        nitroConfig.routeRules[route] = {
+          prerender: true,
+          // Use text/plain to avoid Nitro render an index.html
+          headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
+        }
+      }
+
       if (!nuxt.options.dev) {
         nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
@@ -443,6 +515,47 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'withContentBase', as: 'withContentBase', from: resolveRuntimeModule('./composables/utils') },
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/useUnwrap') }
     ])
+
+    if (options.experimental?.search) {
+      const defaultSearchOptions: Partial<ModuleOptions['experimental']['search']> = {
+        indexed: true,
+        ignoredTags: ['style', 'code'],
+        filterQuery: { _draft: false, _partial: false },
+        options: {
+          fields: ['title', 'content', 'titles'],
+          storeFields: ['title', 'content', 'titles'],
+          searchOptions: {
+            prefix: true,
+            fuzzy: 0.2,
+            boost: {
+              title: 4,
+              content: 2,
+              titles: 1
+            }
+          }
+        }
+      }
+
+      options.experimental.search = {
+        ...defaultSearchOptions,
+        ...options.experimental.search
+      }
+
+      nuxt.options.modules.push('@vueuse/nuxt')
+
+      addImports([
+        {
+          name: 'defineMiniSearchOptions',
+          as: 'defineMiniSearchOptions',
+          from: resolveRuntimeModule('./composables/search')
+        },
+        {
+          name: 'searchContent',
+          as: 'searchContent',
+          from: resolveRuntimeModule('./composables/search')
+        }
+      ])
+    }
 
     // Register components
     addComponentsDir({
@@ -685,6 +798,7 @@ export default defineNuxtModule<ModuleOptions>({
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
+      search: options.experimental.search as any,
       contentHead: options.contentHead ?? true,
       // Anchor link generation config
       // @deprecated
@@ -859,6 +973,8 @@ interface ModulePublicRuntimeConfig {
   highlight: ModuleOptions['highlight']
 
   navigation: ModuleOptions['navigation']
+
+  search: ModuleOptions['experimental']['search']
 
   contentHead: ModuleOptions['contentHead']
 
