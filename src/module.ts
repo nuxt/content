@@ -191,58 +191,6 @@ export interface ModuleOptions {
     fields: Array<string>
   }
   /**
-   * Search mode.
-   *
-   * @default undefined
-   */
-  search?: {
-    /**
-     * List of tags where text must not be extracted.
-    *
-    * By default, will extract text from each tag.
-    *
-    * @default ['style', 'code']
-    */
-    ignoredTags?: Array<string>
-    /**
-     * Query used to filter contents that must be searched.
-     * @default { _partial: false, _draft: false}
-     */
-    filterQuery?: QueryBuilderWhere
-    /**
-     * API return indexed contents to improve client-side load time.
-     * This option will use MiniSearch to create the index.
-     * If you disable this option, API will return raw contents instead
-     * you can use with any client-side search.
-     *
-     * @default true
-     */
-    indexed: boolean
-    /**
-     * MiniSearch Options. When using `indexed` option,
-     * this options will be used to configure MiniSearch
-     * in order to have the same options on both server and client side.
-     *
-     * @default
-     * {
-     *   fields: ['title', 'content', 'titles'],
-     *   storeFields: ['title', 'content', 'titles'],
-     *   searchOptions: {
-     *     prefix: true,
-     *     fuzzy: 0.2,
-     *     boost: {
-     *       title: 4,
-     *       content: 2,
-     *       titles: 1
-     *     }
-     *   }
-     * }
-     *
-     * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
-     */
-    options: MiniSearchOptions
-  }
-  /**
    * List of locale codes.
    * This codes will be used to detect contents locale.
    *
@@ -287,7 +235,59 @@ export interface ModuleOptions {
   experimental: {
     clientDB?: boolean
     stripQueryParameters?: boolean
-    advanceQuery?: boolean
+    advanceQuery?: boolean,
+    /**
+     * Search mode.
+     *
+     * @default undefined
+     */
+    search?: {
+      /**
+       * List of tags where text must not be extracted.
+       *
+       * By default, will extract text from each tag.
+       *
+       * @default ['style', 'code']
+       */
+      ignoredTags?: Array<string>
+      /**
+       * Query used to filter contents that must be searched.
+       * @default { _partial: false, _draft: false}
+       */
+      filterQuery?: QueryBuilderWhere
+      /**
+       * API return indexed contents to improve client-side load time.
+       * This option will use MiniSearch to create the index.
+       * If you disable this option, API will return raw contents instead
+       * you can use with any client-side search.
+       *
+       * @default true
+       */
+      indexed: boolean
+      /**
+       * MiniSearch Options. When using `indexed` option,
+       * this options will be used to configure MiniSearch
+       * in order to have the same options on both server and client side.
+       *
+       * @default
+       * {
+       *   fields: ['title', 'content', 'titles'],
+       *   storeFields: ['title', 'content', 'titles'],
+       *   searchOptions: {
+       *     prefix: true,
+       *     fuzzy: 0.2,
+       *     boost: {
+       *       title: 4,
+       *       content: 2,
+       *       titles: 1
+       *     }
+       *   }
+       * }
+       *
+       * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
+       */
+      options: MiniSearchOptions
+    }
   }
 }
 
@@ -348,14 +348,14 @@ export default defineNuxtModule<ModuleOptions>({
     navigation: {
       fields: []
     },
-    search: undefined,
     contentHead: true,
     documentDriven: false,
     respectPathCase: false,
     experimental: {
       clientDB: false,
       stripQueryParameters: false,
-      advanceQuery: false
+      advanceQuery: false,
+      search: undefined
     }
   },
   async setup (options, nuxt) {
@@ -434,7 +434,7 @@ export default defineNuxtModule<ModuleOptions>({
         }
       )
 
-      if (options.search) {
+      if (options.experimental?.search) {
         const route = nuxt.options.dev
           ? `${options.api.baseURL}/search`
           : `${options.api.baseURL}/search-${buildIntegrity}`
@@ -449,7 +449,7 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.routeRules[route] = {
           prerender: true,
           // Use text/plain to avoid Nitro render an index.html
-          headers: options.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
+          headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
         }
       }
 
@@ -516,8 +516,8 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useUnwrap', as: 'useUnwrap', from: resolveRuntimeModule('./composables/useUnwrap') }
     ])
 
-    if (options.search) {
-      const defaultSearchOptions: Partial<ModuleOptions['search']> = {
+    if (options.experimental?.search) {
+      const defaultSearchOptions: Partial<ModuleOptions['experimental']['search']> = {
         indexed: true,
         ignoredTags: ['style', 'code'],
         filterQuery: { _draft: false, _partial: false },
@@ -536,9 +536,9 @@ export default defineNuxtModule<ModuleOptions>({
         }
       }
 
-      options.search = {
+      options.experimental.search = {
         ...defaultSearchOptions,
-        ...options.search
+        ...options.experimental.search
       }
 
       nuxt.options.modules.push('@vueuse/nuxt')
@@ -798,7 +798,7 @@ export default defineNuxtModule<ModuleOptions>({
       documentDriven: options.documentDriven as any,
       host: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.host ?? '' : '',
       trailingSlash: typeof options.documentDriven !== 'boolean' ? options.documentDriven?.trailingSlash ?? false : false,
-      search: options.search as any,
+      search: options.experimental.search as any,
       contentHead: options.contentHead ?? true,
       // Anchor link generation config
       // @deprecated
@@ -974,7 +974,7 @@ interface ModulePublicRuntimeConfig {
 
   navigation: ModuleOptions['navigation']
 
-  search: ModuleOptions['search']
+  search: ModuleOptions['experimental']['search']
 
   contentHead: ModuleOptions['contentHead']
 

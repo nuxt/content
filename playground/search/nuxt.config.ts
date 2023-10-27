@@ -4,10 +4,12 @@ export default defineNuxtConfig({
   extends: ['../shared'],
 
   content: {
-    search: {
-      mode: 'full-text',
-      indexed: true,
-      filterQuery: { _draft: false, _partial: true }
+    experimental: {
+      search: {
+        mode: 'full-text',
+        indexed: true,
+        filterQuery: { _draft: false, _partial: false }
+      }
     }
   },
 
