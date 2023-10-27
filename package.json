@@ -43,8 +43,8 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@vueuse/core": "^10.2.1",
-    "@vueuse/nuxt": "^10.2.1",
+    "@vueuse/core": "^10.5.0",
+    "@vueuse/nuxt": "^10.5.0",
     "@nuxt/kit": "^3.8.0",
     "@nuxtjs/mdc": "^0.2.6",
     "@vueuse/head": "^2.0.0",
@@ -56,7 +56,7 @@
     "listhen": "^1.5.5",
     "mdast-util-to-string": "^4.0.0",
     "mdurl": "^1.0.1",
-    "minisearch": "^6.1.0",
+    "minisearch": "^6.2.0",
     "micromark": "^4.0.0",
     "micromark-util-sanitize-uri": "^2.0.0",
     "micromark-util-types": "^2.0.0",
