@@ -1,6 +1,6 @@
 # Inline Components usage in MDC
 
-```md
+```mdc
 I am using a :github-button in the middle of a paragraph. 
 ```
 
