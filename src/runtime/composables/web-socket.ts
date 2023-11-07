@@ -1,4 +1,4 @@
-import { useRuntimeConfig } from '#app'
+import { useRuntimeConfig } from '#imports'
 import { refreshNuxtData } from '#imports'
 
 const logger = {

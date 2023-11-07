@@ -2,7 +2,7 @@
 import memoryDriver from 'unstorage/drivers/memory'
 import { type Storage, createStorage, prefixStorage } from 'unstorage'
 import { withBase } from 'ufo'
-import { useRuntimeConfig, useNuxtApp } from '#app'
+import { useRuntimeConfig, useNuxtApp } from '#imports'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta } from '../types'
 import { createNav } from '../server/navigation'

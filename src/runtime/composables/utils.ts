@@ -1,5 +1,5 @@
 import { withBase } from 'ufo'
-import { useRuntimeConfig, useRequestEvent } from '#app'
+import { useRuntimeConfig, useRequestEvent } from '#imports'
 import type { useContent } from './content'
 import { useContentPreview } from './preview'
 

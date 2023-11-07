@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { pascalCase } from 'scule'
-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#app'
+import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#imports'
 import type { MarkdownNode, NavItem, ParsedContent } from '../types'
 import type { ModuleOptions } from '../../module'
 import { useContentState } from '../composables/content'
