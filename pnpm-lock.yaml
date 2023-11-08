@@ -89,8 +89,8 @@ dependencies:
 
 devDependencies:
   '@nuxt/module-builder':
-    specifier: ^0.5.3
-    version: 0.5.3(@nuxt/kit@3.8.1)(nuxi@3.9.1)(typescript@5.2.2)
+    specifier: ^0.5.4
+    version: 0.5.4(@nuxt/kit@3.8.1)(nuxi@3.9.1)(typescript@5.2.2)
   '@nuxt/schema':
     specifier: 3.8.1
     version: 3.8.1(rollup@3.29.4)
@@ -1255,11 +1255,11 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/module-builder@0.5.3(@nuxt/kit@3.8.1)(nuxi@3.9.1)(typescript@5.2.2):
-    resolution: {integrity: sha512-iKQHuZb8/IXzTW2CqrIlsmzBuSaM9vISTGM0+KxbBPSG5JCy5MtWbmxPIw1jgac1g/B2ZkBhOCXOxGTecCHTRQ==}
+  /@nuxt/module-builder@0.5.4(@nuxt/kit@3.8.1)(nuxi@3.9.1)(typescript@5.2.2):
+    resolution: {integrity: sha512-lCPh8s8LSfYqHgIMMsctDhz+AX1z6TnATkUes/GXc/No4kApC0zmJkQWrbtDRjmsWjElwl1kE7l7OzYdYc3d4w==}
     hasBin: true
     peerDependencies:
-      '@nuxt/kit': ^3.8.0
+      '@nuxt/kit': ^3.8.1
       nuxi: ^3.9.1
     dependencies:
       '@nuxt/kit': 3.8.1(rollup@3.29.4)
@@ -10923,7 +10923,7 @@ packages:
       '@rollup/plugin-commonjs': 25.0.7(rollup@3.29.4)
       '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
-      '@rollup/plugin-replace': 5.0.4(rollup@3.29.4)
+      '@rollup/plugin-replace': 5.0.5(rollup@3.29.4)
       '@rollup/pluginutils': 5.0.5(rollup@3.29.4)
       chalk: 5.3.0
       citty: 0.1.4
