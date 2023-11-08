@@ -46,7 +46,7 @@
   "dependencies": {
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",
-    "@nuxt/kit": "^3.8.0",
+    "@nuxt/kit": "^3.8.1",
     "@nuxtjs/mdc": "^0.2.6",
     "@vueuse/head": "^2.0.0",
     "consola": "^3.2.3",
@@ -73,21 +73,21 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
-    "@nuxt/module-builder": "^0.5.2",
-    "@nuxt/schema": "3.8.0",
-    "@nuxt/test-utils": "3.8.0",
-    "@nuxthq/studio": "^1.0.2",
+    "@nuxt/module-builder": "^0.5.3",
+    "@nuxt/schema": "3.8.1",
+    "@nuxt/test-utils": "3.8.1",
+    "@nuxthq/studio": "^1.0.3",
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@nuxtjs/tailwindcss": "^6.8.1",
-    "@types/ws": "^8.5.8",
+    "@nuxtjs/tailwindcss": "^6.9.4",
+    "@types/ws": "^8.5.9",
     "c8": "^8.0.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "globby": "^13.2.2",
     "husky": "^8.0.3",
-    "jiti": "^1.20.0",
+    "jiti": "^1.21.0",
     "lint-staged": "^15.0.2",
-    "nuxt": "3.8.0",
+    "nuxt": "3.8.1",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^16.2.1",
@@ -95,7 +95,7 @@
     "vitest": "^0.34.6",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.10.0",
+  "packageManager": "pnpm@8.10.2",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
