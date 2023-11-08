@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useRuntimeConfig } from '#imports'
+import { useRuntimeConfig, useContent, useContentHead, useRequestEvent } from '#imports'
 import type { LayoutKey } from '#build/types/layouts'
-import { useContent, useContentHead, useRequestEvent } from '#imports'
 
 const { contentHead } = useRuntimeConfig().public.content
 const { page, layout } = useContent()
