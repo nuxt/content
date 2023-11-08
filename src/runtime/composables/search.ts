@@ -1,5 +1,5 @@
 import MiniSearch, { type Options as MiniSearchOptions } from 'minisearch'
-import { useRuntimeConfig, useFetch } from '#imports'
+import { useRuntimeConfig, useFetch, type MaybeRefOrGetter, ref, computed, toValue, type Ref } from '#imports'
 
 export const defineMiniSearchOptions = <DataItem>(options: MiniSearchOptions<DataItem>) => {
   return ref(options)
