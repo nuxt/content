@@ -424,15 +424,22 @@ export default defineNuxtModule<ModuleOptions>({
           method: 'get',
           route: `${options.api.baseURL}/query`,
           handler: resolveRuntimeModule('./server/api/query')
-        },
-        {
+        }
+      )
+
+      if (options.experimental?.clientDB) {
+        nitroConfig.handlers.push({
           method: 'get',
           route: nuxt.options.dev
             ? `${options.api.baseURL}/cache.json`
             : `${options.api.baseURL}/cache.${buildIntegrity}.json`,
           handler: resolveRuntimeModule('./server/api/cache')
+        })
+
+        if (!nuxt.options.dev) {
+          nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
         }
-      )
+      }
 
       if (options.experimental?.search) {
         const route = nuxt.options.dev
@@ -451,10 +458,6 @@ export default defineNuxtModule<ModuleOptions>({
           // Use text/plain to avoid Nitro render an index.html
           headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
         }
-      }
-
-      if (!nuxt.options.dev) {
-        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
       // Register source storages
