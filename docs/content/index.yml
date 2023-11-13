@@ -29,7 +29,7 @@ sections:
         icon: 'i-ph-code'
         to: '/usage/markdown#code-highlighting'
       - title: 'Deploy everywhere.'
-        description: "Nuxt Content support both Static Generation, Node.js hosting or even the Workers environements."
+        description: "Nuxt Content supports both Static Generation, Node.js hosting and even Workers environments."
         icon: 'i-ph-rocket-launch'
         to: ''
   - subTitle: 'Get started <span class="text-primary-400">Now</span>'
