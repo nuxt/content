@@ -90,7 +90,7 @@
     "nuxt": "3.8.1",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
-    "release-it": "^16.2.1",
+    "release-it": "^17.0.0",
     "remark-oembed": "^1.2.2",
     "vitest": "^0.34.6",
     "vue-docgen-web-types": "^0.1.8"
