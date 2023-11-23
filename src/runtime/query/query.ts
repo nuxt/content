@@ -28,7 +28,18 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
     }
   }
 
+  const resultHooks: ((v: any) => any)[] = []
+
+  const resolveResultHooks = (result: any) => {
+    let res = result
+    for (let h of resultHooks) {
+      res = h(res)
+    }
+    return res
+  }
+
   const resolveResult = (result: any) => {
+    let ret: any
     if (opts.legacy) {
       if (result?.surround) {
         return result.surround
@@ -46,7 +57,15 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
         }
       }
 
-      return result?._path || Array.isArray(result) || !Object.prototype.hasOwnProperty.call(result, 'result') ? result : result?.result
+      ret = result?._path || Array.isArray(result) || !Object.prototype.hasOwnProperty.call(result, 'result') ? result : result?.result
+    }
+
+    if (Array.isArray(ret)) {
+      return ret.map(r => resolveResultHooks(r))
+    }
+
+    if (ret?._path) {
+      return resolveResultHooks(ret)
     }
 
     return result
@@ -71,7 +90,9 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
     // locale
     locale: (_locale: string) => query.where({ _locale }),
     withSurround: $set('surround', (surroundQuery, options) => ({ query: surroundQuery, ...options })),
-    withDirConfig: () => $set('dirConfig')(true)
+    withDirConfig: () => $set('dirConfig')(true),
+    // hooks
+    resultHook: <HT>(h: (v: any) => HT) => { resultHooks.push(h); return query as ContentQueryBuilder<HT> }
   }
 
   if (opts.legacy) {
