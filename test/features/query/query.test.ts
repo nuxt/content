@@ -329,4 +329,17 @@ describe('Database Provider', () => {
       expect(item._deleted).toBeUndefined()
     })
   })
+
+  test('Result Hook transform return', async () => {
+    const query = createQuery(pipelineFetcher, { legacy: true })
+      .where({ id: { $in: [1, 2] } })
+      .resultHook((c) => { return { transformedPath: c._path, exampleExtraField: 'hello' } })
+    const result = await query.find()
+
+    result.forEach((item: any) => {
+      expect(Object.keys(item)).toMatchObject(['transformedPath', 'exampleExtraField'])
+      assert(item.exampleExtraField === 'hello')
+      expect(item.id).toBeUndefined()
+    })
+  })
 })

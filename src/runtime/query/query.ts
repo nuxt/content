@@ -32,14 +32,14 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
 
   const resolveResultHooks = (result: any) => {
     let res = result
-    for (let h of resultHooks) {
+    for (const h of resultHooks) {
       res = h(res)
     }
     return res
   }
 
   const resolveResult = (result: any) => {
-    let ret: any
+    let ret = result
     if (opts.legacy) {
       if (result?.surround) {
         return result.surround
@@ -68,7 +68,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
       return resolveResultHooks(ret)
     }
 
-    return result
+    return ret
   }
 
   const query: any = {
