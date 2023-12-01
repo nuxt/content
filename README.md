@@ -34,14 +34,15 @@ Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxt.c
 
 ## 💻 Development
 
+> [!NOTE]
+> This repository uses bash scripts for development and testing. If you are on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) or [Git Bash](https://gitforwindows.org/).
+
 - Clone repository
 - Install dependencies using `pnpm install`
 - Prepare using `pnpm prepare`
 - Build using `pnpm build`
 - Try playground using `pnpm dev`
 - Test using `pnpm test`
-
-**Note:** This repository uses bash scripts for development and testing. If you are on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) or [Git Bash](https://gitforwindows.org/).
 
 ## License
 
