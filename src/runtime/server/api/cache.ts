@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   return {
     generatedAt: now,
     generateTime: Date.now() - now,
-    contents,
+    contents: content.experimental.cacheContents ? contents : [] as any,
     navigation
   }
 })
