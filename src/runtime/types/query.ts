@@ -346,6 +346,4 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
   withDirConfig(): ContentQueryBuilder<T, ContentQueryWithDirConfig>
 }
 
-
 export type ContentQueryFetcher<T> = (query: ContentQueryBuilder<T>) => Promise<ContentQueryResponse>
-
