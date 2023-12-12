@@ -492,6 +492,11 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   locale(locale: string): QueryBuilder<T>
 
   /**
+   * Add result hook to returned content
+   */
+  resultHook<HT>(hook: (content: T) => HT): QueryBuilder<HT>
+
+  /**
    * Retrieve query builder params
    * @internal
    */
