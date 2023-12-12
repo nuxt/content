@@ -21,6 +21,11 @@ const links = [{
   icon: 'i-ph-play-duotone',
   to: '/playground'
 }, {
+  label: 'Templates',
+  icon: 'i-ph-browsers-duotone',
+  to: 'https://nuxt.com/templates',
+  target: '_blank'
+}, {
   label: 'Releases',
   icon: 'i-heroicons-rocket-launch-solid',
   to: 'https://github.com/nuxt/content/releases',
