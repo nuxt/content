@@ -239,7 +239,7 @@ export interface ModuleOptions {
 
     /**
      * Control content cach generation.
-     * 
+     *
      * This option might be removed in the next major version.
      */
     cacheContents?: boolean
