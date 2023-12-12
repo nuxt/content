@@ -437,8 +437,8 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only<K extends keyof T | string>(keys: K): QueryBuilder<Pick<T, K>>
-  only<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
+  only<K extends keyof T>(keys: K): QueryBuilder<Pick<T, K>>
+  only<K extends (keyof T)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
 
   /**
    * Remove a subset of fields
