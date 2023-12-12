@@ -1,6 +1,5 @@
-import type { LayoutKey } from '#build/types/layouts'
-import type { Theme } from 'shiki-es'
 import type { StorageValue } from 'unstorage'
+import type { LayoutKey } from '#build/types/layouts'
 
 export interface ParsedContentInternalMeta {
   /**
@@ -45,27 +44,22 @@ export interface ParsedContentInternalMeta {
   _extension?: 'md' | 'yaml' | 'yml' | 'json' | 'json5' | 'csv'
 }
 
-export interface ParsedContentMeta extends ParsedContentInternalMeta {
-  /**
-   * Layout
-   */
-  layout?: LayoutKey
-
-  [key: string]: any
-}
-
-export interface ParsedContent extends ParsedContentMeta {
-  /**
-   * Excerpt
-   */
-  excerpt?: MarkdownRoot
-  /**
-   * Content body
-   */
-  body: MarkdownRoot | null
-}
-
 //
+
+export interface TocLink {
+  id: string
+  text: string
+  depth: number
+  children?: TocLink[]
+}
+
+export interface Toc {
+  title: string
+  depth: number
+  searchDepth: number
+  links: TocLink[]
+}
+
 export interface MarkdownNode {
   type: string
   tag?: string
@@ -78,16 +72,16 @@ export interface MarkdownNode {
   fmAttributes?: Record<string, any>
 }
 
-export interface MarkdownHtmlNode extends MarkdownNode {
-  type: 'html'
-  value: string
-}
-
 export interface MarkdownRoot {
   type: 'root'
   children: MarkdownNode[]
   props?: Record<string, any>
   toc?: Toc
+}
+
+export interface MarkdownHtmlNode extends MarkdownNode {
+  type: 'html'
+  value: string
 }
 
 export interface MarkdownPlugin extends Record<string, any> {}
@@ -109,18 +103,24 @@ export interface MarkdownOptions {
   rehypePlugins: Record<string, false | (MarkdownPlugin & { instance: any })>
 }
 
-export interface TocLink {
-  id: string
-  text: string
-  depth: number
-  children?: TocLink[]
+export interface ParsedContentMeta extends ParsedContentInternalMeta {
+  /**
+   * Layout
+   */
+  layout?: LayoutKey
+
+  [key: string]: any
 }
 
-export interface Toc {
-  title: string
-  depth: number
-  searchDepth: number
-  links: TocLink[]
+export interface ParsedContent extends ParsedContentMeta {
+  /**
+   * Excerpt
+   */
+  excerpt?: MarkdownRoot
+  /**
+   * Content body
+   */
+  body: MarkdownRoot | null
 }
 
 export interface MarkdownParsedContent extends ParsedContent {
@@ -413,7 +413,7 @@ export interface QueryBuilderWhere extends Partial<Record<keyof ParsedContentInt
    **/
   $in?: string | Array<string | number | boolean>
 
-  [key: string]: string | number | boolean | RegExp | QueryBuilderWhere | Array<string | number | boolean | QueryBuilderWhere>
+  [key: string]: undefined | string | number | boolean | RegExp | QueryBuilderWhere | Array<string | number | boolean | QueryBuilderWhere>
 }
 
 export interface QueryBuilderParams {
@@ -437,8 +437,8 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   /**
    * Select a subset of fields
    */
-  only<K extends keyof T | string>(keys: K): QueryBuilder<Pick<T, K>>
-  only<K extends (keyof T | string)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
+  only<K extends keyof T>(keys: K): QueryBuilder<Pick<T, K>>
+  only<K extends (keyof T)[]>(keys: K): QueryBuilder<Pick<T, K[number]>>
 
   /**
    * Remove a subset of fields
@@ -495,7 +495,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
    * Retrieve query builder params
    * @internal
    */
-  params: () => readonly QueryBuilderParams
+  params: () => QueryBuilderParams
 }
 
 export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void
