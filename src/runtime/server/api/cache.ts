@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const { content } = useRuntimeConfig()
   const now = Date.now()
   // Fetch all content
-  let contents = await serverQueryContent(event).find()
+  const contents = await serverQueryContent(event).find()
 
   // Generate Index
   await getContentIndex(event)
