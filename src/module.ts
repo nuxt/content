@@ -236,6 +236,13 @@ export interface ModuleOptions {
     clientDB?: boolean
     stripQueryParameters?: boolean
     advanceQuery?: boolean,
+
+    /**
+     * Control content cach generation.
+     * 
+     * This option might be removed in the next major version.
+     */
+    cacheContents?: boolean
     /**
      * Search mode.
      *
@@ -353,6 +360,7 @@ export default defineNuxtModule<ModuleOptions>({
     respectPathCase: false,
     experimental: {
       clientDB: false,
+      cacheContents: true,
       stripQueryParameters: false,
       advanceQuery: false,
       search: undefined
@@ -424,22 +432,15 @@ export default defineNuxtModule<ModuleOptions>({
           method: 'get',
           route: `${options.api.baseURL}/query`,
           handler: resolveRuntimeModule('./server/api/query')
-        }
-      )
-
-      if (options.experimental?.clientDB) {
-        nitroConfig.handlers.push({
+        },
+        {
           method: 'get',
           route: nuxt.options.dev
             ? `${options.api.baseURL}/cache.json`
             : `${options.api.baseURL}/cache.${buildIntegrity}.json`,
           handler: resolveRuntimeModule('./server/api/cache')
-        })
-
-        if (!nuxt.options.dev) {
-          nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
         }
-      }
+      )
 
       if (options.experimental?.search) {
         const route = nuxt.options.dev
@@ -458,6 +459,10 @@ export default defineNuxtModule<ModuleOptions>({
           // Use text/plain to avoid Nitro render an index.html
           headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
         }
+      }
+
+      if (!nuxt.options.dev) {
+        nitroConfig.prerender.routes.unshift(`${options.api.baseURL}/cache.${buildIntegrity}.json`)
       }
 
       // Register source storages

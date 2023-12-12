@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const { content } = useRuntimeConfig()
   const now = Date.now()
   // Fetch all content
-  const contents = await serverQueryContent(event).find()
+  let contents = await serverQueryContent(event).find()
 
   // Generate Index
   await getContentIndex(event)
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   return {
     generatedAt: now,
     generateTime: Date.now() - now,
-    contents,
+    contents: content.experimental.cacheContents ? contents : [] as any,
     navigation
   }
 })
