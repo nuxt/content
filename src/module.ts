@@ -236,6 +236,13 @@ export interface ModuleOptions {
     clientDB?: boolean
     stripQueryParameters?: boolean
     advanceQuery?: boolean,
+
+    /**
+     * Control content cach generation.
+     *
+     * This option might be removed in the next major version.
+     */
+    cacheContents?: boolean
     /**
      * Search mode.
      *
@@ -353,6 +360,7 @@ export default defineNuxtModule<ModuleOptions>({
     respectPathCase: false,
     experimental: {
       clientDB: false,
+      cacheContents: true,
       stripQueryParameters: false,
       advanceQuery: false,
       search: undefined

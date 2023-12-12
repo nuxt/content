@@ -79,9 +79,11 @@ const ecosystemLinks = [
   <UPage>
     <UPageHeader :title="page.title" :description="page.description" :links="page.links" :headline="headline" />
 
-    <UPageBody prose class="pb-0">
+    <UPageBody prose>
       <ContentRenderer v-if="page.body" :value="page" />
-      <hr v-if="surround?.length" class="my-8">
+
+      <hr v-if="surround?.length">
+
       <UDocsSurround :surround="surround" />
     </UPageBody>
 
