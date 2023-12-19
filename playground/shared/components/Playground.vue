@@ -17,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const tab = ref('Preview')
 const tabs = ref(['Preview', 'AST'])
 const content = ref(`

@@ -1,9 +1,9 @@
-import { cachedEventHandler } from 'nitropack/dist/runtime/cache'
 import { cacheStorage, serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
 import type { ParsedContent, ParsedContentMeta } from '../../types'
 import { getContentQuery } from '../../utils/query'
 import { isPreview } from '../preview'
+import { cachedEventHandler } from '#imports'
 
 export default cachedEventHandler(async (event) => {
   const query = getContentQuery(event)

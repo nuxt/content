@@ -1,8 +1,7 @@
 import { createError } from 'h3'
-import { cachedEventHandler } from 'nitropack/dist/runtime/cache'
 import { serverQueryContent } from '../storage'
 import { getContentQuery } from '../../utils/query'
-import { useRuntimeConfig } from '#imports'
+import { useRuntimeConfig, cachedEventHandler } from '#imports'
 
 export default cachedEventHandler(async (event) => {
   const query = getContentQuery(event)
