@@ -58,7 +58,7 @@
     "knitwork": "^1.0.0",
     "listhen": "^1.5.5",
     "mdast-util-to-string": "^4.0.0",
-    "mdurl": "^1.0.1",
+    "mdurl": "^2.0.0",
     "minisearch": "^6.3.0",
     "micromark": "^4.0.0",
     "micromark-util-sanitize-uri": "^2.0.0",
