@@ -16,8 +16,10 @@
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     },
-    "./transformers": "./dist/runtime/transformers/index.mjs",
-    "./transformers/*": "./dist/runtime/transformers/*.mjs"
+    "./transformers": "./dist/runtime/transformers/index.js",
+    "./transformers/*": "./dist/runtime/transformers/*.js",
+    "./types": "./dist/runtime/types/index.js",
+    "./dist/runtime/types": "./dist/runtime/types/index.js"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",

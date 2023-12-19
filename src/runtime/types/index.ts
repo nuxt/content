@@ -514,3 +514,6 @@ export interface NavItem {
 
   [key: string]: any
 }
+
+// Ensure that a .js file is emitted too
+export {}

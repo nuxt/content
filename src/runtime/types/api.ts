@@ -22,3 +22,6 @@ export interface ContentQueryWithSurround<T> {
 export interface ContentQueryWithDirConfig {
   dirConfig: Record<string, any>
 }
+
+// Ensure that a .js file is emitted too
+export {}
