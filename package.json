@@ -17,7 +17,8 @@
       "require": "./dist/module.cjs"
     },
     "./transformers": "./dist/runtime/transformers/index.js",
-    "./transformers/*": "./dist/runtime/transformers/*.js"
+    "./transformers/*": "./dist/runtime/transformers/*.js",
+    "./dist/runtime/types": "./dist/runtime/types/index.js"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
