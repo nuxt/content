@@ -1,9 +1,10 @@
-import { createError, defineEventHandler } from 'h3'
+import { createError } from 'h3'
+import { cachedEventHandler } from 'nitropack/dist/runtime/cache'
 import { serverQueryContent } from '../storage'
 import { getContentQuery } from '../../utils/query'
 import { useRuntimeConfig } from '#imports'
 
-export default defineEventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const query = getContentQuery(event)
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
 
@@ -39,4 +40,7 @@ export default defineEventHandler(async (event) => {
   }
 
   return serverQueryContent(event, query).find()
+}, {
+  maxAge: 31536000,
+  shouldBypassCache: () => !!import.meta.dev
 })
