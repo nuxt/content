@@ -347,3 +347,6 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
 }
 
 export type ContentQueryFetcher<T> = (query: ContentQueryBuilder<T>) => Promise<ContentQueryResponse>
+
+// Ensure that a .js file is emitted too
+export {}
