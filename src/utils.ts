@@ -1,11 +1,8 @@
 import type { IncomingMessage } from 'http'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
-// @ts-ignore
 import fsDriver from 'unstorage/drivers/fs'
-// @ts-ignore
 import httpDriver from 'unstorage/drivers/http'
-// @ts-ignore
 import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { consola } from 'consola'
