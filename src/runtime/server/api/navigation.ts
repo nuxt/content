@@ -3,9 +3,9 @@ import { createNav } from '../navigation'
 import type { ParsedContent, ParsedContentMeta } from '../../types'
 import { getContentQuery } from '../../utils/query'
 import { isPreview } from '../preview'
-import { cachedEventHandler } from '#imports'
+import { eventHandler } from '#imports'
 
-export default cachedEventHandler(async (event) => {
+export default eventHandler(async (event) => {
   const query = getContentQuery(event)
 
   // Read from cache if not preview and there is no query
@@ -50,7 +50,4 @@ export default cachedEventHandler(async (event) => {
   }, {} as Record<string, ParsedContentMeta>)
 
   return createNav((contents?.result || contents) as ParsedContentMeta[], configs)
-}, {
-  maxAge: 31536000,
-  shouldBypassCache: () => !!import.meta.dev
 })

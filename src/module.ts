@@ -416,6 +416,12 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
       nitroConfig.handlers = nitroConfig.handlers || []
 
+      // Performance: Add ISR for API routes
+      if (!nuxt.options.dev && !nuxt.options._prepare) {
+        nuxt.options.routeRules = {}
+        nuxt.options.routeRules[`${options.api.baseURL}/query/**`] = { isr: true }
+      }
+
       // Add server handlers
       nitroConfig.handlers.push(
         {
