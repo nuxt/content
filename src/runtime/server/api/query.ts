@@ -1,9 +1,9 @@
 import { createError } from 'h3'
 import { serverQueryContent } from '../storage'
 import { getContentQuery } from '../../utils/query'
-import { useRuntimeConfig, eventHandler } from '#imports'
+import { useRuntimeConfig, cachedEventHandler } from '#imports'
 
-export default eventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const query = getContentQuery(event)
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
 
@@ -39,4 +39,7 @@ export default eventHandler(async (event) => {
   }
 
   return serverQueryContent(event, query).find()
+}, {
+  maxAge: 31536000,
+  shouldBypassCache: () => !!import.meta.dev
 })
