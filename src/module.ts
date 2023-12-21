@@ -785,7 +785,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
       defaultLocale: contentContext.defaultLocale,
-      integrity: buildIntegrity,
+      integrity: buildIntegrity as number,
       experimental: {
         stripQueryParameters: options.experimental.stripQueryParameters,
         advanceQuery: options.experimental.advanceQuery === true,
@@ -964,6 +964,17 @@ interface ModulePublicRuntimeConfig {
     clientDB: boolean
     advanceQuery: boolean
   }
+
+  api:  {
+    baseURL: string
+  }
+
+  host: string | undefined
+  
+  trailingSlash: boolean
+
+  integrity: number | undefined
+
   respectPathCase: boolean
 
   defaultLocale: ModuleOptions['defaultLocale']

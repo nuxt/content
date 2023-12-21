@@ -11,6 +11,10 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
   // Get navigation config from runtimeConfig
   const { navigation } = useRuntimeConfig().public.content
 
+  if (navigation === false) {
+    return []
+  }
+
   // Navigation fields picker
   const pickNavigationFields = (content: ParsedContentMeta) => ({
     ...pick(['title', ...navigation.fields])(content),

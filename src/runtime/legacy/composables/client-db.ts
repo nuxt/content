@@ -1,10 +1,10 @@
 // @ts-ignore
 import memoryDriver from 'unstorage/drivers/memory'
-import { type Storage, createStorage, prefixStorage } from 'unstorage'
+import { type Storage, createStorage, prefixStorage, type StorageValue } from 'unstorage'
 import { withBase } from 'ufo'
 import { createPipelineFetcherLegacy } from '../../query/match/pipeline-legacy'
 import { createQuery } from '../../query/query'
-import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilderParams } from '../../types'
+import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilder, QueryBuilderParams } from '../../types'
 import { createNav } from '../../server/navigation'
 import { useContentPreview } from '../../composables/preview'
 import type { ContentQueryBuilderParams, ContentQueryFetcher } from '../../types/query'
@@ -12,9 +12,15 @@ import { useRuntimeConfig, useNuxtApp } from '#imports'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)
 
-export const contentStorage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
+export const contentStorage: Storage = prefixStorage(createStorage({ driver: memoryDriver() }), '@content')
 
-export function createDB (storage: Storage) {
+interface ClientDB {
+  storage: Storage
+  fetch: (query:  QueryBuilder<ParsedContent>) => Promise<ParsedContent | ParsedContent[]>
+  query: (query?: QueryBuilderParams) => QueryBuilder<ParsedContent>
+}
+
+export function createDB (storage: Storage): ClientDB {
   async function getItems () {
     const keys = new Set<string>(await storage.getKeys('cache:'))
 
@@ -45,8 +51,9 @@ export function createDB (storage: Storage) {
     const items = await Promise.all(Array.from(keys).map(key => storage.getItem(key) as Promise<ParsedContent>))
     return items
   }
+
   return {
-    storage,
+    storage: storage ,
     fetch: createPipelineFetcherLegacy(getItems),
     query: (query?: QueryBuilderParams) => createQuery(createPipelineFetcherLegacy(getItems) as unknown as ContentQueryFetcher<ParsedContent>, {
       initialParams: query as ContentQueryBuilderParams,
@@ -87,7 +94,7 @@ async function initContentDatabase () {
 
     await _contentDatabase.storage.setItem('navigation', navigation)
 
-    await _contentDatabase.storage.setItem('integrity', content.integrity)
+    await _contentDatabase.storage.setItem('integrity', content.integrity as StorageValue)
   }
 
   // call `content:storage` hook to allow plugins to fill storage
