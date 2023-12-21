@@ -280,10 +280,10 @@ export const testMarkdownParser = () => {
       expect(parsed.body).toHaveProperty('children')
       expect(parsed.body.children.length).toEqual(2)
       expect(parsed.body.children[0].tag).toEqual('h1')
-      expect(parsed.body.children[0].children[1].props.class).toEqual('text-green')
+      expect(parsed.body.children[0].children[1].props.className).toEqual(['text-green'])
 
       expect(parsed.body.children[1].tag).toEqual('p')
-      expect(parsed.body.children[1].children[1].props.class).toEqual('font-bold text-green')
+      expect(parsed.body.children[1].children[1].props.className).toEqual(['font-bold', 'text-green'])
     })
 
     test('handle markdown file path as link', async () => {
