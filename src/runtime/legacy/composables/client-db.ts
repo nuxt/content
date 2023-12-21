@@ -16,7 +16,7 @@ export const contentStorage: Storage = prefixStorage(createStorage({ driver: mem
 
 interface ClientDB {
   storage: Storage
-  fetch: (query:  QueryBuilder<ParsedContent>) => Promise<ParsedContent | ParsedContent[]>
+  fetch: (query: QueryBuilder<ParsedContent>) => Promise<ParsedContent | ParsedContent[]>
   query: (query?: QueryBuilderParams) => QueryBuilder<ParsedContent>
 }
 
@@ -53,7 +53,7 @@ export function createDB (storage: Storage): ClientDB {
   }
 
   return {
-    storage: storage ,
+    storage,
     fetch: createPipelineFetcherLegacy(getItems),
     query: (query?: QueryBuilderParams) => createQuery(createPipelineFetcherLegacy(getItems) as unknown as ContentQueryFetcher<ParsedContent>, {
       initialParams: query as ContentQueryBuilderParams,

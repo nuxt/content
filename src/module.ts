@@ -965,12 +965,12 @@ interface ModulePublicRuntimeConfig {
     advanceQuery: boolean
   }
 
-  api:  {
+  api: {
     baseURL: string
   }
 
   host: string | undefined
-  
+
   trailingSlash: boolean
 
   integrity: number | undefined
