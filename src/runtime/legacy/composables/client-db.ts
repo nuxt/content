@@ -1,4 +1,3 @@
-// @ts-ignore
 import memoryDriver from 'unstorage/drivers/memory'
 import { type Storage, createStorage, prefixStorage } from 'unstorage'
 import { withBase } from 'ufo'
