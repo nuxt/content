@@ -1,5 +1,5 @@
-import { ContentQueryFindResponse, ContentQueryFindOneResponse, ContentQueryCountResponse, ContentQueryWithSurround, ContentQueryWithDirConfig } from './api'
-import { ContentQueryCountResponse, ContentQueryResponse, ParsedContentInternalMeta, ParsedContentMeta } from '.'
+import type { ContentQueryFindResponse, ContentQueryFindOneResponse, ContentQueryCountResponse, ContentQueryWithSurround, ContentQueryWithDirConfig, ContentQueryResponse } from './api'
+import type { ParsedContentInternalMeta, ParsedContentMeta } from '.'
 /**
  * Query
  */
@@ -256,7 +256,7 @@ export interface ContentQueryBuilderWhere extends Partial<Record<keyof ParsedCon
    **/
   $in?: Array<string | number | boolean>
 
-  [key: string]: string | number | boolean | RegExp | ContentQueryBuilderWhere | Array<string | number | boolean | ContentQueryBuilderWhere>
+  [key: string]: string | number | boolean | RegExp | ContentQueryBuilderWhere | Array<string | number | boolean | ContentQueryBuilderWhere> | undefined
 }
 
 export interface ContentQueryBuilderParams {
@@ -313,7 +313,7 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
    * Retrieve query builder params
    * @internal
    */
-  params: () => readonly ContentQueryBuilderParams
+  params: () => ContentQueryBuilderParams
 
   /**
    * Filter contents based on locale
@@ -346,7 +346,7 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
   withDirConfig(): ContentQueryBuilder<T, ContentQueryWithDirConfig>
 }
 
-export type ContentQueryFetcher<T> = (query: ContentQueryBuilder<T>) => Promise<ContentQueryResponse>
+export type ContentQueryFetcher<T> = (query: ContentQueryBuilder<T>) => Promise<ContentQueryResponse<T>>
 
 // Ensure that a .js file is emitted too
 export {}

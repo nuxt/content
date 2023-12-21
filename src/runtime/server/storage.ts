@@ -1,4 +1,4 @@
-import { type StorageValue, prefixStorage } from 'unstorage'
+import { type StorageValue, prefixStorage, type Storage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
@@ -33,9 +33,9 @@ interface ParseContentOptions {
   [key: string]: any
 }
 
-export const sourceStorage = prefixStorage(useStorage(), 'content:source')
-export const cacheStorage = prefixStorage(useStorage(), 'cache:content')
-export const cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
+export const sourceStorage: Storage = prefixStorage(useStorage(), 'content:source')
+export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content')
+export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
 

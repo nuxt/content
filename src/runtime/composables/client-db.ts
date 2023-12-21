@@ -1,5 +1,5 @@
 import memoryDriver from 'unstorage/drivers/memory'
-import { type Storage, createStorage, prefixStorage } from 'unstorage'
+import { type Storage, createStorage, prefixStorage, type StorageValue } from 'unstorage'
 import { withBase } from 'ufo'
 import { createQuery } from '../query/query'
 import type { NavItem, ParsedContent, ParsedContentMeta } from '../types'
@@ -86,7 +86,7 @@ async function initContentDatabase () {
 
     await _contentDatabase.storage.setItem('navigation', navigation)
 
-    await _contentDatabase.storage.setItem('integrity', content.integrity)
+    await _contentDatabase.storage.setItem('integrity', content.integrity as StorageValue)
   }
 
   // call `content:storage` hook to allow plugins to fill storage
