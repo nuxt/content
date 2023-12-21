@@ -94,7 +94,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^1.0.4",
+    "vitest": "^1.1.0",
     "vue-docgen-web-types": "^0.1.8"
   },
   "packageManager": "pnpm@8.12.1",
