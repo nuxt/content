@@ -1,6 +1,58 @@
 # Changelog
 
 
+## v2.10.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.9.0...v2.10.0)
+
+### 🚀 Enhancements
+
+- Add homepage on package.json ([#2413](https://github.com/nuxt/content/pull/2413))
+- **api:** Cache api endpoints ([d2bcf70f](https://github.com/nuxt/content/commit/d2bcf70f))
+
+### 🩹 Fixes
+
+- Add missing imports for search ([#2412](https://github.com/nuxt/content/pull/2412))
+- Import nuxt composables from #imports ([#2418](https://github.com/nuxt/content/pull/2418))
+- 7.search-content.md typo ([7bf89960](https://github.com/nuxt/content/commit/7bf89960))
+- Enable cache only for clientDb ([#2425](https://github.com/nuxt/content/pull/2425))
+- Remove d.ts ([#2427](https://github.com/nuxt/content/pull/2427))
+- Ensure `bundler` module resolution works with runtime type imports ([#2470](https://github.com/nuxt/content/pull/2470))
+- Imports ([f33f5a20](https://github.com/nuxt/content/commit/f33f5a20))
+
+### 📖 Documentation
+
+- Use mdc syntax highlight ([7dcbf130](https://github.com/nuxt/content/commit/7dcbf130))
+- Small typo ([3ec3de44](https://github.com/nuxt/content/commit/3ec3de44))
+- Update index.yml ([1f06910c](https://github.com/nuxt/content/commit/1f06910c))
+- Costum components ([#2433](https://github.com/nuxt/content/pull/2433))
+- Missing padding on body ([746cfce8](https://github.com/nuxt/content/commit/746cfce8))
+- Update README.md ([1ce6953f](https://github.com/nuxt/content/commit/1ce6953f))
+- Add templates link ([6dcf4645](https://github.com/nuxt/content/commit/6dcf4645))
+
+### 🏡 Chore
+
+- **perf:** Leverage ISR instead for query caching ([dee73c67](https://github.com/nuxt/content/commit/dee73c67))
+- Remove routeRules added ([6b94f131](https://github.com/nuxt/content/commit/6b94f131))
+- **perf:** Leverage ISR instead for query caching" ([6a56986c](https://github.com/nuxt/content/commit/6a56986c))
+- Upgrade @nuxtjs/mdc^0.3.0 ([8c442665](https://github.com/nuxt/content/commit/8c442665))
+- Remove `ts-ignore` as unstorage has fixed subpath export ([#2472](https://github.com/nuxt/content/pull/2472))
+- Test bundler module resolution ([#2474](https://github.com/nuxt/content/pull/2474))
+
+### ❤️ Contributors
+
+- Daniel Roe <daniel@roe.dev>
+- Farnabaz ([@farnabaz](http://github.com/farnabaz))
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Estéban <e.soubiran25@gmail.com>
+- Adityawarman Dewa Putra <devdewa123.sp@gmail.com>
+- Benjamin Canac ([@benjamincanac](http://github.com/benjamincanac))
+- Lukasz Szymanski <lukasz.szymansky@gmail.com>
+- Erouax 
+- Cosmin Popovici 
+- Adam DeHaven 
+- Maxime Pauvert ([@maximepvrt](http://github.com/maximepvrt))
+
 ## v2.9.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.8.5...v2.9.0)
