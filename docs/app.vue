@@ -26,6 +26,11 @@ const links = [{
   to: 'https://nuxt.com/templates',
   target: '_blank'
 }, {
+  label: 'Editor',
+  icon: 'i-ph-pencil-duotone',
+  to: 'https://nuxt.studio/?utm_source=content-site&utm_medium=header',
+  target: '_blank'
+}, {
   label: 'Releases',
   icon: 'i-heroicons-rocket-launch-solid',
   to: 'https://github.com/nuxt/content/releases',

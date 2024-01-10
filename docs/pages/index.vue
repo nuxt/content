@@ -54,7 +54,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         :ui="{ color: { primary: { solid: 'ring-1 ring-inset ring-primary-700/50 text-primary-400 bg-primary-900/10 hover:bg-primary-900/50 transition-color duration-200' } } }"
       >
         <NuxtLink to="https://nuxt.studio/?utm_source=content-site&utm_medium=hero&utm_campaign=home" target="_blank" rel="noopener">
-          Discover Nuxt Studio: the pro version of Content
+          Nuxt Studio: the Nuxt Content Editor
         </NuxtLink>
       </UBadge>
     </div>

@@ -41,14 +41,14 @@ sections:
     subTitle: Trusted and supported by our<br />amazing community
     avatarText: Created and maintained by 180+ contributors
   - slot: meet-studio
-    title: Meet Studio <br /><span class="text-primary-400">The pro version of Nuxt Content</span>
+    title: Meet Studio <br /><span class="text-primary-400">The Editor for Nuxt Content</span>
     description: 'Nuxt Studio lets you edit your websites made with Nuxt Content on any devices and by anyone. Opening a new door between git-based CMS and collaboration with your marketing teams.'
     button: Try it now!
     list:
+      - Markdown Editor
       - Sync with GitHub
-      - Preview links
-      - Enhanced Markdown Editor
-      - App Config Editor
+      - Live Preview
+      - Editors permissions
       - Live collaboration
       - Edit on mobile
       - Media Library
