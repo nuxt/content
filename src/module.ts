@@ -270,7 +270,7 @@ export interface ModuleOptions {
        *
        * @default true
        */
-      indexed: boolean
+      indexed?: boolean
       /**
        * MiniSearch Options. When using `indexed` option,
        * this options will be used to configure MiniSearch
@@ -293,7 +293,7 @@ export interface ModuleOptions {
        *
        * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
        */
-      options: MiniSearchOptions
+      options?: MiniSearchOptions
     }
   }
 }
