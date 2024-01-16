@@ -5,7 +5,7 @@ export const defineMiniSearchOptions = <DataItem>(options: MiniSearchOptions<Dat
   return ref(options)
 }
 
-export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, options: { miniSearch?: MaybeRefOrGetter<MiniSearchOptions<DataItem>> }) => {
+export const searchContent = async <DataItem>(search: MaybeRefOrGetter<string>, options: { miniSearch?: MaybeRefOrGetter<MiniSearchOptions<DataItem>> } = {}) => {
   const runtimeConfig = useRuntimeConfig()
   const { content } = runtimeConfig.public
   const { integrity, api: { baseURL: baseAPI }, search: searchOptions } = content
