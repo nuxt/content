@@ -82,7 +82,7 @@
     "@nuxtjs/eslint-config-typescript": "latest",
     "@nuxtjs/tailwindcss": "^6.10.4",
     "@types/ws": "^8.5.10",
-    "c8": "^8.0.1",
+    "c8": "^9.1.0",
     "csvtojson": "^2.0.10",
     "eslint": "^8.56.0",
     "globby": "^14.0.0",
