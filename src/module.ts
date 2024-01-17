@@ -595,7 +595,7 @@ export default defineNuxtModule<ModuleOptions>({
     addTemplate({
       filename: 'content-components.mjs',
       getContents ({ options }) {
-        const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
+        const components = options.getComponents().filter((c: any) => !c.island).flatMap((c: any) => {
           const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
           const isClient = c.mode === 'client'
           const definitions: string[] = []
