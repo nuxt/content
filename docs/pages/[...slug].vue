@@ -91,10 +91,12 @@ const ecosystemLinks = [
       <UDocsToc :links="page.body.toc.links">
         <template #bottom>
           <div class="hidden !mt-6 lg:block space-y-6">
-            <UDivider v-if="page.body?.toc?.links?.length" dashed />
+            <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
             <UPageLinks title="Community" :links="communityLinks" />
-            <UDivider dashed />
+            <UDivider type="dashed" />
             <UPageLinks title="Ecosystem" :links="ecosystemLinks" />
+            <UDivider type="dashed" />
+            <AdsCarbon />
           </div>
         </template>
       </UDocsToc>
