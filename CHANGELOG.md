@@ -1,6 +1,41 @@
 # Changelog
 
 
+## v2.11.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.10.0...v2.11.0)
+
+### 🩹 Fixes
+
+- **types:** Fields in `experimental.search` can be optional ([#2506](https://github.com/nuxt/content/pull/2506))
+- **ContentSlot:** Detect multiline usage ([#2508](https://github.com/nuxt/content/pull/2508))
+
+### 📖 Documentation
+
+- Fix component name ([#2482](https://github.com/nuxt/content/pull/2482))
+- Search result variable name ([#2485](https://github.com/nuxt/content/pull/2485))
+- Updates ([d41902ad](https://github.com/nuxt/content/commit/d41902ad))
+- Mention that `searchContent` is an experimental feature ([#2505](https://github.com/nuxt/content/pull/2505))
+- Add carbon ads ([77163e4b](https://github.com/nuxt/content/commit/77163e4b))
+
+### 📦 Build
+
+- Do not emit `.mjs` in runtime directory ([#2514](https://github.com/nuxt/content/pull/2514))
+
+### 🏡 Chore
+
+- Move to `shikiji` for types ([#2495](https://github.com/nuxt/content/pull/2495))
+- Remove unused argument ([#2496](https://github.com/nuxt/content/pull/2496))
+- **dx:** Remove caching for dev HMR ([78e1eebe](https://github.com/nuxt/content/commit/78e1eebe))
+
+### ❤️ Contributors
+
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Daniel Roe <daniel@roe.dev>
+- Farnabaz ([@farnabaz](http://github.com/farnabaz))
+- Anthony Fu <anthonyfu117@hotmail.com>
+- Adam DeHaven
+
 ## v2.10.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.9.0...v2.10.0)

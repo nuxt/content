@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -46,8 +46,8 @@
     "test:unit": "nuxi prepare test/fixtures/basic && nuxi prepare test/fixtures/document-driven && vitest run"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.9.2",
-    "@nuxtjs/mdc": "^0.3.0",
+    "@nuxt/kit": "^3.9.3",
+    "@nuxtjs/mdc": "^0.3.2",
     "@vueuse/core": "^10.7.2",
     "@vueuse/head": "^2.0.0",
     "@vueuse/nuxt": "^10.7.2",
@@ -76,9 +76,9 @@
   },
   "devDependencies": {
     "@nuxt/module-builder": "^0.5.5",
-    "@nuxt/schema": "3.9.2",
-    "@nuxt/test-utils": "3.9.0",
-    "@nuxthq/studio": "^1.0.6",
+    "@nuxt/schema": "3.9.3",
+    "@nuxt/test-utils": "3.10.0",
+    "@nuxthq/studio": "^1.0.9",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@nuxtjs/tailwindcss": "^6.10.4",
     "@types/ws": "^8.5.10",
@@ -89,12 +89,12 @@
     "husky": "^8.0.3",
     "jiti": "^1.21.0",
     "lint-staged": "^15.2.0",
-    "nuxt": "3.9.2",
+    "nuxt": "3.9.3",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.0.1",
     "remark-oembed": "^1.2.2",
-    "vitest": "^1.2.0",
+    "vitest": "^1.2.1",
     "vue-docgen-web-types": "^0.1.8"
   },
   "packageManager": "pnpm@8.14.1",
@@ -120,10 +120,5 @@
     "hooks": {
       "after:bump": "npx changelogen@latest --no-commit --no-tag --output --r $(node -p \"require('./package.json').version\")"
     }
-  },
-  "build": {
-    "externals": [
-      "#build/types/layouts"
-    ]
   }
 }
