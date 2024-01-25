@@ -18,7 +18,7 @@ import { listen } from 'listhen'
 import { type Options as MiniSearchOptions } from 'minisearch'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
-import type { Lang as ShikiLang, Theme as ShikiTheme } from 'shiki-es'
+import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme } from 'shikiji'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import { createStorage, type WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
@@ -270,7 +270,7 @@ export interface ModuleOptions {
        *
        * @default true
        */
-      indexed: boolean
+      indexed?: boolean
       /**
        * MiniSearch Options. When using `indexed` option,
        * this options will be used to configure MiniSearch
@@ -293,7 +293,7 @@ export interface ModuleOptions {
        *
        * @see https://lucaong.github.io/minisearch/modules/_minisearch_.html#options
        */
-      options: MiniSearchOptions
+      options?: MiniSearchOptions
     }
   }
 }
@@ -396,7 +396,7 @@ export default defineNuxtModule<ModuleOptions>({
         enforce: 'pre',
         transform (code) {
           if (code.includes('ContentSlot')) {
-            code = code.replace(/<ContentSlot (.*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot $1 name="$4"')
+            code = code.replace(/<ContentSlot(\s)+([.]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2 name="$5"')
             code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
             code = code.replace(/<ContentSlot/g, '<MDCSlot')
             code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
@@ -595,7 +595,7 @@ export default defineNuxtModule<ModuleOptions>({
     addTemplate({
       filename: 'content-components.mjs',
       getContents ({ options }) {
-        const components = options.getComponents(options.mode).filter((c: any) => !c.island).flatMap((c: any) => {
+        const components = options.getComponents().filter((c: any) => !c.island).flatMap((c: any) => {
           const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
           const isClient = c.mode === 'client'
           const definitions: string[] = []
