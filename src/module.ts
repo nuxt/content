@@ -834,7 +834,8 @@ export default defineNuxtModule<ModuleOptions>({
       }
 
       // @ts-ignore
-      let cssPath = nuxt.options.tailwindcss?.cssPath ? await resolvePath(nuxt.options.tailwindcss?.cssPath, { extensions: ['.css', '.sass', '.scss', '.less', '.styl'] }) : join(nuxt.options.dir.assets, 'css/tailwind.css')
+      const [tailwindCssPath] = Array.isArray(nuxt.options.tailwindcss?.cssPath) ? nuxt.options.tailwindcss?.cssPath : [nuxt.options.tailwindcss?.cssPath]
+      let cssPath = tailwindCssPath ? await resolvePath(tailwindCssPath, { extensions: ['.css', '.sass', '.scss', '.less', '.styl'] }) : join(nuxt.options.dir.assets, 'css/tailwind.css')
       if (!fs.existsSync(cssPath)) {
         cssPath = await resolvePath('tailwindcss/tailwind.css')
       }
