@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@iconify-json/ph": "^1.1.10",
-    "@iconify-json/simple-icons": "^1.1.88",
-    "@nuxt/content": "^2.10.0",
+    "@iconify-json/simple-icons": "^1.1.89",
+    "@nuxt/content": "^2.11.0",
     "@nuxt/ui-pro": "^0.7.3",
-    "@nuxthq/studio": "^1.0.9",
+    "@nuxthq/studio": "^1.0.10",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.1.3",
     "@nuxtjs/plausible": "^0.2.4",
