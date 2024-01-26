@@ -38,7 +38,7 @@ export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content'
 export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
-const isPrerendering = process.argv?.includes('generate')
+const isPrerendering = import.meta.prerender
 
 const contentConfig = useRuntimeConfig().content
 
