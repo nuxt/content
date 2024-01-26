@@ -38,6 +38,7 @@ export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content'
 export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
+const isPrerendering = process.argv?.includes('generate')
 
 const contentConfig = useRuntimeConfig().content
 
@@ -109,19 +110,45 @@ export function* chunksFromArray<T> (arr: T[], n: number) : Generator<T[], void>
   }
 }
 
-export const getContentsList = async (event: H3Event, prefix?: string) => {
-  const keys = await getContentsIds(event, prefix)
+export const getContentsList = (() => {
+  let cachedContents: ParsedContent[] = []
+  let pendingContentsListPromise: Promise<ParsedContent[]> | null = null
 
-  const keyChunks = [...chunksFromArray(keys, 10)]
+  const _getContentsList = async (event: H3Event, prefix?: string) => {
+    const keys = await getContentsIds(event, prefix)
 
-  const contents: ParsedContent[] = []
-  for (const chunk of keyChunks) {
-    const result = await Promise.all(chunk.map(key => getContent(event, key)))
-    contents.push(...result)
+    const keyChunks = [...chunksFromArray(keys, 10)]
+
+    const contents: ParsedContent[] = []
+    for (const chunk of keyChunks) {
+      const result = await Promise.all(chunk.map(key => getContent(event, key)))
+      contents.push(...result)
+    }
+    return contents
   }
 
-  return contents
-}
+  return (event: H3Event, prefix?: string) => {
+    if (event.context.__contentList) {
+      return event.context.__contentList
+    }
+    if (isPrerendering && cachedContents.length) {
+      return cachedContents
+    }
+
+    if (!pendingContentsListPromise) {
+      pendingContentsListPromise = _getContentsList(event, prefix)
+      pendingContentsListPromise.then((result) => {
+        if (isPrerendering) {
+          cachedContents = result as ParsedContent[]
+        }
+        event.context.__contentList = result as ParsedContent[]
+        pendingContentsListPromise = null
+      })
+    }
+    return pendingContentsListPromise
+  }
+})()
+
 const pendingPromises: Record<string, Promise<ParsedContent>> = {}
 export const getContent = async (event: H3Event, id: string): Promise<ParsedContent> => {
   const contentId = id
