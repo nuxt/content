@@ -55,14 +55,19 @@ export const testNavigation = () => {
         }
       })
 
-      // page.md, index.md, /not-hidden-dir
-      expect(list[0].children).toHaveLength(3)
+      // page.md, index.md, /not-hidden-dir, /foo, /foo-bar
+      expect(list[0].children).toHaveLength(5)
 
       // /hidden-dir should not exist
       expect(list[0].children.find(item => item._path.includes('/hidden-dir'))).toBe(undefined)
 
       // /not-hidden-dir should exist
       expect(list[0].children.find(item => item._path.includes('/not-hidden-dir'))).toBeTruthy()
+
+      expect(list[0].children.findIndex(item => item._path === '/test-navigation/foo'))
+        .lessThan(
+          list[0].children.findIndex(item => item._path === '/test-navigation/foo-bar')
+        )
     })
 
     test('Get numbers navigation', async () => {

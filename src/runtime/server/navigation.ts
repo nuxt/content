@@ -118,6 +118,10 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear (nav: PrivateNavItem[]) {
+  nav.forEach((item) => {
+    // Remove extension from path
+    item._file = item._file.split('.').slice(0, -1).join('.')
+  })
   const sorted = nav.sort((a, b) => collator.compare(a._file, b._file))
 
   for (const item of sorted) {
