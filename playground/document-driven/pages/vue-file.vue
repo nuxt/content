@@ -1,4 +1,6 @@
 <script setup>
+import { definePageMeta } from '#imports'
+
 definePageMeta({
   documentDriven: {
     surround: false

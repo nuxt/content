@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useAsyncData, queryContent } from '#imports'
+import { ref, useAsyncData, queryContent, watch, nextTick } from '#imports'
 
 const query = ref({
   where: [{
