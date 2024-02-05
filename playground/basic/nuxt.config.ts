@@ -15,7 +15,11 @@ export default defineNuxtConfig({
     ignores: [
       '\\.bak$',
       'ignored/folder'
-    ]
+    ],
+
+    highlight: {
+      langs: ['json', 'js', 'ts', 'html', 'css', 'vue', 'shell', 'mdc', 'md', 'yaml']
+    }
   },
   typescript: {
     includeWorkspace: true

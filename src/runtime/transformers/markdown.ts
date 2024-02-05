@@ -17,7 +17,8 @@ export default defineTransformer({
     config.remarkPlugins = await importPlugins(config.remarkPlugins)
 
     const parsed = await parseMarkdown(content as string, {
-      highlight: options.highlight,
+      // Pass only when it's an function. String values are handled by `@nuxtjs/mdc`
+      highlight: typeof options.highlight !== 'function' ? undefined : options.highlight,
       remark: {
         plugins: config.remarkPlugins
       },
@@ -32,7 +33,7 @@ export default defineTransformer({
       toc: config.toc
     })
 
-    return <MarkdownParsedContent> {
+    return <MarkdownParsedContent>{
       ...parsed.data,
       excerpt: parsed.excerpt,
       body: {
@@ -45,7 +46,7 @@ export default defineTransformer({
   }
 })
 
-async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = {}) {
+async function importPlugins(plugins: Record<string, false | MarkdownPlugin> = {}) {
   const resolvedPlugins: Record<string, false | MarkdownPlugin & { instance: any }> = {}
   for (const [name, plugin] of Object.entries(plugins)) {
     if (plugin) {
@@ -60,7 +61,7 @@ async function importPlugins (plugins: Record<string, false | MarkdownPlugin> = 
   return resolvedPlugins
 }
 
-function link (state: State, node: Link & { attributes?: Properties }) {
+function link(state: State, node: Link & { attributes?: Properties }) {
   const properties: Properties = {
     ...((node.attributes || {})),
     href: normalizeUri(normalizeLink(node.url))
@@ -80,7 +81,7 @@ function link (state: State, node: Link & { attributes?: Properties }) {
   return state.applyData(node, result)
 }
 
-function normalizeLink (link: string) {
+function normalizeLink(link: string) {
   const match = link.match(/#.+$/)
   const hash = match ? match[0] : ''
   if (link.replace(/#.+$/, '').endsWith('.md') && (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/')))) {
