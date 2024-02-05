@@ -18,7 +18,7 @@ import { listen } from 'listhen'
 import { type Options as MiniSearchOptions } from 'minisearch'
 import { hash } from 'ohash'
 import { join, relative } from 'pathe'
-import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme } from 'shikiji'
+import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny } from 'shiki'
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import { createStorage, type WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
@@ -162,10 +162,29 @@ export interface ModuleOptions {
       default: ShikiTheme
       [theme: string]: ShikiTheme
     },
+
     /**
      * Preloaded languages that will be available for highlighting code blocks.
+     *
+     * @deprecated Use `langs` instead
      */
-    preload?: ShikiLang[]
+    preload?: (ShikiLang | LanguageRegistration)[],
+
+    /**
+     * Languages to be bundled loaded by Shiki
+     *
+     * All languages used has to be included in this list at build time, to create granular bundles.
+     *
+     * Unlike the `preload` option, when this option is provided, it will override the default languages.
+     *
+     * @default ['js','ts','vue','css','html','vue','shell']
+     */
+    langs?: (ShikiLang | LanguageRegistration)[]
+
+    /**
+     * Additional themes to be bundled loaded by Shiki
+     */
+    themes?: (ShikiTheme | ThemeRegistrationAny)[]
   },
   /**
    * Options for yaml parser.
@@ -754,7 +773,7 @@ export default defineNuxtModule<ModuleOptions>({
       hightlight: options.highlight
     })
 
-    // Process markdown plugins, resovle paths
+    // Process markdown plugins, resolve paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
     const nuxtMDCOptions = {

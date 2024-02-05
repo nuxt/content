@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     },
     highlight: {
       theme: 'material-theme-palenight',
-      preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
+      langs: ['json', 'js', 'ts', 'html', 'css', 'vue', 'shell', 'mdc', 'md', 'yaml']
     }
   }
 })
