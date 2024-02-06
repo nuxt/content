@@ -1,6 +1,40 @@
 # Changelog
 
 
+## v2.12.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.11.0...v2.12.0)
+
+### 🚀 Enhancements
+
+- Adopt to mdc v0.4 ([#2539](https://github.com/nuxt/content/pull/2539))
+
+### 🔥 Performance
+
+- **content-list:** Cache contents list during generation and per-request ([#2527](https://github.com/nuxt/content/pull/2527))
+
+### 🩹 Fixes
+
+- **module:** Handle former props in ContentSlot transformer ([#2525](https://github.com/nuxt/content/pull/2525))
+- **client-db:** Fetch dir config on legacy query ([4b9b6b7a](https://github.com/nuxt/content/commit/4b9b6b7a))
+- **navigation:** Ignore extensions on navigation sort ([#2529](https://github.com/nuxt/content/pull/2529))
+
+### 📖 Documentation
+
+- Add `highlight.langs` ([61f6cda9](https://github.com/nuxt/content/commit/61f6cda9))
+
+### 🏡 Chore
+
+- **tw-support:** Get cssPath from array ([#2501](https://github.com/nuxt/content/pull/2501))
+- Missing imports in playground ([e7e082c3](https://github.com/nuxt/content/commit/e7e082c3))
+- Upgrade `@nuxtjs/mdc` ([d3437082](https://github.com/nuxt/content/commit/d3437082))
+
+### ❤️ Contributors
+
+- Farnabaz ([@farnabaz](http://github.com/farnabaz))
+- Anthony Fu <anthonyfu117@hotmail.com>
+- Inesh Bose <dev@inesh.xyz>
+
 ## v2.11.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.10.0...v2.11.0)

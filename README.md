@@ -20,7 +20,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - [**Nuxt 3**](https://nuxt.com) support
 - A Markdown syntax made for Vue components ([**MDC**](https://content.nuxt.com/usage/markdown))
 - Navigation generation
-- Code highlighting with [**Shikiji**](https://github.com/antfu/shikiji)
+- Code highlighting with [**Shiki**](https://github.com/shikijs/shiki)
 - Blazing fast hot module replacement in development
 - Powerful query builder (MongoDB like)
 - Table of contents generation
