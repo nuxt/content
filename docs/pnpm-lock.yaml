@@ -17,7 +17,7 @@ dependencies:
     version: 1.1.90
   '@nuxt/content':
     specifier: ^2.11.0
-    version: link:..
+    version: 2.11.0(nuxt@3.10.0)(vue@3.4.14)
   '@nuxt/ui-pro':
     specifier: ^0.7.5
     version: 0.7.5(nuxt@3.10.1)(vite@5.0.12)(vue@3.4.15)
