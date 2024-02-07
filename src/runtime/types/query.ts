@@ -280,8 +280,8 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
   /**
    * Select a subset of fields
    */
-  only<K extends keyof T | string>(keys: K): ContentQueryBuilder<Pick<T, K>, Y>
-  only<K extends (keyof T | string)[]>(keys: K): ContentQueryBuilder<Pick<T, K[number]>, Y>
+  only<const K extends keyof T | string>(keys: K): ContentQueryBuilder<Pick<T, K>, Y>
+  only<const K extends (keyof T | string)[]>(keys: K): ContentQueryBuilder<Pick<T, K[number]>, Y>
 
   /**
    * Remove a subset of fields
