@@ -74,7 +74,7 @@ function createOperators (match: (...args: any[]) => boolean, operators: Record<
     ),
 
     /**
-     * Match if item contains every condition or math every rule in condition array
+     * Match if item contains every condition or match every rule in condition array
      **/
     $contains: (item, condition) => {
       item = Array.isArray(item) ? item : String(item)
