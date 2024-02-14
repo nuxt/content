@@ -177,7 +177,7 @@ export interface ModuleOptions {
      *
      * Unlike the `preload` option, when this option is provided, it will override the default languages.
      *
-     * @default ['js','ts','vue','css','html','vue','shell']
+     * @default ['js','jsx','json','ts','tsx','vue','css','html','vue','bash','md','mdc','yaml']
      */
     langs?: (ShikiLang | LanguageRegistration)[]
 
