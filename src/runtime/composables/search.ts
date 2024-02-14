@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import MiniSearch, { type Options as MiniSearchOptions } from 'minisearch'
 import { useRuntimeConfig, useFetch, type MaybeRefOrGetter, ref, computed, toValue, type Ref } from '#imports'
 
