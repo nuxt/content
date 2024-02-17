@@ -361,7 +361,7 @@ export interface QueryBuilderWhere extends Partial<Record<keyof ParsedContentInt
    */
   $exists?: boolean
   /**
-   * Match if item contains every condition or math every rule in condition array
+   * Match if item contains every condition or match every rule in condition array
    *
    * @example
     ```ts
