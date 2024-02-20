@@ -42,7 +42,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
     const keyChunks = [...chunksFromArray(keys, 10)]
 
     const contents = []
-    for (const chunk of keyChunks) {
+    for await (const chunk of keyChunks) {
       const result = await Promise.all(chunk.map(key => getContent(event, key)))
       contents.push(...result)
     }
