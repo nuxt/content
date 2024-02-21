@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import type { ParsedContent } from '../types'
 import type { ContentQueryBuilder } from '../types/query'
 import { isPreview } from './preview'
-import { cacheStorage, getContent, getContentsList } from './storage'
+import { cacheStorage, chunksFromArray, getContent, getContentsList } from './storage'
 import { useRuntimeConfig } from '#imports'
 
 export async function getContentIndex (event: H3Event) {
@@ -39,7 +39,13 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
       .flatMap(key => index[key])
 
-    const contents = await Promise.all(keys.map(key => getContent(event, key)))
+    const keyChunks = [...chunksFromArray(keys, 10)]
+
+    const contents = []
+    for await (const chunk of keyChunks) {
+      const result = await Promise.all(chunk.map(key => getContent(event, key)))
+      contents.push(...result)
+    }
 
     return contents as unknown as Promise<T[]>
   }
