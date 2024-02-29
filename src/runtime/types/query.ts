@@ -286,8 +286,8 @@ export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
   /**
    * Remove a subset of fields
    */
-  without<K extends keyof T | string>(keys: K): ContentQueryBuilder<Omit<T, K>, Y>
-  without<K extends (keyof T | string)[]>(keys: K): ContentQueryBuilder<Omit<T, K[number]>, Y>
+  without<const K extends keyof T | string>(keys: K): ContentQueryBuilder<Omit<T, K>, Y>
+  without<const K extends (keyof T | string)[]>(keys: K): ContentQueryBuilder<Omit<T, K[number]>, Y>
 
   /**
    * Filter results
