@@ -1,4 +1,4 @@
-import { parseMarkdown } from '@nuxtjs/mdc/dist/runtime'
+import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import { type State } from 'mdast-util-to-hast'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { type Properties, type Element } from 'hast'
@@ -27,6 +27,7 @@ export default defineTransformer({
       : undefined
 
     const parsed = await parseMarkdown(content as string, {
+      ...config,
       highlight: highlightOptions,
       remark: {
         plugins: config.remarkPlugins
