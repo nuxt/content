@@ -1,6 +1,39 @@
 # Changelog
 
 
+## v2.12.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.12.0...v2.12.1)
+
+### 🩹 Fixes
+
+- Missing import ([#2560](https://github.com/nuxt/content/pull/2560))
+- **types:** Use const type parameter for QueryBuilder only ([#2546](https://github.com/nuxt/content/pull/2546))
+- Split `getContent` to chunks in `getIndexedContentsList` ([#2354](https://github.com/nuxt/content/pull/2354), [#2549](https://github.com/nuxt/content/pull/2549))
+- **types:** Add const type parameter for QueryBuilder.only() and .without() ([#2573](https://github.com/nuxt/content/pull/2573))
+
+### 📖 Documentation
+
+- Typo in  showURL prop ([#2537](https://github.com/nuxt/content/pull/2537))
+- Add descriptions of all match operators ([#2552](https://github.com/nuxt/content/pull/2552))
+- Update `highlight.langs` defaults ([#2559](https://github.com/nuxt/content/pull/2559))
+
+### 🏡 Chore
+
+- Fix Nuxt extends in renovate.json ([#2567](https://github.com/nuxt/content/pull/2567))
+- Upgrade `@nuxtjs/mdc` ([8a176f93](https://github.com/nuxt/content/commit/8a176f93))
+
+### ❤️ Contributors
+
+- Farnabaz ([@farnabaz](http://github.com/farnabaz))
+- Gangan ([@shinGangan](http://github.com/shinGangan))
+- Thunfisch987 ([@thunfisch987](http://github.com/thunfisch987))
+- Aldo ([@comanche2](http://github.com/comanche2))
+- Alex Liu ([@Mini-ghost](http://github.com/Mini-ghost))
+- Romain 'Maz' BILLOIR <romainb@octobercms.fr>
+- Wolfgang Drescher <drescher.wolfgang+git@gmail.com>
+- Mathieu NICOLAS ([@mathieunicolas](http://github.com/mathieunicolas))
+
 ## v2.12.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.11.0...v2.12.0)
