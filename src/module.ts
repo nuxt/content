@@ -408,7 +408,7 @@ export default defineNuxtModule<ModuleOptions>({
     extendViteConfig((config) => {
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
-      config.optimizeDeps.include.push('@nuxtjs/content > slugify')
+      config.optimizeDeps.include.push('@nuxt/content > slugify')
 
       config.plugins?.push({
         name: 'content-slot',
