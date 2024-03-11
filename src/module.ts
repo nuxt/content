@@ -408,7 +408,7 @@ export default defineNuxtModule<ModuleOptions>({
     extendViteConfig((config) => {
       config.optimizeDeps = config.optimizeDeps || {}
       config.optimizeDeps.include = config.optimizeDeps.include || []
-      config.optimizeDeps.include.push('slugify')
+      config.optimizeDeps.include.push('@nuxt/content > slugify')
 
       config.plugins?.push({
         name: 'content-slot',
@@ -800,6 +800,12 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installModule('@nuxtjs/mdc', nuxtMDCOptions)
+
+    // Update mdc optimizeDeps options
+    extendViteConfig((config) => {
+      config.optimizeDeps = config.optimizeDeps || {}
+      config.optimizeDeps.include = config.optimizeDeps.include?.map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content >'))
+    })
 
     nuxt.options.runtimeConfig.public.content = defu(nuxt.options.runtimeConfig.public.content, {
       locales: options.locales,
