@@ -90,7 +90,7 @@ provide('navigation', navigation)
     </template>
     <!-- Mobile panel -->
     <template v-if="$route.path !== '/'" #panel>
-      <LazyUDocsSearchButton size="md" class="mb-4 w-full" />
+      <LazyUContentSearchButton size="md" class="mb-4 w-full" />
       <LazyUNavigationTree :links="mapContentNavigation(navigation!)" default-open :multiple="false" />
     </template>
   </UHeader>
@@ -136,6 +136,6 @@ provide('navigation', navigation)
     </template>
   </UFooter>
   <ClientOnly>
-    <LazyUDocsSearch :files="files" :navigation="navigation" :links="links" />
+    <LazyUContentSearch :files="files" :navigation="navigation" :links="links" />
   </ClientOnly>
 </template>

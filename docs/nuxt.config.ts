@@ -55,11 +55,10 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/content',
+    '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxthq/studio',
     '@vueuse/nuxt',
-    '@nuxtjs/fontaine',
-    '@nuxtjs/google-fonts',
     'nuxt-og-image',
     '@nuxtjs/plausible'
   ],
@@ -69,18 +68,6 @@ export default defineNuxtConfig({
   },
   ui: {
     icons: ['heroicons', 'simple-icons', 'ph']
-  },
-
-  fontMetrics: {
-    fonts: ['DM Sans']
-  },
-
-  googleFonts: {
-    display: 'swap',
-    download: true,
-    families: {
-      'DM+Sans': [400, 500, 600, 700]
-    }
   },
 
   hooks: {

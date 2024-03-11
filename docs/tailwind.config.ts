@@ -33,7 +33,7 @@ export default <Partial<Config>>{
         }
       },
       fontFamily: {
-        sans: ['DM Sans', 'DM Sans fallback', ...defaultTheme.fontFamily.sans]
+        sans: ['Inter var', 'Inter', ...defaultTheme.fontFamily.sans]
       }
     }
   }
