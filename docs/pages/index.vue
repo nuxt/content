@@ -189,7 +189,6 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         card
         :ui="{
           background: 'bg-gradient-to-b from-gray-900 to-gray-950',
-          body: { background: 'bg-gradient-to-b from-gray-900 to-gray-950' },
           links: 'mt-10 flex flex-col space-y-4 items-center justify-center lg:justify-start gap-x-6',
           title: 'text-2xl font-medium tracking-tight text-white sm:text-3xl text-center lg:text-left',
         }"
