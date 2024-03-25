@@ -235,7 +235,7 @@ export default defineNuxtPlugin((nuxt) => {
   }
 
   // Prefetch page content
-  if (process.client) {
+  if (import.meta.client) {
     const router = useRouter()
     nuxt.hook('link:prefetch', (link) => {
       if (!(link in pages.value) && !hasProtocol(link)) {
@@ -256,7 +256,7 @@ export default defineNuxtPlugin((nuxt) => {
   // Route middleware
   addRouteMiddleware(async (to, from) => {
     // Avoid calling on hash change
-    if (process.client && !isClientDBEnabled && to.path === from.path) {
+    if (import.meta.client && !isClientDBEnabled && to.path === from.path) {
       if (!to.meta.layout) {
         const _path = withoutTrailingSlash(to.path)
         if (pages.value[_path]) {
@@ -278,7 +278,7 @@ export default defineNuxtPlugin((nuxt) => {
   })
 
   // @ts-ignore - Refresh on client-side
-  nuxt.hook('app:data:refresh', async () => process.client && await refresh(useRoute(), true))
+  nuxt.hook('app:data:refresh', async () => import.meta.client && await refresh(useRoute(), true))
 })
 
 function prefetchBodyComponents (nodes: MarkdownNode[]) {

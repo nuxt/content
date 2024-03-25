@@ -35,7 +35,7 @@ export default defineTransformer({
   name: 'component-resolver',
   extensions: ['.*'],
   async transform (content, options = {}) {
-    if (process.server) {
+    if (import.meta.server) {
       // This transformer is only needed on client side to resolve components
       return content
     }
