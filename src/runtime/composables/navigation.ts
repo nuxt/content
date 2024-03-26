@@ -24,7 +24,7 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
     : withContentBase(process.dev ? `/navigation/${hash(params)}` : `/navigation/${hash(params)}.${content.integrity}.json`)
 
   // Add `prefetch` to `<head>` in production
-  if (!process.dev && process.server) {
+  if (!process.dev && import.meta.server) {
     addPrerenderPath(apiPath)
   }
 

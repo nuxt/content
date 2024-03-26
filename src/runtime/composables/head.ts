@@ -26,7 +26,7 @@ export const useContentHead = (
     const title = head.title || data?.title
     if (title) {
       head.title = title
-      if (process.server && !head.meta.some(m => m.property === 'og:title')) {
+      if (import.meta.server && !head.meta.some(m => m.property === 'og:title')) {
         head.meta.push({
           property: 'og:title',
           content: title as string
@@ -35,14 +35,14 @@ export const useContentHead = (
     }
 
     const host = config.public.content.host
-    // if (process.server && !host) {
+    // if (import.meta.server && !host) {
     //   const req = useRequestEvent().node?.req
     //   if (req && req.headers.host !== 'localhost') {
     //     const protocol = req.headers['x-forwarded-proto'] || req.connection.encrypted ? 'https' : 'http'
     //     host = `${protocol}://${req.headers.host}`
     //   }
     // }
-    if (process.server && host) {
+    if (import.meta.server && host) {
       const _url = joinURL(host ?? '/', config.app.baseURL, to.fullPath)
       const url = config.public.content.trailingSlash ? withTrailingSlash(_url) : withoutTrailingSlash(_url)
       if (!head.meta.some(m => m.property === 'og:url')) {
@@ -70,7 +70,7 @@ export const useContentHead = (
         content: description
       })
     }
-    if (process.server && description && !head.meta.some(m => m.property === 'og:description')) {
+    if (import.meta.server && description && !head.meta.some(m => m.property === 'og:description')) {
       head.meta.push({
         property: 'og:description',
         content: description
@@ -82,7 +82,7 @@ export const useContentHead = (
     const image = head?.image || data?.image
 
     // Shortcut for head.image to og:image in meta
-    if (process.server && image && head.meta.filter(m => m.property === 'og:image').length === 0) {
+    if (import.meta.server && image && head.meta.filter(m => m.property === 'og:image').length === 0) {
       // Handles `image: '/image/src.jpg'`
       if (typeof image === 'string') {
         head.meta.push({
@@ -125,7 +125,7 @@ export const useContentHead = (
     }
 
     // @ts-ignore
-    if (process.client) { nextTick(() => useHead(head)) } else { useHead(head) }
+    if (import.meta.client) { nextTick(() => useHead(head)) } else { useHead(head) }
   }
 
   watch(() => unref(_content), refreshHead, { immediate: true })

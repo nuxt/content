@@ -22,7 +22,7 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: ContentQu
     : withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
   // Prefetch the query
-  if (!process.dev && process.server) {
+  if (!process.dev && import.meta.server) {
     addPrerenderPath(apiPath)
   }
 

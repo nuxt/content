@@ -6,7 +6,7 @@ const { contentHead } = useRuntimeConfig().public.content
 const { page, layout } = useContent()
 
 // Page not found, set correct status code on SSR
-if (!(page as any).value && process.server) {
+if (!(page as any).value && import.meta.server) {
   const event = useRequestEvent()
   event.res.statusCode = 404
 }

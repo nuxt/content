@@ -5,7 +5,7 @@ let showWarning = true
 export const useContentPreview = () => {
   const getPreviewToken = () => {
     return useCookie('previewToken').value ||
-    (process.client && sessionStorage.getItem('previewToken')) ||
+    (import.meta.client && sessionStorage.getItem('previewToken')) ||
     undefined
   }
 
@@ -14,7 +14,7 @@ export const useContentPreview = () => {
 
     useRoute().query.preview = token || ''
 
-    if (process.client) {
+    if (import.meta.client) {
       if (token) {
         sessionStorage.setItem('previewToken', token)
       } else {
@@ -42,7 +42,7 @@ export const useContentPreview = () => {
       return true
     }
 
-    if (process.client && sessionStorage.getItem('previewToken')) {
+    if (import.meta.client && sessionStorage.getItem('previewToken')) {
       return true
     }
 
