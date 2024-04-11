@@ -124,7 +124,7 @@ export const getContentsList = (() => {
       const result = await Promise.all(chunk.map(key => getContent(event, key)))
       contents.push(...result)
     }
-    return contents
+    return contents.filter(c => c && c._path)
   }
 
   return (event: H3Event, prefix?: string) => {
