@@ -507,7 +507,7 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
-      // @ts-ignore
+      // @ts-expect-error
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle
@@ -760,7 +760,7 @@ export default defineNuxtModule<ModuleOptions>({
       ])
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     await nuxt.callHook('content:context', contentContext)
 
     contentContext.defaultLocale = contentContext.defaultLocale || contentContext.locales[0]
@@ -846,7 +846,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // @nuxtjs/tailwindcss support
-    // @ts-ignore - Module might not exist
+    // @ts-expect-error - Module might not exist
     nuxt.hook('tailwindcss:config', async (tailwindConfig) => {
       const contentPath = resolve(nuxt.options.buildDir, 'content-cache', 'parsed/**/*.{md,yml,yaml,json}')
       tailwindConfig.content = tailwindConfig.content ?? []
@@ -858,7 +858,7 @@ export default defineNuxtModule<ModuleOptions>({
         tailwindConfig.content.files.push(contentPath)
       }
 
-      // @ts-ignore
+      // @ts-expect-error
       const [tailwindCssPath] = Array.isArray(nuxt.options.tailwindcss?.cssPath) ? nuxt.options.tailwindcss.cssPath : [nuxt.options.tailwindcss?.cssPath]
       let cssPath = tailwindCssPath ? await resolvePath(tailwindCssPath, { extensions: ['.css', '.sass', '.scss', '.less', '.styl'] }) : join(nuxt.options.dir.assets, 'css/tailwind.css')
       if (!fs.existsSync(cssPath)) {
