@@ -507,7 +507,6 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('/cache/content')
 
-      // @ts-expect-error
       nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
         inline: [
           // Inline module runtime in Nitro bundle
