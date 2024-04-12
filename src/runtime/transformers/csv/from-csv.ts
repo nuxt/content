@@ -5,7 +5,7 @@
 import { toString } from 'mdast-util-to-string'
 import { preprocess, postprocess } from 'micromark'
 import { stringifyPosition } from 'unist-util-stringify-position'
-import { Token, Event, Point as MPoint } from 'micromark-util-types'
+import type { Token, Event, Point as MPoint } from 'micromark-util-types'
 import { parse } from './parser'
 
 type Point = Omit<MPoint, '_index' | '_bufferIndex'>
@@ -96,7 +96,7 @@ function compiler () {
     }
 
     if (tokenStack.length > 0) {
-      const tail: Function = tokenStack[tokenStack.length - 1]
+      const tail = tokenStack[tokenStack.length - 1]
       const handler = tail[1] || defaultOnError
       handler.call(context, undefined, tail[0])
     } // Figure out `root` position.

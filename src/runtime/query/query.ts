@@ -75,7 +75,7 @@ export function createQuery <T = ParsedContent> (fetcher: ContentQueryFetcher<T>
   }
 
   if (opts.legacy) {
-    // @ts-ignore
+    // @ts-expect-error
     query.findSurround = (surroundQuery, options) => {
       return query.withSurround(surroundQuery, options).find().then(resolveResult)
     }

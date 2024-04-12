@@ -18,11 +18,11 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: ContentQu
   const params = query.params()
 
   const apiPath = content.experimental.stripQueryParameters
-    ? withContentBase(`/query/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
-    : withContentBase(process.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
+    ? withContentBase(`/query/${import.meta.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
+    : withContentBase(import.meta.dev ? '/query' : `/query/${hash(params)}.${content.integrity}.json`)
 
   // Prefetch the query
-  if (!process.dev && import.meta.server) {
+  if (!import.meta.dev && import.meta.server) {
     addPrerenderPath(apiPath)
   }
 
@@ -54,9 +54,8 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: ContentQu
 /**
  * Query contents from path
  */
-export function queryContent<T = ParsedContent>(): ContentQueryBuilder<T>;
-export function queryContent<T = ParsedContent>(query: string, ...pathParts: string[]): ContentQueryBuilder<T>;
-export function queryContent<T = ParsedContent> (query: ContentQueryBuilderParams): ContentQueryBuilder<T>;
+export function queryContent<T = ParsedContent> (query?: ContentQueryBuilderParams): ContentQueryBuilder<T>;
+export function queryContent<T = ParsedContent> (query: string, ...pathParts: string[]): ContentQueryBuilder<T>;
 export function queryContent<T = ParsedContent> (query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { content } = useRuntimeConfig().public
   const queryBuilder = content.experimental.advanceQuery

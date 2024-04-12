@@ -64,7 +64,7 @@ export async function getMountDriver (mount: MountOptions) {
   try {
     return (await import(mount.driver)).default(mount as any)
   } catch (e) {
-    // eslint-disable-next-line no-console
+     
     console.error("Couldn't load driver", mount.driver)
   }
 }

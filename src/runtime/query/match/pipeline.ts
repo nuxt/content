@@ -23,7 +23,9 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
     return index === -1 ? slice : slice.map((_, i) => data[index - before! + i + Number(i >= before!)] || null)
   }
 
-  type ContentQueryPipe<T, InputState = ContentQueryFindResponse<T>, OutputState = ContentQueryFindResponse<T>> = (state: InputState, params: ContentQueryBuilderParams, db: Array<T>) => OutputState | void
+  type ContentQueryPipe<T, InputState = ContentQueryFindResponse<T>, OutputState = ContentQueryFindResponse<T>> = 
+    ((state: InputState, params: ContentQueryBuilderParams, db: Array<T>) => void) |
+    ((state: InputState, params: ContentQueryBuilderParams, db: Array<T>) => OutputState)
 
   const matchingPipelines: Array<ContentQueryPipe<T>> = [
     // Conditions
@@ -44,7 +46,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
         _surround = apply(withoutKeys(params.without))(_surround)
         _surround = apply(withKeys(params.only))(_surround)
 
-        // @ts-ignore
+        // @ts-expect-error
         state.surround = _surround
       }
       return state
@@ -78,7 +80,7 @@ export function createPipelineFetcher<T> (getContentsList: () => Promise<T[]>) {
         if (typeof path === 'string') {
           const dirConfig = db.find((item: any) => item._path === joinURL(path, '_dir'))
           if (dirConfig) {
-            // @ts-ignore
+            // @ts-expect-error
             state.dirConfig = { _path: dirConfig._path, ...withoutKeys(['_'])(dirConfig) }
           }
         }

@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     }
   ],
   modules: [
-    // @ts-ignore
+    // @ts-expect-error
     contentModule,
     '@nuxthq/studio'
   ],

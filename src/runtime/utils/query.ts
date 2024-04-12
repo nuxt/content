@@ -77,6 +77,7 @@ export const getContentQuery = (event: H3Event): ContentQueryBuilderParams => {
     // ?partial=true|false
     if (query[key] && ['true', 'false'].includes(query[key])) {
       where[key] = query[key] === 'true'
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete query[key]
     }
   }

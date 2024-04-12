@@ -11,8 +11,8 @@ export default defineComponent({
   name: 'Markdown',
   extends: ContentSlot,
   setup (props) {
-    if (process.dev && showDeprecatedMessage) {
-      // eslint-disable-next-line no-console
+    if (import.meta.dev && showDeprecatedMessage) {
+       
       console.warn('[deprecation] <Markdown> component is deprecated. Please use <ContentSlot> instead.')
       showDeprecatedMessage = false
     }

@@ -21,7 +21,7 @@ export default defineTransformer({
 
     // Keep array contents under `body` key
     if (Array.isArray(parsed)) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`JSON array is not supported in ${_id}, moving the array into the \`body\` key`)
       parsed = {
         body: parsed

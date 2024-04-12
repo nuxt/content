@@ -276,7 +276,7 @@ export interface ContentQueryBuilderParams {
   [key: string]: any
 }
 
-export interface ContentQueryBuilder<T = ParsedContentMeta, Y = {}> {
+export interface ContentQueryBuilder<T = ParsedContentMeta, Y = Record<string, any>> {
   /**
    * Select a subset of fields
    */

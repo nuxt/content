@@ -60,7 +60,7 @@ export const useContentHead = (
     }
 
     // Grab description from `head.description` or fallback to `data.description`
-    // @ts-ignore - We expect `head.description` from Nuxt configurations...
+    // @ts-expect-error - We expect `head.description` from Nuxt configurations...
     const description = head?.description || data?.description
 
     // Shortcut for head.description
@@ -78,7 +78,7 @@ export const useContentHead = (
     }
 
     // Grab description from `head` or fallback to `data.description`
-    // @ts-ignore - We expect `head.image` from Nuxt configurations...
+    // @ts-expect-error - We expect `head.image` from Nuxt configurations...
     const image = head?.image || data?.image
 
     // Shortcut for head.image to og:image in meta
@@ -87,7 +87,6 @@ export const useContentHead = (
       if (typeof image === 'string') {
         head.meta.push({
           property: 'og:image',
-          // @ts-ignore - We expect `head.image` from Nuxt configurations...
           content: host && !hasProtocol(image) ? new URL(joinURL(config.app.baseURL, image), host).href : image
         })
       }
@@ -124,7 +123,6 @@ export const useContentHead = (
       }
     }
 
-    // @ts-ignore
     if (import.meta.client) { nextTick(() => useHead(head)) } else { useHead(head) }
   }
 

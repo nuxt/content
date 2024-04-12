@@ -26,7 +26,7 @@ describe('Custom api baseURL', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     server: true,
     nuxtConfig: {
-      // @ts-ignore
+      // @ts-expect-error
       content: {
         api: {
           baseURL: apiBaseURL

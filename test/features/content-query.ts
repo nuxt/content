@@ -3,7 +3,7 @@ import { $fetch, useTestContext } from '@nuxt/test-utils'
 import { hash } from 'ohash'
 
 export const testContentQuery = () => {
-  // @ts-ignore
+  // @ts-expect-error
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   const resolveResult = (result: any) => {
     if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {

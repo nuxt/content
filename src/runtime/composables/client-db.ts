@@ -90,7 +90,7 @@ async function initContentDatabase () {
   }
 
   // call `content:storage` hook to allow plugins to fill storage
-  // @ts-ignore
+  // @ts-expect-error
   await nuxtApp.callHook('content:storage', _contentDatabase.storage)
 
   return _contentDatabase

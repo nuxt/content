@@ -4,7 +4,7 @@ import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testNavigation = () => {
-  // @ts-ignore
+  // @ts-expect-error
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   describe('Navigation', () => {
     test('Get navigation', async () => {

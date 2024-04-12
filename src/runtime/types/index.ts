@@ -498,7 +498,7 @@ export interface QueryBuilder<T = ParsedContentMeta> {
   params: () => QueryBuilderParams
 }
 
-export type QueryPipe<T = any> = (data: Array<T>, param: QueryBuilderParams) => Array<T> | void
+export type QueryPipe<T = any> = ((data: Array<T>, param: QueryBuilderParams) => Array<T>) | ((data: Array<T>, param: QueryBuilderParams) => void)
 
 export type DatabaseFetcher<T> = (query: QueryBuilder<T>) => Promise<Array<T> | T>
 

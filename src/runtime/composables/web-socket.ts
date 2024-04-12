@@ -1,9 +1,9 @@
 import { useRuntimeConfig, refreshNuxtData } from '#imports'
 
 const logger = {
-  // eslint-disable-next-line no-console
+   
   log: (...args: any[]) => console.log('[Content]', ...args),
-  // eslint-disable-next-line no-console
+   
   warn: (...args: any[]) => console.warn('[Content]', ...args)
 }
 
@@ -22,7 +22,9 @@ export function useContentWebSocket () {
       if (!data) { return }
 
       refreshNuxtData()
-    } catch (err) {}
+    } catch (err) {
+      // Do nothing
+    }
   }
 
   const onOpen = () => logger.log('WS connected!')
@@ -59,7 +61,9 @@ export function useContentWebSocket () {
     if (ws) {
       try {
         ws.close()
-      } catch (err) {}
+      } catch (err) {
+        // Do nothing
+      }
       ws = undefined
     }
 

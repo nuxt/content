@@ -145,9 +145,9 @@ const ContentQuery = defineComponent({
 
         if (find.value === 'surround') {
           if (!path.value) {
-            // eslint-disable-next-line no-console
+             
             console.warn('[Content] Surround queries requires `path` prop to be set.')
-            // eslint-disable-next-line no-console
+             
             console.warn('[Content] Query without `path` will return regular `find()` results.')
             return queryBuilder.find().then(resolveResult) as Promise<ParsedContent[]>
           }
@@ -155,7 +155,7 @@ const ContentQuery = defineComponent({
           if (legacy) {
             return queryBuilder.findSurround(path.value) as Promise<[ParsedContent | undefined, ParsedContent | undefined]>
           } else {
-            // @ts-ignore
+            // @ts-expect-error
             return queryBuilder.withSurround(path.value).findOne().then(resolveResult)
           }
         }
