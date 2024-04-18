@@ -1,4 +1,4 @@
-import { H3Event } from 'h3'
+import type { H3Event } from 'h3'
 import type { ParsedContent, QueryBuilderWhere } from '../types'
 import { serverQueryContent } from '#content/server'
 
@@ -43,7 +43,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
   for (const item of page.body.children) {
     const tag = item.tag || ''
     if (isHeading(tag)) {
-      const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1]) ?? 0
+      const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1] ?? 0)
 
       const title = extractTextFromAst(item).trim()
 

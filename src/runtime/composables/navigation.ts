@@ -20,11 +20,11 @@ export const fetchContentNavigation = async (queryBuilder?: QueryBuilder | Query
   const params = queryBuilder.params()
 
   const apiPath = content.experimental.stripQueryParameters
-    ? withContentBase(`/navigation/${process.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
-    : withContentBase(process.dev ? `/navigation/${hash(params)}` : `/navigation/${hash(params)}.${content.integrity}.json`)
+    ? withContentBase(`/navigation/${import.meta.dev ? '_' : `${hash(params)}.${content.integrity}`}/${encodeQueryParams(params)}.json`)
+    : withContentBase(import.meta.dev ? `/navigation/${hash(params)}` : `/navigation/${hash(params)}.${content.integrity}.json`)
 
   // Add `prefetch` to `<head>` in production
-  if (!process.dev && import.meta.server) {
+  if (!import.meta.dev && import.meta.server) {
     addPrerenderPath(apiPath)
   }
 

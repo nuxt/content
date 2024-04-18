@@ -43,7 +43,7 @@ export async function transformContent (id: string, content: StorageValue, optio
   const ext = extname(id)
   const parser = getParser(ext, transformers)
   if (!parser) {
-    // eslint-disable-next-line no-console
+     
     console.warn(`${ext} files are not supported, "${id}" falling back to raw content`)
     return file
   }

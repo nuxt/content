@@ -34,8 +34,8 @@ export const useContentPreview = () => {
 
     // Enable clientDB when preview mode is enabled
     if (query.preview || useCookie('previewToken').value) {
-      if (process.dev && showWarning) {
-        // eslint-disable-next-line no-console
+      if (import.meta.dev && showWarning) {
+         
         console.warn('[content] Client DB enabled since a preview token is set (either in query or cookie).')
         showWarning = false
       }

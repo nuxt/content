@@ -98,7 +98,7 @@ async function fetchFiles (opts) {
       }
     }
     return files
-  } catch (error) {
+  } catch {
     throw new Error('[unstorage] [github] Failed to fetch git tree.')
   }
 }

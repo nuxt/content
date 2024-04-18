@@ -7,9 +7,9 @@ export const withContentBase = (url: string) => withBase(url, useRuntimeConfig()
 
 export const useContentDisabled = (): ReturnType<typeof useContent> => {
   // Console warnings
-  // eslint-disable-next-line no-console
+   
   console.warn('useContent is only accessible when you are using `documentDriven` mode.')
-  // eslint-disable-next-line no-console
+   
   console.warn('Learn more by visiting: https://content.nuxt.com/document-driven')
 
   // Break app
@@ -18,9 +18,9 @@ export const useContentDisabled = (): ReturnType<typeof useContent> => {
 
 export const navigationDisabled = () => {
   // Console warnings
-  // eslint-disable-next-line no-console
+
   console.warn('Navigation is only accessible when you enable it in module options.')
-  // eslint-disable-next-line no-console
+   
   console.warn('Learn more by visiting: https://content.nuxt.com/get-started/configuration#navigation')
 
   // Break app
@@ -29,13 +29,15 @@ export const navigationDisabled = () => {
 
 export const addPrerenderPath = (path: string) => {
   const event = useRequestEvent()
-  event.node.res.setHeader(
-    'x-nitro-prerender',
-    [
-      event.node.res.getHeader('x-nitro-prerender'),
-      path
-    ].filter(Boolean).join(',')
-  )
+  if (event) {
+    event.node.res.setHeader(
+      'x-nitro-prerender',
+      [
+        event.node.res.getHeader('x-nitro-prerender'),
+        path
+      ].filter(Boolean).join(',')
+    )
+  }
 }
 
 export const shouldUseClientDB = () => {

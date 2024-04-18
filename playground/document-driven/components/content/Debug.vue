@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
+// @ts-expect-error
 import { useContent, useTheme } from '#imports'
 
 const { globals, surround, page, navigation } = useContent()

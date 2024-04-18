@@ -2,7 +2,7 @@ import { type StorageValue, prefixStorage, type Storage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
-// eslint-disable-next-line import/no-named-as-default
+ 
 import defu from 'defu'
 import type { ParsedContent, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
@@ -13,9 +13,9 @@ import { createPipelineFetcher } from '../query/match/pipeline'
 import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
-// @ts-ignore
+// @ts-expect-error
 import { useNitroApp, useRuntimeConfig, useStorage } from '#imports'
-// @ts-ignore
+// @ts-expect-error
 import { transformers as customTransformers } from '#content/virtual/transformers'
 
 interface ParseContentOptions {
@@ -60,7 +60,7 @@ const contentIgnorePredicate = (key: string) => {
     return false
   }
   if (invalidKeyCharacters.some(ik => key.includes(ik))) {
-    // eslint-disable-next-line no-console
+     
     console.warn(`Ignoring [${key}]. File name should not contain any of the following characters: ${invalidKeyCharacters.join(', ')}`)
     return false
   }
@@ -202,6 +202,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 
       resolve(parsed)
 
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete pendingPromises[id + hash]
     })
   }
@@ -251,7 +252,6 @@ export const createServerQueryFetch = <T = ParsedContent>(event: H3Event) => (qu
 /**
  * Query contents
  */
-export function serverQueryContent<T = ParsedContent>(event: H3Event): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: ContentQueryBuilderParams): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {

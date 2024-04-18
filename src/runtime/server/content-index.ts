@@ -12,7 +12,7 @@ export async function getContentIndex (event: H3Event) {
     // Fetch all contents
     const data = await getContentsList(event)
 
-    contentIndex = data.reduce((acc, item) => {
+    contentIndex = data.reduce((acc: Record<string, string[]>, item: ParsedContent) => {
       acc[item._path!] = acc[item._path!] || []
       if (item._locale === defaultLocale) {
         acc[item._path!].unshift(item._id)

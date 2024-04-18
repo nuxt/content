@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     includeWorkspace: true
   },
   modules: [
-    // @ts-ignore
+    // @ts-expect-error
     contentModule
     // '@nuxtjs/tailwindcss'
   ]

@@ -1,5 +1,10 @@
 <script setup>
-defineProps(['type'])
+defineProps({
+  type: {
+    type: String,
+    default: () => ''
+  }
+})
 </script>
 
 <template>

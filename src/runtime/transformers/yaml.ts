@@ -11,7 +11,7 @@ export default defineTransformer({
     // Keep array contents under `body` key
     let parsed = data
     if (Array.isArray(data)) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`YAML array is not supported in ${_id}, moving the array into the \`body\` key`)
       parsed = { body: data }
     }

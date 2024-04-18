@@ -40,9 +40,9 @@ export default defineComponent({
       () => props.excerpt,
       (newExcerpt) => {
         if (newExcerpt && !props.value?.excerpt) {
-          // eslint-disable-next-line no-console
+           
           console.warn(`No excerpt found for document content/${props?.value?._path}.${props?.value?._extension}!`)
-          // eslint-disable-next-line no-console
+           
           console.warn('Make sure to use <!--more--> in your content if you want to use excerpt feature.')
         }
       },

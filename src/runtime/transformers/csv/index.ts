@@ -1,7 +1,7 @@
 // @ts-nocheck
 // TODO: fix types
 import { unified } from 'unified'
-import { ParsedContent } from '../../types'
+import type { ParsedContent } from '../../types'
 import { defineTransformer } from '../utils'
 import { fromCSV } from './from-csv'
 

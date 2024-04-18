@@ -2,7 +2,7 @@ import contentModule from '../../src/module'
 
 export default defineNuxtConfig({
   modules: [
-    // @ts-ignore
+    // @ts-expect-error
     contentModule
   ],
   content: {

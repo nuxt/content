@@ -5,7 +5,7 @@ import { defineTransformer } from './utils'
 
 async function resolveContentComponents (body: ParsedContent['body'], meta: Record<string, string>) {
   const components = Array.from(new Set(loadComponents(body, meta)))
-  // @ts-ignore
+  // @ts-expect-error
   const manifest = await import('#build/content-components').catch(() => ({}))
   const resolvedComponentsEntries = await Promise.all(components.map(async ([t, c]) => {
     const componentImporter = manifest[pascalCase(c)]

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     const content = await contentQuery.findOne()
 
     const _result = advanceQuery ? content?.result : content
-    // @ts-ignore
+    // @ts-expect-error
     const missing = !_result && !content?.dirConfig?.navigation?.redirect && !content?._dir?.navigation?.redirect
     // If no documents matchs and using findOne()
     if (missing) {

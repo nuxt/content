@@ -4,7 +4,7 @@ import { hash } from 'ohash'
 import { jsonStringify } from '../../src/runtime/utils/json'
 
 export const testRegex = () => {
-  // @ts-ignore
+  // @ts-expect-error
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   const resolveResult = (result: any) => {
     if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {

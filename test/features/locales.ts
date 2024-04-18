@@ -2,7 +2,7 @@ import { describe, expect, test, assert } from 'vitest'
 import { $fetch, useTestContext } from '@nuxt/test-utils'
 
 export const testLocales = () => {
-  // @ts-ignore
+  // @ts-expect-error
   const apiBaseUrl = useTestContext().options.nuxtConfig.content?.api?.baseURL || '/api/_content'
   const resolveResult = (result: any) => {
     if (!useTestContext().options.nuxtConfig.content?.experimental?.advanceQuery) {

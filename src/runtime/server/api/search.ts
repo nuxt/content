@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const sections = files.map(page => splitPageIntoSections(page, { ignoredTags })).flat()
 
   if (indexed) {
-    const miniSearch = new MiniSearch(options)
+    const miniSearch = new MiniSearch(options!)
     miniSearch.addAll(sections)
 
     return JSON.stringify(miniSearch)

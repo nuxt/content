@@ -10,7 +10,7 @@ import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
 import { useRuntimeConfig, addRouteMiddleware, navigateTo, useRoute, defineNuxtPlugin, prefetchComponents, useRouter } from '#imports'
 import { componentNames } from '#components'
-// @ts-ignore
+// @ts-expect-error
 import layouts from '#build/layouts'
 
 export default defineNuxtPlugin((nuxt) => {
@@ -52,7 +52,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   const refresh = async (to: RouteLocationNormalized | RouteLocationNormalizedLoaded, dedup = false) => {
     // Call hook before fetching content
-    // @ts-ignore
+    // @ts-expect-error
     nuxt.callHook('content:document-driven:start', { route: to, dedup })
 
     const routeConfig = (to.meta.documentDriven || {}) as any
@@ -100,7 +100,7 @@ export default defineNuxtPlugin((nuxt) => {
         if (
           typeof moduleOptions.globals === 'object' && Array.isArray(moduleOptions.globals)
         ) {
-          // eslint-disable-next-line no-console
+           
           console.log('Globals must be a list of keys with QueryBuilderParams as a value.')
           return
         }
@@ -248,7 +248,7 @@ export default defineNuxtPlugin((nuxt) => {
       pages.value[_path] = _page
 
       // Call hook after content is fetched
-      // @ts-ignore
+      // @ts-expect-error
       await nuxt.callHook('content:document-driven:finish', { route: to, dedup, page: _page, navigation: _navigation, globals: _globals, surround: _surround })
     })
   }
@@ -296,7 +296,6 @@ export default defineNuxtPlugin((nuxt) => {
     }
   })
 
-  // @ts-ignore - Refresh on client-side
   nuxt.hook('app:data:refresh', async () => import.meta.client && await refresh(useRoute(), true))
 })
 

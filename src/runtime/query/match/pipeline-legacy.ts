@@ -14,7 +14,7 @@ export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T
     const result = await _pipelineFetcher(query as unknown as ContentQueryBuilder<T>)
 
     if (params.surround) {
-      // @ts-ignore
+      // @ts-expect-error
       return result?.surround
     }
 

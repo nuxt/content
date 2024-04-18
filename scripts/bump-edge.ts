@@ -10,11 +10,12 @@ async function loadPackage (dir: string) {
   const data = JSON.parse(await fsp.readFile(pkgPath, 'utf-8').catch(() => '{}'))
   const save = () => fsp.writeFile(pkgPath, JSON.stringify(data, null, 2) + '\n')
 
-  const updateDeps = (reviver: Function) => {
+  const updateDeps = (reviver: any) => {
     for (const type of ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']) {
       if (!data[type]) { continue }
       for (const e of Object.entries(data[type])) {
         const dep = { name: e[0], range: e[1], type }
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete data[type][dep.name]
         const updated = reviver(dep) || dep
         data[updated.type] = data[updated.type] || {}
@@ -104,7 +105,7 @@ async function main () {
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
+   
   console.error(err)
   process.exit(1)
 })
