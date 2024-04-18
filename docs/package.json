@@ -20,7 +20,7 @@
     "@nuxtjs/plausible": "^1.0.0",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
-    "nuxt": "^3.10.3",
+    "nuxt": "^3.11.2",
     "nuxt-og-image": "^2.2.4"
   },
   "resolutions": {
