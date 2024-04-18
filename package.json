@@ -75,16 +75,16 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.3.6",
+    "@nuxt/eslint-config": "^0.3.8",
     "@nuxt/module-builder": "^0.5.5",
     "@nuxt/schema": "3.11.2",
-    "@nuxt/test-utils": "3.12.0",
+    "@nuxt/test-utils": "3.12.1",
     "@nuxthq/studio": "^1.0.13",
-    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@nuxtjs/tailwindcss": "^6.12.0",
     "@types/ws": "^8.5.10",
     "c8": "^9.1.0",
     "csvtojson": "^2.0.10",
-    "eslint": "^8.0.0",
+    "eslint": "^9.0.0",
     "globby": "^14.0.1",
     "husky": "^9.0.11",
     "jiti": "^1.21.0",
@@ -92,23 +92,12 @@
     "nuxt": "3.11.2",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
-    "release-it": "^17.1.1",
+    "release-it": "^17.2.0",
     "remark-oembed": "^1.2.2",
     "vitest": "^1.5.0",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@8.15.5",
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "vue": "^3.2.45"
-      },
-      "ignoreMissing": [
-        "webpack",
-        "vue"
-      ]
-    }
-  },
+  "packageManager": "pnpm@9.0.0",
   "release-it": {
     "git": {
       "commitMessage": "chore(release): release v${version}"
