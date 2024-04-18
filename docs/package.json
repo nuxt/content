@@ -24,7 +24,7 @@
     "nuxt-og-image": "^2.2.4"
   },
   "resolutions": {
-    "ufo": "^1.5.3",
+    "h3": "^1.11.1",
     "@nuxtjs/mdc": "latest"
   },
   "devDependencies": {
