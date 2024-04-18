@@ -17,7 +17,7 @@
     "@nuxthq/studio": "^1.0.13",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/plausible": "^0.2.4",
+    "@nuxtjs/plausible": "^1.0.0",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
     "nuxt": "^3.10.3",
