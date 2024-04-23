@@ -12,8 +12,8 @@ importers:
         specifier: ^3.11.2
         version: 3.11.2(rollup@4.14.1)
       '@nuxtjs/mdc':
-        specifier: ^0.6.1
-        version: 0.6.1(rollup@4.14.1)
+        specifier: ^0.7.0
+        version: 0.7.0(rollup@4.14.1)
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.21(typescript@5.3.3))
@@ -1005,8 +1005,8 @@ packages:
   '@nuxthq/studio@1.0.13':
     resolution: {integrity: sha512-C4j+K53om5Kj5xLrehWEbnDJlid5tDsHP7QdOIsK550dHOxPmvaXMH4YxsSNU8cDppMheMbN59zdYhQaQfko6g==}
 
-  '@nuxtjs/mdc@0.6.1':
-    resolution: {integrity: sha512-zS5QK7DZ/SBrjqQX1DOy7GnxKy+wbj2+LvooefOWmQqHfLTAqJLVIjuv/BmKnQWiRCq19+uysys3iY42EoY5/A==}
+  '@nuxtjs/mdc@0.7.0':
+    resolution: {integrity: sha512-mGTjBa9WSMh1RS/4+1tMwCj4ZwlaOXwXf04ryZK4Xh0IK7wj5K6jTxwETKJYsqov9OGUqO2vIVfOhSOUeAc8bA==}
 
   '@nuxtjs/tailwindcss@6.12.0':
     resolution: {integrity: sha512-vXvEq8z177TQcx0tc10mw3O6T9WeN0iTL8hIKGDfidmr+HKReexJU01aPgHefFrCu4LJB70egYFYnywzB9lMyQ==}
@@ -1383,14 +1383,11 @@ packages:
   '@rushstack/eslint-patch@1.10.2':
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
 
-  '@shikijs/core@1.1.7':
-    resolution: {integrity: sha512-gTYLUIuD1UbZp/11qozD3fWpUTuMqPSf3svDMMrL0UmlGU7D9dPw/V1FonwAorCUJBltaaESxq90jrSjQyGixg==}
-
   '@shikijs/core@1.3.0':
     resolution: {integrity: sha512-7fedsBfuILDTBmrYZNFI8B6ATTxhQAasUHllHmjvSZPnoq4bULWoTpHwmuQvZ8Aq03/tAa2IGo6RXqWtHdWaCA==}
 
-  '@shikijs/transformers@1.1.7':
-    resolution: {integrity: sha512-lXz011ao4+rvweps/9h3CchBfzb1U5OtP5D51Tqc9lQYdLblWMIxQxH6Ybe1GeGINcEVM4goMyPrI0JvlIp4UQ==}
+  '@shikijs/transformers@1.3.0':
+    resolution: {integrity: sha512-3mlpg2I9CjhjE96dEWQOGeCWoPcyTov3s4aAsHmgvnTHa8MBknEnCQy8/xivJPSpD+olqOqIEoHnLfbNJK29AA==}
 
   '@sigstore/bundle@2.1.1':
     resolution: {integrity: sha512-v3/iS+1nufZdKQ5iAlQKcCsoh0jffQyABvYIxKsZQFWc4ubuGjwZklFHpDgV6O6T7vvV78SW5NHI91HFKEcxKg==}
@@ -1837,6 +1834,9 @@ packages:
   '@vue/compiler-core@3.4.21':
     resolution: {integrity: sha512-MjXawxZf2SbZszLPYxaFCjxfibYrzr3eYbKxwpLR9EQN+oaziSu3qKVbwBERj1IFIB8OLUewxB5m/BFzi613og==}
 
+  '@vue/compiler-core@3.4.24':
+    resolution: {integrity: sha512-vbW/tgbwJYj62N/Ww99x0zhFTkZDTcGh3uwJEuadZ/nF9/xuFMC4693P9r+3sxGXISABpDKvffY5ApH9pmdd1A==}
+
   '@vue/compiler-dom@3.4.15':
     resolution: {integrity: sha512-wox0aasVV74zoXyblarOM3AZQz/Z+OunYcIHe1OsGclCHt8RsRm04DObjefaI82u6XDzv+qGWZ24tIsRAIi5MQ==}
 
@@ -1921,6 +1921,9 @@ packages:
 
   '@vue/shared@3.4.21':
     resolution: {integrity: sha512-PuJe7vDIi6VYSinuEbUIQgMIRZGgM8e4R+G+/dQTk0X1NEdvgvvgv7m+rfmDH1gZzyA1OjjoWskvHlfRNfQf3g==}
+
+  '@vue/shared@3.4.24':
+    resolution: {integrity: sha512-BW4tajrJBM9AGAknnyEw5tO2xTmnqgup0VTnDAMcxYmqOX0RG0b9aSUGAbEKolD91tdwpA6oCwbltoJoNzpItw==}
 
   '@vueuse/components@10.9.0':
     resolution: {integrity: sha512-BHQpA0yIi3y7zKa1gYD0FUzLLkcRTqVhP8smnvsCK6GFpd94Nziq1XVPD7YpFeho0k5BzbBiNZF7V/DpkJ967A==}
@@ -5581,8 +5584,8 @@ packages:
   property-information@5.6.0:
     resolution: {integrity: sha512-YUHSPk+A30YPv+0Qf8i9Mbfe/C0hdPXk1s1jPVToV8pk8BQtpw10ct89Eo7OWkutrwqvT0eicAxlOg3dOAu8JA==}
 
-  property-information@6.4.1:
-    resolution: {integrity: sha512-OHYtXfu5aI2sS2LWFSN5rgJjrQ4pCy8i1jubJLe2QvMF8JJ++HXTUIVWFLfXJoaOfvYYjk2SN8J2wFUWIGXT4w==}
+  property-information@6.5.0:
+    resolution: {integrity: sha512-PgTgs/BlvHxOu8QuEN7wi5A0OmXaBcHpmCSTehcs6Uuu9IkDIEo13Hy7n898RHfrQ49vKCoGeWZSaAK01nwVig==}
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
@@ -5784,8 +5787,8 @@ packages:
   remark-gfm@4.0.0:
     resolution: {integrity: sha512-U92vJgBPkbw4Zfu/IiW2oTZLSL3Zpv+uI7My2eq8JxKgqraFdU8YUGicEJCEgSbeaG+QDFqIcwwfMTOEelPxuA==}
 
-  remark-mdc@3.1.0:
-    resolution: {integrity: sha512-5Hf5w2u59AgzclopOPwMUW4FgEWW6s7AVJf1yRIRIIfydBGrq7sW1rhnwMxsswt9bbMPxiuDwImh8DXPfyA85Q==}
+  remark-mdc@3.2.0:
+    resolution: {integrity: sha512-zRi5frIC3O/bcxXgUPHfQ3lyRBKPtokrGnsOPvNrt9bqp4EfjPtduzcWgO4R1WeHYUnvl0zeBStvGsFkJIZf+Q==}
 
   remark-oembed@1.2.2:
     resolution: {integrity: sha512-zTHfSCgBIJV7D2UHanWlUT1sDqulOuAv9eVGl3XhV2o2tGDUgyVjMz5Ctx560IysJ+Qni4p0C3vkR1n3EubNRQ==}
@@ -5997,9 +6000,6 @@ packages:
     resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
     engines: {node: '>=4'}
     hasBin: true
-
-  shiki@1.1.7:
-    resolution: {integrity: sha512-9kUTMjZtcPH3i7vHunA6EraTPpPOITYTdA5uMrvsJRexktqP0s7P3s9HVK80b4pP42FRVe03D7fT3NmJv2yYhw==}
 
   shiki@1.3.0:
     resolution: {integrity: sha512-9aNdQy/etMXctnPzsje1h1XIGm9YfRcSksKOGqZWXA/qP9G18/8fpz5Bjpma8bOgz3tqIpjERAd6/lLjFyzoww==}
@@ -6648,9 +6648,6 @@ packages:
     resolution: {integrity: sha512-nC5q0DnPEPVURPhfPQLahhSTnemVtPzdx7ofiRxXpOB2SYnb3MfdU3DVGyJdS8Lx+tBWeAePO8BfU/3EgksM7Q==}
     hasBin: true
 
-  unwasm@0.3.7:
-    resolution: {integrity: sha512-+s4iWvHHYnLuwNo+9mqVFLBmBzGc3gIuzkVZ8fdMN9K/kWopCnfaUVnDagd2OX3It5nRR5EenI5nSQb8FOd0fA==}
-
   unwasm@0.3.9:
     resolution: {integrity: sha512-LDxTx/2DkFURUd+BU1vUsF/moj0JsoTvl+2tcg2AUOiEzVturhGGx17/IMgGvKUYdZwr33EJHtChCJuhu9Ouvg==}
 
@@ -7229,7 +7226,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.22.5':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-compilation-targets@7.23.6':
     dependencies:
@@ -7270,19 +7267,19 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.23.9
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-member-expression-to-functions@7.23.0':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-module-imports@7.22.15':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-module-transforms@7.23.3(@babel/core@7.23.9)':
     dependencies:
@@ -7304,7 +7301,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.22.5':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-plugin-utils@7.22.5': {}
 
@@ -7326,15 +7323,15 @@ snapshots:
 
   '@babel/helper-simple-access@7.22.5':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-skip-transparent-expression-wrappers@7.22.5':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   '@babel/helper-string-parser@7.23.4': {}
 
@@ -7458,7 +7455,7 @@ snapshots:
   '@babel/template@7.23.9':
     dependencies:
       '@babel/code-frame': 7.24.2
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@babel/types': 7.23.9
 
   '@babel/template@7.24.0':
@@ -7475,7 +7472,7 @@ snapshots:
       '@babel/helper-function-name': 7.23.0
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@babel/types': 7.23.9
       debug: 4.3.4
       globals: 11.12.0
@@ -8231,13 +8228,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@nuxtjs/mdc@0.6.1(rollup@4.14.1)':
+  '@nuxtjs/mdc@0.7.0(rollup@4.14.1)':
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.14.1)
-      '@shikijs/transformers': 1.1.7
+      '@shikijs/transformers': 1.3.0
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.3
-      '@vue/compiler-core': 3.4.21
+      '@vue/compiler-core': 3.4.24
       consola: 3.2.3
       debug: 4.3.4
       defu: 6.1.4
@@ -8250,7 +8247,7 @@ snapshots:
       ohash: 1.1.3
       parse5: 7.1.2
       pathe: 1.1.2
-      property-information: 6.4.1
+      property-information: 6.5.0
       rehype-external-links: 3.0.0
       rehype-raw: 7.0.0
       rehype-slug: 6.0.0
@@ -8258,7 +8255,7 @@ snapshots:
       rehype-sort-attributes: 5.0.0
       remark-emoji: 4.0.1
       remark-gfm: 4.0.0
-      remark-mdc: 3.1.0
+      remark-mdc: 3.2.0
       remark-parse: 11.0.0
       remark-rehype: 11.1.0
       scule: 1.3.0
@@ -8267,7 +8264,7 @@ snapshots:
       unified: 11.0.4
       unist-builder: 4.0.0
       unist-util-visit: 5.0.0
-      unwasm: 0.3.7
+      unwasm: 0.3.9
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -8638,13 +8635,11 @@ snapshots:
 
   '@rushstack/eslint-patch@1.10.2': {}
 
-  '@shikijs/core@1.1.7': {}
-
   '@shikijs/core@1.3.0': {}
 
-  '@shikijs/transformers@1.1.7':
+  '@shikijs/transformers@1.3.0':
     dependencies:
-      shiki: 1.1.7
+      shiki: 1.3.0
 
   '@sigstore/bundle@2.1.1':
     dependencies:
@@ -9273,32 +9268,40 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/helper-module-imports': 7.22.15
       '@babel/helper-plugin-utils': 7.22.5
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/compiler-sfc': 3.4.20
 
   '@vue/compiler-core@3.4.15':
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/shared': 3.4.15
       entities: 4.5.0
       estree-walker: 2.0.2
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   '@vue/compiler-core@3.4.20':
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/shared': 3.4.20
       entities: 4.5.0
       estree-walker: 2.0.2
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
+
+  '@vue/compiler-core@3.4.24':
+    dependencies:
+      '@babel/parser': 7.24.4
+      '@vue/shared': 3.4.24
+      entities: 4.5.0
+      estree-walker: 2.0.2
+      source-map-js: 1.2.0
 
   '@vue/compiler-dom@3.4.15':
     dependencies:
@@ -9317,19 +9320,19 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.15':
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/compiler-core': 3.4.15
       '@vue/compiler-dom': 3.4.15
       '@vue/compiler-ssr': 3.4.15
       '@vue/shared': 3.4.15
       estree-walker: 2.0.2
-      magic-string: 0.30.7
+      magic-string: 0.30.9
       postcss: 8.4.34
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   '@vue/compiler-sfc@3.4.20':
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@vue/compiler-core': 3.4.20
       '@vue/compiler-dom': 3.4.20
       '@vue/compiler-ssr': 3.4.20
@@ -9337,7 +9340,7 @@ snapshots:
       estree-walker: 2.0.2
       magic-string: 0.30.9
       postcss: 8.4.35
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
@@ -9486,6 +9489,8 @@ snapshots:
   '@vue/shared@3.4.20': {}
 
   '@vue/shared@3.4.21': {}
+
+  '@vue/shared@3.4.24': {}
 
   '@vueuse/components@10.9.0(vue@3.4.21(typescript@5.3.3))':
     dependencies:
@@ -9713,7 +9718,7 @@ snapshots:
 
   ast-kit@0.11.3(rollup@4.14.1):
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@rollup/pluginutils': 5.1.0(rollup@4.14.1)
       pathe: 1.1.2
     transitivePeerDependencies:
@@ -9721,7 +9726,7 @@ snapshots:
 
   ast-kit@0.9.5(rollup@4.14.1):
     dependencies:
-      '@babel/parser': 7.23.9
+      '@babel/parser': 7.24.4
       '@rollup/pluginutils': 5.1.0(rollup@4.14.1)
       pathe: 1.1.2
     transitivePeerDependencies:
@@ -9782,7 +9787,7 @@ snapshots:
 
   babel-walk@3.0.0-canary-5:
     dependencies:
-      '@babel/types': 7.23.9
+      '@babel/types': 7.24.0
 
   bail@2.0.2: {}
 
@@ -10194,8 +10199,8 @@ snapshots:
 
   constantinople@4.0.1:
     dependencies:
-      '@babel/parser': 7.23.9
-      '@babel/types': 7.23.9
+      '@babel/parser': 7.24.4
+      '@babel/types': 7.24.0
 
   content-disposition@0.5.4:
     dependencies:
@@ -10275,12 +10280,12 @@ snapshots:
   css-tree@2.2.1:
     dependencies:
       mdn-data: 2.0.28
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   css-tree@2.3.1:
     dependencies:
       mdn-data: 2.0.30
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   css-what@6.1.0: {}
 
@@ -11408,7 +11413,7 @@ snapshots:
       '@types/unist': 3.0.2
       devlop: 1.1.0
       hastscript: 8.0.0
-      property-information: 6.4.1
+      property-information: 6.5.0
       vfile: 6.0.1
       vfile-location: 5.0.2
       web-namespaces: 2.0.1
@@ -11482,7 +11487,7 @@ snapshots:
       '@types/hast': 3.0.4
       comma-separated-tokens: 2.0.3
       devlop: 1.1.0
-      property-information: 6.4.1
+      property-information: 6.5.0
       space-separated-tokens: 2.0.2
       web-namespaces: 2.0.1
       zwitch: 2.0.4
@@ -11508,7 +11513,7 @@ snapshots:
       '@types/hast': 3.0.4
       comma-separated-tokens: 2.0.3
       hast-util-parse-selector: 4.0.0
-      property-information: 6.4.1
+      property-information: 6.5.0
       space-separated-tokens: 2.0.2
 
   he@1.2.0: {}
@@ -13794,13 +13799,13 @@ snapshots:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.0
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   postcss@8.4.35:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.0.0
-      source-map-js: 1.0.2
+      source-map-js: 1.2.0
 
   postcss@8.4.38:
     dependencies:
@@ -13853,7 +13858,7 @@ snapshots:
     dependencies:
       xtend: 4.0.2
 
-  property-information@6.4.1: {}
+  property-information@6.5.0: {}
 
   proto-list@1.2.4: {}
 
@@ -14179,7 +14184,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-mdc@3.1.0:
+  remark-mdc@3.2.0:
     dependencies:
       '@types/mdast': 4.0.3
       '@types/unist': 3.0.2
@@ -14476,10 +14481,6 @@ snapshots:
       glob: 7.2.3
       interpret: 1.4.0
       rechoir: 0.6.2
-
-  shiki@1.1.7:
-    dependencies:
-      '@shikijs/core': 1.1.7
 
   shiki@1.3.0:
     dependencies:
@@ -15254,14 +15255,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  unwasm@0.3.7:
-    dependencies:
-      magic-string: 0.30.7
-      mlly: 1.6.1
-      pathe: 1.1.2
-      pkg-types: 1.0.3
-      unplugin: 1.7.1
-
   unwasm@0.3.9:
     dependencies:
       knitwork: 1.1.0
@@ -15709,8 +15702,8 @@ snapshots:
 
   with@7.0.2:
     dependencies:
-      '@babel/parser': 7.23.9
-      '@babel/types': 7.23.9
+      '@babel/parser': 7.24.4
+      '@babel/types': 7.24.0
       assert-never: 1.2.1
       babel-walk: 3.0.0-canary-5
 
