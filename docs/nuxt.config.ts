@@ -44,7 +44,9 @@ export default defineNuxtConfig({
     '/blog/announcing-v2': { redirect: '/' },
     '/v1': { redirect: '/v1/getting-started/introduction' },
     // Shortcuts
-    '/document-driven': { redirect: '/document-driven/introduction' }
+    '/document-driven': { redirect: '/document-driven/introduction' },
+    // Prevent prerendering of partials, due to nuxt-og-image issue with prerendering
+    '/_partials/**': { prerender: false }
   },
   nitro: {
     prerender: {
