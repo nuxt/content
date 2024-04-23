@@ -97,7 +97,6 @@
     "vitest": "^1.5.0",
     "vue-docgen-web-types": "^0.1.8"
   },
-  "packageManager": "pnpm@9.0.5",
   "release-it": {
     "git": {
       "commitMessage": "chore(release): release v${version}"
