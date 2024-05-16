@@ -425,6 +425,17 @@ export default defineNuxtModule<ModuleOptions>({
               map: { mappings: '' }
             }
           }
+          if (code.includes('content-slot')) {
+            code = code.replace(/<content-slot(\s)+([^/>]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2name="$5"')
+            code = code.replace(/<\/content-slot>/g, '</MDCSlot>')
+            code = code.replace(/<content-slot/g, '<MDCSlot')
+            code = code.replace(/(['"])content-slot['"]/g, '$1MDCSlot$1')
+            code = code.replace(/content-slot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
+            return {
+              code,
+              map: { mappings: '' }
+            }
+          }
         }
       })
     })
