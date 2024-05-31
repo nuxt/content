@@ -52,6 +52,12 @@ const unstorageDrivers = {
   http: httpDriver,
   github: githubDriver
 }
+
+export function getBaseDir (nuxt: Nuxt) {
+  return (nuxt.options.future as unknown as { compatibilityVersion: number }).compatibilityVersion === 4
+    ? nuxt.options.rootDir
+    : nuxt.options.srcDir
+}
 /**
  * Resolve driver of a mount.
  */
@@ -74,13 +80,14 @@ export async function getMountDriver (mount: MountOptions) {
  */
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
-
+  const baseDir = getBaseDir(nuxt)
   const storageKeys = Object.keys(storages)
   if (
     Array.isArray(storages) ||
     // Detect object representation of array `{ '0': 'source1' }`. Nuxt converts this array to object when using `nuxt.config.ts`
     (storageKeys.length > 0 && storageKeys.every(i => i === String(+i)))
   ) {
+    
     storages = Object.values(storages)
     logger.warn('Using array syntax to define sources is deprecated. Consider using object syntax.')
     storages = storages.reduce((mounts, storage) => {
@@ -89,7 +96,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
           name: storage,
           driver: 'fs',
           prefix: '',
-          base: resolve(nuxt.options.srcDir, storage)
+          base: resolve(baseDir, storage),
         }
       }
 
@@ -111,7 +118,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
     storages[defaultStorage] = {
       name: defaultStorage,
       driver: 'fs',
-      base: resolve(nuxt.options.srcDir, 'content')
+      base: resolve(baseDir, 'content')
     }
   }
 
