@@ -286,6 +286,13 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
       params.sort = [{ _file: 1, $numeric: true }]
     }
 
+    if (!import.meta.dev) {
+      params.where = params.where || []
+      if (!params.where.find(item => typeof item._draft !== 'undefined')) {
+        params.where.push({ _draft: { $ne: true } })
+      }
+    }
+
     // Filter by locale if:
     // - locales are defined
     // - query doesn't already have a locale filter
