@@ -22,7 +22,7 @@ import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, Language
 import { joinURL, withLeadingSlash, withTrailingSlash } from 'ufo'
 import { createStorage, type WatchEvent } from 'unstorage'
 import { name, version } from '../package.json'
-import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
+import type { MarkdownPlugin, ParsedContent, QueryBuilderParams, QueryBuilderWhere } from './runtime/types'
 import { makeIgnored } from './runtime/utils/config'
 import {
   CACHE_VERSION,
@@ -1051,5 +1051,13 @@ declare module '@nuxt/schema' {
   }
   interface PrivateRuntimeConfig {
     content: ModulePrivateRuntimeConfig & ContentContext;
+  }
+}
+
+// Keep sync with src/runtime/server/storage.ts
+declare module 'nitropack' {
+  interface NitroRuntimeHooks {
+    'content:file:beforeParse': (file: { _id: string; body: string }) => void;
+    'content:file:afterParse': (file: ParsedContent) => void;
   }
 }
