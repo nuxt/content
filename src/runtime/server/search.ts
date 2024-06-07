@@ -77,10 +77,10 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
       if (!sections[section]) {
         sections[section] = {
           id: path,
-          title: '',
+          title: page.title || '',
           titles: [],
           content: '',
-          level: 0
+          level: 1
         }
       }
 
