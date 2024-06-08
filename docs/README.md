@@ -1,4 +1,4 @@
-[![nuxt-content](/docs/public/cover_dark.png "@nuxt/content image")](https://content.nuxt.com)
+[![nuxt-content](/docs/public/social-card.png "@nuxt/content image")](https://content.nuxt.com)
 
 # Documentation
 
