@@ -82,7 +82,7 @@
     "@nuxthq/studio": "^1.1.2",
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@types/ws": "^8.5.10",
-    "c8": "^9.1.0",
+    "c8": "^10.1.2",
     "csvtojson": "^2.0.10",
     "eslint": "^9.4.0",
     "globby": "^14.0.1",
