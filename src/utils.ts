@@ -75,7 +75,7 @@ export async function getMountDriver (mount: MountOptions) {
  */
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
-  const baseDir = (nuxt.options.future as unknown as { compatibilityVersion: number }).compatibilityVersion === 4
+  const baseDir = (nuxt.options.future as unknown as { compatibilityVersion: number })?.compatibilityVersion === 4
     ? nuxt.options.rootDir
     : nuxt.options.srcDir
   const storageKeys = Object.keys(storages)
