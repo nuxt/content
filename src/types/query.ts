@@ -1,5 +1,5 @@
 import type { ContentQueryFindResponse, ContentQueryFindOneResponse, ContentQueryCountResponse, ContentQueryWithSurround, ContentQueryWithDirConfig, ContentQueryResponse } from './api'
-import type { ParsedContentInternalMeta, ParsedContentMeta } from '.'
+import type { ParsedContentInternalMeta, ParsedContentMeta } from './content'
 /**
  * Query
  */
@@ -276,12 +276,15 @@ export interface ContentQueryBuilderParams {
   [key: string]: any
 }
 
+type ValidKey<T> = keyof T | string;
+type ValidKeys<T> = Array<keyof T | string>;
+
 export interface ContentQueryBuilder<T = ParsedContentMeta, Y = Record<string, any>> {
   /**
    * Select a subset of fields
    */
-  only<const K extends keyof T | string>(keys: K): ContentQueryBuilder<Pick<T, K>, Y>
-  only<const K extends (keyof T | string)[]>(keys: K): ContentQueryBuilder<Pick<T, K[number]>, Y>
+  only<T, K extends ValidKey<T>>(keys: K): ContentQueryBuilder<Pick<T, Extract<K, keyof T>>, Y>
+  only<T, K extends ValidKeys<T>>(keys: K): ContentQueryBuilder<Pick<T, Extract<K[number], keyof T>>, Y>
 
   /**
    * Remove a subset of fields

@@ -4,13 +4,12 @@ import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
  
 import defu from 'defu'
-import type { ParsedContent, ContentTransformer } from '../types'
+import type { ParsedContent, ContentTransformer , ContentQueryBuilder, ContentQueryBuilderParams } from '@nuxt/content'
 import { createQuery } from '../query/query'
 import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
 import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-expect-error
@@ -207,7 +206,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     })
   }
 
-  return pendingPromises[id + hash]
+  return pendingPromises[id + hash]!
 }
 
 /**

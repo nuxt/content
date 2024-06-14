@@ -1,4 +1,4 @@
-import type { ContentTransformer } from '../types'
+import type { ContentTransformer } from '@nuxt/content'
 
 export const defineTransformer = (transformer: ContentTransformer) => {
   return transformer

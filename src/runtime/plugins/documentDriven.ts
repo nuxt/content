@@ -1,14 +1,14 @@
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue-router'
 import { withoutTrailingSlash, hasProtocol } from 'ufo'
 import { pascalCase } from 'scule'
-import { callWithNuxt } from '#app/nuxt'
-import type { MarkdownNode, NavItem, ParsedContent } from '../types'
+import { callWithNuxt, type NuxtApp } from '#app/nuxt'
+import type { MarkdownNode, NavItem, ParsedContent } from '@nuxt/content'
 import type { ModuleOptions } from '../../module'
 import { useContentState } from '../composables/content'
 import { useContentHelpers } from '../composables/helpers'
 import { fetchContentNavigation } from '../composables/navigation'
 import { queryContent } from '../composables/query'
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin  } from 'nuxt/app'
 import { useRuntimeConfig, addRouteMiddleware, navigateTo, useRoute, prefetchComponents, useRouter } from '#imports'
 import { componentNames } from '#components'
 // @ts-expect-error
@@ -27,7 +27,7 @@ export default defineNuxtPlugin((nuxt) => {
     if (page && page?.layout) { return page.layout }
 
     // Resolve key from .vue page meta
-    if (to.matched.length && to.matched[0].meta?.layout) { return to.matched[0].meta.layout }
+    if (to.matched[0] && to.matched[0].meta?.layout) { return to.matched[0].meta.layout }
 
     // Resolve key from navigation
     if (navigation && page) {
@@ -125,10 +125,12 @@ export default defineNuxtPlugin((nuxt) => {
               (acc, value, index) => {
                 const key = Object.keys(moduleOptions.globals!)[index]
 
-                acc[key] = value
+                if (key) {
+                  acc[key] = value
+                }
 
                 return acc
-              }, {})
+              }, {} as Record<string, any>)
           }
         )
       }
@@ -153,7 +155,7 @@ export default defineNuxtPlugin((nuxt) => {
         const { pages } = useContentState()
 
         // Return same page as page is already loaded
-        if (!dedup && pages.value[_path] && pages.value[_path]._path === _path) {
+        if (!dedup && pages.value[_path] && pages.value[_path]!._path === _path) {
           return {
             result: pages.value[_path],
             surround: surrounds.value[_path]
@@ -261,7 +263,7 @@ export default defineNuxtPlugin((nuxt) => {
       if (!to.meta.layout) {
         const _path = withoutTrailingSlash(to.path)
         if (pages.value[_path]) {
-          to.meta.layout = pages.value[_path].layout
+          to.meta.layout = pages.value[_path]!.layout
         }
       }
       return
@@ -271,7 +273,7 @@ export default defineNuxtPlugin((nuxt) => {
 
     if (redirect) {
       if (hasProtocol(redirect)) {
-        return callWithNuxt(nuxt, navigateTo, [redirect, { external: true }])
+        return callWithNuxt(nuxt as NuxtApp, navigateTo, [redirect, { external: true }])
       } else {
         return redirect
       }

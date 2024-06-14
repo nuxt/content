@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 
 /**
  * Used in `src/runtime/pages/document-driven.vue`

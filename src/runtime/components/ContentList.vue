@@ -1,6 +1,6 @@
 <script lang="ts">
 import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
-import type { ParsedContent, QueryBuilderParams } from '../types'
+import type { ParsedContent, QueryBuilderParams } from '@nuxt/content'
 import ContentQuery from './ContentQuery.vue'
 
 const emptyNode = (slot: string, data: any) => h('pre', null, JSON.stringify({ message: 'You should use slots with <ContentList>', slot, data }, null, 2))

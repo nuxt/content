@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
@@ -35,6 +35,7 @@ export default defineTransformer({
     // Check first part for locale name
     const _locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
     const filePath = generatePath(parts.join('/'), { respectPathCase })
+    const filename = parts[parts.length - 1]
 
     return <ParsedContent> {
       _path: filePath,
@@ -44,7 +45,7 @@ export default defineTransformer({
       _locale,
       ...content,
       // TODO: move title to Markdown parser
-      title: content.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
+      title: content.title || generateTitle(refineUrlPart(filename || '')),
       _source,
       _file,
       _extension

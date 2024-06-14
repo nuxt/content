@@ -1,10 +1,9 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
 import { createQuery } from '../query/query'
-import type { ParsedContent } from '../types'
+import type { ParsedContent , ContentQueryBuilder, ContentQueryBuilderParams } from '@nuxt/content'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
-import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
 import { useContentPreview } from './preview'
 import { useRuntimeConfig } from '#imports'
@@ -85,7 +84,7 @@ export function queryContent<T = ParsedContent> (query?: string | ContentQueryBu
 
     // Provide default sort order
     if (!params.sort?.length) {
-      params.sort = [{ _file: 1, $numeric: true }]
+      params.sort = [{ _filename: 1, $numeric: true }]
     }
 
     // Filter by locale if:

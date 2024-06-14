@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUnwrap } from '#imports'
 // Utils from Nuxt Content
 const { flatUnwrap } = useUnwrap()
 

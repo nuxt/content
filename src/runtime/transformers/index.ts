@@ -1,7 +1,7 @@
 import { extname } from 'pathe'
 import { camelCase } from 'scule'
 import type { StorageValue } from 'unstorage'
-import type { ContentTransformer, TransformContentOptions } from '../types'
+import type { ContentTransformer, TransformContentOptions } from '@nuxt/content'
 import csv from './csv'
 import markdown from './markdown'
 import yaml from './yaml'

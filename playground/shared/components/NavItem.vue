@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { NavItem } from '../../../src/runtime/types'
+import type { NavItem } from '../../../src/types/content'
 
 const props = defineProps<{
   navItem: NavItem

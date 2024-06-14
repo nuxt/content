@@ -13,13 +13,12 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/types.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     },
     "./transformers": "./dist/runtime/transformers/index.js",
-    "./transformers/*": "./dist/runtime/transformers/*.js",
-    "./types": "./dist/runtime/types/index.js",
-    "./dist/runtime/types": "./dist/runtime/types/index.js"
+    "./transformers/*": "./dist/runtime/transformers/*.js"
   },
   "main": "./dist/module.cjs",
   "module": "./dist/module.mjs",
@@ -75,6 +74,7 @@
     "ws": "^8.17.0"
   },
   "devDependencies": {
+    "@nuxt/content": "link:.",
     "@nuxt/eslint-config": "^0.3.13",
     "@nuxt/module-builder": "^0.7.1",
     "@nuxt/schema": "3.12.1",

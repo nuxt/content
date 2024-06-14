@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { MarkdownNode, ParsedContent, QueryBuilderWhere } from '../types'
+import type { MarkdownNode, ParsedContent, QueryBuilderWhere } from '@nuxt/content'
 import { serverQueryContent } from '#content/server'
 
 export async function serverSearchContent (event: H3Event, filterQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
@@ -84,7 +84,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
         }
       }
 
-      sections[section].content += extractTextFromAst(item, ignoredTags).trim()
+      sections[section]!.content += extractTextFromAst(item, ignoredTags).trim()
     }
   }
 

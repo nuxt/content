@@ -2,7 +2,7 @@ import type { RouteLocationNormalized, RouteLocationNormalizedLoaded } from 'vue
 import type { HeadObjectPlain } from '@vueuse/head'
 import type { Ref } from 'vue'
 import { hasProtocol, joinURL, withTrailingSlash, withoutTrailingSlash } from 'ufo'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 import { useRoute, nextTick, useHead, unref, watch, useRuntimeConfig } from '#imports'
 
 export const useContentHead = (

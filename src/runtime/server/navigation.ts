@@ -1,4 +1,4 @@
-import type { NavItem, ParsedContentMeta } from '../types'
+import type { NavItem, ParsedContentMeta } from '@nuxt/content'
 import { generateTitle } from '../transformers/path-meta'
 import { useRuntimeConfig } from '#imports'
 
@@ -30,7 +30,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
       const idParts = content._id.split(':').slice(1)
 
       // Check if node is `*:index.md`
-      const isIndex = !!idParts[idParts.length - 1].match(/([1-9][0-9]*\.)?index.md/g)
+      const isIndex = !!idParts[idParts.length - 1]?.match(/([1-9][0-9]*\.)?index.md/g)
 
       const getNavItem = (content: ParsedContentMeta) => ({
         title: content.title,
@@ -60,11 +60,13 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
           navItem.children!.push(indexItem)
         }
 
-        // Merge navigation fields with navItem
-        Object.assign(
-          navItem,
-          pickNavigationFields(dirConfig)
-        )
+        if (dirConfig) {
+          // Merge navigation fields with navItem
+          Object.assign(
+            navItem,
+            pickNavigationFields(dirConfig)
+          )
+        }
       }
 
       // First-level item, push it straight to nav
@@ -96,7 +98,7 @@ export function createNav (contents: ParsedContentMeta[], configs: Record<string
             _path: currentPathPart,
             _file: content._file,
             children: [],
-            ...pickNavigationFields(conf)
+            ...(conf && pickNavigationFields(conf))
           }
           nodes.push(parent!)
         }

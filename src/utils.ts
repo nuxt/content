@@ -7,8 +7,8 @@ import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { consola } from 'consola'
 
-import type { ModuleOptions, MountOptions } from './module'
-import type { MarkdownPlugin } from './runtime/types'
+import type { ModuleOptions, MountOptions } from './types'
+import type { MarkdownPlugin } from './types/content'
 
 export const logger = consola.withTag('@nuxt/content')
 

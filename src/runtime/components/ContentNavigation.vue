@@ -1,7 +1,7 @@
 <script lang="ts">
 import { toRefs, defineComponent, h, useSlots, computed, type PropType, type VNode } from 'vue'
 import { hash } from 'ohash'
-import type { NavItem, QueryBuilderParams, QueryBuilder } from '../types'
+import type { NavItem, QueryBuilderParams, QueryBuilder } from '@nuxt/content'
 import { useAsyncData, fetchContentNavigation, useState, useContent } from '#imports'
 import { NuxtLink } from '#components'
 

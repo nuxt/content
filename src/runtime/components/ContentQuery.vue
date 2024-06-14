@@ -1,7 +1,7 @@
 <script lang="ts">
 import { hash } from 'ohash'
 import { type PropType, type VNode, toRefs, defineComponent, h, useSlots, watch } from 'vue'
-import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '../types'
+import type { ParsedContent, ParsedContentMeta, QueryBuilder, SortParams } from '@nuxt/content'
 import { computed, useAsyncData, queryContent, useRuntimeConfig } from '#imports'
 
 const ContentQuery = defineComponent({
