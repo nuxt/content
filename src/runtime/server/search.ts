@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { ParsedContent, QueryBuilderWhere } from '../types'
+import type { MarkdownNode, ParsedContent, QueryBuilderWhere } from '../types'
 import { serverQueryContent } from '#content/server'
 
 export async function serverSearchContent (event: H3Event, filterQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
@@ -37,7 +37,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
   }
 
   // No section
-  let section = -1
+  let section = 0
   let previousHeadingLevel = 0
   const titles = []
   for (const item of page.body.children) {
@@ -76,11 +76,11 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
     if (!isHeading(tag)) {
       if (!sections[section]) {
         sections[section] = {
-          id: '',
-          title: '',
+          id: path,
+          title: page.title || '',
           titles: [],
           content: '',
-          level: 0
+          level: 1
         }
       }
 
@@ -92,12 +92,12 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
 }
 
 // TODO: Should be tested
-function extractTextFromAst (node: any, ignoredTags: string[] = []) {
+function extractTextFromAst (node: MarkdownNode, ignoredTags: string[] = []) {
   let text = ''
 
   // Get text from markdown AST
   if (node.type === 'text') {
-    text += node.value
+    text += (node.value || '').trim()
   }
 
   // Do not explore children
@@ -107,9 +107,7 @@ function extractTextFromAst (node: any, ignoredTags: string[] = []) {
 
   // Explore children
   if (node.children) {
-    for (const child of node.children) {
-      text += ' ' + extractTextFromAst(child, ignoredTags)
-    }
+    text += node.children.map(child => extractTextFromAst(child, ignoredTags)).filter(Boolean).join(' ')
   }
 
   return text
