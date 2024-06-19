@@ -1,8 +1,8 @@
-import { type StorageValue, prefixStorage, type Storage } from 'unstorage'
+import { type StorageValue, prefixStorage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
- 
+
 import defu from 'defu'
 import type { ParsedContent, ContentTransformer } from '../types'
 import { createQuery } from '../query/query'
@@ -33,9 +33,9 @@ interface ParseContentOptions {
   [key: string]: any
 }
 
-export const sourceStorage: Storage = prefixStorage(useStorage(), 'content:source')
-export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content')
-export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
+export const sourceStorage = () => prefixStorage(useStorage(), 'content:source')
+export const cacheStorage = () => prefixStorage(useStorage(), 'cache:content')
+export const cacheParsedStorage = () => prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
 const isPrerendering = import.meta.prerender
@@ -60,7 +60,7 @@ const contentIgnorePredicate = (key: string) => {
     return false
   }
   if (invalidKeyCharacters.some(ik => key.includes(ik))) {
-     
+
     console.warn(`Ignoring [${key}]. File name should not contain any of the following characters: ${invalidKeyCharacters.join(', ')}`)
     return false
   }
@@ -72,24 +72,25 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
   let keys: string[] = []
 
   if (isProduction) {
-    keys = await cacheParsedStorage.getKeys(prefix)
+    keys = await cacheParsedStorage().getKeys(prefix)
   }
+  const source = sourceStorage()
 
   // Later: handle preview mode, etc
   if (keys.length === 0) {
-    keys = await sourceStorage.getKeys(prefix)
+    keys = await source.getKeys(prefix)
   }
 
   if (isPreview(event)) {
     const { key } = getPreview(event)
     const previewPrefix = `preview:${key}:${prefix || ''}`
-    const previewKeys = await sourceStorage.getKeys(previewPrefix)
+    const previewKeys = await source.getKeys(previewPrefix)
 
     if (previewKeys.length) {
       const keysSet = new Set(keys)
       await Promise.all(
         previewKeys.map(async (key) => {
-          const meta = await sourceStorage.getMeta(key)
+          const meta = await source.getMeta(key)
           if (meta?.__deleted) {
             keysSet.delete(key.substring(previewPrefix.length))
           } else {
@@ -156,22 +157,24 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   if (!contentIgnorePredicate(id)) {
     return { _id: contentId, body: null }
   }
+  const source = sourceStorage()
+  const cache = cacheParsedStorage()
 
   if (isPreview(event)) {
     const { key } = getPreview(event)
     const previewId = `preview:${key}:${id}`
-    const draft = await sourceStorage.getItem(previewId)
+    const draft = await source.getItem(previewId)
     if (draft) {
       id = previewId
     }
   }
 
-  const cached: any = await cacheParsedStorage.getItem(id)
+  const cached: any = await cache.getItem(id)
   if (isProduction && cached) {
     return cached.parsed
   }
 
-  const meta = await sourceStorage.getMeta(id)
+  const meta = await source.getMeta(id)
   const mtime = meta.mtime
   const size = meta.size || 0
   const hash = ohash({
@@ -190,7 +193,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   if (!pendingPromises[id + hash]) {
     // eslint-disable-next-line no-async-promise-executor
     pendingPromises[id + hash] = new Promise(async (resolve) => {
-      const body = await sourceStorage.getItem(id)
+      const body = await source.getItem(id)
 
       if (body === null) {
         return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
@@ -198,7 +201,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 
       const parsed = await parseContent(contentId, body) as ParsedContent
 
-      await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+      await cache.setItem(id, { parsed, hash }).catch(() => {})
 
       resolve(parsed)
 

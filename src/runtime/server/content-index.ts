@@ -7,7 +7,7 @@ import { useRuntimeConfig } from '#imports'
 
 export async function getContentIndex (event: H3Event) {
   const defaultLocale = useRuntimeConfig().content.defaultLocale
-  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string[]>
+  let contentIndex = await cacheStorage().getItem('content-index.json') as Record<string, string[]>
   if (!contentIndex) {
     // Fetch all contents
     const data = await getContentsList(event)
@@ -22,7 +22,7 @@ export async function getContentIndex (event: H3Event) {
       return acc
     }, {} as Record<string, string[]>)
 
-    await cacheStorage.setItem('content-index.json', contentIndex)
+    await cacheStorage().setItem('content-index.json', contentIndex)
   }
 
   return contentIndex
