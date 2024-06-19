@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   await getContentIndex(event)
 
   const navigation: NavItem[] = await $fetch(`${content.api.baseURL}/navigation`)
-  await cacheStorage.setItem('content-navigation.json', navigation)
+  await cacheStorage().setItem('content-navigation.json', navigation)
 
   return {
     generatedAt: now,
