@@ -1,7 +1,7 @@
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash } from 'ohash'
 import { createQuery } from '../query/query'
-import type { ParsedContent , ContentQueryBuilder, ContentQueryBuilderParams } from '@nuxt/content'
+import type { ParsedContent , ContentQueryBuilder, ContentQueryBuilderParams, QueryBuilderParams } from '@nuxt/content'
 import { encodeQueryParams } from '../utils/query'
 import { jsonStringify } from '../utils/json'
 import { addPrerenderPath, shouldUseClientDB, withContentBase } from './utils'
@@ -68,7 +68,7 @@ export function queryContent<T = ParsedContent> (query?: string | ContentQueryBu
 
   const originalParamsFn = queryBuilder.params
   queryBuilder.params = () => {
-    const params = originalParamsFn()
+    const params: QueryBuilderParams = originalParamsFn()
 
     // Add `path` as `where` condition
     if (path) {
@@ -84,7 +84,14 @@ export function queryContent<T = ParsedContent> (query?: string | ContentQueryBu
 
     // Provide default sort order
     if (!params.sort?.length) {
-      params.sort = [{ _filename: 1, $numeric: true }]
+      params.sort = [{ _stem: 1, $numeric: true }]
+    }
+
+    if (!import.meta.dev) {
+      params.where = params.where || []
+      if (!params.where.find(item => typeof item._draft !== 'undefined')) {
+        params.where.push({ _draft: { $ne: true } })
+      }
     }
 
     // Filter by locale if:

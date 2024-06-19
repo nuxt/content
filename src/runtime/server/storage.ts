@@ -4,11 +4,10 @@ import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
  
 import defu from 'defu'
-import type { ParsedContent, ContentTransformer , ContentQueryBuilder, ContentQueryBuilderParams } from '@nuxt/content'
+import type { ParsedContent, ContentTransformer , ContentQueryBuilder, ContentQueryBuilderParams, ModuleOptions, QueryBuilderParams } from '@nuxt/content'
 import { createQuery } from '../query/query'
 import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
-import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
@@ -266,7 +265,7 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
 
   const originalParamsFn = queryBuilder.params
   queryBuilder.params = () => {
-    const params = originalParamsFn()
+    const params: QueryBuilderParams = originalParamsFn()
 
     // Add `path` as `where` condition
     if (path) {
@@ -282,7 +281,7 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
 
     // Provide default sort order
     if (!params.sort?.length) {
-      params.sort = [{ _file: 1, $numeric: true }]
+      params.sort = [{ _stem: 1, $numeric: true }]
     }
 
     if (!import.meta.dev) {
