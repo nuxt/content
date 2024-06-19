@@ -1,4 +1,4 @@
-import { type StorageValue, prefixStorage } from 'unstorage'
+import { type StorageValue, prefixStorage, type Storage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
@@ -33,19 +33,32 @@ interface ParseContentOptions {
   [key: string]: any
 }
 
-export const sourceStorage = () => prefixStorage(useStorage(), 'content:source')
-export const cacheStorage = () => prefixStorage(useStorage(), 'cache:content')
-export const cacheParsedStorage = () => prefixStorage(useStorage(), 'cache:content:parsed')
+let _sourceStorage: Storage
+let _cacheStorage: Storage
+let _cacheParsedStorage: Storage
+export const sourceStorage = () => {
+  if (!_sourceStorage) {
+    _sourceStorage = prefixStorage(useStorage(), 'content:source')
+  }
+  return _sourceStorage
+}
+export const cacheStorage = () => {
+  if (!_cacheStorage) {
+    _cacheStorage = prefixStorage(useStorage(), 'cache:content')
+  }
+  return _cacheStorage
+}
+export const cacheParsedStorage = () => {
+  if (!_cacheParsedStorage) {
+    _cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
+  }
+  return _cacheParsedStorage
+}
 
 const isProduction = process.env.NODE_ENV === 'production'
 const isPrerendering = import.meta.prerender
 
-const contentConfig = useRuntimeConfig().content
-
-/**
- * Content ignore patterns
- */
-const isIgnored = makeIgnored(contentConfig.ignores)
+const contentConfig = () => useRuntimeConfig().content
 
 /**
  * Invalid key characters
@@ -56,6 +69,7 @@ const invalidKeyCharacters = "'\"?#/".split('')
  * Filter predicate for ignore patterns
  */
 const contentIgnorePredicate = (key: string) => {
+  const isIgnored = makeIgnored(contentConfig().ignores)
   if (key.startsWith('preview:') || isIgnored(key)) {
     return false
   }
@@ -174,6 +188,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     return cached.parsed
   }
 
+  const config = contentConfig()
   const meta = await source.getMeta(id)
   const mtime = meta.mtime
   const size = meta.size || 0
@@ -183,8 +198,8 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     // File size
     size,
     // Add Content version to the hash, to revalidate the cache on content update
-    version: contentConfig.cacheVersion,
-    integrity: contentConfig.cacheIntegrity
+    version: config.cacheVersion,
+    integrity: config.cacheIntegrity
   })
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
@@ -218,20 +233,21 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
  */
 export const parseContent = async (id: string, content: StorageValue, opts: ParseContentOptions = {}) => {
   const nitroApp = useNitroApp()
+  const config = contentConfig()
   const options = defu(
     opts,
     {
       markdown: {
-        ...contentConfig.markdown,
-        highlight: contentConfig.highlight
+        ...config.markdown,
+        highlight: config.highlight
       },
-      csv: contentConfig.csv,
-      yaml: contentConfig.yaml,
+      csv: config.csv,
+      yaml: config.yaml,
       transformers: customTransformers,
       pathMeta: {
-        defaultLocale: contentConfig.defaultLocale,
-        locales: contentConfig.locales,
-        respectPathCase: contentConfig.respectPathCase
+        defaultLocale: config.defaultLocale,
+        locales: config.locales,
+        respectPathCase: config.respectPathCase
       }
     }
   )
@@ -259,6 +275,7 @@ export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: C
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
+  const config = contentConfig()
   const queryBuilder = advanceQuery
     ? createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: false })
     : createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: true })
@@ -299,11 +316,11 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
     // Filter by locale if:
     // - locales are defined
     // - query doesn't already have a locale filter
-    if (contentConfig.locales.length) {
+    if (config.locales.length) {
       const queryLocale = params.where?.find(w => w._locale)?._locale
       if (!queryLocale) {
         params.where = params.where || []
-        params.where.push({ _locale: contentConfig.defaultLocale })
+        params.where.push({ _locale: config.defaultLocale })
       }
     }
 
