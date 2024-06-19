@@ -85,7 +85,7 @@ export function queryContent<T = ParsedContent> (query?: string | QueryBuilderPa
 
     // Provide default sort order
     if (!params.sort?.length) {
-      params.sort = [{ _file: 1, $numeric: true }]
+      params.sort = [{ _stem: 1, $numeric: true }]
     }
 
     // Filter by locale if:
