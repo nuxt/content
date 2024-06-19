@@ -1,5 +1,4 @@
-import type { QueryBuilder } from '../../types'
-import type { ContentQueryBuilder } from '../../types/query'
+import type { QueryBuilder , ContentQueryBuilder } from '@nuxt/content'
 import { createPipelineFetcher } from './pipeline'
 
 export function createPipelineFetcherLegacy<T> (getContentsList: () => Promise<T[]>) {

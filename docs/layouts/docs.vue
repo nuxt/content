@@ -1,6 +1,7 @@
-<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
-const navigation = inject('navigation')
+import type { NavItem } from '@nuxt/content';
+
+const navigation = inject<NavItem[]>('navigation')
 </script>
 
 <template>
@@ -20,7 +21,7 @@ const navigation = inject('navigation')
               <template #top>
                 <UContentSearchButton size="md" />
               </template>
-              <UNavigationTree :links="mapContentNavigation(navigation)" />
+              <UNavigationTree :links="mapContentNavigation(navigation!)" />
             </UAside>
           </template>
           <slot />

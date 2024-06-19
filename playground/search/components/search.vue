@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from '#imports'
 const search = ref('')
 
 // Usage for non indexed search
@@ -18,6 +19,7 @@ const search = ref('')
 // const result = await searchContent(search, { miniSearch })
 
 // Usage for indexed search
+// @ts-expect-error - TODO: fix this
 const result = await searchContent(search)
 </script>
 

@@ -2,6 +2,8 @@ import { resolve } from 'pathe'
 import contentModule from '../../src/module'
 
 export default defineNuxtConfig({
+  // Nuxt 4 FTW: https://nuxt.com/docs/getting-started/upgrade#testing-nuxt-4
+  future: { compatibilityVersion: 4 },
   extends: ['../shared'],
   content: {
     sources: {

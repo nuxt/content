@@ -1,7 +1,7 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
@@ -9,10 +9,10 @@ const SEMVER_REGEX = /^(\d+)(\.\d+)*(\.x)?$/
 export const describeId = (id: string) => {
   const [_source, ...parts] = id.split(':')
 
-  const [, filename, _extension] = parts[parts.length - 1]?.match(/(.*)\.([^.]+)$/) || []
+  const [, basename, _extension] = parts[parts.length - 1]?.match(/(.*)\.([^.]+)$/) || []
 
-  if (filename) {
-    parts[parts.length - 1] = filename
+  if (basename) {
+    parts[parts.length - 1] = basename
   }
 
   const _path = (parts || []).join('/')
@@ -21,7 +21,8 @@ export const describeId = (id: string) => {
     _source,
     _path,
     _extension,
-    _file: _extension ? `${_path}.${_extension}` : _path
+    _file: _extension ? `${_path}.${_extension}` : _path,
+    _basename: basename || ''
   }
 }
 
@@ -30,7 +31,7 @@ export default defineTransformer({
   extensions: ['.*'],
   transform (content, options: any = {}) {
     const { locales = [], defaultLocale = 'en', respectPathCase = false } = options
-    const { _source, _file, _path, _extension } = describeId(content._id)
+    const { _source, _file, _path, _extension, _basename } = describeId(content._id)
     const parts = _path.split('/')
     // Check first part for locale name
     const _locale = locales.includes(parts[0]) ? parts.shift() : defaultLocale
@@ -44,9 +45,10 @@ export default defineTransformer({
       _locale,
       ...content,
       // TODO: move title to Markdown parser
-      title: content.title || generateTitle(refineUrlPart(parts[parts.length - 1])),
+      title: content.title || generateTitle(refineUrlPart(_basename)),
       _source,
       _file,
+      _stem: _path,
       _extension
     }
   }

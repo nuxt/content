@@ -1,7 +1,7 @@
 <script lang="ts">
 import { type PropType, type VNode, defineComponent, h, useSlots } from 'vue'
 import { withTrailingSlash } from 'ufo'
-import type { ParsedContent, QueryBuilderParams } from '../types'
+import type { ParsedContent, QueryBuilderParams } from '@nuxt/content'
 import ContentRenderer from './ContentRenderer.vue'
 import ContentQuery from './ContentQuery.vue'
 import { useRuntimeConfig, useRoute, useContentHead } from '#imports'

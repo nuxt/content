@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { getContentIndex } from '../content-index'
 import { cacheStorage, serverQueryContent } from '../storage'
-import type { NavItem } from '../../types'
+import type { NavItem } from '@nuxt/content'
 import { useRuntimeConfig } from '#imports'
 
 // This route is used to cache all the parsed content

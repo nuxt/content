@@ -1,6 +1,5 @@
 import { joinURL } from 'ufo'
-import type { ContentQueryFindResponse, ContentQueryResponse } from '../../types/api'
-import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../../types/query'
+import type { ContentQueryFindResponse, ContentQueryResponse , ContentQueryBuilder, ContentQueryBuilderParams } from '@nuxt/content'
 import { apply, ensureArray, sortList, withoutKeys, withKeys, omit } from './utils'
 import { createMatch } from '.'
 

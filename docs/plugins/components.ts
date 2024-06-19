@@ -1,3 +1,4 @@
+import { defineNuxtPlugin } from 'nuxt/app'
 import { UButton } from '#components'
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { ParsedArticle } from '../../types/article'
+import { useAsyncData, queryContent, useContent } from '#imports'
 
 const { data } = await useAsyncData('key', () => queryContent('data').findOne())
 
-const content = useContent<ParsedArticle>()
+const content = useContent()
 </script>
 
 <template>

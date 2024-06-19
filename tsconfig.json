@@ -5,6 +5,7 @@
   "extends": "./playground/basic/.nuxt/tsconfig.json",
   "exclude": [
     "test",
+    "docs",
     "node_modules"
   ]
 }

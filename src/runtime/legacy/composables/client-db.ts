@@ -3,10 +3,9 @@ import { type Storage, createStorage, prefixStorage, type StorageValue } from 'u
 import { withBase } from 'ufo'
 import { createPipelineFetcherLegacy } from '../../query/match/pipeline-legacy'
 import { createQuery } from '../../query/query'
-import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilder, QueryBuilderParams } from '../../types'
+import type { NavItem, ParsedContent, ParsedContentMeta, QueryBuilder, QueryBuilderParams , ContentQueryBuilderParams, ContentQueryFetcher } from '@nuxt/content'
 import { createNav } from '../../server/navigation'
 import { useContentPreview } from '../../composables/preview'
-import type { ContentQueryBuilderParams, ContentQueryFetcher } from '../../types/query'
 import { useRuntimeConfig, useNuxtApp } from '#imports'
 
 const withContentBase = (url: string) => withBase(url, useRuntimeConfig().public.content.api.baseURL)

@@ -7,8 +7,8 @@ import githubDriver from 'unstorage/drivers/github'
 import { WebSocketServer } from 'ws'
 import { consola } from 'consola'
 
-import type { ModuleOptions, MountOptions } from './module'
-import type { MarkdownPlugin } from './runtime/types'
+import type { ModuleOptions, MountOptions } from './types'
+import type { MarkdownPlugin } from './types/content'
 
 export const logger = consola.withTag('@nuxt/content')
 
@@ -52,6 +52,7 @@ const unstorageDrivers = {
   http: httpDriver,
   github: githubDriver
 }
+
 /**
  * Resolve driver of a mount.
  */
@@ -74,7 +75,9 @@ export async function getMountDriver (mount: MountOptions) {
  */
 export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
-
+  const baseDir = (nuxt.options.future as unknown as { compatibilityVersion: number })?.compatibilityVersion === 4
+    ? nuxt.options.rootDir
+    : nuxt.options.srcDir
   const storageKeys = Object.keys(storages)
   if (
     Array.isArray(storages) ||
@@ -89,7 +92,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
           name: storage,
           driver: 'fs',
           prefix: '',
-          base: resolve(nuxt.options.srcDir, storage)
+          base: resolve(baseDir, storage),
         }
       }
 
@@ -111,7 +114,7 @@ export function useContentMounts (nuxt: Nuxt, storages: Array<string | MountOpti
     storages[defaultStorage] = {
       name: defaultStorage,
       driver: 'fs',
-      base: resolve(nuxt.options.srcDir, 'content')
+      base: resolve(baseDir, 'content')
     }
   }
 

@@ -119,8 +119,8 @@ export const testContentQuery = () => {
     test('find contents with tag', async () => {
       const content = await $fetch('/features/query-content?where={"tags": { "$contains": "mdc" } }&findOne=1')
 
-      expect(content).includes(':mdc-props-inline.md')
-      expect(content).not.includes(':mdc-props.md')
+      expect(content).includes(':mdc-props.md')
+      expect(content).not.includes(':mdc-props-inline.md')
     })
 
     // test `queryContent().where( CONDITION ).find()`
@@ -135,8 +135,8 @@ export const testContentQuery = () => {
     test('find contents with tag', async () => {
       const content = await $fetch('/features/query-content?prefix=&where={"tags": { "$contains": "mdc" } }&findOne=1')
 
-      expect(content).includes(':mdc-props-inline.md')
-      expect(content).not.includes(':mdc-props.md')
+      expect(content).includes(':mdc-props.md')
+      expect(content).not.includes(':mdc-props-inline.md')
     })
   })
 }

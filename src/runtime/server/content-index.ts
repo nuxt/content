@@ -1,6 +1,5 @@
 import type { H3Event } from 'h3'
-import type { ParsedContent } from '../types'
-import type { ContentQueryBuilder } from '../types/query'
+import type { ParsedContent , ContentQueryBuilder } from '@nuxt/content'
 import { isPreview } from './preview'
 import { cacheStorage, chunksFromArray, getContent, getContentsList } from './storage'
 import { useRuntimeConfig } from '#imports'
@@ -15,9 +14,9 @@ export async function getContentIndex (event: H3Event) {
     contentIndex = data.reduce((acc: Record<string, string[]>, item: ParsedContent) => {
       acc[item._path!] = acc[item._path!] || []
       if (item._locale === defaultLocale) {
-        acc[item._path!].unshift(item._id)
+        acc[item._path!]!.unshift(item._id)
       } else {
-        acc[item._path!].push(item._id)
+        acc[item._path!]!.push(item._id)
       }
       return acc
     }, {} as Record<string, string[]>)
@@ -37,7 +36,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
-      .flatMap(key => index[key])
+      .flatMap(key => index[key] as string[])
 
     const keyChunks = [...chunksFromArray(keys, 10)]
 
