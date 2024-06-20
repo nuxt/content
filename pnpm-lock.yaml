@@ -106,8 +106,8 @@ importers:
         specifier: 3.13.1
         version: 3.13.1(h3@1.11.1)(magicast@0.3.4)(nitropack@2.9.6(@opentelemetry/api@1.8.0)(encoding@0.1.13)(magicast@0.3.4))(rollup@4.17.2)(vite@5.3.1(@types/node@20.12.12)(terser@5.31.0))(vitest@1.6.0(@types/node@20.12.12)(terser@5.31.0))(vue-router@4.3.3(vue@3.4.29(typescript@5.4.5)))(vue@3.4.29(typescript@5.4.5))
       '@nuxthq/studio':
-        specifier: ^2.0.0
-        version: 2.0.0(magicast@0.3.4)(rollup@4.17.2)
+        specifier: ^2.0.1
+        version: 2.0.1(magicast@0.3.4)(rollup@4.17.2)
       '@nuxtjs/tailwindcss':
         specifier: ^6.12.0
         version: 6.12.0(magicast@0.3.4)(rollup@4.17.2)
@@ -1155,8 +1155,8 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
-  '@nuxthq/studio@2.0.0':
-    resolution: {integrity: sha512-ZbzobFPul9KIxF+Obyu4mZCmVsoLqksCbKzTrYgQFGUTgQOvMfCJNGYOw6mzlKXaozPt56Yhd2GphcPvGE15Rw==}
+  '@nuxthq/studio@2.0.1':
+    resolution: {integrity: sha512-KOL4tSqlS/gQbR+c+ToSeyUygkslvKHhu2/5WG6BLjaoodAUjmesZNcVjjZdNMwJo07+qQ1XhcRqJx9+fkwQOA==}
 
   '@nuxtjs/mdc@0.8.2':
     resolution: {integrity: sha512-Cle6P65jWolHOAGqILHCIlCrt7t9T4HD60Ao6BqKEXTTdAbp/oLjfW9vtv0KbJBG8F3+euVAFAd8SIIpJgb3wQ==}
@@ -5003,8 +5003,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  nuxt-component-meta@0.6.4:
-    resolution: {integrity: sha512-5KRxI2y4fzCG9HaDdaiiTZDBjBATje+iVXJc7oG4A9NUrlQxgTSzovjqWF2rjg/hJlv63h5AAy/bUgAHK3pypw==}
+  nuxt-component-meta@0.6.5:
+    resolution: {integrity: sha512-hWtviEYqQLZVpitVUKGHUy1NNOPKskbyu8wsLQPdAGKO48HjONV5ZudPoF5nxswb6sdxRmL+dNIIK4VymrtT+w==}
     hasBin: true
 
   nuxt@3.12.2:
@@ -8276,12 +8276,12 @@ snapshots:
       - vti
       - vue-tsc
 
-  '@nuxthq/studio@2.0.0(magicast@0.3.4)(rollup@4.17.2)':
+  '@nuxthq/studio@2.0.1(magicast@0.3.4)(rollup@4.17.2)':
     dependencies:
       '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.17.2)
       defu: 6.1.4
       git-url-parse: 14.0.0
-      nuxt-component-meta: 0.6.4(magicast@0.3.4)(rollup@4.17.2)
+      nuxt-component-meta: 0.6.5(magicast@0.3.4)(rollup@4.17.2)
       parse-git-config: 3.0.0
       pkg-types: 1.1.1
       socket.io-client: 4.7.5
@@ -9511,8 +9511,8 @@ snapshots:
     dependencies:
       '@volar/language-core': 1.11.1
       '@volar/source-map': 1.11.1
-      '@vue/compiler-dom': 3.4.27
-      '@vue/shared': 3.4.27
+      '@vue/compiler-dom': 3.4.29
+      '@vue/shared': 3.4.29
       computeds: 0.0.1
       minimatch: 9.0.4
       muggle-string: 0.3.1
@@ -13065,7 +13065,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  nuxt-component-meta@0.6.4(magicast@0.3.4)(rollup@4.17.2):
+  nuxt-component-meta@0.6.5(magicast@0.3.4)(rollup@4.17.2):
     dependencies:
       '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.17.2)
       citty: 0.1.6

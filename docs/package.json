@@ -10,18 +10,18 @@
   },
   "dependencies": {
     "@iconify-json/ph": "^1.1.13",
-    "@iconify-json/simple-icons": "^1.1.105",
+    "@iconify-json/simple-icons": "^1.1.106",
     "@nuxt/content": "^2.12.1",
     "@nuxt/fonts": "^0.7.0",
-    "@nuxt/ui-pro": "^1.2.0",
+    "@nuxt/ui-pro": "^1.3.0",
     "@nuxthq/studio": "^2.0.1",
-    "@nuxtjs/fontaine": "^0.4.2",
+    "@nuxtjs/fontaine": "^0.4.3",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/plausible": "^1.0.0",
     "@vueuse/core": "^10.11.0",
     "@vueuse/nuxt": "^10.11.0",
     "nuxt": "^3.12.2",
-    "nuxt-og-image": "^2.2.4"
+    "nuxt-og-image": "^2.2.6"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.3.3"
