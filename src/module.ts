@@ -265,7 +265,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.experimental?.search) {
       const defaultSearchOptions: Partial<ModuleOptions['experimental']['search']> = {
         indexed: true,
-        ignoredTags: ['style', 'code'],
+        ignoredTags: ['script', 'style', 'pre'],
         filterQuery: { _draft: false, _partial: false },
         options: {
           fields: ['title', 'content', 'titles'],
