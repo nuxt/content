@@ -241,7 +241,7 @@ export interface ModuleOptions {
        *
        * By default, will extract text from each tag.
        *
-       * @default ['style', 'code']
+       * @default ['script', 'style', 'pre']
        */
       ignoredTags?: Array<string>
       /**
