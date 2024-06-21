@@ -1,5 +1,5 @@
 import { withoutTrailingSlash } from 'ufo'
-import type { NavItem, ParsedContent } from '../types'
+import type { NavItem, ParsedContent } from '@nuxt/content'
 import { computed, shallowReactive, shallowRef, useState, useRoute } from '#imports'
 
 export const useContentState = <G extends object = Record<string, unknown>>() => {

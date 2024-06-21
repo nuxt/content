@@ -1,4 +1,4 @@
-import type { NavItem } from '../types'
+import type { NavItem } from '@nuxt/content'
 
 /**
  * Find first child link from a navigation node.

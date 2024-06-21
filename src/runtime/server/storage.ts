@@ -2,15 +2,13 @@ import { type StorageValue, prefixStorage, type Storage } from 'unstorage'
 import { joinURL, withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { hash as ohash } from 'ohash'
 import type { H3Event } from 'h3'
- 
+
 import defu from 'defu'
-import type { ParsedContent, ContentTransformer } from '../types'
+import type { ParsedContent, ContentTransformer , ContentQueryBuilder, ContentQueryBuilderParams, ModuleOptions, QueryBuilderParams } from '@nuxt/content'
 import { createQuery } from '../query/query'
 import { transformContent } from '../transformers'
 import { makeIgnored } from '../utils/config'
-import type { ModuleOptions } from '../../module'
 import { createPipelineFetcher } from '../query/match/pipeline'
-import type { ContentQueryBuilder, ContentQueryBuilderParams } from '../types/query'
 import { getPreview, isPreview } from './preview'
 import { getIndexedContentsList } from './content-index'
 // @ts-expect-error
@@ -33,18 +31,31 @@ interface ParseContentOptions {
   [key: string]: any
 }
 
-export const sourceStorage: Storage = prefixStorage(useStorage(), 'content:source')
-export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content')
-export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
+let _sourceStorage: Storage
+let _cacheStorage: Storage
+let _cacheParsedStorage: Storage
+export const sourceStorage = () => {
+  if (!_sourceStorage) {
+    _sourceStorage = prefixStorage(useStorage(), 'content:source')
+  }
+  return _sourceStorage
+}
+export const cacheStorage = () => {
+  if (!_cacheStorage) {
+    _cacheStorage = prefixStorage(useStorage(), 'cache:content')
+  }
+  return _cacheStorage
+}
+export const cacheParsedStorage = () => {
+  if (!_cacheParsedStorage) {
+    _cacheParsedStorage = prefixStorage(useStorage(), 'cache:content:parsed')
+  }
+  return _cacheParsedStorage
+}
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const contentConfig = useRuntimeConfig().content
-
-/**
- * Content ignore patterns
- */
-const isIgnored = makeIgnored(contentConfig.ignores)
+const contentConfig = () => useRuntimeConfig().content
 
 /**
  * Invalid key characters
@@ -55,11 +66,12 @@ const invalidKeyCharacters = "'\"?#/".split('')
  * Filter predicate for ignore patterns
  */
 const contentIgnorePredicate = (key: string) => {
+  const isIgnored = makeIgnored(contentConfig().ignores)
   if (key.startsWith('preview:') || isIgnored(key)) {
     return false
   }
   if (invalidKeyCharacters.some(ik => key.includes(ik))) {
-     
+
     console.warn(`Ignoring [${key}]. File name should not contain any of the following characters: ${invalidKeyCharacters.join(', ')}`)
     return false
   }
@@ -71,24 +83,25 @@ export const getContentsIds = async (event: H3Event, prefix?: string) => {
   let keys: string[] = []
 
   if (isProduction) {
-    keys = await cacheParsedStorage.getKeys(prefix)
+    keys = await cacheParsedStorage().getKeys(prefix)
   }
+  const source = sourceStorage()
 
   // Later: handle preview mode, etc
   if (keys.length === 0) {
-    keys = await sourceStorage.getKeys(prefix)
+    keys = await source.getKeys(prefix)
   }
 
   if (isPreview(event)) {
     const { key } = getPreview(event)
     const previewPrefix = `preview:${key}:${prefix || ''}`
-    const previewKeys = await sourceStorage.getKeys(previewPrefix)
+    const previewKeys = await source.getKeys(previewPrefix)
 
     if (previewKeys.length) {
       const keysSet = new Set(keys)
       await Promise.all(
         previewKeys.map(async (key) => {
-          const meta = await sourceStorage.getMeta(key)
+          const meta = await source.getMeta(key)
           if (meta?.__deleted) {
             keysSet.delete(key.substring(previewPrefix.length))
           } else {
@@ -157,22 +170,25 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   if (!contentIgnorePredicate(id)) {
     return { _id: contentId, body: null }
   }
+  const source = sourceStorage()
+  const cache = cacheParsedStorage()
 
   if (isPreview(event)) {
     const { key } = getPreview(event)
     const previewId = `preview:${key}:${id}`
-    const draft = await sourceStorage.getItem(previewId)
+    const draft = await source.getItem(previewId)
     if (draft) {
       id = previewId
     }
   }
 
-  const cached: any = await cacheParsedStorage.getItem(id)
+  const cached: any = await cache.getItem(id)
   if (isProduction && cached) {
     return cached.parsed
   }
 
-  const meta = await sourceStorage.getMeta(id)
+  const config = contentConfig()
+  const meta = await source.getMeta(id)
   const mtime = meta.mtime
   const size = meta.size || 0
   const hash = ohash({
@@ -181,8 +197,8 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     // File size
     size,
     // Add Content version to the hash, to revalidate the cache on content update
-    version: contentConfig.cacheVersion,
-    integrity: contentConfig.cacheIntegrity
+    version: config.cacheVersion,
+    integrity: config.cacheIntegrity
   })
   if (cached?.hash === hash) {
     return cached.parsed as ParsedContent
@@ -191,7 +207,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
   if (!pendingPromises[id + hash]) {
     // eslint-disable-next-line no-async-promise-executor
     pendingPromises[id + hash] = new Promise(async (resolve) => {
-      const body = await sourceStorage.getItem(id)
+      const body = await source.getItem(id)
 
       if (body === null) {
         return resolve({ _id: contentId, body: null } as unknown as ParsedContent)
@@ -199,7 +215,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
 
       const parsed = await parseContent(contentId, body) as ParsedContent
 
-      await cacheParsedStorage.setItem(id, { parsed, hash }).catch(() => {})
+      await cache.setItem(id, { parsed, hash }).catch(() => {})
 
       resolve(parsed)
 
@@ -208,7 +224,7 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
     })
   }
 
-  return pendingPromises[id + hash]
+  return pendingPromises[id + hash]!
 }
 
 /**
@@ -216,20 +232,21 @@ export const getContent = async (event: H3Event, id: string): Promise<ParsedCont
  */
 export const parseContent = async (id: string, content: StorageValue, opts: ParseContentOptions = {}) => {
   const nitroApp = useNitroApp()
+  const config = contentConfig()
   const options = defu(
     opts,
     {
       markdown: {
-        ...contentConfig.markdown,
-        highlight: contentConfig.highlight
+        ...config.markdown,
+        highlight: config.highlight
       },
-      csv: contentConfig.csv,
-      yaml: contentConfig.yaml,
+      csv: config.csv,
+      yaml: config.yaml,
       transformers: customTransformers,
       pathMeta: {
-        defaultLocale: contentConfig.defaultLocale,
-        locales: contentConfig.locales,
-        respectPathCase: contentConfig.respectPathCase
+        defaultLocale: config.defaultLocale,
+        locales: config.locales,
+        respectPathCase: config.respectPathCase
       }
     }
   )
@@ -257,6 +274,7 @@ export function serverQueryContent<T = ParsedContent>(event: H3Event, params?: C
 export function serverQueryContent<T = ParsedContent>(event: H3Event, query?: string, ...pathParts: string[]): ContentQueryBuilder<T>;
 export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: string | ContentQueryBuilderParams, ...pathParts: string[]) {
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
+  const config = contentConfig()
   const queryBuilder = advanceQuery
     ? createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: false })
     : createQuery<T>(createServerQueryFetch(event), { initialParams: typeof query !== 'string' ? query || {} : {}, legacy: true })
@@ -268,7 +286,7 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
 
   const originalParamsFn = queryBuilder.params
   queryBuilder.params = () => {
-    const params = originalParamsFn()
+    const params: QueryBuilderParams = originalParamsFn()
 
     // Add `path` as `where` condition
     if (path) {
@@ -284,7 +302,7 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
 
     // Provide default sort order
     if (!params.sort?.length) {
-      params.sort = [{ _file: 1, $numeric: true }]
+      params.sort = [{ _stem: 1, $numeric: true }]
     }
 
     if (!import.meta.dev) {
@@ -297,11 +315,11 @@ export function serverQueryContent<T = ParsedContent> (event: H3Event, query?: s
     // Filter by locale if:
     // - locales are defined
     // - query doesn't already have a locale filter
-    if (contentConfig.locales.length) {
+    if (config.locales.length) {
       const queryLocale = params.where?.find(w => w._locale)?._locale
       if (!queryLocale) {
         params.where = params.where || []
-        params.where.push({ _locale: contentConfig.defaultLocale })
+        params.where.push({ _locale: config.defaultLocale })
       }
     }
 

@@ -1,5 +1,5 @@
 import { parseFrontMatter } from 'remark-mdc'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({

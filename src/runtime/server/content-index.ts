@@ -1,13 +1,12 @@
 import type { H3Event } from 'h3'
-import type { ParsedContent } from '../types'
-import type { ContentQueryBuilder } from '../types/query'
+import type { ParsedContent , ContentQueryBuilder } from '@nuxt/content'
 import { isPreview } from './preview'
 import { cacheStorage, chunksFromArray, getContent, getContentsList } from './storage'
 import { useRuntimeConfig } from '#imports'
 
 export async function getContentIndex (event: H3Event) {
   const defaultLocale = useRuntimeConfig().content.defaultLocale
-  let contentIndex = await cacheStorage.getItem('content-index.json') as Record<string, string[]>
+  let contentIndex = await cacheStorage().getItem('content-index.json') as Record<string, string[]>
   if (!contentIndex) {
     // Fetch all contents
     const data = await getContentsList(event)
@@ -15,14 +14,14 @@ export async function getContentIndex (event: H3Event) {
     contentIndex = data.reduce((acc: Record<string, string[]>, item: ParsedContent) => {
       acc[item._path!] = acc[item._path!] || []
       if (item._locale === defaultLocale) {
-        acc[item._path!].unshift(item._id)
+        acc[item._path!]!.unshift(item._id)
       } else {
-        acc[item._path!].push(item._id)
+        acc[item._path!]!.push(item._id)
       }
       return acc
     }, {} as Record<string, string[]>)
 
-    await cacheStorage.setItem('content-index.json', contentIndex)
+    await cacheStorage().setItem('content-index.json', contentIndex)
   }
 
   return contentIndex
@@ -37,7 +36,7 @@ export async function getIndexedContentsList<T = ParsedContent> (event: H3Event,
     const index = await getContentIndex(event)
     const keys = Object.keys(index)
       .filter(key => (path as any).test ? (path as any).test(key) : key === String(path))
-      .flatMap(key => index[key])
+      .flatMap(key => index[key] as string[])
 
     const keyChunks = [...chunksFromArray(keys, 10)]
 

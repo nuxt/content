@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { cacheStorage, serverQueryContent } from '../storage'
 import { createNav } from '../navigation'
-import type { ParsedContent, ParsedContentMeta } from '../../types'
+import type { ParsedContent, ParsedContentMeta } from '@nuxt/content'
 import { getContentQuery } from '../../utils/query'
 import { isPreview } from '../preview'
 
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   // Read from cache if not preview and there is no query
   if (!isPreview(event) && Object.keys(query).length === 0) {
-    const cache = await cacheStorage.getItem('content-navigation.json')
+    const cache = await cacheStorage().getItem('content-navigation.json')
     if (cache) {
       return cache
     }

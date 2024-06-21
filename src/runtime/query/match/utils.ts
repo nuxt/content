@@ -1,4 +1,4 @@
-import type { SortOptions } from '../../types'
+import type { SortOptions } from '@nuxt/content'
 
 /**
  * Retrive nested value from object by path

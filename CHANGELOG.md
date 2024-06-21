@@ -1,6 +1,65 @@
 # Changelog
 
 
+## v2.13.0
+
+[compare changes](https://github.com/nuxt/content/compare/v2.12.1...v2.13.0)
+
+### 🚀 Enhancements
+
+- Top level `content/` directory in Nuxt 4 compatibility version ([#2649](https://github.com/nuxt/content/pull/2649))
+
+### 🩹 Fixes
+
+- Optimise nested dependencies ([#2583](https://github.com/nuxt/content/pull/2583))
+- Opt in to `import.meta.*` properties ([#2597](https://github.com/nuxt/content/pull/2597))
+- Ignore unsupported files from contents list ([#2607](https://github.com/nuxt/content/pull/2607))
+- **module:** Convert `content-slot` to `MDCSlot` ([#2632](https://github.com/nuxt/content/pull/2632))
+- Fix typo in logger warning message ([#2626](https://github.com/nuxt/content/pull/2626))
+- **search:** Keep page's beginning paragraphs ([#2658](https://github.com/nuxt/content/pull/2658))
+- Add Nitro hooks types declarations ([#2655](https://github.com/nuxt/content/pull/2655))
+- Filter draft files in production ([#2648](https://github.com/nuxt/content/pull/2648))
+- **search:** Use page title as default title for sections ([9d81acc2](https://github.com/nuxt/content/commit/9d81acc2))
+- Init storage only when used ([#2670](https://github.com/nuxt/content/pull/2670))
+- Use runtimeconfig only when necessary ([6f06f356](https://github.com/nuxt/content/commit/6f06f356))
+- Do not update `devDependencies` ([062fb97f](https://github.com/nuxt/content/commit/062fb97f))
+- **search:** Improve sections with root node ([#2672](https://github.com/nuxt/content/pull/2672))
+- **prerender:** Ensure `/` exists inside prerender rotues ([#2673](https://github.com/nuxt/content/pull/2673))
+
+### 📖 Documentation
+
+- Update to @nuxt/fonts ([40b3a070](https://github.com/nuxt/content/commit/40b3a070))
+- Update ui-pro ui props ([#2585](https://github.com/nuxt/content/pull/2585))
+- Use new `nuxi module add` command in installation ([#2603](https://github.com/nuxt/content/pull/2603))
+- Add multiple slots example ([#2619](https://github.com/nuxt/content/pull/2619))
+- Better excerpt description ([#2633](https://github.com/nuxt/content/pull/2633))
+- Update version ([cc894eb2](https://github.com/nuxt/content/commit/cc894eb2))
+- Resolution for nuxt/ui ([b581635e](https://github.com/nuxt/content/commit/b581635e))
+- Fix and update transformers ([#2639](https://github.com/nuxt/content/pull/2639))
+- Fix social card in README ([#2659](https://github.com/nuxt/content/pull/2659))
+
+### 🏡 Chore
+
+- Upgrade deps & linter ([#2611](https://github.com/nuxt/content/pull/2611))
+- Indicate compatibility with new v4 major ([#2667](https://github.com/nuxt/content/pull/2667))
+- Upgrade deps ([62805914](https://github.com/nuxt/content/commit/62805914))
+- Prepare script ([39671369](https://github.com/nuxt/content/commit/39671369))
+- Upgrade deps ([cc4f4152](https://github.com/nuxt/content/commit/cc4f4152))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Benjamin Canac ([@benjamincanac](http://github.com/benjamincanac))
+- Sébastien Chopin ([@Atinux](http://github.com/Atinux))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+- Gangan ([@shinGangan](http://github.com/shinGangan))
+- Roryc ([@Coiggahou2002](http://github.com/Coiggahou2002))
+- Jakub Sova ([@owljackob](http://github.com/owljackob))
+- Corn <nice.corn.huang@gmail.com>
+- Cameron Childress ([@cameroncf](http://github.com/cameroncf))
+- RollingTL ([@RollingTL](http://github.com/RollingTL))
+- Arash ([@arashsheyda](http://github.com/arashsheyda))
+
 ## v2.12.1
 
 [compare changes](https://github.com/nuxt/content/compare/v2.12.0...v2.12.1)

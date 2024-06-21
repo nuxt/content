@@ -1,5 +1,5 @@
 import { getQuery, type H3Event, createError } from 'h3'
-import type { ContentQueryBuilderParams, ContentQueryBuilderWhere } from '../types/query'
+import type { ContentQueryBuilderParams, ContentQueryBuilderWhere } from '@nuxt/content'
 import { jsonParse, jsonStringify } from './json'
 
 const parseJSONQueryParams = (body: string) => {
@@ -46,14 +46,14 @@ export const getContentQuery = (event: H3Event): ContentQueryBuilderParams => {
   if (qid && query._params) {
     memory[qid] = parseJSONQueryParams(decodeURIComponent(query._params))
 
-    if (memory[qid].where && !Array.isArray(memory[qid].where)) {
-      memory[qid].where = [memory[qid].where as any as ContentQueryBuilderWhere]
+    if (memory[qid]?.where && !Array.isArray(memory[qid]?.where)) {
+      memory[qid]!.where = [memory[qid]!.where as any as ContentQueryBuilderWhere]
     }
 
-    return memory[qid]
+    return memory[qid]!
   }
   if (qid && memory[qid]) {
-    return memory[qid]
+    return memory[qid]!
   }
 
   // Using /api/_content/query?_params={{JSON_FORMAT}}
@@ -86,7 +86,7 @@ export const getContentQuery = (event: H3Event): ContentQueryBuilderParams => {
   if (query.sort) {
     query.sort = String(query.sort).split(',').map((s) => {
       const [key, order] = s.split(':')
-      return [key, +order]
+      return [key, Number.parseInt(order || '0', 10)]
     })
   }
   // ?[query]=...

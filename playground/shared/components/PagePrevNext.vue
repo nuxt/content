@@ -21,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import { useAsyncData, queryContent } from '#imports'
+
 const props = defineProps({
   doc: {
     type: Object,

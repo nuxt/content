@@ -1,4 +1,4 @@
-import type { QueryMatchOperator } from '../../types'
+import type { QueryMatchOperator } from '@nuxt/content'
 import { assertArray, ensureArray, get } from './utils'
 
 interface MatchFactoryOptions {
@@ -11,7 +11,7 @@ export function createMatch (opts: MatchFactoryOptions = {}) {
   function match (item: any, conditions: any): boolean {
     // Match Regex and simple values
     if (typeof conditions !== 'object' || conditions instanceof RegExp) {
-      return operators.$eq(item, conditions)
+      return operators.$eq!(item, conditions)
     }
 
     return Object.keys(conditions || {}).every((key) => {
@@ -119,7 +119,7 @@ function createOperators (match: (...args: any[]) => boolean, operators: Record<
     $regex: (item, condition) => {
       if (!(condition instanceof RegExp)) {
         const matched = String(condition).match(/\/(.*)\/([dgimsuy]*)$/)
-        condition = matched ? new RegExp(matched[1], matched[2] || '') : new RegExp(condition)
+        condition = matched?.[1] ? new RegExp(matched[1], matched[2] || '') : new RegExp(condition)
       }
 
       return condition.test(String(item || ''))

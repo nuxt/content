@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { MarkdownNode, ParsedContent, QueryBuilderWhere } from '../types'
+import type { MarkdownNode, ParsedContent, QueryBuilderWhere } from '@nuxt/content'
 import { serverQueryContent } from '#content/server'
 
 export async function serverSearchContent (event: H3Event, filterQuery?: QueryBuilderWhere): Promise<ParsedContent[]> {
@@ -30,16 +30,22 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
   const path = page._path ?? ''
 
   // TODO: title in frontmatter must be added
-  const sections: Section[] = []
+  const sections: Section[] = [{
+    id: path,
+    title: page.title || '',
+    titles: [],
+    content: page.description.trim() || '',
+    level: 1
+  }]
 
   if (!page?.body?.children) {
     return sections
   }
 
   // No section
-  let section = 0
+  let section = 1
   let previousHeadingLevel = 0
-  const titles = []
+  const titles = [page.title ?? '']
   for (const item of page.body.children) {
     const tag = item.tag || ''
     if (isHeading(tag)) {
@@ -71,20 +77,14 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
       // Swap to a new section
       previousHeadingLevel = currentHeadingLevel
       section += 1
-    }
+    } else {
+      const content = extractTextFromAst(item, ignoredTags).trim()
 
-    if (!isHeading(tag)) {
-      if (!sections[section]) {
-        sections[section] = {
-          id: path,
-          title: page.title || '',
-          titles: [],
-          content: '',
-          level: 1
-        }
+      if (section === 1 && sections[section - 1]?.content === content) {
+        continue
       }
 
-      sections[section].content += extractTextFromAst(item, ignoredTags).trim()
+      sections[section - 1]!.content = `${sections[section - 1]!.content} ${content}`.trim()
     }
   }
 
@@ -97,7 +97,7 @@ function extractTextFromAst (node: MarkdownNode, ignoredTags: string[] = []) {
 
   // Get text from markdown AST
   if (node.type === 'text') {
-    text += (node.value || '').trim()
+    text += (node.value || '')
   }
 
   // Do not explore children
@@ -106,8 +106,8 @@ function extractTextFromAst (node: MarkdownNode, ignoredTags: string[] = []) {
   }
 
   // Explore children
-  if (node.children) {
-    text += node.children.map(child => extractTextFromAst(child, ignoredTags)).filter(Boolean).join(' ')
+  if (node.children?.length) {
+    text += node.children.map((child: any) => extractTextFromAst(child, ignoredTags)).filter(Boolean).join('')
   }
 
   return text

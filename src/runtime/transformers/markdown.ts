@@ -4,7 +4,7 @@ import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { type Properties, type Element } from 'hast'
 import { type Link } from 'mdast'
 import { isRelative } from 'ufo'
-import type { MarkdownOptions, MarkdownPlugin, MarkdownParsedContent } from '../types'
+import type { MarkdownOptions, MarkdownPlugin, MarkdownParsedContent } from '@nuxt/content'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
 

@@ -1,4 +1,4 @@
-import type { ParsedContent } from '../../../src/runtime/types'
+import type { ParsedContent } from '@nuxt/content'
 
 export interface ParsedArticle extends ParsedContent {
   cover: {

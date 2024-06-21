@@ -32,8 +32,8 @@ function regExpReviver (_key: string, value: any) {
 
   if (withOperator[1] === 'REGEX') {
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags
-    const regex = withOperator[2].match(/\/(.*)\/([dgimsuy]*)$/)
-    return regex ? new RegExp(regex[1], regex[2] || '') : value
+    const regex = withOperator[2]?.match(/\/(.*)\/([dgimsuy]*)$/)
+    return regex?.[1] ? new RegExp(regex[1], regex[2] || '') : value
   }
 
   return value

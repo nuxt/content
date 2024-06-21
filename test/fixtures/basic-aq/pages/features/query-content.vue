@@ -11,7 +11,7 @@ const route = useRoute()
 const prefix = route.query.prefix === undefined ? '/_partial' : ''
 const path = route.query.path || ''
 const findOne = route.query.findOne || false
-const where = route.query.where ? JSON.parse(route.query.where) : false
+const where = route.query.where ? JSON.parse(decodeURIComponent(route.query.where)) : false
 
 const { data } = await useAsyncData('foo', () => {
   let q = queryContent(prefix + path || undefined)

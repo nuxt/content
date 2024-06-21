@@ -1,5 +1,5 @@
 import { pascalCase } from 'scule'
-import type { ParsedContent } from '../types'
+import type { ParsedContent } from '@nuxt/content'
 import htmlTags from '../utils/html-tags'
 import { defineTransformer } from './utils'
 
@@ -8,7 +8,7 @@ async function resolveContentComponents (body: ParsedContent['body'], meta: Reco
   // @ts-expect-error
   const manifest = await import('#build/content-components').catch(() => ({}))
   const resolvedComponentsEntries = await Promise.all(components.map(async ([t, c]) => {
-    const componentImporter = manifest[pascalCase(c)]
+    const componentImporter = c && manifest[pascalCase(c)]
     if (typeof componentImporter === 'function') {
       return [t, await componentImporter()]
     }

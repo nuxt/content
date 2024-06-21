@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { defineTransformer } from '@nuxt/content/transformers'
 
 export default defineTransformer({
