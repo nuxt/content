@@ -8,7 +8,8 @@ import {
   defineNuxtModule,
   extendViteConfig,
   installModule,
-  addVitePlugin
+  addVitePlugin,
+  addServerPlugin
 } from '@nuxt/kit'
 import type { Component } from '@nuxt/schema'
 import { defu } from 'defu'
@@ -733,6 +734,7 @@ export default defineNuxtModule<ModuleOptions>({
           ? './plugins/documentDriven'
           : './legacy/plugins/documentDriven'
       ))
+      addServerPlugin(resolveRuntimeModule("./server/plugins/refresh-cache"));
 
       if (options.documentDriven.injectPage) {
         nuxt.options.pages = true

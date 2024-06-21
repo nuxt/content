@@ -38,7 +38,6 @@ export const cacheStorage: Storage = prefixStorage(useStorage(), 'cache:content'
 export const cacheParsedStorage: Storage = prefixStorage(useStorage(), 'cache:content:parsed')
 
 const isProduction = process.env.NODE_ENV === 'production'
-const isPrerendering = import.meta.prerender
 
 const contentConfig = useRuntimeConfig().content
 
@@ -110,8 +109,12 @@ export function* chunksFromArray<T> (arr: T[], n: number) : Generator<T[], void>
   }
 }
 
+let cachedContents: ParsedContent[] = []
+export const cleanCachedContents = () => {
+  cachedContents = [];
+}
+
 export const getContentsList = (() => {
-  let cachedContents: ParsedContent[] = []
   let pendingContentsListPromise: Promise<ParsedContent[]> | null = null
 
   const _getContentsList = async (event: H3Event, prefix?: string) => {
@@ -131,16 +134,14 @@ export const getContentsList = (() => {
     if (event.context.__contentList) {
       return event.context.__contentList
     }
-    if (isPrerendering && cachedContents.length) {
+    if (cachedContents.length) {
       return cachedContents
     }
 
     if (!pendingContentsListPromise) {
       pendingContentsListPromise = _getContentsList(event, prefix)
       pendingContentsListPromise.then((result) => {
-        if (isPrerendering) {
-          cachedContents = result as ParsedContent[]
-        }
+        cachedContents = result as ParsedContent[]
         event.context.__contentList = result as ParsedContent[]
         pendingContentsListPromise = null
       })
