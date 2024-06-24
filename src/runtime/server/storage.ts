@@ -54,6 +54,7 @@ export const cacheParsedStorage = () => {
 }
 
 const isProduction = process.env.NODE_ENV === 'production'
+const isPrerendering = import.meta.prerender
 
 const contentConfig = () => useRuntimeConfig().content
 
@@ -147,14 +148,16 @@ export const getContentsList = (() => {
     if (event.context.__contentList) {
       return event.context.__contentList
     }
-    if (cachedContents.length) {
+    if ((isPrerendering || !isProduction) && cachedContents.length) {
       return cachedContents
     }
 
     if (!pendingContentsListPromise) {
       pendingContentsListPromise = _getContentsList(event, prefix)
       pendingContentsListPromise.then((result) => {
-        cachedContents = result as ParsedContent[]
+        if (isPrerendering || !isProduction) {
+          cachedContents = result as ParsedContent[]
+        }
         event.context.__contentList = result as ParsedContent[]
         pendingContentsListPromise = null
       })

@@ -448,7 +448,9 @@ export default defineNuxtModule<ModuleOptions>({
           ? './plugins/documentDriven'
           : './legacy/plugins/documentDriven'
       ))
-      addServerPlugin(resolveRuntimeModule("./server/plugins/refresh-cache"));
+      if (nuxt.options.dev) {
+        addServerPlugin(resolveRuntimeModule("./server/plugins/refresh-cache"));
+      }
 
       if (options.documentDriven.injectPage) {
         nuxt.options.pages = true
