@@ -156,11 +156,6 @@ export default defineNuxtModule<ModuleOptions>({
       nitroConfig.prerender.routes = nitroConfig.prerender.routes || []
       nitroConfig.handlers = nitroConfig.handlers || []
 
-      // https://github.com/nuxt/nuxt/issues/27490#issuecomment-2162890462
-      if (nitroConfig.prerender.routes.indexOf('/') === -1) {
-        nitroConfig.prerender.routes.push('/')
-      }
-
       // Add server handlers
       nitroConfig.handlers.push(
         {
