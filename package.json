@@ -98,6 +98,7 @@
     "vue-docgen-web-types": "^0.1.8",
     "vue-tsc": "2.0.24"
   },
+  "packageManager": "pnpm@9.4.0",
   "release-it": {
     "git": {
       "commitMessage": "chore(release): release v${version}"

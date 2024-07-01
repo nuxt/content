@@ -35,11 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: pnpm/action-setup@v4.0.0
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 9
+      - run: corepack enable
       - run: pnpm install
       - run: pnpm prepare
       - run: pnpm lint
