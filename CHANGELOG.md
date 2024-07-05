@@ -1,6 +1,36 @@
 # Changelog
 
 
+## v2.13.1
+
+[compare changes](https://github.com/nuxt/content/compare/v2.13.0...v2.13.1)
+
+### 🔥 Performance
+
+- **dev-cache:** Improve localhost markdown page navigation performance (when having 2,000+ pages) ([#2675](https://github.com/nuxt/content/pull/2675))
+
+### 🩹 Fixes
+
+- **module:** Do not force prerender index page ([#2681](https://github.com/nuxt/content/pull/2681))
+- Hot reload on dev server for documentDriven: false ([#2686](https://github.com/nuxt/content/pull/2686))
+
+### 📖 Documentation
+
+- Typo in configuration ([#2677](https://github.com/nuxt/content/pull/2677))
+- Add missing await keyword in search documentation ([#2687](https://github.com/nuxt/content/pull/2687))
+
+### 🏡 Chore
+
+- Upgrade deps ([3fb379a6](https://github.com/nuxt/content/commit/3fb379a6))
+- Remove `@nuxt/ui` resolution ([29fd1489](https://github.com/nuxt/content/commit/29fd1489))
+
+### ❤️ Contributors
+
+- Roman Lossa <roman.lossa@lycorp.co.jp>
+- Bogdan Gradinariu ([@gion](http://github.com/gion))
+- Farnabaz <farnabaz@gmail.com>
+- Gareth <gareth@redfern.dev>
+
 ## v2.13.0
 
 [compare changes](https://github.com/nuxt/content/compare/v2.12.1...v2.13.0)
