@@ -406,6 +406,11 @@ export default defineNuxtModule<ModuleOptions>({
       addImports({ name: 'navigationDisabled', as: 'fetchContentNavigation', from: resolveRuntimeModule('./composables/utils') })
     }
 
+    // Enable hot reload for dev server
+    if (nuxt.options.dev) {
+      addServerPlugin(resolveRuntimeModule("./server/plugins/refresh-cache"));
+    }
+
     // Register document-driven
     if (options.documentDriven) {
       // Enable every feature by default
@@ -443,9 +448,6 @@ export default defineNuxtModule<ModuleOptions>({
           ? './plugins/documentDriven'
           : './legacy/plugins/documentDriven'
       ))
-      if (nuxt.options.dev) {
-        addServerPlugin(resolveRuntimeModule("./server/plugins/refresh-cache"));
-      }
 
       if (options.documentDriven.injectPage) {
         nuxt.options.pages = true
