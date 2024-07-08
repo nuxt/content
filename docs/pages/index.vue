@@ -277,8 +277,8 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         <div class="p-4">
           <video
             class="rounded-lg bg-slate-800"
-            src="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.mp4"
-            poster="https://res.cloudinary.com/nuxt/video/upload/v1695121040/studio/nuxt-studio-intro_p9kph1.jpg"
+            src="https://res.cloudinary.com/nuxt/video/upload/v1717684070/studio/like-in-notion-final_yclhv7.mp4"
+            poster="/HomeNotionLikePoster.webp"
             muted
             loop
             controls
