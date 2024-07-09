@@ -41,18 +41,18 @@ sections:
     subTitle: Trusted and supported by our<br />amazing community
     avatarText: Created and maintained by 180+ contributors
   - slot: meet-studio
-    title: Meet Studio <br /><span class="text-primary-400">The Editor for Nuxt Content</span>
-    description: 'Nuxt Studio lets you edit your websites made with Nuxt Content on any devices and by anyone. Opening a new door between git-based CMS and collaboration with your marketing teams.'
-    button: Try it now!
+    title: Meet Studio <br /><span class="text-primary-400">The Git-based CMS for Nuxt</span>
+    description: 'Nuxt Studio is a new editing experience for your Nuxt Content website, offering infinite customization and user-friendly edition. Edit your website with our Notion-like editor and unleash the collaboration between developers and copywriters.'
+    button: Try Nuxt Studio for free!
     list:
-      - Markdown Editor
-      - Sync with GitHub
-      - Live Preview
-      - Editors permissions
+      - Notion like editor
       - Live collaboration
-      - Edit on mobile
-      - Media Library
-      - Deployment
+      - Sync with GitHub
+      - Google authentication
+      - Custom components
+      - Preview links
+      - Continuous deployment
+      - Draft & review
   - slot: start-building
     subTitle: Start building <span class="text-primary-400">Today</span>
     subDescription: Are you ready to start building your next project with Nuxt Content? Our documentation will help you get up and running in no time.
