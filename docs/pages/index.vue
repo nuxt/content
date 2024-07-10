@@ -151,14 +151,14 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
         <div class="w-full flex flex-col items-center justify-center">
           <div class="flex flex-col space-y-6">
             <div class="flex space-x-4">
-              <div class="relative hidden flex-col justify-between pt-[20px] pb-[70px] md:flex">
+              <div class="relative hidden flex-col justify-between pt-[20px] pb-[135px] md:flex">
                 <svg
                   width="2"
                   height="295"
                   viewBox="0 0 2 295"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  class="absolute left-4 -top-10 h-full z-[-1]"
+                  class="absolute left-4 top-2 h-full z-[-1]"
                 >
                   <path d="M1 0L1 153" stroke="#334155" stroke-dasharray="4 4" />
                   <path d="M1 142L1 295" stroke="#334155" stroke-dasharray="4 4" />
@@ -356,5 +356,16 @@ video[poster] {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+@media (min-width: 640px) {
+  .prose :where(.prose > :last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    min-width: 450px;
+  }
+}
+
+.prose :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  @apply !bg-gray-800;
+  border: 1px !important;
+  border-color: red !important;
 }
 </style>
