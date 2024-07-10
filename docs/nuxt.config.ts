@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   routeRules: {
+    '/': { prerender: true },
     // content.nuxtjs.org redirects
     '/get-started': { redirect: '/get-started/installation' },
     '/guide/writing/content-directory': { redirect: '/usage/content-directory' },
