@@ -226,7 +226,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
               </UAvatar>
             </UTooltip>
           </UAvatarGroup>
-          <p class="text-center text-sm">
+          <p class="text-center lg:text-left text-sm w-full">
             {{ section.avatarText }}
           </p>
         </template>
