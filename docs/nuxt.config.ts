@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  extends: '@nuxt/ui-pro',
+  extends: ['@nuxt/ui-pro'],
   devtools: { enabled: true },
 
   routeRules: {
@@ -49,26 +49,31 @@ export default defineNuxtConfig({
     // Prevent prerendering of partials, due to nuxt-og-image issue with prerendering
     '/_partials/**': { prerender: false }
   },
+
   nitro: {
     prerender: {
       routes: [
+        '/',
         '/api/search.json'
       ]
     }
   },
+
   modules: [
     '@nuxt/content',
     '@nuxt/fonts',
+    '@nuxt/image',
     '@nuxt/ui',
     '@nuxthq/studio',
+    '@nuxtjs/plausible',
     '@vueuse/nuxt',
-    'nuxt-og-image',
-    '@nuxtjs/plausible'
+    'nuxt-og-image'
   ],
 
   colorMode: {
     preference: 'dark'
   },
+
   ui: {
     icons: ['heroicons', 'simple-icons', 'ph']
   },
@@ -82,5 +87,7 @@ export default defineNuxtConfig({
         if (comp.global) { comp.global = 'sync' }
       }
     }
-  }
+  },
+
+  compatibilityDate: '2024-07-11'
 })
