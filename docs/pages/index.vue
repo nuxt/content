@@ -365,7 +365,5 @@ video[poster] {
 
 .prose :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
   @apply !bg-gray-800;
-  border: 1px !important;
-  border-color: red !important;
 }
 </style>
