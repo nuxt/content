@@ -80,7 +80,7 @@
     "@nuxt/schema": "3.12.3",
     "@nuxt/test-utils": "3.13.1",
     "@nuxthq/studio": "^2.0.3",
-    "@nuxtjs/tailwindcss": "^6.12.0",
+    "@nuxtjs/tailwindcss": "^6.12.1",
     "@types/ws": "^8.5.10",
     "c8": "^10.1.2",
     "csvtojson": "^2.0.10",
@@ -94,7 +94,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.5.0",
     "remark-oembed": "^1.2.2",
-    "vitest": "^2.0.1",
+    "vitest": "^2.0.2",
     "vue-docgen-web-types": "^0.1.8",
     "vue-tsc": "2.0.26"
   },
