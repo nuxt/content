@@ -34,7 +34,7 @@ export function splitPageIntoSections (page: ParsedContent, { ignoredTags }: { i
     id: path,
     title: page.title || '',
     titles: [],
-    content: page.description.trim() || '',
+    content: (page.description || '').trim(),
     level: 1
   }]
 
