@@ -500,6 +500,11 @@ export default defineNuxtModule<ModuleOptions>({
     // Process markdown plugins, resolve paths
     contentContext.markdown = processMarkdownOptions(contentContext.markdown)
 
+    // Disable MDC plugin if user disabled it
+    if (options.markdown?.mdc === false) {
+      (contentContext.markdown.remarkPlugins as Record<string, any>)['remark-mdc'] = undefined
+    }
+
     const nuxtMDCOptions = {
       remarkPlugins: contentContext.markdown.remarkPlugins,
       rehypePlugins: contentContext.markdown.rehypePlugins,
