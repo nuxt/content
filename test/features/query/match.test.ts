@@ -164,25 +164,33 @@ describe('Match', () => {
     })
   })
 
-  describe('Numerical operators', () => {
+  describe('Less-than/Greater-than operators', () => {
     test('$gt', () => {
       expect(match(item, { id: { $gt: 0 } })).toBe(true)
       expect(match(item, { id: { $gt: 1 } })).toBe(false)
+      expect(match(item, { category: { $gt: 'c' } })).toBe(true)
+      expect(match(item, { category: { $gt: 'c1' } })).toBe(false)
     })
 
     test('$gte', () => {
       expect(match(item, { id: { $gte: 1 } })).toBe(true)
       expect(match(item, { id: { $gte: 2 } })).toBe(false)
+      expect(match(item, { category: { $gte: 'c1' } })).toBe(true)
+      expect(match(item, { category: { $gte: 'c11' } })).toBe(false)
     })
 
     test('$lt', () => {
       expect(match(item, { id: { $lt: 2 } })).toBe(true)
       expect(match(item, { id: { $lt: 1 } })).toBe(false)
+      expect(match(item, { category: { $lt: 'c11' } })).toBe(true)
+      expect(match(item, { category: { $lt: 'c1' } })).toBe(false)
     })
 
     test('$lte', () => {
       expect(match(item, { id: { $lte: 1 } })).toBe(true)
       expect(match(item, { id: { $lte: 0 } })).toBe(false)
+      expect(match(item, { category: { $lte: 'c1' } })).toBe(true)
+      expect(match(item, { category: { $lte: 'c' } })).toBe(false)
     })
   })
 

@@ -124,7 +124,7 @@ export interface ContentQueryBuilderWhere extends Partial<Record<keyof ParsedCon
     })
     ```
    */
-  $gt?: number
+  $gt?: number | string
   /**
    * Check if item is greater than or equal to condition
    *
@@ -137,7 +137,7 @@ export interface ContentQueryBuilderWhere extends Partial<Record<keyof ParsedCon
     })
     ```
    */
-  $gte?: number
+  $gte?: number | string
   /**
    * Check if item is less than condition
    *
@@ -150,7 +150,7 @@ export interface ContentQueryBuilderWhere extends Partial<Record<keyof ParsedCon
     })
     ```
    */
-  $lt?: number
+  $lt?: number | string
   /**
    * Check if item is less than or equal to condition
    *
@@ -163,7 +163,7 @@ export interface ContentQueryBuilderWhere extends Partial<Record<keyof ParsedCon
     })
     ```
    */
-  $lte?: number
+  $lte?: number | string
   /**
    * Provides regular expression capabilities for pattern matching strings.
    *
