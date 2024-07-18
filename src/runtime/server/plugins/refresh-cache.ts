@@ -4,12 +4,15 @@ import type { WatchEvent } from 'unstorage';
 // @ts-expect-error
 import { useStorage } from '#imports'
 
-export default defineNitroPlugin(() => {
+export default defineNitroPlugin(async (nitro) => {
   const storage = useStorage()
 
-  storage.watch(async (event: WatchEvent, key: string) => {
+  const unwatch = await storage.watch(async (event: WatchEvent, key: string) => {
     if (key.startsWith('content:source')) {
       cleanCachedContents();
     }
   });
+  nitro.hooks.hook('close', async () => {
+    typeof unwatch  === 'function' && await unwatch()
+  })
 })
