@@ -1,6 +1,44 @@
 # Changelog
 
 
+## v2.13.2
+
+[compare changes](https://github.com/nuxt/content/compare/v2.13.1...v2.13.2)
+
+### 🚀 Enhancements
+
+- **home:** Update studio section ([#2696](https://github.com/nuxt/content/pull/2696))
+- **landing:** Design review ([#2703](https://github.com/nuxt/content/pull/2703))
+
+### 🩹 Fixes
+
+- Add string type to gt/lt/gte/lte type definitions ([#2704](https://github.com/nuxt/content/pull/2704))
+- **search:** Non-md file might not have dscription file ([#2706](https://github.com/nuxt/content/pull/2706))
+- **module:** Disable MDC plugin if user disabled it ([#2707](https://github.com/nuxt/content/pull/2707))
+- Unwatch storage on nitro `close` ([ec7105ad](https://github.com/nuxt/content/commit/ec7105ad))
+
+### 📖 Documentation
+
+- Add missing `await` for searchContent docs ([#2692](https://github.com/nuxt/content/pull/2692))
+- Prerender home ([4253f0bf](https://github.com/nuxt/content/commit/4253f0bf))
+- Update `nuxt-og-image` and add `postinstall` script ([#2705](https://github.com/nuxt/content/pull/2705))
+- Update ContentSlot Documentation ([#2713](https://github.com/nuxt/content/pull/2713))
+
+### 🤖 CI
+
+- Add stale action ([99f6060b](https://github.com/nuxt/content/commit/99f6060b))
+- Update stale.yml ([225ff460](https://github.com/nuxt/content/commit/225ff460))
+- Update stale.yml ([964857d4](https://github.com/nuxt/content/commit/964857d4))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Jacob Strong ([@jacstrong](http://github.com/jacstrong))
+- Damien Guard <damien@envytech.co.uk>
+- Florent Delerue <florentdelerue@hotmail.com>
+- Benjamin Canac ([@benjamincanac](http://github.com/benjamincanac))
+- Brock Wilcox ([@awwaiid](http://github.com/awwaiid))
+
 ## v2.13.1
 
 [compare changes](https://github.com/nuxt/content/compare/v2.13.0...v2.13.1)
