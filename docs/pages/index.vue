@@ -342,6 +342,7 @@ const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact
   filter: blur(180px);
   opacity: 0.6;
   z-index: -1;
+  left: 0;
 }
 
 .prose {
