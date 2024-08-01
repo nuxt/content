@@ -40,7 +40,7 @@ export default defineTransformer({
     return <ParsedContent> {
       _path: filePath,
       _dir: filePath.split('/').slice(-2)[0],
-      _draft: content._draft ?? isDraft(_path),
+      _draft: isDraft(_path) || content._draft || content.draft,
       _partial: isPartial(_path),
       _locale,
       ...content,
