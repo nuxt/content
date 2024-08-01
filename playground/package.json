@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "my-module-playground",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate"
+  },
+  "dependencies": {
+    "@nuxt/image": "^1.7.0",
+    "@nuxthub/core": "^0.7.1",
+    "better-sqlite3": "^11.1.2",
+    "nuxt": "^3.12.4"
+  }
+}

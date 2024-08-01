@@ -1,0 +1,59 @@
+{
+  "name": "my-module",
+  "version": "1.0.0",
+  "description": "My new Nuxt module",
+  "repository": "your-org/my-module",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@nuxt/content": "^2.13.2",
+    "@nuxt/kit": "^3.12.4",
+    "@nuxthub/core": "^0.7.1",
+    "@nuxtjs/mdc": "^0.8.3",
+    "@sqlite.org/sqlite-wasm": "3.46.0-build2",
+    "better-sqlite3": "^11.1.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^1.3.9",
+    "@nuxt/eslint-config": "^0.3.13",
+    "@nuxt/module-builder": "^0.8.1",
+    "@nuxt/schema": "^3.12.4",
+    "@nuxt/test-utils": "^3.13.1",
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^20.14.11",
+    "changelogen": "^0.5.5",
+    "eslint": "^9.7.0",
+    "nuxt": "^3.12.4",
+    "typescript": "latest",
+    "vitest": "^2.0.3",
+    "vue-tsc": "^2.0.26",
+    "wrangler": "^3.67.1"
+  },
+  "resolutions": {
+    "@nuxtjs/mdc": "npm:@farnabaz/mdc@0.8.3"
+  }
+}
