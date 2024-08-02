@@ -1,13 +1,3 @@
-<template>
-  <div class="content-page">
-    <MDCRenderer
-      v-if="data"
-      :body="data?.body"
-    />
-    {{ data }}
-  </div>
-</template>
-
 <script setup lang="ts">
 import { definePageMeta, useAsyncData } from '#imports'
 
@@ -26,11 +16,13 @@ definePageMeta({
 })
 </script>
 
-<style>
-.content-page {
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
-  padding: 1rem;
-  margin: 0;
-}
-</style>
+<template>
+  <div class="content-page">
+    <MDCRenderer
+      v-if="data"
+      :body="data?.body"
+    />
+    <h2>Data</h2>
+    <pre>{{ data }}</pre>
+  </div>
+</template>

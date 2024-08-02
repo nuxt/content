@@ -12,7 +12,7 @@ export default createDatabaseAdaptor(function () {
       return (params ? db.prepare(sql).bind(...params).all() : db.prepare(sql).all()).then(res => res.results as T[])
     },
     async first(sql, params) {
-      return params ? db.prepare(sql).bind(params).first() : db.prepare(sql).first()
+      return params ? db.prepare(sql).bind(...params).first() : db.prepare(sql).first()
     },
     async exec<T>(sql) {
       return db.exec(sql.replace(/\n+/g, ' ')) as Promise<T>

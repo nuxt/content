@@ -3,7 +3,7 @@ import { createMatch } from '../content-v2-support-utils/match'
 import { createQuery } from '../content-v2-support-utils/query'
 import { useRuntimeConfig } from '#imports'
 
-export function queryContentV3(path: string) {
+export function queryContentV3(path?: string) {
   const config = useRuntimeConfig().public.contentv3
   async function fetcher(qq) {
     const match = createMatch()
@@ -14,7 +14,7 @@ export function queryContentV3(path: string) {
     // handle multiple where conditions
     const conditions = params.where?.length > 1 ? { $and: params.where } : params.where?.[0]
 
-    const sql = `SELECT * FROM content WHERE ${match('content', conditions)}`
+    const sql = conditions ? `SELECT * FROM content WHERE ${match('content', conditions)}` : `SELECT * FROM content`
 
     let result: Array<any>
 
@@ -32,13 +32,13 @@ export function queryContentV3(path: string) {
   return query
 }
 
-export function queryContentSqlApi<T>(sql: string) {
+function queryContentSqlApi<T>(sql: string) {
   return $fetch<T>(`/api/query?q=${encodeURIComponent(sql)}`)
 }
 
 let db: Database
 
-export async function queryContentSqlWasm(sql: string) {
+async function queryContentSqlWasm(sql: string) {
   if (!db) {
     console.log('[BROWSER] Loading SQLite...')
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)

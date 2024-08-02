@@ -8,12 +8,12 @@ export default createDatabaseAdaptor(() => {
   let adapter
   async function loadAdaptor() {
     if (!adapter) {
-      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset) || config.db === 'builtin') {
-        adapter = createSqliteAdaptor()
-      }
-      else if (config.db === 'nuxthub') {
+      if (config.db === 'nuxthub') {
         const createNuxhubAdaptor = await import('./nuxthub').then(module => module.default)
         adapter = createNuxhubAdaptor()
+      }
+      else if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset) || config.db === 'builtin') {
+        adapter = createSqliteAdaptor()
       }
       else {
         adapter = createSqliteAdaptor()
