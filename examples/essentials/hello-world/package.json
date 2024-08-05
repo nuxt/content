@@ -2,14 +2,15 @@
   "name": "example-hello-world",
   "private": true,
   "scripts": {
+    "postinstall": "nuxt prepare",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "@nuxt/content": "latest",
-    "@nuxt/ui": "latest",
-    "nuxt": "latest"
+    "@nuxt/content": "^2.13.2",
+    "@nuxt/ui": "^2.18.3",
+    "nuxt": "^3.12.4"
   }
 }
