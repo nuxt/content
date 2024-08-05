@@ -5,6 +5,7 @@ jspm_packages
 package-lock.json
 
 examples/*/**/yarn.lock
+examples/*/**/pnpm-lock.yaml
 
 # Logs
 *.log
