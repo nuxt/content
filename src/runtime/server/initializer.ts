@@ -4,5 +4,5 @@ import parsedContents from '#content-v3/dump.mjs'
 export default async () => {
   const db = useDatabaseAdaptor()
 
-  await Promise.all(parsedContents.map(sql => db.exec(sql)))
+  await Promise.all(parsedContents().map((sql: string) => db.exec(sql)))
 }

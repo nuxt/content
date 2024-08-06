@@ -7,7 +7,7 @@ export default createDatabaseAdaptor(function () {
   const config = useRuntimeConfig().contentv3
 
   if (!db) {
-    db = Database(config.dataDir + '/items.db')
+    db = Database(config.dev.dataDir + '/' + config.dev.databaseName)
   }
 
   return {

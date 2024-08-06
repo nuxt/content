@@ -20,6 +20,18 @@ export default defineNitroPlugin(async (nitro) => {
       // Ignore updating production database if the integrityVersion is the same
       if (_info?.version !== config.integrityVersion) {
         await import('../initializer').then(m => m.default).then(initializeDatabase => initializeDatabase())
+
+        await db.first<{ version: string }>('select * from info')
+          .then((infoAfterImport) => {
+            console.log('infoAfterImport', infoAfterImport)
+
+            if (infoAfterImport?.version !== config.integrityVersion) {
+              checkDatabaseIntegrity = true
+            }
+          })
+          .catch((err) => {
+            checkDatabaseIntegrity = true
+          })
       }
     }
     return _handler(event)

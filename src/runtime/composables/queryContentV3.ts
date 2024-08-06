@@ -46,7 +46,7 @@ async function queryContentSqlWasm(sql: string) {
 
     console.log('[BROWSER] Downloading database...')
 
-    const contentDumps = await $fetch('/api/database')
+    const contentDumps = await $fetch<string[]>('/api/database')
 
     console.log('[BROWSER] Loading database...')
     db = new sqlite3.oo1.DB()

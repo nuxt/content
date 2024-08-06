@@ -3,11 +3,10 @@ import { definePageMeta, useAsyncData } from '#imports'
 
 const route = useRoute()
 
-const { data } = await useAsyncData('posts' + route.path, () => {
-  return queryContentV3(route.path).where({ $or: [
-    { _path: route.path, _locale: 'en' },
-    { _path: { $contains: 'far' }, _locale: 'en' },
-  ] }).findOne()
+const { data } = await useAsyncData('posts' + route.path, async () => {
+  const res = await queryContentV3(route.path).findOne()
+
+  return res
 })
 
 definePageMeta({

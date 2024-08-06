@@ -1,22 +1,43 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import fsDriver from 'unstorage/drivers/fs'
 import { defineNuxtModule, createResolver, addImportsDir, addServerScanDir, useNitro, addTemplate } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { transformContent } from '@nuxt/content/transformers'
+import { deflate } from 'pako'
 import { contentSchema, generateInsert, infoSchema, zodToSQL } from './runtime/sqlite'
+import { chunks, getMountDriver, useContentMounts } from './utils'
+
+export type MountOptions = {
+  driver: 'fs' | 'http' | string
+  name?: string
+  prefix?: string
+  [options: string]: any
+}
 
 // Module options TypeScript interface definition
-export interface ModuleOptions {}
+export interface ModuleOptions {
+  /**
+   * Contents can be located in multiple places, in multiple directories or even in remote git repositories.
+   * Using sources option you can tell Content module where to look for contents.
+   *
+   * @default ['content']
+   */
+  sources: Record<string, MountOptions>
+
+  database: 'nuxthub' | 'builtin'
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'my-module',
-    configKey: 'myModule',
+    name: 'Content',
+    configKey: 'contentV3',
   },
   // Default configuration options of the Nuxt module
-  defaults: {},
-  async setup(_options, nuxt) {
+  defaults: {
+    sources: {},
+    database: 'nuxthub',
+  },
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
     const dataDir = nuxt.options.rootDir + '/.data/content'
@@ -34,15 +55,20 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.rootDir + '/content',
     ]
 
-    nuxt.options.runtimeConfig.public.contentv3 = {
+    const publicRuntimeConfig = {
       clientDB: false,
     }
-    nuxt.options.runtimeConfig.contentv3 = {
+    const privateRuntimeConfig = {
       integrityVersion: '0.0.1',
-      dataDir,
-      db: 'nuxthub',
+      dev: {
+        dataDir: dataDir,
+        databaseName: 'items2.db',
+      },
+      db: options.database,
       sources,
     }
+    nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
+    nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
@@ -50,8 +76,20 @@ export default defineNuxtModule<ModuleOptions>({
 
     addWasmSupport(nuxt)
 
-    const sqlDumpList = []
-    const { dst: _dst } = addTemplate({ filename: 'dump.mjs', getContents: () => `export default ${JSON.stringify(sqlDumpList)}`, write: true })
+    let dumpisReady = false
+    const sqlDumpList: string[] = []
+    const { dst: _dst } = addTemplate({ filename: 'dump.mjs', getContents: () => {
+      const compressed = deflate(JSON.stringify(sqlDumpList))
+      const str = Buffer.from(compressed.buffer).toString('base64')
+      return [
+        'import { inflate } from "pako"',
+
+        `export default function() {`,
+          `return JSON.parse(inflate(new Uint8Array(Buffer.from("${str}", 'base64')), { to: 'string' }));`,
+        `}`,
+        `export const ready = ${dumpisReady}`,
+      ].join('\n')
+    }, write: true })
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/dump.mjs'] = _dst
 
@@ -59,25 +97,49 @@ export default defineNuxtModule<ModuleOptions>({
 
     addServerScanDir(resolver.resolve('./runtime/server'))
 
-    // Create database dump
-    sqlDumpList.push(zodToSQL(contentSchema, 'content'))
-    sqlDumpList.push(zodToSQL(infoSchema, 'info'))
-
-    const insert = generateInsert(infoSchema, 'info', { version: nuxt.options.runtimeConfig.contentv3.integrityVersion })
-    sqlDumpList.push(mergeInterValues(insert.prepareSql, insert.values))
-    const storage = createStorage()
-    sources.forEach(source => storage.mount(`content`, fsDriver({ base: source })))
-    const keys = await storage.getKeys('content')
-    for await (const key of keys) {
-      const content = await storage.getItem(key)
-      const parsedContent = await transformContent(key, content)
-      const insert = generateInsert(contentSchema, 'content', parsedContent)
-      sqlDumpList.push(mergeInterValues(insert.prepareSql, insert.values))
-    }
+    generateSqlDump(nuxt, options, privateRuntimeConfig.integrityVersion).then ((dump) => {
+      sqlDumpList.push(...dump)
+      dumpisReady = true
+    })
   },
 })
 
-function mergeInterValues(sql: string, values: any[]) {
+async function generateSqlDump(nuxt: Nuxt, options: ModuleOptions, integrityVersion: string) {
+  const sqlDumpList: string[] = []
+
+  // Create database dump
+  sqlDumpList.push(zodToSQL(contentSchema, 'content'))
+
+  const storage = createStorage()
+  const _sources = useContentMounts(nuxt, options.sources)
+  for (const [key, source] of Object.entries(_sources)) {
+    storage.mount(key, await getMountDriver(source))
+  }
+  const keys = await storage.getKeys('content')
+  // chunk 25 keys
+
+  for await (const chunk of chunks(keys, 25)) {
+    await Promise.all(chunk.map(async (key) => {
+      console.log('Processing', key)
+      const content = await storage.getItem(key)
+      const parsedContent = await transformContent(key.replace(/^content:/, ''), content)
+      if (parsedContent._extension === 'yml') {
+        parsedContent.body = JSON.parse(JSON.stringify(parsedContent))
+      }
+      const insert2 = generateInsert(contentSchema, 'content', parsedContent)
+      sqlDumpList.push(mergeInterValues(insert2.prepareSql, insert2.values))
+    }))
+  }
+
+  console.log('Generating info table')
+  sqlDumpList.push(zodToSQL(infoSchema, 'info'))
+  const insert = generateInsert(infoSchema, 'info', { version: integrityVersion })
+  sqlDumpList.push(mergeInterValues(insert.prepareSql, insert.values))
+
+  return sqlDumpList
+}
+
+function mergeInterValues(sql: string, values: Array<string | number | boolean | object>) {
   let index = 0
   return sql.replace(/\?/g, () => {
     const value = values[index++]

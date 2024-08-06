@@ -1,28 +1,28 @@
 import createSqliteAdaptor from './sqlite'
-import { createDatabaseAdaptor } from './factory'
+import type { DatabaseAdaptor } from './factory'
 import { useRuntimeConfig } from '#imports'
 
-export default createDatabaseAdaptor(() => {
+export default function useContentDatabase() {
   const config = useRuntimeConfig().contentv3
 
-  let adapter
+  let adapter: DatabaseAdaptor
   async function loadAdaptor() {
     if (!adapter) {
-      if (config.db === 'nuxthub') {
-        const createNuxhubAdaptor = await import('./nuxthub').then(module => module.default)
-        adapter = createNuxhubAdaptor()
+      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset) || config.db === 'builtin') {
+        adapter = await createSqliteAdaptor()
       }
-      else if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset) || config.db === 'builtin') {
-        adapter = createSqliteAdaptor()
+      else if (config.db === 'nuxthub') {
+        const createNuxhubAdaptor = await import('./nuxthub').then(module => module.default)
+        adapter = await createNuxhubAdaptor()
       }
       else {
-        adapter = createSqliteAdaptor()
+        adapter = await createSqliteAdaptor()
       }
     }
     return adapter
   }
 
-  return {
+  return <DatabaseAdaptor>{
     all: async (sql, params) => {
       !adapter && (await loadAdaptor())
       const result = await adapter.all(sql, params)
@@ -31,9 +31,13 @@ export default createDatabaseAdaptor(() => {
         return []
       }
       return result.map((item) => {
+        if (item._extension === 'yml') {
+          return item.body && item.body !== 'undefined' ? JSON.parse(item.body) : null
+        }
+
         return {
           ...item,
-          body: item.body ? JSON.parse(item.body) : null,
+          body: item.body && item.body !== 'undefined' ? JSON.parse(item.body) : null,
         }
       })
     },
@@ -54,4 +58,4 @@ export default createDatabaseAdaptor(() => {
       return adapter.exec(sql)
     },
   }
-})
+}
