@@ -1,6 +1,7 @@
 import createSqliteAdaptor from './sqlite'
 import type { DatabaseAdaptor } from './factory'
 import { useRuntimeConfig } from '#imports'
+import { collections } from '#content-v3/collections'
 
 export default function useContentDatabase() {
   const config = useRuntimeConfig().contentv3
@@ -22,36 +23,47 @@ export default function useContentDatabase() {
     return adapter
   }
 
+  function collectionJsonFields(sql: string): string[] {
+    const table = sql.match(/FROM\s+(\w+)/)
+    if (!table) {
+      return []
+    }
+    return collections.find(c => c.name === table[1])?.jsonFields || []
+  }
+
   return <DatabaseAdaptor>{
     all: async (sql, params) => {
       !adapter && (await loadAdaptor())
-      const result = await adapter.all(sql, params)
+      const result = await adapter.all<Record<string, unknown>>(sql, params)
 
       if (!result) {
         return []
       }
       return result.map((item) => {
-        if (item._extension === 'yml') {
-          return item.body && item.body !== 'undefined' ? JSON.parse(item.body) : null
+        const jsonFields = collectionJsonFields(sql)
+        for (const key of jsonFields) {
+          if (item[key]) {
+            item[key] = item[key] && item[key] !== 'undefined' ? JSON.parse(item[key] as string) : item[key]
+          }
         }
-
-        return {
-          ...item,
-          body: item.body && item.body !== 'undefined' ? JSON.parse(item.body) : null,
-        }
+        return item
       })
     },
     first: async (sql, params) => {
       !adapter && (await loadAdaptor())
-      const item = await adapter.first(sql, params)
+      const item = await adapter.first<Record<string, unknown>>(sql, params)
 
       if (!item) {
-        return null
+        return item
       }
-      return {
-        ...item,
-        body: item.body ? JSON.parse(item.body) : null,
+
+      const jsonFields = collectionJsonFields(sql)
+      for (const key of jsonFields) {
+        if (item[key]) {
+          item[key] = item[key] && item[key] !== 'undefined' ? JSON.parse(item[key] as string) : item[key]
+        }
       }
+      return item
     },
     exec: async (sql) => {
       !adapter && (await loadAdaptor())

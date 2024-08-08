@@ -4,7 +4,7 @@ import { definePageMeta, useAsyncData } from '#imports'
 const route = useRoute()
 
 const { data } = await useAsyncData('posts' + route.path, async () => {
-  const res = await queryContentV3(route.path).findOne()
+  const res = await queryContents('content').path(route.path).first()
 
   return res
 })

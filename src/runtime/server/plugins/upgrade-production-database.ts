@@ -1,5 +1,5 @@
 import { defineNitroPlugin } from 'nitropack/runtime'
-import useDatabaseAdaptor from '../adaptors'
+import useContentDatabase from '../adaptors'
 import { useRuntimeConfig } from '#imports'
 
 export default defineNitroPlugin(async (nitro) => {
@@ -12,28 +12,32 @@ export default defineNitroPlugin(async (nitro) => {
 
   const _handler = nitro.h3App.handler
   let checkDatabaseIntegrity = true
+  let promise: Promise<void> | undefined
   nitro.h3App.handler = async function (event) {
     if (checkDatabaseIntegrity) {
       checkDatabaseIntegrity = false
-      const db = useDatabaseAdaptor()
-      const _info = await db.first<{ version: string }>('select * from info').catch(() => null)
-      // Ignore updating production database if the integrityVersion is the same
-      if (_info?.version !== config.integrityVersion) {
-        await import('../initializer').then(m => m.default).then(initializeDatabase => initializeDatabase())
-
-        await db.first<{ version: string }>('select * from info')
-          .then((infoAfterImport) => {
-            console.log('infoAfterImport', infoAfterImport)
-
-            if (infoAfterImport?.version !== config.integrityVersion) {
-              checkDatabaseIntegrity = true
-            }
-          })
-          .catch((err) => {
-            checkDatabaseIntegrity = true
-          })
-      }
+      promise = checkAndImportDatabaseIntegrity(config.integrityVersion)
+        .then((isValid) => { checkDatabaseIntegrity = !isValid })
+        .catch(() => { checkDatabaseIntegrity = true })
     }
+
+    promise && await promise
+
     return _handler(event)
   }
 })
+
+async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
+  const before = await useContentDatabase().first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  if (before?.version === integrityVersion) {
+    return true
+  }
+
+  await import('../initializer')
+    .then(m => m.default)
+    .then(initializeDatabase => initializeDatabase())
+
+  const after = await useContentDatabase().first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+
+  return after?.version === integrityVersion
+}

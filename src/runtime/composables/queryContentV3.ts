@@ -9,7 +9,7 @@ export function queryContentV3(path?: string) {
     const match = createMatch()
     const params = qq.params()
     params.where = params.where || []
-    path && params.where.unshift({ _path: path })
+    path && params.where.unshift({ path: path })
 
     // handle multiple where conditions
     const conditions = params.where?.length > 1 ? { $and: params.where } : params.where?.[0]

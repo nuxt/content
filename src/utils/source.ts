@@ -1,12 +1,17 @@
 import { resolve } from 'pathe'
-import type { Nuxt } from '@nuxt/schema'
+import { type Nuxt } from '@nuxt/schema'
 import fsDriver, { type FSStorageOptions } from 'unstorage/drivers/fs'
 import httpDriver, { type HTTPOptions } from 'unstorage/drivers/http'
 import githubDriver, { type GithubOptions } from 'unstorage/drivers/github'
 
-import type { MountOptions } from '@nuxt/content'
+export type MountOptions = {
+  driver: 'fs' | 'http' | string
+  name?: string
+  prefix?: string
+  [options: string]: any
+}
 
-export const MOUNT_PREFIX = 'content:'
+export const MOUNT_PREFIX = ''
 
 const unstorageDrivers = {
   fs: fsDriver,
