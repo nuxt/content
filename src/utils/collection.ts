@@ -1,8 +1,10 @@
 import { pascalCase } from 'scule'
 import { z } from 'zod'
 import type { ZodArrayDef, ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
-import type { Collection, ResolvedCollection } from '../types'
+import type { Collection, ResolvedCollection } from '../types/collection'
 import { contentSchema, pageSchema } from './schema'
+import type { ZodFieldType } from './zod'
+import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>) {
   const schema = collection.schema
@@ -56,6 +58,7 @@ export function resolveCollections(collections: Record<string, Collection>): Res
   })
 }
 
+// Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
@@ -84,35 +87,28 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     .replace(/\?/g, () => values[index++] as string)
 }
 
-// Function to convert Zod schema to SQL table definition
+// Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(name: string, collection: Collection) {
-  const fieldMappings = {
-    ZodString: 'VARCHAR',
-    ZodNumber: 'INT',
-    ZodBoolean: 'BOOLEAN',
-    ZodDate: 'DATE',
-  }
-
-  const sqlFields = Object.entries(collection.schema.shape).map(([key, value]) => {
-    const underlyingType = getUnderlyingType(value)
+  const sqlFields = Object.entries(collection.schema.shape).map(([key, zodType]) => {
+    const underlyingType = getUnderlyingType(zodType)
 
     // Convert nested objects to TEXT
     if (['ZodObject', 'ZodArray', 'ZodRecord'].includes(underlyingType.constructor.name)) {
       return `${key} TEXT`
     }
 
-    let sqlType = fieldMappings[underlyingType.constructor.name as keyof typeof fieldMappings]
+    let sqlType = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
     if (!sqlType) throw new Error(`Unsupported Zod type: ${underlyingType.constructor.name}`)
 
     // Handle string length
-    if (underlyingType.constructor.name === 'ZodString' && (underlyingType._def as unknown as ZodArrayDef).maxLength) {
-      sqlType += `(${(underlyingType._def as unknown as ZodArrayDef).maxLength?.value})`
+    if (underlyingType.constructor.name === 'ZodString' && (underlyingType._def as ZodArrayDef).maxLength) {
+      sqlType += `(${(underlyingType._def as ZodArrayDef).maxLength?.value})`
     }
 
     // Handle optional fields
     let constraints = ''
-    if (value._def.innerType) {
-      const _def = value._def.innerType._def as unknown as ZodStringDef
+    if (zodType._def.innerType) {
+      const _def = zodType._def.innerType._def as ZodStringDef
       if (_def.checks && _def.checks.some(check => check.kind === 'min')) {
         constraints += ' NOT NULL'
       }
@@ -121,7 +117,7 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
       }
     }
     else {
-      const _def = value._def as unknown as ZodStringDef
+      const _def = zodType._def as ZodStringDef
       if (_def.checks && _def.checks.some(check => check.kind === 'min')) {
         constraints += ' NOT NULL'
       }
@@ -131,20 +127,12 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
     }
 
     // Handle default values
-    if (value._def.defaultValue !== undefined) {
-      constraints += ` DEFAULT ${typeof value._def.defaultValue() === 'string' ? `'${value._def.defaultValue()}'` : value._def.defaultValue()}`
+    if (zodType._def.defaultValue !== undefined) {
+      constraints += ` DEFAULT ${typeof zodType._def.defaultValue() === 'string' ? `'${zodType._def.defaultValue()}'` : zodType._def.defaultValue()}`
     }
 
     return `${key} ${sqlType}${constraints}`
   })
 
   return `CREATE TABLE IF NOT EXISTS ${name} (${sqlFields.join(',  ')})`
-}
-
-// Function to get the underlying Zod type
-function getUnderlyingType(zodType: ZodType<unknown, ZodOptionalDef>) {
-  while (zodType._def.innerType) {
-    zodType = zodType._def.innerType
-  }
-  return zodType
 }

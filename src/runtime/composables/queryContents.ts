@@ -20,7 +20,7 @@ export const queryContents = <T>(collection: string) => {
 
   const query: ContentQueryBuilder<T> = {
     path(path: string) {
-      params.where.push({ path: path })
+      params.where.push({ _path: path })
       return query
     },
     skip(skip: number) {

@@ -9,7 +9,7 @@ export default function useContentDatabase() {
   let adapter: DatabaseAdaptor
   async function loadAdaptor() {
     if (!adapter) {
-      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset) || config.db === 'builtin') {
+      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string) || config.db === 'builtin') {
         adapter = await createSqliteAdaptor()
       }
       else if (config.db === 'nuxthub') {

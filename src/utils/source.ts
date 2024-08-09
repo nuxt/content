@@ -3,13 +3,7 @@ import { type Nuxt } from '@nuxt/schema'
 import fsDriver, { type FSStorageOptions } from 'unstorage/drivers/fs'
 import httpDriver, { type HTTPOptions } from 'unstorage/drivers/http'
 import githubDriver, { type GithubOptions } from 'unstorage/drivers/github'
-
-export type MountOptions = {
-  driver: 'fs' | 'http' | string
-  name?: string
-  prefix?: string
-  [options: string]: any
-}
+import type { MountOptions } from '../types/source'
 
 export const MOUNT_PREFIX = ''
 
@@ -22,29 +16,29 @@ const unstorageDrivers = {
 /**
  * Resolve driver of a mount.
  */
-export async function getMountDriver(mount: MountOptions) {
-  const dirverName = mount.driver as keyof typeof unstorageDrivers
+export async function getMountDriver(options: MountOptions) {
+  const dirverName = options.driver as keyof typeof unstorageDrivers
   switch (dirverName) {
     case 'fs':
-      return fsDriver(mount as FSStorageOptions)
+      return fsDriver(options as FSStorageOptions)
     case 'http':
-      return httpDriver(mount as unknown as HTTPOptions)
+      return httpDriver(options as HTTPOptions)
     case 'github':
-      return githubDriver(mount as unknown as GithubOptions)
+      return githubDriver(options as GithubOptions)
     default:
       try {
-        return (await import(mount.driver)).default(mount)
+        return (await import(options.driver)).default(options)
       }
       catch (e) {
-        console.error('Couldn\'t load driver', mount.driver)
+        console.error('Couldn\'t load driver', options.driver)
       }
   }
 }
 
 /**
- * Generate mounts for content storages
+ * Generate mount options for content storages
  */
-export function useContentMounts(nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
+export function generateStorageMountOptions(nuxt: Nuxt, storages: Array<string | MountOptions> | Record<string, MountOptions>) {
   const key = (path: string, prefix = '') => `${MOUNT_PREFIX}${path.replace(/[/:]/g, '_')}${prefix.replace(/\//g, ':')}`
   const baseDir = (nuxt.options.future as unknown as { compatibilityVersion: number })?.compatibilityVersion === 4
     ? nuxt.options.rootDir
@@ -64,7 +58,7 @@ export function useContentMounts(nuxt: Nuxt, storages: Array<string | MountOptio
           driver: 'fs',
           prefix: '',
           base: resolve(baseDir, storage),
-        }
+        } as MountOptions
       }
 
       if (typeof storage === 'object') {
@@ -87,7 +81,7 @@ export function useContentMounts(nuxt: Nuxt, storages: Array<string | MountOptio
       name: defaultStorage,
       driver: 'fs',
       base: resolve(baseDir, 'content'),
-    }
+    } as MountOptions
   }
 
   return storages

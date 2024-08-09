@@ -14,6 +14,7 @@ export default defineNitroPlugin(async (nitro) => {
   let checkDatabaseIntegrity = true
   let promise: Promise<void> | undefined
   nitro.h3App.handler = async function (event) {
+    // TODO fix multiple times event handler
     if (checkDatabaseIntegrity) {
       checkDatabaseIntegrity = false
       promise = checkAndImportDatabaseIntegrity(config.integrityVersion)

@@ -9,9 +9,14 @@ const { data } = await useAsyncData('contents-list', () => queryContentV3().find
         v-for="item in data"
         :key="item._id"
       >
-        <NuxtLink :to="item.path">
+        <NuxtLink :to="item._path">
           {{ item.title }}
         </nuxtlink>
+      </li>
+      <li>
+        <NuxtLink to="/data/foo">
+          Data Foo
+        </NuxtLink>
       </li>
     </ul>
     <slot />

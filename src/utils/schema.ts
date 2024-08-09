@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import type { ParsedContentInternalMeta } from '../types/content'
+import { ContentFileExtension, ContentFileType } from '../types/content'
+import { getEnumValues } from './zod'
 
 export const pageSchema = z.object({
   stem: z.string(),
@@ -12,7 +15,7 @@ export const pageSchema = z.object({
 
 export const contentSchema = z.object({
   _id: z.string(),
-  path: z.string(),
+  _path: z.string(),
   _dir: z.string(),
   _draft: z.boolean().default(false),
   _partial: z.boolean().default(false),
@@ -25,9 +28,9 @@ export const contentSchema = z.object({
     children: z.any(),
     toc: z.any(),
   }),
-  _type: z.string(),
+  _type: z.enum(getEnumValues(ContentFileType)),
   _source: z.string(),
   _file: z.string(),
   _stem: z.string(),
-  _extension: z.string(),
-})
+  _extension: z.enum(getEnumValues(ContentFileExtension)),
+}) satisfies z.ZodSchema<ParsedContentInternalMeta>

@@ -2,8 +2,8 @@ import Database from 'better-sqlite3'
 import { createDatabaseAdaptor } from './factory'
 import { useRuntimeConfig } from '#imports'
 
-let db: Database
-export default createDatabaseAdaptor(function () {
+let db: Database.Database
+export default createDatabaseAdaptor(() => {
   const config = useRuntimeConfig().contentv3
 
   if (!db) {

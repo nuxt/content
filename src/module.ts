@@ -5,19 +5,16 @@ import type { Nuxt } from '@nuxt/schema'
 import { transformContent } from '@nuxt/content/transformers'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
-import { chunks, getMountDriver, useContentMounts } from './utils/source'
+import { chunks, getMountDriver, generateStorageMountOptions } from './utils/source'
+import type { MountOptions } from './types/source'
 import { addWasmSupport } from './utils/wasm'
 import { resolveCollections, generateCollectionInsert } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
-import type { ResolvedCollection } from './types'
+import type { ResolvedCollection } from './types/collection'
+import type { ModuleOptions } from './types/module'
 
 export * from './utils/collection'
 export * from './utils/schema'
-
-// Module options TypeScript interface definition
-export interface ModuleOptions {
-  database: 'nuxthub' | 'builtin'
-}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -52,7 +49,7 @@ export default defineNuxtModule<ModuleOptions>({
     const privateRuntimeConfig = {
       integrityVersion: '0.0.1-' + hash(collections.map(c => c.table).join('-')),
       dev: {
-        dataDir: dataDir,
+        dataDir,
         databaseName: 'items2.db',
       },
       db: options.database,
@@ -71,6 +68,7 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: contentTypesTemplate,
       options: { collections },
     })
+
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/collections'] = addTemplate({
       filename: 'content/collections.mjs',
@@ -79,10 +77,10 @@ export default defineNuxtModule<ModuleOptions>({
       write: true,
     }).dst
 
-    let dumpisReady = false
-    const sqlDumpList: string[] = []
+    let dumpIsReady = false
+    let sqlDump: string[] = []
     nuxt.options.nitro.alias['#content-v3/dump'] = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
-      const compressed = deflate(JSON.stringify(sqlDumpList))
+      const compressed = deflate(JSON.stringify(sqlDump))
 
       const str = Buffer.from(compressed.buffer).toString('base64')
       return [
@@ -90,17 +88,18 @@ export default defineNuxtModule<ModuleOptions>({
         `export default function() {`,
           `return JSON.parse(inflate(new Uint8Array(Buffer.from("${str}", 'base64')), { to: 'string' }));`,
         `}`,
-        `export const ready = ${dumpisReady}`,
+        `export const ready = ${dumpIsReady}`,
       ].join('\n')
     }, write: true }).dst
 
     addImportsDir(resolver.resolve('./runtime/composables'))
     addServerScanDir(resolver.resolve('./runtime/server'))
 
-    const dumpGeneratePromise = generateSqlDump(nuxt, collections, privateRuntimeConfig.integrityVersion).then ((dump) => {
-      sqlDumpList.push(...dump)
-      dumpisReady = true
+    const dumpGeneratePromise = generateSqlDump(nuxt, collections, privateRuntimeConfig.integrityVersion).then((dump) => {
+      sqlDump = dump
+      dumpIsReady = true
     })
+
     nuxt.hook('app:templates', async () => {
       await dumpGeneratePromise
     })
@@ -111,20 +110,21 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], in
   const sqlDumpList: string[] = []
 
   const storage = createStorage()
-  const _sources = useContentMounts(nuxt, collections.map(c => c.source))
-  for (const [key, source] of Object.entries(_sources)) {
-    if (source.driver === 'fs' && source.base) {
-      source.base = resolveAlias(source.base)
+  const mountsOptions = generateStorageMountOptions(nuxt, collections.map(c => c.source) as MountOptions[])
+  for (const [key, options] of Object.entries(mountsOptions)) {
+    if (options.driver === 'fs' && options.base) {
+      options.base = resolveAlias(options.base)
     }
-    storage.mount(key, await getMountDriver(source))
+    storage.mount(key, await getMountDriver(options))
   }
 
-  // Create database dumpz
+  // Create database dump
   for await (const collection of collections) {
+    // Collection table definition
     sqlDumpList.push(collection.table)
 
+    // Insert content
     const keys = await storage.getKeys(collection.name)
-
     for await (const chunk of chunks(keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
         console.log('Processing', key)
@@ -142,6 +142,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], in
       }))
     }
   }
+
   const infoCollection = collections.find(c => c.name === '_info')!
   sqlDumpList.push(generateCollectionInsert(infoCollection, { version: integrityVersion }))
 

@@ -1,5 +1,6 @@
 import { useNitro } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
+import type { InputPluginOption } from 'rollup'
 
 export function addWasmSupport(nuxt: Nuxt) {
   nuxt.hook('ready', () => {
@@ -13,10 +14,10 @@ export function addWasmSupport(nuxt: Nuxt) {
       _nitro.options.externals.inline.push(id => id.endsWith('.wasm'))
       _nitro.hooks.hook('rollup:before', async (_, rollupConfig) => {
         const { rollup: unwasm } = await import('unwasm/plugin')
-        rollupConfig.plugins = rollupConfig.plugins || []
-        ;(rollupConfig.plugins as any[]).push(
+        rollupConfig.plugins = rollupConfig.plugins || [];
+        (rollupConfig.plugins as InputPluginOption[]).push(
           unwasm({
-            ...(_nitro.options.wasm as any),
+            ..._nitro.options.wasm,
           }),
         )
       })

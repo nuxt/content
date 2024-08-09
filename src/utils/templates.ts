@@ -1,8 +1,8 @@
 import { printNode, zodToTs } from 'zod-to-ts'
 import type { ZodObject, ZodRawShape } from 'zod'
-import type { ResolvedCollection } from '../types'
+import type { ResolvedCollection } from '../types/collection'
 
-export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection<unknown>[] } }) {
+export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection<ZodRawShape>[] } }) {
   return [
     ...options.collections.map(c => `export type ${c.pascalName} = ${printNode(zodToTs(c.schema as ZodObject<ZodRawShape>, c.pascalName).node)}`),
     'interface Collections {',
@@ -23,7 +23,7 @@ export function contentTypesTemplate({ options }: { options: { collections: Reso
   ].join('\n')
 }
 
-export function collectionsTemplate({ options }: { options: { collections: ResolvedCollection<unknown>[] } }) {
+export function collectionsTemplate({ options }: { options: { collections: ResolvedCollection<ZodRawShape>[] } }) {
   return 'export const collections = ' + JSON.stringify(options.collections.map(c => ({
     name: c.name,
     pascalName: c.pascalName,
