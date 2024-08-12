@@ -15,7 +15,7 @@ export const pageSchema = z.object({
 
 export const contentSchema = z.object({
   _id: z.string(),
-  _path: z.string(),
+  path: z.string(),
   _dir: z.string(),
   _draft: z.boolean().default(false),
   _partial: z.boolean().default(false),

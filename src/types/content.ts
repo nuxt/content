@@ -60,7 +60,7 @@ export interface ParsedContentInternalMeta {
   /**
    * Content path, this path is source agnostic and it the content my live in any source
    */
-  _path?: string
+  path?: string
   /**
    * Content title
    */

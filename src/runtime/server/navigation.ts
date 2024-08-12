@@ -1,16 +1,4 @@
-interface ContentNavigationItem {
-  title: string
-  path: string
-  stem: string
-  children?: ContentNavigationItem[]
-}
-
-interface PageDocument {
-  title: string
-  path: string
-  stem: string
-  [key: string]: any
-}
+import type { ContentNavigationItem, PageDocument } from '~/src/types'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.

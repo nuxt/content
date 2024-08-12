@@ -1,18 +1,19 @@
 import { createMatch } from '../content-v2-support-utils/match'
+import { executeContentQuery } from './executeContentQuery'
 
 interface ContentQueryBuilder<T> {
   path(path: string): ContentQueryBuilder<T>
   skip(skip: number): ContentQueryBuilder<T>
-  where(field: string, operator: '=' | '>' | '<' | 'in', value: any): ContentQueryBuilder<T>
+  where(field: string, operator: '=' | '>' | '<' | 'in', value: unknown): ContentQueryBuilder<T>
   select<K extends keyof T>(...fields: K[]): ContentQueryBuilder<Pick<T, K>>
   limit(limit: number): ContentQueryBuilder<T>
   all(): Promise<T[]>
   first(): Promise<T>
 }
 
-export const queryContents = <T>(collection: string) => {
+export const queryContents = <T = Record<string, unknown>>(collection: string) => {
   const params = {
-    where: [] as Array<any>,
+    where: [] as Array<unknown>,
     select: '*',
     skip: 0,
     limit: 0,
@@ -20,14 +21,14 @@ export const queryContents = <T>(collection: string) => {
 
   const query: ContentQueryBuilder<T> = {
     path(path: string) {
-      params.where.push({ _path: path })
+      params.where.push({ path })
       return query
     },
     skip(skip: number) {
       params.skip = skip
       return query
     },
-    where(field: string, operator: '=' | '>' | '<' | 'in', value: any) {
+    where(field: string, operator: '=' | '>' | '<' | 'in', value: unknown) {
       params.where.push({ [field]: { [operator]: value } })
       return query
     },
@@ -39,13 +40,13 @@ export const queryContents = <T>(collection: string) => {
       params.select = fields.join(', ')
       return query
     },
-    async all() {
+    async all(): Promise<T[]> {
       const sql = `SELECT * FROM ${collection} ${generateWhere()} ${generateLimitAndSkip()}`
-      return $fetch<T[]>(`/api/query?q=${encodeURIComponent(sql)}`)
+      return executeContentQuery(collection, sql)
     },
-    async first() {
+    async first(): Promise<T> {
       const sql = `SELECT * FROM ${collection} ${generateWhere()} ${generateLimitAndSkip()}`
-      return $fetch<T[]>(`/api/query?q=${encodeURIComponent(sql)}`).then(res => res[0])
+      return executeContentQuery(collection, sql).then(res => res[0])
     },
   }
 

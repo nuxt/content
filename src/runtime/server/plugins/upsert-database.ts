@@ -5,11 +5,6 @@ import { useRuntimeConfig } from '#imports'
 export default defineNitroPlugin(async (nitro) => {
   const config = useRuntimeConfig().contentv3
 
-  // Ignore updating production database if the config is set to isolatedProductionDatabase
-  if (config.isolatedProductionDatabase === true) {
-    return
-  }
-
   const _handler = nitro.h3App.handler
   let checkDatabaseIntegrity = true
   let promise: Promise<void> | undefined
@@ -19,7 +14,10 @@ export default defineNitroPlugin(async (nitro) => {
       checkDatabaseIntegrity = false
       promise = checkAndImportDatabaseIntegrity(config.integrityVersion)
         .then((isValid) => { checkDatabaseIntegrity = !isValid })
-        .catch(() => { checkDatabaseIntegrity = true })
+        .catch((error) => {
+          console.log('Database integrity check failed, rebuilding database', error)
+          checkDatabaseIntegrity = true
+        })
     }
 
     promise && await promise
@@ -29,16 +27,22 @@ export default defineNitroPlugin(async (nitro) => {
 })
 
 async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
-  const before = await useContentDatabase().first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  const db = useContentDatabase()
+  const before = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
   if (before?.version === integrityVersion) {
     return true
   }
 
-  await import('../initializer')
-    .then(m => m.default)
-    .then(initializeDatabase => initializeDatabase())
+  // @ts-expect-error - Vite doesn't know about the import
+  await (await import('#content-v3/dump' /* @vite-ignore */).then(m => m.default()))
+    .reduce((prev: Promise<void>, sql: string) => prev.then(() => {
+      return db.exec(sql).catch((error) => {
+        console.log('Failed to execute sql', sql, error)
+        throw error
+      })
+    }), Promise.resolve())
 
-  const after = await useContentDatabase().first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  const after = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
 
   return after?.version === integrityVersion
 }

@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, addImportsDir, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImportsDir, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { transformContent } from '@nuxt/content/transformers'
 import { deflate } from 'pako'
@@ -15,6 +15,7 @@ import type { ModuleOptions } from './types/module'
 
 export * from './utils/collection'
 export * from './utils/schema'
+export type * from './types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -94,6 +95,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImportsDir(resolver.resolve('./runtime/composables'))
     addServerScanDir(resolver.resolve('./runtime/server'))
+    addImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+    ])
+    addServerImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+    ])
 
     const dumpGeneratePromise = generateSqlDump(nuxt, collections, privateRuntimeConfig.integrityVersion).then((dump) => {
       sqlDump = dump

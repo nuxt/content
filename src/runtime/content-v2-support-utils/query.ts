@@ -39,13 +39,13 @@ export function createQuery<T = ParsedContent>(fetcher: ContentQueryFetcher<T>, 
 
       if ((result as any)?.dirConfig) {
         result.result = {
-          _path: (result as any).dirConfig?._path,
+          path: (result as any).dirConfig?.path,
           ...(result.result as T),
           _dir: (result as any).dirConfig,
         }
       }
 
-      return result?._path || Array.isArray(result) || !Object.prototype.hasOwnProperty.call(result, 'result') ? result : result?.result
+      return result?.path || Array.isArray(result) || !Object.prototype.hasOwnProperty.call(result, 'result') ? result : result?.result
     }
 
     return result

@@ -70,7 +70,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     if ((collection.jsonFields || []).includes(key)) {
       values.push(data[key] ? `'${JSON.stringify(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
     }
-    else if (underlyingType.constructor.name === 'ZodString' || underlyingType.constructor.name === 'ZodDate') {
+    else if (['ZodString', 'ZodDate', 'ZodEnum'].includes(underlyingType.constructor.name)) {
       values.push(data[key] ? `'${String(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
     }
     else if (underlyingType.constructor.name === 'ZodBoolean') {
