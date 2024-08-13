@@ -1,13 +1,12 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, addServerPlugin } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
-import { deflate } from 'pako'
 import { hash } from 'ohash'
 import { chunks, getMountDriver, generateStorageMountOptions } from './utils/source'
 import type { MountOptions } from './types/source'
 import { resolveCollections, generateCollectionInsert } from './utils/collection'
-import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
+import { collectionsTemplate, contentTypesTemplate, sqlDumpTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
 import { watchContents } from './utils/dev'
@@ -29,10 +28,6 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
 
     const dataDir = nuxt.options.rootDir + '/.data/content'
-
-    nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
-    nuxt.options.nitro.publicAssets.push({ dir: dataDir, maxAge: 0 })
-
     await mkdir(dataDir, { recursive: true }).catch(() => {})
 
     const configPath = await resolvePath(nuxt.options.rootDir + '/content.config', { extensions: ['mjs', 'js', 'ts'] })
@@ -61,10 +56,51 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
-    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
-    nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
-    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    if (publicRuntimeConfig.clientDB) {
+      nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
+      nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
+      nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
+      // The database API is only required for the client-side database
+      addServerHandler({
+        handler: resolver.resolve('./runtime/server/api/database'),
+        method: 'get',
+        route: '/api/database',
+      })
+
+      // This enables SharedArrayBuffer to work in the browser which is required for SQLite in the browser
+      addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
+    }
+
+    /**
+     * Server
+     */
+    addServerPlugin(resolver.resolve('./runtime/server/plugin/upsert-database'))
+    addServerHandler({
+      route: '/api/:collection/query',
+      method: 'get',
+      handler: resolver.resolve('./runtime/server/api/[collection]/query'),
+    })
+    addServerHandler({
+      route: '/api/:collection/navigation',
+      method: 'get',
+      handler: resolver.resolve('./runtime/server/api/[collection]/navigation.get'),
+    })
+    addServerImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+    ])
+
+    /**
+     * Client
+     */
+    addImportsDir(resolver.resolve('./runtime/composables'))
+    addImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+    ])
+
+    /**
+     * Templates
+     */
     addTypeTemplate({
       filename: 'content/content.d.ts',
       getContents: contentTypesTemplate,
@@ -81,27 +117,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     let dumpIsReady = false
     let sqlDump: string[] = []
-    nuxt.options.nitro.alias['#content-v3/dump'] = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
-      const compressed = deflate(JSON.stringify(sqlDump))
-
-      const str = Buffer.from(compressed.buffer).toString('base64')
-      return [
-        'import { inflate } from "pako"',
-        `export default function() {`,
-          `return JSON.parse(inflate(new Uint8Array(Buffer.from("${str}", 'base64')), { to: 'string' }));`,
-        `}`,
-        `export const ready = ${dumpIsReady}`,
-      ].join('\n')
-    }, write: true }).dst
-
-    addImportsDir(resolver.resolve('./runtime/composables'))
-    addServerScanDir(resolver.resolve('./runtime/server'))
-    addImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
-    ])
-    addServerImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
-    ])
+    nuxt.options.nitro.alias['#content-v3/dump'] = addTemplate({
+      filename: 'content/dump.mjs',
+      getContents: sqlDumpTemplate,
+      options: { dump: sqlDump, dumpIsReady },
+      write: true,
+    }).dst
 
     if (nuxt.options._prepare) {
       return
