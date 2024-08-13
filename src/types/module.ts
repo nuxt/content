@@ -1,10 +1,10 @@
 export interface ModuleOptions {
   database: 'nuxthub' | 'builtin'
-  clientDB?: {
+  clientDB: {
     enabled: boolean
   }
-  dev?: {
-    dataDir?: string
-    databaseName?: string
+  dev: {
+    dataDir: string
+    databaseName: string
   }
 }
