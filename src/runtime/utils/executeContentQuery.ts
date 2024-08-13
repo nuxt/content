@@ -5,7 +5,7 @@ import { useRuntimeConfig } from '#imports'
 export async function executeContentQuery<T extends keyof Collections, G = Collections[T]>(collection: T, sql: string) {
   const config = useRuntimeConfig().public.contentv3
   let result: G[]
-  if (import.meta.client && config.clientDB) {
+  if (import.meta.client && config.clientDB?.enabled) {
     result = await queryContentSqlWasm<G>(collection, sql)
   }
   else {

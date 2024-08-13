@@ -2,15 +2,18 @@ import { pascalCase } from 'scule'
 import { z } from 'zod'
 import type { ZodArrayDef, ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection } from '../types/collection'
-import { contentSchema, pageSchema } from './schema'
+import { contentSchema, metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>) {
-  const schema = collection.schema
+  const schema = (collection.type === 'page'
+    ? pageSchema.extend((collection.schema as ZodObject<ZodRawShape>).shape)
+    : collection.schema).extend(metaSchema.shape)
+
   return {
     ...collection,
-    schema: collection.type === 'page' ? pageSchema.extend((schema as ZodObject<ZodRawShape>).shape) : schema,
+    schema,
   }
 }
 
@@ -80,6 +83,13 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
       values.push(data[key] as string | number | boolean)
     }
   })
+
+  const collectionColumns = Object.keys(collection.schema.shape)
+  const metaColumnEnteries = Object.entries(data)
+    .filter(([key]) => !collectionColumns.includes(key))
+
+  fields.push('meta')
+  values.push(`'${JSON.stringify(Object.fromEntries(metaColumnEnteries)).replace(/'/g, '\'\'')}'`)
 
   let index = 0
 

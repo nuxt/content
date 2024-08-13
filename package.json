@@ -1,6 +1,6 @@
 {
   "name": "@farnabaz/content-next",
-  "version": "1.9.0",
+  "version": "1.12.0",
   "description": "My new Nuxt module",
   "repository": "your-org/my-module",
   "license": "MIT",
@@ -34,6 +34,7 @@
     "pako": "^2.1.0",
     "pathe": "^1.1.2",
     "scule": "^1.3.0",
+    "shiki": "^1.12.1",
     "unstorage": "^1.10.2",
     "zod": "^3.23.8",
     "zod-to-ts": "^1.2.0"
