@@ -4,6 +4,7 @@ import type { ResolvedCollection } from '../types/collection'
 
 export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
   return [
+    'import type { ContentQueryBuilder } from \'@farnabaz/content-next\'',
     ...options.collections.map(c => `export type ${c.pascalName} = ${printNode(zodToTs(c.schema as ZodObject<ZodRawShape>, c.pascalName).node)}`),
     'interface Collections {',
     ...options.collections.map(c => `  ${c.name}: ${c.pascalName}`),
@@ -14,16 +15,9 @@ export function contentTypesTemplate({ options }: { options: { collections: Reso
     ...options.collections.map(c => `    ${c.name}: ${c.pascalName}`),
     '  }',
     '}',
-    'interface QueryBuilder<T> {',
-    '  path(path: string): QueryBuilder<T>',
-    '  skip(skip: number): QueryBuilder<T>',
-    '  limit(limit: number): QueryBuilder<T>',
-    '  all(): Promise<T[]>',
-    '  first(): Promise<T>',
-    '}',
     '',
     'declare global {',
-    '  const queryContents: <T extends keyof Collections>(collection: T) => QueryBuilder<T>',
+    '  const queryContents: <T extends keyof Collections>(collection: T) => ContentQueryBuilder<T>',
     '}',
   ].join('\n')
 }

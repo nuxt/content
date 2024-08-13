@@ -1,35 +1,61 @@
-import { createMatch } from '../content-v2-support-utils/match'
+import type { ContentQueryBuilder, SQLOperator } from '@farnabaz/content-next'
 import { executeContentQuery } from './executeContentQuery'
-
-interface ContentQueryBuilder<T> {
-  path(path: string): ContentQueryBuilder<T>
-  skip(skip: number): ContentQueryBuilder<T>
-  where(field: string, operator: '=' | '>' | '<' | 'in', value: unknown): ContentQueryBuilder<T>
-  select<K extends keyof T>(...fields: K[]): ContentQueryBuilder<Pick<T, K>>
-  limit(limit: number): ContentQueryBuilder<T>
-  all(): Promise<T[]>
-  first(): Promise<T>
-}
 
 export const queryContents = <T = Record<string, unknown>>(collection: string) => {
   const params = {
-    where: [] as Array<unknown>,
-    select: '*',
-    skip: 0,
+    conditions: [] as Array<string>,
+    selectedFields: [] as Array<keyof T>,
+    offset: 0,
     limit: 0,
   }
 
   const query: ContentQueryBuilder<T> = {
     path(path: string) {
-      params.where.push({ path })
-      return query
+      return query.where('path', '=', path)
     },
     skip(skip: number) {
-      params.skip = skip
+      params.offset = skip
       return query
     },
-    where(field: string, operator: '=' | '>' | '<' | 'in', value: unknown) {
-      params.where.push({ [field]: { [operator]: value } })
+    where(field: string, operator: SQLOperator, value: unknown): ContentQueryBuilder<T> {
+      let condition: string
+
+      switch (operator.toUpperCase()) {
+        case 'IN':
+        case 'NOT IN':
+          if (Array.isArray(value)) {
+            const values = value.map(val => `'${val}'`).join(', ')
+            condition = `${field} ${operator.toUpperCase()} (${values})`
+          }
+          else {
+            throw new TypeError(`Value for ${operator} must be an array`)
+          }
+          break
+
+        case 'BETWEEN':
+        case 'NOT BETWEEN':
+          if (Array.isArray(value) && value.length === 2) {
+            condition = `${field} ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
+          }
+          else {
+            throw new Error(`Value for ${operator} must be an array with two elements`)
+          }
+          break
+
+        case 'IS NULL':
+        case 'IS NOT NULL':
+          condition = `${field} ${operator.toUpperCase()}`
+          break
+
+        case 'LIKE':
+        case 'NOT LIKE':
+          condition = `${field} ${operator.toUpperCase()} '${value}'`
+          break
+
+        default:
+          condition = `${field} ${operator} '${value}'`
+      }
+      params.conditions.push(`(${condition})`)
       return query
     },
     limit(limit: number) {
@@ -37,34 +63,34 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       return query
     },
     select<K extends keyof T>(...fields: K[]) {
-      params.select = fields.join(', ')
+      params.selectedFields.push(...fields)
       return query
     },
     async all(): Promise<T[]> {
-      const sql = `SELECT * FROM ${collection} ${generateWhere()} ${generateLimitAndSkip()}`
-      return executeContentQuery(collection, sql)
+      return executeContentQuery(collection, buildQuery())
     },
     async first(): Promise<T> {
-      const sql = `SELECT * FROM ${collection} ${generateWhere()} ${generateLimitAndSkip()}`
-      return executeContentQuery(collection, sql).then(res => res[0])
+      return executeContentQuery(collection, buildQuery()).then(res => res[0])
     },
   }
 
-  function generateLimitAndSkip() {
-    if (params.limit && params.skip) {
-      return `LIMIT ${params.limit} OFFSET ${params.skip}`
-    }
-    else if (params.limit) {
-      return `LIMIT ${params.limit}`
-    }
-    return ''
-  }
+  function buildQuery() {
+    let query = 'SELECT '
+    query += params.selectedFields.length > 0 ? params.selectedFields.join(', ') : '*'
+    query += ` FROM ${collection}`
 
-  function generateWhere() {
-    const match = createMatch()
+    if (params.conditions.length > 0) {
+      query += ` WHERE ${params.conditions.join(' AND ')}`
+    }
 
-    const where = params.where || []
-    return where.length > 0 ? `WHERE ${where.map(w => match('content', w)).join(' AND ')}` : ''
+    if (params.limit > 0) {
+      if (params.offset > 0) {
+        query += ` LIMIT ${params.limit} OFFSET ${params.offset}`
+      }
+      query += ` LIMIT ${params.limit}`
+    }
+
+    return query
   }
 
   return query

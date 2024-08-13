@@ -1,17 +1,17 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, addImportsDir, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
-import { transformContent } from '@nuxt/content/transformers'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
 import { chunks, getMountDriver, generateStorageMountOptions } from './utils/source'
 import type { MountOptions } from './types/source'
-import { addWasmSupport } from './utils/wasm'
 import { resolveCollections, generateCollectionInsert } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
+import { watchContents } from './utils/dev'
+import { parseContent } from './utils/content'
 
 export * from './utils/collection'
 export * from './utils/schema'
@@ -35,16 +35,19 @@ export default defineNuxtModule<ModuleOptions>({
 
     await mkdir(dataDir, { recursive: true }).catch(() => {})
 
-    const contentConfig = await import(nuxt.options.rootDir + '/content.config')
-      .catch((err) => {
-        console.error(err)
-        return {}
-      })
+    const configPath = await resolvePath(nuxt.options.rootDir + '/content.config', { extensions: ['mjs', 'js', 'ts'] })
+    const contentConfig = configPath
+      ? await import(configPath)
+        .catch((err) => {
+          console.error(err)
+          return {}
+        })
+      : {}
 
     const collections = resolveCollections(contentConfig.collections || {})
 
     const publicRuntimeConfig = {
-      clientDB: false,
+      clientDB: true,
     }
 
     const privateRuntimeConfig = {
@@ -61,8 +64,6 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
-
-    addWasmSupport(nuxt)
 
     addTypeTemplate({
       filename: 'content/content.d.ts',
@@ -102,20 +103,29 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
     ])
 
-    const dumpGeneratePromise = generateSqlDump(nuxt, collections, privateRuntimeConfig.integrityVersion).then((dump) => {
-      sqlDump = dump
-      dumpIsReady = true
-    })
+    if (nuxt.options._prepare) {
+      return
+    }
+
+    const storage = await createCollectionsStorage(nuxt, collections)
+    const dumpGeneratePromise = generateSqlDump(storage, collections, privateRuntimeConfig.integrityVersion)
+      .then((dump) => {
+        sqlDump = dump
+        dumpIsReady = true
+      })
 
     nuxt.hook('app:templates', async () => {
       await dumpGeneratePromise
     })
+
+    if (nuxt.options.dev) {
+      const databaseLocation = privateRuntimeConfig.dev.dataDir + '/' + privateRuntimeConfig.dev.databaseName
+      watchContents(nuxt, storage, collections, databaseLocation)
+    }
   },
 })
 
-async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], integrityVersion: string) {
-  const sqlDumpList: string[] = []
-
+async function createCollectionsStorage(nuxt: Nuxt, collections: ResolvedCollection[]) {
   const storage = createStorage()
   const mountsOptions = generateStorageMountOptions(nuxt, collections.map(c => c.source) as MountOptions[])
   for (const [key, options] of Object.entries(mountsOptions)) {
@@ -124,6 +134,11 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], in
     }
     storage.mount(key, await getMountDriver(options))
   }
+  return storage
+}
+
+async function generateSqlDump(storage: ReturnType<typeof createStorage>, collections: ResolvedCollection[], integrityVersion: string) {
+  const sqlDumpList: string[] = []
 
   // Create database dump
   for await (const collection of collections) {
@@ -135,15 +150,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], in
     for await (const chunk of chunks(keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
         console.log('Processing', key)
-        const content = await storage.getItem(key)
-        const parsedContent = await transformContent(key, content)
-
-        // TODO: remove this
-        parsedContent.title = parsedContent.title || parsedContent._title
-        parsedContent.description = parsedContent.description || parsedContent._description
-        parsedContent.path = parsedContent.path || parsedContent._path
-        parsedContent.stem = parsedContent.stem || parsedContent._stem
-        parsedContent.body = parsedContent.body || (parsedContent._extension === 'yml' ? JSON.parse(JSON.stringify(parsedContent)) : {})
+        const parsedContent = await parseContent(storage, collection, key)
 
         sqlDumpList.push(generateCollectionInsert(collection, parsedContent))
       }))
@@ -151,7 +158,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], in
   }
 
   const infoCollection = collections.find(c => c.name === '_info')!
-  sqlDumpList.push(generateCollectionInsert(infoCollection, { version: integrityVersion }))
+  sqlDumpList.push(generateCollectionInsert(infoCollection, { id: 'version', version: integrityVersion }))
 
   return sqlDumpList
 }

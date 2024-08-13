@@ -83,7 +83,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT INTO ${collection.name} (${fields.join(', ')}) VALUES (${'?,'.repeat(fields.length).slice(0, -1)})`
+  return `INSERT INTO ${collection.name} (id, ${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(fields.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
@@ -134,5 +134,5 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
     return `${key} ${sqlType}${constraints}`
   })
 
-  return `CREATE TABLE IF NOT EXISTS ${name} (${sqlFields.join(',  ')})`
+  return `CREATE TABLE IF NOT EXISTS ${name} (id TEXT PRIMARY KEY, ${sqlFields.join(',  ')})`
 }

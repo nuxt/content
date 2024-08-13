@@ -29,8 +29,12 @@ export default defineNitroPlugin(async (nitro) => {
 async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
   const db = useContentDatabase()
   const before = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
-  if (before?.version === integrityVersion) {
-    return true
+  if (before?.version) {
+    if (before?.version === integrityVersion) {
+      return true
+    }
+    // Delete old version
+    await db.exec(`DELETE FROM _info WHERE version = '${before.version}'`)
   }
 
   // @ts-expect-error - Vite doesn't know about the import
