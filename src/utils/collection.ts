@@ -55,8 +55,8 @@ export function resolveCollections(collections: Record<string, Collection>): Res
         path: typeof collection.schema.shape.path !== 'undefined',
       },
       jsonFields: Object.keys(collection.schema.shape)
-        .filter(key => ['ZodObject', 'ZodArray', 'ZodRecord']
-          .includes(collection.schema.shape[key].constructor.name)),
+        .filter(key => ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection']
+          .includes(getUnderlyingType(collection.schema.shape[key]).constructor.name)),
     }
   })
 }
@@ -83,7 +83,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
       values.push(data[key] ? true : false)
     }
     else {
-      values.push(data[key] as string | number | boolean)
+      values.push(data[key] ? data[key] as string | number | boolean : 'NULL')
     }
   })
 
@@ -96,8 +96,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  // (id, ${fields.join(', ')})
-  return `INSERT INTO ${collection.name} VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(values.length).slice(0, -1)})`
+  return `INSERT INTO ${collection.name} (id, ${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(values.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
@@ -107,7 +106,7 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
     const underlyingType = getUnderlyingType(zodType)
 
     // Convert nested objects to TEXT
-    if (['ZodObject', 'ZodArray', 'ZodRecord'].includes(underlyingType.constructor.name)) {
+    if (['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection'].includes(underlyingType.constructor.name)) {
       return `${key} TEXT`
     }
 

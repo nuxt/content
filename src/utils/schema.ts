@@ -13,6 +13,13 @@ export const pageSchema = z.object({
   path: z.string(),
   title: z.string(),
   description: z.string(),
+  head: z.intersection(
+    z.object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+    }),
+    z.record(z.string(), z.any()),
+  ).optional(),
   body: z.object({
     type: z.string(),
     children: z.any(),

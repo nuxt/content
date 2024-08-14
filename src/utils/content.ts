@@ -40,14 +40,20 @@ export async function parseContent(storage: ReturnType<typeof createStorage>, co
   })
 
   // TODO: remove this
-  Object.keys(collection.schema.shape).forEach((key) => {
-    parseContent[key] = parsedContent[key] || parsedContent._[key]
+  const collectionKeys = Object.keys(collection.schema.shape)
+  const result: Record<string, unknown> = {
+    id: parsedContent._id || parsedContent.id || parsedContent.key,
+    meta: {} as Record<string, unknown>,
+  }
+  collectionKeys.forEach((key) => {
+    result[key] = parsedContent[key] || parsedContent[`_${key}`]
   })
-  parsedContent.title = parsedContent.title || parsedContent._title
-  parsedContent.description = parsedContent.description || parsedContent._description
-  parsedContent.path = parsedContent.path || parsedContent._path
-  parsedContent.stem = parsedContent.stem || parsedContent._stem
-  parsedContent.body = parsedContent.body || (parsedContent._extension === 'yml' ? JSON.parse(JSON.stringify(parsedContent)) : {})
 
-  return parsedContent
+  const metaObject = Object.keys(parsedContent).filter(key => !collectionKeys.includes(key)).map(key => ([key, parsedContent[key]]))
+
+  result.meta = Object.fromEntries(metaObject)
+
+  result.body = parsedContent.body || (parsedContent._extension === 'yml' ? JSON.parse(JSON.stringify(parsedContent)) : {})
+
+  return result
 }
