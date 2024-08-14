@@ -87,16 +87,9 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     }
   })
 
-  const collectionColumns = Object.keys(collection.schema.shape)
-  const metaColumnEnteries = Object.entries(data)
-    .filter(([key]) => !collectionColumns.includes(key))
-
-  fields.push('meta')
-  values.push(`'${JSON.stringify(Object.fromEntries(metaColumnEnteries)).replace(/'/g, '\'\'')}'`)
-
   let index = 0
 
-  return `INSERT INTO ${collection.name} (id, ${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(values.length).slice(0, -1)})`
+  return `INSERT OR REPLACE INTO ${collection.name} (id,${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}',${'?,'.repeat(values.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 

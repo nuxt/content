@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, addServerPlugin } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
@@ -62,15 +62,30 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
-    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
-    nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
-    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    if (options.clientDB) {
+      nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
+      nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
+      nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
-    addTypeTemplate({
-      filename: 'content/content.d.ts',
-      getContents: contentTypesTemplate,
-      options: { collections },
-    })
+      addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
+      addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
+    }
+
+    addImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+      { name: 'queryContentV3', from: resolver.resolve('./runtime/composables/queryContentV3') },
+    ])
+
+    addServerImports([
+      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+    ])
+
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/upsert-database'))
+    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query'), method: 'get' })
+    addServerHandler({ route: '/api/:collection/navigation', handler: resolver.resolve('./runtime/server/api/[collection]/navigation'), method: 'get' })
+
+    // Types template
+    addTypeTemplate({ filename: 'content/content.d.ts', getContents: contentTypesTemplate, options: { collections } })
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/collections'] = addTemplate({
@@ -94,15 +109,6 @@ export default defineNuxtModule<ModuleOptions>({
         `export const ready = ${dumpIsReady}`,
       ].join('\n')
     }, write: true }).dst
-
-    addImportsDir(resolver.resolve('./runtime/composables'))
-    addServerScanDir(resolver.resolve('./runtime/server'))
-    addImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
-    ])
-    addServerImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
-    ])
 
     if (nuxt.options._prepare) {
       return

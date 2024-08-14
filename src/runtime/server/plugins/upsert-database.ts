@@ -38,15 +38,16 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
   }
 
   // @ts-expect-error - Vite doesn't know about the import
-  await (await import('#content-v3/dump' /* @vite-ignore */).then(m => m.default()))
-    .reduce((prev: Promise<void>, sql: string) => prev.then(() => {
-      return db.exec(sql).catch((error) => {
-        console.log('Failed to execute sql', sql, error)
-        throw error
-      })
-    }), Promise.resolve())
+  const dump = await import('#content-v3/dump' /* @vite-ignore */).then(m => m.default())
+  await dump.reduce(async (prev: Promise<void>, sql: string) => {
+    await prev
+    await db.exec(sql).catch((error) => {
+      console.log('error', error)
+      // throw error
+    })
+  }, Promise.resolve())
 
   const after = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
-
+  console.log(after)
   return after?.version === integrityVersion
 }
