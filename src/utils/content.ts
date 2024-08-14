@@ -40,6 +40,9 @@ export async function parseContent(storage: ReturnType<typeof createStorage>, co
   })
 
   // TODO: remove this
+  Object.keys(collection.schema.shape).forEach((key) => {
+    parseContent[key] = parsedContent[key] || parsedContent._[key]
+  })
   parsedContent.title = parsedContent.title || parsedContent._title
   parsedContent.description = parsedContent.description || parsedContent._description
   parsedContent.path = parsedContent.path || parsedContent._path

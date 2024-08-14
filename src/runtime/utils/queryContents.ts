@@ -7,6 +7,7 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
     selectedFields: [] as Array<keyof T>,
     offset: 0,
     limit: 0,
+    orderBy: [] as Array<string>,
   }
 
   const query: ContentQueryBuilder<T> = {
@@ -17,7 +18,7 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       params.offset = skip
       return query
     },
-    where(field: string, operator: SQLOperator, value: unknown): ContentQueryBuilder<T> {
+    where(field: keyof T | string, operator: SQLOperator, value: unknown): ContentQueryBuilder<T> {
       let condition: string
 
       switch (operator.toUpperCase()) {
@@ -66,6 +67,10 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       params.selectedFields.push(...fields)
       return query
     },
+    order(field: keyof T, direction: 'ASC' | 'DESC') {
+      params.orderBy.push(`${String(field)} ${direction}`)
+      return query
+    },
     async all(): Promise<T[]> {
       return executeContentQuery(collection, buildQuery())
     },
@@ -88,6 +93,10 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
         query += ` LIMIT ${params.limit} OFFSET ${params.offset}`
       }
       query += ` LIMIT ${params.limit}`
+    }
+
+    if (params.orderBy.length > 0) {
+      query += ` ORDER BY ${params.orderBy.join(', ')}`
     }
 
     return query

@@ -73,8 +73,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     if ((collection.jsonFields || []).includes(key)) {
       values.push(data[key] ? `'${JSON.stringify(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
     }
-    else if (['ZodString', 'ZodDate', 'ZodEnum'].includes(underlyingType.constructor.name)) {
+    else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
       values.push(data[key] ? `'${String(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
+    }
+    else if (['ZodDate'].includes(underlyingType.constructor.name)) {
+      values.push(data[key] ? `'${new Date(data[key] as string).toISOString()}'` : 'NULL')
     }
     else if (underlyingType.constructor.name === 'ZodBoolean') {
       values.push(data[key] ? true : false)
@@ -93,7 +96,8 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT INTO ${collection.name} (id, ${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(fields.length).slice(0, -1)})`
+  // (id, ${fields.join(', ')})
+  return `INSERT INTO ${collection.name} VALUES ('${data._id || data.id || data.key}', ${'?,'.repeat(values.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
