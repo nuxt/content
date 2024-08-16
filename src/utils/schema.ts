@@ -3,17 +3,19 @@ import { ContentFileExtension, ContentFileType } from '../types/content'
 import { getEnumValues } from './zod'
 
 export const metaSchema = z.object({
+  id: z.string(),
+  weight: z.string(),
+  stem: z.string(),
   extension: z.enum(getEnumValues(ContentFileExtension)),
   meta: z.object<Record<string, ZodTypeAny>>({
   }),
 })
 
 export const pageSchema = z.object({
-  stem: z.string(),
   path: z.string(),
   title: z.string(),
   description: z.string(),
-  head: z.intersection(
+  seo: z.intersection(
     z.object({
       title: z.string().optional(),
       description: z.string().optional(),
@@ -26,9 +28,9 @@ export const pageSchema = z.object({
     toc: z.any(),
   }),
   navigation: z.boolean().default(true),
-  raw: z.string(),
 })
 
+// TODO
 export const contentSchema = z.object({
   dir: z.string(),
   draft: z.boolean().default(false),

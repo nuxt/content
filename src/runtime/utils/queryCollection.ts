@@ -1,16 +1,16 @@
-import type { ContentQueryBuilder, SQLOperator } from '@farnabaz/content-next'
+import type { CollectionQueryBuilder, SQLOperator, Collections } from '@farnabaz/content-next'
 import { executeContentQuery } from './executeContentQuery'
 
-export const queryContents = <T = Record<string, unknown>>(collection: string) => {
+export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
-    selectedFields: [] as Array<keyof T>,
+    selectedFields: [] as Array<keyof Collections[T]>,
     offset: 0,
     limit: 0,
     orderBy: [] as Array<string>,
   }
 
-  const query: ContentQueryBuilder<T> = {
+  const query: CollectionQueryBuilder<Collections[T]> = {
     path(path: string) {
       return query.where('path', '=', path)
     },
@@ -18,7 +18,7 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       params.offset = skip
       return query
     },
-    where(field: keyof T | string, operator: SQLOperator, value: unknown): ContentQueryBuilder<T> {
+    where(field: keyof Collections[T] | string, operator: SQLOperator, value: unknown): CollectionQueryBuilder<Collections[T]> {
       let condition: string
 
       switch (operator.toUpperCase()) {
@@ -26,7 +26,7 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
         case 'NOT IN':
           if (Array.isArray(value)) {
             const values = value.map(val => `'${val}'`).join(', ')
-            condition = `${field} ${operator.toUpperCase()} (${values})`
+            condition = `${String(field)} ${operator.toUpperCase()} (${values})`
           }
           else {
             throw new TypeError(`Value for ${operator} must be an array`)
@@ -36,7 +36,7 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
         case 'BETWEEN':
         case 'NOT BETWEEN':
           if (Array.isArray(value) && value.length === 2) {
-            condition = `${field} ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
+            condition = `${String(field)} ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
           }
           else {
             throw new Error(`Value for ${operator} must be an array with two elements`)
@@ -45,16 +45,16 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
 
         case 'IS NULL':
         case 'IS NOT NULL':
-          condition = `${field} ${operator.toUpperCase()}`
+          condition = `${String(field)} ${operator.toUpperCase()}`
           break
 
         case 'LIKE':
         case 'NOT LIKE':
-          condition = `${field} ${operator.toUpperCase()} '${value}'`
+          condition = `${String(field)} ${operator.toUpperCase()} '${value}'`
           break
 
         default:
-          condition = `${field} ${operator} '${value}'`
+          condition = `${String(field)} ${operator} '${value}'`
       }
       params.conditions.push(`(${condition})`)
       return query
@@ -63,19 +63,19 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       params.limit = limit
       return query
     },
-    select<K extends keyof T>(...fields: K[]) {
-      params.selectedFields.push(...fields)
+    select<K extends keyof Collections[T]>(...fields: K[]) {
+      fields.length && params.selectedFields.push(...fields)
       return query
     },
-    order(field: keyof T, direction: 'ASC' | 'DESC') {
+    order(field: keyof Collections[T], direction: 'ASC' | 'DESC') {
       params.orderBy.push(`${String(field)} ${direction}`)
       return query
     },
-    async all(): Promise<T[]> {
-      return executeContentQuery(collection, buildQuery())
+    async all(): Promise<Collections[T][]> {
+      return executeContentQuery<T, Collections[T]>(collection, buildQuery())
     },
-    async first(): Promise<T> {
-      return executeContentQuery(collection, buildQuery()).then(res => res[0])
+    async first(): Promise<Collections[T]> {
+      return executeContentQuery<T, Collections[T]>(collection, buildQuery()).then(res => res[0])
     },
   }
 
@@ -88,15 +88,18 @@ export const queryContents = <T = Record<string, unknown>>(collection: string) =
       query += ` WHERE ${params.conditions.join(' AND ')}`
     }
 
+    if (params.orderBy.length > 0) {
+      query += ` ORDER BY ${params.orderBy.join(', ')}`
+    }
+    else {
+      query += ` ORDER BY weight ASC, stem ASC`
+    }
+
     if (params.limit > 0) {
       if (params.offset > 0) {
         query += ` LIMIT ${params.limit} OFFSET ${params.offset}`
       }
       query += ` LIMIT ${params.limit}`
-    }
-
-    if (params.orderBy.length > 0) {
-      query += ` ORDER BY ${params.orderBy.join(', ')}`
     }
 
     return query

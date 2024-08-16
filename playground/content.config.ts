@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { defineCollection } from '@farnabaz/content-next'
 
-export const collections = {
-  data: defineCollection({
+export const collections = [
+  defineCollection('data', {
     type: 'data',
     source: {
       name: 'data',
@@ -26,7 +26,7 @@ export const collections = {
       published: z.boolean(),
     }),
   }),
-  pages: defineCollection({
+  defineCollection('pages', {
     type: 'page',
     source: {
       name: 'pages',
@@ -42,4 +42,4 @@ export const collections = {
       ),
     }),
   }),
-}
+]

@@ -49,6 +49,10 @@ export async function parseContent(storage: ReturnType<typeof createStorage>, co
     result[key] = parsedContent[key] || parsedContent[`_${key}`]
   })
 
+  result.weight = String(result.stem || '')
+    .split('/')
+    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9')).join('').padEnd(9, '9')
+
   const metaObject = Object.keys(parsedContent).filter(key => !collectionKeys.includes(key)).map(key => ([key, parsedContent[key]]))
 
   result.meta = Object.fromEntries(metaObject)

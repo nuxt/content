@@ -2,14 +2,13 @@ import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { Collections } from '@farnabaz/content-next'
 import { useRuntimeConfig } from '#imports'
 
-export async function executeContentQuery<T extends keyof Collections, G = Collections[T]>(collection: T, sql: string) {
-  const config = useRuntimeConfig().public.contentv3
-  let result: G[]
-  if (import.meta.client && config.clientDB?.enabled) {
-    result = await queryContentSqlWasm<G>(collection, sql)
+export async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
+  let result: Array<Result>
+  if (import.meta.client && useRuntimeConfig().public.contentv3.clientDB?.enabled) {
+    result = await queryContentSqlWasm<Result>(collection, sql)
   }
   else {
-    result = await queryContentSqlApi<G>(collection, sql)
+    result = await queryContentSqlApi<Result>(collection, sql)
   }
 
   return result

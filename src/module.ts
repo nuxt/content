@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, addImportsDir, resolvePath, addServerScanDir, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, addServerPlugin } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, addServerPlugin } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
@@ -44,11 +44,11 @@ export default defineNuxtModule<ModuleOptions>({
       ? await import(configPath)
         .catch((err) => {
           console.error(err)
-          return {}
+          return []
         })
       : {}
 
-    const collections = resolveCollections(contentConfig.collections || {})
+    const collections = resolveCollections(contentConfig.collections || [])
 
     const publicRuntimeConfig = {
       clientDB: options.clientDB,
@@ -72,12 +72,16 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     addImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
+      { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
+      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
       { name: 'queryContentV3', from: resolver.resolve('./runtime/composables/queryContentV3') },
     ])
 
     addServerImports([
-      { name: 'queryContents', from: resolver.resolve('./runtime/utils/queryContents') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
+      { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
+      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
     ])
 
     addServerPlugin(resolver.resolve('./runtime/server/plugins/upsert-database'))
@@ -134,7 +138,13 @@ export default defineNuxtModule<ModuleOptions>({
 
 async function createCollectionsStorage(nuxt: Nuxt, collections: ResolvedCollection[]) {
   const storage = createStorage()
-  const mountsOptions = generateStorageMountOptions(nuxt, collections.map(c => c.source) as MountOptions[])
+  const sources = collections.filter(c => !!c.source).map((col) => {
+    if (typeof col.source === 'string') {
+      return { name: col.name, driver: 'fs', base: col.source, prefix: '' }
+    }
+    return col.source
+  }) as Array<MountOptions>
+  const mountsOptions = generateStorageMountOptions(nuxt, sources)
   for (const [key, options] of Object.entries(mountsOptions)) {
     if (options.driver === 'fs' && options.base) {
       options.base = resolveAlias(options.base)

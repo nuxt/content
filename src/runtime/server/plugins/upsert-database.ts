@@ -48,6 +48,5 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
   }, Promise.resolve())
 
   const after = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
-  console.log(after)
   return after?.version === integrityVersion
 }

@@ -1,5 +1,7 @@
 import type { ZodObject, ZodRawShape } from 'zod'
 
+export interface PageCollections {
+}
 export interface Collections {
 }
 
@@ -7,10 +9,13 @@ type CollectionType = 'page' | 'data'
 
 export interface Collection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
-  source: {
+  source?: string | {
     name: string
-    driver: 'fs'
+    driver: 'fs' | 'git'
     base: string
+    prefix?: string
+
+    [key: string]: unknown
   }
   schema: ZodObject<T>
 }

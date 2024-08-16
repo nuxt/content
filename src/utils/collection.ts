@@ -6,49 +6,40 @@ import { contentSchema, metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
-export function defineCollection<T extends ZodRawShape>(collection: Collection<T>) {
+export function defineCollection<T extends ZodRawShape>(name: string, collection: Collection<T>) {
   const schema = (collection.type === 'page'
     ? pageSchema.extend((collection.schema as ZodObject<ZodRawShape>).shape)
     : collection.schema).extend(metaSchema.shape)
 
   return {
     ...collection,
+    name,
     schema,
   }
 }
 
-export function resolveCollections(collections: Record<string, Collection>): ResolvedCollection[] {
-  if (!collections.content) {
-    collections.content = defineCollection({
+export function resolveCollections(collections: Array<Collection & { name: string }>): ResolvedCollection[] {
+  if (!collections.find(c => c.name === 'content')) {
+    collections.push(defineCollection('content', {
       type: 'page',
-      source: {
-        name: 'content',
-        driver: 'fs',
-        base: '~~/content',
-      },
+      source: 'content',
       schema: contentSchema,
-    })
+    }))
   }
 
-  collections._info = defineCollection({
+  collections.push(defineCollection('_info', {
     type: 'data',
-    source: {
-      name: 'content',
-      driver: 'fs',
-      base: '~~/content',
-    },
     schema: z.object({
       version: z.string(),
     }),
-  })
+  }))
 
-  return Object.entries(collections).map(([key, collection]) => {
+  return collections.map((collection) => {
     return {
       ...collection,
-      name: key,
-      pascalName: pascalCase(key),
+      pascalName: pascalCase(collection.name),
       source: collection.source,
-      table: generateCollectionTableDefinition(key, collection),
+      table: generateCollectionTableDefinition(collection.name, collection),
       generatedFields: {
         raw: typeof collection.schema.shape.raw !== 'undefined',
         body: typeof collection.schema.shape.body !== 'undefined',
@@ -89,7 +80,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT OR REPLACE INTO ${collection.name} (id,${fields.join(', ')}) VALUES ('${data._id || data.id || data.key}',${'?,'.repeat(values.length).slice(0, -1)})`
+  return `INSERT OR REPLACE INTO ${collection.name} (${fields.join(', ')}) VALUES (${'?,'.repeat(values.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
@@ -102,6 +93,8 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
     if (['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection'].includes(underlyingType.constructor.name)) {
       return `${key} TEXT`
     }
+
+    if (key === 'id') return `${key} TEXT PRIMARY KEY`
 
     let sqlType = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
     if (!sqlType) throw new Error(`Unsupported Zod type: ${underlyingType.constructor.name}`)
@@ -139,6 +132,5 @@ export function generateCollectionTableDefinition(name: string, collection: Coll
 
     return `${key} ${sqlType}${constraints}`
   })
-
-  return `CREATE TABLE IF NOT EXISTS ${name} (id TEXT PRIMARY KEY, ${sqlFields.join(',  ')})`
+  return `CREATE TABLE IF NOT EXISTS ${name} (${sqlFields.join(',  ')})`
 }

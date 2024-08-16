@@ -3,16 +3,15 @@ import type { ContentNavigationItem, PageDocument } from '~/src/types'
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export function createNav(contents: PageDocument[], configs: Record<string, PageDocument>) {
+export function createNav(contents: PageDocument[], configs: Record<string, PageDocument>, extraFields: string[] = []) {
   // Navigation fields picker
   const pickNavigationFields = (content: PageDocument) => ({
-    ...pick(['title'])(content),
+    ...pick(['title', ...extraFields])(content),
     ...(isObject(content?.navigation) ? content.navigation : {}),
   })
 
   // Create navigation object
   const nav = contents
-    .sort((a, b) => a.path!.localeCompare(b.path!))
     .reduce((nav, content) => {
       // Resolve path and id parts
       const parts = content.path!.substring(1).split('/')
@@ -84,8 +83,9 @@ export function createNav(contents: PageDocument[], configs: Record<string, Page
           parent = {
             title: part,
             path: currentPathPart,
-            stem: content.stem,
+            stem: idParts,
             children: [],
+            page: false,
             ...(conf && pickNavigationFields(conf)),
           }
           nodes.push(parent!)
