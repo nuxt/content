@@ -235,7 +235,7 @@ export interface ModuleOptions {
      *
      * @default undefined
      */
-    search?: {
+    search?: false | {
       /**
        * List of tags where text must not be extracted.
        *
