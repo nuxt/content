@@ -38,7 +38,7 @@ export default defineTransformer({
     const filePath = generatePath(parts.join('/'), { respectPathCase })
 
     return <ParsedContent> {
-      _path: filePath,
+      _path: content._path ?? filePath,
       _dir: filePath.split('/').slice(-2)[0],
       _draft: content._draft ?? isDraft(_path),
       _partial: isPartial(_path),
