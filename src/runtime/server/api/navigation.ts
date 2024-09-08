@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  const dirConfigs = await serverQueryContent(event)
+  const dirConfigs = await serverQueryContent(event, query)
     .where({ _path: /\/_dir$/i, _partial: true })
     .find()
 
