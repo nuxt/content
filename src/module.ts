@@ -116,9 +116,36 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Vite configurations
     extendViteConfig((config) => {
-      config.optimizeDeps = config.optimizeDeps || {}
-      config.optimizeDeps.include = config.optimizeDeps.include || []
-      config.optimizeDeps.include.push('@nuxt/content > slugify')
+      const include = [
+        'slugify'
+      ]
+      // deps from @nuxtjs/mdc
+      const includeMDCModuleDeps = [
+        'remark-gfm',
+        'remark-emoji',
+        'remark-mdc',
+        'remark-rehype',
+        'rehype-raw',
+        'parse5',
+        'unist-util-visit',
+        'unified',
+        'debug'
+      ]
+
+      config.optimizeDeps ||= {}
+      config.optimizeDeps.include ||= []
+
+      for (const pkg of include) {
+        if (!config.optimizeDeps.include.includes(pkg)) {
+          config.optimizeDeps.include.push('@nuxtjs/content > ' + pkg)
+        }
+      }
+
+      for (const pkg of includeMDCModuleDeps) {
+        if (!config.optimizeDeps.include.includes(pkg)) {
+          config.optimizeDeps.include.push('@nuxtjs/content > @nuxtjs/mdc > ' + pkg)
+        }
+      }
 
       config.plugins?.push({
         name: 'content-slot',
