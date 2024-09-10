@@ -114,69 +114,6 @@ export default defineNuxtModule<ModuleOptions>({
       ...options
     }
 
-    // Add Vite configurations
-    extendViteConfig((config) => {
-      const include = [
-        'slugify'
-      ]
-      // deps from @nuxtjs/mdc
-      const includeMDCModuleDeps = [
-        'remark-gfm',
-        'remark-emoji',
-        'remark-mdc',
-        'remark-rehype',
-        'rehype-raw',
-        'parse5',
-        'unist-util-visit',
-        'unified',
-        'debug'
-      ]
-
-      config.optimizeDeps ||= {}
-      config.optimizeDeps.include ||= []
-
-      for (const pkg of include) {
-        if (!config.optimizeDeps.include.includes(pkg)) {
-          config.optimizeDeps.include.push('@nuxtjs/content > ' + pkg)
-        }
-      }
-
-      for (const pkg of includeMDCModuleDeps) {
-        if (!config.optimizeDeps.include.includes(pkg)) {
-          config.optimizeDeps.include.push('@nuxtjs/content > @nuxtjs/mdc > ' + pkg)
-        }
-      }
-
-      config.plugins?.push({
-        name: 'content-slot',
-        enforce: 'pre',
-        transform (code) {
-          if (code.includes('ContentSlot')) {
-            code = code.replace(/<ContentSlot(\s)+([^/>]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2name="$5"')
-            code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
-            code = code.replace(/<ContentSlot/g, '<MDCSlot')
-            code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
-            code = code.replace(/ContentSlot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
-            return {
-              code,
-              map: { mappings: '' }
-            }
-          }
-          if (code.includes('content-slot')) {
-            code = code.replace(/<content-slot(\s)+([^/>]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2name="$5"')
-            code = code.replace(/<\/content-slot>/g, '</MDCSlot>')
-            code = code.replace(/<content-slot/g, '<MDCSlot')
-            code = code.replace(/(['"])content-slot['"]/g, '$1MDCSlot$1')
-            code = code.replace(/content-slot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
-            return {
-              code,
-              map: { mappings: '' }
-            }
-          }
-        }
-      })
-    })
-
     nuxt.hook('nitro:config', (nitroConfig) => {
       // Init Nitro context
       nitroConfig.prerender = nitroConfig.prerender || {}
@@ -559,8 +496,40 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Update mdc optimizeDeps options
     extendViteConfig((config) => {
-      config.optimizeDeps = config.optimizeDeps || {}
-      config.optimizeDeps.include = config.optimizeDeps.include?.map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content >'))
+      config.optimizeDeps ||= {}
+      config.optimizeDeps.include ||= []
+      config.optimizeDeps.include.push('@nuxt/content > slugify')
+      config.optimizeDeps.include = config.optimizeDeps.include
+        .map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content > @nuxtjs/mdc > '))
+     
+      config.plugins?.push({
+        name: 'content-slot',
+        enforce: 'pre',
+        transform (code) {
+          if (code.includes('ContentSlot')) {
+            code = code.replace(/<ContentSlot(\s)+([^/>]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2name="$5"')
+            code = code.replace(/<\/ContentSlot>/g, '</MDCSlot>')
+            code = code.replace(/<ContentSlot/g, '<MDCSlot')
+            code = code.replace(/(['"])ContentSlot['"]/g, '$1MDCSlot$1')
+            code = code.replace(/ContentSlot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
+            return {
+              code,
+              map: { mappings: '' }
+            }
+          }
+          if (code.includes('content-slot')) {
+            code = code.replace(/<content-slot(\s)+([^/>]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"])/g, '<MDCSlot$1$2name="$5"')
+            code = code.replace(/<\/content-slot>/g, '</MDCSlot>')
+            code = code.replace(/<content-slot/g, '<MDCSlot')
+            code = code.replace(/(['"])content-slot['"]/g, '$1MDCSlot$1')
+            code = code.replace(/content-slot\(([^(]*)(:use=['"](\$slots.)?([a-zA-Z0-9_-]*)['"]|use=['"]([a-zA-Z0-9_-]*)['"])([^)]*)/g, 'MDCSlot($1name="$4"$6')
+            return {
+              code,
+              map: { mappings: '' }
+            }
+          }
+        }
+      })
     })
 
     const contentRuntime = defu(nuxt.options.runtimeConfig.public.content, {
