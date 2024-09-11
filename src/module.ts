@@ -161,7 +161,7 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.routeRules[route] = {
           prerender: true,
           // Use text/plain to avoid Nitro render an index.html
-          headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain' } : { 'Content-Type': 'application/json' }
+          headers: options.experimental.search.indexed ? { 'Content-Type': 'text/plain; charset=utf-8' } : { 'Content-Type': 'application/json' }
         }
       }
 
