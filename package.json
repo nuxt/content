@@ -49,7 +49,7 @@
     "@nuxtjs/mdc": "^0.8.3",
     "@vueuse/core": "^11.0.3",
     "@vueuse/head": "^2.0.0",
-    "@vueuse/nuxt": "^10.11.0",
+    "@vueuse/nuxt": "^11.0.3",
     "consola": "^3.2.3",
     "defu": "^6.1.4",
     "destr": "^2.0.3",
