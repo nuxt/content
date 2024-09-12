@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@nuxtjs/mdc': npm:@nuxtjs/mdc-edge@latest
-
 importers:
 
   .:
@@ -1017,8 +1014,8 @@ packages:
   '@nuxtjs/color-mode@3.4.2':
     resolution: {integrity: sha512-6A+lDP8R6fFXc1Ip5tDepKq9MJW6oxbRlz1plvW52yacnpeDFXv5S5rDS0ax31AuSFUPlgzHymFSdjcylBwZ6w==}
 
-  '@nuxtjs/mdc-edge@0.8.4-28769003.bd3be45':
-    resolution: {integrity: sha512-3OSz7z6rqC3Uu/SpZontqsz7ACc9dVeMj4a/F3wOyYKTQ5ZYth0IBqoYEWQxWI0zsorbAbaau6HDPKcY3Fc7iQ==}
+  '@nuxtjs/mdc@0.8.3':
+    resolution: {integrity: sha512-FqvJFWkBN9u2FeWog+7+C0aIOx0WIu61TYgAXPmmIOVVua6s2mXQsMyF3fXY2M56QBIaYJzK/SYN+5FGr5GNTQ==}
 
   '@nuxtjs/plausible@1.0.2':
     resolution: {integrity: sha512-AT5GoVddqgvbp39OY1/DtWHUgjn+6LGjJXB75imdEUxPok2uAVGtr3oZ0F7merC9T3y0rIqZx8HzpUmCcipBnQ==}
@@ -5706,7 +5703,7 @@ snapshots:
   '@nuxt/content@2.13.2(ioredis@5.4.1)(magicast@0.3.4)(nuxt@3.12.4(@parcel/watcher@2.4.1)(@types/node@20.14.10)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.18.1)(sass@1.77.8)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.2))(webpack-sources@3.2.3))(rollup@4.18.1)(vue@3.4.32(typescript@5.5.3))(webpack-sources@3.2.3)':
     dependencies:
       '@nuxt/kit': 3.13.1(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)
-      '@nuxtjs/mdc': '@nuxtjs/mdc-edge@0.8.4-28769003.bd3be45(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)'
+      '@nuxtjs/mdc': 0.8.3(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)
       '@vueuse/core': 10.11.0(vue@3.4.32(typescript@5.5.3))
       '@vueuse/head': 2.0.0(vue@3.4.32(typescript@5.5.3))
       '@vueuse/nuxt': 10.11.0(magicast@0.3.4)(nuxt@3.12.4(@parcel/watcher@2.4.1)(@types/node@20.14.10)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.18.1)(sass@1.77.8)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.2))(webpack-sources@3.2.3))(rollup@4.18.1)(vue@3.4.32(typescript@5.5.3))(webpack-sources@3.2.3)
@@ -6232,7 +6229,7 @@ snapshots:
       - supports-color
       - webpack-sources
 
-  '@nuxtjs/mdc-edge@0.8.4-28769003.bd3be45(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)':
+  '@nuxtjs/mdc@0.8.3(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)':
     dependencies:
       '@nuxt/kit': 3.13.1(magicast@0.3.4)(rollup@4.18.1)(webpack-sources@3.2.3)
       '@shikijs/transformers': 1.17.0
