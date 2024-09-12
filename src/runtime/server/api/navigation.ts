@@ -32,7 +32,10 @@ export default defineEventHandler(async (event) => {
     })
     .find()
 
-  const dirConfigs = await serverQueryContent(event, query)
+  // Extract from query if exists
+  const _locale = (query?.where || []).find((w: any) => w._locale)?._locale
+
+  const dirConfigs = await serverQueryContent(event, _locale ? { where: [{ _locale }] } : undefined)
     .where({ _path: /\/_dir$/i, _partial: true })
     .find()
 
