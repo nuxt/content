@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.13.1",
-    "@nuxtjs/mdc": "^0.8.3",
+    "@nuxtjs/mdc": "^0.9.0",
     "@vueuse/core": "^11.0.3",
     "@vueuse/head": "^2.0.0",
     "@vueuse/nuxt": "^11.0.3",
