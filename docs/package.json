@@ -21,6 +21,9 @@
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",
     "nuxt": "^3.12.4",
-    "nuxt-og-image": "^3.0.1"
+    "nuxt-og-image": "^3.0.0-rc.64"
+  },
+  "resolutions": {
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest"
   }
 }
