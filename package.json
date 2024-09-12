@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.13.1",
-    "@nuxtjs/mdc": "^0.8.3",
+    "@nuxtjs/mdc": "^0.9.0",
     "@vueuse/core": "^11.0.3",
     "@vueuse/head": "^2.0.0",
     "@vueuse/nuxt": "^11.0.3",
@@ -94,7 +94,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.6.0",
     "remark-oembed": "^1.2.2",
-    "vitest": "^2.0.5",
+    "vitest": "^2.1.0",
     "vue-docgen-web-types": "^0.1.8",
     "vue-tsc": "2.1.6"
   },
