@@ -64,8 +64,7 @@ export async function getMountDriver (mount: MountOptions) {
 
   try {
     return (await import(mount.driver)).default(mount as any)
-  } catch (e) {
-     
+  } catch {
     console.error("Couldn't load driver", mount.driver)
   }
 }
@@ -135,7 +134,7 @@ export function createWebSocket () {
     for (const client of wss.clients) {
       try {
         client.send(data)
-      } catch (err) {
+      } catch {
         /* Ignore error (if client not ready to receive event) */
       }
     }

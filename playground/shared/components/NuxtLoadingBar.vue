@@ -26,9 +26,14 @@ let _cut
 
 // Functions
 const clear = () => {
-  _timer && clearInterval(_timer)
-  _throttle && clearTimeout(_throttle)
-  _timer = null
+  if (_timer) {
+    clearInterval(_timer)
+    _timer = null
+  } 
+  if (_throttle) {
+    clearTimeout(_throttle)
+    _throttle = null
+  }
 }
 const start = () => {
   clear()

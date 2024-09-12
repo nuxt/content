@@ -13,6 +13,8 @@ export default defineNitroPlugin(async (nitro) => {
     }
   });
   nitro.hooks.hook('close', async () => {
-    typeof unwatch  === 'function' && await unwatch()
+    if (typeof unwatch  === 'function') {
+      await unwatch()
+    }
   })
 })

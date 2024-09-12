@@ -1,5 +1,5 @@
 import { serverQueryContent as _serverQueryContent } from '../server/storage'
-import { type serverQueryContent as legacyServerQueryContent } from './types'
+import type { serverQueryContent as legacyServerQueryContent } from './types'
 
 export { parseContent } from '../server/storage'
 

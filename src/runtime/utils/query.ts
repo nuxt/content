@@ -5,7 +5,7 @@ import { jsonParse, jsonStringify } from './json'
 const parseJSONQueryParams = (body: string) => {
   try {
     return jsonParse(body)
-  } catch (e) {
+  } catch {
     throw createError({ statusCode: 400, message: 'Invalid _params query' })
   }
 }

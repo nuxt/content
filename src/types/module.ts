@@ -1,4 +1,4 @@
-import { type Options as MiniSearchOptions } from 'minisearch'
+import type { Options as MiniSearchOptions } from 'minisearch'
 import type { ListenOptions } from 'listhen'
 import type { MarkdownPlugin, QueryBuilderParams, QueryBuilderWhere } from './content'
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny } from 'shiki'

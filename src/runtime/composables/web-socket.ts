@@ -22,7 +22,7 @@ export function useContentWebSocket () {
       if (!data) { return }
 
       refreshNuxtData()
-    } catch (err) {
+    } catch {
       // Do nothing
     }
   }
@@ -61,7 +61,7 @@ export function useContentWebSocket () {
     if (ws) {
       try {
         ws.close()
-      } catch (err) {
+      } catch {
         // Do nothing
       }
       ws = undefined

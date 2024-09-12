@@ -28,7 +28,7 @@ onMounted(
       )
 
       emit('change', props.value)
-    } catch (_) {
+    } catch {
       editorState.value = 'error'
     }
   }

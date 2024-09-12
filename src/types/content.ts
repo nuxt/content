@@ -84,7 +84,7 @@ export interface MarkdownHtmlNode extends MarkdownNode {
   value: string
 }
 
-export interface MarkdownPlugin extends Record<string, any> {}
+export type MarkdownPlugin = Record<string, any>
 
 export interface MarkdownOptions {
   /**
