@@ -1,4 +1,4 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
+import { defineNitroPlugin } from '#imports';
 import type { WatchEvent } from 'unstorage';
 // @ts-expect-error
 import { useStorage } from '#imports'
