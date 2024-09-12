@@ -1,9 +1,10 @@
 import { createError, defineEventHandler } from 'h3'
-import { serverQueryContent } from '../storage'
-import { getContentQuery } from '../../utils/query'
 import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
+  const { getContentQuery } = await import('../../utils/query')
+  const { serverQueryContent } = await import('../storage')
+
   const query = getContentQuery(event)
   const { advanceQuery } = useRuntimeConfig().public.content.experimental
 

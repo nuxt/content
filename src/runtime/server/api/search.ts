@@ -1,9 +1,10 @@
 import { defineEventHandler } from 'h3'
-import MiniSearch from 'minisearch'
-import { serverSearchContent, splitPageIntoSections } from '../search'
 import { useRuntimeConfig } from '#imports'
 
 export default defineEventHandler(async (event) => {
+  const { serverSearchContent, splitPageIntoSections } = await import('../search')
+  const MiniSearch = await import('minisearch').then(m => m.default)
+
   const runtimeConfig = useRuntimeConfig()
   const { ignoredTags = [], filterQuery, indexed, options } = runtimeConfig.public.content.search!
 
