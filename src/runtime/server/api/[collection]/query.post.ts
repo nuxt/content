@@ -1,6 +1,6 @@
 import { eventHandler, readValidatedBody, getRouterParam } from 'h3'
 import { z } from 'zod'
-import useContentDatabase from '../../adaptors'
+import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
 import { useRuntimeConfig } from '#imports'
 

@@ -10,7 +10,7 @@ export interface PageDocument {
   title: string
   path: string
   stem: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface SurroundOptions<T> {

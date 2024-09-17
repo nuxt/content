@@ -64,6 +64,9 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
+    nuxt.options.routeRules ||= {}
+    nuxt.options.routeRules['/api/database'] = { prerender: true }
+
     addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
     addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
 

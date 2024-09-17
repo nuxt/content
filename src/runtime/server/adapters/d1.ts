@@ -1,8 +1,8 @@
 import type { D1Database } from '@cloudflare/workers-types/experimental'
-import { createDatabaseAdaptor } from './factory'
+import { createDatabaseAdapter } from './factory'
 
 let db: D1Database
-export default createDatabaseAdaptor(() => {
+export default createDatabaseAdapter(() => {
   if (!db) {
     // @ts-expect-error - missing types
     db = process.env.DB || globalThis.__env__?.DB || globalThis.DB
