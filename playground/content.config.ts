@@ -1,14 +1,20 @@
 import { z } from 'zod'
-import { defineCollection } from '@farnabaz/content-next'
+import { defineCollection, contentSchema } from '@farnabaz/content-next'
 
 export const collections = [
-  defineCollection('data', {
-    type: 'data',
+  defineCollection('content', {
     source: {
-      name: 'data',
       driver: 'fs',
-      base: '~~/content/data',
+      base: '~~/content',
+      ignore: [
+        '**/content/data/**',
+        '**/content/pages/**',
+      ],
     },
+    schema: contentSchema,
+  }),
+  defineCollection('data', {
+    source: '~~/content/data',
     schema: z.object({
       path: z.string(),
       company: z.string(),
@@ -27,12 +33,7 @@ export const collections = [
     }),
   }),
   defineCollection('pages', {
-    type: 'page',
-    source: {
-      name: 'pages',
-      driver: 'fs',
-      base: '~~/content/pages',
-    },
+    source: '~~/content/pages',
     schema: z.object({
       authors: z.array(
         z.object({

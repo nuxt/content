@@ -1,28 +1,34 @@
 import { pascalCase } from 'scule'
 import { z } from 'zod'
 import type { ZodArrayDef, ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
-import type { Collection, ResolvedCollection } from '../types/collection'
+import type { Collection, CollectionType, ResolvedCollection, CollectionSource } from '../types/collection'
 import { contentSchema, metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
 export function defineCollection<T extends ZodRawShape>(name: string, collection: Collection<T>) {
-  const schema = (collection.type === 'page'
+  const type = collection.type || 'page' as CollectionType
+  const schema = (type === 'page'
     ? pageSchema.extend((collection.schema as ZodObject<ZodRawShape>).shape)
     : collection.schema).extend(metaSchema.shape)
 
   return {
-    ...collection,
     name,
+    type,
+    source: refineSource(name, collection.source),
     schema,
   }
+}
+
+export function defineDataCollection<T extends ZodRawShape>(name: string, collection: Collection<T>) {
+  return defineCollection(name, { ...collection, type: 'data' })
 }
 
 export function resolveCollections(collections: Array<Collection & { name: string }>): ResolvedCollection[] {
   if (!collections.find(c => c.name === 'content')) {
     collections.push(defineCollection('content', {
       type: 'page',
-      source: 'content',
+      source: '~~/content',
       schema: contentSchema,
     }))
   }
@@ -37,8 +43,9 @@ export function resolveCollections(collections: Array<Collection & { name: strin
   return collections.map((collection) => {
     return {
       ...collection,
+      type: collection.type || 'page',
       pascalName: pascalCase(collection.name),
-      source: collection.source,
+      source: refineSource(collection.name, collection.source),
       table: generateCollectionTableDefinition(collection.name, collection),
       generatedFields: {
         raw: typeof collection.schema.shape.raw !== 'undefined',
@@ -50,6 +57,21 @@ export function resolveCollections(collections: Array<Collection & { name: strin
           .includes(getUnderlyingType(collection.schema.shape[key]).constructor.name)),
     }
   })
+}
+
+/**
+ * Process collection source and return refined source
+ */
+function refineSource(collectionName: string, source: string | CollectionSource | undefined): CollectionSource | undefined {
+  if (typeof source === 'string') {
+    return { name: collectionName, driver: 'fs', base: source, prefix: '' }
+  }
+
+  if (source) {
+    return { name: collectionName, ...(source as unknown as CollectionSource) }
+  }
+
+  return undefined
 }
 
 // Convert collection data to SQL insert statement

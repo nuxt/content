@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, addServerPlugin } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
@@ -25,9 +25,6 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     database: 'nuxthub',
-    clientDB: {
-      enabled: false,
-    },
     dev: {
       dataDir: '.data/content',
       databaseName: 'items.db',
@@ -49,27 +46,26 @@ export default defineNuxtModule<ModuleOptions>({
       : {}
 
     const collections = resolveCollections(contentConfig.collections || [])
+    const integrityVersion = '0.0.1-' + hash(collections.map(c => c.table).join('-'))
 
     const publicRuntimeConfig = {
-      clientDB: options.clientDB,
+      integrityVersion,
     }
 
     const privateRuntimeConfig = {
-      integrityVersion: '0.0.1-' + hash(collections.map(c => c.table).join('-')),
+      integrityVersion,
       dev: options.dev,
       db: options.database,
     }
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
-    if (options.clientDB) {
-      nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
-      nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
-      nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
+    nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
+    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
-      addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
-      addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
-    }
+    addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
+    addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
 
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
@@ -84,7 +80,6 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
     ])
 
-    addServerPlugin(resolver.resolve('./runtime/server/plugins/upsert-database'))
     addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query'), method: 'get' })
     addServerHandler({ route: '/api/:collection/navigation', handler: resolver.resolve('./runtime/server/api/[collection]/navigation'), method: 'get' })
 
@@ -106,10 +101,8 @@ export default defineNuxtModule<ModuleOptions>({
 
       const str = Buffer.from(compressed.buffer).toString('base64')
       return [
-        'import { inflate } from "pako"',
-        `export default function() {`,
-          `return JSON.parse(inflate(new Uint8Array(Buffer.from("${str}", 'base64')), { to: 'string' }));`,
-        `}`,
+        `export default "${str}"`,
+        '',
         `export const ready = ${dumpIsReady}`,
       ].join('\n')
     }, write: true }).dst
@@ -138,13 +131,12 @@ export default defineNuxtModule<ModuleOptions>({
 
 async function createCollectionsStorage(nuxt: Nuxt, collections: ResolvedCollection[]) {
   const storage = createStorage()
-  const sources = collections.filter(c => !!c.source).map((col) => {
-    if (typeof col.source === 'string') {
-      return { name: col.name, driver: 'fs', base: col.source, prefix: '' }
-    }
-    return col.source
-  }) as Array<MountOptions>
+  const sources = collections
+    .filter(c => !!c.source)
+    .map(col => ({ name: col.name, ...col.source })) as Array<MountOptions>
+
   const mountsOptions = generateStorageMountOptions(nuxt, sources)
+
   for (const [key, options] of Object.entries(mountsOptions)) {
     if (options.driver === 'fs' && options.base) {
       options.base = resolveAlias(options.base)

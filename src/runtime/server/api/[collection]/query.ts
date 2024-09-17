@@ -1,7 +1,11 @@
 import { eventHandler, getQuery, getRouterParam } from 'h3'
 import useContentDatabase from '../../adaptors'
+import { decompressDump } from '../../../utils/dump'
+import { useRuntimeConfig } from '#imports'
 
+let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {
+  const config = useRuntimeConfig().contentv3
   const collectionName = getRouterParam(event, 'collection')
   let sqlQuery = String(getQuery(event).q || '')
   sqlQuery = (sqlQuery.includes('%20') ? decodeURIComponent(sqlQuery) : sqlQuery)
@@ -15,5 +19,43 @@ export default eventHandler(async (event) => {
     throw new Error('Invalid query')
   }
 
+  if (checkDatabaseIntegrity) {
+    checkDatabaseIntegrity = false
+    await checkAndImportDatabaseIntegrity(config.integrityVersion)
+      .then((isValid) => { checkDatabaseIntegrity = !isValid })
+      .catch((error) => {
+        console.log('Database integrity check failed, rebuilding database', error)
+        checkDatabaseIntegrity = true
+      })
+  }
+
   return useContentDatabase().all(sqlQuery)
 })
+
+async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
+  const db = useContentDatabase()
+  const before = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  if (before?.version) {
+    if (before?.version === integrityVersion) {
+      return true
+    }
+    // Delete old version
+    await db.exec(`DELETE FROM _info WHERE version = '${before.version}'`)
+  }
+
+  // @ts-expect-error - Vite doesn't know about the import
+  const dump = await import('#content-v3/dump' /* @vite-ignore */)
+    .then(m => m.default)
+    .then(decompressDump)
+
+  await dump.reduce(async (prev: Promise<void>, sql: string) => {
+    await prev
+    await db.exec(sql).catch((error) => {
+      console.log('error', error)
+      // throw error
+    })
+  }, Promise.resolve())
+
+  const after = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  return after?.version === integrityVersion
+}
