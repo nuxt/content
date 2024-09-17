@@ -1,12 +1,18 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { Collections } from '@farnabaz/content-next'
 import { decompressSQLDump } from './internal/decompressSQLDump'
+import { measurePerformance } from './internal/performance'
 import { useRuntimeConfig } from '#imports'
 
 export async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
   let result: Array<Result>
   if (import.meta.client) {
-    result = await queryContentSqlClientWasm<Result>(collection, sql)
+    if (window.benchmark?.downloadCompressedDump) {
+      result = await queryContentSqlClientWasm<Result>(collection, sql)
+    }
+    else {
+      result = await queryContentSqlClientWasmDecompressed<Result>(collection, sql)
+    }
   }
   else {
     result = await queryContentSqlApi<Result>(collection, sql)
@@ -26,41 +32,46 @@ function queryContentSqlApi<T>(collection: keyof Collections, sql: string) {
 
 let db: Database
 
-async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql: string) {
-  if (!db) {
+async function queryContentSqlClientWasmDecompressed<T>(_collection: keyof Collections, sql: string) {
+  const perf = measurePerformance()
+  if (!db || window.benchmark?.reinitiateDatabase) {
     const config = useRuntimeConfig().public.contentv3
     const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
 
-    let compressedDump: string | null = (localCacheVersion === config.integrityVersion)
-      ? window.localStorage.getItem('contentv3-dump')
+    let compressedDump: string | string[] | null = window.benchmark?.cacheInLocalStorage && (localCacheVersion === config.integrityVersion)
+      ? window.localStorage.getItem('contentv3-dump-sql')
       : null
+    perf.tick('Get Local Cache')
 
     if (!compressedDump) {
-      console.log('[BROWSER] Downloading database...')
-      compressedDump = await $fetch('/api/database', { responseType: 'text', query: { v: config.integrityVersion } })
-      try {
-        window.localStorage.setItem('contentv3-integrity-version', config.integrityVersion)
-        window.localStorage.setItem('contentv3-dump', compressedDump!)
-      }
-      catch (error) {
-        console.log('Database integrity check failed, rebuilding database', error)
+      compressedDump = await $fetch<string[]>('/api/database-decompress', { responseType: 'json', query: { v: config.integrityVersion } })
+      perf.tick('Download Database')
+      if (window.benchmark?.cacheInLocalStorage) {
+        try {
+          window.localStorage.setItem('contentv3-integrity-version', config.integrityVersion)
+          window.localStorage.setItem('contentv3-dump-sql', JSON.stringify(compressedDump))
+        }
+        catch (error) {
+          console.log('Database integrity check failed, rebuilding database', error)
+        }
+        perf.tick('Store Database')
       }
     }
 
-    const dump = await decompressSQLDump(compressedDump!)
+    const dump = typeof compressedDump === 'string' ? JSON.parse(compressedDump) : compressedDump
+    perf.tick('Decompress Database')
 
-    console.log('[BROWSER] Loading SQLite...')
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     const sqlite3 = await sqlite3InitModule()
+    perf.tick('Import SQLite Module')
 
-    console.log('[BROWSER] Loading database...')
     db = new sqlite3.oo1.DB()
     for (const command of dump) {
       await db.exec(command)
     }
+    perf.tick('Restore Dump')
   }
 
-  console.log('[BROWSER] Executing query...')
   const res = await new Promise((resolve, reject) => {
     db.exec({
       sql,
@@ -88,6 +99,82 @@ async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql:
       },
     })
   })
+  perf.tick('Execute Query')
+
+  console.log(perf.end('Run with Raw Dump'))
+  return res as T[]
+}
+
+async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql: string) {
+  const perf = measurePerformance()
+  if (!db || window.benchmark?.reinitiateDatabase) {
+    const config = useRuntimeConfig().public.contentv3
+    const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
+
+    let compressedDump: string | null = window.benchmark?.cacheInLocalStorage && (localCacheVersion === config.integrityVersion)
+      ? window.localStorage.getItem('contentv3-dump')
+      : null
+    perf.tick('Get Local Cache')
+
+    if (!compressedDump) {
+      compressedDump = await $fetch('/api/database', { responseType: 'text', query: { v: config.integrityVersion } })
+      perf.tick('Download Database')
+      if (window.benchmark?.cacheInLocalStorage) {
+        try {
+          window.localStorage.setItem('contentv3-integrity-version', config.integrityVersion)
+          window.localStorage.setItem('contentv3-dump', compressedDump!)
+        }
+        catch (error) {
+          console.log('Database integrity check failed, rebuilding database', error)
+        }
+        perf.tick('Store Database')
+      }
+    }
+
+    const dump = await decompressSQLDump(compressedDump!)
+    perf.tick('Decompress Database')
+
+    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
+    const sqlite3 = await sqlite3InitModule()
+    perf.tick('Import SQLite Module')
+
+    db = new sqlite3.oo1.DB()
+    for (const command of dump) {
+      await db.exec(command)
+    }
+    perf.tick('Restore Dump')
+  }
+
+  const res = await new Promise((resolve, reject) => {
+    db.exec({
+      sql,
+      rowMode: 'object',
+      returnValue: 'resultRows',
+      callback: (rows) => {
+        if (Array.isArray(rows)) {
+          rows = rows.map((row) => {
+            return {
+              ...row,
+              body: row.body ? JSON.parse(row.body) : null,
+            }
+          })
+        }
+
+        rows = {
+          ...rows,
+          body: rows.body ? JSON.parse(rows.body) : null,
+        }
+
+        resolve([rows])
+      },
+      error: (err) => {
+        reject(err)
+      },
+    })
+  })
+  perf.tick('Execute Query')
+
+  console.log(perf.end('Run with Compressed Dump'))
 
   return res as T[]
 }

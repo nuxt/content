@@ -1,40 +1,29 @@
 <script setup lang="ts">
 const { data } = await useAsyncData('contents-list', () => getCollectionNavigation('content'))
+const links = computed(() => {
+  console.log(data.value)
+
+  return data.value?.flatMap(item => ([
+    {
+      label: item.title,
+      to: item.page !== false ? item.path : undefined,
+    },
+    ...(item.children?.map(child => ({
+      label: ` -- ${child.title}`,
+      to: child.path,
+    })) ?? []),
+  ]))
+})
 </script>
 
 <template>
-  <div>
-    <ul>
-      <li
-        v-for="item in data"
-        :key="item.path"
-      >
-        <NuxtLink
-          v-if="item.page !== false"
-          :to="item.path"
-        >
-          {{ item.title }}
-        </nuxtlink>
-        <template v-else>
-          {{ item.title }}
-          <ul>
-            <li
-              v-for="child in item.children"
-              :key="child.path"
-            >
-              <NuxtLink :to="child.path">
-                {{ child.title }}
-              </nuxtlink>
-            </li>
-          </ul>
-        </template>
-      </li>
-      <li>
-        <NuxtLink to="/data/foo">
-          Data Foo
-        </NuxtLink>
-      </li>
-    </ul>
-    <slot />
+  <div class="flex">
+    <UVerticalNavigation
+      class="w-[200px] flex-none p-2 sticky top-0 h-screen"
+      :links="links"
+    />
+    <div class="flex-1 p-4 prose prose-invert">
+      <slot />
+    </div>
   </div>
 </template>

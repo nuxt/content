@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['../src/module', '@nuxtjs/mdc', '@nuxthub/core'],
+  modules: ['../src/module', '@nuxtjs/mdc', '@nuxt/ui', '@nuxthub/core'],
   contentV3: {
     database: 'd1',
   },

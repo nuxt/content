@@ -47,6 +47,8 @@
     "@nuxt/module-builder": "^0.8.1",
     "@nuxt/schema": "^3.12.4",
     "@nuxt/test-utils": "^3.14.0",
+    "@nuxt/ui": "^2.18.4",
+    "@nuxthub/core": "^0.7.18",
     "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^22.1.0",
     "@types/pako": "^2.0.3",

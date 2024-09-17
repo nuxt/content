@@ -68,6 +68,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules['/api/database'] = { prerender: true }
 
     addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
+    addServerHandler({ route: '/api/database-decompress', handler: resolver.resolve('./runtime/server/api/database-decompress') })
     addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
 
     addImports([
