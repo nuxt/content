@@ -12,9 +12,8 @@ export default function useContentDatabase() {
       if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string) || config.db === 'builtin') {
         adapter = await createSqliteAdaptor()
       }
-      else if (config.db === 'nuxthub') {
-        const createNuxhubAdaptor = await import('./nuxthub').then(module => module.default)
-        adapter = await createNuxhubAdaptor()
+      else if (config.db === 'd1') {
+        adapter = await import('./d1').then(m => m.default())
       }
       else {
         adapter = await createSqliteAdaptor()
@@ -28,7 +27,7 @@ export default function useContentDatabase() {
     if (!table) {
       return []
     }
-    return collections.find(c => c.name === table[1])?.jsonFields || []
+    return collections.find((c: { name: string }) => c.name === table[1])?.jsonFields || []
   }
 
   return <DatabaseAdaptor>{

@@ -1,36 +1,28 @@
-import type { PageCollections, ContentNavigationItem, SurroundOptions } from '@farnabaz/content-next'
+import type { PageCollections, PageDocument } from '@farnabaz/content-next'
+import { generateNavigationTree } from './internal/generateNavigationTree'
+import { queryCollection } from './queryCollection'
 
 export async function getCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
-  const res = await $fetch<ContentNavigationItem[]>(`/api/${String(collection)}/navigation`, {
-    query: {
-      fields: fields ? fields.join(',') : undefined,
-    },
-  })
+  const contents = await queryCollection(collection)
+    .order('weight', 'ASC')
+    .order('stem', 'ASC')
+    .select('stem', 'path', 'title', ...(fields || []))
+    .all() as Array<PageDocument>
 
-  return res
-}
+  // TODO: We should rethink about dir configs and their impact on navigation
+  const dirConfigs = contents.filter(c => String(c.stem).endsWith('dir'))
+  const configs = dirConfigs.reduce((configs, conf) => {
+    if (conf.title?.toLowerCase() === 'dir') {
+      conf.title = ''
+    }
+    const key = conf.path!.split('/').slice(0, -1).join('/') || '/'
+    configs[key] = {
+      ...conf,
+      // Extract meta from body. (non MD files)
+      ...conf.body,
+    }
+    return configs
+  }, {} as Record<string, PageDocument>)
 
-export async function getSurroundingCollectionItems<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
-  const { before = 1, after = 1, fields = [] } = opts || {}
-  const navigation = await getCollectionNavigation(collection, fields)
-
-  const flatData = flattedData(navigation)
-  const index = flatData.findIndex(item => item.path === path)
-  const beforeItems = flatData.slice(index - before, index)
-  const afterItems = flatData.slice(index + 1, index + after + 1)
-
-  return [
-    ...(Array.from({ length: before }).fill(null).concat(beforeItems).slice(beforeItems.length)),
-    ...afterItems.concat(Array.from({ length: after }).fill(null) as typeof afterItems).slice(0, after),
-  ] as ContentNavigationItem[]
-}
-
-function flattedData(data: ContentNavigationItem[]) {
-  const flatData = data.flatMap((item) => {
-    const children: ContentNavigationItem[] = item.children ? flattedData(item.children) : []
-
-    return item.page === false ? children : [{ ...item, children: undefined }, ...children]
-  })
-
-  return flatData
+  return generateNavigationTree(contents.filter(c => !String(c.stem).endsWith('dir')), configs, (fields || []) as string[])
 }

@@ -11,14 +11,14 @@ export default createDatabaseAdaptor(() => {
   }
 
   return {
-    async all(sql, params) {
-      return params ? db.prepare(sql).all(params) : db.prepare(sql).all()
+    async all<T>(sql: string, params?: Array<number | string | boolean>): Promise<T[]> {
+      return params ? db.prepare<unknown[], T>(sql).all(params) : db.prepare<unknown[], T>(sql).all()
     },
-    async first(sql, params) {
-      return params ? db.prepare(sql).get(params) : db.prepare(sql).get()
+    async first<T>(sql: string, params?: Array<number | string | boolean>) {
+      return params ? db.prepare<unknown[], T>(sql).get(params) : db.prepare<unknown[], T>(sql).get()
     },
-    async exec(sql) {
-      return db.exec(sql)
+    async exec(sql: string): Promise<void> {
+      await db.exec(sql)
     },
   }
 })

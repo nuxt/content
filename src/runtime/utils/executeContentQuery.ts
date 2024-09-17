@@ -1,6 +1,6 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { Collections } from '@farnabaz/content-next'
-import { decompressDump } from './dump'
+import { decompressSQLDump } from './internal/decompressSQLDump'
 import { useRuntimeConfig } from '#imports'
 
 export async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
@@ -16,8 +16,12 @@ export async function executeContentQuery<T extends keyof Collections, Result = 
 }
 
 function queryContentSqlApi<T>(collection: keyof Collections, sql: string) {
-  // TODO: Test post method
-  return $fetch(`/api/${String(collection)}/query?q=${encodeURIComponent(sql)}`) as Promise<T[]>
+  return $fetch<T[]>(`/api/${String(collection)}/query`, {
+    method: 'POST',
+    body: {
+      query: sql,
+    },
+  })
 }
 
 let db: Database
@@ -43,7 +47,7 @@ async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql:
       }
     }
 
-    const dump = await decompressDump(compressedDump!)
+    const dump = await decompressSQLDump(compressedDump!)
 
     console.log('[BROWSER] Loading SQLite...')
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)

@@ -1,14 +1,14 @@
-import { eventHandler, getQuery, getRouterParam } from 'h3'
+import { eventHandler, readValidatedBody, getRouterParam } from 'h3'
+import { z } from 'zod'
 import useContentDatabase from '../../adaptors'
-import { decompressDump } from '../../../utils/dump'
+import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
 import { useRuntimeConfig } from '#imports'
 
 let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {
   const config = useRuntimeConfig().contentv3
   const collectionName = getRouterParam(event, 'collection')
-  let sqlQuery = String(getQuery(event).q || '')
-  sqlQuery = (sqlQuery.includes('%20') ? decodeURIComponent(sqlQuery) : sqlQuery)
+  const { query: sqlQuery } = await readValidatedBody(event, z.object({ query: z.string() }).parse)
 
   if (!sqlQuery || !sqlQuery.toUpperCase().startsWith('SELECT')) {
     throw new Error('Invalid query')
@@ -46,7 +46,7 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
   // @ts-expect-error - Vite doesn't know about the import
   const dump = await import('#content-v3/dump' /* @vite-ignore */)
     .then(m => m.default)
-    .then(decompressDump)
+    .then(decompressSQLDump)
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev

@@ -24,7 +24,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'contentV3',
   },
   defaults: {
-    database: 'nuxthub',
+    database: 'builtin',
     dev: {
       dataDir: '.data/content',
       databaseName: 'items.db',
@@ -70,7 +70,7 @@ export default defineNuxtModule<ModuleOptions>({
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
       { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
-      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
+      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getSurroundingCollectionItems') },
       { name: 'queryContentV3', from: resolver.resolve('./runtime/composables/queryContentV3') },
     ])
 
@@ -80,8 +80,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
     ])
 
-    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query'), method: 'get' })
-    addServerHandler({ route: '/api/:collection/navigation', handler: resolver.resolve('./runtime/server/api/[collection]/navigation'), method: 'get' })
+    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
 
     // Types template
     addTypeTemplate({ filename: 'content/content.d.ts', getContents: contentTypesTemplate, options: { collections } })
@@ -94,17 +93,12 @@ export default defineNuxtModule<ModuleOptions>({
       write: true,
     }).dst
 
-    let dumpIsReady = false
     let sqlDump: string[] = []
     nuxt.options.nitro.alias['#content-v3/dump'] = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
       const compressed = deflate(JSON.stringify(sqlDump))
 
       const str = Buffer.from(compressed.buffer).toString('base64')
-      return [
-        `export default "${str}"`,
-        '',
-        `export const ready = ${dumpIsReady}`,
-      ].join('\n')
+      return `export default "${str}"`
     }, write: true }).dst
 
     if (nuxt.options._prepare) {
@@ -115,7 +109,6 @@ export default defineNuxtModule<ModuleOptions>({
     const dumpGeneratePromise = generateSqlDump(storage, collections, privateRuntimeConfig.integrityVersion)
       .then((dump) => {
         sqlDump = dump
-        dumpIsReady = true
       })
 
     nuxt.hook('app:templates', async () => {

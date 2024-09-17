@@ -1,5 +1,5 @@
 export interface ModuleOptions {
-  database: 'nuxthub' | 'builtin'
+  database: 'd1' | 'builtin'
   dev: {
     dataDir: string
     databaseName: string

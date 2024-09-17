@@ -3,7 +3,7 @@ import type { ContentNavigationItem, PageDocument } from '~/src/types'
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export function createNav(contents: PageDocument[], configs: Record<string, PageDocument>, extraFields: string[] = []) {
+export function generateNavigationTree(contents: PageDocument[], configs: Record<string, PageDocument>, extraFields: string[] = []) {
   // Navigation fields picker
   const pickNavigationFields = (content: PageDocument) => ({
     ...pick(['title', ...extraFields])(content),
