@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import { createStorage } from 'unstorage'
-import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, resolveAlias, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
@@ -105,6 +105,9 @@ export default defineNuxtModule<ModuleOptions>({
       return `export default "${str}"`
     }, write: true }).dst
 
+    // Install mdc module
+    await installModule('@nuxtjs/mdc')
+
     if (nuxt.options._prepare) {
       return
     }
@@ -112,6 +115,8 @@ export default defineNuxtModule<ModuleOptions>({
     const storage = await createCollectionsStorage(nuxt, collections)
     const dumpGeneratePromise = generateSqlDump(storage, collections, privateRuntimeConfig.integrityVersion)
       .then((dump) => {
+        console.log(dump)
+
         sqlDump = dump
       })
 
@@ -157,6 +162,7 @@ async function generateSqlDump(storage: ReturnType<typeof createStorage>, collec
       await Promise.all(chunk.map(async (key) => {
         console.log('Processing', key)
         const parsedContent = await parseContent(storage, collection, key)
+        console.log('parsedContent', parsedContent)
 
         sqlDumpList.push(generateCollectionInsert(collection, parsedContent))
       }))

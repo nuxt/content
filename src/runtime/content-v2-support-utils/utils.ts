@@ -3,9 +3,9 @@ import type { SortOptions } from '@nuxt/content'
 /**
  * Retrive nested value from object by path
  */
-export const get = (obj: any, path: string): any => path.split('.').reduce((acc, part) => acc && acc[part], obj)
+export const get = <T>(obj: T, path: string): T => path.split('.').reduce((acc, part) => acc && acc[part], obj as T)
 
-const _pick = (obj: any, condition: (item: any) => boolean) =>
+const _pick = (obj: Record<string, unknown>, condition: (item: string) => boolean) =>
   Object.keys(obj)
     .filter(condition)
     .reduce((newObj, key) => Object.assign(newObj, { [key]: obj[key] }), {})
@@ -13,18 +13,18 @@ const _pick = (obj: any, condition: (item: any) => boolean) =>
 /**
  * Returns a new object with the specified keys
  */
-export const pick = (keys?: string[]) => (obj: any) => keys && keys.length ? _pick(obj, key => keys.includes(key)) : obj
+export const pick = (keys?: string[]) => (obj: Record<string, unknown>) => keys && keys.length ? _pick(obj, key => keys.includes(key)) : obj
 
 /**
  * Returns a new object with all the keys of the original object execept the ones specified.
  */
-export const omit = (keys?: string[]) => (obj: any) =>
+export const omit = (keys?: string[]) => (obj: Record<string, unknown>) =>
   keys && keys.length ? _pick(obj, key => !keys.includes(key)) : obj
 
 /**
  * Apply a function to each element of an array
  */
-export const apply = (fn: (d: any) => any) => (data: any) => Array.isArray(data) ? data.map(item => fn(item)) : fn(data)
+export const apply = (fn: (d: any) => any) => (data: Record<string, unknown>) => Array.isArray(data) ? data.map(item => fn(item)) : fn(data)
 
 export const detectProperties = (keys: string[]) => {
   const prefixes = []
@@ -40,7 +40,7 @@ export const detectProperties = (keys: string[]) => {
   return { prefixes, properties }
 }
 
-export const withoutKeys = (keys: string[] = []) => (obj: any) => {
+export const withoutKeys = (keys: string[] = []) => (obj: Record<string, unknown>) => {
   if (keys.length === 0 || !obj) {
     return obj
   }
@@ -48,7 +48,7 @@ export const withoutKeys = (keys: string[] = []) => (obj: any) => {
   return _pick(obj, key => !properties.includes(key) && !prefixes.includes(key[0]))
 }
 
-export const withKeys = (keys: string[] = []) => (obj: any) => {
+export const withKeys = (keys: string[] = []) => (obj: Record<string, unknown>) => {
   if (keys.length === 0 || !obj) {
     return obj
   }

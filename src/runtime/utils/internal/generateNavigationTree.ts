@@ -7,7 +7,7 @@ export function generateNavigationTree(contents: PageDocument[], configs: Record
   // Navigation fields picker
   const pickNavigationFields = (content: PageDocument) => ({
     ...pick(['title', ...extraFields])(content),
-    ...(isObject(content?.navigation) ? content.navigation : {}),
+    ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
   })
 
   // Create navigation object
@@ -83,7 +83,7 @@ export function generateNavigationTree(contents: PageDocument[], configs: Record
           parent = {
             title: part,
             path: currentPathPart,
-            stem: idParts,
+            stem: idParts.join(':'),
             children: [],
             page: false,
             ...(conf && pickNavigationFields(conf)),

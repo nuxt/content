@@ -1,6 +1,4 @@
 import type { createStorage } from 'unstorage'
-import { transformContent } from '@nuxt/content/transformers'
-
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import MaterialThemePalenight from 'shiki/themes/material-theme-palenight.mjs'
 import HtmlLang from 'shiki/langs/html.mjs'
@@ -9,7 +7,8 @@ import TsLang from 'shiki/langs/typescript.mjs'
 import VueLang from 'shiki/langs/vue.mjs'
 import ScssLang from 'shiki/langs/scss.mjs'
 import YamlLang from 'shiki/langs/yaml.mjs'
-import type { ResolvedCollection } from '../types/collection'
+import type { ResolvedCollection } from '../../types/collection'
+import { transformContent } from './transformers'
 
 const highlightPlugin = {
   instance: rehypeHighlight,
@@ -39,25 +38,26 @@ export async function parseContent(storage: ReturnType<typeof createStorage>, co
     },
   })
 
-  // TODO: remove this
-  const collectionKeys = Object.keys(collection.schema.shape)
-  const result: Record<string, unknown> = {
-    id: parsedContent._id || parsedContent.id || parsedContent.key,
-    meta: {} as Record<string, unknown>,
-  }
-  collectionKeys.forEach((key) => {
-    result[key] = parsedContent[key] || parsedContent[`_${key}`]
-  })
+  const result = { id: parsedContent.id } as Record<string, unknown>
+  const meta = {} as Record<string, unknown>
 
   result.weight = String(result.stem || '')
     .split('/')
-    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9')).join('').padEnd(9, '9')
+    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9'))
+    .join('')
+    .padEnd(9, '9')
 
-  const metaObject = Object.keys(parsedContent).filter(key => !collectionKeys.includes(key)).map(key => ([key, parsedContent[key]]))
+  const collectionKeys = Object.keys(collection.schema.shape)
+  for (const key of Object.keys(parsedContent)) {
+    if (collectionKeys.includes(key)) {
+      result[key] = parsedContent[key]
+    }
+    else {
+      meta[key] = parsedContent[key]
+    }
+  }
 
-  result.meta = Object.fromEntries(metaObject)
-
-  result.body = parsedContent.body || (parsedContent._extension === 'yml' ? JSON.parse(JSON.stringify(parsedContent)) : {})
+  result.meta = meta
 
   return result
 }

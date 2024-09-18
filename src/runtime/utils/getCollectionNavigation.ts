@@ -8,6 +8,7 @@ export async function getCollectionNavigation<T extends keyof PageCollections>(c
     .order('stem', 'ASC')
     .select('stem', 'path', 'title', ...(fields || []))
     .all() as Array<PageDocument>
+  console.log(contents)
 
   // TODO: We should rethink about dir configs and their impact on navigation
   const dirConfigs = contents.filter(c => String(c.stem).endsWith('dir'))
