@@ -1,5 +1,6 @@
 import { printNode, zodToTs } from 'zod-to-ts'
 import type { ZodObject, ZodRawShape } from 'zod'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 import type { ResolvedCollection } from '../types/collection'
 
 export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
@@ -28,5 +29,6 @@ export function collectionsTemplate({ options }: { options: { collections: Resol
     name: c.name,
     pascalName: c.pascalName,
     jsonFields: c.jsonFields,
+    schema: zodToJsonSchema(c.schema, c.name),
   })), null, 2)
 }
