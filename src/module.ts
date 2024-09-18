@@ -115,8 +115,6 @@ export default defineNuxtModule<ModuleOptions>({
     const storage = await createCollectionsStorage(nuxt, collections)
     const dumpGeneratePromise = generateSqlDump(storage, collections, privateRuntimeConfig.integrityVersion)
       .then((dump) => {
-        console.log(dump)
-
         sqlDump = dump
       })
 
@@ -131,13 +129,16 @@ export default defineNuxtModule<ModuleOptions>({
   },
 })
 
-async function createCollectionsStorage(nuxt: Nuxt, collections: ResolvedCollection[]) {
+async function createCollectionsStorage(_nuxt: Nuxt, collections: ResolvedCollection[]) {
   const storage = createStorage()
   const sources = collections
     .filter(c => !!c.source)
-    .map(col => ({ name: col.name, ...col.source })) as Array<MountOptions>
+    .reduce((acc, col) => {
+      acc[col.name] = col.source!
+      return acc
+    }, {} as Record<string, MountOptions>)
 
-  const mountsOptions = generateStorageMountOptions(nuxt, sources)
+  const mountsOptions = generateStorageMountOptions(sources)
 
   for (const [key, options] of Object.entries(mountsOptions)) {
     if (options.driver === 'fs' && options.base) {
@@ -162,7 +163,6 @@ async function generateSqlDump(storage: ReturnType<typeof createStorage>, collec
       await Promise.all(chunk.map(async (key) => {
         console.log('Processing', key)
         const parsedContent = await parseContent(storage, collection, key)
-        console.log('parsedContent', parsedContent)
 
         sqlDumpList.push(generateCollectionInsert(collection, parsedContent))
       }))
