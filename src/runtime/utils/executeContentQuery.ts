@@ -8,12 +8,7 @@ import { useRuntimeConfig } from '#imports'
 export async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
   let result: Array<Result>
   if (import.meta.client) {
-    if (window.benchmark?.downloadCompressedDump) {
-      result = await queryContentSqlClientWasm<Result>(collection, sql)
-    }
-    else {
-      result = await queryContentSqlClientWasmDecompressed<Result>(collection, sql)
-    }
+    result = await queryContentSqlClientWasm<Result>(collection, sql)
   }
   else {
     result = await queryContentSqlApi<Result>(collection, sql)
@@ -32,89 +27,39 @@ function queryContentSqlApi<T>(collection: keyof Collections, sql: string) {
 }
 
 let db: Database
+let collections: Record<string, { jsonFields: string[] }> | null = null
 
-async function queryContentSqlClientWasmDecompressed<T>(_collection: keyof Collections, sql: string) {
+async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: string) {
   const perf = measurePerformance()
-  if (!db || window.benchmark?.reinitiateDatabase) {
+  if (!db || !collections || window.benchmark?.reinitiateDatabase) {
+    let compressedDump: string | null = null
     const config = useRuntimeConfig().public.contentv3
-    const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
 
-    let compressedDump: string | string[] | null = window.benchmark?.cacheInLocalStorage && (localCacheVersion === config.integrityVersion)
-      ? window.localStorage.getItem('contentv3-dump-sql')
-      : null
-    perf.tick('Get Local Cache')
-
-    if (!compressedDump) {
-      compressedDump = await $fetch<string[]>('/api/database-decompress', { responseType: 'json', query: { v: config.integrityVersion } })
-      perf.tick('Download Database')
-      if (window.benchmark?.cacheInLocalStorage) {
-        try {
-          window.localStorage.setItem('contentv3-integrity-version', config.integrityVersion)
-          window.localStorage.setItem('contentv3-dump-sql', JSON.stringify(compressedDump))
+    if (window.benchmark?.cacheInLocalStorage) {
+      const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
+      if (localCacheVersion === config.integrityVersion) {
+        compressedDump = window.localStorage.getItem('contentv3-dump')
+        const localCollections = window.localStorage.getItem('contentv3-collections')
+        if (localCollections) {
+          collections = JSON.parse(localCollections)
         }
-        catch (error) {
-          console.log('Database integrity check failed, rebuilding database', error)
-        }
-        perf.tick('Store Database')
       }
     }
 
-    const dump = typeof compressedDump === 'string' ? JSON.parse(compressedDump) : compressedDump
-    perf.tick('Decompress Database')
-
-    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
-    const sqlite3 = await sqlite3InitModule()
-    perf.tick('Import SQLite Module')
-
-    db = new sqlite3.oo1.DB()
-    for (const command of dump) {
-      await db.exec(command)
-    }
-    perf.tick('Restore Dump')
-  }
-
-  const jsonFields = ['body', 'meta'] as string[]
-  const res = await new Promise((resolve, reject) => {
-    db.exec({
-      sql,
-      rowMode: 'object',
-      // @ts-expect-error Types are mixed up
-      returnValue: 'resultRows',
-      // @ts-expect-error Types are mixed up
-      callback(rows: T | T[]) {
-        if (!Array.isArray(rows)) {
-          rows = [rows]
-        }
-
-        resolve(rows.map(row => parseJsonFields(row, jsonFields)))
-      },
-      error: err => reject(err),
-    })
-  })
-  perf.tick('Execute Query')
-
-  console.log(perf.end('Run with Raw Dump'))
-  return res as T[]
-}
-
-async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql: string) {
-  const perf = measurePerformance()
-  if (!db || window.benchmark?.reinitiateDatabase) {
-    const config = useRuntimeConfig().public.contentv3
-    const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
-
-    let compressedDump: string | null = window.benchmark?.cacheInLocalStorage && (localCacheVersion === config.integrityVersion)
-      ? window.localStorage.getItem('contentv3-dump')
-      : null
     perf.tick('Get Local Cache')
+    console.log(!compressedDump, collections)
+    if (!compressedDump || !collections) {
+      const response = await $fetch('/api/database', { query: { v: config.integrityVersion } })
+      compressedDump = response.dump
+      collections = response.collections
+      console.log({ collection })
 
-    if (!compressedDump) {
-      compressedDump = await $fetch('/api/database', { responseType: 'text', query: { v: config.integrityVersion } })
       perf.tick('Download Database')
       if (window.benchmark?.cacheInLocalStorage) {
         try {
           window.localStorage.setItem('contentv3-integrity-version', config.integrityVersion)
           window.localStorage.setItem('contentv3-dump', compressedDump!)
+          window.localStorage.setItem('contentv3-collections', JSON.stringify(collections))
         }
         catch (error) {
           console.log('Database integrity check failed, rebuilding database', error)
@@ -137,8 +82,7 @@ async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql:
     perf.tick('Restore Dump')
   }
 
-  // TODO: get json fields from dump
-  const jsonFields = ['body', 'meta'] as string[]
+  const jsonFields = collections?.[collection]?.jsonFields || ['body', 'meta'] as string[]
   const res = await new Promise((resolve, reject) => {
     db.exec({
       sql,
