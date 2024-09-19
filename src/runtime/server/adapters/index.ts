@@ -1,3 +1,4 @@
+import { parseJsonFields } from '../../utils/internal/parseJsonFields'
 import createSqliteAdapter from './sqlite'
 import type { DatabaseAdapter } from './factory'
 import { useRuntimeConfig } from '#imports'
@@ -38,15 +39,8 @@ export default function useContentDatabase() {
       if (!result) {
         return []
       }
-      return result.map((item) => {
-        const jsonFields = collectionJsonFields(sql)
-        for (const key of jsonFields) {
-          if (item[key]) {
-            item[key] = item[key] && item[key] !== 'undefined' ? JSON.parse(item[key] as string) : item[key]
-          }
-        }
-        return item
-      })
+      const jsonFields = collectionJsonFields(sql)
+      return result.map(item => parseJsonFields(item, jsonFields))
     },
     first: async (sql, params) => {
       !adapter && (await loadAdapter())
@@ -57,12 +51,7 @@ export default function useContentDatabase() {
       }
 
       const jsonFields = collectionJsonFields(sql)
-      for (const key of jsonFields) {
-        if (item[key]) {
-          item[key] = item[key] && item[key] !== 'undefined' ? JSON.parse(item[key] as string) : item[key]
-        }
-      }
-      return item
+      return parseJsonFields(item, jsonFields)
     },
     exec: async (sql) => {
       !adapter && (await loadAdapter())

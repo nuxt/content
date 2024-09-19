@@ -2,6 +2,7 @@ import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { Collections } from '@farnabaz/content-next'
 import { decompressSQLDump } from './internal/decompressSQLDump'
 import { measurePerformance } from './internal/performance'
+import { parseJsonFields } from './internal/parseJsonFields'
 import { useRuntimeConfig } from '#imports'
 
 export async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
@@ -72,31 +73,22 @@ async function queryContentSqlClientWasmDecompressed<T>(_collection: keyof Colle
     perf.tick('Restore Dump')
   }
 
+  const jsonFields = ['body', 'meta'] as string[]
   const res = await new Promise((resolve, reject) => {
     db.exec({
       sql,
       rowMode: 'object',
+      // @ts-expect-error Types are mixed up
       returnValue: 'resultRows',
-      callback: (rows) => {
-        if (Array.isArray(rows)) {
-          rows = rows.map((row) => {
-            return {
-              ...row,
-              body: row.body ? JSON.parse(row.body) : null,
-            }
-          })
+      // @ts-expect-error Types are mixed up
+      callback(rows: T | T[]) {
+        if (!Array.isArray(rows)) {
+          rows = [rows]
         }
 
-        rows = {
-          ...rows,
-          body: rows.body ? JSON.parse(rows.body) : null,
-        }
-
-        resolve([rows])
+        resolve(rows.map(row => parseJsonFields(row, jsonFields)))
       },
-      error: (err) => {
-        reject(err)
-      },
+      error: err => reject(err),
     })
   })
   perf.tick('Execute Query')
@@ -145,31 +137,23 @@ async function queryContentSqlClientWasm<T>(_collection: keyof Collections, sql:
     perf.tick('Restore Dump')
   }
 
+  // TODO: get json fields from dump
+  const jsonFields = ['body', 'meta'] as string[]
   const res = await new Promise((resolve, reject) => {
     db.exec({
       sql,
       rowMode: 'object',
+      // @ts-expect-error Types are mixed up
       returnValue: 'resultRows',
-      callback: (rows) => {
-        if (Array.isArray(rows)) {
-          rows = rows.map((row) => {
-            return {
-              ...row,
-              body: row.body ? JSON.parse(row.body) : null,
-            }
-          })
+      // @ts-expect-error Types are mixed up
+      callback(rows: T | T[]) {
+        if (!Array.isArray(rows)) {
+          rows = [rows]
         }
 
-        rows = {
-          ...rows,
-          body: rows.body ? JSON.parse(rows.body) : null,
-        }
-
-        resolve([rows])
+        resolve(rows.map(row => parseJsonFields(row, jsonFields)))
       },
-      error: (err) => {
-        reject(err)
-      },
+      error: err => reject(err),
     })
   })
   perf.tick('Execute Query')

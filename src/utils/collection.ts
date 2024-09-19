@@ -64,11 +64,11 @@ export function resolveCollections(collections: Array<Collection & { name: strin
  */
 function refineSource(collectionName: string, source: string | CollectionSource | undefined): CollectionSource | undefined {
   if (typeof source === 'string') {
-    return { name: collectionName, driver: 'fs', base: source, prefix: '' }
+    return { driver: 'fs', base: source, prefix: '' }
   }
 
   if (source) {
-    return { name: collectionName, ...(source as unknown as CollectionSource) }
+    return { ...(source as unknown as CollectionSource) }
   }
 
   return undefined
