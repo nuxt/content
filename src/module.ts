@@ -11,7 +11,7 @@ import { resolveCollections, generateCollectionInsert } from './utils/collection
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
-import { watchContents } from './utils/dev'
+import { getContentChecksum, localDatabase, logger, watchContents } from './utils/dev'
 import { parseContent } from './utils/content'
 
 export * from './utils/collection'
@@ -35,6 +35,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     options.dev!.dataDir = join(nuxt.options.rootDir, options.dev!.dataDir!)
     await mkdir(options.dev!.dataDir, { recursive: true }).catch(() => {})
+    const databaseLocation = join(options.dev!.dataDir, options.dev!.databaseName!)
 
     const configPath = await resolvePath(join(nuxt.options.rootDir, 'content.config'), { extensions: ['mjs', 'js', 'ts'] })
     const contentConfig = configPath
@@ -113,7 +114,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     const storage = await createCollectionsStorage(nuxt, collections)
-    const dumpGeneratePromise = generateSqlDump(storage, collections, privateRuntimeConfig.integrityVersion)
+    const dumpGeneratePromise = generateSqlDump(storage, collections, databaseLocation, privateRuntimeConfig.integrityVersion)
       .then((dump) => {
         sqlDump = dump
       })
@@ -123,8 +124,17 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     if (nuxt.options.dev) {
-      const databaseLocation = join(options.dev!.dataDir, options.dev!.databaseName!)
       watchContents(nuxt, storage, collections, databaseLocation)
+
+      nuxt.hook('nitro:init', async (nitro) => {
+        nitro.storage.watch(async (_event, key) => {
+          if (['root:content.config.ts', 'root:content.config.mjs'].includes(key)) {
+            logger.info(`${key.split(':').pop()} Updated. Restarting Nuxt...`)
+
+            nuxt.hooks.callHook('restart', { hard: true })
+          }
+        })
+      })
     }
   },
 })
@@ -149,20 +159,44 @@ async function createCollectionsStorage(_nuxt: Nuxt, collections: ResolvedCollec
   return storage
 }
 
-async function generateSqlDump(storage: ReturnType<typeof createStorage>, collections: ResolvedCollection[], integrityVersion: string) {
+async function generateSqlDump(storage: ReturnType<typeof createStorage>, collections: ResolvedCollection[], cacheDatabaseLocation: string, integrityVersion: string) {
   const sqlDumpList: string[] = []
+  const db = localDatabase(cacheDatabaseLocation)
+  const databaseContents = db.fetchDevelopmentCache()
 
+  const startTime = performance.now()
+  let filesCount = 0
+  let cachedFilesCount = 0
+  let parsedFilesCount = 0
   // Create database dump
   for await (const collection of collections) {
     // Collection table definition
+    sqlDumpList.push(`DROP TABLE IF EXISTS ${collection.name};`)
     sqlDumpList.push(collection.table)
+
+    // Ensure table exists
+    db.exec(collection.table)
 
     // Insert content
     const keys = await storage.getKeys(collection.name)
+    filesCount += keys.length
+
     for await (const chunk of chunks(keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
-        console.log('Processing', key)
-        const parsedContent = await parseContent(storage, collection, key)
+        const content = await storage.getItem(key) as string
+        const checksum = getContentChecksum(content)
+        const cache = databaseContents[key]
+
+        let parsedContent
+        if (cache && cache.checksum === checksum) {
+          cachedFilesCount += 1
+          parsedContent = JSON.parse(cache.parsedContent)
+        }
+        else {
+          parsedFilesCount += 1
+          parsedContent = await parseContent(key, content, collection)
+          db.insertDevelopmentCache(key, checksum, JSON.stringify(parsedContent))
+        }
 
         sqlDumpList.push(generateCollectionInsert(collection, parsedContent))
       }))
@@ -171,6 +205,9 @@ async function generateSqlDump(storage: ReturnType<typeof createStorage>, collec
 
   const infoCollection = collections.find(c => c.name === '_info')!
   sqlDumpList.push(generateCollectionInsert(infoCollection, { id: 'version', version: integrityVersion }))
+
+  const endTime = performance.now()
+  logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return sqlDumpList
 }

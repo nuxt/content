@@ -1,4 +1,3 @@
-import type { createStorage } from 'unstorage'
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import MaterialThemePalenight from 'shiki/themes/material-theme-palenight.mjs'
 import HtmlLang from 'shiki/langs/html.mjs'
@@ -30,8 +29,7 @@ const highlightPlugin = {
     },
   }),
 }
-export async function parseContent(storage: ReturnType<typeof createStorage>, collection: ResolvedCollection, key: string) {
-  const content = await storage.getItem(key)
+export async function parseContent(key: string, content: string, collection: ResolvedCollection) {
   const parsedContent = await transformContent(key, content, {
     markdown: {
       rehypePlugins: { highlight: highlightPlugin },
