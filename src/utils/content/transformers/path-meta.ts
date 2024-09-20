@@ -87,7 +87,7 @@ export function refineUrlPart(name: string): string {
 }
 
 export const describeId = (id: string) => {
-  const [source, ...parts] = id.split(':')
+  const [source, ...parts] = id.split(/[:/]/)
 
   const [, basename, extension] = parts[parts.length - 1]?.match(/(.*)\.([^.]+)$/) || []
 

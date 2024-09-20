@@ -1,43 +1,55 @@
 import crypto from 'node:crypto'
-import type { createStorage, WatchEvent } from 'unstorage'
+import { join } from 'node:path'
+import { readFile } from 'node:fs/promises'
 import Database from 'better-sqlite3'
 import type { Nuxt } from '@nuxt/schema'
 import { useLogger } from '@nuxt/kit'
+import { type ConsolaInstance } from 'consola'
+import chokidar from 'chokidar'
+import micromatch from 'micromatch'
 import type { ResolvedCollection } from '../types/collection'
-import { generateCollectionInsert } from './collection'
+import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
 
-export const logger = useLogger('@nuxt/content')
+export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function watchContents(nuxt: Nuxt, storage: ReturnType<typeof createStorage>, collections: ResolvedCollection[], databaseLocation: string) {
+export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], databaseLocation: string) {
   const db = localDatabase(databaseLocation)
-  // Watch contents
-  await storage.watch(async (event: WatchEvent, key: string) => {
-    logger.info('Content changed', key)
 
-    const collection = collections.find(c => key.startsWith(c.name))
-    if (collection) {
-      await db.exec(`DELETE FROM ${collection.name} WHERE id = '${key}'`)
-      if (event === 'update') {
-        const content = await storage.getItem(key) as string
-        const checksum = getContentChecksum(content)
-        const localCache = db.fetchDevelopmentCacheForKey(key)
-
-        if (localCache && localCache.checksum === checksum) {
-          db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
-          return
-        }
-
-        const parsedContent = await parseContent(key, content, collection)
-        await db.exec(generateCollectionInsert(collection, parsedContent))
-        db.insertDevelopmentCache(key, checksum, JSON.stringify(parsedContent))
-      }
-    }
+  const watcher = chokidar.watch('.', {
+    ignoreInitial: true,
+    cwd: join(nuxt.options.rootDir, 'content'),
   })
 
+  watcher.on('add', onChange)
+  watcher.on('change', onChange)
+  watcher.on('unlink', onChange)
+
+  async function onChange(path: string) {
+    const collection = collections.find(({ source }) => source?.base && micromatch.isMatch(path, source?.base, { ignore: source?.ignore || [] }))
+    if (collection) {
+      logger.info(`File changed. collection: ${collection.name}, path: ${path}`)
+
+      const { fixed } = parseSourceBase(collection.source!)
+      const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
+
+      const content = await readFile(join(nuxt.options.rootDir, 'content', path), 'utf8')
+      const checksum = getContentChecksum(content)
+      const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
+
+      if (localCache && localCache.checksum === checksum) {
+        db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
+        return
+      }
+
+      const parsedContent = await parseContent(keyInCollection, content, collection)
+      await db.exec(generateCollectionInsert(collection, parsedContent))
+      db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
+    }
+  }
+
   nuxt.hook('close', async () => {
-    await storage.unwatch()
-    await storage.dispose()
+    watcher.close()
     db.close()
   })
 }
@@ -69,10 +81,18 @@ export function localDatabase(databaseLocation: string) {
     insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
       _localDatabase!.exec(`INSERT OR REPLACE INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
     },
-    exec: (sql: string) => _localDatabase!.exec(sql),
+    exec: (sql: string) => {
+      _localDatabase!.exec(sql)
+    },
     close: () => {
       _localDatabase!.close()
       _localDatabase = undefined
     },
+  }
+}
+
+export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown> {
+  for (let i = 0; i < arr.length; i += size) {
+    yield arr.slice(i, i + size)
   }
 }

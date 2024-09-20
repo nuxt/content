@@ -2,11 +2,11 @@ import { pascalCase } from 'scule'
 import { z } from 'zod'
 import type { ZodArrayDef, ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection } from '../types/collection'
-import { contentSchema, metaSchema, pageSchema } from './schema'
+import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
-export function defineCollection<T extends ZodRawShape>(name: string, collection: Collection<T>): DefinedCollection {
+export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
   let schema = collection.schema || z.object({})
   if (collection.type === 'page') {
     schema = pageSchema.extend((schema as ZodObject<ZodRawShape>).shape)
@@ -15,36 +15,28 @@ export function defineCollection<T extends ZodRawShape>(name: string, collection
   schema = metaSchema.extend((schema as ZodObject<ZodRawShape>).shape)
 
   return {
-    name,
     type: collection.type,
-    source: refineSource(name, collection.source),
+    source: refineSource(collection.source),
     schema,
   }
 }
 
-export function resolveCollections(collections: Array<DefinedCollection>): ResolvedCollection[] {
-  if (!collections.find(c => c.name === 'content')) {
-    collections.push(defineCollection('content', {
-      type: 'page',
-      source: '~~/content',
-      schema: contentSchema,
-    }))
-  }
-
-  collections.push(defineCollection('_info', {
+export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
+  collections._info = defineCollection({
     type: 'data',
     schema: z.object({
       version: z.string(),
     }),
-  }))
+  })
 
-  return collections.map((collection) => {
+  return Object.entries(collections).map(([name, collection]) => {
     return {
       ...collection,
+      name,
       type: collection.type || 'page',
-      pascalName: pascalCase(collection.name),
-      source: refineSource(collection.name, collection.source),
-      table: generateCollectionTableDefinition(collection.name, collection),
+      pascalName: pascalCase(name),
+      source: refineSource(collection.source),
+      table: generateCollectionTableDefinition(name, collection),
       generatedFields: {
         raw: typeof collection.schema.shape.raw !== 'undefined',
         body: typeof collection.schema.shape.body !== 'undefined',
@@ -60,9 +52,9 @@ export function resolveCollections(collections: Array<DefinedCollection>): Resol
 /**
  * Process collection source and return refined source
  */
-function refineSource(collectionName: string, source: string | CollectionSource | undefined): CollectionSource | undefined {
+function refineSource(source: string | CollectionSource | undefined): CollectionSource | undefined {
   if (typeof source === 'string') {
-    return { driver: 'fs', base: source, prefix: '' }
+    return { base: source, prefix: '' }
   }
 
   if (source) {
@@ -70,6 +62,14 @@ function refineSource(collectionName: string, source: string | CollectionSource 
   }
 
   return undefined
+}
+
+export function parseSourceBase(source: CollectionSource) {
+  const [fixPart, ...rest] = source.base.includes('*') ? source.base.split('*') : ['', source.base]
+  return {
+    fixed: fixPart,
+    dynamic: '*' + rest.join('*'),
+  }
 }
 
 // Convert collection data to SQL insert statement
