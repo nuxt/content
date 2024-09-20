@@ -1,30 +1,28 @@
 import { pascalCase } from 'scule'
 import { z } from 'zod'
 import type { ZodArrayDef, ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
-import type { Collection, CollectionType, ResolvedCollection, CollectionSource } from '../types/collection'
+import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection } from '../types/collection'
 import { contentSchema, metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
-export function defineCollection<T extends ZodRawShape>(name: string, collection: Collection<T>) {
-  const type = collection.type || 'page' as CollectionType
-  const schema = (type === 'page'
-    ? pageSchema.extend((collection.schema as ZodObject<ZodRawShape>).shape)
-    : collection.schema).extend(metaSchema.shape)
+export function defineCollection<T extends ZodRawShape>(name: string, collection: Collection<T>): DefinedCollection {
+  let schema = collection.schema || z.object({})
+  if (collection.type === 'page') {
+    schema = pageSchema.extend((schema as ZodObject<ZodRawShape>).shape)
+  }
+
+  schema = metaSchema.extend((schema as ZodObject<ZodRawShape>).shape)
 
   return {
     name,
-    type,
+    type: collection.type,
     source: refineSource(name, collection.source),
     schema,
   }
 }
 
-export function defineDataCollection<T extends ZodRawShape>(name: string, collection: Collection<T>) {
-  return defineCollection(name, { ...collection, type: 'data' })
-}
-
-export function resolveCollections(collections: Array<Collection & { name: string }>): ResolvedCollection[] {
+export function resolveCollections(collections: Array<DefinedCollection>): ResolvedCollection[] {
   if (!collections.find(c => c.name === 'content')) {
     collections.push(defineCollection('content', {
       type: 'page',
@@ -52,7 +50,7 @@ export function resolveCollections(collections: Array<Collection & { name: strin
         body: typeof collection.schema.shape.body !== 'undefined',
         path: typeof collection.schema.shape.path !== 'undefined',
       },
-      jsonFields: Object.keys(collection.schema.shape)
+      jsonFields: Object.keys(collection.schema.shape || {})
         .filter(key => ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection']
           .includes(getUnderlyingType(collection.schema.shape[key]).constructor.name)),
     }
@@ -107,7 +105,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 }
 
 // Convert a collection with Zod schema to SQL table definition
-export function generateCollectionTableDefinition(name: string, collection: Collection) {
+export function generateCollectionTableDefinition(name: string, collection: DefinedCollection) {
   const sqlFields = Object.entries(collection.schema.shape).map(([key, zodType]) => {
     const underlyingType = getUnderlyingType(zodType)
 

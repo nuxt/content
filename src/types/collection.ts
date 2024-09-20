@@ -10,9 +10,24 @@ export type CollectionType = 'page' | 'data'
 
 export type CollectionSource = MountOptions
 
-export interface Collection<T extends ZodRawShape = ZodRawShape> {
-  type?: CollectionType
+export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
+  type: 'page'
   source?: string | CollectionSource
+  schema?: ZodObject<T>
+}
+
+export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
+  type: 'data'
+  source?: string | CollectionSource
+  schema: ZodObject<T>
+}
+
+export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> | DataCollection<T>
+
+export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
+  name: string
+  type: CollectionType
+  source: CollectionSource | undefined
   schema: ZodObject<T>
 }
 
