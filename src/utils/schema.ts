@@ -1,4 +1,4 @@
-import { z, type ZodTypeAny } from 'zod'
+import { z } from 'zod'
 import { ContentFileExtension } from '../types/content'
 import { getEnumValues } from './zod'
 
@@ -7,7 +7,7 @@ export const metaSchema = z.object({
   weight: z.string(),
   stem: z.string(),
   extension: z.enum(getEnumValues(ContentFileExtension)),
-  meta: z.object<Record<string, ZodTypeAny>>({}),
+  meta: z.record(z.string(), z.any()),
 })
 
 export const pageSchema = z.object({

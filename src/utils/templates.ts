@@ -1,23 +1,27 @@
 import { printNode, zodToTs } from 'zod-to-ts'
-import type { ZodObject, ZodRawShape } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import type { ResolvedCollection } from '../types/collection'
 
+function indentLines(str: string, indent: number = 2) {
+  str = str.replace(/ {4}/g, ' '.repeat(indent))
+  return str.split('\n').map(line => ' '.repeat(indent) + line).join('\n')
+}
+
 export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
+  const publicCollections = options.collections.filter(c => c.name !== '_info')
+  const pagesCollections = publicCollections.filter(c => c.type === 'page')
   return [
-    'import type { CollectionQueryBuilder } from \'@farnabaz/content-next\'',
-    ...options.collections.map(c => `export type ${c.pascalName} = ${printNode(zodToTs(c.schema as ZodObject<ZodRawShape>, c.pascalName).node)}`),
-    'interface Collections {',
-    ...options.collections.map(c => `  ${c.name}: ${c.pascalName}`),
-    '}',
-    '',
     'declare module \'@farnabaz/content-next\' {',
+    ...publicCollections.map(c =>
+      indentLines(`type ${c.pascalName}CollectionItem = ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
+    ),
+    '',
     '  interface PageCollections {',
-    ...options.collections.filter(c => c.type === 'page').map(c => `    ${c.name}: ${c.pascalName}`),
+    ...pagesCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
     '  }',
     '',
     '  interface Collections {',
-    ...options.collections.map(c => `    ${c.name}: ${c.pascalName}`),
+    ...publicCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
     '  }',
     '}',
     '',

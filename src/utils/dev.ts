@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { join } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import Database from 'better-sqlite3'
 import type { Nuxt } from '@nuxt/schema'
 import { useLogger } from '@nuxt/kit'
@@ -89,6 +89,39 @@ export function localDatabase(databaseLocation: string) {
       _localDatabase = undefined
     },
   }
+}
+
+export async function generateInitialFiles(nuxt: Nuxt) {
+  const configPath = join(nuxt.options.rootDir, 'content.config.ts')
+  await writeFile(
+    configPath,
+    [
+      'import { defineCollection } from \'@farnabaz/content-next\'',
+      '',
+      'export const collections = {',
+      '  pages: defineCollection({',
+      '    type: \'page\',',
+      '    source: \'pages/**\',',
+      '  })',
+      '}',
+      '',
+    ].join('\n'),
+  )
+  // Create pages directory
+  await mkdir(join(nuxt.options.rootDir, 'content', 'pages'), { recursive: true }).catch(() => {})
+
+  await writeFile(
+    join(nuxt.options.rootDir, 'content', 'pages', 'index.md'),
+    [
+      '---',
+      'title: Home',
+      '---',
+      '',
+      'Welcome to Nuxt Content!',
+    ].join('\n'),
+  )
+
+  return configPath
 }
 
 export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown> {
