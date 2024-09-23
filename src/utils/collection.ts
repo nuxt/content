@@ -54,7 +54,7 @@ export function resolveCollections(collections: Record<string, DefinedCollection
  */
 function refineSource(source: string | CollectionSource | undefined): CollectionSource | undefined {
   if (typeof source === 'string') {
-    return { base: source, prefix: '' }
+    return { path: source, prefix: '' }
   }
 
   if (source) {
@@ -65,7 +65,7 @@ function refineSource(source: string | CollectionSource | undefined): Collection
 }
 
 export function parseSourceBase(source: CollectionSource) {
-  const [fixPart, ...rest] = source.base.includes('*') ? source.base.split('*') : ['', source.base]
+  const [fixPart, ...rest] = source.path.includes('*') ? source.path.split('*') : ['', source.path]
   return {
     fixed: fixPart,
     dynamic: '*' + rest.join('*'),

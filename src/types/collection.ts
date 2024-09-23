@@ -8,7 +8,7 @@ export interface Collections {
 export type CollectionType = 'page' | 'data'
 
 export type CollectionSource = {
-  base: string
+  path: string
   prefix?: string
   ignore?: string[]
 }
