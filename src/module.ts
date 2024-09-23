@@ -62,17 +62,15 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
     nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/database'] = { prerender: true }
+    nuxt.options.routeRules['/api/database.json'] = { prerender: true }
 
     addServerHandler({ route: '/api/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
-    addServerHandler({ route: '/api/database-decompress', handler: resolver.resolve('./runtime/server/api/database-decompress') })
-    // addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
+    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
 
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
       { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getSurroundingCollectionItems') },
-      { name: 'queryContentV3', from: resolver.resolve('./runtime/composables/queryContentV3') },
     ])
 
     addServerImports([
@@ -81,10 +79,8 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
     ])
 
-    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
-
     // Types template
-    addTypeTemplate({ filename: 'content/content.d.ts', getContents: contentTypesTemplate, options: { collections } })
+    addTypeTemplate({ filename: 'content/types.d.ts', getContents: contentTypesTemplate, options: { collections } })
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/collections'] = addTemplate({
