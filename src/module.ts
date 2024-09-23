@@ -1,15 +1,16 @@
 import { mkdir, readFile } from 'node:fs/promises'
-import { defineNuxtModule, createResolver, resolvePath, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
 import { join } from 'pathe'
 import fastGlob from 'fast-glob'
-import { resolveCollections, generateCollectionInsert, parseSourceBase } from './utils/collection'
+import { generateCollectionInsert, parseSourceBase } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks } from './utils/dev'
+import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
 
 export * from './utils/collection'
@@ -35,16 +36,8 @@ export default defineNuxtModule<ModuleOptions>({
     await mkdir(options.dev!.dataDir, { recursive: true }).catch(() => {})
     const databaseLocation = join(options.dev!.dataDir, options.dev!.databaseName!)
 
-    const configPath = await resolvePath(join(nuxt.options.rootDir, 'content.config'), { extensions: ['mjs', 'js', 'ts'] })
-    const contentConfig = configPath
-      ? await import(configPath)
-        .catch((err) => {
-          console.error(err)
-          return []
-        })
-      : {}
+    const { collections } = await loadContentConfig(nuxt, { createOnMissing: true })
 
-    const collections = resolveCollections(contentConfig.collections || {})
     const integrityVersion = '0.0.1-' + hash(collections.map(c => c.table).join('-'))
 
     const publicRuntimeConfig = {

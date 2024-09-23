@@ -100,7 +100,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT OR REPLACE INTO ${collection.name} (${fields.join(', ')}) VALUES (${'?,'.repeat(values.length).slice(0, -1)})`
+  return `INSERT OR REPLACE INTO ${collection.name} (${fields.map(f => `\`${f}\``).join(', ')}) VALUES (${'?,'.repeat(values.length).slice(0, -1)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
@@ -150,7 +150,7 @@ export function generateCollectionTableDefinition(name: string, collection: Defi
       constraints += ` DEFAULT ${typeof zodType._def.defaultValue() === 'string' ? `'${zodType._def.defaultValue()}'` : zodType._def.defaultValue()}`
     }
 
-    return `${key} ${sqlType}${constraints}`
+    return `\`${key}\` ${sqlType}${constraints}`
   })
   return `CREATE TABLE IF NOT EXISTS ${name} (${sqlFields.join(',  ')})`
 }
