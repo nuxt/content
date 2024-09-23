@@ -2,10 +2,10 @@ import type { D1Database } from '@cloudflare/workers-types/experimental'
 import { createDatabaseAdapter } from './factory'
 
 let db: D1Database
-export default createDatabaseAdapter(() => {
+export default createDatabaseAdapter<{ binding: string }>((opts) => {
+  const binding = opts?.binding || 'DB'
   if (!db) {
-    // @ts-expect-error - missing types
-    db = process.env.DB || globalThis.__env__?.DB || globalThis.DB
+    db = process.env?.[binding] || globalThis.__env__?.[binding] || globalThis?.[binding]
   }
 
   return {

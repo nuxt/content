@@ -49,7 +49,10 @@ async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: 
     perf.tick('Get Local Cache')
     console.log(!compressedDump, collections)
     if (!compressedDump || !collections) {
-      const response = await $fetch('/api/database', { query: { v: config.integrityVersion } })
+      const response = await $fetch('/api/database.json', {
+        headers: { 'content-type': 'application/json' },
+        query: { v: config.integrityVersion },
+      })
       compressedDump = response.dump
       collections = response.collections
       console.log({ collection })

@@ -92,6 +92,11 @@ export function localDatabase(databaseLocation: string) {
 }
 
 export async function generateInitialFiles(nuxt: Nuxt) {
+  // Don't generate initial files if `nuxi prepare` executed on module root
+  if (process.env.npm_package_name === '@farnabaz/content-next') {
+    return
+  }
+
   const configPath = join(nuxt.options.rootDir, 'content.config.ts')
   await writeFile(
     configPath,

@@ -1,13 +1,10 @@
 import Database from 'better-sqlite3'
 import { createDatabaseAdapter } from './factory'
-import { useRuntimeConfig } from '#imports'
 
 let db: Database.Database
-export default createDatabaseAdapter(() => {
-  const config = useRuntimeConfig().contentv3
-
+export default createDatabaseAdapter<{ filename: string }>((opts) => {
   if (!db) {
-    db = Database(config.dev.dataDir + '/' + config.dev.databaseName)
+    db = Database(opts?.filename)
   }
 
   return {

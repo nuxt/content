@@ -1,4 +1,5 @@
 import { mkdir, readFile } from 'node:fs/promises'
+import { dirname } from 'node:path'
 import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
@@ -8,7 +9,7 @@ import fastGlob from 'fast-glob'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
-import type { ModuleOptions } from './types/module'
+import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
@@ -23,22 +24,25 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'contentV3',
   },
   defaults: {
-    database: 'builtin',
-    dev: {
-      dataDir: '.data/content',
-      databaseName: 'items.db',
+    database: {
+      type: 'sqlite',
+      filename: '.data/content/local.db',
     },
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    options.dev!.dataDir = join(nuxt.options.rootDir, options.dev!.dataDir!)
-    await mkdir(options.dev!.dataDir, { recursive: true }).catch(() => {})
-    const databaseLocation = join(options.dev!.dataDir, options.dev!.databaseName!)
+    await mkdir(join(nuxt.options.rootDir, '.data/content'), { recursive: true }).catch(() => {})
+    const localDatabase = join(nuxt.options.rootDir, '.data/content/local.db')
+
+    if (options.database.type === 'sqlite') {
+      options.database.filename = join(nuxt.options.rootDir, options.database.filename)
+      await mkdir(dirname(options.database.filename), { recursive: true }).catch(() => {})
+    }
 
     const { collections } = await loadContentConfig(nuxt, { createOnMissing: true })
 
-    const integrityVersion = '0.0.1-' + hash(collections.map(c => c.table).join('-'))
+    const integrityVersion = '0.0.2-' + hash(collections.map(c => c.table).join('-'))
 
     const publicRuntimeConfig = {
       integrityVersion,
@@ -46,10 +50,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     const privateRuntimeConfig = {
       integrityVersion,
-      dev: options.dev,
-      db: options.database,
+      database: options.database,
+      localDatabase: { type: 'sqlite', filename: localDatabase } as SqliteDatabaseConfig,
     }
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
+    // @ts-expect-error - privateRuntimeConfig is not typed
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
@@ -59,7 +64,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules ||= {}
     nuxt.options.routeRules['/api/database'] = { prerender: true }
 
-    addServerHandler({ route: '/api/database', handler: resolver.resolve('./runtime/server/api/database') })
+    addServerHandler({ route: '/api/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
     addServerHandler({ route: '/api/database-decompress', handler: resolver.resolve('./runtime/server/api/database-decompress') })
     // addServerHandler({ handler: resolver.resolve('./runtime/server/middleware/coop'), middleware: true })
 
@@ -104,7 +109,7 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    const dumpGeneratePromise = generateSqlDump(nuxt, collections, databaseLocation, privateRuntimeConfig.integrityVersion)
+    const dumpGeneratePromise = generateSqlDump(nuxt, collections, localDatabase, privateRuntimeConfig.integrityVersion)
       .then((dump) => {
         sqlDump = dump
       })
@@ -114,7 +119,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     if (nuxt.options.dev) {
-      watchContents(nuxt, collections, databaseLocation)
+      watchContents(nuxt, collections, localDatabase)
 
       nuxt.hook('nitro:init', async (nitro) => {
         nitro.storage.watch(async (_event, key) => {
@@ -129,9 +134,9 @@ export default defineNuxtModule<ModuleOptions>({
   },
 })
 
-async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], cacheDatabaseLocation: string, integrityVersion: string) {
+async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], cachelocalDatabase: string, integrityVersion: string) {
   const sqlDumpList: string[] = []
-  const db = localDatabase(cacheDatabaseLocation)
+  const db = localDatabase(cachelocalDatabase)
   const databaseContents = db.fetchDevelopmentCache()
 
   const startTime = performance.now()

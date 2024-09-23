@@ -5,19 +5,22 @@ import { useRuntimeConfig } from '#imports'
 import { collections } from '#content-v3/collections'
 
 export default function useContentDatabase() {
-  const config = useRuntimeConfig().contentv3
+  const { database, localDatabase } = useRuntimeConfig().contentv3
 
   let adapter: DatabaseAdapter
   async function loadAdapter() {
     if (!adapter) {
-      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string) || config.db === 'builtin') {
-        adapter = await createSqliteAdapter()
+      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+        adapter = await createSqliteAdapter(localDatabase)
       }
-      else if (config.db === 'd1') {
-        adapter = await import('./d1').then(m => m.default())
+      else if (database.type === 'd1') {
+        adapter = await import('./d1').then(m => m.default(database))
+      }
+      else if (database.type === 'sqlite') {
+        adapter = await createSqliteAdapter(database)
       }
       else {
-        adapter = await createSqliteAdapter()
+        adapter = await createSqliteAdapter(localDatabase)
       }
     }
     return adapter

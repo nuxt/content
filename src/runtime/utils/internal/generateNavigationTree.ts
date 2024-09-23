@@ -1,4 +1,4 @@
-import type { ContentNavigationItem, PageDocument } from '~/src/types'
+import type { ContentNavigationItem, PageDocument } from '@farnabaz/content-next'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
