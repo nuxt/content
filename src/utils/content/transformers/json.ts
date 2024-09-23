@@ -1,5 +1,4 @@
 import { destr } from 'destr'
-import type { ParsedContent } from '../../../types/content'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({
@@ -29,7 +28,7 @@ export default defineTransformer({
       }
     }
 
-    return <ParsedContent> {
+    return {
       ...parsed,
       body: parsed.body || parsed,
       id,

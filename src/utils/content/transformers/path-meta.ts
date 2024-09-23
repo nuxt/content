@@ -1,7 +1,6 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
-import type { ParsedContent } from '../../../types/content'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^\d+(?:\.\d+)*(?:\.x)?$/
@@ -15,33 +14,19 @@ export default defineTransformer({
   extensions: ['.*'],
   transform(content, options: PathMetaOptions = {}) {
     const { respectPathCase = false } = options
-    const { basename, extension, stem, source } = describeId(content.id)
+    const { basename, extension, stem } = describeId(content.id)
     // Check first part for locale name
     const filePath = generatePath(stem, { respectPathCase })
 
-    return <ParsedContent> {
+    return {
       path: filePath,
-      draft: content.draft ?? isDraft(stem),
-      partial: isPartial(stem),
       ...content,
-      // TODO: move title to Markdown parser
-      title: content.title || generateTitle(refineUrlPart(basename)),
-      source,
+      title: content.title ?? generateTitle(refineUrlPart(basename)),
       stem,
       extension,
     }
   },
 })
-
-/**
- * When file name ends with `.draft` then it will mark as draft.
- */
-const isDraft = (path: string): boolean => !!path.match(/\.draft(\/|\.|$)/)
-
-/**
- * Files or directories that starts with underscore `_` will mark as partial content.
- */
-const isPartial = (path: string): boolean => path.split(/[:/]/).some(part => part.match(/^_.*/))
 
 /**
  * Generate path from file name

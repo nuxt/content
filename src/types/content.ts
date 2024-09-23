@@ -1,5 +1,7 @@
-import type { StorageValue } from 'unstorage'
-import type { LayoutKey } from '#build/types/layouts'
+export interface TransformedContent {
+  id: string
+  [key: string]: unknown
+}
 
 export interface TransformContentOptions {
   transformers?: ContentTransformer[]
@@ -9,13 +11,13 @@ export interface TransformContentOptions {
 export type ContentTransformer = {
   name: string
   extensions: string[]
-  parse(id: string, content: StorageValue, options: Record<string, unknown>): Promise<ParsedContent> | ParsedContent
-  transform?(content: ParsedContent, options: Record<string, unknown>): Promise<ParsedContent> | ParsedContent
+  parse(id: string, content: string, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
+  transform?(content: TransformedContent, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
 } | {
   name: string
   extensions: string[]
-  parse?(id: string, content: StorageValue, options: Record<string, unknown>): Promise<ParsedContent> | ParsedContent
-  transform(content: ParsedContent, options: Record<string, unknown>): Promise<ParsedContent> | ParsedContent
+  parse?(id: string, content: string, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
+  transform(content: TransformedContent, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
 }
 
 export interface MarkdownPlugin extends Record<string, unknown> {
@@ -90,67 +92,4 @@ export interface MarkdownRoot {
   children: MarkdownNode[]
   props?: Record<string, unknown>
   toc?: Toc
-}
-
-export interface ParsedContentInternalMeta {
-  /**
-   * Content id
-   */
-  id: string
-  /**
-   * Content source
-   */
-  _source?: string
-  /**
-   * Content path, this path is source agnostic and it the content my live in any source
-   */
-  path?: string
-  /**
-   * Content title
-   */
-  title?: string
-  /**
-   * Content draft status
-   */
-  _draft?: boolean
-  /**
-   * Content partial status
-   */
-  _partial?: boolean
-  /**
-   * Content locale
-   */
-  _locale?: string
-  /**
-   * File type of the content, i.e `markdown`
-   */
-  _type?: typeof ContentFileType[keyof typeof ContentFileType]
-  /**
-   * Path to the file relative to the content directory
-   */
-  stem?: string
-  /**
-   * Extension of the file
-   */
-  _extension?: typeof ContentFileExtension[keyof typeof ContentFileExtension]
-}
-
-export interface ParsedContentMeta extends ParsedContentInternalMeta {
-  /**
-   * Layout
-   */
-  layout?: LayoutKey
-
-  [key: string]: unknown
-}
-
-export interface ParsedContent extends ParsedContentMeta {
-  /**
-   * Excerpt
-   */
-  excerpt?: MarkdownRoot
-  /**
-   * Content body
-   */
-  body: MarkdownRoot | null
 }

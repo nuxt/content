@@ -1,5 +1,4 @@
 import { parseFrontMatter } from 'remark-mdc'
-import type { ParsedContent } from '../../../types/content'
 import { defineTransformer } from './utils'
 
 export default defineTransformer({
@@ -15,7 +14,7 @@ export default defineTransformer({
       parsed = { body: data }
     }
 
-    return <ParsedContent> {
+    return {
       ...parsed,
       body: parsed.body || parsed,
       id,

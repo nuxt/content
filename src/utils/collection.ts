@@ -6,6 +6,8 @@ import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes } from './zod'
 
+const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion']
+
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
   let schema = collection.schema || z.object({})
   if (collection.type === 'page') {
@@ -43,7 +45,7 @@ export function resolveCollections(collections: Record<string, DefinedCollection
         path: typeof collection.schema.shape.path !== 'undefined',
       },
       jsonFields: Object.keys(collection.schema.shape || {})
-        .filter(key => ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection']
+        .filter(key => JSON_FIELDS_TYPES
           .includes(getUnderlyingType(collection.schema.shape[key]).constructor.name)),
     }
   })
@@ -110,11 +112,11 @@ export function generateCollectionTableDefinition(name: string, collection: Defi
     const underlyingType = getUnderlyingType(zodType)
 
     // Convert nested objects to TEXT
-    if (['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection'].includes(underlyingType.constructor.name)) {
+    if (JSON_FIELDS_TYPES.includes(underlyingType.constructor.name)) {
       return `${key} TEXT`
     }
 
-    if (key === 'id') return `${key} TEXT PRIMARY KEY`
+    if (key === 'contentId') return `${key} TEXT PRIMARY KEY`
 
     let sqlType = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
     if (!sqlType) throw new Error(`Unsupported Zod type: ${underlyingType.constructor.name}`)

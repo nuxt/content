@@ -36,7 +36,7 @@ export async function parseContent(key: string, content: string, collection: Res
     },
   })
 
-  const result = { id: parsedContent.id } as Record<string, unknown>
+  const result = { contentId: parsedContent.id } as Record<string, unknown>
   const meta = {} as Record<string, unknown>
 
   result.weight = String(result.stem || '')

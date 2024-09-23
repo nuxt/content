@@ -1,7 +1,6 @@
 // @ts-nocheck
 // TODO: fix types
 import { unified } from 'unified'
-import type { ParsedContent } from '../../../../types/content'
 import { defineTransformer } from '../utils'
 import { fromCSV } from './from-csv'
 
@@ -53,9 +52,8 @@ export default defineTransformer({
     })
     const { result } = await stream.process(content)
 
-    return <ParsedContent> {
-      _id,
-      _type: 'csv',
+    return {
+      id,
       body: result,
     }
   },

@@ -1,14 +1,13 @@
 import { z, type ZodTypeAny } from 'zod'
-import { ContentFileExtension, ContentFileType } from '../types/content'
+import { ContentFileExtension } from '../types/content'
 import { getEnumValues } from './zod'
 
 export const metaSchema = z.object({
-  id: z.string(),
+  contentId: z.string(),
   weight: z.string(),
   stem: z.string(),
   extension: z.enum(getEnumValues(ContentFileExtension)),
-  meta: z.object<Record<string, ZodTypeAny>>({
-  }),
+  meta: z.object<Record<string, ZodTypeAny>>({}),
 })
 
 export const pageSchema = z.object({
@@ -27,15 +26,12 @@ export const pageSchema = z.object({
     children: z.any(),
     toc: z.any(),
   }),
-  navigation: z.boolean().default(true),
-})
-
-// TODO
-export const contentSchema = z.object({
-  dir: z.string(),
-  draft: z.boolean().default(false),
-  partial: z.boolean().default(false),
-  locale: z.string(),
-  type: z.enum(getEnumValues(ContentFileType)),
-  source: z.string(),
+  navigation: z.union([
+    z.boolean(),
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      icon: z.string(),
+    }),
+  ]).default(true),
 })

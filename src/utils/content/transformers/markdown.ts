@@ -4,7 +4,7 @@ import { normalizeUri } from 'micromark-util-sanitize-uri'
 import { type Properties, type Element } from 'hast'
 import { type Link } from 'mdast'
 import { isRelative } from 'ufo'
-import type { MarkdownOptions, MarkdownPlugin, ParsedContent } from '../../../types/content'
+import type { MarkdownOptions, MarkdownPlugin } from '../../../types/content'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
 
@@ -37,14 +37,13 @@ export default defineTransformer({
       },
     })
 
-    return <ParsedContent>{
+    return {
       ...parsed.data,
       excerpt: parsed.excerpt,
       body: {
         ...parsed.body,
         toc: parsed.toc,
       },
-      type: 'markdown',
       id,
     }
   },

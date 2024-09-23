@@ -28,7 +28,7 @@ export function generateNavigationTree(contents: PageDocument[], configs: Record
         ...pickNavigationFields(content),
       })
 
-      // Create navigation item from ParsedContent
+      // Create navigation item from content
       const navItem: ContentNavigationItem = getNavItem(content)
 
       // Push index
