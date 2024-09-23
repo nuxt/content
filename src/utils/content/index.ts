@@ -39,12 +39,6 @@ export async function parseContent(key: string, content: string, collection: Res
   const result = { contentId: parsedContent.id } as Record<string, unknown>
   const meta = {} as Record<string, unknown>
 
-  result.weight = String(result.stem || '')
-    .split('/')
-    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9'))
-    .join('')
-    .padEnd(9, '9')
-
   const collectionKeys = Object.keys(collection.schema.shape)
   for (const key of Object.keys(parsedContent)) {
     if (collectionKeys.includes(key)) {
@@ -56,6 +50,13 @@ export async function parseContent(key: string, content: string, collection: Res
   }
 
   result.meta = meta
+
+  result.weight = String(result.stem || '')
+    .split('/')
+    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9'))
+    .join('')
+    .padEnd(12, '9')
+    .slice(0, 12)
 
   return result
 }
