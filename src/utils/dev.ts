@@ -81,6 +81,7 @@ export function localDatabase(databaseLocation: string) {
     insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
       _localDatabase!.exec(`INSERT OR REPLACE INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
     },
+    database: _localDatabase!,
     exec: (sql: string) => {
       _localDatabase!.exec(sql)
     },
@@ -91,13 +92,13 @@ export function localDatabase(databaseLocation: string) {
   }
 }
 
-export async function generateInitialFiles(nuxt: Nuxt) {
+export async function generateInitialFiles(root: string) {
   // Don't generate initial files if `nuxi prepare` executed on module root
-  if (process.env.npm_package_name === '@farnabaz/content-next') {
+  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@farnabaz/content-next') {
     return
   }
 
-  const configPath = join(nuxt.options.rootDir, 'content.config.ts')
+  const configPath = join(root, 'content.config.ts')
   await writeFile(
     configPath,
     [
@@ -113,10 +114,10 @@ export async function generateInitialFiles(nuxt: Nuxt) {
     ].join('\n'),
   )
   // Create pages directory
-  await mkdir(join(nuxt.options.rootDir, 'content', 'pages'), { recursive: true }).catch(() => {})
+  await mkdir(join(root, 'content', 'pages'), { recursive: true }).catch(() => {})
 
   await writeFile(
-    join(nuxt.options.rootDir, 'content', 'pages', 'index.md'),
+    join(root, 'content', 'pages', 'index.md'),
     [
       '---',
       'title: Home',

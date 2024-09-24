@@ -40,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>({
       await mkdir(dirname(options.database.filename), { recursive: true }).catch(() => {})
     }
 
-    const { collections } = await loadContentConfig(nuxt, { createOnMissing: true })
+    const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
 
     const integrityVersion = '0.0.2-' + hash(collections.map(c => c.table).join('-'))
 
