@@ -4,6 +4,6 @@ export default defineNuxtPlugin(() => {
   window.benchmark = {
     downloadCompressedDump: true,
     cacheInLocalStorage: true,
-    reinitiateDatabase: true,
+    reinitiateDatabase: false,
   }
 })

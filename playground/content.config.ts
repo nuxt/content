@@ -4,14 +4,16 @@ import { defineCollection } from '@farnabaz/content-next'
 const content = defineCollection({
   type: 'page',
   source: {
-    driver: 'fs',
-    base: '**',
+    path: '**',
     ignore: [
       'data/**',
       'pages/**',
       'nuxt-content/**',
     ],
   },
+  schema: z.object({
+    date: z.date(),
+  }),
 })
 
 const data = defineCollection({
@@ -19,6 +21,7 @@ const data = defineCollection({
   source: 'data/**',
   schema: z.object({
     path: z.string(),
+    to: z.string(),
     company: z.string(),
     domain: z.array(z.string()),
     tutorial: z.array(
@@ -43,8 +46,7 @@ const pages = defineCollection({
 const nuxt_content = defineCollection({
   type: 'page',
   source: {
-    driver: 'fs',
-    base: 'nuxt-content/**',
+    path: 'nuxt-content/**',
     prefix: '/nuxt-content',
   },
 })

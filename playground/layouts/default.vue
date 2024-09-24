@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const { data } = await useAsyncData('contents-list', () => getCollectionNavigation('content'))
 const links = computed(() => {
-  console.log(data.value)
-
   return data.value?.flatMap(item => ([
     {
       label: item.title,
