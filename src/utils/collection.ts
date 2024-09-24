@@ -82,21 +82,23 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
   Object.entries((collection.schema).shape).forEach(([key, value]) => {
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
+    const defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
+
     fields.push(key)
     if ((collection.jsonFields || []).includes(key)) {
-      values.push(data[key] ? `'${JSON.stringify(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
+      values.push(data[key] ? `'${JSON.stringify(data[key]).replace(/'/g, '\'\'')}'` : defaultValue)
     }
     else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
-      values.push(data[key] ? `'${String(data[key]).replace(/'/g, '\'\'')}'` : 'NULL')
+      values.push(data[key] ? `'${String(data[key]).replace(/'/g, '\'\'')}'` : defaultValue)
     }
     else if (['ZodDate'].includes(underlyingType.constructor.name)) {
-      values.push(data[key] ? `'${new Date(data[key] as string).toISOString()}'` : 'NULL')
+      values.push(data[key] ? `'${new Date(data[key] as string).toISOString()}'` : defaultValue)
     }
     else if (underlyingType.constructor.name === 'ZodBoolean') {
       values.push(data[key] ? true : false)
     }
     else {
-      values.push(data[key] ? data[key] as string | number | boolean : 'NULL')
+      values.push(data[key] ? data[key] as string | number | boolean : defaultValue)
     }
   })
 
