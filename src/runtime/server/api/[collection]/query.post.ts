@@ -2,6 +2,7 @@ import { eventHandler, readValidatedBody, getRouterParam } from 'h3'
 import { z } from 'zod'
 import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
+import { loadDatabaseDump } from '../../../utils/internal/app'
 import { useRuntimeConfig } from '#imports'
 
 let checkDatabaseIntegrity = true
@@ -43,10 +44,7 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
     await db.exec(`DELETE FROM _info WHERE version = '${before.version}'`)
   }
 
-  // @ts-expect-error - Vite doesn't know about the import
-  const dump = await import('#content-v3/dump' /* @vite-ignore */)
-    .then(m => m.default)
-    .then(decompressSQLDump)
+  const dump = await loadDatabaseDump().then(decompressSQLDump)
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev

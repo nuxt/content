@@ -1,8 +1,8 @@
 import { parseJsonFields } from '../../utils/internal/parseJsonFields'
+import { getCollectionInfo } from '../../utils/internal/app'
 import createSqliteAdapter from './sqlite'
 import type { DatabaseAdapter } from './factory'
 import { useRuntimeConfig } from '#imports'
-import { collections } from '#content-v3/collections'
 
 export default function useContentDatabase() {
   const { database, localDatabase } = useRuntimeConfig().contentv3
@@ -14,7 +14,7 @@ export default function useContentDatabase() {
         adapter = await createSqliteAdapter(localDatabase)
       }
       else if (database.type === 'd1') {
-        adapter = await import('./d1').then(m => m.default(database))
+        adapter = await import('./d1').then(m => m.default(database as unknown as { binding: string }))
       }
       else if (database.type === 'sqlite') {
         adapter = await createSqliteAdapter(database)
@@ -31,7 +31,8 @@ export default function useContentDatabase() {
     if (!table) {
       return []
     }
-    return collections.find((c: { name: string }) => c.name === table[1])?.jsonFields || []
+    // return collections.find((c: { name: string }) => c.name === table[1])?.jsonFields || []
+    return getCollectionInfo(table[1])?.jsonFields || []
   }
 
   return <DatabaseAdapter>{

@@ -29,10 +29,15 @@ export function contentTypesTemplate({ options }: { options: { collections: Reso
 }
 
 export function collectionsTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
-  return 'export const collections = ' + JSON.stringify(options.collections.map(c => ({
-    name: c.name,
-    pascalName: c.pascalName,
-    jsonFields: c.jsonFields,
-    schema: zodToJsonSchema(c.schema, c.name),
-  })), null, 2)
+  const collectionsMeta = options.collections.map(c => [
+    c.name,
+    {
+      name: c.name,
+      pascalName: c.pascalName,
+      type: c.type,
+      schema: zodToJsonSchema(c.schema, c.name),
+      jsonFields: c.jsonFields,
+    },
+  ])
+  return 'export const collections = ' + JSON.stringify(Object.fromEntries(collectionsMeta), null, 2)
 }

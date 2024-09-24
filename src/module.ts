@@ -61,11 +61,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
-    nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/database.json'] = { prerender: true }
-
     addServerHandler({ route: '/api/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
     addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
+
+    nuxt.options.routeRules ||= {}
+    nuxt.options.routeRules['/api/database.json'] = { prerender: true }
 
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
@@ -82,8 +82,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Types template
     addTypeTemplate({ filename: 'content/types.d.ts', getContents: contentTypesTemplate, options: { collections } })
 
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    nuxt.options.nitro.alias['#content-v3/collections'] = addTemplate({
+    const collectionsDst = addTemplate({
       filename: 'content/collections.mjs',
       getContents: collectionsTemplate,
       options: { collections },
@@ -91,12 +90,17 @@ export default defineNuxtModule<ModuleOptions>({
     }).dst
 
     let sqlDump: string[] = []
-    nuxt.options.nitro.alias['#content-v3/dump'] = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
+    const dumpDst = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
       const compressed = deflate(JSON.stringify(sqlDump))
 
       const str = Buffer.from(compressed.buffer).toString('base64')
       return `export default "${str}"`
     }, write: true }).dst
+
+    // Add aliases
+    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
+    nuxt.options.nitro.alias['#content-v3/collections'] = collectionsDst
+    nuxt.options.nitro.alias['#content-v3/dump'] = dumpDst
 
     // Install mdc module
     await installModule('@nuxtjs/mdc')

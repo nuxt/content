@@ -1,4 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod'
+import type { JsonSchema7Type } from 'zod-to-json-schema'
 
 export interface PageCollections {
 }
@@ -51,6 +52,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
 export interface CollectionInfo {
   name: string
   pascalName: string
-  jsonFields: string[]
   type: CollectionType
+  schema: JsonSchema7Type
+  jsonFields: string[]
 }

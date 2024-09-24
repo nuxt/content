@@ -5,6 +5,7 @@ let db: D1Database
 export default createDatabaseAdapter<{ binding: string }>((opts) => {
   const binding = opts?.binding || 'DB'
   if (!db) {
+    // @ts-expect-error - D1 doesn't have a global variable
     db = process.env?.[binding] || globalThis.__env__?.[binding] || globalThis?.[binding]
   }
 
