@@ -81,7 +81,6 @@ export function localDatabase(databaseLocation: string) {
     insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
       _localDatabase!.exec(`INSERT OR REPLACE INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
     },
-    database: _localDatabase!,
     exec: (sql: string) => {
       _localDatabase!.exec(sql)
     },

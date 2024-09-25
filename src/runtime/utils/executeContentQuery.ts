@@ -86,26 +86,13 @@ async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: 
   }
 
   const jsonFields = collections?.[collection]?.jsonFields || ['body', 'meta'] as string[]
-  const res = await new Promise((resolve, reject) => {
-    db.exec({
-      sql,
-      rowMode: 'object',
-      // @ts-expect-error Types are mixed up
-      returnValue: 'resultRows',
-      // @ts-expect-error Types are mixed up
-      callback(rows: T | T[]) {
-        if (!Array.isArray(rows)) {
-          rows = [rows]
-        }
+  const rows = db
+    .exec({ sql, rowMode: 'object', returnValue: 'resultRows' })
+    .map(row => parseJsonFields(row, jsonFields))
 
-        resolve(rows.map(row => parseJsonFields(row, jsonFields)))
-      },
-      error: err => reject(err),
-    })
-  })
   perf.tick('Execute Query')
 
   console.log(perf.end('Run with Compressed Dump'))
 
-  return res as T[]
+  return rows as T[]
 }
