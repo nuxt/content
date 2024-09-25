@@ -1,6 +1,6 @@
 {
   "name": "@farnabaz/content-next",
-  "version": "1.27.0",
+  "version": "1.35.0",
   "description": "My new Nuxt module",
   "repository": "your-org/my-module",
   "license": "MIT",
@@ -65,6 +65,7 @@
     "@nuxt/schema": "^3.12.4",
     "@nuxt/test-utils": "^3.14.0",
     "@nuxt/ui": "^2.18.4",
+    "@nuxt/ui-pro": "^1.4.3",
     "@nuxthub/core": "^0.7.18",
     "@types/better-sqlite3": "^7.6.11",
     "@types/micromatch": "^4.0.9",

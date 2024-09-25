@@ -69,12 +69,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
+      { name: 'getCollectionSearchSections', from: resolver.resolve('./runtime/utils/getCollectionSearchSections') },
       { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getSurroundingCollectionItems') },
     ])
 
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
+      { name: 'getCollectionSearchSections', from: resolver.resolve('./runtime/utils/getCollectionSearchSections') },
       { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
       { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
     ])

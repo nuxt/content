@@ -47,7 +47,7 @@ const nuxt_content = defineCollection({
   type: 'page',
   source: {
     path: 'nuxt-content/**',
-    prefix: '/nuxt-content',
+    prefix: '/docs',
   },
 })
 
