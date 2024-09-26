@@ -1,5 +1,5 @@
 ---
-title: "Home Page"
+title: Home
 ---
 
-# Hello
+Welcome to Nuxt Content!
