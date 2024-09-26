@@ -39,6 +39,7 @@
     "consola": "^3.2.3",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.2",
+    "jiti": "^2.0.0",
     "json5": "^2.2.3",
     "mdast-util-to-hast": "^13.2.0",
     "mdast-util-to-string": "^4.0.0",
