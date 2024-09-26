@@ -1,5 +1,4 @@
-import { z } from 'zod'
-import { defineCollection } from '@farnabaz/content-next'
+import { defineCollection, z } from '@farnabaz/content-next'
 
 const content = defineCollection({
   type: 'page',

@@ -14,8 +14,8 @@ import { getContentChecksum, localDatabase, logger, watchContents, chunks } from
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
 
-export * from './utils/collection'
-export * from './utils/schema'
+// Export public utils
+export * from './utils'
 export type * from './types'
 
 export default defineNuxtModule<ModuleOptions>({

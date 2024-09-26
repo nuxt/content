@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: corepack enable
+      - run: pnpm install
+      - run: pnpm dev:prepare
+      - run: pnpm lint
+      - run: pnpm prepack
+      - run: pnpm test
+      - name: Release Nightly
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: pnpm changelogen --bump --canary --publish --publishTag nightly
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

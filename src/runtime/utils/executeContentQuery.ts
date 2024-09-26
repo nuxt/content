@@ -47,7 +47,6 @@ async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: 
     }
 
     perf.tick('Get Local Cache')
-    console.log(!compressedDump, collections)
     if (!compressedDump || !collections) {
       const response = await $fetch('/api/database.json', {
         headers: { 'content-type': 'application/json' },
@@ -55,7 +54,6 @@ async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: 
       })
       compressedDump = response.dump
       collections = response.collections
-      console.log({ collection })
 
       perf.tick('Download Database')
       if (window.benchmark?.cacheInLocalStorage) {

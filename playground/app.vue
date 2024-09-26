@@ -18,7 +18,6 @@ const files = await queryCollection('nuxt_content').all().then(files => files.ma
   _id: file.contentId,
   _path: file.path,
 })))
-console.log({ files })
 
 const links = [{
   label: 'Home',

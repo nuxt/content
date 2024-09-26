@@ -1,14 +1,17 @@
 import type { ZodType, ZodOptionalDef } from 'zod'
+import { z as zod } from 'zod'
 
 export type ZodFieldType = 'ZodString' | 'ZodNumber' | 'ZodBoolean' | 'ZodDate' | 'ZodEnum'
 export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
+
+export const z = zod
 
 export const ZodToSqlFieldTypes: Record<ZodFieldType, SqlFieldType> = {
   ZodString: 'VARCHAR',
   ZodNumber: 'INT',
   ZodBoolean: 'BOOLEAN',
   ZodDate: 'DATE',
-  ZodEnum: 'TEXT',
+  ZodEnum: 'VARCHAR',
 } as const
 
 export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
