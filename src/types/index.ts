@@ -1,4 +1,6 @@
 export * from './collection'
 export * from './module'
 export * from './navigation'
+export * from './surround'
 export * from './query'
+export * from './content'

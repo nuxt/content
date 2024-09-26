@@ -23,10 +23,10 @@ describe('defineCollection', () => {
       },
     })
 
-    expect(collection.schema.shape).ownProperty('title')
+    expect(collection.schema.shape).not.ownProperty('title')
 
-    expectProperties(collection.schema.shape, metaFields)
-    expectProperties(collection.schema.shape, pageFields)
+    expectProperties(collection.extendedSchema.shape, metaFields)
+    expectProperties(collection.extendedSchema.shape, pageFields)
   })
 
   test('Page with custom schema', () => {
@@ -38,11 +38,11 @@ describe('defineCollection', () => {
       }),
     })
 
-    expect(collection.schema.shape).ownProperty('title')
-    expect(collection.schema.shape).toHaveProperty('customField')
+    expect(collection.schema.shape).ownProperty('customField')
+    expect(collection.extendedSchema.shape).toHaveProperty('customField')
 
-    expectProperties(collection.schema.shape, metaFields)
-    expectProperties(collection.schema.shape, pageFields)
+    expectProperties(collection.extendedSchema.shape, metaFields)
+    expectProperties(collection.extendedSchema.shape, pageFields)
   })
 
   test('Page with object source', () => {
@@ -67,7 +67,10 @@ describe('defineCollection', () => {
       },
     })
 
-    expectProperties(collection.schema.shape, pageFields)
+    expect(collection.schema.shape).ownProperty('customField')
+    expect(collection.extendedSchema.shape).toHaveProperty('customField')
+
+    expectProperties(collection.extendedSchema.shape, pageFields)
   })
 
   test('Data with schema', () => {
@@ -88,9 +91,10 @@ describe('defineCollection', () => {
     })
 
     expect(collection.schema.shape).toHaveProperty('customField')
+    expect(collection.extendedSchema.shape).toHaveProperty('customField')
     expect(collection.schema.shape).not.toHaveProperty('title')
 
-    expectProperties(collection.schema.shape, metaFields)
+    expectProperties(collection.extendedSchema.shape, metaFields)
   })
 
   test('Data with object source', () => {

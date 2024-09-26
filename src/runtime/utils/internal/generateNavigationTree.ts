@@ -1,12 +1,12 @@
-import type { ContentNavigationItem, PageDocument } from '@farnabaz/content-next'
+import type { ContentNavigationItem, PageCollectionItemBase } from '../../../types'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export function generateNavigationTree(contents: PageDocument[], configs: Record<string, PageDocument>, extraFields: string[] = []) {
+export function generateNavigationTree(contents: PageCollectionItemBase[], configs: Record<string, PageCollectionItemBase>, extraFields: string[] = []) {
   // Navigation fields picker
-  const pickNavigationFields = (content: PageDocument) => ({
-    ...pick(['title', ...extraFields])(content),
+  const pickNavigationFields = (content: PageCollectionItemBase) => ({
+    ...pick(['title', ...extraFields])(content as unknown as Record<string, unknown>),
     ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
   })
 
@@ -20,7 +20,7 @@ export function generateNavigationTree(contents: PageDocument[], configs: Record
       // Check if node is `*:index.md`
       const isIndex = !!idParts[idParts.length - 1]?.match(/([1-9]\d*\.)?index/g)
 
-      const getNavItem = (content: PageDocument) => ({
+      const getNavItem = (content: PageCollectionItemBase) => ({
         title: content.title,
         path: content.path,
         stem: content.stem,

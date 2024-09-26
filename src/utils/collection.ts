@@ -18,7 +18,8 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
   return {
     type: collection.type,
     source: refineSource(collection.source),
-    schema,
+    schema: collection.schema || z.object({}),
+    extendedSchema: schema,
   }
 }
 
@@ -35,9 +36,9 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
       body: typeof collection.schema.shape.body !== 'undefined',
       path: typeof collection.schema.shape.path !== 'undefined',
     },
-    jsonFields: Object.keys(collection.schema.shape || {})
+    jsonFields: Object.keys(collection.extendedSchema.shape || {})
       .filter(key => JSON_FIELDS_TYPES
-        .includes(getUnderlyingType(collection.schema.shape[key]).constructor.name)),
+        .includes(getUnderlyingType(collection.extendedSchema.shape[key]).constructor.name)),
   }
 }
 
@@ -80,7 +81,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
 
-  Object.entries((collection.schema).shape).forEach(([key, value]) => {
+  Object.entries((collection.extendedSchema).shape).forEach(([key, value]) => {
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
     const defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
@@ -112,7 +113,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(name: string, collection: DefinedCollection) {
-  const sqlFields = Object.entries(collection.schema.shape).map(([key, zodType]) => {
+  const sqlFields = Object.entries(collection.extendedSchema.shape).map(([key, zodType]) => {
     const underlyingType = getUnderlyingType(zodType)
 
     if (key === 'contentId') return `${key} TEXT PRIMARY KEY`

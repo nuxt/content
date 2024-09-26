@@ -1,4 +1,5 @@
-import type { CollectionQueryBuilder, SQLOperator, Collections } from '@farnabaz/content-next'
+import type { Collections } from '@farnabaz/content-next'
+import type { CollectionQueryBuilder, SQLOperator } from '../../types'
 import { executeContentQuery } from './executeContentQuery'
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {

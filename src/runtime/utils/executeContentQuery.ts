@@ -53,7 +53,7 @@ async function queryContentSqlClientWasm<T>(collection: keyof Collections, sql: 
         query: { v: config.integrityVersion },
       })
       compressedDump = response.dump
-      collections = response.collections
+      collections = response.collections as unknown as Record<string, { jsonFields: string[] }>
 
       perf.tick('Download Database')
       if (window.benchmark?.cacheInLocalStorage) {

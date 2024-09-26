@@ -1,4 +1,4 @@
-import type { PageCollections, MarkdownNode } from '@farnabaz/content-next'
+import type { MarkdownNode, MarkdownRoot } from '../../../types'
 
 type Section = {
   // Path to the section
@@ -16,7 +16,14 @@ type Section = {
 const HEADING = /^h([1-6])$/
 const isHeading = (tag: string) => HEADING.test(tag)
 
-export function splitPageIntoSections<T extends keyof PageCollections>(collection: T, page: PageCollections[T], { ignoredTags }: { ignoredTags: string[] }) {
+interface SectionablePage {
+  path: string
+  title: string
+  description: string
+  body: MarkdownRoot
+}
+
+export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
   const path = (page.path ?? '')
 
   // TODO: title in frontmatter must be added

@@ -1,10 +1,9 @@
 import type { ZodObject, ZodRawShape } from 'zod'
 import type { JsonSchema7Type } from 'zod-to-json-schema'
+import type { MarkdownRoot } from './content'
 
-export interface PageCollections {
-}
-export interface Collections {
-}
+export interface PageCollections {}
+export interface Collections {}
 
 export type CollectionType = 'page' | 'data'
 
@@ -32,6 +31,7 @@ export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
   source: CollectionSource | undefined
   schema: ZodObject<T>
+  extendedSchema: ZodObject<T>
 }
 
 export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
@@ -40,6 +40,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
   source: CollectionSource | undefined
   schema: ZodObject<T>
+  extendedSchema: ZodObject<T>
   table: string
   generatedFields: {
     raw: boolean
@@ -56,3 +57,31 @@ export interface CollectionInfo {
   schema: JsonSchema7Type
   jsonFields: string[]
 }
+
+export interface CollectionItemBase {
+  contentId: string
+  weight: string
+  stem: string
+  extension: string
+  meta: Record<string, unknown>
+}
+
+export interface PageCollectionItemBase extends CollectionItemBase {
+  path: string
+  title: string
+  description: string
+  seo?: {
+    title: string
+    description: string
+
+    [key: string]: unknown
+  }
+  body: MarkdownRoot
+  navigation?: boolean | {
+    title: string
+    description: string
+    icon: string
+  }
+}
+
+export interface DataCollectionItemBase extends CollectionItemBase {}

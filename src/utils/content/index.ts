@@ -39,7 +39,7 @@ export async function parseContent(key: string, content: string, collection: Res
   const result = { contentId: parsedContent.id } as Record<string, unknown>
   const meta = {} as Record<string, unknown>
 
-  const collectionKeys = Object.keys(collection.schema.shape)
+  const collectionKeys = Object.keys(collection.extendedSchema.shape)
   for (const key of Object.keys(parsedContent)) {
     if (collectionKeys.includes(key)) {
       result[key] = parsedContent[key]

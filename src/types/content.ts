@@ -24,6 +24,7 @@ export interface MarkdownPlugin extends Record<string, unknown> {
   instance?: unknown
   options?: Record<string, unknown>
 }
+
 export interface MarkdownOptions {
   /**
    * Enable/Disable MDC components.

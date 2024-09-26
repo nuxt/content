@@ -10,10 +10,14 @@ function indentLines(str: string, indent: number = 2) {
 export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
   const publicCollections = options.collections.filter(c => c.name !== '_info')
   const pagesCollections = publicCollections.filter(c => c.type === 'page')
+
+  const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
   return [
+    'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@farnabaz/content-next\'',
+    '',
     'declare module \'@farnabaz/content-next\' {',
     ...publicCollections.map(c =>
-      indentLines(`type ${c.pascalName}CollectionItem = ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
+      indentLines(`interface ${c.pascalName}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
     ),
     '',
     '  interface PageCollections {',
@@ -35,7 +39,7 @@ export function collectionsTemplate({ options }: { options: { collections: Resol
       name: c.name,
       pascalName: c.pascalName,
       type: c.type,
-      schema: zodToJsonSchema(c.schema, c.name),
+      schema: zodToJsonSchema(c.extendedSchema, c.name),
       jsonFields: c.jsonFields,
     },
   ])
