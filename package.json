@@ -1,6 +1,6 @@
 {
   "name": "@farnabaz/content-next",
-  "version": "3.1.0-1727351883.9a4bb74",
+  "version": "3.0.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -8,7 +8,10 @@
     "content",
     "module"
   ],
-  "repository": "nuxt/content",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuxt/content.git"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
