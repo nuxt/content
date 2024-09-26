@@ -3,11 +3,15 @@ import type { ContentNavigationItem } from '@farnabaz/content-next'
  * Find first child link from a navigation node.
  */
 const navBottomLink = (link: ContentNavigationItem): string | undefined => {
-  if (!link.children) { return link._path }
+  if (!link.children) {
+    return link._path
+  }
 
   for (const child of link?.children || []) {
     const result = navBottomLink(child)
-    if (result) { return result }
+    if (result) {
+      return result
+    }
   }
 }
 
@@ -16,11 +20,15 @@ const navBottomLink = (link: ContentNavigationItem): string | undefined => {
  */
 const navDirFromPath = (path: string, tree: ContentNavigationItem[]): ContentNavigationItem[] | undefined => {
   for (const file of tree) {
-    if (file._path === path && !file._id) { return file.children }
+    if (file._path === path && !file._id) {
+      return file.children
+    }
 
     if (file.children) {
       const result = navDirFromPath(path, file.children)
-      if (result) { return result }
+      if (result) {
+        return result
+      }
     }
   }
 }
@@ -30,11 +38,15 @@ const navDirFromPath = (path: string, tree: ContentNavigationItem[]): ContentNav
  */
 const navPageFromPath = (path: string, tree: ContentNavigationItem[]): ContentNavigationItem | undefined => {
   for (const file of tree) {
-    if (file._path === path) { return file }
+    if (file._path === path) {
+      return file
+    }
 
     if (file.children) {
       const result = navPageFromPath(path, file.children)
-      if (result) { return result }
+      if (result) {
+        return result
+      }
     }
   }
 }
@@ -43,7 +55,7 @@ const navPageFromPath = (path: string, tree: ContentNavigationItem[]): ContentNa
  * Find a navigation field node from a path.
  */
 const navKeyFromPath = (path: string, key: string, tree: ContentNavigationItem[]) => {
-  let value: any
+  let value: unknown
 
   const goDeep = (path: string, tree: ContentNavigationItem[]) => {
     for (const file of tree) {
@@ -51,11 +63,17 @@ const navKeyFromPath = (path: string, key: string, tree: ContentNavigationItem[]
         // Ignore root page
         continue
       }
-      if (path?.startsWith(file._path) && file[key]) { value = file[key] }
+      if (path?.startsWith(file._path) && file[key]) {
+        value = file[key]
+      }
 
-      if (file._path === path) { return }
+      if (file._path === path) {
+        return
+      }
 
-      if (file.children) { goDeep(path, file.children) }
+      if (file.children) {
+        goDeep(path, file.children)
+      }
     }
   }
 
