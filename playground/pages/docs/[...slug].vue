@@ -8,7 +8,7 @@ const { data } = await useAsyncData('posts' + route.path, async () => {
 })
 
 const { data: surround } = await useAsyncData('docs-surround' + route.path, () => {
-  return getSurroundingCollectionItems('nuxt_content', route.path, {
+  return getCollectionItemSurroundings('nuxt_content', route.path, {
     before: 1,
     after: 1,
     fields: ['title', 'description'],

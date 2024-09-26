@@ -67,19 +67,15 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules ||= {}
     nuxt.options.routeRules['/api/database.json'] = { prerender: true }
 
-    addImports([
+    // Helpers are designed to be enviroment agnostic
+    const autoImports = [
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
       { name: 'getCollectionSearchSections', from: resolver.resolve('./runtime/utils/getCollectionSearchSections') },
       { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
-      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getSurroundingCollectionItems') },
-    ])
-
-    addServerImports([
-      { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
-      { name: 'getCollectionSearchSections', from: resolver.resolve('./runtime/utils/getCollectionSearchSections') },
-      { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
-      { name: 'getSurroundingCollectionItems', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
-    ])
+      { name: 'getCollectionItemSurroundings', from: resolver.resolve('./runtime/utils/getCollectionItemSurroundings') },
+    ]
+    addImports(autoImports)
+    addServerImports(autoImports)
 
     // Types template
     addTypeTemplate({ filename: 'content/types.d.ts', getContents: contentTypesTemplate, options: { collections } })

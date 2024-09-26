@@ -1,7 +1,8 @@
-import type { PageCollections, ContentNavigationItem, SurroundOptions } from '@farnabaz/content-next'
+import type { PageCollections } from '@farnabaz/content-next'
+import type { ContentNavigationItem, SurroundOptions } from '../../types'
 import { getCollectionNavigation } from './getCollectionNavigation'
 
-export async function getSurroundingCollectionItems<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export async function getCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
   const { before = 1, after = 1, fields = [] } = opts || {}
   const navigation = await getCollectionNavigation(collection, fields)
 
