@@ -1,7 +1,6 @@
-import { defineNitroPlugin } from 'nitropack/runtime'
 import type { WatchEvent } from 'unstorage';
 // @ts-expect-error
-import { useStorage } from '#imports'
+import { useStorage, defineNitroPlugin } from '#imports'
 
 export default defineNitroPlugin(async (nitro) => {
   const { cleanCachedContents } = await import('../storage')
