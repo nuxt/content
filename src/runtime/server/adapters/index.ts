@@ -37,7 +37,9 @@ export default function useContentDatabase() {
 
   return <DatabaseAdapter>{
     all: async (sql, params) => {
-      !adapter && (await loadAdapter())
+      if (!adapter) {
+        await loadAdapter()
+      }
       const result = await adapter.all<Record<string, unknown>>(sql, params)
 
       if (!result) {
@@ -47,7 +49,9 @@ export default function useContentDatabase() {
       return result.map(item => parseJsonFields(item, jsonFields))
     },
     first: async (sql, params) => {
-      !adapter && (await loadAdapter())
+      if (!adapter) {
+        await loadAdapter()
+      }
       const item = await adapter.first<Record<string, unknown>>(sql, params)
 
       if (!item) {
@@ -58,7 +62,9 @@ export default function useContentDatabase() {
       return parseJsonFields(item, jsonFields)
     },
     exec: async (sql) => {
-      !adapter && (await loadAdapter())
+      if (!adapter) {
+        await loadAdapter()
+      }
       return adapter.exec(sql)
     },
   }

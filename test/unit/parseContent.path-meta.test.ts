@@ -89,38 +89,38 @@ describe('Transformer (path-meta)', () => {
       expect(transformed).toHaveProperty('contentId')
       assert(
         transformed.contentId === fullPath,
-          `Id is not equal, expected: ${id}, actual: ${transformed.contentId}`,
+        `Id is not equal, expected: ${id}, actual: ${transformed.contentId}`,
       )
 
       expect(transformed).toHaveProperty('stem')
       assert(
         transformed.stem === expected.stem,
-          `Draft is not equal, expected: ${expected.stem}, actual: ${transformed.stem}`,
+        `Draft is not equal, expected: ${expected.stem}, actual: ${transformed.stem}`,
       )
 
       expect(transformed).toHaveProperty('extension')
       assert(
         transformed.extension === expected.extension,
-          `Partial is not equal, expected: ${expected.extension}, actual: ${transformed.extension}`,
+        `Partial is not equal, expected: ${expected.extension}, actual: ${transformed.extension}`,
       )
 
       expect(transformed).toHaveProperty('path')
 
       assert(
         transformed.path === expected.path,
-          `Path is not equal, expected: ${expected.path}, actual: ${transformed.path}`,
+        `Path is not equal, expected: ${expected.path}, actual: ${transformed.path}`,
       )
 
       expect(transformed).toHaveProperty('extension')
       assert(
         fullPath.endsWith(`.${transformed.extension}`),
-          `extension is not equal, recieved: ${transformed.extension}`,
+        `extension is not equal, recieved: ${transformed.extension}`,
       )
 
       expect(transformed).toHaveProperty('title')
       assert(
         transformed.title === expected.title,
-          `Title is not equal, expected: ${expected.title}, actual: "${transformed.title}"`,
+        `Title is not equal, expected: ${expected.title}, actual: "${transformed.title}"`,
       )
     })
   })

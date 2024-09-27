@@ -65,7 +65,9 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
       return query
     },
     select<K extends keyof Collections[T]>(...fields: K[]) {
-      fields.length && params.selectedFields.push(...fields)
+      if (fields.length) {
+        params.selectedFields.push(...fields)
+      }
       return query
     },
     order(field: keyof Collections[T], direction: 'ASC' | 'DESC') {

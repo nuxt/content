@@ -1,5 +1,5 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-import { type State } from 'mdast-util-to-hast'
+import type { State } from 'mdast-util-to-hast'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import type { Properties, Element } from 'hast'
 import type { Link } from 'mdast'
