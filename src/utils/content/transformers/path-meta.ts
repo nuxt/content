@@ -21,7 +21,7 @@ export default defineTransformer({
     return {
       path: filePath,
       ...content,
-      title: content.title ?? generateTitle(refineUrlPart(basename)),
+      title: content.title || generateTitle(refineUrlPart(basename)),
       stem,
       extension,
     }

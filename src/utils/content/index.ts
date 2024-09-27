@@ -31,23 +31,23 @@ const highlightPlugin = {
   }),
 }
 
-export async function parseContent(key: string, content: string, collection: ResolvedCollection, options: ModuleOptions['build']) {
+export async function parseContent(key: string, content: string, collection: ResolvedCollection, options?: ModuleOptions['build']) {
   const parsedContent = await transformContent(key, content, {
     markdown: {
-      ...options.markdown,
+      ...options?.markdown,
       rehypePlugins: {
-        highlight: options.markdown?.highlight !== false
+        highlight: options?.markdown?.highlight !== false
           ? {
               ...highlightPlugin,
-              ...(options.markdown?.highlight || {}),
+              ...(options?.markdown?.highlight || {}),
             }
           : undefined,
-        ...options.markdown?.rehypePlugins,
+        ...options?.markdown?.rehypePlugins,
       },
     },
   })
 
-  const result = { contentId: parsedContent.id } as Record<string, unknown>
+  const result = { contentId: parsedContent.id } as typeof collection.schema._type
   const meta = {} as Record<string, unknown>
 
   const collectionKeys = Object.keys(collection.extendedSchema.shape)

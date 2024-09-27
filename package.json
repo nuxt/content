@@ -79,6 +79,7 @@
     "@types/node": "^22.7.3",
     "@types/pako": "^2.0.3",
     "changelogen": "^0.5.7",
+    "csvtojson": "^2.0.10",
     "eslint": "^9.11.1",
     "micromark-util-types": "^2.0.0",
     "nuxt": "^3.13.2",

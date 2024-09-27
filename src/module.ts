@@ -1,6 +1,6 @@
 import { mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule, addServerImportsDir } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { deflate } from 'pako'
 import { hash } from 'ohash'
