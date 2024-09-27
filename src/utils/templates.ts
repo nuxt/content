@@ -13,9 +13,9 @@ export function contentTypesTemplate({ options }: { options: { collections: Reso
 
   const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
   return [
-    'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@farnabaz/content-next\'',
+    'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@nuxt/content\'',
     '',
-    'declare module \'@farnabaz/content-next\' {',
+    'declare module \'@nuxt/content\' {',
     ...publicCollections.map(c =>
       indentLines(`interface ${c.pascalName}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
     ),

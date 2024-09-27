@@ -17,7 +17,6 @@ const links = computed(() => {
 
 <template>
   <div class="flex">
-    sss
     <UVerticalNavigation
       class="w-[200px] flex-none p-2 sticky top-0 h-screen"
       :links="links"

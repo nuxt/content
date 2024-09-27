@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { queryCollection } from '../src/runtime/utils/queryCollection'
-import { getCollectionSearchSections, useAsyncData } from '#imports'
-
 const { data: navigation } = await useAsyncData('navigation', async () => {
   const res = await getCollectionSearchSections('nuxt_content', { ignoredTags: [] })
 
   return res.map(item => ({
     ...item,
-    id: item.id.split('/').slice(1).join('/').replace(/\/+/g, '/'),
-    _id: item.id.split('/').slice(1).join('/').replace(/\/+/g, '/'),
-    _path: item.id.split('/').slice(1).join('/').replace(/\/+/g, '/'),
-    path: item.id.split('/').slice(1).join('/').replace(/\/+/g, '/'),
+    id: item.id,
+    _id: item.id,
+    _path: item.id,
+    path: item.id,
   }))
 })
 const files = await queryCollection('nuxt_content').all().then(files => files.map(file => ({

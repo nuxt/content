@@ -1,4 +1,4 @@
-import type { ContentNavigationItem } from '@farnabaz/content-next'
+import type { ContentNavigationItem } from '@nuxt/content'
 /**
  * Find first child link from a navigation node.
  */

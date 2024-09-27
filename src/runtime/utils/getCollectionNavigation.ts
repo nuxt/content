@@ -1,4 +1,4 @@
-import type { PageCollections } from '@farnabaz/content-next'
+import type { PageCollections } from '@nuxt/content'
 import type { PageCollectionItemBase } from '../../types'
 import { generateNavigationTree } from './internal/generateNavigationTree'
 import { queryCollection } from './queryCollection'

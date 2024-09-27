@@ -108,7 +108,7 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.20240909.0
         version: 4.20240909.0
-      '@farnabaz/content-next':
+      '@nuxt/content':
         specifier: link:.
         version: 'link:'
       '@nuxt/devtools':

@@ -7,6 +7,7 @@ import VueLang from 'shiki/langs/vue.mjs'
 import ScssLang from 'shiki/langs/scss.mjs'
 import YamlLang from 'shiki/langs/yaml.mjs'
 import type { ResolvedCollection } from '../../types/collection'
+import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 
 const highlightPlugin = {
@@ -29,10 +30,20 @@ const highlightPlugin = {
     },
   }),
 }
-export async function parseContent(key: string, content: string, collection: ResolvedCollection) {
+
+export async function parseContent(key: string, content: string, collection: ResolvedCollection, options: ModuleOptions['build']) {
   const parsedContent = await transformContent(key, content, {
     markdown: {
-      rehypePlugins: { highlight: highlightPlugin },
+      ...options.markdown,
+      rehypePlugins: {
+        highlight: options.markdown?.highlight !== false
+          ? {
+              ...highlightPlugin,
+              ...(options.markdown?.highlight || {}),
+            }
+          : undefined,
+        ...options.markdown?.rehypePlugins,
+      },
     },
   })
 

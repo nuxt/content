@@ -47,7 +47,7 @@ export async function transformContent(id: string, content: string, options: Tra
   }
 
   const parserOptions = (options[camelCase(parser.name)] || {}) as Record<string, unknown>
-  const parsed = await parser.parse!(file.id, file.body, parserOptions)
+  const parsed = await parser.parse!(file.id, file.body as string, parserOptions)
 
   const matchedTransformers = getTransformers(ext, transformers)
   const result = await matchedTransformers.reduce(async (prev, cur) => {

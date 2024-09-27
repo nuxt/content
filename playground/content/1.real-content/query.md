@@ -4,7 +4,7 @@ Query layer provides server API and composables to search and query contents.
 
 ## Endpoints
 
-Query server exposes one API:
+Query server exposes `one` API:
 
 - `/api/_content/query`
 

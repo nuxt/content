@@ -8,13 +8,14 @@ import { type ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import type { ResolvedCollection } from '../types/collection'
+import type { ModuleOptions } from '../types'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], databaseLocation: string) {
-  const db = localDatabase(databaseLocation)
+export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
+  const db = localDatabase(options._localDatabase!.filename)
 
   const watcher = chokidar.watch('.', {
     ignoreInitial: true,
@@ -42,7 +43,8 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         return
       }
 
-      const parsedContent = await parseContent(keyInCollection, content, collection)
+      const parsedContent = await parseContent(keyInCollection, content, collection, options.build)
+
       await db.exec(generateCollectionInsert(collection, parsedContent))
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
     }
@@ -93,7 +95,7 @@ export function localDatabase(databaseLocation: string) {
 
 export async function generateInitialFiles(root: string) {
   // Don't generate initial files if `nuxi prepare` executed on module root
-  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@farnabaz/content-next') {
+  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@nuxt/content') {
     return
   }
 
@@ -101,7 +103,7 @@ export async function generateInitialFiles(root: string) {
   await writeFile(
     configPath,
     [
-      'import { defineCollection } from \'@farnabaz/content-next\'',
+      'import { defineCollection } from \'@nuxt/content\'',
       '',
       'export const collections = {',
       '  pages: defineCollection({',
