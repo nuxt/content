@@ -1,5 +1,5 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
-import type { Collections } from '@nuxt/content'
+import type { Collections } from '@farnabaz/content-next'
 import { decompressSQLDump } from './internal/decompressSQLDump'
 import { measurePerformance } from './internal/performance'
 import { parseJsonFields } from './internal/parseJsonFields'

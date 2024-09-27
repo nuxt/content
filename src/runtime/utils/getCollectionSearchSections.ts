@@ -1,4 +1,4 @@
-import type { Collections } from '@nuxt/content'
+import type { Collections } from '@farnabaz/content-next'
 import { queryCollection } from './queryCollection'
 import { splitPageIntoSections } from './internal/search'
 

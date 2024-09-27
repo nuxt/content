@@ -1,4 +1,4 @@
-import type { PageCollections } from '@nuxt/content'
+import type { PageCollections } from '@farnabaz/content-next'
 import type { ContentNavigationItem, SurroundOptions } from '../../types'
 import { getCollectionNavigation } from './getCollectionNavigation'
 

@@ -12,7 +12,7 @@ import type { ModuleOptions } from '../types'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
 
-export const logger: ConsolaInstance = useLogger('@nuxt/content')
+export const logger: ConsolaInstance = useLogger('@farnabaz/content-next')
 
 export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const db = localDatabase(options._localDatabase!.filename)
@@ -95,7 +95,7 @@ export function localDatabase(databaseLocation: string) {
 
 export async function generateInitialFiles(root: string) {
   // Don't generate initial files if `nuxi prepare` executed on module root
-  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@nuxt/content') {
+  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@farnabaz/content-next') {
     return
   }
 
@@ -103,7 +103,7 @@ export async function generateInitialFiles(root: string) {
   await writeFile(
     configPath,
     [
-      'import { defineCollection } from \'@nuxt/content\'',
+      'import { defineCollection } from \'@farnabaz/content-next\'',
       '',
       'export const collections = {',
       '  pages: defineCollection({',

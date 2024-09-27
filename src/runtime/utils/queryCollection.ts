@@ -1,4 +1,4 @@
-import type { Collections } from '@nuxt/content'
+import type { Collections } from '@farnabaz/content-next'
 import type { CollectionQueryBuilder, SQLOperator } from '../../types'
 import { executeContentQuery } from './executeContentQuery'
 
