@@ -66,7 +66,7 @@ export async function parseContent(key: string, content: string, collection: Res
 
   result.weight = String(result.stem || '')
     .split('/')
-    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '9'))
+    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '0'))
     .join('')
     .padEnd(12, '9')
     .slice(0, 12)
