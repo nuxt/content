@@ -7,7 +7,8 @@ export async function getCollectionNavigation<T extends keyof PageCollections>(c
   const contents = await queryCollection<T>(collection)
     .order('weight', 'ASC')
     .order('stem', 'ASC')
-    .select('stem', 'path', 'title', ...(fields || []))
+    .where('navigation', '<>', '"false"')
+    .select('navigation', 'stem', 'path', 'title', ...(fields || []))
     .all() as unknown as PageCollectionItemBase[]
 
   // TODO: We should rethink about dir configs and their impact on navigation
