@@ -1,4 +1,4 @@
-import { mkdir, readFile } from 'node:fs/promises'
+import { mkdir, readFile, stat } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
@@ -154,6 +154,24 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/collections'] = collectionsDst
     nuxt.options.nitro.alias['#content-v3/dump'] = dumpDst
+
+    // Register user global components
+    const _layers = [...nuxt.options._layers].reverse()
+    for (const layer of _layers) {
+      const srcDir = layer.config.srcDir
+      const globalComponents = resolver.resolve(srcDir, 'components/content')
+      const dirStat = await stat(globalComponents).catch(() => null)
+      if (dirStat && dirStat.isDirectory()) {
+        nuxt.hook('components:dirs', (dirs) => {
+          dirs.unshift({
+            path: globalComponents,
+            global: true,
+            pathPrefix: false,
+            prefix: '',
+          })
+        })
+      }
+    }
 
     // Install mdc module
     const nuxtMDCOptions = {
