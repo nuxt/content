@@ -4,4 +4,6 @@ export interface ContentNavigationItem {
   stem: string
   children?: ContentNavigationItem[]
   page?: false
+
+  [key: string]: unknown
 }
