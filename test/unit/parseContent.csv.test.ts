@@ -79,7 +79,6 @@ describe('Parser (.csv)', () => {
 
       expect(parsed).toHaveProperty('contentId')
       assert(parsed.contentId === 'content/index.csv')
-      console.log(parsed)
 
       expect(parsed).toHaveProperty('body')
       expect(Array.isArray(parsed.body)).toBeTruthy()

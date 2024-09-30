@@ -1,4 +1,4 @@
-import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny } from 'shiki'
+import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { MarkdownPlugin } from './content'
 
 export interface D1DatabaseConfig {
@@ -101,8 +101,8 @@ export interface ModuleOptions {
          * Default theme that will be used for highlighting code blocks.
          */
         theme?: ShikiTheme | {
-          default: ShikiTheme
-          [theme: string]: ShikiTheme
+          default: ShikiTheme | ThemeRegistrationRaw
+          [theme: string]: ShikiTheme | ThemeRegistrationRaw
         }
 
         /**
@@ -134,13 +134,13 @@ export interface ModuleOptions {
      *
      * @default {}
      */
-    yaml: false | Record<string, unknown>
+    yaml?: false | Record<string, unknown>
     /**
      * Options for yaml parser.
      *
      * @default {}
      */
-    csv: false | {
+    csv?: false | {
       json?: boolean
       delimeter?: string
     }
