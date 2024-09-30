@@ -24,7 +24,7 @@ describe('generateCollectionInsert', () => {
 
     expect(sql).toBe([
       'INSERT OR REPLACE INTO content',
-      ' (`contentId`, `weight`, `stem`, `extension`, `meta`, `customField`, `otherField`, `otherField2`, `date`)',
+      ' ("contentId", "weight", "stem", "extension", "meta", "customField", "otherField", "otherField2", "date")',
       ' VALUES',
       ' (\'foo.md\', \'999999999999\', \'foo\', \'md\', \'{}\', 13, \'untitled\', true, \'2022-01-01T00:00:00.000Z\')',
     ].join(''))
@@ -55,7 +55,7 @@ describe('generateCollectionInsert', () => {
 
     expect(sql).toBe([
       'INSERT OR REPLACE INTO content',
-      ' (`contentId`, `weight`, `stem`, `extension`, `meta`, `customField`, `otherField`, `otherField2`, `date`)',
+      ' ("contentId", "weight", "stem", "extension", "meta", "customField", "otherField", "otherField2", "date")',
       ' VALUES',
       ' (\'foo.md\', \'999999999999\', \'foo\', \'md\', \'{}\', 42, \'foo\', false, \'2022-01-02T00:00:00.000Z\')',
     ].join(''))

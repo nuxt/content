@@ -27,7 +27,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
         case 'NOT IN':
           if (Array.isArray(value)) {
             const values = value.map(val => `'${val}'`).join(', ')
-            condition = `\`${String(field)}\` ${operator.toUpperCase()} (${values})`
+            condition = `"${String(field)}" ${operator.toUpperCase()} (${values})`
           }
           else {
             throw new TypeError(`Value for ${operator} must be an array`)
@@ -37,7 +37,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
         case 'BETWEEN':
         case 'NOT BETWEEN':
           if (Array.isArray(value) && value.length === 2) {
-            condition = `\`${String(field)}\` ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
+            condition = `"${String(field)}" ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
           }
           else {
             throw new Error(`Value for ${operator} must be an array with two elements`)
@@ -46,16 +46,16 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
 
         case 'IS NULL':
         case 'IS NOT NULL':
-          condition = `\`${String(field)}\` ${operator.toUpperCase()}`
+          condition = `"${String(field)}" ${operator.toUpperCase()}`
           break
 
         case 'LIKE':
         case 'NOT LIKE':
-          condition = `\`${String(field)}\` ${operator.toUpperCase()} '${value}'`
+          condition = `"${String(field)}" ${operator.toUpperCase()} '${value}'`
           break
 
         default:
-          condition = `\`${String(field)}\` ${operator} '${value}'`
+          condition = `"${String(field)}" ${operator} '${value}'`
       }
       params.conditions.push(`(${condition})`)
       return query
@@ -71,7 +71,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
       return query
     },
     order(field: keyof Collections[T], direction: 'ASC' | 'DESC') {
-      params.orderBy.push(`\`${String(field)}\` ${direction}`)
+      params.orderBy.push(`"${String(field)}" ${direction}`)
       return query
     },
     async all(): Promise<Collections[T][]> {
@@ -84,8 +84,8 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
 
   function buildQuery() {
     let query = 'SELECT '
-    query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `\`${String(f)}\``).join(', ') : '*'
-    query += ` FROM ${collection}`
+    query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
+    query += ` FROM ${String(collection)}`
 
     if (params.conditions.length > 0) {
       query += ` WHERE ${params.conditions.join(' AND ')}`

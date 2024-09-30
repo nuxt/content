@@ -9,7 +9,7 @@ import fastGlob from 'fast-glob'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
-import type { ModuleOptions } from './types/module'
+import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
@@ -87,9 +87,9 @@ export default defineNuxtModule<ModuleOptions>({
     await mkdir(join(nuxt.options.rootDir, dirname(contentOptions._localDatabase!.filename)), { recursive: true }).catch(() => {})
     contentOptions._localDatabase!.filename = join(nuxt.options.rootDir, contentOptions._localDatabase!.filename)
 
-    if (contentOptions.database.type === 'sqlite') {
-      contentOptions.database.filename = join(nuxt.options.rootDir, contentOptions.database.filename)
-      await mkdir(dirname(contentOptions.database.filename), { recursive: true }).catch(() => {})
+    if ((contentOptions.database as SqliteDatabaseConfig).filename) {
+      (contentOptions.database as SqliteDatabaseConfig).filename = join(nuxt.options.rootDir, (contentOptions.database as SqliteDatabaseConfig).filename)
+      await mkdir(dirname((contentOptions.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
