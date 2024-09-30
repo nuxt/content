@@ -1,3 +1,5 @@
+import type { MDCRoot, Toc } from '@nuxtjs/mdc'
+
 export interface TransformedContent {
   id: string
   [key: string]: unknown
@@ -62,35 +64,7 @@ export const ContentFileType = {
   Csv: 'csv',
 } as const
 
-export interface TocLink {
-  id: string
-  text: string
-  depth: number
-  children?: TocLink[]
-}
-
-export interface Toc {
-  title: string
-  depth: number
-  searchDepth: number
-  links: TocLink[]
-}
-
-export interface MarkdownNode {
-  type: string
-  tag?: string
-  value?: string
-  props?: Record<string, unknown>
-  content?: unknown
-  children?: MarkdownNode[]
-
-  attributes?: Record<string, unknown>
-  fmAttributes?: Record<string, unknown>
-}
-
-export interface MarkdownRoot {
-  type: 'root'
-  children: MarkdownNode[]
+export interface MarkdownRoot extends MDCRoot {
   props?: Record<string, unknown>
   toc?: Toc
 }

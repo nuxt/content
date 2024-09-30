@@ -1,4 +1,4 @@
-import type { MarkdownNode, MarkdownRoot } from '../../../types'
+import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 
 type Section = {
   // Path to the section
@@ -20,7 +20,7 @@ interface SectionablePage {
   path: string
   title: string
   description: string
-  body: MarkdownRoot
+  body: MDCRoot
 }
 
 export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
@@ -44,7 +44,7 @@ export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { 
   let previousHeadingLevel = 0
   const titles = [page.title ?? '']
   for (const item of page.body.children) {
-    const tag = item.tag || ''
+    const tag = (item as MDCElement).tag || ''
     if (isHeading(tag)) {
       const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1] ?? 0)
 
@@ -64,7 +64,7 @@ export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { 
       }
 
       sections.push({
-        id: `${path}#${item.props?.id}`,
+        id: `${path}#${(item as MDCElement).props?.id}`,
         title,
         titles: [...titles],
         content: '',
@@ -91,7 +91,7 @@ export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { 
   return sections
 }
 
-function extractTextFromAst(node: MarkdownNode, ignoredTags: string[] = []) {
+function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
   let text = ''
 
   // Get text from markdown AST
@@ -100,13 +100,13 @@ function extractTextFromAst(node: MarkdownNode, ignoredTags: string[] = []) {
   }
 
   // Do not explore children
-  if (ignoredTags.includes(node.tag ?? '')) {
+  if (ignoredTags.includes((node as MDCElement).tag ?? '')) {
     return ''
   }
 
   // Explore children
-  if (node.children?.length) {
-    text += node.children.map((child: MarkdownNode) => extractTextFromAst(child, ignoredTags)).filter(Boolean).join('')
+  if ((node as MDCElement).children?.length) {
+    text += (node as MDCElement).children.map((child: MDCNode) => extractTextFromAst(child, ignoredTags)).filter(Boolean).join('')
   }
 
   return text

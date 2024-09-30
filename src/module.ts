@@ -246,8 +246,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], op
     const { fixed, dynamic } = parseSourceBase(collection.source)
     const cwd = join(nuxt.options.rootDir, 'content', fixed)
 
-    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [] })
-      .catch(() => [])
+    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [] }).catch(() => [])
 
     filesCount += _keys.length
 
