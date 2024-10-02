@@ -175,6 +175,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Install mdc module
     const nuxtMDCOptions = {
+      highlight: contentOptions.build?.markdown?.highlight,
       components: {
         prose: true,
         map: contentOptions.renderer.alias,
