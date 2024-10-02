@@ -52,7 +52,7 @@ Nuxt 2 is supported with Content v1, documentation is on <https://content.nuxt.c
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
-[npm-downloads-href]: https://npmjs.com/package/@nuxt/content
+[npm-downloads-href]: https://npm.chart.dev/@nuxt/content
 
 [license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [license-href]: https://github.com/nuxt/content/blob/main/LICENSE
