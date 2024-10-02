@@ -101,8 +101,8 @@ export interface ModuleOptions {
          * Default theme that will be used for highlighting code blocks.
          */
         theme?: ShikiTheme | {
-          default: ShikiTheme | ThemeRegistrationRaw
-          [theme: string]: ShikiTheme | ThemeRegistrationRaw
+          default: ShikiTheme | ThemeRegistrationRaw | string
+          [theme: string]: ShikiTheme | ThemeRegistrationRaw | string
         }
 
         /**

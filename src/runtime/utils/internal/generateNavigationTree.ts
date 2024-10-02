@@ -15,7 +15,7 @@ export function generateNavigationTree(contents: PageCollectionItemBase[], confi
     .reduce((nav, content) => {
       // Resolve path and id parts
       const parts = content.path!.substring(1).split('/')
-      const idParts = content.stem.split(':').slice(1)
+      const idParts = content.stem.split('/')
 
       // Check if node is `*:index.md`
       const isIndex = !!idParts[idParts.length - 1]?.match(/([1-9]\d*\.)?index/g)
@@ -83,7 +83,7 @@ export function generateNavigationTree(contents: PageCollectionItemBase[], confi
           parent = {
             title: part,
             path: currentPathPart,
-            stem: idParts.join(':'),
+            stem: idParts.join('/'),
             children: [],
             page: false,
             ...(conf && pickNavigationFields(conf)),
