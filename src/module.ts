@@ -6,6 +6,7 @@ import { deflate } from 'pako'
 import { hash } from 'ohash'
 import { join } from 'pathe'
 import fastGlob from 'fast-glob'
+import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
 import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
@@ -175,7 +176,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Install mdc module
     const nuxtMDCOptions = {
-      highlight: contentOptions.build?.markdown?.highlight,
+      highlight: contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight'],
       components: {
         prose: true,
         map: contentOptions.renderer.alias,
