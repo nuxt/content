@@ -6,6 +6,16 @@ export default defineNuxtConfig({
       type: 'd1',
       binding: 'DB',
     },
+    build: {
+      markdown: {
+        highlight: {
+          theme: {
+            dark: 'aurora-x', // Theme containing italic
+            default: 'github-light',
+          },
+        },
+      },
+    },
   },
   uiPro: {
     content: {},

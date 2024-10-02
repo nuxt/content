@@ -1,34 +1,57 @@
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
-import MaterialThemePalenight from 'shiki/themes/material-theme-palenight.mjs'
 import HtmlLang from 'shiki/langs/html.mjs'
 import MdcLang from 'shiki/langs/mdc.mjs'
 import TsLang from 'shiki/langs/typescript.mjs'
 import VueLang from 'shiki/langs/vue.mjs'
 import ScssLang from 'shiki/langs/scss.mjs'
 import YamlLang from 'shiki/langs/yaml.mjs'
+import { hash } from 'ohash'
+import type { Highlighter } from '@nuxtjs/mdc'
 import type { ResolvedCollection } from '../../types/collection'
 import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 
-const highlightPlugin = {
-  instance: rehypeHighlight,
-  theme: 'material-theme-palenight',
-  // Create the Shiki highlighter
-  highlighter: createShikiHighlighter({
-    bundledThemes: {
-      'material-theme-palenight': MaterialThemePalenight,
-    },
-    // Configure the bundled languages
-    bundledLangs: {
-      html: HtmlLang,
-      mdc: MdcLang,
-      vue: VueLang,
-      yml: YamlLang,
-      scss: ScssLang,
-      ts: TsLang,
-      typescript: TsLang,
-    },
-  }),
+type HighlighterOptions = Exclude<ModuleOptions['build']['markdown']['highlight'], false | undefined>
+
+let highlightPlugin: {
+  instance: unknown
+  key?: string
+  theme?: Record<string, unknown>
+  highlighter: Highlighter
+}
+async function getHighlighPlugin(options: HighlighterOptions) {
+  const key = hash(JSON.stringify(options || {}))
+  if (!highlightPlugin || highlightPlugin.key !== key) {
+    const themesObject = typeof options.theme === 'string' ? { default: options.theme } : options.theme || { default: 'material-theme-palenight' }
+    const bundledThemes = await Promise.all(Object.entries(themesObject)
+      .map(async ([name, theme]) => [
+        name,
+        typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`)) : theme,
+      ]))
+
+    const highlighter = createShikiHighlighter({
+      bundledThemes: Object.fromEntries(bundledThemes),
+      // Configure the bundled languages
+      bundledLangs: {
+        html: HtmlLang,
+        mdc: MdcLang,
+        vue: VueLang,
+        yml: YamlLang,
+        scss: ScssLang,
+        ts: TsLang,
+        typescript: TsLang,
+      },
+    })
+
+    highlightPlugin = {
+      highlighter,
+      key,
+      instance: rehypeHighlight,
+      ...options,
+      theme: Object.fromEntries(bundledThemes),
+    }
+  }
+  return highlightPlugin
 }
 
 export async function parseContent(key: string, content: string, collection: ResolvedCollection, options?: ModuleOptions['build']) {
@@ -38,10 +61,7 @@ export async function parseContent(key: string, content: string, collection: Res
       rehypePlugins: {
         highlight: options?.markdown?.highlight === false
           ? undefined
-          : {
-              ...highlightPlugin,
-              ...(options?.markdown?.highlight || {}),
-            },
+          : await getHighlighPlugin(options?.markdown.highlight || {}),
         ...options?.markdown?.rehypePlugins,
       },
       highlight: undefined,
