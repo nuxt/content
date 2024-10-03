@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { data: navigation } = await useAsyncData('navigation', async () => {
-  const res = await getCollectionSearchSections('nuxt_content', { ignoredTags: [] })
+  const res = await queryCollectionSearchSections('nuxt_content', { ignoredTags: [] })
 
   return res.map(item => ({
     ...item,

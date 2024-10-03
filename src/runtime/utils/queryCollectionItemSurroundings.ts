@@ -1,10 +1,10 @@
 import type { PageCollections } from '@farnabaz/content-next'
 import type { ContentNavigationItem, SurroundOptions } from '../../types'
-import { getCollectionNavigation } from './getCollectionNavigation'
+import { queryCollectionNavigation } from './queryCollectionNavigation'
 
-export async function getCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export async function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
   const { before = 1, after = 1, fields = [] } = opts || {}
-  const navigation = await getCollectionNavigation(collection, fields)
+  const navigation = await queryCollectionNavigation(collection, fields)
 
   const flatData = flattedData(navigation)
   const index = flatData.findIndex(item => item.path === path)

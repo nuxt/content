@@ -126,9 +126,9 @@ export default defineNuxtModule<ModuleOptions>({
     // Helpers are designed to be enviroment agnostic
     const autoImports = [
       { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
-      { name: 'getCollectionSearchSections', from: resolver.resolve('./runtime/utils/getCollectionSearchSections') },
-      { name: 'getCollectionNavigation', from: resolver.resolve('./runtime/utils/getCollectionNavigation') },
-      { name: 'getCollectionItemSurroundings', from: resolver.resolve('./runtime/utils/getCollectionItemSurroundings') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/utils/queryCollectionSearchSections') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/utils/queryCollectionNavigation') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/utils/queryCollectionItemSurroundings') },
     ]
     addImports(autoImports)
     addServerImports(autoImports)
@@ -175,8 +175,9 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Install mdc module
+    const highlight = contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
     const nuxtMDCOptions = {
-      highlight: contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight'],
+      highlight: highlight ? { ...highlight } : highlight,
       components: {
         prose: true,
         map: contentOptions.renderer.alias,
@@ -248,7 +249,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], op
     const { fixed, dynamic } = parseSourceBase(collection.source)
     const cwd = join(nuxt.options.rootDir, 'content', fixed)
 
-    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [] }).catch(() => [])
+    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [], dot: true }).catch(() => [])
 
     filesCount += _keys.length
 

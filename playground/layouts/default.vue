@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = await useAsyncData('contents-list', () => getCollectionNavigation('content'))
+const { data } = await useAsyncData('contents-list', () => queryCollectionNavigation('content'))
 const links = computed(() => {
   return data.value?.flatMap(item => ([
     {

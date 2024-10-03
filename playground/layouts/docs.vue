@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = await useAsyncData('contents-list', () => getCollectionNavigation('nuxt_content'))
+const { data } = await useAsyncData('contents-list', () => queryCollectionNavigation('nuxt_content'))
 const links = computed(() => {
   const root = data.value?.[0].children || []
   return root?.flatMap(item => ([

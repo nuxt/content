@@ -10,7 +10,7 @@ const { data } = await useAsyncData('posts' + route.path, async () => {
 })
 
 const { data: surround } = await useAsyncData('content-surround' + route.path, () => {
-  return getCollectionItemSurroundings('content', route.path, {
+  return queryCollectionItemSurroundings('content', route.path, {
     before: 1,
     after: 1,
     fields: ['title', 'description'],

@@ -27,7 +27,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
   watcher.on('unlink', onChange)
 
   async function onChange(path: string) {
-    const collection = collections.find(({ source }) => source?.path && micromatch.isMatch(path, source?.path, { ignore: source?.ignore || [] }))
+    const collection = collections.find(({ source }) => source?.path && micromatch.isMatch(path, source?.path, { ignore: source?.ignore || [], dot: true }))
     if (collection) {
       logger.info(`File changed. collection: ${collection.name}, path: ${path}`)
 
