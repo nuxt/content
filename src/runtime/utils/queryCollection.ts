@@ -1,6 +1,7 @@
 import type { Collections } from '@farnabaz/content-next'
 import type { CollectionQueryBuilder, SQLOperator } from '../../types'
 import { executeContentQuery } from './executeContentQuery'
+import { getTableName } from './internal/app'
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
   const params = {
@@ -85,7 +86,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
   function buildQuery() {
     let query = 'SELECT '
     query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
-    query += ` FROM ${String(collection)}`
+    query += ` FROM ${getTableName(String(collection))}`
 
     if (params.conditions.length > 0) {
       query += ` WHERE ${params.conditions.join(' AND ')}`

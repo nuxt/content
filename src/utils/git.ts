@@ -27,9 +27,6 @@ export async function downloadRepository(url: string, cwd: string) {
 
   try {
     const response = await fetch(url)
-    const etag = response.headers.get('etag')
-    console.log(etag)
-
     const stream = createWriteStream(tarFile)
     await promisify(pipeline)(response.body as unknown as ReadableStream[], stream)
 

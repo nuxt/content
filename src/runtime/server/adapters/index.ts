@@ -1,5 +1,6 @@
 import { parseJsonFields } from '../../utils/internal/parseJsonFields'
-import { getCollectionInfo } from '../../utils/internal/app'
+import { getCollectionInfo } from '../../utils/internal/app.server'
+import { getCollectionName } from '../../utils/internal/app'
 import createSqliteAdapter from './sqlite'
 import type { DatabaseAdapter } from './factory'
 import { useRuntimeConfig } from '#imports'
@@ -31,8 +32,8 @@ export default function useContentDatabase() {
     if (!table) {
       return []
     }
-    // return collections.find((c: { name: string }) => c.name === table[1])?.jsonFields || []
-    return getCollectionInfo(table[1])?.jsonFields || []
+
+    return getCollectionInfo(getCollectionName(table[1]))?.jsonFields || []
   }
 
   return <DatabaseAdapter>{

@@ -1,5 +1,5 @@
 import { eventHandler } from 'h3'
-import { collectionsInfo, loadDatabaseDump } from '../../utils/internal/app'
+import { collectionsInfo, loadDatabaseDump } from '../../utils/internal/app.server'
 
 export default eventHandler(async () => {
   const dump: string = await loadDatabaseDump()

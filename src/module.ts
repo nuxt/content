@@ -96,7 +96,7 @@ export default defineNuxtModule<ModuleOptions>({
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
 
     contentOptions._iv += hash({
-      collections: collections.map(c => c.table),
+      collections: collections.map(c => c.tableDefinition),
       buildOptions: contentOptions.build,
     })
 
@@ -110,6 +110,7 @@ export default defineNuxtModule<ModuleOptions>({
       localDatabase: contentOptions._localDatabase!,
     }
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
+    // @ts-expect-error - privateRuntimeConfig is not typed
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
@@ -238,8 +239,7 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], op
   // Create database dump
   for await (const collection of collections) {
     // Collection table definition
-    sqlDumpList.push(`DROP TABLE IF EXISTS ${collection.name};`)
-    sqlDumpList.push(collection.table)
+    sqlDumpList.push(...collection.tableDefinition.split('\n'))
 
     if (!collection.source) {
       continue

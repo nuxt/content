@@ -3,8 +3,11 @@ import { zodToJsonSchema } from 'zod-to-json-schema'
 import type { ResolvedCollection } from '../types/collection'
 
 function indentLines(str: string, indent: number = 2) {
-  str = str.replace(/ {4}/g, ' '.repeat(indent))
-  return str.split('\n').map(line => ' '.repeat(indent) + line).join('\n')
+  return str
+    .replace(/ {4}/g, ' '.repeat(indent))
+    .split('\n')
+    .map(line => ' '.repeat(indent) + line)
+    .join('\n')
 }
 
 export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
@@ -37,6 +40,7 @@ export function collectionsTemplate({ options }: { options: { collections: Resol
     acc[collection.name] = {
       name: collection.name,
       pascalName: collection.pascalName,
+      tableName: collection.tableName,
       // Remove source from collection meta if it's a remote collection
       source: collection.source?.repository ? undefined : collection.source,
       type: collection.type,

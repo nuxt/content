@@ -49,7 +49,8 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   source: ResolvedCollectionSource | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
-  table: string
+  tableName: string
+  tableDefinition: string
   generatedFields: {
     raw: boolean
     body: boolean
@@ -61,6 +62,8 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
 export interface CollectionInfo {
   name: string
   pascalName: string
+  tableName: string
+  source: CollectionSource | undefined
   type: CollectionType
   schema: JsonSchema7Type
   jsonFields: string[]

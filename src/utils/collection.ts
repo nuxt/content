@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { pascalCase } from 'scule'
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
+import { getTableName } from '../runtime/utils/internal/app'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
@@ -36,7 +37,8 @@ export function resolveCollection(name: string, collection: DefinedCollection, o
     type: collection.type || 'page',
     pascalName: pascalCase(name),
     source: resolveSource(collection.source, opts),
-    table: generateCollectionTableDefinition(name, collection),
+    tableName: getTableName(name),
+    tableDefinition: generateCollectionTableDefinition(name, collection, { drop: true }),
     generatedFields: {
       raw: typeof collection.schema.shape.raw !== 'undefined',
       body: typeof collection.schema.shape.body !== 'undefined',
@@ -129,12 +131,12 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT OR REPLACE INTO ${collection.name} (${fields.map(f => `"${f}"`).join(', ')}) VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
+  return `INSERT OR REPLACE INTO ${collection.tableName} (${fields.map(f => `"${f}"`).join(', ')}) VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
 // Convert a collection with Zod schema to SQL table definition
-export function generateCollectionTableDefinition(name: string, collection: DefinedCollection) {
+export function generateCollectionTableDefinition(name: string, collection: DefinedCollection, opts: { drop?: boolean } = {}) {
   const sqlFields = Object.entries(collection.extendedSchema.shape).map(([key, zodType]) => {
     const underlyingType = getUnderlyingType(zodType)
 
@@ -172,5 +174,12 @@ export function generateCollectionTableDefinition(name: string, collection: Defi
 
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
-  return `CREATE TABLE IF NOT EXISTS ${name} (${sqlFields.join(', ')})`
+
+  let definition = `CREATE TABLE IF NOT EXISTS ${getTableName(name)} (${sqlFields.join(', ')});`
+
+  if (opts.drop) {
+    definition = `DROP TABLE IF EXISTS ${getTableName(name)};\n${definition}`
+  }
+
+  return definition
 }

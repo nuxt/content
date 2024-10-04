@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionTableDefinition, defineCollection } from '../../src/utils/collection'
+import { getTableName } from '../../src/runtime/utils/internal/app'
 
 describe('generateCollectionTableDefinition', () => {
   test('Page without custom schema', () => {
@@ -11,7 +12,7 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
@@ -23,7 +24,7 @@ describe('generateCollectionTableDefinition', () => {
       ' "seo" TEXT,',
       ' "body" TEXT,',
       ' "navigation" TEXT DEFAULT true',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -38,7 +39,7 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
@@ -51,7 +52,7 @@ describe('generateCollectionTableDefinition', () => {
       ' "body" TEXT,',
       ' "navigation" TEXT DEFAULT true,',
       ' "customField" VARCHAR',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -66,14 +67,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" VARCHAR',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -89,14 +90,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" VARCHAR(64) DEFAULT \'foo\'',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -111,14 +112,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" INT DEFAULT 13',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -133,14 +134,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" BOOLEAN DEFAULT false',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -155,14 +156,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" DATE',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -180,14 +181,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" TEXT',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -205,14 +206,14 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
       ' "customField" TEXT',
-      ')',
+      ');',
     ].join(''))
   })
 
@@ -237,7 +238,7 @@ describe('generateCollectionTableDefinition', () => {
     const sql = generateCollectionTableDefinition('content', collection)
 
     expect(sql).toBe([
-      'CREATE TABLE IF NOT EXISTS content (',
+      `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
       'contentId TEXT PRIMARY KEY,',
       ' "weight" VARCHAR,',
       ' "stem" VARCHAR,',
@@ -249,7 +250,7 @@ describe('generateCollectionTableDefinition', () => {
       ' "f4" DATE NULL,',
       ' "f5" TEXT NULL,',
       ' "f6" TEXT NULL',
-      ')',
+      ');',
     ].join(''))
   })
 })

@@ -4,6 +4,7 @@ import { setup, $fetch } from '@nuxt/test-utils'
 import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/utils/internal/decompressSQLDump'
+import { getTableName } from '../src/runtime/utils/internal/app'
 import { localDatabase } from './utils/database'
 
 async function cleanup() {
@@ -75,7 +76,7 @@ describe('empty', async () => {
     })
 
     test('Pages table is created', async () => {
-      const cache = db.database.prepare<unknown[], Record<string, unknown>>('SELECT * FROM pages').all()
+      const cache = db.database.prepare<unknown[], Record<string, unknown>>(`SELECT * FROM ${getTableName('pages')}`).all()
       expect(cache).toHaveLength(1)
       expect(cache[0].title).toBe('Home')
       expect(cache[0].path).toBe('/')

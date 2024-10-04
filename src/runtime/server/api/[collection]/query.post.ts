@@ -2,7 +2,8 @@ import { eventHandler, readValidatedBody, getRouterParam } from 'h3'
 import { z } from 'zod'
 import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
-import { loadDatabaseDump } from '../../../utils/internal/app'
+import { loadDatabaseDump } from '../../../utils/internal/app.server'
+import { getTableName } from '../../../utils/internal/app'
 import { useRuntimeConfig } from '#imports'
 
 let checkDatabaseIntegrity = true
@@ -16,7 +17,7 @@ export default eventHandler(async (event) => {
   }
 
   const tablename = sqlQuery.match(/FROM\s+(\w+)/)?.[1]
-  if (tablename !== collectionName) {
+  if (tablename !== getTableName(String(collectionName))) {
     throw new Error('Invalid query')
   }
 
@@ -35,13 +36,13 @@ export default eventHandler(async (event) => {
 
 async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
   const db = useContentDatabase()
-  const before = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  const before = await db.first<{ version: string }>(`select * from ${getTableName('_info')}`).catch(() => ({ version: '' }))
   if (before?.version) {
     if (before?.version === integrityVersion) {
       return true
     }
     // Delete old version
-    await db.exec(`DELETE FROM _info WHERE version = '${before.version}'`)
+    await db.exec(`DELETE FROM ${getTableName('_info')} WHERE version = '${before.version}'`)
   }
 
   const dump = await loadDatabaseDump().then(decompressSQLDump)
@@ -54,6 +55,6 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
     })
   }, Promise.resolve())
 
-  const after = await db.first<{ version: string }>('select * from _info').catch(() => ({ version: '' }))
+  const after = await db.first<{ version: string }>(`select * from ${getTableName('_info')}`).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
 }
