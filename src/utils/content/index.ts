@@ -26,7 +26,7 @@ async function getHighlighPlugin(options: HighlighterOptions) {
     const bundledThemes = await Promise.all(Object.entries(themesObject)
       .map(async ([name, theme]) => [
         name,
-        typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`)) : theme,
+        typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`).then(m => m.default || m)) : theme,
       ]))
 
     const highlighter = createShikiHighlighter({

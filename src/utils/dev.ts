@@ -17,6 +17,8 @@ export const logger: ConsolaInstance = useLogger('@farnabaz/content-next')
 export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const db = localDatabase(options._localDatabase!.filename)
 
+  const localCollections = collections.filter(c => c.source && !c.source.repository)
+
   const watcher = chokidar.watch('.', {
     ignoreInitial: true,
     cwd: join(nuxt.options.rootDir, 'content'),
@@ -27,7 +29,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
   watcher.on('unlink', onChange)
 
   async function onChange(path: string) {
-    const collection = collections.find(({ source }) => source?.path && micromatch.isMatch(path, source?.path, { ignore: source?.ignore || [], dot: true }))
+    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.path, { ignore: source!.ignore || [], dot: true }))
     if (collection) {
       logger.info(`File changed. collection: ${collection.name}, path: ${path}`)
 

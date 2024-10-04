@@ -5,13 +5,13 @@ import type { DefinedCollection } from '../types'
 import { resolveCollections } from './collection'
 import { generateInitialFiles } from './dev'
 
-export async function loadContentConfig(root: string, opts: { createOnMissing?: boolean } = {}) {
-  const jiti = createJiti(root)
-  const configs = await fastGlob('content.config.*', { cwd: root })
-  let configPath = configs.length ? join(root, configs[0]) : undefined
+export async function loadContentConfig(rootDir: string, opts: { createOnMissing?: boolean } = {}) {
+  const jiti = createJiti(rootDir)
+  const configs = await fastGlob('content.config.*', { cwd: rootDir })
+  let configPath = configs.length ? join(rootDir, configs[0]) : undefined
 
   if (!configPath && opts?.createOnMissing) {
-    configPath = await generateInitialFiles(root)
+    configPath = await generateInitialFiles(rootDir)
   }
 
   const contentConfig = (configPath
@@ -23,6 +23,6 @@ export async function loadContentConfig(root: string, opts: { createOnMissing?: 
     : {}) as { collections: Record<string, DefinedCollection> }
 
   return {
-    collections: resolveCollections(contentConfig.collections || {}),
+    collections: resolveCollections(contentConfig.collections || {}, { rootDir }),
   }
 }

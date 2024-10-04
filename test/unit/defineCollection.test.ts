@@ -17,10 +17,7 @@ describe('defineCollection', () => {
     })
     expect(collection).toMatchObject({
       type: 'page',
-      source: {
-        path: 'pages/**',
-        prefix: '',
-      },
+      source: 'pages/**',
     })
 
     expect(collection.schema.shape).not.ownProperty('title')
@@ -84,10 +81,7 @@ describe('defineCollection', () => {
 
     expect(collection).toMatchObject({
       type: 'data',
-      source: {
-        path: 'data/**',
-        prefix: '',
-      },
+      source: 'data/**',
     })
 
     expect(collection.schema.shape).toHaveProperty('customField')

@@ -110,7 +110,6 @@ export default defineNuxtModule<ModuleOptions>({
       localDatabase: contentOptions._localDatabase!,
     }
     nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
-    // @ts-expect-error - privateRuntimeConfig is not typed
     nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
@@ -246,10 +245,15 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], op
       continue
     }
 
-    const { fixed, dynamic } = parseSourceBase(collection.source)
-    const cwd = join(nuxt.options.rootDir, 'content', fixed)
+    if (collection.source.prepare) {
+      await collection.source.prepare(nuxt)
+    }
 
-    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [], dot: true }).catch(() => [])
+    const { fixed, dynamic } = parseSourceBase(collection.source)
+    const cwd = join(collection.source.cwd, fixed)
+
+    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [], dot: true })
+      .catch(() => [])
 
     filesCount += _keys.length
 

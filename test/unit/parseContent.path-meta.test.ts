@@ -41,7 +41,7 @@ const testCases = {
       stem: `${semver}/doc`,
     }
     return map
-  }, {}),
+  }, {} as Record<string, unknown>),
   'content:1.one:2.two:3.three:4.four:5.five:doc.md': {
     __description: 'Position of nested directories (position will calculate with first three directory)',
     title: 'Doc',
@@ -79,7 +79,7 @@ describe('Transformer (path-meta)', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }))
+  }), { rootDir: '~' })
 
   Object.entries(testCases).forEach(([id, expected]) => {
     test(id, async () => {

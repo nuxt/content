@@ -33,15 +33,18 @@ export function contentTypesTemplate({ options }: { options: { collections: Reso
 }
 
 export function collectionsTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
-  const collectionsMeta = options.collections.map(c => [
-    c.name,
-    {
-      name: c.name,
-      pascalName: c.pascalName,
-      type: c.type,
-      schema: zodToJsonSchema(c.extendedSchema, c.name),
-      jsonFields: c.jsonFields,
-    },
-  ])
-  return 'export const collections = ' + JSON.stringify(Object.fromEntries(collectionsMeta), null, 2)
+  const collectionsMeta = options.collections.reduce((acc, collection) => {
+    acc[collection.name] = {
+      name: collection.name,
+      pascalName: collection.pascalName,
+      // Remove source from collection meta if it's a remote collection
+      source: collection.source?.repository ? undefined : collection.source,
+      type: collection.type,
+      jsonFields: collection.jsonFields,
+      schema: zodToJsonSchema(collection.extendedSchema, collection.name),
+    }
+    return acc
+  }, {} as Record<string, unknown>)
+
+  return 'export const collections = ' + JSON.stringify(collectionsMeta, null, 2)
 }

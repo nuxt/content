@@ -1,6 +1,7 @@
 import { describe, test, expect, assert } from 'vitest'
 import { z } from 'zod'
 import GithubLight from 'shiki/themes/github-light.mjs'
+import type { MDCElement } from '@nuxtjs/mdc'
 import { parseContent } from '../../src/utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
@@ -12,7 +13,7 @@ describe('Highlighter', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }))
+  }), { rootDir: '~' })
 
   test('themed', async () => {
     const parsed = await parseContent('content/index.md', [
@@ -40,7 +41,8 @@ describe('Highlighter', () => {
     const styleElement = parsed.body.children.pop()
     expect(styleElement.tag).toBe('style')
     const style = styleElement.children[0].value
-    const code = (parsed.body as MarkdownRoot).children?.[0].children?.[0].children?.[0].children || []
+    // @ts-expect-error - MDCText warning for children
+    const code: MDCElement[] = (parsed.body as MarkdownRoot).children?.[0].children?.[0].children?.[0].children || []
     code.forEach((token, i) => {
       if (token.props?.style) {
         expect(token.props.style).includes(`--shiki-default:${colors.default[i]}`)

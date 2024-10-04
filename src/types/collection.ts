@@ -1,5 +1,6 @@
 import type { ZodObject, ZodRawShape } from 'zod'
 import type { JsonSchema7Type } from 'zod-to-json-schema'
+import type { Nuxt } from '@nuxt/schema'
 import type { MarkdownRoot } from './content'
 
 export interface PageCollections {}
@@ -8,9 +9,16 @@ export interface Collections {}
 export type CollectionType = 'page' | 'data'
 
 export type CollectionSource = {
+  repository?: string
+  cwd?: string
   path: string
   prefix?: string
   ignore?: string[]
+}
+
+export interface ResolvedCollectionSource extends CollectionSource {
+  prepare?: (nuxt: Nuxt) => Promise<void>
+  cwd: string
 }
 
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
@@ -29,7 +37,7 @@ export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> 
 
 export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
-  source: CollectionSource | undefined
+  source: CollectionSource | string | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
 }
@@ -38,7 +46,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   name: string
   pascalName: string
   type: CollectionType
-  source: CollectionSource | undefined
+  source: ResolvedCollectionSource | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
   table: string

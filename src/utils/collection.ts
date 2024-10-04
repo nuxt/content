@@ -1,9 +1,15 @@
+import { join } from 'node:path'
 import { pascalCase } from 'scule'
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
-import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection } from '../types/collection'
+import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
+import { downloadRepository, parseGitHubUrl } from './git'
+
+interface ResovleOptions {
+  rootDir: string
+}
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
@@ -17,19 +23,19 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
 
   return {
     type: collection.type,
-    source: refineSource(collection.source),
+    source: collection.source,
     schema: collection.schema || z.object({}),
     extendedSchema: schema,
   }
 }
 
-export function resolveCollection(name: string, collection: DefinedCollection): ResolvedCollection {
+export function resolveCollection(name: string, collection: DefinedCollection, opts: ResovleOptions): ResolvedCollection {
   return {
     ...collection,
     name,
     type: collection.type || 'page',
     pascalName: pascalCase(name),
-    source: refineSource(collection.source),
+    source: resolveSource(collection.source, opts),
     table: generateCollectionTableDefinition(name, collection),
     generatedFields: {
       raw: typeof collection.schema.shape.raw !== 'undefined',
@@ -42,7 +48,7 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
   }
 }
 
-export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
+export function resolveCollections(collections: Record<string, DefinedCollection>, opts: ResovleOptions): ResolvedCollection[] {
   collections._info = defineCollection({
     type: 'data',
     schema: z.object({
@@ -50,22 +56,38 @@ export function resolveCollections(collections: Record<string, DefinedCollection
     }),
   })
 
-  return Object.entries(collections).map(([name, collection]) => resolveCollection(name, collection))
+  return Object.entries(collections).map(([name, collection]) => resolveCollection(name, collection, opts))
 }
 
 /**
  * Process collection source and return refined source
  */
-function refineSource(source: string | CollectionSource | undefined): CollectionSource | undefined {
-  if (typeof source === 'string') {
-    return { path: source, prefix: '' }
+function resolveSource(source: string | CollectionSource | undefined, opts: ResovleOptions): ResolvedCollectionSource | undefined {
+  if (!source) {
+    return undefined
   }
 
-  if (source) {
-    return { ...(source as unknown as CollectionSource) }
+  const result: ResolvedCollectionSource = {
+    cwd: '',
+    ...(typeof source === 'string' ? { path: source } : source),
   }
 
-  return undefined
+  const repository = result?.repository && parseGitHubUrl(result.repository!)
+  if (repository) {
+    const { org, repo, branch } = repository
+    result.cwd = join(opts.rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
+
+    result.prepare = async () => {
+      await downloadRepository(
+        `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`,
+        result.cwd!,
+      )
+    }
+  }
+
+  result.cwd = result.cwd || join(opts.rootDir, 'content')
+
+  return result
 }
 
 export function parseSourceBase(source: CollectionSource) {
