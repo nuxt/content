@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = await useAsyncData('contents-list', () => queryCollectionNavigation('nuxt_content'))
+const { data } = await useAsyncData('nuxt-contents-list', () => queryCollectionNavigation('nuxt'))
 const links = computed(() => {
   const root = data.value?.[0].children || []
   return root?.flatMap(item => ([
@@ -18,7 +18,7 @@ const links = computed(() => {
 <template>
   <div class="flex">
     <UVerticalNavigation
-      class="w-[200px] flex-none p-2 sticky top-0 h-screen"
+      class="w-[200px] flex-none p-2 sticky top-0 h-screen overflow-scroll"
       :links="links"
     />
     <div class="flex-1 p-4 prose prose-invert">

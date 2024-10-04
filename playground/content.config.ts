@@ -7,7 +7,6 @@ const content = defineCollection({
     ignore: [
       'data/**',
       'pages/**',
-      'nuxt-content/**',
     ],
   },
   schema: z.object({
@@ -42,19 +41,32 @@ const pages = defineCollection({
   source: 'pages/**',
 })
 
-const nuxt_content = defineCollection({
-  type: 'page',
-  source: {
-    path: 'nuxt-content/**',
-    prefix: '/docs',
-  },
-})
-
 export const collections = {
   content,
   data,
   pages,
-  nuxt_content,
+  contentV2: defineCollection({
+    type: 'page',
+    source: {
+      repository: 'https://github.com/nuxt/content',
+      path: 'docs/content/**',
+      prefix: '/content-v2',
+      ignore: [
+        '**/_dir.yml',
+      ],
+    },
+  }),
+  nuxt: defineCollection({
+    type: 'page',
+    source: {
+      repository: 'https://github.com/nuxt/nuxt',
+      path: 'docs/**',
+      prefix: '/nuxt',
+      ignore: [
+        '**/_dir.yml',
+      ],
+    },
+  }),
   foo: defineCollection({
     source: 'data/foo/bar.yml',
     type: 'data',

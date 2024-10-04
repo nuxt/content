@@ -1,5 +1,9 @@
 export default defineNuxtConfig({
-  modules: ['../src/module', '@nuxt/ui', '@nuxthub/core'],
+  modules: [
+    '../src/module',
+    '@nuxt/ui',
+    '@nuxthub/core',
+  ],
   extends: ['@nuxt/ui-pro'],
   contentV3: {
     database: {
@@ -23,5 +27,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-07-24',
   hub: {
     database: true,
+  },
+  hooks: {
+    'components:extend': (components) => {
+      const globals = components.filter(c => [
+        'UCallout',
+        'UAlert',
+      ].includes(c.pascalName))
+
+      globals.forEach(c => c.global = 'sync')
+    },
   },
 })

@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { definePageMeta, useAsyncData } from '#imports'
-
 const route = useRoute()
 
 const { data } = await useAsyncData('posts' + route.path, async () => {
-  const res = await queryCollection('content').path(route.path).first()
+  const res = await queryCollection('contentV2').path(route.path).first()
 
   return res
 })
 
-const { data: surround } = await useAsyncData('content-surround' + route.path, () => {
-  return queryCollectionItemSurroundings('content', route.path, {
+const { data: surround } = await useAsyncData('docs-surround' + route.path, () => {
+  return queryCollectionItemSurroundings('contentV2', route.path, {
     before: 1,
     after: 1,
     fields: ['title', 'description'],
@@ -18,7 +16,7 @@ const { data: surround } = await useAsyncData('content-surround' + route.path, (
 })
 
 definePageMeta({
-  layout: 'default',
+  layout: 'content-v2',
   layoutTransition: false,
 })
 </script>
