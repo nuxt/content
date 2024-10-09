@@ -1,84 +1,56 @@
-<!--
-Get your module up and running quickly.
+[![nuxt-content-social-card](./.github/social-card.png)](https://content.nuxt.com)
 
-Find and replace all on all files (CMD+SHIFT+F):
-- Name: My Module
-- Package name: my-module
-- Description: My new Nuxt module
--->
-
-# My Module
+# Nuxt Content
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
+[![Volta][volta-src]][volta-href]
 
-My new Nuxt module for doing amazing things.
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/usage/markdown).
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
-<!-- - [📖 &nbsp;Documentation](https://example.com) -->
+- [📖 &nbsp;Read the documentation](https://content3.nuxt.dev)
+- [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
+- [✍️ &nbsp;Nuxt Studio](https://nuxt.studio)
 
 ## Features
 
-<!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
-
-## Quick Setup
-
-Install the module to your Nuxt application with one command:
-
-```bash
-npx nuxi module add my-module
-```
-
-That's it! You can now use My Module in your Nuxt app ✨
+- [**Nuxt 3**](https://nuxt.com) support
+- Work in serverless and edge environments (Cloudflare Workers, etc.)
+- Render Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/usage/markdown)
+- Fully typed collections and queries
+- Navigation generation
+- Blazing fast hot module replacement in development
+- Code highlighting with [**Shiki**](https://github.com/shikijs/shiki)
+- Powerful query builder on top of SQLite database
+- [... and more](https://content.nuxt.com)
 
 
-## Contribution
+## 💻 Development
 
-<details>
-  <summary>Local development</summary>
-  
-  ```bash
-  # Install dependencies
-  npm install
-  
-  # Generate type stubs
-  npm run dev:prepare
-  
-  # Develop with the playground
-  npm run dev
-  
-  # Build the playground
-  npm run dev:build
-  
-  # Run ESLint
-  npm run lint
-  
-  # Run Vitest
-  npm run test
-  npm run test:watch
-  
-  # Release new version
-  npm run release
-  ```
+- Clone repository
+- Install dependencies using `pnpm install`
+- Prepare using `pnpm dev:prepare`
+- Build using `pnpm prepack`
+- Try playground using `pnpm dev`
+- Test using `pnpm test`
 
-</details>
+## License
 
+[MIT](./LICENSE) - Made with 💚
 
-<!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/my-module/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/my-module
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-href]: https://npmjs.com/package/@nuxt/content
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npmjs.com/package/my-module
+[npm-downloads-src]: https://img.shields.io/npm/dm/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-href]: https://npmjs.com/package/@nuxt/content
 
-[license-src]: https://img.shields.io/npm/l/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/my-module
+[license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://github.com/nuxt/content/blob/main/LICENSE
 
-[nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
 [nuxt-href]: https://nuxt.com
+
+[volta-src]: https://user-images.githubusercontent.com/904724/209143798-32345f6c-3cf8-4e06-9659-f4ace4a6acde.svg
+[volta-href]: https://volta.net/nuxt/content?utm_source=readme_nuxt_content
