@@ -93,24 +93,35 @@ const components = computed(() => {
   return resolveContentComponents(props.body, { tags })
 })
 function resolveVueComponent(component: string | Renderable) {
-  if (!htmlTags.includes(component as string) && !(component as Renderable)?.render && !(component as Renderable)?.ssrRender) {
-    component = pascalCase(component as string)
-    const componentFn = globalComponents.includes(component) ? resolveComponent(component, false) : component
-
-    if (typeof componentFn === 'object') {
-      return componentFn
+  let _component: unknown = component
+  if (typeof component === 'string') {
+    if (htmlTags.includes(component)) {
+      return component
     }
-    console.log(component, localComponents.includes(component))
-
-    if (localComponents.includes(component)) {
-      return defineAsyncComponent(() => {
+    if (globalComponents.includes(pascalCase(component))) {
+      _component = resolveComponent(component, false)
+    }
+    else if (localComponents.includes(pascalCase(component))) {
+      _component = defineAsyncComponent(() => {
         // @ts-expect-error - typescript doesn't know about the import
         return import('#content-v3/components').then(m => m[pascalCase(component)]())
       })
     }
+    if (typeof _component === 'string') {
+      return _component
+    }
   }
 
-  return component
+  const componentObject = _component as Renderable
+  if ('__asyncLoader' in componentObject) {
+    return componentObject
+  }
+
+  if ('setup' in componentObject) {
+    return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
+  }
+
+  return componentObject
 }
 
 function resolveContentComponents(body: MDCRoot, meta: Record<string, unknown>) {

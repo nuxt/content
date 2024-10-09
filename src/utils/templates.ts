@@ -96,7 +96,7 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
             c.pascalName,
             `${genDynamicImport(isAbsolute(c.filePath)
               ? './' + relative(join(nuxt.options.rootDir, '.content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
-              : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}.then(m => m.${c.export})`,
+              : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}`,
             c.global,
           ]
           return map

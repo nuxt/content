@@ -67,13 +67,4 @@ export const collections = {
       ],
     },
   }),
-  foo: defineCollection({
-    source: 'data/foo/bar.yml',
-    type: 'data',
-    schema: z.object({
-      name: z.string(),
-      type: z.string(),
-      born: z.number(),
-    }),
-  }),
 }

@@ -14,7 +14,7 @@ import {
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { hash } from 'ohash'
-import { join, dirname } from 'pathe'
+import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
@@ -87,11 +87,15 @@ export default defineNuxtModule<ModuleOptions>({
         .catch(() => {})
     }
 
-    await mkdir(join(nuxt.options.rootDir, dirname(contentOptions._localDatabase!.filename)), { recursive: true }).catch(() => {})
-    contentOptions._localDatabase!.filename = join(nuxt.options.rootDir, contentOptions._localDatabase!.filename)
+    contentOptions._localDatabase!.filename = isAbsolute(contentOptions._localDatabase!.filename)
+      ? contentOptions._localDatabase!.filename
+      : join(nuxt.options.rootDir, contentOptions._localDatabase!.filename)
+    await mkdir(dirname(contentOptions._localDatabase!.filename), { recursive: true }).catch(() => {})
 
     if ((contentOptions.database as SqliteDatabaseConfig).filename) {
-      (contentOptions.database as SqliteDatabaseConfig).filename = join(nuxt.options.rootDir, (contentOptions.database as SqliteDatabaseConfig).filename)
+      (contentOptions.database as SqliteDatabaseConfig).filename = isAbsolute((contentOptions.database as SqliteDatabaseConfig).filename)
+        ? (contentOptions.database as SqliteDatabaseConfig).filename
+        : join(nuxt.options.rootDir, (contentOptions.database as SqliteDatabaseConfig).filename)
       await mkdir(dirname((contentOptions.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
