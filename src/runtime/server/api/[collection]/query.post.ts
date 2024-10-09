@@ -4,11 +4,10 @@ import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
 import { loadDatabaseDump } from '../../../utils/internal/app.server'
 import { getTableName } from '../../../utils/internal/app'
-import { useRuntimeConfig } from '#imports'
+import { contentsIv } from '#content-v3/integrity'
 
 let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {
-  const config = useRuntimeConfig().contentv3
   const collectionName = getRouterParam(event, 'collection')
   const { query: sqlQuery } = await readValidatedBody(event, z.object({ query: z.string() }).parse)
 
@@ -23,7 +22,7 @@ export default eventHandler(async (event) => {
 
   if (checkDatabaseIntegrity) {
     checkDatabaseIntegrity = false
-    await checkAndImportDatabaseIntegrity(config.integrityVersion)
+    await checkAndImportDatabaseIntegrity(contentsIv)
       .then((isValid) => { checkDatabaseIntegrity = !isValid })
       .catch((error) => {
         console.log('Database integrity check failed, rebuilding database', error)
@@ -47,6 +46,7 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
 
   const dump = await loadDatabaseDump().then(decompressSQLDump)
 
+  // await db.exec(dump.join('\n'))
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
     await db.exec(sql).catch((error) => {

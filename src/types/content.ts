@@ -1,4 +1,4 @@
-import type { MDCRoot, Toc } from '@nuxtjs/mdc'
+import type { Highlighter, MDCRoot, Toc } from '@nuxtjs/mdc'
 
 export interface TransformedContent {
   id: string
@@ -44,7 +44,7 @@ export interface MarkdownOptions {
   rehypePlugins: Record<string, false | MarkdownPlugin>
 
   highlight?: {
-    highlighter?: (code: string, lang: string) => string
+    highlighter?: Highlighter
     [key: string]: unknown
   }
 }

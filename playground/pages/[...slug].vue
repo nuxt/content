@@ -4,9 +4,7 @@ import { definePageMeta, useAsyncData } from '#imports'
 const route = useRoute()
 
 const { data } = await useAsyncData('posts' + route.path, async () => {
-  const res = await queryCollection('content').path(route.path).first()
-
-  return res
+  return await queryCollection('content').path(route.path).first()
 })
 
 const { data: surround } = await useAsyncData('content-surround' + route.path, () => {
@@ -25,7 +23,7 @@ definePageMeta({
 
 <template>
   <div class="content-page">
-    <MDCRenderer
+    <ContentRenderer
       v-if="data"
       :body="data?.body"
     />

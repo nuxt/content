@@ -1,5 +1,9 @@
 import { printNode, zodToTs } from 'zod-to-ts'
 import { zodToJsonSchema } from 'zod-to-json-schema'
+import type { NuxtTemplate } from '@nuxt/schema'
+import { isAbsolute, join, relative } from 'pathe'
+import { genDynamicImport } from 'knitwork'
+import { deflate } from 'pako'
 import type { ResolvedCollection } from '../types/collection'
 
 function indentLines(str: string, indent: number = 2) {
@@ -10,45 +14,120 @@ function indentLines(str: string, indent: number = 2) {
     .join('\n')
 }
 
-export function contentTypesTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
-  const publicCollections = options.collections.filter(c => c.name !== '_info')
-  const pagesCollections = publicCollections.filter(c => c.type === 'page')
+export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
+  filename: 'content/types.d.ts' as const,
+  getContents: ({ options }) => {
+    const publicCollections = (options.collections as ResolvedCollection[]).filter(c => c.name !== '_info')
+    const pagesCollections = publicCollections.filter(c => c.type === 'page')
 
-  const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
-  return [
-    'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@farnabaz/content-next\'',
-    '',
-    'declare module \'@farnabaz/content-next\' {',
-    ...publicCollections.map(c =>
-      indentLines(`interface ${c.pascalName}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
-    ),
-    '',
-    '  interface PageCollections {',
-    ...pagesCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
-    '  }',
-    '',
-    '  interface Collections {',
-    ...publicCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
-    '  }',
-    '}',
-    '',
-  ].join('\n')
+    const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
+    return [
+      'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@farnabaz/content-next\'',
+      '',
+      'declare module \'@farnabaz/content-next\' {',
+      ...publicCollections.map(c =>
+        indentLines(`interface ${c.pascalName}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
+      ),
+      '',
+      '  interface PageCollections {',
+      ...pagesCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
+      '  }',
+      '',
+      '  interface Collections {',
+      ...publicCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
+      '  }',
+      '}',
+      '',
+    ].join('\n')
+  },
+  options: {
+    collections,
+  },
+} satisfies NuxtTemplate)
+
+export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
+  filename: 'content/collections.mjs' as const,
+  getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
+    const collectionsMeta = options.collections.reduce((acc, collection) => {
+      acc[collection.name] = {
+        name: collection.name,
+        pascalName: collection.pascalName,
+        tableName: collection.tableName,
+        // Remove source from collection meta if it's a remote collection
+        source: collection.source?.repository ? undefined : collection.source,
+        type: collection.type,
+        jsonFields: collection.jsonFields,
+        schema: zodToJsonSchema(collection.extendedSchema, collection.name),
+      }
+      return acc
+    }, {} as Record<string, unknown>)
+
+    return 'export const collections = ' + JSON.stringify(collectionsMeta, null, 2)
+  },
+  options: {
+    collections,
+  },
+  write: true,
+})
+
+export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
+  filename: 'content/dump.mjs' as const,
+  getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
+    const compressed = deflate(JSON.stringify(options.manifest.dump))
+
+    const str = Buffer.from(compressed.buffer).toString('base64')
+    return `export default "${str}"`
+  },
+  write: true,
+  options: {
+    manifest,
+  },
+})
+
+export const componentsManifestTemplate = (manifest: { components: string[] }) => {
+  return {
+    filename: '../.content/components.ts',
+    write: true,
+    getContents: ({ app, nuxt, options }) => {
+      const componentsMap = app.components
+        .filter(c => !c.island && (nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global))
+        .reduce((map, c) => {
+          map[c.pascalName] = map[c.pascalName] || [
+            c.pascalName,
+            `${genDynamicImport(isAbsolute(c.filePath)
+              ? './' + relative(join(nuxt.options.rootDir, '.content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
+              : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}.then(m => m.${c.export})`,
+            c.global,
+          ]
+          return map
+        }, {} as Record<string, unknown[]>)
+
+      const componentsList = Object.values(componentsMap)
+      const globalComponents = componentsList.filter(c => c[2]).map(c => c[0])
+      const localComponents = componentsList.filter(c => !c[2])
+      return [
+        ...localComponents.map(([pascalName, type]) => `export const ${pascalName} = () => ${type}`),
+        `export const globalComponents = ${JSON.stringify(globalComponents)}`,
+        `export const localComponents = ${JSON.stringify(localComponents.map(c => c[0]))}`,
+      ].join('\n')
+    },
+    options: {
+      manifest,
+    },
+  } satisfies NuxtTemplate
 }
 
-export function collectionsTemplate({ options }: { options: { collections: ResolvedCollection[] } }) {
-  const collectionsMeta = options.collections.reduce((acc, collection) => {
-    acc[collection.name] = {
-      name: collection.name,
-      pascalName: collection.pascalName,
-      tableName: collection.tableName,
-      // Remove source from collection meta if it's a remote collection
-      source: collection.source?.repository ? undefined : collection.source,
-      type: collection.type,
-      jsonFields: collection.jsonFields,
-      schema: zodToJsonSchema(collection.extendedSchema, collection.name),
-    }
-    return acc
-  }, {} as Record<string, unknown>)
-
-  return 'export const collections = ' + JSON.stringify(collectionsMeta, null, 2)
-}
+export const contentIntegrityTemplate = (manifest: { contentsIv: string, collectionsIv: string }) => ({
+  filename: 'content/integrity.mjs' as const,
+  getContents: ({ options }: { options: { manifest: { contentsIv: string, collectionsIv: string } } }) => {
+    return [
+      'export const contentsIv = "' + options.manifest.contentsIv + '"',
+      'export const collectionsIv = "' + options.manifest.collectionsIv + '"',
+      'export const integrityVersion = "' + options.manifest.collectionsIv + ':' + options.manifest.contentsIv + '"',
+    ].join('\n')
+  },
+  options: {
+    manifest,
+  },
+  write: true,
+})

@@ -7,6 +7,7 @@ import ScssLang from 'shiki/langs/scss.mjs'
 import YamlLang from 'shiki/langs/yaml.mjs'
 import { hash } from 'ohash'
 import type { Highlighter } from '@nuxtjs/mdc'
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 import type { ResolvedCollection } from '../../types/collection'
 import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
@@ -41,6 +42,7 @@ async function getHighlighPlugin(options: HighlighterOptions) {
         ts: TsLang,
         typescript: TsLang,
       },
+      engine: createJavaScriptRegexEngine({ forgiving: true }),
     })
 
     highlightPlugin = {

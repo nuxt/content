@@ -1,17 +1,29 @@
-import { mkdir, readFile, stat } from 'node:fs/promises'
-import { dirname } from 'node:path'
-import { defineNuxtModule, createResolver, addTemplate, addTypeTemplate, addImports, addServerImports, addServerHandler, installModule } from '@nuxt/kit'
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
+import {
+  defineNuxtModule,
+  createResolver,
+  addTemplate,
+  addTypeTemplate,
+  addImports,
+  addServerImports,
+  addServerHandler,
+  installModule,
+  addPlugin,
+  updateTemplates,
+  addComponentsDir,
+} from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
-import { deflate } from 'pako'
 import { hash } from 'ohash'
-import { join } from 'pathe'
+import { join, dirname } from 'pathe'
 import fastGlob from 'fast-glob'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
+import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
+import { kebabCase, pascalCase } from 'scule'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
-import { collectionsTemplate, contentTypesTemplate } from './utils/templates'
+import { collectionsTemplate, componentsManifestTemplate, contentIntegrityTemplate, contentTypesTemplate, sqlDumpTemplate } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
-import { getContentChecksum, localDatabase, logger, watchContents, chunks } from './utils/dev'
+import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
 
@@ -19,39 +31,12 @@ import { parseContent } from './utils/content'
 export * from './utils'
 export type * from './types'
 
-const PROSE_TAGS = [
-  'p',
-  'a',
-  'blockquote',
-  'code',
-  'em',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-  'hr',
-  'img',
-  'ul',
-  'ol',
-  'li',
-  'strong',
-  'table',
-  'thead',
-  'tbody',
-  'td',
-  'th',
-  'tr',
-]
-
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'Content',
     configKey: 'contentV3',
   },
   defaults: {
-    _iv: '1',
     _localDatabase: {
       type: 'sqlite',
       filename: '.data/content/local.db',
@@ -60,10 +45,17 @@ export default defineNuxtModule<ModuleOptions>({
       type: 'sqlite',
       filename: '.data/content/local.db',
     },
-    renderer: {
-      alias: {
-        ...Object.fromEntries(PROSE_TAGS.map(t => [t, `prose-${t}`])),
+    watch: {
+      enabled: true,
+      port: {
+        port: 4000,
+        portRange: [4000, 4040],
       },
+      hostname: 'localhost',
+      showURL: false,
+    },
+    renderer: {
+      alias: {},
       anchorLinks: {
         depth: 4,
         exclude: [1],
@@ -80,9 +72,19 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(_options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const contentOptions = {
-      ..._options,
-      _iv: '1',
+    const contentOptions = { ..._options }
+    const collectionManifest = {
+      collectionsIv: '-',
+      contentsIv: '-',
+      dump: [] as string[],
+      components: [] as string[],
+    }
+
+    // Add .content/** to .gitignore
+    const gitignore = await readFile(join(nuxt.options.rootDir, '.gitignore'), 'utf-8').catch(() => '')
+    if (!gitignore.includes('.content/**')) {
+      await writeFile(join(nuxt.options.rootDir, '.gitignore'), gitignore.trim() + '\n# Ignore content module cache directory\n.content/**\n')
+        .catch(() => {})
     }
 
     await mkdir(join(nuxt.options.rootDir, dirname(contentOptions._localDatabase!.filename)), { recursive: true }).catch(() => {})
@@ -95,17 +97,16 @@ export default defineNuxtModule<ModuleOptions>({
 
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
 
-    contentOptions._iv += hash({
+    collectionManifest.collectionsIv += hash({
       collections: collections.map(c => c.tableDefinition),
       buildOptions: contentOptions.build,
     })
 
     const publicRuntimeConfig = {
-      integrityVersion: contentOptions._iv,
+      wsUrl: '',
     }
 
     const privateRuntimeConfig = {
-      integrityVersion: contentOptions._iv,
       database: contentOptions.database,
       localDatabase: contentOptions._localDatabase!,
     }
@@ -132,29 +133,20 @@ export default defineNuxtModule<ModuleOptions>({
     ]
     addImports(autoImports)
     addServerImports(autoImports)
+    addComponentsDir({ path: resolver.resolve('./runtime/components') })
 
-    // Types template
-    addTypeTemplate({ filename: 'content/types.d.ts', getContents: contentTypesTemplate, options: { collections } })
-
-    const collectionsDst = addTemplate({
-      filename: 'content/collections.mjs',
-      getContents: collectionsTemplate,
-      options: { collections },
-      write: true,
-    }).dst
-
-    let sqlDump: string[] = []
-    const dumpDst = addTemplate({ filename: 'content/dump.mjs', getContents: () => {
-      const compressed = deflate(JSON.stringify(sqlDump))
-
-      const str = Buffer.from(compressed.buffer).toString('base64')
-      return `export default "${str}"`
-    }, write: true }).dst
-
+    // Templates
+    addTypeTemplate(contentTypesTemplate(collections))
+    const collectionsDst = addTemplate(collectionsTemplate(collections)).dst
+    const dumpDst = addTemplate(sqlDumpTemplate(collectionManifest)).dst
+    const componentsDst = addTemplate(componentsManifestTemplate(collectionManifest)).dst
+    const integrityDst = addTemplate(contentIntegrityTemplate(collectionManifest)).dst
     // Add aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content-v3/collections'] = collectionsDst
     nuxt.options.nitro.alias['#content-v3/dump'] = dumpDst
+    nuxt.options.alias['#content-v3/components'] = componentsDst
+    nuxt.options.alias['#content-v3/integrity'] = integrityDst
 
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()
@@ -177,7 +169,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Install mdc module
     const highlight = contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
     const nuxtMDCOptions = {
-      highlight: highlight ? { ...highlight } : highlight,
+      highlight: highlight ? { ...highlight, noApiRoute: true } : highlight,
       components: {
         prose: true,
         map: contentOptions.renderer.alias,
@@ -202,9 +194,19 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    const dumpGeneratePromise = generateSqlDump(nuxt, collections, contentOptions)
-      .then((dump) => {
-        sqlDump = dump
+    const dumpGeneratePromise = processCollectionItems(nuxt, collections, contentOptions)
+      .then((manifest) => {
+        collectionManifest.contentsIv = manifest.contentIv
+        collectionManifest.dump = manifest.dump
+        collectionManifest.components = manifest.components
+
+        return updateTemplates({
+          filter: template => [
+            String(sqlDumpTemplate(collectionManifest).filename),
+            String(componentsManifestTemplate(collectionManifest).filename),
+            String(contentIntegrityTemplate(collectionManifest).filename),
+          ].includes(template.filename),
+        })
       })
 
     nuxt.hook('app:templates', async () => {
@@ -212,22 +214,18 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     if (nuxt.options.dev) {
-      watchContents(nuxt, collections, contentOptions)
-
-      nuxt.hook('nitro:init', async (nitro) => {
-        nitro.storage.watch(async (_event, key) => {
-          if (['root:content.config.ts', 'root:content.config.mjs'].includes(key)) {
-            logger.info(`${key.split(':').pop()} Updated. Restarting Nuxt...`)
-
-            nuxt.hooks.callHook('restart', { hard: true })
-          }
-        })
+      addPlugin({
+        src: resolver.resolve('./runtime/plugins/websocket.dev'),
+        mode: 'client',
       })
+      await watchContents(nuxt, collections, contentOptions, collectionManifest)
+      await watchComponents(nuxt)
+      await watchConfig(nuxt)
     }
   },
 })
 
-async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
+async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const sqlDumpList: string[] = []
   const db = localDatabase(options._localDatabase!.filename)
   const databaseContents = db.fetchDevelopmentCache()
@@ -282,14 +280,29 @@ async function generateSqlDump(nuxt: Nuxt, collections: ResolvedCollection[], op
 
   const infoCollection = collections.find(c => c.name === '_info')!
 
-  sqlDumpList.push(generateCollectionInsert(infoCollection, { id: 'version', version: options._iv }))
+  const version = hash(sqlDumpList)
+
+  sqlDumpList.push(generateCollectionInsert(infoCollection, { contentId: 'version', version }))
 
   for (const sql of sqlDumpList) {
     db.exec(sql)
   }
 
+  const tags = sqlDumpList.flatMap(sql => sql.match(/"tag":"([^"]+)"/g) || [])
+  const uniqueTags = [
+    ...Object.values(options.renderer.alias || {}),
+    ...new Set(tags),
+  ]
+    .map(tag => tag.substring(7, tag.length - 1))
+    .filter(tag => !htmlTags.includes(kebabCase(tag)))
+    .map(tag => pascalCase(tag))
+
   const endTime = performance.now()
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
-  return sqlDumpList
+  return {
+    contentIv: version,
+    dump: sqlDumpList,
+    components: uniqueTags,
+  }
 }

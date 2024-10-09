@@ -1,4 +1,5 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
+import type { ListenOptions } from 'listhen'
 import type { MarkdownPlugin } from './content'
 
 export interface D1DatabaseConfig {
@@ -14,10 +15,6 @@ export interface SqliteDatabaseConfig {
 export interface ModuleOptions {
   /**
    * @private
-   */
-  _iv?: string
-  /**
-   * @private
    * @default { type: 'sqlite', filename: '.data/content/local.db' }
    */
   _localDatabase?: SqliteDatabaseConfig
@@ -25,6 +22,7 @@ export interface ModuleOptions {
    * Production database configuration
    */
   database: D1DatabaseConfig | SqliteDatabaseConfig
+  watch?: Partial<ListenOptions> & { enabled?: boolean }
   renderer: {
     /**
      * Tags will be used to replace markdown components and render custom components instead of default ones.

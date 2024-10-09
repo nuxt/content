@@ -44,6 +44,8 @@
     "fast-glob": "^3.3.2",
     "jiti": "^2.0.0",
     "json5": "^2.2.3",
+    "knitwork": "^1.1.0",
+    "listhen": "^1.9.0",
     "mdast-util-to-hast": "^13.2.0",
     "mdast-util-to-string": "^4.0.0",
     "micromark": "^4.0.0",
@@ -63,6 +65,7 @@
     "ufo": "^1.5.4",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
+    "ws": "^8.18.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.3",
     "zod-to-ts": "^1.2.0"
@@ -79,6 +82,7 @@
     "@types/micromatch": "^4.0.9",
     "@types/node": "^22.7.3",
     "@types/pako": "^2.0.3",
+    "@types/ws": "^8.5.12",
     "changelogen": "^0.5.7",
     "csvtojson": "^2.0.10",
     "eslint": "^9.11.1",
@@ -88,8 +92,5 @@
     "vitest": "^2.1.1",
     "vue-tsc": "^2.1.6",
     "wrangler": "^3.78.11"
-  },
-  "resolutions": {
-    "@nuxtjs/mdc": "npm:@farnabaz/mdc@0.8.3"
   }
 }

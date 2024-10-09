@@ -1,6 +1,5 @@
 import type { Collections } from '@farnabaz/content-next'
 import type { CollectionInfo } from '../../../types'
-// @ts-expect-error - Vite doesn't know about the import
 import { collections as _collections } from '#content-v3/collections'
 
 export const collectionsInfo = _collections as Record<keyof Collections, CollectionInfo>
