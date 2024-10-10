@@ -1,11 +1,8 @@
 {
-  "compilerOptions": {
-    "lib": [ "es2015", "dom" ]
-  },
-  "extends": "./playground/basic/.nuxt/tsconfig.json",
+  "extends": "./.nuxt/tsconfig.json",
   "exclude": [
-    "test",
-    "docs",
-    "node_modules"
+    "dist",
+    "node_modules",
+    "playground",
   ]
 }

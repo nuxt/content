@@ -1,13 +1,8 @@
 # Dependencies
 node_modules
-jspm_packages
-
-package-lock.json
-
-examples/*/**/yarn.lock
 
 # Logs
-*.log
+*.log*
 
 # Temp directories
 .temp
@@ -20,22 +15,31 @@ examples/*/**/yarn.lock
 
 # Generated dirs
 dist
+
+# Nuxt
 .nuxt
-.nuxt-*
 .output
-.gen
-nuxt.d.ts
+.data
+.vercel_build_output
+.build-*
+.netlify
 
-# Junit reports
+# Env
+.env
+
+# Testing
 reports
-
-# Coverage reports
 coverage
 *.lcov
 .nyc_output
 
 # VSCode
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 .history
 
 # Intellij idea
@@ -46,31 +50,12 @@ coverage
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
 
-.vercel_build_output
-.build-*
-.env
-.netlify
-
-# Cypress
-cypress/videos
-cypress/screenshots
-
-# Fake contents in test directories
-fake
+.wrangler
+# Ignore content module cache directory
+.content/**

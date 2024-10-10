@@ -1,3 +1,0 @@
-# Homepage title
-
-Homepage body

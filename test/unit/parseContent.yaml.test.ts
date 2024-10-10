@@ -1,0 +1,35 @@
+import { describe, test, expect, assert } from 'vitest'
+import { z } from 'zod'
+import { parseContent } from '../../src/utils/content'
+import { defineCollection } from '../../src/utils'
+import { resolveCollection } from '../../src/utils/collection'
+
+describe('Parser (.yml)', () => {
+  const collection = resolveCollection('content', defineCollection({
+    type: 'data',
+    source: 'content/**',
+    schema: z.object({
+      body: z.any(),
+    }),
+  }), { rootDir: '~' })
+  test('key:value', async () => {
+    const parsed = await parseContent('content/index.yml', 'key: value', collection)
+
+    expect(parsed).toHaveProperty('contentId')
+    assert(parsed.contentId === 'content/index.yml')
+
+    expect(parsed.meta).toHaveProperty('key', 'value')
+  })
+
+  test('array', async () => {
+    const parsed = await parseContent('content/index.yml', '- item 1 \n- item 2', collection)
+
+    expect(parsed).toHaveProperty('contentId')
+    assert(parsed.contentId === 'content/index.yml')
+
+    expect(parsed).haveOwnProperty('body')
+    expect(Array.isArray(parsed.body)).toBeTruthy()
+    expect(parsed.body).toHaveLength(2)
+    expect(parsed.body).toMatchObject(['item 1', 'item 2'])
+  })
+})

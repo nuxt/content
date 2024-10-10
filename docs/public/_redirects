@@ -1,4 +1,0 @@
-# Waiting for https://github.com/unjs/nitro/issues/1748
-/fr/v1/* /v1/:splat
-/ja/v1/* /v1/:splat
-/ru/v1/* /v1/:splat
