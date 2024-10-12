@@ -1,10 +1,10 @@
 export default defineNuxtConfig({
   modules: [
     '../src/module',
-    '@nuxt/ui',
+    '@nuxt/ui-pro',
     '@nuxthub/core',
   ],
-  extends: ['@nuxt/ui-pro'],
+  // extends: ['@nuxt/ui-pro'],
   contentV3: {
     database: {
       type: 'd1',

@@ -17,9 +17,10 @@ const links = computed(() => {
 
 <template>
   <div class="flex">
-    <UVerticalNavigation
+    <UNavigationMenu
       class="w-[200px] flex-none p-2 sticky top-0 h-screen"
-      :links="links"
+      orientation="vertical"
+      :items="links"
     />
     <div class="flex-1 p-4 prose prose-invert">
       <slot />
