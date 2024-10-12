@@ -44,7 +44,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       listener = await listen(() => 'Nuxt Content', websocketOptions)
 
       // Register ws url
-      nitro.options.runtimeConfig.public.contentv3.wsUrl = listener.url.replace('http', 'ws')
+      nitro.options.runtimeConfig.public.content.wsUrl = listener.url.replace('http', 'ws')
 
       listener.server.on('upgrade', websocket.serve)
     })

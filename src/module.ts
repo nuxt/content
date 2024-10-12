@@ -34,7 +34,7 @@ export type * from './types'
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'Content',
-    configKey: 'contentV3',
+    configKey: 'content',
   },
   defaults: {
     _localDatabase: {
@@ -114,9 +114,9 @@ export default defineNuxtModule<ModuleOptions>({
       database: contentOptions.database,
       localDatabase: contentOptions._localDatabase!,
     }
-    nuxt.options.runtimeConfig.public.contentv3 = publicRuntimeConfig
+    nuxt.options.runtimeConfig.public.content = publicRuntimeConfig
     // @ts-expect-error - privateRuntimeConfig is not typed
-    nuxt.options.runtimeConfig.contentv3 = privateRuntimeConfig
+    nuxt.options.runtimeConfig.content = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []

@@ -6,7 +6,7 @@ import type { DatabaseAdapter } from './factory'
 import { useRuntimeConfig } from '#imports'
 
 export default function useContentDatabase() {
-  const { database, localDatabase } = useRuntimeConfig().contentv3
+  const { database, localDatabase } = useRuntimeConfig().content
 
   let adapter: DatabaseAdapter
   async function loadAdapter() {

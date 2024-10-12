@@ -76,7 +76,7 @@ export function useContentWebSocket() {
     }
 
     // WebSocket Base URL
-    const wsURL = `${useRuntimeConfig().public.contentv3.wsUrl}ws`
+    const wsURL = `${useRuntimeConfig().public.content.wsUrl}ws`
 
     logger.log(`WS connect to ${wsURL}`)
 

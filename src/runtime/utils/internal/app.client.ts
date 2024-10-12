@@ -12,10 +12,10 @@ export async function prepareLocalDatabase() {
     let collections: Record<string, { jsonFields: string[] }> | null = null
 
     if (!import.meta.dev) {
-      const localCacheVersion = window.localStorage.getItem('contentv3-integrity-version')
+      const localCacheVersion = window.localStorage.getItem('content-integrity-version')
       if (localCacheVersion === integrityVersion) {
-        compressedDump = window.localStorage.getItem('contentv3-dump')
-        const localCollections = window.localStorage.getItem('contentv3-collections')
+        compressedDump = window.localStorage.getItem('content-dump')
+        const localCollections = window.localStorage.getItem('content-collections')
         if (localCollections) {
           collections = JSON.parse(localCollections)
         }
@@ -34,9 +34,9 @@ export async function prepareLocalDatabase() {
       perf.tick('Download Database')
       if (!import.meta.dev) {
         try {
-          window.localStorage.setItem('contentv3-integrity-version', integrityVersion)
-          window.localStorage.setItem('contentv3-dump', compressedDump!)
-          window.localStorage.setItem('contentv3-collections', JSON.stringify(collections))
+          window.localStorage.setItem('content-integrity-version', integrityVersion)
+          window.localStorage.setItem('content-dump', compressedDump!)
+          window.localStorage.setItem('content-collections', JSON.stringify(collections))
         }
         catch (error) {
           console.log('Database integrity check failed, rebuilding database', error)
