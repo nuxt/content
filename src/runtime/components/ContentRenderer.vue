@@ -1,47 +1,51 @@
-<script script setup lang="ts">
-import { resolveComponent, toRaw, getCurrentInstance, defineAsyncComponent, computed } from 'vue'
-import type { DefineComponent, PropType } from 'vue'
+<script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
+import { resolveComponent, toRaw, getCurrentInstance, defineAsyncComponent, computed } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
 import { globalComponents, localComponents } from '#content-v3/components'
-
-const renderFunctions = ['render', 'ssrRender', '__ssrInlineRender'] as const
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
   ssrRender?: (props: Record<string, unknown>) => unknown
 }
 
+const renderFunctions = ['render', 'ssrRender', '__ssrInlineRender'] as const
+
 const props = defineProps({
   /**
    * Content to render
    */
-  body: {
-    type: Object as PropType<MDCRoot>,
+  value: {
+    type: Object,
     required: true,
   },
   /**
-   * Document meta data
+   * Render only the excerpt
    */
-  data: {
-    type: Object,
-    default: () => ({}),
-  },
-  /**
-   * Root tag to use for rendering
-   */
-  class: {
-    type: [String, Object],
-    default: undefined,
+  excerpt: {
+    type: Boolean,
+    default: false,
   },
   /**
    * Root tag to use for rendering
    */
   tag: {
-    type: [String, Boolean],
-    default: undefined,
+    type: String,
+    default: 'div',
+  },
+  /**
+   * The map of custom components to use for rendering.
+   */
+  components: {
+    type: Object,
+    default: () => ({}),
+  },
+
+  data: {
+    type: Object,
+    default: () => ({}),
   },
   /**
    * Whether or not to render Prose components instead of HTML tags
@@ -51,11 +55,11 @@ const props = defineProps({
     default: undefined,
   },
   /**
-   * The map of custom components to use for rendering.
+   * Root tag to use for rendering
    */
-  components: {
-    type: Object as PropType<Record<string, string | DefineComponent<unknown, unknown, unknown>>>,
-    default: () => ({}),
+  class: {
+    type: [String, Object],
+    default: undefined,
   },
   /**
    * Tags to unwrap separated by spaces
@@ -66,6 +70,26 @@ const props = defineProps({
     default: false,
   },
 })
+
+const debug = import.meta.dev
+
+const body = computed(() => {
+  let body = props.value.body || props.value
+  if (props.excerpt && props.value.excerpt) {
+    body = props.value.excerpt
+  }
+
+  return body
+})
+
+const data = computed(() => {
+  const { body, excerpt, ...data } = props.value
+  return {
+    ...data,
+    ...props.data,
+  }
+})
+
 const proseComponentMap = Object.fromEntries(['p', 'a', 'blockquote', 'code', 'pre', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'img', 'ul', 'ol', 'li', 'strong', 'table', 'thead', 'tbody', 'td', 'th', 'tr', 'script'].map(t => [t, `prose-${t}`]))
 
 const $nuxt = getCurrentInstance()?.appContext?.app?.$nuxt
@@ -81,7 +105,7 @@ const key = computed(() => {
   if (!import.meta.dev) {
     return undefined
   }
-  const res = Array.from(new Set(loadComponents(props.body, { tags })))
+  const res = Array.from(new Set(body.value ? loadComponents(body.value, { tags }) : []))
     .filter(t => localComponents.includes(pascalCase(String(t))))
     .sort()
     .join('.')
@@ -89,24 +113,25 @@ const key = computed(() => {
   return res
 })
 
-const components = computed(() => {
-  return resolveContentComponents(props.body, { tags })
+const componentsMap = computed(() => {
+  return body.value ? resolveContentComponents(body.value, { tags }) : {}
 })
+
 function resolveVueComponent(component: string | Renderable) {
-  let _component: unknown = component
+  const _component: unknown = component
   if (typeof component === 'string') {
     if (htmlTags.includes(component)) {
       return component
     }
-    if (globalComponents.includes(pascalCase(component))) {
-      _component = resolveComponent(component, false)
-    }
-    else if (localComponents.includes(pascalCase(component))) {
-      _component = defineAsyncComponent(() => {
-        // @ts-expect-error - typescript doesn't know about the import
-        return import('#content-v3/components').then(m => m[pascalCase(component)]())
-      })
-    }
+    // if (globalComponents.includes(pascalCase(component))) {
+    //   _component = resolveComponent(component, false)
+    // }
+    // else if (localComponents.includes(pascalCase(component))) {
+    //   _component = defineAsyncComponent(() => {
+    //     // @ts-expect-error - typescript doesn't know about the import
+    //     return import('#content-v3/components').then(m => m[pascalCase(component)]())
+    //   })
+    // }
     if (typeof _component === 'string') {
       return _component
     }
@@ -117,9 +142,9 @@ function resolveVueComponent(component: string | Renderable) {
     return componentObject
   }
 
-  if ('setup' in componentObject) {
-    return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
-  }
+  // if ('setup' in componentObject) {
+  //   return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
+  // }
 
   return componentObject
 }
@@ -167,12 +192,13 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
 <template>
   <MDCRenderer
     :key="key"
-    :body="props.body"
-    :data="props.data"
+    :body="body"
+    :data="data"
     :clas="props.class"
     :tag="props.tag"
     :prose="props.prose"
     :unwrap="props.unwrap"
-    :components="components"
+    :components="componentsMap"
+    :data-content-id="debug ? value._id : undefined"
   />
 </template>

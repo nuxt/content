@@ -218,10 +218,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     if (nuxt.options.dev) {
-      addPlugin({
-        src: resolver.resolve('./runtime/plugins/websocket.dev'),
-        mode: 'client',
-      })
+      addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
       await watchContents(nuxt, collections, contentOptions, collectionManifest)
       await watchComponents(nuxt)
       await watchConfig(nuxt)
