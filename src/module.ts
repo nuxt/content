@@ -11,6 +11,7 @@ import {
   addPlugin,
   updateTemplates,
   addComponentsDir,
+  extendViteConfig,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { hash } from 'ohash'
@@ -193,6 +194,15 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
     await installModule('@nuxtjs/mdc', nuxtMDCOptions)
+
+    // Update mdc optimizeDeps options
+    extendViteConfig((config) => {
+      config.optimizeDeps ||= {}
+      config.optimizeDeps.include ||= []
+      config.optimizeDeps.include.push('@nuxt/content > slugify')
+      config.optimizeDeps.include = config.optimizeDeps.include
+        .map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content > @nuxtjs/mdc > '))
+    })
 
     if (nuxt.options._prepare) {
       return
