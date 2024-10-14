@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, stat } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -79,13 +79,6 @@ export default defineNuxtModule<ModuleOptions>({
       contentsIv: '-',
       dump: [] as string[],
       components: [] as string[],
-    }
-
-    // Add .content/** to .gitignore
-    const gitignore = await readFile(join(nuxt.options.rootDir, '.gitignore'), 'utf-8').catch(() => '')
-    if (!gitignore.includes('.content/**')) {
-      await writeFile(join(nuxt.options.rootDir, '.gitignore'), gitignore.trim() + '\n# Ignore content module cache directory\n.content/**\n')
-        .catch(() => {})
     }
 
     contentOptions._localDatabase!.filename = isAbsolute(contentOptions._localDatabase!.filename)
