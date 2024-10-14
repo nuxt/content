@@ -76,10 +76,10 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
       return query
     },
     async all(): Promise<Collections[T][]> {
-      return executeContentQuery<T, Collections[T]>(collection, buildQuery())
+      return executeContentQuery<T, Collections[T]>(collection, buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
-      return executeContentQuery<T, Collections[T]>(collection, buildQuery()).then(res => res[0])
+      return executeContentQuery<T, Collections[T]>(collection, buildQuery()).then(res => res[0] || null)
     },
   }
 

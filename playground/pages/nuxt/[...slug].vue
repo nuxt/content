@@ -25,7 +25,7 @@ definePageMeta({
   <div class="content-page">
     <MDCRenderer
       v-if="data"
-      :body="data?.body"
+      :value="data"
     />
     <h2>Surround</h2>
     <pre>{{ surround }}</pre>
