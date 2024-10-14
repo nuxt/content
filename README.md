@@ -1,4 +1,4 @@
-[![nuxt-content-social-card](./.github/social-card.png)](https://content.nuxt.com)
+[![nuxt-content-social-card](./.github/social-card.png)](https://content3.nuxt.dev)
 
 # Nuxt Content
 
@@ -24,7 +24,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Blazing fast hot module replacement in development
 - Code highlighting with [**Shiki**](https://github.com/shikijs/shiki)
 - Powerful query builder on top of SQLite database
-- [... and more](https://content.nuxt.com)
+- [... and more](https://content3.nuxt.dev)
 
 
 ## 💻 Development
@@ -40,7 +40,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 [MIT](./LICENSE) - Made with 💚
 
-[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/next.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
