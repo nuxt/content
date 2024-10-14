@@ -86,7 +86,7 @@ export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
 
 export const componentsManifestTemplate = (manifest: { components: string[] }) => {
   return {
-    filename: '../.content/components.ts',
+    filename: 'content/components.ts',
     write: true,
     getContents: ({ app, nuxt, options }) => {
       const componentsMap = app.components
@@ -95,7 +95,7 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
           map[c.pascalName] = map[c.pascalName] || [
             c.pascalName,
             `${genDynamicImport(isAbsolute(c.filePath)
-              ? './' + relative(join(nuxt.options.rootDir, '.content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
+              ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
               : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}`,
             c.global,
           ]

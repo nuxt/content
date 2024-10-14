@@ -118,20 +118,20 @@ const componentsMap = computed(() => {
 })
 
 function resolveVueComponent(component: string | Renderable) {
-  const _component: unknown = component
+  let _component: unknown = component
   if (typeof component === 'string') {
     if (htmlTags.includes(component)) {
       return component
     }
-    // if (globalComponents.includes(pascalCase(component))) {
-    //   _component = resolveComponent(component, false)
-    // }
-    // else if (localComponents.includes(pascalCase(component))) {
-    //   _component = defineAsyncComponent(() => {
-    //     // @ts-expect-error - typescript doesn't know about the import
-    //     return import('#content-v3/components').then(m => m[pascalCase(component)]())
-    //   })
-    // }
+    if (globalComponents.includes(pascalCase(component))) {
+      _component = resolveComponent(component, false)
+    }
+    else if (localComponents.includes(pascalCase(component))) {
+      _component = defineAsyncComponent(() => {
+        // @ts-expect-error - typescript doesn't know about the import
+        return import('#content-v3/components').then(m => m[pascalCase(component)]())
+      })
+    }
     if (typeof _component === 'string') {
       return _component
     }
@@ -142,9 +142,9 @@ function resolveVueComponent(component: string | Renderable) {
     return componentObject
   }
 
-  // if ('setup' in componentObject) {
-  //   return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
-  // }
+  if ('setup' in componentObject) {
+    return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
+  }
 
   return componentObject
 }

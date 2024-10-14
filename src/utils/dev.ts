@@ -4,7 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import type { IncomingMessage } from 'node:http'
 import Database from 'better-sqlite3'
 import type { Nuxt } from '@nuxt/schema'
-import { addVitePlugin, updateTemplates, useLogger } from '@nuxt/kit'
+import { addVitePlugin, isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
@@ -120,6 +120,13 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
 }
 
 export function watchComponents(nuxt: Nuxt) {
+  const componentsTemplatePath = join(nuxt.options.buildDir, 'content/components.ts')
+  nuxt.options.vite.server ||= {}
+  nuxt.options.vite.server.watch ||= {}
+  nuxt.options.vite.server.watch.ignored = (file) => {
+    return file !== componentsTemplatePath && isIgnored(file)
+  }
+
   let componentDirs: string[] = []
   nuxt.hook('components:dirs', (allDirs) => {
     componentDirs = allDirs.map(dir => typeof dir === 'string' ? dir : dir.path).filter(Boolean)
@@ -132,9 +139,7 @@ export function watchComponents(nuxt: Nuxt) {
     const path = resolve(nuxt.options.srcDir, relativePath)
     if (componentDirs.some(dir => path.startsWith(dir + '/'))) {
       await updateTemplates({
-        filter: template => [
-          '../.content/components.ts',
-        ].includes(template.filename),
+        filter: template => ['content/components.ts'].includes(template.filename),
       })
     }
   })
@@ -143,7 +148,7 @@ export function watchComponents(nuxt: Nuxt) {
     name: 'reload',
     configureServer(server) {
       server.watcher.on('change', (file) => {
-        if (file.endsWith('/content/components.ts')) {
+        if (file === componentsTemplatePath) {
           server.ws.send({
             type: 'full-reload',
           })
