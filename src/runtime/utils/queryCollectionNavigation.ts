@@ -1,5 +1,4 @@
-import type { PageCollections } from '@nuxt/content'
-import type { PageCollectionItemBase } from '../../types'
+import type { PageCollections, PageCollectionItemBase } from '@nuxt/content'
 import { generateNavigationTree } from './internal/generateNavigationTree'
 import { queryCollection } from './queryCollection'
 

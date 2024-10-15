@@ -138,10 +138,10 @@ export default defineNuxtModule<ModuleOptions>({
     const integrityDst = addTemplate(contentIntegrityTemplate(collectionManifest)).dst
     // Add aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    nuxt.options.nitro.alias['#content-v3/collections'] = collectionsDst
-    nuxt.options.nitro.alias['#content-v3/dump'] = dumpDst
-    nuxt.options.alias['#content-v3/components'] = componentsDst
-    nuxt.options.alias['#content-v3/integrity'] = integrityDst
+    nuxt.options.nitro.alias['#content/collections'] = collectionsDst
+    nuxt.options.nitro.alias['#content/dump'] = dumpDst
+    nuxt.options.alias['#content/components'] = componentsDst
+    nuxt.options.alias['#content/integrity'] = integrityDst
 
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()

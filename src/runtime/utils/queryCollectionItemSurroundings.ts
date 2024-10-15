@@ -1,5 +1,4 @@
-import type { PageCollections } from '@nuxt/content'
-import type { ContentNavigationItem, SurroundOptions } from '../../types'
+import type { PageCollections, ContentNavigationItem, SurroundOptions } from '@nuxt/content'
 import { queryCollectionNavigation } from './queryCollectionNavigation'
 
 export async function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {

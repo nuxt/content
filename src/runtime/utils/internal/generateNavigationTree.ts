@@ -1,4 +1,4 @@
-import type { ContentNavigationItem, PageCollectionItemBase } from '../../../types'
+import type { ContentNavigationItem, PageCollectionItemBase } from '@nuxt/content'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
@@ -108,7 +108,7 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear(nav: ContentNavigationItem[]) {
-  const sorted = nav.sort((a, b) => collator.compare(a.stem, b.stem))
+  const sorted = nav.sort((a, b) => collator.compare(a.stem!, b.stem!))
 
   for (const item of sorted) {
     if (item.children?.length) {

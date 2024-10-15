@@ -4,7 +4,7 @@ import { resolveComponent, toRaw, getCurrentInstance, defineAsyncComponent, comp
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
-import { globalComponents, localComponents } from '#content-v3/components'
+import { globalComponents, localComponents } from '#content/components'
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
@@ -129,7 +129,7 @@ function resolveVueComponent(component: string | Renderable) {
     else if (localComponents.includes(pascalCase(component))) {
       _component = defineAsyncComponent(() => {
         // @ts-expect-error - typescript doesn't know about the import
-        return import('#content-v3/components').then(m => m[pascalCase(component)]())
+        return import('#content/components').then(m => m[pascalCase(component)]())
       })
     }
     if (typeof _component === 'string') {

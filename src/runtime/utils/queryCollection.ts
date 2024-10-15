@@ -1,5 +1,4 @@
-import type { Collections } from '@nuxt/content'
-import type { CollectionQueryBuilder, SQLOperator } from '../../types'
+import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
 import { executeContentQuery } from './executeContentQuery'
 import { getTableName } from './internal/app'
 

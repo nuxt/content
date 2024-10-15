@@ -4,7 +4,7 @@ import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
 import { loadDatabaseDump } from '../../../utils/internal/app.server'
 import { getTableName } from '../../../utils/internal/app'
-import { contentsIv } from '#content-v3/integrity'
+import { contentsIv } from '#content/integrity'
 
 let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {

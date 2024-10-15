@@ -1,7 +1,7 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import { measurePerformance } from './performance'
 import { decompressSQLDump } from './decompressSQLDump'
-import { integrityVersion } from '#content-v3/integrity'
+import { integrityVersion } from '#content/integrity'
 
 let db: Database & { collections?: Record<string, { jsonFields: string[] }> }
 

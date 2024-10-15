@@ -1,6 +1,6 @@
 import { eventHandler } from 'h3'
+import type { CollectionInfo } from '@nuxt/content'
 import { collectionsInfo, loadDatabaseDump } from '../../utils/internal/app.server'
-import type { CollectionInfo } from '../../../types'
 
 export default eventHandler(async () => {
   const dump: string = await loadDatabaseDump()

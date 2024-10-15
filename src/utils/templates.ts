@@ -107,8 +107,8 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
       const localComponents = componentsList.filter(c => !c[2])
       return [
         ...localComponents.map(([pascalName, type]) => `export const ${pascalName} = () => ${type}`),
-        `export const globalComponents = ${JSON.stringify(globalComponents)}`,
-        `export const localComponents = ${JSON.stringify(localComponents.map(c => c[0]))}`,
+        `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
+        `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
     },
     options: {
