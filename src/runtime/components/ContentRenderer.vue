@@ -137,6 +137,10 @@ function resolveVueComponent(component: string | Renderable) {
     }
   }
 
+  if (!_component) {
+    return _component
+  }
+
   const componentObject = _component as Renderable
   if ('__asyncLoader' in componentObject) {
     return componentObject

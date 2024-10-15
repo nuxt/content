@@ -100,17 +100,14 @@ export default defineNuxtModule<ModuleOptions>({
       buildOptions: contentOptions.build,
     })
 
-    const publicRuntimeConfig = {
+    nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',
     }
-
-    const privateRuntimeConfig = {
+    nuxt.options.runtimeConfig.content = {
+      // @ts-expect-error - privateRuntimeConfig is not typed
       database: contentOptions.database,
       localDatabase: contentOptions._localDatabase!,
     }
-    nuxt.options.runtimeConfig.public.content = publicRuntimeConfig
-    // @ts-expect-error - privateRuntimeConfig is not typed
-    nuxt.options.runtimeConfig.content = privateRuntimeConfig
 
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
     nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []

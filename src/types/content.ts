@@ -1,5 +1,7 @@
 import type { Highlighter, MDCRoot, Toc } from '@nuxtjs/mdc'
 
+export type { Toc, TocLink } from '@nuxtjs/mdc'
+
 export interface TransformedContent {
   id: string
   [key: string]: unknown
