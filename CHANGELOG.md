@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.13.4
+
+[compare changes](https://github.com/nuxt/content/compare/v2.13.3...v2.13.4)
+
+### 🏡 Chore
+
+- Upgrade `@nuxtjs/mdc` ([0c462d3f](https://github.com/nuxt/content/commit/0c462d3f))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.13.3
 
 [compare changes](https://github.com/nuxt/content/compare/v2.13.2...v2.13.3)
