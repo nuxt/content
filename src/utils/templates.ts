@@ -117,13 +117,11 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
   } satisfies NuxtTemplate
 }
 
-export const contentIntegrityTemplate = (manifest: { contentsIv: string, collectionsIv: string }) => ({
+export const contentIntegrityTemplate = (manifest: { integrityVersion: string }) => ({
   filename: 'content/integrity.mjs' as const,
-  getContents: ({ options }: { options: { manifest: { contentsIv: string, collectionsIv: string } } }) => {
+  getContents: ({ options }: { options: { manifest: { integrityVersion: string } } }) => {
     return [
-      'export const contentsIv = "' + options.manifest.contentsIv + '"',
-      'export const collectionsIv = "' + options.manifest.collectionsIv + '"',
-      'export const integrityVersion = "' + options.manifest.collectionsIv + ':' + options.manifest.contentsIv + '"',
+      'export const integrityVersion = "' + options.manifest.integrityVersion + '"',
     ].join('\n')
   },
   options: {

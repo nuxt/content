@@ -4,7 +4,7 @@ import useContentDatabase from '../../adapters'
 import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
 import { loadDatabaseDump } from '../../../utils/internal/app.server'
 import { getTableName } from '../../../utils/internal/app'
-import { contentsIv } from '#content/integrity'
+import { integrityVersion } from '#content/integrity'
 
 let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {
@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
 
   if (checkDatabaseIntegrity) {
     checkDatabaseIntegrity = false
-    await checkAndImportDatabaseIntegrity(contentsIv)
+    await checkAndImportDatabaseIntegrity(integrityVersion)
       .then((isValid) => { checkDatabaseIntegrity = !isValid })
       .catch((error) => {
         console.log('Database integrity check failed, rebuilding database', error)

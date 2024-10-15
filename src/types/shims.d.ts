@@ -1,6 +1,4 @@
 declare module '#content/integrity' {
-  export const collectionsIv: string
-  export const contentsIv: string
   export const integrityVersion: string
 }
 

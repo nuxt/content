@@ -75,8 +75,7 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     const contentOptions = { ..._options }
     const collectionManifest = {
-      collectionsIv: '-',
-      contentsIv: '-',
+      integrityVersion: '-',
       dump: [] as string[],
       components: [] as string[],
     }
@@ -95,11 +94,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
 
-    collectionManifest.collectionsIv += hash({
-      collections: collections.map(c => c.tableDefinition),
-      buildOptions: contentOptions.build,
-    })
-
     nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',
     }
@@ -109,9 +103,11 @@ export default defineNuxtModule<ModuleOptions>({
       localDatabase: contentOptions._localDatabase!,
     }
 
-    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
-    nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || []
+    nuxt.options.vite.optimizeDeps ||= {}
+    nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    nuxt.options.vite.optimizeDeps.include ||= []
+    nuxt.options.vite.optimizeDeps.include.push('scule', 'pako')
 
     addServerHandler({ route: '/api/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
     addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
@@ -200,7 +196,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const dumpGeneratePromise = processCollectionItems(nuxt, collections, contentOptions)
       .then((manifest) => {
-        collectionManifest.contentsIv = manifest.contentIv
+        collectionManifest.integrityVersion = manifest.integrityVersion
         collectionManifest.dump = manifest.dump
         collectionManifest.components = manifest.components
 
@@ -302,7 +298,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return {
-    contentIv: version,
+    integrityVersion: version,
     dump: sqlDumpList,
     components: uniqueTags,
   }
