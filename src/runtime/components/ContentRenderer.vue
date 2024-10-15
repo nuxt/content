@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
-import { resolveComponent, toRaw, getCurrentInstance, defineAsyncComponent, computed } from 'vue'
+import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
 import { globalComponents, localComponents } from '#content/components'
+import { useRuntimeConfig } from '#imports'
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
@@ -92,8 +93,7 @@ const data = computed(() => {
 
 const proseComponentMap = Object.fromEntries(['p', 'a', 'blockquote', 'code', 'pre', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'img', 'ul', 'ol', 'li', 'strong', 'table', 'thead', 'tbody', 'td', 'th', 'tr', 'script'].map(t => [t, `prose-${t}`]))
 
-const $nuxt = getCurrentInstance()?.appContext?.app?.$nuxt
-const { mdc } = $nuxt?.$config?.public || {}
+const { mdc } = useRuntimeConfig().public || {}
 const tags = {
   ...mdc?.components?.prose && props.prose !== false ? proseComponentMap : {},
   ...mdc?.components?.map || {},
