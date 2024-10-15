@@ -1,6 +1,61 @@
 # Changelog
 
 
+## v2.13.4
+
+[compare changes](https://github.com/nuxt/content/compare/v2.13.3...v2.13.4)
+
+### 🏡 Chore
+
+- Upgrade `@nuxtjs/mdc` ([0c462d3f](https://github.com/nuxt/content/commit/0c462d3f))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.13.3
+
+[compare changes](https://github.com/nuxt/content/compare/v2.13.2...v2.13.3)
+
+### 🩹 Fixes
+
+- **module:** Allow using `@nuxtjs/mdc` utils via content module ([#2775](https://github.com/nuxt/content/pull/2775))
+- **search:** Add `charset=utf-8` to headers of indexed mode ([#2729](https://github.com/nuxt/content/pull/2729))
+- **docs:** Add warning about using `ssr: false` with Content ([#2776](https://github.com/nuxt/content/pull/2776))
+- Corrected .gradient class ([#2723](https://github.com/nuxt/content/pull/2723))
+- **build:** Keep parser deps out of main bundle ([#2780](https://github.com/nuxt/content/pull/2780))
+- **navigation:** Respect query locale ([#2772](https://github.com/nuxt/content/pull/2772))
+- Import `defineNitroPlugin` from `#imports` ([34f65172](https://github.com/nuxt/content/commit/34f65172))
+- Respect `draft` key as `_draft` ([#2738](https://github.com/nuxt/content/pull/2738))
+- Draft field order ([b0b5eb2d](https://github.com/nuxt/content/commit/b0b5eb2d))
+
+### 📖 Documentation
+
+- Fix incorrect TS types import path in documentation ([#2773](https://github.com/nuxt/content/pull/2773))
+- Missing imports and typo in code blocks ([#2741](https://github.com/nuxt/content/pull/2741))
+- Changed types path ([#2735](https://github.com/nuxt/content/pull/2735))
+- Fix typo in SSR warning on Installation page ([#2777](https://github.com/nuxt/content/pull/2777))
+- Update link to downloads count badge ([c1d6ad14](https://github.com/nuxt/content/commit/c1d6ad14))
+
+### 🏡 Chore
+
+- Upgrade deps ([18aa97ea](https://github.com/nuxt/content/commit/18aa97ea))
+- Upgrade `@nuxtjs/mdc` ([#2781](https://github.com/nuxt/content/pull/2781))
+- Upgrade `@nuxtjs/mdc` ([664ac088](https://github.com/nuxt/content/commit/664ac088))
+
+### ❤️ Contributors
+
+- Farnabaz <farnabaz@gmail.com>
+- Bean Deng 邓斌 ([@HADB](http://github.com/HADB))
+- Sébastien Chopin ([@atinux](http://github.com/atinux))
+- EJ Fox ([@ejfox](http://github.com/ejfox))
+- Oh My Neck ([@hi-zp](http://github.com/hi-zp))
+- Michael DeLally ([@mdelally](http://github.com/mdelally))
+- RollingTL ([@RollingTL](http://github.com/RollingTL))
+- Aditya Mathur ([@MathurAditya724](http://github.com/MathurAditya724))
+- 邓超 <2325690622@qq.com>
+- Vilius Paliokas ([@ViliusP](http://github.com/ViliusP))
+
 ## v2.13.2
 
 [compare changes](https://github.com/nuxt/content/compare/v2.13.1...v2.13.2)
