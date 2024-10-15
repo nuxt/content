@@ -95,7 +95,7 @@ function resolveSource(source: string | CollectionSource | undefined, opts: Reso
 export function parseSourceBase(source: CollectionSource) {
   const [fixPart, ...rest] = source.path.includes('*') ? source.path.split('*') : ['', source.path]
   return {
-    fixed: fixPart,
+    fixed: fixPart || '',
     dynamic: '*' + rest.join('*'),
   }
 }
