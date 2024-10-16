@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { join } from 'node:path'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import type { IncomingMessage } from 'node:http'
 import Database from 'better-sqlite3'
 import type { Nuxt } from '@nuxt/schema'
@@ -245,44 +245,6 @@ export function localDatabase(databaseLocation: string) {
       _localDatabase = undefined
     },
   }
-}
-
-export async function generateInitialFiles(root: string) {
-  // Don't generate initial files if `nuxi prepare` executed on module root
-  if (process.env.NODE_ENV !== 'test' && process.env.npm_package_name === '@nuxt/content') {
-    return
-  }
-
-  const configPath = join(root, 'content.config.ts')
-  await writeFile(
-    configPath,
-    [
-      'import { defineCollection } from \'@nuxt/content\'',
-      '',
-      'export const collections = {',
-      '  pages: defineCollection({',
-      '    type: \'page\',',
-      '    source: \'pages/**\',',
-      '  })',
-      '}',
-      '',
-    ].join('\n'),
-  )
-  // Create pages directory
-  await mkdir(join(root, 'content', 'pages'), { recursive: true }).catch(() => {})
-
-  await writeFile(
-    join(root, 'content', 'pages', 'index.md'),
-    [
-      '---',
-      'title: Home',
-      '---',
-      '',
-      'Welcome to Nuxt Content!',
-    ].join('\n'),
-  )
-
-  return configPath
 }
 
 export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown> {

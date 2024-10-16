@@ -2,16 +2,26 @@ import { join } from 'node:path'
 import fastGlob from 'fast-glob'
 import { createJiti } from 'jiti'
 import type { DefinedCollection } from '../types'
-import { resolveCollections } from './collection'
-import { generateInitialFiles } from './dev'
+import { defineCollection, resolveCollections } from './collection'
 
-export async function loadContentConfig(rootDir: string, opts: { createOnMissing?: boolean } = {}) {
+const defaultConfig = {
+  collections: {
+    content: defineCollection({
+      type: 'page',
+      source: '**/*.md',
+    }),
+  },
+}
+
+export async function loadContentConfig(rootDir: string, opts: { defaultFallback?: boolean } = {}) {
   const jiti = createJiti(rootDir)
   const configs = await fastGlob('content.config.*', { cwd: rootDir })
-  let configPath = configs.length ? join(rootDir, configs[0]) : undefined
+  const configPath = configs.length ? join(rootDir, configs[0]) : undefined
 
-  if (!configPath && opts?.createOnMissing) {
-    configPath = await generateInitialFiles(rootDir)
+  if (!configPath && opts?.defaultFallback) {
+    return {
+      collections: resolveCollections(defaultConfig.collections, { rootDir }),
+    }
   }
 
   const contentConfig = (configPath

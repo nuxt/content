@@ -92,7 +92,7 @@ export default defineNuxtModule<ModuleOptions>({
       await mkdir(dirname((contentOptions.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
-    const { collections } = await loadContentConfig(nuxt.options.rootDir, { createOnMissing: true })
+    const { collections } = await loadContentConfig(nuxt.options.rootDir, { defaultFallback: true })
 
     nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',

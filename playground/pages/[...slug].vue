@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { definePageMeta, useAsyncData } from '#imports'
-
 const route = useRoute()
 
 const { data } = await useAsyncData('posts' + route.path, async () => {
