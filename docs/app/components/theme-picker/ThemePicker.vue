@@ -99,11 +99,11 @@ const neutral = computed({
   set(option) {
     appConfig.ui.colors.neutral = option
     window.localStorage.setItem('nuxt-ui-neutral', appConfig.ui.colors.neutral)
-  }
+  },
 })
 
 const colorsToOmit = ['inherit', 'current', 'transparent', 'black', 'white', ...neutralColors]
-const primaryColors = Object.keys(omit(colors, colorsToOmit as any))
+const primaryColors = Object.keys(omit(colors, colorsToOmit as unknown as Array<keyof typeof colors>))
 const primary = computed({
   get() {
     return appConfig.ui.colors.primary
@@ -111,7 +111,7 @@ const primary = computed({
   set(option) {
     appConfig.ui.colors.primary = option
     window.localStorage.setItem('nuxt-ui-primary', appConfig.ui.colors.primary)
-  }
+  },
 })
 
 const radiuses = [0, 0.125, 0.25, 0.375, 0.5]
@@ -122,12 +122,12 @@ const radius = computed({
   set(option) {
     appConfig.theme.radius = option
     window.localStorage.setItem('nuxt-ui-radius', String(appConfig.theme.radius))
-  }
+  },
 })
 
 const modes = [
   { label: 'light', icon: appConfig.ui.icons.light },
-  { label: 'dark', icon: appConfig.ui.icons.dark }
+  { label: 'dark', icon: appConfig.ui.icons.dark },
 ]
 const mode = computed({
   get() {
@@ -135,6 +135,6 @@ const mode = computed({
   },
   set(option) {
     colorMode.preference = option
-  }
+  },
 })
 </script>

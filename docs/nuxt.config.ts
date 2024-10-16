@@ -5,12 +5,6 @@ import pkg from '../package.json'
 const { resolve } = createResolver(import.meta.url)
 
 export default defineNuxtConfig({
-  app: {
-    rootAttrs: {
-      'vaul-drawer-wrapper': '',
-      'class': 'bg-[--ui-bg]',
-    },
-  },
 
   modules: [
     '@nuxt/ui-pro',
@@ -21,6 +15,16 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-og-image',
   ],
+  app: {
+    rootAttrs: {
+      'vaul-drawer-wrapper': '',
+      'class': 'bg-[--ui-bg]',
+    },
+  },
+
+  site: {
+    url: 'https://content3.nuxt.dev',
+  },
 
   content: {
     database: {
@@ -29,39 +33,25 @@ export default defineNuxtConfig({
     },
   },
 
-  hub: {
-    database: true,
-    cache: true,
-  },
-
-  future: {
-    compatibilityVersion: 4,
-  },
-
   runtimeConfig: {
     public: {
       version: pkg.version,
     },
   },
 
-  icon: {
-    customCollections: [{
-      prefix: 'custom',
-      dir: resolve('./app/assets/icons'),
-    }],
-    clientBundle: {
-      scan: true,
-      includeCustomCollections: true,
-    },
-    provider: 'iconify',
-  },
-
-  image: {
-    provider: 'ipx',
-  },
-
   routeRules: {
     '/': { redirect: '/getting-started', prerender: false },
+  },
+
+  future: {
+    compatibilityVersion: 4,
+  },
+
+  compatibilityDate: '2024-07-09',
+
+  hub: {
+    database: true,
+    cache: true,
   },
 
   hooks: {
@@ -109,9 +99,19 @@ export default defineNuxtConfig({
     },
   },
 
-  site: {
-    url: 'https://content3.nuxt.dev',
+  icon: {
+    customCollections: [{
+      prefix: 'custom',
+      dir: resolve('./app/assets/icons'),
+    }],
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true,
+    },
+    provider: 'iconify',
   },
 
-  compatibilityDate: '2024-07-09',
+  image: {
+    provider: 'ipx',
+  },
 })

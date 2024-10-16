@@ -15,17 +15,26 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 defineShortcuts({
   meta_g: () => {
     window.open('https://github.com/nuxt/content/tree/v3', '_blank')
-  }
+  },
 })
 </script>
 
 <template>
   <UHeader :ui="{ left: 'min-w-0' }">
     <template #left>
-      <NuxtLink to="/" class="flex items-end gap-2 font-bold text-xl text-[--ui-text-highlighted] min-w-0" aria-label="Nuxt Content">
+      <NuxtLink
+        to="/"
+        class="flex items-end gap-2 font-bold text-xl text-[--ui-text-highlighted] min-w-0"
+        aria-label="Nuxt Content"
+      >
         <Logo class="w-auto h-6 shrink-0" />
 
-        <UBadge :label="`v${config.version}`" variant="subtle" size="sm" class="-mb-[2px] rounded-[--ui-radius] font-semibold inline-block truncate" />
+        <UBadge
+          :label="`v${config.version}`"
+          variant="subtle"
+          size="sm"
+          class="-mb-[2px] rounded-[--ui-radius] font-semibold inline-block truncate"
+        />
       </NuxtLink>
     </template>
 
@@ -34,11 +43,17 @@ defineShortcuts({
     <template #right>
       <ThemePicker />
 
-      <UTooltip text="Search" :kbds="['meta', 'K']">
+      <UTooltip
+        text="Search"
+        :kbds="['meta', 'K']"
+      >
         <UContentSearchButton />
       </UTooltip>
 
-      <UTooltip text="Open on GitHub" :kbds="['meta', 'G']">
+      <UTooltip
+        text="Open on GitHub"
+        :kbds="['meta', 'G']"
+      >
         <UButton
           color="neutral"
           variant="ghost"

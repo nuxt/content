@@ -47,7 +47,7 @@ export default defineNuxtPlugin({
             document.querySelector('style#nuxt-ui-colors').innerHTML = html;
             `.replace(/\s+/g, ' '),
           type: 'text/javascript',
-          tagPriority: -1
+          tagPriority: -1,
         }, {
           innerHTML: `
             if (localStorage.getItem('nuxt-ui-radius')) {
@@ -55,9 +55,9 @@ export default defineNuxtPlugin({
             }
           `.replace(/\s+/g, ' '),
           type: 'text/javascript',
-          tagPriority: -1
-        }]
+          tagPriority: -1,
+        }],
       })
     }
-  }
+  },
 })

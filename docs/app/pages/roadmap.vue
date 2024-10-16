@@ -6,7 +6,7 @@ useSeoMeta({
   titleTemplate: '%s - Nuxt Content',
   title,
   ogTitle: 'Nuxt Content Roadmap',
-  description
+  description,
 })
 
 defineOgImageComponent('Docs')
@@ -22,7 +22,11 @@ const src = computed(() => `https://volta.net/embed/${token}?theme=${colorMode.v
 <template>
   <div class="h-[calc(100vh-var(--header-height)-var(--header-height)-1px)]">
     <ClientOnly>
-      <iframe :src="src" width="100%" height="100%" />
+      <iframe
+        :src="src"
+        width="100%"
+        height="100%"
+      />
     </ClientOnly>
   </div>
 </template>

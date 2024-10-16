@@ -19,14 +19,27 @@ const route = useRoute()
 </script>
 
 <template>
-  <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
+  <USeparator
+    icon="i-simple-icons-nuxtdotjs"
+    class="h-px"
+  />
 
   <UFooter>
     <template #left>
-      <NuxtLink v-if="route.path.startsWith('/pro')" to="https://content.nuxt.com/pro/purchase" target="_blank" class="text-sm text-[--ui-text-muted]">
+      <NuxtLink
+        v-if="route.path.startsWith('/pro')"
+        to="https://content.nuxt.com/pro/purchase"
+        target="_blank"
+        class="text-sm text-[--ui-text-muted]"
+      >
         Purchase <span class="text-[--ui-text-highlighted]">Nuxt Content Pro</span>
       </NuxtLink>
-      <NuxtLink v-else to="https://github.com/nuxt/content" target="_blank" class="text-sm text-[--ui-text-muted]">
+      <NuxtLink
+        v-else
+        to="https://github.com/nuxt/content"
+        target="_blank"
+        class="text-sm text-[--ui-text-muted]"
+      >
         Published under <span class="text-[--ui-text-highlighted]">MIT License</span>
       </NuxtLink>
     </template>
