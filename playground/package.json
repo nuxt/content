@@ -11,7 +11,7 @@
   "dependencies": {
     "@nuxt/ui": "3.0.0-alpha.6",
     "@nuxt/ui-pro": "2.0.0-alpha.6",
-    "@nuxthub/core": "^0.7.1",
-    "nuxt": "^3.12.4"
+    "@nuxthub/core": "^0.7.32",
+    "nuxt": "^3.13.2"
   }
 }

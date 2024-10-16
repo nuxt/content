@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@nuxt/content": "next",
-    "nuxt": "^3.13.0",
-    "vue": "latest",
-    "vue-router": "latest"
+    "nuxt": "^3.13.2"
   }
 }
