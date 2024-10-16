@@ -98,8 +98,8 @@ export default defineNuxtModule<ModuleOptions>({
       wsUrl: '',
     }
     nuxt.options.runtimeConfig.content = {
-      // @ts-expect-error - privateRuntimeConfig is not typed
-      database: contentOptions.database,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      database: contentOptions.database as any,
       localDatabase: contentOptions._localDatabase!,
     }
 
