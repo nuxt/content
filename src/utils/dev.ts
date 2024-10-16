@@ -78,7 +78,10 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       if (index !== -1) {
         manifest.dump.splice(index, 1, insertQuery)
         await updateTemplates({
-          filter: template => template.filename === 'content/dump.mjs',
+          filter: template => [
+            'content/integrity.mjs',
+            'content/dump.mjs',
+          ].includes(template.filename),
         })
       }
 
@@ -120,10 +123,14 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
 }
 
 export function watchComponents(nuxt: Nuxt) {
+  const contentDir = join(nuxt.options.rootDir, 'content')
   const componentsTemplatePath = join(nuxt.options.buildDir, 'content/components.ts')
   nuxt.options.vite.server ||= {}
   nuxt.options.vite.server.watch ||= {}
   nuxt.options.vite.server.watch.ignored = (file) => {
+    if (file.startsWith(contentDir)) {
+      return true
+    }
     return file !== componentsTemplatePath && isIgnored(file)
   }
 
