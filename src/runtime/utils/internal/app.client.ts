@@ -26,7 +26,7 @@ export async function prepareLocalDatabase() {
     if (!compressedDump || !collections) {
       const response = await $fetch<{ dump: string, collections: Record<string, { jsonFields: string[] }> }>('/api/database.json', {
         headers: { 'content-type': 'application/json' },
-        query: { v: integrityVersion },
+        query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
       })
       compressedDump = response.dump
       collections = response.collections as unknown as Record<string, { jsonFields: string[] }>
