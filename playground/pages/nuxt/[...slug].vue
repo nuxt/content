@@ -23,7 +23,7 @@ definePageMeta({
 
 <template>
   <div class="content-page">
-    <MDCRenderer
+    <ContentRenderer
       v-if="data"
       :value="data"
     />

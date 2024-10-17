@@ -2,13 +2,13 @@
 const route = useRoute()
 
 const { data } = await useAsyncData('posts' + route.path, async () => {
-  const res = await queryCollection('contentV2').path(route.path).first()
+  const res = await queryCollection('vue').path(route.path).first()
 
   return res
 })
 
 const { data: surround } = await useAsyncData('docs-surround' + route.path, () => {
-  return queryCollectionItemSurroundings('contentV2', route.path, {
+  return queryCollectionItemSurroundings('vue', route.path, {
     before: 1,
     after: 1,
     fields: ['title', 'description'],
@@ -16,7 +16,7 @@ const { data: surround } = await useAsyncData('docs-surround' + route.path, () =
 })
 
 definePageMeta({
-  layout: 'content-v2',
+  layout: 'vue',
   layoutTransition: false,
 })
 </script>
@@ -29,5 +29,6 @@ definePageMeta({
     />
     <h2>Surround</h2>
     <pre>{{ surround }}</pre>
+    <hr>
   </div>
 </template>

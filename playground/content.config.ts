@@ -67,4 +67,12 @@ export const collections = {
       ],
     },
   }),
+  vue: defineCollection({
+    type: 'page',
+    source: {
+      repository: 'https://github.com/vuejs/docs',
+      path: 'src/**/*.md',
+      prefix: '/vue',
+    },
+  }),
 }
