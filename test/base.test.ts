@@ -66,7 +66,6 @@ describe('empty', async () => {
 
     test('content table is created', async () => {
       const cache = db.database.prepare<unknown[], Record<string, unknown>>(`SELECT name FROM sqlite_master WHERE type='table' AND name='${getTableName('content')}';`).all()
-      console.log(cache)
 
       expect(cache).toHaveLength(1)
       expect(cache[0].name).toBe(getTableName('content'))

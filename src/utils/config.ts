@@ -3,6 +3,7 @@ import fastGlob from 'fast-glob'
 import { createJiti } from 'jiti'
 import type { DefinedCollection } from '../types'
 import { defineCollection, resolveCollections } from './collection'
+import { logger } from './dev'
 
 const defaultConfig = {
   collections: {
@@ -19,6 +20,7 @@ export async function loadContentConfig(rootDir: string, opts: { defaultFallback
   const configPath = configs.length ? join(rootDir, configs[0]) : undefined
 
   if (!configPath && opts?.defaultFallback) {
+    logger.warn('`content.config.ts` is not found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/getting-started/installation')
     return {
       collections: resolveCollections(defaultConfig.collections, { rootDir }),
     }
