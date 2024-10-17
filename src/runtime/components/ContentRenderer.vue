@@ -74,10 +74,30 @@ const props = defineProps({
 
 const debug = import.meta.dev
 
+function expand(arr: string | [string, Record<string, unknown>, unknown[]]): MDCElement | MDCText {
+  if (typeof arr === 'string') {
+    return {
+      type: 'text',
+      value: arr,
+    }
+  }
+
+  const [tag, props, ...children] = arr
+  return {
+    type: 'element',
+    tag,
+    props,
+    children: children.map(child => expand(child as string | [string, Record<string, unknown>, unknown[]])),
+  }
+}
+
 const body = computed(() => {
   let body = props.value.body || props.value
   if (props.excerpt && props.value.excerpt) {
     body = props.value.excerpt
+  }
+  if (Array.isArray(body)) {
+    return expand(body as unknown as [string, Record<string, unknown>, unknown[]])
   }
 
   return body
