@@ -104,8 +104,10 @@ export function parseSourceBase(source: CollectionSource) {
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
+  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
 
-  Object.entries((collection.extendedSchema).shape).forEach(([key, value]) => {
+  sortedKeys.forEach((key) => {
+    const value = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
     const defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
@@ -116,7 +118,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
-      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace('\n', '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodDate'].includes(underlyingType.constructor.name)) {
       values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert as string).toISOString()}'` : defaultValue)
@@ -131,14 +133,16 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT OR REPLACE INTO ${collection.tableName} (${fields.map(f => `"${f}"`).join(', ')}) VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
+  return `INSERT OR REPLACE INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(name: string, collection: DefinedCollection, opts: { drop?: boolean } = {}) {
-  const sqlFields = Object.entries(collection.extendedSchema.shape).map(([key, zodType]) => {
-    const underlyingType = getUnderlyingType(zodType)
+  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
+  const sqlFields = sortedKeys.map((key) => {
+    const type = (collection.extendedSchema).shape[key]
+    const underlyingType = getUnderlyingType(type)
 
     if (key === 'contentId') return `${key} TEXT PRIMARY KEY`
 
@@ -161,14 +165,14 @@ export function generateCollectionTableDefinition(name: string, collection: Defi
 
     // Handle optional fields
     const constraints = [
-      zodType.isNullable() ? ' NULL' : '',
+      type.isNullable() ? ' NULL' : '',
     ]
 
     // Handle default values
-    if (zodType._def.defaultValue !== undefined) {
-      const defaultValue = typeof zodType._def.defaultValue() === 'string'
-        ? `'${zodType._def.defaultValue()}'`
-        : zodType._def.defaultValue()
+    if (type._def.defaultValue !== undefined) {
+      const defaultValue = typeof type._def.defaultValue() === 'string'
+        ? `'${type._def.defaultValue()}'`
+        : type._def.defaultValue()
       constraints.push(`DEFAULT ${defaultValue}`)
     }
 

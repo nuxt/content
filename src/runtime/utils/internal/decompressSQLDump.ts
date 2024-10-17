@@ -12,10 +12,6 @@ function convertDataURIToBinary(base64: string) {
 }
 
 export function decompressSQLDump(dump: string): string[] {
-  return JSON.parse(
-    inflate(
-      convertDataURIToBinary(dump),
-      { to: 'string' },
-    ),
-  )
+  return inflate(convertDataURIToBinary(dump), { to: 'string' })
+    .split('\n')
 }

@@ -73,7 +73,7 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
 export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
   filename: 'content/dump.mjs' as const,
   getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
-    const compressed = deflate(JSON.stringify(options.manifest.dump))
+    const compressed = deflate(options.manifest.dump.join('\n'))
 
     const str = Buffer.from(compressed.buffer).toString('base64')
     return `export default "${str}"`
