@@ -3,18 +3,12 @@ import { defineTransformer } from './utils'
 
 export default defineTransformer({
   name: 'Json',
-  extensions: ['.json', '.json5'],
+  extensions: ['.json'],
   parse: async (id, content) => {
     let parsed
 
     if (typeof content === 'string') {
-      if (id.endsWith('json5')) {
-        parsed = (await import('json5').then(m => m.default || m))
-          .parse(content)
-      }
-      else if (id.endsWith('json')) {
-        parsed = destr(content)
-      }
+      parsed = destr(content)
     }
     else {
       parsed = content

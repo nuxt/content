@@ -44,7 +44,6 @@
     "destr": "^2.0.3",
     "fast-glob": "^3.3.2",
     "jiti": "^2.3.3",
-    "json5": "^2.2.3",
     "knitwork": "^1.1.0",
     "listhen": "^1.9.0",
     "mdast-util-to-hast": "^13.2.0",
