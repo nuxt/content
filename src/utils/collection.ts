@@ -7,6 +7,7 @@ import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
 import { downloadRepository, parseGitHubUrl } from './git'
+import { logger } from './dev'
 
 interface ResovleOptions {
   rootDir: string
@@ -30,7 +31,15 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
   }
 }
 
-export function resolveCollection(name: string, collection: DefinedCollection, opts: ResovleOptions): ResolvedCollection {
+export function resolveCollection(name: string, collection: DefinedCollection, opts: ResovleOptions): ResolvedCollection | undefined {
+  if (/^[a-z_]\w*$/i.test(name) === false) {
+    logger.warn([
+      `Collection name "${name}" is invalid. Collection names must be valid JavaScript identifiers. This collection will be ignored.`,
+    ].join('\n'))
+
+    return undefined
+  }
+
   return {
     ...collection,
     name,
@@ -58,7 +67,9 @@ export function resolveCollections(collections: Record<string, DefinedCollection
     }),
   })
 
-  return Object.entries(collections).map(([name, collection]) => resolveCollection(name, collection, opts))
+  return Object.entries(collections)
+    .map(([name, collection]) => resolveCollection(name, collection, opts))
+    .filter(Boolean) as ResolvedCollection[]
 }
 
 /**
