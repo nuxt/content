@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@nuxt/ui-docs",
+  "name": "@nuxt/content-docs",
   "type": "module",
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.1",

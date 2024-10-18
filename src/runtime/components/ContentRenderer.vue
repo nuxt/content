@@ -97,7 +97,10 @@ const body = computed(() => {
     body = props.value.excerpt
   }
   if (Array.isArray(body)) {
-    return expand(body as unknown as [string, Record<string, unknown>, unknown[]])
+    return {
+      ...expand(body as unknown as [string, Record<string, unknown>, unknown[]]),
+      type: 'root',
+    }
   }
 
   return body
