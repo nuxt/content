@@ -1,4 +1,5 @@
 import type { ContentNavigationItem, PageCollectionItemBase } from '@nuxt/content'
+import { pascalCase } from 'scule'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
@@ -81,7 +82,7 @@ export function generateNavigationTree(contents: PageCollectionItemBase[], confi
         // Create dummy parent if not found
         if (!parent) {
           parent = {
-            title: part,
+            title: generateTitle(part),
             path: currentPathPart,
             stem: idParts.join('/'),
             children: [],
@@ -144,3 +145,5 @@ function pick(keys?: string[]) {
 function isObject(obj: unknown) {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
+
+export const generateTitle = (path: string) => path.split(/[\s-]/g).map(pascalCase).join(' ')
