@@ -1,10 +1,4 @@
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
-import HtmlLang from 'shiki/langs/html.mjs'
-import MdcLang from 'shiki/langs/mdc.mjs'
-import TsLang from 'shiki/langs/typescript.mjs'
-import VueLang from 'shiki/langs/vue.mjs'
-import ScssLang from 'shiki/langs/scss.mjs'
-import YamlLang from 'shiki/langs/yaml.mjs'
 import { hash } from 'ohash'
 import type { Highlighter } from '@nuxtjs/mdc'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
@@ -23,25 +17,22 @@ let highlightPlugin: {
 async function getHighlighPlugin(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
   if (!highlightPlugin || highlightPlugin.key !== key) {
+    const langs = Array.from(new Set(['html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', ...(options.langs || [])]))
     const themesObject = typeof options.theme === 'string' ? { default: options.theme } : options.theme || { default: 'material-theme-palenight' }
     const bundledThemes = await Promise.all(Object.entries(themesObject)
       .map(async ([name, theme]) => [
         name,
         typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`).then(m => m.default || m)) : theme,
       ]))
+    const bundledLangs = await Promise.all(langs.map(async lang => [
+      lang,
+      await import(`shiki/langs/${lang}.mjs`).then(m => m.default || m),
+    ]))
 
     const highlighter = createShikiHighlighter({
       bundledThemes: Object.fromEntries(bundledThemes),
       // Configure the bundled languages
-      bundledLangs: {
-        html: HtmlLang,
-        mdc: MdcLang,
-        vue: VueLang,
-        yml: YamlLang,
-        scss: ScssLang,
-        ts: TsLang,
-        typescript: TsLang,
-      },
+      bundledLangs: Object.fromEntries(bundledLangs),
       engine: createJavaScriptRegexEngine({ forgiving: true }),
     })
 
