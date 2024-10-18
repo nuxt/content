@@ -4,6 +4,7 @@ import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
+import { decompressTree } from '../utils/internal/abstract-tree'
 import { globalComponents, localComponents } from '#content/components'
 import { useRuntimeConfig } from '#imports'
 
@@ -74,33 +75,13 @@ const props = defineProps({
 
 const debug = import.meta.dev
 
-function expand(arr: string | [string, Record<string, unknown>, unknown[]]): MDCElement | MDCText {
-  if (typeof arr === 'string') {
-    return {
-      type: 'text',
-      value: arr,
-    }
-  }
-
-  const [tag, props, ...children] = arr
-  return {
-    type: 'element',
-    tag,
-    props,
-    children: children.map(child => expand(child as string | [string, Record<string, unknown>, unknown[]])),
-  }
-}
-
 const body = computed(() => {
   let body = props.value.body || props.value
   if (props.excerpt && props.value.excerpt) {
     body = props.value.excerpt
   }
-  if (Array.isArray(body)) {
-    return {
-      ...expand(body as unknown as [string, Record<string, unknown>, unknown[]]),
-      type: 'root',
-    }
+  if (body.type === 'minimal') {
+    return decompressTree(body)
   }
 
   return body

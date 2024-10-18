@@ -4,7 +4,6 @@ import { queryCollection } from './queryCollection'
 
 export async function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
   const collecitonItems = await queryCollection<T>(collection)
-    .order('weight', 'ASC')
     .order('stem', 'ASC')
     .where('navigation', '<>', '"false"')
     .select('navigation', 'stem', 'path', 'title', ...(fields || []))

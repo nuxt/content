@@ -71,7 +71,6 @@ export interface CollectionInfo {
 
 export interface CollectionItemBase {
   contentId: string
-  weight: string
   stem: string
   extension: string
   meta: Record<string, unknown>

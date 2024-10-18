@@ -95,7 +95,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
       query += ` ORDER BY ${params.orderBy.join(', ')}`
     }
     else {
-      query += ` ORDER BY weight ASC, stem ASC`
+      query += ` ORDER BY stem ASC`
     }
 
     if (params.limit > 0) {

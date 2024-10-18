@@ -5,7 +5,7 @@ export default defineTransformer({
   name: 'Json',
   extensions: ['.json'],
   parse: async (id, content) => {
-    let parsed
+    let parsed: Record<string, unknown>
 
     if (typeof content === 'string') {
       parsed = destr(content)

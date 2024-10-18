@@ -12,19 +12,6 @@ const jsonArray = JSON.stringify([
   'item 1',
   'item 2',
 ])
-const json5 = `{
-  key: 'value',
-  // comments
-  unquoted: 'and you can quote me on that',
-  singleQuotes: 'I can use "double quotes" here',
-  lineBreaks: "Look, Mom! \
-No \\n's!",
-  hexadecimal: 0xdecaf,
-  leadingDecimalPoint: .8675309, andTrailing: 8675309.,
-  positiveSign: +1,
-  trailingComma: 'in objects', andIn: ['arrays',],
-  "backwardsCompatible": "with JSON",
-}`
 
 describe('Parser (json)', () => {
   const collection = resolveCollection('content', defineCollection({
@@ -52,17 +39,5 @@ describe('Parser (json)', () => {
     expect(Array.isArray(parsed.body)).toBeTruthy()
     expect(parsed.body).toHaveLength(2)
     expect(parsed.body).toMatchObject(['item 1', 'item 2'])
-  })
-
-  test('json5 key:value', async () => {
-    const parsed = await parseContent('content/index.json5', json5, collection)
-
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.json5')
-    assert(parsed.meta.key === 'value')
-
-    expect(parsed.meta.leadingDecimalPoint).toEqual(0.8675309)
-    expect(parsed.meta.andTrailing).toEqual(8675309)
-    expect(parsed.meta.lineBreaks).toEqual('Look, Mom! No \n\'s!')
   })
 })

@@ -59,6 +59,7 @@ async function getHighlighPlugin(options: HighlighterOptions) {
 export async function parseContent(key: string, content: string, collection: ResolvedCollection, options?: ModuleOptions['build']) {
   const parsedContent = await transformContent(key, content, {
     markdown: {
+      compress: true,
       ...options?.markdown,
       rehypePlugins: {
         highlight: options?.markdown?.highlight === false
@@ -85,13 +86,6 @@ export async function parseContent(key: string, content: string, collection: Res
   }
 
   result.meta = meta
-
-  result.weight = String(result.stem || '')
-    .split('/')
-    .map(f => (f.match(/^(\d+)\./)?.[1] ?? '999').padStart(3, '0'))
-    .join('')
-    .padEnd(12, '9')
-    .slice(0, 12)
 
   return result
 }

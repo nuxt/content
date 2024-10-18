@@ -4,7 +4,6 @@ import { getEnumValues } from './zod'
 
 export const metaSchema = z.object({
   contentId: z.string(),
-  weight: z.string(),
   stem: z.string(),
   extension: z.enum(getEnumValues(ContentFileExtension)),
   meta: z.record(z.string(), z.any()),

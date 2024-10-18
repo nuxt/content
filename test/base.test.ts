@@ -85,7 +85,7 @@ describe('empty', async () => {
     })
 
     test('is downloadable', async () => {
-      const response = await $fetch<Record<string, unknown>>('/api/database.json')
+      const response = await $fetch<Record<string, unknown>>('/api/content/database.json')
       expect(response.dump).toBeDefined()
       expect(response.collections).toBeDefined()
 

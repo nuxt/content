@@ -7,6 +7,8 @@ import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import type { MarkdownRoot } from '../../src/types/content'
 
+const markdownOptions = { markdown: { compress: false } as Record<string, unknown> }
+
 describe('Highlighter', () => {
   const collection = resolveCollection('content', defineCollection({
     type: 'page',
@@ -22,6 +24,7 @@ describe('Highlighter', () => {
       '```',
     ].join('\n'), collection, {
       markdown: {
+        ...markdownOptions.markdown,
         highlight: {
           theme: {
             dark: 'material-theme-palenight', // Theme containing italic
@@ -64,6 +67,7 @@ describe('Highlighter', () => {
       'Second block',
     ].join('\n'), collection, {
       markdown: {
+        ...markdownOptions.markdown,
         highlight: {
           theme: {
             dark: 'material-theme-palenight', // Theme containing italic

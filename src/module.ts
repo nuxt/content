@@ -58,8 +58,9 @@ export default defineNuxtModule<ModuleOptions>({
     renderer: {
       alias: {},
       anchorLinks: {
-        depth: 4,
-        exclude: [1],
+        h2: true,
+        h3: true,
+        h4: true,
       },
     },
     build: {
@@ -109,11 +110,11 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.include ||= []
     nuxt.options.vite.optimizeDeps.include.push('scule', 'pako')
 
-    addServerHandler({ route: '/api/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
-    addServerHandler({ route: '/api/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
+    addServerHandler({ route: '/api/content/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
+    addServerHandler({ route: '/api/content/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
 
     nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/database.json'] = { prerender: true }
+    nuxt.options.routeRules['/api/content/database.json'] = { prerender: true }
 
     // Helpers are designed to be enviroment agnostic
     const autoImports = [
@@ -166,19 +167,10 @@ export default defineNuxtModule<ModuleOptions>({
         map: contentOptions.renderer.alias,
       },
       headings: {
-        anchorLinks: {
-          // Reset defaults
-          h2: false, h3: false, h4: false,
-        } as Record<string, boolean>,
+        anchorLinks: contentOptions.renderer.anchorLinks,
       },
     }
 
-    // Apply anchor link generation config
-    if (contentOptions.renderer.anchorLinks && typeof contentOptions.renderer.anchorLinks === 'object') {
-      for (let i = 0; i < contentOptions.renderer.anchorLinks.depth!; i++) {
-        nuxtMDCOptions.headings.anchorLinks[`h${i + 1}`] = !contentOptions.renderer.anchorLinks.exclude!.includes(i + 1)
-      }
-    }
     await installModule('@nuxtjs/mdc', nuxtMDCOptions)
 
     // Update mdc optimizeDeps options

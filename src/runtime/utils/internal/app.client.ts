@@ -24,7 +24,7 @@ export async function prepareLocalDatabase() {
 
     perf.tick('Get Local Cache')
     if (!compressedDump || !collections) {
-      const response = await $fetch<{ dump: string, collections: Record<string, { jsonFields: string[] }> }>('/api/database.json', {
+      const response = await $fetch<{ dump: string, collections: Record<string, { jsonFields: string[] }> }>('/api/content/database.json', {
         headers: { 'content-type': 'application/json' },
         query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
       })

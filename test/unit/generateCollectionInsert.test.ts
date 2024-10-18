@@ -17,7 +17,6 @@ describe('generateCollectionInsert', () => {
     }), { rootDir: '~' })
     const sql = generateCollectionInsert(collection, {
       contentId: 'foo.md',
-      weight: '999999999999',
       stem: 'foo',
       extension: 'md',
       meta: {},
@@ -25,9 +24,8 @@ describe('generateCollectionInsert', () => {
 
     expect(sql).toBe([
       `INSERT OR REPLACE INTO ${getTableName('content')}`,
-      ' ("contentId", "weight", "stem", "extension", "meta", "customField", "otherField", "otherField2", "date")',
       ' VALUES',
-      ' (\'foo.md\', \'999999999999\', \'foo\', \'md\', \'{}\', 13, \'untitled\', true, \'2022-01-01T00:00:00.000Z\')',
+      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\')',
     ].join(''))
   })
 
@@ -44,7 +42,6 @@ describe('generateCollectionInsert', () => {
     }), { rootDir: '~' })
     const sql = generateCollectionInsert(collection, {
       contentId: 'foo.md',
-      weight: '999999999999',
       stem: 'foo',
       extension: 'md',
       meta: {},
@@ -56,9 +53,8 @@ describe('generateCollectionInsert', () => {
 
     expect(sql).toBe([
       `INSERT OR REPLACE INTO ${getTableName('content')}`,
-      ' ("contentId", "weight", "stem", "extension", "meta", "customField", "otherField", "otherField2", "date")',
       ' VALUES',
-      ' (\'foo.md\', \'999999999999\', \'foo\', \'md\', \'{}\', 42, \'foo\', false, \'2022-01-02T00:00:00.000Z\')',
+      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\')',
     ].join(''))
   })
 })

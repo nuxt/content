@@ -15,7 +15,7 @@ export async function executeContentQuery<T extends keyof Collections, Result = 
 }
 
 function queryContentSqlApi<T>(collection: keyof Collections, sql: string) {
-  return $fetch<T[]>(`/api/${String(collection)}/query`, {
+  return $fetch<T[]>(`/api/content/${String(collection)}/query`, {
     method: 'POST',
     body: {
       query: sql,

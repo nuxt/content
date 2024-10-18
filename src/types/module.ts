@@ -35,20 +35,7 @@ export interface ModuleOptions {
      *
      * @default {}
      */
-    anchorLinks?: boolean | {
-      /**
-       * Sets the maximal depth for anchor link generation
-       *
-       * @default 4
-       */
-      depth?: number
-      /**
-       * Excludes headings from link generation when they are in the depth range.
-       *
-       * @default [1]
-       */
-      exclude?: number[]
-    }
+    anchorLinks?: boolean | Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', boolean>>
   }
   build: {
     markdown: {

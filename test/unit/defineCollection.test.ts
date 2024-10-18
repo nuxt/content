@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { defineCollection } from '../../src/utils/collection'
 
-const metaFields = ['contentId', 'weight', 'stem', 'meta', 'extension']
+const metaFields = ['contentId', 'stem', 'meta', 'extension']
 const pageFields = ['path', 'title', 'description', 'seo', 'body', 'navigation']
 
 function expectProperties(shape: z.ZodRawShape, fields: string[]) {

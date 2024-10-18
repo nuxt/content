@@ -1,4 +1,6 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
+import type { MinimalTree } from '@nuxt/content'
+import { decompressTree } from './abstract-tree'
 
 type Section = {
   // Path to the section
@@ -24,6 +26,7 @@ interface SectionablePage {
 }
 
 export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
+  const body = (!page.body || page.body?.type === 'root') ? page.body : decompressTree(page.body as unknown as MinimalTree)
   const path = (page.path ?? '')
 
   // TODO: title in frontmatter must be added
@@ -43,7 +46,7 @@ export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { 
   let section = 1
   let previousHeadingLevel = 0
   const titles = [page.title ?? '']
-  for (const item of page.body.children) {
+  for (const item of body.children) {
     const tag = (item as MDCElement).tag || ''
     if (isHeading(tag)) {
       const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1] ?? 0)
