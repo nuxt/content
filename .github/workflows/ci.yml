@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - v3
   pull_request:
     branches:
       - main
+      - v3
 
 jobs:
   ubuntu:
@@ -23,9 +25,9 @@ jobs:
       - run: pnpm lint
       - run: pnpm prepack
       - run: pnpm test
-      - name: Release Nightly
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: pnpm changelogen --bump --canary --publish --publishTag nightly
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+      # - name: Release Nightly
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: pnpm changelogen --bump --canary --publish --publishTag nightly
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      #     NPM_CONFIG_PROVENANCE: true
