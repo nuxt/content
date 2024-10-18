@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "next",
+    "@nuxt/content": "^3.0.0-alpha.1",
     "nuxt": "^3.13.2"
   }
 }
