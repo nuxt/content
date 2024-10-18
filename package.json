@@ -95,5 +95,6 @@
   },
   "resolutions": {
     "vue": "^3.5.12"
-  }
+  },
+  "packageManager": "pnpm@9.12.2"
 }

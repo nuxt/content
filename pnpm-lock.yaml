@@ -38,9 +38,6 @@ importers:
       jiti:
         specifier: ^2.3.3
         version: 2.3.3
-      json5:
-        specifier: ^2.2.3
-        version: 2.2.3
       knitwork:
         specifier: ^1.1.0
         version: 1.1.0
