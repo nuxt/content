@@ -2,8 +2,6 @@ import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import type { MinimalTree, MinimalNode } from '@nuxt/content'
 
 export function compressTree(input: MDCRoot): MinimalTree {
-  console.log(input.children)
-
   return {
     type: 'minimal',
     value: input.children.map(compressNode).filter(v => v !== undefined) as MinimalNode[],

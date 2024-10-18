@@ -38,11 +38,6 @@ export default defineTransformer({
       },
     })
 
-    console.log('parsed.excerpt', parsed.excerpt)
-
-    if (!parsed.body) {
-      console.log(id, parsed)
-    }
     if ((options as { compress: boolean }).compress) {
       return {
         ...parsed.data,
