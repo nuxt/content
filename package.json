@@ -78,7 +78,7 @@
     "@nuxt/eslint-config": "^0.6.0",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "3.13.2",
-    "@nuxt/test-utils": "3.14.3",
+    "@nuxt/test-utils": "3.14.4",
     "@nuxthq/studio": "^2.1.1",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@types/ws": "^8.5.12",
