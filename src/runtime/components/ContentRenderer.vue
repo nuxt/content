@@ -4,7 +4,7 @@ import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
-import { decompressTree } from '../utils/internal/abstract-tree'
+import { decompressTree } from '../internal/abstract-tree'
 import { globalComponents, localComponents } from '#content/components'
 import { useRuntimeConfig } from '#imports'
 

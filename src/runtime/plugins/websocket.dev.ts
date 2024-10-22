@@ -6,6 +6,6 @@ export default defineNuxtPlugin(() => {
 
   if (import.meta.client && publicConfig.content.wsUrl) {
     // Connect to websocket
-    import('../utils/internal/websocket').then(({ useContentWebSocket }) => useContentWebSocket())
+    import('../internal/websocket').then(({ useContentWebSocket }) => useContentWebSocket())
   }
 })

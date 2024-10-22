@@ -3,8 +3,8 @@ import fs from 'node:fs/promises'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
-import { decompressSQLDump } from '../src/runtime/utils/internal/decompressSQLDump'
-import { getTableName } from '../src/runtime/utils/internal/app'
+import { decompressSQLDump } from '../src/runtime/internal/dump'
+import { getTableName } from '../src/runtime/internal/app'
 import { localDatabase } from './utils/database'
 
 async function cleanup() {
@@ -55,12 +55,12 @@ describe('empty', async () => {
       }
     })
     test('is created', async () => {
-      const stat = await fs.stat(fileURLToPath(new URL('./fixtures/empty/.data/content/local.db', import.meta.url)))
+      const stat = await fs.stat(fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)))
       expect(stat?.isFile()).toBe(true)
     })
 
     test('load database', async () => {
-      const databaseLocation = fileURLToPath(new URL('./fixtures/empty/.data/content/local.db', import.meta.url))
+      const databaseLocation = fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url))
       db = localDatabase(databaseLocation)
     })
 
@@ -74,27 +74,26 @@ describe('empty', async () => {
 
   describe('SQL dump', () => {
     test('is generated', async () => {
-      const dump = await import(fileURLToPath(new URL('./fixtures/empty/.nuxt/content/dump.mjs', import.meta.url))).then(m => m.default)
+      const dump = await fs.readFile(fileURLToPath(new URL('./fixtures/empty/.nuxt/content/raw/compressed.sql', import.meta.url)), 'utf8')
 
-      const parsedDump = decompressSQLDump(dump)
+      const parsedDump = await decompressSQLDump(dump)
 
       expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(2)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only _info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT OR REPLACE INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
     })
 
     test('is downloadable', async () => {
       const response = await $fetch<Record<string, unknown>>('/api/content/database.json')
       expect(response.dump).toBeDefined()
-      expect(response.collections).toBeDefined()
 
-      const parsedDump = decompressSQLDump(response.dump as string)
+      const parsedDump = await decompressSQLDump(response.dump as string)
 
       expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(2)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only _info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT OR REPLACE INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
     })
   })
 })

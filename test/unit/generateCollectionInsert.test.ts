@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionInsert, defineCollection, resolveCollection } from '../../src/utils/collection'
-import { getTableName } from '../../src/runtime/utils/internal/app'
+import { getTableName } from '../../src/runtime/internal/app'
 
 describe('generateCollectionInsert', () => {
   test('Respect Schema\'s default values', () => {
@@ -23,7 +23,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql).toBe([
-      `INSERT OR REPLACE INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
       ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\')',
     ].join(''))
@@ -52,7 +52,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql).toBe([
-      `INSERT OR REPLACE INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
       ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\')',
     ].join(''))

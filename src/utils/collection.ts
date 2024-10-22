@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { pascalCase } from 'scule'
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
-import { getTableName } from '../runtime/utils/internal/app'
+import { getTableName } from '../runtime/internal/app'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
@@ -129,7 +129,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
-      values.push(`'${String(valueToInsert).replace('\n', '\\n').replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodDate'].includes(underlyingType.constructor.name)) {
       values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert as string).toISOString()}'` : defaultValue)
@@ -144,7 +144,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
   let index = 0
 
-  return `INSERT OR REPLACE INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
+  return `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
     .replace(/\?/g, () => values[index++] as string)
 }
 

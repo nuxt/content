@@ -1,4 +1,4 @@
-import { prepareLocalDatabase } from './app.client'
+import { prepareLocalDatabase } from './database.client'
 import { useRuntimeConfig, refreshNuxtData } from '#imports'
 
 const logger = {

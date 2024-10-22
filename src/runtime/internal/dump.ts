@@ -1,4 +1,6 @@
-import { inflate } from 'pako'
+export async function decompressSQLDump(dump: string): Promise<string[]> {
+  return import('pako').then(m => m.inflate(convertDataURIToBinary(dump), { to: 'string' }).split('\n'))
+}
 
 function convertDataURIToBinary(base64: string) {
   const raw = atob(base64)
@@ -9,9 +11,4 @@ function convertDataURIToBinary(base64: string) {
     array[i] = raw.charCodeAt(i)
   }
   return array
-}
-
-export function decompressSQLDump(dump: string): string[] {
-  return inflate(convertDataURIToBinary(dump), { to: 'string' })
-    .split('\n')
 }

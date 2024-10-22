@@ -6,7 +6,6 @@ import {
   addTypeTemplate,
   addImports,
   addServerImports,
-  addServerHandler,
   installModule,
   addPlugin,
   updateTemplates,
@@ -21,7 +20,7 @@ import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
-import { collectionsTemplate, componentsManifestTemplate, contentIntegrityTemplate, contentTypesTemplate, sqlDumpTemplate } from './utils/templates'
+import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, manifestTemplate, sqlDumpTemplate, sqlDumpTemplateRaw } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
@@ -40,11 +39,11 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     _localDatabase: {
       type: 'sqlite',
-      filename: '.data/content/local.db',
+      filename: '.data/content/contents.sqlite',
     },
     database: {
       type: 'sqlite',
-      filename: '.data/content/local.db',
+      filename: './contents.sqlite',
     },
     watch: {
       enabled: true,
@@ -87,9 +86,7 @@ export default defineNuxtModule<ModuleOptions>({
     await mkdir(dirname(contentOptions._localDatabase!.filename), { recursive: true }).catch(() => {})
 
     if ((contentOptions.database as SqliteDatabaseConfig).filename) {
-      (contentOptions.database as SqliteDatabaseConfig).filename = isAbsolute((contentOptions.database as SqliteDatabaseConfig).filename)
-        ? (contentOptions.database as SqliteDatabaseConfig).filename
-        : join(nuxt.options.rootDir, (contentOptions.database as SqliteDatabaseConfig).filename)
+      (contentOptions.database as SqliteDatabaseConfig).filename = (contentOptions.database as SqliteDatabaseConfig).filename
       await mkdir(dirname((contentOptions.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
@@ -110,36 +107,60 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.include ||= []
     nuxt.options.vite.optimizeDeps.include.push('scule', 'pako')
 
-    addServerHandler({ route: '/api/content/database.json', handler: resolver.resolve('./runtime/server/api/database.json') })
-    addServerHandler({ route: '/api/content/:collection/query', handler: resolver.resolve('./runtime/server/api/[collection]/query.post'), method: 'post' })
-
-    nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/content/database.json'] = { prerender: true }
-
     // Helpers are designed to be enviroment agnostic
-    const autoImports = [
-      { name: 'queryCollection', from: resolver.resolve('./runtime/utils/queryCollection') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/utils/queryCollectionSearchSections') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/utils/queryCollectionNavigation') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/utils/queryCollectionItemSurroundings') },
+    const nuxtAutoImports = [
+      { name: 'queryCollection', from: resolver.resolve('./runtime/index') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/index') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/index') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/index') },
     ]
-    addImports(autoImports)
-    addServerImports(autoImports)
+    const nitroAutoImports = [
+      { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/server/index') },
+      { name: 'queryCollectionSearchSectionsWithEvent', as: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/server/index') },
+      { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/server/index') },
+      { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/server/index') },
+    ]
+    addImports(nuxtAutoImports)
+    addServerImports(nitroAutoImports)
     addComponentsDir({ path: resolver.resolve('./runtime/components') })
 
     // Templates
     addTypeTemplate(contentTypesTemplate(collections))
+    const sqlDumpDst = addTemplate(sqlDumpTemplate(collectionManifest)).dst
+    const manifestDst = addTemplate(manifestTemplate(collections, collectionManifest)).dst
     const collectionsDst = addTemplate(collectionsTemplate(collections)).dst
-    const dumpDst = addTemplate(sqlDumpTemplate(collectionManifest)).dst
     const componentsDst = addTemplate(componentsManifestTemplate(collectionManifest)).dst
-    const integrityDst = addTemplate(contentIntegrityTemplate(collectionManifest)).dst
+    addTemplate(sqlDumpTemplateRaw(collectionManifest))
     // Add aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content/collections'] = collectionsDst
-    nuxt.options.nitro.alias['#content/dump'] = dumpDst
     nuxt.options.alias['#content/components'] = componentsDst
-    nuxt.options.alias['#content/integrity'] = integrityDst
+    nuxt.options.alias['#content/manifest'] = manifestDst
 
+    nuxt.hook('nitro:config', (config) => {
+      config.publicAssets ||= []
+      config.alias = config.alias || {}
+      config.handlers ||= []
+
+      if (config.preset === 'cloudflare-pages') {
+        config.publicAssets.push({ dir: join(nuxt.options.buildDir, 'content', 'raw'), maxAge: 60 })
+
+        config.handlers.push({
+          route: '/api/content/database.json',
+          handler: resolver.resolve('./runtime/presets/cloudflare-pages/database'),
+        })
+      }
+      else {
+        config.alias['#content/dump'] = sqlDumpDst
+        config.handlers.push({
+          route: '/api/content/database.json',
+          handler: resolver.resolve('./runtime/presets/node/database'),
+        })
+      }
+    })
+
+    nuxt.options.routeRules ||= {}
+    nuxt.options.routeRules['/api/content/database.json'] = { prerender: true }
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()
     for (const layer of _layers) {
@@ -194,9 +215,9 @@ export default defineNuxtModule<ModuleOptions>({
 
         return updateTemplates({
           filter: template => [
-            String(sqlDumpTemplate(collectionManifest).filename),
+            String(sqlDumpTemplateRaw(collectionManifest).filename),
             String(componentsManifestTemplate(collectionManifest).filename),
-            String(contentIntegrityTemplate(collectionManifest).filename),
+            String(manifestTemplate(collections, collectionManifest).filename),
           ].includes(template.filename),
         })
       })
@@ -215,7 +236,7 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
-  const sqlDumpList: string[] = []
+  const collectionDump: Record<string, string[]> = {}
   const db = localDatabase(options._localDatabase!.filename)
   const databaseContents = db.fetchDevelopmentCache()
 
@@ -225,8 +246,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let parsedFilesCount = 0
   // Create database dump
   for await (const collection of collections) {
+    collectionDump[collection.name] = []
     // Collection table definition
-    sqlDumpList.push(...collection.tableDefinition.split('\n'))
+    collectionDump[collection.name].push(...collection.tableDefinition.split('\n'))
 
     if (!collection.source) {
       continue
@@ -244,6 +266,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     filesCount += _keys.length
 
+    const list: Array<Array<string>> = []
     for await (const chunk of chunks(_keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
         const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
@@ -262,16 +285,21 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
         }
 
-        sqlDumpList.push(generateCollectionInsert(collection, parsedContent))
+        list.push([key, generateCollectionInsert(collection, parsedContent)])
       }))
     }
+    // Sort by file name to ensure consistent order
+    list.sort((a, b) => a[0].localeCompare(String(b[0])))
+    collectionDump[collection.name].push(...list.map(([, sql]) => sql))
   }
 
   const infoCollection = collections.find(c => c.name === '_info')!
 
-  const version = hash(sqlDumpList)
+  const version = hash(collectionDump)
 
-  sqlDumpList.push(generateCollectionInsert(infoCollection, { contentId: 'version', version }))
+  collectionDump._info.push(generateCollectionInsert(infoCollection, { contentId: 'version', version }))
+
+  const sqlDumpList = Object.values(collectionDump).flatMap(a => a)
 
   for (const sql of sqlDumpList) {
     db.exec(sql)

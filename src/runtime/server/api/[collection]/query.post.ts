@@ -1,10 +1,10 @@
-import { eventHandler, readValidatedBody, getRouterParam } from 'h3'
+import { eventHandler, readValidatedBody, getRouterParam, type H3Event } from 'h3'
 import { z } from 'zod'
 import useContentDatabase from '../../adapters'
-import { decompressSQLDump } from '../../../utils/internal/decompressSQLDump'
-import { loadDatabaseDump } from '../../../utils/internal/app.server'
-import { getTableName } from '../../../utils/internal/app'
-import { integrityVersion } from '#content/integrity'
+import { decompressSQLDump } from '../../../internal/dump'
+import { loadDatabaseDump } from '../../../internal/app.server'
+import { getTableName } from '../../../internal/app'
+import { integrityVersion } from '#content/manifest'
 
 let checkDatabaseIntegrity = true
 export default eventHandler(async (event) => {
@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
 
   if (checkDatabaseIntegrity) {
     checkDatabaseIntegrity = false
-    await checkAndImportDatabaseIntegrity(integrityVersion)
+    await checkAndImportDatabaseIntegrity(event, integrityVersion)
       .then((isValid) => { checkDatabaseIntegrity = !isValid })
       .catch((error) => {
         console.log('Database integrity check failed, rebuilding database', error)
@@ -33,7 +33,7 @@ export default eventHandler(async (event) => {
   return useContentDatabase().all(sqlQuery)
 })
 
-async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
+async function checkAndImportDatabaseIntegrity(event: H3Event, integrityVersion: string) {
   const db = useContentDatabase()
   const before = await db.first<{ version: string }>(`select * from ${getTableName('_info')}`).catch(() => ({ version: '' }))
   if (before?.version) {
@@ -44,7 +44,7 @@ async function checkAndImportDatabaseIntegrity(integrityVersion: string) {
     await db.exec(`DELETE FROM ${getTableName('_info')} WHERE version = '${before.version}'`)
   }
 
-  const dump = await loadDatabaseDump().then(decompressSQLDump)
+  const dump = await loadDatabaseDump(event).then(decompressSQLDump)
 
   // await db.exec(dump.join('\n'))
   await dump.reduce(async (prev: Promise<void>, sql: string) => {

@@ -1,6 +1,7 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import type { MinimalTree } from '@nuxt/content'
 import { decompressTree } from './abstract-tree'
+import type { CollectionQueryBuilder, PageCollectionItemBase } from '~/src/types'
 
 type Section = {
   // Path to the section
@@ -25,7 +26,17 @@ interface SectionablePage {
   body: MDCRoot
 }
 
-export function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags: string[] }) {
+  const { ignoredTags = [] } = opts || {}
+
+  const documents = await queryBuilder
+    .select('path', 'body', 'description', 'title')
+    .all()
+
+  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags }))
+}
+
+function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
   const body = (!page.body || page.body?.type === 'root') ? page.body : decompressTree(page.body as unknown as MinimalTree)
   const path = (page.path ?? '')
 

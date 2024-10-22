@@ -5,7 +5,7 @@ import type { Properties, Element } from 'hast'
 import type { Link } from 'mdast'
 import { isRelative } from 'ufo'
 import type { MarkdownOptions, MarkdownPlugin } from '../../../types/content'
-import { compressTree } from '../../../runtime/utils/internal/abstract-tree'
+import { compressTree } from '../../../runtime/internal/abstract-tree'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
 

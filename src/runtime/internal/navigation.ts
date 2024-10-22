@@ -1,13 +1,35 @@
 import type { ContentNavigationItem, PageCollectionItemBase } from '@nuxt/content'
 import { pascalCase } from 'scule'
+import type { CollectionQueryBuilder } from '~/src/types'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export function generateNavigationTree(contents: PageCollectionItemBase[], configs: Record<string, PageCollectionItemBase>, extraFields: string[] = []) {
+export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = []) {
+  const collecitonItems = await queryBuilder
+    .order('stem', 'ASC')
+    .where('navigation', '<>', '"false"')
+    .select('navigation', 'stem', 'path', 'title', ...(extraFields || []))
+    .all() as unknown as PageCollectionItemBase[]
+
+  const { contents, configs } = collecitonItems.reduce((acc, c) => {
+    if (String(c.stem).split('/').pop() === '.navigation') {
+      c.title = c.title?.toLowerCase() === 'navigation' ? '' : c.title
+      const key = c.path!.split('/').slice(0, -1).join('/') || '/'
+      acc.configs[key] = {
+        ...c,
+        ...c.body,
+      }
+    }
+    else {
+      acc.contents.push(c)
+    }
+    return acc
+  }, { configs: {}, contents: [] } as { configs: Record<string, PageCollectionItemBase>, contents: PageCollectionItemBase[] })
+
   // Navigation fields picker
   const pickNavigationFields = (content: PageCollectionItemBase) => ({
-    ...pick(['title', ...extraFields])(content as unknown as Record<string, unknown>),
+    ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
     ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
   })
 
@@ -64,14 +86,14 @@ export function generateNavigationTree(contents: PageCollectionItemBase[], confi
       }
 
       // Find siblings of current item and push them to parent children key
-      const siblings = parts.slice(0, -1).reduce((nodes, part, i) => {
+      const siblings = parts.slice(0, -1).reduce((nodes: ContentNavigationItem[], part: string, i: number) => {
         // Part of current path
         const currentPathPart: string = '/' + parts.slice(0, i + 1).join('/')
 
         // Get current node _dir.yml config
         const conf = configs[currentPathPart]
 
-        // Drop childrens if _dir.yml has `navigation: false`
+        // Drop childrens if .navigation.yml has `navigation: false`
         if (typeof conf?.navigation !== 'undefined' && !conf.navigation) {
           return []
         }

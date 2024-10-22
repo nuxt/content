@@ -76,7 +76,21 @@ export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
     const compressed = deflate(options.manifest.dump.join('\n'))
 
     const str = Buffer.from(compressed.buffer).toString('base64')
-    return `export default "${str}"`
+    return `export default '${str}'`
+  },
+  write: true,
+  options: {
+    manifest,
+  },
+})
+
+export const sqlDumpTemplateRaw = (manifest: { dump: string[] }) => ({
+  filename: 'content/raw/compressed.sql' as const,
+  getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
+    const compressed = deflate(options.manifest.dump.join('\n'))
+
+    const str = Buffer.from(compressed.buffer).toString('base64')
+    return str
   },
   write: true,
   options: {
@@ -117,14 +131,23 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
   } satisfies NuxtTemplate
 }
 
-export const contentIntegrityTemplate = (manifest: { integrityVersion: string }) => ({
-  filename: 'content/integrity.mjs' as const,
-  getContents: ({ options }: { options: { manifest: { integrityVersion: string } } }) => {
+export const manifestTemplate = (collections: ResolvedCollection[], manifest: { integrityVersion: string }) => ({
+  filename: 'content/manifest.mjs' as const,
+  getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: { integrityVersion: string } } }) => {
+    const collectionsMeta = options.collections.reduce((acc, collection) => {
+      acc[collection.name] = {
+        jsonFields: collection.jsonFields,
+      }
+      return acc
+    }, {} as Record<string, unknown>)
+
     return [
       'export const integrityVersion = "' + options.manifest.integrityVersion + '"',
+      'export default ' + JSON.stringify(collectionsMeta, null, 2),
     ].join('\n')
   },
   options: {
+    collections,
     manifest,
   },
   write: true,

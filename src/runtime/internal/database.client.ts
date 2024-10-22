@@ -1,42 +1,70 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
+import type { DatabaseAdapter } from '@nuxt/content'
 import { measurePerformance } from './performance'
-import { decompressSQLDump } from './decompressSQLDump'
-import { integrityVersion } from '#content/integrity'
+import { decompressSQLDump } from './dump'
+import { parseJsonFields } from './collection'
+import { integrityVersion } from '#content/manifest'
 
-let db: Database & { collections?: Record<string, { jsonFields: string[] }> }
+let db: Database
 
-export async function prepareLocalDatabase() {
-  if (!db || !db.collections) {
+export function loadDatabaseAdapter() {
+  return <DatabaseAdapter>{
+    all: async (sql, params) => {
+      if (!db) {
+        await loadAdapter()
+      }
+
+      return db
+        .exec({ sql, rowMode: 'object', returnValue: 'resultRows' })
+        .map(row => parseJsonFields(sql, row))
+    },
+    first: async (sql, params) => {
+      if (!db) {
+        await loadAdapter()
+      }
+
+      return parseJsonFields(
+        sql,
+        db
+          .exec({ sql, rowMode: 'object', returnValue: 'resultRows' })
+          .shift(),
+      )
+    },
+    exec: async (sql) => {
+      if (!db) {
+        await loadAdapter()
+      }
+
+      return db.exec({ sql })
+    },
+  }
+}
+
+export async function loadAdapter() {
+  if (!db) {
     const perf = measurePerformance()
     let compressedDump: string | null = null
-    let collections: Record<string, { jsonFields: string[] }> | null = null
 
     if (!import.meta.dev) {
       const localCacheVersion = window.localStorage.getItem('content-integrity-version')
       if (localCacheVersion === integrityVersion) {
         compressedDump = window.localStorage.getItem('content-dump')
-        const localCollections = window.localStorage.getItem('content-collections')
-        if (localCollections) {
-          collections = JSON.parse(localCollections)
-        }
       }
     }
 
     perf.tick('Get Local Cache')
-    if (!compressedDump || !collections) {
-      const response = await $fetch<{ dump: string, collections: Record<string, { jsonFields: string[] }> }>('/api/content/database.json', {
+    if (!compressedDump) {
+      const response = await $fetch<{ dump: string }>('/api/content/database.json', {
         headers: { 'content-type': 'application/json' },
         query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
       })
       compressedDump = response.dump
-      collections = response.collections as unknown as Record<string, { jsonFields: string[] }>
 
       perf.tick('Download Database')
       if (!import.meta.dev) {
         try {
           window.localStorage.setItem('content-integrity-version', integrityVersion)
           window.localStorage.setItem('content-dump', compressedDump!)
-          window.localStorage.setItem('content-collections', JSON.stringify(collections))
         }
         catch (error) {
           console.log('Database integrity check failed, rebuilding database', error)
@@ -53,7 +81,6 @@ export async function prepareLocalDatabase() {
     perf.tick('Import SQLite Module')
 
     db = new sqlite3.oo1.DB()
-    db.collections = collections
 
     for (const command of dump) {
       await db.exec(command)

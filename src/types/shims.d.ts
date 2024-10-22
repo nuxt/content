@@ -1,5 +1,6 @@
-declare module '#content/integrity' {
+declare module '#content/manifest' {
   export const integrityVersion: string
+  export default Record<string, unknown>
 }
 
 declare module '#content/components' {

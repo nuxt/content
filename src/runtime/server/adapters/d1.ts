@@ -1,5 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types/experimental'
-import { createDatabaseAdapter } from './factory'
+import { createDatabaseAdapter } from '../../internal/database-adapter.ts'
 
 let db: D1Database
 export default createDatabaseAdapter<{ binding: string }>((opts) => {
