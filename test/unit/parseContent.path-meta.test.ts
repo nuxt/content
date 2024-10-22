@@ -86,10 +86,10 @@ describe('Transformer (path-meta)', () => {
       const fullPath = id.replace(/:/g, '/')
       const transformed = await parseContent(fullPath, 'Index', collection)
 
-      expect(transformed).toHaveProperty('contentId')
+      expect(transformed).toHaveProperty('_id')
       assert(
-        transformed.contentId === fullPath,
-        `Id is not equal, expected: ${id}, actual: ${transformed.contentId}`,
+        transformed._id === fullPath,
+        `Id is not equal, expected: ${id}, actual: ${transformed._id}`,
       )
 
       expect(transformed).toHaveProperty('stem')

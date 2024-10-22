@@ -15,7 +15,7 @@ export function loadDatabaseAdapter() {
       }
 
       return db
-        .exec({ sql, rowMode: 'object', returnValue: 'resultRows' })
+        .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
         .map(row => parseJsonFields(sql, row))
     },
     first: async (sql, params) => {
@@ -26,7 +26,7 @@ export function loadDatabaseAdapter() {
       return parseJsonFields(
         sql,
         db
-          .exec({ sql, rowMode: 'object', returnValue: 'resultRows' })
+          .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
           .shift(),
       )
     },

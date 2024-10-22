@@ -24,16 +24,16 @@ describe('Parser (json)', () => {
   test('key:value', async () => {
     const parsed = await parseContent('content/index.json', json, collection)
 
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.json')
+    expect(parsed).toHaveProperty('_id')
+    assert(parsed._id === 'content/index.json')
     assert(parsed.meta.key === 'value')
   })
 
   test('array', async () => {
     const parsed = await parseContent('content/index.json', jsonArray, collection)
 
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.json')
+    expect(parsed).toHaveProperty('_id')
+    assert(parsed._id === 'content/index.json')
 
     expect(parsed).haveOwnProperty('body')
     expect(Array.isArray(parsed.body)).toBeTruthy()

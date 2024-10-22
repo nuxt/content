@@ -16,7 +16,7 @@ describe('generateCollectionInsert', () => {
       }),
     }), { rootDir: '~' })
     const sql = generateCollectionInsert(collection, {
-      contentId: 'foo.md',
+      _id: 'foo.md',
       stem: 'foo',
       extension: 'md',
       meta: {},
@@ -41,7 +41,7 @@ describe('generateCollectionInsert', () => {
       }),
     }), { rootDir: '~' })
     const sql = generateCollectionInsert(collection, {
-      contentId: 'foo.md',
+      _id: 'foo.md',
       stem: 'foo',
       extension: 'md',
       meta: {},

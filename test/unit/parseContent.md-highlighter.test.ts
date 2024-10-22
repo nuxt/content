@@ -38,8 +38,8 @@ describe('Highlighter', () => {
       default: '#D73A49 #005CC5 #D73A49 #005CC5 #D73A49 #005CC5'.split(' '),
       dark: '#C792EA #BABED8 #89DDFF #FFCB6B #89DDFF #F78C6C'.split(' '),
     }
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.md')
+    expect(parsed).toHaveProperty('_id')
+    assert(parsed._id === 'content/index.md')
 
     const styleElement = parsed.body.children.pop()
     expect(styleElement.tag).toBe('style')

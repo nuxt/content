@@ -297,7 +297,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
   const version = hash(collectionDump)
 
-  collectionDump._info.push(generateCollectionInsert(infoCollection, { contentId: 'version', version }))
+  collectionDump._info.push(generateCollectionInsert(infoCollection, { _id: 'version', version }))
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)
 

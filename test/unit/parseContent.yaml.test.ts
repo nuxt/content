@@ -15,8 +15,8 @@ describe('Parser (.yml)', () => {
   test('key:value', async () => {
     const parsed = await parseContent('content/index.yml', 'key: value', collection)
 
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.yml')
+    expect(parsed).toHaveProperty('_id')
+    assert(parsed._id === 'content/index.yml')
 
     expect(parsed.meta).toHaveProperty('key', 'value')
   })
@@ -24,8 +24,8 @@ describe('Parser (.yml)', () => {
   test('array', async () => {
     const parsed = await parseContent('content/index.yml', '- item 1 \n- item 2', collection)
 
-    expect(parsed).toHaveProperty('contentId')
-    assert(parsed.contentId === 'content/index.yml')
+    expect(parsed).toHaveProperty('_id')
+    assert(parsed._id === 'content/index.yml')
 
     expect(parsed).haveOwnProperty('body')
     expect(Array.isArray(parsed.body)).toBeTruthy()

@@ -101,7 +101,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       const { fixed } = parseSourceBase(collection.source!)
       const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
 
-      const updateQuery = `DELETE FROM ${collection.tableName} WHERE contentId = '${keyInCollection}'`
+      const updateQuery = `DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`
       await db.exec(updateQuery)
       await db.deleteDevelopmentCache(keyInCollection)
 

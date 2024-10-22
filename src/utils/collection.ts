@@ -155,7 +155,7 @@ export function generateCollectionTableDefinition(name: string, collection: Defi
     const type = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(type)
 
-    if (key === 'contentId') return `${key} TEXT PRIMARY KEY`
+    if (key === '_id') return `${key} TEXT PRIMARY KEY`
 
     let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
 

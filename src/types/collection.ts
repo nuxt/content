@@ -70,7 +70,7 @@ export interface CollectionInfo {
 }
 
 export interface CollectionItemBase {
-  contentId: string
+  _id: string
   stem: string
   extension: string
   meta: Record<string, unknown>
