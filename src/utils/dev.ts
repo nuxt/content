@@ -63,6 +63,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
 
       if (localCache && localCache.checksum === checksum) {
+        db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)
         db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
         return
       }
@@ -70,6 +71,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       const parsedContent = await parseContent(keyInCollection, content, collection, options.build)
 
       const insertQuery = generateCollectionInsert(collection, parsedContent)
+      await db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)
       await db.exec(insertQuery)
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 
@@ -79,7 +81,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         manifest.dump.splice(index, 1, insertQuery)
         await updateTemplates({
           filter: template => [
-            'content/integrity.mjs',
+            'content/manifest.mjs',
             'content/dump.mjs',
           ].includes(template.filename),
         })
@@ -88,7 +90,10 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       websocket?.broadcast({
         path,
         collection: collection.name,
-        query: insertQuery,
+        queries: [
+          'DELETE FROM ' + collection.tableName + ' WHERE _id = \'' + keyInCollection + '\'',
+          insertQuery,
+        ],
       })
     }
   }
@@ -239,6 +244,7 @@ export function localDatabase(databaseLocation: string) {
         .get(key)
     },
     insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
+      this.deleteDevelopmentCache(id)
       _localDatabase!.exec(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
     },
     deleteDevelopmentCache(id: string) {

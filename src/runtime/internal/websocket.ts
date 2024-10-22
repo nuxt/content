@@ -1,4 +1,4 @@
-import { prepareLocalDatabase } from './database.client'
+import { loadDatabaseAdapter } from './database.client'
 import { useRuntimeConfig, refreshNuxtData } from '#imports'
 
 const logger = {
@@ -18,13 +18,16 @@ export function useContentWebSocket() {
     try {
       const data = JSON.parse(message.data)
 
-      if (!data) {
+      if (!data || !data.queries) {
         return
       }
 
-      await prepareLocalDatabase()
-        .then(db => db.exec(data.query))
-        .catch(err => console.log(err))
+      const db = await loadDatabaseAdapter()
+
+      for (const s of data.queries) {
+        await db.exec(s).catch(err => console.log(err))
+      }
+      console.log('updated', data.queries)
 
       refreshNuxtData()
     }

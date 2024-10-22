@@ -72,8 +72,9 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityV
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
-    await db.exec(sql).catch(() => {
-      console.log('Failed to execute SQL', sql)
+    await db.exec(sql).catch((err) => {
+      const message = err.message || 'Unknown error'
+      console.log('Failed to execute SQL', message.split(':').pop().trim())
       // throw error
     })
   }, Promise.resolve())

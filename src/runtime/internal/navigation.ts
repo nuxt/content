@@ -8,7 +8,7 @@ import type { CollectionQueryBuilder } from '~/src/types'
 export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = []) {
   const collecitonItems = await queryBuilder
     .order('stem', 'ASC')
-    .where('navigation', '<>', '"false"')
+    .where('navigation', '<>', 'false')
     .select('navigation', 'stem', 'path', 'title', ...(extraFields || []))
     .all() as unknown as PageCollectionItemBase[]
 
