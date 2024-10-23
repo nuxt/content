@@ -124,11 +124,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Templates
     addTypeTemplate(contentTypesTemplate(collections))
-    const sqlDumpDst = addTemplate(sqlDumpTemplate(collectionManifest)).dst
     const manifestDst = addTemplate(manifestTemplate(collections, collectionManifest)).dst
     const collectionsDst = addTemplate(collectionsTemplate(collections)).dst
     const componentsDst = addTemplate(componentsManifestTemplate(collectionManifest)).dst
-    addTemplate(sqlDumpTemplateRaw(collectionManifest))
     // Add aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.alias['#content/collections'] = collectionsDst
@@ -140,25 +138,29 @@ export default defineNuxtModule<ModuleOptions>({
       config.alias = config.alias || {}
       config.handlers ||= []
 
-      if (config.preset === 'cloudflare-pages') {
+      switch (config.preset) {
+        case 'cloudflare-pages':
+          // Add raw content dump
+          addTemplate(sqlDumpTemplateRaw(collectionManifest))
+          // Add raw content dump to public assets
         config.publicAssets.push({ dir: join(nuxt.options.buildDir, 'content', 'raw'), maxAge: 60 })
 
         config.handlers.push({
-          route: '/api/content/database.json',
-          handler: resolver.resolve('./runtime/presets/cloudflare-pages/database'),
+            route: '/api/content/database.sql',
+            handler: resolver.resolve('./runtime/presets/cloudflare-pages/database.sql'),
         })
-      }
-      else {
-        config.alias['#content/dump'] = sqlDumpDst
+          break
+        default:
+          config.alias['#content/dump'] = addTemplate(sqlDumpTemplate(collectionManifest)).dst
         config.handlers.push({
-          route: '/api/content/database.json',
-          handler: resolver.resolve('./runtime/presets/node/database'),
+            route: '/api/content/database.sql',
+            handler: resolver.resolve('./runtime/presets/node/database.sql'),
         })
       }
     })
 
     nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/content/database.json'] = { prerender: true }
+    nuxt.options.routeRules['/api/content/database.sql'] = { prerender: true }
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()
     for (const layer of _layers) {

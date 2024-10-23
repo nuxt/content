@@ -14,5 +14,5 @@ export default eventHandler(async (event) => {
     dump = await useStorage().getItem('build:content:raw:compressed.sql') || ''
   }
 
-  return { dump }
+  return dump
 })

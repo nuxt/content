@@ -54,11 +54,10 @@ export async function loadAdapter() {
 
     perf.tick('Get Local Cache')
     if (!compressedDump) {
-      const response = await $fetch<{ dump: string }>('/api/content/database.json', {
-        headers: { 'content-type': 'application/json' },
+      compressedDump = await $fetch('/api/content/database.sql', {
+        headers: { 'content-type': 'text/plain' },
         query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
       })
-      compressedDump = response.dump
 
       perf.tick('Download Database')
       if (!import.meta.dev) {
