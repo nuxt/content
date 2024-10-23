@@ -1,12 +1,12 @@
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
-import type { Highlighter } from '@nuxtjs/mdc'
+import type { Highlighter, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
+import type { Nuxt } from '@nuxt/schema'
 import type { ResolvedCollection } from '../../types/collection'
-import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 
-type HighlighterOptions = Exclude<ModuleOptions['build']['markdown']['highlight'], false | undefined>
+type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined>
 
 let highlightPlugin: {
   instance: unknown
@@ -14,7 +14,16 @@ let highlightPlugin: {
   theme?: Record<string, unknown>
   highlighter: Highlighter
 }
-async function getHighlighPlugin(options: HighlighterOptions) {
+let highlightPluginPromise: Promise<typeof highlightPlugin>
+async function getHighlighPluginInstance(options: HighlighterOptions) {
+  if (!highlightPlugin) {
+    highlightPluginPromise = highlightPluginPromise || _getHighlighPlugin(options)
+    await highlightPluginPromise
+  }
+
+  return highlightPlugin
+}
+async function _getHighlighPlugin(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
   if (!highlightPlugin || highlightPlugin.key !== key) {
     const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', ...(options.langs || [])]))
@@ -37,26 +46,27 @@ async function getHighlighPlugin(options: HighlighterOptions) {
     })
 
     highlightPlugin = {
-      highlighter,
       key,
       instance: rehypeHighlight,
       ...options,
+      highlighter,
       theme: Object.fromEntries(bundledThemes),
     }
   }
   return highlightPlugin
 }
 
-export async function parseContent(key: string, content: string, collection: ResolvedCollection, options?: ModuleOptions['build']) {
+export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt: Nuxt) {
+  const markdownOptions = nuxt.options.mdc
   const parsedContent = await transformContent(key, content, {
     markdown: {
       compress: true,
-      ...options?.markdown,
+      ...markdownOptions,
       rehypePlugins: {
-        highlight: options?.markdown?.highlight === false
+        highlight: markdownOptions.highlight === false
           ? undefined
-          : await getHighlighPlugin(options?.markdown.highlight || {}),
-        ...options?.markdown?.rehypePlugins,
+          : await getHighlighPluginInstance(markdownOptions.highlight || {}),
+        ...markdownOptions?.rehypePlugins,
       },
       highlight: undefined,
     },

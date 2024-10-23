@@ -6,17 +6,14 @@ import {
   addTypeTemplate,
   addImports,
   addServerImports,
-  installModule,
   addPlugin,
   updateTemplates,
   addComponentsDir,
-  extendViteConfig,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { hash } from 'ohash'
 import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
-import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
@@ -26,6 +23,7 @@ import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
+import { installMDCModule } from './utils/mdc'
 
 // Export public utils
 export * from './utils'
@@ -179,29 +177,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Install mdc module
-    const highlight = contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
-    const nuxtMDCOptions = {
-      highlight: highlight ? { ...highlight, noApiRoute: true } : highlight,
-      components: {
-        prose: true,
-        map: contentOptions.renderer.alias,
-      },
-      headings: {
-        anchorLinks: contentOptions.renderer.anchorLinks,
-      },
-    }
-
-    await installModule('@nuxtjs/mdc', nuxtMDCOptions)
-
-    // Update mdc optimizeDeps options
-    extendViteConfig((config) => {
-      config.optimizeDeps ||= {}
-      config.optimizeDeps.include ||= []
-      config.optimizeDeps.include.push('@nuxt/content > slugify')
-      config.optimizeDeps.include = config.optimizeDeps.include
-        .map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content > @nuxtjs/mdc > '))
-    })
+    await installMDCModule(contentOptions, nuxt)
 
     if (nuxt.options._prepare) {
       return
@@ -281,7 +257,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
         }
         else {
           parsedFilesCount += 1
-          parsedContent = await parseContent(keyInCollection, content, collection, options.build)
+          parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
           db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
         }
 

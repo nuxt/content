@@ -67,7 +67,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         return
       }
 
-      const parsedContent = await parseContent(keyInCollection, content, collection, options.build)
+      const parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
 
       const insertQuery = generateCollectionInsert(collection, parsedContent)
       await db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)

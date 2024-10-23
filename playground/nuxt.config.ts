@@ -20,6 +20,15 @@ export default defineNuxtConfig({
       },
     },
   },
+  mdc: {
+    highlight: {
+      theme: {
+        light: 'material-theme-lighter',
+        default: 'material-theme',
+        dark: 'material-theme-palenight',
+      },
+    },
+  },
   compatibilityDate: '2024-07-24',
   hub: {
     database: true,

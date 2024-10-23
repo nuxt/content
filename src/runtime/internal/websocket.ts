@@ -27,7 +27,6 @@ export function useContentWebSocket() {
       for (const s of data.queries) {
         await db.exec(s).catch((err: unknown) => console.log(err))
       }
-      console.log('updated', data.queries)
 
       refreshNuxtData()
     }
