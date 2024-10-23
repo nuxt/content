@@ -49,7 +49,7 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignored
     level: 1,
   }]
 
-  if (!page?.body?.children) {
+  if (!body?.children) {
     return sections
   }
 
