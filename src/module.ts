@@ -106,20 +106,18 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.include.push('scule', 'pako')
 
     // Helpers are designed to be enviroment agnostic
-    const nuxtAutoImports = [
-      { name: 'queryCollection', from: resolver.resolve('./runtime/index') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/index') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/index') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/index') },
-    ]
-    const nitroAutoImports = [
-      { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/server/index') },
-      { name: 'queryCollectionSearchSectionsWithEvent', as: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/server/index') },
-      { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/server/index') },
-      { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/server/index') },
-    ]
-    addImports(nuxtAutoImports)
-    addServerImports(nitroAutoImports)
+    addImports([
+      { name: 'queryCollection', from: resolver.resolve('./runtime/app') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
+    ])
+    addServerImports([
+      { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionSearchSectionsWithEvent', as: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+    ])
     addComponentsDir({ path: resolver.resolve('./runtime/components') })
 
     // Templates
@@ -143,19 +141,19 @@ export default defineNuxtModule<ModuleOptions>({
           // Add raw content dump
           addTemplate(sqlDumpTemplateRaw(collectionManifest))
           // Add raw content dump to public assets
-        config.publicAssets.push({ dir: join(nuxt.options.buildDir, 'content', 'raw'), maxAge: 60 })
+          config.publicAssets.push({ dir: join(nuxt.options.buildDir, 'content', 'raw'), maxAge: 60 })
 
-        config.handlers.push({
+          config.handlers.push({
             route: '/api/content/database.sql',
             handler: resolver.resolve('./runtime/presets/cloudflare-pages/database.sql'),
-        })
+          })
           break
         default:
           config.alias['#content/dump'] = addTemplate(sqlDumpTemplate(collectionManifest)).dst
-        config.handlers.push({
+          config.handlers.push({
             route: '/api/content/database.sql',
             handler: resolver.resolve('./runtime/presets/node/database.sql'),
-        })
+          })
       }
     })
 

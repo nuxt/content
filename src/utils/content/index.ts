@@ -56,8 +56,8 @@ async function _getHighlighPlugin(options: HighlighterOptions) {
   return highlightPlugin
 }
 
-export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt: Nuxt) {
-  const markdownOptions = nuxt.options.mdc
+export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt?: Nuxt) {
+  const markdownOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
   const parsedContent = await transformContent(key, content, {
     markdown: {
       compress: true,

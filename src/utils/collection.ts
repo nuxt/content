@@ -2,7 +2,6 @@ import { join } from 'node:path'
 import { pascalCase } from 'scule'
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
-import { getTableName } from '../runtime/internal/app'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
@@ -14,6 +13,8 @@ interface ResovleOptions {
 }
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
+
+const getTableName = (name: string) => `content_${name}`
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
   let schema = collection.schema || z.object({})

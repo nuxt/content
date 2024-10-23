@@ -11,7 +11,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
 }
 
 export async function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
-  return generateNavigationTree(queryCollection(collection), fields)
+  return generateNavigationTree(queryCollection(collection), fields as string[])
 }
 
 export async function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {

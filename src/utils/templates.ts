@@ -132,7 +132,7 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
 }
 
 export const manifestTemplate = (collections: ResolvedCollection[], manifest: { integrityVersion: string }) => ({
-  filename: 'content/manifest.mjs' as const,
+  filename: 'content/manifest.ts' as const,
   getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: { integrityVersion: string } } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {
@@ -143,6 +143,11 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: { 
 
     return [
       'export const integrityVersion = "' + options.manifest.integrityVersion + '"',
+      '',
+      `export function tables = ${JSON.stringify(
+        Object.fromEntries(collections.map(c => [c.name, c.tableName])),
+      )}`,
+      '',
       'export default ' + JSON.stringify(collectionsMeta, null, 2),
     ].join('\n')
   },

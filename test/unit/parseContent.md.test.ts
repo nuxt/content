@@ -1,11 +1,20 @@
 import { describe, test, expect, assert } from 'vitest'
 import { z } from 'zod'
 import { visit } from 'unist-util-visit'
+import type { Nuxt } from '@nuxt/schema'
 import { parseContent } from '../../src/utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 
-const markdownOptions = { markdown: { compress: false } as Record<string, unknown> }
+const nuxtMock = {
+  options: {
+    mdc: {
+      compress: false,
+      markdown: {
+      } as Record<string, unknown>,
+    },
+  },
+} as unknown as Nuxt
 
 describe('Parser (.md)', () => {
   const collection = resolveCollection('content', defineCollection({
@@ -16,7 +25,7 @@ describe('Parser (.md)', () => {
   }), { rootDir: '~' })!
 
   test('Index file', async () => {
-    const parsed = await parseContent('content/index.md', '# Index', collection, markdownOptions)
+    const parsed = await parseContent('content/index.md', '# Index', collection, nuxtMock)
 
     expect(parsed).toHaveProperty('_id')
     assert(parsed._id === 'content/index.md')
@@ -29,7 +38,7 @@ describe('Parser (.md)', () => {
 
   describe('Code Block', () => {
     test('Html `<code>` should render as inline code', async () => {
-      const parsed = await parseContent('content/index.md', '`code`', collection, markdownOptions)
+      const parsed = await parseContent('content/index.md', '`code`', collection, nuxtMock)
 
       expect(parsed).toHaveProperty('_id')
       assert(parsed._id === 'content/index.md')
@@ -45,7 +54,7 @@ describe('Parser (.md)', () => {
         'let code = undefined;',
         'return code;',
         '```',
-      ].join('\n'), collection, markdownOptions)
+      ].join('\n'), collection, nuxtMock)
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.body.children[0].tag).toBe('pre')
@@ -64,7 +73,7 @@ describe('Parser (.md)', () => {
         'let code = undefined;',
         'return code;',
         '```',
-      ].join('\n'), collection, markdownOptions)
+      ].join('\n'), collection, nuxtMock)
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('children[0].tag', 'pre')
@@ -83,7 +92,7 @@ describe('Parser (.md)', () => {
         'let code = undefined;',
         'return code;',
         '```',
-      ].join('\n'), collection, markdownOptions)
+      ].join('\n'), collection, nuxtMock)
 
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('children[0].tag', 'pre')
@@ -104,7 +113,7 @@ describe('Parser (.md)', () => {
         '_draft: true',
         '---',
         '# Draft',
-      ].join('\n'), collection, markdownOptions)
+      ].join('\n'), collection, nuxtMock)
 
       expect(parsed.meta._draft).toBe(true)
     })
@@ -122,7 +131,7 @@ describe('Parser (.md)', () => {
   })
 
   test('comment', async () => {
-    const parsed = await parseContent('content/index.md', '<!-- comment -->', collection, markdownOptions)
+    const parsed = await parseContent('content/index.md', '<!-- comment -->', collection, nuxtMock)
 
     expect(parsed).toHaveProperty('_id')
     assert(parsed._id === 'content/index.md')
@@ -134,7 +143,7 @@ describe('Parser (.md)', () => {
   })
 
   test('empty file with new lines', async () => {
-    const parsed = await parseContent('content/index.md', ['', '', ''].join('\n'), collection, markdownOptions)
+    const parsed = await parseContent('content/index.md', ['', '', ''].join('\n'), collection, nuxtMock)
 
     expect(parsed.body).toHaveProperty('children')
     expect(parsed.body.children.length).toEqual(0)
@@ -151,7 +160,7 @@ describe('Parser (.md)', () => {
       ':hello:', // invalid
       '`:hello`', // code
       ':rocket:', // emoji
-    ].join('\n'), collection, markdownOptions)
+    ].join('\n'), collection, nuxtMock)
 
     let compComponentCount = 0
     visit(parsed.body, node => (node as unknown as { tag: string }).tag === 'hello', () => {
@@ -173,7 +182,7 @@ describe('Parser (.md)', () => {
   })
 
   test('h1 tags', async () => {
-    const parsed = await parseContent('content/index.md', '<h1>Hello</h1>', collection, markdownOptions)
+    const parsed = await parseContent('content/index.md', '<h1>Hello</h1>', collection, nuxtMock)
 
     expect(parsed.body).toHaveProperty('children')
     expect(parsed.body.children.length).toEqual(1)
@@ -184,7 +193,7 @@ describe('Parser (.md)', () => {
     const parsed = await parseContent('content/index.md', [
       '# Hello [World]{.text-green}',
       'The answer to life the universe and everything: [42]{.font-bold .text-green}',
-    ].join('\n'), collection, markdownOptions)
+    ].join('\n'), collection, nuxtMock)
 
     expect(parsed.body).toHaveProperty('children')
     expect(parsed.body.children.length).toEqual(2)
@@ -210,7 +219,7 @@ describe('Parser (.md)', () => {
       '[link1](../../01.foo/file.md#bar)',
       '[link1](../../01.foo.draft.md)',
       '[link1](../../_foo.draft.md)',
-    ].join('\n'), collection, markdownOptions)
+    ].join('\n'), collection, nuxtMock)
 
     const nodes = parsed.body.children[0].children
     expect(nodes.shift().props.href).toEqual('3.x')
@@ -237,7 +246,7 @@ describe('Parser (.md)', () => {
       '### 🎨 Alert',
     ]
     for (const heading of headings) {
-      const parsed = await parseContent('content/index.md', heading, collection, markdownOptions)
+      const parsed = await parseContent('content/index.md', heading, collection, nuxtMock)
 
       expect(parsed.body.children[0].props.id).toEqual('alert')
     }

@@ -80,7 +80,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         manifest.dump.splice(index, 1, insertQuery)
         await updateTemplates({
           filter: template => [
-            'content/manifest.mjs',
+            'content/manifest.ts',
             'content/dump.mjs',
           ].includes(template.filename),
         })

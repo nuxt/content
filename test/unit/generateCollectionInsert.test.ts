@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionInsert, defineCollection, resolveCollection } from '../../src/utils/collection'
-import { getTableName } from '../../src/runtime/internal/app'
+import { getTableName } from '../utils/database'
 
 describe('generateCollectionInsert', () => {
   test('Respect Schema\'s default values', () => {

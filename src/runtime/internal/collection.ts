@@ -1,16 +1,5 @@
 import type { CollectionInfo } from '@nuxt/content'
-import { getCollectionName } from './app'
 import contentManifest from '#content/manifest'
-
-export function findJsonFields(sql: string): string[] {
-  const table = sql.match(/FROM\s+(\w+)/)
-  if (!table) {
-    return []
-  }
-
-  const info = contentManifest[getCollectionName(table[1]) as keyof typeof contentManifest] as CollectionInfo
-  return info?.jsonFields || []
-}
 
 export function parseJsonFields<T>(sql: string, doc: T) {
   const jsonFields = findJsonFields(sql)
@@ -27,4 +16,18 @@ export function parseJsonFields<T>(sql: string, doc: T) {
     }
   }
   return item
+}
+
+function findJsonFields(sql: string): string[] {
+  const table = sql.match(/FROM\s+(\w+)/)
+  if (!table) {
+    return []
+  }
+
+  const info = contentManifest[getCollectionName(table[1]) as keyof typeof contentManifest] as CollectionInfo
+  return info?.jsonFields || []
+}
+
+function getCollectionName(table: string) {
+  return table.replace(/^content_/, '')
 }

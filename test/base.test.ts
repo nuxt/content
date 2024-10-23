@@ -4,8 +4,7 @@ import { setup, $fetch } from '@nuxt/test-utils'
 import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
-import { getTableName } from '../src/runtime/internal/app'
-import { localDatabase } from './utils/database'
+import { localDatabase, getTableName } from './utils/database'
 
 async function cleanup() {
   await fs.rm(fileURLToPath(new URL('./fixtures/empty/node_modules', import.meta.url)), { recursive: true, force: true })
@@ -74,7 +73,7 @@ describe('empty', async () => {
 
   describe('SQL dump', () => {
     test('is generated', async () => {
-      const dump = await fs.readFile(fileURLToPath(new URL('./fixtures/empty/.nuxt/content/raw/compressed.sql', import.meta.url)), 'utf8')
+      const dump = await import(new URL('./fixtures/empty/.nuxt/content/dump.mjs', import.meta.url).pathname).then(m => m.default)
 
       const parsedDump = await decompressSQLDump(dump)
 
@@ -85,10 +84,10 @@ describe('empty', async () => {
     })
 
     test('is downloadable', async () => {
-      const response: Record<string, unknown> = await $fetch('/api/content/database.json')
-      expect(response.dump).toBeDefined()
+      const response: string = await $fetch('/api/content/database.sql', { reponseType: 'text' })
+      expect(response).toBeDefined()
 
-      const parsedDump = await decompressSQLDump(response.dump as string)
+      const parsedDump = await decompressSQLDump(response as string)
 
       expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(2)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)

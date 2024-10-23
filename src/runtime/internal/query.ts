@@ -1,14 +1,10 @@
 import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
 import type { H3Event } from 'h3'
-import { getTableName } from '../internal/app'
-
 import loadDatabaseAdapter from './database.server'
-import { integrityVersion } from '#content/manifest'
+import { integrityVersion, tables } from '#content/manifest'
 import { useRuntimeConfig } from '#imports'
 
-type Fetcher = <T>(sql: string) => Promise<T[]>
-
-export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: Fetcher): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (sql: string) => Promise<T[]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -81,17 +77,17 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
-      return fetch<Collections[T]>(buildQuery()).then(res => res || [])
+      return fetch(buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
-      return fetch<Collections[T]>(buildQuery()).then(res => res[0] || null)
+      return fetch(buildQuery()).then(res => res[0] || null)
     },
   }
 
   function buildQuery() {
     let query = 'SELECT '
     query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
-    query += ` FROM ${getTableName(String(collection))}`
+    query += ` FROM ${tables[String(collection)]}`
 
     if (params.conditions.length > 0) {
       query += ` WHERE ${params.conditions.join(' AND ')}`

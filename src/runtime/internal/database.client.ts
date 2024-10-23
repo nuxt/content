@@ -40,7 +40,7 @@ export function loadDatabaseAdapter() {
   }
 }
 
-export async function loadAdapter() {
+async function loadAdapter() {
   if (!db) {
     const perf = measurePerformance()
     let compressedDump: string | null = null

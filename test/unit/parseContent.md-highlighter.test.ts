@@ -2,12 +2,25 @@ import { describe, test, expect, assert } from 'vitest'
 import { z } from 'zod'
 import GithubLight from 'shiki/themes/github-light.mjs'
 import type { MDCElement } from '@nuxtjs/mdc'
+import type { Nuxt } from '@nuxt/schema'
 import { parseContent } from '../../src/utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import type { MarkdownRoot } from '../../src/types/content'
 
-const markdownOptions = { markdown: { compress: false } as Record<string, unknown> }
+const nuxtMock = {
+  options: {
+    mdc: {
+      compress: false,
+      highlight: {
+        theme: {
+          dark: 'material-theme-palenight', // Theme containing italic
+          default: GithubLight,
+        },
+      },
+    },
+  },
+} as unknown as Nuxt
 
 describe('Highlighter', () => {
   const collection = resolveCollection('content', defineCollection({
@@ -22,17 +35,7 @@ describe('Highlighter', () => {
       '```ts',
       'const a: number = 1',
       '```',
-    ].join('\n'), collection, {
-      markdown: {
-        ...markdownOptions.markdown,
-        highlight: {
-          theme: {
-            dark: 'material-theme-palenight', // Theme containing italic
-            default: GithubLight,
-          },
-        },
-      },
-    })
+    ].join('\n'), collection, nuxtMock)
 
     const colors = {
       default: '#D73A49 #005CC5 #D73A49 #005CC5 #D73A49 #005CC5'.split(' '),
@@ -65,17 +68,7 @@ describe('Highlighter', () => {
       '```',
       '<!--more-->',
       'Second block',
-    ].join('\n'), collection, {
-      markdown: {
-        ...markdownOptions.markdown,
-        highlight: {
-          theme: {
-            dark: 'material-theme-palenight', // Theme containing italic
-            default: GithubLight,
-          },
-        },
-      },
-    })
+    ].join('\n'), collection, nuxtMock)
 
     const styleExcerpt = parsed.meta.excerpt.children.pop()
     expect(styleExcerpt.tag).toBe('style')

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionTableDefinition, defineCollection } from '../../src/utils/collection'
-import { getTableName } from '../../src/runtime/internal/app'
+import { getTableName } from '../utils/database'
 
 describe('generateCollectionTableDefinition', () => {
   test('Page without custom schema', () => {
