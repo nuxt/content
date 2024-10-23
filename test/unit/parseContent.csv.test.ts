@@ -72,7 +72,7 @@ describe('Parser (.csv)', () => {
     schema: z.object({
       body: z.any(),
     }),
-  }), { rootDir: '~' })
+  }), { rootDir: '~' })!
   for (const csv of csvs) {
     test(`${csv.replace(/\n/g, '-')}`, async () => {
       const parsed = await parseContent('content/index.csv', csv, collection)

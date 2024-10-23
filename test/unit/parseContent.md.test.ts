@@ -13,7 +13,7 @@ describe('Parser (.md)', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }), { rootDir: '~' })
+  }), { rootDir: '~' })!
 
   test('Index file', async () => {
     const parsed = await parseContent('content/index.md', '# Index', collection, markdownOptions)

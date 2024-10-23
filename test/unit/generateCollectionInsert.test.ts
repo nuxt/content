@@ -14,7 +14,7 @@ describe('generateCollectionInsert', () => {
         otherField2: z.boolean().default(true),
         date: z.date().default(new Date('2022-01-01')),
       }),
-    }), { rootDir: '~' })
+    }), { rootDir: '~' })!
     const sql = generateCollectionInsert(collection, {
       _id: 'foo.md',
       stem: 'foo',
@@ -39,7 +39,7 @@ describe('generateCollectionInsert', () => {
         otherField2: z.boolean().default(true),
         date: z.date().default(new Date('2022-01-01')),
       }),
-    }), { rootDir: '~' })
+    }), { rootDir: '~' })!
     const sql = generateCollectionInsert(collection, {
       _id: 'foo.md',
       stem: 'foo',

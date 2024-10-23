@@ -25,7 +25,7 @@ export function useContentWebSocket() {
       const db = await loadDatabaseAdapter()
 
       for (const s of data.queries) {
-        await db.exec(s).catch(err => console.log(err))
+        await db.exec(s).catch((err: unknown) => console.log(err))
       }
       console.log('updated', data.queries)
 
@@ -79,7 +79,7 @@ export function useContentWebSocket() {
     }
 
     // WebSocket Base URL
-    const wsURL = `${useRuntimeConfig().public.content.wsUrl}ws`
+    const wsURL = `${(useRuntimeConfig().public.content as { wsUrl: string }).wsUrl}ws`
 
     logger.log(`WS connect to ${wsURL}`)
 

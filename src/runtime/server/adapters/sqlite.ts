@@ -1,5 +1,5 @@
 import type Database from 'better-sqlite3'
-import { createDatabaseAdapter } from '../../internal/database-adapter.ts'
+import { createDatabaseAdapter } from '../../internal/database-adapter'
 
 let db: Database.Database
 export default createDatabaseAdapter<{ filename: string }>((opts) => {

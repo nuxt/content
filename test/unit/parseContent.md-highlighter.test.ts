@@ -15,7 +15,7 @@ describe('Highlighter', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }), { rootDir: '~' })
+  }), { rootDir: '~' })!
 
   test('themed', async () => {
     const parsed = await parseContent('content/index.md', [

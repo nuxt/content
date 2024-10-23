@@ -12,8 +12,7 @@ import { resolve } from 'pathe'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { listen, type Listener } from 'listhen'
-import type { ResolvedCollection } from '../types/collection'
-import type { ModuleOptions } from '../types'
+import type { ResolvedCollection, ModuleOptions } from '../types'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
 
@@ -44,7 +43,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       listener = await listen(() => 'Nuxt Content', websocketOptions)
 
       // Register ws url
-      nitro.options.runtimeConfig.public.content.wsUrl = listener.url.replace('http', 'ws')
+      ;(nitro.options.runtimeConfig.public.content as Record<string, unknown>).wsUrl = listener.url.replace('http', 'ws')
 
       listener.server.on('upgrade', websocket.serve)
     })

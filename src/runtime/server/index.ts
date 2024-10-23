@@ -10,7 +10,7 @@ export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3E
 }
 
 export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
-  return generateNavigationTree(queryCollectionWithEvent(event, collection), fields)
+  return generateNavigationTree(queryCollectionWithEvent(event, collection), fields as string[])
 }
 
 export async function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {

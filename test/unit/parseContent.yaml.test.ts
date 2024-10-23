@@ -11,7 +11,7 @@ describe('Parser (.yml)', () => {
     schema: z.object({
       body: z.any(),
     }),
-  }), { rootDir: '~' })
+  }), { rootDir: '~' })!
   test('key:value', async () => {
     const parsed = await parseContent('content/index.yml', 'key: value', collection)
 

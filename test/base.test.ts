@@ -85,7 +85,7 @@ describe('empty', async () => {
     })
 
     test('is downloadable', async () => {
-      const response = await $fetch<Record<string, unknown>>('/api/content/database.json')
+      const response: Record<string, unknown> = await $fetch('/api/content/database.json')
       expect(response.dump).toBeDefined()
 
       const parsedDump = await decompressSQLDump(response.dump as string)

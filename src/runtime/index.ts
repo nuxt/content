@@ -29,7 +29,7 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
   }
   else {
     const event = tryUseNuxtApp()?.ssrContext?.event
-    result = await executeContentQueryWithEvent<Result>(event, sql)
+    result = await executeContentQueryWithEvent<T>(event!, sql)
   }
 
   return result
