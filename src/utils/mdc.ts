@@ -5,9 +5,10 @@ import { extendViteConfig, installModule } from '@nuxt/kit'
 import type { ModuleOptions } from '../types'
 
 export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt) {
+  const options = nuxt.options as unknown as { mdc: MDCModuleOptions, content: ModuleOptions }
   // Install mdc module
-  const highlight = nuxt.options.content?.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
-  nuxt.options.mdc = defu(nuxt.options.mdc, {
+  const highlight = options.content?.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
+  options.mdc = defu(options.mdc, {
     highlight: highlight ? { ...highlight, noApiRoute: true } : highlight,
     components: {
       prose: true,

@@ -1,5 +1,5 @@
 import { eventHandler } from 'h3'
-import { useStorage } from '#imports'
+import { useStorage } from 'nitropack/runtime'
 
 export default eventHandler(async () => {
   let dump = await useStorage().getItem('build:content:raw:compressed.sql') || ''

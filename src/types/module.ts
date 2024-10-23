@@ -132,3 +132,8 @@ export interface ModuleOptions {
   }
 
 }
+
+export interface RuntimeConfig {
+  database: D1DatabaseConfig | SqliteDatabaseConfig
+  localDatabase: SqliteDatabaseConfig
+}

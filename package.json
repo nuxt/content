@@ -42,6 +42,7 @@
     "better-sqlite3": "^11.3.0",
     "chokidar": "^4.0.1",
     "consola": "^3.2.3",
+    "defu": "^6.1.4",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.2",
     "jiti": "^2.3.3",

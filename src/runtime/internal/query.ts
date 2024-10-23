@@ -1,4 +1,4 @@
-import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, SQLOperator, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import loadDatabaseAdapter from './database.server'
 import { integrityVersion, tables } from '#content/manifest'
@@ -116,7 +116,7 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
 let checkDatabaseIntegrity = true
 let integrityCheckPromise: Promise<void> | null = null
 export async function executeContentQueryWithEvent<T extends keyof Collections, Result = Collections[T]>(event: H3Event, sql: string): Promise<Result[]> {
-  const conf = useRuntimeConfig().content
+  const conf = useRuntimeConfig().content as RuntimeConfig
 
   if (import.meta.server && event) {
     if (checkDatabaseIntegrity) {

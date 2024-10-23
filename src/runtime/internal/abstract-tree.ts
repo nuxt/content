@@ -1,5 +1,5 @@
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
-import type { MinimalTree, MinimalNode } from '@nuxt/content'
+import type { MinimalTree, MinimalNode, MinimalElement } from '@nuxt/content'
 
 export function compressTree(input: MDCRoot): MinimalTree {
   return {

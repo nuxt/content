@@ -1,5 +1,5 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
-import type { DatabaseAdapter } from '@nuxt/content'
+import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { measurePerformance } from './performance'
 import { decompressSQLDump } from './dump'
 import { parseJsonFields } from './collection'
@@ -7,18 +7,18 @@ import { integrityVersion } from '#content/manifest'
 
 let db: Database
 
-export function loadDatabaseAdapter() {
-  return <DatabaseAdapter>{
-    all: async (sql, params) => {
+export function loadDatabaseAdapter(): DatabaseAdapter {
+  return {
+    all: async <T>(sql: string, params: DatabaseBindParams) => {
       if (!db) {
         await loadAdapter()
       }
 
       return db
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
-        .map(row => parseJsonFields(sql, row))
+        .map(row => parseJsonFields(sql, row) as T)
     },
-    first: async (sql, params) => {
+    first: async <T>(sql: string, params: DatabaseBindParams) => {
       if (!db) {
         await loadAdapter()
       }
@@ -28,14 +28,14 @@ export function loadDatabaseAdapter() {
         db
           .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
           .shift(),
-      )
+      ) as T
     },
-    exec: async (sql) => {
+    exec: async (sql: string) => {
       if (!db) {
         await loadAdapter()
       }
 
-      return db.exec({ sql })
+      await db.exec({ sql })
     },
   }
 }
@@ -54,7 +54,8 @@ async function loadAdapter() {
 
     perf.tick('Get Local Cache')
     if (!compressedDump) {
-      compressedDump = await $fetch('/api/content/database.sql', {
+      compressedDump = await $fetch<string>('/api/content/database.sql', {
+        responseType: 'text',
         headers: { 'content-type': 'text/plain' },
         query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
       })

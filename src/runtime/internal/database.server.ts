@@ -1,9 +1,9 @@
-import type { D1DatabaseConfig, SqliteDatabaseConfig, DatabaseAdapter, DatabaseAdapterConfig } from '@nuxt/content'
+import type { D1DatabaseConfig, SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { decompressSQLDump } from './dump'
 import { tables } from '#content/manifest'
 
-export default function loadDatabaseAdapter(config: { database: DatabaseAdapterConfig, localDatabase: SqliteDatabaseConfig }) {
+export default function loadDatabaseAdapter(config: RuntimeConfig) {
   const { database, localDatabase } = config
 
   let adapter: DatabaseAdapter
@@ -47,7 +47,7 @@ export default function loadDatabaseAdapter(config: { database: DatabaseAdapterC
   }
 }
 
-export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityVersion: string, config: { database: DatabaseAdapterConfig, localDatabase: SqliteDatabaseConfig }) {
+export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityVersion: string, config: RuntimeConfig) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables._info}`).catch(() => ({ version: '' }))
@@ -81,7 +81,7 @@ async function loadDatabaseDump(event: H3Event): Promise<string> {
     return await event.context.cloudflare.env.ASSETS.fetch(url).then((r: Response) => r.text())
   }
 
-  return await $fetch('/api/content/database.sql').catch((e) => {
+  return await $fetch<string>('/api/content/database.sql', { responseType: 'text' }).catch((e) => {
     console.error('Failed to fetch compressed dump', e)
     return ''
   })

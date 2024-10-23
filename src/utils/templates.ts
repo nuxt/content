@@ -144,7 +144,7 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: { 
     return [
       'export const integrityVersion = "' + options.manifest.integrityVersion + '"',
       '',
-      `export function tables = ${JSON.stringify(
+      `export const tables = ${JSON.stringify(
         Object.fromEntries(collections.map(c => [c.name, c.tableName])),
       )}`,
       '',
