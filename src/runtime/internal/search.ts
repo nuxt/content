@@ -30,6 +30,7 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(q
   const { ignoredTags = [] } = opts || {}
 
   const documents = await queryBuilder
+    .where('extension', '=', 'md')
     .select('path', 'body', 'description', 'title')
     .all()
 
