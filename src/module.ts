@@ -16,14 +16,16 @@ import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
+import { defu } from 'defu'
 import { generateCollectionInsert, parseSourceBase } from './utils/collection'
-import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, manifestTemplate, sqlDumpTemplate, sqlDumpTemplateRaw } from './utils/templates'
+import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
+import { findPreset } from './presets'
 
 // Export public utils
 export * from './utils'
@@ -34,14 +36,10 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'Content',
     configKey: 'content',
   },
-  defaults: {
+  defaults: nuxt => defu(findPreset(nuxt).defaults(nuxt), {
     _localDatabase: {
       type: 'sqlite',
       filename: '.data/content/contents.sqlite',
-    },
-    database: {
-      type: 'sqlite',
-      filename: './contents.sqlite',
     },
     watch: {
       enabled: true,
@@ -68,24 +66,23 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
-  },
-  async setup(_options, nuxt) {
+  }) as ModuleOptions,
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const contentOptions = { ..._options }
-    const collectionManifest = {
+    const manifest = {
       integrityVersion: '-',
       dump: [] as string[],
       components: [] as string[],
     }
 
-    contentOptions._localDatabase!.filename = isAbsolute(contentOptions._localDatabase!.filename)
-      ? contentOptions._localDatabase!.filename
-      : join(nuxt.options.rootDir, contentOptions._localDatabase!.filename)
-    await mkdir(dirname(contentOptions._localDatabase!.filename), { recursive: true }).catch(() => {})
+    options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
+      ? options._localDatabase!.filename
+      : join(nuxt.options.rootDir, options._localDatabase!.filename)
+    await mkdir(dirname(options._localDatabase!.filename), { recursive: true }).catch(() => {})
 
-    if ((contentOptions.database as SqliteDatabaseConfig).filename) {
-      (contentOptions.database as SqliteDatabaseConfig).filename = (contentOptions.database as SqliteDatabaseConfig).filename
-      await mkdir(dirname((contentOptions.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
+    if ((options.database as SqliteDatabaseConfig).filename) {
+      (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
+      await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { defaultFallback: true })
@@ -95,8 +92,8 @@ export default defineNuxtModule<ModuleOptions>({
     }
     nuxt.options.runtimeConfig.content = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      database: contentOptions.database as any,
-      localDatabase: contentOptions._localDatabase!,
+      database: options.database as any,
+      localDatabase: options._localDatabase!,
     }
 
     nuxt.options.vite.optimizeDeps ||= {}
@@ -120,42 +117,16 @@ export default defineNuxtModule<ModuleOptions>({
     ])
     addComponentsDir({ path: resolver.resolve('./runtime/components') })
 
-    // Templates
-    addTypeTemplate(contentTypesTemplate(collections))
-    const manifestDst = addTemplate(manifestTemplate(collections, collectionManifest)).dst
-    const collectionsDst = addTemplate(collectionsTemplate(collections)).dst
-    const componentsDst = addTemplate(componentsManifestTemplate(collectionManifest)).dst
-    // Add aliases
+    // Add Templates & aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    nuxt.options.nitro.alias['#content/collections'] = collectionsDst
-    nuxt.options.alias['#content/components'] = componentsDst
-    nuxt.options.alias['#content/manifest'] = manifestDst
+    nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(collections)).dst
+    nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
+    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(collections, manifest)).dst
+    addTypeTemplate(contentTypesTemplate(collections))
 
-    nuxt.hook('nitro:config', (config) => {
-      config.publicAssets ||= []
-      config.alias = config.alias || {}
-      config.handlers ||= []
-
-      switch (config.preset) {
-        case 'cloudflare-pages':
-          // Add raw content dump
-          addTemplate(sqlDumpTemplateRaw(collectionManifest))
-          // Add raw content dump to public assets
-          config.publicAssets.push({ dir: join(nuxt.options.buildDir, 'content', 'raw'), maxAge: 60 })
-
-          config.handlers.push({
-            route: '/api/content/database.sql',
-            handler: resolver.resolve('./runtime/presets/cloudflare-pages/database.sql'),
-          })
-          break
-        default:
-          config.alias['#content/dump'] = addTemplate(sqlDumpTemplate(collectionManifest)).dst
-          config.handlers.push({
-            route: '/api/content/database.sql',
-            handler: resolver.resolve('./runtime/presets/node/database.sql'),
-          })
-      }
-    })
+    // Load preset
+    const preset = findPreset(nuxt)
+    await preset.setup(options, nuxt, manifest)
 
     nuxt.options.routeRules ||= {}
     nuxt.options.routeRules['/api/content/database.sql'] = { prerender: true }
@@ -177,23 +148,24 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    await installMDCModule(contentOptions, nuxt)
+    await installMDCModule(options, nuxt)
 
     if (nuxt.options._prepare) {
       return
     }
 
-    const dumpGeneratePromise = processCollectionItems(nuxt, collections, contentOptions)
-      .then((manifest) => {
-        collectionManifest.integrityVersion = manifest.integrityVersion
-        collectionManifest.dump = manifest.dump
-        collectionManifest.components = manifest.components
+    const dumpGeneratePromise = processCollectionItems(nuxt, collections, options)
+      .then((fest) => {
+        manifest.integrityVersion = fest.integrityVersion
+        manifest.dump = fest.dump
+        manifest.components = fest.components
 
         return updateTemplates({
           filter: template => [
-            String(sqlDumpTemplateRaw(collectionManifest).filename),
-            String(componentsManifestTemplate(collectionManifest).filename),
-            String(manifestTemplate(collections, collectionManifest).filename),
+            moduleTemplates.dump,
+            moduleTemplates.raw,
+            moduleTemplates.manifest,
+            moduleTemplates.components,
           ].includes(template.filename),
         })
       })
@@ -204,7 +176,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (nuxt.options.dev) {
       addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-      await watchContents(nuxt, collections, contentOptions, collectionManifest)
+      await watchContents(nuxt, collections, options, manifest)
       await watchComponents(nuxt)
       await watchConfig(nuxt)
     }

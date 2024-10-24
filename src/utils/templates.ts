@@ -14,8 +14,17 @@ function indentLines(str: string, indent: number = 2) {
     .join('\n')
 }
 
+export const moduleTemplates = {
+  types: 'content/types.d.ts',
+  collections: 'content/collections.mjs',
+  manifest: 'content/manifest.ts',
+  components: 'content/components.ts',
+  dump: 'content/dump.mjs',
+  raw: 'content/raw/compressed.sql',
+}
+
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
-  filename: 'content/types.d.ts' as const,
+  filename: moduleTemplates.types as `${string}.d.ts`,
   getContents: ({ options }) => {
     const publicCollections = (options.collections as ResolvedCollection[]).filter(c => c.name !== '_info')
     const pagesCollections = publicCollections.filter(c => c.type === 'page')
@@ -46,7 +55,7 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
 } satisfies NuxtTemplate)
 
 export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
-  filename: 'content/collections.mjs' as const,
+  filename: moduleTemplates.collections,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {
@@ -71,7 +80,7 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
 })
 
 export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
-  filename: 'content/dump.mjs' as const,
+  filename: moduleTemplates.dump,
   getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
     const compressed = deflate(options.manifest.dump.join('\n'))
 
@@ -85,7 +94,7 @@ export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
 })
 
 export const sqlDumpTemplateRaw = (manifest: { dump: string[] }) => ({
-  filename: 'content/raw/compressed.sql' as const,
+  filename: moduleTemplates.raw,
   getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
     const compressed = deflate(options.manifest.dump.join('\n'))
 
@@ -100,7 +109,7 @@ export const sqlDumpTemplateRaw = (manifest: { dump: string[] }) => ({
 
 export const componentsManifestTemplate = (manifest: { components: string[] }) => {
   return {
-    filename: 'content/components.ts',
+    filename: moduleTemplates.components,
     write: true,
     getContents: ({ app, nuxt, options }) => {
       const componentsMap = app.components
@@ -132,7 +141,7 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
 }
 
 export const manifestTemplate = (collections: ResolvedCollection[], manifest: { integrityVersion: string }) => ({
-  filename: 'content/manifest.ts' as const,
+  filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: { integrityVersion: string } } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {

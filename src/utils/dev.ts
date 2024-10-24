@@ -15,6 +15,7 @@ import { listen, type Listener } from 'listhen'
 import type { ResolvedCollection, ModuleOptions } from '../types'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
+import { moduleTemplates } from './templates'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
@@ -80,8 +81,9 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         manifest.dump.splice(index, 1, insertQuery)
         await updateTemplates({
           filter: template => [
-            'content/manifest.ts',
-            'content/dump.mjs',
+            moduleTemplates.manifest,
+            moduleTemplates.dump,
+            moduleTemplates.raw,
           ].includes(template.filename),
         })
       }
@@ -150,7 +152,7 @@ export function watchComponents(nuxt: Nuxt) {
     const path = resolve(nuxt.options.srcDir, relativePath)
     if (componentDirs.some(dir => path.startsWith(dir + '/'))) {
       await updateTemplates({
-        filter: template => ['content/components.ts'].includes(template.filename),
+        filter: template => [moduleTemplates.components].includes(template.filename),
       })
     }
   })
