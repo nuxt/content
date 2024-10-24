@@ -3,12 +3,6 @@ import { sqlDumpTemplate } from '../../utils/templates'
 import { definePreset } from '../../utils/preset'
 
 export default definePreset({
-  defaults: () => ({
-    database: {
-      type: 'sqlite',
-      filename: './contents.sqlite',
-    },
-  }),
   setup(_options, nuxt, manifest) {
     const { resolve } = createResolver(import.meta.url)
     nuxt.hook('nitro:config', (config) => {

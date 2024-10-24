@@ -36,10 +36,14 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'Content',
     configKey: 'content',
   },
-  defaults: nuxt => defu(findPreset(nuxt).defaults(nuxt), {
+  defaults: {
     _localDatabase: {
       type: 'sqlite',
       filename: '.data/content/contents.sqlite',
+    },
+    database: {
+      type: 'sqlite',
+      filename: './contents.sqlite',
     },
     watch: {
       enabled: true,
@@ -66,7 +70,7 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
-  }) as ModuleOptions,
+  },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const manifest = {
@@ -125,8 +129,10 @@ export default defineNuxtModule<ModuleOptions>({
     addTypeTemplate(contentTypesTemplate(collections))
 
     // Load preset
-    const preset = findPreset(nuxt)
-    await preset.setup(options, nuxt, manifest)
+    nuxt.hook('modules:done', async () => {
+      const preset = findPreset(nuxt)
+      await preset.setup(options, nuxt, manifest)
+    })
 
     nuxt.options.routeRules ||= {}
     nuxt.options.routeRules['/api/content/database.sql'] = { prerender: true }

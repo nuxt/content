@@ -7,7 +7,6 @@ export interface Manifest {
 }
 
 export interface Preset {
-  defaults: (nuxt: Nuxt) => Partial<ModuleOptions>
   setup: (options: ModuleOptions, nuxt: Nuxt, manifest: Manifest) => void
 }
 

@@ -4,15 +4,14 @@ import { sqlDumpTemplateRaw } from '../../utils/templates'
 import { definePreset } from '../../utils/preset'
 
 export default definePreset({
-  defaults: () => {
-    return {
-      database: {
+  setup(options, nuxt, manifest) {
+    if (options.database?.type !== 'd1') {
+      options.database = {
         type: 'd1',
         binding: 'DB',
-      },
+      }
     }
-  },
-  setup(_options, nuxt, manifest) {
+
     const { resolve } = createResolver(import.meta.url)
     nuxt.hook('nitro:config', (config) => {
       config.publicAssets ||= []
