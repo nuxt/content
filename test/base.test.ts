@@ -73,23 +73,23 @@ describe('empty', async () => {
 
   describe('SQL dump', () => {
     test('is generated', async () => {
-      const dump = await import(new URL('./fixtures/empty/.nuxt/content/dump.mjs', import.meta.url).pathname).then(m => m.default)
+      const dump = await import(new URL('./fixtures/empty/.nuxt/content/dump.mjs', import.meta.url).pathname).then(m => m.content)
 
       const parsedDump = await decompressSQLDump(dump)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(2)
+      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only _info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
     })
 
     test('is downloadable', async () => {
-      const response: string = await $fetch<string>('/api/content/database.sql', { responseType: 'text' })
+      const response: string = await $fetch<string>('/api/content/content/database.sql', { responseType: 'text' })
       expect(response).toBeDefined()
 
       const parsedDump = await decompressSQLDump(response as string)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(2)
+      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only _info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)

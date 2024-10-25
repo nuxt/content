@@ -1,10 +1,10 @@
 import type { Collections, CollectionQueryBuilder, SQLOperator, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import loadDatabaseAdapter from './database.server'
-import { integrityVersion, tables } from '#content/manifest'
+import { checksums, tables } from '#content/manifest'
 import { useRuntimeConfig } from '#imports'
 
-export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (sql: string) => Promise<T[]>): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<T[]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -77,10 +77,10 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
-      return fetch(buildQuery()).then(res => res || [])
+      return fetch(collection, buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
-      return fetch(buildQuery()).then(res => res[0] || null)
+      return fetch(collection, buildQuery()).then(res => res[0] || null)
     },
   }
 
@@ -113,20 +113,20 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
   return query
 }
 
-let checkDatabaseIntegrity = true
+const checkDatabaseIntegrity = {} as Record<string, boolean>
 let integrityCheckPromise: Promise<void> | null = null
-export async function executeContentQueryWithEvent<T extends keyof Collections, Result = Collections[T]>(event: H3Event, sql: string): Promise<Result[]> {
+export async function executeContentQueryWithEvent<T extends keyof Collections, Result = Collections[T]>(event: H3Event, collection: T, sql: string): Promise<Result[]> {
   const conf = useRuntimeConfig().content as RuntimeConfig
 
   if (import.meta.server && event) {
-    if (checkDatabaseIntegrity) {
-      checkDatabaseIntegrity = false
+    if (checkDatabaseIntegrity[String(collection)] !== false) {
+      checkDatabaseIntegrity[String(collection)] = false
       integrityCheckPromise = integrityCheckPromise || import('./database.server')
-        .then(m => m.checkAndImportDatabaseIntegrity(event, integrityVersion, conf))
-        .then((isValid) => { checkDatabaseIntegrity = !isValid })
+        .then(m => m.checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], conf))
+        .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
         .catch((error) => {
           console.log('Database integrity check failed, rebuilding database', error)
-          checkDatabaseIntegrity = true
+          checkDatabaseIntegrity[String(collection)] = true
           integrityCheckPromise = null
         })
     }

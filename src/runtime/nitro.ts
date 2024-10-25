@@ -6,7 +6,7 @@ import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
 
 export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQureyBuilder<T>(collection, sql => executeContentQueryWithEvent(event, sql))
+  return collectionQureyBuilder<T>(collection, (collection, sql) => executeContentQueryWithEvent(event, collection, sql))
 }
 
 export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {

@@ -1,4 +1,4 @@
-import type { D1DatabaseConfig, SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { D1DatabaseConfig, SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig, Collections } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { decompressSQLDump } from './dump'
 import { tables } from '#content/manifest'
@@ -9,7 +9,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig) {
   let adapter: DatabaseAdapter
   async function loadAdapter() {
     if (!adapter) {
-      if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
         adapter = await loadSqliteAdapter(localDatabase)
       }
       else if (database.type === 'sqlite') {
@@ -47,7 +47,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig) {
   }
 }
 
-export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityVersion: string, config: RuntimeConfig) {
+export async function checkAndImportDatabaseIntegrity<T extends keyof Collections>(event: H3Event, collection: T, integrityVersion: string, config: RuntimeConfig) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables._info}`).catch(() => ({ version: '' }))
@@ -59,7 +59,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityV
     await db.exec(`DELETE FROM ${tables._info} WHERE version = '${before.version}'`)
   }
 
-  const dump = await loadDatabaseDump(event).then(decompressSQLDump)
+  const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
@@ -74,14 +74,14 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, integrityV
   return after?.version === integrityVersion
 }
 
-async function loadDatabaseDump(event: H3Event): Promise<string> {
+async function loadDatabaseDump<T extends keyof Collections>(event: H3Event, collection: T): Promise<string> {
   if (event?.context?.cloudflare?.env.ASSETS) {
     const url = new URL(event.context.cloudflare.request.url)
-    url.pathname = '/compressed.sql'
+    url.pathname = `/dump.${String(collection)}.sql`
     return await event.context.cloudflare.env.ASSETS.fetch(url).then((r: Response) => r.text())
   }
 
-  return await $fetch<string>('/api/content/database.sql', { responseType: 'text' }).catch((e) => {
+  return await $fetch<string>(`/api/content/${String(collection)}/database.sql`, { responseType: 'text' }).catch((e) => {
     console.error('Failed to fetch compressed dump', e)
     return ''
   })

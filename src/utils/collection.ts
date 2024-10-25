@@ -57,6 +57,8 @@ export function resolveCollection(name: string, collection: DefinedCollection, o
     jsonFields: Object.keys(collection.extendedSchema.shape || {})
       .filter(key => JSON_FIELDS_TYPES
         .includes(getUnderlyingType(collection.extendedSchema.shape[key]).constructor.name)),
+
+    private: name === '_info',
   }
 }
 

@@ -18,11 +18,11 @@ export function useContentWebSocket() {
     try {
       const data = JSON.parse(message.data)
 
-      if (!data || !data.queries) {
+      if (!data || !data.queries || !data.collection) {
         return
       }
 
-      const db = await loadDatabaseAdapter()
+      const db = await loadDatabaseAdapter(data.collection)
 
       for (const s of data.queries) {
         await db.exec(s).catch((err: unknown) => console.log(err))

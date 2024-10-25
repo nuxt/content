@@ -1,6 +1,6 @@
 declare module '#content/manifest' {
   export default Record<string, unknown>
-  export const integrityVersion: string
+  export const checksums: Record<string, string>
   export const tables: Record<string, string>
 }
 

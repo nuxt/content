@@ -3,25 +3,21 @@ import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { measurePerformance } from './performance'
 import { decompressSQLDump } from './dump'
 import { parseJsonFields } from './collection'
-import { integrityVersion } from '#content/manifest'
+import { checksums, tables } from '#content/manifest'
 
 let db: Database
 
-export function loadDatabaseAdapter(): DatabaseAdapter {
+export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   return {
     all: async <T>(sql: string, params: DatabaseBindParams) => {
-      if (!db) {
-        await loadAdapter()
-      }
+      await loadAdapter(collection)
 
       return db
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
         .map(row => parseJsonFields(sql, row) as T)
     },
     first: async <T>(sql: string, params: DatabaseBindParams) => {
-      if (!db) {
-        await loadAdapter()
-      }
+      await loadAdapter(collection)
 
       return parseJsonFields(
         sql,
@@ -31,40 +27,60 @@ export function loadDatabaseAdapter(): DatabaseAdapter {
       ) as T
     },
     exec: async (sql: string) => {
-      if (!db) {
-        await loadAdapter()
-      }
+      await loadAdapter(collection)
 
       await db.exec({ sql })
     },
   }
 }
 
-async function loadAdapter() {
+async function loadAdapter<T>(collection: T) {
+  const perf = measurePerformance()
   if (!db) {
-    const perf = measurePerformance()
-    let compressedDump: string | null = null
+    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
+    const sqlite3 = await sqlite3InitModule()
+    perf.tick('Import SQLite Module')
 
+    db = new sqlite3.oo1.DB()
+  }
+  let compressedDump: string | null = null
+
+  const checksumId = `checksum_${collection}`
+  const dumpId = `collection_${collection}`
+  let checksumState = 'matched'
+  try {
+    const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables._info} where _id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
+      .shift()
+
+    if (dbChecksum?.version !== checksums[String(collection)]) {
+      checksumState = 'mismatch'
+    }
+  }
+  catch {
+    checksumState = 'missing'
+  }
+
+  if (checksumState !== 'matched') {
     if (!import.meta.dev) {
-      const localCacheVersion = window.localStorage.getItem('content-integrity-version')
-      if (localCacheVersion === integrityVersion) {
-        compressedDump = window.localStorage.getItem('content-dump')
+      const localCacheVersion = window.localStorage.getItem(`content_${checksumId}`)
+      if (localCacheVersion === checksums[String(collection)]) {
+        compressedDump = window.localStorage.getItem(`content_${dumpId}`)
       }
     }
 
     perf.tick('Get Local Cache')
     if (!compressedDump) {
-      compressedDump = await $fetch<string>('/api/content/database.sql', {
+      compressedDump = await $fetch<string>(`/api/content/${collection}/database.sql`, {
         responseType: 'text',
         headers: { 'content-type': 'text/plain' },
-        query: { v: integrityVersion, t: import.meta.dev ? Date.now() : undefined },
+        query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
       })
 
       perf.tick('Download Database')
       if (!import.meta.dev) {
         try {
-          window.localStorage.setItem('content-integrity-version', integrityVersion)
-          window.localStorage.setItem('content-dump', compressedDump!)
+          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)])
+          window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
         }
         catch (error) {
           console.log('Database integrity check failed, rebuilding database', error)
@@ -76,19 +92,23 @@ async function loadAdapter() {
     const dump = await decompressSQLDump(compressedDump!)
     perf.tick('Decompress Database')
 
-    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
-    const sqlite3 = await sqlite3InitModule()
-    perf.tick('Import SQLite Module')
-
-    db = new sqlite3.oo1.DB()
+    await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
+    if (checksumState === 'mismatch') {
+      await db.exec({ sql: `DELETE FROM ${tables._info} WHERE _id = '${checksumId}'` })
+    }
 
     for (const command of dump) {
-      await db.exec(command)
+      try {
+        await db.exec(command)
+      }
+      catch (error) {
+        console.log('Error executing command', error)
+      }
     }
     perf.tick('Restore Dump')
-
-    perf.end('Initialize Database')
   }
+
+  perf.end('Initialize Database')
 
   return db
 }

@@ -16,8 +16,7 @@ import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
-import { defu } from 'defu'
-import { generateCollectionInsert, parseSourceBase } from './utils/collection'
+import { generateCollectionInsert, generateCollectionTableDefinition, parseSourceBase } from './utils/collection'
 import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
@@ -26,6 +25,7 @@ import { loadContentConfig } from './utils/config'
 import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
+import type { Manifest } from './types/manifest'
 
 // Export public utils
 export * from './utils'
@@ -73,10 +73,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const manifest = {
-      integrityVersion: '-',
-      dump: [] as string[],
-      components: [] as string[],
+    const manifest: Manifest = {
+      checksum: {},
+      dump: {},
+      components: [],
+      collections: [],
     }
 
     options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
@@ -90,6 +91,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     const { collections } = await loadContentConfig(nuxt.options.rootDir, { defaultFallback: true })
+    manifest.collections = collections
 
     nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',
@@ -129,13 +131,17 @@ export default defineNuxtModule<ModuleOptions>({
     addTypeTemplate(contentTypesTemplate(collections))
 
     // Load preset
-    nuxt.hook('modules:done', async () => {
+    nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
-      await preset.setup(options, nuxt, manifest)
+      await preset.setupNitro(options, config, manifest)
     })
 
     nuxt.options.routeRules ||= {}
-    nuxt.options.routeRules['/api/content/database.sql'] = { prerender: true }
+    collections.forEach((collection) => {
+      if (!collection.private) {
+        nuxt.options.routeRules![`/api/content/${collection.name}/database.sql`] = { prerender: true }
+      }
+    })
     // Register user global components
     const _layers = [...nuxt.options._layers].reverse()
     for (const layer of _layers) {
@@ -162,14 +168,13 @@ export default defineNuxtModule<ModuleOptions>({
 
     const dumpGeneratePromise = processCollectionItems(nuxt, collections, options)
       .then((fest) => {
-        manifest.integrityVersion = fest.integrityVersion
+        manifest.checksum = fest.checksum
         manifest.dump = fest.dump
         manifest.components = fest.components
 
         return updateTemplates({
           filter: template => [
             moduleTemplates.dump,
-            moduleTemplates.raw,
             moduleTemplates.manifest,
             moduleTemplates.components,
           ].includes(template.filename),
@@ -191,8 +196,11 @@ export default defineNuxtModule<ModuleOptions>({
 
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
+  const collectionChecksum: Record<string, string> = {}
   const db = localDatabase(options._localDatabase!.filename)
   const databaseContents = db.fetchDevelopmentCache()
+
+  const infoCollection = collections.find(c => c.name === '_info')!
 
   const startTime = performance.now()
   let filesCount = 0
@@ -200,6 +208,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let parsedFilesCount = 0
   // Create database dump
   for await (const collection of collections) {
+    if (collection.name === '_info') {
+      continue
+    }
     collectionDump[collection.name] = []
     // Collection table definition
     collectionDump[collection.name].push(...collection.tableDefinition.split('\n'))
@@ -245,16 +256,19 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     // Sort by file name to ensure consistent order
     list.sort((a, b) => a[0].localeCompare(String(b[0])))
     collectionDump[collection.name].push(...list.map(([, sql]) => sql))
+
+    collectionChecksum[collection.name] = hash(collectionDump[collection.name])
+
+    collectionDump[collection.name].push(
+      generateCollectionTableDefinition(infoCollection.name, infoCollection, { drop: false }),
+      generateCollectionInsert(infoCollection, { _id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+    )
   }
-
-  const infoCollection = collections.find(c => c.name === '_info')!
-
-  const version = hash(collectionDump)
-
-  collectionDump._info.push(generateCollectionInsert(infoCollection, { _id: 'version', version }))
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)
 
+  // Drop _info table and recreate it
+  db.exec(`DROP TABLE IF EXISTS ${infoCollection.tableName}`)
   for (const sql of sqlDumpList) {
     db.exec(sql)
   }
@@ -272,8 +286,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return {
-    integrityVersion: version,
-    dump: sqlDumpList,
+    checksum: collectionChecksum,
+    dump: collectionDump,
     components: uniqueTags,
   }
 }

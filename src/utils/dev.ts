@@ -13,13 +13,14 @@ import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { listen, type Listener } from 'listhen'
 import type { ResolvedCollection, ModuleOptions } from '../types'
+import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
 import { moduleTemplates } from './templates'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions, manifest: { dump: string[] }) {
+export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions, manifest: Manifest) {
   const db = localDatabase(options._localDatabase!.filename)
 
   const localCollections = collections.filter(c => c.source && !c.source.repository)
@@ -73,17 +74,18 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
       const insertQuery = generateCollectionInsert(collection, parsedContent)
       await db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)
       await db.exec(insertQuery)
+
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 
-      const queryPrefix = insertQuery.split('(')[0]
-      const index = manifest.dump.findIndex(item => item.startsWith(queryPrefix) && item.includes(`'${keyInCollection}'`))
+      const index = manifest.dump[collection.name].findIndex(item => item.includes(`'${keyInCollection}'`))
       if (index !== -1) {
-        manifest.dump.splice(index, 1, insertQuery)
+        // Update templates to have valid dump for client-side navigation
+        manifest.dump[collection.name].splice(index, 1, insertQuery)
         await updateTemplates({
           filter: template => [
             moduleTemplates.manifest,
             moduleTemplates.dump,
-            moduleTemplates.raw,
+            // moduleTemplates.raw,
           ].includes(template.filename),
         })
       }

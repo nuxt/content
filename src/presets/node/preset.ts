@@ -3,15 +3,13 @@ import { sqlDumpTemplate } from '../../utils/templates'
 import { definePreset } from '../../utils/preset'
 
 export default definePreset({
-  setup(_options, nuxt, manifest) {
+  setupNitro(_options, nitroConfig, manifest) {
     const { resolve } = createResolver(import.meta.url)
-    nuxt.hook('nitro:config', (config) => {
-      config.publicAssets ||= []
-      config.alias = config.alias || {}
-      config.handlers ||= []
+    nitroConfig.publicAssets ||= []
+    nitroConfig.alias = nitroConfig.alias || {}
+    nitroConfig.handlers ||= []
 
-      config.alias['#content/dump'] = addTemplate(sqlDumpTemplate(manifest)).dst
-      config.handlers.push({ route: '/api/content/database.sql', handler: resolve('./database.sql') })
-    })
+    nitroConfig.alias['#content/dump'] = addTemplate(sqlDumpTemplate(manifest)).dst
+    nitroConfig.handlers.push({ route: '/api/content/:collection/database.sql', handler: resolve('./database.sql') })
   },
 })

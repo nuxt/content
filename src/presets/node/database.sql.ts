@@ -1,12 +1,7 @@
-import { eventHandler } from 'h3'
-import { useStorage } from 'nitropack/runtime'
+import { eventHandler, getRouterParam } from 'h3'
 
-export default eventHandler(async () => {
-  let dump = await useStorage().getItem('build:content:raw:compressed.sql') || ''
+export default eventHandler(async (event) => {
+  const collection = getRouterParam(event, 'collection')!
 
-  if (!dump) {
-    dump = await import('#content/dump').then(m => m.default)
-  }
-
-  return dump
+  return await import('#content/dump').then(m => m[collection])
 })

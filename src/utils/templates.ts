@@ -5,6 +5,7 @@ import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { deflate } from 'pako'
 import type { ResolvedCollection } from '../types/collection'
+import type { Manifest } from '../types/manifest'
 
 function indentLines(str: string, indent: number = 2) {
   return str
@@ -20,13 +21,12 @@ export const moduleTemplates = {
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   dump: 'content/dump.mjs',
-  raw: 'content/raw/compressed.sql',
 }
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
   filename: moduleTemplates.types as `${string}.d.ts`,
   getContents: ({ options }) => {
-    const publicCollections = (options.collections as ResolvedCollection[]).filter(c => c.name !== '_info')
+    const publicCollections = (options.collections as ResolvedCollection[]).filter(c => !c.private)
     const pagesCollections = publicCollections.filter(c => c.type === 'page')
 
     const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
@@ -79,13 +79,13 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
   write: true,
 })
 
-export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
+export const sqlDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.dump,
-  getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
-    const compressed = deflate(options.manifest.dump.join('\n'))
-
-    const str = Buffer.from(compressed.buffer).toString('base64')
-    return `export default '${str}'`
+  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+    return Object.entries(options.manifest.dump).map(([key, value]) => {
+      const str = Buffer.from(deflate(value.join('\n')).buffer).toString('base64')
+      return `export const ${key} = "${str}"`
+    }).join('\n')
   },
   write: true,
   options: {
@@ -93,13 +93,12 @@ export const sqlDumpTemplate = (manifest: { dump: string[] }) => ({
   },
 })
 
-export const sqlDumpTemplateRaw = (manifest: { dump: string[] }) => ({
-  filename: moduleTemplates.raw,
-  getContents: ({ options }: { options: { manifest: { dump: string[] } } }) => {
-    const compressed = deflate(options.manifest.dump.join('\n'))
+export const sqlDumpTemplateRaw = (collection: string, manifest: Manifest) => ({
+  filename: `content/raw/dump.${collection}.sql`,
+  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+    const compressed = deflate((options.manifest.dump[collection] || []).join('\n'))
 
-    const str = Buffer.from(compressed.buffer).toString('base64')
-    return str
+    return Buffer.from(compressed.buffer).toString('base64')
   },
   write: true,
   options: {
@@ -107,7 +106,7 @@ export const sqlDumpTemplateRaw = (manifest: { dump: string[] }) => ({
   },
 })
 
-export const componentsManifestTemplate = (manifest: { components: string[] }) => {
+export const componentsManifestTemplate = (manifest: Manifest) => {
   return {
     filename: moduleTemplates.components,
     write: true,
@@ -140,9 +139,9 @@ export const componentsManifestTemplate = (manifest: { components: string[] }) =
   } satisfies NuxtTemplate
 }
 
-export const manifestTemplate = (collections: ResolvedCollection[], manifest: { integrityVersion: string }) => ({
+export const manifestTemplate = (collections: ResolvedCollection[], manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
-  getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: { integrityVersion: string } } }) => {
+  getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: Manifest } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         jsonFields: collection.jsonFields,
@@ -151,7 +150,7 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: { 
     }, {} as Record<string, unknown>)
 
     return [
-      'export const integrityVersion = "' + options.manifest.integrityVersion + '"',
+      `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
       '',
       `export const tables = ${JSON.stringify(
         Object.fromEntries(collections.map(c => [c.name, c.tableName])),

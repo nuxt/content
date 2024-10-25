@@ -57,6 +57,11 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
     path: boolean
   }
   jsonFields: string[]
+  /**
+   * Whether the collection is private or not.
+   * Private collections will not be available in the runtime.
+   */
+  private: boolean
 }
 
 export interface CollectionInfo {

@@ -1,13 +1,9 @@
-import type { ModuleOptions, Nuxt } from '@nuxt/schema'
-
-export interface Manifest {
-  integrityVersion: string
-  dump: string[]
-  components: string[]
-}
+import type { ModuleOptions } from '@nuxt/schema'
+import type { NitroConfig } from 'nitropack'
+import type { Manifest } from '../types/manifest'
 
 export interface Preset {
-  setup: (options: ModuleOptions, nuxt: Nuxt, manifest: Manifest) => void
+  setupNitro: (options: ModuleOptions, nitroConfig: NitroConfig, manifest: Manifest) => void | Promise<void>
 }
 
 export function definePreset(preset: Preset) {
