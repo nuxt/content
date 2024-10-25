@@ -133,7 +133,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Load preset
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
-      await preset.setupNitro(options, config, manifest)
+      await preset.setupNitro(config, { manifest, resolver })
     })
 
     nuxt.options.routeRules ||= {}

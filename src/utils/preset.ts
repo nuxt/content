@@ -1,9 +1,13 @@
-import type { ModuleOptions } from '@nuxt/schema'
 import type { NitroConfig } from 'nitropack'
+import type { Resolver } from '@nuxt/kit'
 import type { Manifest } from '../types/manifest'
 
+interface Options {
+  manifest: Manifest
+  resolver: Resolver
+}
 export interface Preset {
-  setupNitro: (options: ModuleOptions, nitroConfig: NitroConfig, manifest: Manifest) => void | Promise<void>
+  setupNitro: (nitroConfig: NitroConfig, opts: Options) => void | Promise<void>
 }
 
 export function definePreset(preset: Preset) {
