@@ -125,7 +125,7 @@ export async function executeContentQueryWithEvent<T extends keyof Collections, 
         .then(m => m.checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], conf))
         .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
         .catch((error) => {
-          console.log('Database integrity check failed, rebuilding database', error)
+          console.log('Database integrity check failed', error)
           checkDatabaseIntegrity[String(collection)] = true
           integrityCheckPromise = null
         })

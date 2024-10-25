@@ -114,7 +114,7 @@ describe('Transformer (path-meta)', () => {
       expect(transformed).toHaveProperty('extension')
       assert(
         fullPath.endsWith(`.${transformed.extension}`),
-        `extension is not equal, recieved: ${transformed.extension}`,
+        `extension is not equal, received: ${transformed.extension}`,
       )
 
       expect(transformed).toHaveProperty('title')

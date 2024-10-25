@@ -81,7 +81,7 @@ async function importPlugins(plugins: Record<string, false | MarkdownPlugin> = {
 function link(state: State, node: Link & { attributes?: Properties }) {
   const properties: Properties = {
     ...((node.attributes || {})),
-    href: normalizeUri(normalizeLink(node.url)),
+    href: normalizeUri(normaliseLink(node.url)),
   }
 
   if (node.title !== null && node.title !== undefined) {
@@ -98,7 +98,7 @@ function link(state: State, node: Link & { attributes?: Properties }) {
   return state.applyData(node, result)
 }
 
-function normalizeLink(link: string) {
+function normaliseLink(link: string) {
   const match = link.match(/#.+$/)
   const hash = match ? match[0] : ''
   if (link.replace(/#.+$/, '').endsWith('.md') && (isRelative(link) || (!/^https?/.test(link) && !link.startsWith('/')))) {

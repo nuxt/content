@@ -8,7 +8,7 @@ import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
 import { downloadRepository, parseGitHubUrl } from './git'
 import { logger } from './dev'
 
-interface ResovleOptions {
+interface ResolveOptions {
   rootDir: string
 }
 
@@ -32,7 +32,7 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
   }
 }
 
-export function resolveCollection(name: string, collection: DefinedCollection, opts: ResovleOptions): ResolvedCollection | undefined {
+export function resolveCollection(name: string, collection: DefinedCollection, opts: ResolveOptions): ResolvedCollection | undefined {
   if (/^[a-z_]\w*$/i.test(name) === false) {
     logger.warn([
       `Collection name "${name}" is invalid. Collection names must be valid JavaScript identifiers. This collection will be ignored.`,
@@ -62,7 +62,7 @@ export function resolveCollection(name: string, collection: DefinedCollection, o
   }
 }
 
-export function resolveCollections(collections: Record<string, DefinedCollection>, opts: ResovleOptions): ResolvedCollection[] {
+export function resolveCollections(collections: Record<string, DefinedCollection>, opts: ResolveOptions): ResolvedCollection[] {
   collections._info = defineCollection({
     type: 'data',
     schema: z.object({
@@ -78,7 +78,7 @@ export function resolveCollections(collections: Record<string, DefinedCollection
 /**
  * Process collection source and return refined source
  */
-function resolveSource(source: string | CollectionSource | undefined, opts: ResovleOptions): ResolvedCollectionSource | undefined {
+function resolveSource(source: string | CollectionSource | undefined, opts: ResolveOptions): ResolvedCollectionSource | undefined {
   if (!source) {
     return undefined
   }

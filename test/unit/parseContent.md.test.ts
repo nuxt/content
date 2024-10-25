@@ -177,7 +177,7 @@ describe('Parser (.md)', () => {
     expect(paragraph.children[4].tag).toEqual('hello')
     expect(paragraph.children[5].tag).toEqual('hello')
 
-    // Check conflict between inline compoenent and emoji
+    // Check conflict between inline component and emoji
     expect(paragraph.children.pop().value).toContain('🚀')
   })
 
