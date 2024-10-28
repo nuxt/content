@@ -12,6 +12,11 @@ export interface SqliteDatabaseConfig {
   filename: string
 }
 
+export type PostgreSQLDatabaseConfig = {
+  type: 'postgresql'
+  url: string
+}
+
 export interface ModuleOptions {
   /**
    * @private
@@ -134,6 +139,6 @@ export interface ModuleOptions {
 }
 
 export interface RuntimeConfig {
-  database: D1DatabaseConfig | SqliteDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
   localDatabase: SqliteDatabaseConfig
 }

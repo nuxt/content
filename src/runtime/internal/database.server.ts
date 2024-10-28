@@ -18,8 +18,8 @@ export default function loadDatabaseAdapter(config: RuntimeConfig) {
       else if (database.type === 'd1') {
         adapter = await loadD1Database(database)
       }
-      else {
-        adapter = await loadSqliteAdapter(localDatabase)
+      else if (database.type === 'postgres') {
+        adapter = await loadPostgreAdapter(database)
       }
     }
     return adapter
@@ -93,4 +93,8 @@ function loadD1Database(config: D1DatabaseConfig) {
 
 function loadSqliteAdapter(config: SqliteDatabaseConfig) {
   return import('../adapters/sqlite').then(m => m.default(config))
+}
+
+function loadPostgreAdapter(config: SqliteDatabaseConfig) {
+  return import('../adapters/postgres').then(m => m.default(config))
 }

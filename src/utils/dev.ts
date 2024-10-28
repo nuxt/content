@@ -229,36 +229,36 @@ export function getContentChecksum(content: string) {
     .digest('hex')
 }
 
-let _localDatabase: Database.Database | undefined
+const _localDatabase: Record<string, Database.Database | undefined> = {}
 export function localDatabase(databaseLocation: string) {
-  if (!_localDatabase) {
-    _localDatabase = Database(databaseLocation)
-    _localDatabase!.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
+  if (!_localDatabase[databaseLocation]) {
+    _localDatabase[databaseLocation] = Database(databaseLocation)
+    _localDatabase[databaseLocation]!.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
   }
 
   return {
     fetchDevelopmentCache() {
-      return _localDatabase!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache')
+      return _localDatabase[databaseLocation]!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache')
         .all()
         .reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {} as Record<string, { checksum: string, parsedContent: string }>)
     },
     fetchDevelopmentCacheForKey(key: string) {
-      return _localDatabase!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache WHERE id = ?')
+      return _localDatabase[databaseLocation]!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache WHERE id = ?')
         .get(key)
     },
     insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
       this.deleteDevelopmentCache(id)
-      _localDatabase!.exec(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
+      _localDatabase[databaseLocation]!.exec(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
     },
     deleteDevelopmentCache(id: string) {
-      _localDatabase!.exec(`DELETE FROM _development_cache WHERE id = '${id}'`)
+      _localDatabase[databaseLocation]!.exec(`DELETE FROM _development_cache WHERE id = '${id}'`)
     },
     exec: (sql: string) => {
-      _localDatabase!.exec(sql)
+      _localDatabase[databaseLocation]!.exec(sql)
     },
     close: () => {
-      _localDatabase!.close()
-      _localDatabase = undefined
+      _localDatabase[databaseLocation]!.close()
+      _localDatabase[databaseLocation] = undefined
     },
   }
 }
