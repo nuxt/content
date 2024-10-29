@@ -3,6 +3,7 @@ import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import { extendViteConfig, installModule } from '@nuxt/kit'
 import type { ModuleOptions } from '../types'
+import { setParserOptions } from './content'
 
 export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt) {
   const options = nuxt.options as unknown as { mdc: MDCModuleOptions, content: ModuleOptions }
@@ -18,6 +19,15 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
       anchorLinks: contentOptions.renderer.anchorLinks,
     },
   }) as MDCModuleOptions
+
+  // Hook into mdc configs and store them for parser
+  await nuxt.hook('mdc:configSources', async (mdcConfigs) => {
+    const configs = await Promise.all(mdcConfigs.map(path => import(path).then(m => m.default)))
+
+    setParserOptions({
+      mdcConfigs: configs,
+    })
+  })
 
   await installModule('@nuxtjs/mdc')
 
