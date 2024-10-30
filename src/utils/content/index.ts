@@ -1,9 +1,9 @@
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
 import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
-import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
+import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import type { ResolvedCollection } from '../../types/collection'
 import { transformContent } from './transformers'
 
@@ -50,7 +50,7 @@ async function _getHighlighPlugin(options: HighlighterOptions) {
       bundledThemes: Object.fromEntries(bundledThemes),
       // Configure the bundled languages
       bundledLangs: Object.fromEntries(bundledLangs),
-      engine: createJavaScriptRegexEngine({ forgiving: true }),
+      engine: createOnigurumaEngine(import('shiki/wasm')),
       getMdcConfigs: () => Promise.resolve(parserOptions.mdcConfigs),
     })
 
