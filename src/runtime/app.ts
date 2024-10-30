@@ -24,21 +24,20 @@ export async function queryCollectionSearchSections(collection: keyof Collection
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
-  let result: Array<Result>
   if (import.meta.client) {
-    result = await queryContentSqlClientWasm<T, Result>(collection, sql)
+    return await queryContentSqlClientWasm<T, Result>(collection, sql)
   }
   else {
-    result = await fetchQuery(tryUseNuxtApp()?.ssrContext?.event, collection, sql)
+    return await fetchQuery(tryUseNuxtApp()?.ssrContext?.event, String(collection), sql)
   }
-
-  return result
 }
 
 async function queryContentSqlClientWasm<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
   const perf = measurePerformance()
-  const db = await import('./internal/database.client').then(m => m.loadDatabaseAdapter(collection))
-  const rows = await db.all<Result>(sql)
+
+  const rows = await import('./internal/database.client')
+    .then(m => m.loadDatabaseAdapter(collection))
+    .then(db => db.all<Result>(sql))
 
   perf.tick('Execute Query')
 
