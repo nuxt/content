@@ -9,7 +9,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
   const collecitonItems = await queryBuilder
     .order('stem', 'ASC')
     .where('navigation', '<>', 'false')
-    .select('navigation', 'stem', 'path', 'title', ...(extraFields || []))
+    .select('navigation', 'stem', 'path', 'title', 'meta', ...(extraFields || []))
     .all() as unknown as PageCollectionItemBase[]
 
   const { contents, configs } = collecitonItems.reduce((acc, c) => {
@@ -28,6 +28,11 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
   }, { configs: {}, contents: [] } as { configs: Record<string, PageCollectionItemBase>, contents: PageCollectionItemBase[] })
 
   // Navigation fields picker
+  const pickConfigNavigationFields = (content: PageCollectionItemBase) => ({
+    ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
+    ...content.meta as unknown as Record<string, unknown>,
+    ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
+  })
   const pickNavigationFields = (content: PageCollectionItemBase) => ({
     ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
     ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
@@ -74,7 +79,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
           // Merge navigation fields with navItem
           Object.assign(
             navItem,
-            pickNavigationFields(dirConfig),
+            pickConfigNavigationFields(dirConfig),
           )
         }
       }
@@ -103,13 +108,16 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
         // Create dummy parent if not found
         if (!parent) {
+          const navigationConfig = conf ? pickConfigNavigationFields(conf) : {} as ContentNavigationItem
+          console.log(navigationConfig)
+
           parent = {
-            title: generateTitle(part),
+            ...navigationConfig,
+            title: navigationConfig.title || generateTitle(part),
             path: currentPathPart,
             stem: idParts.join('/'),
             children: [],
             page: false,
-            ...(conf && pickNavigationFields(conf)),
           }
           nodes.push(parent!)
         }
