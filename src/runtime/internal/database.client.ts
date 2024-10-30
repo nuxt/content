@@ -3,6 +3,7 @@ import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { measurePerformance } from './performance'
 import { decompressSQLDump } from './dump'
 import { parseJsonFields } from './collection'
+import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
@@ -70,12 +71,7 @@ async function loadAdapter<T>(collection: T) {
 
     perf.tick('Get Local Cache')
     if (!compressedDump) {
-      compressedDump = await $fetch<string>(`/api/content/${collection}/database.sql`, {
-        responseType: 'text',
-        headers: { 'content-type': 'text/plain' },
-        query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
-      })
-
+      compressedDump = await fetchDatabase(undefined, String(collection))
       perf.tick('Download Database')
       if (!import.meta.dev) {
         try {

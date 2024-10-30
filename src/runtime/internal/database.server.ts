@@ -1,53 +1,63 @@
-import type { D1DatabaseConfig, SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig, Collections } from '@nuxt/content'
+import type { SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { decompressSQLDump } from './dump'
-import { tables } from '#content/manifest'
+import { fetchDatabase } from './api'
+import { tables, checksums } from '#content/manifest'
+import adapter from '#content/adapter'
 
 export default function loadDatabaseAdapter(config: RuntimeConfig) {
   const { database, localDatabase } = config
 
-  let adapter: DatabaseAdapter
+  let _adapter: DatabaseAdapter
   async function loadAdapter() {
-    if (!adapter) {
+    if (!_adapter) {
       if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-        adapter = await loadSqliteAdapter(localDatabase)
+        _adapter = await loadSqliteAdapter(localDatabase)
       }
-      else if (database.type === 'sqlite') {
-        adapter = await loadSqliteAdapter(database)
-      }
-      else if (database.type === 'd1') {
-        adapter = await loadD1Database(database)
-      }
-      else if (database.type === 'postgres') {
-        adapter = await loadPostgreAdapter(database)
+      else {
+        _adapter = adapter(database)
       }
     }
-    return adapter
+
+    return _adapter
   }
 
   return <DatabaseAdapter>{
     all: async (sql, params) => {
-      if (!adapter) {
-        await loadAdapter()
-      }
-      return await adapter.all<Record<string, unknown>>(sql, params)
+      const db = await loadAdapter()
+      return await db.all<Record<string, unknown>>(sql, params)
     },
     first: async (sql, params) => {
-      if (!adapter) {
-        await loadAdapter()
-      }
-      return await adapter.first<Record<string, unknown>>(sql, params)
+      const db = await loadAdapter()
+      return await db.first<Record<string, unknown>>(sql, params)
     },
     exec: async (sql) => {
-      if (!adapter) {
-        await loadAdapter()
-      }
-      return adapter.exec(sql)
+      const db = await loadAdapter()
+      return db.exec(sql)
     },
   }
 }
 
-export async function checkAndImportDatabaseIntegrity<T extends keyof Collections>(event: H3Event, collection: T, integrityVersion: string, config: RuntimeConfig) {
+const checkDatabaseIntegrity = {} as Record<string, boolean>
+let integrityCheckPromise: Promise<void> | null = null
+export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig): Promise<void> {
+  if (checkDatabaseIntegrity[String(collection)] !== false) {
+    checkDatabaseIntegrity[String(collection)] = false
+    integrityCheckPromise = integrityCheckPromise || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
+      .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
+      .catch((error) => {
+        console.log('Database integrity check failed', error)
+        checkDatabaseIntegrity[String(collection)] = true
+        integrityCheckPromise = null
+      })
+  }
+
+  if (integrityCheckPromise) {
+    await integrityCheckPromise
+  }
+}
+
+async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables._info}`).catch(() => ({ version: '' }))
@@ -74,27 +84,14 @@ export async function checkAndImportDatabaseIntegrity<T extends keyof Collection
   return after?.version === integrityVersion
 }
 
-async function loadDatabaseDump<T extends keyof Collections>(event: H3Event, collection: T): Promise<string> {
-  if (event?.context?.cloudflare?.env.ASSETS) {
-    const url = new URL(event.context.cloudflare.request.url)
-    url.pathname = `/dump.${String(collection)}.sql`
-    return await event.context.cloudflare.env.ASSETS.fetch(url).then((r: Response) => r.text())
-  }
-
-  return await $fetch<string>(`/api/content/${String(collection)}/database.sql`, { responseType: 'text' }).catch((e) => {
-    console.error('Failed to fetch compressed dump', e)
-    return ''
-  })
-}
-
-function loadD1Database(config: D1DatabaseConfig) {
-  return import('../adapters/d1').then(m => m.default(config))
+async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
+  return await fetchDatabase(event, String(collection))
+    .catch((e) => {
+      console.error('Failed to fetch compressed dump', e)
+      return ''
+    })
 }
 
 function loadSqliteAdapter(config: SqliteDatabaseConfig) {
   return import('../adapters/sqlite').then(m => m.default(config))
-}
-
-function loadPostgreAdapter(config: SqliteDatabaseConfig) {
-  return import('../adapters/postgres').then(m => m.default(config))
 }

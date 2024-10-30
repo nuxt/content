@@ -1,9 +1,10 @@
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions } from '@nuxt/content'
-import { collectionQureyBuilder, executeContentQueryWithEvent } from './internal/query'
+import { collectionQureyBuilder } from './internal/query'
 import { measurePerformance } from './internal/performance'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
+import { fetchQuery } from './internal/api'
 import { tryUseNuxtApp } from '#imports'
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
@@ -28,8 +29,7 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
     result = await queryContentSqlClientWasm<T, Result>(collection, sql)
   }
   else {
-    const event = tryUseNuxtApp()?.ssrContext?.event
-    result = await executeContentQueryWithEvent<T, Result>(event!, collection, sql)
+    result = await fetchQuery(tryUseNuxtApp()?.ssrContext?.event, collection, sql)
   }
 
   return result

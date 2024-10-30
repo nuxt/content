@@ -1,8 +1,5 @@
-import type { Collections, CollectionQueryBuilder, SQLOperator, RuntimeConfig } from '@nuxt/content'
-import type { H3Event } from 'h3'
-import loadDatabaseAdapter from './database.server'
-import { checksums, tables } from '#content/manifest'
-import { useRuntimeConfig } from '#imports'
+import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
+import { tables } from '#content/manifest'
 
 export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<T[]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
@@ -111,30 +108,4 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
   }
 
   return query
-}
-
-const checkDatabaseIntegrity = {} as Record<string, boolean>
-let integrityCheckPromise: Promise<void> | null = null
-export async function executeContentQueryWithEvent<T extends keyof Collections, Result = Collections[T]>(event: H3Event, collection: T, sql: string): Promise<Result[]> {
-  const conf = useRuntimeConfig().content as RuntimeConfig
-
-  if (import.meta.server && event) {
-    if (checkDatabaseIntegrity[String(collection)] !== false) {
-      checkDatabaseIntegrity[String(collection)] = false
-      integrityCheckPromise = integrityCheckPromise || import('./database.server')
-        .then(m => m.checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], conf))
-        .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
-        .catch((error) => {
-          console.log('Database integrity check failed', error)
-          checkDatabaseIntegrity[String(collection)] = true
-          integrityCheckPromise = null
-        })
-    }
-
-    if (integrityCheckPromise) {
-      await integrityCheckPromise
-    }
-  }
-
-  return loadDatabaseAdapter(conf).all<T>(sql)
 }

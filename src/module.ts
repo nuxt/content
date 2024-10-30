@@ -134,6 +134,17 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver })
+
+      const adapter = config.runtimeConfig!.content!.database?.type || options.database.type || 'sqlite'
+      config.alias ||= {}
+      config.alias['#content/adapter'] = resolver.resolve(`./runtime/adapters/${adapter}`)
+
+      config.handlers ||= []
+      config.handlers.push({
+        route: '/api/content/:collection/query',
+        handler: resolver.resolve('./runtime/api/query.post'),
+        method: 'POST',
+      })
     })
 
     nuxt.options.routeRules ||= {}

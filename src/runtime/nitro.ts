@@ -1,12 +1,13 @@
 import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions } from '@nuxt/content'
 import type { H3Event } from 'h3'
-import { collectionQureyBuilder, executeContentQueryWithEvent } from './internal/query'
+import { collectionQureyBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
+import { fetchQuery } from './internal/api'
 
 export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQureyBuilder<T>(collection, (collection, sql) => executeContentQueryWithEvent(event, collection, sql))
+  return collectionQureyBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
 }
 
 export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
