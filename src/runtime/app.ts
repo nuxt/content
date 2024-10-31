@@ -25,10 +25,10 @@ export async function queryCollectionSearchSections(collection: keyof Collection
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
   if (import.meta.client) {
-    return await queryContentSqlClientWasm<T, Result>(collection, sql)
+    return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }
   else {
-    return await fetchQuery(tryUseNuxtApp()?.ssrContext?.event, String(collection), sql)
+    return fetchQuery(tryUseNuxtApp()?.ssrContext?.event, String(collection), sql) as Promise<Result[]>
   }
 }
 

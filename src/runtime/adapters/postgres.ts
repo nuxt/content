@@ -4,7 +4,7 @@ import { createDatabaseAdapter } from '../internal/database-adapter'
 export type PostgreSqlOptions = { url: string } | pg.ClientConfig
 
 let _client: undefined | pg.Client | Promise<pg.Client>
-export default createDatabaseAdapter<PostgreSqlOptions>((opts = {}) => {
+export default createDatabaseAdapter<PostgreSqlOptions>((opts) => {
   function getClient() {
     if (_client) {
       return _client
@@ -33,7 +33,7 @@ export default createDatabaseAdapter<PostgreSqlOptions>((opts = {}) => {
     async first<T>(sql: string, params?: Array<number | string | boolean>) {
       const db = await getClient()
       const { rows } = params ? await db.query<T[], T>(sql, params as QueryConfigValues<T>) : await db.query<T[], T>(sql)
-      return rows[0]
+      return rows[0] as T
     },
     async exec(sql: string): Promise<void> {
       const db = await getClient()

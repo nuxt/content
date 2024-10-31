@@ -1,4 +1,4 @@
-import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
+import type { ModuleOptions as MDCModuleOptions, MdcConfig } from '@nuxtjs/mdc'
 import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import { extendViteConfig, installModule } from '@nuxt/kit'
@@ -26,7 +26,7 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
   await nuxt.hook('mdc:configSources', async (mdcConfigs) => {
     if (mdcConfigs.length) {
       const jiti = createJiti(nuxt.options.rootDir)
-      const configs = await Promise.all(mdcConfigs.map(path => jiti.import(path).then(m => m.default || m)))
+      const configs = await Promise.all(mdcConfigs.map(path => jiti.import(path).then(m => (m as { default: MdcConfig }).default || m)))
 
       setParserOptions({
         mdcConfigs: configs,

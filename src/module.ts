@@ -11,6 +11,7 @@ import {
   addComponentsDir,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
+import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { hash } from 'ohash'
 import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
@@ -212,7 +213,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const databaseContents = db.fetchDevelopmentCache()
 
   const configHash = hash({
-    mdcHighlight: nuxt.options.mdc?.highlight,
+    mdcHighlight: (nuxt.options as unknown as { mdc: MDCModuleOptions }).mdc?.highlight,
     contentBuild: options.build?.markdown,
   })
 

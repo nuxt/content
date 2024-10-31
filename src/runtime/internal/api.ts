@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 import { checksums } from '#content/manifest'
 
-export async function fetchDatabase(event: H3Event | undefined, collection: string) {
+export async function fetchDatabase(event: H3Event | undefined, collection: string): Promise<string> {
   return await $fetch(`/api/content/${collection}/database.sql`, {
     context: event ? { clouflare: event.context.cloudflare } : {},
     responseType: 'text',
@@ -10,7 +10,7 @@ export async function fetchDatabase(event: H3Event | undefined, collection: stri
   })
 }
 
-export async function fetchQuery(event: H3Event | undefined, collection: string, sql: string) {
+export async function fetchQuery<Item>(event: H3Event | undefined, collection: string, sql: string): Promise<Item[]> {
   return await $fetch(`/api/content/${collection}/query`, {
     context: event ? { clouflare: event.context.cloudflare } : {},
     headers: { 'content-type': 'application/json' },

@@ -87,6 +87,7 @@
     "@types/micromatch": "^4.0.9",
     "@types/node": "^22.8.4",
     "@types/pako": "^2.0.3",
+    "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.12",
     "csvtojson": "^2.0.10",
     "eslint": "^9.13.0",

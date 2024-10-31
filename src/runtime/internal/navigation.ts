@@ -108,7 +108,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
         // Create dummy parent if not found
         if (!parent) {
-          const navigationConfig = conf ? pickConfigNavigationFields(conf) : {} as ContentNavigationItem
+          const navigationConfig = (conf ? pickConfigNavigationFields(conf) : {}) as ContentNavigationItem
           parent = {
             ...navigationConfig,
             title: navigationConfig.title || generateTitle(part),

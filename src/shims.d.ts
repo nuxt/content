@@ -1,9 +1,11 @@
-import { DatabaseAdapter } from './database'
+import type { DatabaseAdapter } from './types/database'
 
 declare module '#content/manifest' {
-  export default Record<string, unknown>
-  export const checksums: Record<string, string>
-  export const tables: Record<string, string>
+  const manifest: Record<string, unknown>
+  const checksums: Record<string, string>
+  const tables: Record<string, string>
+
+  export { manifest as default, checksums, tables }
 }
 
 declare module '#content/components' {
@@ -16,7 +18,9 @@ declare module '#content/dump' {
 }
 
 declare module '#content/adapter' {
-  export default DatabaseAdapter
+  const adapter: DatabaseAdapter
+
+  export { adapter as default }
 }
 
 declare module '#content/collections' {

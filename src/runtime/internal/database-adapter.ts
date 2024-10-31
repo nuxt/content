@@ -1,7 +1,7 @@
 import type { DatabaseAdapter } from '@nuxt/content'
 import { parseJsonFields } from './collection'
 
-export function createDatabaseAdapter<Options = unknown>(factory: (otps?: Options) => DatabaseAdapter) {
+export function createDatabaseAdapter<Options = unknown>(factory: (otps: Options) => DatabaseAdapter) {
   return (opts: Options) => {
     const adapter = factory(opts)
 
