@@ -284,12 +284,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     db.exec(sql)
   }
 
-  const tags = sqlDumpList.flatMap(sql => sql.match(/"tag":"([^"]+)"/g) || [])
+  const tags = sqlDumpList.flatMap(sql => sql.match(/(?<=(^|,|\[)\[")[^"]+(?=")/g) || [])
   const uniqueTags = [
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
   ]
-    .map(tag => tag.substring(7, tag.length - 1))
     .filter(tag => !htmlTags.includes(kebabCase(tag)))
     .map(tag => pascalCase(tag))
 
