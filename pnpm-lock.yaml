@@ -23,6 +23,9 @@ importers:
       better-sqlite3:
         specifier: ^11.5.0
         version: 11.5.0
+      c12:
+        specifier: ^2.0.1
+        version: 2.0.1(magicast@0.3.5)
       chokidar:
         specifier: ^4.0.1
         version: 4.0.1
