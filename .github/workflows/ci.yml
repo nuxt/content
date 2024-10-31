@@ -25,9 +25,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm prepack
       - run: pnpm test
-      # - name: Release Nightly
-      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      #   run: pnpm changelogen --bump --canary --publish --publishTag nightly
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      #     NPM_CONFIG_PROVENANCE: true
+      - name: Publish
+        run: pnpx pkg-pr-new publish --compact --no-template --pnpm
+
