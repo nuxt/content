@@ -10,7 +10,8 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
   const options = nuxt.options as unknown as { mdc: MDCModuleOptions, content: ModuleOptions }
   // Install mdc module
   const highlight = options.content?.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
-  options.mdc = defu(options.mdc, {
+
+  options.mdc = defu({
     highlight: highlight ? { ...highlight, noApiRoute: true } : highlight,
     components: {
       prose: true,
@@ -19,7 +20,7 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
     headings: {
       anchorLinks: contentOptions.renderer.anchorLinks,
     },
-  }) as MDCModuleOptions
+  }, options.mdc) as MDCModuleOptions
 
   // Hook into mdc configs and store them for parser
   await nuxt.hook('mdc:configSources', async (mdcConfigs) => {
