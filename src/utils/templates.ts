@@ -150,10 +150,12 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: Ma
     }, {} as Record<string, unknown>)
 
     return [
-      `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
+      `export const checksums: Record<string, string> = ${JSON.stringify(manifest.checksum, null, 2)}`,
       '',
-      `export const tables = ${JSON.stringify(
+      `export const tables: Record<string, string> = ${JSON.stringify(
         Object.fromEntries(collections.map(c => [c.name, c.tableName])),
+        null,
+        2,
       )}`,
       '',
       'export default ' + JSON.stringify(collectionsMeta, null, 2),
