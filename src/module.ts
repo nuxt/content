@@ -211,6 +211,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const db = localDatabase(options._localDatabase!.filename)
   const databaseContents = db.fetchDevelopmentCache()
 
+  const configHash = hash({
+    mdcHighlight: nuxt.options.mdc?.highlight,
+    contentBuild: options.build?.markdown,
+  })
+
   const infoCollection = collections.find(c => c.name === '_info')!
 
   const startTime = performance.now()
@@ -247,7 +252,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       await Promise.all(chunk.map(async (key) => {
         const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
         const content = await readFile(join(cwd, key), 'utf8')
-        const checksum = getContentChecksum(content)
+        const checksum = getContentChecksum(configHash + content)
         const cache = databaseContents[keyInCollection]
 
         let parsedContent
