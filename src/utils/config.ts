@@ -21,5 +21,7 @@ export async function loadContentConfig(rootDir: string, opts: { defaultFallback
     }
   }
 
-  return config
+  return {
+    collections: resolveCollections(config.collections || {}, { rootDir }),
+  }
 }
