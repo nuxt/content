@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -154,23 +154,6 @@ export default defineNuxtModule<ModuleOptions>({
         nuxt.options.routeRules![`/api/content/${collection.name}/database.sql`] = { prerender: true }
       }
     })
-    // Register user global components
-    const _layers = [...nuxt.options._layers].reverse()
-    for (const layer of _layers) {
-      const srcDir = layer.config.srcDir
-      const globalComponents = resolver.resolve(srcDir, 'components/content')
-      const dirStat = await stat(globalComponents).catch(() => null)
-      if (dirStat && dirStat.isDirectory()) {
-        nuxt.hook('components:dirs', (dirs) => {
-          dirs.unshift({
-            path: globalComponents,
-            global: true,
-            pathPrefix: false,
-            prefix: '',
-          })
-        })
-      }
-    }
 
     await installMDCModule(options, nuxt)
 
