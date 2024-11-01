@@ -12,7 +12,9 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
   const highlight = options.content?.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
 
   options.mdc = defu({
-    highlight: highlight ? { ...highlight, noApiRoute: true } : highlight,
+    highlight: highlight !== false
+      ? { ...highlight, noApiRoute: (options.mdc?.highlight as { noApiRoute: boolean })?.noApiRoute ?? true }
+      : highlight,
     components: {
       prose: true,
       map: contentOptions.renderer.alias,

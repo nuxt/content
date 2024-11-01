@@ -54,51 +54,6 @@ export default defineNuxtConfig({
     cache: true,
   },
 
-  hooks: {
-    'components:extend': (components) => {
-      const globals = components.filter(c => [
-        'UAccordion',
-        'UAlert',
-        'UAvatar',
-        'UAvatarGroup',
-        'UBadge',
-        'UBreadcrumb',
-        'UButton',
-        'UButtonGroup',
-        'UCheckbox',
-        'UChip',
-        'UCollapsible',
-        'UCommandPalette',
-        'UContextMenu',
-        'UDrawer',
-        'UDropdownMenu',
-        'UFormField',
-        'UIcon',
-        'UInput',
-        'UInputMenu',
-        'UKbd',
-        'ULink',
-        'UModal',
-        'UNavigationMenu',
-        'UPagination',
-        'UPopover',
-        'UProgress',
-        'URadioGroup',
-        'USelect',
-        'USelectMenu',
-        'USeparator',
-        'USlider',
-        'USlideover',
-        'USwitch',
-        'UTabs',
-        'UTextarea',
-        'UTooltip',
-      ].includes(c.pascalName))
-
-      globals.forEach(c => c.global = 'sync')
-    },
-  },
-
   icon: {
     customCollections: [{
       prefix: 'custom',
@@ -113,5 +68,8 @@ export default defineNuxtConfig({
 
   image: {
     provider: 'ipx',
+  },
+  ogImage: {
+    zeroRuntime: true,
   },
 })
