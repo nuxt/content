@@ -7,11 +7,11 @@ import { generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
 
 export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQureyBuilder<T>(collection, (collection, sql) => fetchQuery<T>(event, collection, sql))
+  return collectionQureyBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
 }
 
 export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
-  return generateNavigationTree(queryCollectionWithEvent(event, collection), fields as string[])
+  return generateNavigationTree(queryCollectionWithEvent(event, collection), fields)
 }
 
 export async function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {

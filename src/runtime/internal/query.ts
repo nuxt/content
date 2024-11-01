@@ -1,7 +1,7 @@
 import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
 import { tables } from '#content/manifest'
 
-export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<T[]>): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
