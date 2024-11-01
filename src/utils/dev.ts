@@ -84,7 +84,7 @@ export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[
         await updateTemplates({
           filter: template => [
             moduleTemplates.manifest,
-            moduleTemplates.dump,
+            moduleTemplates.fullCompressedDump,
             // moduleTemplates.raw,
           ].includes(template.filename),
         })

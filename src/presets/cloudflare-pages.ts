@@ -1,6 +1,6 @@
 import { addTemplate } from '@nuxt/kit'
 import { join } from 'pathe'
-import { sqlDumpTemplateRaw } from '../utils/templates'
+import { collectionDumpTemplate } from '../utils/templates'
 import { definePreset } from '../utils/preset'
 import { logger } from '../utils/dev'
 
@@ -21,7 +21,7 @@ export default definePreset({
     // Add raw content dump
     manifest.collections.map(async (collection) => {
       if (!collection.private) {
-        addTemplate(sqlDumpTemplateRaw(collection.name, manifest))
+        addTemplate(collectionDumpTemplate(collection.name, manifest))
       }
     })
 

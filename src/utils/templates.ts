@@ -20,7 +20,8 @@ export const moduleTemplates = {
   collections: 'content/collections.mjs',
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
-  dump: 'content/dump.mjs',
+  fullCompressedDump: 'content/database.compressed.mjs',
+  fullRawDump: 'content/database.sql',
 }
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
@@ -79,8 +80,8 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
   write: true,
 })
 
-export const sqlDumpTemplate = (manifest: Manifest) => ({
-  filename: moduleTemplates.dump,
+export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
+  filename: moduleTemplates.fullCompressedDump,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     return Object.entries(options.manifest.dump).map(([key, value]) => {
       const str = Buffer.from(deflate(value.join('\n')).buffer).toString('base64')
@@ -93,7 +94,20 @@ export const sqlDumpTemplate = (manifest: Manifest) => ({
   },
 })
 
-export const sqlDumpTemplateRaw = (collection: string, manifest: Manifest) => ({
+export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
+  filename: moduleTemplates.fullRawDump,
+  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+    return Object.entries(options.manifest.dump).map(([_key, value]) => {
+      return value.join('\n')
+    }).join('\n')
+  },
+  write: true,
+  options: {
+    manifest,
+  },
+})
+
+export const collectionDumpTemplate = (collection: string, manifest: Manifest) => ({
   filename: `content/raw/dump.${collection}.sql`,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const compressed = deflate((options.manifest.dump[collection] || []).join('\n'))

@@ -73,7 +73,7 @@ describe('empty', async () => {
 
   describe('SQL dump', () => {
     test('is generated', async () => {
-      const dump = await import(new URL('./fixtures/empty/.nuxt/content/dump.mjs', import.meta.url).pathname).then(m => m.content)
+      const dump = await import(new URL('./fixtures/empty/.nuxt/content/database.compressed.mjs', import.meta.url).pathname).then(m => m.content)
 
       const parsedDump = await decompressSQLDump(dump)
 

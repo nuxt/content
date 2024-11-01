@@ -18,7 +18,7 @@ import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import { generateCollectionInsert, generateCollectionTableDefinition, parseSourceBase } from './utils/collection'
-import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
+import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
@@ -126,10 +126,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Templates & aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
+    addTypeTemplate(contentTypesTemplate(collections))
+    addTemplate(fullDatabaseRawDumpTemplate(manifest))
     nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(collections)).dst
     nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
     nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(collections, manifest)).dst
-    addTypeTemplate(contentTypesTemplate(collections))
 
     // Load preset
     nuxt.hook('nitro:config', async (config) => {
@@ -169,7 +170,8 @@ export default defineNuxtModule<ModuleOptions>({
 
         return updateTemplates({
           filter: template => [
-            moduleTemplates.dump,
+            moduleTemplates.fullRawDump,
+            moduleTemplates.fullCompressedDump,
             moduleTemplates.manifest,
             moduleTemplates.components,
           ].includes(template.filename),

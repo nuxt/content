@@ -1,5 +1,5 @@
 import { addTemplate } from '@nuxt/kit'
-import { sqlDumpTemplate } from '../utils/templates'
+import { fullDatabaseCompressedDumpTemplate } from '../utils/templates'
 import { definePreset } from '../utils/preset'
 
 export default definePreset({
@@ -8,7 +8,7 @@ export default definePreset({
     nitroConfig.alias = nitroConfig.alias || {}
     nitroConfig.handlers ||= []
 
-    nitroConfig.alias['#content/dump'] = addTemplate(sqlDumpTemplate(manifest)).dst
+    nitroConfig.alias['#content/dump'] = addTemplate(fullDatabaseCompressedDumpTemplate(manifest)).dst
     nitroConfig.handlers.push({
       route: '/api/content/:collection/database.sql',
       handler: resolver.resolve('./runtime/presets/node/database.sql'),
