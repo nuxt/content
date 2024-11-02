@@ -17,7 +17,11 @@ describe('defineCollection', () => {
     })
     expect(collection).toMatchObject({
       type: 'page',
-      source: 'pages/**',
+      source: {
+        _resolved: true,
+        cwd: '',
+        path: 'pages/**',
+      },
     })
 
     expect(collection.schema.shape).not.ownProperty('title')
@@ -81,7 +85,11 @@ describe('defineCollection', () => {
 
     expect(collection).toMatchObject({
       type: 'data',
-      source: 'data/**',
+      source: {
+        _resolved: true,
+        cwd: '',
+        path: 'data/**',
+      },
     })
 
     expect(collection.schema.shape).toHaveProperty('customField')

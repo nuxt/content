@@ -79,7 +79,7 @@ describe('Transformer (path-meta)', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }), { rootDir: '~' })!
+  }))!
 
   Object.entries(testCases).forEach(([id, expected]) => {
     test(id, async () => {

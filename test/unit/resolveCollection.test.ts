@@ -7,7 +7,7 @@ describe('resolveCollection', () => {
       type: 'page',
       source: 'pages/**',
     })
-    const resolvedCollection = resolveCollection('invalid-name', collection, { rootDir: '' })
+    const resolvedCollection = resolveCollection('invalid-name', collection)
     expect(resolvedCollection).toBeUndefined()
   })
 })

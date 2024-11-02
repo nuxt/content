@@ -33,6 +33,7 @@ describe('empty', async () => {
     test('Default collection is defined', async () => {
       const rootDir = fileURLToPath(new URL('./fixtures/empty', import.meta.url))
       const config = await loadContentConfig(rootDir, { defaultFallback: true })
+      console.log(config.collections)
 
       // Pages collection + _info collection
       expect(config.collections.length).toBe(2)

@@ -17,6 +17,7 @@ export type CollectionSource = {
 }
 
 export interface ResolvedCollectionSource extends CollectionSource {
+  _resolved: true
   prepare?: (nuxt: Nuxt) => Promise<void>
   cwd: string
 }
@@ -37,7 +38,7 @@ export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> 
 
 export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
-  source: CollectionSource | string | undefined
+  source: ResolvedCollectionSource | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
 }

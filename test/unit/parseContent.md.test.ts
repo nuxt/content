@@ -22,7 +22,7 @@ describe('Parser (.md)', () => {
     source: 'content/**',
     schema: z.object({
     }),
-  }), { rootDir: '~' })!
+  }))!
 
   test('Index file', async () => {
     const parsed = await parseContent('content/index.md', '# Index', collection, nuxtMock)

@@ -1,16 +1,11 @@
-import { join } from 'node:path'
 import { pascalCase } from 'scule'
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
+import { defineLocalSource, defineGitHubSource } from './source'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z } from './zod'
-import { downloadRepository, parseGitHubUrl } from './git'
 import { logger } from './dev'
-
-interface ResolveOptions {
-  rootDir: string
-}
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
@@ -26,13 +21,13 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
 
   return {
     type: collection.type,
-    source: collection.source,
+    source: resolveSource(collection.source),
     schema: collection.schema || z.object({}),
     extendedSchema: schema,
   }
 }
 
-export function resolveCollection(name: string, collection: DefinedCollection, opts: ResolveOptions): ResolvedCollection | undefined {
+export function resolveCollection(name: string, collection: DefinedCollection): ResolvedCollection | undefined {
   if (/^[a-z_]\w*$/i.test(name) === false) {
     logger.warn([
       `Collection name "${name}" is invalid. Collection names must be valid JavaScript identifiers. This collection will be ignored.`,
@@ -46,7 +41,7 @@ export function resolveCollection(name: string, collection: DefinedCollection, o
     name,
     type: collection.type || 'page',
     pascalName: pascalCase(name),
-    source: resolveSource(collection.source, opts),
+    source: collection.source,
     tableName: getTableName(name),
     tableDefinition: generateCollectionTableDefinition(name, collection, { drop: true }),
     generatedFields: {
@@ -62,7 +57,7 @@ export function resolveCollection(name: string, collection: DefinedCollection, o
   }
 }
 
-export function resolveCollections(collections: Record<string, DefinedCollection>, opts: ResolveOptions): ResolvedCollection[] {
+export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
   collections._info = defineCollection({
     type: 'data',
     schema: z.object({
@@ -71,39 +66,31 @@ export function resolveCollections(collections: Record<string, DefinedCollection
   })
 
   return Object.entries(collections)
-    .map(([name, collection]) => resolveCollection(name, collection, opts))
+    .map(([name, collection]) => resolveCollection(name, collection))
     .filter(Boolean) as ResolvedCollection[]
 }
 
 /**
  * Process collection source and return refined source
  */
-function resolveSource(source: string | CollectionSource | undefined, opts: ResolveOptions): ResolvedCollectionSource | undefined {
+function resolveSource(source: string | CollectionSource | undefined): ResolvedCollectionSource | undefined {
   if (!source) {
     return undefined
   }
 
-  const result: ResolvedCollectionSource = {
-    cwd: '',
-    ...(typeof source === 'string' ? { path: source } : source),
+  if (typeof source === 'string') {
+    return defineLocalSource({ path: source })
   }
 
-  const repository = result?.repository && parseGitHubUrl(result.repository!)
-  if (repository) {
-    const { org, repo, branch } = repository
-    result.cwd = join(opts.rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
-
-    result.prepare = async () => {
-      await downloadRepository(
-        `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`,
-        result.cwd!,
-      )
-    }
+  if ((source as ResolvedCollectionSource)._resolved) {
+    return source as ResolvedCollectionSource
   }
 
-  result.cwd = result.cwd || join(opts.rootDir, 'content')
+  if (source.repository) {
+    return defineGitHubSource(source)
+  }
 
-  return result
+  return defineLocalSource(source)
 }
 
 export function parseSourceBase(source: CollectionSource) {

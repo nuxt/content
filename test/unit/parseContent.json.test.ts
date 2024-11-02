@@ -20,7 +20,7 @@ describe('Parser (json)', () => {
     schema: z.object({
       body: z.any(),
     }),
-  }), { rootDir: '~' })!
+  }))!
   test('key:value', async () => {
     const parsed = await parseContent('content/index.json', json, collection)
 

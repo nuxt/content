@@ -29,7 +29,7 @@ export default definePreset({
     nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
     nitroConfig.handlers.push({
       route: '/api/content/:collection/database.sql',
-      handler: resolver.resolve('./runtime/presets/cloudflare-pages/database.sql'),
+      handler: resolver.resolve('./runtime/presets/cloudflare-pages/database-handler'),
     })
   },
 
