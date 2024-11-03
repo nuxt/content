@@ -215,7 +215,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     collectionDump[collection.name] = []
     // Collection table definition
-    collectionDump[collection.name].push(...collection.tableDefinition.split('\n'))
+    collectionDump[collection.name].push(
+      ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
+    )
 
     if (!collection.source) {
       continue
@@ -262,7 +264,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     collectionChecksum[collection.name] = hash(collectionDump[collection.name])
 
     collectionDump[collection.name].push(
-      generateCollectionTableDefinition(infoCollection.name, infoCollection, { drop: false }),
+      generateCollectionTableDefinition(infoCollection, { drop: false }),
       `DELETE FROM ${infoCollection.tableName} WHERE _id = 'checksum_${collection.name}'`,
       generateCollectionInsert(infoCollection, { _id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
     )

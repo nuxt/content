@@ -4,6 +4,7 @@ import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { deflate } from 'pako'
+import { pascalCase } from 'scule'
 import type { ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 
@@ -36,15 +37,15 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       '',
       'declare module \'@nuxt/content\' {',
       ...publicCollections.map(c =>
-        indentLines(`interface ${c.pascalName}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, c.pascalName).node)}`),
+        indentLines(`interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, pascalCase(c.name)).node)}`),
       ),
       '',
       '  interface PageCollections {',
-      ...pagesCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
+      ...pagesCollections.map(c => indentLines(`${c.name}: ${pascalCase(c.name)}CollectionItem`, 4)),
       '  }',
       '',
       '  interface Collections {',
-      ...publicCollections.map(c => indentLines(`${c.name}: ${c.pascalName}CollectionItem`, 4)),
+      ...publicCollections.map(c => indentLines(`${c.name}: ${pascalCase(c.name)}CollectionItem`, 4)),
       '  }',
       '}',
       '',
@@ -61,7 +62,6 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         name: collection.name,
-        pascalName: collection.pascalName,
         tableName: collection.tableName,
         // Remove source from collection meta if it's a remote collection
         source: collection.source?.repository ? undefined : collection.source,

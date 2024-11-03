@@ -41,22 +41,16 @@ export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   source: ResolvedCollectionSource | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
+  jsonFields: string[]
 }
 
 export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   name: string
-  pascalName: string
+  tableName: string
   type: CollectionType
   source: ResolvedCollectionSource | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
-  tableName: string
-  tableDefinition: string
-  generatedFields: {
-    raw: boolean
-    body: boolean
-    path: boolean
-  }
   jsonFields: string[]
   /**
    * Whether the collection is private or not.

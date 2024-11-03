@@ -25,3 +25,7 @@ export function getUnderlyingType(zodType: ZodType): ZodType {
   }
   return zodType
 }
+
+export function getUnderlyingTypeName(zodType: ZodType): string {
+  return getUnderlyingType(zodType).constructor.name
+}

@@ -7,6 +7,7 @@ export default createDatabaseAdapter<{ filename: string }>((opts) => {
   if (!db) {
     const filename = !opts || isAbsolute(opts?.filename || '')
       ? opts?.filename
+      // @ts-expect-error - `_importMeta_` is defined in nitro runtime
       : new URL(opts.filename, globalThis._importMeta_.url).pathname
     db = new Database(filename)
   }

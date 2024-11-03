@@ -1,15 +1,15 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
-import { generateCollectionTableDefinition, defineCollection } from '../../src/utils/collection'
+import { generateCollectionTableDefinition, defineCollection, resolveCollection } from '../../src/utils/collection'
 import { getTableName } from '../utils/database'
 
 describe('generateCollectionTableDefinition', () => {
   test('Page without custom schema', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'page',
       source: 'pages/**',
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -28,14 +28,14 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Page with custom schema', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'page',
       source: 'pages/**',
       schema: z.object({
         customField: z.string(),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -55,14 +55,14 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Data with schema', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
         customField: z.string(),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -77,14 +77,14 @@ describe('generateCollectionTableDefinition', () => {
 
   // Columns
   test('String with max length', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
         customField: z.string().max(64).default('foo'),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -98,14 +98,14 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Number', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
         customField: z.number().default(13),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -119,14 +119,14 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Boolean', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
         customField: z.boolean().default(false),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -140,14 +140,14 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Date', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
         customField: z.date(),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -161,7 +161,7 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Object', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
@@ -170,8 +170,8 @@ describe('generateCollectionTableDefinition', () => {
           f2: z.string(),
         }),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -185,7 +185,7 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Array', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
@@ -194,8 +194,8 @@ describe('generateCollectionTableDefinition', () => {
           f2: z.string(),
         })),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
@@ -209,7 +209,7 @@ describe('generateCollectionTableDefinition', () => {
   })
 
   test('Nullable', () => {
-    const collection = defineCollection({
+    const collection = resolveCollection('content', defineCollection({
       type: 'data',
       source: 'data/**',
       schema: z.object({
@@ -225,8 +225,8 @@ describe('generateCollectionTableDefinition', () => {
         }).nullable(),
         f6: z.array(z.any()).nullable(),
       }),
-    })
-    const sql = generateCollectionTableDefinition('content', collection)
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
