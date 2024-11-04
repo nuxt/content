@@ -12,7 +12,7 @@ import { resolve } from 'pathe'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { listen, type Listener } from 'listhen'
-import type { ResolvedCollection, ModuleOptions } from '../types'
+import type { ModuleOptions } from '../types'
 import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert, parseSourceBase } from './collection'
 import { parseContent } from './content'
@@ -20,8 +20,9 @@ import { moduleTemplates } from './templates'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function watchContents(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions, manifest: Manifest) {
+export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
   const db = localDatabase(options._localDatabase!.filename)
+  const collections = manifest.collections
 
   const localCollections = collections.filter(c => c.source && !c.source.repository)
 

@@ -159,10 +159,10 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
   } satisfies NuxtTemplate
 }
 
-export const manifestTemplate = (collections: ResolvedCollection[], manifest: Manifest) => ({
+export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
-  getContents: ({ options }: { options: { collections: ResolvedCollection[], manifest: Manifest } }) => {
-    const collectionsMeta = options.collections.reduce((acc, collection) => {
+  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+    const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         jsonFields: collection.jsonFields,
       }
@@ -173,7 +173,7 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: Ma
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
       '',
       `export const tables = ${JSON.stringify(
-        Object.fromEntries(collections.map(c => [c.name, c.tableName])),
+        Object.fromEntries(manifest.collections.map(c => [c.name, c.tableName])),
         null,
         2,
       )}`,
@@ -182,7 +182,6 @@ export const manifestTemplate = (collections: ResolvedCollection[], manifest: Ma
     ].join('\n')
   },
   options: {
-    collections,
     manifest,
   },
   write: true,

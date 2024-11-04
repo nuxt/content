@@ -22,7 +22,7 @@ import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, 
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
-import { loadContentConfig } from './utils/config'
+import { loadLayersConfig } from './utils/config'
 import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
@@ -91,7 +91,7 @@ export default defineNuxtModule<ModuleOptions>({
       await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
 
-    const { collections } = await loadContentConfig(nuxt.options.rootDir, { defaultFallback: true })
+    const { collections } = await loadLayersConfig(nuxt)
     manifest.collections = collections
 
     nuxt.options.runtimeConfig.public.content = {
@@ -127,11 +127,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Templates & aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    addTypeTemplate(contentTypesTemplate(collections))
+    addTypeTemplate(contentTypesTemplate(manifest.collections))
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(collections)).dst
+    nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(manifest.collections)).dst
     nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
-    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(collections, manifest)).dst
+    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
 
     // Load preset
     nuxt.hook('nitro:config', async (config) => {
@@ -150,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     nuxt.options.routeRules ||= {}
-    collections.forEach((collection) => {
+    manifest.collections.forEach((collection) => {
       if (!collection.private) {
         nuxt.options.routeRules![`/api/content/${collection.name}/database.sql`] = { prerender: true }
       }
@@ -162,7 +162,7 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    const dumpGeneratePromise = processCollectionItems(nuxt, collections, options)
+    const dumpGeneratePromise = processCollectionItems(nuxt, manifest.collections, options)
       .then((fest) => {
         manifest.checksum = fest.checksum
         manifest.dump = fest.dump
@@ -184,7 +184,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (nuxt.options.dev) {
       addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-      await watchContents(nuxt, collections, options, manifest)
+      await watchContents(nuxt, options, manifest)
       await watchComponents(nuxt)
       await watchConfig(nuxt)
     }

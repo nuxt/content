@@ -1,4 +1,8 @@
+import { stat } from 'node:fs/promises'
 import { loadConfig } from 'c12'
+import type { Nuxt } from '@nuxt/schema'
+import { join } from 'pathe'
+import type { ResolvedCollection } from '../types'
 import { defineCollection, resolveCollections } from './collection'
 import { logger } from './dev'
 
@@ -23,5 +27,24 @@ export async function loadContentConfig(rootDir: string, opts: { defaultFallback
 
   return {
     collections: resolveCollections(config.collections || {}),
+  }
+}
+
+export async function loadLayersConfig(nuxt: Nuxt) {
+  const collectionMap = {} as Record<string, ResolvedCollection>
+  const _layers = [...nuxt.options._layers].reverse()
+  for (const layer of _layers) {
+    const rootDir = layer.config.rootDir
+    const configStat = await stat(join(rootDir, 'content.config.ts')).catch(() => null)
+    if (configStat && configStat.isFile()) {
+      const { collections } = await loadContentConfig(rootDir, { defaultFallback: false })
+      for (const collection of collections) {
+        collectionMap[collection.name] = collection
+      }
+    }
+  }
+
+  return {
+    collections: Object.values(collectionMap),
   }
 }
