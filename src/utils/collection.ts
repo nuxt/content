@@ -103,7 +103,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     const value = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
-    const defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
+    let defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
+
+    if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
+      defaultValue = JSON.stringify(defaultValue)
+    }
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
 
     fields.push(key)
@@ -163,9 +167,13 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
 
     // Handle default values
     if (type._def.defaultValue !== undefined) {
-      const defaultValue = typeof type._def.defaultValue() === 'string'
+      let defaultValue = typeof type._def.defaultValue() === 'string'
         ? `'${type._def.defaultValue()}'`
         : type._def.defaultValue()
+
+      if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
+        defaultValue = `'${JSON.stringify(defaultValue)}'`
+      }
       constraints.push(`DEFAULT ${defaultValue}`)
     }
 

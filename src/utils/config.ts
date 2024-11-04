@@ -44,6 +44,13 @@ export async function loadLayersConfig(nuxt: Nuxt) {
     }
   }
 
+  if (Object.keys(collectionMap).length === 0) {
+    const collections = resolveCollections(defaultConfig.collections)
+    for (const collection of collections) {
+      collectionMap[collection.name] = collection
+    }
+  }
+
   return {
     collections: Object.values(collectionMap),
   }
