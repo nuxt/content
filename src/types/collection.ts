@@ -80,9 +80,11 @@ export interface PageCollectionItemBase extends CollectionItemBase {
   path: string
   title: string
   description: string
-  seo?: {
-    title: string
-    description: string
+  seo: {
+    title?: string
+    description?: string
+    meta?: Array<Partial<Record<'id' | 'name' | 'property' | 'content', string>>>
+    link?: Array<Partial<Record<'color' | 'rel' | 'href' | 'hreflang' | 'imagesizes' | 'imagesrcset' | 'integrity' | 'media' | 'sizes' | 'id', string>>>
 
     [key: string]: unknown
   }

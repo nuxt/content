@@ -84,6 +84,12 @@ export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.fullCompressedDump,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     return Object.entries(options.manifest.dump).map(([key, value]) => {
+      const collection = options.manifest.collections.find(c => c.name === key)
+      // Ignore provate collections
+      if (collection?.private) {
+        return ''
+      }
+
       const str = Buffer.from(deflate(value.join('\n')).buffer).toString('base64')
       return `export const ${key} = "${str}"`
     }).join('\n')
