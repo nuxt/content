@@ -1,4 +1,4 @@
-import { mkdir, readFile } from 'node:fs/promises'
+import { mkdir, readFile, stat } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -132,6 +132,18 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(manifest.collections)).dst
     nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
     nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
+
+    // Register user components
+    const _layers = [...nuxt.options._layers].reverse()
+    for (const layer of _layers) {
+      const path = resolver.resolve(layer.config.srcDir, 'components/content')
+      const dirStat = await stat(path).catch(() => null)
+      if (dirStat && dirStat.isDirectory()) {
+        nuxt.hook('components:dirs', (dirs) => {
+          dirs.unshift({ path, pathPrefix: false, prefix: '' })
+        })
+      }
+    }
 
     // Load preset
     nuxt.hook('nitro:config', async (config) => {
