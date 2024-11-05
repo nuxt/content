@@ -5,6 +5,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import type { ResolvedCollection } from '../../types/collection'
+import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 
 let parserOptions = {
@@ -66,16 +67,22 @@ async function _getHighlighPlugin(options: HighlighterOptions) {
 }
 
 export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt?: Nuxt) {
-  const markdownOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
+  const mdcOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
+  const contentOptions = (nuxt?.options as unknown as { content: ModuleOptions })?.content?.build?.markdown || {}
   const parsedContent = await transformContent(key, content, {
     markdown: {
       compress: true,
-      ...markdownOptions,
+      ...mdcOptions,
       rehypePlugins: {
-        highlight: markdownOptions.highlight === false
+        highlight: mdcOptions.highlight === false
           ? undefined
-          : await getHighlighPluginInstance(markdownOptions.highlight || {}),
-        ...markdownOptions?.rehypePlugins,
+          : await getHighlighPluginInstance(mdcOptions.highlight || {}),
+        ...mdcOptions?.rehypePlugins,
+        ...contentOptions?.rehypePlugins,
+      },
+      remarkPlugins: {
+        ...mdcOptions?.remarkPlugins,
+        ...contentOptions?.remarkPlugins,
       },
       highlight: undefined,
     },
