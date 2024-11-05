@@ -8,6 +8,11 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
     offset: 0,
     limit: 0,
     orderBy: [] as Array<string>,
+    // Count query
+    count: {
+      field: '' as keyof Collections[T] | '*',
+      distinct: false,
+    },
   }
 
   const query: CollectionQueryBuilder<Collections[T]> = {
@@ -18,7 +23,7 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       params.offset = skip
       return query
     },
-    where(field: keyof Collections[T] | string, operator: SQLOperator, value: unknown): CollectionQueryBuilder<Collections[T]> {
+    where(field: keyof Collections[T] | string, operator: SQLOperator, value?: unknown): CollectionQueryBuilder<Collections[T]> {
       let condition: string
 
       switch (operator.toUpperCase()) {
@@ -77,13 +82,23 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       return fetch(collection, buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
-      return fetch(collection, buildQuery()).then(res => res[0] || null)
+      return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
+    },
+    async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
+      return fetch(collection, buildQuery({
+        count: { field: String(field), distinct },
+      })).then(m => m[0].count)
     },
   }
 
-  function buildQuery() {
+  function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number } = {}) {
     let query = 'SELECT '
-    query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
+    if (opts?.count) {
+      query += `COUNT(${opts.count.distinct ? 'DISTINCT' : ''} ${opts.count.field}) as count`
+    }
+    else {
+      query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
+    }
     query += ` FROM ${tables[String(collection)]}`
 
     if (params.conditions.length > 0) {
@@ -97,11 +112,12 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       query += ` ORDER BY stem ASC`
     }
 
-    if (params.limit > 0) {
+    const limit = opts?.limit || params.limit
+    if (limit > 0) {
       if (params.offset > 0) {
-        query += ` LIMIT ${params.limit} OFFSET ${params.offset}`
+        query += ` LIMIT ${limit} OFFSET ${params.offset}`
       }
-      query += ` LIMIT ${params.limit}`
+      query += ` LIMIT ${limit}`
     }
 
     return query
