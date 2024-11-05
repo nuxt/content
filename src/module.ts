@@ -227,7 +227,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     collectionDump[collection.name] = []
     // Collection table definition
-    collectionDump[collection.name].push(
+    collectionDump[collection.name]!.push(
       ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
     )
 
@@ -270,12 +270,12 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       }))
     }
     // Sort by file name to ensure consistent order
-    list.sort((a, b) => a[0].localeCompare(String(b[0])))
-    collectionDump[collection.name].push(...list.map(([, sql]) => sql))
+    list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+    collectionDump[collection.name]!.push(...list.map(([, sql]) => sql!))
 
     collectionChecksum[collection.name] = hash(collectionDump[collection.name])
 
-    collectionDump[collection.name].push(
+    collectionDump[collection.name]!.push(
       generateCollectionTableDefinition(infoCollection, { drop: false }),
       `DELETE FROM ${infoCollection.tableName} WHERE _id = 'checksum_${collection.name}'`,
       generateCollectionInsert(infoCollection, { _id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),

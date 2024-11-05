@@ -61,13 +61,12 @@ export const useContentHead = (content: PageCollectionItemBase | null, { host, t
   head.link = [...(head.link || [])]
 
   // Great basic informations from the content
-  const title = head.title || content?.title
-  if (title) {
-    head.title = title
+  head.title = head.title || content?.title
+  if (head.title) {
     if (import.meta.server && !head.meta?.some(m => m.property === 'og:title')) {
       head.meta.push({
         property: 'og:title',
-        content: title as string,
+        content: head.title as string,
       })
     }
   }
