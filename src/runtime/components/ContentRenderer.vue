@@ -162,14 +162,21 @@ function resolveContentComponents(body: MDCRoot, meta: Record<string, unknown>) 
     return
   }
   const components = Array.from(new Set(loadComponents(body, meta as { tags: Record<string, string> })))
-  const res = components.map((c) => {
-    if (typeof c === 'object' && renderFunctions.some(fn => Object.hasOwnProperty.call(c, fn))) {
-      return [false, false]
+
+  const result = {} as Record<string, unknown>
+  for (const [tag, component] of components) {
+    if (typeof component === 'object' && renderFunctions.some(fn => Object.hasOwnProperty.call(component, fn))) {
+      continue
     }
-    const resolvedComponent = resolveVueComponent(c as string)
-    return [c, resolvedComponent]
-  })
-  return Object.fromEntries(res.filter(item => Boolean(item[0])))
+
+    if (result[tag]) {
+      continue
+    }
+
+    result[tag] = resolveVueComponent(component as string)
+  }
+
+  return result as Exclude<(InstanceType<typeof MDCRenderer>)['$props']['components'], undefined>
 }
 
 function loadComponents(node: MDCRoot | MDCElement, documentMeta: { tags: Record<string, string> }) {
@@ -178,9 +185,9 @@ function loadComponents(node: MDCRoot | MDCElement, documentMeta: { tags: Record
     return []
   }
   const renderTag = findMappedTag(node as unknown as MDCElement, documentMeta.tags)
-  const components2 = [] as unknown[]
+  const components2 = [] as Array<[string, unknown]>
   if ((node as unknown as MDCRoot).type !== 'root' && !htmlTags.includes(renderTag)) {
-    components2.push(renderTag)
+    components2.push([tag, renderTag])
   }
   for (const child of node.children || []) {
     components2.push(...loadComponents(child as MDCElement, documentMeta))
