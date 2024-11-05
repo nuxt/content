@@ -9,8 +9,8 @@
     "dev:prepare": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/ui": "3.0.0-alpha.6",
-    "@nuxt/ui-pro": "2.0.0-alpha.6",
+    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@50cc034",
+    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@8eac713",
     "@nuxthub/core": "^0.7.32",
     "nuxt": "^3.13.2"
   }

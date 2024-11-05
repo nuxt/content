@@ -107,6 +107,7 @@ export const useContentHead = (content: PageCollectionItemBase | null, { host, t
   }
 
   // Grab description from `head` or fallback to `data.description`
+  // @ts-expect-error - image does not exists in content
   const image = head?.image || content?.image
 
   // Shortcut for head.image to og:image in meta
