@@ -1,12 +1,21 @@
+import { gzip } from 'node:zlib'
 import { printNode, zodToTs } from 'zod-to-ts'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
-import { deflate } from 'pako'
 import { pascalCase } from 'scule'
 import type { ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
+
+const compress = (text: string): Promise<string> => {
+  return new Promise((resolve, reject) => gzip(text, (err, buff) => {
+    if (err) {
+      return reject(err)
+    }
+    return resolve(buff?.toString('base64'))
+  }))
+}
 
 function indentLines(str: string, indent: number = 2) {
   return str
@@ -82,17 +91,18 @@ export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
 
 export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.fullCompressedDump,
-  getContents: ({ options }: { options: { manifest: Manifest } }) => {
-    return Object.entries(options.manifest.dump).map(([key, value]) => {
-      const collection = options.manifest.collections.find(c => c.name === key)
+  getContents: async ({ options }: { options: { manifest: Manifest } }) => {
+    const result = [] as string[]
+    for (const [key, dump] of Object.entries(options.manifest.dump)) {
       // Ignore provate collections
-      if (collection?.private) {
+      if (options.manifest.collections.find(c => c.name === key)?.private) {
         return ''
       }
+      const compressedDump = await compress(dump.join('\n'))
+      result.push(`export const ${key} = "${compressedDump}"`)
+    }
 
-      const str = Buffer.from(deflate(value.join('\n')).buffer).toString('base64')
-      return `export const ${key} = "${str}"`
-    }).join('\n')
+    return result.join('\n')
   },
   write: true,
   options: {
@@ -115,10 +125,8 @@ export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
 
 export const collectionDumpTemplate = (collection: string, manifest: Manifest) => ({
   filename: `content/raw/dump.${collection}.sql`,
-  getContents: ({ options }: { options: { manifest: Manifest } }) => {
-    const compressed = deflate((options.manifest.dump[collection] || []).join('\n'))
-
-    return Buffer.from(compressed.buffer).toString('base64')
+  getContents: async ({ options }: { options: { manifest: Manifest } }) => {
+    return compress((options.manifest.dump[collection] || []).join('\n'))
   },
   write: true,
   options: {

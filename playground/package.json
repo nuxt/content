@@ -11,7 +11,7 @@
   "dependencies": {
     "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@50cc034",
     "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@8eac713",
-    "@nuxthub/core": "^0.7.32",
-    "nuxt": "^3.13.2"
+    "@nuxthub/core": "^0.8.6",
+    "nuxt": "^3.14.159"
   }
 }

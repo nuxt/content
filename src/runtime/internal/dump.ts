@@ -1,14 +1,12 @@
-export async function decompressSQLDump(dump: string): Promise<string[]> {
-  return import('pako').then(m => m.inflate(convertDataURIToBinary(dump), { to: 'string' }).split('\n'))
-}
+export async function decompressSQLDump(base64Str: string, compressionType: CompressionFormat = 'gzip'): Promise<string[]> {
+  // Decode Base64 to binary data
+  const binaryData = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0))
 
-function convertDataURIToBinary(base64: string) {
-  const raw = atob(base64)
-  const rawLength = raw.length
-  const array = new Uint8Array(new ArrayBuffer(rawLength))
+  // Create a Response from the Blob and use the DecompressionStream
+  const response = new Response(new Blob([binaryData]))
+  const decompressedStream = response.body?.pipeThrough(new DecompressionStream(compressionType))
+  // Read the decompressed data as text
+  const decompressedText = await new Response(decompressedStream).text()
 
-  for (let i = 0; i < rawLength; i++) {
-    array[i] = raw.charCodeAt(i)
-  }
-  return array
+  return decompressedText.split('\n')
 }

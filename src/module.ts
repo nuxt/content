@@ -107,7 +107,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
     nuxt.options.vite.optimizeDeps.include ||= []
-    nuxt.options.vite.optimizeDeps.include.push('scule', 'pako')
+    nuxt.options.vite.optimizeDeps.include.push('scule')
 
     // Helpers are designed to be enviroment agnostic
     addImports([
