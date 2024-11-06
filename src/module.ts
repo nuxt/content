@@ -115,7 +115,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
-      { name: 'useContentHead', from: resolver.resolve('./runtime/app') },
+      { name: 'useContentHead', from: resolver.resolve('./runtime/composables/useContentHead') },
     ])
     addServerImports([
       { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
