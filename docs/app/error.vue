@@ -12,7 +12,7 @@ const colorMode = useColorMode()
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
 const { data: files } = await useAsyncData('files', () => queryCollectionSearchSections('docs', { ignoredTags: ['style'] }))
 
-const color = computed(() => colorMode.value === 'dark' ? (colors as any)[appConfig.ui.colors.neutral][900] : 'white')
+const color = computed(() => colorMode.value === 'dark' ? colors[appConfig.ui.colors.neutral as keyof typeof colors][900] : 'white')
 
 useHead({
   meta: [
