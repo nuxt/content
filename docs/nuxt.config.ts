@@ -5,7 +5,6 @@ import pkg from '../package.json'
 const { resolve } = createResolver(import.meta.url)
 
 export default defineNuxtConfig({
-
   modules: [
     '@nuxt/ui-pro',
     '@nuxt/content',
@@ -15,6 +14,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-og-image',
   ],
+
   app: {
     rootAttrs: {
       'vaul-drawer-wrapper': '',
@@ -45,10 +45,6 @@ export default defineNuxtConfig({
     },
   },
 
-  routeRules: {
-    '/': { redirect: '/docs/getting-started', prerender: false },
-  },
-
   future: {
     compatibilityVersion: 4,
   },
@@ -75,6 +71,7 @@ export default defineNuxtConfig({
   image: {
     provider: 'ipx',
   },
+
   ogImage: {
     zeroRuntime: true,
   },
