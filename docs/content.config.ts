@@ -4,7 +4,7 @@ export const collections = {
   docs: defineCollection({
     type: 'page',
     source: {
-      path: 'docs/**',
+      include: 'docs/**',
       prefix: '/docs',
     },
     schema: z.object({
