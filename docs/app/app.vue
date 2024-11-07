@@ -80,7 +80,7 @@ provide('navigation', navigation)
 @import "tailwindcss";
 @import "@nuxt/ui-pro";
 
-@source "../content/**/*.md";
+@source "../content/**/*";
 
 @theme {
   --font-family-sans: 'Public Sans', sans-serif;
