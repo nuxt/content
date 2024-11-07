@@ -11,6 +11,7 @@ const content = defineCollection({
   },
   schema: z.object({
     date: z.date(),
+    rawbody: z.string(),
   }),
 })
 
