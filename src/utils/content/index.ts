@@ -24,15 +24,15 @@ let highlightPlugin: {
   highlighter: Highlighter
 }
 let highlightPluginPromise: Promise<typeof highlightPlugin>
-async function getHighlighPluginInstance(options: HighlighterOptions) {
+async function getHighlightPluginInstance(options: HighlighterOptions) {
   if (!highlightPlugin) {
-    highlightPluginPromise = highlightPluginPromise || _getHighlighPlugin(options)
+    highlightPluginPromise = highlightPluginPromise || _getHighlightPlugin(options)
     await highlightPluginPromise
   }
 
   return highlightPlugin
 }
-async function _getHighlighPlugin(options: HighlighterOptions) {
+async function _getHighlightPlugin(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
   if (!highlightPlugin || highlightPlugin.key !== key) {
     const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', 'typescript', ...(options.langs || [])]))
@@ -76,7 +76,7 @@ export async function parseContent(key: string, content: string, collection: Res
       rehypePlugins: {
         highlight: mdcOptions.highlight === false
           ? undefined
-          : await getHighlighPluginInstance(mdcOptions.highlight || {}),
+          : await getHighlightPluginInstance(mdcOptions.highlight || {}),
         ...mdcOptions?.rehypePlugins,
         ...contentOptions?.rehypePlugins,
       },
@@ -105,8 +105,9 @@ export async function parseContent(key: string, content: string, collection: Res
   result.meta = meta
 
   // Storing `content` into `rawbody` field
-  // This allow users to define `rowbody` field in collection schema and access to raw content
-  result.rawbody = content
+  if (collectionKeys.includes('rawbody')) {
+    result.rawbody = result.rawbody ?? content
+  }
 
   return result
 }
