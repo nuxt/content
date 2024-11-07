@@ -63,7 +63,7 @@ sections:
         icon: i-lucide-code-xml
     links:
       - label: Learn more about MDC
-        to: /docs/mdc
+        to: /docs/usage/markdown#mdc-syntax
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
@@ -113,7 +113,7 @@ sections:
         icon: i-lucide-text-cursor
     links:
       - label: Learn more about query
-        to: /docs/queries
+        to: /docs/utils/query-collection
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
