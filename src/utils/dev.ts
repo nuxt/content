@@ -55,7 +55,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   async function onChange(path: string) {
     const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.path, { ignore: source!.ignore || [], dot: true }))
     if (collection) {
-      logger.info(`File changed. collection: ${collection.name}, path: ${path}`)
+      logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
 
       const { fixed } = parseSourceBase(collection.source!)
       const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
