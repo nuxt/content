@@ -27,13 +27,13 @@ defineShortcuts({
         class="flex items-end gap-2 font-bold text-xl text-[--ui-text-highlighted] min-w-0"
         aria-label="Nuxt Content"
       >
-        <Logo class="w-auto h-6 shrink-0" />
+        <AppLogo class="w-auto h-6 shrink-0" />
 
         <UBadge
           :label="`v${config.version}`"
           variant="subtle"
           size="sm"
-          class="-mb-[2px] rounded-[--ui-radius] font-semibold inline-block truncate"
+          class="-mb-[2px] font-semibold inline-block truncate"
         />
       </NuxtLink>
     </template>
@@ -41,7 +41,7 @@ defineShortcuts({
     <!-- <UNavigationMenu :items="items" variant="link" /> -->
 
     <template #right>
-      <ThemePicker />
+      <UColorModeButton />
 
       <UTooltip
         text="Search"

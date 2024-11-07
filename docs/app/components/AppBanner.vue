@@ -1,7 +1,7 @@
 <template>
   <UBanner
-    icon="i-heroicons-wrench-screwdriver"
-    :actions="[{ label: 'Go to Nuxt Content v2', to: 'https://content.nuxt.com', trailingIcon: 'i-heroicons-arrow-right-20-solid' }]"
+    icon="i-lucide-construction"
+    :actions="[{ label: 'Go to Nuxt Content v2', to: 'https://content.nuxt.com', trailingIcon: 'i-lucide-arrow-right' }]"
     :close="false"
   >
     <template #title>

@@ -105,7 +105,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   async function onRemove(path: string) {
     const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.path, { ignore: source!.ignore || [], dot: true }))
     if (collection) {
-      logger.info(`File removed. collection: ${collection.name}, path: ${path}`)
+      logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
 
       const { fixed } = parseSourceBase(collection.source!)
       const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
@@ -178,7 +178,7 @@ export function watchConfig(nuxt: Nuxt) {
   nuxt.hook('nitro:init', async (nitro) => {
     nitro.storage.watch(async (_event, key) => {
       if ('root:content.config.ts' === key) {
-        logger.info(`${key.split(':').pop()} Updated. Restarting Nuxt...`)
+        logger.info(`\`${key.split(':').pop()}\` updated, restarting the Nuxt server...`)
 
         nuxt.hooks.callHook('restart', { hard: true })
       }

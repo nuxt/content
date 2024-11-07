@@ -48,17 +48,17 @@ const route = useRoute()
 
     <template #right>
       <UButton
-        aria-label="Nuxt Website"
-        icon="i-simple-icons-nuxtdotjs"
-        to="https://nuxt.com"
+        aria-label="Nuxt Content on Discord"
+        icon="i-simple-icons-discord"
+        to="https://go.nuxt.com/discord"
         target="_blank"
         color="neutral"
         variant="ghost"
       />
       <UButton
-        aria-label="Nuxt Content on Discord"
-        icon="i-simple-icons-discord"
-        to="https://chat.nuxt.dev"
+        aria-label="Nuxt on BlueSKy"
+        icon="i-simple-icons-bluesky"
+        to="https://go.nuxt.com/bluesky"
         target="_blank"
         color="neutral"
         variant="ghost"
@@ -66,7 +66,7 @@ const route = useRoute()
       <UButton
         aria-label="Nuxt on X"
         icon="i-simple-icons-x"
-        to="https://x.com/nuxt_js"
+        to="https://go.nuxt.com/x"
         target="_blank"
         color="neutral"
         variant="ghost"

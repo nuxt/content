@@ -33,13 +33,14 @@ defineOgImageComponent('Docs', {
   title: page.value.title,
 })
 
+console.log(page.value)
 const communityLinks = computed(() => [{
-  icon: 'i-heroicons-pencil-square',
+  icon: 'i-lucide-pencil',
   label: 'Edit this page',
   to: `https://github.com/nuxt/content/edit/v3/docs/content/${page?.value?.stem}.${page.value?.extension}`,
   target: '_blank',
 }, {
-  icon: 'i-heroicons-star',
+  icon: 'i-lucide-star',
   label: 'Star on GitHub',
   to: 'https://github.com/nuxt/content',
   target: '_blank',

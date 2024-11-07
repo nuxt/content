@@ -36,18 +36,13 @@ const searchTerm = ref('')
 const links = computed(() => {
   return [{
     label: 'Docs',
-    icon: 'i-heroicons-book-open',
+    icon: 'i-lucide-book',
     to: '/getting-started',
     active: route.path.startsWith('/getting-started') || route.path.startsWith('/components'),
-  }, {
-    label: 'Releases',
-    icon: 'i-heroicons-rocket-launch',
-    to: '/releases',
   }].filter(Boolean)
 })
 
 const color = computed(() => colorMode.value === 'dark' ? colors[appConfig.ui.colors.neutral as keyof typeof colors][900] : 'white')
-const radius = computed(() => `:root { --ui-radius: ${appConfig.theme.radius}rem; }`)
 
 useHead({
   meta: [
@@ -57,9 +52,6 @@ useHead({
   link: [
     { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
     { rel: 'canonical', href: `https://content.nuxt.com${withoutTrailingSlash(route.path)}` },
-  ],
-  style: [
-    { innerHTML: radius, id: 'nuxt-ui-radius', tagPriority: -2 },
   ],
   htmlAttrs: {
     lang: 'en',
@@ -75,31 +67,26 @@ provide('navigation', navigation)
 </script>
 
 <template>
-  <UApp :toaster="appConfig.toaster">
+  <UApp>
     <NuxtLoadingIndicator color="#FFF" />
 
-    <template v-if="!route.path.startsWith('/examples')">
-      <Banner />
-
-      <Header :links="links" />
-    </template>
+    <AppBanner />
+    <AppHeader :links="links" />
 
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
 
-    <template v-if="!route.path.startsWith('/examples')">
-      <Footer />
+    <AppFooter />
 
-      <ClientOnly>
-        <LazyUContentSearch
-          v-model:search-term="searchTerm"
-          :files="files"
-          :navigation="navigation"
-          :fuse="{ resultLimit: 42 }"
-        />
-      </ClientOnly>
-    </template>
+    <ClientOnly>
+      <LazyUContentSearch
+        v-model:search-term="searchTerm"
+        :files="files"
+        :navigation="navigation"
+        :fuse="{ resultLimit: 42 }"
+      />
+    </ClientOnly>
   </UApp>
 </template>
 

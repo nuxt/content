@@ -80,7 +80,7 @@
     "pg": "*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241022.0",
+    "@cloudflare/workers-types": "^4.20241106.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^1.6.0",
     "@nuxt/eslint-config": "^0.6.1",

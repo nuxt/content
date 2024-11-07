@@ -2,7 +2,7 @@
   <UCard>
     <UButton
       variant="ghost"
-      icon="i-heroicons-magnifying-glass-20-solid"
+      icon="i-lucide-search"
       @click="useContentSearch().open.value = true"
     >
       Open Search Modal
