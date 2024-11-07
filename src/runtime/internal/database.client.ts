@@ -44,6 +44,12 @@ async function loadAdapter<T>(collection: T) {
 
     db = new sqlite3.oo1.DB()
   }
+
+  // Do not initialize database with dump for Studio preview
+  if (window.sessionStorage.getItem('previewToken')) {
+    return db
+  }
+
   let compressedDump: string | null = null
 
   const checksumId = `checksum_${collection}`
@@ -94,6 +100,10 @@ async function loadAdapter<T>(collection: T) {
     }
 
     for (const command of dump) {
+      if (command.startsWith('INSERT')) {
+        continue
+      }
+
       try {
         await db.exec(command)
       }

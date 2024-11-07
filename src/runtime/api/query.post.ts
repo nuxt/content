@@ -8,7 +8,7 @@ export default eventHandler(async (event) => {
   const { sql } = await readValidatedBody(event, z.object({ sql: z.string() }).parse)
   const collection = getRouterParam(event, 'collection')!
 
-  const conf = useRuntimeConfig().content as RuntimeConfig
+  const conf = useRuntimeConfig().content as RuntimeConfig['content']
   await checkAndImportDatabaseIntegrity(event, collection, conf)
 
   return loadDatabaseAdapter(conf).all(sql)

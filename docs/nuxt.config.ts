@@ -31,6 +31,14 @@ export default defineNuxtConfig({
       type: 'd1',
       binding: 'DB',
     },
+    studio: {
+      enabled: true,
+      dev: true,
+      gitInfo: {
+        owner: 'larbish',
+        name: 'starter-larb',
+      },
+    },
   },
 
   runtimeConfig: {

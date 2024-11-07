@@ -1,6 +1,8 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
+import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
+import type { ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
@@ -17,6 +19,23 @@ export type PostgreSQLDatabaseConfig = {
   url: string
 }
 
+export interface StudioOptions {
+  /**
+   * Enable Studio in production
+   * @default: false
+   */
+  enabled: boolean
+  /**
+   * Enable studio in development
+   * @default false
+   */
+  dev?: boolean
+  /**
+   * Override Git information for Studio preview validation
+   */
+  gitInfo?: GitInfo
+}
+
 export interface ModuleOptions {
   /**
    * @private
@@ -25,8 +44,17 @@ export interface ModuleOptions {
   _localDatabase?: SqliteDatabaseConfig
   /**
    * Production database configuration
+   * @default { type: 'sqlite', filename: './contents.sqlite' }
    */
-  database: D1DatabaseConfig | SqliteDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
+  /**
+   * Studio mode configuration
+   */
+  studio?: StudioOptions
+  /**
+   * Development HMR
+   * @default { enabled: true }
+   */
   watch?: Partial<ListenOptions> & { enabled?: boolean }
   renderer: {
     /**
@@ -114,7 +142,7 @@ export interface ModuleOptions {
         langs?: (ShikiLang | LanguageRegistration)[]
 
         /**
-         * Additional themes to be bundled loaded by Shiki
+         * Additional themes to be bundled loaded by Shiki.
          */
         themes?: (ShikiTheme | ThemeRegistrationAny)[]
       }
@@ -126,7 +154,7 @@ export interface ModuleOptions {
      */
     yaml?: false | Record<string, unknown>
     /**
-     * Options for yaml parser.
+     * Options for csv parser.
      *
      * @default {}
      */
@@ -139,6 +167,17 @@ export interface ModuleOptions {
 }
 
 export interface RuntimeConfig {
-  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
-  localDatabase: SqliteDatabaseConfig
+  content: {
+    version: string
+    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
+    localDatabase: SqliteDatabaseConfig
+    collections?: ResolvedCollection[]
+  }
+  studio: {
+    gitInfo: GitInfo
+    appConfigSchema: {
+      properties: Record<string, unknown>
+      default: Record<string, unknown>
+    }
+  }
 }
