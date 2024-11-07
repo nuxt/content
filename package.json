@@ -102,6 +102,7 @@
     "wrangler": "^3.85.0"
   },
   "resolutions": {
+    "@nuxt/content": "workspace:*",
     "vue": "^3.5.12"
   },
   "packageManager": "pnpm@9.12.3"

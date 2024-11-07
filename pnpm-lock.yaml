@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@nuxt/content': workspace:*
   vue: ^3.5.12
 
 importers:
@@ -127,7 +128,7 @@ importers:
         specifier: ^4.20241106.0
         version: 4.20241106.0
       '@nuxt/content':
-        specifier: link:.
+        specifier: workspace:*
         version: 'link:'
       '@nuxt/devtools':
         specifier: ^1.6.0
@@ -196,8 +197,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2
       '@nuxt/content':
-        specifier: ^3.0.0-alpha.5
-        version: 3.0.0-alpha.6(magicast@0.3.5)(pg@8.13.1)(rollup@4.24.4)
+        specifier: workspace:*
+        version: link:..
       '@nuxt/image':
         specifier: ^1.8.1
         version: 1.8.1(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.24.4)
@@ -250,8 +251,8 @@ importers:
   examples/blog:
     dependencies:
       '@nuxt/content':
-        specifier: ^3.0.0-alpha.1
-        version: 3.0.0-alpha.6(magicast@0.3.5)(pg@8.13.1)(rollup@4.24.4)
+        specifier: workspace:*
+        version: link:../..
       nuxt:
         specifier: ^3.13.2
         version: 3.14.159(@parcel/watcher@2.5.0)(@types/node@22.9.0)(better-sqlite3@11.5.0)(eslint@9.14.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.36.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.6.3))
@@ -1245,11 +1246,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@nuxt/content@3.0.0-alpha.6':
-    resolution: {integrity: sha512-vxn1iMa3YrrnYs3f9DNx9/R/AncK87kFbysNmjH634JBcLC1yCMWqCq4VvasdFx4ko3x5ip+9m9J3z3SjUaPZQ==}
-    peerDependencies:
-      pg: '*'
 
   '@nuxt/devalue@2.0.2':
     resolution: {integrity: sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==}
@@ -7586,53 +7582,6 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@nuxt/content@3.0.0-alpha.6(magicast@0.3.5)(pg@8.13.1)(rollup@4.24.4)':
-    dependencies:
-      '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@4.24.4)
-      '@nuxtjs/mdc': 0.9.2(magicast@0.3.5)(rollup@4.24.4)
-      '@sqlite.org/sqlite-wasm': 3.47.0-build1
-      better-sqlite3: 11.5.0
-      c12: 2.0.1(magicast@0.3.5)
-      chokidar: 4.0.1
-      consola: 3.2.3
-      defu: 6.1.4
-      destr: 2.0.3
-      fast-glob: 3.3.2
-      jiti: 2.4.0
-      knitwork: 1.1.0
-      listhen: 1.9.0
-      mdast-util-to-hast: 13.2.0
-      mdast-util-to-string: 4.0.0
-      micromark: 4.0.0
-      micromark-util-character: 2.1.0
-      micromark-util-chunked: 2.0.0
-      micromark-util-resolve-all: 2.0.0
-      micromark-util-sanitize-uri: 2.0.0
-      micromatch: 4.0.8
-      ohash: 1.1.4
-      pathe: 1.1.2
-      pg: 8.13.1
-      remark-mdc: 3.2.1
-      scule: 1.3.0
-      shiki: 1.22.2
-      slugify: 1.6.6
-      tar: 7.4.3
-      typescript: 5.6.3
-      ufo: 1.5.4
-      unified: 11.0.5
-      unist-util-stringify-position: 4.0.0
-      ws: 8.18.0
-      zod: 3.23.8
-      zod-to-json-schema: 3.23.5(zod@3.23.8)
-      zod-to-ts: 1.2.0(typescript@5.6.3)(zod@3.23.8)
-    transitivePeerDependencies:
-      - bufferutil
-      - magicast
-      - rollup
-      - supports-color
-      - utf-8-validate
-      - webpack-sources
-
   '@nuxt/devalue@2.0.2': {}
 
   '@nuxt/devtools-kit@1.6.0(magicast@0.3.5)(rollup@3.29.5)(vite@5.4.10(@types/node@22.9.0)(lightningcss@1.28.1)(terser@5.36.0))':
@@ -8596,49 +8545,6 @@ snapshots:
   '@nuxtjs/mdc@0.9.2(magicast@0.3.5)(rollup@3.29.5)':
     dependencies:
       '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@3.29.5)
-      '@shikijs/transformers': 1.22.2
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      '@vue/compiler-core': 3.5.12
-      consola: 3.2.3
-      debug: 4.3.7(supports-color@9.4.0)
-      defu: 6.1.4
-      destr: 2.0.3
-      detab: 3.0.2
-      github-slugger: 2.0.0
-      hast-util-to-string: 3.0.1
-      mdast-util-to-hast: 13.2.0
-      micromark-util-sanitize-uri: 2.0.0
-      ohash: 1.1.4
-      parse5: 7.2.1
-      pathe: 1.1.2
-      property-information: 6.5.0
-      rehype-external-links: 3.0.0
-      rehype-raw: 7.0.0
-      rehype-slug: 6.0.0
-      rehype-sort-attribute-values: 5.0.1
-      rehype-sort-attributes: 5.0.1
-      remark-emoji: 5.0.1
-      remark-gfm: 4.0.0
-      remark-mdc: 3.2.1
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.1
-      scule: 1.3.0
-      shiki: 1.22.2
-      ufo: 1.5.4
-      unified: 11.0.5
-      unist-builder: 4.0.0
-      unist-util-visit: 5.0.0
-      unwasm: 0.3.9
-    transitivePeerDependencies:
-      - magicast
-      - rollup
-      - supports-color
-      - webpack-sources
-
-  '@nuxtjs/mdc@0.9.2(magicast@0.3.5)(rollup@4.24.4)':
-    dependencies:
-      '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@4.24.4)
       '@shikijs/transformers': 1.22.2
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
