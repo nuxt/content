@@ -6,21 +6,7 @@ const route = useRoute()
 const appConfig = useAppConfig()
 const colorMode = useColorMode()
 
-function mapPath(data) {
-  return data.map((item) => {
-    if (item.children) {
-      item.children = mapPath(item.children)
-    }
-    return {
-      ...item,
-      _path: item.path,
-    }
-  })
-}
-const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), {
-  default: () => [],
-  transform: mapPath,
-})
+const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
 const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('docs'))
 
 const searchTerm = ref('')
