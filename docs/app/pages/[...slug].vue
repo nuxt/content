@@ -33,7 +33,6 @@ defineOgImageComponent('Docs', {
   title: page.value.title,
 })
 
-console.log(page.value)
 const communityLinks = computed(() => [{
   icon: 'i-lucide-pencil',
   label: 'Edit this page',
