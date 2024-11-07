@@ -9,11 +9,11 @@ export interface Collections {}
 export type CollectionType = 'page' | 'data'
 
 export type CollectionSource = {
+  include: string
+  prefix?: string
+  exclude?: string[]
   repository?: string
   cwd?: string
-  path: string
-  prefix?: string
-  ignore?: string[]
 }
 
 export interface ResolvedCollectionSource extends CollectionSource {

@@ -19,8 +19,8 @@ describe('defineCollection', () => {
       type: 'page',
       source: {
         _resolved: true,
-        cwd: '',
-        path: 'pages/**',
+        include: '**',
+        cwd: '~~/content/pages',
       },
     })
 
@@ -50,9 +50,9 @@ describe('defineCollection', () => {
     const collection = defineCollection({
       type: 'page',
       source: {
-        path: 'pages/**',
+        include: 'pages/**',
         prefix: 'blog',
-        ignore: ['pages/blog/index.md'],
+        exclude: ['pages/blog/index.md'],
       },
       schema: z.object({
         customField: z.string(),
@@ -62,9 +62,10 @@ describe('defineCollection', () => {
     expect(collection).toMatchObject({
       type: 'page',
       source: {
-        path: 'pages/**',
+        include: '**',
         prefix: 'blog',
-        ignore: ['pages/blog/index.md'],
+        exclude: ['pages/blog/index.md'],
+        cwd: '~~/content/pages',
       },
     })
 
@@ -87,8 +88,8 @@ describe('defineCollection', () => {
       type: 'data',
       source: {
         _resolved: true,
-        cwd: '',
-        path: 'data/**',
+        include: '**',
+        cwd: '~~/content/data',
       },
     })
 
@@ -103,9 +104,9 @@ describe('defineCollection', () => {
     const collection = defineCollection({
       type: 'data',
       source: {
-        path: 'data/**',
+        include: 'data/**',
         prefix: 'blog',
-        ignore: ['data/blog/index.md'],
+        exclude: ['data/blog/index.md'],
       },
       schema: z.object({
         customField: z.string(),
@@ -115,9 +116,10 @@ describe('defineCollection', () => {
     expect(collection).toMatchObject({
       type: 'data',
       source: {
-        path: 'data/**',
+        include: '**',
+        cwd: '~~/content/data',
         prefix: 'blog',
-        ignore: ['data/blog/index.md'],
+        exclude: ['data/blog/index.md'],
       },
     })
   })

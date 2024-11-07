@@ -17,7 +17,7 @@ import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
-import { generateCollectionInsert, generateCollectionTableDefinition, parseSourceBase } from './utils/collection'
+import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
@@ -239,10 +239,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       await collection.source.prepare(nuxt)
     }
 
-    const { fixed, dynamic } = parseSourceBase(collection.source)
-    const cwd = join(collection.source.cwd, fixed)
-
-    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [], dot: true })
+    const cwd = collection.source.cwd
+    const _keys = await fastGlob(collection.source.include, { cwd, ignore: collection.source!.exclude || [], dot: true })
       .catch(() => [])
 
     filesCount += _keys.length

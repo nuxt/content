@@ -71,7 +71,7 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
   }
 
   if (typeof source === 'string') {
-    return defineLocalSource({ path: source })
+    return defineLocalSource({ include: source })
   }
 
   if ((source as ResolvedCollectionSource)._resolved) {
@@ -85,14 +85,6 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
   return defineLocalSource(source)
 }
 
-export function parseSourceBase(source: CollectionSource) {
-  const [fixPart, ...rest] = source.path.includes('*') ? source.path.split('*') : ['', source.path]
-  return {
-    fixed: fixPart || '',
-    dynamic: '*' + rest.join('*'),
-  }
-}
-
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
@@ -103,7 +95,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     const value = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
-    let defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
+    let defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
 
     if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
       defaultValue = JSON.stringify(defaultValue)
@@ -138,7 +130,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
   const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
   const sqlFields = sortedKeys.map((key) => {
-    const type = (collection.extendedSchema).shape[key]
+    const type = (collection.extendedSchema).shape[key]!
     const underlyingType = getUnderlyingType(type)
 
     if (key === '_id') return `${key} TEXT PRIMARY KEY`

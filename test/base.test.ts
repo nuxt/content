@@ -42,7 +42,7 @@ describe('empty', async () => {
       expect(pagesCollection).toBeDefined()
       expect(pagesCollection?.type).toBe('page')
       expect(pagesCollection?.source).toBeDefined()
-      expect(pagesCollection?.source?.path).toBe('**/*.md')
+      expect(pagesCollection?.source?.include).toBe('**/*')
     })
   })
 
