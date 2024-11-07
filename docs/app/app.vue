@@ -101,4 +101,11 @@ provide('navigation', navigation)
 :root {
   --ui-container-width: 90rem;
 }
+
+.dark {
+  --ui-bg: var(--ui-color-neutral-950);
+  --ui-bg-muted: var(--ui-color-neutral-900);
+  --ui-bg-elevated: var(--ui-color-neutral-900);
+  --ui-bg-accented: var(--ui-color-neutral-800);
+}
 </style>
