@@ -37,8 +37,8 @@ const links = computed(() => {
   return [{
     label: 'Docs',
     icon: 'i-lucide-book',
-    to: '/getting-started',
-    active: route.path.startsWith('/getting-started') || route.path.startsWith('/components'),
+    to: '/docs/getting-started',
+    active: route.path.startsWith('/docs'),
   }].filter(Boolean)
 })
 

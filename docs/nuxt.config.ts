@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': { redirect: '/getting-started', prerender: false },
+    '/': { redirect: '/docs/getting-started', prerender: false },
   },
 
   future: {
