@@ -12,24 +12,22 @@ import { resolve } from 'pathe'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { listen, type Listener } from 'listhen'
-import type { ModuleOptions } from '../types'
+import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
-import { generateCollectionInsert, parseSourceBase } from './collection'
+import { generateCollectionInsert } from './collection'
 import { parseContent } from './content'
 import { moduleTemplates } from './templates'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
+  const cwd = join(nuxt.options.rootDir, 'content')
   const db = localDatabase(options._localDatabase!.filename)
   const collections = manifest.collections
 
   const localCollections = collections.filter(c => c.source && !c.source.repository)
 
-  const watcher = chokidar.watch('.', {
-    ignoreInitial: true,
-    cwd: join(nuxt.options.rootDir, 'content'),
-  })
+  const watcher = chokidar.watch('.', { ignoreInitial: true, cwd })
 
   watcher.on('add', onChange)
   watcher.on('change', onChange)
@@ -52,13 +50,46 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     })
   }
 
+  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string) {
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE _id = '${key}'`
+    await db.exec(removeQuery)
+    if (insertQuery) {
+      await db.exec(insertQuery)
+    }
+
+    const index = manifest.dump[collection.name]?.findIndex(item => item.includes(`'${key}'`))
+    if (index && index !== -1) {
+      // Update templates to have valid dump for client-side navigation
+      if (insertQuery) {
+        manifest.dump[collection.name]?.splice(index, 1, insertQuery)
+      }
+      else {
+        manifest.dump[collection.name]?.splice(index, 1)
+      }
+
+      await updateTemplates({
+        filter: template => [
+          moduleTemplates.manifest,
+          moduleTemplates.fullCompressedDump,
+          // moduleTemplates.raw,
+        ].includes(template.filename),
+      })
+    }
+
+    websocket?.broadcast({
+      key,
+      collection: collection.name,
+      queries: insertQuery ? [removeQuery, insertQuery] : [removeQuery],
+    })
+  }
+
   async function onChange(path: string) {
-    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.path, { ignore: source!.ignore || [], dot: true }))
+    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
     if (collection) {
       logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
 
-      const { fixed } = parseSourceBase(collection.source!)
-      const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
+      const filePath = join(cwd, path).replace(collection.source!.cwd, '')
+      const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
 
       const content = await readFile(join(nuxt.options.rootDir, 'content', path), 'utf8')
       const checksum = getContentChecksum(content)
@@ -72,53 +103,24 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       const parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
 
-      const insertQuery = generateCollectionInsert(collection, parsedContent)
-      await db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)
-      await db.exec(insertQuery)
-
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 
-      const index = manifest.dump[collection.name].findIndex(item => item.includes(`'${keyInCollection}'`))
-      if (index !== -1) {
-        // Update templates to have valid dump for client-side navigation
-        manifest.dump[collection.name].splice(index, 1, insertQuery)
-        await updateTemplates({
-          filter: template => [
-            moduleTemplates.manifest,
-            moduleTemplates.fullCompressedDump,
-            // moduleTemplates.raw,
-          ].includes(template.filename),
-        })
-      }
-
-      websocket?.broadcast({
-        path,
-        collection: collection.name,
-        queries: [
-          'DELETE FROM ' + collection.tableName + ' WHERE _id = \'' + keyInCollection + '\'',
-          insertQuery,
-        ],
-      })
+      const insertQuery = generateCollectionInsert(collection, parsedContent)
+      await broadcast(collection, keyInCollection, insertQuery)
     }
   }
 
   async function onRemove(path: string) {
-    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.path, { ignore: source!.ignore || [], dot: true }))
+    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
     if (collection) {
       logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
 
-      const { fixed } = parseSourceBase(collection.source!)
-      const keyInCollection = join(collection.name, collection.source?.prefix || '', path.replace(fixed, ''))
+      const filePath = join(cwd, path).replace(collection.source!.cwd, '')
+      const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
 
-      const updateQuery = `DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`
-      await db.exec(updateQuery)
       await db.deleteDevelopmentCache(keyInCollection)
 
-      websocket?.broadcast({
-        path,
-        collection: collection.name,
-        query: updateQuery,
-      })
+      await broadcast(collection, keyInCollection)
     }
   }
 
