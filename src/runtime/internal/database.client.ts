@@ -79,7 +79,7 @@ async function loadAdapter<T>(collection: T) {
           window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
         }
         catch (error) {
-          console.log('Database integrity check failed, rebuilding database', error)
+          console.error('Database integrity check failed, rebuilding database', error)
         }
         perf.tick('Store Database')
       }
@@ -98,7 +98,7 @@ async function loadAdapter<T>(collection: T) {
         await db.exec(command)
       }
       catch (error) {
-        console.log('Error executing command', error)
+        console.error('Error executing command', error)
       }
     }
     perf.tick('Restore Dump')

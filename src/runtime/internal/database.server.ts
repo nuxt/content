@@ -46,7 +46,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
     integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
       .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
       .catch((error) => {
-        console.log('Database integrity check failed', error)
+        console.error('Database integrity check failed', error)
         checkDatabaseIntegrity[String(collection)] = true
         integrityCheckPromise[String(collection)] = null
       })
@@ -61,7 +61,6 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = 'checksum_${collection}'`).catch(() => ({ version: '' }))
-  console.log(`checkAndImportDatabaseIntegrity: ${collection}, before: ${before?.version}, now: ${integrityVersion}`)
 
   if (before?.version) {
     if (before?.version === integrityVersion) {
@@ -71,16 +70,13 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     await db.exec(`DELETE FROM ${tables.info} WHERE id = 'checksum_${collection}'`)
   }
 
-  const now = Date.now()
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
-  console.log(`loadDatabaseDump: ${Date.now() - now}ms`)
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
     await db.exec(sql).catch((err: Error) => {
       const message = err.message || 'Unknown error'
-      // console.log('Failed to execute SQL', message.split(':').pop()?.trim())
-      console.log(`Failed to execute SQL ${sql}: ${message}`)
+      console.error(`Failed to execute SQL ${sql}: ${message}`)
       // throw error
     })
   }, Promise.resolve())
