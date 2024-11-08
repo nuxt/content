@@ -4,6 +4,7 @@ import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
+import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
 import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
@@ -15,7 +16,8 @@ export function setParserOptions(opts: Partial<typeof parserOptions>) {
   parserOptions = defu(opts, parserOptions)
 }
 
-type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined>
+type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined> & { compress: boolean }
+type HighlightedNode = { type: 'element', properties?: Record<string, string | undefined> }
 
 let highlightPlugin: {
   instance: unknown
@@ -59,7 +61,31 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
       key,
       instance: rehypeHighlight,
       ...options,
-      highlighter,
+      highlighter: async (code, lang, theme, opts) => {
+        const result = await highlighter(code, lang, theme, opts)
+        const visitTree = {
+          type: 'element',
+          children: result.tree as Array<unknown>,
+        }
+        if (options.compress) {
+          const stylesMap: Record<string, string> = {}
+          visit(
+            visitTree,
+            node => !!(node as HighlightedNode).properties?.style,
+            (_node) => {
+              const node = _node as HighlightedNode
+              const style = node.properties!.style!
+              stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
+              node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
+              node.properties!.style = undefined
+            },
+          )
+
+          result.style = Object.entries(stylesMap).map(([style, cls]) => `.${cls}{${style}}`).join('') + result.style
+        }
+
+        return result
+      },
       theme: Object.fromEntries(bundledThemes),
     }
   }
@@ -76,7 +102,7 @@ export async function parseContent(key: string, content: string, collection: Res
       rehypePlugins: {
         highlight: mdcOptions.highlight === false
           ? undefined
-          : await getHighlightPluginInstance(mdcOptions.highlight || {}),
+          : await getHighlightPluginInstance({ ...mdcOptions.highlight, compress: true }),
         ...mdcOptions?.rehypePlugins,
         ...contentOptions?.rehypePlugins,
       },
