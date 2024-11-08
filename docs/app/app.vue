@@ -7,7 +7,9 @@ const appConfig = useAppConfig()
 const colorMode = useColorMode()
 
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
-const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('docs'))
+const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
+  server: false,
+})
 
 const searchTerm = ref('')
 
