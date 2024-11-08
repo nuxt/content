@@ -4,17 +4,17 @@ import type { CollectionSource, ResolvedCollectionSource } from '../types/collec
 import { downloadRepository, parseGitHubUrl } from './git'
 
 export function defineLocalSource(source: CollectionSource): ResolvedCollectionSource {
-  const { fixed, dynamic } = parseSourceBase(source)
+  const { fixed } = parseSourceBase(source)
   const resolvedSource: ResolvedCollectionSource = {
     _resolved: true,
     prefix: withoutTrailingSlash(withLeadingSlash(fixed)),
     ...source,
-    include: dynamic,
-    cwd: withoutTrailingSlash(join('~~/content/', fixed)),
+    include: source.include,
+    cwd: '',
     prepare: async (nuxt) => {
       resolvedSource.cwd = source.cwd
         ? String(source.cwd).replace(/^~~\//, nuxt.options.rootDir)
-        : join(nuxt.options.rootDir, 'content', fixed)
+        : join(nuxt.options.rootDir, 'content')
     },
   }
   return resolvedSource

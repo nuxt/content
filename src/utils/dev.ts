@@ -17,6 +17,7 @@ import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert } from './collection'
 import { parseContent } from './content'
 import { moduleTemplates } from './templates'
+import { parseSourceBase } from './source'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
@@ -87,8 +88,9 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
     if (collection) {
       logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
+      const { fixed } = parseSourceBase(collection.source!)
 
-      const filePath = join(cwd, path).replace(collection.source!.cwd, '')
+      const filePath = path.substring(fixed.length)
       const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
 
       const content = await readFile(join(nuxt.options.rootDir, 'content', path), 'utf8')
@@ -114,8 +116,9 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
     if (collection) {
       logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
+      const { fixed } = parseSourceBase(collection.source!)
 
-      const filePath = join(cwd, path).replace(collection.source!.cwd, '')
+      const filePath = path.substring(fixed.length)
       const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
 
       await db.deleteDevelopmentCache(keyInCollection)

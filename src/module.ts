@@ -27,6 +27,7 @@ import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
+import { parseSourceBase } from './utils/source'
 
 // Export public utils
 export * from './utils'
@@ -239,6 +240,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       await collection.source.prepare(nuxt)
     }
 
+    const { fixed } = parseSourceBase(collection.source)
     const cwd = collection.source.cwd
     const _keys = await fastGlob(collection.source.include, { cwd, ignore: collection.source!.exclude || [], dot: true })
       .catch(() => [])
@@ -248,8 +250,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     const list: Array<Array<string>> = []
     for await (const chunk of chunks(_keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
+        key = key.substring(fixed.length)
         const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
-        const content = await readFile(join(cwd, key), 'utf8')
+
+        const content = await readFile(join(cwd, fixed, key), 'utf8')
         const checksum = getContentChecksum(configHash + collectionHash + content)
         const cache = databaseContents[keyInCollection]
 
