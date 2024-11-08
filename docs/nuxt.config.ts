@@ -54,6 +54,22 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-07-09',
 
+  nitro: {
+    prerender: {
+      routes: ['/'],
+      crawlLinks: true,
+    },
+    cloudflare: {
+      pages: {
+        routes: {
+          exclude: [
+            '/docs/*',
+          ],
+        },
+      },
+    },
+  },
+
   hub: {
     database: true,
     cache: true,
