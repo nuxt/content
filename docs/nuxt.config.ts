@@ -28,8 +28,11 @@ export default defineNuxtConfig({
 
   content: {
     database: {
-      type: 'd1',
-      binding: 'DB',
+      // type: 'd1',
+      // binding: 'DB',
+      type: 'libsql',
+      url: process.env.TURSO_DATABASE_URL!,
+      authToken: process.env.TURSO_AUTH_TOKEN!,
     },
   },
 

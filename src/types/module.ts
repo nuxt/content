@@ -17,6 +17,18 @@ export type PostgreSQLDatabaseConfig = {
   url: string
 }
 
+export type LibSQLDatabaseConfig = {
+  type: 'libsql'
+  /**
+   * The URL of the libSQL/Turso database
+   */
+  url: string
+  /**
+   * The authentication token for the libSQL/Turso database
+   */
+  authToken: string
+}
+
 export interface ModuleOptions {
   /**
    * @private
@@ -26,7 +38,7 @@ export interface ModuleOptions {
   /**
    * Production database configuration
    */
-  database: D1DatabaseConfig | SqliteDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig
   watch?: Partial<ListenOptions> & { enabled?: boolean }
   renderer: {
     /**

@@ -78,7 +78,8 @@
     "zod-to-ts": "^1.2.0"
   },
   "peerDependencies": {
-    "pg": "*"
+    "pg": "*",
+    "@libsql/client": "*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
