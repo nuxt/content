@@ -60,15 +60,9 @@ export default defineNuxtConfig({
   },
 
   icon: {
-    customCollections: [{
-      prefix: 'custom',
-      dir: resolve('./app/assets/icons'),
-    }],
     clientBundle: {
       scan: true,
-      includeCustomCollections: true,
     },
-    provider: 'iconify',
   },
 
   image: {
