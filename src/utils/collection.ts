@@ -55,11 +55,11 @@ export function resolveCollections(collections: Record<string, DefinedCollection
     source: undefined,
     schema: z.object({
       id: z.string(),
-      value: z.string(),
+      version: z.string(),
     }),
     extendedSchema: z.object({
       id: z.string(),
-      value: z.string(),
+      version: z.string(),
     }),
     jsonFields: [],
   }
