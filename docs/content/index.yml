@@ -74,7 +74,7 @@ sections:
     code: |
       ::code-group
 
-      ```md [content/index.md]
+      ```mdc [content/index.md]
       ---
       title: Nuxt Content
       description: An open source blog theme powered by Nuxt.
