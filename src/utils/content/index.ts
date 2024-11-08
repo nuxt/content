@@ -88,8 +88,8 @@ export async function parseContent(key: string, content: string, collection: Res
     },
   })
 
-  const { id: _id, ...parsedContentFields } = parsedContent
-  const result = { _id } as typeof collection.extendedSchema._type
+  const { id: id, ...parsedContentFields } = parsedContent
+  const result = { id } as typeof collection.extendedSchema._type
   const meta = {} as Record<string, unknown>
 
   const collectionKeys = Object.keys(collection.extendedSchema.shape)

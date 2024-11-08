@@ -51,7 +51,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   }
 
   async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE _id = '${key}'`
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}'`
     await db.exec(removeQuery)
     if (insertQuery) {
       await db.exec(insertQuery)
@@ -96,7 +96,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
 
       if (localCache && localCache.checksum === checksum) {
-        db.exec(`DELETE FROM ${collection.tableName} WHERE _id = '${keyInCollection}'`)
+        db.exec(`DELETE FROM ${collection.tableName} WHERE id = '${keyInCollection}'`)
         db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
         return
       }

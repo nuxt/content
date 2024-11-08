@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
-import { generateCollectionInsert, defineCollection, resolveCollection } from '../../src/utils/collection'
-import { getTableName } from '../utils/database'
+import { generateCollectionInsert, defineCollection, resolveCollection, getTableName } from '../../src/utils/collection'
 
 describe('generateCollectionInsert', () => {
   test('Respect Schema\'s default values', () => {
@@ -16,7 +15,7 @@ describe('generateCollectionInsert', () => {
       }),
     }))!
     const sql = generateCollectionInsert(collection, {
-      _id: 'foo.md',
+      id: 'foo.md',
       stem: 'foo',
       extension: 'md',
       meta: {},
@@ -41,7 +40,7 @@ describe('generateCollectionInsert', () => {
       }),
     }))!
     const sql = generateCollectionInsert(collection, {
-      _id: 'foo.md',
+      id: 'foo.md',
       stem: 'foo',
       extension: 'md',
       meta: {},

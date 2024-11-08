@@ -213,7 +213,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     contentBuild: options.build?.markdown,
   })
 
-  const infoCollection = collections.find(c => c.name === '_info')!
+  const infoCollection = collections.find(c => c.name === 'info')!
 
   const startTime = performance.now()
   let filesCount = 0
@@ -221,9 +221,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let parsedFilesCount = 0
   // Create database dump
   for await (const collection of collections) {
-    if (collection.name === '_info') {
+    if (collection.name === 'info') {
       continue
     }
+    const collectionHash = hash(collection)
     collectionDump[collection.name] = []
     // Collection table definition
     collectionDump[collection.name]!.push(
@@ -249,7 +250,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       await Promise.all(chunk.map(async (key) => {
         const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
         const content = await readFile(join(cwd, key), 'utf8')
-        const checksum = getContentChecksum(configHash + content)
+        const checksum = getContentChecksum(configHash + collectionHash + content)
         const cache = databaseContents[keyInCollection]
 
         let parsedContent
@@ -274,14 +275,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     collectionDump[collection.name]!.push(
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      `DELETE FROM ${infoCollection.tableName} WHERE _id = 'checksum_${collection.name}'`,
-      generateCollectionInsert(infoCollection, { _id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+      `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}'`,
+      generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, value: collectionChecksum[collection.name] }),
     )
   }
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)
 
-  // Drop _info table and recreate it
+  // Drop info table and recreate it
   db.exec(`DROP TABLE IF EXISTS ${infoCollection.tableName}`)
   for (const sql of sqlDumpList) {
     db.exec(sql)

@@ -8,8 +8,8 @@ import { logger } from './dev'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
-function getTableName(name: string) {
-  return `content_${name}`
+export function getTableName(name: string) {
+  return `_content_${name}`
 }
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
@@ -45,17 +45,24 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     name,
     type: collection.type || 'page',
     tableName: getTableName(name),
-    private: name === '_info',
+    private: name === 'info',
   }
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
-  collections._info = defineCollection({
+  collections.info = {
     type: 'data',
+    source: undefined,
     schema: z.object({
-      version: z.string(),
+      id: z.string(),
+      value: z.string(),
     }),
-  })
+    extendedSchema: z.object({
+      id: z.string(),
+      value: z.string(),
+    }),
+    jsonFields: [],
+  }
 
   return Object.entries(collections)
     .map(([name, collection]) => resolveCollection(name, collection))
@@ -89,7 +96,7 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
+  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
 
   sortedKeys.forEach((key) => {
     const value = (collection.extendedSchema).shape[key]
@@ -128,12 +135,12 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
-  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
+  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
     const type = (collection.extendedSchema).shape[key]!
     const underlyingType = getUnderlyingType(type)
 
-    if (key === '_id') return `${key} TEXT PRIMARY KEY`
+    if (key === 'id') return `${key} TEXT PRIMARY KEY`
 
     let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
 
@@ -179,4 +186,14 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
   }
 
   return definition
+}
+
+function getOrderedColumns(shape: ZodRawShape) {
+  const keys = new Set([
+    shape.id ? 'id' : undefined,
+    shape.title ? 'title' : undefined,
+    ...Object.keys(shape).sort(),
+  ].filter(Boolean))
+
+  return Array.from(keys) as string[]
 }

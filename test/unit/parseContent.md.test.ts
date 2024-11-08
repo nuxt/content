@@ -27,8 +27,8 @@ describe('Parser (.md)', () => {
   test('Index file', async () => {
     const parsed = await parseContent('content/index.md', '# Index', collection, nuxtMock)
 
-    expect(parsed).toHaveProperty('_id')
-    assert(parsed._id === 'content/index.md')
+    expect(parsed).toHaveProperty('id')
+    assert(parsed.id === 'content/index.md')
 
     expect(parsed).toHaveProperty('body')
     expect(parsed.body).toHaveProperty('type', 'root')
@@ -40,8 +40,8 @@ describe('Parser (.md)', () => {
     test('Html `<code>` should render as inline code', async () => {
       const parsed = await parseContent('content/index.md', '`code`', collection, nuxtMock)
 
-      expect(parsed).toHaveProperty('_id')
-      assert(parsed._id === 'content/index.md')
+      expect(parsed).toHaveProperty('id')
+      assert(parsed.id === 'content/index.md')
       expect(parsed).toHaveProperty('body')
       expect(parsed.body).toHaveProperty('type', 'root')
       expect(parsed.body).toHaveProperty('children[0].tag', 'p')
@@ -133,8 +133,8 @@ describe('Parser (.md)', () => {
   test('comment', async () => {
     const parsed = await parseContent('content/index.md', '<!-- comment -->', collection, nuxtMock)
 
-    expect(parsed).toHaveProperty('_id')
-    assert(parsed._id === 'content/index.md')
+    expect(parsed).toHaveProperty('id')
+    assert(parsed.id === 'content/index.md')
     expect(parsed).toHaveProperty('body')
     expect(parsed.body).toHaveProperty('type', 'root')
     expect(parsed.body).toHaveProperty('children')

@@ -214,6 +214,6 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
     :prose="props.prose"
     :unwrap="props.unwrap"
     :components="componentsMap"
-    :data-content-id="debug ? value._id : undefined"
+    :data-content-id="debug ? value.id : undefined"
   />
 </template>

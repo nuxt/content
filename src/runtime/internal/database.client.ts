@@ -50,7 +50,7 @@ async function loadAdapter<T>(collection: T) {
   const dumpId = `collection_${collection}`
   let checksumState = 'matched'
   try {
-    const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables._info} where _id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
+    const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
       .shift()
 
     if (dbChecksum?.version !== checksums[String(collection)]) {
@@ -90,7 +90,7 @@ async function loadAdapter<T>(collection: T) {
 
     await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
     if (checksumState === 'mismatch') {
-      await db.exec({ sql: `DELETE FROM ${tables._info} WHERE _id = '${checksumId}'` })
+      await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
     }
 
     for (const command of dump) {
