@@ -63,7 +63,7 @@ sections:
         icon: i-lucide-code-xml
     links:
       - label: Learn more about MDC
-        to: /docs/usage/markdown#mdc-syntax
+        to: /docs/files/markdown#mdc-syntax
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
