@@ -1,28 +1,15 @@
 <script setup lang="ts">
-import colors from 'tailwindcss/colors'
 import type { NuxtError } from '#app'
 
 const props = defineProps<{
   error: NuxtError
 }>()
 
-const route = useRoute()
-const appConfig = useAppConfig()
-const colorMode = useColorMode()
-
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
 const { data: files } = await useAsyncData('files', () => queryCollectionSearchSections('docs', { ignoredTags: ['style'] }))
 
-const color = computed(() => colorMode.value === 'dark' ? colors[appConfig.ui.colors.neutral as keyof typeof colors][900] : 'white')
-
-const links = computed(() => {
-  return [{
-    label: 'Docs',
-    icon: 'i-lucide-book',
-    to: '/docs/getting-started',
-    active: route.path.startsWith('/docs'),
-  }].filter(Boolean)
-})
+const links = useNavLinks()
+const color = useThemeColor()
 
 useHead({
   meta: [

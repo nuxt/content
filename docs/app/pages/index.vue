@@ -42,6 +42,8 @@ if (!page.value) {
       :ui="{
         title: 'font-semibold lg:text-4xl',
         featureLeadingIcon: 'text-[var(--ui-text-highlighted)]',
+        container: section.code ? 'lg:items-start' : '',
+        wrapper: section.code ? 'pt-10' : '',
         ...(section.ui || {}),
       }"
     >

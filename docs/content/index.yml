@@ -8,7 +8,7 @@ hero:
   links:
     - label: Get Started
       trailingIcon: i-lucide-arrow-right
-      to: /docs/getting-started
+      to: /docs/getting-started/installation
     - label: Open Visual Editor
       to: https://nuxt.studio
       target: _blank
@@ -67,39 +67,57 @@ sections:
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
-      - label: Watch 3min demo
-        trailingIcon: i-lucide-circle-play
-        color: neutral
-        variant: ghost
     code: |
       ::code-group
+      :::preview-card{label="Preview" icon="i-lucide-eye"}
+        ::example-landing-hero
+        ---
+        image: /images/everest.jpg
+        ---
+        #title
+        The Everest.
 
+        #description
+        The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+        ::
+      :::
       ```mdc [content/index.md]
       ---
-      title: Nuxt Content
-      description: An open source blog theme powered by Nuxt.
+      title: The Mountains Website
+      description: A website about the most iconic mountains in the world.
       ---
 
       ::landing-hero
       ---
-      image: /images/mountain.png
+      image: /images/everest.png
       ---
       #title
-      Welcome to Alpine
+      The Everest.
 
       #description
-      An [open source blog theme](https://github.com/nuxt-themes/alpine) powered by [Nuxt Content](https://content.nuxtjs.org), editable on [Nuxt Studio](https://nuxt.studio).
+      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
       ::
       ```
 
       ```vue [components/LandingHero.vue]
+      <script setup lang="ts">
+      defineProps<{ image: string }>()
+      </script>
+
       <template>
-        <div>
-          <h1>{{ title }}</h1>
-        </div>
+        <section class="flex items-center gap-12">
+          <div class="flex flex-col gap-2">
+            <h1 class="text-4xl">
+              <MDCSlot unwrap="p" />
+            </h1>
+            <div class="text-base text-gray-500 dark:text-gray-400">
+              <slot name="description" />
+            </div>
+          </div>
+          <img :src="image" class="w-1/2 rounded-lg">
+        </section>
       </template>
       ```
-
       ::
   - title: Query with [Type-Safety]{class="text-[var(--ui-secondary)]"}
     description: Define your content structure with collections and query them with schema validation and full type-safety.
@@ -112,37 +130,47 @@ sections:
       - title: Get auto-completion in your Vue files
         icon: i-lucide-text-cursor
     links:
-      - label: Learn more about query
-        to: /docs/utils/query-collection
+      - label: Learn more about content collections
+        to: /docs/collections/collections
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
     code: |
       ::code-group
-
       ```vue [pages/blog.vue]
       <script setup lang="ts">
-      const { data: posts } = await useAsyncData('posts', () => {
-        return queryCollection('blog')
-          .order('date', 'DESC')
-          .select('title', 'path', 'description')
-          .all()
+      const { data: posts } = await useAsyncData('blog', () => {
+        return queryCollection('blog').all()
       })
       </script>
 
       <template>
-        <div v-for="post in posts" :key="post.path">
-          <h2>{{ doc.title }}</div>
-          <p>{{ doc.description }}</p>
-          <NuxtLink :to="doc.path">Read post →</NuxtLink>
+        <div>
+          <h1>Blog</h1>
+          <ul>
+            <li v-for="post in posts" :key="post.id">
+              <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
+            </li>
+          </ul>
         </div>
       </template>
       ```
 
       ```ts [content.config.ts]
-      export default defineContent({
-        collections: ['blog'],
-      })
+      import { defineCollection, z } from '@nuxt/content'
+
+      export const collections = {
+        blog: defineCollection({
+          source: 'blog/*.md',
+          type: 'page',
+          // Define custom schema for docs collection
+          schema: z.object({
+            tags: z.array(z.string()),
+            image: z.string(),
+            date: z.Date()
+          })
+        })
+      }
       ```
 
       ::
@@ -169,7 +197,7 @@ sections:
   - title: Add a git-based CMS to your Nuxt project.
     links:
       - label: Start reading docs
-        to: /docs/getting-started
+        to: /docs/getting-started/installation
         trailingIcon: i-lucide-arrow-right
       - label: Open Visual Editor
         to: https://nuxt.studio
