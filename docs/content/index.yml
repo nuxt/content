@@ -1,6 +1,6 @@
 hero:
   title: The git-based CMS for<br> Nuxt projects.
-  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then easily import and display it in their application.
+  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then query and display it in their application.
   image:
     dark: /home/hero-dark.svg
     light: /home/hero-light.svg
@@ -30,28 +30,28 @@ sections:
         description: Use Vue components in Markdown files, with props, slots and nested components.
       - title: Code highlighting
         icon: i-lucide-list-minus
-        description: Display beautiful code blocks on your website with the Shiki integration supporting VS Code.
-      - title: Visual editor
+        description: Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
+      - title: Visual Editor
         icon: i-lucide-mouse-pointer-click
-        description: Let your team edit your Nuxt Content project with a visual editor.
+        description: Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
       - title: Navigation Generation
         icon: i-lucide-panel-left
-        description: Get your content structure in a structured object and display a navigation in minutes.
-      - title: Prose Component
+        description: Generate a structured object from your content files and display a navigation menu in minutes.
+      - title: Prose Components
         icon: i-lucide-heading-1
-        description: Easily drop in components to render different parts of your Markdown content.
+        description: Customize HTML typography tags with Vue components to give your content a consistent style.
       - title: Deploy everywhere
         icon: i-lucide-globe
         description: Nuxt Content works on all hosting providers, static, server, serverless & edge.
   - title: Everything you need for content management
-    description: Combine file-based simplicity with Vue component power. Build any content-rich website, from documentation to complex applications.
+    description: Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
     class: '-mb-24 sm:-mb-32'
     image:
       dark: /home/features-dark.svg
       light: /home/features-light.svg
       class: 'size-full lg:h-full max-w-[calc(100%-2rem)] absolute top-0 inset-x-4'
   - title: Markdown meets [Vue]{class="text-[var(--ui-primary)]"}
-    description: We invented the MDC syntax to let you use your Vue components with props and slots inside your Markdown files.
+    description: We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
     orientation: horizontal
     reverse: true
     features:
