@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import type { NavigationMenuItem } from '@nuxt/ui'
+// import type { NavigationMenuItem } from '@nuxt/ui'
 
-const props = defineProps<{
-  links: NavigationMenuItem[]
-}>()
+// const props = defineProps<{
+//   links: NavigationMenuItem[]
+// }>()
 
 const config = useRuntimeConfig().public
 
