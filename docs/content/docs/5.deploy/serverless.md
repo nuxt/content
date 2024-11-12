@@ -93,6 +93,10 @@ nuxi build
 
 The generated output will be compatible with the selected platform.
 
+::note
+The linked database will be loaded on the server side when booting the server. In the browser, a [WASM SQLite](/docs/advanced/database#wasm-sqlite-in-browser) database will be loaded for client-side navigation and actions.
+::
+
 ### 3. Optimize with pre-rendering
 
 As each request trigger a fresh instance of your Nuxt server, the performance of your serverless application will be impacted if you don't pre-render some pages.
