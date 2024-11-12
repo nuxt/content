@@ -1,0 +1,184 @@
+hero:
+  title: The git-based CMS for<br> Nuxt projects.
+  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then easily import and display it in their application.
+  image:
+    dark: /home/hero-dark.svg
+    light: /home/hero-light.svg
+    class: 'size-full max-w-[calc(100%-2rem)] absolute bottom-0 inset-x-4'
+  links:
+    - label: Get Started
+      trailingIcon: i-lucide-arrow-right
+      to: /docs/getting-started
+    - label: Open Visual Editor
+      to: https://nuxt.studio
+      target: _blank
+      color: neutral
+      variant: subtle
+sections:
+  - features:
+      - title: File-based CMS
+        icon: i-lucide-files
+        description: Write your content in Markdown, YML, CSV or JSON and query it in your components.
+      - title: Query Builder
+        icon: i-lucide-filter
+        description: Query your content with a MongoDB-like API to fetch the right data at the right time.
+      - title: SQLite powered
+        icon: i-lucide-database
+        description: Add custom fields to your content, making it suitable for various types of projects.
+      - title: Markdown with Vue
+        icon: i-simple-icons-markdown
+        description: Use Vue components in Markdown files, with props, slots and nested components.
+      - title: Code highlighting
+        icon: i-lucide-list-minus
+        description: Display beautiful code blocks on your website with the Shiki integration supporting VS Code.
+      - title: Visual editor
+        icon: i-lucide-mouse-pointer-click
+        description: Let your team edit your Nuxt Content project with a visual editor.
+      - title: Navigation Generation
+        icon: i-lucide-panel-left
+        description: Get your content structure in a structured object and display a navigation in minutes.
+      - title: Prose Component
+        icon: i-lucide-heading-1
+        description: Easily drop in components to render different parts of your Markdown content.
+      - title: Deploy everywhere
+        icon: i-lucide-globe
+        description: Nuxt Content works on all hosting providers, static, server, serverless & edge.
+  - title: Everything you need for content management
+    description: Combine file-based simplicity with Vue component power. Build any content-rich website, from documentation to complex applications.
+    class: '-mb-24 sm:-mb-32'
+    image:
+      dark: /home/features-dark.svg
+      light: /home/features-light.svg
+      class: 'size-full lg:h-full max-w-[calc(100%-2rem)] absolute top-0 inset-x-4'
+  - title: Markdown meets [Vue]{class="text-[var(--ui-primary)]"}
+    description: We invented the MDC syntax to let you use your Vue components with props and slots inside your Markdown files.
+    orientation: horizontal
+    reverse: true
+    features:
+      - title: Specify props with frontmatter syntax
+        icon: i-lucide-list
+      - title: Use components slots with `#`
+        icon: i-lucide-hash
+      - title: Add any other html attributes
+        icon: i-lucide-code-xml
+    links:
+      - label: Learn more about MDC
+        to: /docs/files/markdown#mdc-syntax
+        trailingIcon: i-lucide-arrow-right
+        color: neutral
+        variant: subtle
+      - label: Watch 3min demo
+        trailingIcon: i-lucide-circle-play
+        color: neutral
+        variant: ghost
+    code: |
+      ::code-group
+
+      ```mdc [content/index.md]
+      ---
+      title: Nuxt Content
+      description: An open source blog theme powered by Nuxt.
+      ---
+
+      ::landing-hero
+      ---
+      image: /images/mountain.png
+      ---
+      #title
+      Welcome to Alpine
+
+      #description
+      An [open source blog theme](https://github.com/nuxt-themes/alpine) powered by [Nuxt Content](https://content.nuxtjs.org), editable on [Nuxt Studio](https://nuxt.studio).
+      ::
+      ```
+
+      ```vue [components/LandingHero.vue]
+      <template>
+        <div>
+          <h1>{{ title }}</h1>
+        </div>
+      </template>
+      ```
+
+      ::
+  - title: Query with [Type-Safety]{class="text-[var(--ui-secondary)]"}
+    description: Define your content structure with collections and query them with schema validation and full type-safety.
+    orientation: horizontal
+    features:
+      - title: Create collections for similar content files
+        icon: i-lucide-layout-grid
+      - title: Define schema for the collection front matter
+        icon: i-lucide-circle-check
+      - title: Get auto-completion in your Vue files
+        icon: i-lucide-text-cursor
+    links:
+      - label: Learn more about query
+        to: /docs/utils/query-collection
+        trailingIcon: i-lucide-arrow-right
+        color: neutral
+        variant: subtle
+    code: |
+      ::code-group
+
+      ```vue [pages/blog.vue]
+      <script setup lang="ts">
+      const { data: posts } = await useAsyncData('posts', () => {
+        return queryCollection('blog')
+          .order('date', 'DESC')
+          .select('title', 'path', 'description')
+          .all()
+      })
+      </script>
+
+      <template>
+        <div v-for="post in posts" :key="post.path">
+          <h2>{{ doc.title }}</div>
+          <p>{{ doc.description }}</p>
+          <NuxtLink :to="doc.path">Read post →</NuxtLink>
+        </div>
+      </template>
+      ```
+
+      ```ts [content.config.ts]
+      export default defineContent({
+        collections: ['blog'],
+      })
+      ```
+
+      ::
+  - title: Make changes [like a pro]{class="text-[var(--ui-primary)]"}
+    description: Edit your Nuxt Content website with our Notion-like Markdown editor with live preview and online collaboration.
+    orientation: horizontal
+    reverse: true
+    image:
+      dark: /home/pro-dark.svg
+      light: /home/pro-light.svg
+      class: 'size-full'
+    features:
+      - title: Commit & push to GitHub with one click
+        icon: i-simple-icons-github
+      - title: Invite editors to login with Google and publish changes
+        icon: i-simple-icons-google
+      - title: Edit the content in real-time with your team
+        icon: i-lucide-users
+    links:
+      - label: Discover the Nuxt Content Editor
+        to: https://nuxt.studio
+        trailingIcon: i-lucide-arrow-right
+        color: neutral
+  - title: Add a git-based CMS to your Nuxt project.
+    links:
+      - label: Start reading docs
+        to: /docs/getting-started
+        trailingIcon: i-lucide-arrow-right
+      - label: Open Visual Editor
+        to: https://nuxt.studio
+        target: _blank
+        color: neutral
+        variant: outline
+    ui:
+      container: 'lg:py-52'
+    image:
+      dark: /home/cta-dark.svg
+      light: /home/cta-light.svg
+      class: 'size-full max-w-[calc(100%-2rem)] absolute bottom-0 inset-x-4'

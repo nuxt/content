@@ -29,5 +29,5 @@ function findJsonFields(sql: string): string[] {
 }
 
 function getCollectionName(table: string) {
-  return table.replace(/^content_/, '')
+  return table.replace(/^_content_/, '')
 }

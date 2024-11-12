@@ -29,6 +29,7 @@
   "scripts": {
     "prepack": "nuxt-module-build build",
     "docs": "nuxi dev docs",
+    "docs:build": "nuxi build docs",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
@@ -75,16 +76,18 @@
     "ufo": "^1.5.4",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
+    "unist-util-visit": "^5.0.0",
     "ws": "^8.18.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.5",
     "zod-to-ts": "^1.2.0"
   },
   "peerDependencies": {
+    "@libsql/client": "*",
     "pg": "*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241022.0",
+    "@cloudflare/workers-types": "^4.20241106.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^1.6.0",
     "@nuxt/eslint-config": "^0.6.1",
@@ -106,6 +109,8 @@
     "wrangler": "^3.85.0"
   },
   "resolutions": {
+    "@nuxt/content": "workspace:*",
+    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@3623989",
     "vue": "^3.5.12"
   },
   "packageManager": "pnpm@9.12.3"

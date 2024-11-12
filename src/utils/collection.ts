@@ -8,8 +8,8 @@ import { logger } from './dev'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
-function getTableName(name: string) {
-  return `content_${name}`
+export function getTableName(name: string) {
+  return `_content_${name}`
 }
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
@@ -45,17 +45,24 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     name,
     type: collection.type || 'page',
     tableName: getTableName(name),
-    private: name === '_info',
+    private: name === 'info',
   }
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
-  collections._info = defineCollection({
+  collections.info = {
     type: 'data',
+    source: undefined,
     schema: z.object({
+      id: z.string(),
       version: z.string(),
     }),
-  })
+    extendedSchema: z.object({
+      id: z.string(),
+      version: z.string(),
+    }),
+    jsonFields: [],
+  }
 
   return Object.entries(collections)
     .map(([name, collection]) => resolveCollection(name, collection))
@@ -71,7 +78,7 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
   }
 
   if (typeof source === 'string') {
-    return defineLocalSource({ path: source })
+    return defineLocalSource({ include: source })
   }
 
   if ((source as ResolvedCollectionSource)._resolved) {
@@ -85,25 +92,17 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
   return defineLocalSource(source)
 }
 
-export function parseSourceBase(source: CollectionSource) {
-  const [fixPart, ...rest] = source.path.includes('*') ? source.path.split('*') : ['', source.path]
-  return {
-    fixed: fixPart || '',
-    dynamic: '*' + rest.join('*'),
-  }
-}
-
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
+  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
 
   sortedKeys.forEach((key) => {
     const value = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
-    let defaultValue = value._def.defaultValue ? value._def.defaultValue() : 'NULL'
+    let defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
 
     if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
       defaultValue = JSON.stringify(defaultValue)
@@ -136,12 +135,12 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
-  const sortedKeys = Object.keys((collection.extendedSchema).shape).sort()
+  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
-    const type = (collection.extendedSchema).shape[key]
+    const type = (collection.extendedSchema).shape[key]!
     const underlyingType = getUnderlyingType(type)
 
-    if (key === '_id') return `${key} TEXT PRIMARY KEY`
+    if (key === 'id') return `${key} TEXT PRIMARY KEY`
 
     let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
 
@@ -187,4 +186,14 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
   }
 
   return definition
+}
+
+function getOrderedColumns(shape: ZodRawShape) {
+  const keys = new Set([
+    shape.id ? 'id' : undefined,
+    shape.title ? 'title' : undefined,
+    ...Object.keys(shape).sort(),
+  ].filter(Boolean))
+
+  return Array.from(keys) as string[]
 }

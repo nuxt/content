@@ -3,7 +3,7 @@ import { ContentFileExtension } from '../types/content'
 import { getEnumValues } from './zod'
 
 export const metaSchema = z.object({
-  _id: z.string(),
+  id: z.string(),
   stem: z.string(),
   extension: z.enum(getEnumValues(ContentFileExtension)),
   meta: z.record(z.string(), z.any()),

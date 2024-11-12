@@ -77,8 +77,8 @@ describe('Parser (.csv)', () => {
     test(`${csv.replace(/\n/g, '-')}`, async () => {
       const parsed = await parseContent('content/index.csv', csv, collection)
 
-      expect(parsed).toHaveProperty('_id')
-      assert(parsed._id === 'content/index.csv')
+      expect(parsed).toHaveProperty('id')
+      assert(parsed.id === 'content/index.csv')
 
       expect(parsed).toHaveProperty('body')
       expect(Array.isArray(parsed.body)).toBeTruthy()

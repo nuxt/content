@@ -24,9 +24,10 @@ export function useContentWebSocket() {
 
       const db = await loadDatabaseAdapter(data.collection)
 
-      for (const s of data.queries) {
-        await db.exec(s).catch((err: unknown) => console.log(err))
-      }
+      await data.queries.reduce(async (prev: Promise<void>, sql: string) => {
+        await prev
+        await db.exec(sql).catch((err: unknown) => console.log(err))
+      }, Promise.resolve())
 
       refreshNuxtData()
     }

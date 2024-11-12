@@ -4,7 +4,7 @@ import vercel from './vercel'
 import node from './node'
 
 export function findPreset(nuxt: Nuxt) {
-  const preset = nuxt.options.nitro.preset
+  const preset = nuxt.options.nitro.preset?.replace(/_/g, '-')
 
   if (preset === 'cloudflare-pages') {
     return cloudflare

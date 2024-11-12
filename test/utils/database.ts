@@ -1,7 +1,5 @@
 import Database from 'better-sqlite3'
 
-export const getTableName = (name: string) => `content_${name}`
-
 let _localDatabase: Database.Database | undefined
 export function localDatabase(databaseLocation: string) {
   if (!_localDatabase) {

@@ -3,14 +3,15 @@ import { defineCollection, z } from '@nuxt/content'
 const content = defineCollection({
   type: 'page',
   source: {
-    path: '**',
-    ignore: [
+    include: '**',
+    exclude: [
       'data/**',
       'pages/**',
     ],
   },
   schema: z.object({
     date: z.date(),
+    rawbody: z.string(),
   }),
 })
 
@@ -49,9 +50,9 @@ export const collections = {
     type: 'page',
     source: {
       repository: 'https://github.com/nuxt/content',
-      path: 'docs/content/**',
+      include: 'docs/content/**',
       prefix: '/content-v2',
-      ignore: [
+      exclude: [
         '**/_dir.yml',
       ],
     },
@@ -60,9 +61,9 @@ export const collections = {
     type: 'page',
     source: {
       repository: 'https://github.com/nuxt/nuxt',
-      path: 'docs/**',
+      include: 'docs/**',
       prefix: '/nuxt',
-      ignore: [
+      exclude: [
         '**/_dir.yml',
       ],
     },
@@ -71,7 +72,7 @@ export const collections = {
     type: 'page',
     source: {
       repository: 'https://github.com/vuejs/docs',
-      path: 'src/**/*.md',
+      include: 'src/**/*.md',
       prefix: '/vue',
     },
   }),

@@ -10,7 +10,7 @@ const defaultConfig = {
   collections: {
     content: defineCollection({
       type: 'page',
-      source: '**/*.md',
+      source: '**/*',
     }),
   },
 }

@@ -1,75 +1,33 @@
 <script setup lang="ts">
+import colors from 'tailwindcss/colors'
 import type { NuxtError } from '#app'
-// import type { ContentSearchFile } from '@nuxt/ui-pro'
 
-useSeoMeta({
-  title: 'Page not found',
-  description: 'We are sorry but this page could not be found.',
-})
-
-defineProps<{
+const props = defineProps<{
   error: NuxtError
 }>()
 
 const route = useRoute()
-// const colorMode = useColorMode()
-// const { branch } = useContentSource()
+const appConfig = useAppConfig()
+const colorMode = useColorMode()
 
-function mapPath(data) {
-  return data.map((item) => {
-    if (item.children) {
-      item.children = mapPath(item.children)
-    }
-    return {
-      ...item,
-      _path: item.path,
-    }
-  })
-}
-const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), {
-  default: () => [],
-  transform: mapPath,
-})
-const { data: files } = await useAsyncData('search', () => queryCollectionSearchSections('docs'))
+const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
+const { data: files } = await useAsyncData('files', () => queryCollectionSearchSections('docs', { ignoredTags: ['style'] }))
 
-// Computed
-
-// const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
+const color = computed(() => colorMode.value === 'dark' ? colors[appConfig.ui.colors.neutral as keyof typeof colors][900] : 'white')
 
 const links = computed(() => {
   return [{
     label: 'Docs',
-    icon: 'i-heroicons-book-open',
-    to: '/getting-started',
-    active: route.path.startsWith('/getting-started') || route.path.startsWith('/components'),
-  }, ...(navigation.value.find(item => item._path === '/pro')
-    ? [{
-        label: 'Pro',
-        icon: 'i-heroicons-square-3-stack-3d',
-        to: '/pro',
-        active: route.path.startsWith('/pro/getting-started') || route.path.startsWith('/pro/components') || route.path.startsWith('/pro/prose'),
-      }, {
-        label: 'Pricing',
-        icon: 'i-heroicons-credit-card',
-        to: '/pro/pricing',
-      }, {
-        label: 'Templates',
-        icon: 'i-heroicons-computer-desktop',
-        to: '/pro/templates',
-      }]
-    : []), {
-    label: 'Releases',
-    icon: 'i-heroicons-rocket-launch',
-    to: '/releases',
+    icon: 'i-lucide-book',
+    to: '/docs/getting-started',
+    active: route.path.startsWith('/docs'),
   }].filter(Boolean)
 })
-
-// Head
 
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    // { key: 'theme-color', name: 'theme-color', content: color }
+    { key: 'theme-color', name: 'theme-color', content: color },
   ],
   link: [
     { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
@@ -79,32 +37,37 @@ useHead({
   },
 })
 
-// Provide
+useSeoMeta({
+  titleTemplate: '%s - Nuxt UI v3',
+  title: String(props.error.statusCode),
+})
+
+useServerSeoMeta({
+  ogSiteName: 'Nuxt UI',
+  twitterCard: 'summary_large_image',
+})
 
 provide('navigation', navigation)
-provide('files', files)
 </script>
 
 <template>
   <UApp>
-    <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator color="#FFF" />
 
-    <Header :links="links" />
+    <AppBanner />
 
-    <UContainer>
-      <UMain>
-        <UPage>
-          <!-- <UPageError :error="error" /> -->
-        </UPage>
-      </UMain>
-    </UContainer>
+    <AppHeader :links="links" />
 
-    <Footer />
+    <UError :error="error" />
 
-    <LazyUContentSearch
-      :files="files"
-      :navigation="navigation"
-      :fuse="{ resultLimit: 42 }"
-    />
+    <AppFooter />
+
+    <ClientOnly>
+      <LazyUContentSearch
+        :files="files"
+        :navigation="navigation"
+        :fuse="{ resultLimit: 42 }"
+      />
+    </ClientOnly>
   </UApp>
 </template>

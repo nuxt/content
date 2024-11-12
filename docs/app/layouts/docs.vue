@@ -3,7 +3,7 @@ import type { ContentNavigationItem } from '@nuxt/content'
 
 const nav = inject<Ref<ContentNavigationItem[]>>('navigation')
 
-const navigation = computed(() => nav?.value.filter(item => !item._path.startsWith('/pro')))
+const navigation = computed(() => nav?.value.find(item => item.path === '/docs')?.children || [])
 </script>
 
 <template>

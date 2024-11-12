@@ -4,7 +4,8 @@ import { setup, $fetch } from '@nuxt/test-utils'
 import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
-import { localDatabase, getTableName } from './utils/database'
+import { getTableName } from '../src/utils/collection'
+import { localDatabase } from './utils/database'
 
 async function cleanup() {
   await fs.rm(fileURLToPath(new URL('./fixtures/empty/node_modules', import.meta.url)), { recursive: true, force: true })
@@ -34,7 +35,7 @@ describe('empty', async () => {
       const rootDir = fileURLToPath(new URL('./fixtures/empty', import.meta.url))
       const config = await loadContentConfig(rootDir, { defaultFallback: true })
 
-      // Pages collection + _info collection
+      // Pages collection + info collection
       expect(config.collections.length).toBe(2)
       expect(config.collections.map(c => c.name)).toContain('content')
 
@@ -42,7 +43,7 @@ describe('empty', async () => {
       expect(pagesCollection).toBeDefined()
       expect(pagesCollection?.type).toBe('page')
       expect(pagesCollection?.source).toBeDefined()
-      expect(pagesCollection?.source?.path).toBe('**/*.md')
+      expect(pagesCollection?.source?.include).toBe('**/*')
     })
   })
 
@@ -79,7 +80,7 @@ describe('empty', async () => {
 
       expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
-      // Only _info collection is inserted
+      // Only info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
     })
 
@@ -91,7 +92,7 @@ describe('empty', async () => {
 
       expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
-      // Only _info collection is inserted
+      // Only info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
     })
   })

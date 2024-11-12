@@ -10,7 +10,7 @@ const { data: post } = await useAsyncData(() => {
 <template>
   <div>
     <nuxt-link to="/">
-      <small>«Back </small>
+      <small>« Back </small>
     </nuxt-link>
     <h1>{{ post.title }}</h1>
     <ContentRenderer :value="post" />

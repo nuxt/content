@@ -4,6 +4,7 @@ import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
+import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
 import type { ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
@@ -15,7 +16,8 @@ export function setParserOptions(opts: Partial<typeof parserOptions>) {
   parserOptions = defu(opts, parserOptions)
 }
 
-type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined>
+type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined> & { compress: boolean }
+type HighlightedNode = { type: 'element', properties?: Record<string, string | undefined> }
 
 let highlightPlugin: {
   instance: unknown
@@ -24,15 +26,15 @@ let highlightPlugin: {
   highlighter: Highlighter
 }
 let highlightPluginPromise: Promise<typeof highlightPlugin>
-async function getHighlighPluginInstance(options: HighlighterOptions) {
+async function getHighlightPluginInstance(options: HighlighterOptions) {
   if (!highlightPlugin) {
-    highlightPluginPromise = highlightPluginPromise || _getHighlighPlugin(options)
+    highlightPluginPromise = highlightPluginPromise || _getHighlightPlugin(options)
     await highlightPluginPromise
   }
 
   return highlightPlugin
 }
-async function _getHighlighPlugin(options: HighlighterOptions) {
+async function _getHighlightPlugin(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
   if (!highlightPlugin || highlightPlugin.key !== key) {
     const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', 'typescript', ...(options.langs || [])]))
@@ -59,7 +61,31 @@ async function _getHighlighPlugin(options: HighlighterOptions) {
       key,
       instance: rehypeHighlight,
       ...options,
-      highlighter,
+      highlighter: async (code, lang, theme, opts) => {
+        const result = await highlighter(code, lang, theme, opts)
+        const visitTree = {
+          type: 'element',
+          children: result.tree as Array<unknown>,
+        }
+        if (options.compress) {
+          const stylesMap: Record<string, string> = {}
+          visit(
+            visitTree,
+            node => !!(node as HighlightedNode).properties?.style,
+            (_node) => {
+              const node = _node as HighlightedNode
+              const style = node.properties!.style!
+              stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
+              node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
+              node.properties!.style = undefined
+            },
+          )
+
+          result.style = Object.entries(stylesMap).map(([style, cls]) => `.${cls}{${style}}`).join('') + result.style
+        }
+
+        return result
+      },
       theme: Object.fromEntries(bundledThemes),
     }
   }
@@ -76,7 +102,7 @@ export async function parseContent(key: string, content: string, collection: Res
       rehypePlugins: {
         highlight: mdcOptions.highlight === false
           ? undefined
-          : await getHighlighPluginInstance(mdcOptions.highlight || {}),
+          : await getHighlightPluginInstance({ ...mdcOptions.highlight, compress: true }),
         ...mdcOptions?.rehypePlugins,
         ...contentOptions?.rehypePlugins,
       },
@@ -88,8 +114,8 @@ export async function parseContent(key: string, content: string, collection: Res
     },
   })
 
-  const { id: _id, ...parsedContentFields } = parsedContent
-  const result = { _id } as typeof collection.extendedSchema._type
+  const { id: id, ...parsedContentFields } = parsedContent
+  const result = { id } as typeof collection.extendedSchema._type
   const meta = {} as Record<string, unknown>
 
   const collectionKeys = Object.keys(collection.extendedSchema.shape)
@@ -105,8 +131,9 @@ export async function parseContent(key: string, content: string, collection: Res
   result.meta = meta
 
   // Storing `content` into `rawbody` field
-  // This allow users to define `rowbody` field in collection schema and access to raw content
-  result.rawbody = content
+  if (collectionKeys.includes('rawbody')) {
+    result.rawbody = result.rawbody ?? content
+  }
 
   return result
 }

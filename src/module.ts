@@ -18,7 +18,7 @@ import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import { version } from '../package.json'
-import { generateCollectionInsert, generateCollectionTableDefinition, parseSourceBase } from './utils/collection'
+import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
@@ -29,6 +29,7 @@ import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupStudio } from './utils/studio/module'
+import { parseSourceBase } from './utils/source'
 
 // Export public utils
 export * from './utils'
@@ -122,7 +123,6 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
-      { name: 'useContentHead', from: resolver.resolve('./runtime/composables/useContentHead') },
     ])
     addServerImports([
       { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
@@ -234,7 +234,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     contentBuild: options.build?.markdown,
   })
 
-  const infoCollection = collections.find(c => c.name === '_info')!
+  const infoCollection = collections.find(c => c.name === 'info')!
 
   const startTime = performance.now()
   let filesCount = 0
@@ -243,9 +243,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
   // Create database dump
   for await (const collection of collections) {
-    if (collection.name === '_info') {
+    if (collection.name === 'info') {
       continue
     }
+    const collectionHash = hash(collection)
     collectionDump[collection.name] = []
     // Collection table definition
     collectionDump[collection.name]!.push(
@@ -260,10 +261,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       await collection.source.prepare(nuxt)
     }
 
-    const { fixed, dynamic } = parseSourceBase(collection.source)
-    const cwd = join(collection.source.cwd, fixed)
-
-    const _keys = await fastGlob(dynamic, { cwd, ignore: collection.source!.ignore || [], dot: true })
+    const { fixed } = parseSourceBase(collection.source)
+    const cwd = collection.source.cwd
+    const _keys = await fastGlob(collection.source.include, { cwd, ignore: collection.source!.exclude || [], dot: true })
       .catch(() => [])
 
     filesCount += _keys.length
@@ -271,9 +271,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     const list: Array<Array<string>> = []
     for await (const chunk of chunks(_keys, 25)) {
       await Promise.all(chunk.map(async (key) => {
+        key = key.substring(fixed.length)
         const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
-        const content = await readFile(join(cwd, key), 'utf8')
-        const checksum = getContentChecksum(configHash + content)
+
+        const content = await readFile(join(cwd, fixed, key), 'utf8')
+        const checksum = getContentChecksum(configHash + collectionHash + content)
         const cache = databaseContents[keyInCollection]
 
         let parsedContent
@@ -298,14 +300,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     collectionDump[collection.name]!.push(
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      `DELETE FROM ${infoCollection.tableName} WHERE _id = 'checksum_${collection.name}'`,
-      generateCollectionInsert(infoCollection, { _id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+      `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}'`,
+      generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
     )
   }
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)
 
-  // Drop _info table and recreate it
+  // Drop info table and recreate it
   db.exec(`DROP TABLE IF EXISTS ${infoCollection.tableName}`)
   for (const sql of sqlDumpList) {
     db.exec(sql)

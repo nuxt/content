@@ -36,6 +36,18 @@ export interface StudioOptions {
   gitInfo?: GitInfo
 }
 
+export type LibSQLDatabaseConfig = {
+  type: 'libsql'
+  /**
+   * The URL of the libSQL/Turso database
+   */
+  url: string
+  /**
+   * The authentication token for the libSQL/Turso database
+   */
+  authToken: string
+}
+
 export interface ModuleOptions {
   /**
    * @private
@@ -46,7 +58,7 @@ export interface ModuleOptions {
    * Production database configuration
    * @default { type: 'sqlite', filename: './contents.sqlite' }
    */
-  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig
   /**
    * Studio mode configuration
    */

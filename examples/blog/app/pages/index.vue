@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { data: posts } = await useAsyncData(() => {
   return queryCollection('blog')
-    .select('title', 'description', 'path', '_id', 'date')
+    .select('title', 'description', 'path', 'id', 'date')
     .order('date', 'DESC')
     .all()
 })
@@ -12,7 +12,7 @@ const { data: posts } = await useAsyncData(() => {
     <h1>Blog</h1>
     <p
       v-for="post in posts"
-      :key="post._id"
+      :key="post.id"
     >
       >
       <nuxt-link :to="post.path">
