@@ -123,7 +123,7 @@ sections:
       ```vue [pages/blog.vue]
       <script setup lang="ts">
       const { data: posts } = await useAsyncData('posts', () => {
-        return queryContent('blog')
+        return queryCollection('blog')
           .order('date', 'DESC')
           .select('title', 'path', 'description')
           .all()
