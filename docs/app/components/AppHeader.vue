@@ -10,7 +10,7 @@ const config = useRuntimeConfig().public
 
 const nav = inject<Ref<ContentNavigationItem[]>>('navigation')
 
-const items = computed(() => props.links.map(({ icon, ...link }) => link))
+// const items = computed(() => props.links.map(({ icon, ...link }) => link))
 const navigation = computed(() => nav?.value.find(item => item.path === '/docs')?.children || [])
 
 defineShortcuts({
