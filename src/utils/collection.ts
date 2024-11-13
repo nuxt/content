@@ -1,7 +1,7 @@
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
 import { defineLocalSource, defineGitHubSource } from './source'
-import { metaSchema, pageSchema } from './schema'
+import { getOrderedSchemaKeys, metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
 import { logger } from './dev'
@@ -96,7 +96,7 @@ function resolveSource(source: string | CollectionSource | undefined): ResolvedC
 export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
+  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
 
   sortedKeys.forEach((key) => {
     const value = (collection.extendedSchema).shape[key]
@@ -135,7 +135,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
-  const sortedKeys = getOrderedColumns((collection.extendedSchema).shape)
+  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
     const type = (collection.extendedSchema).shape[key]!
     const underlyingType = getUnderlyingType(type)
@@ -186,14 +186,4 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
   }
 
   return definition
-}
-
-function getOrderedColumns(shape: ZodRawShape) {
-  const keys = new Set([
-    shape.id ? 'id' : undefined,
-    shape.title ? 'title' : undefined,
-    ...Object.keys(shape).sort(),
-  ].filter(Boolean))
-
-  return Array.from(keys) as string[]
 }

@@ -6,7 +6,7 @@ import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
-import type { ResolvedCollection } from '../types/collection'
+import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
@@ -180,6 +180,7 @@ export const studioTemplate = (collections: ResolvedCollection[], gitInfo: GitIn
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         name: collection.name,
+        pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
         // Remove source from collection meta if it's a remote collection
         source: collection.source?.repository ? undefined : collection.source,
@@ -189,7 +190,7 @@ export const studioTemplate = (collections: ResolvedCollection[], gitInfo: GitIn
         tableDefinition: generateCollectionTableDefinition(collection),
       }
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as Record<string, CollectionInfo>)
 
     const appConfigMeta = {
       properties: schema.properties?.appConfig,

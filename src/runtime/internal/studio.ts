@@ -2,12 +2,14 @@ import { createApp } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { AppConfig } from 'nuxt/schema'
 import type { TransformedContent } from '@nuxt/content'
-import micromatch from 'micromatch'
 import StudioPreviewMode from '../components/StudioPreviewMode.vue'
 import type { FileChangeMessagePayload, PreviewFile, PreviewResponse } from '../../types/studio'
+import type { CollectionInfo } from '../../types/collection'
 import { createSingleton, deepAssign, deepDelete, defu, mergeDraft, StudioConfigFiles } from '../../utils/studio'
 import { loadDatabaseAdapter } from '../internal/database.client'
-import { callWithNuxt, refreshNuxtData } from '#app'
+import { getOrderedSchemaKeys } from '../../utils/schema'
+import { getCollectionByPath, v2ToV3ParsedFile } from './v2-compatibility'
+import { callWithNuxt } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, ref, toRaw, useRoute, useRouter } from '#imports'
 import { collections } from '#content/studio'
 
@@ -32,44 +34,20 @@ const syncPreview = async (data: PreviewResponse) => {
   // return true
 }
 
-const fileCollection = (file: PreviewFile) => {
-  return Object.values(collections).find((collection) => {
-    if (!collection.source) {
+const syncPreviewFiles = async (files: PreviewFile[]) => {
+  files.forEach(async (file) => {
+    // Fetch corresponding collection
+    const collection = getCollectionByPath(file.path, collections)
+    if (!collection) {
+      console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping insertion.`)
       return
     }
 
-    return micromatch.isMatch(file.path, collection.source.path, { ignore: collection.source.ignore || [], dot: true })
-  })
+    // Convert v2 parsed file to v3 format
+    const v3File = v2ToV3ParsedFile(file, collection)
 
-  // if (collection) {
-  //   await loadDatabaseAdapter(collection.name)
-  // }
-}
-
-const syncPreviewFiles = async (files: PreviewFile[]) => {
-  const insertV2Content = async (file: PreviewFile) => {
-    // const internalKeys = ['_id', 'stem', 'meta', 'extension']
-    const mappedFile = {
-      _id: file.parsed._id,
-      stem: file.parsed._stem,
-      meta: {},
-      extension: file.parsed._extension,
-      path: file.parsed._path,
-    }
-
-    const collection = fileCollection(file)
-    const properties = collection.schema.definitions[collection.name].properties
-
-    Object.keys(file.parsed).forEach((key) => {
-      if (key in properties) {
-        mappedFile[key] = file.parsed[key]
-      }
-      else {
-        mappedFile.meta[key] = file.parsed[key]
-      }
-    })
-
-    const query = generateCollectionInsert(collection, mappedFile)
+    // Generate insert query
+    const query = generateCollectionInsert(collection, v3File)
 
     // Load db
     const db = loadDatabaseAdapter(collection.name)
@@ -81,11 +59,11 @@ const syncPreviewFiles = async (files: PreviewFile[]) => {
     await db.exec(query)
 
     // window.db = db
-  }
 
-  await insertV2Content(files[0])
+    console.log(`Studio Preview: Inserted file: ${file.path}`)
+  })
 
-  refreshNuxtData()
+  requestRerender()
 
   // TODO Remove previous preview data
   // removeAllContentItems(previewToken)
@@ -295,31 +273,15 @@ export function initIframeCommunication() {
 }
 
 async function requestRerender() {
-  // TODO discuss with Ahad
-  // if (contentConfig?.documentDriven) {
-  //   const { pages } = callWithNuxt(nuxtApp, useContentState)
-
-  //   const contents = await Promise.all(Object.keys(pages.value).map(async (key) => {
-  //     return await findContentItem(pages.value[key]?._id ?? key)
-  //   }))
-
-  //   pages.value = contents.reduce((acc, item, index) => {
-  //     if (item) {
-  //       acc[Object.keys(pages.value)[index]] = item
-  //     }
-  //     return acc
-  //   }, {} as Record<string, ParsedContent>)
-  // }
-  // Directly call `app:data:refresh` hook to refresh all data (!Calling `refreshNuxtData` causing some delay in data refresh!)
   await nuxtApp.hooks.callHookParallel('app:data:refresh')
 }
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: any, data: Record<string, unknown>) {
+export function generateCollectionInsert(collection: CollectionInfo, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const properties = collection.schema.definitions[collection.name].properties
-  const sortedKeys = Object.keys(properties).sort()
+  const sortedKeys = getOrderedSchemaKeys(properties)
 
   sortedKeys.forEach((key) => {
     const value = (properties)[key]

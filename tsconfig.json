@@ -4,5 +4,8 @@
     "dist",
     "node_modules",
     "docs"
-  ]
+  ],
+  "compilerOptions": {
+    "strictNullChecks": false
+  }
 }

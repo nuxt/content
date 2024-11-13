@@ -34,19 +34,20 @@ export default defineNuxtConfig({
       // url: process.env.TURSO_DATABASE_URL!,
       // authToken: process.env.TURSO_AUTH_TOKEN!,
     },
-  },
-
-  mdc: {
-    highlight: {
-      noApiRoute: false,
-    },
     studio: {
       enabled: true,
       dev: true,
       gitInfo: {
         owner: 'larbish',
         name: 'starter-larb',
+        url: 'https://github.com/larbish/starter-larb',
       },
+    },
+  },
+
+  mdc: {
+    highlight: {
+      noApiRoute: false,
     },
   },
 

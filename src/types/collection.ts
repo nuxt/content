@@ -67,6 +67,7 @@ export interface CollectionInfo {
   type: CollectionType
   schema: JsonSchema7Type
   jsonFields: string[]
+  tableDefinition?: string
 }
 
 export interface CollectionItemBase {

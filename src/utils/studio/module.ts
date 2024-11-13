@@ -9,7 +9,7 @@ import {
 } from '@nuxt/kit'
 import type { Schema } from 'untyped'
 import type { Nuxt } from '@nuxt/schema'
-import { getGitEnv, getLocalGitInfo } from '../git'
+import { getGitEnv, getLocalGitInfo, type GitInfo } from '../git'
 import type { ModuleOptions } from '../../types'
 import { studioTemplate } from '../templates'
 import type { Manifest } from '../../types/manifest'
@@ -20,7 +20,7 @@ export async function setupStudio(options: ModuleOptions, nuxt: Nuxt, resolver: 
   const { resolve } = resolver
   const apiURL = process.env.STUDIO_API || 'https://api.nuxt.studio'
   const iframeMessagingAllowedOrigins = process.env.IFRAME_MESSAGING_ALLOWED_ORIGINS
-  const gitInfo = studioOptions.gitInfo || await getLocalGitInfo(nuxt.options.rootDir) || getGitEnv() || {}
+  const gitInfo = studioOptions.gitInfo || await getLocalGitInfo(nuxt.options.rootDir) || getGitEnv() || {} as GitInfo
 
   // Public runtimeConfig
   nuxt.options.runtimeConfig.public.studio = { apiURL, iframeMessagingAllowedOrigins }

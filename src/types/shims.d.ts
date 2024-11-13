@@ -1,4 +1,4 @@
-import type { DatabaseAdapter } from './types/database'
+import type { DatabaseAdapter } from './database'
 
 declare module '#content/manifest' {
   const manifest: Record<string, unknown>
@@ -25,4 +25,10 @@ declare module '#content/adapter' {
 
 declare module '#content/collections' {
   export const collections: Record<string, unknown>
+}
+
+declare module '#content/studio' {
+  export const collections: Record<string, unknown>
+  export const gitInfo: GitInfo
+  export const appConfigSchema: Record<string, unknown>
 }
