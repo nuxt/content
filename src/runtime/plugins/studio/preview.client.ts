@@ -1,5 +1,5 @@
 import { mountPreviewUI, initIframeCommunication } from '../../internal/studio'
-import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, refreshNuxtData } from '#imports'
+import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const studioConfig = useRuntimeConfig().public.studio || {}

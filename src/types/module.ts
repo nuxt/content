@@ -19,6 +19,18 @@ export type PostgreSQLDatabaseConfig = {
   url: string
 }
 
+export type LibSQLDatabaseConfig = {
+  type: 'libsql'
+  /**
+   * The URL of the libSQL/Turso database
+   */
+  url: string
+  /**
+   * The authentication token for the libSQL/Turso database
+   */
+  authToken: string
+}
+
 export interface StudioOptions {
   /**
    * Enable Studio in production
@@ -34,18 +46,6 @@ export interface StudioOptions {
    * Override Git information for Studio preview validation
    */
   gitInfo?: GitInfo
-}
-
-export type LibSQLDatabaseConfig = {
-  type: 'libsql'
-  /**
-   * The URL of the libSQL/Turso database
-   */
-  url: string
-  /**
-   * The authentication token for the libSQL/Turso database
-   */
-  authToken: string
 }
 
 export interface ModuleOptions {

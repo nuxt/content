@@ -1,3 +1,4 @@
+import { dirname, parse, join } from 'pathe'
 import { createApp } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { AppConfig } from 'nuxt/schema'
@@ -9,7 +10,7 @@ import { createSingleton, deepAssign, deepDelete, defu, mergeDraft, StudioConfig
 import { loadDatabaseAdapter } from '../internal/database.client'
 import { getOrderedSchemaKeys } from '../../utils/schema'
 import { getCollectionByPath, v2ToV3ParsedFile } from './v2-compatibility'
-import { callWithNuxt } from '#app'
+import { callWithNuxt, refreshNuxtData } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, ref, toRaw, useRoute, useRouter } from '#imports'
 import { collections } from '#content/studio'
 
@@ -20,6 +21,7 @@ import { collections } from '#content/studio'
 const initialAppConfig = createSingleton(() => JSON.parse(JSON.stringify((useAppConfig()))))
 
 const syncPreview = async (data: PreviewResponse) => {
+  console.log('data :', data)
   const mergedFiles = mergeDraft(data.files, data.additions, data.deletions)
 
   // // Handle content files
@@ -29,6 +31,7 @@ const syncPreview = async (data: PreviewResponse) => {
   // const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
   // syncPreviewAppConfig(appConfig?.parsed)
 
+  refreshNuxtData()
   // requestRerender()
 
   // return true
@@ -46,6 +49,8 @@ const syncPreviewFiles = async (files: PreviewFile[]) => {
     // Convert v2 parsed file to v3 format
     const v3File = v2ToV3ParsedFile(file, collection)
 
+    console.log('v3File :', v3File)
+
     // Generate insert query
     const query = generateCollectionInsert(collection, v3File)
 
@@ -62,21 +67,6 @@ const syncPreviewFiles = async (files: PreviewFile[]) => {
 
     console.log(`Studio Preview: Inserted file: ${file.path}`)
   })
-
-  requestRerender()
-
-  // TODO Remove previous preview data
-  // removeAllContentItems(previewToken)
-
-  // TODO Set preview meta
-  // setPreviewMetaItems(previewToken, files)
-
-  // TODO Handle content files
-  // await Promise.all(
-  //   files.map((file) => {
-  //     updateContentItem(previewToken, file)
-  //   }),
-  // )
 }
 
 const syncPreviewAppConfig = (appConfig?: any) => {
@@ -155,32 +145,51 @@ export function initIframeCommunication() {
       return
     }
 
+    console.log('------------ MESSAGE RECEIVED ------------')
+    console.log('TYPE :', e.data.type)
+    console.log('PAYLOAD :', e.data.payload)
+    console.log('------------------------------------------')
     const { type, payload = {} } = e.data || {}
+
+    // Removing `content/` prefix only if path is starting with content/
+    const path = payload.path?.startsWith('content/') ? payload.path.split('/').slice(1).join('/') : payload.path
+
+    // Generate stem (path without extension)
+    const stem = join(dirname(path), parse(path).name)
 
     switch (type) {
       case 'nuxt-studio:editor:file-selected': {
-        // TODO
-        const content: TransformedContent = null
-        // const content = await findContentItem(payload.path)
-        if (!content || content._partial) {
-          // Do not navigate to another page if content is not found
-          // This makes sure that user stays on the same page when navigation through directories in the editor
-          // Also, We should not navigate if content is a partial
+        const collection = getCollectionByPath(path, collections)
+        if (!collection) {
+          console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
           return
         }
 
-        // Ensure that the content is related to a valid route for non markdown files
-        if (!String(payload.path).endsWith('.md')) {
-          const resolvedRoute = router.resolve(content.path)
-          if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
-            return
-          }
+        // Only navigate to pages
+        if (collection.type !== 'page') {
+          return
+        }
+
+        const db = loadDatabaseAdapter(collection.name)
+
+        const content: TransformedContent = await db.first(`SELECT * FROM ${collection.tableName} WHERE stem = '${stem}'`)
+
+        // Do not navigate to another page if content is not found
+        // This makes sure that user stays on the same page when navigation through directories in the editor
+        if (!content) {
+          return
+        }
+
+        // Ensure that the content is related to a valid route
+        const resolvedRoute = router.resolve(content.path)
+        if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
+          return
         }
 
         // Navigate to the selected content
         if (content.path !== useRoute().path) {
-          editorSelectedPath.value = content._path!
-          router.push(content._path!)
+          editorSelectedPath.value = content.path as string
+          router.push(content.path)
         }
         break
       }
@@ -215,11 +224,11 @@ export function initIframeCommunication() {
   })
 
   nuxtApp.hook('page:finish', () => {
-    detectRenderedContents()
+    // detectRenderedContents()
 
-    if (nuxtApp.payload.prerenderedAt) {
-      requestRerender()
-    }
+    // if (nuxtApp.payload.prerenderedAt) {
+    //   requestRerender()
+    // }
   })
 
   // TODO check with ahad
@@ -229,36 +238,36 @@ export function initIframeCommunication() {
   // })
 
   // @ts-expect-error custom hook
-  // nuxtApp.hook('nuxt-studio:preview:ready', () => {
-  //   window.parent.postMessage({
-  //     type: 'nuxt-studio:preview:ready',
-  //     payload: routePayload(useRoute()),
-  //   }, '*')
+  nuxtApp.hook('nuxt-studio:preview:ready', () => {
+    window.parent.postMessage({
+      type: 'nuxt-studio:preview:ready',
+      payload: routePayload(useRoute()),
+    }, '*')
 
-  //   setTimeout(() => {
-  //     // Initial sync
-  //     detectRenderedContents()
-  //   }, 100)
-  // })
+    // setTimeout(() => {
+    //   // Initial sync
+    //   detectRenderedContents()
+    // }, 100)
+  })
 
   // Inject Utils to window
-  function detectRenderedContents() {
-    const renderedContents = Array.from(window.document.querySelectorAll('[data-content-id]'))
-      .map(el => el.getAttribute('data-content-id')!)
+  // function detectRenderedContents() {
+  //   const renderedContents = Array.from(window.document.querySelectorAll('[data-content-id]'))
+  //     .map(el => el.getAttribute('data-content-id')!)
 
-    console.log('Detect rendered contents :', renderedContents)
+  //   console.log('Detect rendered contents :', renderedContents)
 
-    const contentIds = Array
-      .from(new Set([route.meta.studio_page_contentId as string, ...renderedContents]))
-      .filter(Boolean)
+  //   const contentIds = Array
+  //     .from(new Set([route.meta.studio_page_contentId as string, ...renderedContents]))
+  //     .filter(Boolean)
 
-    if (editorSelectedPath.value === contentIds[0]) {
-      editorSelectedPath.value = ''
-      return
-    }
+  //   if (editorSelectedPath.value === contentIds[0]) {
+  //     editorSelectedPath.value = ''
+  //     return
+  //   }
 
-    window.openFileInStudio(contentIds, { navigate: true, pageContentId: route.meta.studio_page_contentId as string })
-  }
+  //   window.openFileInStudio(contentIds, { navigate: true, pageContentId: route.meta.studio_page_contentId as string })
+  // }
 
   window.openFileInStudio = (contentIds: string[], data = {}) => {
     window.parent.postMessage({
@@ -273,7 +282,7 @@ export function initIframeCommunication() {
 }
 
 async function requestRerender() {
-  await nuxtApp.hooks.callHookParallel('app:data:refresh')
+  await useNuxtApp().hooks.callHookParallel('app:data:refresh')
 }
 
 // Convert collection data to SQL insert statement

@@ -45,8 +45,6 @@ async function loadAdapter<T>(collection: T) {
     db = new sqlite3.oo1.DB()
   }
 
-  console.log('window.sessionStorage.getItem :', window.sessionStorage.getItem('previewToken'))
-
   // Do not initialize database with dump for Studio preview
   if (window.sessionStorage.getItem('previewToken')) {
     return db
@@ -102,10 +100,6 @@ async function loadAdapter<T>(collection: T) {
     }
 
     for (const command of dump) {
-      if (command.startsWith('INSERT')) {
-        continue
-      }
-
       try {
         await db.exec(command)
       }
@@ -116,10 +110,7 @@ async function loadAdapter<T>(collection: T) {
     perf.tick('Restore Dump')
   }
 
-  console.log('Initialize Database')
+  perf.end('Database Loaded')
 
-  perf.end('Initialize Database')
-
-  window.db = db
   return db
 }

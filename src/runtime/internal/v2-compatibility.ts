@@ -32,8 +32,8 @@ export const getCollectionByPath = (path: string, collections: Record<string, Co
       return
     }
 
-    // Removing `content/` prefix
-    const pathWithoutRoot = path.split('/').slice(1).join('/')
+    // Removing `content/` prefix if exits
+    const pathWithoutRoot = path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
     return micromatch.isMatch(pathWithoutRoot, collection.source.include, { ignore: collection.source.exclude || [], dot: true })
   })
 }

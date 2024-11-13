@@ -43,17 +43,6 @@ const closePreviewMode = async () => {
 }
 
 const sync = async (data: PreviewResponse) => {
-  // if (previewReady.value === true) {
-  //   // Preview already ready, no need to sync again
-  //   return
-  // }
-
-  // Wait for db to be ready client side
-  // if (!dbReady.value) {
-  //   setTimeout(() => sync(data), 1000)
-  //   return
-  // }
-
   await props.syncPreview(data)
 
   // Ensure that preview token is set in cookie
