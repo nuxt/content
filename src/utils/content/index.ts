@@ -102,7 +102,7 @@ export async function parseContent(key: string, content: string, collection: Res
       rehypePlugins: {
         highlight: mdcOptions.highlight === false
           ? undefined
-          : await getHighlightPluginInstance({ ...mdcOptions.highlight, compress: true }),
+          : await getHighlightPluginInstance({ ...mdcOptions.highlight, compress: (mdcOptions as { compress: boolean })?.compress !== false }),
         ...mdcOptions?.rehypePlugins,
         ...contentOptions?.rehypePlugins,
       },
