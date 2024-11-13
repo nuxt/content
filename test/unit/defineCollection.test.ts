@@ -19,8 +19,8 @@ describe('defineCollection', () => {
       type: 'page',
       source: {
         _resolved: true,
-        include: '**',
-        cwd: '~~/content/pages',
+        include: 'pages/**',
+        cwd: '',
       },
     })
 
@@ -62,10 +62,10 @@ describe('defineCollection', () => {
     expect(collection).toMatchObject({
       type: 'page',
       source: {
-        include: '**',
+        include: 'pages/**',
         prefix: 'blog',
         exclude: ['pages/blog/index.md'],
-        cwd: '~~/content/pages',
+        cwd: '',
       },
     })
 
@@ -88,8 +88,8 @@ describe('defineCollection', () => {
       type: 'data',
       source: {
         _resolved: true,
-        include: '**',
-        cwd: '~~/content/data',
+        include: 'data/**',
+        cwd: '',
       },
     })
 
@@ -116,8 +116,8 @@ describe('defineCollection', () => {
     expect(collection).toMatchObject({
       type: 'data',
       source: {
-        include: '**',
-        cwd: '~~/content/data',
+        include: 'data/**',
+        cwd: '',
         prefix: 'blog',
         exclude: ['data/blog/index.md'],
       },

@@ -1,6 +1,6 @@
 hero:
   title: The git-based CMS for<br> Nuxt projects.
-  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then easily import and display it in their application.
+  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then query and display it in their application.
   image:
     dark: /home/hero-dark.svg
     light: /home/hero-light.svg
@@ -8,7 +8,7 @@ hero:
   links:
     - label: Get Started
       trailingIcon: i-lucide-arrow-right
-      to: /docs/getting-started
+      to: /docs/getting-started/installation
     - label: Open Visual Editor
       to: https://nuxt.studio
       target: _blank
@@ -30,28 +30,28 @@ sections:
         description: Use Vue components in Markdown files, with props, slots and nested components.
       - title: Code highlighting
         icon: i-lucide-list-minus
-        description: Display beautiful code blocks on your website with the Shiki integration supporting VS Code.
-      - title: Visual editor
+        description: Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
+      - title: Visual Editor
         icon: i-lucide-mouse-pointer-click
-        description: Let your team edit your Nuxt Content project with a visual editor.
+        description: Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
       - title: Navigation Generation
         icon: i-lucide-panel-left
-        description: Get your content structure in a structured object and display a navigation in minutes.
-      - title: Prose Component
+        description: Generate a structured object from your content files and display a navigation menu in minutes.
+      - title: Prose Components
         icon: i-lucide-heading-1
-        description: Easily drop in components to render different parts of your Markdown content.
+        description: Customize HTML typography tags with Vue components to give your content a consistent style.
       - title: Deploy everywhere
         icon: i-lucide-globe
         description: Nuxt Content works on all hosting providers, static, server, serverless & edge.
   - title: Everything you need for content management
-    description: Combine file-based simplicity with Vue component power. Build any content-rich website, from documentation to complex applications.
+    description: Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
     class: '-mb-24 sm:-mb-32'
     image:
       dark: /home/features-dark.svg
       light: /home/features-light.svg
       class: 'size-full lg:h-full max-w-[calc(100%-2rem)] absolute top-0 inset-x-4'
   - title: Markdown meets [Vue]{class="text-[var(--ui-primary)]"}
-    description: We invented the MDC syntax to let you use your Vue components with props and slots inside your Markdown files.
+    description: We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
     orientation: horizontal
     reverse: true
     features:
@@ -67,39 +67,57 @@ sections:
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
-      - label: Watch 3min demo
-        trailingIcon: i-lucide-circle-play
-        color: neutral
-        variant: ghost
     code: |
       ::code-group
+      :::preview-card{label="Preview" icon="i-lucide-eye"}
+        ::example-landing-hero
+        ---
+        image: /images/everest.jpg
+        ---
+        #title
+        The Everest.
 
+        #description
+        The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+        ::
+      :::
       ```mdc [content/index.md]
       ---
-      title: Nuxt Content
-      description: An open source blog theme powered by Nuxt.
+      title: The Mountains Website
+      description: A website about the most iconic mountains in the world.
       ---
 
       ::landing-hero
       ---
-      image: /images/mountain.png
+      image: /images/everest.png
       ---
       #title
-      Welcome to Alpine
+      The Everest.
 
       #description
-      An [open source blog theme](https://github.com/nuxt-themes/alpine) powered by [Nuxt Content](https://content.nuxtjs.org), editable on [Nuxt Studio](https://nuxt.studio).
+      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
       ::
       ```
 
       ```vue [components/LandingHero.vue]
+      <script setup lang="ts">
+      defineProps<{ image: string }>()
+      </script>
+
       <template>
-        <div>
-          <h1>{{ title }}</h1>
-        </div>
+        <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
+          <div>
+            <h1 class="text-4xl font-semibold">
+              <slot name="title" />
+            </h1>
+            <div class="text-base text-gray-600 dark:text-gray-300">
+              <slot name="description" />
+            </div>
+          </div>
+          <img :src="image" class="w-1/2 rounded-lg">
+        </section>
       </template>
       ```
-
       ::
   - title: Query with [Type-Safety]{class="text-[var(--ui-secondary)]"}
     description: Define your content structure with collections and query them with schema validation and full type-safety.
@@ -112,37 +130,47 @@ sections:
       - title: Get auto-completion in your Vue files
         icon: i-lucide-text-cursor
     links:
-      - label: Learn more about query
-        to: /docs/utils/query-collection
+      - label: Learn more about content collections
+        to: /docs/collections/collections
         trailingIcon: i-lucide-arrow-right
         color: neutral
         variant: subtle
     code: |
       ::code-group
-
       ```vue [pages/blog.vue]
       <script setup lang="ts">
-      const { data: posts } = await useAsyncData('posts', () => {
-        return queryCollection('blog')
-          .order('date', 'DESC')
-          .select('title', 'path', 'description')
-          .all()
+      const { data: posts } = await useAsyncData('blog', () => {
+        return queryCollection('blog').all()
       })
       </script>
 
       <template>
-        <div v-for="post in posts" :key="post.path">
-          <h2>{{ doc.title }}</div>
-          <p>{{ doc.description }}</p>
-          <NuxtLink :to="doc.path">Read post →</NuxtLink>
+        <div>
+          <h1>Blog</h1>
+          <ul>
+            <li v-for="post in posts" :key="post.id">
+              <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
+            </li>
+          </ul>
         </div>
       </template>
       ```
 
       ```ts [content.config.ts]
-      export default defineContent({
-        collections: ['blog'],
-      })
+      import { defineCollection, z } from '@nuxt/content'
+
+      export const collections = {
+        blog: defineCollection({
+          source: 'blog/*.md',
+          type: 'page',
+          // Define custom schema for docs collection
+          schema: z.object({
+            tags: z.array(z.string()),
+            image: z.string(),
+            date: z.Date()
+          })
+        })
+      }
       ```
 
       ::
@@ -169,7 +197,7 @@ sections:
   - title: Add a git-based CMS to your Nuxt project.
     links:
       - label: Start reading docs
-        to: /docs/getting-started
+        to: /docs/getting-started/installation
         trailingIcon: i-lucide-arrow-right
       - label: Open Visual Editor
         to: https://nuxt.studio

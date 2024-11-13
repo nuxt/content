@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import type { NavigationMenuItem } from '@nuxt/ui'
+// import type { NavigationMenuItem } from '@nuxt/ui'
 
-const props = defineProps<{
-  links: NavigationMenuItem[]
-}>()
+// const props = defineProps<{
+//   links: NavigationMenuItem[]
+// }>()
 
 const config = useRuntimeConfig().public
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+const nav = inject<Ref<ContentNavigationItem[]>>('navigation')
 
-const items = computed(() => props.links.map(({ icon, ...link }) => link))
+// const items = computed(() => props.links.map(({ icon, ...link }) => link))
+const navigation = computed(() => nav?.value.find(item => item.path === '/docs')?.children || [])
 
 defineShortcuts({
   meta_g: () => {
@@ -33,18 +34,26 @@ defineShortcuts({
           :label="`v${config.version}`"
           variant="subtle"
           size="sm"
-          class="-mb-[2px] font-semibold inline-block truncate"
+          class="hidden -mb-[2px] font-semibold sm:inline-block truncate"
         />
       </NuxtLink>
     </template>
 
-    <UNavigationMenu
+    <!-- <UNavigationMenu
       :items="items"
       variant="link"
-    />
+    /> -->
 
     <template #right>
-      <UColorModeButton />
+      <UButton
+        v-if="$route.path === '/'"
+        label="Get started"
+        to="/docs/getting-started"
+        size="sm"
+        class="hidden sm:inline-flex"
+      />
+
+      <UColorModeButton class="hidden sm:inline-flex" />
 
       <UTooltip
         text="Search"

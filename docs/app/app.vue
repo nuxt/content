@@ -1,36 +1,15 @@
 <script setup lang="ts">
 import { withoutTrailingSlash } from 'ufo'
-import colors from 'tailwindcss/colors'
 
 const route = useRoute()
-const appConfig = useAppConfig()
-const colorMode = useColorMode()
 
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
 const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
   server: false,
 })
 
-const searchTerm = ref('')
-
-// watch(searchTerm, debounce((query: string) => {
-//   if (!query) {
-//     return
-//   }
-
-//   useTrackEvent('Search', { props: { query: `${query} - ${searchTerm.value?.commandPaletteRef.results.length} results` } })
-// }, 500))
-
-const links = computed(() => {
-  return [{
-    label: 'Docs',
-    icon: 'i-lucide-book',
-    to: '/docs/getting-started',
-    active: route.path.startsWith('/docs'),
-  }].filter(Boolean)
-})
-
-const color = computed(() => colorMode.value === 'dark' ? colors[appConfig.ui.colors.neutral as keyof typeof colors][900] : 'white')
+const links = useNavLinks()
+const color = useThemeColor()
 
 useHead({
   meta: [
@@ -39,7 +18,7 @@ useHead({
   ],
   link: [
     { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
-    { rel: 'canonical', href: `https://content.nuxt.com${withoutTrailingSlash(route.path)}` },
+    { rel: 'canonical', href: `https://content3.nuxt.dev${withoutTrailingSlash(route.path)}` },
   ],
   htmlAttrs: {
     lang: 'en',
@@ -69,7 +48,6 @@ provide('navigation', navigation)
 
     <ClientOnly>
       <LazyUContentSearch
-        v-model:search-term="searchTerm"
         :files="files"
         :navigation="navigation"
         :fuse="{ resultLimit: 42 }"
