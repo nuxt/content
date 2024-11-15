@@ -22,8 +22,11 @@ type HighlightedNode = { type: 'element', properties?: Record<string, string | u
 let highlightPlugin: {
   instance: unknown
   key?: string
-  theme?: Record<string, unknown>
-  highlighter: Highlighter
+  options?: {
+    theme?: Record<string, unknown>
+    highlighter: Highlighter
+  }
+
 }
 let highlightPluginPromise: Promise<typeof highlightPlugin>
 async function getHighlightPluginInstance(options: HighlighterOptions) {
@@ -61,32 +64,34 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
       key,
       instance: rehypeHighlight,
       ...options,
-      highlighter: async (code, lang, theme, opts) => {
-        const result = await highlighter(code, lang, theme, opts)
-        const visitTree = {
-          type: 'element',
-          children: result.tree as Array<unknown>,
-        }
-        if (options.compress) {
-          const stylesMap: Record<string, string> = {}
-          visit(
-            visitTree,
-            node => !!(node as HighlightedNode).properties?.style,
-            (_node) => {
-              const node = _node as HighlightedNode
-              const style = node.properties!.style!
-              stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
-              node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
-              node.properties!.style = undefined
-            },
-          )
+      options: {
+        highlighter: async (code, lang, theme, opts) => {
+          const result = await highlighter(code, lang, theme, opts)
+          const visitTree = {
+            type: 'element',
+            children: result.tree as Array<unknown>,
+          }
+          if (options.compress) {
+            const stylesMap: Record<string, string> = {}
+            visit(
+              visitTree,
+              node => !!(node as HighlightedNode).properties?.style,
+              (_node) => {
+                const node = _node as HighlightedNode
+                const style = node.properties!.style!
+                stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
+                node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
+                node.properties!.style = undefined
+              },
+            )
 
-          result.style = Object.entries(stylesMap).map(([style, cls]) => `.${cls}{${style}}`).join('') + result.style
-        }
+            result.style = Object.entries(stylesMap).map(([style, cls]) => `.${cls}{${style}}`).join('') + result.style
+          }
 
-        return result
+          return result
+        },
+        theme: Object.fromEntries(bundledThemes),
       },
-      theme: Object.fromEntries(bundledThemes),
     }
   }
   return highlightPlugin

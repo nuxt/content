@@ -7,9 +7,9 @@ import type { ModuleOptions } from '../types'
 import { setParserOptions } from './content'
 
 export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt) {
-  const options = nuxt.options as unknown as { mdc: MDCModuleOptions, content: ModuleOptions }
+  const options = nuxt.options as unknown as { mdc: MDCModuleOptions }
   // Install mdc module
-  const highlight = options.content?.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
+  const highlight = contentOptions.build?.markdown?.highlight as unknown as MDCModuleOptions['highlight']
 
   options.mdc = defu({
     highlight: highlight !== false
@@ -22,6 +22,8 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
     headings: {
       anchorLinks: contentOptions.renderer.anchorLinks,
     },
+    remarkPlugins: contentOptions.build?.markdown?.remarkPlugins,
+    rehypePlugins: contentOptions.build?.markdown?.rehypePlugins,
   }, options.mdc) as MDCModuleOptions
 
   // Hook into mdc configs and store them for parser

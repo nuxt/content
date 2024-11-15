@@ -8,6 +8,21 @@ import { resolveCollection } from '../../src/utils/collection'
 
 const nuxtMock = {
   options: {
+    content: {
+      build: {
+        markdown: {
+          remarkPlugins: {
+            'remark-mdc': {
+              options: {
+                experimental: {
+                  autoUnwrap: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     mdc: {
       compress: false,
       markdown: {
@@ -249,6 +264,21 @@ describe('Parser (.md)', () => {
       const parsed = await parseContent('content/index.md', heading, collection, nuxtMock)
 
       expect(parsed.body.children[0].props.id).toEqual('alert')
+    }
+  })
+
+  test('Unwrap component only child', async () => {
+    const tests = [
+      { markdown: `::component\nHello\n::`, firstChild: { type: 'text', value: 'Hello' } },
+      { markdown: `::component\nHello :world\n::`, firstChild: { type: 'text', value: 'Hello ' } },
+      { markdown: `::component\n - item 1\n - item 2\n::`, firstChild: { type: 'element', tag: 'li' } },
+      { markdown: `:::component\n::nested-component\nHello\n::\n:::`, firstChild: { type: 'element', tag: 'nested-component' } },
+
+    ]
+    for (const { markdown, firstChild } of tests) {
+      const parsed = await parseContent('content/index.md', markdown, collection, nuxtMock)
+
+      expect(parsed.body.children[0].children[0]).toMatchObject(firstChild)
     }
   })
 })
