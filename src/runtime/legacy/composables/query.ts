@@ -36,7 +36,7 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
     params: content.experimental.stripQueryParameters
       ? undefined
       : {
-          _params: jsonStringify(params),
+          _params: encodeURIComponent(jsonStringify(params)),
           previewToken: useContentPreview().getPreviewToken()
         }
   })
