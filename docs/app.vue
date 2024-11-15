@@ -56,6 +56,7 @@ provide('navigation', navigation)
 </script>
 
 <template>
+  <Banner />
   <UHeader :links="links">
     <template #logo>
       <Logo class="h-6 w-auto" />
