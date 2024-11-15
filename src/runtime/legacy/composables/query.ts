@@ -30,16 +30,10 @@ export const createQueryFetch = <T = ParsedContent>() => async (query: QueryBuil
     return db.fetch(query as QueryBuilder<ParsedContent>)
   }
 
-  const data = await $fetch(apiPath as any, {
-    method: 'GET',
-    responseType: 'json',
-    params: content.experimental.stripQueryParameters
-      ? undefined
-      : {
-          _params: encodeURIComponent(jsonStringify(params)),
-          previewToken: useContentPreview().getPreviewToken()
-        }
-  })
+  const _query = content.experimental.stripQueryParameters
+  ? undefined
+  : `_params=${encodeURIComponent(jsonStringify(params))}&previewToken=${useContentPreview().getPreviewToken()}`
+  const data = await $fetch(apiPath + '?' + _query, { method: 'GET', responseType: 'json' })
 
   // On SSG, all url are redirected to `404.html` when not found, so we need to check the content type
   // to know if the response is a valid JSON or not

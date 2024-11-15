@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       '~/addons/nitro-plugin.ts'
     ]
   },
+
   components: {
     dirs: [
       {
@@ -21,7 +22,9 @@ export default defineNuxtConfig({
       }
     ]
   },
+
   modules: [contentModule],
+
   content: {
     locales: ['fa', 'en'],
     defaultLocale: 'en',
@@ -61,5 +64,7 @@ export default defineNuxtConfig({
         ['rehype-wrap-all', [{ selector: 'ol', wrapper: 'p' }, { selector: 'ul', wrapper: 'p' }]]
       ]
     }
-  }
+  },
+
+  compatibilityDate: '2024-11-15'
 })
