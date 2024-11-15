@@ -1,8 +1,8 @@
 import micromatch from 'micromatch'
 import type { CollectionInfo } from '../../types/collection'
-import type { PreviewFile } from '../../types/studio'
+import type { DraftSyncFile } from '../../types/studio'
 
-export const v2ToV3ParsedFile = (file: PreviewFile, collection: CollectionInfo) => {
+export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo) => {
   const mappedFile: Record<string, unknown> = {
     id: file.parsed._id,
     stem: file.parsed._stem,

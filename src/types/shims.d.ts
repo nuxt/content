@@ -1,3 +1,4 @@
+import type { CollectionInfo } from './collection'
 import type { DatabaseAdapter } from './database'
 
 declare module '#content/manifest' {
@@ -28,7 +29,7 @@ declare module '#content/collections' {
 }
 
 declare module '#content/studio' {
-  export const collections: Record<string, unknown>
+  export const collections: Record<string, CollectionInfo>
   export const gitInfo: GitInfo
   export const appConfigSchema: Record<string, unknown>
 }

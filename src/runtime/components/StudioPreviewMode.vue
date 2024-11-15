@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, onUnmounted } from 'vue'
 import type { Socket } from 'socket.io-client'
-import type { PreviewResponse } from '../../types/studio'
+import type { DraftSyncData } from '../../types/studio'
 import { useCookie, useNuxtApp, useRouter } from '#app'
 
 const props = defineProps({
@@ -13,7 +13,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  syncPreview: {
+  initializePreview: {
     type: Function,
     required: true,
   },
@@ -42,8 +42,9 @@ const closePreviewMode = async () => {
   window.location.reload()
 }
 
-const sync = async (data: PreviewResponse) => {
-  await props.syncPreview(data)
+const init = async (data: DraftSyncData) => {
+  // Initialize browser db with the data received
+  await props.initializePreview(data)
 
   // Ensure that preview token is set in cookie
   // This is needed for cases that user wants to exit preview mode before preview is ready
@@ -94,8 +95,8 @@ onMounted(async () => {
     }
   }
 
-  // Client should receive draft:sync event on connect
-  socket.on('draft:sync', async (data) => {
+  // Client should receive `draft:sync` once the draft has been send for the first time
+  socket.on('draft:sync', async (data: DraftSyncData) => {
     clearSyncTimeout()
 
     // If no data is received, it means the draft is not ready yet
@@ -132,7 +133,7 @@ onMounted(async () => {
       return
     }
 
-    sync(data)
+    init(data)
   })
 
   socket.on('draft:unauthorized', () => {

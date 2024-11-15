@@ -1,44 +1,27 @@
-import { dirname, parse, join } from 'pathe'
 import { createApp } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { AppConfig } from 'nuxt/schema'
 import type { TransformedContent } from '@nuxt/content'
 import StudioPreviewMode from '../components/StudioPreviewMode.vue'
-import type { FileChangeMessagePayload, PreviewFile, PreviewResponse } from '../../types/studio'
-import type { CollectionInfo } from '../../types/collection'
-import { createSingleton, deepAssign, deepDelete, defu, mergeDraft, StudioConfigFiles } from '../../utils/studio'
+import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile } from '../../types/studio'
+import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles } from '../../utils/studio'
 import { loadDatabaseAdapter } from '../internal/database.client'
-import { getOrderedSchemaKeys } from '../../utils/schema'
-import { getCollectionByPath, v2ToV3ParsedFile } from './v2-compatibility'
+import { generateCollectionInsert, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/query'
+import { getCollectionByPath, v2ToV3ParsedFile } from '../../utils/studio/compatibility'
 import { callWithNuxt, refreshNuxtData } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, ref, toRaw, useRoute, useRouter } from '#imports'
 import { collections } from '#content/studio'
 
-// const dbFiles: PreviewFile[] = []
-
-// const { storage, findContentItem, updateContentItem, removeContentItem, removeAllContentItems, setPreviewMetaItems } = useContentStorage()
-
 const initialAppConfig = createSingleton(() => JSON.parse(JSON.stringify((useAppConfig()))))
 
-const syncPreview = async (data: PreviewResponse) => {
-  console.log('data :', data)
+const initializePreview = async (data: DraftSyncData) => {
   const mergedFiles = mergeDraft(data.files, data.additions, data.deletions)
 
   // // Handle content files
   const contentFiles = mergedFiles.filter(item => !([StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4, StudioConfigFiles.nuxtConfig].includes(item.path)))
-  await syncPreviewFiles(contentFiles)
 
-  // const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
-  // syncPreviewAppConfig(appConfig?.parsed)
-
-  refreshNuxtData()
-  // requestRerender()
-
-  // return true
-}
-
-const syncPreviewFiles = async (files: PreviewFile[]) => {
-  files.forEach(async (file) => {
+  // Initialize db with preview files
+  for (const file of contentFiles) {
     // Fetch corresponding collection
     const collection = getCollectionByPath(file.path, collections)
     if (!collection) {
@@ -46,15 +29,10 @@ const syncPreviewFiles = async (files: PreviewFile[]) => {
       return
     }
 
-    // Convert v2 parsed file to v3 format
     const v3File = v2ToV3ParsedFile(file, collection)
 
-    console.log('v3File :', v3File)
-
-    // Generate insert query
     const query = generateCollectionInsert(collection, v3File)
 
-    // Load db
     const db = loadDatabaseAdapter(collection.name)
 
     // Define table
@@ -64,9 +42,14 @@ const syncPreviewFiles = async (files: PreviewFile[]) => {
     await db.exec(query)
 
     // window.db = db
+  }
 
-    console.log(`Studio Preview: Inserted file: ${file.path}`)
-  })
+  // const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
+  // syncPreviewAppConfig(appConfig?.parsed)
+
+  refreshNuxtData()
+
+  // return true
 }
 
 const syncPreviewAppConfig = (appConfig?: any) => {
@@ -96,7 +79,7 @@ export function mountPreviewUI() {
   createApp(StudioPreviewMode, {
     previewToken,
     apiURL: window.sessionStorage.getItem('previewAPI') || studio?.apiURL,
-    syncPreview,
+    initializePreview,
   }).mount(el)
 }
 
@@ -138,7 +121,7 @@ export function initIframeCommunication() {
     }
   })
 
-  window.addEventListener('message', async (e) => {
+  window.addEventListener('message', async (e: { data: FileMessageData }) => {
     // IFRAME_MESSAGING_ALLOWED_ORIGINS format must be a comma separated string of allowed origins
     const allowedOrigins = studio?.iframeMessagingAllowedOrigins?.split(',').map((origin: string) => origin.trim()) || []
     if (!['https://nuxt.studio', 'https://new.nuxt.studio', 'https://new.dev.nuxt.studio', 'https://dev.nuxt.studio', 'http://localhost:3000', ...allowedOrigins].includes(e.origin)) {
@@ -149,63 +132,26 @@ export function initIframeCommunication() {
     console.log('TYPE :', e.data.type)
     console.log('PAYLOAD :', e.data.payload)
     console.log('------------------------------------------')
-    const { type, payload = {} } = e.data || {}
-
-    // Removing `content/` prefix only if path is starting with content/
-    const path = payload.path?.startsWith('content/') ? payload.path.split('/').slice(1).join('/') : payload.path
-
-    // Generate stem (path without extension)
-    const stem = join(dirname(path), parse(path).name)
+    const { type, payload = {}, navigate } = e.data || {}
 
     switch (type) {
-      case 'nuxt-studio:editor:file-selected': {
-        const collection = getCollectionByPath(path, collections)
-        if (!collection) {
-          console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
-          return
-        }
-
-        // Only navigate to pages
-        if (collection.type !== 'page') {
-          return
-        }
-
-        const db = loadDatabaseAdapter(collection.name)
-
-        const content: TransformedContent = await db.first(`SELECT * FROM ${collection.tableName} WHERE stem = '${stem}'`)
-
-        // Do not navigate to another page if content is not found
-        // This makes sure that user stays on the same page when navigation through directories in the editor
-        if (!content) {
-          return
-        }
-
-        // Ensure that the content is related to a valid route
-        const resolvedRoute = router.resolve(content.path)
-        if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
-          return
-        }
-
-        // Navigate to the selected content
-        if (content.path !== useRoute().path) {
-          editorSelectedPath.value = content.path as string
-          router.push(content.path)
-        }
+      case FileMessageType.FileSelected: {
+        await handleFileSelection(payload as FileSelectMessagePayload)
         break
       }
-      case 'nuxt-studio:editor:media-changed':
-      case 'nuxt-studio:editor:file-changed': {
-        const previewToken = window.sessionStorage.getItem('previewToken') as string
+      case FileMessageType.FileChanged:
+      case FileMessageType.MediaChanged: {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
         for (const addition of additions) {
-          // TODO
-          // await updateContentItem(previewToken, addition)
+          await handleFileUpdate(addition, navigate)
         }
         for (const deletion of deletions) {
+          console.log('deletion :', deletion)
           // TODO
           // await removeContentItem(previewToken, deletion.path)
         }
-        requestRerender()
+
+        rerenderPreview()
         break
       }
       case 'nuxt-studio:config:file-changed': {
@@ -221,13 +167,89 @@ export function initIframeCommunication() {
         }
       }
     }
+
+    async function handleFileSelection(payload: FileSelectMessagePayload) {
+      // Removing `content/` prefix only if path is starting with content/
+      const path = payload.path?.startsWith('content/') ? payload.path.split('/').slice(1).join('/') : payload.path
+
+      const collection = getCollectionByPath(path, collections)
+      if (!collection) {
+        console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
+        return
+      }
+
+      // Load db
+      const db = loadDatabaseAdapter(collection.name)
+      // Only navigate to pages
+      if (collection.type !== 'page') {
+        return
+      }
+
+      // Generate stem (path without extension)
+      const stem = generateStemFromPath(path)
+
+      const query = generateRecordSelectByColumn(collection, 'stem', stem)
+
+      const file: TransformedContent = await db.first(query)
+
+      // Do not navigate to another page if file is not found
+      // This makes sure that user stays on the same page when navigation through directories in the editor
+      if (!file) {
+        return
+      }
+
+      // Ensure that the content is related to a valid route
+      const resolvedRoute = router.resolve(file.path)
+      if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
+        return
+      }
+
+      // Navigate to the selected content
+      if (file.path !== useRoute().path) {
+        editorSelectedPath.value = file.path as string
+        router.push(file.path)
+      }
+    }
+
+    async function handleFileUpdate(file: PreviewFile, navigate: boolean) {
+      const collection = getCollectionByPath(file.path, collections)
+      if (!collection) {
+        console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping update.`)
+        return
+      }
+
+      const stem = generateStemFromPath(file.path)
+
+      const v3File = v2ToV3ParsedFile({ path: file.path, parsed: file.parsed }, collection)
+
+      const query = generateRecordUpdate(collection, stem, v3File)
+
+      const db = loadDatabaseAdapter(collection.name)
+
+      await db.exec(query)
+
+      // TODO
+      console.log('navigate :', navigate)
+
+      // Navigate to the updated content if not already on the page
+      if (navigate && file.path !== useRoute().path) {
+        // Ensure that the content is related to a valid route
+        const resolvedRoute = router.resolve(file.path)
+        if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
+          return
+        }
+
+        editorSelectedPath.value = file.path as string
+        router.push(file.path)
+      }
+    }
   })
 
   nuxtApp.hook('page:finish', () => {
     // detectRenderedContents()
 
     // if (nuxtApp.payload.prerenderedAt) {
-    //   requestRerender()
+    //   rerenderPreview()
     // }
   })
 
@@ -281,45 +303,6 @@ export function initIframeCommunication() {
   }
 }
 
-async function requestRerender() {
+async function rerenderPreview() {
   await useNuxtApp().hooks.callHookParallel('app:data:refresh')
-}
-
-// Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: CollectionInfo, data: Record<string, unknown>) {
-  const fields: string[] = []
-  const values: Array<string | number | boolean> = []
-  const properties = collection.schema.definitions[collection.name].properties
-  const sortedKeys = getOrderedSchemaKeys(properties)
-
-  sortedKeys.forEach((key) => {
-    const value = (properties)[key]
-    // const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
-    const underlyingType = value.type
-
-    const defaultValue = value.default ? value.default : 'NULL'
-    const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
-
-    fields.push(key)
-    if ((collection.jsonFields || []).includes(key)) {
-      values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
-    }
-    else if (['string', 'enum'].includes(underlyingType)) {
-      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
-    }
-    // else if (['Date'].includes(underlyingType)) {
-    //   values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert as string).toISOString()}'` : defaultValue)
-    // }
-    // else if (underlyingType.constructor.name === 'ZodBoolean') {
-    //   values.push(valueToInsert !== 'NULL' ? !!valueToInsert : valueToInsert)
-    // }
-    else {
-      values.push(valueToInsert)
-    }
-  })
-
-  let index = 0
-
-  return `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
-    .replace(/\?/g, () => values[index++] as string)
 }

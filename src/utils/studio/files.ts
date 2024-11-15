@@ -1,4 +1,5 @@
-import type { DraftFile, PreviewFile } from '~/src/types/studio'
+import { dirname, parse, join } from 'pathe'
+import type { DraftFile, DraftSyncFile } from '~/src/types/studio'
 
 export const StudioConfigFiles = {
   appConfig: 'app.config.ts',
@@ -6,12 +7,18 @@ export const StudioConfigFiles = {
   nuxtConfig: 'nuxt.config.ts',
 }
 
-export const mergeDraft = (dbFiles: PreviewFile[] = [], draftAdditions: DraftFile[], draftDeletions: DraftFile[]) => {
+export function generateStemFromPath(path: string) {
+  const pathWithoutPrefix = path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
+
+  return join(dirname(pathWithoutPrefix), parse(pathWithoutPrefix).name)
+}
+
+export function mergeDraft(dbFiles: DraftSyncFile[] = [], draftAdditions: DraftFile[], draftDeletions: DraftFile[]) {
   const additions = [...(draftAdditions || [])]
   const deletions = [...(draftDeletions || [])]
 
   // Compute file name
-  const mergedFiles: PreviewFile[] = JSON.parse(JSON.stringify(dbFiles))
+  const mergedFiles: DraftSyncFile[] = JSON.parse(JSON.stringify(dbFiles))
 
   // Merge darft additions
   for (const addition of additions) {
