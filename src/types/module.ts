@@ -57,12 +57,6 @@ export interface ModuleOptions {
   build: {
     markdown: {
       /**
-       * Whether MDC syntax should be supported or not.
-       *
-       * @default true
-       */
-      mdc?: boolean
-      /**
        * Control behavior of Table of Contents generation
        */
       toc?: {

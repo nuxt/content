@@ -104,6 +104,7 @@ export async function parseContent(key: string, content: string, collection: Res
     markdown: {
       compress: true,
       ...mdcOptions,
+      ...contentOptions,
       rehypePlugins: {
         highlight: mdcOptions.highlight === false
           ? undefined
