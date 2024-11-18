@@ -1,3 +1,5 @@
+title: The git-based CMS for Nuxt projects.
+description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then query and display it in their application.
 hero:
   title: The git-based CMS for<br> Nuxt projects.
   description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then query and display it in their application.

@@ -1,12 +1,19 @@
 <script setup lang="ts">
-useSeoMeta({
-  title: 'Nuxt Content made easy for Vue Developers',
-  description: 'Nuxt Content reads the content/ directory in your project, parses .md, .yml, .csv and .json files to create a powerful data layer for your application. Use Vue components in Markdown with the MDC syntax.',
-})
+const siteConfig = useSiteConfig()
+
 const { data: page } = await useAsyncData('index', () => queryCollection('content').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
+
+useSeoMeta({
+  title: page.value.title,
+  description: page.value.description,
+  ogTitle: page.value.title,
+  ogDescription: page.value.description,
+  ogImage: `${siteConfig.url}/social.png`,
+  twitterImage: `${siteConfig.url}/social.png`,
+})
 </script>
 
 <template>

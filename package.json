@@ -63,7 +63,7 @@
     "micromatch": "^4.0.8",
     "ohash": "^1.1.4",
     "pathe": "^1.1.2",
-    "remark-mdc": "^3.2.1",
+    "remark-mdc": "latest",
     "scule": "^1.3.0",
     "shiki": "^1.22.2",
     "slugify": "^1.6.6",
