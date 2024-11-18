@@ -209,7 +209,7 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
     :key="key"
     :body="body"
     :data="data"
-    :clas="props.class"
+    :class="props.class"
     :tag="props.tag"
     :prose="props.prose"
     :unwrap="props.unwrap"
