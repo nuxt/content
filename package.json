@@ -105,6 +105,8 @@
     "wrangler": "^3.85.0"
   },
   "resolutions": {
+    "remark-mdc": "npm:remark-mdc-edge@latest",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest",
     "@nuxt/content": "workspace:*",
     "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@3623989",
     "vue": "^3.5.12"
