@@ -1,6 +1,7 @@
 import micromatch from 'micromatch'
 import type { CollectionInfo } from '../../types/collection'
 import type { DraftSyncFile } from '../../types/studio'
+import { withoutRoot } from './files'
 
 export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo) => {
   const mappedFile: Record<string, unknown> = {
@@ -32,8 +33,6 @@ export const getCollectionByPath = (path: string, collections: Record<string, Co
       return
     }
 
-    // Removing `content/` prefix if exits
-    const pathWithoutRoot = path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
-    return micromatch.isMatch(pathWithoutRoot, collection.source.include, { ignore: collection.source.exclude || [], dot: true })
+    return micromatch.isMatch(withoutRoot(path), collection.source.include, { ignore: collection.source.exclude || [], dot: true })
   })
 }

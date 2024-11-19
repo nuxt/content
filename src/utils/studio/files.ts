@@ -7,10 +7,16 @@ export const StudioConfigFiles = {
   nuxtConfig: 'nuxt.config.ts',
 }
 
-export function generateStemFromPath(path: string) {
-  const pathWithoutPrefix = path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
+// Removing `content/` prefix only if path is starting with content/
+export function withoutRoot(path: string) {
+  return path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
+}
 
-  return join(dirname(pathWithoutPrefix), parse(pathWithoutPrefix).name)
+// Generate stem (path without extension)
+export function generateStemFromPath(path: string) {
+  const pathWithoutRoot = withoutRoot(path)
+
+  return join(dirname(pathWithoutRoot), parse(pathWithoutRoot).name)
 }
 
 export function mergeDraft(dbFiles: DraftSyncFile[] = [], draftAdditions: DraftFile[], draftDeletions: DraftFile[]) {

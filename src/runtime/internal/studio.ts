@@ -5,12 +5,12 @@ import type { TransformedContent } from '@nuxt/content'
 import { withLeadingSlash } from 'ufo'
 import StudioPreviewMode from '../components/StudioPreviewMode.vue'
 import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile } from '../../types/studio'
-import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles } from '../../utils/studio'
+import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from '../../utils/studio'
 import { loadDatabaseAdapter } from '../internal/database.client'
-import { generateCollectionInsert, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/query'
+import { generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/query'
 import { getCollectionByPath, v2ToV3ParsedFile } from '../../utils/studio/compatibility'
 import { callWithNuxt, refreshNuxtData } from '#app'
-import { useAppConfig, useNuxtApp, useRuntimeConfig, ref, toRaw, useRoute, useRouter } from '#imports'
+import { useAppConfig, useNuxtApp, useRuntimeConfig, toRaw, useRoute, useRouter } from '#imports'
 import { collections } from '#content/studio'
 
 const initialAppConfig = createSingleton(() => JSON.parse(JSON.stringify((useAppConfig()))))
@@ -135,7 +135,7 @@ export function initIframeCommunication() {
 
     switch (type) {
       case FileMessageType.FileSelected: {
-        await handleFileSelection(payload as FileSelectMessagePayload)
+        await handleFileSelection((payload as FileSelectMessagePayload).path)
         break
       }
       case FileMessageType.FileChanged:
@@ -145,9 +145,7 @@ export function initIframeCommunication() {
           await handleFileUpdate(addition, navigate)
         }
         for (const deletion of deletions) {
-          console.log('deletion :', deletion)
-          // TODO
-          // await removeContentItem(previewToken, deletion.path)
+          await handleFileDeletion(deletion.path)
         }
 
         rerenderPreview()
@@ -167,11 +165,8 @@ export function initIframeCommunication() {
       }
     }
 
-    async function handleFileSelection(payload: FileSelectMessagePayload) {
-      // Removing `content/` prefix only if path is starting with content/
-      const path = payload.path?.startsWith('content/') ? payload.path.split('/').slice(1).join('/') : payload.path
-
-      const collection = getCollectionByPath(path, collections)
+    async function handleFileSelection(path: string) {
+      const collection = getCollectionByPath(withoutRoot(path), collections)
       if (!collection) {
         console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
         return
@@ -184,7 +179,6 @@ export function initIframeCommunication() {
         return
       }
 
-      // Generate stem (path without extension)
       const stem = generateStemFromPath(path)
 
       const query = generateRecordSelectByColumn(collection, 'stem', stem)
@@ -237,6 +231,22 @@ export function initIframeCommunication() {
 
         router.push(updatedPath)
       }
+    }
+
+    async function handleFileDeletion(path: string) {
+      const collection = getCollectionByPath(withoutRoot(path), collections)
+      if (!collection) {
+        console.warn(`Studio Preview: collection not found for file: ${path}, skipping deletion.`)
+        return
+      }
+
+      const stem = generateStemFromPath(path)
+
+      const query = generateRecordDeletion(collection, stem)
+
+      const db = loadDatabaseAdapter(collection.name)
+
+      await db.exec(query)
     }
   })
 

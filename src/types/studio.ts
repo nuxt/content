@@ -74,7 +74,7 @@ export interface PreviewFile {
 
 export interface FileChangeMessagePayload {
   additions: PreviewFile[]
-  deletions: PreviewFile[]
+  deletions: { path: string }[]
 }
 
 export interface FileSelectMessagePayload {
