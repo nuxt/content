@@ -63,7 +63,7 @@ provide('navigation', navigation)
 @source "../content/**/*";
 
 @theme {
-  --font-family-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Public Sans', sans-serif;
 
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
@@ -79,7 +79,7 @@ provide('navigation', navigation)
 }
 
 :root {
-  --ui-container-width: 90rem;
+  --ui-container: 90rem;
 }
 
 .dark {

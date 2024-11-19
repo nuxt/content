@@ -106,7 +106,6 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
-    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@3623989",
     "vue": "^3.5.12"
   },
   "packageManager": "pnpm@9.13.2"
