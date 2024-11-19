@@ -24,6 +24,14 @@ export default defineNuxtConfig({
   },
 
   content: {
+    build: {
+      markdown: {
+        toc: {
+          depth: 4,
+          searchDepth: 4,
+        },
+      },
+    },
     database: {
       type: 'd1',
       binding: 'DB',

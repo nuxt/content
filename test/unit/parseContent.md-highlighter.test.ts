@@ -10,6 +10,21 @@ import type { MarkdownRoot } from '../../src/types/content'
 
 const nuxtMock = {
   options: {
+    content: {
+      build: {
+        markdown: {
+          remarkPlugins: {
+            'remark-mdc': {
+              options: {
+                experimental: {
+                  autoUnwrap: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     mdc: {
       compress: false,
       highlight: {

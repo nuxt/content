@@ -70,7 +70,17 @@ export default defineNuxtModule<ModuleOptions>({
       },
     },
     build: {
-      markdown: {},
+      markdown: {
+        remarkPlugins: {
+          'remark-mdc': {
+            options: {
+              experimental: {
+                autoUnwrap: true,
+              },
+            },
+          },
+        },
+      },
       yaml: {},
       csv: {
         delimeter: ',',

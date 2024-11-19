@@ -67,7 +67,7 @@
     "parse-git-config": "^3.0.0",
     "pathe": "^1.1.2",
     "pkg-types": "^1.2.1",
-    "remark-mdc": "^3.2.1",
+    "remark-mdc": "latest",
     "scule": "^1.3.0",
     "shiki": "^1.22.2",
     "slugify": "^1.6.6",

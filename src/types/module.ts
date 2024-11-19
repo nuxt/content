@@ -85,12 +85,6 @@ export interface ModuleOptions {
   build: {
     markdown: {
       /**
-       * Whether MDC syntax should be supported or not.
-       *
-       * @default true
-       */
-      mdc?: boolean
-      /**
        * Control behavior of Table of Contents generation
        */
       toc?: {
@@ -113,14 +107,14 @@ export interface ModuleOptions {
        *
        * @default []
        */
-      remarkPlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
+      remarkPlugins?: Record<string, false | MarkdownPlugin>
       /**
        * Register custom remark plugin to provide new feature into your markdown contents.
        * Checkout: https://github.com/rehypejs/rehype/blob/main/doc/plugins.md
        *
        * @default []
        */
-      rehypePlugins?: Array<string | [string, MarkdownPlugin]> | Record<string, false | MarkdownPlugin>
+      rehypePlugins?: Record<string, false | MarkdownPlugin>
 
       /**
        * Content module uses `shiki` to highlight code blocks.

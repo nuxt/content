@@ -68,7 +68,7 @@ async function importPlugins(plugins: Record<string, false | MarkdownPlugin> = {
     if (plugin) {
       resolvedPlugins[name] = {
         instance: plugin.instance || await import(/* @vite-ignore */ name).then(m => m.default || m),
-        options: plugin,
+        options: plugin.options || {},
       }
     }
     else {

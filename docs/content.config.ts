@@ -21,8 +21,8 @@ export const collections = {
     }),
   }),
   content: defineCollection({
-    type: 'data',
-    source: '*.yml',
+    type: 'page',
+    source: 'index.yml',
     schema: z.object({
       hero: z.object({
         title: z.string(),
