@@ -150,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
       const dirStat = await stat(path).catch(() => null)
       if (dirStat && dirStat.isDirectory()) {
         nuxt.hook('components:dirs', (dirs) => {
-          dirs.push({ path, pathPrefix: false, prefix: '' })
+          dirs.unshift({ path, pathPrefix: false, prefix: '' })
         })
       }
     }
