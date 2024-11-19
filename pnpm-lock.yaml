@@ -20,8 +20,8 @@ importers:
         specifier: ^3.14.159
         version: 3.14.159(magicast@0.3.5)(rollup@3.29.5)
       '@nuxtjs/mdc':
-        specifier: ^0.9.3
-        version: 0.9.3(magicast@0.3.5)(rollup@3.29.5)
+        specifier: ^0.9.4
+        version: 0.9.4(magicast@0.3.5)(rollup@3.29.5)
       '@sqlite.org/sqlite-wasm':
         specifier: 3.47.0-build1
         version: 3.47.0-build1
@@ -1443,8 +1443,8 @@ packages:
   '@nuxtjs/color-mode@3.5.2':
     resolution: {integrity: sha512-cC6RfgZh3guHBMLLjrBB2Uti5eUoGM9KyauOaYS9ETmxNWBMTvpgjvSiSJp1OFljIXPIqVTJ3xtJpSNZiO3ZaA==}
 
-  '@nuxtjs/mdc@0.9.3':
-    resolution: {integrity: sha512-6cOFToWBOnhzt5L51arQC9j5fqWLMgOWZAqp8s7EoP4atcd1BWXysCoVQ7r9hh88JiubEgZsqWL83h4A1oTa9g==}
+  '@nuxtjs/mdc@0.9.4':
+    resolution: {integrity: sha512-2R4ueW064l02zi7X3381RWjTH2zF9eC6wqjo8uYm3ePz5s7kH9DgrsBnq6E8zaKXnsjp5LcTPQF7byChRK4TCQ==}
 
   '@nuxtjs/plausible@1.0.3':
     resolution: {integrity: sha512-jf6W9+Q/VhfHk/jal1gp0OpYU2qwq7eOV4evNKvHWKVM0Qbps+LbKSxNcewgqN91tVx9sv4RbnOEJ8Uq0/FRkg==}
@@ -7980,7 +7980,7 @@ snapshots:
       mlly: 1.7.2
       ohash: 1.1.4
       pathe: 1.1.2
-      std-env: 3.7.0
+      std-env: 3.8.0
       tinyglobby: 0.2.10
     transitivePeerDependencies:
       - magicast
@@ -8531,7 +8531,7 @@ snapshots:
       - supports-color
       - webpack-sources
 
-  '@nuxtjs/mdc@0.9.3(magicast@0.3.5)(rollup@3.29.5)':
+  '@nuxtjs/mdc@0.9.4(magicast@0.3.5)(rollup@3.29.5)':
     dependencies:
       '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@3.29.5)
       '@shikijs/transformers': 1.23.1
