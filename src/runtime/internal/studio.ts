@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { AppConfig } from 'nuxt/schema'
 import type { TransformedContent } from '@nuxt/content'
+import { withLeadingSlash } from 'ufo'
 import StudioPreviewMode from '../components/StudioPreviewMode.vue'
 import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile } from '../../types/studio'
 import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles } from '../../utils/studio'
@@ -94,8 +95,6 @@ export function initIframeCommunication() {
 
   const router = useRouter()
   const route = useRoute()
-
-  const editorSelectedPath = ref('')
 
   // Evaluate route payload
   const routePayload = (route: RouteLocationNormalized) => ({
@@ -206,7 +205,6 @@ export function initIframeCommunication() {
 
       // Navigate to the selected content
       if (file.path !== useRoute().path) {
-        editorSelectedPath.value = file.path as string
         router.push(file.path)
       }
     }
@@ -228,19 +226,16 @@ export function initIframeCommunication() {
 
       await db.exec(query)
 
-      // TODO
-      console.log('navigate :', navigate)
-
       // Navigate to the updated content if not already on the page
-      if (navigate && file.path !== useRoute().path) {
+      const updatedPath = withLeadingSlash(file.pathRoute)
+      if (navigate && updatedPath !== useRoute().path) {
         // Ensure that the content is related to a valid route
-        const resolvedRoute = router.resolve(file.path)
+        const resolvedRoute = router.resolve(updatedPath)
         if (!resolvedRoute || !resolvedRoute.matched || resolvedRoute.matched.length === 0) {
           return
         }
 
-        editorSelectedPath.value = file.path as string
-        router.push(file.path)
+        router.push(updatedPath)
       }
     }
   })
