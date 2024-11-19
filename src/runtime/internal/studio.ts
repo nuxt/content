@@ -246,15 +246,6 @@ export function initIframeCommunication() {
     }
   })
 
-  nuxtApp.hook('page:finish', () => {
-    selectCurrentRouteOnStudio()
-  })
-
-  // @ts-expect-error custom hook
-  nuxtApp.hook('nuxt-studio:preview:ready', () => {
-    window.parent.postMessage({ type: 'nuxt-studio:preview:ready' }, '*')
-  })
-
   async function selectCurrentRouteOnStudio() {
     const currentPath = route.path
 
@@ -274,6 +265,15 @@ export function initIframeCommunication() {
 
     window.openFileInStudio(currentPath)
   }
+
+  nuxtApp.hook('page:finish', () => {
+    selectCurrentRouteOnStudio()
+  })
+
+  // @ts-expect-error custom hook
+  nuxtApp.hook('nuxt-studio:preview:ready', () => {
+    window.parent.postMessage({ type: 'nuxt-studio:preview:ready' }, '*')
+  })
 
   // Inject utils to window
   window.openFileInStudio = (path: string) => {

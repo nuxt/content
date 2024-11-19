@@ -10,7 +10,10 @@ export const getCollectionByPath = (path: string, collections: Record<string, Co
       return
     }
 
-    return micromatch.isMatch(withoutRoot(path), collection.source.include, { ignore: collection.source.exclude || [], dot: true })
+    const paths = path === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [withoutRoot(path)]
+    return paths.some((pathWithoutRoot) => {
+      return micromatch.isMatch(pathWithoutRoot, collection.source.include, { ignore: collection.source.exclude || [], dot: true })
+    })
   })
 }
 
