@@ -1,3 +1,3 @@
 interface Window {
-  openFileInStudio: (contentIds: string[], data = {}) => void
+  openFileInStudio: (path: string) => void
 }

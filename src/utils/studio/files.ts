@@ -1,4 +1,5 @@
 import { dirname, parse, join } from 'pathe'
+import { withoutLeadingSlash } from 'ufo'
 import type { DraftFile, DraftSyncFile } from '~/src/types/studio'
 
 export const StudioConfigFiles = {
@@ -9,7 +10,7 @@ export const StudioConfigFiles = {
 
 // Removing `content/` prefix only if path is starting with content/
 export function withoutRoot(path: string) {
-  return path?.startsWith('content/') ? path.split('/').slice(1).join('/') : path
+  return path?.startsWith('content/') ? path.split('/').slice(1).join('/') : withoutLeadingSlash(path)
 }
 
 // Generate stem (path without extension)

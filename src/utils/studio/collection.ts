@@ -1,7 +1,19 @@
+import micromatch from 'micromatch'
 import type { CollectionInfo } from '../../types/collection'
 import { getOrderedSchemaKeys } from '../schema'
+import { withoutRoot } from './files'
 
-// Convert collection data to SQL insert statement
+// TODO handle source prefix
+export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
+  return Object.values(collections).find((collection) => {
+    if (!collection.source) {
+      return
+    }
+
+    return micromatch.isMatch(withoutRoot(path), collection.source.include, { ignore: collection.source.exclude || [], dot: true })
+  })
+}
+
 export function generateCollectionInsert(collection: CollectionInfo, data: Record<string, unknown>) {
   const values = computeValuesBasedOnCollectionSchema(collection, data)
 

@@ -1,7 +1,5 @@
-import micromatch from 'micromatch'
 import type { CollectionInfo } from '../../types/collection'
 import type { DraftSyncFile } from '../../types/studio'
-import { withoutRoot } from './files'
 
 export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo) => {
   const mappedFile: Record<string, unknown> = {
@@ -25,14 +23,4 @@ export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo
   })
 
   return mappedFile
-}
-
-export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
-  return Object.values(collections).find((collection) => {
-    if (!collection.source) {
-      return
-    }
-
-    return micromatch.isMatch(withoutRoot(path), collection.source.include, { ignore: collection.source.exclude || [], dot: true })
-  })
 }
