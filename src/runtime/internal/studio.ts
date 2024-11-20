@@ -29,19 +29,17 @@ const initializePreview = async (data: DraftSyncData) => {
       return
     }
 
+    const db = loadDatabaseAdapter(collection.name)
+
+    // Define collection table
+    await db.exec(collection.tableDefinition)
+
     const v3File = v2ToV3ParsedFile(file, collection)
 
     const query = generateCollectionInsert(collection, v3File)
 
-    const db = loadDatabaseAdapter(collection.name)
-
-    // Define table
-    await db.exec(collection.tableDefinition)
-
     // Insert preview files
     await db.exec(query)
-
-    // window.db = db
   }
 
   // const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
