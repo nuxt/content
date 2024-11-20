@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.0.0-alpha.7](https://github.com/nuxt/content/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2024-11-20)
+
+### Features
+
+* add support for LibSQL ([e345fdc](https://github.com/nuxt/content/commit/e345fdc53deac26bb6397218dfe082b323e6ab2d))
+* enable `remark-mdc` automatic unwrap ([b5b7759](https://github.com/nuxt/content/commit/b5b77596c6e17093ee9cb3a5717719d7be1304c9))
+* provice default value for seo title & description ([c8d8848](https://github.com/nuxt/content/commit/c8d88489b9124ebc249f5c6077d3714147070140))
+
+### Bug Fixes
+
+* broken util ([89352b8](https://github.com/nuxt/content/commit/89352b85fab74c28e44354fa7130d8a6cadcce6b))
+* **build:** do not return database in `dropContentTables` ([668bc15](https://github.com/nuxt/content/commit/668bc157a776362bf6a539b197c322fb100801bc))
+* **ContentRenderer:** typo in class props ([e817035](https://github.com/nuxt/content/commit/e81703523c487aacd9fe2d69a18e1c9a87dd18da))
+* deprioritise `~/components/content` directory ([0a7077a](https://github.com/nuxt/content/commit/0a7077ab06875f845c2176a31418f561c954c574))
+* **deps:** use `@nuxt/content` from workspace ([4d89141](https://github.com/nuxt/content/commit/4d8914115d454047c3ab908f67077ddef96e298c))
+* **Dev:** update dump on file modification and deletion ([21a04d7](https://github.com/nuxt/content/commit/21a04d7ec3fb0015f01a01597b6009304ac71f02))
+* drop `markdown.mdc` option, plugin can be controlled vie `markdown.remarkPlugins` ([1cf4cbd](https://github.com/nuxt/content/commit/1cf4cbdcef48fa0d82fcff82ec43dedb1d70233c))
+* drop `useContentHead` in favor of `useSeoMeta` ([ca78aaf](https://github.com/nuxt/content/commit/ca78aaf4285e775e2b624e9015fd4a9031486062))
+* drop content tables to start local server with a clean state ([#2859](https://github.com/nuxt/content/issues/2859)) ([aa4614d](https://github.com/nuxt/content/commit/aa4614d1977be8ab964fab369ca4a7544e87eddf))
+* **icons:** use local server bundle ([a440e2f](https://github.com/nuxt/content/commit/a440e2fef3561e224f58191cf513ce4bcf92ba67))
+* **source:** do not edit `source.include` ([fa591ff](https://github.com/nuxt/content/commit/fa591ff14d8ab0523d9c71d15eb0d481e1881b21))
+* typo ([e0f7bf5](https://github.com/nuxt/content/commit/e0f7bf5bc222f0a424c1f31d77fcf2b3499fd238))
+* unshift components dirs to prevent getting prefixed ([8f8b373](https://github.com/nuxt/content/commit/8f8b37397a579df124f83c18056023dfe0955428))
+* use version for info collection ([a79040d](https://github.com/nuxt/content/commit/a79040d971110937b930bcd1f9ad010efa2c215b))
 
 ## v2.13.4
 
@@ -1308,4 +1332,3 @@
 - Vinayak Kulkarni
 - Vinccool96
 - Yaël Guilloux
-
