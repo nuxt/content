@@ -1,0 +1,19 @@
+{
+  "name": "nuxt-content-i18n-starter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "next",
+    "@nuxtjs/i18n": "latest",
+    "@nuxt/ui-pro": "next",
+    "nuxt": "latest",
+    "vue": "latest",
+    "vue-router": "latest"
+  }
+}

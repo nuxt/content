@@ -28,6 +28,7 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
+    "example": "run () { nuxi dev examples/$*; }; run",
     "docs": "nuxi dev docs",
     "docs:build": "nuxi build docs",
     "dev": "nuxi dev playground",
