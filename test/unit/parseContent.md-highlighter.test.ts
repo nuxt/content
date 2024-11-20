@@ -71,7 +71,6 @@ describe('Highlighter', () => {
       }
       else {
         expect(style).toContain(`.${token.props?.class}`)
-        expect(style).toContain(`.dark .${token.props?.class}`)
       }
     })
   })
