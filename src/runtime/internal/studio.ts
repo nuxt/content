@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import type { AppConfig } from 'nuxt/schema'
-import type { TransformedContent } from '@nuxt/content'
+import type { CollectionInfo } from '@nuxt/content'
 import { withLeadingSlash } from 'ufo'
 import StudioPreviewMode from '../components/StudioPreviewMode.vue'
-import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile } from '../../types/studio'
+import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile, type DraftSyncFile } from '../../types/studio'
 import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from '../../utils/studio'
 import { loadDatabaseAdapter } from '../internal/database.client'
 import { getCollectionByPath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/collection'
@@ -21,44 +21,54 @@ const initializePreview = async (data: DraftSyncData) => {
   // // Handle content files
   const contentFiles = mergedFiles.filter(item => !([StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4, StudioConfigFiles.nuxtConfig].includes(item.path)))
 
-  // Initialize db with preview files
-  for (const file of contentFiles) {
-    // Fetch corresponding collection
-    const collection = getCollectionByPath(file.path, collections)
-    if (!collection) {
-      console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping insertion.`)
-      return
-    }
-
+  // Initialize collection tables
+  for (const collection of Object.values(collections as Record<string, CollectionInfo>)) {
     const db = loadDatabaseAdapter(collection.name)
-
-    // Define collection table
     await db.exec(collection.tableDefinition)
-
-    const v3File = v2ToV3ParsedFile(file, collection)
-
-    const query = generateCollectionInsert(collection, v3File)
-
-    // Insert preview files
-    await db.exec(query)
   }
 
-  // const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
-  // syncPreviewAppConfig(appConfig?.parsed)
+  // Initialize db with preview files
+  for (const file of contentFiles) {
+    await syncDraftFile(collections, file)
+  }
+
+  const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
+  if (appConfig) {
+    syncDraftAppConfig(appConfig.parsed)
+  }
 
   refreshNuxtData()
 
-  // return true
+  dbReady.value = true
 }
 
-const syncPreviewAppConfig = (appConfig?: any) => {
+const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: DraftSyncFile) => {
+  // Fetch corresponding collection
+  const collection = getCollectionByPath(file.path, collections)
+  if (!collection) {
+    console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping insertion.`)
+    return
+  }
+
+  const db = loadDatabaseAdapter(collection.name)
+
+  const v3File = v2ToV3ParsedFile(file, collection)
+
+  const query = generateCollectionInsert(collection, v3File)
+
+  await db.exec(query)
+}
+
+const syncDraftAppConfig = (appConfig?: Record<string, unknown>) => {
   const nuxtApp = useNuxtApp()
 
   const _appConfig = callWithNuxt(nuxtApp, useAppConfig) as AppConfig
+  console.log('_appConfig :', _appConfig)
+  console.log('initialAppConfig :', initialAppConfig)
 
   // Using `defu` to merge with initial config
   // This is important to revert to default values for missing properties
-  deepAssign(_appConfig, defu(appConfig, initialAppConfig))
+  deepAssign(_appConfig, defu(appConfig || {}, initialAppConfig))
 
   // Reset app config to initial state if no appConfig is provided
   // Makes sure that app config does not contain any preview data
@@ -149,16 +159,20 @@ export function initIframeCommunication() {
 
         const appConfig = additions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
         if (appConfig) {
-          syncPreviewAppConfig(appConfig?.parsed)
+          syncDraftAppConfig(appConfig?.parsed)
         }
         const shouldRemoveAppConfig = deletions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
         if (shouldRemoveAppConfig) {
-          syncPreviewAppConfig(undefined)
+          syncDraftAppConfig(undefined)
         }
       }
     }
 
     async function handleFileSelection(path: string) {
+      if (!path) {
+        return
+      }
+
       const collection = getCollectionByPath(withoutRoot(path), collections)
       if (!collection) {
         console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
@@ -279,7 +293,6 @@ export function initIframeCommunication() {
 
   // @ts-expect-error custom hook
   nuxtApp.hook('nuxt-studio:preview:ready', () => {
-    dbReady.value = true
     window.parent.postMessage({ type: 'nuxt-studio:preview:ready' }, '*')
   })
 
