@@ -17,8 +17,6 @@ export const pageSchema = z.object({
     z.object({
       title: z.string().optional(),
       description: z.string().optional(),
-      meta: z.array(z.record(z.string(), z.any())).optional(),
-      link: z.array(z.record(z.string(), z.any())).optional(),
     }),
     z.record(z.string(), z.any()),
   ).optional().default({}),
