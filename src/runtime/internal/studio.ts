@@ -9,9 +9,10 @@ import { loadDatabaseAdapter } from '../internal/database.client'
 import { getCollectionByPath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/collection'
 import { v2ToV3ParsedFile } from '../../utils/studio/compatibility'
 import { callWithNuxt, refreshNuxtData } from '#app'
-import { useAppConfig, useNuxtApp, useRuntimeConfig, useRoute, useRouter } from '#imports'
+import { useAppConfig, useNuxtApp, useRuntimeConfig, useRoute, useRouter, ref } from '#imports'
 import { collections } from '#content/studio'
 
+const dbReady = ref(false)
 const initialAppConfig = createSingleton(() => JSON.parse(JSON.stringify((useAppConfig()))))
 
 const initializePreview = async (data: DraftSyncData) => {
@@ -109,6 +110,10 @@ export function initIframeCommunication() {
   })
 
   window.addEventListener('message', async (e: { data: FileMessageData }) => {
+    if (!dbReady.value) {
+      return
+    }
+
     // IFRAME_MESSAGING_ALLOWED_ORIGINS format must be a comma separated string of allowed origins
     const allowedOrigins = studio?.iframeMessagingAllowedOrigins?.split(',').map((origin: string) => origin.trim()) || []
     if (!['https://nuxt.studio', 'https://new.nuxt.studio', 'https://new.dev.nuxt.studio', 'https://dev.nuxt.studio', 'http://localhost:3000', ...allowedOrigins].includes(e.origin)) {
@@ -172,11 +177,11 @@ export function initIframeCommunication() {
 
       const query = generateRecordSelectByColumn(collection, 'stem', stem)
 
-      const file: TransformedContent = await db.first(query)
+      const file = await db.first(query) as { path: string }
 
       // Do not navigate to another page if file is not found
       // This makes sure that user stays on the same page when navigation through directories in the editor
-      if (!file) {
+      if (!file || !file.path) {
         return
       }
 
@@ -245,6 +250,10 @@ export function initIframeCommunication() {
   })
 
   async function selectCurrentRouteOnStudio() {
+    if (!dbReady.value) {
+      return
+    }
+
     const currentPath = route.path
 
     const collection = getCollectionByPath(currentPath, collections)
@@ -256,7 +265,7 @@ export function initIframeCommunication() {
 
     const query = generateRecordSelectByColumn(collection, 'path', currentPath)
 
-    const file: TransformedContent = await db.first(query)
+    const file = await db.first(query) as { path: string }
     if (!file || !file.path) {
       return
     }
@@ -270,6 +279,7 @@ export function initIframeCommunication() {
 
   // @ts-expect-error custom hook
   nuxtApp.hook('nuxt-studio:preview:ready', () => {
+    dbReady.value = true
     window.parent.postMessage({ type: 'nuxt-studio:preview:ready' }, '*')
   })
 
