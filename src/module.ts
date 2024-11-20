@@ -231,7 +231,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let cachedFilesCount = 0
   let parsedFilesCount = 0
 
-  // Remove all existing content collections to start with a clean slate
+  // Remove all existing content collections to start with a clean state
   db.dropContentTables()
 
   // Create database dump
