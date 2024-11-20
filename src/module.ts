@@ -230,6 +230,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let filesCount = 0
   let cachedFilesCount = 0
   let parsedFilesCount = 0
+
+  // Remove all existing content collections to start with a clean slate
+  db.dropContentTables()
+
   // Create database dump
   for await (const collection of collections) {
     if (collection.name === 'info') {
