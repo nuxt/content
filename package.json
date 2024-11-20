@@ -91,6 +91,7 @@
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.14.1592",
     "@nuxt/test-utils": "^3.14.4",
+    "@release-it/conventional-changelog": "^9.0.3",
     "@types/better-sqlite3": "^7.6.12",
     "@types/micromatch": "^4.0.9",
     "@types/node": "^22.9.1",
