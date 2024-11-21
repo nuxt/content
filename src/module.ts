@@ -45,10 +45,6 @@ export default defineNuxtModule<ModuleOptions>({
       type: 'sqlite',
       filename: '.data/content/contents.sqlite',
     },
-    database: {
-      type: 'sqlite',
-      filename: './contents.sqlite',
-    },
     studio: {
       enabled: false,
     },
@@ -89,6 +85,14 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   async setup(options, nuxt) {
+    // Provide default database configuration here since nuxt is merging defaults and user options
+    if (!options.database) {
+      options.database = {
+        type: 'sqlite',
+        filename: './contents.sqlite',
+      }
+    }
+
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
       checksum: {},
@@ -118,9 +122,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
     nuxt.options.runtimeConfig.content = {
       version,
-      database: options.database as SqliteDatabaseConfig,
+      database: options.database,
       localDatabase: options._localDatabase!,
-    }
+    } as never
+
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
