@@ -3,11 +3,14 @@ import type { CollectionInfo } from '../../types/collection'
 import { getOrderedSchemaKeys } from '../schema'
 import { withoutRoot } from './files'
 
-// TODO handle source prefix
 export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
   return Object.values(collections).find((collection) => {
     if (!collection.source) {
       return
+    }
+
+    if (collection.source.prefix && path.startsWith(collection.source.prefix)) {
+      path = path.substring(collection.source.prefix.length)
     }
 
     const paths = path === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [withoutRoot(path)]
