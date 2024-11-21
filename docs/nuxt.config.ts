@@ -41,12 +41,6 @@ export default defineNuxtConfig({
     },
     studio: {
       enabled: true,
-      dev: true,
-      gitInfo: {
-        owner: 'larbish',
-        name: 'starter-larb',
-        url: 'https://github.com/larbish/starter-larb',
-      },
     },
   },
 
