@@ -128,10 +128,6 @@ export function initIframeCommunication() {
       return
     }
 
-    console.log('------------ MESSAGE RECEIVED ------------')
-    console.log('TYPE :', e.data.type)
-    console.log('PAYLOAD :', e.data.payload)
-    console.log('------------------------------------------')
     const { type, payload = {}, navigate } = e.data || {}
 
     switch (type) {
