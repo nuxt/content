@@ -42,7 +42,7 @@ export function generateRecordSelectByColumn(collection: CollectionInfo, column:
   return `SELECT * FROM ${collection.tableName} WHERE ${column} = '${value}'`
 }
 
-export function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: Record<string, unknown>) {
+function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const properties = collection.schema.definitions[collection.name].properties

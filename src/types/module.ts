@@ -177,13 +177,5 @@ export interface RuntimeConfig {
     version: string
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
-    collections?: ResolvedCollection[]
-  }
-  studio: {
-    gitInfo: GitInfo
-    appConfigSchema: {
-      properties: Record<string, unknown>
-      default: Record<string, unknown>
-    }
   }
 }

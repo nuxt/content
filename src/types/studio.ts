@@ -37,21 +37,6 @@ export interface DraftFile {
   pathMeta?: Record<string, unknown>
 }
 
-// {
-//   "id": 0,
-//   "name": "2.installation.md",
-//   "nameWithoutPrefix": "installation.md",
-//   "type": "file",
-//   "path": "content/docs/1.getting-started/2.installation.md",
-//   "pathPreview": "content/docs/1.getting-started/2.installation.md",
-//   "pathWithoutRoot": "docs/1.getting-started/2.installation.md",
-//   "pathRoute": "docs/getting-started/installation",
-//   "status": "updated",
-//   "content": "---\ntitle: Installation\ndescription: Get started with Nuxt Content v3 in your Nuxt application.\n---\n\n###\n",
-//   "updatedAt": "2024-11-12T10:30:55.626Z",
-//   "parsed": ''
-// }
-
 /*
 Iframe messaging data
 */

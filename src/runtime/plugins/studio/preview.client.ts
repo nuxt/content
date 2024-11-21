@@ -6,9 +6,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const route = useRoute()
   const previewToken = useCookie('previewToken', { sameSite: 'none', secure: true })
 
-  // TODO connect to db sqlite
-  // const storage = fuseState<Storage | null>('studio-client-db', () => null)
-
   if (studioConfig.apiURL) {
     // Do not enable preview if preview token is missing in query params
     if (Object.prototype.hasOwnProperty.call(route.query, 'preview') && !route.query.preview) {

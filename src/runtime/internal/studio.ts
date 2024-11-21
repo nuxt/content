@@ -63,8 +63,6 @@ const syncDraftAppConfig = (appConfig?: Record<string, unknown>) => {
   const nuxtApp = useNuxtApp()
 
   const _appConfig = callWithNuxt(nuxtApp, useAppConfig) as AppConfig
-  console.log('_appConfig :', _appConfig)
-  console.log('initialAppConfig :', initialAppConfig)
 
   // Using `defu` to merge with initial config
   // This is important to revert to default values for missing properties
@@ -154,7 +152,7 @@ export function initIframeCommunication() {
         rerenderPreview()
         break
       }
-      case 'nuxt-studio:config:file-changed': {
+      case FileMessageType.ConfigFileChanged: {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
 
         const appConfig = additions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
@@ -184,7 +182,6 @@ export function initIframeCommunication() {
         return
       }
 
-      // Load db
       const db = loadDatabaseAdapter(collection.name)
 
       const stem = generateStemFromPath(path)
