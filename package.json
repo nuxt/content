@@ -19,6 +19,11 @@
       "types": "./dist/module.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
+    },
+    "./studio": {
+      "types": "./dist/studio.d.ts",
+      "import": "./dist/studio.mjs",
+      "require": "./dist/studio.cjs"
     }
   },
   "main": "./dist/module.cjs",
@@ -115,5 +120,20 @@
     "@nuxt/content": "workspace:*",
     "vue": "^3.5.12"
   },
-  "packageManager": "pnpm@9.14.2"
+  "packageManager": "pnpm@9.14.2",
+  "unbuild": {
+    "entries": [
+      "./src/module",
+      "./src/studio"
+    ],
+    "externals": [
+      "untyped"
+    ],
+    "rollup": {
+      "output": {
+        "exports": "named"
+      },
+      "emitCJS": true
+    }
+  }
 }
