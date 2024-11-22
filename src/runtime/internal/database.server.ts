@@ -5,7 +5,7 @@ import { fetchDatabase } from './api'
 import { tables, checksums } from '#content/manifest'
 import adapter from '#content/adapter'
 
-export default function loadDatabaseAdapter(config: RuntimeConfig) {
+export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
   let _adapter: DatabaseAdapter
@@ -40,7 +40,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig) {
 
 const checkDatabaseIntegrity = {} as Record<string, boolean>
 const integrityCheckPromise = {} as Record<string, Promise<void> | null>
-export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig): Promise<void> {
+export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
   if (checkDatabaseIntegrity[String(collection)] !== false) {
     checkDatabaseIntegrity[String(collection)] = false
     integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
@@ -57,7 +57,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig) {
+async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = 'checksum_${collection}'`).catch(() => ({ version: '' }))

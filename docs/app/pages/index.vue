@@ -7,10 +7,10 @@ if (!page.value) {
 }
 
 useSeoMeta({
-  title: page.value.title,
-  description: page.value.description,
-  ogTitle: page.value.title,
-  ogDescription: page.value.description,
+  title: page.value.seo?.title,
+  description: page.value.seo?.description,
+  ogTitle: page.value.seo?.title,
+  ogDescription: page.value.seo?.description,
   ogImage: `${siteConfig.url}/social.png`,
   twitterImage: `${siteConfig.url}/social.png`,
 })

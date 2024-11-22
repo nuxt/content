@@ -5,8 +5,11 @@ import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { pascalCase } from 'scule'
-import type { ResolvedCollection } from '../types/collection'
+import type { Schema } from 'untyped'
+import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
+import type { GitInfo } from './git'
+import { generateCollectionTableDefinition } from './collection'
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
@@ -27,7 +30,7 @@ function indentLines(str: string, indent: number = 2) {
 
 export const moduleTemplates = {
   types: 'content/types.d.ts',
-  collections: 'content/collections.mjs',
+  studio: 'content/studio.mjs',
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   fullCompressedDump: 'content/database.compressed.mjs',
@@ -64,30 +67,6 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
     collections,
   },
 } satisfies NuxtTemplate)
-
-export const collectionsTemplate = (collections: ResolvedCollection[]) => ({
-  filename: moduleTemplates.collections,
-  getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
-    const collectionsMeta = options.collections.reduce((acc, collection) => {
-      acc[collection.name] = {
-        name: collection.name,
-        tableName: collection.tableName,
-        // Remove source from collection meta if it's a remote collection
-        source: collection.source?.repository ? undefined : collection.source,
-        type: collection.type,
-        jsonFields: collection.jsonFields,
-        schema: zodToJsonSchema(collection.extendedSchema, collection.name),
-      }
-      return acc
-    }, {} as Record<string, unknown>)
-
-    return 'export const collections = ' + JSON.stringify(collectionsMeta, null, 2)
-  },
-  options: {
-    collections,
-  },
-  write: true,
-})
 
 export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.fullCompressedDump,
@@ -191,6 +170,42 @@ export const manifestTemplate = (manifest: Manifest) => ({
   },
   options: {
     manifest,
+  },
+  write: true,
+})
+
+export const studioTemplate = (collections: ResolvedCollection[], gitInfo: GitInfo, schema: Schema) => ({
+  filename: moduleTemplates.studio,
+  getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
+    const collectionsMeta = options.collections.reduce((acc, collection) => {
+      acc[collection.name] = {
+        name: collection.name,
+        pascalName: pascalCase(collection.name),
+        tableName: collection.tableName,
+        // Remove source from collection meta if it's a remote collection
+        source: collection.source?.repository ? undefined : collection.source,
+        type: collection.type,
+        jsonFields: collection.jsonFields,
+        schema: zodToJsonSchema(collection.extendedSchema, collection.name),
+        tableDefinition: generateCollectionTableDefinition(collection),
+      }
+      return acc
+    }, {} as Record<string, CollectionInfo>)
+
+    const appConfigMeta = {
+      properties: schema.properties?.appConfig,
+      default: (schema.default as Record<string, unknown>)?.appConfig,
+    }
+
+    return [
+      'export const collections = ' + JSON.stringify(collectionsMeta, null, 2),
+      'export const gitInfo = ' + JSON.stringify(gitInfo, null, 2),
+      'export const appConfigSchema = ' + JSON.stringify(appConfigMeta, null, 2),
+    ].join('\n')
+  },
+  options: {
+    collections,
+    gitInfo,
   },
   write: true,
 })

@@ -44,6 +44,12 @@ async function loadAdapter<T>(collection: T) {
 
     db = new sqlite3.oo1.DB()
   }
+
+  // Do not initialize database with dump for Studio preview
+  if (window.sessionStorage.getItem('previewToken')) {
+    return db
+  }
+
   let compressedDump: string | null = null
 
   const checksumId = `checksum_${collection}`
@@ -104,7 +110,7 @@ async function loadAdapter<T>(collection: T) {
     perf.tick('Restore Dump')
   }
 
-  perf.end('Initialize Database')
+  perf.end('Database Loaded')
 
   return db
 }

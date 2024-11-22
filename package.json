@@ -19,6 +19,11 @@
       "types": "./dist/module.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
+    },
+    "./studio": {
+      "types": "./dist/studio.d.ts",
+      "import": "./dist/studio.mjs",
+      "require": "./dist/studio.cjs"
     }
   },
   "main": "./dist/module.cjs",
@@ -51,6 +56,7 @@
     "defu": "^6.1.4",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.2",
+    "git-url-parse": "^15.0.0",
     "jiti": "^2.4.0",
     "knitwork": "^1.1.0",
     "listhen": "^1.9.0",
@@ -62,12 +68,16 @@
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
+    "nuxt-component-meta": "^0.9.0",
     "ohash": "^1.1.4",
+    "parse-git-config": "^3.0.0",
     "pathe": "^1.1.2",
+    "pkg-types": "^1.2.1",
     "remark-mdc": "latest",
     "scule": "^1.3.0",
     "shiki": "^1.23.1",
     "slugify": "^1.6.6",
+    "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
     "typescript": "^5.6.3",
     "ufo": "^1.5.4",
@@ -110,5 +120,20 @@
     "@nuxt/content": "workspace:*",
     "vue": "^3.5.12"
   },
-  "packageManager": "pnpm@9.14.2"
+  "packageManager": "pnpm@9.14.2",
+  "unbuild": {
+    "entries": [
+      "./src/module",
+      "./src/studio"
+    ],
+    "externals": [
+      "untyped"
+    ],
+    "rollup": {
+      "output": {
+        "exports": "named"
+      },
+      "emitCJS": true
+    }
+  }
 }

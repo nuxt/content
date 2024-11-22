@@ -63,10 +63,14 @@ export interface CollectionInfo {
   name: string
   pascalName: string
   tableName: string
-  source: CollectionSource | undefined
+  source: CollectionSource
   type: CollectionType
-  schema: JsonSchema7Type
+  schema: JsonSchema7Type & {
+    $schema?: string
+    definitions?: { [key: string]: JsonSchema7Type }
+  }
   jsonFields: string[]
+  tableDefinition: string
 }
 
 export interface CollectionItemBase {

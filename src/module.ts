@@ -8,7 +8,7 @@ import {
   addServerImports,
   addPlugin,
   updateTemplates,
-  addComponentsDir,
+  addComponent,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -17,8 +17,9 @@ import { join, dirname, isAbsolute } from 'pathe'
 import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
+import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
-import { collectionsTemplate, componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
+import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
@@ -27,6 +28,7 @@ import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
+import { setupStudio } from './utils/studio/module'
 import { parseSourceBase } from './utils/source'
 
 // Export public utils
@@ -43,9 +45,8 @@ export default defineNuxtModule<ModuleOptions>({
       type: 'sqlite',
       filename: '.data/content/contents.sqlite',
     },
-    database: {
-      type: 'sqlite',
-      filename: './contents.sqlite',
+    studio: {
+      enabled: false,
     },
     watch: {
       enabled: true,
@@ -84,6 +85,14 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   async setup(options, nuxt) {
+    // Provide default database configuration here since nuxt is merging defaults and user options
+    if (!options.database) {
+      options.database = {
+        type: 'sqlite',
+        filename: './contents.sqlite',
+      }
+    }
+
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
       checksum: {},
@@ -92,11 +101,13 @@ export default defineNuxtModule<ModuleOptions>({
       collections: [],
     }
 
+    // Create local database
     options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
       ? options._localDatabase!.filename
       : join(nuxt.options.rootDir, options._localDatabase!.filename)
     await mkdir(dirname(options._localDatabase!.filename), { recursive: true }).catch(() => {})
 
+    // Create sql database
     if ((options.database as SqliteDatabaseConfig).filename) {
       (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
       await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
@@ -105,14 +116,15 @@ export default defineNuxtModule<ModuleOptions>({
     const { collections } = await loadLayersConfig(nuxt)
     manifest.collections = collections
 
+    // Module Options
     nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',
     }
     nuxt.options.runtimeConfig.content = {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      database: options.database as any,
+      version,
+      database: options.database,
       localDatabase: options._localDatabase!,
-    }
+    } as never
 
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
@@ -133,13 +145,12 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
     ])
-    addComponentsDir({ path: resolver.resolve('./runtime/components') })
+    addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
     // Add Templates & aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     addTypeTemplate(contentTypesTemplate(manifest.collections))
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.nitro.alias['#content/collections'] = addTemplate(collectionsTemplate(manifest.collections)).dst
     nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
     nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
 
@@ -155,7 +166,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Load preset
+    // Load nitro preset and set db adapter
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver })
@@ -171,6 +182,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
     })
 
+    // Prerender database.sql routes for each collection to fetch dump
     nuxt.options.routeRules ||= {}
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
@@ -200,15 +212,28 @@ export default defineNuxtModule<ModuleOptions>({
         })
       })
 
+    // Generate collections and sql dump to update templates local database
+    // `app:templates` is triggered for all environments
     nuxt.hook('app:templates', async () => {
       await dumpGeneratePromise
     })
 
+    // Handle HMR changes
     if (nuxt.options.dev) {
       addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
       await watchContents(nuxt, options, manifest)
       await watchComponents(nuxt)
       await watchConfig(nuxt)
+    }
+
+    // Handle Studio mode
+    if (options.studio?.enabled) {
+      // Only enable Studio in production build or when explicitly enabled
+      if (nuxt.options.dev === true && !options.studio?.dev) {
+        return
+      }
+
+      await setupStudio(options, nuxt, resolver, manifest)
     }
   },
 })
