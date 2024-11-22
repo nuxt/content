@@ -1,6 +1,8 @@
-import micromatch from 'micromatch'
+import { minimatch } from 'minimatch'
 import type { CollectionInfo } from '@nuxt/content'
+// import { joinURL, withoutLeadingSlash } from 'ufo'
 import { getOrderedSchemaKeys } from '../schema'
+// import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
 
 export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
@@ -9,13 +11,22 @@ export const getCollectionByPath = (path: string, collections: Record<string, Co
       return
     }
 
-    if (collection.source.prefix && path.startsWith(collection.source.prefix)) {
-      path = path.substring(collection.source.prefix.length)
-    }
+    const pathWithoutRoot = withoutRoot(path)
 
-    const paths = path === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [withoutRoot(path)]
-    return paths.some((pathWithoutRoot) => {
-      return micromatch.isMatch(pathWithoutRoot, collection.source.include, { ignore: collection.source.exclude || [], dot: true })
+    // TODO HANDLE PREFIX
+    // const prefix = withoutLeadingSlash(collection.source.prefix)
+
+    // if (!pathWithoutRoot.startsWith(prefix)) {
+    //   return false
+    // }
+
+    // const { fixed } = parseSourceBase(collection.source)
+
+    // path = joinURL(fixed, pathWithoutRoot.substring(withoutLeadingSlash(collection.source.prefix).length))
+
+    const paths = pathWithoutRoot === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [pathWithoutRoot]
+    return paths.some((p) => {
+      return minimatch(p, collection.source.include)
     })
   })
 }

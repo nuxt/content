@@ -1,3 +1,4 @@
+import type { CollectionSource } from '@nuxt/content'
 import { createDefu } from 'defu'
 
 export * from './files'
@@ -51,5 +52,13 @@ export function deepAssign(obj: Record<string, unknown>, newObj: Record<string, 
     else {
       obj[key] = val
     }
+  }
+}
+
+export function parseSourceBase(source: CollectionSource) {
+  const [fixPart, ...rest] = source.include.includes('*') ? source.include.split('*') : ['', source.include]
+  return {
+    fixed: fixPart || '',
+    dynamic: '*' + rest.join('*'),
   }
 }

@@ -68,6 +68,7 @@
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
+    "minimatch": "^10.0.1",
     "nuxt-component-meta": "^0.9.0",
     "ohash": "^1.1.4",
     "parse-git-config": "^3.0.0",
