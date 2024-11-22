@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 
-const nav = inject<Ref<ContentNavigationItem[]>>('navigation')
-
-const navigation = computed(() => nav?.value?.find(item => item.path === '/docs')?.children || [])
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 </script>
 
 <template>
