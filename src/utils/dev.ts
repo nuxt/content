@@ -260,7 +260,7 @@ export function localDatabase(databaseLocation: string) {
       _localDatabase[databaseLocation]!.exec(`DELETE FROM _development_cache WHERE id = '${id}'`)
     },
     dropContentTables() {
-      return _localDatabase[databaseLocation]!.prepare<unknown[], { name: string }>(`SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE '_content_%'`)
+      _localDatabase[databaseLocation]!.prepare<unknown[], { name: string }>(`SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE '_content_%'`)
         .all()
         .map(({ name }) => _localDatabase[databaseLocation]!.exec(`DROP TABLE IF EXISTS ${name}`))
     },

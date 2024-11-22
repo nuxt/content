@@ -145,5 +145,11 @@ export async function parseContent(key: string, content: string, collection: Res
     result.rawbody = result.rawbody ?? content
   }
 
+  if (collectionKeys.includes('seo')) {
+    result.seo = result.seo || {}
+    result.seo.title = result.seo.title || result.title
+    result.seo.description = result.seo.description || result.description
+  }
+
   return result
 }

@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -28,6 +28,7 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
+    "example": "run () { nuxi dev examples/$*; }; run",
     "docs": "nuxi dev docs",
     "docs:build": "nuxi build docs",
     "dev": "nuxi dev playground",
@@ -40,8 +41,8 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.14.159",
-    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest",
+    "@nuxt/kit": "^3.14.1592",
+    "@nuxtjs/mdc": "^0.9.5",
     "@sqlite.org/sqlite-wasm": "3.47.0-build1",
     "better-sqlite3": "^11.5.0",
     "c12": "^2.0.1",
@@ -56,11 +57,11 @@
     "listhen": "^1.9.0",
     "mdast-util-to-hast": "^13.2.0",
     "mdast-util-to-string": "^4.0.0",
-    "micromark": "^4.0.0",
-    "micromark-util-character": "^2.1.0",
-    "micromark-util-chunked": "^2.0.0",
-    "micromark-util-resolve-all": "^2.0.0",
-    "micromark-util-sanitize-uri": "^2.0.0",
+    "micromark": "^4.0.1",
+    "micromark-util-character": "^2.1.1",
+    "micromark-util-chunked": "^2.0.1",
+    "micromark-util-resolve-all": "^2.0.1",
+    "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
     "nuxt-component-meta": "^0.9.0",
     "ohash": "^1.1.4",
@@ -69,7 +70,7 @@
     "pkg-types": "^1.2.1",
     "remark-mdc": "latest",
     "scule": "^1.3.0",
-    "shiki": "^1.22.2",
+    "shiki": "^1.23.1",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
@@ -88,30 +89,31 @@
     "pg": "*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241106.0",
+    "@cloudflare/workers-types": "^4.20241112.0",
     "@nuxt/content": "link:.",
-    "@nuxt/devtools": "^1.6.0",
-    "@nuxt/eslint-config": "^0.6.1",
+    "@nuxt/devtools": "^1.6.1",
+    "@nuxt/eslint-config": "^0.7.1",
     "@nuxt/module-builder": "^0.8.4",
-    "@nuxt/schema": "^3.14.159",
+    "@nuxt/schema": "^3.14.1592",
     "@nuxt/test-utils": "^3.14.4",
-    "@types/better-sqlite3": "^7.6.11",
+    "@release-it/conventional-changelog": "^9.0.3",
+    "@types/better-sqlite3": "^7.6.12",
     "@types/micromatch": "^4.0.9",
-    "@types/node": "^22.9.0",
+    "@types/node": "^22.9.1",
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.14.0",
-    "micromark-util-types": "^2.0.0",
-    "nuxt": "^3.14.159",
+    "eslint": "^9.15.0",
+    "micromark-util-types": "^2.0.1",
+    "nuxt": "^3.14.1592",
     "release-it": "^17.10.0",
-    "vitest": "^2.1.4",
+    "vitest": "^2.1.5",
     "vue-tsc": "^2.1.10",
-    "wrangler": "^3.85.0"
+    "wrangler": "^3.88.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
     "vue": "^3.5.12"
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.14.2"
 }
