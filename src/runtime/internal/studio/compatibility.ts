@@ -1,5 +1,4 @@
-import type { CollectionInfo } from '../../types/collection'
-import type { DraftSyncFile } from '../../types/studio'
+import type { CollectionInfo, DraftSyncFile } from '@nuxt/content'
 
 export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo) => {
   const mappedFile: Record<string, unknown> = {

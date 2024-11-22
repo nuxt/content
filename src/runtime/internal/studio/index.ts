@@ -1,13 +1,12 @@
 import { createApp } from 'vue'
 import type { AppConfig } from 'nuxt/schema'
-import type { CollectionInfo } from '@nuxt/content'
+import type { CollectionInfo, FileChangeMessagePayload, FileMessageData, FileSelectMessagePayload, DraftSyncData, PreviewFile, DraftSyncFile } from '@nuxt/content'
 import { withLeadingSlash } from 'ufo'
-import StudioPreviewMode from '../components/StudioPreviewMode.vue'
-import { FileMessageType, type FileChangeMessagePayload, type FileMessageData, type FileSelectMessagePayload, type DraftSyncData, type PreviewFile, type DraftSyncFile } from '../../types/studio'
-import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from '../../utils/studio'
-import { loadDatabaseAdapter } from '../internal/database.client'
-import { getCollectionByPath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from '../../utils/studio/collection'
-import { v2ToV3ParsedFile } from '../../utils/studio/compatibility'
+import StudioPreviewMode from '../../components/StudioPreviewMode.vue'
+import { loadDatabaseAdapter } from '../database.client'
+import { v2ToV3ParsedFile } from './compatibility'
+import { getCollectionByPath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from './collection'
+import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from './utils'
 import { callWithNuxt, refreshNuxtData } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, useRoute, useRouter, ref } from '#imports'
 import { collections } from '#content/studio'
@@ -131,12 +130,12 @@ export function initIframeCommunication() {
     const { type, payload = {}, navigate } = e.data || {}
 
     switch (type) {
-      case FileMessageType.FileSelected: {
+      case 'nuxt-studio:editor:file-selected': {
         await handleFileSelection((payload as FileSelectMessagePayload).path)
         break
       }
-      case FileMessageType.FileChanged:
-      case FileMessageType.MediaChanged: {
+      case 'nuxt-studio:editor:file-changed':
+      case 'nuxt-studio:editor:media-changed': {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
         for (const addition of additions) {
           await handleFileUpdate(addition, navigate)
@@ -148,7 +147,7 @@ export function initIframeCommunication() {
         rerenderPreview()
         break
       }
-      case FileMessageType.ConfigFileChanged: {
+      case 'nuxt-studio:config:file-changed': {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
 
         const appConfig = additions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))

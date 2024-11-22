@@ -66,12 +66,7 @@ export interface FileSelectMessagePayload {
   path: string
 }
 
-export const enum FileMessageType {
-  FileSelected = 'nuxt-studio:editor:file-selected',
-  FileChanged = 'nuxt-studio:editor:file-changed',
-  MediaChanged = 'nuxt-studio:editor:media-changed',
-  ConfigFileChanged = 'nuxt-studio:config:file-changed',
-}
+export type FileMessageType = 'nuxt-studio:editor:file-selected' | 'nuxt-studio:editor:file-changed' | 'nuxt-studio:editor:media-changed' | 'nuxt-studio:config:file-changed'
 
 export interface FileMessageData {
   type: FileMessageType

@@ -1,5 +1,5 @@
 import micromatch from 'micromatch'
-import type { CollectionInfo } from '../../types/collection'
+import type { CollectionInfo } from '@nuxt/content'
 import { getOrderedSchemaKeys } from '../schema'
 import { withoutRoot } from './files'
 
