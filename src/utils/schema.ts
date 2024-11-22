@@ -1,4 +1,4 @@
-import { z, type ZodRawShape } from 'zod'
+import { z } from 'zod'
 import { ContentFileExtension } from '../types/content'
 import { getEnumValues } from './zod'
 

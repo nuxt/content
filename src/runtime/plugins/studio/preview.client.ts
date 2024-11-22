@@ -1,4 +1,3 @@
-import { mountPreviewUI, initIframeCommunication } from '../../internal/studio'
 import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
@@ -24,8 +23,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     window.sessionStorage.setItem('previewAPI', typeof route.query.staging !== 'undefined' ? 'https://dev-api.nuxt.studio' : studioConfig.apiURL)
 
     nuxtApp.hook('app:mounted', async () => {
-      mountPreviewUI()
-      initIframeCommunication()
+      await import('../../internal/studio').then(({ mountPreviewUI, initIframeCommunication }) => {
+        mountPreviewUI()
+        initIframeCommunication()
+      })
     })
   }
 })
