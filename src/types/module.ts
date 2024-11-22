@@ -2,7 +2,6 @@ import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, Language
 import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
-import type { ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
