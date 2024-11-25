@@ -79,8 +79,6 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
-      console.log(buildQuery())
-
       return fetch(collection, buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
