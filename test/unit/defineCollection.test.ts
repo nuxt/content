@@ -17,11 +17,11 @@ describe('defineCollection', () => {
     })
     expect(collection).toMatchObject({
       type: 'page',
-      source: {
+      source: [{
         _resolved: true,
         include: 'pages/**',
         cwd: '',
-      },
+      }],
     })
 
     expect(collection.schema.shape).not.ownProperty('title')
@@ -61,12 +61,12 @@ describe('defineCollection', () => {
 
     expect(collection).toMatchObject({
       type: 'page',
-      source: {
+      source: [{
         include: 'pages/**',
         prefix: 'blog',
         exclude: ['pages/blog/index.md'],
         cwd: '',
-      },
+      }],
     })
 
     expect(collection.schema.shape).ownProperty('customField')
@@ -86,11 +86,11 @@ describe('defineCollection', () => {
 
     expect(collection).toMatchObject({
       type: 'data',
-      source: {
+      source: [{
         _resolved: true,
         include: 'data/**',
         cwd: '',
-      },
+      }],
     })
 
     expect(collection.schema.shape).toHaveProperty('customField')
@@ -115,12 +115,12 @@ describe('defineCollection', () => {
 
     expect(collection).toMatchObject({
       type: 'data',
-      source: {
+      source: [{
         include: 'data/**',
         cwd: '',
         prefix: 'blog',
         exclude: ['data/blog/index.md'],
-      },
+      }],
     })
   })
 })

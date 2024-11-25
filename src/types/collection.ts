@@ -24,13 +24,13 @@ export interface ResolvedCollectionSource extends CollectionSource {
 
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'page'
-  source?: string | CollectionSource
+  source?: string | CollectionSource | CollectionSource[]
   schema?: ZodObject<T>
 }
 
 export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'data'
-  source?: string | CollectionSource
+  source?: string | CollectionSource | CollectionSource[]
   schema: ZodObject<T>
 }
 
@@ -38,7 +38,7 @@ export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> 
 
 export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   type: CollectionType
-  source: ResolvedCollectionSource | undefined
+  source: ResolvedCollectionSource[] | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
   jsonFields: string[]
@@ -48,7 +48,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   name: string
   tableName: string
   type: CollectionType
-  source: ResolvedCollectionSource | undefined
+  source: ResolvedCollectionSource[] | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
   jsonFields: string[]
@@ -63,7 +63,7 @@ export interface CollectionInfo {
   name: string
   pascalName: string
   tableName: string
-  source: CollectionSource
+  source: CollectionSource[]
   type: CollectionType
   schema: JsonSchema7Type & {
     $schema?: string

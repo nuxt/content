@@ -1,6 +1,6 @@
 import type { ZodRawShape } from 'zod'
 
-export function getOrderedSchemaKeys(shape: ZodRawShape) {
+export function getOrderedSchemaKeys(shape: ZodRawShape | Record<string, unknown>) {
   const keys = new Set([
     shape.id ? 'id' : undefined,
     shape.title ? 'title' : undefined,

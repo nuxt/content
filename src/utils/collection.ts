@@ -73,24 +73,28 @@ export function resolveCollections(collections: Record<string, DefinedCollection
 /**
  * Process collection source and return refined source
  */
-function resolveSource(source: string | CollectionSource | undefined): ResolvedCollectionSource | undefined {
+function resolveSource(source: string | CollectionSource | CollectionSource[] | undefined): ResolvedCollectionSource[] | undefined {
   if (!source) {
     return undefined
   }
 
   if (typeof source === 'string') {
-    return defineLocalSource({ include: source })
+    return [defineLocalSource({ include: source })]
   }
 
-  if ((source as ResolvedCollectionSource)._resolved) {
-    return source as ResolvedCollectionSource
-  }
+  const sources: CollectionSource[] = Array.isArray(source) ? source : [source]
 
-  if (source.repository) {
-    return defineGitHubSource(source)
-  }
+  return sources.map((source) => {
+    if ((source as ResolvedCollectionSource)._resolved) {
+      return source as ResolvedCollectionSource
+    }
 
-  return defineLocalSource(source)
+    if (source.repository) {
+      return defineGitHubSource(source)
+    }
+
+    return defineLocalSource(source)
+  })
 }
 
 // Convert collection data to SQL insert statement

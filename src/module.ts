@@ -274,53 +274,54 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     if (!collection.source) {
       continue
     }
+    for await (const source of collection.source) {
+      if (source.prepare) {
+        await source.prepare(nuxt)
+      }
 
-    if (collection.source.prepare) {
-      await collection.source.prepare(nuxt)
+      const { fixed } = parseSourceBase(source)
+      const cwd = source.cwd
+      const _keys = await fastGlob(source.include, { cwd, ignore: source!.exclude || [], dot: true })
+        .catch(() => [])
+
+      filesCount += _keys.length
+
+      const list: Array<Array<string>> = []
+      for await (const chunk of chunks(_keys, 25)) {
+        await Promise.all(chunk.map(async (key) => {
+          key = key.substring(fixed.length)
+          const keyInCollection = join(collection.name, source?.prefix || '', key)
+
+          const content = await readFile(join(cwd, fixed, key), 'utf8')
+          const checksum = getContentChecksum(configHash + collectionHash + content)
+          const cache = databaseContents[keyInCollection]
+
+          let parsedContent
+          if (cache && cache.checksum === checksum) {
+            cachedFilesCount += 1
+            parsedContent = JSON.parse(cache.parsedContent)
+          }
+          else {
+            parsedFilesCount += 1
+            parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
+            db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
+          }
+
+          list.push([key, generateCollectionInsert(collection, parsedContent)])
+        }))
+      }
+      // Sort by file name to ensure consistent order
+      list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+      collectionDump[collection.name]!.push(...list.map(([, sql]) => sql!))
+
+      collectionChecksum[collection.name] = hash(collectionDump[collection.name])
+
+      collectionDump[collection.name]!.push(
+        generateCollectionTableDefinition(infoCollection, { drop: false }),
+        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}'`,
+        generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+      )
     }
-
-    const { fixed } = parseSourceBase(collection.source)
-    const cwd = collection.source.cwd
-    const _keys = await fastGlob(collection.source.include, { cwd, ignore: collection.source!.exclude || [], dot: true })
-      .catch(() => [])
-
-    filesCount += _keys.length
-
-    const list: Array<Array<string>> = []
-    for await (const chunk of chunks(_keys, 25)) {
-      await Promise.all(chunk.map(async (key) => {
-        key = key.substring(fixed.length)
-        const keyInCollection = join(collection.name, collection.source?.prefix || '', key)
-
-        const content = await readFile(join(cwd, fixed, key), 'utf8')
-        const checksum = getContentChecksum(configHash + collectionHash + content)
-        const cache = databaseContents[keyInCollection]
-
-        let parsedContent
-        if (cache && cache.checksum === checksum) {
-          cachedFilesCount += 1
-          parsedContent = JSON.parse(cache.parsedContent)
-        }
-        else {
-          parsedFilesCount += 1
-          parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
-          db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
-        }
-
-        list.push([key, generateCollectionInsert(collection, parsedContent)])
-      }))
-    }
-    // Sort by file name to ensure consistent order
-    list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-    collectionDump[collection.name]!.push(...list.map(([, sql]) => sql!))
-
-    collectionChecksum[collection.name] = hash(collectionDump[collection.name])
-
-    collectionDump[collection.name]!.push(
-      generateCollectionTableDefinition(infoCollection, { drop: false }),
-      `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}'`,
-      generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
-    )
   }
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)

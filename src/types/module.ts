@@ -178,3 +178,10 @@ export interface RuntimeConfig {
     localDatabase: SqliteDatabaseConfig
   }
 }
+
+export interface PublicRuntimeConfig {
+  studio: {
+    apiURL?: string
+    iframeMessagingAllowedOrigins?: string
+  }
+}

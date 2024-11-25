@@ -43,7 +43,8 @@ describe('empty', async () => {
       expect(pagesCollection).toBeDefined()
       expect(pagesCollection?.type).toBe('page')
       expect(pagesCollection?.source).toBeDefined()
-      expect(pagesCollection?.source?.include).toBe('**/*')
+      expect(pagesCollection?.source[0]).toBeDefined()
+      expect(pagesCollection?.source[0].include).toBe('**/*')
     })
   })
 

@@ -26,7 +26,12 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   const db = localDatabase(options._localDatabase!.filename)
   const collections = manifest.collections
 
-  const localCollections = collections.filter(c => c.source && !c.source.repository)
+  const sourceMap = collections.flatMap((c) => {
+    return c.source
+      ? c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s }))
+      : []
+  })
+  // const localCollections = collections.filter(c => c.source && !c.source.repository)
 
   const watcher = chokidar.watch('.', { ignoreInitial: true, cwd })
 
@@ -85,13 +90,14 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   }
 
   async function onChange(path: string) {
-    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
-    if (collection) {
+    const match = sourceMap.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
+    if (match) {
+      const { collection, source } = match
       logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
-      const { fixed } = parseSourceBase(collection.source!)
+      const { fixed } = parseSourceBase(source)
 
       const filePath = path.substring(fixed.length)
-      const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
+      const keyInCollection = join(collection.name, source?.prefix || '', filePath)
 
       const content = await readFile(join(nuxt.options.rootDir, 'content', path), 'utf8')
       const checksum = getContentChecksum(content)
@@ -113,13 +119,14 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   }
 
   async function onRemove(path: string) {
-    const collection = localCollections.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
-    if (collection) {
+    const match = sourceMap.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
+    if (match) {
+      const { collection, source } = match
       logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
-      const { fixed } = parseSourceBase(collection.source!)
+      const { fixed } = parseSourceBase(source)
 
       const filePath = path.substring(fixed.length)
-      const keyInCollection = join(collection.name, collection.source?.prefix || '', filePath)
+      const keyInCollection = join(collection.name, source?.prefix || '', filePath)
 
       await db.deleteDevelopmentCache(keyInCollection)
 
