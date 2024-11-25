@@ -1,13 +1,20 @@
-import type { CollectionInfo, DraftSyncFile } from '@nuxt/content'
+import type { CollectionInfo, DraftSyncFile, ResolvedCollectionSource } from '@nuxt/content'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
+import { join } from 'pathe'
+import { parseSourceBase } from './utils'
 
-export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo) => {
+export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo, source: ResolvedCollectionSource) => {
+  const { fixed } = parseSourceBase(source)
+  const path = file.parsed._path.substring(fixed.length)
+  const pathInCollection = join(source?.prefix || '', path)
+
+  // TODO - Handle data collections (remove path...)
   const mappedFile: Record<string, unknown> = {
     id: file.parsed._id,
     stem: file.parsed._stem,
     meta: {},
     extension: file.parsed._extension,
-    path: file.parsed._path,
+    path: pathInCollection,
   }
 
   const properties = (collection.schema.definitions[collection.name] as JsonSchema7ObjectType).properties

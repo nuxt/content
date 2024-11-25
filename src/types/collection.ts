@@ -63,7 +63,7 @@ export interface CollectionInfo {
   name: string
   pascalName: string
   tableName: string
-  source: CollectionSource[]
+  source: ResolvedCollectionSource[]
   type: CollectionType
   schema: JsonSchema7Type & {
     $schema?: string

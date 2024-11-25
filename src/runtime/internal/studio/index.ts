@@ -5,7 +5,7 @@ import { withLeadingSlash } from 'ufo'
 import StudioPreviewMode from '../../components/StudioPreviewMode.vue'
 import { loadDatabaseAdapter } from '../database.client'
 import { v2ToV3ParsedFile } from './compatibility'
-import { getCollectionByPath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate } from './collection'
+import { getCollectionByFilePath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate, getCollectionByRoutePath } from './collection'
 import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from './utils'
 import { callWithNuxt, refreshNuxtData } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, useRoute, useRouter, ref } from '#imports'
@@ -43,7 +43,7 @@ const initializePreview = async (data: DraftSyncData) => {
 
 const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: DraftSyncFile) => {
   // Fetch corresponding collection
-  const collection = getCollectionByPath(file.path, collections)
+  const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
   if (!collection) {
     console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping insertion.`)
     return
@@ -51,7 +51,7 @@ const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: 
 
   const db = loadDatabaseAdapter(collection.name)
 
-  const v3File = v2ToV3ParsedFile(file, collection)
+  const v3File = v2ToV3ParsedFile(file, collection, matchedSource)
 
   const query = generateCollectionInsert(collection, v3File)
 
@@ -167,7 +167,7 @@ export function initIframeCommunication() {
         return
       }
 
-      const collection = getCollectionByPath(withoutRoot(path), collections)
+      const { collection } = getCollectionByFilePath(withoutRoot(path), collections)
       if (!collection) {
         console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
         return
@@ -205,7 +205,7 @@ export function initIframeCommunication() {
     }
 
     async function handleFileUpdate(file: PreviewFile, navigate: boolean) {
-      const collection = getCollectionByPath(file.path, collections)
+      const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
       if (!collection) {
         console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping update.`)
         return
@@ -213,7 +213,7 @@ export function initIframeCommunication() {
 
       const stem = generateStemFromPath(file.path)
 
-      const v3File = v2ToV3ParsedFile({ path: file.path, parsed: file.parsed }, collection)
+      const v3File = v2ToV3ParsedFile({ path: file.path, parsed: file.parsed }, collection, matchedSource)
 
       const query = generateRecordUpdate(collection, stem, v3File)
 
@@ -240,7 +240,7 @@ export function initIframeCommunication() {
     }
 
     async function handleFileDeletion(path: string) {
-      const collection = getCollectionByPath(withoutRoot(path), collections)
+      const { collection } = getCollectionByFilePath(withoutRoot(path), collections)
       if (!collection) {
         console.warn(`Studio Preview: collection not found for file: ${path}, skipping deletion.`)
         return
@@ -261,23 +261,23 @@ export function initIframeCommunication() {
       return
     }
 
-    const currentPath = route.path
+    const routePath = route.path
 
-    const collection = getCollectionByPath(currentPath, collections)
+    const { collection } = getCollectionByRoutePath(routePath, collections)
     if (!collection || collection.type !== 'page') {
       return
     }
 
     const db = loadDatabaseAdapter(collection.name)
 
-    const query = generateRecordSelectByColumn(collection, 'path', currentPath)
+    const query = generateRecordSelectByColumn(collection, 'path', routePath)
 
     const file = await db.first(query) as { path: string }
     if (!file || !file.path) {
       return
     }
 
-    window.openFileInStudio(currentPath)
+    window.openFileInStudio(routePath)
   }
 
   nuxtApp.hook('page:finish', () => {

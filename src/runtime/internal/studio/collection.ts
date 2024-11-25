@@ -1,35 +1,60 @@
 import { minimatch } from 'minimatch'
-import type { CollectionInfo } from '@nuxt/content'
-// import { joinURL, withoutLeadingSlash } from 'ufo'
+import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
+import { joinURL } from 'ufo'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { getOrderedSchemaKeys } from '../schema'
-// import { parseSourceBase } from './utils'
+import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
 
-export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
-  return Object.values(collections).find((collection) => {
+export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
+  let matchedSource: ResolvedCollectionSource
+  const collection = Object.values(collections).find((collection) => {
     if (!collection.source || collection.source.length === 0) {
       return
     }
 
     const pathWithoutRoot = withoutRoot(path)
-
-    // TODO HANDLE PREFIX
-    // const prefix = withoutLeadingSlash(collection.source.prefix)
-
-    // if (!pathWithoutRoot.startsWith(prefix)) {
-    //   return false
-    // }
-
-    // const { fixed } = parseSourceBase(collection.source)
-
-    // path = joinURL(fixed, pathWithoutRoot.substring(withoutLeadingSlash(collection.source.prefix).length))
-
     const paths = pathWithoutRoot === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [pathWithoutRoot]
     return paths.some((p) => {
-      return collection.source.some(source => minimatch(p, source.include))
+      matchedSource = collection.source.find(source => minimatch(p, source.include))
+      return matchedSource
     })
   })
+
+  return {
+    collection,
+    matchedSource,
+  }
+}
+
+export const getCollectionByRoutePath = (routePath: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
+  let matchedSource: ResolvedCollectionSource
+  const collection = Object.values(collections).find((collection) => {
+    if (!collection.source || collection.source.length === 0) {
+      return
+    }
+
+    matchedSource = collection.source.find((source) => {
+      if (!routePath.startsWith(source.prefix)) {
+        return
+      }
+
+      const pathWithoutPrefix = routePath.substring(source.prefix.length)
+
+      const { fixed } = parseSourceBase(source)
+
+      const path = joinURL(fixed, pathWithoutPrefix)
+
+      return minimatch(path, source.include)
+    })
+
+    return matchedSource
+  })
+
+  return {
+    collection,
+    matchedSource,
+  }
 }
 
 export function generateCollectionInsert(collection: CollectionInfo, data: Record<string, unknown>) {
