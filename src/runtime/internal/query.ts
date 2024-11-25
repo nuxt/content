@@ -87,7 +87,7 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
-      })).then(m => m[0].count)
+      })).then(m => (m[0] as { count: number }).count)
     },
   }
 

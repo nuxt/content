@@ -54,7 +54,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         stem: content.stem,
         children: [],
         ...pickNavigationFields(content),
-      })
+      } as ContentNavigationItem)
 
       // Create navigation item from content
       const navItem: ContentNavigationItem = getNavItem(content)

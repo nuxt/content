@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import type { AppConfig } from 'nuxt/schema'
-import type { CollectionInfo, FileChangeMessagePayload, FileMessageData, FileSelectMessagePayload, DraftSyncData, PreviewFile, DraftSyncFile } from '@nuxt/content'
+import type { PublicRuntimeConfig, CollectionInfo, FileChangeMessagePayload, FileMessageData, FileSelectMessagePayload, DraftSyncData, PreviewFile, DraftSyncFile } from '@nuxt/content'
 import { withLeadingSlash } from 'ufo'
 import StudioPreviewMode from '../../components/StudioPreviewMode.vue'
 import { loadDatabaseAdapter } from '../database.client'
@@ -70,12 +70,13 @@ const syncDraftAppConfig = (appConfig?: Record<string, unknown>) => {
   // Reset app config to initial state if no appConfig is provided
   // Makes sure that app config does not contain any preview data
   if (!appConfig) {
+    // @ts-expect-error -- TODO fix type
     deepDelete(_appConfig, initialAppConfig)
   }
 }
 
 export function mountPreviewUI() {
-  const { studio } = useRuntimeConfig().public
+  const studio: PublicRuntimeConfig['studio'] = useRuntimeConfig().public.studio || {}
 
   const previewToken = window.sessionStorage.getItem('previewToken')
   // Show loading
@@ -91,7 +92,7 @@ export function mountPreviewUI() {
 
 export function initIframeCommunication() {
   const nuxtApp = useNuxtApp()
-  const { studio } = useRuntimeConfig().public
+  const studio: PublicRuntimeConfig['studio'] = useRuntimeConfig().public.studio
 
   // Not in an iframe
   if (!window.parent || window.self === window.parent) {
@@ -116,7 +117,7 @@ export function initIframeCommunication() {
     }
   })
 
-  window.addEventListener('message', async (e: { data: FileMessageData }) => {
+  window.addEventListener('message', async (e: { origin: string, data: FileMessageData }) => {
     if (!dbReady.value) {
       return
     }

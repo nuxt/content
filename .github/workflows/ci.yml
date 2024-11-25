@@ -24,6 +24,7 @@ jobs:
       - run: pnpm dev:prepare
       - run: pnpm lint
       - run: pnpm prepack
+      - run: pnpm typecheck
       - run: pnpm test
       - name: Publish
         run: pnpx pkg-pr-new publish --compact --no-template --pnpm

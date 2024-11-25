@@ -183,7 +183,7 @@ export const studioTemplate = (collections: ResolvedCollection[], gitInfo: GitIn
         pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
         // Remove source from collection meta if it's a remote collection
-        source: collection.source?.repository ? undefined : collection.source,
+        source: collection.source?.filter(source => source.repository ? undefined : collection.source),
         type: collection.type,
         jsonFields: collection.jsonFields,
         schema: zodToJsonSchema(collection.extendedSchema, collection.name),

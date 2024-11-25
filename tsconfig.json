@@ -3,9 +3,15 @@
   "exclude": [
     "dist",
     "node_modules",
-    "docs"
+    "docs",
+    "playground",
+    "examples"
+  ],
+  "include": [
+    "src",
+    "src/types/shim.d.ts"
   ],
   "compilerOptions": {
-    "strictNullChecks": false
-  }
+    "strictNullChecks": false,
+  },
 }

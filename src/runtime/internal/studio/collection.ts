@@ -1,13 +1,14 @@
 import { minimatch } from 'minimatch'
 import type { CollectionInfo } from '@nuxt/content'
 // import { joinURL, withoutLeadingSlash } from 'ufo'
+import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { getOrderedSchemaKeys } from '../schema'
 // import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
 
 export const getCollectionByPath = (path: string, collections: Record<string, CollectionInfo>): CollectionInfo => {
   return Object.values(collections).find((collection) => {
-    if (!collection.source) {
+    if (!collection.source || collection.source.length === 0) {
       return
     }
 
@@ -26,7 +27,7 @@ export const getCollectionByPath = (path: string, collections: Record<string, Co
 
     const paths = pathWithoutRoot === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [pathWithoutRoot]
     return paths.some((p) => {
-      return minimatch(p, collection.source.include)
+      return collection.source.some(source => minimatch(p, source.include))
     })
   })
 }
@@ -59,13 +60,13 @@ export function generateRecordSelectByColumn(collection: CollectionInfo, column:
 function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const properties = collection.schema.definitions[collection.name].properties
+  const properties = (collection.schema.definitions[collection.name] as JsonSchema7ObjectType).properties
   const sortedKeys = getOrderedSchemaKeys(properties)
 
   sortedKeys.forEach((key) => {
     const value = (properties)[key]
     // const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
-    const underlyingType = value.type
+    const underlyingType = (value as JsonSchema7ObjectType).type
 
     const defaultValue = value.default ? value.default : 'NULL'
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue

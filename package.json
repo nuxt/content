@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
+    "typecheck": "nuxi typecheck",
     "example": "run () { nuxi dev examples/$*; }; run",
     "docs": "nuxi dev docs",
     "docs:build": "nuxi build docs",
@@ -105,6 +106,7 @@
     "@release-it/conventional-changelog": "^9.0.3",
     "@types/better-sqlite3": "^7.6.12",
     "@types/micromatch": "^4.0.9",
+    "@types/minimatch": "^5.1.2",
     "@types/node": "^22.9.1",
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
