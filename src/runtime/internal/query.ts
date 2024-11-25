@@ -79,6 +79,8 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
+      console.log(buildQuery())
+
       return fetch(collection, buildQuery()).then(res => res || [])
     },
     async first(): Promise<Collections[T]> {
@@ -117,7 +119,9 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       if (params.offset > 0) {
         query += ` LIMIT ${limit} OFFSET ${params.offset}`
       }
-      query += ` LIMIT ${limit}`
+      else {
+        query += ` LIMIT ${limit}`
+      }
     }
 
     return query
