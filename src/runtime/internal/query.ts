@@ -1,4 +1,5 @@
 import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
+import { withoutTrailingSlash } from 'ufo'
 import { tables } from '#content/manifest'
 
 export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
@@ -17,7 +18,7 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
 
   const query: CollectionQueryBuilder<Collections[T]> = {
     path(path: string) {
-      return query.where('path', '=', path)
+      return query.where('path', '=', withoutTrailingSlash(path))
     },
     skip(skip: number) {
       params.offset = skip
