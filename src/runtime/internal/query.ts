@@ -98,7 +98,8 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
       query += `COUNT(${opts.count.distinct ? 'DISTINCT' : ''} ${opts.count.field}) as count`
     }
     else {
-      query += params.selectedFields.length > 0 ? params.selectedFields.map(f => `"${String(f)}"`).join(', ') : '*'
+      const fields = Array.from(new Set(params.selectedFields))
+      query += fields.length > 0 ? fields.map(f => `"${String(f)}"`).join(', ') : '*'
     }
     query += ` FROM ${tables[String(collection)]}`
 
