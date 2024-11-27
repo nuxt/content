@@ -8,7 +8,7 @@
 [![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
 
-Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/usage/markdown).
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content3.nuxt.dev/docs/files/markdown).
 
 - [📖 &nbsp;Read the documentation](https://content3.nuxt.dev)
 - [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
@@ -18,7 +18,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 - [**Nuxt 3**](https://nuxt.com) support
 - Work in serverless and edge environments (Cloudflare Workers, etc.)
-- Render Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/usage/markdown)
+- Render Vue components in Markdown with the [MDC syntax](https://content3.nuxt.dev/docs/files/markdown)
 - Fully typed collections and queries
 - Navigation generation
 - Blazing fast hot module replacement in development
