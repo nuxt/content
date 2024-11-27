@@ -66,17 +66,7 @@ export default defineNuxtModule<ModuleOptions>({
       },
     },
     build: {
-      markdown: {
-        remarkPlugins: {
-          'remark-mdc': {
-            options: {
-              experimental: {
-                autoUnwrap: true,
-              },
-            },
-          },
-        },
-      },
+      markdown: {},
       yaml: {},
       csv: {
         delimeter: ',',

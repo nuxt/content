@@ -121,7 +121,8 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
-    "vue": "^3.5.12"
+    "vue": "^3.5.12",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest"
   },
   "packageManager": "pnpm@9.14.2",
   "unbuild": {
