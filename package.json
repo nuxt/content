@@ -75,7 +75,7 @@
   },
   "devDependencies": {
     "@nuxt/content": "link:.",
-    "@nuxt/eslint-config": "^0.7.1",
+    "@nuxt/eslint-config": "^0.7.2",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "3.14.159",
     "@nuxt/test-utils": "3.14.4",
@@ -94,7 +94,7 @@
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.10.0",
     "remark-oembed": "^1.2.2",
-    "vitest": "^2.1.5",
+    "vitest": "^2.1.6",
     "vue-docgen-web-types": "^0.1.8",
     "vue-tsc": "2.1.10"
   },
