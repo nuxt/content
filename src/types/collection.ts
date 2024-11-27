@@ -13,6 +13,7 @@ export type CollectionSource = {
   prefix?: string
   exclude?: string[]
   repository?: string
+  authToken?: string
   cwd?: string
 }
 

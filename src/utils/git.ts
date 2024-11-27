@@ -17,14 +17,14 @@ export interface GitInfo {
   url: string
 }
 
-export async function downloadRepository(url: string, cwd: string) {
+export async function downloadRepository(url: string, cwd: string, { headers }: { headers?: Record<string, string> } = {}) {
   const tarFile = join(cwd, '.content.clone.tar.gz')
   const cacheFile = join(cwd, '.content.cache.json')
 
   const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch(() => null)
   if (cache) {
     // Directory exists, skip download
-    const response = await fetch(url, { method: 'HEAD' })
+    const response = await fetch(url, { method: 'HEAD', headers })
     const etag = response.headers.get('etag')
     if (etag === cache.etag) {
       await writeFile(cacheFile, JSON.stringify({
@@ -38,7 +38,7 @@ export async function downloadRepository(url: string, cwd: string) {
   await mkdir(cwd, { recursive: true })
 
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, { headers })
     const stream = createWriteStream(tarFile)
     await promisify(pipeline)(response.body as unknown as ReadableStream[], stream)
 

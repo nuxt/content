@@ -31,10 +31,16 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
         const { org, repo, branch } = repository
         resolvedSource.cwd = join(nuxt.options.rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
 
-        await downloadRepository(
-          `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`,
-          resolvedSource.cwd!,
-        )
+        let headers: Record<string, string> = {}
+        if (resolvedSource.authToken) {
+          headers = { Authorization: `Bearer ${resolvedSource.authToken}` }
+        }
+
+        const url = headers.Authorization
+          ? `https://api.github.com/repos/${org}/${repo}/tarball/${branch}`
+          : `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`
+
+        await downloadRepository(url, resolvedSource.cwd!, { headers })
       }
     },
   }
