@@ -23,8 +23,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     window.sessionStorage.setItem('previewToken', String(previewToken.value))
     window.sessionStorage.setItem('previewAPI', typeof route.query.staging !== 'undefined' ? 'https://dev-api.nuxt.studio' : studioConfig.apiURL)
 
-    const manifest = await getAppManifest()
     // Disable prerendering for preview
+    const manifest = await getAppManifest()
     manifest.prerendered = []
 
     nuxtApp.hook('app:mounted', async () => {
