@@ -125,12 +125,12 @@ export default defineNuxtModule<ModuleOptions>({
         {
           method: 'get',
           route: `${options.api.baseURL}/query/:qid/**:params`,
-          handler: resolveRuntimeModule('./server/api/query')
+          handler: resolveRuntimeModule('./server/api/query-qid-params')
         },
         {
           method: 'get',
           route: `${options.api.baseURL}/query/:qid`,
-          handler: resolveRuntimeModule('./server/api/query')
+          handler: resolveRuntimeModule('./server/api/query-qid')
         },
         {
           method: 'get',
@@ -353,11 +353,11 @@ export default defineNuxtModule<ModuleOptions>({
           {
             method: 'get',
             route: `${options.api.baseURL}/navigation/:qid/**:params`,
-            handler: resolveRuntimeModule('./server/api/navigation')
+            handler: resolveRuntimeModule('./server/api/navigation-qid-params')
           }, {
             method: 'get',
             route: `${options.api.baseURL}/navigation/:qid`,
-            handler: resolveRuntimeModule('./server/api/navigation')
+            handler: resolveRuntimeModule('./server/api/navigation-qid')
           },
           {
             method: 'get',
