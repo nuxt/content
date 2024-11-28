@@ -112,9 +112,17 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
     if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
       defaultValue = JSON.stringify(defaultValue)
     }
-    const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
+    const valueToInsert = (typeof data[key] === 'undefined' || String(data[key]) === 'null')
+      ? defaultValue
+      : data[key]
 
     fields.push(key)
+
+    if (valueToInsert === 'NULL') {
+      values.push(valueToInsert)
+      return
+    }
+
     if ((collection.jsonFields || []).includes(key)) {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
@@ -122,10 +130,10 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodDate'].includes(underlyingType.constructor.name)) {
-      values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert as string).toISOString()}'` : defaultValue)
+      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
     }
     else if (underlyingType.constructor.name === 'ZodBoolean') {
-      values.push(valueToInsert !== 'NULL' ? !!valueToInsert : valueToInsert)
+      values.push(!!valueToInsert)
     }
     else {
       values.push(valueToInsert)
