@@ -27,7 +27,7 @@ export function mergeDraft(dbFiles: DraftSyncFile[] = [], draftAdditions: DraftF
   // Compute file name
   const mergedFiles: DraftSyncFile[] = JSON.parse(JSON.stringify(dbFiles))
 
-  // Merge darft additions
+  // Merge draft additions
   for (const addition of additions) {
     // File is new
     if (addition.new) {
@@ -42,7 +42,7 @@ export function mergeDraft(dbFiles: DraftSyncFile[] = [], draftAdditions: DraftF
       const oldPathExistInCache = additions.find(a => a.path === addition.oldPath)
       if (oldPathExistInCache) {
         mergedFiles.push({ path: addition.path, parsed: addition.parsed })
-        // Update exsiting renamed file data
+        // Update existing renamed file data
       }
       else {
         const file = mergedFiles.find(f => f.path === addition.oldPath)
