@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
-    "@nuxtjs/mdc": "^0.9.5",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest",
     "@sqlite.org/sqlite-wasm": "3.47.0-build1",
     "better-sqlite3": "^11.5.0",
     "c12": "^2.0.1",
@@ -121,8 +121,7 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
-    "vue": "^3.5.12",
-    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest"
+    "vue": "^3.5.12"
   },
   "packageManager": "pnpm@9.14.2",
   "unbuild": {

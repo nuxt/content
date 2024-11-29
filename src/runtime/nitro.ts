@@ -1,4 +1,4 @@
-import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { collectionQureyBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
@@ -8,6 +8,8 @@ import { fetchQuery } from './internal/api'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
+  andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
+  orWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
 }
 
@@ -33,6 +35,14 @@ function chainablePromise<T extends keyof PageCollections, Result>(event: H3Even
   const chainable: ChainablePromise<T, Result> = {
     where(field, operator, value) {
       queryBuilder.where(String(field), operator, value)
+      return chainable
+    },
+    andWhere(groupFactory) {
+      queryBuilder.andWhere(groupFactory)
+      return chainable
+    },
+    orWhere(groupFactory) {
+      queryBuilder.orWhere(groupFactory)
       return chainable
     },
     order(field, direction) {

@@ -1,30 +1,19 @@
-import type { Collections, CollectionQueryBuilder, SQLOperator } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, CollectionQueryGroup, QueryGroupFunction, SQLOperator } from '@nuxt/content'
 import { withoutTrailingSlash } from 'ufo'
 import { tables } from '#content/manifest'
 
-export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
-  const params = {
-    conditions: [] as Array<string>,
-    selectedFields: [] as Array<keyof Collections[T]>,
-    offset: 0,
-    limit: 0,
-    orderBy: [] as Array<string>,
-    // Count query
-    count: {
-      field: '' as keyof Collections[T] | '*',
-      distinct: false,
-    },
-  }
+const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'and' | 'or') => {
+  const conditions = (group as unknown as { _conditions: Array<string> })._conditions
+  return conditions.length > 0 ? `(${conditions.join(` ${type} `)})` : ''
+}
 
-  const query: CollectionQueryBuilder<Collections[T]> = {
-    path(path: string) {
-      return query.where('path', '=', withoutTrailingSlash(path))
-    },
-    skip(skip: number) {
-      params.offset = skip
-      return query
-    },
-    where(field: keyof Collections[T] | string, operator: SQLOperator, value?: unknown): CollectionQueryBuilder<Collections[T]> {
+export const collectionQureyGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
+  const conditions = [] as Array<string>
+
+  const query: CollectionQueryGroup<Collections[T]> = {
+    // @ts-expect-error -- internal
+    _conditions: conditions,
+    where(field: keyof Collections[T] | string, operator: SQLOperator, value?: unknown): CollectionQueryGroup<Collections[T]> {
       let condition: string
 
       switch (operator.toUpperCase()) {
@@ -62,7 +51,58 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
         default:
           condition = `"${String(field)}" ${operator} '${value}'`
       }
-      params.conditions.push(`(${condition})`)
+      conditions.push(`${condition}`)
+      return query
+    },
+    andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
+      const group = groupFactory(collectionQureyGroup(collection))
+      conditions.push(buildGroup(group, 'and'))
+      return query
+    },
+    orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
+      const group = groupFactory(collectionQureyGroup(collection))
+      conditions.push(buildGroup(group, 'or'))
+      return query
+    },
+  }
+
+  return query
+}
+
+export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
+  const params = {
+    conditions: [] as Array<string>,
+    selectedFields: [] as Array<keyof Collections[T]>,
+    offset: 0,
+    limit: 0,
+    orderBy: [] as Array<string>,
+    // Count query
+    count: {
+      field: '' as keyof Collections[T] | '*',
+      distinct: false,
+    },
+  }
+
+  const query: CollectionQueryBuilder<Collections[T]> = {
+    andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
+      const group = groupFactory(collectionQureyGroup(collection))
+      params.conditions.push(buildGroup(group, 'and'))
+      return query
+    },
+    orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
+      const group = groupFactory(collectionQureyGroup(collection))
+      params.conditions.push(buildGroup(group, 'or'))
+      return query
+    },
+    path(path: string) {
+      return query.where('path', '=', withoutTrailingSlash(path))
+    },
+    skip(skip: number) {
+      params.offset = skip
+      return query
+    },
+    where(field: keyof Collections[T] | string, operator: SQLOperator, value?: unknown): CollectionQueryBuilder<Collections[T]> {
+      query.andWhere(group => group.where(String(field), operator, value))
       return query
     },
     limit(limit: number) {
