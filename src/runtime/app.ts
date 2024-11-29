@@ -1,4 +1,4 @@
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator } from '@nuxt/content'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 import { collectionQureyBuilder } from './internal/query'
 import { measurePerformance } from './internal/performance'
 import { generateNavigationTree } from './internal/navigation'
@@ -9,6 +9,8 @@ import { tryUseNuxtApp } from '#imports'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
+  andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
+  orWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
 }
 
@@ -57,6 +59,14 @@ function chainablePromise<T extends keyof PageCollections, Result>(collection: T
   const chainable: ChainablePromise<T, Result> = {
     where(field, operator, value) {
       queryBuilder.where(String(field), operator, value)
+      return chainable
+    },
+    andWhere(groupFactory) {
+      queryBuilder.andWhere(groupFactory)
+      return chainable
+    },
+    orWhere(groupFactory) {
+      queryBuilder.orWhere(groupFactory)
       return chainable
     },
     order(field, direction) {

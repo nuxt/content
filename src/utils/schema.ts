@@ -32,5 +32,5 @@ export const pageSchema = z.object({
       description: z.string(),
       icon: z.string(),
     }),
-  ]).default(true),
+  ]).optional().default(true),
 })

@@ -8,7 +8,10 @@ import type { CollectionQueryBuilder } from '~/src/types'
 export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = []) {
   const collecitonItems = await queryBuilder
     .order('stem', 'ASC')
-    .where('navigation', '<>', 'false')
+    .orWhere(group => group
+      .where('navigation', '<>', 'false')
+      .where('navigation', 'IS NULL'),
+    )
     .select('navigation', 'stem', 'path', 'title', 'meta', ...(extraFields || []))
     .all() as unknown as PageCollectionItemBase[]
 
@@ -65,7 +68,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         const dirConfig = configs[navItem.path]
 
         // Drop item if current directory config has `navigation: false`
-        if (typeof dirConfig?.navigation !== 'undefined' && !dirConfig?.navigation) {
+        if (typeof dirConfig?.navigation !== 'undefined' && dirConfig?.navigation === false) {
           return nav
         }
 
@@ -99,7 +102,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         const conf = configs[currentPathPart]
 
         // Drop childrens if .navigation.yml has `navigation: false`
-        if (typeof conf?.navigation !== 'undefined' && !conf.navigation) {
+        if (typeof conf?.navigation !== 'undefined' && conf.navigation === false) {
           return []
         }
 
@@ -171,7 +174,7 @@ function pick(keys?: string[]) {
 }
 
 function isObject(obj: unknown) {
-  return Object.prototype.toString.call(obj) === '[object Object]'
+  return obj !== null && Object.prototype.toString.call(obj) === '[object Object]'
 }
 
 export const generateTitle = (path: string) => path.split(/[\s-]/g).map(pascalCase).join(' ')

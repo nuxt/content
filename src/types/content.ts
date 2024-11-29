@@ -54,6 +54,7 @@ export interface MarkdownOptions {
 export const ContentFileExtension = {
   Markdown: 'md',
   Yaml: 'yaml',
+  Yml: 'yml',
   Json: 'json',
   Csv: 'csv',
   Xml: 'xml',
