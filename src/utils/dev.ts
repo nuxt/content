@@ -11,6 +11,7 @@ import micromatch from 'micromatch'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { listen, type Listener } from 'listhen'
+import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert } from './collection'
@@ -20,23 +21,8 @@ import { parseSourceBase } from './source'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const cwd = join(nuxt.options.rootDir, 'content')
+export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
   const db = localDatabase(options._localDatabase!.filename)
-  const collections = manifest.collections
-
-  const sourceMap = collections.flatMap((c) => {
-    return c.source
-      ? c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s }))
-      : []
-  })
-  // const localCollections = collections.filter(c => c.source && !c.source.repository)
-
-  const watcher = chokidar.watch('.', { ignoreInitial: true, cwd })
-
-  watcher.on('add', onChange)
-  watcher.on('change', onChange)
-  watcher.on('unlink', onRemove)
 
   let websocket: ReturnType<typeof createWebSocket>
   let listener: Listener
@@ -88,17 +74,47 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     })
   }
 
+  nuxt.hook('close', async () => {
+    // Close WebSocket server
+    await websocket.close()
+    await listener.server.close()
+  })
+
+  return {
+    broadcast,
+  }
+}
+
+export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
+  const db = localDatabase(options._localDatabase!.filename)
+  const collections = manifest.collections
+
+  const sourceMap = collections.flatMap((c) => {
+    return c.source
+      ? c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: withTrailingSlash(s.cwd) }))
+      : []
+  })
+  const dirsToWatch = Array.from(new Set(sourceMap.map(({ source }) => source.cwd)))
+
+  const watcher = chokidar.watch(dirsToWatch, { ignoreInitial: true })
+
+  watcher.on('add', onChange)
+  watcher.on('change', onChange)
+  watcher.on('unlink', onRemove)
+
   async function onChange(path: string) {
-    const match = sourceMap.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
+    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
-      const { collection, source } = match
+      const { collection, source, cwd } = match
+      // Remove the cwd prefix
+      path = path.substring(cwd.length)
       logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
       const { fixed } = parseSourceBase(source)
 
       const filePath = path.substring(fixed.length)
       const keyInCollection = join(collection.name, source?.prefix || '', filePath)
 
-      const content = await readFile(join(nuxt.options.rootDir, 'content', path), 'utf8')
+      const content = await readFile(join(cwd, path), 'utf8')
       const checksum = getContentChecksum(content)
       const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
 
@@ -113,14 +129,16 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 
       const insertQuery = generateCollectionInsert(collection, parsedContent)
-      await broadcast(collection, keyInCollection, insertQuery)
+      await socket.broadcast(collection, keyInCollection, insertQuery)
     }
   }
 
   async function onRemove(path: string) {
-    const match = sourceMap.find(({ source }) => micromatch.isMatch(path, source!.include, { ignore: source!.exclude || [], dot: true }))
+    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
-      const { collection, source } = match
+      const { collection, source, cwd } = match
+      // Remove the cwd prefix
+      path = path.substring(cwd.length)
       logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
       const { fixed } = parseSourceBase(source)
 
@@ -129,16 +147,13 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       await db.deleteDevelopmentCache(keyInCollection)
 
-      await broadcast(collection, keyInCollection)
+      await socket.broadcast(collection, keyInCollection)
     }
   }
 
   nuxt.hook('close', async () => {
     watcher.close()
     db.close()
-    // Close WebSocket server
-    await websocket.close()
-    await listener.server.close()
   })
 }
 

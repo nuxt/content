@@ -22,7 +22,7 @@ import { generateCollectionInsert, generateCollectionTableDefinition } from './u
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
-import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig } from './utils/dev'
+import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig, startSocketServer } from './utils/dev'
 import { loadLayersConfig } from './utils/config'
 import { parseContent } from './utils/content'
 import { installMDCModule } from './utils/mdc'
@@ -211,9 +211,12 @@ export default defineNuxtModule<ModuleOptions>({
     // Handle HMR changes
     if (nuxt.options.dev) {
       addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-      await watchContents(nuxt, options, manifest)
       await watchComponents(nuxt)
       await watchConfig(nuxt)
+      const socket = await startSocketServer(nuxt, options, manifest)
+      dumpGeneratePromise.then(async () => {
+        await watchContents(nuxt, options, manifest, socket)
+      })
     }
 
     // Handle Studio mode
