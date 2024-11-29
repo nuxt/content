@@ -20,8 +20,11 @@ export async function generateItemSurround<T extends PageCollectionItemBase>(que
 function flattedData(data: ContentNavigationItem[]) {
   const flatData = data.flatMap((item) => {
     const children: ContentNavigationItem[] = item.children ? flattedData(item.children) : []
+    if (item.page === false || (children.length && children[0].path === item.path)) {
+      return children
+    }
 
-    return item.page === false ? children : [{ ...item, children: undefined }, ...children]
+    return [{ ...item, children: undefined }, ...children]
   })
 
   return flatData
