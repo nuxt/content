@@ -24,7 +24,13 @@ definePageMeta({
     <ContentRenderer
       v-if="data"
       :value="data"
-    />
+    >
+      <template #empty>
+        <div>
+          <h1>Nobody Exists</h1>
+        </div>
+      </template>
+    </ContentRenderer>
     <h2>Surround</h2>
     <pre>{{ surround }}</pre>
   </div>

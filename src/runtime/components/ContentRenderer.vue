@@ -87,6 +87,8 @@ const body = computed(() => {
   return body
 })
 
+const isEmpty = computed(() => !body.value?.children?.length)
+
 const data = computed(() => {
   const { body, excerpt, ...data } = props.value
   return {
@@ -206,6 +208,7 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
 
 <template>
   <MDCRenderer
+    v-if="!isEmpty"
     :key="key"
     :body="body"
     :data="data"
@@ -216,4 +219,13 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
     :components="componentsMap"
     :data-content-id="debug ? value.id : undefined"
   />
+  <slot
+    v-else
+    name="empty"
+    :body="body"
+    :data="data"
+    :data-content-id="debug ? value.id : undefined"
+  >
+    <!-- nobody -->
+  </slot>
 </template>
