@@ -96,9 +96,9 @@
     "pg": "*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241127.0",
+    "@cloudflare/workers-types": "^4.20241202.0",
     "@nuxt/content": "link:.",
-    "@nuxt/devtools": "^1.6.1",
+    "@nuxt/devtools": "^1.6.2",
     "@nuxt/eslint-config": "^0.7.2",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.14.1592",
