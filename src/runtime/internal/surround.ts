@@ -8,8 +8,8 @@ export async function generateItemSurround<T extends PageCollectionItemBase>(que
 
   const flatData = flattedData(navigation)
   const index = flatData.findIndex(item => item.path === path)
-  const beforeItems = flatData.slice(index - before, index)
-  const afterItems = flatData.slice(index + 1, index + after + 1)
+  const beforeItems = index === -1 ? [] : flatData.slice(index - before, index)
+  const afterItems = index === -1 ? [] : flatData.slice(index + 1, index + after + 1)
 
   return [
     ...(Array.from({ length: before }).fill(null).concat(beforeItems).slice(beforeItems.length)),
