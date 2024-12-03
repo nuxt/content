@@ -2,7 +2,7 @@ import type { Collections, CollectionQueryBuilder, CollectionQueryGroup, QueryGr
 import { withoutTrailingSlash } from 'ufo'
 import { tables } from '#content/manifest'
 
-const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'and' | 'or') => {
+const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR') => {
   const conditions = (group as unknown as { _conditions: Array<string> })._conditions
   return conditions.length > 0 ? `(${conditions.join(` ${type} `)})` : ''
 }
@@ -56,12 +56,12 @@ export const collectionQureyGroup = <T extends keyof Collections>(collection: T)
     },
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQureyGroup(collection))
-      conditions.push(buildGroup(group, 'and'))
+      conditions.push(buildGroup(group, 'AND'))
       return query
     },
     orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQureyGroup(collection))
-      conditions.push(buildGroup(group, 'or'))
+      conditions.push(buildGroup(group, 'OR'))
       return query
     },
   }
@@ -86,12 +86,12 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
   const query: CollectionQueryBuilder<Collections[T]> = {
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQureyGroup(collection))
-      params.conditions.push(buildGroup(group, 'and'))
+      params.conditions.push(buildGroup(group, 'AND'))
       return query
     },
     orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQureyGroup(collection))
-      params.conditions.push(buildGroup(group, 'or'))
+      params.conditions.push(buildGroup(group, 'OR'))
       return query
     },
     path(path: string) {
