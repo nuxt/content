@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
-    "@nuxtjs/mdc": "^0.9.5",
+    "@nuxtjs/mdc": "^0.10.0",
     "@vueuse/core": "^11.3.0",
     "@vueuse/head": "^2.0.0",
     "@vueuse/nuxt": "^11.3.0",
@@ -65,7 +65,7 @@
     "ohash": "^1.1.4",
     "pathe": "^1.1.2",
     "scule": "^1.3.0",
-    "shiki": "^1.23.1",
+    "shiki": "^1.24.0",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "ufo": "^1.5.4",
@@ -84,21 +84,21 @@
     "@types/ws": "^8.5.13",
     "c8": "^10.1.2",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.15.0",
+    "eslint": "^9.16.0",
     "globby": "^14.0.2",
     "husky": "^9.1.7",
-    "jiti": "^2.4.0",
+    "jiti": "^2.4.1",
     "lint-staged": "^15.2.10",
     "nuxt": "3.14.1592",
     "rehype-figure": "^1.0.1",
     "rehype-wrap-all": "^1.1.0",
     "release-it": "^17.10.0",
     "remark-oembed": "^1.2.2",
-    "vitest": "^2.1.6",
+    "vitest": "^2.1.8",
     "vue-docgen-web-types": "^0.1.8",
     "vue-tsc": "2.1.10"
   },
-  "packageManager": "pnpm@9.14.2",
+  "packageManager": "pnpm@9.14.4",
   "release-it": {
     "git": {
       "commitMessage": "chore(release): release v${version}"
