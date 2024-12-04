@@ -21,7 +21,7 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
   const tarFile = join(cwd, '.content.clone.tar.gz')
   const cacheFile = join(cwd, '.content.cache.json')
 
-  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch(() => null)
+  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
   if (cache) {
     // Directory exists, skip download
     const response = await fetch(url, { method: 'HEAD', headers })

@@ -148,7 +148,7 @@ export default defineNuxtModule<ModuleOptions>({
     const _layers = [...nuxt.options._layers].reverse()
     for (const layer of _layers) {
       const path = resolver.resolve(layer.config.srcDir, 'components/content')
-      const dirStat = await stat(path).catch(() => null)
+      const dirStat = await stat(path).catch((): null => null)
       if (dirStat && dirStat.isDirectory()) {
         nuxt.hook('components:dirs', (dirs) => {
           dirs.unshift({ path, pathPrefix: false, prefix: '' })
@@ -275,7 +275,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       const { fixed } = parseSourceBase(source)
       const cwd = source.cwd
       const _keys = await fastGlob(source.include, { cwd, ignore: source!.exclude || [], dot: true })
-        .catch(() => [])
+        .catch((): [] => [])
 
       filesCount += _keys.length
 
@@ -325,7 +325,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     db.exec(sql)
   }
 
-  const tags = sqlDumpList.flatMap(sql => sql.match(/(?<=(^|,|\[)\[")[^"]+(?=")/g) || [])
+  const tags = sqlDumpList.flatMap((sql: string): RegExpMatchArray | [] => sql.match(/(?<=(^|,|\[)\[")[^"]+(?=")/g) || [])
   const uniqueTags = [
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
