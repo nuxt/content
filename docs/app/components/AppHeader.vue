@@ -42,7 +42,7 @@ defineShortcuts({
             variant="subtle"
             trailing-icon="i-lucide-chevron-down"
             size="xs"
-            class="-mb-[3px] font-semibold rounded-full truncate"
+            class="-mb-[3px] font-semibold rounded-full truncate hidden sm:flex"
             :class="[open && 'bg-[var(--ui-primary)]/15 ']"
             :ui="{
               trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' '),

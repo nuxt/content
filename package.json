@@ -121,6 +121,7 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
+    "@nuxt/icon": "1.7.6",
     "vue": "^3.5.12"
   },
   "packageManager": "pnpm@9.14.4",
