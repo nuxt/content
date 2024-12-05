@@ -18,7 +18,6 @@ Serverless hosting lets you run code and applications without managing servers d
 Before deploying your project, you need to select a database service:
 
 ::code-group
-
 ```ts [PostgreSQL]
 // 1. Create a PostgreSQL database
 // 2. And add the `POSTGRES_URL` to the env variables
@@ -31,6 +30,7 @@ export default defineNuxtConfig({
   }
 })
 ```
+
 ```ts [Cloudflare D1]
 // 1. Create a D1 database in your CF account
 // 2. Link it to your project with the same binding name
@@ -43,6 +43,7 @@ export default defineNuxtConfig({
   }
 })
 ```
+
 ```ts [LibSQL]
 // 1. Create a LibSQL database on Turso.tech
 // 2. And add the `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` env variables
@@ -57,6 +58,7 @@ export default defineNuxtConfig({
   }
 })
 ```
+
 ```ts [NuxtHub]
 // Install the NuxtHub module (see hub.nuxt.com)
 export default defineNuxtConfig({
