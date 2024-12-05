@@ -87,7 +87,10 @@ defineShortcuts({
 
       <USeparator type="dashed" class="my-4" /> -->
 
-      <UContentNavigation :navigation="navigation" />
+      <UContentNavigation
+        highlight
+        :navigation="navigation"
+      />
     </template>
   </UHeader>
 </template>
