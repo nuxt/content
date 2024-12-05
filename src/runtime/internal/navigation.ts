@@ -1,6 +1,5 @@
-import type { ContentNavigationItem, PageCollectionItemBase } from '@nuxt/content'
+import type { ContentNavigationItem, PageCollectionItemBase, CollectionQueryBuilder } from '@nuxt/content'
 import { pascalCase } from 'scule'
-import type { CollectionQueryBuilder } from '~/src/types'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.

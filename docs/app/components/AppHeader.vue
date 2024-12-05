@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-// import type { NavigationMenuItem } from '@nuxt/ui'
-
-// const props = defineProps<{
-//   links: NavigationMenuItem[]
-// }>()
 
 const config = useRuntimeConfig().public
 
-const nav = inject<Ref<ContentNavigationItem[]>>('navigation')
-
-// const items = computed(() => props.links.map(({ icon, ...link }) => link))
-const navigation = computed(() => nav?.value.find(item => item.path === '/docs')?.children || [])
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 defineShortcuts({
   meta_g: () => {
