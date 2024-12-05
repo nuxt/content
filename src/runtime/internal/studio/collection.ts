@@ -39,6 +39,12 @@ export const getCollectionByRoutePath = (routePath: string, collections: Record<
         return
       }
 
+      if (routePath === '/') {
+        return ['index.yml', 'index.yaml', 'index.md', 'index.json'].some((p) => {
+          return collection.source.find(source => minimatch(p, source.include))
+        })
+      }
+
       const pathWithoutPrefix = routePath.substring(source.prefix.length)
 
       const { fixed } = parseSourceBase(source)
