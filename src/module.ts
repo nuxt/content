@@ -344,7 +344,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   }
 }
 
-const proseTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'strong', 'em', 's', 'code', 'span']
+const proseTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'strong', 'em', 's', 'code', 'span', 'blockquote', 'pre', 'hr', 'img', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td']
 function getMappedTag(tag: string, additionalTags: Record<string, string> = {}) {
   if (proseTags.includes(tag)) {
     return `prose-${tag}`
