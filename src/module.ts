@@ -330,6 +330,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
   ]
+    .map(tag => getMappedTag(tag, options?.renderer?.alias))
     .filter(tag => !htmlTags.includes(kebabCase(tag)))
     .map(tag => pascalCase(tag))
 
@@ -341,4 +342,12 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     dump: collectionDump,
     components: uniqueTags,
   }
+}
+
+const proseTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'strong', 'em', 's', 'code', 'span']
+function getMappedTag(tag: string, additionalTags: Record<string, string> = {}) {
+  if (proseTags.includes(tag)) {
+    return `prose-${tag}`
+  }
+  return additionalTags[tag] || tag
 }
