@@ -244,7 +244,7 @@ orientation: horizontal
   :::
 
 #title
-Markdown meets [Vue]{.text-[var(--ui-primary)]}
+Markdown meets [Vue]{.text-[var(--ui-primary)]} components
 
 #description
 We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
@@ -397,10 +397,10 @@ orientation: horizontal
   :::
 
 #title
-Make changes [like a pro]{.text-[var(--ui-primary)]}
+Make changes [without technical skills]{.text-[var(--ui-primary)]}
 
 #description
-Edit your Nuxt Content website with our Notion-like Markdown editor with live preview and online collaboration.
+Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editors and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
 
 #features
   :::u-page-card
@@ -420,7 +420,7 @@ Edit your Nuxt Content website with our Notion-like Markdown editor with live pr
   variant: naked
   ---
   #title{unwrap="p"}
-  Invite editors to login with Google and publish changes
+  Invite editors to login with Google and let them publish their changes
   :::
 
   :::u-page-card
@@ -437,7 +437,7 @@ Edit your Nuxt Content website with our Notion-like Markdown editor with live pr
   :::u-button
   ---
   color: neutral
-  label: Discover the Nuxt Content Editor
+  label: Discover Studio
   to: https://nuxt.studio
   trailingIcon: i-lucide-arrow-right
   ---
