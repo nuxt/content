@@ -14,7 +14,7 @@ export interface SqliteDatabaseConfig {
 }
 
 export type PostgreSQLDatabaseConfig = {
-  type: 'postgresql'
+  type: 'postgres'
   url: string
 }
 
