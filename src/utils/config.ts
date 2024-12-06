@@ -26,7 +26,7 @@ export async function loadContentConfig(rootDir: string, opts: { defaultFallback
   (globalThis as any).defineContentConfig = (c: any) => c
   const { config, configFile } = await loadConfig<NuxtContentConfig>({ name: 'content', cwd: rootDir })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  delete (globalThis as any).defineNuxtConfig
+  delete (globalThis as any).defineContentConfig
 
   if ((!configFile || configFile === 'content.config') && opts.defaultFallback) {
     logger.warn('`content.config.ts` is not found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/getting-started/installation')
