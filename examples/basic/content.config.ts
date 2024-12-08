@@ -1,8 +1,10 @@
-import { defineCollection } from '@nuxt/content'
+import { defineContentConfig, defineCollection } from '@nuxt/content'
 
-export const collections = {
-  content: defineCollection({
-    type: 'page',
-    source: '**',
-  }),
-}
+export default defineContentConfig({
+  collections: {
+    content: defineCollection({
+      type: 'page',
+      source: '**',
+    }),
+  },
+})
