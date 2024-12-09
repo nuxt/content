@@ -1,4 +1,4 @@
-import { defineCollection, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
 const content = defineCollection({
   type: 'page',
@@ -42,7 +42,7 @@ const pages = defineCollection({
   source: 'pages/**',
 })
 
-export const collections = {
+const collections = {
   content,
   data,
   pages,
@@ -77,3 +77,5 @@ export const collections = {
     },
   }),
 }
+
+export default defineContentConfig({ collections })

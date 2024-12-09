@@ -317,20 +317,22 @@ orientation: horizontal
   ```
   
   ```ts [content.config.ts]
-  import { defineCollection, z } from '@nuxt/content'
+  import { defineContentConfig, defineCollection, z } from '@nuxt/content'
   
-  export const collections = {
-    blog: defineCollection({
-      source: 'blog/*.md',
-      type: 'page',
-      // Define custom schema for docs collection
-      schema: z.object({
-        tags: z.array(z.string()),
-        image: z.string(),
-        date: z.Date()
+  export default defineContentConfig({
+    collections: {
+      blog: defineCollection({
+        source: 'blog/*.md',
+        type: 'page',
+        // Define custom schema for docs collection
+        schema: z.object({
+          tags: z.array(z.string()),
+          image: z.string(),
+          date: z.Date()
+        })
       })
-    })
-  }
+    }
+  })
   ```
   :::
 
