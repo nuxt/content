@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.0.0-alpha.8](https://github.com/nuxt/content/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2024-12-09)
+
+### Features
+
+* **build:** allow modifying `slugify` options ([#2898](https://github.com/nuxt/content/issues/2898)) ([d05f0ed](https://github.com/nuxt/content/commit/d05f0edbab6d20b0817ef7d5be6baa2d53cecd63))
+* **config:** provide defineContentConfig utility ([#2891](https://github.com/nuxt/content/issues/2891)) ([cf85cd4](https://github.com/nuxt/content/commit/cf85cd4006b6acaa56ea0f3a3150fbf3dcdb882c))
+* multi source collection ([acfbe96](https://github.com/nuxt/content/commit/acfbe96a38589ee8de0a5a5b22748033d40035c9))
+* **query:** support complex SQL where conditions ([#2878](https://github.com/nuxt/content/issues/2878)) ([7f8f128](https://github.com/nuxt/content/commit/7f8f1285536d1993a15f5081cbc2f68e80570029))
+* **studio:** integration ([#2836](https://github.com/nuxt/content/issues/2836)) ([99f6f2f](https://github.com/nuxt/content/commit/99f6f2ff7b58978c40bdd1453e3a1972503ab614))
+* support `where` & `order` in navigation & surround utils ([e8df390](https://github.com/nuxt/content/commit/e8df390c4130ce82b7171a513daf3d3de536b404))
+* support authentication token for private repositories ([66cd372](https://github.com/nuxt/content/commit/66cd37275239008513bc94ddcc8fe8641389b98d))
+* **watch:** watch for cahnges in all local sources ([c5b1a4f](https://github.com/nuxt/content/commit/c5b1a4f85a73f347fbd30c998f333de8d8385603))
+
+### Bug Fixes
+
+* **collection:** path route matching ([8ae885d](https://github.com/nuxt/content/commit/8ae885dd150536f270753739255942e9c801d904))
+* **collection:** respect default value in `null` fields ([9fdc4d6](https://github.com/nuxt/content/commit/9fdc4d6371b610cc152daf5b865af3bb2b8a888e))
+* **ContentRenderer:** render `empty` slot if body is empty ([c325151](https://github.com/nuxt/content/commit/c3251514a16f50a1d0692324173a016bd3100223)), closes [#2877](https://github.com/nuxt/content/issues/2877)
+* correct typos in comments within mergeDraft function ([006c615](https://github.com/nuxt/content/commit/006c615e56ff3fb7c6db3f381661f3ee1be729d3))
+* **docs:** prerendering issues ([c9a0cda](https://github.com/nuxt/content/commit/c9a0cda15ff30fbadb88c537059e71474c0c7e7e))
+* **hot reload:** normalize files path in windows ([f883273](https://github.com/nuxt/content/commit/f8832736c5d4837615f1b0b9919cc630ac4b53df)), closes [#2872](https://github.com/nuxt/content/issues/2872)
+* **lint:** single function argument ([c96fd9d](https://github.com/nuxt/content/commit/c96fd9d54def918aa48127f84c98d8579281a5a1))
+* **module:** postgres database types ([36d3b08](https://github.com/nuxt/content/commit/36d3b0871c1049a8c2b6f51aeeedb5476eb8c1f5))
+* **navigation:** highlight ([862a8b4](https://github.com/nuxt/content/commit/862a8b457f887851d692b1cc4f1dfca5557c43a6))
+* **navigation:** mobile display ([0525e9d](https://github.com/nuxt/content/commit/0525e9d66292ed8836b2c3cfc3d88e831439cdee))
+* **preview:** move comment ([72e894e](https://github.com/nuxt/content/commit/72e894e83eab4f4a1c33f7cb252e866d60cdbe35))
+* **preview:** prerendering issue on load ([b955f76](https://github.com/nuxt/content/commit/b955f769a19461effb375d505c141bee057e3f75))
+* **query:** ensure fields are unique in query ([9b4635e](https://github.com/nuxt/content/commit/9b4635e20c405ccee8ec912d38f4574fc4bd3787))
+* **query:** no trailing slash on path ([a2e5c9f](https://github.com/nuxt/content/commit/a2e5c9f44a2c5f11539be5a2668023567a3b2914))
+* **renderer:** bundle prose/alias components ([bd9e15b](https://github.com/nuxt/content/commit/bd9e15b530484362158dcc5e4ceda3604b80582a))
+* **studio:** find index file collection by route path ([c3f2b9b](https://github.com/nuxt/content/commit/c3f2b9bae5948a135165d44ca71f1ab579d61839))
+* **studio:** use minimatch for browser ([a1582b6](https://github.com/nuxt/content/commit/a1582b6eec4904b5f67d45462c3aca331cc2d638))
+* **surround:** do not use parent item if it exists as first child ([5810fc6](https://github.com/nuxt/content/commit/5810fc690663c732ab73bc0c91aa5f2aea2be868))
+* **surround:** handle missing path ([59c69bc](https://github.com/nuxt/content/commit/59c69bc491d2868d25589c3b71b21e5bb4b751fc))
+* **surround:** remove all posible dupplicate paths ([d529996](https://github.com/nuxt/content/commit/d5299960e6e3239a2e36425fb6f9d6d4d8a2c2e3))
+* typecheck ([4890997](https://github.com/nuxt/content/commit/48909976e81b7afc065b7cb7dbd5bb81646b7b71))
+* typecheck prepack ([dae4149](https://github.com/nuxt/content/commit/dae414978f957d85606aa559c6ade5924940d41c))
+
+### Performance Improvements
+
+* broadcase changes before templates update ([2957772](https://github.com/nuxt/content/commit/295777219a096b9833708ebd3e3c7cf50689b2df))
+
 ## [3.0.0-alpha.7](https://github.com/nuxt/content/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2024-11-20)
 
 ### Features
