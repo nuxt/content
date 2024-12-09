@@ -153,7 +153,7 @@ export interface ModuleOptions {
         themes?: (ShikiTheme | ThemeRegistrationAny)[]
       }
     }
-    pathMeta: PathMetaOptions
+    pathMeta?: PathMetaOptions
     /**
      * Options for yaml parser.
      *
