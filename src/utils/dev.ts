@@ -58,7 +58,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
         manifest.dump[collection.name]?.splice(index, 1)
       }
 
-      await updateTemplates({
+      updateTemplates({
         filter: template => [
           moduleTemplates.manifest,
           moduleTemplates.fullCompressedDump,
