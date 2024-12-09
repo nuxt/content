@@ -1,8 +1,5 @@
 <template>
   <h1 class="text-4xl">
-    <MDCSlot
-      :use="$slots.default"
-      unwrap="p"
-    />
+    <slot mdc-unwrap="p" />
   </h1>
 </template>

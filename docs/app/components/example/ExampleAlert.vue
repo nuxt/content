@@ -12,10 +12,7 @@ defineProps({
     class="alert"
     :class="[type]"
   >
-    <MDCSlot
-      :use="$slots.default"
-      unwrap="p"
-    />
+    <slot mdc-unwrap="p" />
   </div>
 </template>
 
