@@ -1,22 +1,26 @@
 import { pascalCase } from 'scule'
 import slugify from 'slugify'
 import { withoutTrailingSlash, withLeadingSlash } from 'ufo'
+import defu from 'defu'
+import type { PathMetaOptions } from '../../../types/path-meta'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^\d+(?:\.\d+)*(?:\.x)?$/
 
-interface PathMetaOptions {
-  respectPathCase?: boolean
+const defaultOptions: PathMetaOptions = {
+  slugifyOptions: {
+    lower: true,
+  },
 }
 
 export default defineTransformer({
   name: 'path-meta',
   extensions: ['.*'],
   transform(content, options: PathMetaOptions = {}) {
-    const { respectPathCase = false } = options
+    const opts = defu(options, defaultOptions)
     const { basename, extension, stem } = describeId(content.id)
     // Check first part for locale name
-    const filePath = generatePath(stem, { respectPathCase })
+    const filePath = generatePath(stem, opts)
 
     return {
       path: filePath,
@@ -34,8 +38,8 @@ export default defineTransformer({
  * @param path file full path
  * @returns generated slug
  */
-export const generatePath = (path: string, { forceLeadingSlash = true, respectPathCase = false } = {}): string => {
-  path = path.split('/').map(part => slugify(refineUrlPart(part), { lower: !respectPathCase })).join('/')
+export const generatePath = (path: string, { forceLeadingSlash = true, slugifyOptions = {} } = {}): string => {
+  path = path.split('/').map(part => slugify(refineUrlPart(part), slugifyOptions)).join('/')
   return forceLeadingSlash ? withLeadingSlash(withoutTrailingSlash(path)) : path
 }
 
