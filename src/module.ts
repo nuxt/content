@@ -66,6 +66,7 @@ export default defineNuxtModule<ModuleOptions>({
       },
     },
     build: {
+      pathMeta: {},
       markdown: {},
       yaml: {},
       csv: {

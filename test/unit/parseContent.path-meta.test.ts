@@ -71,6 +71,13 @@ const testCases = {
     extension: 'md',
     stem: 'indexer.draft',
   },
+  'content/فرهنگ/فارسی/فرهنگ.md': {
+    __description: 'Handle special chars in file name',
+    title: 'فرهنگ',
+    path: '/frhng/farsy/frhng',
+    extension: 'md',
+    stem: 'فرهنگ/فارسی/فرهنگ',
+  },
 }
 
 describe('Transformer (path-meta)', () => {

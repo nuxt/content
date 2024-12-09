@@ -99,26 +99,27 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
 
 export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt?: Nuxt) {
   const mdcOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
-  const contentOptions = (nuxt?.options as unknown as { content: ModuleOptions })?.content?.build?.markdown || {}
+  const { pathMeta = {}, markdown = {} } = (nuxt?.options as unknown as { content: ModuleOptions })?.content?.build || {}
 
-  const rehypeHighlightPlugin = contentOptions.highlight !== false
-    ? await getHighlightPluginInstance(defu(contentOptions.highlight as HighlighterOptions, mdcOptions.highlight, { compress: true }))
+  const rehypeHighlightPlugin = markdown.highlight !== false
+    ? await getHighlightPluginInstance(defu(markdown.highlight as HighlighterOptions, mdcOptions.highlight, { compress: true }))
     : undefined
 
   const parsedContent = await transformContent(key, content, {
+    pathMeta: pathMeta,
     markdown: {
       compress: true,
       ...mdcOptions,
-      ...contentOptions,
+      ...markdown,
       rehypePlugins: {
         highlight: rehypeHighlightPlugin,
         ...mdcOptions?.rehypePlugins,
-        ...contentOptions?.rehypePlugins,
+        ...markdown?.rehypePlugins,
       },
       remarkPlugins: {
         'remark-emoji': {},
         ...mdcOptions?.remarkPlugins,
-        ...contentOptions?.remarkPlugins,
+        ...markdown?.remarkPlugins,
       },
       highlight: undefined,
     },
