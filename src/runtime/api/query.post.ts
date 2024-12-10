@@ -1,5 +1,5 @@
 import { eventHandler, getRouterParam, readValidatedBody } from 'h3'
-import { z } from 'zod'
+import * as z from 'zod'
 import type { RuntimeConfig } from '@nuxt/content'
 import loadDatabaseAdapter, { checkAndImportDatabaseIntegrity } from '../internal/database.server'
 import { useRuntimeConfig } from '#imports'
