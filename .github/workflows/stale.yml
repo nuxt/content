@@ -2,7 +2,7 @@ name: 'Close stale issues'
 
 on:
   schedule:
-    - cron: '30 1 * * *'
+    - cron: '30 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,4 +21,5 @@ jobs:
           close-issue-message: 'This issue was closed because it has been stalled for 30 days with no activity.'
           days-before-stale: 60
           days-before-close: 30
+          operations-per-run: 100
           days-before-pr-stale: -1
