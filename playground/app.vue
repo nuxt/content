@@ -9,5 +9,7 @@
 
 <style>
 @import "tailwindcss";
-@import "@nuxt/ui";
+@import "@nuxt/ui-pro";
+
+@source "./content/**/*";
 </style>
