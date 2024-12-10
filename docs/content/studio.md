@@ -6,7 +6,6 @@ seo:
     content in Markdown, YAML, or JSON files and then query and display it in
     their application.
 ---
-
 ::u-page-hero
   :::div{.hidden.sm:block}
     ::::u-color-mode-image
@@ -19,17 +18,18 @@ seo:
   :::
 
 #title{unwrap="p"}
-The git-based CMS for :br Nuxt projects.
+Content edition :br for everyone.
 
 #description
-Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, or JSON files and then query and display it in their application.
+Studio brings visual editing to your Nuxt Content projects, developers control the setup while teams edit visually. With smart editors that adapt to markdown, YAML, or JSON, anyone can contribute to the website – no technical expertise needed. \*\_Built for developers, made for everyone.\_\*
 
 #links{unwrap="p"}
   :::u-button
   ---
-  label: Get Started
+  label: Get Started for free
   size: xl
-  to: /docs/getting-started/installation
+  target: _blank
+  to: https://nuxt.studio/signin
   trailingIcon: i-lucide-arrow-right
   ---
   :::
@@ -37,10 +37,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   :::u-button
   ---
   color: neutral
-  label: Open Visual Editor
+  label: Read the documentation
   size: xl
   target: _blank
-  to: https://nuxt.studio
+  to: /docs/studio/setup
   variant: subtle
   ---
   :::
@@ -51,66 +51,66 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-files
+  icon: i-lucide-circle-user
   variant: naked
   ---
   #title{unwrap="p"}
-  File-based CMS
+  GitHub & Google Authentication
   
   #description{unwrap="p"}
-  Write your content in Markdown, YML, CSV or JSON and query it in your components.
+  Personalized workspace for each role: developers, writers, and clients.
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-filter
+  icon: i-lucide-file-pen
   variant: naked
   ---
   #title{unwrap="p"}
-  Query Builder
+  Easy content updates
   
   #description{unwrap="p"}
-  Query your content with a MongoDB-like API to fetch the right data at the right time.
+  From Markdown to YAML edition, or visual editors are designed for non technical users.
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-database
+  icon: i-lucide-users
   variant: naked
   ---
   #title{unwrap="p"}
-  SQLite powered
+  Real-time Collaboration
   
   #description{unwrap="p"}
-  Add custom fields to your content, making it suitable for various types of projects.
+  Write as a team in real-time with our collaboration features.
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-simple-icons-markdown
+  icon: i-lucide-sparkles
   variant: naked
   ---
   #title{unwrap="p"}
-  Markdown with Vue
+  From Code to Edition
   
   #description{unwrap="p"}
-  Use Vue components in Markdown files, with props, slots and nested components.
+  Developers build the foundation while writers can safely edit the content.
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-list-minus
+  icon: i-lucide-panels-top-left
   variant: naked
   ---
   #title{unwrap="p"}
-  Code highlighting
+  Review before publishing
   
   #description{unwrap="p"}
-  Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
+  Review your changes before making them live on your website.
   :::
 
   :::u-page-card
@@ -120,172 +120,104 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   variant: naked
   ---
   #title{unwrap="p"}
-  Visual Editor
+  Ready-to-use Templates
   
   #description{unwrap="p"}
-  Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
-  :::
-
-  :::u-page-card
-  ---
-  inline: true
-  icon: i-lucide-panel-left
-  variant: naked
-  ---
-  #title{unwrap="p"}
-  Navigation Generation
-  
-  #description{unwrap="p"}
-  Customize HTML typography tags with Vue components to give your content a consistent style.
-  :::
-
-  :::u-page-card
-  ---
-  inline: true
-  icon: i-lucide-heading-1
-  variant: naked
-  ---
-  #title{unwrap="p"}
-  Prose Components
-  
-  #description{unwrap="p"}
-  Nuxt Content works on all hosting providers, static, server, serverless & edge.
-  :::
-
-  :::u-page-card
-  ---
-  inline: true
-  icon: i-lucide-globe
-  variant: naked
-  ---
-  #title{unwrap="p"}
-  Deploy everywhere
-  
-  #description{unwrap="p"}
-  Generate a structured object from your content files and display a navigation menu in minutes.
-  :::
-::
-
-::u-page-section
-#title
-Everything you need for content management
-
-#description
-Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
-
-  :::div{.hidden.sm:block}
-    ::::u-color-mode-image
-    ---
-    class: size-full absolute top-0 inset-x-4
-    dark: /home/features-dark.svg
-    light: /home/features-light.svg
-    ---
-    ::::
+  Get started quickly with pre-built templates for Saas sites, blogs, docs and more.
   :::
 ::
 
 ::u-page-section
 ---
-reverse: true
 orientation: horizontal
 ---
-  :::code-group
-    ::::preview-card{.!h-[458px] icon="i-lucide-eye" label="Preview"}
-      :::::example-landing-hero
-      ---
-      class: "!h-[458px]"
-      image: /images/everest.jpg
-      ---
-      #title
-      The Everest.
-      
-      #description
-      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-      :::::
-    ::::
-  
+:::code-group
+  ```vue [components/content/HomeFeature.vue]
+  <template>
+    <div class="flex items-start gap-3">
+      <div class="flex items-center justify-center border rounded-lg p-1.5">
+        <UIcon :name="icon" />
+      </div>
+      <div class="flex flex-col">
+        <h3 class="font-semibold">
+          <ContentSlot name="title" />
+        </h3>
+        <span>
+          <ContentSlot name="description" />
+        </span>
+      </div>
+    </div>
+  </template>
+
+  <script setup lang="ts">
+  defineProps({
+    icon: {
+      type: String,
+      default: 'i-ph-cursor-click',
+    },
+  })
+  </script>
+  ```
   ```mdc [content/index.md]
-  ---
-  title: The Mountains Website
-  description: A website about the most iconic mountains in the world.
-  ---
-  
-  ::landing-hero
-  ---
-  image: /images/everest.png
-  ---
-  #title
-  The Everest.
-  
-  #description
-  The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+  ::home-feature
+    ---
+    icon: i-mdi-vuejs
+    ---
+    #title
+    Embedded Vue components
+    #description
+    Edit slots and props inside the Notion-like editor.
   ::
   ```
-  
-  ```vue [components/LandingHero.vue]
-  <script setup lang="ts">
-  defineProps<{ image: string }>()
-  </script>
-  
-  <template>
-    <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
-      <div>
-        <h1 class="text-4xl font-semibold">
-          <slot name="title" />
-        </h1>
-        <div class="text-base text-gray-600 dark:text-gray-300">
-          <slot name="description" />
-        </div>
-      </div>
-      <img :src="image" class="w-1/2 rounded-lg">
-    </section>
-  </template>
-  ```
-  :::
+  ::::preview-card{icon="i-lucide-eye" label="Editor"}
+    ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
+  ::::
+:::
+
 
 #title
-Markdown meets [Vue]{.text-[var(--ui-primary)]} components
+Developers create the [editing experience]{.text-[var(--ui-primary)]}
 
 #description
-We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
+Developers build the foundation their way: custom components, media library, and site configuration.
 
 #features
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-list
+  icon: i-lucide-settings-2
   variant: naked
   ---
   #title{unwrap="p"}
-  Specify props with frontmatter syntax
+  Customizable and editable Vue components
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-hash
+  icon: i-lucide-brush
   variant: naked
   ---
   #title{unwrap="p"}
-  Use components slots with `#`
+  Edit your app.config visually
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-code-xml
+  icon: i-simple-icons-markdown
   variant: naked
   ---
   #title{unwrap="p"}
-  Add any other html attributes
+  Edit your Markdown with our visual editor
   :::
 
 #links
   :::u-button
   ---
   color: neutral
-  label: Learn more about MDC
-  to: /docs/files/markdown#mdc-syntax
+  label: Learn more about custom components
+  to: /docs/files/markdown#vue-components
   trailingIcon: i-lucide-arrow-right
   variant: subtle
   ---

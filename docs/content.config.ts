@@ -18,9 +18,19 @@ export default defineContentConfig({
         })).optional(),
       }),
     }),
-    home: defineCollection({
+    landing: defineCollection({
       type: 'page',
-      source: 'index.md',
+      source: [{
+        include: 'index.md',
+      }, {
+        include: 'studio.md',
+      }, {
+        include: 'blog.yml',
+      }, {
+        include: 'changelog.yml',
+      }, {
+        include: 'templates.yml',
+      }],
     }),
   },
 })

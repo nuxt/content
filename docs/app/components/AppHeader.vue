@@ -5,6 +5,42 @@ const config = useRuntimeConfig().public
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
+const items = ref([
+  {
+    label: 'Docs',
+    to: '/docs/getting-started/installation',
+  },
+  {
+    label: 'Studio',
+    to: '/studio',
+    children: [
+      {
+        label: 'Features',
+        icon: 'i-lucide-file-pen-line',
+        to: '/studio',
+      },
+      {
+        label: 'Pricing',
+        icon: 'i-lucide-rocket',
+        to: '/studio/pricing',
+      },
+      {
+        label: 'Templates',
+        icon: 'i-lucide-panels-top-left',
+        to: '/studio/templates',
+      },
+    ],
+  },
+  {
+    label: 'Blog',
+    to: '/blog',
+  },
+  {
+    label: 'Changelog',
+    to: '/changelog',
+  },
+])
+
 defineShortcuts({
   meta_g: () => {
     window.open('https://github.com/nuxt/content/tree/v3', '_blank')
@@ -44,10 +80,10 @@ defineShortcuts({
       </NuxtLink>
     </template>
 
-    <!-- <UNavigationMenu
+    <UNavigationMenu
       :items="items"
-      variant="link"
-    /> -->
+      class="justify-center"
+    />
 
     <template #right>
       <UButton

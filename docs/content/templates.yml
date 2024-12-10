@@ -1,0 +1,7 @@
+title: Blog
+navigation.title: Blog
+description: Read the latest news about Nuxt Studio or articles about CMS development with Nuxt.
+hero:
+  title: '<span>Studio</span> <span class="text-primary">blog</span>'
+  description: Read the latest news about Nuxt Studio<br/ >or articles about CMS development with Nuxt.
+  align: center

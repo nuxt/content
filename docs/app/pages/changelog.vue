@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('content-landing', () => queryCollection('landing').path('/').first())
+const { data: page } = await useAsyncData('content-landing', () => queryCollection('landing').path('/changelog').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
@@ -17,8 +17,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <ContentRenderer
-    v-if="page"
-    :value="page"
-  />
+  <pre>
+    {{ page }}
+  </pre>
 </template>

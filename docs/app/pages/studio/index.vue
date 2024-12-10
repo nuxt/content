@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('content-landing', () => queryCollection('landing').path('/').first())
+const { data: page } = await useAsyncData('studio-landing', () => queryCollection('landing').path('/studio').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
