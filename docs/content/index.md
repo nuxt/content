@@ -390,16 +390,11 @@ Define your content structure with collections and query them with schema valida
 reverse: true
 orientation: horizontal
 ---
-  :::u-color-mode-image
-  ---
-  class: size-full
-  dark: /home/pro-dark.svg
-  light: /home/pro-light.svg
-  ---
-  :::
+:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
-#title
-Make changes [without technical skills]{.text-[var(--ui-primary)]}
+ 
+#title{unwrap="p"}
+Let [anyone edit]{.text-[var(--ui-primary)]} your website
 
 #description
 Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editors and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
@@ -408,11 +403,21 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   :::u-page-card
   ---
   inline: true
-  icon: i-simple-icons-github
+  icon: i-lucide-mouse-pointer-click
   variant: naked
   ---
   #title{unwrap="p"}
-  Commit & push to GitHub with one click
+  Visual editor with drag and drop for Markdown
+  :::
+
+  :::u-page-card
+  ---
+  inline: true
+  icon: i-lucide-file-text
+  variant: naked
+  ---
+  #title{unwrap="p"}
+  Form generation for YML and JSON files
   :::
 
   :::u-page-card
@@ -425,22 +430,12 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   Invite editors to login with Google and let them publish their changes
   :::
 
-  :::u-page-card
-  ---
-  inline: true
-  icon: i-lucide-users
-  variant: naked
-  ---
-  #title{unwrap="p"}
-  Edit the content in real-time with your team
-  :::
-
 #links
   :::u-button
   ---
   color: neutral
   label: Discover Studio
-  to: https://nuxt.studio
+  to: /studio
   trailingIcon: i-lucide-arrow-right
   ---
   :::

@@ -6,6 +6,7 @@ seo:
     content in Markdown, YAML, or JSON files and then query and display it in
     their application.
 ---
+
 ::u-page-hero
   :::div{.hidden.sm:block}
     ::::u-color-mode-image
@@ -18,10 +19,10 @@ seo:
   :::
 
 #title{unwrap="p"}
-Content edition :br for everyone.
+Studio, content edition :br for everyone.
 
 #description
-Studio brings visual editing to your Nuxt Content projects, developers control the setup while teams edit visually. With smart editors that adapt to markdown, YAML, or JSON, anyone can contribute to the website – no technical expertise needed. \*\_Built for developers, made for everyone.\_\*
+**Studio** brings visual editing to your Nuxt Content projects, developers control the setup while teams edit visually. With smart editors that adapt to markdown, YAML, or JSON, anyone can contribute to the website – no technical expertise needed. \*\_Built for developers, made for everyone.\_\*
 
 #links{unwrap="p"}
   :::u-button
@@ -131,7 +132,7 @@ Studio brings visual editing to your Nuxt Content projects, developers control t
 ---
 orientation: horizontal
 ---
-:::code-group
+  :::code-group
   ```vue [components/content/HomeFeature.vue]
   <template>
     <div class="flex items-start gap-3">
@@ -148,7 +149,7 @@ orientation: horizontal
       </div>
     </div>
   </template>
-
+  
   <script setup lang="ts">
   defineProps({
     icon: {
@@ -158,6 +159,7 @@ orientation: horizontal
   })
   </script>
   ```
+  
   ```mdc [content/index.md]
   ::home-feature
     ---
@@ -169,13 +171,13 @@ orientation: horizontal
     Edit slots and props inside the Notion-like editor.
   ::
   ```
-  ::::preview-card{icon="i-lucide-eye" label="Editor"}
+  
+    ::::preview-card{icon="i-lucide-eye" label="Editor"}
     ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
-  ::::
-:::
+    ::::
+  :::
 
-
-#title
+#title{unwrap="p"}
 Developers create the [editing experience]{.text-[var(--ui-primary)]}
 
 #description
@@ -227,82 +229,47 @@ Developers build the foundation their way: custom components, media library, and
 ::u-page-section
 ---
 orientation: horizontal
+reverse: "true"
 ---
-  :::code-group
-  ```vue [pages/blog.vue]
-  <script setup lang="ts">
-  const { data: posts } = await useAsyncData('blog', () => {
-    return queryCollection('blog').all()
-  })
-  </script>
-  
-  <template>
-    <div>
-      <h1>Blog</h1>
-      <ul>
-        <li v-for="post in posts" :key="post.id">
-          <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
-        </li>
-      </ul>
-    </div>
-  </template>
-  ```
-  
-  ```ts [content.config.ts]
-  import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-  
-  export default defineContentConfig({
-    collections: {
-      blog: defineCollection({
-        source: 'blog/*.md',
-        type: 'page',
-        // Define custom schema for docs collection
-        schema: z.object({
-          tags: z.array(z.string()),
-          image: z.string(),
-          date: z.Date()
-        })
-      })
-    }
-  })
-  ```
-  :::
+:video{autoplay controls loop poster="/assets/home/videos/HomeNotionLikePoster.webp" src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
-#title
-Query with [Type-Safety]{.text-[var(--ui-secondary)]}
+ 
+
+#title{unwrap="p"}
+Let [anyone edit]{.text-[var(--ui-primary)]} your Nuxt Content website
 
 #description
-Define your content structure with collections and query them with schema validation and full type-safety.
+Teams and clients get a powerful visual editor for content management, from text edition to media management - all without touching code.
 
 #features
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-layout-grid
+  icon: i-lucide-mouse-pointer-click
   variant: naked
   ---
   #title{unwrap="p"}
-  Create collections for similar content files
+  Visual editor with drag and drop for Markdown
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-circle-check
+  icon: i-lucide-file-text
   variant: naked
   ---
   #title{unwrap="p"}
-  Define schema for the collection front matter
+  Form generation for `YML` and `JSON` files
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-text-cursor
+  icon: i-lucide-image
   variant: naked
   ---
   #title{unwrap="p"}
-  Get auto-completion in your Vue files
+  Manage all your medias in one place
   :::
 
 #links
@@ -319,7 +286,6 @@ Define your content structure with collections and query them with schema valida
 
 ::u-page-section
 ---
-reverse: true
 orientation: horizontal
 ---
   :::u-color-mode-image
@@ -331,50 +297,40 @@ orientation: horizontal
   :::
 
 #title
-Make changes [without technical skills]{.text-[var(--ui-primary)]}
+[Edit together]{.text-[var(--ui-primary)]}, preview instantly
 
 #description
-Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editors and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
+Edit content as a team and see your site come to life with live preview. From text editing to component updates, every change reflects your final website design. Experience seamless content creation without delays or manual refreshes.
 
 #features
   :::u-page-card
   ---
   inline: true
-  icon: i-simple-icons-github
+  icon: i-lucide-files
   variant: naked
   ---
   #title{unwrap="p"}
-  Commit & push to GitHub with one click
+  See your changes in real-time on your website
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-simple-icons-google
+  icon: i-lucide-link
   variant: naked
   ---
   #title{unwrap="p"}
-  Invite editors to login with Google and let them publish their changes
+  Share preview URLs to anyone with live updates
   :::
 
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-users
+  icon: i-lucide-list
   variant: naked
   ---
   #title{unwrap="p"}
-  Edit the content in real-time with your team
-  :::
-
-#links
-  :::u-button
-  ---
-  color: neutral
-  label: Discover Studio
-  to: https://nuxt.studio
-  trailingIcon: i-lucide-arrow-right
-  ---
+  Review all your changes before publishing
   :::
 ::
 
@@ -390,13 +346,14 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   :::
 
 #title
-Add a git-based CMS to your Nuxt project.
+The [best way]{.text-[var(--ui-primary)]} to edit your [Nuxt Content]{.text-[var(--ui-primary)]} website
 
 #links
   :::u-button
   ---
-  label: Start reading docs
-  to: /docs/getting-started/installation
+  label: Get started for free
+  target: _blank
+  to: https://nuxt.studio/signin
   trailingIcon: i-lucide-arrow-right
   ---
   :::
@@ -404,10 +361,12 @@ Add a git-based CMS to your Nuxt project.
   :::u-button
   ---
   color: neutral
-  label: Open Studio
-  target: _blank
-  to: https://nuxt.studio
+  label: See pricing
+  to: /studio/pricing
   variant: outline
   ---
   :::
+
+#description
+Import your Nuxt Content website and invite your team to collaborate today.
 ::
