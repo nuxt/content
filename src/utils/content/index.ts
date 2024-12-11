@@ -85,7 +85,7 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
               },
             )
 
-            result.style = Object.entries(stylesMap).map(([style, cls]) => `.${cls}{${style}}`).join('') + result.style
+            result.style = Object.entries(stylesMap).map(([style, cls]) => `html pre.shiki code .${cls}{${style}}`).join('') + result.style
           }
 
           return result
