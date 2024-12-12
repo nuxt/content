@@ -1,7 +1,8 @@
 ---
 title: Behind the scenes of Nuxt Studio's visual editor
 description: Discover the inner workings of Nuxt Studio's visual editor and how it interprets the Markdown syntax and generate it back.
-image: /blog/visual-editor.webp
+image: 
+  src: /blog/visual-editor.webp
 authors:
   - name: Baptiste Leproux
     avatar:

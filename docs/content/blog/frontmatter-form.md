@@ -3,7 +3,8 @@ name: Visual front-matter edition
 title: Visual front-matter edition
 description: Your page metadata is now editable through a visual interface instead of YAML.
 date: '2024-10-17T00:00:00.000Z'
-image: /blog/frontmatters.png
+image: 
+  src: /blog/frontmatters.png
 authors:
   - name: Baptiste Leproux
     avatar: 
