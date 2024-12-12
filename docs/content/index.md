@@ -194,7 +194,7 @@ orientation: horizontal
       :::::example-landing-hero
       ---
       class: "!h-[458px]"
-      image: /images/everest.jpg
+      image: /mountains/everest.jpg
       ---
       #title
       The Everest.
@@ -212,7 +212,7 @@ orientation: horizontal
   
   ::landing-hero
   ---
-  image: /images/everest.png
+  image: /mountains/everest.png
   ---
   #title
   The Everest.

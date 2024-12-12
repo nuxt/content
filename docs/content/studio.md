@@ -229,7 +229,7 @@ Developers build the foundation their way: custom components, media library, and
 ::u-page-section
 ---
 orientation: horizontal
-reverse: "true"
+reverse: true
 ---
 :video{autoplay controls loop poster="/assets/home/videos/HomeNotionLikePoster.webp" src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 

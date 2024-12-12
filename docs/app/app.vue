@@ -40,7 +40,7 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator color="#FFF" />
 
     <AppBanner />
-    <AppHeader :links="links" />
+    <AppHeader />
 
     <NuxtLayout>
       <NuxtPage />
@@ -50,6 +50,7 @@ provide('navigation', navigation)
 
     <ClientOnly>
       <LazyUContentSearch
+        :links="links"
         :files="files"
         :navigation="navigation"
         :fuse="{ resultLimit: 42 }"

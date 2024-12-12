@@ -8,6 +8,30 @@ export const useNavLinks = () => {
     icon: 'i-lucide-book',
     to: '/docs/getting-started',
     active: route.path.startsWith('/docs'),
+  }, {
+    label: 'Studio',
+    icon: 'i-lucide-book',
+    children: [{
+      label: 'Features',
+      icon: 'i-lucide-file-pen-line',
+      to: '/studio',
+    }, {
+      label: 'Pricing',
+      icon: 'i-lucide-rocket',
+      to: '/studio/pricing',
+    }, {
+      label: 'Templates',
+      icon: 'i-lucide-panels-top-left',
+      to: '/studio/templates',
+    }],
+  }, {
+    label: 'Blog',
+    icon: 'i-lucide-book',
+    to: '/blog',
+  }, {
+    label: 'Changelog',
+    icon: 'i-lucide-book',
+    to: '/changelog',
   }])
 }
 

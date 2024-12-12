@@ -2,44 +2,11 @@
 import type { ContentNavigationItem } from '@nuxt/content'
 
 const config = useRuntimeConfig().public
+const links = useNavLinks()
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
-const items = ref([
-  {
-    label: 'Docs',
-    to: '/docs/getting-started/installation',
-  },
-  {
-    label: 'Studio',
-    to: '/studio',
-    children: [
-      {
-        label: 'Features',
-        icon: 'i-lucide-file-pen-line',
-        to: '/studio',
-      },
-      {
-        label: 'Pricing',
-        icon: 'i-lucide-rocket',
-        to: '/studio/pricing',
-      },
-      {
-        label: 'Templates',
-        icon: 'i-lucide-panels-top-left',
-        to: '/studio/templates',
-      },
-    ],
-  },
-  {
-    label: 'Blog',
-    to: '/blog',
-  },
-  {
-    label: 'Changelog',
-    to: '/changelog',
-  },
-])
+const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => link))
 
 defineShortcuts({
   meta_g: () => {
@@ -49,7 +16,10 @@ defineShortcuts({
 </script>
 
 <template>
-  <UHeader :ui="{ left: 'min-w-0' }">
+  <UHeader
+    :ui="{ left: 'min-w-0' }"
+    mode="drawer"
+  >
     <template #left>
       <NuxtLink
         to="/"
@@ -81,7 +51,7 @@ defineShortcuts({
     </template>
 
     <UNavigationMenu
-      :items="items"
+      :items="linksWithoutIcon"
       class="justify-center"
     />
 
@@ -119,9 +89,16 @@ defineShortcuts({
     </template>
 
     <template #content>
-      <!-- <UNavigationMenu orientation="vertical" :items="items" class="-ml-2.5" />
+      <UNavigationMenu
+        orientation="vertical"
+        :items="links"
+        class="-mx-2.5"
+      />
 
-      <USeparator type="dashed" class="my-4" /> -->
+      <USeparator
+        type="dashed"
+        class="my-4"
+      />
 
       <UContentNavigation
         highlight

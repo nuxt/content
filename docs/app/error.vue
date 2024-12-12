@@ -43,7 +43,7 @@ provide('navigation', navigation)
 
     <AppBanner />
 
-    <AppHeader :links="links" />
+    <AppHeader />
 
     <UError :error="error" />
 
@@ -51,6 +51,7 @@ provide('navigation', navigation)
 
     <ClientOnly>
       <LazyUContentSearch
+        :links="links"
         :files="files"
         :navigation="navigation"
         :fuse="{ resultLimit: 42 }"
