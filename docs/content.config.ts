@@ -33,8 +33,8 @@ export default defineContentConfig({
       }],
     }),
     posts: defineCollection({
-      type: 'page', // required // Type page extends pageSchema
-      source: 'blog/*.md',
+      type: 'page',
+      source: [{ include: 'blog/*.md' }, { include: 'changelog/*.md' }],
       schema: z.object({
         authors: z.array(z.object({
           slug: z.string(),

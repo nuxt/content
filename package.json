@@ -121,6 +121,7 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
+    "typescript": "^5.6.3",
     "unimport": "3.14.5"
   },
   "packageManager": "pnpm@9.15.0",

@@ -6,6 +6,7 @@ settings:
 
 overrides:
   '@nuxt/content': workspace:*
+  typescript: ^5.6.3
   unimport: 3.14.5
 
 importers:
@@ -121,7 +122,7 @@ importers:
         specifier: ^7.4.3
         version: 7.4.3
       typescript:
-        specifier: 5.6.3
+        specifier: ^5.6.3
         version: 5.6.3
       ufo:
         specifier: ^1.5.4
@@ -2500,14 +2501,14 @@ packages:
     peerDependencies:
       '@typescript-eslint/parser': ^8.0.0 || ^8.0.0-alpha.0
       eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <5.8.0'
+      typescript: ^5.6.3
 
   '@typescript-eslint/parser@8.18.0':
     resolution: {integrity: sha512-hgUZ3kTEpVzKaK3uNibExUYm6SKKOmTU2BOxBSvOYwtJEPdVQ70kZJpPjstlnhCHcuc2WGfSbpKlb/69ttyN5Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <5.8.0'
+      typescript: ^5.6.3
 
   '@typescript-eslint/scope-manager@8.17.0':
     resolution: {integrity: sha512-/ewp4XjvnxaREtqsZjF4Mfn078RD/9GmiEAtTeLQ7yFdKnqwTOgRMSvFz4et9U5RiJQ15WTGXPLj89zGusvxBg==}
@@ -2522,7 +2523,7 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <5.8.0'
+      typescript: ^5.6.3
 
   '@typescript-eslint/types@8.17.0':
     resolution: {integrity: sha512-gY2TVzeve3z6crqh2Ic7Cr+CAv6pfb0Egee7J5UAVWCpVvDI/F71wNfolIim4FE6hT15EbpZFVUj9j5i38jYXA==}
@@ -2545,7 +2546,7 @@ packages:
     resolution: {integrity: sha512-rqQgFRu6yPkauz+ms3nQpohwejS8bvgbPyIDq13cgEDbkXt4LH4OkDMT0/fN1RUtzG8e8AKJyDBoocuQh8qNeg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      typescript: '>=4.8.4 <5.8.0'
+      typescript: ^5.6.3
 
   '@typescript-eslint/utils@8.17.0':
     resolution: {integrity: sha512-bQC8BnEkxqG8HBGKwG9wXlZqg37RKSMY7v/X8VEWD8JG2JuTHuNK0VFvMPMUKQcbk6B+tf05k+4AShAEtCtJ/w==}
@@ -2562,7 +2563,7 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <5.8.0'
+      typescript: ^5.6.3
 
   '@typescript-eslint/visitor-keys@8.17.0':
     resolution: {integrity: sha512-1Hm7THLpO6ww5QU6H/Qp+AusUUl+z/CAm3cNZZ0jQvon9yicgO7Rwd+/WWRpMKLYV6p2UvdbR27c86rzCPpreg==}
@@ -2725,7 +2726,7 @@ packages:
   '@vue/language-core@2.1.10':
     resolution: {integrity: sha512-DAI289d0K3AB5TUG3xDp9OuQ71CnrujQwJrQnfuZDwo6eGNf0UoRlPuaVNO+Zrn65PC3j0oB2i7mNmVPggeGeQ==}
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -3459,7 +3460,7 @@ packages:
     resolution: {integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==}
     engines: {node: '>=14'}
     peerDependencies:
-      typescript: '>=4.9.5'
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -5336,7 +5337,7 @@ packages:
     hasBin: true
     peerDependencies:
       sass: ^1.78.0
-      typescript: '>=5.5.4'
+      typescript: ^5.6.3
       vue-tsc: ^1.8.27 || ^2.0.21
     peerDependenciesMeta:
       sass:
@@ -5606,7 +5607,7 @@ packages:
     resolution: {integrity: sha512-7j3nktnRzlQdlHnHsrcr6Gqz8f80/RhfA2I8s1clPI+jkY0hLNmnYVKBfuUEli5EEgK1B6M+ibdS5REasPlsUw==}
     hasBin: true
     peerDependencies:
-      typescript: ^5.x
+      typescript: ^5.6.3
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -6338,7 +6339,7 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       rollup: ^3.29.4 || ^4
-      typescript: ^4.5 || ^5.0
+      typescript: ^5.6.3
 
   rollup-plugin-inject@3.0.2:
     resolution: {integrity: sha512-ptg9PQwzs3orn4jkgXJ74bfs5vYz1NCZlSQMBUA0wKcGp5i5pA1AO3fOUEte8enhGUC+iapTCzEWw2jEFFUO/w==}
@@ -6735,7 +6736,7 @@ packages:
       stylus: '>=0.55'
       sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
       svelte: ^4.0.0 || ^5.0.0-next.100 || ^5.0.0
-      typescript: ^5.0.0
+      typescript: ^5.6.3
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -6903,7 +6904,7 @@ packages:
     resolution: {integrity: sha512-i3eMG77UTMD0hZhgRS562pv83RC6ukSAC2GMNWc+9dieh/+jDM5u5YG+NHX6VNDRHQcHwmsTHctP9LhbC3WxVw==}
     engines: {node: '>=16'}
     peerDependencies:
-      typescript: '>=4.2.0'
+      typescript: ^5.6.3
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
@@ -6913,7 +6914,7 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
     peerDependencies:
-      typescript: ^5.0.0
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -6978,7 +6979,7 @@ packages:
     resolution: {integrity: sha512-JWCUYx3Oxdzvw2J9kTAp+DKE8df/BnH/JTSj6JyA4SH40ECdFu7FoJJcrm8G92B7TjofQ6GZGjJs50TRxoH6Wg==}
     hasBin: true
     peerDependencies:
-      typescript: ^5.1.6
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -7191,7 +7192,7 @@ packages:
   valibot@0.42.1:
     resolution: {integrity: sha512-3keXV29Ar5b//Hqi4MbSdV7lfVp6zuYLZuA9V1PvQUsXqogr+u5lvLPLk3A4f74VUXDnf/JfWMN6sB+koJ/FFw==}
     peerDependencies:
-      typescript: '>=5'
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -7233,7 +7234,7 @@ packages:
       meow: ^9.0.0
       optionator: ^0.9.1
       stylelint: '>=13'
-      typescript: '*'
+      typescript: ^5.6.3
       vite: '>=2.0.0'
       vls: '*'
       vti: '*'
@@ -7362,7 +7363,7 @@ packages:
   vue-component-meta@2.1.10:
     resolution: {integrity: sha512-YEFSau36lLCJNvoM6eynAcq891Y6HKIEdEk3PCzCyNVySeYJAXgE/9iCYqQzLtBJlKg/bBpImz8VbUZsh4N/7Q==}
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -7405,12 +7406,12 @@ packages:
     resolution: {integrity: sha512-RBNSfaaRHcN5uqVqJSZh++Gy/YUzryuv9u1aFWhsammDJXNtUiJMNoJ747lZcQ68wUQFx6E73y4FY3D8E7FGMA==}
     hasBin: true
     peerDependencies:
-      typescript: '>=5.0.0'
+      typescript: ^5.6.3
 
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.6.3
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -7632,7 +7633,7 @@ packages:
   zod-to-ts@1.2.0:
     resolution: {integrity: sha512-x30XE43V+InwGpvTySRNz9kB7qFU8DlyEy7BsSTCHPH1R0QasMmHWZDCzYm6bVXtj/9NNJAZF3jW8rzFvH5OFA==}
     peerDependencies:
-      typescript: ^4.9.4 || ^5.0.2
+      typescript: ^5.6.3
       zod: ^3
 
   zod@3.23.8:

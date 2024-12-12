@@ -6,7 +6,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('posts', () => queryCollection('posts').all())
+const { data: posts } = await useAsyncData('posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').all())
 
 useSeoMeta({
   title: page.value.seo?.title,
