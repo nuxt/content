@@ -6,6 +6,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+const { data: posts } = await useAsyncData('posts', () => queryCollection('posts').all())
+
 useSeoMeta({
   title: page.value.seo?.title,
   description: page.value.seo?.description,
@@ -31,7 +33,7 @@ useSeoMeta({
       :description="page?.description"
     />
   </UContainer>
-  <!-- <pre>
-    {{ page }}
-  </pre> -->
+  <pre>
+    {{ posts }}
+  </pre>
 </template>

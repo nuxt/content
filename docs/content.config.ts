@@ -32,5 +32,29 @@ export default defineContentConfig({
         include: 'templates.yml',
       }],
     }),
+    posts: defineCollection({
+      type: 'page', // required // Type page extends pageSchema
+      source: 'blog/*.md',
+      schema: z.object({
+        authors: z.array(z.object({
+          slug: z.string(),
+          name: z.string(),
+          to: z.string(),
+          avatar: z.object({
+            src: z.string(),
+            alt: z.string(),
+          }),
+        })),
+        date: z.date(),
+        image: z.object({
+          src: z.string(),
+          alt: z.string(),
+        }),
+        badge: z.object({
+          label: z.string(),
+          color: z.string(),
+        }),
+      }),
+    }),
   },
 })
