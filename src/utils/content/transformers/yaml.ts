@@ -4,8 +4,9 @@ import { defineTransformer } from './utils'
 export default defineTransformer({
   name: 'Yaml',
   extensions: ['.yml', '.yaml'],
-  parse: (id, content) => {
-    const { data } = parseFrontMatter(`---\n${content}\n---`)
+  parse: (file) => {
+    const { id, body } = file
+    const { data } = parseFrontMatter(`---\n${body}\n---`)
 
     // Keep array contents under `body` key
     let parsed = data

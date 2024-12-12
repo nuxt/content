@@ -2,6 +2,14 @@ import type { Highlighter, MDCRoot, Toc } from '@nuxtjs/mdc'
 
 export type { Toc, TocLink } from '@nuxtjs/mdc'
 
+export interface ContentFile extends Record<string, unknown> {
+  id: string
+  body: string
+  path: string
+  dirname?: string
+  extension?: string
+}
+
 export interface TransformedContent {
   id: string
   [key: string]: unknown
@@ -15,12 +23,12 @@ export interface TransformContentOptions {
 export type ContentTransformer = {
   name: string
   extensions: string[]
-  parse(id: string, content: string, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
+  parse(file: ContentFile, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
   transform?(content: TransformedContent, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
 } | {
   name: string
   extensions: string[]
-  parse?(id: string, content: string, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
+  parse?(file: ContentFile, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
   transform(content: TransformedContent, options: Record<string, unknown>): Promise<TransformedContent> | TransformedContent
 }
 

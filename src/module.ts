@@ -24,7 +24,7 @@ import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig, startSocketServer } from './utils/dev'
 import { loadLayersConfig } from './utils/config'
-import { parseContent } from './utils/content'
+import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
@@ -268,6 +268,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     if (!collection.source) {
       continue
     }
+    const parse = await createParser(collection, nuxt)
+
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare(nuxt)
@@ -285,8 +287,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
         await Promise.all(chunk.map(async (key) => {
           key = key.substring(fixed.length)
           const keyInCollection = join(collection.name, source?.prefix || '', key)
+          const fullPath = join(cwd, fixed, key)
 
-          const content = await readFile(join(cwd, fixed, key), 'utf8')
+          const content = await readFile(fullPath, 'utf8')
           const checksum = getContentChecksum(configHash + collectionHash + content)
           const cache = databaseContents[keyInCollection]
 
@@ -297,7 +300,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           }
           else {
             parsedFilesCount += 1
-            parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
+            parsedContent = await parse({
+              id: keyInCollection,
+              body: content,
+              path: fullPath,
+            })
             db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
           }
 
