@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
-    "@nuxtjs/mdc": "0.11.1",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@0.11.2-28900083.b7dc03e",
     "@sqlite.org/sqlite-wasm": "3.47.1-build1",
     "better-sqlite3": "^11.7.0",
     "c12": "^2.0.1",
