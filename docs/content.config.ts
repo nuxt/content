@@ -52,7 +52,7 @@ export default defineContentConfig({
         }),
         badge: z.object({
           label: z.string(),
-          color: z.string(),
+          color: z.enum(['error', 'primary', 'neutral', 'secondary', 'success', 'info', 'warning']),
         }),
       }),
     }),

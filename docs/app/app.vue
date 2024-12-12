@@ -42,9 +42,11 @@ provide('navigation', navigation)
     <AppBanner />
     <AppHeader />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <UMain>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </UMain>
 
     <AppFooter />
 
