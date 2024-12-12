@@ -15,7 +15,7 @@ import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert } from './collection'
-import { parseContent } from './content'
+import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { parseSourceBase } from './source'
 
@@ -86,6 +86,8 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 }
 
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
+  const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
+
   const db = localDatabase(options._localDatabase!.filename)
   const collections = manifest.collections
 
@@ -113,8 +115,9 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       const filePath = path.substring(fixed.length)
       const keyInCollection = join(collection.name, source?.prefix || '', filePath)
+      const fullPath = join(cwd, path)
 
-      const content = await readFile(join(cwd, path), 'utf8')
+      const content = await readFile(fullPath, 'utf8')
       const checksum = getContentChecksum(content)
       const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
 
@@ -124,7 +127,15 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
         return
       }
 
-      const parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
+      if (!collectionParsers[collection.name]) {
+        collectionParsers[collection.name] = await createParser(collection, nuxt)
+      }
+      const parser = collectionParsers[collection.name]!
+      const parsedContent = await parser({
+        id: keyInCollection,
+        body: content,
+        path: fullPath,
+      })
 
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 

@@ -2,7 +2,7 @@ import { describe, test, expect, assert } from 'vitest'
 import { z } from 'zod'
 import { visit } from 'unist-util-visit'
 import type { Nuxt } from '@nuxt/schema'
-import { parseContent } from '../../src/utils/content'
+import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 

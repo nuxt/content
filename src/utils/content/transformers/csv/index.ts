@@ -45,16 +45,16 @@ function csvParse(options) {
 export default defineTransformer({
   name: 'csv',
   extensions: ['.csv'],
-  parse: async (id, content, options = {}) => {
+  parse: async (file, options = {}) => {
     const stream = unified().use(csvParse, {
       delimiter: ',',
       json: true,
       ...options,
     })
-    const { result } = await stream.process(content)
+    const { result } = await stream.process(file.body)
 
     return {
-      id,
+      id: file.id,
       body: result,
     }
   },

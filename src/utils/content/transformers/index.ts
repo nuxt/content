@@ -1,6 +1,6 @@
 import { extname } from 'pathe'
 import { camelCase } from 'scule'
-import type { ContentTransformer, TransformedContent, TransformContentOptions } from '../../../types/content'
+import type { ContentTransformer, TransformContentOptions, ContentFile } from '../../../types/content'
 import csv from './csv'
 import markdown from './markdown'
 import yaml from './yaml'
@@ -34,20 +34,19 @@ function getTransformers(ext: string, additionalTransformers: ContentTransformer
 /**
  * Parse content file using registered plugins
  */
-export async function transformContent(id: string, content: string, options: TransformContentOptions = {}) {
+export async function transformContent(file: ContentFile, options: TransformContentOptions = {}) {
   const { transformers = [] } = options
   // Call hook before parsing the file
-  const file = { id: id, body: content } as TransformedContent
 
-  const ext = extname(id)
+  const ext = file.extension || extname(file.id)
   const parser = getParser(ext, transformers)
   if (!parser) {
-    console.warn(`${ext} files are not supported, "${id}" falling back to raw content`)
+    console.warn(`${ext} files are not supported, "${file.id}" falling back to raw content`)
     return file
   }
 
   const parserOptions = (options[camelCase(parser.name)] || {}) as Record<string, unknown>
-  const parsed = await parser.parse!(file.id, file.body as string, parserOptions)
+  const parsed = await parser.parse!(file, parserOptions)
 
   const matchedTransformers = getTransformers(ext, transformers)
   const result = await matchedTransformers.reduce(async (prev, cur) => {
