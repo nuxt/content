@@ -6,8 +6,9 @@ date: '2024-10-28T01:00:00.000Z'
 image: /docs/studio/json-yml-forms.png
 authors:
   - name: Baptiste Leproux
-    avatarUrl: https://avatars.githubusercontent.com/u/7290030?v=4
-    link: https://x.com/_larbish
+    to: https://x.com/_larbish
+    avatar: 
+      src: https://avatars.githubusercontent.com/u/7290030?v=4
 ---
 
 ::callout{icon="i-ph-lightbulb"}

@@ -6,8 +6,9 @@ date: '2024-10-17T00:00:00.000Z'
 image: /blog/frontmatters.png
 authors:
   - name: Baptiste Leproux
-    avatarUrl: https://avatars.githubusercontent.com/u/7290030?v=4
-    link: https://x.com/_larbish
+    avatar: 
+      src: https://avatars.githubusercontent.com/u/7290030?v=4
+    to: https://x.com/_larbish
 ---
 
 ::callout{icon="i-ph-lightbulb"}
