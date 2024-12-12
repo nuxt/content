@@ -3,7 +3,7 @@ name: Visual YAML and JSON File Edition
 title: Visual YAML and JSON File Edition
 description: Edit YAML and JSON files with an automatically generated form.
 date: '2024-10-28T01:00:00.000Z'
-img: /docs/json-yml-forms.png
+image: /docs/json-yml-forms.png
 authors:
   - name: Baptiste Leproux
     avatarUrl: https://avatars.githubusercontent.com/u/7290030?v=4
