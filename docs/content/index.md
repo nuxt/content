@@ -360,7 +360,7 @@ Define your content structure with collections and query them with schema valida
   variant: naked
   ---
   #title{unwrap="p"}
-  Define schema for the collection front matter
+  Define schema for the collection frontmatter
   :::
 
   :::u-page-card
