@@ -48,24 +48,25 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
       await db.exec(insertQuery)
     }
 
-    const index = manifest.dump[collection.name]?.findIndex(item => item.includes(`'${key}'`))
-    if (index && index !== -1) {
-      // Update templates to have valid dump for client-side navigation
-      if (insertQuery) {
-        manifest.dump[collection.name]?.splice(index, 1, insertQuery)
-      }
-      else {
-        manifest.dump[collection.name]?.splice(index, 1)
-      }
+    const collectionDump = manifest.dump[collection.name]
+    const keyIndex = collectionDump?.findIndex(item => item.includes(`'${key}'`))
+    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump?.length
+    const itemsToRemove = keyIndex === -1 ? 0 : 1
 
-      updateTemplates({
-        filter: template => [
-          moduleTemplates.manifest,
-          moduleTemplates.fullCompressedDump,
-          // moduleTemplates.raw,
-        ].includes(template.filename),
-      })
+    if (insertQuery) {
+      collectionDump?.splice(indexToUpdate, itemsToRemove, insertQuery)
     }
+    else {
+      collectionDump?.splice(indexToUpdate, itemsToRemove)
+    }
+
+    updateTemplates({
+      filter: template => [
+        moduleTemplates.manifest,
+        moduleTemplates.fullCompressedDump,
+        // moduleTemplates.raw,
+      ].includes(template.filename),
+    })
 
     websocket?.broadcast({
       key,
