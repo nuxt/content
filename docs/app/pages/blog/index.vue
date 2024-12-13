@@ -42,6 +42,7 @@ useSeoMeta({
             :key="index"
             v-bind="post"
             :to="post.path"
+            variant="naked"
           />
         </UBlogPosts>
       </UContainer>
