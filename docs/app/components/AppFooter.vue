@@ -66,7 +66,7 @@ const route = useRoute()
       <UButton
         aria-label="Nuxt on X"
         icon="i-simple-icons-x"
-        to="https://go.nuxt.com/x"
+        to="https://x.com/nuxtstudio"
         target="_blank"
         color="neutral"
         variant="ghost"

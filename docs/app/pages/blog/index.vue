@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('content-landing', () => queryCollection('landing').path('/blog').first())
+const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').all())
+const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').all())
 
 useSeoMeta({
   title: page.value.seo?.title,

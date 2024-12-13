@@ -1,25 +1,22 @@
 <script setup lang="ts">
+const containers = useTemplateRef<HTMLDivElement[]>('containers') as Ref<HTMLDivElement[]>
 const marker = useTemplateRef<HTMLDivElement>('marker') as Ref<HTMLDivElement>
-const dots = useTemplateRef('dots') as Ref<HTMLDivElement[]> as Ref<HTMLDivElement[]>
-const container = useTemplateRef('container') as Ref<HTMLDivElement[]>
-// const clotherPoint = ref<boolean>(true)
+const dots = useTemplateRef<HTMLDivElement[]>('dots') as Ref<HTMLDivElement[]>
 const markerTop = ref(0)
-const PAGE_SIZE = 2
+const PAGE_SIZE = 1
 const loadedPages = ref(1)
 
 const { y } = useWindowScroll()
-const { isScrolling } = useScroll(document)
+const { isScrolling, arrivedState } = useScroll(document)
 
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('content-landing', () => queryCollection('landing').path('/changelog').first())
+const { data: page } = await useAsyncData('changelog', () => queryCollection('landing').path('/changelog').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('posts', () => queryCollection('posts').where('path', 'LIKE', '/changelog%').all())
-
-console.log('posts.value :', posts.value)
+const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts').where('path', 'LIKE', '/changelog%').all())
 
 useSeoMeta({
   title: page.value.seo?.title,
@@ -32,56 +29,38 @@ useSeoMeta({
 
 const paginatedPosts = computed(() => canLoadMore.value ? posts.value?.slice(0, loadedPages.value * PAGE_SIZE) || [] : posts.value || [])
 const canLoadMore = computed(() => (posts.value?.length || 0) / PAGE_SIZE > loadedPages.value)
-// function loadMore() {
-//   loadedPages.value++
-// }
-
-onMounted(() => {
-  // console.log('dot.value :', dot.value)
-  // console.log('container.value :', container.value)
-  marker.value.style.left = `${container.value[0]!.offsetLeft + 3}px`
-})
+function loadMore() {
+  loadedPages.value++
+}
 
 watch(() => y.value, () => {
   markerTop.value = y.value
 
-  //   const mobilePointTop = dot.value.getBoundingClientRect().top + window.scrollY
+  for (let i = 0; i < dots.value.length; i++) {
+    // Height is the sum of all the previous containers
+    const containersHeight = containers.value.map(container => container.getBoundingClientRect().height)
+    const height = containersHeight.slice(0, i).reduce((acc, curr) => acc + curr, 0)
 
-  //   const fixedPoints = dots.value.map((point) => {
-  //     return point.getBoundingClientRect().top + window.scrollY
-  //   })
-
-//   if (!(arrivedState.top || arrivedState.bottom)) {
-//     for (let i = 0; i < fixedPoints.length; i++) {
-//       if (Math.abs(mobilePointTop - fixedPoints[i]!) <= 100) {
-//         dots.value[i]!.classList.add('neon')
-//         clotherPoint.value = true
-//       }
-//       else {
-//         if (dots.value[i]!.classList.value.includes('neon')) {
-//           dots.value[i]!.classList.remove('neon')
-//           clotherPoint.value = false
-//         }
-//       }
-//     }
-//   }
+    // If the marker is located between the top of the container and the bottom of the container (variant with the gap), it is hightlighted
+    const GAP = 150
+    if (markerTop.value >= height - GAP && markerTop.value <= height + containersHeight[i]! - GAP) {
+      dots.value[i]!.classList.add('neon')
+    }
+    else {
+      dots.value[i]!.classList.remove('neon')
+    }
+  }
 })
-// watch(() => arrivedState.top, () => {
-//   console.log('arrivedState.top :', arrivedState.top)
-//   if (arrivedState.top === true) {
-//     dots.value[0]!.classList.add('neon')
-//   }
-// })
-// watch(() => arrivedState.bottom, () => {
-//   console.log('arrivedState.bottom :', arrivedState.bottom)
-//   if (arrivedState.bottom === true) {
-//     dots.value[dots.value.length - 1]!.classList.add('neon')
-//   }
-// })
+
+watch(() => arrivedState.bottom, () => {
+  if (arrivedState.bottom && canLoadMore.value) {
+    loadMore()
+  }
+})
 </script>
 
 <template>
-  <UContainer>
+  <UPage>
     <NuxtImg
       src="/page-hero.svg"
       width="1440"
@@ -93,119 +72,90 @@ watch(() => y.value, () => {
     <UPageHero
       :title="page?.title"
       :description="page?.description"
-    >
-      <template #links>
-        <UButton
-          to="https://x.com/nuxtstudio"
-          icon="i-simple-icons-x"
-          size="sm"
-          target="_blank"
-          aria-label="Follow studio on X"
-        >
-          @nuxtstudio
-        </UButton>
-      </template>
-    </UPageHero>
+    />
 
-    <UPageBody class="relative">
-      <div
-        ref="marker"
-        class="hidden lg:block absolute rounded-full bg-gray-500 dark:bg-gray-400 z-10 neon marker"
-        :style="{ top: `${markerTop}px`, height: `${isScrolling ? 40 : 0}px`, width: '2px' }"
-      />
-      <ul class="flex flex-col">
-        <li
-          v-for="(post, index) in paginatedPosts"
-          :key="post.id"
-          class="flex flex-col"
-        >
-          <div class="flex w-full flex-col lg:flex-row last:mb-[2px] group">
-            <div class="flex w-full pb-4 lg:w-[200px] lg:pb-0 -mt-1">
-              <p class="text-sm text-gray-600 dark:text-gray-300">
-                <time class="top-24">{{ formatDateByLocale(post.date) }}</time>
-              </p>
-            </div>
-            <div
-              ref="container"
-              class="relative hidden lg:flex lg:min-w-[150px] lg:w-[150px]"
+    <UPageBody>
+      <UContainer>
+        <div class="relative">
+          <div
+            ref="marker"
+            class="hidden lg:block absolute rounded-full bg-gray-500 dark:bg-gray-400 neon marker"
+            :style="{ left: '153px', top: `${markerTop}px`, height: `${isScrolling ? 40 : 0}px`, width: '2px' }"
+          />
+
+          <ul class="flex flex-col">
+            <li
+              v-for="(post, index) in paginatedPosts"
+              :key="post.id"
+              ref="containers"
+              class="flex flex-col"
             >
-              <div
-                ref="dots"
-                class="z-10 hidden w-2 h-2 rounded-full lg:block left-4 top-24 bg-[var(--ui-primary)]"
-                :class="{ neon: index === 0 }"
-              />
-
-              <div class="absolute left-[3.5px] top-0.5 h-full w-[1px] bg-[var(--ui-primary)]" />
-            </div>
-            <div class="w-full pb-32">
-              <div class="group">
-                <!-- <NuxtLink
-                  :to="post.path"
-                  :aria-label="post.title"
-                  class="absolute inset-0 z-10"
-                /> -->
-                <NuxtImg
-                  v-bind="post.image"
-                  loading="lazy"
-                  width="915"
-                  height="515"
-                  class="aspect-[16/9] object-cover rounded-md group-hover:scale-105 transition duration-300 h-full"
-                />
-
-                <!-- <div class="flex flex-col">
-                  <h2 class="text-4xl font-semibold">
-                    {{ post.title }}
-                  </h2>
-                  <p
-                    v-if="post.description"
-                    class="pt-2 pb-4 text-lg text-gray-500 dark:text-gray-400"
-                  >
-                    {{ post.description }}
+              <div class="flex flex-col lg:flex-row">
+                <div class="flex w-full pb-4 lg:max-w-[150px] lg:pb-0 -mt-2">
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    <time>{{ formatDateByLocale(post.date) }}</time>
                   </p>
-                  <div class="flex flex-wrap items-center gap-6 mt-4">
-                    <UButton
-                      v-for="author in post.authors"
-                      :key="author.name"
-                      :to="author.to"
-                      target="_blank"
-                      variant="ghost"
-                      class="-my-1.5 -mx-2.5"
-                      :aria-label="author.name"
-                    >
-                      <UAvatar v-bind="author.avatar" />
+                </div>
+                <div class="relative hidden lg:flex lg:min-w-[150px]">
+                  <div
+                    ref="dots"
+                    class="hidden w-2 h-2 rounded-full lg:block bg-[var(--ui-primary)]"
+                    :class="{ neon: index === 0 }"
+                  />
 
-                      <div class="text-left">
-                        <p class="font-medium">
-                          {{ author.name }}
-                        </p>
+                  <div class="absolute left-[3.5px] top-0.5 h-full w-[1px] bg-[var(--ui-primary)]" />
+                </div>
+                <div class="pb-32">
+                  <div class="group relative">
+                    <NuxtLink
+                      :to="post.path"
+                      :aria-label="post.title"
+                      class="absolute inset-0 z-[10]"
+                    />
+                    <div class="overflow-hidden rounded-md max-w-[915px]">
+                      <NuxtImg
+                        v-bind="post.image"
+                        loading="lazy"
+                        width="915"
+                        height="515"
+                        class="aspect-[16/9] object-cover rounded-md group-hover:scale-105 transition duration-300 h-full"
+                        :to="post.path"
+                      />
+                    </div>
+
+                    <div class="flex flex-col mt-4 gap-4">
+                      <div class="flex flex-col">
+                        <h2 class="text-2xl font-semibold">
+                          {{ post.title }}
+                        </h2>
                         <p
-                          v-if="author.to"
-                          class="leading-4 text-gray-500 dark:text-gray-400"
+                          v-if="post.description"
+                          class="text-lg text-gray-500 dark:text-gray-400"
                         >
-                          {{ `@${author.to.split('/').pop()}` }}
+                          {{ post.description }}
                         </p>
                       </div>
-                    </UButton>
+                      <div class="flex gap-6">
+                        <UUser
+                          v-for="author in post.authors"
+                          :key="author.name"
+                          :name="author.name"
+                          :description="`@${author.to.split('/').pop()}`"
+                          :avatar="author.avatar"
+                          :to="author.to"
+                          size="lg"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div> -->
+                </div>
               </div>
-            </div>
-          </div>
-          <!-- <div
-            v-if="index === paginatedPosts.length - 1 && canLoadMore"
-            class="z-10 flex justify-center -mt-16 lg:col-span-4 lg:ml-48"
-          >
-            <UButton
-              size="sm"
-              label="Load more"
-              aria-label="Load more"
-              @click="loadMore"
-            />
-          </div> -->
-        </li>
-      </ul>
+            </li>
+          </ul>
+        </div>
+      </UContainer>
     </UPageBody>
-  </UContainer>
+  </UPage>
 </template>
 
 <style lang="postcss" scoped>
