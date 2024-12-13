@@ -3,7 +3,7 @@ const containers = useTemplateRef<HTMLDivElement[]>('containers') as Ref<HTMLDiv
 const marker = useTemplateRef<HTMLDivElement>('marker') as Ref<HTMLDivElement>
 const dots = useTemplateRef<HTMLDivElement[]>('dots') as Ref<HTMLDivElement[]>
 const markerTop = ref(0)
-const PAGE_SIZE = 1
+const PAGE_SIZE = 5
 const loadedPages = ref(1)
 
 const { y } = useWindowScroll()
