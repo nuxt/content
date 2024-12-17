@@ -21,10 +21,10 @@ describe('generateCollectionInsert', () => {
       meta: {},
     })
 
-    expect(sql).toBe([
+    expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\')',
+      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\');',
     ].join(''))
   })
 
@@ -50,10 +50,40 @@ describe('generateCollectionInsert', () => {
       date: new Date('2022-01-02'),
     })
 
-    expect(sql).toBe([
+    expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\')',
+      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\');',
+    ].join(''))
+  })
+
+  test('Split long values', () => {
+    const collection = resolveCollection('content', defineCollection({
+      type: 'data',
+      source: '**',
+      schema: z.object({
+        content: z.string().max(10000),
+      }),
+    }))!
+
+    const sql = generateCollectionInsert(collection, {
+      id: 'foo.md',
+      stem: 'foo',
+      extension: 'md',
+      meta: {},
+      content: 'a' + 'b'.repeat(50000) + 'c'.repeat(50000),
+    })
+
+    expect(sql[0]).toBe([
+      `INSERT INTO ${getTableName('content')}`,
+      ' VALUES',
+      ' (\'foo.md\', \'a' + 'b'.repeat(50000 - 1) + '\', \'md\', \'{}\', \'foo\');',
+    ].join(''))
+    expect(sql[1]).toBe([
+      `UPDATE ${getTableName('content')}`,
+      ' SET',
+      ' content = \'b' + 'c'.repeat(50000) + '\'',
+      ' WHERE id = \'foo.md\';',
     ].join(''))
   })
 })

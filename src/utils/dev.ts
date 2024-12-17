@@ -41,11 +41,11 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
     })
   }
 
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}'`
+  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}';`
     await db.exec(removeQuery)
     if (insertQuery) {
-      await db.exec(insertQuery)
+      await Promise.all(insertQuery.map(query => db.exec(query)))
     }
 
     const collectionDump = manifest.dump[collection.name]
@@ -54,7 +54,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
     if (insertQuery) {
-      collectionDump?.splice(indexToUpdate, itemsToRemove, insertQuery)
+      collectionDump?.splice(indexToUpdate, itemsToRemove, ...insertQuery)
     }
     else {
       collectionDump?.splice(indexToUpdate, itemsToRemove)
@@ -128,7 +128,8 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       if (localCache && localCache.checksum === checksum) {
         db.exec(`DELETE FROM ${collection.tableName} WHERE id = '${keyInCollection}'`)
-        db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
+        const insertQuery = generateCollectionInsert(collection, JSON.parse(localCache.parsedContent))
+        await Promise.all(insertQuery.map(query => db.exec(query)))
         return
       }
 
