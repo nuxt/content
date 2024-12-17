@@ -105,7 +105,11 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   watcher.on('change', onChange)
   watcher.on('unlink', onRemove)
 
-  async function onChange(path: string) {
+  async function onChange(pathOrError: string | Error) {
+    if (pathOrError instanceof Error) {
+      return
+    }
+    let path = pathOrError as string
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match
@@ -146,7 +150,11 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     }
   }
 
-  async function onRemove(path: string) {
+  async function onRemove(pathOrError: string | Error) {
+    if (pathOrError instanceof Error) {
+      return
+    }
+    let path = pathOrError as string
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match

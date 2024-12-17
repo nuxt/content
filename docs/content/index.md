@@ -136,7 +136,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Navigation Generation
   
   #description{unwrap="p"}
-  Customize HTML typography tags with Vue components to give your content a consistent style.
+  Generate a structured object from your content files and display a navigation menu in minutes.
   :::
 
   :::u-page-card
@@ -149,7 +149,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Prose Components
   
   #description{unwrap="p"}
-  Nuxt Content works on all hosting providers, static, server, serverless & edge.
+  Customize HTML typography tags with Vue components to give your content a consistent style.
   :::
 
   :::u-page-card
@@ -162,7 +162,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Deploy everywhere
   
   #description{unwrap="p"}
-  Generate a structured object from your content files and display a navigation menu in minutes.
+  Nuxt Content works on all hosting providers, static, server, serverless & edge.
   :::
 ::
 
