@@ -106,48 +106,16 @@ watch(() => arrivedState.bottom, () => {
                   <div class="absolute left-[3.5px] top-0.5 h-full w-[1px] bg-[var(--ui-primary)]" />
                 </div>
                 <div class="pb-32">
-                  <div class="group relative">
-                    <NuxtLink
-                      :to="post.path"
-                      :aria-label="post.title"
-                      class="absolute inset-0 z-[10]"
-                    />
-                    <div class="overflow-hidden rounded-md max-w-[915px]">
-                      <NuxtImg
-                        v-bind="post.image"
-                        loading="lazy"
-                        width="915"
-                        height="515"
-                        class="aspect-[16/9] object-cover rounded-md group-hover:scale-105 transition duration-300 h-full"
-                        :to="post.path"
-                      />
-                    </div>
-
-                    <div class="flex flex-col mt-4 gap-4">
-                      <div class="flex flex-col">
-                        <h2 class="text-2xl font-semibold">
-                          {{ post.title }}
-                        </h2>
-                        <p
-                          v-if="post.description"
-                          class="text-lg text-gray-500 dark:text-gray-400"
-                        >
-                          {{ post.description }}
-                        </p>
-                      </div>
-                      <div class="flex gap-6">
-                        <UUser
-                          v-for="author in post.authors"
-                          :key="author.name"
-                          :name="author.name"
-                          :description="`@${author.to.split('/').pop()}`"
-                          :avatar="author.avatar"
-                          :to="author.to"
-                          size="lg"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <UBlogPost
+                    :key="index"
+                    :title="post.title"
+                    :description="post.description"
+                    :image="post.image"
+                    :to="post.path"
+                    :authors="post.authors"
+                    variant="naked"
+                    :ui="{ wrapper: '!px-0' }"
+                  />
                 </div>
               </div>
             </li>
