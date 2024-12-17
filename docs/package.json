@@ -15,7 +15,7 @@
     "@vueuse/nuxt": "^11.2.0",
     "joi": "^17.13.3",
     "minisearch": "^7.1.0",
-    "nuxt": "3.14.159",
+    "nuxt": "3.14.1592",
     "nuxt-og-image": "^3.0.8",
     "prettier": "^3.3.3",
     "shiki-transformer-color-highlight": "^0.2.0",
