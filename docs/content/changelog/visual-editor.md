@@ -22,7 +22,7 @@ category: Technical
 
 Nuxt Studio offers a versatile workspace for both developers and content writers, giving them the freedom to choose between two distinct editors for content creation and management: the Markdown editor and the Visual editor.
 
-![Select your favorit editor from the project settings](/assets/blog/favorite-editor.webp)
+![Select your favorit editor from the project settings](/blog/favorite-editor.webp)
 
 Each editor serves its own purpose—some users are used to Markdown edition, while others prefer a non-technical, visual approach.
 
@@ -32,7 +32,7 @@ This article explains the technical processes behind the visual editor, explorin
 
 ## **Markdown Editor**
 
-![Edit directly markdown on Nuxt Studio](/assets/blog/markdown-editor.webp)
+![Edit directly markdown on Nuxt Studio](/blog/markdown-editor.webp)
 
 The Markdown editor in Nuxt Studio provides full control over your content, allowing you to write directly in [MDC](https://content.nuxt.com/usage/markdown) (an empowered Markdown syntax). This syntax enables integration of Vue components directly into your Markdown files, offering more flexibility to structure your pages.
 
@@ -40,7 +40,7 @@ When your file is saved with the Markdown editor, the content is stored exactly 
 
 ## **Visual Editor**
 
-![Edit your content with a visual editor on Nuxt Studio](/assets/blog/visual-editor.webp)
+![Edit your content with a visual editor on Nuxt Studio](/blog/visual-editor.webp)
 
 The Visual Editor is a sort of WYSIWYG (What You See Is What You Get) tool built on top of [TipTap](https://tiptap.dev/) and [ProseMirror](https://prosemirror.net/), designed to abstract away the complexities of Markdown syntax and offer a more intuitive, visual editing experience. This editor is particularly user-friendly for those who prefer not to deal with raw Markdown code.
 
@@ -52,7 +52,7 @@ Once the Visual Editor displays the content, users can make updates in a visuall
 
 ### **Why Changes might occur in the original markdown file without user modification**
 
-![Alert is displayed when automatic markdown parsing is detected](/assets/blog/automatic-parsing-modal.webp)
+![Alert is displayed when automatic markdown parsing is detected](/blog/automatic-parsing-modal.webp)
 
 #### **Non-Critical Changes**
 
