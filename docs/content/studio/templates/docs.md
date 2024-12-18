@@ -1,6 +1,6 @@
 ---
 slug: docs
-subtitle: Create your documentation in seconds.
+subtitle: Create your documentation in seconds
 title: Docs
 baseDir: .
 branch: main
@@ -12,15 +12,10 @@ licenseType: nuxt-ui-pro
 mainScreen: /templates/docs-main.webp
 name: docs
 owner: nuxt-ui-pro
----
-
-::template-slider
----
 image1: /templates/docs-1.webp
 image2: /templates/docs-2.webp
 image3: /templates/docs-3.webp
 ---
-::
 
 ::template-core
 [Nuxt UI Pro](https://ui.nuxt.com/pro) is a collection of premium components, an extension of [Nuxt UI](https://ui.nuxt.com), designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.

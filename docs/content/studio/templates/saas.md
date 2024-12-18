@@ -11,15 +11,10 @@ licenseType: nuxt-ui-pro
 mainScreen: /templates/saas-main.webp
 name: SaaS
 owner: nuxt-ui-pro
----
-
-::template-slider
----
 image1: /templates/saas-1.webp
 image2: /templates/saas-2.webp
 image3: /templates/saas-3.webp
 ---
-::
 
 ::template-core
 [Nuxt UI Pro](https://ui.nuxt.com/pro) is a collection of premium components, an extension of [Nuxt UI](https://ui.nuxt.com), designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.

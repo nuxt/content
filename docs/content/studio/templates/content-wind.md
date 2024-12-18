@@ -11,14 +11,9 @@ licenseType: free
 mainScreen: /templates/content-wind-main.webp
 name: content-wind
 owner: Atinux
----
-
-::template-slider
----
 image1: /templates/content-wind-1.webp
 image2: /templates/content-wind-2.webp
 ---
-::
 
 ::template-core
 A lightweight Nuxt theme to build a Markdown driven website, based on Nuxt Content, TailwindCSS and Iconify
@@ -40,7 +35,7 @@ A lightweight Nuxt theme to build a Markdown driven website, based on Nuxt Conte
     - label: Nuxt Studio ready
       content: Edit your theme content and appearance with live-preview within Nuxt Studio.
     - label: Vue Components
-      content: contentents (or your own) inside your content."
+      content: Insert built-in components (or your own) inside your content.
     - label: Write Markdown
       content: Enjoy the ease and simplicity of Markdown and discover MDC syntax.
     - label: Deploy anywhere

@@ -16,17 +16,6 @@ useSeoMeta({
   ogImage: `${siteConfig.url}/social.png`,
   twitterImage: `${siteConfig.url}/social.png`,
 })
-
-const badges = {
-  'free': {
-    color: 'secondary' as const,
-    label: 'Free',
-  },
-  'nuxt-ui-pro': {
-    color: 'primary' as const,
-    label: 'Nuxt UI Pro',
-  },
-}
 </script>
 
 <template>
@@ -62,8 +51,8 @@ const badges = {
           >
             <template #date>
               <UBadge
-                :label="badges[template.licenseType].label"
-                :color="badges[template.licenseType].color"
+                :label="TEMPLATE_BADGES[template.licenseType].label"
+                :color="TEMPLATE_BADGES[template.licenseType].color"
                 variant="outline"
               />
             </template>

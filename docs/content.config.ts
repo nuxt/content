@@ -46,6 +46,9 @@ export default defineContentConfig({
         mainScreen: z.string(),
         name: z.string(),
         owner: z.string(),
+        image1: z.string(),
+        image2: z.string(),
+        image3: z.string(),
       }),
     }),
     posts: defineCollection({

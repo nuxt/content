@@ -11,10 +11,8 @@ licenseType: free
 mainScreen: /templates/starter-main.webp
 name: starter
 owner: nuxt
+image1: /templates/starter-1.webp
 ---
-
-::template-slider{image1="/templates/starter-1.webp"}
-::
 
 ::template-core
 Unleash your imagination with our minimalist starter:
