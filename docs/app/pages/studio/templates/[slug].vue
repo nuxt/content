@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
+const siteConfig = useSiteConfig()
 
 const { data: template } = await useAsyncData(`template-${route.params.slug}`, () => queryCollection('templates').path(route.path).first())
 if (!template.value) {
@@ -7,8 +8,12 @@ if (!template.value) {
 }
 
 useSeoMeta({
-  title: template.value?.title || 'Template not found',
-  description: template.value?.description || 'We are sorry, we cannot find the template you are looking for.',
+  title: template.value?.seo.title,
+  description: template.value?.seo.description,
+  ogTitle: template.value?.seo.title,
+  ogDescription: template.value?.seo.description,
+  ogImage: template.value?.mainScreen ? `${siteConfig.url}/${template.value?.mainScreen}` : `${siteConfig.url}/social.png`,
+  twitterImage: template.value?.mainScreen ? `${siteConfig.url}/${template.value?.mainScreen}` : `${siteConfig.url}/social.png`,
 })
 
 const isNuxtUIProTemplate = computed(() => template.value?.licenseType === 'nuxt-ui-pro')
