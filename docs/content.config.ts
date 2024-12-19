@@ -1,4 +1,5 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+import { user } from '#build/ui-pro'
 
 export default defineContentConfig({
   collections: {
@@ -57,6 +58,7 @@ export default defineContentConfig({
       schema: z.object({
         authors: z.array(z.object({
           slug: z.string(),
+          username: z.string(),
           name: z.string(),
           to: z.string(),
           avatar: z.object({
@@ -68,10 +70,6 @@ export default defineContentConfig({
         image: z.object({
           src: z.string(),
           alt: z.string(),
-        }),
-        badge: z.object({
-          label: z.string(),
-          color: z.enum(['error', 'primary', 'neutral', 'secondary', 'success', 'info', 'warning']),
         }),
       }),
     }),

@@ -47,6 +47,7 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
+    "@farnabaz/mdlint": "0.0.14",
     "@nuxt/kit": "^3.14.1592",
     "@nuxtjs/mdc": "0.11.1",
     "@sqlite.org/sqlite-wasm": "3.47.1-build1",
