@@ -6,6 +6,7 @@ import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
 import { logger } from './dev'
+import type { ParsedContentFile } from '~/src/types'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
@@ -98,7 +99,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
 }
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>): string[] {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): string[] {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)

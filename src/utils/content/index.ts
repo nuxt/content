@@ -6,8 +6,10 @@ import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
-import type { ResolvedCollection } from '../../types/collection'
-import type { ModuleOptions } from '../../types/module'
+import type {
+  ResolvedCollection,
+} from '../../types/collection'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ParsedContentFile } from '../../types/module'
 import { transformContent } from './transformers'
 import type { ContentFile } from '~/src/types'
 
@@ -127,17 +129,21 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     },
   }
 
-  return async function parse(file: ContentFile) {
+  return async function parse(file: ContentFile): Promise<ParsedContentFile> {
     if (file.path && !file.dirname) {
       file.dirname = dirname(file.path)
     }
+    const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
+    const { file: hookedFile, collection: hookedCollection } = beforeParseCtx
 
-    const parsedContent = await transformContent(file, parserOptions)
+    const parsedContent = await transformContent(hookedFile, beforeParseCtx.parserOptions)
     const { id: id, ...parsedContentFields } = parsedContent
     const result = { id } as typeof collection.extendedSchema._type
     const meta = {} as Record<string, unknown>
 
-    const collectionKeys = Object.keys(collection.extendedSchema.shape)
+    const collectionKeys = Object.keys(hookedCollection.extendedSchema.shape)
     for (const key of Object.keys(parsedContentFields)) {
       if (collectionKeys.includes(key)) {
         result[key] = parsedContent[key]
@@ -160,8 +166,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       result.seo.description = result.seo.description || result.description
     }
 
-    const hookCtx = { content: result, collection }
-    await nuxt?.callHook?.('collection:parsedFile', hookCtx)
-    return hookCtx.content
+    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
+    return afterParseCtx.content
   }
 }
