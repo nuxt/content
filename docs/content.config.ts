@@ -1,5 +1,22 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-import { user } from '#build/ui-pro'
+
+const pricingPlan = z.object({
+  title: z.string(),
+  description: z.string(),
+  price: z.string(),
+  cycle: z.string().optional(),
+  features: z.array(z.string()),
+  cta: z.object({
+    label: z.string(),
+    color: z.string(),
+    to: z.string(),
+  }),
+})
+
+const pricingFeature = z.object({
+  title: z.string(),
+  plans: z.array(z.enum(['solo', 'team', 'unlimited'])),
+})
 
 export default defineContentConfig({
   collections: {
@@ -32,6 +49,84 @@ export default defineContentConfig({
       }, {
         include: 'studio/templates.yml',
       }],
+    }),
+    pricing: defineCollection({
+      type: 'page',
+      source: 'studio/pricing.yml',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        onboarding: z.object({
+          title: z.string(),
+          image: z.object({
+            dark: z.string(),
+            light: z.string(),
+          }),
+        }),
+        plans: z.object({
+          solo: pricingPlan,
+          team: pricingPlan,
+          unlimited: pricingPlan,
+        }),
+        features: z.object({
+          title: z.string(),
+          description: z.string(),
+          includes: z.object({
+            sync: z.object({
+              title: z.string(),
+              includes: z.object({
+                repositories: pricingFeature,
+                workflow: pricingFeature,
+              }),
+            }),
+            projects: z.object({
+              title: z.string(),
+              includes: z.object({
+                clone: pricingFeature,
+                import: pricingFeature,
+              }),
+            }),
+            editors: z.object({
+              title: z.string(),
+              includes: z.object({
+                markdown: pricingFeature,
+                json: pricingFeature,
+                appconfig: pricingFeature,
+                drag: pricingFeature,
+              }),
+            }),
+            preview: z.object({
+              title: z.string(),
+              includes: z.object({
+                draft: pricingFeature,
+                branches: pricingFeature,
+                prs: pricingFeature,
+              }),
+            }),
+            deploy: z.object({
+              title: z.string(),
+              includes: z.object({
+                gh: pricingFeature,
+                self: pricingFeature,
+              }),
+            }),
+            publish: z.object({
+              title: z.string(),
+              includes: z.object({
+                preview: pricingFeature,
+                branch: pricingFeature,
+                commit: pricingFeature,
+              }),
+            }),
+            media: pricingFeature,
+            support: pricingFeature,
+            dedicated: pricingFeature,
+            team: pricingFeature,
+            collaboration: pricingFeature,
+            unlimited: pricingFeature,
+          }),
+        }),
+      }),
     }),
     templates: defineCollection({
       type: 'page',
@@ -73,5 +168,6 @@ export default defineContentConfig({
         }),
       }),
     }),
+
   },
 })

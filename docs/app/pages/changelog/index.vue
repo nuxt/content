@@ -11,7 +11,7 @@ const { isScrolling, arrivedState } = useScroll(document)
 
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('changelog', () => queryCollection('landing').path('/changelog').first())
+const { data: page } = await useAsyncData('changelog-landing', () => queryCollection('landing').path('/changelog').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
