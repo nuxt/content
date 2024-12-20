@@ -160,6 +160,8 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       result.seo.description = result.seo.description || result.description
     }
 
-    return result
+    const hookCtx = { content: result, collection }
+    await nuxt?.callHook?.('content:parsed', hookCtx)
+    return hookCtx.content
   }
 }

@@ -3,6 +3,7 @@ import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
 import type { PathMetaOptions } from './path-meta'
+import type { CollectionItemBase, DataCollectionItemBase, PageCollectionItemBase, ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
@@ -186,4 +187,10 @@ export interface PublicRuntimeConfig {
     apiURL?: string
     iframeMessagingAllowedOrigins?: string
   }
+}
+
+export type ContentParsedHook = { content: CollectionItemBase | DataCollectionItemBase | PageCollectionItemBase, collection: ResolvedCollection }
+
+export interface ModuleHooks {
+  'content:parsed': (hook: ContentParsedHook) => void | Promise<void>
 }
