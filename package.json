@@ -112,6 +112,7 @@
     "@types/ws": "^8.5.13",
     "csvtojson": "^2.0.10",
     "eslint": "^9.17.0",
+    "mdclint": "^0.0.1",
     "micromark-util-types": "^2.0.1",
     "nuxt": "^3.14.1592",
     "release-it": "^17.10.0",

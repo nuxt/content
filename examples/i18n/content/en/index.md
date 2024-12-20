@@ -12,6 +12,4 @@ You can find an example of querying contents and rendering them in `app/pages/[.
 Checkout [official docs][docs] to read more about Nuxt Content
 ::
 
-
-
 [docs]: https://content3.nuxt.dev

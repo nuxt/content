@@ -56,7 +56,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   File-based CMS
-  
+
   #description{unwrap="p"}
   Write your content in Markdown, YML, CSV or JSON and query it in your components.
   :::
@@ -69,7 +69,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Query Builder
-  
+
   #description{unwrap="p"}
   Query your content with a MongoDB-like API to fetch the right data at the right time.
   :::
@@ -82,7 +82,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   SQLite powered
-  
+
   #description{unwrap="p"}
   Add custom fields to your content, making it suitable for various types of projects.
   :::
@@ -95,7 +95,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Markdown with Vue
-  
+
   #description{unwrap="p"}
   Use Vue components in Markdown files, with props, slots and nested components.
   :::
@@ -108,7 +108,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Code highlighting
-  
+
   #description{unwrap="p"}
   Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
   :::
@@ -121,7 +121,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Visual Editor
-  
+
   #description{unwrap="p"}
   Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
   :::
@@ -134,7 +134,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Navigation Generation
-  
+
   #description{unwrap="p"}
   Generate a structured object from your content files and display a navigation menu in minutes.
   :::
@@ -147,7 +147,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Prose Components
-  
+
   #description{unwrap="p"}
   Customize HTML typography tags with Vue components to give your content a consistent style.
   :::
@@ -160,7 +160,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ---
   #title{unwrap="p"}
   Deploy everywhere
-  
+
   #description{unwrap="p"}
   Nuxt Content works on all hosting providers, static, server, serverless & edge.
   :::
@@ -198,35 +198,35 @@ orientation: horizontal
       ---
       #title
       The Everest.
-      
+
       #description
       The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
       :::::
     ::::
-  
+
   ```mdc [content/index.md]
   ---
   title: The Mountains Website
   description: A website about the most iconic mountains in the world.
   ---
-  
+
   ::landing-hero
   ---
   image: /images/everest.png
   ---
   #title
   The Everest.
-  
+
   #description
   The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
   ::
   ```
-  
+
   ```vue [components/LandingHero.vue]
   <script setup lang="ts">
   defineProps<{ image: string }>()
   </script>
-  
+
   <template>
     <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
       <div>
@@ -303,7 +303,7 @@ orientation: horizontal
     return queryCollection('blog').all()
   })
   </script>
-  
+
   <template>
     <div>
       <h1>Blog</h1>
@@ -315,10 +315,10 @@ orientation: horizontal
     </div>
   </template>
   ```
-  
+
   ```ts [content.config.ts]
   import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-  
+
   export default defineContentConfig({
     collections: {
       blog: defineCollection({
