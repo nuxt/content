@@ -9,7 +9,7 @@ import { visit } from 'unist-util-visit'
 import type {
   ResolvedCollection,
 } from '../../types/collection'
-import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ParsedContentFile } from '../../types/module'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 import type { ContentFile } from '~/src/types'
 
