@@ -129,7 +129,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     },
   }
 
-  return async function parse(file: ContentFile): Promise<ParsedContentFile> {
+  return async function parse(file: ContentFile) {
     if (file.path && !file.dirname) {
       file.dirname = dirname(file.path)
     }

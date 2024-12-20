@@ -6,7 +6,7 @@ import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
 import { logger } from './dev'
-import type { ParsedContentFile } from '~/src/types'
+import type { ParsedContentFile } from '../types'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
 
