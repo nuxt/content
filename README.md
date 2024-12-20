@@ -26,7 +26,6 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 - Powerful query builder on top of SQLite database
 - [... and more](https://content3.nuxt.dev)
 
-
 ## 💻 Development
 
 - Clone repository

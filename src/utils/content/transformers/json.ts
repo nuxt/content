@@ -4,14 +4,15 @@ import { defineTransformer } from './utils'
 export default defineTransformer({
   name: 'Json',
   extensions: ['.json'],
-  parse: async (id, content) => {
+  parse: async (file) => {
+    const { id, body } = file
     let parsed: Record<string, unknown>
 
-    if (typeof content === 'string') {
-      parsed = destr(content)
+    if (typeof body === 'string') {
+      parsed = destr(body)
     }
     else {
-      parsed = content
+      parsed = body
     }
 
     // Keep array contents under `body` key

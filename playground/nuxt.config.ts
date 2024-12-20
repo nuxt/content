@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   content: {
     build: {
       markdown: {
+        remarkPlugins: {
+          'remark-code-import': {},
+        },
         highlight: {
           theme: {
             dark: 'aurora-x', // Theme containing italic

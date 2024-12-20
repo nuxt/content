@@ -12,7 +12,7 @@ import { generatePath } from './path-meta'
 export default defineTransformer({
   name: 'markdown',
   extensions: ['.md'],
-  parse: async (id, content, options: Partial<MarkdownOptions> = {}) => {
+  parse: async (file, options: Partial<MarkdownOptions> = {}) => {
     const config = { ...options } as MarkdownOptions
     config.rehypePlugins = await importPlugins(config.rehypePlugins)
     config.remarkPlugins = await importPlugins(config.remarkPlugins)
@@ -27,7 +27,7 @@ export default defineTransformer({
         }
       : undefined
 
-    const parsed = await parseMarkdown(content as string, {
+    const parsed = await parseMarkdown(file.body as string, {
       ...config,
       highlight,
       toc: config.toc,
@@ -36,6 +36,8 @@ export default defineTransformer({
         plugins: config.rehypePlugins,
         options: { handlers: { link } },
       },
+    }, {
+      fileOptions: file,
     })
 
     if ((options as { compress: boolean }).compress) {
@@ -46,7 +48,7 @@ export default defineTransformer({
           ...compressTree(parsed.body),
           toc: parsed.toc,
         },
-        id,
+        id: file.id,
       }
     }
 
@@ -57,7 +59,7 @@ export default defineTransformer({
         ...parsed.body,
         toc: parsed.toc,
       },
-      id,
+      id: file.id,
     }
   },
 })
