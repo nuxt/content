@@ -397,7 +397,7 @@ orientation: horizontal
 Let [anyone edit]{.text-[var(--ui-primary)]} your website
 
 #description
-Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editors and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
+Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editor and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
 
 #features
   :::u-page-card
@@ -427,7 +427,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   variant: naked
   ---
   #title{unwrap="p"}
-  Invite editors to login with Google and let them publish their changes
+  Invite editors to login with Google and publish changes
   :::
 
 #links

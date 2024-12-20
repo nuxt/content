@@ -15,7 +15,8 @@ const pricingPlan = z.object({
 
 const pricingFeature = z.object({
   title: z.string(),
-  plans: z.array(z.enum(['solo', 'team', 'unlimited'])),
+  plans: z.array(z.enum(['solo', 'team', 'unlimited'])).optional(),
+  value: z.array(z.string()).optional(),
 })
 
 export default defineContentConfig({
@@ -54,8 +55,6 @@ export default defineContentConfig({
       type: 'page',
       source: 'studio/pricing.yml',
       schema: z.object({
-        title: z.string(),
-        description: z.string(),
         onboarding: z.object({
           title: z.string(),
           image: z.object({
@@ -72,6 +71,13 @@ export default defineContentConfig({
           title: z.string(),
           description: z.string(),
           includes: z.object({
+            projects: pricingFeature,
+            members: pricingFeature,
+            media: pricingFeature,
+            support: pricingFeature,
+            dedicated: pricingFeature,
+            roles: pricingFeature,
+            collaboration: pricingFeature,
             sync: z.object({
               title: z.string(),
               includes: z.object({
@@ -79,7 +85,7 @@ export default defineContentConfig({
                 workflow: pricingFeature,
               }),
             }),
-            projects: z.object({
+            project: z.object({
               title: z.string(),
               includes: z.object({
                 clone: pricingFeature,
@@ -118,12 +124,6 @@ export default defineContentConfig({
                 commit: pricingFeature,
               }),
             }),
-            media: pricingFeature,
-            support: pricingFeature,
-            dedicated: pricingFeature,
-            team: pricingFeature,
-            collaboration: pricingFeature,
-            unlimited: pricingFeature,
           }),
         }),
       }),
@@ -168,6 +168,5 @@ export default defineContentConfig({
         }),
       }),
     }),
-
   },
 })

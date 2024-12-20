@@ -19,10 +19,10 @@ seo:
   :::
 
 #title{unwrap="p"}
-Studio, content edition :br for everyone.
+Meet Studio, content edition :br for everyone.
 
 #description
-**Studio** brings visual editing to your Nuxt Content projects, developers control the setup while teams edit visually. With smart editors that adapt to markdown, YAML, or JSON, anyone can contribute to the website – no technical expertise needed. \*\_Built for developers, made for everyone.\_\*
+**Nuxt Studio** brings visual editing to your Nuxt Content projects. Anyone can contribute to the website thanks to our versatile editor that adapt to markdown, YAML, or JSON – no technical expertise needed. *Built for developers, made for everyone.*
 
 #links{unwrap="p"}
   :::u-button
@@ -40,7 +40,6 @@ Studio, content edition :br for everyone.
   color: neutral
   label: Read the documentation
   size: xl
-  target: _blank
   to: /docs/studio/setup
   variant: subtle
   ---
@@ -72,7 +71,7 @@ Studio, content edition :br for everyone.
   Easy content updates
   
   #description{unwrap="p"}
-  From Markdown to YAML edition, or visual editors are designed for non technical users.
+  From Markdown to YAML edition, our visual editor is designed for non technical users.
   :::
 
   :::u-page-card
@@ -134,6 +133,15 @@ orientation: horizontal
 ---
   :::code-group
   ```vue [components/content/HomeFeature.vue]
+  <script setup lang="ts">
+    defineProps({
+      icon: {
+        type: String,
+        default: 'i-ph-cursor-click',
+      },
+    })
+  </script>
+
   <template>
     <div class="flex items-start gap-3">
       <div class="flex items-center justify-center border rounded-lg p-1.5">
@@ -149,15 +157,6 @@ orientation: horizontal
       </div>
     </div>
   </template>
-  
-  <script setup lang="ts">
-  defineProps({
-    icon: {
-      type: String,
-      default: 'i-ph-cursor-click',
-    },
-  })
-  </script>
   ```
   
   ```mdc [content/index.md]
@@ -197,21 +196,21 @@ Developers build the foundation their way: custom components, media library, and
   :::u-page-card
   ---
   inline: true
-  icon: i-lucide-brush
-  variant: naked
-  ---
-  #title{unwrap="p"}
-  Edit your app.config visually
-  :::
-
-  :::u-page-card
-  ---
-  inline: true
   icon: i-simple-icons-markdown
   variant: naked
   ---
   #title{unwrap="p"}
   Edit your Markdown with our visual editor
+  :::
+
+  :::u-page-card
+  ---
+  inline: true
+  icon: i-lucide-brush
+  variant: naked
+  ---
+  #title{unwrap="p"}
+  Edit your app.config visually
   :::
 
 #links
@@ -270,17 +269,6 @@ Teams and clients get a powerful visual editor for content management, from text
   ---
   #title{unwrap="p"}
   Manage all your medias in one place
-  :::
-
-#links
-  :::u-button
-  ---
-  color: neutral
-  label: Learn more about content collections
-  to: /docs/collections/collections
-  trailingIcon: i-lucide-arrow-right
-  variant: subtle
-  ---
   :::
 ::
 

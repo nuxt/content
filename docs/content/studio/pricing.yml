@@ -1,7 +1,7 @@
 title: Get the right plan for your project
 description: Explore our options tailored to individual and team needs.Get started for free.
 onboarding:
-  title: Onboarding
+  title: Team Onboarding
   image:
     dark: /pricing/timeline-dark.webp
     light: /pricing/timeline-light.webp
@@ -61,6 +61,27 @@ features:
   title: All Features
   description: Studio has a per-project pricing model that can scale to meet your needs.
   includes:
+    projects:
+      title: Projects
+      value: ['Unlimited', '1', Unlimited]
+    members:
+      title: Members
+      value: ['1', '2 included ($9 per extra)', Unlimited]
+    media:
+      title: Media Library
+      plans: ['solo', 'team', 'unlimited']
+    support:
+      title: Discord support
+      plans: ['solo', 'team', 'unlimited']
+    dedicated:
+      title: Dedicated Discord channel
+      plans: ['team', 'unlimited']
+    roles:
+      title:  Roles and permissions
+      plans: ['team', 'unlimited']
+    collaboration:
+      title: Live Collaboration
+      plans: ['team', 'unlimited']
     sync:
       title: GitHub syncing
       includes:
@@ -76,7 +97,7 @@ features:
         actions:
           title: Actions
           plans: ['solo', 'team', 'unlimited']
-    projects:
+    project:
       title: Project
       includes:
         clone:
@@ -133,21 +154,3 @@ features:
         commit:
           title: Commit
           plans: ['solo', 'team', 'unlimited']
-    media:
-      title: Media Library
-      plans: ['solo', 'team', 'unlimited']
-    support:
-      title: Discord support
-      plans: ['solo', 'team', 'unlimited']
-    dedicated:
-      title: Dedicated Discord channel
-      plans: ['team', 'unlimited']
-    team:
-      title: Team management
-      plans: ['team', 'unlimited']
-    collaboration:
-      title: Live Collaboration
-      plans: ['team', 'unlimited']
-    unlimited:
-      title: Unlimited members and projects
-      plans: ['unlimited']

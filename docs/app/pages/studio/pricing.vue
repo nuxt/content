@@ -2,6 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 
 const siteConfig = useSiteConfig()
+const UIcon = resolveComponent('UIcon')
 
 const { data: page } = await useAsyncData('pricing-landing', () => queryCollection('pricing').path('/studio/pricing').first())
 if (!page.value) {
@@ -20,9 +21,9 @@ useSeoMeta({
 type Feature = {
   title: string
   main?: boolean
-  solo: boolean | ''
-  team: boolean | ''
-  unlimited: boolean | ''
+  solo: boolean | string
+  team: boolean | string
+  unlimited: boolean | string
 }
 
 const data = computed(() => {
@@ -40,19 +41,22 @@ const data = computed(() => {
       Object.values(mainFeature.includes).forEach((feature) => {
         features.push({
           title: feature.title,
-          solo: feature.plans.includes('solo'),
-          team: feature.plans.includes('team'),
-          unlimited: feature.plans.includes('unlimited'),
+          solo: (feature.plans || []).includes('solo'),
+          team: (feature.plans || []).includes('team'),
+          unlimited: (feature.plans || []).includes('unlimited'),
         })
       })
     }
     else {
+      const solo = mainFeature.plans ? mainFeature.plans.includes('solo') : mainFeature.value![0] as string
+      const team = mainFeature.plans ? mainFeature.plans.includes('team') : mainFeature.value![1] as string
+      const unlimited = mainFeature.plans ? mainFeature.plans.includes('unlimited') : mainFeature.value![2] as string
       features.push({
         title: mainFeature.title,
         main: true,
-        solo: mainFeature.plans.includes('solo'),
-        team: mainFeature.plans.includes('team'),
-        unlimited: mainFeature.plans.includes('unlimited'),
+        solo,
+        team,
+        unlimited,
       })
     }
   })
@@ -79,9 +83,13 @@ const columns: TableColumn<Feature>[] = [
       ])
     },
     cell: ({ row }) => {
-      console.log('row :', row)
-      return h('div', { class: 'flex justify-center' },
-        row.original.solo !== true ? row.original.solo === false ? '❌' : '' : '✅')
+      return h('div', { class: 'flex justify-center text-[var(--ui-text-highlighted)]' },
+        typeof row.original.solo === 'string'
+          ? row.original.solo
+          : row.original.solo === true
+            ? h(UIcon, { name: 'i-lucide-circle-check', class: 'text-[var(--ui-text-highlighted)]' })
+            : '_',
+      )
     },
   },
   {
@@ -93,8 +101,13 @@ const columns: TableColumn<Feature>[] = [
       ])
     },
     cell: ({ row }) => {
-      return h('div', { class: 'flex justify-center' },
-        row.original.team !== true ? row.original.team === false ? '❌' : '' : '✅')
+      return h('div', { class: 'flex justify-center text-[var(--ui-text-highlighted)]' },
+        typeof row.original.team === 'string'
+          ? row.original.team
+          : row.original.team === true
+            ? h(UIcon, { name: 'i-lucide-circle-check', class: 'text-[var(--ui-primary)]' })
+            : '_',
+      )
     },
   },
   {
@@ -106,8 +119,13 @@ const columns: TableColumn<Feature>[] = [
       ])
     },
     cell: ({ row }) => {
-      return h('div', { class: 'flex justify-center' },
-        row.original.unlimited !== true ? row.original.unlimited === false ? '❌' : '' : '✅')
+      return h('div', { class: 'flex justify-center text-[var(--ui-text-highlighted)]' },
+        typeof row.original.unlimited === 'string'
+          ? row.original.unlimited
+          : row.original.unlimited === true
+            ? h(UIcon, { name: 'i-lucide-circle-check', class: 'text-[var(--ui-text-highlighted)]' })
+            : '_',
+      )
     },
   },
 ]
@@ -153,6 +171,7 @@ const columns: TableColumn<Feature>[] = [
         <UTable
           :data="data"
           :columns="columns"
+          :ui="{ tbody: 'divide-none' }"
         />
       </UPageSection>
     </UContainer>
