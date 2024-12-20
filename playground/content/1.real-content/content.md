@@ -103,7 +103,7 @@ Path-meta is a built-in transformer that extract multiple meta informations from
 
 **@nuxt/content** use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
 
-```
+```text
 1.hello.md
 2.index.md
 3.group/1.index.md
