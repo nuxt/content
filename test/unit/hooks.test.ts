@@ -14,11 +14,11 @@ describe('Hooks', () => {
       foo: z.any(),
     }),
   }))!
-  it('content:parsed', async () => {
+  it('collection:parsedFile', async () => {
     let hookCtx: ContentParsedHook
     const nuxtMock = {
       callHook(hook: string, ctx: ContentParsedHook) {
-        if (hook === 'content:parsed') {
+        if (hook === 'collection:parsedFile') {
           // augment
           ctx.content.bar = 'foo'
           hookCtx = ctx

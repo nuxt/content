@@ -161,7 +161,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     }
 
     const hookCtx = { content: result, collection }
-    await nuxt?.callHook?.('content:parsed', hookCtx)
+    await nuxt?.callHook?.('collection:parsedFile', hookCtx)
     return hookCtx.content
   }
 }

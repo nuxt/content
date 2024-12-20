@@ -192,5 +192,5 @@ export interface PublicRuntimeConfig {
 export type ContentParsedHook = { content: CollectionItemBase | DataCollectionItemBase | PageCollectionItemBase, collection: ResolvedCollection }
 
 export interface ModuleHooks {
-  'content:parsed': (hook: ContentParsedHook) => void | Promise<void>
+  'collection:parsedFile': (hook: ContentParsedHook) => void | Promise<void>
 }
