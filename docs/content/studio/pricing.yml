@@ -91,6 +91,7 @@ features:
         workflow:
           title: Branches and Pull Requests
           plans: []
+          soon: true
         files:
           title: Files
           plans: ['solo', 'team', 'unlimited']
@@ -130,9 +131,11 @@ features:
         branches:
           title: Branches
           plans: []
+          soon: true
         prs:
           title: Pull requests
           plans: []
+          soon: true
     deploy:
       title: Deploy
       includes:
@@ -151,6 +154,7 @@ features:
         branch:
           title: Branch creation / merge
           plans: []
+          soon: true
         commit:
           title: Commit
           plans: ['solo', 'team', 'unlimited']

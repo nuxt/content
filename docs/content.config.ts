@@ -17,6 +17,7 @@ const pricingFeature = z.object({
   title: z.string(),
   plans: z.array(z.enum(['solo', 'team', 'unlimited'])).optional(),
   value: z.array(z.string()).optional(),
+  soon: z.boolean().optional(),
 })
 
 export default defineContentConfig({
