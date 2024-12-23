@@ -8,7 +8,7 @@
     "@iconify-json/vscode-icons": "^1.2.2",
     "@nuxt/content": "latest",
     "@nuxt/image": "^1.8.1",
-    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@0f70402",
+    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@7659616",
     "@nuxthub/core": "^0.8.6",
     "@nuxtjs/plausible": "^1.0.3",
     "@octokit/rest": "^21.0.2",

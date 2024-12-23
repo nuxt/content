@@ -18,8 +18,6 @@ useSeoMeta({
 
 const isNuxtUIProTemplate = computed(() => template.value?.licenseType === 'nuxt-ui-pro')
 
-console.log('template.value :', template.value)
-
 const images = computed(() => template.value
   ? [
       template.value.image1,

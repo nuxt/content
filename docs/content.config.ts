@@ -10,7 +10,7 @@ const pricingPlan = z.object({
   hightlight: z.boolean().optional(),
   button: z.object({
     label: z.string(),
-    color: z.string(),
+    color: z.enum(['error', 'primary', 'neutral', 'secondary', 'success', 'info', 'warning']),
     to: z.string(),
     target: z.string().optional(),
   }),
