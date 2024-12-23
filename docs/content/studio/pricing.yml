@@ -29,6 +29,7 @@ plans:
     price: $29
     cycle: /project/month
     highlight: true
+    badge: Most popular
     features:
       - 1 project
       - 2 members included
@@ -36,12 +37,11 @@ plans:
       - Team & workflow management
       - Real-time collaboration
       - Priority support
-    badge:
-      label: Most Popular
-      color: primary
+      - All solo features
     button:
       label: Start 14-day free trial
       to: ''
+      target: _blank
   unlimited:
     title: Unlimited
     description: For large teams looking to collaborate on multiple projects with no limits.
@@ -57,6 +57,7 @@ plans:
     button:
       label: Start 14-day free trial
       to: ''
+      target: _blank
 features:
   title: All Features
   description: Studio has a per-project pricing model that can scale to meet your needs.

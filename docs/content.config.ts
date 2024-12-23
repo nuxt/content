@@ -6,10 +6,13 @@ const pricingPlan = z.object({
   price: z.string(),
   cycle: z.string().optional(),
   features: z.array(z.string()),
-  cta: z.object({
+  badge: z.string().optional(),
+  hightlight: z.boolean().optional(),
+  button: z.object({
     label: z.string(),
     color: z.string(),
     to: z.string(),
+    target: z.string().optional(),
   }),
 })
 
