@@ -6,8 +6,10 @@ import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
-import type { ResolvedCollection } from '../../types/collection'
-import type { ModuleOptions } from '../../types/module'
+import type {
+  ResolvedCollection,
+} from '../../types/collection'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
 import type { ContentFile } from '~/src/types'
 
@@ -131,8 +133,12 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     if (file.path && !file.dirname) {
       file.dirname = dirname(file.path)
     }
+    const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
+    const { file: hookedFile } = beforeParseCtx
 
-    const parsedContent = await transformContent(file, parserOptions)
+    const parsedContent = await transformContent(hookedFile, beforeParseCtx.parserOptions)
     const { id: id, ...parsedContentFields } = parsedContent
     const result = { id } as typeof collection.extendedSchema._type
     const meta = {} as Record<string, unknown>
@@ -160,6 +166,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       result.seo.description = result.seo.description || result.description
     }
 
-    return result
+    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
+    return afterParseCtx.content
   }
 }

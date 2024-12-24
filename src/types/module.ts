@@ -1,8 +1,9 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
-import type { MarkdownPlugin } from './content'
+import type { ContentFile, MarkdownPlugin, TransformContentOptions } from './content'
 import type { PathMetaOptions } from './path-meta'
+import type { ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
@@ -186,4 +187,23 @@ export interface PublicRuntimeConfig {
     apiURL?: string
     iframeMessagingAllowedOrigins?: string
   }
+}
+
+// TODO improve types
+export type ParsedContentFile = Record<string, unknown>
+
+export interface FileBeforeParseHook {
+  collection: Readonly<ResolvedCollection>
+  file: ContentFile
+  parserOptions: TransformContentOptions
+}
+export interface FileAfterParseHook {
+  collection: Readonly<ResolvedCollection>
+  file: ContentFile
+  content: ParsedContentFile
+}
+
+export interface ModuleHooks {
+  'content:file:beforeParse': (hook: FileBeforeParseHook) => void | Promise<void>
+  'content:file:afterParse': (hook: FileAfterParseHook) => void | Promise<void>
 }

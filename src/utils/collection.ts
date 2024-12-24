@@ -1,6 +1,7 @@
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys } from '../runtime/internal/schema'
+import type { ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource } from './source'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
@@ -98,7 +99,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
 }
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>): string[] {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): string[] {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
