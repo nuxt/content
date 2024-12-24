@@ -143,7 +143,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     const result = { id } as typeof collection.extendedSchema._type
     const meta = {} as Record<string, unknown>
 
-    const collectionKeys = Object.keys(hookedCollection.extendedSchema.shape)
+    const collectionKeys = Object.keys(collection.extendedSchema.shape)
     for (const key of Object.keys(parsedContentFields)) {
       if (collectionKeys.includes(key)) {
         result[key] = parsedContent[key]
