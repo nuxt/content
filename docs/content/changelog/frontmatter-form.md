@@ -10,14 +10,11 @@ authors:
     avatar: 
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
+category: studio
 ---
 
-::callout{icon="i-ph-lightbulb"}
-To ensure a smooth experience with the latest version, please make sure the following dependencies are up to date:
-
-- [Nuxt](https://nuxt.com): `v3.13.2`
-- [Nuxt Content](https://content.nuxtjs.org): `v2.13.4`
-- [Studio module](https://github.com/nuxtlabs/studio-module): `v2.1.1`
+::warning
+This article was published before the merge of the [Content](https://github.com/nuxt/content) and [Studio](https://github.com/nuxtlabs/studio-module) modules on January 6, 2025. As a result, it may contain some inconsistencies. The Studio module is now deprecated and available as an opt-in feature of the Content module. Learn how to enable it in [this guide](/docs/get-started/introduction).
 ::
 
 ## Visual Front-Matter editing

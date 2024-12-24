@@ -15,7 +15,7 @@ authors:
     to: https://x.com/CoumauFerdinand
     username: CoumauFerdinand
 date: 2024-09-04T00:00:00.000Z
-category: Technical
+category: studio
 ---
 
 ## **Introduction**

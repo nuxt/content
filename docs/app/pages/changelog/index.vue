@@ -16,7 +16,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts').where('path', 'LIKE', '/changelog%').all())
+const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts').where('path', 'LIKE', '/changelog%').order('date', 'DESC').all())
 
 useSeoMeta({
   title: page.value.seo?.title,
@@ -114,7 +114,7 @@ watch(() => arrivedState.bottom, () => {
                     :to="post.path"
                     :authors="post.authors"
                     variant="naked"
-                    :ui="{ wrapper: '!px-0' }"
+                    :ui="{ body: '!px-0' }"
                   />
                 </div>
               </div>

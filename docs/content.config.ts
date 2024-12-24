@@ -165,6 +165,7 @@ export default defineContentConfig({
             alt: z.string(),
           }),
         })),
+        category: z.enum(['studio', 'content']).optional(),
         date: z.date(),
         image: z.object({
           src: z.string(),

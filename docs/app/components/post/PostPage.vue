@@ -82,7 +82,15 @@ function copyLink() {
                 { label: post.title },
               ]"
             />
-            <time>{{ formatDateByLocale(post.date) }}</time>
+            <div class="flex items-center gap-3">
+              <UBadge
+                v-if="post.category"
+                :label="titleCase(post.category)"
+                variant="outline"
+                color="neutral"
+              />
+              <time class="text-[var(--ui-text)]">{{ formatDateByLocale(post.date) }}</time>
+            </div>
           </div>
         </template>
 

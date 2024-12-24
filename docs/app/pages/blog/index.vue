@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { titleCase } from 'scule'
+
 const siteConfig = useSiteConfig()
 
 const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
@@ -6,7 +8,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').all())
+const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').order('date', 'DESC').all())
 
 useSeoMeta({
   title: page.value.seo?.title,
@@ -41,6 +43,7 @@ useSeoMeta({
             :key="index"
             v-bind="post"
             :to="post.path"
+            :badge="titleCase(post.category!)"
             variant="naked"
           />
         </UBlogPosts>
