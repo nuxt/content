@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import fs from 'node:fs/promises'
 import { setup, $fetch } from '@nuxt/test-utils'
+import type { Nuxt } from '@nuxt/schema'
 import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
@@ -33,7 +34,7 @@ describe('empty', async () => {
     })
     test('Default collection is defined', async () => {
       const rootDir = fileURLToPath(new URL('./fixtures/empty', import.meta.url))
-      const config = await loadContentConfig(rootDir, { defaultFallback: true })
+      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt, { defaultFallback: true })
 
       // Pages collection + info collection
       expect(config.collections.length).toBe(2)
