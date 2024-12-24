@@ -138,7 +138,7 @@ const columns: TableColumn<Feature>[] = [
         </div>
       </UPageHero>
 
-      <UPageSection>
+      <UPageSection :ui="{ container: 'sm:py-16 lg:py-16' }">
         <UPricingPlans orientation="horizontal">
           <UPricingPlan v-bind="page.plans.solo" />
           <UPricingPlan v-bind="page.plans.team" />

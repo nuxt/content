@@ -5,15 +5,15 @@ export const useNavLinks = () => {
 
   return computed(() => [{
     label: 'Documentation',
-    icon: 'i-lucide-book',
+    icon: 'i-lucide-book-open',
     to: '/docs/getting-started',
     active: route.path.startsWith('/docs'),
   }, {
     label: 'Studio',
-    icon: 'i-lucide-book',
+    icon: 'i-lucide-file-pen-line',
     children: [{
+      icon: 'i-lucide-mouse-pointer-click',
       label: 'Features',
-      icon: 'i-lucide-file-pen-line',
       to: '/studio',
     }, {
       label: 'Pricing',
@@ -26,11 +26,11 @@ export const useNavLinks = () => {
     }],
   }, {
     label: 'Blog',
-    icon: 'i-lucide-book',
+    icon: 'i-lucide-file-text',
     to: '/blog',
   }, {
     label: 'Changelog',
-    icon: 'i-lucide-book',
+    icon: 'i-lucide-history',
     to: '/changelog',
   }])
 }
