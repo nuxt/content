@@ -193,12 +193,12 @@ export interface PublicRuntimeConfig {
 export type ParsedContentFile = Record<string, unknown>
 
 export interface FileBeforeParseHook {
-  collection: ResolvedCollection
+  collection: Readonly<ResolvedCollection>
   file: ContentFile
   parserOptions: TransformContentOptions
 }
 export interface FileAfterParseHook {
-  collection: ResolvedCollection
+  collection: Readonly<ResolvedCollection>
   file: ContentFile
   content: ParsedContentFile
 }

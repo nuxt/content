@@ -136,7 +136,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
     // @ts-expect-error runtime type
     await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
-    const { file: hookedFile, collection: hookedCollection } = beforeParseCtx
+    const { file: hookedFile } = beforeParseCtx
 
     const parsedContent = await transformContent(hookedFile, beforeParseCtx.parserOptions)
     const { id: id, ...parsedContentFields } = parsedContent
