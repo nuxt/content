@@ -50,7 +50,7 @@ export async function loadContentConfig(nuxt: Nuxt, options: { defaultFallback?:
   const collectionsConfig = contentConfigs.reduce((acc, curr) => ({ ...acc, ...curr.config?.collections }), {} as Record<string, DefinedCollection>)
   const hasNoCollections = Object.keys(collectionsConfig || {}).length === 0
 
-  if (!hasNoCollections) {
+  if (hasNoCollections) {
     logger.warn('No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/getting-started/installation')
   }
 
