@@ -15,7 +15,7 @@ import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { generateCollectionInsert } from './collection'
-import { parseContent } from './content'
+import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { parseSourceBase } from './source'
 
@@ -41,31 +41,32 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
     })
   }
 
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}'`
+  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}';`
     await db.exec(removeQuery)
     if (insertQuery) {
-      await db.exec(insertQuery)
+      await Promise.all(insertQuery.map(query => db.exec(query)))
     }
 
-    const index = manifest.dump[collection.name]?.findIndex(item => item.includes(`'${key}'`))
-    if (index && index !== -1) {
-      // Update templates to have valid dump for client-side navigation
-      if (insertQuery) {
-        manifest.dump[collection.name]?.splice(index, 1, insertQuery)
-      }
-      else {
-        manifest.dump[collection.name]?.splice(index, 1)
-      }
+    const collectionDump = manifest.dump[collection.name]
+    const keyIndex = collectionDump?.findIndex(item => item.includes(`'${key}'`))
+    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump?.length
+    const itemsToRemove = keyIndex === -1 ? 0 : 1
 
-      updateTemplates({
-        filter: template => [
-          moduleTemplates.manifest,
-          moduleTemplates.fullCompressedDump,
-          // moduleTemplates.raw,
-        ].includes(template.filename),
-      })
+    if (insertQuery) {
+      collectionDump?.splice(indexToUpdate, itemsToRemove, ...insertQuery)
     }
+    else {
+      collectionDump?.splice(indexToUpdate, itemsToRemove)
+    }
+
+    updateTemplates({
+      filter: template => [
+        moduleTemplates.manifest,
+        moduleTemplates.fullCompressedDump,
+        // moduleTemplates.raw,
+      ].includes(template.filename),
+    })
 
     websocket?.broadcast({
       key,
@@ -86,6 +87,8 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 }
 
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
+  const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
+
   const db = localDatabase(options._localDatabase!.filename)
   const collections = manifest.collections
 
@@ -102,7 +105,11 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   watcher.on('change', onChange)
   watcher.on('unlink', onRemove)
 
-  async function onChange(path: string) {
+  async function onChange(pathOrError: string | Error) {
+    if (pathOrError instanceof Error) {
+      return
+    }
+    let path = pathOrError as string
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match
@@ -113,18 +120,28 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       const filePath = path.substring(fixed.length)
       const keyInCollection = join(collection.name, source?.prefix || '', filePath)
+      const fullPath = join(cwd, path)
 
-      const content = await readFile(join(cwd, path), 'utf8')
+      const content = await readFile(fullPath, 'utf8')
       const checksum = getContentChecksum(content)
       const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
 
       if (localCache && localCache.checksum === checksum) {
         db.exec(`DELETE FROM ${collection.tableName} WHERE id = '${keyInCollection}'`)
-        db.exec(generateCollectionInsert(collection, JSON.parse(localCache.parsedContent)))
+        const insertQuery = generateCollectionInsert(collection, JSON.parse(localCache.parsedContent))
+        await Promise.all(insertQuery.map(query => db.exec(query)))
         return
       }
 
-      const parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
+      if (!collectionParsers[collection.name]) {
+        collectionParsers[collection.name] = await createParser(collection, nuxt)
+      }
+      const parser = collectionParsers[collection.name]!
+      const parsedContent = await parser({
+        id: keyInCollection,
+        body: content,
+        path: fullPath,
+      })
 
       db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
 
@@ -133,7 +150,11 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     }
   }
 
-  async function onRemove(path: string) {
+  async function onRemove(pathOrError: string | Error) {
+    if (pathOrError instanceof Error) {
+      return
+    }
+    let path = pathOrError as string
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match

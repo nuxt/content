@@ -2,7 +2,7 @@ import { describe, test, expect, assert } from 'vitest'
 import { z } from 'zod'
 import { visit } from 'unist-util-visit'
 import type { Nuxt } from '@nuxt/schema'
-import { parseContent } from '../../src/utils/content'
+import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 
@@ -115,7 +115,7 @@ describe('Parser (.md)', () => {
       const props = parsed.body.children[0].props
       expect(props).toHaveProperty('meta')
       expect(props.meta).toBe('other code block info')
-      expect(props.language).toBe(undefined)
+      expect(props.language).toBe('text')
       expect(props.filename).toBe(undefined)
       expect(props.highlights).toEqual([4, 5, 6, 7])
     })

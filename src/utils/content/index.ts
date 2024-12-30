@@ -1,3 +1,4 @@
+import { dirname } from 'node:path'
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
 import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -5,9 +6,12 @@ import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
-import type { ResolvedCollection } from '../../types/collection'
-import type { ModuleOptions } from '../../types/module'
+import type {
+  ResolvedCollection,
+} from '../../types/collection'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
 import { transformContent } from './transformers'
+import type { ContentFile } from '~/src/types'
 
 let parserOptions = {
   mdcConfigs: [] as MdcConfig[],
@@ -85,7 +89,7 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
               },
             )
 
-            result.style = Object.entries(stylesMap).map(([style, cls]) => `html pre.shiki code .${cls}{${style}}`).join('') + result.style
+            result.style = Object.entries(stylesMap).map(([style, cls]) => `html pre.shiki code .${cls}, html code.shiki .${cls}{${style}}`).join('') + result.style
           }
 
           return result
@@ -97,7 +101,7 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
   return highlightPlugin
 }
 
-export async function parseContent(key: string, content: string, collection: ResolvedCollection, nuxt?: Nuxt) {
+export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) {
   const mdcOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
   const { pathMeta = {}, markdown = {} } = (nuxt?.options as unknown as { content: ModuleOptions })?.content?.build || {}
 
@@ -105,7 +109,7 @@ export async function parseContent(key: string, content: string, collection: Res
     ? await getHighlightPluginInstance(defu(markdown.highlight as HighlighterOptions, mdcOptions.highlight, { compress: true }))
     : undefined
 
-  const parsedContent = await transformContent(key, content, {
+  const parserOptions = {
     pathMeta: pathMeta,
     markdown: {
       compress: true,
@@ -121,36 +125,50 @@ export async function parseContent(key: string, content: string, collection: Res
         ...mdcOptions?.remarkPlugins,
         ...markdown?.remarkPlugins,
       },
-      highlight: undefined,
+      highlight: undefined as HighlighterOptions,
     },
-  })
+  }
 
-  const { id: id, ...parsedContentFields } = parsedContent
-  const result = { id } as typeof collection.extendedSchema._type
-  const meta = {} as Record<string, unknown>
-
-  const collectionKeys = Object.keys(collection.extendedSchema.shape)
-  for (const key of Object.keys(parsedContentFields)) {
-    if (collectionKeys.includes(key)) {
-      result[key] = parsedContent[key]
+  return async function parse(file: ContentFile) {
+    if (file.path && !file.dirname) {
+      file.dirname = dirname(file.path)
     }
-    else {
-      meta[key] = parsedContent[key]
+    const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
+    const { file: hookedFile } = beforeParseCtx
+
+    const parsedContent = await transformContent(hookedFile, beforeParseCtx.parserOptions)
+    const { id: id, ...parsedContentFields } = parsedContent
+    const result = { id } as typeof collection.extendedSchema._type
+    const meta = {} as Record<string, unknown>
+
+    const collectionKeys = Object.keys(collection.extendedSchema.shape)
+    for (const key of Object.keys(parsedContentFields)) {
+      if (collectionKeys.includes(key)) {
+        result[key] = parsedContent[key]
+      }
+      else {
+        meta[key] = parsedContent[key]
+      }
     }
+
+    result.meta = meta
+
+    // Storing `content` into `rawbody` field
+    if (collectionKeys.includes('rawbody')) {
+      result.rawbody = result.rawbody ?? file.body
+    }
+
+    if (collectionKeys.includes('seo')) {
+      result.seo = result.seo || {}
+      result.seo.title = result.seo.title || result.title
+      result.seo.description = result.seo.description || result.description
+    }
+
+    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
+    // @ts-expect-error runtime type
+    await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
+    return afterParseCtx.content
   }
-
-  result.meta = meta
-
-  // Storing `content` into `rawbody` field
-  if (collectionKeys.includes('rawbody')) {
-    result.rawbody = result.rawbody ?? content
-  }
-
-  if (collectionKeys.includes('seo')) {
-    result.seo = result.seo || {}
-    result.seo.title = result.seo.title || result.title
-    result.seo.description = result.seo.description || result.description
-  }
-
-  return result
 }

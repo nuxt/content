@@ -24,7 +24,7 @@ import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig, startSocketServer } from './utils/dev'
 import { loadLayersConfig } from './utils/config'
-import { parseContent } from './utils/content'
+import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
@@ -268,6 +268,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     if (!collection.source) {
       continue
     }
+    const parse = await createParser(collection, nuxt)
+
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare(nuxt)
@@ -280,13 +282,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       filesCount += _keys.length
 
-      const list: Array<Array<string>> = []
+      const list: Array<[string, Array<string>]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
           key = key.substring(fixed.length)
           const keyInCollection = join(collection.name, source?.prefix || '', key)
+          const fullPath = join(cwd, fixed, key)
 
-          const content = await readFile(join(cwd, fixed, key), 'utf8')
+          const content = await readFile(fullPath, 'utf8')
           const checksum = getContentChecksum(configHash + collectionHash + content)
           const cache = databaseContents[keyInCollection]
 
@@ -297,7 +300,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           }
           else {
             parsedFilesCount += 1
-            parsedContent = await parseContent(keyInCollection, content, collection, nuxt)
+            parsedContent = await parse({
+              id: keyInCollection,
+              body: content,
+              path: fullPath,
+            })
             db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
           }
 
@@ -306,14 +313,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       }
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      collectionDump[collection.name]!.push(...list.map(([, sql]) => sql!))
+      collectionDump[collection.name]!.push(...list.flatMap(([, sql]) => sql!))
 
       collectionChecksum[collection.name] = hash(collectionDump[collection.name])
 
       collectionDump[collection.name]!.push(
         generateCollectionTableDefinition(infoCollection, { drop: false }),
-        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}'`,
-        generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
+        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
       )
     }
   }

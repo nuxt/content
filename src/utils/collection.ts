@@ -1,6 +1,7 @@
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys } from '../runtime/internal/schema'
+import type { ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource } from './source'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
@@ -98,7 +99,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
 }
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: Record<string, unknown>) {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): string[] {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
@@ -141,9 +142,40 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: R
   })
 
   let index = 0
-
-  return `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)})`
+  const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
+
+  if (sql.length < 100000) {
+    return [sql]
+  }
+
+  // Split the SQL into multiple statements
+  const bigColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
+  const bigColumnIndex = values.indexOf(bigColumn)
+  const bigColumnName = fields[bigColumnIndex]
+
+  if (typeof bigColumn === 'string') {
+    let splitIndex = Math.floor(bigColumn.length / 2)
+    while (['\'', '"', '\\'].includes(bigColumn[splitIndex])) {
+      splitIndex -= 1
+    }
+
+    const part1 = bigColumn.slice(0, splitIndex) + '\''
+    const part2 = '\'' + bigColumn.slice(splitIndex)
+
+    values[bigColumnIndex] = part1
+    index = 0
+
+    return [
+      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
+        .replace(/\?/g, () => values[index++] as string),
+      `UPDATE ${collection.tableName} SET ${bigColumnName} = ${part2} WHERE id = ${values[0]};`,
+    ]
+  }
+
+  return [
+    sql,
+  ]
 }
 
 // Convert a collection with Zod schema to SQL table definition

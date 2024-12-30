@@ -81,11 +81,11 @@ export function generateRecordUpdate(collection: CollectionInfo, stem: string, d
 }
 
 export function generateRecordDeletion(collection: CollectionInfo, stem: string) {
-  return `DELETE FROM ${collection.tableName} WHERE stem = '${stem}'`
+  return `DELETE FROM ${collection.tableName} WHERE stem = '${stem}';`
 }
 
 export function generateRecordSelectByColumn(collection: CollectionInfo, column: string, value: string) {
-  return `SELECT * FROM ${collection.tableName} WHERE ${column} = '${value}'`
+  return `SELECT * FROM ${collection.tableName} WHERE ${column} = '${value}';`
 }
 
 function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: Record<string, unknown>) {
