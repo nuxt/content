@@ -24,6 +24,11 @@
       "types": "./dist/studio.d.ts",
       "import": "./dist/studio.mjs",
       "require": "./dist/studio.cjs"
+    },
+    "./module": {
+      "types": "./dist/module.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
     }
   },
   "main": "./dist/module.cjs",
