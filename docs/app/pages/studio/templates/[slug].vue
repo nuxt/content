@@ -34,26 +34,29 @@ const images = computed(() => template.value
         :title="template.title"
         :description="template.description"
         :headline="template.category"
-        :links="[
-          {
-            label: 'Preview',
-            color: 'neutral',
-            trailing: true,
-            icon: 'i-ph-arrow-square-out',
-            to: template.demo,
-            target: '_blank',
-          },
-          {
-            label: 'Use it on Studio',
-            color: 'primary',
-            to: 'https://nuxt.studio/signin',
-            target: '_blank',
-            variant: 'solid',
-          },
-        ]"
       >
+        <template #headline>
+          <div class="flex flex-col gap-6">
+            <UBreadcrumb
+              :items="[
+                { label: 'Templates',
+                  icon: 'i-lucide-image',
+                  to: '/studio/templates' },
+                { label: template.title },
+              ]"
+            />
+            <div>
+              <UBadge
+                :label="TEMPLATE_BADGES[template.licenseType].label"
+                :color="TEMPLATE_BADGES[template.licenseType].color"
+                variant="outline"
+              />
+            </div>
+          </div>
+        </template>
+
         <template #title>
-          <span class="flex flex-row gap-3">
+          <div class="flex flex-row gap-3 text-2xl">
             <span class="font-semibold">
               {{ template.title }} - {{ template.subtitle }}
             </span>
@@ -66,21 +69,45 @@ const images = computed(() => template.value
                 :light="`/nuxt-ui-pro-light.svg`"
                 :dark="`/nuxt-ui-pro-dark.svg`"
                 alt="nuxt ui pro templates"
-                class="h-8"
+                class="h-6"
               />
               <span
                 v-else
                 class="font-semibold"
               >{{ template.owner }}</span>
             </span>
-          </span>
+          </div>
         </template>
-        <template #headline>
-          <UBadge
-            :label="TEMPLATE_BADGES[template.licenseType].label"
-            :color="TEMPLATE_BADGES[template.licenseType].color"
-            variant="outline"
-          />
+
+        <template #links>
+          <div class="flex gap-3">
+            <UButton
+              label="Preview"
+              color="neutral"
+              trailing
+              icon="i-ph-arrow-square-out"
+              to="template.demo"
+              target="_blank"
+            />
+
+            <UDropdownMenu
+              :items="[{
+                label: 'Import on Studio',
+                to: 'https://nuxt.studio/signin',
+                target: '_blank',
+              }, {
+                label: 'Clone on GitHub',
+                to: `https://github.com/${template.owner}/${template.name}`,
+                target: '_blank',
+              }]"
+            >
+              <UButton
+                label="Use it"
+                color="primary"
+                variant="solid"
+              />
+            </UDropdownMenu>
+          </div>
         </template>
       </UPageHeader>
 

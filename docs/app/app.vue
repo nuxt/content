@@ -84,7 +84,7 @@ provide('navigation', navigation)
 }
 
 :root {
-  --ui-container: 90rem;
+  --ui-container: 80rem;
 }
 
 .dark {

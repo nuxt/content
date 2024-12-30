@@ -47,6 +47,7 @@ useSeoMeta({
               root: 'hover:ring-2 hover:ring-[var(--ui-primary)]',
               description: 'text-pretty',
               image: 'group-hover:scale-100',
+              header: 'aspect-auto',
             }"
           >
             <template #date>

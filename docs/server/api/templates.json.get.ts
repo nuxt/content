@@ -1,5 +1,5 @@
-export default defineEventHandler(async () => {
-  const templates = await queryCollection('templates').all()
+export default defineEventHandler(async (event) => {
+  const templates = await queryCollection(event, 'templates').all()
 
   if (!templates) {
     throw createError({

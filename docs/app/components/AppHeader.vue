@@ -56,14 +56,6 @@ defineShortcuts({
     />
 
     <template #right>
-      <UButton
-        v-if="$route.path === '/'"
-        label="Get started"
-        to="/docs/getting-started"
-        size="sm"
-        class="hidden sm:inline-flex"
-      />
-
       <UColorModeButton class="hidden sm:inline-flex" />
 
       <UTooltip
@@ -86,6 +78,13 @@ defineShortcuts({
           aria-label="GitHub"
         />
       </UTooltip>
+
+      <UButton
+        label="Open Studio"
+        to="https://studio.content.nuxt.com"
+        size="sm"
+        class="hidden sm:inline-flex"
+      />
     </template>
 
     <template #content>
