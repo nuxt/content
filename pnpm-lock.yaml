@@ -2564,8 +2564,8 @@ packages:
     resolution: {integrity: sha512-jndyth0X11FbvIDForYq90b+N5xsR31FRsmvp7AC7dcW71clemUEDHCwqzSJn8cVFwahgvlwWbEoYHPEgQrtIQ==}
     engines: {node: '>=14'}
 
-  '@uploadthing/mime-types@0.3.3':
-    resolution: {integrity: sha512-fjDxBwLhl4e6aqIcuAvytKaR4q12eqJw8Bh6I2r3VjN6vkOGf+AKU8Cpxrjsb5CJLn1QqO8s1jAemx/ptcjTIA==}
+  '@uploadthing/mime-types@0.3.4':
+    resolution: {integrity: sha512-EB0o0a4y++UJFMLqS8LDVhSQgXUllG6t5fwl5cbmOM0Uay8YY5Nc/JjFwzJ8wccdIKz4oYwQW7EOSfUyaMPbfw==}
 
   '@vercel/nft@0.27.10':
     resolution: {integrity: sha512-zbaF9Wp/NsZtKLE4uVmL3FyfFwlpDyuymQM1kPbeT0mVOHKDQQNjnnfslB3REg3oZprmNFJuh3pkHBk2qAaizg==}
@@ -4835,6 +4835,7 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lighthouse-logger@2.0.1:
@@ -9883,7 +9884,7 @@ snapshots:
       '@cloudflare/workers-types': 4.20241224.0
       '@nuxt/devtools-kit': 1.7.0(magicast@0.3.5)(rollup@4.29.1)(vite@5.4.11(@types/node@22.10.2)(lightningcss@1.28.2)(terser@5.37.0))
       '@nuxt/kit': 3.15.0(magicast@0.3.5)(rollup@4.29.1)
-      '@uploadthing/mime-types': 0.3.3
+      '@uploadthing/mime-types': 0.3.4
       citty: 0.1.6
       confbox: 0.1.8
       defu: 6.1.4
@@ -9928,7 +9929,7 @@ snapshots:
       '@cloudflare/workers-types': 4.20241224.0
       '@nuxt/devtools-kit': 1.7.0(magicast@0.3.5)(rollup@4.29.1)(vite@6.0.6(@types/node@22.10.2)(jiti@2.4.2)(lightningcss@1.28.2)(terser@5.37.0)(yaml@2.6.1))
       '@nuxt/kit': 3.15.0(magicast@0.3.5)(rollup@4.29.1)
-      '@uploadthing/mime-types': 0.3.3
+      '@uploadthing/mime-types': 0.3.4
       citty: 0.1.6
       confbox: 0.1.8
       defu: 6.1.4
@@ -11018,7 +11019,7 @@ snapshots:
       '@unocss/core': 0.65.3
       magic-string: 0.30.17
 
-  '@uploadthing/mime-types@0.3.3': {}
+  '@uploadthing/mime-types@0.3.4': {}
 
   '@vercel/nft@0.27.10(rollup@4.29.1)':
     dependencies:
