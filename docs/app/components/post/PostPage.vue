@@ -112,6 +112,8 @@ function copyLink() {
           :value="post"
         />
 
+        <DocsCTA />
+
         <div class="flex items-center justify-between mt-12">
           <UButton
             :to="`/${type}`"

@@ -124,7 +124,14 @@ export function initIframeCommunication() {
 
     // IFRAME_MESSAGING_ALLOWED_ORIGINS format must be a comma separated string of allowed origins
     const allowedOrigins = studio?.iframeMessagingAllowedOrigins?.split(',').map((origin: string) => origin.trim()) || []
-    if (!['https://nuxt.studio', 'https://new.nuxt.studio', 'https://new.dev.nuxt.studio', 'https://dev.nuxt.studio', 'http://localhost:3000', ...allowedOrigins].includes(e.origin)) {
+    if (![
+      'https://studio.content.nuxt.com',
+      'https://studio.content.nuxt.dev',
+      'https://nuxt.studio',
+      'https://dev.nuxt.studio',
+      'http://localhost:3000',
+      ...allowedOrigins,
+    ].includes(e.origin)) {
       return
     }
 

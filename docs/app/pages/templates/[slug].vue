@@ -41,7 +41,7 @@ const images = computed(() => template.value
               :items="[
                 { label: 'Templates',
                   icon: 'i-lucide-image',
-                  to: '/studio/templates' },
+                  to: '/templates' },
                 { label: template.title },
               ]"
             />
@@ -93,7 +93,7 @@ const images = computed(() => template.value
             <UDropdownMenu
               :items="[{
                 label: 'Import on Studio',
-                to: 'https://nuxt.studio/signin',
+                to: 'https://studio.content.nuxt.com/signin',
                 target: '_blank',
               }, {
                 label: 'Clone on GitHub',

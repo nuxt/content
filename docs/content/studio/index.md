@@ -30,7 +30,7 @@ Meet Studio, content edition :br for everyone.
   label: Get Started for free
   size: xl
   target: _blank
-  to: https://nuxt.studio/signin
+  to: https://studio.content.nuxt.com/signin
   trailingIcon: i-lucide-arrow-right
   ---
   :::
@@ -341,7 +341,7 @@ The [best way]{.text-[var(--ui-primary)]} to edit your [Nuxt Content]{.text-[var
   ---
   label: Get started for free
   target: _blank
-  to: https://nuxt.studio/signin
+  to: https://studio.content.nuxt.com/signin
   trailingIcon: i-lucide-arrow-right
   ---
   :::

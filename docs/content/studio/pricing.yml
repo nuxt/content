@@ -10,7 +10,6 @@ plans:
     title: Solo
     description: For solo user signed up with their personal GitHub account.
     price: Free
-    cycle: ''
     features:
       - Unlimited projects
       - 1 member

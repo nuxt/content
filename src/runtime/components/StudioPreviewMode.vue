@@ -191,7 +191,7 @@ onUnmounted(() => {
           />
         </svg>
         <span><a
-          href="https://nuxt.studio"
+          href="https://studio.content.nuxt.com"
           target="_blank"
           rel="noopener"
         >Nuxt Studio</a>: Preview enabled</span>

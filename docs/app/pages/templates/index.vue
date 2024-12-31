@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('templates-landing', () => queryCollection('landing').path('/studio/templates').first())
+const { data: page } = await useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
@@ -42,7 +42,7 @@ useSeoMeta({
             :title="template.title"
             :description="template.description"
             :image="template.mainScreen"
-            :to="`/studio/templates/${template.slug}`"
+            :to="`/templates/${template.slug}`"
             :ui="{
               root: 'hover:ring-2 hover:ring-[var(--ui-primary)]',
               description: 'text-pretty',

@@ -19,10 +19,6 @@ export const useNavLinks = () => {
       label: 'Pricing',
       icon: 'i-lucide-rocket',
       to: '/studio/pricing',
-    }, {
-      label: 'Templates',
-      icon: 'i-lucide-panels-top-left',
-      to: '/studio/templates',
     }],
   }, {
     label: 'Blog',
@@ -32,6 +28,10 @@ export const useNavLinks = () => {
     label: 'Changelog',
     icon: 'i-lucide-history',
     to: '/changelog',
+  }, {
+    label: 'Templates',
+    icon: 'i-lucide-panels-top-left',
+    to: '/templates',
   }])
 }
 

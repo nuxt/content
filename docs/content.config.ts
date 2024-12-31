@@ -52,7 +52,7 @@ export default defineContentConfig({
       }, {
         include: 'studio/index.md',
       }, {
-        include: 'studio/templates.yml',
+        include: 'templates.yml',
       }],
     }),
     pricing: defineCollection({
@@ -134,7 +134,7 @@ export default defineContentConfig({
     }),
     templates: defineCollection({
       type: 'page',
-      source: 'studio/templates/*.md',
+      source: 'templates/*.md',
       schema: z.object({
         slug: z.string(),
         subtitle: z.string(),
