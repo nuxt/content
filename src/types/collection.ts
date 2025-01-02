@@ -20,6 +20,8 @@ export type CollectionSource = {
 export interface ResolvedCollectionSource extends CollectionSource {
   _resolved: true
   prepare?: (nuxt: Nuxt) => Promise<void>
+  list?: () => Promise<string[]>
+  get?: (path: string) => Promise<string>
   cwd: string
 }
 
