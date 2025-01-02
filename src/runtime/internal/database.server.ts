@@ -1,4 +1,4 @@
-import type { SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { BetterSqliteDatabaseConfig, BunSqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
@@ -93,6 +93,13 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
     })
 }
 
-function loadSqliteAdapter(config: SqliteDatabaseConfig) {
-  return import('../adapters/sqlite').then(m => m.default(config))
+function loadSqliteAdapter(config: BetterSqliteDatabaseConfig | BunSqliteDatabaseConfig) {
+  // Used to avoid invalid import after prepack
+  const { type } = config
+  if (type === 'sqlite') {
+    return import('../adapters/sqlite').then(m => m.default(config))
+  }
+  else {
+    return import('../adapters/bunsqlite').then(m => m.default(config))
+  }
 }

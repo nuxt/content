@@ -21,8 +21,8 @@ import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
-import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
-import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
+import type { ModuleOptions, BetterSqliteDatabaseConfig } from './types/module'
+import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
@@ -30,6 +30,7 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupStudio } from './utils/studio/module'
 import { parseSourceBase } from './utils/source'
+import { getLocalDatabase, getDefaultSqliteAdapter } from './utils/sqlite'
 
 // Export public utils
 export * from './utils'
@@ -42,7 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     _localDatabase: {
-      type: 'sqlite',
+      type: getDefaultSqliteAdapter(),
       filename: '.data/content/contents.sqlite',
     },
     studio: {
@@ -79,8 +80,24 @@ export default defineNuxtModule<ModuleOptions>({
     // Provide default database configuration here since nuxt is merging defaults and user options
     if (!options.database) {
       options.database = {
-        type: 'sqlite',
+        type: getDefaultSqliteAdapter(),
         filename: './contents.sqlite',
+      }
+    }
+
+    if (!process.versions.bun && options._localDatabase.type === 'bunsqlite') {
+      logger.warn('BunSQLite is not available in this environment. Falling back to SQLite.')
+      options._localDatabase = {
+        type: 'sqlite',
+        filename: options._localDatabase.filename,
+      }
+    }
+
+    if (!process.versions.bun && options.database.type === 'bunsqlite') {
+      logger.warn('BunSQLite is not available in this environment. Falling back to SQLite.')
+      options.database = {
+        type: 'sqlite',
+        filename: options.database.filename,
       }
     }
 
@@ -99,11 +116,10 @@ export default defineNuxtModule<ModuleOptions>({
     await mkdir(dirname(options._localDatabase!.filename), { recursive: true }).catch(() => {})
 
     // Create sql database
-    if ((options.database as SqliteDatabaseConfig).filename) {
-      (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
-      await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
+    if ((options.database as BetterSqliteDatabaseConfig).filename) {
+      (options.database as BetterSqliteDatabaseConfig).filename = (options.database as BetterSqliteDatabaseConfig).filename
+      await mkdir(dirname((options.database as BetterSqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
-
     const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections
 
@@ -186,7 +202,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (nuxt.options._prepare) {
       return
     }
-
     const dumpGeneratePromise = processCollectionItems(nuxt, manifest.collections, options)
       .then((fest) => {
         manifest.checksum = fest.checksum
@@ -234,8 +249,8 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
-  const db = localDatabase(options._localDatabase!.filename)
-  const databaseContents = db.fetchDevelopmentCache()
+  const db = await getLocalDatabase(options._localDatabase!.filename)
+  const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
     mdcHighlight: (nuxt.options as unknown as { mdc: MDCModuleOptions }).mdc?.highlight,
@@ -251,7 +266,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
   // Remove all existing content collections to start with a clean state
   db.dropContentTables()
-
   // Create database dump
   for await (const collection of collections) {
     if (collection.name === 'info') {

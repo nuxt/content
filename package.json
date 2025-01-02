@@ -43,6 +43,7 @@
     "release": "npm run lint && npm run test && npm run prepack && release-it",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:bun": "bun test ./test/bun.test.ts",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
@@ -105,6 +106,7 @@
     "@nuxt/test-utils": "^3.15.1",
     "@release-it/conventional-changelog": "^9.0.4",
     "@types/better-sqlite3": "^7.6.12",
+    "@types/bun": "^1.1.14",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^22.10.2",
@@ -131,7 +133,9 @@
       "./src/studio"
     ],
     "externals": [
-      "untyped"
+      "untyped",
+      "bun:sqlite",
+      "bun:test"
     ],
     "rollup": {
       "output": {

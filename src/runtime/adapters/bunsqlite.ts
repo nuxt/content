@@ -1,6 +1,6 @@
 import { createDatabaseAdapter } from '../internal/database-adapter'
-import { getBetter3DatabaseAdapter } from '../internal/sqlite'
+import { getBunSqliteDatabaseAdapter } from '../internal/bunsqlite'
 
 export default createDatabaseAdapter<{ filename: string }>((opts) => {
-  return getBetter3DatabaseAdapter(opts)
+  return getBunSqliteDatabaseAdapter(opts)
 })
