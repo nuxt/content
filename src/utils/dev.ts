@@ -98,6 +98,8 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       : []
   })
   const dirsToWatch = Array.from(new Set(sourceMap.map(({ source }) => source.cwd)))
+    // Filter out empty cwd for custom collections
+    .filter(Boolean)
 
   const watcher = chokidar.watch(dirsToWatch, { ignoreInitial: true })
 
