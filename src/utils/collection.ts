@@ -1,5 +1,5 @@
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
-import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource } from '../types/collection'
+import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys } from '../runtime/internal/schema'
 import type { ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource } from './source'
@@ -30,6 +30,13 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
     jsonFields: Object.keys(schema.shape)
       .filter(key => JSON_FIELDS_TYPES
         .includes(getUnderlyingTypeName(schema.shape[key as keyof typeof schema.shape]))),
+  }
+}
+
+export function defineCollectionSource(source: CustomCollectionSource): ResolvedCustomCollectionSource {
+  return {
+    _custom: true,
+    ...resolveSource({ ...source, cwd: '', include: '' })?.[0],
   }
 }
 

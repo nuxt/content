@@ -25,15 +25,25 @@ export interface ResolvedCollectionSource extends CollectionSource {
   cwd: string
 }
 
+export interface CustomCollectionSource {
+  prepare?: (nuxt: Nuxt) => Promise<void>
+  list: () => Promise<string[]>
+  get: (path: string) => Promise<string>
+}
+
+export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource {
+  _custom: true
+}
+
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'page'
-  source?: string | CollectionSource | CollectionSource[]
+  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema?: ZodObject<T>
 }
 
 export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'data'
-  source?: string | CollectionSource | CollectionSource[]
+  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema: ZodObject<T>
 }
 
