@@ -5,7 +5,7 @@ import FastGlob from 'fast-glob'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
 import { downloadRepository, parseGitHubUrl } from './git'
 
-export function defineLocalSource(source: CollectionSource): ResolvedCollectionSource {
+export function defineLocalSource(source: CollectionSource | ResolvedCollectionSource): ResolvedCollectionSource {
   const { fixed } = parseSourceBase(source)
   const resolvedSource: ResolvedCollectionSource = {
     _resolved: true,
@@ -13,23 +13,21 @@ export function defineLocalSource(source: CollectionSource): ResolvedCollectionS
     ...source,
     include: source.include,
     cwd: '',
-    prepare: async (nuxt) => {
+    prepare: (source as ResolvedCollectionSource).prepare || (async (nuxt) => {
       resolvedSource.cwd = source.cwd
         ? String(source.cwd).replace(/^~~\//, nuxt.options.rootDir)
         : join(nuxt.options.rootDir, 'content')
-    },
-    list: async () => {
+    }),
+    list: (source as ResolvedCollectionSource).list || (async () => {
       const _keys = await FastGlob(source.include, { cwd: resolvedSource.cwd, ignore: source!.exclude || [], dot: true })
         .catch((): [] => [])
       return _keys.map(key => key.substring(fixed.length))
-    },
-    get: async (key) => {
+    }),
+    get: (source as ResolvedCollectionSource).get || (async (key) => {
       const fullPath = join(resolvedSource.cwd, fixed, key)
-      console.log(key)
-
       const content = await readFile(fullPath, 'utf8')
       return content
-    },
+    }),
   }
   return resolvedSource
 }
