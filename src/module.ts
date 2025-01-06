@@ -21,7 +21,7 @@ import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
-import type { ModuleOptions, BetterSqliteDatabaseConfig } from './types/module'
+import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
 import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
@@ -30,7 +30,7 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupStudio } from './utils/studio/module'
 import { parseSourceBase } from './utils/source'
-import { getLocalDatabase, getDefaultSqliteAdapter } from './utils/sqlite'
+import { getLocalDatabase } from './utils/sqlite'
 
 // Export public utils
 export * from './utils'
@@ -43,7 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     _localDatabase: {
-      type: getDefaultSqliteAdapter(),
+      type: 'sqlite',
       filename: '.data/content/contents.sqlite',
     },
     studio: {
@@ -80,24 +80,8 @@ export default defineNuxtModule<ModuleOptions>({
     // Provide default database configuration here since nuxt is merging defaults and user options
     if (!options.database) {
       options.database = {
-        type: getDefaultSqliteAdapter(),
+        type: 'sqlite',
         filename: './contents.sqlite',
-      }
-    }
-
-    if (!process.versions.bun && options._localDatabase.type === 'bunsqlite') {
-      logger.warn('BunSQLite is not available in this environment. Falling back to SQLite.')
-      options._localDatabase = {
-        type: 'sqlite',
-        filename: options._localDatabase.filename,
-      }
-    }
-
-    if (!process.versions.bun && options.database.type === 'bunsqlite') {
-      logger.warn('BunSQLite is not available in this environment. Falling back to SQLite.')
-      options.database = {
-        type: 'sqlite',
-        filename: options.database.filename,
       }
     }
 
@@ -116,9 +100,9 @@ export default defineNuxtModule<ModuleOptions>({
     await mkdir(dirname(options._localDatabase!.filename), { recursive: true }).catch(() => {})
 
     // Create sql database
-    if ((options.database as BetterSqliteDatabaseConfig).filename) {
-      (options.database as BetterSqliteDatabaseConfig).filename = (options.database as BetterSqliteDatabaseConfig).filename
-      await mkdir(dirname((options.database as BetterSqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
+    if ((options.database as SqliteDatabaseConfig).filename) {
+      (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
+      await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
     const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections

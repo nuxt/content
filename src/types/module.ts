@@ -10,13 +10,8 @@ export interface D1DatabaseConfig {
   binding: string
 }
 
-export interface BetterSqliteDatabaseConfig {
+export interface SqliteDatabaseConfig {
   type: 'sqlite'
-  filename: string
-}
-
-export interface BunSqliteDatabaseConfig {
-  type: 'bunsqlite'
   filename: string
 }
 
@@ -59,12 +54,12 @@ export interface ModuleOptions {
    * @private
    * @default { type: 'sqlite', filename: '.data/content/local.db' }
    */
-  _localDatabase?: BetterSqliteDatabaseConfig | BunSqliteDatabaseConfig
+  _localDatabase?: SqliteDatabaseConfig
   /**
    * Production database configuration
    * @default { type: 'sqlite', filename: './contents.sqlite' }
    */
-  database: D1DatabaseConfig | BetterSqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | BunSqliteDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig
   /**
    * Studio mode configuration
    */
@@ -182,8 +177,8 @@ export interface ModuleOptions {
 export interface RuntimeConfig {
   content: {
     version: string
-    database: D1DatabaseConfig | BetterSqliteDatabaseConfig | PostgreSQLDatabaseConfig
-    localDatabase: BetterSqliteDatabaseConfig | BunSqliteDatabaseConfig
+    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
+    localDatabase: SqliteDatabaseConfig
   }
 }
 
