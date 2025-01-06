@@ -4,7 +4,7 @@ import nodePreset from './node'
 
 export default definePreset({
   async setupNitro(nitroConfig, options) {
-    if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite' || nitroConfig.runtimeConfig?.content?.database?.type === 'bunsqlite') {
+    if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
       logger.warn('Deploying sqlite database to Vercel is not possible, switching to Postgres database with `POSTGRES_URL`.')
       nitroConfig.runtimeConfig!.content!.database = {
         type: 'postgres',
