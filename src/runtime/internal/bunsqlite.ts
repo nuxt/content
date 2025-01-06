@@ -1,5 +1,7 @@
+import * as zlib from 'node:zlib'
 import { isAbsolute } from 'pathe'
 import type { Database as BunDatabaseType } from 'bun:sqlite'
+
 /**
  * CompressionStream and DecompressionStream polyfill for Bun
  */
