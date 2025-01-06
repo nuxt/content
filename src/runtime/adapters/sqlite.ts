@@ -8,7 +8,7 @@ export default createDatabaseAdapter<{ filename: string }>((opts) => {
     const filename = !opts || isAbsolute(opts?.filename || '')
       ? opts?.filename
       : new URL(opts.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
-    db = new Database(filename)
+    db = new Database(process.platform === 'win32' ? filename.slice(1) : filename)
   }
 
   return {
