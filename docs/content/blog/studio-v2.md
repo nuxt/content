@@ -1,6 +1,7 @@
 ---
 title: Introducing Nuxt Studio v2
-description: We are excited to announce the v2 release of Nuxt Studio, the new editing experience for your Nuxt Content website
+description: We are excited to announce the v2 release of Nuxt Studio, the new
+  editing experience for your Nuxt Content website
 image:
   src: /blog/nuxt-studio-v2.png
 authors:
@@ -20,7 +21,7 @@ This article was published before the merge of the [Content](https://github.com/
 We are excited to announce the release of Nuxt Studio v2, a major update bringing a brand new interface designed specifically for our users, based on their feedback.
 
 ::tip
-Studio is optimized for **Nuxt Content** project but the only real requirement is to have a _content_ folder with Markdown files. This simple setup is enough to start editing and publishing your files with the platform.
+Studio is optimized for **Nuxt Content*&#x2A; project but the only real requirement is to have a &#x5F;content_ folder with Markdown files. This simple setup is enough to start editing and publishing your files with the platform.
 ::
 
 ### **A more intuitive interface**
@@ -47,7 +48,6 @@ Collaboration is available for teams.
 
 ![Notion-like editor with collaboration](/blog/collaborate.webp)
 
-
 ::warning
 Medias in the editor are not displayed until you set up the live preview (see section below).
 ::
@@ -58,12 +58,9 @@ Medias in the editor are not displayed until you set up the live preview (see se
 
 As the live preview feature requires a deployed URL, we made it as simple as possible to set it up.
 
-While GitHub pages deployment remains available and still does not require any configuration on your end, requirements have been simplified for self-hosted project as we removed the token verification. [Enabling the Studio module](https://studio.content.nuxt.com/docs/get-started/setup#enable-the-live-preview) is the **only remaining requirement.**
+While GitHub pages deployment remains available and still does not require any configuration on your end, requirements have been simplified for self-hosted project as we removed the token verification. [Enabling the Studio module](https://studio.content.nuxt.com/docs/get-started/setup#enable-the-live-preview) is the &#x2A;*only remaining requirement.**
 
-::warning
----
-to: https://github.com/nuxtlabs/studio-module
----
+::warning{to="https://github.com/nuxtlabs/studio-module"}
 It's crucial to use the latest version of the **Studio module** to ensure compatibility and access to new features.
 ::
 
