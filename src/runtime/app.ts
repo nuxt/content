@@ -1,5 +1,5 @@
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
-import { collectionQureyBuilder } from './internal/query'
+import { collectionQueryBuilder } from './internal/query'
 import { measurePerformance } from './internal/performance'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
@@ -15,7 +15,7 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQureyBuilder<T>(collection, (collection, sql) => executeContentQuery(collection, sql))
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(collection, sql))
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
