@@ -22,12 +22,11 @@ definePageMeta({
         v-for="item in data"
         :key="item.id"
       >
-        {{ item }}
         <h2>{{ item.title }}</h2>
-        <p>{{ item.date }}</p>
-        <p>{{ item.score }}</p>
-        <p>{{ item.url }}</p>
-        <p>{{ item.author }}</p>
+        <p>date: {{ item.date }}</p>
+        <p>score: {{ item.score }}</p>
+        <p>url: {{ item.url }}</p>
+        <p>by: {{ item.by }}</p>
       </UCard>
     </div>
     <ContentRenderer
