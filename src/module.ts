@@ -268,12 +268,12 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     for await (const source of collection.source) {
       if (source.prepare) {
-        await source.prepare(nuxt)
+        await source.prepare({ rootDir: nuxt.options.rootDir })
       }
 
       const { fixed } = parseSourceBase(source)
       const cwd = source.cwd
-      const _keys = await source.list()
+      const _keys = await source.getKeys()
 
       filesCount += _keys.length
 
@@ -283,7 +283,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           const keyInCollection = join(collection.name, source?.prefix || '', key)
           const fullPath = join(cwd, fixed, key)
 
-          const content = await source.get(key)
+          const content = await source.getItem(key)
           const checksum = getContentChecksum(configHash + collectionHash + content)
           const cache = databaseContents[keyInCollection]
 

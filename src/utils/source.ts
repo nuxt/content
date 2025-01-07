@@ -10,24 +10,24 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
   const resolvedSource: ResolvedCollectionSource = {
     _resolved: true,
     prefix: withoutTrailingSlash(withLeadingSlash(fixed)),
-    ...source,
-    include: source.include,
-    cwd: '',
-    prepare: (source as ResolvedCollectionSource).prepare || (async (nuxt) => {
+    prepare: async ({ rootDir }) => {
       resolvedSource.cwd = source.cwd
-        ? String(source.cwd).replace(/^~~\//, nuxt.options.rootDir)
-        : join(nuxt.options.rootDir, 'content')
-    }),
-    list: (source as ResolvedCollectionSource).list || (async () => {
+        ? String(source.cwd).replace(/^~~\//, rootDir)
+        : join(rootDir, 'content')
+    },
+    getKeys: async () => {
       const _keys = await FastGlob(source.include, { cwd: resolvedSource.cwd, ignore: source!.exclude || [], dot: true })
         .catch((): [] => [])
       return _keys.map(key => key.substring(fixed.length))
-    }),
-    get: (source as ResolvedCollectionSource).get || (async (key) => {
+    },
+    getItem: async (key) => {
       const fullPath = join(resolvedSource.cwd, fixed, key)
       const content = await readFile(fullPath, 'utf8')
       return content
-    }),
+    },
+    ...source,
+    include: source.include,
+    cwd: '',
   }
   return resolvedSource
 }
@@ -35,11 +35,11 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
 export function defineGitHubSource(source: CollectionSource): ResolvedCollectionSource {
   const resolvedSource = defineLocalSource(source)
 
-  resolvedSource.prepare = async (nuxt) => {
+  resolvedSource.prepare = async ({ rootDir }) => {
     const repository = source?.repository && parseGitHubUrl(source.repository!)
     if (repository) {
       const { org, repo, branch } = repository
-      resolvedSource.cwd = join(nuxt.options.rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
+      resolvedSource.cwd = join(rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
 
       let headers: Record<string, string> = {}
       if (resolvedSource.authToken) {
