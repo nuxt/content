@@ -22,14 +22,15 @@ import { generateCollectionInsert, generateCollectionTableDefinition } from './u
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
-import { getContentChecksum, localDatabase, logger, watchContents, chunks, watchComponents, watchConfig, startSocketServer } from './utils/dev'
-import { loadLayersConfig } from './utils/config'
+import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
+import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupStudio } from './utils/studio/module'
 import { parseSourceBase } from './utils/source'
+import { getLocalDatabase } from './utils/sqlite'
 
 // Export public utils
 export * from './utils'
@@ -103,8 +104,7 @@ export default defineNuxtModule<ModuleOptions>({
       (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
       await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
     }
-
-    const { collections } = await loadLayersConfig(nuxt)
+    const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections
 
     // Module Options
@@ -186,7 +186,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (nuxt.options._prepare) {
       return
     }
-
     const dumpGeneratePromise = processCollectionItems(nuxt, manifest.collections, options)
       .then((fest) => {
         manifest.checksum = fest.checksum
@@ -213,7 +212,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (nuxt.options.dev) {
       addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
       await watchComponents(nuxt)
-      await watchConfig(nuxt)
       const socket = await startSocketServer(nuxt, options, manifest)
       dumpGeneratePromise.then(async () => {
         await watchContents(nuxt, options, manifest, socket)
@@ -235,8 +233,8 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
-  const db = localDatabase(options._localDatabase!.filename)
-  const databaseContents = db.fetchDevelopmentCache()
+  const db = await getLocalDatabase(options._localDatabase!.filename)
+  const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
     mdcHighlight: (nuxt.options as unknown as { mdc: MDCModuleOptions }).mdc?.highlight,
@@ -252,7 +250,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
   // Remove all existing content collections to start with a clean state
   db.dropContentTables()
-
   // Create database dump
   for await (const collection of collections) {
     if (collection.name === 'info') {
