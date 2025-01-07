@@ -11,7 +11,7 @@ seo:
   :::div{.hidden.sm:block}
     ::::u-color-mode-image
     ---
-    class: size-full absolute bottom-0 inset-x-4 z-[-1]
+    class: size-full absolute bottom-0 inset-0 z-[-1]
     dark: /home/hero-dark.svg
     light: /home/hero-light.svg
     ---
@@ -176,7 +176,7 @@ Combine file-based simplicity with Vue component power. Build content-rich websi
   :::div{.hidden.sm:block}
     ::::u-color-mode-image
     ---
-    class: size-full absolute top-0 inset-x-4
+    class: size-full absolute top-0 inset-0
     dark: /home/features-dark.svg
     light: /home/features-light.svg
     ---
@@ -450,7 +450,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   :::div{.hidden.sm:block}
     ::::u-color-mode-image
     ---
-    class: size-full absolute bottom-0 inset-x-4 z-[-1]
+    class: size-full absolute bottom-0 inset-0 z-[-1]
     dark: /home/cta-dark.svg
     light: /home/cta-light.svg
     ---
