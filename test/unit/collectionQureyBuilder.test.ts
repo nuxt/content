@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { collectionQureyBuilder } from '../../src/runtime/internal/query'
+import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
 // Mock tables from manifest
 vi.mock('#content/manifest', () => ({
@@ -12,20 +12,20 @@ vi.mock('#content/manifest', () => ({
 const mockFetch = vi.fn().mockResolvedValue(Promise.resolve([{}]))
 const mockCollection = 'articles' as never
 
-describe('collectionQureyBuilder', () => {
+describe('collectionQueryBuilder', () => {
   beforeEach(() => {
     mockFetch.mockClear()
   })
 
   it('builds a simple select query', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.all()
 
     expect(mockFetch).toHaveBeenCalledWith('articles', 'SELECT * FROM _articles ORDER BY stem ASC')
   })
 
   it('builds query with where clause', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.where('title', '=', 'Test Article').all()
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -35,7 +35,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with multiple where clauses', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .where('title', '=', 'Test Article')
       .where('published', '=', true)
@@ -48,7 +48,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with IN operator', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .where('category', 'IN', ['news', 'tech'])
       .all()
@@ -60,7 +60,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with BETWEEN operator', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .where('date', 'BETWEEN', ['2023-01-01', '2023-12-31'])
       .all()
@@ -72,7 +72,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with selected fields', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .select('title', 'date', 'author')
       .all()
@@ -84,7 +84,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with order by', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .order('date', 'DESC')
       .all()
@@ -96,7 +96,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with limit without skip', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .limit(5)
       .all()
@@ -108,7 +108,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with limit and offset', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .limit(10)
       .skip(20)
@@ -121,7 +121,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with first()', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.first()
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds count query', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count()
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -141,7 +141,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds distinct count query', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count('author', true)
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -151,7 +151,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with complex where conditions using andWhere', async () => {
-    const query = collectionQureyBuilder(mockCollection, mockFetch)
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query
       .where('published', '=', true)
       .andWhere(group => group
@@ -170,7 +170,7 @@ describe('collectionQureyBuilder', () => {
   })
 
   it('builds query with path', async () => {
-    const query = collectionQureyBuilder('articles' as never, mockFetch)
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
     await query
       .path('/blog/my-article')
       .all()

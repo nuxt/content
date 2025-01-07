@@ -1,6 +1,6 @@
 import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 import type { H3Event } from 'h3'
-import { collectionQureyBuilder } from './internal/query'
+import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
@@ -14,7 +14,7 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQureyBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
+  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
 }
 
 export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {

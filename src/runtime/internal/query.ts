@@ -7,7 +7,7 @@ const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Col
   return conditions.length > 0 ? `(${conditions.join(` ${type} `)})` : ''
 }
 
-export const collectionQureyGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
+export const collectionQueryGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
   const conditions = [] as Array<string>
 
   const query: CollectionQueryGroup<Collections[T]> = {
@@ -55,12 +55,12 @@ export const collectionQureyGroup = <T extends keyof Collections>(collection: T)
       return query
     },
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
-      const group = groupFactory(collectionQureyGroup(collection))
+      const group = groupFactory(collectionQueryGroup(collection))
       conditions.push(buildGroup(group, 'AND'))
       return query
     },
     orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
-      const group = groupFactory(collectionQureyGroup(collection))
+      const group = groupFactory(collectionQueryGroup(collection))
       conditions.push(buildGroup(group, 'OR'))
       return query
     },
@@ -69,7 +69,7 @@ export const collectionQureyGroup = <T extends keyof Collections>(collection: T)
   return query
 }
 
-export const collectionQureyBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -85,12 +85,12 @@ export const collectionQureyBuilder = <T extends keyof Collections>(collection: 
 
   const query: CollectionQueryBuilder<Collections[T]> = {
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
-      const group = groupFactory(collectionQureyGroup(collection))
+      const group = groupFactory(collectionQueryGroup(collection))
       params.conditions.push(buildGroup(group, 'AND'))
       return query
     },
     orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
-      const group = groupFactory(collectionQureyGroup(collection))
+      const group = groupFactory(collectionQueryGroup(collection))
       params.conditions.push(buildGroup(group, 'OR'))
       return query
     },
