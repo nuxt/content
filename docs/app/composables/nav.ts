@@ -14,9 +14,11 @@ export const useNavLinks = () => {
     children: [{
       icon: 'i-lucide-mouse-pointer-click',
       label: 'Features',
+      description: 'Everything you need to edit your Nuxt Content project',
       to: '/studio',
     }, {
       label: 'Pricing',
+      description: 'Free for personal use, paid plans for teams',
       icon: 'i-lucide-rocket',
       to: '/studio/pricing',
     }],

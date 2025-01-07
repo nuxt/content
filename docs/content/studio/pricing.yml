@@ -1,5 +1,5 @@
 title: Get the right plan for your project
-description: Explore our options tailored to individual and team needs.Get started for free.
+description: Explore our options tailored to individual and team needs. Get started for free.
 onboarding:
   title: Team Onboarding
   image:
@@ -20,7 +20,7 @@ plans:
       - ... and much more
     button:
       label: Get started for free
-      color: gray
+      color: neutral
       to: ''
   team:
     title: Team
