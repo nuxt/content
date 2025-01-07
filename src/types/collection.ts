@@ -1,6 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod'
 import type { JsonSchema7Type } from 'zod-to-json-schema'
-import type { Nuxt } from '@nuxt/schema'
 import type { MarkdownRoot } from './content'
 
 export interface PageCollections {}
@@ -19,19 +18,31 @@ export type CollectionSource = {
 
 export interface ResolvedCollectionSource extends CollectionSource {
   _resolved: true
-  prepare?: (nuxt: Nuxt) => Promise<void>
+  prepare?: (opts: { rootDir: string }) => Promise<void>
+  getKeys?: () => Promise<string[]>
+  getItem?: (path: string) => Promise<string>
   cwd: string
+}
+
+export interface CustomCollectionSource {
+  prepare?: (opts: { rootDir: string }) => Promise<void>
+  getKeys: () => Promise<string[]>
+  getItem: (path: string) => Promise<string>
+}
+
+export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource {
+  _custom: true
 }
 
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'page'
-  source?: string | CollectionSource | CollectionSource[]
+  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema?: ZodObject<T>
 }
 
 export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'data'
-  source?: string | CollectionSource | CollectionSource[]
+  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema: ZodObject<T>
 }
 
@@ -88,8 +99,6 @@ export interface PageCollectionItemBase extends CollectionItemBase {
   seo: {
     title?: string
     description?: string
-    meta?: Array<Partial<Record<'id' | 'name' | 'property' | 'content', string>>>
-    link?: Array<Partial<Record<'color' | 'rel' | 'href' | 'hreflang' | 'imagesizes' | 'imagesrcset' | 'integrity' | 'media' | 'sizes' | 'id', string>>>
 
     [key: string]: unknown
   }

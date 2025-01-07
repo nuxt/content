@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, stat } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -14,7 +14,6 @@ import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { hash } from 'ohash'
 import { join, dirname, isAbsolute } from 'pathe'
-import fastGlob from 'fast-glob'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import { version } from '../package.json'
@@ -269,24 +268,22 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     for await (const source of collection.source) {
       if (source.prepare) {
-        await source.prepare(nuxt)
+        await source.prepare({ rootDir: nuxt.options.rootDir })
       }
 
       const { fixed } = parseSourceBase(source)
       const cwd = source.cwd
-      const _keys = await fastGlob(source.include, { cwd, ignore: source!.exclude || [], dot: true })
-        .catch((): [] => [])
+      const _keys = await source.getKeys()
 
       filesCount += _keys.length
 
       const list: Array<[string, Array<string>]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
-          key = key.substring(fixed.length)
           const keyInCollection = join(collection.name, source?.prefix || '', key)
           const fullPath = join(cwd, fixed, key)
 
-          const content = await readFile(fullPath, 'utf8')
+          const content = await source.getItem(key)
           const checksum = getContentChecksum(configHash + collectionHash + content)
           const cache = databaseContents[keyInCollection]
 
