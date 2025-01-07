@@ -1,6 +1,5 @@
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 import { collectionQueryBuilder } from './internal/query'
-import { measurePerformance } from './internal/performance'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
@@ -40,15 +39,9 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
 }
 
 async function queryContentSqlClientWasm<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
-  const perf = measurePerformance()
-
   const rows = await import('./internal/database.client')
     .then(m => m.loadDatabaseAdapter(collection))
     .then(db => db.all<Result>(sql))
-
-  perf.tick('Execute Query')
-
-  console.log(perf.end('Run with Compressed Dump'))
 
   return rows as Result[]
 }

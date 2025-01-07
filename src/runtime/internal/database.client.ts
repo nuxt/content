@@ -1,6 +1,5 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
-import { measurePerformance } from './performance'
 import { decompressSQLDump } from './dump'
 import { parseJsonFields } from './collection'
 import { fetchDatabase } from './api'
@@ -36,12 +35,9 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 }
 
 async function loadAdapter<T>(collection: T) {
-  const perf = measurePerformance()
   if (!db) {
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     const sqlite3 = await sqlite3InitModule()
-    perf.tick('Import SQLite Module')
-
     db = new sqlite3.oo1.DB()
   }
 
@@ -75,10 +71,8 @@ async function loadAdapter<T>(collection: T) {
       }
     }
 
-    perf.tick('Get Local Cache')
     if (!compressedDump) {
       compressedDump = await fetchDatabase(undefined, String(collection))
-      perf.tick('Download Database')
       if (!import.meta.dev) {
         try {
           window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)])
@@ -87,12 +81,10 @@ async function loadAdapter<T>(collection: T) {
         catch (error) {
           console.error('Database integrity check failed, rebuilding database', error)
         }
-        perf.tick('Store Database')
       }
     }
 
     const dump = await decompressSQLDump(compressedDump!)
-    perf.tick('Decompress Database')
 
     await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
     if (checksumState === 'mismatch') {
@@ -107,10 +99,7 @@ async function loadAdapter<T>(collection: T) {
         console.error('Error executing command', error)
       }
     }
-    perf.tick('Restore Dump')
   }
-
-  perf.end('Database Loaded')
 
   return db
 }
