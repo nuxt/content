@@ -272,7 +272,7 @@ export function initIframeCommunication() {
 
     const { collection } = getCollectionByRoutePath(routePath, collections)
     if (!collection || collection.type !== 'page') {
-      return
+      window.openFileInStudio(routePath, false)
     }
 
     const db = loadDatabaseAdapter(collection.name)
@@ -280,11 +280,8 @@ export function initIframeCommunication() {
     const query = generateRecordSelectByColumn(collection, 'path', routePath)
 
     const file = await db.first(query) as { path: string }
-    if (!file || !file.path) {
-      return
-    }
 
-    window.openFileInStudio(routePath)
+    window.openFileInStudio(routePath, !!file?.path)
   }
 
   nuxtApp.hook('page:finish', () => {
@@ -297,10 +294,10 @@ export function initIframeCommunication() {
   })
 
   // Inject utils to window
-  window.openFileInStudio = (path: string) => {
+  window.openFileInStudio = (path: string, navigate: boolean) => {
     window.parent.postMessage({
       type: 'nuxt-studio:preview:navigate',
-      payload: { path },
+      payload: { path, navigate },
     }, '*')
   }
 }

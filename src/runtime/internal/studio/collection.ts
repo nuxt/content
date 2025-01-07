@@ -51,7 +51,10 @@ export const getCollectionByRoutePath = (routePath: string, collections: Record<
 
       const path = joinURL(fixed, pathWithoutPrefix)
 
-      return minimatch(path, source.include)
+      // Remove extension from source.include
+      const pattern = source.include.replace(/\.[^/.]+$/, '')
+
+      return minimatch(path, pattern)
     })
 
     return matchedSource

@@ -1,5 +1,5 @@
 interface Window {
-  openFileInStudio: (path: string) => void
+  openFileInStudio: (path: string, navigate: boolean) => void
 }
 
 declare module '#content/manifest' {
