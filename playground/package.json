@@ -12,7 +12,7 @@
     "remark-code-import": "latest",
     "@nuxt/content": "latest",
     "@nuxt/ui-pro": "3.0.0-alpha.9",
-    "@nuxthub/core": "^0.8.6",
-    "nuxt": "^3.15.0"
+    "@nuxthub/core": "^0.8.10",
+    "nuxt": "^3.15.1"
   }
 }
