@@ -13,5 +13,6 @@
   ],
   "compilerOptions": {
     "strictNullChecks": false,
+    "types": ["@types/bun"]
   },
 }

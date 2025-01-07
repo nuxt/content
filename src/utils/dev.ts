@@ -2,7 +2,6 @@ import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import type { IncomingMessage } from 'node:http'
 import { join, resolve } from 'pathe'
-import Database from 'better-sqlite3'
 import type { Nuxt } from '@nuxt/schema'
 import { addVitePlugin, isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
@@ -14,6 +13,7 @@ import { listen, type Listener } from 'listhen'
 import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
+import { getLocalDatabase } from './sqlite'
 import { generateCollectionInsert } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
@@ -22,7 +22,7 @@ import { parseSourceBase } from './source'
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
 export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const db = localDatabase(options._localDatabase!.filename)
+  const db = await getLocalDatabase(options._localDatabase!.filename)
 
   let websocket: ReturnType<typeof createWebSocket>
   let listener: Listener
@@ -89,7 +89,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
   const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
 
-  const db = localDatabase(options._localDatabase!.filename)
+  const db = await getLocalDatabase(options._localDatabase!.filename)
   const collections = manifest.collections
 
   const sourceMap = collections.flatMap((c) => {
@@ -124,7 +124,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       const content = await readFile(fullPath, 'utf8')
       const checksum = getContentChecksum(content)
-      const localCache = db.fetchDevelopmentCacheForKey(keyInCollection)
+      const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
 
       if (localCache && localCache.checksum === checksum) {
         db.exec(`DELETE FROM ${collection.tableName} WHERE id = '${keyInCollection}'`)
@@ -275,45 +275,6 @@ export function getContentChecksum(content: string) {
     .createHash('md5')
     .update(content, 'utf8')
     .digest('hex')
-}
-
-const _localDatabase: Record<string, Database.Database | undefined> = {}
-export function localDatabase(databaseLocation: string) {
-  if (!_localDatabase[databaseLocation]) {
-    _localDatabase[databaseLocation] = Database(databaseLocation)
-    _localDatabase[databaseLocation]!.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
-  }
-
-  return {
-    fetchDevelopmentCache() {
-      return _localDatabase[databaseLocation]!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache')
-        .all()
-        .reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {} as Record<string, { checksum: string, parsedContent: string }>)
-    },
-    fetchDevelopmentCacheForKey(key: string) {
-      return _localDatabase[databaseLocation]!.prepare<unknown[], { id: string, checksum: string, parsedContent: string }>('SELECT * FROM _development_cache WHERE id = ?')
-        .get(key)
-    },
-    insertDevelopmentCache(id: string, checksum: string, parsedContent: string) {
-      this.deleteDevelopmentCache(id)
-      _localDatabase[databaseLocation]!.exec(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
-    },
-    deleteDevelopmentCache(id: string) {
-      _localDatabase[databaseLocation]!.exec(`DELETE FROM _development_cache WHERE id = '${id}'`)
-    },
-    dropContentTables() {
-      _localDatabase[databaseLocation]!.prepare<unknown[], { name: string }>(`SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE '_content_%'`)
-        .all()
-        .map(({ name }) => _localDatabase[databaseLocation]!.exec(`DROP TABLE IF EXISTS ${name}`))
-    },
-    exec: (sql: string) => {
-      _localDatabase[databaseLocation]!.exec(sql)
-    },
-    close: () => {
-      _localDatabase[databaseLocation]!.close()
-      _localDatabase[databaseLocation] = undefined
-    },
-  }
 }
 
 export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown> {
