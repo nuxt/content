@@ -98,7 +98,6 @@ describe('basic', async () => {
   describe('refine retrived document', () => {
     test('retrieve document', async () => {
       const doc: Record<string, unknown> = await $fetch('/api/content/get?path=/')
-      console.log('doc', doc)
 
       expect(doc).toBeDefined()
       expect(typeof doc.booleanField).toBe('boolean')
