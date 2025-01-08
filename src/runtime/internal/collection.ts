@@ -1,7 +1,7 @@
 import type { CollectionInfo } from '@nuxt/content'
 import contentManifest from '#content/manifest'
 
-export function refineRetrivedDocument<T>(sql: string, doc: T) {
+export function refineContentFields<T>(sql: string, doc: T) {
   const fields = findCollectionFields(sql)
   const item = { ...doc } as T
   for (const key in item) {
