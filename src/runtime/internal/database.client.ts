@@ -1,7 +1,7 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { decompressSQLDump } from './dump'
-import { parseJsonFields } from './collection'
+import { refineRetrivedDocument } from './collection'
 import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
@@ -14,12 +14,12 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 
       return db
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
-        .map(row => parseJsonFields(sql, row) as T)
+        .map(row => refineRetrivedDocument(sql, row) as T)
     },
     first: async <T>(sql: string, params: DatabaseBindParams) => {
       await loadAdapter(collection)
 
-      return parseJsonFields(
+      return refineRetrivedDocument(
         sql,
         db
           .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
