@@ -53,7 +53,7 @@ export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
   source: ResolvedCollectionSource[] | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
-  jsonFields: string[]
+  fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
 }
 
 export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
@@ -63,7 +63,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
   source: ResolvedCollectionSource[] | undefined
   schema: ZodObject<T>
   extendedSchema: ZodObject<T>
-  jsonFields: string[]
+  fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   /**
    * Whether the collection is private or not.
    * Private collections will not be available in the runtime.
@@ -81,7 +81,7 @@ export interface CollectionInfo {
     $schema?: string
     definitions?: { [key: string]: JsonSchema7Type }
   }
-  jsonFields: string[]
+  fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   tableDefinition: string
 }
 

@@ -27,9 +27,28 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
     source: resolveSource(collection.source),
     schema: collection.schema || z.object({}),
     extendedSchema: schema,
-    jsonFields: Object.keys(schema.shape)
-      .filter(key => JSON_FIELDS_TYPES
-        .includes(getUnderlyingTypeName(schema.shape[key as keyof typeof schema.shape]))),
+    fields: Object.keys(schema.shape).reduce((acc, key) => {
+      const underlyingType = getUnderlyingTypeName(schema.shape[key as keyof typeof schema.shape])
+      if (JSON_FIELDS_TYPES.includes(underlyingType)) {
+        acc[key] = 'json'
+      }
+      else if (['ZodString'].includes(underlyingType)) {
+        acc[key] = 'string'
+      }
+      else if (['ZodDate'].includes(underlyingType)) {
+        acc[key] = 'date'
+      }
+      else if (underlyingType === 'ZodBoolean') {
+        acc[key] = 'boolean'
+      }
+      else if (underlyingType === 'ZodNumber') {
+        acc[key] = 'number'
+      }
+      else {
+        acc[key] = 'string'
+      }
+      return acc
+    }, {} as Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>),
   }
 }
 
@@ -70,7 +89,7 @@ export function resolveCollections(collections: Record<string, DefinedCollection
       id: z.string(),
       version: z.string(),
     }),
-    jsonFields: [],
+    fields: {},
   }
 
   return Object.entries(collections)
@@ -131,16 +150,16 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       return
     }
 
-    if ((collection.jsonFields || []).includes(key)) {
+    if (collection.fields[key] === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
-    else if (['ZodDate'].includes(underlyingType.constructor.name)) {
+    else if (collection.fields[key] === 'date') {
       values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
     }
-    else if (underlyingType.constructor.name === 'ZodBoolean') {
+    else if (collection.fields[key] === 'boolean') {
       values.push(!!valueToInsert)
     }
     else {
