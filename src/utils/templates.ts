@@ -151,7 +151,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
-        jsonFields: collection.jsonFields,
+        fields: collection.fields,
       }
       return acc
     }, {} as Record<string, unknown>)
@@ -185,7 +185,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         // Remove source from collection meta if it's a remote collection
         source: collection.source?.filter(source => source.repository ? undefined : collection.source),
         type: collection.type,
-        jsonFields: collection.jsonFields,
+        fields: collection.fields,
         schema: zodToJsonSchema(collection.extendedSchema, collection.name),
         tableDefinition: generateCollectionTableDefinition(collection),
       }

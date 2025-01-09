@@ -1,12 +1,15 @@
 import type { CollectionInfo } from '@nuxt/content'
 import contentManifest from '#content/manifest'
 
-export function parseJsonFields<T>(sql: string, doc: T) {
-  const jsonFields = findJsonFields(sql)
+export function refineContentFields<T>(sql: string, doc: T) {
+  const fields = findCollectionFields(sql)
   const item = { ...doc } as T
-  for (const key of (jsonFields as Array<keyof T>)) {
-    if (item[key] && item[key] !== 'undefined') {
+  for (const key in item) {
+    if (fields[key as string] === 'json' && item[key] && item[key] !== 'undefined') {
       item[key] = JSON.parse(item[key] as string)
+    }
+    if (fields[key as string] === 'boolean' && item[key] !== 'undefined') {
+      item[key] = Boolean(item[key]) as never
     }
   }
 
@@ -18,14 +21,14 @@ export function parseJsonFields<T>(sql: string, doc: T) {
   return item
 }
 
-function findJsonFields(sql: string): string[] {
+function findCollectionFields(sql: string): Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'> {
   const table = sql.match(/FROM\s+(\w+)/)
   if (!table) {
-    return []
+    return {}
   }
 
   const info = contentManifest[getCollectionName(table[1]) as keyof typeof contentManifest] as CollectionInfo
-  return info?.jsonFields || []
+  return info?.fields || {}
 }
 
 function getCollectionName(table: string) {

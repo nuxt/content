@@ -1,5 +1,5 @@
 import type { DatabaseAdapter } from '@nuxt/content'
-import { parseJsonFields } from './collection'
+import { refineContentFields } from './collection'
 
 export function createDatabaseAdapter<Options = unknown>(factory: (otps: Options) => DatabaseAdapter) {
   return (opts: Options) => {
@@ -12,7 +12,7 @@ export function createDatabaseAdapter<Options = unknown>(factory: (otps: Options
         if (!result) {
           return []
         }
-        return result.map(item => parseJsonFields(sql, item))
+        return result.map(item => refineContentFields(sql, item))
       },
       first: async (sql, params) => {
         const item = await adapter.first<Record<string, unknown>>(sql, params)
@@ -21,7 +21,7 @@ export function createDatabaseAdapter<Options = unknown>(factory: (otps: Options
           return item
         }
 
-        return parseJsonFields(sql, item)
+        return refineContentFields(sql, item)
       },
       exec: async (sql) => {
         return adapter.exec(sql)

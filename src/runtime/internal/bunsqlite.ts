@@ -55,7 +55,7 @@ export const getBunSqliteDatabaseAdapter = (opts: { filename: string }) => {
     const filename = !opts || isAbsolute(opts?.filename || '') || opts?.filename === ':memory:'
       ? opts?.filename
       : new URL(opts.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
-    db = new Database(filename, { create: true })
+    db = new Database(process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename, { create: true })
   }
 
   return {

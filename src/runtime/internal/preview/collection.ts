@@ -106,7 +106,7 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
 
     fields.push(key)
-    if ((collection.jsonFields || []).includes(key)) {
+    if (collection.fields[key] === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (['string', 'enum'].includes(underlyingType)) {
