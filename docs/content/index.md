@@ -378,7 +378,7 @@ Define your content structure with collections and query them with schema valida
   ---
   color: neutral
   label: Learn more about content collections
-  to: /docs/collections/collections
+  to: /docs/collections/define
   trailingIcon: i-lucide-arrow-right
   variant: subtle
   ---
