@@ -39,12 +39,13 @@ export default defineNuxtConfig({
       // url: process.env.TURSO_DATABASE_URL!,
       // authToken: process.env.TURSO_AUTH_TOKEN!,
     },
-    studio: {
-      enabled: true,
+    preview: {
       dev: true,
+      api: 'https://dev-api.nuxt.studio',
       // gitInfo: {
       //   owner: 'larbish',
       //   name: 'starter-larb',
+      //   url: '',
       // },
     },
   },

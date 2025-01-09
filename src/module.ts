@@ -183,6 +183,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (nuxt.options._prepare) {
       return
     }
+
     const dumpGeneratePromise = processCollectionItems(nuxt, manifest.collections, options)
       .then((fest) => {
         manifest.checksum = fest.checksum
@@ -216,7 +217,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Handle preview mode
-    if (options.preview?.api) {
+    if (process.env.PREVIEW_API || options.preview?.api) {
       // Only enable preview in production build or when explicitly enabled
       if (nuxt.options.dev === true && !options.preview?.dev) {
         return

@@ -36,7 +36,7 @@ export interface PreviewOptions {
   /**
    * Enable preview in production by setting API URL
    */
-  api?: boolean
+  api?: string
   /**
    * Enable preview mode in development
    */
