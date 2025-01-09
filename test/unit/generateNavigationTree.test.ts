@@ -243,4 +243,93 @@ describe('generateNavigationTree', () => {
     expect(tree[0]).toHaveProperty('description', 'Home page')
     expect(tree[0]).toHaveProperty('customField', 'custom value')
   })
+
+  it('index file in directory', async () => {
+    const items = [
+      {
+        title: 'bourg-en-bresse',
+        path: '/devenir-benevole/bourg-en-bresse',
+        stem: 'devenir-benevole/bourg-en-bresse',
+      },
+      {
+        title: 'index',
+        path: '/devenir-benevole',
+        stem: 'devenir-benevole/index',
+      },
+    ] as Array<PageCollectionItemBase & { customField: string }>
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+    expect(tree).toMatchObject([
+      {
+        title: 'index',
+        path: '/devenir-benevole',
+        stem: 'devenir-benevole/index',
+        children: [
+          {
+            title: 'bourg-en-bresse',
+            path: '/devenir-benevole/bourg-en-bresse',
+            stem: 'devenir-benevole/bourg-en-bresse',
+          },
+          {
+            title: 'index',
+            path: '/devenir-benevole',
+            stem: 'devenir-benevole/index',
+          },
+        ],
+      },
+    ])
+  })
+
+  it('index file in directory 2', async () => {
+    const items = [
+      {
+        title: 'bourg-en-bresse',
+        path: '/devenir-benevole/france/ain/bourg-en-bresse',
+        stem: 'devenir-benevole/france/ain/bourg-en-bresse',
+      },
+      {
+        title: 'index',
+        path: '/devenir-benevole/france/ain',
+        stem: 'devenir-benevole/france/ain/index',
+      },
+    ] as Array<PageCollectionItemBase & { customField: string }>
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+
+    expect(tree).toMatchObject([
+      {
+        title: 'Devenir Benevole',
+        path: '/devenir-benevole',
+        stem: 'devenir-benevole',
+        children: [
+          {
+            title: 'France',
+            path: '/devenir-benevole/france',
+            stem: 'devenir-benevole/france',
+            children: [
+              {
+                title: 'index',
+                path: '/devenir-benevole/france/ain',
+                stem: 'devenir-benevole/france/ain/index',
+                children: [
+                  {
+                    title: 'bourg-en-bresse',
+                    path: '/devenir-benevole/france/ain/bourg-en-bresse',
+                    stem: 'devenir-benevole/france/ain/bourg-en-bresse',
+                  },
+                  {
+                    title: 'index',
+                    path: '/devenir-benevole/france/ain',
+                    stem: 'devenir-benevole/france/ain/index',
+                  },
+                ],
+              },
+            ],
+            page: false,
+          },
+        ],
+        page: false,
+      },
+    ])
+  })
 })

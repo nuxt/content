@@ -91,7 +91,14 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         // Check for duplicate link
         const existed = nav.find(item => item.path === navItem.path && item.page === false)
         if (isIndex && existed) {
-          existed.children.push(...navItem.children)
+          Object.assign(existed, {
+            ...navItem,
+            page: undefined,
+            children: [
+              ...navItem.children,
+              ...existed.children,
+            ],
+          })
         }
         else {
           nav.push(navItem)
@@ -133,7 +140,21 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         return parent!.children!
       }, nav)
 
-      siblings.push(navItem)
+      // Check for duplicate link
+      const existed = siblings.find(item => item.path === navItem.path && item.page === false)
+      if (existed) {
+        Object.assign(existed, {
+          ...navItem,
+          page: undefined,
+          children: [
+            ...navItem.children,
+            ...existed.children,
+          ],
+        })
+      }
+      else {
+        siblings.push(navItem)
+      }
 
       return nav
     }, [] as ContentNavigationItem[])
