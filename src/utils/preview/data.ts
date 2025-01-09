@@ -16,66 +16,66 @@ const supportedFields: { [key in ConfigInputsTypes]: Schema } = {
   default: {
     type: 'string',
     tags: [
-      '@studioInput string',
+      '@previewInput string',
     ],
   },
   string: {
     type: 'string',
     tags: [
-      '@studioInput string',
+      '@previewInput string',
     ],
   },
   number: {
     type: 'number',
     tags: [
-      '@studioInput number',
+      '@previewInput number',
     ],
   },
   boolean: {
     type: 'boolean',
     tags: [
-      '@studioInput boolean',
+      '@previewInput boolean',
     ],
   },
   array: {
     type: 'array',
     tags: [
-      '@studioInput array',
+      '@previewInput array',
     ],
   },
   object: {
     type: 'object',
     tags: [
-      '@studioInput object',
+      '@previewInput object',
     ],
   },
   file: {
     type: 'string',
     tags: [
-      '@studioInput file',
+      '@previewInput file',
     ],
   },
   media: {
     type: 'string',
     tags: [
-      '@studioInput media',
+      '@previewInput media',
     ],
   },
   component: {
     type: 'string',
     tags: [
-      '@studioInput component',
+      '@previewInput component',
     ],
   },
   icon: {
     type: 'string',
     tags: [
-      '@studioInput icon',
+      '@previewInput icon',
     ],
   },
 }
 
-export type StudioFieldData =
+export type PreviewFieldData =
   PartialSchema &
   {
     type?: keyof typeof supportedFields
@@ -84,10 +84,9 @@ export type StudioFieldData =
   }
 
 /**
- * Helper to build Nuxt Studio compatible configuration schema.
- * Supports all type of fields provided by Nuxt Studio and all fields supported from Untyped Schema interface.
+ * Helper to build preview compatible configuration schema.
  */
-export function field(schema: StudioFieldData): InputValue {
+export function field(schema: PreviewFieldData): InputValue {
   if (!schema.type) {
     throw new Error(`Missing type in schema ${JSON.stringify(schema)}`)
   }
@@ -100,7 +99,7 @@ export function field(schema: StudioFieldData): InputValue {
     result.tags = []
   }
   if (result.icon) {
-    result.tags.push(`@studioIcon ${result.icon}`)
+    result.tags.push(`@previewIcon ${result.icon}`)
     delete result.icon
   }
   return {
@@ -108,11 +107,11 @@ export function field(schema: StudioFieldData): InputValue {
   }
 }
 
-export function group(schema: StudioFieldData): InputValue {
+export function group(schema: PreviewFieldData): InputValue {
   const result = { ...schema }
 
   if (result.icon) {
-    result.tags = [`@studioIcon ${result.icon}`]
+    result.tags = [`@previewIcon ${result.icon}`]
     delete result.icon
   }
 

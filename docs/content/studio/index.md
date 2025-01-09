@@ -56,7 +56,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   GitHub & Google Authentication
-  
+
   #description{unwrap="p"}
   Personalized workspace for each role: developers, writers, and clients.
   :::
@@ -69,7 +69,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Easy content updates
-  
+
   #description{unwrap="p"}
   From Markdown to YAML edition, our visual editor is designed for non technical users.
   :::
@@ -82,7 +82,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Real-time Collaboration
-  
+
   #description{unwrap="p"}
   Write as a team in real-time with our collaboration features.
   :::
@@ -95,7 +95,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   From Code to Edition
-  
+
   #description{unwrap="p"}
   Developers build the foundation while writers can safely edit the content.
   :::
@@ -108,7 +108,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Review before publishing
-  
+
   #description{unwrap="p"}
   Review your changes before making them live on your website.
   :::
@@ -121,7 +121,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Ready-to-use Templates
-  
+
   #description{unwrap="p"}
   Get started quickly with pre-built templates for Saas sites, blogs, docs and more.
   :::
@@ -158,7 +158,7 @@ orientation: horizontal
     </div>
   </template>
   ```
-  
+
   ```mdc [content/index.md]
   ::home-feature
     ---
@@ -170,7 +170,7 @@ orientation: horizontal
     Edit slots and props inside the Notion-like editor.
   ::
   ```
-  
+
     ::::preview-card{icon="i-lucide-eye" label="Editor"}
     ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
     ::::
@@ -231,8 +231,6 @@ orientation: horizontal
 reverse: true
 ---
 :video{autoplay controls loop poster="/assets/home/videos/HomeNotionLikePoster.webp" src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
-
- 
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-[var(--ui-primary)]} your Nuxt Content website

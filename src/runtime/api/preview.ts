@@ -4,7 +4,7 @@ import type { RuntimeConfig } from '@nuxt/content'
 import { useRuntimeConfig, useAppConfig } from '#imports'
 // @ts-expect-error import does exist
 import components from '#nuxt-component-meta/nitro'
-import { collections, gitInfo, appConfigSchema } from '#content/studio'
+import { collections, gitInfo, appConfigSchema } from '#content/preview'
 
 interface NuxtComponentMeta {
   pascalName: string

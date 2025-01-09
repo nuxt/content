@@ -9,7 +9,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  apiURL: {
+  api: {
     type: String,
     required: true,
   },
@@ -58,7 +58,7 @@ const init = async (data: DraftSyncData) => {
   await router.replace({ query: {} })
 
   // @ts-expect-error custom hook => keep this for typecheck in project using the module
-  nuxtApp.callHook('nuxt-studio:preview:ready')
+  nuxtApp.callHook('nuxt-content:preview:ready')
 
   if (window.parent && window.self !== window.parent) {
     socket.disconnect()
@@ -67,7 +67,7 @@ const init = async (data: DraftSyncData) => {
 
 onMounted(async () => {
   const io = await import('socket.io-client')
-  socket = io.connect(`${props.apiURL}/preview`, {
+  socket = io.connect(`${props.api}/preview`, {
     transports: ['websocket', 'polling'],
     auth: {
       token: props.previewToken,
@@ -101,11 +101,11 @@ onMounted(async () => {
 
     // If no data is received, it means the draft is not ready yet
     if (!data) {
-      // Request draft sync via Studio API
+      // Request draft sync via Preview API
       try {
-        // Request preview sync from Studio API
+        // Request preview sync from Preview API
         await $fetch('api/projects/preview/sync', {
-          baseURL: props.apiURL,
+          baseURL: props.api,
           method: 'POST',
           params: {
             token: props.previewToken,
@@ -163,7 +163,7 @@ onUnmounted(() => {
 
 // async function requestPreviewSync() {
 //   await $fetch('api/projects/preview/sync', {
-//     baseURL: props.apiURL,
+//     baseURL: props.api,
 //     method: 'POST',
 //     params: {
 //       token: props.previewToken,
@@ -190,11 +190,7 @@ onUnmounted(() => {
             fill="currentColor"
           />
         </svg>
-        <span><a
-          href="https://studio.content.nuxt.com"
-          target="_blank"
-          rel="noopener"
-        >Nuxt Studio</a>: Preview enabled</span>
+        <span>Preview enabled</span>
         <button @click="closePreviewMode">
           Close
         </button>

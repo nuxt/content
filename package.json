@@ -20,10 +20,10 @@
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     },
-    "./studio": {
-      "types": "./dist/studio.d.ts",
-      "import": "./dist/studio.mjs",
-      "require": "./dist/studio.cjs"
+    "./preview": {
+      "types": "./dist/preview.d.ts",
+      "import": "./dist/preview.mjs",
+      "require": "./dist/preview.cjs"
     }
   },
   "main": "./dist/module.cjs",
@@ -135,7 +135,7 @@
   "unbuild": {
     "entries": [
       "./src/module",
-      "./src/studio"
+      "./src/preview"
     ],
     "externals": [
       "untyped",

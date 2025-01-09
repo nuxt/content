@@ -42,6 +42,10 @@ export default defineNuxtConfig({
     studio: {
       enabled: true,
       dev: true,
+      gitInfo: {
+        owner: 'larbish',
+        name: 'starter-larb',
+      },
     },
   },
 

@@ -2,14 +2,15 @@ import { createApp } from 'vue'
 import type { AppConfig } from 'nuxt/schema'
 import type { PublicRuntimeConfig, CollectionInfo, FileChangeMessagePayload, FileMessageData, FileSelectMessagePayload, DraftSyncData, PreviewFile, DraftSyncFile } from '@nuxt/content'
 import { withLeadingSlash } from 'ufo'
-import StudioPreviewMode from '../../components/StudioPreviewMode.vue'
+import ContentPreviewMode from '../../components/ContentPreviewMode.vue'
 import { loadDatabaseAdapter } from '../database.client'
 import { v2ToV3ParsedFile } from './compatibility'
 import { getCollectionByFilePath, generateCollectionInsert, generateRecordDeletion, generateRecordSelectByColumn, generateRecordUpdate, getCollectionByRoutePath } from './collection'
-import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, StudioConfigFiles, withoutRoot } from './utils'
+import { createSingleton, deepAssign, deepDelete, defu, generateStemFromPath, mergeDraft, PreviewConfigFiles, withoutRoot } from './utils'
+import { officialProviderUrls } from './providers'
 import { callWithNuxt, refreshNuxtData } from '#app'
 import { useAppConfig, useNuxtApp, useRuntimeConfig, useRoute, useRouter, ref } from '#imports'
-import { collections } from '#content/studio'
+import { collections } from '#content/preview'
 
 const dbReady = ref(false)
 const initialAppConfig = createSingleton(() => JSON.parse(JSON.stringify((useAppConfig()))))
@@ -18,7 +19,7 @@ const initializePreview = async (data: DraftSyncData) => {
   const mergedFiles = mergeDraft(data.files, data.additions, data.deletions)
 
   // // Handle content files
-  const contentFiles = mergedFiles.filter(item => !([StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4, StudioConfigFiles.nuxtConfig].includes(item.path)))
+  const contentFiles = mergedFiles.filter(item => !([PreviewConfigFiles.appConfig, PreviewConfigFiles.appConfigV4, PreviewConfigFiles.nuxtConfig].includes(item.path)))
 
   // Initialize collection tables
   for (const collection of Object.values(collections as Record<string, CollectionInfo>)) {
@@ -31,7 +32,7 @@ const initializePreview = async (data: DraftSyncData) => {
     await syncDraftFile(collections, file)
   }
 
-  const appConfig = mergedFiles.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
+  const appConfig = mergedFiles.find(item => [PreviewConfigFiles.appConfig, PreviewConfigFiles.appConfigV4].includes(item.path))
   if (appConfig) {
     syncDraftAppConfig(appConfig.parsed)
   }
@@ -45,7 +46,7 @@ const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: 
   // Fetch corresponding collection
   const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
   if (!collection) {
-    console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping insertion.`)
+    console.warn(`Content Preview: collection not found for file: ${file.path}, skipping insertion.`)
     return
   }
 
@@ -76,23 +77,23 @@ const syncDraftAppConfig = (appConfig?: Record<string, unknown>) => {
 }
 
 export function mountPreviewUI() {
-  const studio: PublicRuntimeConfig['studio'] = useRuntimeConfig().public.studio || {}
+  const previewConfig: PublicRuntimeConfig['preview'] = useRuntimeConfig().public.preview || {}
 
   const previewToken = window.sessionStorage.getItem('previewToken')
   // Show loading
   const el = document.createElement('div')
   el.id = '__nuxt_preview_wrapper'
   document.body.appendChild(el)
-  createApp(StudioPreviewMode, {
+  createApp(ContentPreviewMode, {
     previewToken,
-    apiURL: window.sessionStorage.getItem('previewAPI') || studio?.apiURL,
+    api: window.sessionStorage.getItem('previewAPI') || previewConfig?.api,
     initializePreview,
   }).mount(el)
 }
 
 export function initIframeCommunication() {
   const nuxtApp = useNuxtApp()
-  const studio: PublicRuntimeConfig['studio'] = useRuntimeConfig().public.studio
+  const previewConfig: PublicRuntimeConfig['preview'] = useRuntimeConfig().public.preview
 
   // Not in an iframe
   if (!window.parent || window.self === window.parent) {
@@ -105,7 +106,7 @@ export function initIframeCommunication() {
   window.addEventListener('keydown', (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) {
       window.parent.postMessage({
-        type: 'nuxt-studio:preview:keydown',
+        type: 'nuxt-content:preview:keydown',
         payload: {
           key: e.key,
           metaKey: e.metaKey,
@@ -122,14 +123,11 @@ export function initIframeCommunication() {
       return
     }
 
-    // IFRAME_MESSAGING_ALLOWED_ORIGINS format must be a comma separated string of allowed origins
-    const allowedOrigins = studio?.iframeMessagingAllowedOrigins?.split(',').map((origin: string) => origin.trim()) || []
+    // PREVIEW_ALLOWED_ORIGINS format must be a comma separated string of allowed origins
+    const allowedOrigins = previewConfig?.iframeMessagingAllowedOrigins?.split(',').map((origin: string) => origin.trim()) || []
     if (![
-      'https://studio.content.nuxt.com',
-      'https://studio.content.nuxt.dev',
-      'https://nuxt.studio',
-      'https://dev.nuxt.studio',
       'http://localhost:3000',
+      ...officialProviderUrls,
       ...allowedOrigins,
     ].includes(e.origin)) {
       return
@@ -138,12 +136,12 @@ export function initIframeCommunication() {
     const { type, payload = {}, navigate } = e.data || {}
 
     switch (type) {
-      case 'nuxt-studio:editor:file-selected': {
+      case 'nuxt-content:editor:file-selected': {
         await handleFileSelection((payload as FileSelectMessagePayload).path)
         break
       }
-      case 'nuxt-studio:editor:file-changed':
-      case 'nuxt-studio:editor:media-changed': {
+      case 'nuxt-content:editor:file-changed':
+      case 'nuxt-content:editor:media-changed': {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
         for (const addition of additions) {
           await handleFileUpdate(addition, navigate)
@@ -155,14 +153,14 @@ export function initIframeCommunication() {
         rerenderPreview()
         break
       }
-      case 'nuxt-studio:config:file-changed': {
+      case 'nuxt-content:config:file-changed': {
         const { additions = [], deletions = [] } = payload as FileChangeMessagePayload
 
-        const appConfig = additions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
+        const appConfig = additions.find(item => [PreviewConfigFiles.appConfig, PreviewConfigFiles.appConfigV4].includes(item.path))
         if (appConfig) {
           syncDraftAppConfig(appConfig?.parsed)
         }
-        const shouldRemoveAppConfig = deletions.find(item => [StudioConfigFiles.appConfig, StudioConfigFiles.appConfigV4].includes(item.path))
+        const shouldRemoveAppConfig = deletions.find(item => [PreviewConfigFiles.appConfig, PreviewConfigFiles.appConfigV4].includes(item.path))
         if (shouldRemoveAppConfig) {
           syncDraftAppConfig(undefined)
         }
@@ -176,7 +174,7 @@ export function initIframeCommunication() {
 
       const { collection } = getCollectionByFilePath(withoutRoot(path), collections)
       if (!collection) {
-        console.warn(`Studio Preview: collection not found for file: ${path}, skipping navigation.`)
+        console.warn(`Content Preview: collection not found for file: ${path}, skipping navigation.`)
         return
       }
 
@@ -214,7 +212,7 @@ export function initIframeCommunication() {
     async function handleFileUpdate(file: PreviewFile, navigate: boolean) {
       const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
       if (!collection) {
-        console.warn(`Studio Preview: collection not found for file: ${file.path}, skipping update.`)
+        console.warn(`Content Preview: collection not found for file: ${file.path}, skipping update.`)
         return
       }
 
@@ -249,7 +247,7 @@ export function initIframeCommunication() {
     async function handleFileDeletion(path: string) {
       const { collection } = getCollectionByFilePath(withoutRoot(path), collections)
       if (!collection) {
-        console.warn(`Studio Preview: collection not found for file: ${path}, skipping deletion.`)
+        console.warn(`Content Preview: collection not found for file: ${path}, skipping deletion.`)
         return
       }
 
@@ -263,7 +261,7 @@ export function initIframeCommunication() {
     }
   })
 
-  async function selectCurrentRouteOnStudio() {
+  async function sendNavigateMessage() {
     if (!dbReady.value) {
       return
     }
@@ -272,7 +270,7 @@ export function initIframeCommunication() {
 
     const { collection } = getCollectionByRoutePath(routePath, collections)
     if (!collection || collection.type !== 'page') {
-      window.openFileInStudio(routePath, false)
+      window.sendNavigateMessageInPreview(routePath, false)
     }
 
     const db = loadDatabaseAdapter(collection.name)
@@ -281,22 +279,22 @@ export function initIframeCommunication() {
 
     const file = await db.first(query) as { path: string }
 
-    window.openFileInStudio(routePath, !!file?.path)
+    window.sendNavigateMessageInPreview(routePath, !!file?.path)
   }
 
   nuxtApp.hook('page:finish', () => {
-    selectCurrentRouteOnStudio()
+    sendNavigateMessage()
   })
 
   // @ts-expect-error custom hook
-  nuxtApp.hook('nuxt-studio:preview:ready', () => {
-    window.parent.postMessage({ type: 'nuxt-studio:preview:ready' }, '*')
+  nuxtApp.hook('nuxt-content:preview:ready', () => {
+    window.parent.postMessage({ type: 'nuxt-content:preview:ready' }, '*')
   })
 
   // Inject utils to window
-  window.openFileInStudio = (path: string, navigate: boolean) => {
+  window.sendNavigateMessageInPreview = (path: string, navigate: boolean) => {
     window.parent.postMessage({
-      type: 'nuxt-studio:preview:navigate',
+      type: 'nuxt-content:preview:navigate',
       payload: { path, navigate },
     }, '*')
   }

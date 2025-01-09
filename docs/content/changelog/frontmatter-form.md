@@ -3,11 +3,11 @@ name: Visual front-matter edition
 title: Visual front-matter edition
 description: Your page metadata is now editable through a visual interface instead of YAML.
 date: '2024-10-17T00:00:00.000Z'
-image: 
+image:
   src: /blog/frontmatters.png
 authors:
   - name: Baptiste Leproux
-    avatar: 
+    avatar:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
 category: studio
@@ -80,7 +80,7 @@ export const collections = {
   posts: defineCollection({
     // Specify the type of content in this collection
     type: 'page',
-    // Load every file matching this pattern 
+    // Load every file matching this pattern
     source: 'blog/**/*.md',
     // Define custom schema for this collection
     schema: z.object({
@@ -106,7 +106,7 @@ For example, collection schemas will help us further enhance form generation in 
 
 ```ts [content.config.ts]
 image: z.object({
-    src: z.string().editor({ type: 'media' }) 
+    src: z.string().editor({ type: 'media' })
     alt: z.string()
 }),
 icon: z.string().editor({ type: 'icon' })

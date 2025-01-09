@@ -1,8 +1,8 @@
 import { dirname, parse, join } from 'pathe'
 import { withoutLeadingSlash } from 'ufo'
-import type { DraftFile, DraftSyncFile } from '~/src/types/studio'
+import type { DraftFile, DraftSyncFile } from '~/src/types/preview'
 
-export const StudioConfigFiles = {
+export const PreviewConfigFiles = {
   appConfig: 'app.config.ts',
   appConfigV4: 'app/app.config.ts',
   nuxtConfig: 'nuxt.config.ts',

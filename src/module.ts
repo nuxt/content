@@ -28,7 +28,7 @@ import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupStudio } from './utils/studio/module'
+import { setupPreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { getLocalDatabase } from './utils/sqlite'
 
@@ -46,9 +46,7 @@ export default defineNuxtModule<ModuleOptions>({
       type: 'sqlite',
       filename: '.data/content/contents.sqlite',
     },
-    studio: {
-      enabled: false,
-    },
+    preview: {},
     watch: {
       enabled: true,
       port: {
@@ -218,14 +216,14 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    // Handle Studio mode
-    if (options.studio?.enabled) {
-      // Only enable Studio in production build or when explicitly enabled
-      if (nuxt.options.dev === true && !options.studio?.dev) {
+    // Handle preview mode
+    if (options.preview?.api) {
+      // Only enable preview in production build or when explicitly enabled
+      if (nuxt.options.dev === true && !options.preview?.dev) {
         return
       }
 
-      await setupStudio(options, nuxt, resolver, manifest)
+      await setupPreview(options, nuxt, resolver, manifest)
     }
   },
 })

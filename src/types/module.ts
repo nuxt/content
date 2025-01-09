@@ -32,19 +32,17 @@ export type LibSQLDatabaseConfig = {
   authToken: string
 }
 
-export interface StudioOptions {
+export interface PreviewOptions {
   /**
-   * Enable Studio in production
-   * @default: false
+   * Enable preview in production by setting API URL
    */
-  enabled: boolean
+  api?: boolean
   /**
-   * Enable studio in development
-   * @default false
+   * Enable preview mode in development
    */
   dev?: boolean
   /**
-   * Override Git information for Studio preview validation
+   * Override Git information for preview validation
    */
   gitInfo?: GitInfo
 }
@@ -61,9 +59,10 @@ export interface ModuleOptions {
    */
   database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig
   /**
-   * Studio mode configuration
+   * Preview mode configuration
+   * @default {}
    */
-  studio?: StudioOptions
+  preview?: PreviewOptions
   /**
    * Development HMR
    * @default { enabled: true }
@@ -183,8 +182,8 @@ export interface RuntimeConfig {
 }
 
 export interface PublicRuntimeConfig {
-  studio: {
-    apiURL?: string
+  preview: {
+    api?: string
     iframeMessagingAllowedOrigins?: string
   }
 }

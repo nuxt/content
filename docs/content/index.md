@@ -392,7 +392,6 @@ orientation: horizontal
 ---
 :video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
- 
 #title{unwrap="p"}
 Let [anyone edit]{.text-[var(--ui-primary)]} your website
 

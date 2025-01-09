@@ -105,6 +105,7 @@ const images = computed(() => template.value
                 label="Use it"
                 color="primary"
                 variant="solid"
+                trailing-icon="i-ph-arrow-right"
               />
             </UDropdownMenu>
           </div>

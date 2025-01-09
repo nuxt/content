@@ -120,7 +120,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
-      return fetch(collection, buildQuery()).then(res => res || [])
+      return fetch(collection, buildQuery()).then(res => res || [] as Collections[T][])
     },
     async first(): Promise<Collections[T]> {
       return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)

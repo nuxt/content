@@ -1,5 +1,5 @@
 interface Window {
-  openFileInStudio: (path: string, navigate: boolean) => void
+  sendNavigateMessageInPreview: (path: string, navigate: boolean) => void
 }
 
 declare module '#content/manifest' {
@@ -31,7 +31,7 @@ declare module '#content/collections' {
   export const collections: Record<string, unknown>
 }
 
-declare module '#content/studio' {
+declare module '#content/preview' {
   import type { CollectionInfo } from './collection'
 
   export const collections: Record<string, CollectionInfo>

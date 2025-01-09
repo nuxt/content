@@ -45,7 +45,7 @@ async function loadAdapter<T>(collection: T) {
     db = new sqlite3.oo1.DB()
   }
 
-  // Do not initialize database with dump for Studio preview
+  // Do not initialize database with dump for preview mode
   if (window.sessionStorage.getItem('previewToken')) {
     return db
   }
