@@ -88,7 +88,15 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
       // First-level item, push it straight to nav
       if (parts.length === 1) {
-        nav.push(navItem)
+        // Check for duplicate link
+        const existed = nav.find(item => item.path === navItem.path && item.page === false)
+        if (isIndex && existed) {
+          existed.children.push(...navItem.children)
+        }
+        else {
+          nav.push(navItem)
+        }
+
         return nav
       }
 
@@ -115,7 +123,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
             ...navigationConfig,
             title: navigationConfig.title || generateTitle(part),
             path: currentPathPart,
-            stem: idParts.join('/'),
+            stem: idParts.slice(0, i + 1).join('/'),
             children: [],
             page: false,
           }
