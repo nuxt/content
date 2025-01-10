@@ -16,7 +16,7 @@ category: Migration
 
 # Migrate to Content x UI v3
 
-**2025 starts with the power of 3!**
+**2025 kicks off with the power of 3!**
 
 This start of year is marked by major updates to our favorite tools. The UI team is about to launch **version 3** of the **UI / UI Pro libraries** (currently in alpha), while the Content team has already released **Nuxt Content v3**.
 
@@ -26,9 +26,29 @@ These updates mean that all our starter templates combining **Content** and **UI
 Check the UI Pro documentation starter repository code source.
 ::
 
-## Content migration
+## Content migration (v2 → v3)
 
-### 1. Create `content.config.ts` file
+### 1. Update package to v3
+
+::code-group
+```bash [pnpm]
+pnpm add @nuxt/content@next
+```
+
+```bash [yarn]
+yarn add @nuxt/content@next
+```
+
+```bash [npm]
+npm install @nuxt/content@next
+```
+
+```bash [bun]
+bun add @nuxt/content@next
+```
+::
+
+### 2. Create `content.config.ts` file
 
 This configuration file define your data structure. A collection represents a set of related items. In the case of the docs starter, there is two different collections, the `landing` collection representing the home page, one for the landing page and another for the doc pages.
 
@@ -71,7 +91,7 @@ On top of the built-in fields provided by the [`page`](/docs/collections/types#p
 The `type: page` means there is a 1-to-1 relationship between the content file and a page on your site.
 ::
 
-### 2. Migrate `app.vue`
+### 3. Migrate `app.vue`
 
 ::prose-steps{level="4"}
 #### Navigation fetch can be updated by moving from `fetchContentNavigation` to `queryCollectionNavigation` method.
@@ -105,7 +125,7 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
   :::
 ::
 
-### 3. Migrate landing page
+### 4. Migrate landing page
 
 ::prose-steps{level="4"}
 #### Home page data fetching can be updated by moving from `queryContent` to `queryCollection` method.
@@ -136,7 +156,7 @@ useSeoMeta({
   :::
 ::
 
-### 4. Migrate catch-all docs page
+### 5. Migrate catch-all docs page
 
 ::prose-steps{level="4"}
 #### Docs page data and surround fetching can be updated and mutualised by moving from `queryContent` to `queryCollection` and `queryCollectionItemSurroundings` methods.
@@ -183,7 +203,7 @@ useSeoMeta({
   :::
 ::
 
-### 5. Update types and replace
+### 6. Update types
 
 Types have been significantly enhanced in Content v3, eliminating the need for most manual typings, as they are now directly provided by the Nuxt Content APIs.
 
@@ -195,11 +215,11 @@ import type { ContentNavigationItem } from '@nuxt/content'
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 ```
 
-### 6. Replace folder metadata files
+### 7. Replace folder metadata files
 
 All `_dir.yml` files become `.navigation.yml`
 
-### 7. Studio integration
+### 8. Migrate Studio activation
 
 Since the [studio module]() has been deprecated and a new generic preview API has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependancies and from the `nuxt.config.ts` modules.
 
@@ -220,3 +240,115 @@ Finally, in order to keep the [app config file updatable](/docs/studio/config) f
 ::prose-tip
 That's it, content v3 is now powering the starter. Let's now migrate to the version 3 of [UI / UIPro](https://ui3.nuxt.dev).
 ::
+
+## UIPro Migration (v1 → v3)
+
+::prose-caution
+This is a migration case, it won't cover all breaking changes introduced by the version upgrade.
+::
+
+### 1. Setup package to v3
+
+::prose-note
+To maintain consistency with the UI versioning, which transitioned from v1 to v2. The UIPro version 2 is being skipped, and the update jumps directly to v3.
+::
+
+::prose-steps{level="4"}
+#### Install the Nuxt UI v3 alpha package
+
+  :::code-group{sync="pm"}
+  ```bash [pnpm]
+  pnpm add @nuxt/ui-pro@next
+  ```
+  
+  ```bash [yarn]
+  yarn add @nuxt/ui-pro@next
+  ```
+  
+  ```bash [npm]
+  npm install @nuxt/ui-pro@next
+  ```
+  
+  ```bash [bun]
+  bun add @nuxt/ui-pro@next
+  ```
+  :::
+
+#### Add the module in the Nuxt configuration file
+
+  :::prose-code-group
+  ```ts [nuxt.config.ts (v1)]
+  export default defineNuxtConfig({
+    extends: ['@nuxt/ui-pro']
+  })
+  ```
+  
+  ```ts [nuxt.config.ts (v3)]
+  export default defineNuxtConfig({
+    modules: ['@nuxt/ui-pro']
+  })
+  ```
+  :::
+
+  :::prose-note
+  **UIPro V3** is now considered as a module and no more as a layer.
+  :::
+
+#### Import Tailwind CSS and Nuxt UI Pro in your CSS
+
+```css [assets/css/main.css]
+@import "tailwindcss";
+@import "@nuxt/ui-pro";
+```
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  modules: ['@nuxt/ui-pro'],
+  css: ['~/assets/css/main.css']
+})
+```
+::
+
+### 2. Update existing `ui` overrides in `app.config.ts`
+
+::prose-caution{to="https://ui3.nuxt.dev/getting-started/theme#customize-theme"}
+All overrides using the `ui` props in a component or the `ui` key in the `app.config.ts` are obsolete and need to be check in the **UI / UI Pro** documentation.
+::
+
+::prose-code-group
+```ts [app.config.ts (v1)]
+export default defineAppConfig({
+  ui: {
+    primary: 'green',
+    gray: 'slate',
+    footer: {
+      bottom: {
+        left: 'text-sm text-gray-500 dark:text-gray-400',
+        wrapper: 'border-t border-gray-200 dark:border-gray-800'
+      }
+    }
+  },
+})
+```
+
+```ts [app.config.ts (v2)]
+export default defineAppConfig({
+  ui: {
+    colors: {
+      primary: 'green',
+      neutral: 'slate'
+    }
+  },
+  uiPro: {
+    footer: {
+      slots: {
+        root: 'border-t border-gray-200 dark:border-gray-800',
+        left: 'text-sm text-gray-500 dark:text-gray-400'
+      }
+    }
+  },
+}
+```
+::
+
+###
