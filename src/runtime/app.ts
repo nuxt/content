@@ -32,7 +32,6 @@ export async function queryCollectionSearchSections(collection: keyof Collection
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event, collection: T, sql: string) {
-  console.log('event', !!event, event ? event?.context?.cloudflare : false)
   if (import.meta.client) {
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }
