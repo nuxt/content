@@ -1,4 +1,5 @@
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
+import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
@@ -14,7 +15,8 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(collection, sql))
+  const event = tryUseNuxtApp()?.ssrContext?.event
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
@@ -29,12 +31,13 @@ export async function queryCollectionSearchSections(collection: keyof Collection
   return generateSearchSections(queryCollection(collection), opts)
 }
 
-async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
+async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event, collection: T, sql: string) {
+  console.log('event', !!event, event ? event?.context?.cloudflare : false)
   if (import.meta.client) {
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }
   else {
-    return fetchQuery(tryUseNuxtApp()?.ssrContext?.event, String(collection), sql) as Promise<Result[]>
+    return fetchQuery(event, String(collection), sql) as Promise<Result[]>
   }
 }
 
