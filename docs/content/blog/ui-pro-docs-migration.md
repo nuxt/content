@@ -41,20 +41,24 @@ export default defineContentConfig({
       type: 'page',
       source: 'docs/**',
       schema: z.object({
+        toc: z.boolean().optional(),
         headline: z.string().optional(),
         links: z.array(z.object({
           label: z.string(),
           icon: z.string(),
           to: z.string(),
-          target: z.string().optional(),
-        })).optional(),
-      }),
-    }),
+          target: z.string().optional()
+        })).optional()
+      })
+    })
   }
 })
 ```
 
-On top of the built-in fields provided by the [`page`](/docs/collections/types#page-type) type, the `docs` collection needs extra fields representing `headline` and `links` that can be optionally display in the docs [page header](https://ui3.nuxt.dev/components/page-header).
+On top of the built-in fields provided by the [`page`](/docs/collections/types#page-type) type, the `docs` collection needs extra fields:
+
+- `headline` and `links` are strings that can be optionally display in the docs [page header](https://ui3.nuxt.dev/components/page-header)
+- `toc` is a boolean used to toggle the display of the [table of content](https://ui3.nuxt.dev/components/page#within-a-page) on the page
 
 ::prose-tip
 The `type: page` means there is a 1-to-1 relationship between the content file and a page on your site.
