@@ -92,7 +92,6 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
         const existed = nav.find(item => item.path === navItem.path && item.page === false)
         if (isIndex && existed) {
           Object.assign(existed, {
-            ...navItem,
             page: undefined,
             children: [
               ...navItem.children,

@@ -261,9 +261,9 @@ describe('generateNavigationTree', () => {
     const tree = await generateNavigationTree(mockQueryBuilder(items))
     expect(tree).toMatchObject([
       {
-        title: 'index',
+        title: 'Devenir Benevole',
         path: '/devenir-benevole',
-        stem: 'devenir-benevole/index',
+        stem: 'devenir-benevole',
         children: [
           {
             title: 'bourg-en-bresse',
@@ -329,6 +329,47 @@ describe('generateNavigationTree', () => {
           },
         ],
         page: false,
+      },
+    ])
+  })
+
+  it('index file in directory 3', async () => {
+    const items = [
+      {
+        title: 'Title from `.navigation.yml` file',
+        path: '/devenir-benevole/navigation',
+        stem: 'devenir-benevole/.navigation',
+      },
+      {
+        title: 'bourg-en-bresse',
+        path: '/devenir-benevole/bourg-en-bresse',
+        stem: 'devenir-benevole/bourg-en-bresse',
+      },
+      {
+        title: 'index',
+        path: '/devenir-benevole',
+        stem: 'devenir-benevole/index',
+      },
+    ] as Array<PageCollectionItemBase & { customField: string }>
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+    expect(tree).toMatchObject([
+      {
+        title: 'Title from `.navigation.yml` file',
+        path: '/devenir-benevole',
+        stem: 'devenir-benevole',
+        children: [
+          {
+            title: 'bourg-en-bresse',
+            path: '/devenir-benevole/bourg-en-bresse',
+            stem: 'devenir-benevole/bourg-en-bresse',
+          },
+          {
+            title: 'index',
+            path: '/devenir-benevole',
+            stem: 'devenir-benevole/index',
+          },
+        ],
       },
     ])
   })
