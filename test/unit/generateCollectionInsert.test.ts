@@ -82,7 +82,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[1]).toBe([
       `UPDATE ${getTableName('content')}`,
       ' SET',
-      ' content = \'b' + 'c'.repeat(50000) + '\'',
+      ' content = CONCAT(content, \'b' + 'c'.repeat(50000) + '\')',
       ' WHERE id = \'foo.md\';',
     ].join(''))
   })
