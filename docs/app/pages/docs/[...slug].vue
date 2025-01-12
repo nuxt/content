@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageHeadline } from '#ui-pro/utils/content'
 
 const route = useRoute()
-const navigation = inject('navigation')
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 definePageMeta({
   layout: 'docs',
@@ -22,9 +23,9 @@ if (!data.value || !data.value.page) {
 
 const page = computed(() => data.value?.page)
 const surround = computed(() => data.value?.surround)
-const title = computed(() => page.value?.navigation?.title || page.value?.title)
+const title = computed(() => (page.value?.navigation as { title: string })?.title || page.value?.title)
 
-const headline = computed(() => findPageHeadline(navigation.value, page.value))
+const headline = computed(() => findPageHeadline(navigation!.value, page.value))
 
 useSeoMeta({
   titleTemplate: '%s - Nuxt Content v3',
