@@ -244,7 +244,7 @@ That's it, content v3 is now powering the starter. Let's now migrate to the vers
 ## UIPro Migration (v1 → v3)
 
 ::prose-caution
-This is a migration case, it won't cover all breaking changes introduced by the version upgrade.
+This is a migration case, it won't cover all breaking changes introduced by the version upgrade. You should check each component you're using in the documentation to know if you need updates concerning props, slots or styles.
 ::
 
 ### 1. Setup package to v3
@@ -351,4 +351,99 @@ export default defineAppConfig({
 ```
 ::
 
-###
+### 3. Migrate `app.vue`
+
+- `Main`, `Footer` and `LazyUContentSearch` components do not need any updates in our case.
+- `Notification` component can be removed since `Toast` components are directly handled by the `App` component.
+- `Header` component needs updates since `panel` slot has been replaced by `content` slot.
+- Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
+
+::prose-code-group
+```vue [header.vue (v1)]
+<script>
+// Content navigation provided by fetchContentNavigation()
+const navigation = inject<Ref<NavItem[]>>('navigation')
+</script>
+
+<template>
+  <UHeader>
+    <template #panel>
+      <UNavigationTree :links="mapContentNavigation(navigation)" />
+     </template>
+   </UHeader>
+</template>
+```
+
+```vue [header.vue (v3)]
+<script>
+// Content navigation provided by queryCollectionNavigation('docs')
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+</script>
+
+<template>
+  <UHeader>
+    <template #content>
+      <UContentNavigation
+        highlight
+        :navigation="navigation"
+      />
+     </template>
+   </UHeader>
+</template>
+```
+::
+
+### 4. Migrate `docs` layout
+
+- `Aside` component has been renamed to `PageAside` .
+- `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
+
+::prose-code-group
+```vue [layout/docs.vue (v1)]
+<template>
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UAside>
+          <UNavigationTree :links="mapContentNavigation(navigation)" />
+        </UAside>
+      </template>
+
+      <slot />
+    </UPage>
+  </UContainer>
+</template>
+```
+
+```vue [layout/docs.vue (v3)]
+<template>
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UPageAside>
+          <UContentNavigation
+            highlight
+            :navigation="navigation"
+          />
+        </UPageAside>
+      </template>
+
+      <slot />
+    </UPage>
+  </UContainer>
+</template>
+```
+::
+
+### 5. Update landing page
+
+We've decided to move the landing content from `YML` to `Markdown` .
+
+::prose-tip
+This decision was made because components used in Markdown no longer need to be exposed globally (nor do they need to be created in the `components/content` folder). Content v3 handles it under the hood.
+::
+
+All landing components have been reorganised and standardised as generic `Page` components:
+
+- `LandingHero` => `PageHero`
+- `LandingSection` => `PageSection`
