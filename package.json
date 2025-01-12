@@ -105,7 +105,7 @@
     "@nuxt/kit": "^3.15.1",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.15.1",
-    "@nuxt/test-utils": "^3.15.1",
+    "@nuxt/test-utils": "^3.15.4",
     "@release-it/conventional-changelog": "^10.0.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/bun": "^1.1.16",
@@ -115,14 +115,14 @@
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.17.0",
+    "eslint": "^9.18.0",
     "mdclint": "^0.0.2",
     "micromark-util-types": "^2.0.1",
     "nuxt": "^3.15.1",
     "release-it": "^18.1.1",
     "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0",
-    "wrangler": "^3.100.0"
+    "wrangler": "^3.101.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
