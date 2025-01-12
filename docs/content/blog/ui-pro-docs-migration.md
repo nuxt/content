@@ -307,12 +307,44 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css']
 })
 ```
+
+#### Remove tailwind config file and use CSS-first theming
+
+Nuxt UI v3 uses Tailwind CSS v4 that follows a CSS-first configuration approach, you can now customize your theme with CSS variables inside a `@theme` directive.
+
+- Delete the `tailwind.config.ts` file
+- Use the `@theme` directive to apply your theme in `main.css` file
+- Use the `@source` directive in order for Tailwind to detect classes in `markdown` files.
+
+```css [assets/css/main.css]
+@import "tailwindcss";
+@import "@nuxt/ui-pro";
+
+@source "../content/**/*";
+
+@theme {
+  --font-sans: 'DM Sans', sans-serif;
+
+  --color-green-50: #EFFDF5;
+  --color-green-100: #D9FBE8;
+  --color-green-200: #B3F5D1;
+  --color-green-300: #75EDAE;
+  --color-green-400: #00DC82;
+  --color-green-500: #00C16A;
+  --color-green-600: #00A155;
+  --color-green-700: #007F45;
+  --color-green-800: #016538;
+  --color-green-900: #0A5331;
+  --color-green-950: #052E16;
+}
+
+```
 ::
 
-### 2. Update existing `ui` overrides in `app.config.ts`
+### 2. Update `ui` overloads in `app.config.ts`
 
 ::prose-caution{to="https://ui3.nuxt.dev/getting-started/theme#customize-theme"}
-All overrides using the `ui` props in a component or the `ui` key in the `app.config.ts` are obsolete and need to be check in the **UI / UI Pro** documentation.
+All overloads using the `ui` props in a component or the `ui` key in the `app.config.ts` are obsolete and need to be check in the **UI / UI Pro** documentation.
 ::
 
 ::prose-code-group
@@ -355,7 +387,10 @@ export default defineAppConfig({
 
 - `Main`, `Footer` and `LazyUContentSearch` components do not need any updates in our case.
 - `Notification` component can be removed since `Toast` components are directly handled by the `App` component.
-- `Header` component needs updates since `panel` slot has been replaced by `content` slot.
+- `Header` component needs updates:
+  - `panel` slot has been replaced by `content`.
+  - `logo` slot has been replaced by `title`.
+  - `center` slot has been removed and is now the default.
 - Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
 
 ::prose-code-group
@@ -393,49 +428,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 ```
 ::
 
-### 4. Migrate `docs` layout
-
-- `Aside` component has been renamed to `PageAside` .
-- `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
-
-::prose-code-group
-```vue [layout/docs.vue (v1)]
-<template>
-  <UContainer>
-    <UPage>
-      <template #left>
-        <UAside>
-          <UNavigationTree :links="mapContentNavigation(navigation)" />
-        </UAside>
-      </template>
-
-      <slot />
-    </UPage>
-  </UContainer>
-</template>
-```
-
-```vue [layout/docs.vue (v3)]
-<template>
-  <UContainer>
-    <UPage>
-      <template #left>
-        <UPageAside>
-          <UContentNavigation
-            highlight
-            :navigation="navigation"
-          />
-        </UPageAside>
-      </template>
-
-      <slot />
-    </UPage>
-  </UContainer>
-</template>
-```
-::
-
-### 5. Update landing page
+### 4. Migrate landing page
 
 We've decided to move the landing content from `YML` to `Markdown` .
 
@@ -443,7 +436,179 @@ We've decided to move the landing content from `YML` to `Markdown` .
 This decision was made because components used in Markdown no longer need to be exposed globally (nor do they need to be created in the `components/content` folder). Content v3 handles it under the hood.
 ::
 
-All landing components have been reorganised and standardised as generic `Page` components:
+::prose-steps{level="4"}
+#### Update content configuration
+
+```ts [content.config.ts]
+export default defineContentConfig({
+  collections: {
+    landing: defineCollection({
+      type: 'page',
+      source: 'index.md'
+    }),
+    docs: defineCollection({
+      type: 'page',
+      source: {
+        include: '**',
+        exclude: ['index.md']
+      },
+      ...  
+    })
+  }
+})
+```
+
+#### Use `ContentRenderer` to render `Markdown`
+
+  :::prose-note
+  `prose` property must be set to `false` in `ContentRendered` as we don't want `Mardown` to be applied with prose styling in the case of a landing page integrating non prose Vue components.
+  :::
+
+  :::prose-code-group
+  ```vue [index.vue (v1)]
+  <template>
+    <div>
+      <ULandingHero
+        v-if="page.hero"
+        v-bind="page.hero"
+      >
+        <template #headline>
+          <UBadge
+            v-if="page.hero.headline"
+            variant="subtle"
+            size="lg"
+            class="relative rounded-full font-semibold"
+          >
+            <NuxtLink
+              :to="page.hero.headline.to"
+              target="_blank"
+              class="focus:outline-none"
+              tabindex="-1"
+            >
+              <span
+                class="absolute inset-0"
+                aria-hidden="true"
+              />
+            </NuxtLink>
+  
+            {{ page.hero.headline.label }}
+  
+            <UIcon
+              v-if="page.hero.headline.icon"
+              :name="page.hero.headline.icon"
+              class="ml-1 w-4 h-4 pointer-events-none"
+            />
+          </UBadge>
+        </template>
+  
+        <template #title>
+          <MDC :value="page.hero.title" />
+        </template>
+  
+        <MDC
+          :value="page.hero.code"
+          class="prose prose-primary dark:prose-invert mx-auto"
+        />
+      </ULandingHero>
+  
+      <ULandingSection
+        :title="page.features.title"
+        :links="page.features.links"
+      >
+        <UPageGrid>
+          <ULandingCard
+            v-for="(item, index) of page.features.items"
+            :key="index"
+            v-bind="item"
+          />
+        </UPageGrid>
+      </ULandingSection>
+    </div>
+  </template>
+  ```
+  
+  ```vue [index.vue (v3)]
+  <template>
+    <UContainer>
+      <ContentRenderer
+        v-if="page"
+        :value="page"
+        :prose="false"
+      />
+    </UContainer>
+  </template>
+  ```
+  :::
+
+#### Migrate Vue components to MDC
+
+Move all components in `index.md` following the [MDC syntax](/docs/files/markdown).
+
+Landing components have been reorganised and standardised as generic `Page` components.
 
 - `LandingHero` => `PageHero`
 - `LandingSection` => `PageSection`
+- `LandingCard` => `PageCard` (we'll use the `PageFeature` instead)
+
+  :::prose-tip{to="https://github.com/nuxt-ui-pro/docs/blob/v3/content/index.md"}
+  Have a look at the final `Markdown` result on GitHub.
+  :::
+::
+
+### 4. Migrate docs page
+
+::prose-steps{level="4"}
+#### Layout
+
+- `Aside` component has been renamed to `PageAside` .
+- `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
+
+  :::prose-code-group
+  ```vue [layout/docs.vue (v1)]
+  <template>
+    <UContainer>
+      <UPage>
+        <template #left>
+          <UAside>
+            <UNavigationTree :links="mapContentNavigation(navigation)" />
+          </UAside>
+        </template>
+  
+        <slot />
+      </UPage>
+    </UContainer>
+  </template>
+  ```
+  
+  ```vue [layout/docs.vue (v3)]
+  <template>
+    <UContainer>
+      <UPage>
+        <template #left>
+          <UPageAside>
+            <UContentNavigation
+              highlight
+              :navigation="navigation"
+            />
+          </UPageAside>
+        </template>
+  
+        <slot />
+      </UPage>
+    </UContainer>
+  </template>
+  ```
+  :::
+
+#### Catch-all pages
+
+- `Divider` has been renamed in `Separator`
+- `FindPageHeadline` must be imported from `#ui-pro/utils/content`
+- `prose` property does not exist no more on `PageBody` component.
+::
+
+::prose-tip{to="https://github.com/nuxt-ui-pro/docs/tree/v3"}
+That's it! The docs starter is now fully running on both UI and Content v3 🎉 You can have a check at the source code on GitHub.
+::
+
+## Bonus: Edit on Studio
