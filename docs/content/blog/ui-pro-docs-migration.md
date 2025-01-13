@@ -571,7 +571,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
 - `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
 
   :::prose-code-group
-  ```vue [layout/docs.vue (v1)]
+  ```vue [docs.vue (v1)]
   <template>
     <UContainer>
       <UPage>
@@ -587,7 +587,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
   </template>
   ```
 
-  ```vue [layout/docs.vue (v3)]
+  ```vue [docs.vue (v3)]
   <template>
     <UContainer>
       <UPage>
