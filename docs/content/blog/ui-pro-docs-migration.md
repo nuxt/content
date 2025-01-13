@@ -570,42 +570,42 @@ Landing components have been reorganised and standardised as generic `Page` comp
 - `Aside` component has been renamed to `PageAside` .
 - `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
 
-  :::prose-code-group
-  ```vue [docs.vue (v1)]
-  <template>
-    <UContainer>
-      <UPage>
-        <template #left>
-          <UAside>
-            <UNavigationTree :links="mapContentNavigation(navigation)" />
-          </UAside>
-        </template>
+:::prose-code-group
+```vue [layout/docs.vue (v1)]
+<template>
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UAside>
+          <UNavigationTree :links="mapContentNavigation(navigation)" />
+        </UAside>
+      </template>
 
-        <slot />
-      </UPage>
-    </UContainer>
-  </template>
-  ```
+      <slot />
+    </UPage>
+  </UContainer>
+</template>
+```
 
-  ```vue [docs.vue (v3)]
-  <template>
-    <UContainer>
-      <UPage>
-        <template #left>
-          <UPageAside>
-            <UContentNavigation
-              highlight
-              :navigation="navigation"
-            />
-          </UPageAside>
-        </template>
+```vue [layout/docs.vue (v3)]
+<template>
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UPageAside>
+          <UContentNavigation
+            highlight
+            :navigation="navigation"
+          />
+        </UPageAside>
+      </template>
 
-        <slot />
-      </UPage>
-    </UContainer>
-  </template>
-  ```
-  :::
+      <slot />
+    </UPage>
+  </UContainer>
+</template>
+```
+:::
 
 #### Catch-all pages
 
