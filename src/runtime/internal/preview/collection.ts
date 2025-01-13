@@ -102,7 +102,7 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
     // const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
     const underlyingType = (value as JsonSchema7ObjectType).type
 
-    const defaultValue = value.default ? value.default : 'NULL'
+    const defaultValue = value.default !== undefined ? value.default : 'NULL'
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
 
     fields.push(key)
