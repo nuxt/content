@@ -21,10 +21,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
 
     window.sessionStorage.setItem('previewToken', String(previewToken.value))
-    window.sessionStorage.setItem('previewAPI', (typeof route.query.staging !== 'undefined' && process.env.PREVIEW_STAGING_API)
-      ? process.env.PREVIEW_STAGING_API
-      : previewConfig.api,
-    )
+    // @ts-expect-error not exposed in runtimeConfig
+    window.sessionStorage.setItem('previewAPI', (typeof route.query.staging !== 'undefined' && previewConfig.stagingApi) ? previewConfig.stagingApi : previewConfig.api)
 
     // Disable prerendering for preview
     const manifest = await getAppManifest()

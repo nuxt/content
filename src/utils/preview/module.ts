@@ -18,12 +18,17 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
   const previewOptions = options.preview!
 
   const { resolve } = resolver
-  const api = process.env.PREVIEW_API || previewOptions.api
+  const api = process.env.NUXT_CONTENT_PREVIEW_API || previewOptions.api
   const iframeMessagingAllowedOrigins = process.env.PREVIEW_ALLOWED_ORIGINS
   const gitInfo = previewOptions.gitInfo || await getLocalGitInfo(nuxt.options.rootDir) || getGitEnv() || {} as GitInfo
 
   // Public runtimeConfig
   nuxt.options.runtimeConfig.public.preview = { api, iframeMessagingAllowedOrigins }
+
+  if (process.env.NUXT_CONTENT_PREVIEW_STAGING_API) {
+    // @ts-expect-error do not exposed it in runtimeConfig
+    nuxt.options.runtimeConfig.public.preview.stagingApi = process.env.NUXT_CONTENT_PREVIEW_STAGING_API
+  }
 
   nuxt.hook('schema:resolved', (schema: Schema) => {
     // Add preview templates once schema is resolved

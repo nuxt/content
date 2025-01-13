@@ -217,7 +217,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Handle preview mode
-    if (process.env.PREVIEW_API || options.preview?.api) {
+    if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
       // Only enable preview in production build or when explicitly enabled
       if (nuxt.options.dev === true && !options.preview?.dev) {
         return
