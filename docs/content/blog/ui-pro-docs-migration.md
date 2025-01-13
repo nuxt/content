@@ -191,7 +191,7 @@ useSeoMeta({
   ```
   :::
 
-#### `useSeoMeta` can be populated using the `seo` field provided by the [page](/docs/collections/types#page-type) type
+#### Populate `useSeoMeta` with the `seo` field provided by the [page](/docs/collections/types#page-type) type
 
 ```ts [index.vue]
 useSeoMeta({
@@ -388,7 +388,7 @@ export default defineAppConfig({
 ```
 ::
 
-### 3. Migrate `app.vue`
+### 3. Update `app.vue`
 
 - `Main`, `Footer` and `LazyUContentSearch` components do not need any updates in our case.
 - `Notification` component can be removed since `Toast` components are directly handled by the `App` component.
@@ -433,7 +433,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 ```
 ::
 
-### 4. Migrate landing page
+### 4. Update landing page
 
 We've decided to move the landing content from `YML` to `Markdown` .
 
