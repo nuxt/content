@@ -195,7 +195,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     return [
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
         .replace(/\?/g, () => values[index++] as string),
-      `UPDATE ${collection.tableName} SET ${bigColumnName} = ${part2} WHERE id = ${values[0]};`,
+      `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${part2}) WHERE id = ${values[0]};`,
     ]
   }
 
