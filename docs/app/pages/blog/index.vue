@@ -8,7 +8,12 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts').where('path', 'LIKE', '/blog%').order('date', 'DESC').all())
+const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts')
+  .where('path', 'LIKE', '/blog%')
+  .where('draft', '=', 0)
+  .order('date', 'DESC')
+  .all(),
+)
 
 useSeoMeta({
   title: page.value.seo?.title,

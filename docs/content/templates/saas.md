@@ -14,6 +14,7 @@ owner: nuxt-ui-pro
 image1: /templates/saas-1.webp
 image2: /templates/saas-2.webp
 image3: /templates/saas-3.webp
+draft: true
 ---
 
 ::template-core

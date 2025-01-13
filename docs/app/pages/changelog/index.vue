@@ -16,7 +16,12 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts').where('path', 'LIKE', '/changelog%').order('date', 'DESC').all())
+const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts')
+  .where('path', 'LIKE', '/changelog%')
+  .where('draft', '=', 0)
+  .order('date', 'DESC')
+  .all(),
+)
 
 useSeoMeta({
   title: page.value.seo?.title,

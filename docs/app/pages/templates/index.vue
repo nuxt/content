@@ -6,7 +6,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: templates } = await useAsyncData('templates', () => queryCollection('templates').all())
+const { data: templates } = await useAsyncData('templates', () => queryCollection('templates').where('draft', '=', 0).all())
 
 useSeoMeta({
   title: page.value.seo?.title,

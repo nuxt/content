@@ -12,6 +12,7 @@ authors:
     username: larbish
 date: 2025-01-07T01:00:00.000Z
 category: Migration
+draft: true
 ---
 
 # Migrate to Content x UI v3
@@ -94,20 +95,21 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 ### 3. Migrate `app.vue`
 
 ::prose-steps{level="4"}
-#### Navigation fetch can be updated by moving from `fetchContentNavigation` to `queryCollectionNavigation` method.
+
+#### Navigation fetch can be updated by moving from `fetchContentNavigation` to `queryCollectionNavigation` method
 
   :::prose-code-group
   ```ts [app.vue (v2)]
   const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
   ```
-  
+
   ```ts [app.vue (v3)]
   const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
-  
+
   ```
   :::
 
-#### Content search command palette data can use the new `queryCollectionSearchSections` method.
+#### Content search command palette data can use the new `queryCollectionSearchSections` method
 
   :::prose-code-group
   ```ts [app.vue (v2)]
@@ -116,7 +118,7 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
     server: false
   })
   ```
-  
+
   ```ts [app.vue (v3)]
   const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
     server: false,
@@ -128,19 +130,20 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 ### 4. Migrate landing page
 
 ::prose-steps{level="4"}
-#### Home page data fetching can be updated by moving from `queryContent` to `queryCollection` method.
+
+#### Home page data fetching can be updated by moving from `queryContent` to `queryCollection` method
 
   :::prose-code-group
   ```ts [index.vue (v2)]
   const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
   ```
-  
+
   ```ts [index.vue (v3)]
   const { data: page } = await useAsyncData('index', () => queryCollection('landing').path('/').first())
   ```
   :::
 
-#### `useSeoMeta` can be populated using the `seo` field provided by the [page](/docs/collections/types#page-type) type.
+#### `useSeoMeta` can be populated using the `seo` field provided by the [page](/docs/collections/types#page-type) type
 
 ```ts [index.vue]
 useSeoMeta({
@@ -159,19 +162,20 @@ useSeoMeta({
 ### 5. Migrate catch-all docs page
 
 ::prose-steps{level="4"}
-#### Docs page data and surround fetching can be updated and mutualised by moving from `queryContent` to `queryCollection` and `queryCollectionItemSurroundings` methods.
+
+#### Docs page data and surround fetching can be updated and mutualised by moving from `queryContent` to `queryCollection` and `queryCollectionItemSurroundings` methods
 
   :::prose-code-group
   ```ts [docs/[...slug\\].vue (v2)]
   const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-  
+
   const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent()
     .where({ _extension: 'md', navigation: { $ne: false } })
     .only(['title', 'description', '_path'])
     .findSurround(withoutTrailingSlash(route.path))
   )
   ```
-  
+
   ```ts [docs/[...slug\\].vue (v3)]
   const { data } = await useAsyncData(route.path, () => Promise.all([
     queryCollection('docs').path(route.path).first(),
@@ -181,13 +185,13 @@ useSeoMeta({
   ]), {
     transform: ([page, surround]) => ({ page, surround }),
   })
-  
+
   const page = computed(() => data.value?.page)
   const surround = computed(() => data.value?.surround)
   ```
   :::
 
-#### `useSeoMeta` can be populated using the `seo` field provided by the [page](/docs/collections/types#page-type) type.
+#### `useSeoMeta` can be populated using the `seo` field provided by the [page](/docs/collections/types#page-type) type
 
 ```ts [index.vue]
 useSeoMeta({
@@ -221,7 +225,7 @@ All `_dir.yml` files become `.navigation.yml`
 
 ### 8. Migrate Studio activation
 
-Since the [studio module]() has been deprecated and a new generic preview API has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependancies and from the `nuxt.config.ts` modules.
+Since the [studio module](https://nuxtlabs/studio-module) has been deprecated and a new generic preview API has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependancies and from the `nuxt.config.ts` modules.
 
 Instead we just need to enable the preview mode in the Nuxt configuration file by binding the Studio API.
 
@@ -254,21 +258,22 @@ To maintain consistency with the UI versioning, which transitioned from v1 to v2
 ::
 
 ::prose-steps{level="4"}
+
 #### Install the Nuxt UI v3 alpha package
 
   :::code-group{sync="pm"}
   ```bash [pnpm]
   pnpm add @nuxt/ui-pro@next
   ```
-  
+
   ```bash [yarn]
   yarn add @nuxt/ui-pro@next
   ```
-  
+
   ```bash [npm]
   npm install @nuxt/ui-pro@next
   ```
-  
+
   ```bash [bun]
   bun add @nuxt/ui-pro@next
   ```
@@ -282,7 +287,7 @@ To maintain consistency with the UI versioning, which transitioned from v1 to v2
     extends: ['@nuxt/ui-pro']
   })
   ```
-  
+
   ```ts [nuxt.config.ts (v3)]
   export default defineNuxtConfig({
     modules: ['@nuxt/ui-pro']
@@ -437,6 +442,7 @@ This decision was made because components used in Markdown no longer need to be 
 ::
 
 ::prose-steps{level="4"}
+
 #### Update content configuration
 
 ```ts [content.config.ts]
@@ -452,7 +458,7 @@ export default defineContentConfig({
         include: '**',
         exclude: ['index.md']
       },
-      ...  
+      ...
     })
   }
 })
@@ -490,9 +496,9 @@ export default defineContentConfig({
                 aria-hidden="true"
               />
             </NuxtLink>
-  
+
             {{ page.hero.headline.label }}
-  
+
             <UIcon
               v-if="page.hero.headline.icon"
               :name="page.hero.headline.icon"
@@ -500,17 +506,17 @@ export default defineContentConfig({
             />
           </UBadge>
         </template>
-  
+
         <template #title>
           <MDC :value="page.hero.title" />
         </template>
-  
+
         <MDC
           :value="page.hero.code"
           class="prose prose-primary dark:prose-invert mx-auto"
         />
       </ULandingHero>
-  
+
       <ULandingSection
         :title="page.features.title"
         :links="page.features.links"
@@ -526,7 +532,7 @@ export default defineContentConfig({
     </div>
   </template>
   ```
-  
+
   ```vue [index.vue (v3)]
   <template>
     <UContainer>
@@ -558,6 +564,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
 ### 4. Migrate docs page
 
 ::prose-steps{level="4"}
+
 #### Layout
 
 - `Aside` component has been renamed to `PageAside` .
@@ -573,13 +580,13 @@ Landing components have been reorganised and standardised as generic `Page` comp
             <UNavigationTree :links="mapContentNavigation(navigation)" />
           </UAside>
         </template>
-  
+
         <slot />
       </UPage>
     </UContainer>
   </template>
   ```
-  
+
   ```vue [layout/docs.vue (v3)]
   <template>
     <UContainer>
@@ -592,7 +599,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
             />
           </UPageAside>
         </template>
-  
+
         <slot />
       </UPage>
     </UContainer>

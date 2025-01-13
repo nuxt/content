@@ -136,6 +136,7 @@ export default defineContentConfig({
       type: 'page',
       source: 'templates/*.md',
       schema: z.object({
+        draft: z.boolean().default(false),
         slug: z.string(),
         subtitle: z.string(),
         baseDir: z.string(),
@@ -155,6 +156,7 @@ export default defineContentConfig({
       type: 'page',
       source: [{ include: 'blog/*.md' }, { include: 'changelog/*.md' }],
       schema: z.object({
+        draft: z.boolean().default(false),
         authors: z.array(z.object({
           slug: z.string(),
           username: z.string(),
