@@ -266,7 +266,7 @@ export interface ContentQueryBuilderParams {
   only?: string[]
   without?: string[]
   sort?: ContentQuerySortOptions[]
-  where?: ContentQueryBuilderWhere[]
+  where?: ContentQueryBuilderWhere[] | ContentQueryBuilderWhere
   surround?: {
     query: string | ContentQueryBuilderWhere
     before?: number
