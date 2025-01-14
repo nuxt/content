@@ -1,14 +1,21 @@
 import { describe, it, expect } from 'vitest'
-import type { PageCollectionItemBase } from '@nuxt/content'
+import type { CollectionQueryBuilder, PageCollectionItemBase } from '@nuxt/content'
 import { generateNavigationTree } from '../../src/runtime/internal/navigation'
 
 describe('generateNavigationTree', () => {
   const mockQueryBuilder = (items: PageCollectionItemBase[]) => ({
-    order: () => mockQueryBuilder(items),
+    order: (field: keyof PageCollectionItemBase, direction: 'ASC' | 'DESC') => {
+      return mockQueryBuilder(items.sort((a, b) => {
+        if (direction === 'ASC') {
+          return (a[field] as string) < (b[field] as string) ? -1 : 1
+        }
+        return (a[field] as string) > (b[field] as string) ? -1 : 1
+      }))
+    },
     orWhere: () => mockQueryBuilder(items),
     select: () => mockQueryBuilder(items),
     all: async () => items,
-  })
+  } as unknown as CollectionQueryBuilder<PageCollectionItemBase>)
 
   it('should generate a basic navigation tree', async () => {
     const items = [
@@ -95,17 +102,17 @@ describe('generateNavigationTree', () => {
       {
         title: 'Guide',
         path: '/guide',
-        stem: 'guide/index',
+        stem: 'guide',
         children: [
-          {
-            title: 'Getting Started',
-            path: '/guide/getting-started',
-            stem: 'guide/getting-started',
-          },
           {
             title: 'Guide',
             path: '/guide',
             stem: 'guide/index',
+          },
+          {
+            title: 'Getting Started',
+            path: '/guide/getting-started',
+            stem: 'guide/getting-started',
           },
         ],
       },
@@ -266,14 +273,14 @@ describe('generateNavigationTree', () => {
         stem: 'devenir-benevole',
         children: [
           {
-            title: 'bourg-en-bresse',
-            path: '/devenir-benevole/bourg-en-bresse',
-            stem: 'devenir-benevole/bourg-en-bresse',
-          },
-          {
             title: 'index',
             path: '/devenir-benevole',
             stem: 'devenir-benevole/index',
+          },
+          {
+            title: 'bourg-en-bresse',
+            path: '/devenir-benevole/bourg-en-bresse',
+            stem: 'devenir-benevole/bourg-en-bresse',
           },
         ],
       },
@@ -313,14 +320,14 @@ describe('generateNavigationTree', () => {
                 stem: 'devenir-benevole/france/ain/index',
                 children: [
                   {
-                    title: 'bourg-en-bresse',
-                    path: '/devenir-benevole/france/ain/bourg-en-bresse',
-                    stem: 'devenir-benevole/france/ain/bourg-en-bresse',
-                  },
-                  {
                     title: 'index',
                     path: '/devenir-benevole/france/ain',
                     stem: 'devenir-benevole/france/ain/index',
+                  },
+                  {
+                    title: 'bourg-en-bresse',
+                    path: '/devenir-benevole/france/ain/bourg-en-bresse',
+                    stem: 'devenir-benevole/france/ain/bourg-en-bresse',
                   },
                 ],
               },
@@ -360,14 +367,14 @@ describe('generateNavigationTree', () => {
         stem: 'devenir-benevole',
         children: [
           {
-            title: 'bourg-en-bresse',
-            path: '/devenir-benevole/bourg-en-bresse',
-            stem: 'devenir-benevole/bourg-en-bresse',
-          },
-          {
             title: 'index',
             path: '/devenir-benevole',
             stem: 'devenir-benevole/index',
+          },
+          {
+            title: 'bourg-en-bresse',
+            path: '/devenir-benevole/bourg-en-bresse',
+            stem: 'devenir-benevole/bourg-en-bresse',
           },
         ],
       },
