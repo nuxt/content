@@ -66,11 +66,10 @@ watch(() => arrivedState.bottom, () => {
 
 <template>
   <UPage>
-    <NuxtImg
-      src="/page-hero.svg"
-      width="1440"
-      height="400"
-      class="absolute inset-x-0 hidden w-full top-48 xl:top-28 2xl:-mt-24 min-[2000px]:-mt-64 md:block"
+    <UColorModeImage
+      class="absolute w-full"
+      light="/background-hero-light.svg"
+      dark="/background-hero-dark.svg"
       alt="Hero background"
     />
 
