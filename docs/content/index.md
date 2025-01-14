@@ -48,11 +48,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
 ::u-page-section
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-files
-  variant: naked
   ---
   #title{unwrap="p"}
   File-based CMS
@@ -61,11 +59,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Write your content in Markdown, YAML, CSV or JSON and query it in your components.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-filter
-  variant: naked
   ---
   #title{unwrap="p"}
   Query Builder
@@ -74,11 +70,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Query your content with a MongoDB-like API to fetch the right data at the right time.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-database
-  variant: naked
   ---
   #title{unwrap="p"}
   SQLite powered
@@ -87,11 +81,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Add custom fields to your content, making it suitable for various types of projects.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-simple-icons-markdown
-  variant: naked
   ---
   #title{unwrap="p"}
   Markdown with Vue
@@ -100,11 +92,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Use Vue components in Markdown files, with props, slots and nested components.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-list-minus
-  variant: naked
   ---
   #title{unwrap="p"}
   Code highlighting
@@ -113,11 +103,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-mouse-pointer-click
-  variant: naked
   ---
   #title{unwrap="p"}
   Visual Editor
@@ -126,11 +114,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-panel-left
-  variant: naked
   ---
   #title{unwrap="p"}
   Navigation Generation
@@ -139,11 +125,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Generate a structured object from your content files and display a navigation menu in minutes.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-heading-1
-  variant: naked
   ---
   #title{unwrap="p"}
   Prose Components
@@ -152,11 +136,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   Customize HTML typography tags with Vue components to give your content a consistent style.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-globe
-  variant: naked
   ---
   #title{unwrap="p"}
   Deploy everywhere
@@ -250,31 +232,25 @@ Markdown meets [Vue]{.text-[var(--ui-primary)]} components
 We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-list
-  variant: naked
   ---
   #title{unwrap="p"}
   Specify props with frontmatter syntax
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-hash
-  variant: naked
   ---
   #title{unwrap="p"}
   Use components slots with `#`
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-code-xml
-  variant: naked
   ---
   #title{unwrap="p"}
   Add any other html attributes
@@ -343,31 +319,25 @@ Query with [Type-Safety]{.text-[var(--ui-secondary)]}
 Define your content structure with collections and query them with schema validation and full type-safety.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-layout-grid
-  variant: naked
   ---
   #title{unwrap="p"}
   Create collections for similar content files
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-circle-check
-  variant: naked
   ---
   #title{unwrap="p"}
   Define schema for the collection frontmatter
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-text-cursor
-  variant: naked
   ---
   #title{unwrap="p"}
   Get auto-completion in your Vue files
@@ -399,31 +369,25 @@ Let [anyone edit]{.text-[var(--ui-primary)]} your website
 Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editor and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-mouse-pointer-click
-  variant: naked
   ---
   #title{unwrap="p"}
   Visual editor with drag and drop for Markdown
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-file-text
-  variant: naked
   ---
   #title{unwrap="p"}
   Form generation for YML and JSON files
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-simple-icons-google
-  variant: naked
   ---
   #title{unwrap="p"}
   Invite editors to login with Google and publish changes

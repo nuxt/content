@@ -48,11 +48,9 @@ Meet Studio, content edition :br for everyone.
 
 ::u-page-section
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-circle-user
-  variant: naked
   ---
   #title{unwrap="p"}
   GitHub & Google Authentication
@@ -61,11 +59,9 @@ Meet Studio, content edition :br for everyone.
   Personalized workspace for each role: developers, writers, and clients.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-file-pen
-  variant: naked
   ---
   #title{unwrap="p"}
   Easy content updates
@@ -74,11 +70,9 @@ Meet Studio, content edition :br for everyone.
   From Markdown to YAML edition, our visual editor is designed for non technical users.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-users
-  variant: naked
   ---
   #title{unwrap="p"}
   Real-time Collaboration
@@ -87,11 +81,9 @@ Meet Studio, content edition :br for everyone.
   Write as a team in real-time with our collaboration features.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-sparkles
-  variant: naked
   ---
   #title{unwrap="p"}
   From Code to Edition
@@ -100,11 +92,9 @@ Meet Studio, content edition :br for everyone.
   Developers build the foundation while writers can safely edit the content.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-panels-top-left
-  variant: naked
   ---
   #title{unwrap="p"}
   Review before publishing
@@ -113,11 +103,9 @@ Meet Studio, content edition :br for everyone.
   Review your changes before making them live on your website.
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-mouse-pointer-click
-  variant: naked
   ---
   #title{unwrap="p"}
   Ready-to-use Templates
@@ -183,31 +171,25 @@ Developers create the [editing experience]{.text-[var(--ui-primary)]}
 Developers build the foundation their way: custom components, media library, and site configuration.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-settings-2
-  variant: naked
   ---
   #title{unwrap="p"}
   Customizable and editable Vue components
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-simple-icons-markdown
-  variant: naked
   ---
   #title{unwrap="p"}
   Edit your Markdown with our visual editor
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-brush
-  variant: naked
   ---
   #title{unwrap="p"}
   Edit your app.config visually
@@ -239,31 +221,25 @@ Let [anyone edit]{.text-[var(--ui-primary)]} your Nuxt Content website
 Teams and clients get a powerful visual editor for content management, from text edition to media management - all without touching code.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-mouse-pointer-click
-  variant: naked
   ---
   #title{unwrap="p"}
   Visual editor with drag and drop for Markdown
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-file-text
-  variant: naked
   ---
   #title{unwrap="p"}
   Form generation for `YML` and `JSON` files
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-image
-  variant: naked
   ---
   #title{unwrap="p"}
   Manage all your medias in one place
@@ -289,31 +265,25 @@ orientation: horizontal
 Edit content as a team and see your site come to life with live preview. From text editing to component updates, every change reflects your final website design. Experience seamless content creation without delays or manual refreshes.
 
 #features
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-files
-  variant: naked
   ---
   #title{unwrap="p"}
   See your changes in real-time on your website
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-link
-  variant: naked
   ---
   #title{unwrap="p"}
   Share preview URLs to anyone with live updates
   :::
 
-  :::u-page-card
+  :::u-page-feature
   ---
-  inline: true
   icon: i-lucide-list
-  variant: naked
   ---
   #title{unwrap="p"}
   Review all your changes before publishing
