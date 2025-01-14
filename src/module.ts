@@ -214,17 +214,17 @@ export default defineNuxtModule<ModuleOptions>({
       const socket = await startSocketServer(nuxt, options, manifest)
       dumpGeneratePromise.then(async () => {
         await watchContents(nuxt, options, manifest, socket)
+
+        // Handle Studio mode
+        if (options.studio?.enabled) {
+          // Only enable Studio in production build or when explicitly enabled
+          if (nuxt.options.dev === true && !options.studio?.dev) {
+            return
+          }
+
+          await setupStudio(options, nuxt, resolver, manifest)
+        }
       })
-    }
-
-    // Handle Studio mode
-    if (options.studio?.enabled) {
-      // Only enable Studio in production build or when explicitly enabled
-      if (nuxt.options.dev === true && !options.studio?.dev) {
-        return
-      }
-
-      await setupStudio(options, nuxt, resolver, manifest)
     }
   },
 })
