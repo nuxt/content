@@ -130,8 +130,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
   }
 
   return async function parse(file: ContentFile) {
-    if (file.path && !file.dirname) {
-      file.dirname = dirname(file.path)
+    if (file.path) {
+      file.dirname = file.dirname ?? dirname(file.path)
+      file.extension = file.extension ?? file.path.includes('.') ? '.' + file.path.split('.').pop() : undefined
     }
     const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
     // @ts-expect-error runtime type
