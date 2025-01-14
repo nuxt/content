@@ -92,8 +92,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       nuxt-component-meta:
-        specifier: ^0.9.0
-        version: 0.9.0(magicast@0.3.5)(rollup@3.29.5)
+        specifier: ^0.10.0
+        version: 0.10.0(magicast@0.3.5)(rollup@3.29.5)
       ohash:
         specifier: ^1.1.4
         version: 1.1.4
@@ -5166,7 +5166,6 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
-    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lighthouse-logger@2.0.1:
@@ -5770,8 +5769,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  nuxt-component-meta@0.9.0:
-    resolution: {integrity: sha512-Zmuw/PxAeJkIu7EPZEFg0lIwnfpeiDsHog9i1g5d4Z3O5+00R1Vbuk+NC6K7kgpdLsdU2/XBvzc7oQ6BsXuQPg==}
+  nuxt-component-meta@0.10.0:
+    resolution: {integrity: sha512-iq7hbSnfp4Ff/PTMYBF8pYabTQuF3u7HVN66Kb3hOnrnaPEdXEn/q6HkAn5V8UjOVSgXYpvycM0wSnwyADYNVA==}
     hasBin: true
 
   nuxt-og-image@4.0.3:
@@ -15123,7 +15122,7 @@ snapshots:
 
   nuxi@3.20.0: {}
 
-  nuxt-component-meta@0.9.0(magicast@0.3.5)(rollup@3.29.5):
+  nuxt-component-meta@0.10.0(magicast@0.3.5)(rollup@3.29.5):
     dependencies:
       '@nuxt/kit': 3.15.1(magicast@0.3.5)(rollup@3.29.5)
       citty: 0.1.6

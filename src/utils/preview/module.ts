@@ -54,5 +54,6 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
   // // Install dependencies
   await installModule('nuxt-component-meta', {
     globalsOnly: true,
+    include: manifest.components,
   })
 }

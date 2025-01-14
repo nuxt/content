@@ -14,9 +14,7 @@ interface NuxtComponentMeta {
 }
 
 export default eventHandler(async () => {
-  const componentsIgnoredPrefix = ['Content', 'DocumentDriven', 'Markdown']
-  const filteredComponents = (Object.values(components) as NuxtComponentMeta[])
-    .filter(c => c.global && !componentsIgnoredPrefix.some(prefix => c.pascalName.startsWith(prefix)))
+  const mappedComponents = (Object.values(components) as NuxtComponentMeta[])
     .map(({ pascalName, filePath, meta }) => {
       return {
         name: pascalName,
@@ -43,6 +41,6 @@ export default eventHandler(async () => {
     collections,
     appConfigSchema,
     appConfig,
-    components: filteredComponents,
+    components: mappedComponents,
   }
 })
