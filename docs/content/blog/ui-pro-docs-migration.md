@@ -551,6 +551,8 @@ Landing components have been reorganised and standardised as generic `Page` comp
 - `LandingSection` => `PageSection`
 - `LandingCard` => `PageCard` (we'll use the `PageFeature` instead)
 
+:br
+
   :::prose-tip{to="https://github.com/nuxt-ui-pro/docs/blob/v3/content/index.md"}
   Have a look at the final `Markdown` result on GitHub.
   :::
@@ -563,7 +565,9 @@ Landing components have been reorganised and standardised as generic `Page` comp
 #### Layout
 
 - `Aside` component has been renamed to `PageAside` .
-- `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation` .
+- `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation`.
+
+:br
 
 :::prose-code-group
 ```vue [layout/docs.vue (v1)]
