@@ -206,25 +206,25 @@ export default defineNuxtModule<ModuleOptions>({
       await dumpGeneratePromise
     })
 
-    // Handle HMR changes
-    if (nuxt.options.dev) {
-      addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-      await watchComponents(nuxt)
-      const socket = await startSocketServer(nuxt, options, manifest)
-      dumpGeneratePromise.then(async () => {
+    dumpGeneratePromise.then(async () => {
+      // Handle HMR changes
+      if (nuxt.options.dev) {
+        addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
+        await watchComponents(nuxt)
+        const socket = await startSocketServer(nuxt, options, manifest)
         await watchContents(nuxt, options, manifest, socket)
+      }
 
-        // Handle preview mode
-        if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
-          // Only enable preview in production build or when explicitly enabled
-          if (nuxt.options.dev === true && !options.preview?.dev) {
-            return
-          }
-
-          await setupPreview(options, nuxt, resolver, manifest)
+      // Handle preview mode
+      if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
+        // Only enable preview in production build or when explicitly enabled
+        if (nuxt.options.dev === true && !options.preview?.dev) {
+          return
         }
-      })
-    }
+
+        await setupPreview(options, nuxt, resolver, manifest)
+      }
+    })
   },
 })
 
