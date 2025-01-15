@@ -1,5 +1,40 @@
 # Changelog
 
+## [3.0.0-alpha.9](https://github.com/nuxt/content/compare/v3.0.0-alpha.8...v3.0.0-alpha.9) (2025-01-15)
+
+### Features
+
+* **config:** enable watch for all layer configs and load in parallel ([#2929](https://github.com/nuxt/content/issues/2929)) ([c6b3bef](https://github.com/nuxt/content/commit/c6b3befb50f6d7dab28004125315fd23b0d7132b))
+* **database:** add support for BunSQLite ([#2944](https://github.com/nuxt/content/issues/2944)) ([db77463](https://github.com/nuxt/content/commit/db7746369d37e0f6803ee9b66c58d9d82c3b0fa7))
+* **module:** integrate with unifiedjs VFile ([#2911](https://github.com/nuxt/content/issues/2911)) ([6371a19](https://github.com/nuxt/content/commit/6371a191a59671c59d04a2eab0831d52dbbe0255))
+* pre / post parsing hooks ([#2925](https://github.com/nuxt/content/issues/2925)) ([c2c98d8](https://github.com/nuxt/content/commit/c2c98d8fe93b75732d702583b1c25a6de9c78687))
+* **sources:** define custom sources ([#2941](https://github.com/nuxt/content/issues/2941)) ([53bf75d](https://github.com/nuxt/content/commit/53bf75d6f2198eca664009032386ddce894de132))
+* update import path for shiki languages ([#2942](https://github.com/nuxt/content/issues/2942)) ([f4f68ba](https://github.com/nuxt/content/commit/f4f68ba1317d844621254994367d1566042603ff))
+
+### Bug Fixes
+
+* **docs:** ensure card prose on the homepage matches the correct title ([#2919](https://github.com/nuxt/content/issues/2919)) ([67c57a7](https://github.com/nuxt/content/commit/67c57a7fec82752aa0793e7f4d34c966fe1a7cb2))
+* **hooks:** generate missing dirname & extension in vFile ([e048a55](https://github.com/nuxt/content/commit/e048a55aa1ea64cd835fbc6204ac7708015172da)), closes [#2970](https://github.com/nuxt/content/issues/2970)
+* **module:**  update dump template on new file creation ([e098115](https://github.com/nuxt/content/commit/e0981155997ffe5e72a6f17cce1cd01812ccca01))
+* **module:** mark `build.pathMeta` as optional in module config ([8329a63](https://github.com/nuxt/content/commit/8329a633641ef071dcea86e57b2a752d624d3643))
+* **module:** split big sql queries into two ([#2917](https://github.com/nuxt/content/issues/2917)) ([a27dcae](https://github.com/nuxt/content/commit/a27dcae1a6ad09a06d3ff30176f043716f4084a9))
+* **navigation:** prevent duplicate nodes ([#2959](https://github.com/nuxt/content/issues/2959)) ([67d6c6b](https://github.com/nuxt/content/commit/67d6c6ba257f4bca2a9599e630c41fa77c32f374))
+* **navigation:** respect user defined order ([#2974](https://github.com/nuxt/content/issues/2974)) ([b832033](https://github.com/nuxt/content/commit/b832033ace84633761b3ef8b0cf88fba02a1d516))
+* prevent import cache in development ([8ea4de1](https://github.com/nuxt/content/commit/8ea4de1fbb30ba9b5a2ec4ff513a1a7096d5d48d))
+* refine json and boolean fields after retrieving content ([#2957](https://github.com/nuxt/content/issues/2957)) ([0dacb1e](https://github.com/nuxt/content/commit/0dacb1ee933972e389402bde0040e7506432f8d5))
+* **shiki:** inline codes syntax highlighting ([f124c95](https://github.com/nuxt/content/commit/f124c9538edcd0c7f978a0dcc58cfe399793b929))
+* **shiki:** preserve style priority on compress ([b95e807](https://github.com/nuxt/content/commit/b95e807ed69a3f89097f7e7a420031594569c807))
+* **sqlite:** remove extra `/` from database filename in windows ([8a9af69](https://github.com/nuxt/content/commit/8a9af695d589649eac7b318270c69534be3ec35c)), closes [#2897](https://github.com/nuxt/content/issues/2897)
+* **sqlite:** remove leading `/` from file path ([85010c1](https://github.com/nuxt/content/commit/85010c11c0f622b4eaf2dac138097c32829b5fd1))
+* **types:** inject content types to server tsConfig ([203ac90](https://github.com/nuxt/content/commit/203ac906ce17f8f0dffda17ddb2b77fc66998976)), closes [#2968](https://github.com/nuxt/content/issues/2968)
+* **typos:** collectionQureyBuilder ([#2953](https://github.com/nuxt/content/issues/2953)) ([71036e2](https://github.com/nuxt/content/commit/71036e2027063c97c48d97c25b11ec72c832f4ab))
+* undefined ssr event & and invalid column update ([#2962](https://github.com/nuxt/content/issues/2962)) ([9660776](https://github.com/nuxt/content/commit/966077622e80ddb456ab26cba8c908a604e03266))
+* vfile extension format ([12aef72](https://github.com/nuxt/content/commit/12aef7230e9b52f19e70d64479bb44304fb5e3ae))
+
+### Performance Improvements
+
+* reduce zod bundle size ([#2900](https://github.com/nuxt/content/issues/2900)) ([f6e4607](https://github.com/nuxt/content/commit/f6e460712942daff01f71ccdad0ae5916739946c))
+
 ## [3.0.0-alpha.8](https://github.com/nuxt/content/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2024-12-09)
 
 ### Features
