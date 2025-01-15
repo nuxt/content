@@ -41,12 +41,7 @@ export default defineNuxtConfig({
     },
     preview: {
       dev: true,
-      api: 'https://dev-api.nuxt.studio',
-      // gitInfo: {
-      //   owner: 'larbish',
-      //   name: 'starter-larb',
-      //   url: '',
-      // },
+      api: 'https://api.nuxt.studio',
     },
   },
 
