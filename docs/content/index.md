@@ -40,7 +40,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   label: Open Visual Editor
   size: xl
   target: _blank
-  to: https://studio.content.nuxt.com
+  to: https://nuxt.studio
   variant: subtle
   ---
   :::
@@ -432,7 +432,7 @@ Add a git-based CMS to your Nuxt project.
   color: neutral
   label: Open Studio
   target: _blank
-  to: https://studio.content.nuxt.com
+  to: https://nuxt.studio
   variant: outline
   ---
   :::

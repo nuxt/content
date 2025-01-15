@@ -81,7 +81,7 @@ defineShortcuts({
 
       <UButton
         label="Open Studio"
-        to="https://studio.content.nuxt.com"
+        to="https://nuxt.studio"
         size="sm"
         class="hidden sm:inline-flex"
       />

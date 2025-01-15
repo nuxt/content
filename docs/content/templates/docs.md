@@ -3,7 +3,7 @@ slug: docs
 subtitle: Create your documentation in seconds
 title: Docs
 baseDir: .
-branch: main
+branch: v3
 category: docs
 createdAt: '2023-11-15T17:41:03.087Z'
 demo: https://docs-template.nuxt.dev/

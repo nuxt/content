@@ -93,7 +93,7 @@ const images = computed(() => template.value
             <UDropdownMenu
               :items="[{
                 label: 'Import on Studio',
-                to: 'https://studio.content.nuxt.com/signin',
+                to: 'https://nuxt.studio/signin',
                 target: '_blank',
               }, {
                 label: 'Clone on GitHub',

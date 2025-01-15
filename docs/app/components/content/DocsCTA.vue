@@ -4,7 +4,7 @@
     :links="[
       {
         label: 'Get started for free',
-        to: 'https://studio.content.nuxt.com',
+        to: 'https://nuxt.studio',
         target: '_blank',
         trailingIcon: 'i-ph-arrow-right',
       },
