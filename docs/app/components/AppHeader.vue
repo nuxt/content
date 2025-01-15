@@ -4,12 +4,6 @@ import type { ContentNavigationItem } from '@nuxt/content'
 const config = useRuntimeConfig().public
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
-
-defineShortcuts({
-  meta_g: () => {
-    window.open('https://github.com/nuxt/content/tree/v3', '_blank')
-  },
-})
 </script>
 
 <template>
