@@ -49,6 +49,7 @@ useSeoMeta({
             :to="post.path"
             :badge="titleCase(post.category!)"
             variant="naked"
+            :ui="{ header: 'aspect-auto' }"
           />
         </UBlogPosts>
       </UContainer>

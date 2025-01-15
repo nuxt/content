@@ -1,9 +1,8 @@
 ---
-title: Migrate UIPro Docs Starter
-description: Migrate the UI Pro Docs starter from Content v2 and UI Pro v1 to
-  Content x UI v3.
+title: Migrate Nuxt UIPro Documentation Starter
+description: How to upgrade your Nuxt UI Pro documentation to Content and UIPro v3.
 image:
-  src: /blog/nuxt-studio-v2.png
+  src: /blog/migrate-docs-starter.png
 authors:
   - name: Baptiste Leproux
     avatar:
@@ -15,7 +14,7 @@ category: Migration
 draft: true
 ---
 
-# Migrate to Content x UI v3
+# How to upgrade your Nuxt UI Pro documentation to Content and UI v3
 
 **2025 kicks off with the power of 3!**
 
@@ -237,10 +236,10 @@ export default defineNuxtConfig({
 Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview` .
 
 ::prose-tip
-That's it, content v3 is now powering the starter. Let's now migrate to the version 3 of [UI / UIPro](https://ui3.nuxt.dev).
+That's it, content v3 is now powering the starter. Let's now migrate to the version 3 of [Nuxt UI / UIPro](https://ui3.nuxt.dev).
 ::
 
-## UIPro Migration (v1 → v3)
+## Nuxt UIPro Migration (v1 → v3)
 
 ::prose-caution
 This is a migration case, it won't cover all breaking changes introduced by the version upgrade. You should check each component you're using in the documentation to know if you need updates concerning props, slots or styles.
@@ -249,7 +248,7 @@ This is a migration case, it won't cover all breaking changes introduced by the 
 ### 1. Setup package to v3
 
 ::prose-note
-To maintain consistency with the UI versioning, which transitioned from v1 to v2. The UIPro version 2 is being skipped, and the update jumps directly to v3.
+To maintain consistency with the UI versioning, which transitioned from v1 to v2. The Nuxt UIPro version 2 is being skipped, and the update jumps directly to v3.
 ::
 
 ::prose-steps{level="4"}
@@ -291,7 +290,7 @@ To maintain consistency with the UI versioning, which transitioned from v1 to v2
   :::
 
   :::prose-note
-  **UIPro V3** is now considered as a module and no more as a layer.
+  **Nuxt UIPro V3** is now considered as a module and no more as a layer.
   :::
 
 #### Import Tailwind CSS and Nuxt UI Pro in your CSS

@@ -118,7 +118,10 @@ watch(() => arrivedState.bottom, () => {
                     :to="post.path"
                     :authors="post.authors"
                     variant="naked"
-                    :ui="{ body: '!px-0' }"
+                    :ui="{
+                      body: '!px-0',
+                      header: 'aspect-auto',
+                    }"
                   />
                 </div>
               </div>
