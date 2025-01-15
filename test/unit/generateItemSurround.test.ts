@@ -316,7 +316,6 @@ describe('generateItemSurround', () => {
       orderBy: ['"date" DESC'],
     }
     const result = await generateItemSurround(queryBuilder, '/second-article')
-    // console.log(result, result[0], !!result[1])
 
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({ path: '/third-article' })
