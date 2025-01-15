@@ -5,8 +5,13 @@ import { pascalCase } from 'scule'
  * Create NavItem array to be consumed from runtime plugin.
  */
 export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = []) {
+  // @ts-expect-error -- internal
+  const params = queryBuilder.__params
+  if (!params?.orderBy?.length) {
+    queryBuilder = queryBuilder.order('stem', 'ASC')
+  }
+
   const collecitonItems = await queryBuilder
-    .order('stem', 'ASC')
     .orWhere(group => group
       .where('navigation', '<>', 'false')
       .where('navigation', 'IS NULL'),
@@ -161,13 +166,13 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
   return sortAndClear(nav)
 }
 
-const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+// const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
 /**
  * Sort items by path and clear empty children keys.
  */
 function sortAndClear(nav: ContentNavigationItem[]) {
-  const sorted = nav.sort((a, b) => collator.compare(a.stem!, b.stem!))
+  const sorted = nav// .sort((a, b) => collator.compare(a.stem!, b.stem!))
 
   for (const item of sorted) {
     if (item.children?.length) {

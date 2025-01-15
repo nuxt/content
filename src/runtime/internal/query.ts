@@ -84,6 +84,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   const query: CollectionQueryBuilder<Collections[T]> = {
+    // @ts-expect-error -- internal
+    __params: params,
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQueryGroup(collection))
       params.conditions.push(buildGroup(group, 'AND'))

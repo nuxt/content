@@ -17,11 +17,11 @@ export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3E
   return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
 }
 
-export async function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
+export function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateNavigationTree(qb, fields))
 }
 
-export async function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
