@@ -14,16 +14,16 @@ category: Migration
 draft: true
 ---
 
-# How to upgrade your Nuxt UI Pro documentation to Content and UI v3
+# How to upgrade your Nuxt UI Pro docs website to Content and UI v3
 
 **2025 kicks off with the power of 3!**
 
 This start of year is marked by major updates to our favorite tools. The UI team is about to launch **version 3** of the **UI / UI Pro libraries** (currently in alpha), while the Content team has already released **Nuxt Content v3**.
 
-These updates mean that all our starter templates combining **Content** and **UI** will need to be updated to align with the latest versions. To help you make the transition, this guide walks through migrating the **Docs Starter** to the new **Content x UI v3** package.
+These updates mean that all our starter templates combining **Content** and **UI** will need to be updated to align with the latest versions. To help you make the transition, this guide walks through migrating the **Nuxt UI Pro Docs Starter** to the new **Content v3 and Nuxt UI v3** packages.
 
 ::prose-tip{to="https://github.com/nuxt-ui-pro/docs"}
-Check the UI Pro documentation starter repository code source.
+Check the UI Pro documentation starter repository source code.
 ::
 
 ## Content migration (v2 → v3)
@@ -50,7 +50,7 @@ bun add @nuxt/content@next
 
 ### 2. Create `content.config.ts` file
 
-This configuration file define your data structure. A collection represents a set of related items. In the case of the docs starter, there is two different collections, the `landing` collection representing the home page, one for the landing page and another for the doc pages.
+This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page, one for the landing page and another for the doc pages.
 
 ```js [content.config.ts]
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
@@ -80,7 +80,7 @@ export default defineContentConfig({
 })
 ```
 
-On top of the built-in fields provided by the [`page`](/docs/collections/types#page-type) type, the `docs` collection needs `links` extra field that can be optionally display in the docs [page header](https://ui3.nuxt.dev/components/page-header).
+On top of the built-in fields provided by the [`page`](/docs/collections/types#page-type) type, we added the extra field `links` to the `docs` collection so we can optionally display them in the docs [page header](https://ui3.nuxt.dev/components/page-header).
 
 ::prose-tip
 The `type: page` means there is a 1-to-1 relationship between the content file and a page on your site.
@@ -147,7 +147,7 @@ useSeoMeta({
 ```
 
   :::prose-note
-  Please note that the `seo` field is automatically overridden by the root `title` and `description` if empty.
+  Please note that the `seo` field is automatically overridden by the root `title` and `description` if not set.
   :::
 ::
 
@@ -194,7 +194,7 @@ useSeoMeta({
 ```
 
   :::prose-note
-  Please note that the `seo` field is automatically overridden by the root `title` and `description` if empty.
+  Please note that the `seo` field is automatically overridden by the root `title` and `description` if not set.
   :::
 ::
 
@@ -230,13 +230,13 @@ export default defineNuxtConfig({
 })
 ```
 
-Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
+Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio, we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
 
 ::prose-tip
-That's it, content v3 is now powering the starter. Let's now migrate to the version 3 of [Nuxt UI / UIPro](https://ui3.nuxt.dev).
+That's it, content v3 is now powering the starter. Let's now migrate to version 3 of [Nuxt UI / UI Pro](https://ui3.nuxt.dev).
 ::
 
-## Nuxt UIPro Migration (v1 → v3)
+## Nuxt UI Pro Migration (v1 → v3)
 
 ::prose-caution
 This is a migration case, it won't cover all breaking changes introduced by the version upgrade. You should check each component you're using in the documentation to know if you need updates concerning props, slots or styles.
@@ -271,7 +271,7 @@ To maintain consistency with the UI versioning, which transitioned from v1 to v2
 
 #### Add the module in the Nuxt configuration file
 
-It's no more required to add `@nuxt/ui` in modules as it is automatically imported by `@nuxt/ui-pro` .
+It's no longer required to add `@nuxt/ui` in modules as it is automatically imported by `@nuxt/ui-pro` .
 
   :::prose-code-group
   ```ts [nuxt.config.ts (v3)]
@@ -289,7 +289,7 @@ It's no more required to add `@nuxt/ui` in modules as it is automatically import
   :::
 
   :::prose-note
-  **Nuxt UIPro V3** is now considered as a module and no more as a layer.
+  **Nuxt UIPro V3** is now considered as a module and no longer as a layer.
   :::
 
 #### Import Tailwind CSS and Nuxt UI Pro in your CSS
@@ -308,7 +308,7 @@ export default defineNuxtConfig({
 
 #### Remove tailwind config file and use CSS-first theming
 
-Nuxt UI v3 uses Tailwind CSS v4 that follows a CSS-first configuration approach, you can now customize your theme with CSS variables inside a `@theme` directive.
+Nuxt UI v3 uses Tailwind CSS v4 that follows a CSS-first configuration approach. You can now customize your theme with CSS variables inside a `@theme` directive.
 
 - Delete the `tailwind.config.ts` file
 - Use the `@theme` directive to apply your theme in `main.css` file
@@ -342,7 +342,7 @@ Nuxt UI v3 uses Tailwind CSS v4 that follows a CSS-first configuration approach,
 ### 2. Update `ui` overloads in `app.config.ts`
 
 ::prose-caution{to="https://ui3.nuxt.dev/getting-started/theme#customize-theme"}
-All overloads using the `ui` props in a component or the `ui` key in the `app.config.ts` are obsolete and need to be check in the **UI / UI Pro** documentation.
+All overloads using the `ui` props in a component or the `ui` key in the `app.config.ts` are obsolete and need to be checked in the **UI / UI Pro** documentation.
 ::
 
 ::prose-code-group
@@ -383,7 +383,7 @@ export default defineAppConfig({
 
 ### 3. Migrate `error.vue` page
 
-New `Error` component can be used as full page structure.
+New `UError` component can be used as full page structure.
 
 ::prose-code-group
 ```vue [error.vue (v3)]
@@ -438,10 +438,6 @@ New `Error` component can be used as full page structure.
 - `Main`, `Footer` and `LazyUContentSearch` components do not need any updates in our case.
 - `Notification` component can be removed since `Toast` components are directly handled by the `App` component.
 - Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
-- `Header` component needs updates:
-  - `panel` slot has been replaced by `content`.
-  - `logo` slot has been replaced by `title`.
-  - `center` slot has been removed and is now the default.
 
 ::prose-code-group
 ```vue [header.vue (v3)]
@@ -656,13 +652,13 @@ Landing components have been reorganised and standardised as generic `Page` comp
 
 #### Catch-all pages
 
-- `Divider` has been renamed in `Separator`
+- `Divider` has been renamed to `Separator`
 - `FindPageHeadline` must be imported from `#ui-pro/utils/content`
 - `prose` property does not exist no more on `PageBody` component.
 ::
 
 ::prose-tip{to="https://github.com/nuxt-ui-pro/docs/tree/v3"}
-That's it! The docs starter is now fully running on both UI and Content v3 🎉 You can have a check at the source code on GitHub.
+That's it! The docs starter is now fully running on both UI and Content v3 🎉 You check out the source code on GitHub.
 ::
 
 ## Bonus: Edit on Studio
