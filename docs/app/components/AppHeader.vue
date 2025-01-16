@@ -25,7 +25,7 @@ const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => l
         <UDropdownMenu
           v-slot="{ open }"
           :modal="false"
-          :items="[{ label: `v${config.version}`, active: true, color: 'primary', checked: true, type: 'checkbox' }, { label: 'v2.13.4', to: 'https://content.nuxt.com' }]"
+          :items="[{ label: `v${config.version}`, active: true, color: 'primary', checked: true, type: 'checkbox' }, { label: 'v2.13.4', to: 'https://v2.content.nuxt.com' }]"
           :ui="{ content: 'w-(--radix-dropdown-menu-trigger-width) min-w-0' }"
           size="xs"
         >

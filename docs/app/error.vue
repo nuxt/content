@@ -41,8 +41,6 @@ provide('navigation', navigation)
   <UApp>
     <NuxtLoadingIndicator color="#FFF" />
 
-    <AppBanner />
-
     <AppHeader />
 
     <UError :error="error" />
