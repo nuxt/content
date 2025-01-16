@@ -20,7 +20,7 @@ useHead({
   ],
   link: [
     { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
-    { rel: 'canonical', href: `https://content3.nuxt.dev${withoutTrailingSlash(route.path)}` },
+    { rel: 'canonical', href: `https://content.nuxt.com${withoutTrailingSlash(route.path)}` },
   ],
   htmlAttrs: {
     lang: 'en',
@@ -39,7 +39,6 @@ provide('navigation', navigation)
   <UApp>
     <NuxtLoadingIndicator color="#FFF" />
 
-    <AppBanner />
     <AppHeader />
 
     <UMain>

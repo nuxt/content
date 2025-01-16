@@ -1,6 +1,6 @@
 # Nuxt Content Starter
 
-Look at the [Nuxt Content documentation](https://content3.nuxt.dev) to learn more.
+Look at the [Nuxt Content documentation](https://content.nuxt.com) to learn more.
 
 ## Setup
 

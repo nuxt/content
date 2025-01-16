@@ -12,4 +12,4 @@ Vous pouvez trouver un exemple d'interrogation et d'affichage des contenus dans 
 Consultez la [documentation officielle][docs] pour en savoir plus sur Nuxt Content
 ::
 
-[docs]: https://content3.nuxt.dev
+[docs]: https://content.nuxt.com

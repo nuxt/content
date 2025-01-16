@@ -1,4 +1,4 @@
-[![nuxt-content-social-card](./.github/social-card.png)](https://content3.nuxt.dev)
+[![nuxt-content-social-card](./.github/social-card.png)](https://content.nuxt.com)
 
 # Nuxt Content
 
@@ -8,23 +8,23 @@
 [![Nuxt][nuxt-src]][nuxt-href]
 [![Volta][volta-src]][volta-href]
 
-Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content3.nuxt.dev/docs/files/markdown).
+Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml`, `.csv` or `.json` files and creates a powerful data layer for your application. Bonus, use Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/docs/files/markdown).
 
-- [📖 &nbsp;Read the documentation](https://content3.nuxt.dev)
+- [📖 &nbsp;Read the documentation](https://content.nuxt.com)
 - [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
-- [✍️ &nbsp;Nuxt Studio](https://content3.nuxt.dev/docs/studio)
+- [✍️ &nbsp;Nuxt Studio](https://content.nuxt.com/docs/studio)
 
 ## Features
 
 - [**Nuxt 3**](https://nuxt.com) support
 - Work in serverless and edge environments (Cloudflare Workers, etc.)
-- Render Vue components in Markdown with the [MDC syntax](https://content3.nuxt.dev/docs/files/markdown)
+- Render Vue components in Markdown with the [MDC syntax](https://content.nuxt.com/docs/files/markdown)
 - Fully typed collections and queries
 - Navigation generation
 - Blazing fast hot module replacement in development
 - Code highlighting with [**Shiki**](https://github.com/shikijs/shiki)
 - Powerful query builder on top of SQLite database
-- [... and more](https://content3.nuxt.dev)
+- [... and more](https://content.nuxt.com)
 
 ## 💻 Development
 

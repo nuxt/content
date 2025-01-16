@@ -12,4 +12,4 @@
 برای مطالعه بیشتر درباره Nuxt Content به [مستندات رسمی][docs] مراجعه کنید
 ::
 
-[docs]: https://content3.nuxt.dev
+[docs]: https://content.nuxt.com

@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://content3.nuxt.dev',
+    url: 'https://content.nuxt.com',
   },
 
   content: {
