@@ -8,10 +8,26 @@ describe('generateItemSurround', () => {
     where: () => mockQueryBuilder,
     orWhere: () => mockQueryBuilder,
     order: () => mockQueryBuilder,
-    only: () => mockQueryBuilder,
+    only: (_field: string, _direction: 'ASC' | 'DESC') => mockQueryBuilder,
     select: () => mockQueryBuilder,
     all: async () => mockData,
   }
+  const createMockQueryBuilder = (mockData: Array<Record<string, unknown>>) => ({
+    find: async () => mockData,
+    where: () => createMockQueryBuilder(mockData),
+    orWhere: () => createMockQueryBuilder(mockData),
+    order: (field: string, direction: 'ASC' | 'DESC') => {
+      return createMockQueryBuilder(mockData.sort((a, b) => {
+        if (direction === 'ASC') {
+          return (a[field] as string) < (b[field] as string) ? -1 : 1
+        }
+        return (a[field] as string) > (b[field] as string) ? -1 : 1
+      }))
+    },
+    only: () => createMockQueryBuilder(mockData),
+    select: () => createMockQueryBuilder(mockData),
+    all: async () => mockData,
+  })
 
   const mockData: ContentNavigationItem[] = [
     {
@@ -269,5 +285,40 @@ describe('generateItemSurround', () => {
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({ path: '/section' })
     expect(result[1]).toMatchObject({ path: '/section/item-4' })
+  })
+
+  it('Respect user order', async () => {
+    const mockQueryBuilder = createMockQueryBuilder([
+      // 1.first-article with a date field set to 2024-01-01.
+      // 2.second-article with a date field set to 2025-01-01.
+      {
+        path: '/first-article',
+        id: '1',
+        stem: '1-first-article',
+        date: new Date('2024-01-01'),
+      },
+      {
+        path: '/second-article',
+        id: '2',
+        stem: '2-second-article',
+        date: new Date('2025-01-01'),
+      },
+      {
+        path: '/third-article',
+        id: '3',
+        stem: '3-third-article',
+        date: new Date('2026-01-01'),
+      },
+    ])
+    const queryBuilder = mockQueryBuilder.order('date', 'DESC')
+    // @ts-expect-error -- internal
+    queryBuilder.__params = {
+      orderBy: ['"date" DESC'],
+    }
+    const result = await generateItemSurround(queryBuilder, '/second-article')
+
+    expect(result).toHaveLength(2)
+    expect(result[0]).toMatchObject({ path: '/third-article' })
+    expect(result[1]).toMatchObject({ path: '/first-article' })
   })
 })

@@ -7,12 +7,6 @@ const links = useNavLinks()
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => link))
-
-defineShortcuts({
-  meta_g: () => {
-    window.open('https://github.com/nuxt/content/tree/v3', '_blank')
-  },
-})
 </script>
 
 <template>

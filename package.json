@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "3.0.0-alpha.8",
+  "version": "3.0.0-alpha.9",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -52,12 +52,12 @@
     "@farnabaz/mdlint": "0.0.14",
     "@nuxt/kit": "^3.14.1592",
     "@nuxtjs/mdc": "^0.12.1",
-    "@shikijs/langs": "^1.26.1",
+    "@shikijs/langs": "^1.27.2",
     "@sqlite.org/sqlite-wasm": "3.47.2-build1",
-    "better-sqlite3": "^11.7.2",
+    "better-sqlite3": "^11.8.0",
     "c12": "^2.0.1",
     "chokidar": "^4.0.3",
-    "consola": "^3.3.3",
+    "consola": "^3.4.0",
     "defu": "^6.1.4",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.3",
@@ -78,10 +78,10 @@
     "ohash": "^1.1.4",
     "parse-git-config": "^3.0.0",
     "pathe": "^2.0.1",
-    "pkg-types": "^1.3.0",
+    "pkg-types": "^1.3.1",
     "remark-mdc": "latest",
     "scule": "^1.3.0",
-    "shiki": "^1.26.1",
+    "shiki": "^1.27.2",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
@@ -113,7 +113,7 @@
     "@types/bun": "^1.1.16",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^5.1.2",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.6",
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
     "csvtojson": "^2.0.10",
@@ -124,14 +124,12 @@
     "release-it": "^18.1.1",
     "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0",
-    "wrangler": "^3.101.0"
+    "wrangler": "^3.102.0"
   },
   "resolutions": {
-    "@nuxt/content": "workspace:*",
-    "typescript": "^5.6.3",
-    "unimport": "3.14.5"
+    "@nuxt/content": "workspace:*"
   },
-  "packageManager": "pnpm@9.15.3",
+  "packageManager": "pnpm@9.15.4",
   "unbuild": {
     "entries": [
       "./src/module",

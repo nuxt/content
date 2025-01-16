@@ -16,6 +16,7 @@ import { hash } from 'ohash'
 import { join, dirname, isAbsolute } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
+import defu from 'defu'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
@@ -137,10 +138,15 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Templates & aliases
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    addTypeTemplate(contentTypesTemplate(manifest.collections))
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
     nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
     nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
+
+    // Add content types to Nuxt and Nitro
+    const typesTemplateDst = addTypeTemplate(contentTypesTemplate(manifest.collections)).dst
+    nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
+      include: [typesTemplateDst],
+    })
 
     // Register user components
     const _layers = [...nuxt.options._layers].reverse()
