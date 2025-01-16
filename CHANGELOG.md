@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.0](https://github.com/nuxt/content/compare/v3.0.0-alpha.9...v3.0.0) (2025-01-16)
+
+### Bug Fixes
+
+* **templates:** demo url ([1dd5b21](https://github.com/nuxt/content/commit/1dd5b21c2ac9bdf6e99a04276fb64bd09c641842))
+
 ## [3.0.0-alpha.9](https://github.com/nuxt/content/compare/v3.0.0-alpha.8...v3.0.0-alpha.9) (2025-01-15)
 
 ### Features
