@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.15.2",
-    "@nuxtjs/mdc": "^0.12.1",
+    "@nuxtjs/mdc": "^0.13.0",
     "@shikijs/langs": "^1.27.2",
     "@sqlite.org/sqlite-wasm": "3.48.0-build1",
     "better-sqlite3": "^11.8.0",
@@ -103,7 +103,7 @@
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^1.7.0",
     "@nuxt/eslint-config": "^0.7.5",
-    "@nuxt/kit": "^3.15.1",
+    "@nuxt/kit": "^3.15.2",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.15.2",
     "@nuxt/test-utils": "^3.15.4",
@@ -121,7 +121,7 @@
     "micromark-util-types": "^2.0.1",
     "nuxt": "^3.15.2",
     "release-it": "^18.1.1",
-    "vitest": "^2.1.8",
+    "vitest": "^3.0.0",
     "vue-tsc": "^2.2.0",
     "wrangler": "^3.103.0"
   },
