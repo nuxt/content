@@ -5,12 +5,10 @@ on:
     branches:
       - main
       - v3
-      - chore/full-app
   pull_request:
     branches:
       - main
       - v3
-      - chore/full-app
 
 jobs:
   ubuntu:
