@@ -49,7 +49,6 @@
     "verify": "npm run dev:prepare && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "@farnabaz/mdlint": "0.0.14",
     "@nuxt/kit": "^3.15.2",
     "@nuxtjs/mdc": "^0.12.1",
     "@shikijs/langs": "^1.27.2",

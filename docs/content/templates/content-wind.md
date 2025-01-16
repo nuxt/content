@@ -13,6 +13,7 @@ name: content-wind
 owner: Atinux
 image1: /templates/content-wind-1.webp
 image2: /templates/content-wind-2.webp
+draft: true
 ---
 
 ::template-core
