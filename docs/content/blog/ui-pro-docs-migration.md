@@ -219,7 +219,7 @@ All `_dir.yml` files become `.navigation.yml`
 
 ### 8. Migrate Studio activation
 
-Since the [studio module](https://nuxtlabs/studio-module) has been deprecated and a new generic `Preview API` has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependancies and from the `nuxt.config.ts` modules.
+Since the [studio module](https://nuxtlabs/studio-module) has been deprecated and a new generic `Preview API` has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependencies and from the `nuxt.config.ts` modules.
 
 Instead we just need to enable the preview mode in the Nuxt configuration file by binding the Studio API.
 
