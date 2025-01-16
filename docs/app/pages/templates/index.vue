@@ -20,13 +20,6 @@ useSeoMeta({
 
 <template>
   <UPage>
-    <UColorModeImage
-      class="absolute w-full"
-      light="/background-hero-light.svg"
-      dark="/background-hero-dark.svg"
-      alt="Hero background"
-    />
-
     <UPageHero
       :title="page?.title"
       :description="page?.description"

@@ -11,6 +11,7 @@ export default defineAppConfig({
       slots: {
         title: 'font-semibold sm:text-6xl',
         description: 'sm:text-lg text-[var(--ui-text-toned)] max-w-5xl mx-auto',
+        container: 'py-16 sm:py-20 lg:py-24',
       },
     },
     pageSection: {

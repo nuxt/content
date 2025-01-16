@@ -128,17 +128,9 @@ const columns: TableColumn<Feature>[] = [
       <UPageHero
         :title="page.title"
         :description="page.description"
-      >
-        <div class="hidden sm:block">
-          <UColorModeImage
-            class="size-full absolute bottom-0 inset-x-4 z-[-1]"
-            dark="/home/hero-dark.svg"
-            light="/home/hero-light.svg"
-          />
-        </div>
-      </UPageHero>
+      />
 
-      <UPageSection :ui="{ container: 'sm:py-16 lg:py-16' }">
+      <UPageSection :ui="{ container: '!pt-0' }">
         <UPricingPlans orientation="horizontal">
           <UPricingPlan v-bind="page.plans.solo" />
           <UPricingPlan v-bind="page.plans.team" />
