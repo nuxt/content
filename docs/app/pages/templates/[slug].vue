@@ -86,7 +86,7 @@ const images = computed(() => template.value
               color="neutral"
               trailing
               icon="i-ph-arrow-square-out"
-              to="template.demo"
+              :to="template.demo"
               target="_blank"
             />
 
