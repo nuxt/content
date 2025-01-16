@@ -46,7 +46,7 @@ const links = [
   {
     icon: 'i-simple-icons-bluesky',
     label: 'Follow on Bluesky',
-    to: 'https://bluesky.com/nuxtlabs',
+    to: 'https://go.nuxt.com/bluesky',
     target: '_blank',
   },
   {
