@@ -6,7 +6,7 @@ baseDir: .
 branch: v3
 category: docs
 createdAt: 2023-11-15T17:41:03.087Z
-demo: https://docs-template.nuxt.dev/
+demo: https://v3.docs-template-3erl.pages.dev/
 description: Create your documentation in seconds with this template
 licenseType: nuxt-ui-pro
 mainScreen: /templates/docs-main.webp
