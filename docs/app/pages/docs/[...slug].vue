@@ -26,11 +26,11 @@ const surround = computed(() => data.value?.surround)
 const title = computed(() => (page.value?.navigation as { title: string })?.title || page.value?.title)
 
 const headline = computed(() => findPageHeadline(navigation!.value, page.value))
-
+const titleName = computed(() => route.path.includes('studio') ? 'Nuxt Studio' : 'Nuxt Content')
 useSeoMeta({
-  titleTemplate: '%s - Nuxt Content v3',
+  titleTemplate: `%s - ${titleName.value}`,
   title: title.value,
-  ogTitle: `${title.value} - Nuxt Content v3`,
+  ogTitle: `${title.value} - ${titleName.value}`,
   description: page.value?.description,
   ogDescription: page.value?.description,
 })
