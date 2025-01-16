@@ -92,29 +92,29 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 #### Navigation fetch can be updated by moving from `fetchContentNavigation` to `queryCollectionNavigation` method
 
   :::prose-code-group
-  ```ts [app.vue (v2)]
-  const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
-  ```
-  
   ```ts [app.vue (v3)]
   const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
   
+  ```
+  
+  ```ts [app.vue (v2)]
+  const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
   ```
   :::
 
 #### Content search command palette data can use the new `queryCollectionSearchSections` method
 
   :::prose-code-group
+  ```ts [app.vue (v3)]
+  const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
+    server: false,
+  })
+  ```
+  
   ```ts [app.vue (v2)]
   const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
     default: () => [],
     server: false
-  })
-  ```
-  
-  ```ts [app.vue (v3)]
-  const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
-    server: false,
   })
   ```
   :::
@@ -126,12 +126,12 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 #### Home page data fetching can be updated by moving from `queryContent` to `queryCollection` method
 
   :::prose-code-group
-  ```ts [index.vue (v2)]
-  const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
-  ```
-  
   ```ts [index.vue (v3)]
   const { data: page } = await useAsyncData('index', () => queryCollection('landing').path('/').first())
+  ```
+  
+  ```ts [index.vue (v2)]
+  const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
   ```
   :::
 
@@ -157,16 +157,6 @@ useSeoMeta({
 #### Docs page data and surround fetching can be updated and mutualised by moving from `queryContent` to `queryCollection` and `queryCollectionItemSurroundings` methods
 
   :::prose-code-group
-  ```ts [docs/[...slug\\].vue (v2)]
-  const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-  
-  const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent()
-    .where({ _extension: 'md', navigation: { $ne: false } })
-    .only(['title', 'description', '_path'])
-    .findSurround(withoutTrailingSlash(route.path))
-  )
-  ```
-  
   ```ts [docs/[...slug\\].vue (v3)]
   const { data } = await useAsyncData(route.path, () => Promise.all([
     queryCollection('docs').path(route.path).first(),
@@ -179,6 +169,16 @@ useSeoMeta({
   
   const page = computed(() => data.value?.page)
   const surround = computed(() => data.value?.surround)
+  ```
+  
+  ```ts [docs/[...slug\\].vue (v2)]
+  const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+  
+  const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent()
+    .where({ _extension: 'md', navigation: { $ne: false } })
+    .only(['title', 'description', '_path'])
+    .findSurround(withoutTrailingSlash(route.path))
+  )
   ```
   :::
 
@@ -271,16 +271,19 @@ To maintain consistency with the UI versioning, which transitioned from v1 to v2
 
 #### Add the module in the Nuxt configuration file
 
+It's no more required to add `@nuxt/ui` in modules as it is automatically imported by `@nuxt/ui-pro` .
+
   :::prose-code-group
-  ```ts [nuxt.config.ts (v1)]
-  export default defineNuxtConfig({
-    extends: ['@nuxt/ui-pro']
-  })
-  ```
-  
   ```ts [nuxt.config.ts (v3)]
   export default defineNuxtConfig({
     modules: ['@nuxt/ui-pro']
+  })
+  ```
+  
+  ```ts [nuxt.config.ts (v1)]
+  export default defineNuxtConfig({
+    extends: ['@nuxt/ui-pro'],
+    modules: ['@nuxt/ui']
   })
   ```
   :::
@@ -343,22 +346,7 @@ All overloads using the `ui` props in a component or the `ui` key in the `app.co
 ::
 
 ::prose-code-group
-```ts [app.config.ts (v1)]
-export default defineAppConfig({
-  ui: {
-    primary: 'green',
-    gray: 'slate',
-    footer: {
-      bottom: {
-        left: 'text-sm text-gray-500 dark:text-gray-400',
-        wrapper: 'border-t border-gray-200 dark:border-gray-800'
-      }
-    }
-  },
-})
-```
-
-```ts [app.config.ts (v2)]
+```ts [app.config.ts (v3)]
 export default defineAppConfig({
   ui: {
     colors: {
@@ -376,34 +364,86 @@ export default defineAppConfig({
   },
 }
 ```
+
+```ts [app.config.ts (v1)]
+export default defineAppConfig({
+  ui: {
+    primary: 'green',
+    gray: 'slate',
+    footer: {
+      bottom: {
+        left: 'text-sm text-gray-500 dark:text-gray-400',
+        wrapper: 'border-t border-gray-200 dark:border-gray-800'
+      }
+    }
+  },
+})
+```
 ::
 
-### 3. Update `app.vue`
+### 3. Migrate `error.vue` page
+
+New `Error` component can be used as full page structure.
+
+::prose-code-group
+```vue [error.vue (v3)]
+<template>
+  <div>
+    <AppHeader />
+
+    <UError :error="error" />
+
+    <AppFooter />
+
+    <ClientOnly>
+      <LazyUContentSearch
+        :files="files"
+        :navigation="navigation"
+      />
+    </ClientOnly>
+  </div>
+</template>
+```
+
+```vue [error.vue (v1)]
+<template>
+  <div>
+    <AppHeader />
+
+    <UMain>
+      <UContainer>
+        <UPage>
+          <UPageError :error="error" />
+        </UPage>
+      </UContainer>
+    </UMain>
+
+    <AppFooter />
+
+    <ClientOnly>
+      <LazyUContentSearch
+        :files="files"
+        :navigation="navigation"
+      />
+    </ClientOnly>
+
+    <UNotifications />
+  </div>
+</template>
+```
+::
+
+### 4. Migrate `app.vue` page
 
 - `Main`, `Footer` and `LazyUContentSearch` components do not need any updates in our case.
 - `Notification` component can be removed since `Toast` components are directly handled by the `App` component.
+- Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
 - `Header` component needs updates:
   - `panel` slot has been replaced by `content`.
   - `logo` slot has been replaced by `title`.
   - `center` slot has been removed and is now the default.
-- Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
 
 ::prose-code-group
-```vue [header.vue (v1)]
-<script>
-// Content navigation provided by fetchContentNavigation()
-const navigation = inject<Ref<NavItem[]>>('navigation')
-</script>
-
-<template>
-  <UHeader>
-    <template #panel>
-      <UNavigationTree :links="mapContentNavigation(navigation)" />
-     </template>
-   </UHeader>
-</template>
-```
-
 ```vue [header.vue (v3)]
 <script>
 // Content navigation provided by queryCollectionNavigation('docs')
@@ -421,9 +461,24 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
    </UHeader>
 </template>
 ```
+
+```vue [header.vue (v1)]
+<script>
+// Content navigation provided by fetchContentNavigation()
+const navigation = inject<Ref<NavItem[]>>('navigation')
+</script>
+
+<template>
+  <UHeader>
+    <template #panel>
+      <UNavigationTree :links="mapContentNavigation(navigation)" />
+     </template>
+   </UHeader>
+</template>
+```
 ::
 
-### 4. Update landing page
+### 5. Update landing page
 
 We've decided to move the landing content from `YML` to `Markdown` .
 
@@ -460,6 +515,18 @@ export default defineContentConfig({
   :::
 
   :::prose-code-group
+  ```vue [index.vue (v3)]
+  <template>
+    <UContainer>
+      <ContentRenderer
+        v-if="page"
+        :value="page"
+        :prose="false"
+      />
+    </UContainer>
+  </template>
+  ```
+  
   ```vue [index.vue (v1)]
   <template>
     <div>
@@ -521,18 +588,6 @@ export default defineContentConfig({
     </div>
   </template>
   ```
-  
-  ```vue [index.vue (v3)]
-  <template>
-    <UContainer>
-      <ContentRenderer
-        v-if="page"
-        :value="page"
-        :prose="false"
-      />
-    </UContainer>
-  </template>
-  ```
   :::
 
 #### Migrate Vue components to MDC
@@ -552,7 +607,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
   :::
 ::
 
-### 4. Migrate docs page
+### 6. Migrate docs page
 
 ::prose-steps{level="4"}
 #### Layout
@@ -563,22 +618,6 @@ Landing components have been reorganised and standardised as generic `Page` comp
 .
 
   :::prose-code-group
-  ```vue [layout/docs.vue (v1)]
-  <template>
-    <UContainer>
-      <UPage>
-        <template #left>
-          <UAside>
-            <UNavigationTree :links="mapContentNavigation(navigation)" />
-          </UAside>
-        </template>
-  
-        <slot />
-      </UPage>
-    </UContainer>
-  </template>
-  ```
-  
   ```vue [layout/docs.vue (v3)]
   <template>
     <UContainer>
@@ -590,6 +629,22 @@ Landing components have been reorganised and standardised as generic `Page` comp
               :navigation="navigation"
             />
           </UPageAside>
+        </template>
+  
+        <slot />
+      </UPage>
+    </UContainer>
+  </template>
+  ```
+  
+  ```vue [layout/docs.vue (v1)]
+  <template>
+    <UContainer>
+      <UPage>
+        <template #left>
+          <UAside>
+            <UNavigationTree :links="mapContentNavigation(navigation)" />
+          </UAside>
         </template>
   
         <slot />
