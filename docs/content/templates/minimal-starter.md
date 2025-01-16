@@ -3,6 +3,7 @@ slug: minimal-starter
 subtitle: The minimalist template
 title: Minimal Starter
 baseDir: .
+draft: true
 branch: content
 category: minimal
 demo: https://codesandbox.io/p/sandbox/github/nuxt/starter/tree/content

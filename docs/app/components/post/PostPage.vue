@@ -147,7 +147,10 @@ function copyLink() {
           class="text-gray-200 dark:text-gray-800"
         >
 
-        <UContentSurround :surround="surround" />
+        <UContentSurround
+          :surround="surround"
+          :ui="{ linkTitle: 'text-wrap' }"
+        />
       </UPageBody>
 
       <template #right>
