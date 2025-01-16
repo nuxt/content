@@ -13,7 +13,7 @@ const siteConfig = useSiteConfig()
 
 const { data } = await useAsyncData(route.path, () => Promise.all([
   queryCollection('posts').path(route.path).first(),
-  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] }),
+  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] }).order('date', 'DESC'),
 ]), {
   transform: ([page, surround]) => ({ page, surround }),
 })
