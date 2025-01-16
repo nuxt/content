@@ -30,7 +30,7 @@ function indentLines(str: string, indent: number = 2) {
 
 export const moduleTemplates = {
   types: 'content/types.d.ts',
-  studio: 'content/studio.mjs',
+  preview: 'content/preview.mjs',
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   fullCompressedDump: 'content/database.compressed.mjs',
@@ -174,8 +174,8 @@ export const manifestTemplate = (manifest: Manifest) => ({
   write: true,
 })
 
-export const studioTemplate = (collections: ResolvedCollection[], gitInfo: GitInfo, schema: Schema) => ({
-  filename: moduleTemplates.studio,
+export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitInfo, schema: Schema) => ({
+  filename: moduleTemplates.preview,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
       acc[collection.name] = {

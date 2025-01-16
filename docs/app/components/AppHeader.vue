@@ -2,12 +2,18 @@
 import type { ContentNavigationItem } from '@nuxt/content'
 
 const config = useRuntimeConfig().public
+const links = useNavLinks()
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+
+const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => link))
 </script>
 
 <template>
-  <UHeader :ui="{ left: 'min-w-0' }">
+  <UHeader
+    :ui="{ left: 'min-w-0' }"
+    mode="drawer"
+  >
     <template #left>
       <NuxtLink
         to="/"
@@ -38,20 +44,12 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
       </NuxtLink>
     </template>
 
-    <!-- <UNavigationMenu
-      :items="items"
-      variant="link"
-    /> -->
+    <UNavigationMenu
+      :items="linksWithoutIcon"
+      class="justify-center"
+    />
 
     <template #right>
-      <UButton
-        v-if="$route.path === '/'"
-        label="Get started"
-        to="/docs/getting-started"
-        size="sm"
-        class="hidden sm:inline-flex"
-      />
-
       <UColorModeButton class="hidden sm:inline-flex" />
 
       <UTooltip
@@ -74,12 +72,26 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
           aria-label="GitHub"
         />
       </UTooltip>
+
+      <UButton
+        label="Open Studio"
+        to="https://nuxt.studio"
+        size="sm"
+        class="hidden sm:inline-flex"
+      />
     </template>
 
     <template #content>
-      <!-- <UNavigationMenu orientation="vertical" :items="items" class="-ml-2.5" />
+      <UNavigationMenu
+        orientation="vertical"
+        :items="links"
+        class="-mx-2.5"
+      />
 
-      <USeparator type="dashed" class="my-4" /> -->
+      <USeparator
+        type="dashed"
+        class="my-4"
+      />
 
       <UContentNavigation
         highlight

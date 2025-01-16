@@ -40,16 +40,19 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator color="#FFF" />
 
     <AppBanner />
-    <AppHeader :links="links" />
+    <AppHeader />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <UMain>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </UMain>
 
     <AppFooter />
 
     <ClientOnly>
       <LazyUContentSearch
+        :links="links"
         :files="files"
         :navigation="navigation"
         :fuse="{ resultLimit: 42 }"
@@ -81,7 +84,7 @@ provide('navigation', navigation)
 }
 
 :root {
-  --ui-container: 90rem;
+  --ui-container: 80rem;
 }
 
 .dark {
