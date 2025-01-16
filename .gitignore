@@ -13,6 +13,7 @@ examples/*/**/yarn.lock
 .temp
 .tmp
 .cache
+.data
 
 # Yarn
 **/.yarn/cache

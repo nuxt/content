@@ -5,12 +5,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        > [!IMPORTANT]  
-        > As Nuxt Content v3 is currently in alpha, we recommend thorough testing before using it in production environments. We're actively working on stabilization and welcome feedback from early adopters to improve the library. 
+        > [!IMPORTANT]
+        > As Nuxt Content v3 is currently in alpha, we recommend thorough testing before using it in production environments. We're actively working on stabilization and welcome feedback from early adopters to improve the library.
   - type: markdown
     attributes:
       value: |
-        Before reporting a bug, please make sure that you have read through our [v3 documentation](https://content3.nuxt.dev/) and existing [issues](https://github.com/nuxt/content/issues?q=is%3Aissue%20is%3Aopen%20sort%3Aupdated-desc%20label%3Av3).
+        Before reporting a bug, please make sure that you have read through our [v3 documentation](https://content.nuxt.com/) and existing [issues](https://github.com/nuxt/content/issues?q=is%3Aissue%20is%3Aopen%20sort%3Aupdated-desc%20label%3Av3).
   - type: textarea
     id: env
     attributes:
