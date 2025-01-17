@@ -16,7 +16,7 @@ const { data } = await useAsyncData(route.path, () => Promise.all([
   queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] })
     .where('path', 'LIKE', `/${type}%`)
     .where('draft', '=', 0)
-    .order('date', 'ASC'),
+    .order('date', 'DESC'),
 ]), {
   transform: ([page, surround]) => ({ page, surround }),
 })
