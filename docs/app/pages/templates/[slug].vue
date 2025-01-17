@@ -97,7 +97,7 @@ const images = computed(() => template.value
                 target: '_blank',
               }, {
                 label: 'Clone on GitHub',
-                to: `https://github.com/${template.owner}/${template.name}`,
+                to: `https://github.com/${template.owner}/${template.name}/tree/${template.branch}`,
                 target: '_blank',
               }]"
             >
