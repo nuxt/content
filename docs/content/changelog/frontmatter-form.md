@@ -112,6 +112,6 @@ image: z.object({
 icon: z.string().editor({ type: 'icon' })
 ```
 
-::callout{icon="i-ph-lightbulb" to="https://github.com/nuxt/content/tree/v3"}
-Nuxt Content v3 is in alpha version for the moment. Don't hesitate to try it out and give us feedback.
+::callout{icon="i-ph-lightbulb" to="https://github.com/nuxt/content/tree/main"}
+Nuxt Content v3 has been officially released. Don't hesitate to try it out and give us feedback.
 ::
