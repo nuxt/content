@@ -30,7 +30,7 @@ if (import.meta.server) {
           :to="to"
           target="_blank"
           class="focus:outline-none"
-          aria-label="Nuxt Content v3-alpha has been released!"
+          aria-label="Nuxt Content v3 has been released!"
           tabindex="-1"
       >
         <span class="absolute inset-0 " aria-hidden="true" />
@@ -41,7 +41,7 @@ if (import.meta.server) {
 
         <p class="text-sm font-medium text-white dark:text-gray-900 truncate">
           <UIcon name="i-heroicons-rocket-launch" class="w-5 h-5 align-top flex-shrink-0 pointer-events-none mr-2" />
-          <span class="font-semibold">Nuxt Content v3-alpha</span> has been released!
+          <span class="font-semibold">Nuxt Content v3</span> has been released!
         </p>
 
         <UButton
