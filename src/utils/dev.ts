@@ -111,7 +111,8 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     if (pathOrError instanceof Error) {
       return
     }
-    let path = pathOrError as string
+    // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
+    let path = resolve(pathOrError as string)
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match
@@ -156,7 +157,8 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     if (pathOrError instanceof Error) {
       return
     }
-    let path = pathOrError as string
+    // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
+    let path = resolve(pathOrError as string)
     const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
     if (match) {
       const { collection, source, cwd } = match
