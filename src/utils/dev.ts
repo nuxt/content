@@ -93,9 +93,10 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   const collections = manifest.collections
 
   const sourceMap = collections.flatMap((c) => {
-    return c.source
-      ? c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: withTrailingSlash(s.cwd) }))
-      : []
+    if (c.source) {
+      return c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: s.cwd && withTrailingSlash(s.cwd) }))
+    }
+    return []
   })
   const dirsToWatch = Array.from(new Set(sourceMap.map(({ source }) => source.cwd)))
     // Filter out empty cwd for custom collections
@@ -113,7 +114,13 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     }
     // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
     let path = resolve(pathOrError as string)
-    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
+    const match = sourceMap.find(({ source, cwd }) => {
+      if (cwd && path.startsWith(cwd)) {
+        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+      }
+
+      return false
+    })
     if (match) {
       const { collection, source, cwd } = match
       // Remove the cwd prefix
@@ -159,7 +166,13 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     }
     // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
     let path = resolve(pathOrError as string)
-    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
+    const match = sourceMap.find(({ source, cwd }) => {
+      if (cwd && path.startsWith(cwd)) {
+        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+      }
+
+      return false
+    })
     if (match) {
       const { collection, source, cwd } = match
       // Remove the cwd prefix
