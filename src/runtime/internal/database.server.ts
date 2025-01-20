@@ -16,24 +16,10 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   async function loadAdapter() {
     if (!_adapter) {
       if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-        if ('filename' in localDatabase) {
-          const filename = isAbsolute(localDatabase?.filename || '') || localDatabase?.filename === ':memory:'
-            ? localDatabase?.filename
-            : new URL(localDatabase.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
-
-          localDatabase.filename = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
-        }
-        _adapter = await localAdapter(localDatabase)
+        _adapter = await localAdapter(refineDatabaseConfig(localDatabase))
       }
       else {
-        if ('filename' in database) {
-          const filename = isAbsolute(database?.filename || '') || database?.filename === ':memory:'
-            ? database?.filename
-            : new URL(database.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
-
-          database.filename = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
-        }
-        _adapter = adapter(database)
+        _adapter = adapter(refineDatabaseConfig(database as unknown))
       }
     }
 
@@ -120,4 +106,17 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
       console.error('Failed to fetch compressed dump', e)
       return ''
     })
+}
+
+function refineDatabaseConfig(config: { filename?: string }) {
+  config = { ...config }
+  if ('filename' in config) {
+    const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
+      ? config?.filename
+      : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+
+    config.filename = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
+  }
+
+  return config
 }
