@@ -8,4 +8,9 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   compatibilityDate: '2024-04-03',
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
 })
