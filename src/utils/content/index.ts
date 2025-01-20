@@ -116,9 +116,10 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       ...mdcOptions,
       ...markdown,
       rehypePlugins: {
-        highlight: rehypeHighlightPlugin,
         ...mdcOptions?.rehypePlugins,
         ...markdown?.rehypePlugins,
+        // keep highlight plugin last to avoid conflict with other code plugins like `rehype-katex`
+        highlight: rehypeHighlightPlugin,
       },
       remarkPlugins: {
         'remark-emoji': {},
