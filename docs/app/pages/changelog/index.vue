@@ -107,7 +107,7 @@ watch(() => arrivedState.bottom, () => {
                     :key="index"
                     :title="post.title"
                     :description="post.description"
-                    :image="post.image"
+                    :image="{ ...post.image, height: 915 }"
                     :to="post.path"
                     :authors="post.authors"
                     variant="naked"
