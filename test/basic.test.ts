@@ -62,7 +62,8 @@ describe('basic', async () => {
     })
 
     test('content table is created', async () => {
-      const cache = await db.database?.all<Record<string, unknown>>(`SELECT name FROM sqlite_master WHERE type='table' AND name='${getTableName('content')}';`)
+      const cache = await db.database?.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`)
+        .all(getTableName('content')) as { name: string }[]
 
       expect(cache).toBeDefined()
       expect(cache).toHaveLength(1)

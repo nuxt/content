@@ -45,8 +45,8 @@ describe('empty', async () => {
       expect(pagesCollection).toBeDefined()
       expect(pagesCollection?.type).toBe('page')
       expect(pagesCollection?.source).toBeDefined()
-      expect(pagesCollection?.source[0]).toBeDefined()
-      expect(pagesCollection?.source[0].include).toBe('**/*')
+      expect(pagesCollection?.source?.[0]).toBeDefined()
+      expect(pagesCollection?.source?.[0].include).toBe('**/*')
     })
   })
 
@@ -68,11 +68,12 @@ describe('empty', async () => {
     })
 
     test('content table is created', async () => {
-      const cache = await db.database?.all<Record<string, unknown>>(`SELECT name FROM sqlite_master WHERE type='table' AND name='${getTableName('content')}';`)
+      const cache = await db.database?.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`)
+        .all(getTableName('content')) as { name: string }[]
 
       expect(cache).toBeDefined()
       expect(cache).toHaveLength(1)
-      expect(cache[0].name).toBe(getTableName('content'))
+      expect(cache![0]!.name).toBe(getTableName('content'))
     })
   })
 
