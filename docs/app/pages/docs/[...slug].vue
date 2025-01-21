@@ -50,6 +50,11 @@ const communityLinks = computed(() => [{
   label: 'Star on GitHub',
   to: 'https://github.com/nuxt/content',
   target: '_blank',
+}, {
+  icon: 'i-simple-icons-discord',
+  label: 'Chat on Discord',
+  to: 'https://discord.gg/sBXDm6e8SP',
+  target: '_blank',
 }])
 </script>
 
