@@ -49,7 +49,7 @@ bun add @nuxt/content@^3
 
 ### 2. Create `content.config.ts` file
 
-This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page, one for the landing page and another for the doc pages.
+This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page and another `docs` collection for the documentation pages.
 
 ```js [content.config.ts]
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
