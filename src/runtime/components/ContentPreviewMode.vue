@@ -103,6 +103,11 @@ onMounted(async () => {
     if (!data) {
       // Request draft sync via Preview API
       try {
+        // Wait for draft:ready and then request sync to get the data back with 'draft:ready'
+        socket.once('draft:ready', () => {
+          socket.emit('draft:requestSync')
+        })
+
         // Request preview sync from Preview API
         await $fetch('api/projects/preview/sync', {
           baseURL: props.api,
@@ -110,11 +115,6 @@ onMounted(async () => {
           params: {
             token: props.previewToken,
           },
-        })
-
-        // Wait for draft:ready and then request sync to get the data back with 'draft:ready'
-        socket.once('draft:ready', () => {
-          socket.emit('draft:requestSync')
         })
       }
       catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
