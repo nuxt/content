@@ -11,7 +11,6 @@ authors:
     username: larbish
 date: 2025-01-07T01:00:00.000Z
 category: Migration
-draft: true
 ---
 
 # How to upgrade your Nuxt documentation website to Content x UI v3
