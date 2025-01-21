@@ -1,6 +1,6 @@
 ---
 title: Migrate Nuxt UI Pro Documentation Starter
-description: How to upgrade your Nuxt UI Pro documentation to Content and UIPro v3
+description: How to upgrade your Nuxt UI Pro documentation to Content and UI v3
 image:
   src: /blog/migrate-docs-starter.png
 authors:
@@ -440,7 +440,7 @@ New `UError` component can be used as full page structure.
 - Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
 
 ::prose-code-group
-```vue [header.vue (v3)]
+```vue [Header.vue (v3)]
 <script>
 // Content navigation provided by queryCollectionNavigation('docs')
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
@@ -458,7 +458,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 </template>
 ```
 
-```vue [header.vue (v1)]
+```vue [Header.vue (v1)]
 <script>
 // Content navigation provided by fetchContentNavigation()
 const navigation = inject<Ref<NavItem[]>>('navigation')
@@ -596,8 +596,6 @@ Landing components have been reorganised and standardised as generic `Page` comp
 - `LandingSection` => `PageSection`
 - `LandingCard` => `PageCard` (we'll use the `PageFeature` instead)
 
-.
-
   :::prose-tip{to="https://github.com/nuxt-ui-pro/docs/blob/v3/content/index.md"}
   Have a look at the final `Markdown` result on GitHub.
   :::
@@ -610,8 +608,6 @@ Landing components have been reorganised and standardised as generic `Page` comp
 
 - `Aside` component has been renamed to `PageAside` .
 - `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation`.
-
-.
 
   :::prose-code-group
   ```vue [layout/docs.vue (v3)]
@@ -653,7 +649,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
 #### Catch-all pages
 
 - `Divider` has been renamed to `Separator`
-- `FindPageHeadline` must be imported from `#ui-pro/utils/content`
+- `findPageHeadline` must be imported from `#ui-pro/utils/content`
 - `prose` property does not exist no more on `PageBody` component.
 ::
 
