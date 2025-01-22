@@ -2,6 +2,7 @@ import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
+import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/better-sqlite3'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
@@ -19,7 +20,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
         _adapter = await localAdapter(refineDatabaseConfig(localDatabase))
       }
       else {
-        _adapter = adapter(refineDatabaseConfig(database as unknown))
+        _adapter = adapter(refineDatabaseConfig(database))
       }
     }
 
@@ -29,7 +30,6 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
     all: async (sql, params = []) => {
       const db = await loadAdapter()
       const result = await db.prepare(sql).all(...params)
-        .then(res => 'results' in res && Array.isArray(res.results) ? res.results : res)
 
       if (!result) {
         return []
@@ -109,14 +109,25 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
     })
 }
 
-function refineDatabaseConfig(config: { filename?: string }) {
-  config = { ...config }
-  if ('filename' in config) {
-    const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
-      ? config?.filename
-      : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
+  if (config.type === 'd1') {
+    return { ...config, bindingName: config.bindingName || config.binding }
+  }
 
-    config.filename = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
+  if (config.type === 'sqlite') {
+    const _config = { ...config } as SqliteConnectorOptions
+    if (config.filename === ':memory:') {
+      return { name: 'memory' }
+    }
+
+    if ('filename' in config) {
+      const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
+        ? config?.filename
+        : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+
+      _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
+    }
+    return _config
   }
 
   return config

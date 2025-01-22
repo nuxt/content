@@ -13,7 +13,7 @@ import {
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { hash } from 'ohash'
-import { join, isAbsolute, resolve } from 'pathe'
+import { join, isAbsolute } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
@@ -234,7 +234,7 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
-  const db = await getLocalDatabase({ type: 'sqlite', filename: resolve(nuxt.options.rootDir, '.data/content/contents.sqlite') })
+  const db = await getLocalDatabase(options._localDatabase)
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
