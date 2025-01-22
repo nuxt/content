@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises'
+import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'pathe'
 import { getPlatformProxy } from 'wrangler'
 import { definePreset } from '../utils/preset'
@@ -13,6 +13,7 @@ export default definePreset({
     if (nitroConfig.dev === false) {
       // Write SQL dump to database queries when not in dev mode
       const sql = Object.values(options.manifest.dump).map(value => value.join('\n')).join('\n')
+      await mkdir(resolve(nitroConfig.rootDir, '.data/hub/database/queries'), { recursive: true })
       await writeFile(resolve(nitroConfig.rootDir, '.data/hub/database/queries/content-database.sql'), sql)
       // Disable integrity check in production for performance
       nitroConfig.runtimeConfig.content.integrityCheck = false
