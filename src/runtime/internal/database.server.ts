@@ -29,6 +29,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
     all: async (sql, params = []) => {
       const db = await loadAdapter()
       const result = await db.prepare(sql).all(...params)
+        .then(res => 'results' in res && Array.isArray(res.results) ? res.results : res)
 
       if (!result) {
         return []

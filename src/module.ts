@@ -1,4 +1,4 @@
-import { mkdir, stat } from 'node:fs/promises'
+import { stat } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -13,7 +13,7 @@ import {
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { hash } from 'ohash'
-import { join, dirname, isAbsolute } from 'pathe'
+import { join, isAbsolute, resolve } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
@@ -21,7 +21,7 @@ import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
-import type { ModuleOptions, SqliteDatabaseConfig } from './types/module'
+import type { ModuleOptions } from './types/module'
 import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
@@ -30,7 +30,7 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
-import { getLocalDatabase, resolveDatabaseAdapter } from './utils/sqlite'
+import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 
 // Export public utils
 export * from './utils'
@@ -92,16 +92,16 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Create local database
-    options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
-      ? options._localDatabase!.filename
-      : join(nuxt.options.rootDir, options._localDatabase!.filename)
-    await mkdir(dirname(options._localDatabase!.filename), { recursive: true }).catch(() => {})
+    await refineDatabaseConfig(options._localDatabase, nuxt)
+    if (options._localDatabase?.type === 'sqlite') {
+      options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
+        ? options._localDatabase!.filename
+        : join(nuxt.options.rootDir, options._localDatabase!.filename)
+    }
 
     // Create sql database
-    if ((options.database as SqliteDatabaseConfig).filename) {
-      (options.database as SqliteDatabaseConfig).filename = (options.database as SqliteDatabaseConfig).filename
-      await mkdir(dirname((options.database as SqliteDatabaseConfig).filename), { recursive: true }).catch(() => {})
-    }
+    await refineDatabaseConfig(options.database, nuxt)
+
     const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections
 
@@ -119,7 +119,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
     nuxt.options.vite.optimizeDeps.include ||= []
-    nuxt.options.vite.optimizeDeps.include.push('scule')
+    nuxt.options.vite.optimizeDeps.include.push('@nuxt/content > scule')
 
     // Helpers are designed to be enviroment agnostic
     addImports([
@@ -163,7 +163,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Load nitro preset and set db adapter
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
-      await preset.setupNitro(config, { manifest, resolver })
+      await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
 
       config.alias ||= {}
       config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolver)
@@ -174,6 +174,14 @@ export default defineNuxtModule<ModuleOptions>({
         route: '/api/content/:collection/query',
         handler: resolver.resolve('./runtime/api/query.post'),
       })
+
+      // Handle HMR changes
+      if (nuxt.options.dev) {
+        addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
+        await watchComponents(nuxt)
+        const socket = await startSocketServer(nuxt, options, manifest)
+        await watchContents(nuxt, options, manifest, socket)
+      }
     })
 
     // Prerender database.sql routes for each collection to fetch dump
@@ -190,36 +198,24 @@ export default defineNuxtModule<ModuleOptions>({
       return
     }
 
-    const dumpGeneratePromise = processCollectionItems(nuxt, manifest.collections, options)
-      .then((fest) => {
-        manifest.checksum = fest.checksum
-        manifest.dump = fest.dump
-        manifest.components = fest.components
-
-        return updateTemplates({
-          filter: template => [
-            moduleTemplates.fullRawDump,
-            moduleTemplates.fullCompressedDump,
-            moduleTemplates.manifest,
-            moduleTemplates.components,
-          ].includes(template.filename),
-        })
-      })
-
     // Generate collections and sql dump to update templates local database
-    // `app:templates` is triggered for all environments
-    nuxt.hook('app:templates', async () => {
-      await dumpGeneratePromise
-    })
+    // `modules:done` is triggered for all environments
+    nuxt.hook('modules:done', async () => {
+      const fest = await processCollectionItems(nuxt, manifest.collections, options)
 
-    dumpGeneratePromise.then(async () => {
-      // Handle HMR changes
-      if (nuxt.options.dev) {
-        addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-        await watchComponents(nuxt)
-        const socket = await startSocketServer(nuxt, options, manifest)
-        await watchContents(nuxt, options, manifest, socket)
-      }
+      // Update manifest
+      manifest.checksum = fest.checksum
+      manifest.dump = fest.dump
+      manifest.components = fest.components
+
+      await updateTemplates({
+        filter: template => [
+          moduleTemplates.fullRawDump,
+          moduleTemplates.fullCompressedDump,
+          moduleTemplates.manifest,
+          moduleTemplates.components,
+        ].includes(template.filename),
+      })
 
       // Handle preview mode
       if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
@@ -237,7 +233,7 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
-  const db = await getLocalDatabase(options._localDatabase!.filename)
+  const db = await getLocalDatabase({ type: 'sqlite', filename: resolve(nuxt.options.rootDir, '.data/content/contents.sqlite') })
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
