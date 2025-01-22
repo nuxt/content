@@ -52,7 +52,7 @@ const links = [
   {
     icon: 'i-simple-icons-discord',
     label: 'Chat on Discord',
-    to: 'https://discord.com/invite/sBXDm6e8SP',
+    to: 'https://discord.gg/sBXDm6e8SP',
     target: '_blank',
   },
 ]

@@ -34,8 +34,9 @@ export async function loadContentConfig(nuxt: Nuxt, options: { defaultFallback?:
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).defineContentConfig = (c: any) => c
 
+  const layers = [...nuxt.options._layers].reverse()
   const contentConfigs = await Promise.all(
-    nuxt.options._layers.reverse().map(
+    layers.map(
       layer => loader<NuxtContentConfig>({ name: 'content', cwd: layer.config.rootDir, defaultConfig: options.defaultFallback ? defaultConfig : undefined }),
     ),
   )
