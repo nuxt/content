@@ -6,17 +6,16 @@ import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
-
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   return {
-    all: async <T>(sql: string, params: DatabaseBindParams) => {
+    all: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
       return db
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
         .map(row => refineContentFields(sql, row) as T)
     },
-    first: async <T>(sql: string, params: DatabaseBindParams) => {
+    first: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
       return refineContentFields(

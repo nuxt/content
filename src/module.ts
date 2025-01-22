@@ -30,7 +30,7 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
-import { getLocalDatabase } from './utils/sqlite'
+import { getLocalDatabase, resolveDatabaseAdapter } from './utils/sqlite'
 
 // Export public utils
 export * from './utils'
@@ -165,9 +165,9 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver })
 
-      const adapter = config.runtimeConfig!.content!.database?.type || options.database.type || 'sqlite'
       config.alias ||= {}
-      config.alias['#content/adapter'] = resolver.resolve(`./runtime/adapters/${adapter}`)
+      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolver)
+      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolver)
 
       config.handlers ||= []
       config.handlers.push({

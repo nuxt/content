@@ -57,6 +57,7 @@
     "c12": "^2.0.1",
     "chokidar": "^4.0.3",
     "consola": "^3.4.0",
+    "db0": "^0.2.1",
     "defu": "^6.1.4",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.3",
@@ -84,7 +85,6 @@
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
-    "typescript": "5.7.3",
     "ufo": "^1.5.4",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
@@ -96,7 +96,7 @@
   },
   "peerDependencies": {
     "@libsql/client": "*",
-    "pg": "*"
+    "@electric-sql/pglite": "*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250121.0",
@@ -121,6 +121,7 @@
     "micromark-util-types": "^2.0.1",
     "nuxt": "^3.15.2",
     "release-it": "^18.1.1",
+    "typescript": "5.7.3",
     "vitest": "^3.0.3",
     "vue-tsc": "^2.2.0",
     "wrangler": "^3.103.2"
