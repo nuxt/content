@@ -123,7 +123,8 @@
     "release-it": "^18.1.1",
     "typescript": "5.7.3",
     "vitest": "^3.0.3",
-    "vue-tsc": "^2.2.0"
+    "vue-tsc": "^2.2.0",
+    "wrangler": "^3.103.2"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"

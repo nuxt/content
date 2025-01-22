@@ -13,42 +13,24 @@ import localAdapter from '#content/local-adapter'
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
-  let _adapter: Connector
-  async function loadAdapter() {
-    if (!_adapter) {
-      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-        _adapter = await localAdapter(refineDatabaseConfig(localDatabase))
-      }
-      else {
-        _adapter = adapter(refineDatabaseConfig(database))
-      }
-    }
-
-    return _adapter
+  let db: Connector
+  if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+    db = localAdapter(refineDatabaseConfig(localDatabase))
   }
+  else {
+    db = adapter(refineDatabaseConfig(database))
+  }
+
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {
-      const db = await loadAdapter()
-      const result = await db.prepare(sql).all(...params)
-
-      if (!result) {
-        return []
-      }
-
-      return result.map((item: unknown) => refineContentFields(sql, item))
+      return db.prepare(sql).all(...params)
+        .then(result => (result || []).map((item: unknown) => refineContentFields(sql, item)))
     },
     first: async (sql, params = []) => {
-      const db = await loadAdapter()
-      const item = await db.prepare(sql).get(...params)
-
-      if (!item) {
-        return item
-      }
-
-      return refineContentFields(sql, item)
+      return db.prepare(sql).get(...params)
+        .then(item => item ? refineContentFields(sql, item) : item)
     },
     exec: async (sql) => {
-      const db = await loadAdapter()
       return db.exec(sql)
     },
   }
@@ -74,7 +56,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
-  const db = await loadDatabaseAdapter(config)
+  const db = loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = 'checksum_${collection}'`).catch(() => ({ version: '' }))
 
