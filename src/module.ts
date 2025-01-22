@@ -113,6 +113,7 @@ export default defineNuxtModule<ModuleOptions>({
       version,
       database: options.database,
       localDatabase: options._localDatabase!,
+      integrityCheck: true,
     } as never
 
     nuxt.options.vite.optimizeDeps ||= {}

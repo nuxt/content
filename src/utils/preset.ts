@@ -9,6 +9,7 @@ interface Options {
   moduleOptions: ModuleOptions
 }
 export interface Preset {
+  name: string
   setupNitro: (nitroConfig: NitroConfig, opts: Options) => void | Promise<void>
 }
 

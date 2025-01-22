@@ -182,6 +182,7 @@ export interface RuntimeConfig {
     version: string
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
+    integrityCheck: boolean
   }
 }
 
