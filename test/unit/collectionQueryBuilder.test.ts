@@ -43,7 +43,7 @@ describe('collectionQueryBuilder', () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT * FROM _articles WHERE ("title" = \'Test Article\') AND ("published" = \'true\') ORDER BY stem ASC',
+      'SELECT * FROM _articles WHERE ("title" = \'Test Article\') AND ("published" = \'1\') ORDER BY stem ASC',
     )
   })
 
@@ -165,7 +165,7 @@ describe('collectionQueryBuilder', () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT * FROM _articles WHERE ("published" = \'true\') AND ("category" = \'tech\' AND ("tags" LIKE \'%javascript%\' OR "tags" LIKE \'%typescript%\')) ORDER BY stem ASC',
+      'SELECT * FROM _articles WHERE ("published" = \'1\') AND ("category" = \'tech\' AND ("tags" LIKE \'%javascript%\' OR "tags" LIKE \'%typescript%\')) ORDER BY stem ASC',
     )
   })
 

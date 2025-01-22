@@ -49,7 +49,7 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
           break
 
         default:
-          condition = `"${String(field)}" ${operator} '${value}'`
+          condition = `"${String(field)}" ${operator} '${typeof value === 'boolean' ? Number(value) : value}'`
       }
       conditions.push(`${condition}`)
       return query
