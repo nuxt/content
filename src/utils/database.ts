@@ -1,12 +1,33 @@
+import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
-import type { CacheEntry, LocalDevelopmentDatabase } from '../types'
+import type { Nuxt } from '@nuxt/schema'
+import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
+import { isAbsolute, join, dirname } from 'pathe'
+import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, SqliteDatabaseConfig } from '../types'
+import type { ModuleOptions } from '../types/module'
+
+export async function refineDatabaseConfig(database: ModuleOptions['database'], nuxt: Nuxt) {
+  if (database.type === 'd1') {
+    if (!('bindingName' in database)) {
+      // @ts-expect-error bindingName
+      database.bindingName = database.binding
+    }
+  }
+
+  if (database.type === 'sqlite') {
+    const path = isAbsolute(database.filename)
+      ? database.filename
+      : join(nuxt.options.rootDir, database.filename)
+    await mkdir(dirname(path), { recursive: true }).catch(() => {})
+  }
+}
 
 export function getDefaultSqliteAdapter() {
   return process.versions.bun ? 'bunsqlite' : 'sqlite'
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql', resolver: Resolver) {
+export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1', resolver: Resolver) {
   const databaseConnectors = {
     sqlite: 'db0/connectors/better-sqlite3',
     bunsqlite: resolver.resolve('./runtime/internal/bunsqlite'),
@@ -23,18 +44,23 @@ export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgr
   return databaseConnectors[adapter]
 }
 
-async function getDatabase(filename: string): Promise<Connector> {
+async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig): Promise<Connector> {
+  if (database.type === 'd1') {
+    return cloudflareD1Connector({ bindingName: database.bindingName })
+  }
+
   const type = getDefaultSqliteAdapter()
   return import(type === 'bunsqlite' ? 'db0/connectors/bun-sqlite' : 'db0/connectors/better-sqlite3')
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
-      return connector({ path: filename })
+      return connector({ path: database.filename })
     })
 }
 
 const _localDatabase: Record<string, Connector> = {}
-export async function getLocalDatabase(databaseLocation: string): Promise<LocalDevelopmentDatabase> {
-  const db = _localDatabase[databaseLocation] || await getDatabase(databaseLocation)
+export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, connector?: Connector): Promise<LocalDevelopmentDatabase> {
+  const databaseLocation = database.type === 'sqlite' ? database.filename : database.bindingName
+  const db = _localDatabase[databaseLocation] || connector || await getDatabase(database)
 
   _localDatabase[databaseLocation] = db
   await db.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
