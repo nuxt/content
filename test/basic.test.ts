@@ -6,7 +6,7 @@ import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
 import { getTableName } from '../src/utils/collection'
-import { getLocalDatabase } from '../src/utils/sqlite'
+import { getLocalDatabase } from '../src/utils/database'
 import type { LocalDevelopmentDatabase } from '../dist/module'
 
 async function cleanup() {
@@ -57,8 +57,7 @@ describe('basic', async () => {
     })
 
     test('load database', async () => {
-      const databaseLocation = fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url))
-      db = await getLocalDatabase(databaseLocation)
+      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url)) })
     })
 
     test('content table is created', async () => {
