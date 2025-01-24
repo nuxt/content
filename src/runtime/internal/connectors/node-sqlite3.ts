@@ -10,7 +10,7 @@ export interface ConnectorOptions {
   name?: string
 }
 
-export default function sqliteConnector(opts: ConnectorOptions) {
+export default function nodeSqlite3Connector(opts: ConnectorOptions) {
   let _db: sqlite3.Database
   const getDB = () => {
     if (_db) {
@@ -30,7 +30,7 @@ export default function sqliteConnector(opts: ConnectorOptions) {
   }
 
   return <Connector>{
-    name: 'sqlite3',
+    name: 'node-sqlite3',
     dialect: 'sqlite',
     exec(sql: string) {
       return getDB().exec(sql)

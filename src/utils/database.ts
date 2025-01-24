@@ -20,7 +20,7 @@ function isSqlite3Available() {
     return true
   }
   catch {
-    logger.error('sqlite3 is not available in the current environment')
+    logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
     process.exit(1)
   }
 }
