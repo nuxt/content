@@ -4,8 +4,26 @@ import type { Resolver } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
+import { isWebContainer } from '@webcontainer/env'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions } from '../types/module'
+import { logger } from './dev'
+
+function isSqlite3Available() {
+  if (!isWebContainer()) {
+    return false
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('sqlite3')
+    return true
+  }
+  catch {
+    logger.error('sqlite3 is not available in the current environment')
+    process.exit(1)
+  }
+}
 
 export async function refineDatabaseConfig(database: ModuleOptions['database'], nuxt: Nuxt) {
   if (database.type === 'd1') {
@@ -29,8 +47,8 @@ export function getDefaultSqliteAdapter() {
 
 export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1', resolver: Resolver) {
   const databaseConnectors = {
-    sqlite: 'db0/connectors/better-sqlite3',
-    bunsqlite: resolver.resolve('./runtime/internal/bunsqlite'),
+    sqlite: isSqlite3Available() ? resolver.resolve('./runtime/internal/connectors/node-sqlite3') : 'db0/connectors/better-sqlite3',
+    bunsqlite: resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
     libsql: 'db0/connectors/libsql/web',
     d1: 'db0/connectors/cloudflare-d1',
@@ -50,7 +68,7 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig): P
   }
 
   const type = getDefaultSqliteAdapter()
-  return import(type === 'bunsqlite' ? 'db0/connectors/bun-sqlite' : 'db0/connectors/better-sqlite3')
+  return import(type === 'bunsqlite' ? 'db0/connectors/bun-sqlite' : (isSqlite3Available() ? './connectors/sqlite3' : 'db0/connectors/better-sqlite3'))
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })

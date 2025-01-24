@@ -53,6 +53,7 @@
     "@nuxtjs/mdc": "^0.13.1",
     "@shikijs/langs": "^2.1.0",
     "@sqlite.org/sqlite-wasm": "3.48.0-build3",
+    "@webcontainer/env": "^1.1.1",
     "better-sqlite3": "^11.8.1",
     "c12": "^2.0.1",
     "chokidar": "^4.0.3",
@@ -95,8 +96,20 @@
     "zod-to-ts": "^1.2.0"
   },
   "peerDependencies": {
+    "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "@electric-sql/pglite": "*"
+    "sqlite3": "*"
+  },
+  "peerDependenciesMeta": {
+    "@electric-sql/pglite": {
+      "optional": true
+    },
+    "@libsql/client": {
+      "optional": true
+    },
+    "sqlite3": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250124.3",
