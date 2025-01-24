@@ -6,7 +6,7 @@ import { afterAll, describe, expect, test } from 'vitest'
 import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
 import { getTableName } from '../src/utils/collection'
-import { getLocalDatabase } from '../src/utils/sqlite'
+import { getLocalDatabase } from '../src/utils/database'
 import type { LocalDevelopmentDatabase } from '../dist/module'
 
 async function cleanup() {
@@ -45,8 +45,8 @@ describe('empty', async () => {
       expect(pagesCollection).toBeDefined()
       expect(pagesCollection?.type).toBe('page')
       expect(pagesCollection?.source).toBeDefined()
-      expect(pagesCollection?.source[0]).toBeDefined()
-      expect(pagesCollection?.source[0].include).toBe('**/*')
+      expect(pagesCollection?.source?.[0]).toBeDefined()
+      expect(pagesCollection?.source?.[0].include).toBe('**/*')
     })
   })
 
@@ -63,16 +63,16 @@ describe('empty', async () => {
     })
 
     test('load database', async () => {
-      const databaseLocation = fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url))
-      db = await getLocalDatabase(databaseLocation)
+      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)) })
     })
 
     test('content table is created', async () => {
-      const cache = await db.database?.all<Record<string, unknown>>(`SELECT name FROM sqlite_master WHERE type='table' AND name='${getTableName('content')}';`)
+      const cache = await db.database?.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`)
+        .all(getTableName('content')) as { name: string }[]
 
       expect(cache).toBeDefined()
       expect(cache).toHaveLength(1)
-      expect(cache[0].name).toBe(getTableName('content'))
+      expect(cache![0]!.name).toBe(getTableName('content'))
     })
   })
 

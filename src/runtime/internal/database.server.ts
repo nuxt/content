@@ -1,38 +1,37 @@
-import type { SqliteDatabaseConfig, DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
+import { isAbsolute } from 'pathe'
+import type { Connector } from 'db0'
+import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/better-sqlite3'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
+import { refineContentFields } from './collection'
 import { tables, checksums } from '#content/manifest'
 import adapter from '#content/adapter'
+import localAdapter from '#content/local-adapter'
 
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
-  let _adapter: DatabaseAdapter
-  async function loadAdapter() {
-    if (!_adapter) {
-      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-        _adapter = await loadSqliteAdapter(localDatabase)
-      }
-      else {
-        _adapter = adapter(database)
-      }
-    }
-
-    return _adapter
+  let db: Connector
+  if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+    db = localAdapter(refineDatabaseConfig(localDatabase))
+  }
+  else {
+    db = adapter(refineDatabaseConfig(database))
   }
 
   return <DatabaseAdapter>{
-    all: async (sql, params) => {
-      const db = await loadAdapter()
-      return await db.all<Record<string, unknown>>(sql, params)
+    all: async (sql, params = []) => {
+      return db.prepare(sql).all(...params)
+        .then(result => 'results' in result && Array.isArray(result.results) ? result.results : result)
+        .then(result => (result || []).map((item: unknown) => refineContentFields(sql, item)))
     },
-    first: async (sql, params) => {
-      const db = await loadAdapter()
-      return await db.first<Record<string, unknown>>(sql, params)
+    first: async (sql, params = []) => {
+      return db.prepare(sql).get(...params)
+        .then(item => item ? refineContentFields(sql, item) : item)
     },
     exec: async (sql) => {
-      const db = await loadAdapter()
       return db.exec(sql)
     },
   }
@@ -58,7 +57,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
-  const db = await loadDatabaseAdapter(config)
+  const db = loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = 'checksum_${collection}'`).catch(() => ({ version: '' }))
 
@@ -93,6 +92,26 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
     })
 }
 
-function loadSqliteAdapter(config: SqliteDatabaseConfig) {
-  return import('../adapters/sqlite').then(m => m.default(config))
+function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
+  if (config.type === 'd1') {
+    return { ...config, bindingName: config.bindingName || config.binding }
+  }
+
+  if (config.type === 'sqlite') {
+    const _config = { ...config } as SqliteConnectorOptions
+    if (config.filename === ':memory:') {
+      return { name: 'memory' }
+    }
+
+    if ('filename' in config) {
+      const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
+        ? config?.filename
+        : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+
+      _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
+    }
+    return _config
+  }
+
+  return config
 }

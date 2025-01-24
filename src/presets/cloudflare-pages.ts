@@ -5,6 +5,7 @@ import { definePreset } from '../utils/preset'
 import { logger } from '../utils/dev'
 
 export default definePreset({
+  name: 'cloudflare-pages',
   async setupNitro(nitroConfig, { manifest, resolver }) {
     if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
       logger.warn('Deploying to Cloudflare Pages requires using D1 database, switching to D1 database with binding `DB`.')

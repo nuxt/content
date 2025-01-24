@@ -27,6 +27,14 @@ declare module '#content/adapter' {
   export { adapter as default }
 }
 
+declare module '#content/local-adapter' {
+  import type { DatabaseAdapter } from './database'
+
+  const adapter: DatabaseAdapter
+
+  export { adapter as default }
+}
+
 declare module '#content/collections' {
   export const collections: Record<string, unknown>
 }

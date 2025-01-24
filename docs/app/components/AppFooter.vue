@@ -50,7 +50,7 @@ const route = useRoute()
       <UButton
         aria-label="Nuxt Content on Discord"
         icon="i-simple-icons-discord"
-        to="https://go.nuxt.com/discord"
+        to="https://discord.gg/sBXDm6e8SP"
         target="_blank"
         color="neutral"
         variant="ghost"
