@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs'
 import { defineNuxtConfig } from 'nuxt/config'
+import { resolve } from 'pathe'
 import pkg from '../package.json'
 
 export default defineNuxtConfig({
@@ -50,11 +52,19 @@ export default defineNuxtConfig({
       noApiRoute: false,
     },
   },
-
   runtimeConfig: {
     public: {
       version: pkg.version,
     },
+  },
+  routeRules: {
+    ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
+      .split('\n')
+      .filter(line => line.trim().length && !line.trim().startsWith('#'))
+      .reduce((acc, line) => {
+        const [from, to] = line.split('=') as [string, string]
+        return Object.assign(acc, { [from]: { redirect: to } })
+      }, {} as Record<string, { redirect: string }>),
   },
 
   future: {
