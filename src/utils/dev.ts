@@ -139,7 +139,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       let parsedContent = localCache?.parsedContent
 
       // If the local cache is not present or the checksum does not match, we need to parse the content
-      if (!localCache && localCache?.checksum !== checksum) {
+      if (!localCache || localCache?.checksum !== checksum) {
         if (!collectionParsers[collection.name]) {
           collectionParsers[collection.name] = await createParser(collection, nuxt)
         }
