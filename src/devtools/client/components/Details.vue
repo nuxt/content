@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computedAsync, useVirtualList } from '@vueuse/core'
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, shallowRef, onMounted } from 'vue'
 import { rpc } from '../composables/rpc'
 
 const loading = ref(true)
@@ -13,15 +13,16 @@ const props = defineProps<{
   table: string
 }>()
 
+const columns = shallowRef([])
+
 const rows = computedAsync(() => {
   loading.value = true
   return rpc.value?.sqliteTable(props.table).then((data) => {
+    columns.value = Object.keys(data[0])
     loading.value = false
     return data
   })
 })
-
-const columns = computed(() => rows.value?.length ? Object.keys(rows.value[0]) : [])
 
 const filteredRows = computed(() => {
   if (!rows.value) return []
@@ -49,7 +50,7 @@ const filteredRows = computed(() => {
 })
 
 const { list: virtualRows, containerProps, wrapperProps, scrollTo } = useVirtualList(filteredRows, {
-  itemHeight: 10,
+  itemHeight: 37,
 })
 
 function toggleSort(column: string) {
@@ -79,13 +80,54 @@ function copyAS(format: 'json') {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2))
   }
 }
+
+const pageSize = 19
+const currentPage = ref(1)
+const totalPages = computed(() => Math.ceil(filteredRows.value.length / pageSize) || 1)
+
+function scrollToPage(page: number) {
+  if (page > 0 && page <= totalPages.value) {
+    console.log('next page: ', page)
+    const index = (page - 1) * pageSize
+    scrollTo(index)
+    currentPage.value = page
+  }
+}
+
+const dataBody = ref()
+
+onMounted(() => {
+  containerProps.ref.value.addEventListener('scroll', onContainerScroll)
+})
+
+function onContainerScroll() {
+  if (!containerProps.ref.value) return
+
+  const scrollTop = containerProps.ref.value.scrollTop // Total scroll offset
+  const itemHeight = 37 // Each item's height
+  const topIndex = Math.floor(scrollTop / itemHeight) // Index of the first visible item
+  const newPage = Math.ceil((topIndex + 1) / pageSize) // Calculate the page (1-based)
+  console.log('ScrollTop:', scrollTop)
+  console.log('Top Index:', topIndex)
+  console.log('New Page:', newPage)
+
+  // Update currentPage only if it has changed
+  if (newPage !== currentPage.value) {
+    currentPage.value = newPage
+  }
+}
 </script>
 
 <template>
   <div class="flex flex-col h-full">
     <div class="sticky top-0 z-10 bg-neutral-900 border-b border-gray-400/20 p-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <span class="text-sm">Rows: {{ rows?.length }}</span>
+        <span class="text-sm">
+          Rows: {{ rows?.length }}
+          <span v-if="Object.keys(filters).length">
+            / {{ filteredRows.length }}
+          </span>
+        </span>
       </div>
       <div class="flex items-center gap-4">
         <!-- TODO -->
@@ -105,88 +147,91 @@ function copyAS(format: 'json') {
       >
         Loading ...
       </NLoading>
-      <table
-        class="table-row"
-        v-bind="containerProps"
-      >
-        <thead class="bg-neutral-950 sticky top-0">
-          <tr>
-            <th
+      <div v-bind="containerProps">
+        <!-- Header -->
+        <div class="sticky top-0">
+          <div class="flex">
+            <TableDataCell
+              data="#"
+              size="sm"
+              class="text-center bg-neutral-950/50 backdrop-blur"
+            />
+            <TableDataCell
               v-for="column in columns"
               :key="column"
-              class="relative px-4 py-2 text-left text-sm font-bold border-b border-r border-gray-400/20"
+              class="bg-neutral-950/50 backdrop-blur"
             >
               <div class="inline-flex items-center gap-2 sticky left-4">
                 {{ column }}
+                <NTextInput
+                  v-model="filters[column]"
+                  n="xs"
+                  type="text"
+                  placeholder="Filter..."
+                  @input="updateFilter(column, filters[column])"
+                />
                 <NButton
                   n="blue"
+                  class="h-full"
                   :icon="sortColumn === column
                     ? (sortOrder === 'asc' ? 'carbon-chevron-up' : 'carbon-chevron-down')
                     : 'carbon-chevron-down'"
                   @click="toggleSort(column)"
                 />
               </div>
-              <NTextInput
-                v-model="filters[column]"
-                n="xs"
-                type="text"
-                class="mt-2"
-                placeholder="Filter..."
-                @input="updateFilter(column, filters[column])"
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody v-bind="wrapperProps">
-          <tr
-            v-for="item in virtualRows"
-            :key="item.index"
-            class="hover:bg-neutral-800"
+            </TableDataCell>
+          </div>
+        </div>
+        <!-- Body -->
+        <div
+          v-bind="wrapperProps"
+          ref="dataBody"
+        >
+          <div
+            v-for="{ data, index } in virtualRows"
+            :key="index"
+            class="flex items-stretch"
+            style="height: 37px;"
           >
-            <td
+            <TableDataCell
+              :data="(index + 1).toString()"
+              size="sm"
+              class="text-center"
+            />
+            <TableDataCell
               v-for="column in columns"
               :key="column"
-              class="px-4 py-2 text-sm border-b border-r border-gray-400/20"
-            >
-              <span
-                v-if="item.data[column]"
-                class="block truncate max-w-72"
-              >
-                {{ item.data[column] }}
-              </span>
-              <span
-                v-else
-                class="text-neutral-400/40"
-              >
-                NULL
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              :data="data[column]"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="border-t border-gray-400/20 p-2 flex items-center justify-between text-sm">
       <div class="flex items-center gap-4">
-        <!-- TODO: add pagination working with virtual scroll -->
+        <!-- TODO: complete pagination: disable, input, ... -->
         <div class="flex items-center gap-1">
           <NButton
             class="h-full"
             icon="carbon-chevron-left"
             n="primary"
+            @click="scrollToPage(currentPage - 1)"
           />
           <NButton disabled>
-            x
+            {{ currentPage }} / {{ totalPages }}
           </NButton>
           <NButton
             class="h-full"
             icon="carbon-chevron-right"
             n="primary"
+            @click="scrollToPage(currentPage + 1)"
           />
         </div>
       </div>
       <div class="flex items-center gap-2">
         <span>Copy as</span>
+        <!-- TODO: add more options -->
         <NButton
           n="blue"
           class="text-sm"
