@@ -17,10 +17,6 @@ const links = [{
   icon: 'i-heroicons-book-open-solid',
   to: '/get-started/installation'
 }, {
-  label: 'Playground',
-  icon: 'i-ph-play-duotone',
-  to: '/playground'
-}, {
   label: 'Templates',
   icon: 'i-ph-browsers-duotone',
   to: 'https://nuxt.com/templates',
