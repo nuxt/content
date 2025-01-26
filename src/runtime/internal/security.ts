@@ -19,13 +19,16 @@ export function assertSafeQuery(sql: string, collection: string) {
 
   // COLUMNS
   const columns = select.trim().split(', ')
-  if (
-    !columns.every(column =>
-      column === '*'
-      || column.match(/^"[a-z_]\w+"$/i)
-      || column.match(/^COUNT\((DISTINCT )?[a-z_]\w+\) as count$/i),
-    )
-  ) {
+  if (columns.length === 1) {
+    if (
+      columns[0] !== '*'
+      && !columns[0].startsWith('COUNT(')
+      && !columns[0].match(/^COUNT\((DISTINCT )?[a-z_]\w+\) as count$/)
+    ) {
+      throw new Error('Invalid query')
+    }
+  }
+  else if (!columns.every(column => column.match(/^"[a-z_]\w+"$/i))) {
     throw new Error('Invalid query')
   }
 
@@ -36,7 +39,7 @@ export function assertSafeQuery(sql: string, collection: string) {
 
   // WHERE
   if (where) {
-    if (!where.match(/^ WHERE \(.*\)$/)) {
+    if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query')
     }
     const noString = where?.replace(/"[^"]+"/g, '').replace(/'[^']+'/g, '')
@@ -46,10 +49,8 @@ export function assertSafeQuery(sql: string, collection: string) {
   }
 
   // ORDER BY
-  if (!orderBy.split(', ').every(column => column.match(/^[a-z_]\w+$/i) || column.match(/^"[^"]+"$/))) {
-    throw new Error('Invalid query')
-  }
-  if (order !== 'ASC' && order !== 'DESC') {
+  const _order = (orderBy + ' ' + order).split(', ')
+  if (!_order.every(column => column.match(/^("[a-z_]+"|[a-z_]+) (ASC|DESC)$/))) {
     throw new Error('Invalid query')
   }
 
