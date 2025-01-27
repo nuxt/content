@@ -271,6 +271,7 @@ export function initIframeCommunication() {
     const { collection } = getCollectionByRoutePath(routePath, collections)
     if (!collection || collection.type !== 'page') {
       window.sendNavigateMessageInPreview(routePath, false)
+      return
     }
 
     const db = loadDatabaseAdapter(collection.name)
