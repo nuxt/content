@@ -33,6 +33,7 @@ describe('decompressSQLDump', () => {
     // Where clause should follow query builder syntax
     'SELECT * FROM _content_test WHERE id = 1 ORDER BY id DESC LIMIT 10 OFFSET 10': false,
     'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
+    'SELECT * FROM _content_test WHERE (id = \'");\'); select * from ((SELECT * FROM sqlite_master where 1 <> "") as t) ORDER BY type DESC': false,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {

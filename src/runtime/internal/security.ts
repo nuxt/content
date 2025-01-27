@@ -42,7 +42,7 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query')
     }
-    const noString = where?.replace(/"[^"]+"/g, '').replace(/'[^']+'/g, '')
+    const noString = where?.replace(/(['"`])(?:\\.|[^\\])*?\1/g, '')
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query')
     }
