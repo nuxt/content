@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/nuxt/content/compare/v3.0.0...v3.0.1) (2025-01-27)
+
+### Bug Fixes
+
+* **studio:** return when collection not found ([0e0c8e7](https://github.com/nuxt/content/commit/0e0c8e7f20d2dbaa0d1adad3a833c536bce046fa))
+* validate query before execute ([#3048](https://github.com/nuxt/content/issues/3048)) ([0f0da14](https://github.com/nuxt/content/commit/0f0da14bd73370a3ea9bc9957095384e64a1aca4))
+
 ## [3.0.0](https://github.com/nuxt/content/compare/v3.0.0-alpha.9...v3.0.0) (2025-01-16)
 
 ### Bug Fixes
