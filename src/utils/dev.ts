@@ -42,7 +42,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
   }
 
   async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}';`
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
     await db.exec(removeQuery)
     if (insertQuery) {
       await Promise.all(insertQuery.map(query => db.exec(query)))

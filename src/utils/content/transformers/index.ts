@@ -41,8 +41,7 @@ export async function transformContent(file: ContentFile, options: TransformCont
   const ext = file.extension || extname(file.id)
   const parser = getParser(ext, transformers)
   if (!parser) {
-    console.warn(`${ext} files are not supported, "${file.id}" falling back to raw content`)
-    return file
+    throw new Error(`\`${ext}\` files are not supported.`)
   }
 
   const parserOptions = (options[camelCase(parser.name)] || {}) as Record<string, unknown>
