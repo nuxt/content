@@ -284,27 +284,34 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
         await Promise.all(chunk.map(async (key) => {
           const keyInCollection = join(collection.name, source?.prefix || '', key)
           const fullPath = join(cwd, fixed, key)
-
-          const content = await source.getItem(key)
-          const checksum = getContentChecksum(configHash + collectionHash + content)
           const cache = databaseContents[keyInCollection]
 
-          let parsedContent
-          if (cache && cache.checksum === checksum) {
-            cachedFilesCount += 1
-            parsedContent = JSON.parse(cache.parsedContent)
-          }
-          else {
-            parsedFilesCount += 1
-            parsedContent = await parse({
-              id: keyInCollection,
-              body: content,
-              path: fullPath,
-            })
-            db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
-          }
+          try {
+            const content = await source.getItem(key)
+            const checksum = getContentChecksum(configHash + collectionHash + content)
 
-          list.push([key, generateCollectionInsert(collection, parsedContent)])
+            let parsedContent
+            if (cache && cache.checksum === checksum) {
+              cachedFilesCount += 1
+              parsedContent = JSON.parse(cache.parsedContent)
+            }
+            else {
+              parsedFilesCount += 1
+              parsedContent = await parse({
+                id: keyInCollection,
+                body: content,
+                path: fullPath,
+              })
+              if (parsedContent) {
+                db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
+              }
+            }
+
+            list.push([key, generateCollectionInsert(collection, parsedContent)])
+          }
+          catch (e: unknown) {
+            logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
+          }
         }))
       }
       // Sort by file name to ensure consistent order
