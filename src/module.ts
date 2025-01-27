@@ -31,6 +31,7 @@ import type { Manifest } from './types/manifest'
 import { setupPreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import { setupDevtools } from './devtools/module'
 
 // Export public utils
 export * from './utils'
@@ -228,6 +229,9 @@ export default defineNuxtModule<ModuleOptions>({
         await setupPreview(options, nuxt, resolver, manifest)
       }
     })
+
+    // setup devtools
+    setupDevtools(options, nuxt, resolver.resolve)
   },
 })
 
