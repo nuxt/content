@@ -8,7 +8,7 @@ import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
 import { logger } from './dev'
 
-const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny']
+const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny', 'ZodMap']
 
 export function getTableName(name: string) {
   return `_content_${name}`
