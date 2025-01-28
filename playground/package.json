@@ -11,8 +11,8 @@
   "dependencies": {
     "remark-code-import": "latest",
     "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "3.0.0-alpha.11",
-    "@nuxthub/core": "^0.8.14",
+    "@nuxt/ui-pro": "3.0.0-alpha.12",
+    "@nuxthub/core": "^0.8.15",
     "nuxt": "^3.15.3"
   }
 }
