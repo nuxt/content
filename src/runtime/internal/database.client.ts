@@ -42,7 +42,12 @@ async function loadAdapter<T>(collection: T) {
       // For example `nuxt-security` module drops logger in production build by default.
       silent: true,
       debug: (...args: unknown[]) => console.debug(...args),
-      warn: (...args: unknown[]) => console.warn(...args),
+      warn: (...args: unknown[]) => {
+        if (String(args[0]).includes('OPFS sqlite3_vfs')) {
+          return
+        }
+        console.warn(...args)
+      },
       error: (...args: unknown[]) => console.error(...args),
       log: (...args: unknown[]) => console.log(...args),
     }
