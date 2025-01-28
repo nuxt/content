@@ -61,6 +61,3 @@ sections:
       - title: Getting Started
         description: Create a new content-driven project with Nuxt Content or add it to your existing project.
         to: '/get-started/installation'
-      - title: Playground
-        description: Play with Nuxt Content in the browser with our Stackblitz playground.
-        to: '/playground'
