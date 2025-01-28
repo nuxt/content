@@ -94,15 +94,17 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 
   const insertDevelopmentCache = async (id: string, checksum: string, parsedContent: string) => {
     deleteDevelopmentCache(id)
-    db.exec(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES ('${id}', '${checksum}', '${parsedContent.replace(/'/g, '\'\'')}')`)
+    db.prepare(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES (?, ?, ?)`)
+      .run(id, checksum, parsedContent)
   }
 
   const deleteDevelopmentCache = async (id: string) => {
-    db.exec(`DELETE FROM _development_cache WHERE id = '${id}'`)
+    db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
   }
 
   const dropContentTables = async () => {
-    const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?').all('table', '_content_%') as { name: string }[]
+    const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
+      .all('table', '_content_%') as { name: string }[]
     for (const { name } of tables) {
       db.exec(`DROP TABLE ${name}`)
     }
