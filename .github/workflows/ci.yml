@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - main
-      - v3
+      - feat/*
   pull_request:
     branches:
       - main
-      - v3
 
 jobs:
   ubuntu:
