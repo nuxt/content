@@ -136,7 +136,7 @@ describe('collectionQueryBuilder', () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT( *) as count FROM _articles ORDER BY stem ASC',
+      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
     )
   })
 
