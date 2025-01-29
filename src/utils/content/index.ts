@@ -3,15 +3,15 @@ import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
 import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import type { Nuxt } from '@nuxt/schema'
+import { resolveAlias } from '@nuxt/kit'
 import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
-import type {
-  ResolvedCollection,
-} from '../../types/collection'
+import type { ResolvedCollection } from '../../types/collection'
 import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
+import { logger } from '../dev'
+import type { ContentFile } from '../../types'
 import { transformContent } from './transformers'
-import type { ContentFile } from '~/src/types'
 
 let parserOptions = {
   mdcConfigs: [] as MdcConfig[],
@@ -102,12 +102,22 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
 }
 
 export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) {
-  const mdcOptions = (nuxt?.options as unknown as { mdc: MDCModuleOptions })?.mdc || {}
-  const { pathMeta = {}, markdown = {} } = (nuxt?.options as unknown as { content: ModuleOptions })?.content?.build || {}
+  const nuxtOptions = nuxt?.options as unknown as { content: ModuleOptions, mdc: MDCModuleOptions }
+  const mdcOptions = nuxtOptions?.mdc || {}
+  const { pathMeta = {}, markdown = {}, transformers = [] } = nuxtOptions?.content?.build || {}
 
   const rehypeHighlightPlugin = markdown.highlight !== false
     ? await getHighlightPluginInstance(defu(markdown.highlight as HighlighterOptions, mdcOptions.highlight, { compress: true }))
     : undefined
+
+  // Load transformers
+  const extraTransformers = await Promise.all(transformers.map(async (transformer) => {
+    const resolved = resolveAlias(transformer, nuxt?.options?.alias)
+    return import(resolved).then(m => m.default || m).catch((e) => {
+      logger.error(`Failed to load transformer ${transformer}`, e)
+      return undefined
+    })
+  })).then(transformers => transformers.filter(Boolean))
 
   const parserOptions = {
     pathMeta: pathMeta,
@@ -140,7 +150,10 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
     const { file: hookedFile } = beforeParseCtx
 
-    const parsedContent = await transformContent(hookedFile, beforeParseCtx.parserOptions)
+    const parsedContent = await transformContent(hookedFile, {
+      ...beforeParseCtx.parserOptions,
+      transformers: extraTransformers,
+    })
     const { id: id, ...parsedContentFields } = parsedContent
     const result = { id } as typeof collection.extendedSchema._type
     const meta = {} as Record<string, unknown>
