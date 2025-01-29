@@ -1,4 +1,7 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER/i
+const SQL_CLEANUN_REGEX = /(['"`])(?:\\.|[^\\])*?\1|\/\*[\s\S]*?\*\//g
+const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?[a-z_]\w+\)/i
+const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
  * Assert that the query is safe
@@ -10,7 +13,7 @@ const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER/i
  * @returns True if the query is safe, false otherwise
  */
 export function assertSafeQuery(sql: string, collection: string) {
-  const match = sql.match(/^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/)
+  const match = sql.match(SQL_SELECT_REGEX)
   if (!match) {
     throw new Error('Invalid query')
   }
@@ -22,8 +25,8 @@ export function assertSafeQuery(sql: string, collection: string) {
   if (columns.length === 1) {
     if (
       columns[0] !== '*'
-      && !columns[0].startsWith('COUNT(')
-      && !columns[0].match(/^COUNT\((DISTINCT )?[a-z_]\w+\) as count$/)
+      && !columns[0].match(SQL_COUNT_REGEX)
+      && !columns[0].match(/^"[a-z_]\w+"$/)
     ) {
       throw new Error('Invalid query')
     }
@@ -42,7 +45,7 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query')
     }
-    const noString = where?.replace(/(['"`])(?:\\.|[^\\])*?\1/g, '')
+    const noString = where?.replace(SQL_CLEANUN_REGEX, '')
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query')
     }
