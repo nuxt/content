@@ -115,7 +115,7 @@
     "@cloudflare/workers-types": "^4.20250124.3",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^1.7.0",
-    "@nuxt/eslint-config": "^0.7.5",
+    "@nuxt/eslint-config": "^0.7.6",
     "@nuxt/kit": "^3.15.4",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.15.4",
