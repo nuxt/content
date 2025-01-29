@@ -10,7 +10,7 @@ import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
 import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
 import { logger } from '../dev'
-import type { ContentFile } from '../../types'
+import type { ContentFile, ContentTransformer } from '../../types'
 import { transformContent } from './transformers'
 
 let parserOptions = {
@@ -111,11 +111,11 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     : undefined
 
   // Load transformers
-  const extraTransformers = await Promise.all(transformers.map(async (transformer) => {
+  const extraTransformers: ContentTransformer[] = await Promise.all(transformers.map(async (transformer) => {
     const resolved = resolveAlias(transformer, nuxt?.options?.alias)
-    return import(resolved).then(m => m.default || m).catch((e) => {
+    return import(resolved).then(m => m.default || m).catch((e: unknown) => {
       logger.error(`Failed to load transformer ${transformer}`, e)
-      return undefined
+      return false
     })
   })).then(transformers => transformers.filter(Boolean))
 
