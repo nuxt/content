@@ -40,6 +40,7 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE (id /*\'*/IN (SELECT id FROM _content_test) /*\'*/) ORDER BY id ASC': false,
     'SELECT * FROM _content_test WHERE (1=\' \\\' OR id IN (SELECT id FROM _content_docs) OR 1!=\'\') ORDER BY id ASC': false,
     'SELECT "id", "id" FROM _content_docs WHERE (1=\' \\\') UNION SELECT tbl_name,tbl_name FROM sqlite_master-- \') ORDER BY id ASC': false,
+    'SELECT "id" FROM _content_test WHERE (x=$\'$ OR x IN (SELECT BLAH) OR x=$\'$) ORDER BY id ASC': false
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {

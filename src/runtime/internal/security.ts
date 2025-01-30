@@ -1,4 +1,4 @@
-const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER/i
+const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?[a-z_]\w+\)/i
 const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
 
@@ -100,6 +100,7 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
 
         inString = false
         stringFence = ''
+        continue
       }
       else {
         inString = true
