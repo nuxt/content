@@ -25,10 +25,10 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
           .shift(),
       ) as T
     },
-    exec: async (sql: string) => {
+    exec: async (sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
-      await db.exec({ sql })
+      await db.exec({ sql, bind: params })
     },
   }
 }

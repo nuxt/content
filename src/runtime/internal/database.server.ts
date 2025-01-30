@@ -31,8 +31,8 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
       return db.prepare(sql).get(...params)
         .then(item => item ? refineContentFields(sql, item) : item)
     },
-    exec: async (sql) => {
-      return db.exec(sql)
+    exec: async (sql, params = []) => {
+      return db.prepare(sql).run(...params)
     },
   }
 }
@@ -59,14 +59,14 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = 'checksum_${collection}'`).catch(() => ({ version: '' }))
+  const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
 
   if (before?.version) {
     if (before?.version === integrityVersion) {
       return true
     }
     // Delete old version
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = 'checksum_${collection}'`)
+    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
@@ -80,7 +80,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     })
   }, Promise.resolve())
 
-  const after = await db.first<{ version: string }>(`SELECT * FROM ${tables.info} WHERE id = 'checksum_${collection}'`).catch(() => ({ version: '' }))
+  const after = await db.first<{ version: string }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
 }
 
