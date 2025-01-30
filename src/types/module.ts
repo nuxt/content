@@ -87,6 +87,10 @@ export interface ModuleOptions {
     anchorLinks?: boolean | Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', boolean>>
   }
   build: {
+    /**
+     * List of user-defined transformers.
+     */
+    transformers?: string[]
     markdown: {
       /**
        * Control behavior of Table of Contents generation
