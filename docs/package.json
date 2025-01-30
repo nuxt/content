@@ -5,7 +5,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.25",
     "@iconify-json/simple-icons": "^1.2.22",
-    "@iconify-json/vscode-icons": "^1.2.10",
+    "@iconify-json/vscode-icons": "^1.2.11",
     "@nuxt/content": "latest",
     "@nuxt/image": "^1.9.0",
     "@nuxt/ui-pro": "3.0.0-alpha.12",
