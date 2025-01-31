@@ -1,6 +1,6 @@
 import { minimatch } from 'minimatch'
 import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
-import { joinURL } from 'ufo'
+import { joinURL, withoutLeadingSlash } from 'ufo'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
@@ -39,8 +39,10 @@ export const getCollectionByRoutePath = (routePath: string, collections: Record<
         return
       }
 
-      if (routePath === '/') {
-        return ['index.yml', 'index.yaml', 'index.md', 'index.json'].some((p) => {
+      if (routePath === '/' || routePath === source.prefix) {
+        const indexFiles = ['index.yml', 'index.yaml', 'index.md', 'index.json']
+        const files = routePath === '/' ? indexFiles : indexFiles.map(file => withoutLeadingSlash(joinURL(source.prefix, file)))
+        return files.some((p) => {
           return collection.source.find(source => minimatch(p, source.include))
         })
       }
