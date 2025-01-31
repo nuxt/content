@@ -39,11 +39,11 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 [MIT](./LICENSE) - Made with 💚
 
-[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/next.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-src]: https://img.shields.io/npm/v/@nuxt/content/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/@nuxt/content
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/@nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
-[npm-downloads-href]: https://npmjs.com/package/@nuxt/content
+[npm-downloads-href]: https://npm.chart.dev/@nuxt/content
 
 [license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [license-href]: https://github.com/nuxt/content/blob/main/LICENSE
