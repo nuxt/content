@@ -5,6 +5,11 @@ import cfPreset from './cloudflare-pages'
 
 export default definePreset({
   name: 'nuxthub',
+  async setup(options, nuxt) {
+    // Make sure database is enabled
+    const nuxthubOptions: { database?: boolean } = (nuxt.options as unknown as { hub: unknown }).hub ||= {}
+    nuxthubOptions.database = true
+  },
   async setupNitro(nitroConfig, options) {
     await cfPreset.setupNitro(nitroConfig, options)
 

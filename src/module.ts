@@ -160,6 +160,8 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Load nitro preset and set db adapter
+    const preset = findPreset(nuxt)
+    await preset?.setup?.(options, nuxt)
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
