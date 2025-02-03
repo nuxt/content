@@ -9,7 +9,7 @@ export default definePreset({
       logger.warn('Deploying sqlite database to Vercel is not possible, switching to Postgres database with `POSTGRES_URL`.')
       nitroConfig.runtimeConfig!.content!.database = {
         type: 'postgres',
-        url: 'process.env.POSTGRES_URL',
+        url: process.env.POSTGRES_URL,
       }
     }
 
