@@ -1,4 +1,6 @@
-const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER/i
+const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
+const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?[a-z_]\w+\)/i
+const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
  * Assert that the query is safe
@@ -10,7 +12,14 @@ const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER/i
  * @returns True if the query is safe, false otherwise
  */
 export function assertSafeQuery(sql: string, collection: string) {
-  const match = sql.match(/^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/)
+  const cleanedupQuery = cleanupQuery(sql)
+
+  // Query is invalid if the cleaned up query is not the same as the original query (it contains comments)
+  if (cleanedupQuery !== sql) {
+    throw new Error('Invalid query')
+  }
+
+  const match = sql.match(SQL_SELECT_REGEX)
   if (!match) {
     throw new Error('Invalid query')
   }
@@ -22,8 +31,8 @@ export function assertSafeQuery(sql: string, collection: string) {
   if (columns.length === 1) {
     if (
       columns[0] !== '*'
-      && !columns[0].startsWith('COUNT(')
-      && !columns[0].match(/^COUNT\((DISTINCT )?[a-z_]\w+\) as count$/)
+      && !columns[0].match(SQL_COUNT_REGEX)
+      && !columns[0].match(/^"[a-z_]\w+"$/)
     ) {
       throw new Error('Invalid query')
     }
@@ -42,7 +51,7 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query')
     }
-    const noString = where?.replace(/(['"`])(?:\\.|[^\\])*?\1/g, '')
+    const noString = cleanupQuery(where, { removeString: true })
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query')
     }
@@ -65,4 +74,58 @@ export function assertSafeQuery(sql: string, collection: string) {
   }
 
   return true
+}
+
+function cleanupQuery(query: string, options: { removeString: boolean } = { removeString: false }) {
+  // Track whether we're inside a string literal
+  let inString = false
+  let stringFence = ''
+  let result = ''
+  for (let i = 0; i < query.length; i++) {
+    const char = query[i]
+    const prevChar = query[i - 1]
+    const nextChar = query[i + 1]
+
+    if (char === '\'' || char === '"') {
+      if (!options?.removeString) {
+        result += char
+        continue
+      }
+
+      if (inString) {
+        if (char !== stringFence || nextChar === stringFence || prevChar === stringFence) {
+          // skip character, it's part of a string
+          continue
+        }
+
+        inString = false
+        stringFence = ''
+        continue
+      }
+      else {
+        inString = true
+        stringFence = char
+        continue
+      }
+    }
+
+    if (!inString) {
+      if (char === '-' && nextChar === '-') {
+        // everything after this is a comment
+        return result
+      }
+
+      if (char === '/' && nextChar === '*') {
+        i += 2
+        while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
+          i += 1
+        }
+        i += 2
+        continue
+      }
+
+      result += char
+    }
+  }
+  return result
 }

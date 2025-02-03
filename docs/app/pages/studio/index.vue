@@ -11,8 +11,8 @@ useSeoMeta({
   description: page.value.seo?.description,
   ogTitle: page.value.seo?.title,
   ogDescription: page.value.seo?.description,
-  ogImage: `${siteConfig.url}/social.png`,
-  twitterImage: `${siteConfig.url}/social.png`,
+  ogImage: `${siteConfig.url}/studio-social.png`,
+  twitterImage: `${siteConfig.url}/studio-social.png`,
 })
 </script>
 

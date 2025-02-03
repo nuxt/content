@@ -6,17 +6,16 @@ import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
-
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   return {
-    all: async <T>(sql: string, params: DatabaseBindParams) => {
+    all: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
       return db
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
         .map(row => refineContentFields(sql, row) as T)
     },
-    first: async <T>(sql: string, params: DatabaseBindParams) => {
+    first: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
       return refineContentFields(
@@ -26,10 +25,10 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
           .shift(),
       ) as T
     },
-    exec: async (sql: string) => {
+    exec: async (sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
-      await db.exec({ sql })
+      await db.exec({ sql, bind: params })
     },
   }
 }
@@ -37,6 +36,21 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 async function loadAdapter<T>(collection: T) {
   if (!db) {
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
+    // @ts-expect-error sqlite3ApiConfig is not defined in the module
+    globalThis.sqlite3ApiConfig = {
+      // overriding default log function allows to avoid error when logger are dropped in build.
+      // For example `nuxt-security` module drops logger in production build by default.
+      silent: true,
+      debug: (...args: unknown[]) => console.debug(...args),
+      warn: (...args: unknown[]) => {
+        if (String(args[0]).includes('OPFS sqlite3_vfs')) {
+          return
+        }
+        console.warn(...args)
+      },
+      error: (...args: unknown[]) => console.error(...args),
+      log: (...args: unknown[]) => console.log(...args),
+    }
     const sqlite3 = await sqlite3InitModule()
     db = new sqlite3.oo1.DB()
   }

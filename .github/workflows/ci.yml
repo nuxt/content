@@ -4,16 +4,16 @@ on:
   push:
     branches:
       - main
-      - v3
+      - feat/*
   pull_request:
     branches:
       - main
-      - v3
 
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
-
+    env:
+      COREPACK_DEFAULT_TO_LATEST: 0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

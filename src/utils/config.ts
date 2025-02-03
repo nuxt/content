@@ -34,8 +34,9 @@ export async function loadContentConfig(nuxt: Nuxt, options: { defaultFallback?:
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).defineContentConfig = (c: any) => c
 
+  const layers = [...nuxt.options._layers].reverse()
   const contentConfigs = await Promise.all(
-    nuxt.options._layers.reverse().map(
+    layers.map(
       layer => loader<NuxtContentConfig>({ name: 'content', cwd: layer.config.rootDir, defaultConfig: options.defaultFallback ? defaultConfig : undefined }),
     ),
   )
@@ -51,7 +52,7 @@ export async function loadContentConfig(nuxt: Nuxt, options: { defaultFallback?:
   const hasNoCollections = Object.keys(collectionsConfig || {}).length === 0
 
   if (hasNoCollections) {
-    logger.warn('No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/getting-started/installation')
+    logger.warn('No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/docs/getting-started/installation')
   }
 
   const collections = resolveCollections(hasNoCollections ? defaultConfig.collections : collectionsConfig)

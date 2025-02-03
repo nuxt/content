@@ -12,7 +12,9 @@ export default eventHandler(async (event) => {
   assertSafeQuery(sql, collection)
 
   const conf = useRuntimeConfig().content as RuntimeConfig['content']
-  await checkAndImportDatabaseIntegrity(event, collection, conf)
+  if (conf.integrityCheck) {
+    await checkAndImportDatabaseIntegrity(event, collection, conf)
+  }
 
   return loadDatabaseAdapter(conf).all(sql)
 })

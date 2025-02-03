@@ -195,7 +195,7 @@ features:
             - team
             - unlimited
         self:
-          title: Selft Hosted
+          title: Self Hosted
           plans:
             - solo
             - team

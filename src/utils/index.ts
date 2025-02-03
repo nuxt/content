@@ -1,4 +1,5 @@
 export { metaSchema, pageSchema } from './schema'
 export { defineCollection, defineCollectionSource } from './collection'
 export { defineContentConfig } from './config'
+export { defineTransformer } from './content/transformers/utils'
 export { z } from './zod'

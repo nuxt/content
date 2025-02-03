@@ -13,7 +13,10 @@ const siteConfig = useSiteConfig()
 
 const { data } = await useAsyncData(route.path, () => Promise.all([
   queryCollection('posts').path(route.path).first(),
-  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] }),
+  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] })
+    .where('path', 'LIKE', `/${type}%`)
+    .where('draft', '=', 0)
+    .order('date', 'DESC'),
 ]), {
   transform: ([page, surround]) => ({ page, surround }),
 })
@@ -43,13 +46,13 @@ const links = [
   {
     icon: 'i-simple-icons-bluesky',
     label: 'Follow on Bluesky',
-    to: 'https://bluesky.com/nuxtlabs',
+    to: 'https://go.nuxt.com/bluesky',
     target: '_blank',
   },
   {
     icon: 'i-simple-icons-discord',
     label: 'Chat on Discord',
-    to: 'https://discord.com/invite/sBXDm6e8SP',
+    to: 'https://discord.gg/sBXDm6e8SP',
     target: '_blank',
   },
 ]
@@ -144,7 +147,10 @@ function copyLink() {
           class="text-gray-200 dark:text-gray-800"
         >
 
-        <UContentSurround :surround="surround" />
+        <UContentSurround
+          :surround="surround"
+          :ui="{ linkTitle: 'text-wrap' }"
+        />
       </UPageBody>
 
       <template #right>

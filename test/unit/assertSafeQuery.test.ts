@@ -34,6 +34,13 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE id = 1 ORDER BY id DESC LIMIT 10 OFFSET 10': false,
     'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
     'SELECT * FROM _content_test WHERE (id = \'");\'); select * from ((SELECT * FROM sqlite_master where 1 <> "") as t) ORDER BY type DESC': false,
+    'SELECT "body" FROM _content_test ORDER BY body ASC': true,
+    // Advanced
+    'SELECT COUNT(*) UNION SELECT name /**/FROM sqlite_master-- FROM _content_test WHERE (1=1) ORDER BY id ASC': false,
+    'SELECT * FROM _content_test WHERE (id /*\'*/IN (SELECT id FROM _content_test) /*\'*/) ORDER BY id ASC': false,
+    'SELECT * FROM _content_test WHERE (1=\' \\\' OR id IN (SELECT id FROM _content_docs) OR 1!=\'\') ORDER BY id ASC': false,
+    'SELECT "id", "id" FROM _content_docs WHERE (1=\' \\\') UNION SELECT tbl_name,tbl_name FROM sqlite_master-- \') ORDER BY id ASC': false,
+    'SELECT "id" FROM _content_test WHERE (x=$\'$ OR x IN (SELECT BLAH) OR x=$\'$) ORDER BY id ASC': false,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {
@@ -47,7 +54,7 @@ describe('decompressSQLDump', () => {
     })
   })
 
-  it('throws error if query is not valid', async () => {
+  it('all queries should be valid', async () => {
     await collectionQueryBuilder(mockCollection, mockFetch).all()
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
 

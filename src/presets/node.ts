@@ -3,6 +3,7 @@ import { fullDatabaseCompressedDumpTemplate } from '../utils/templates'
 import { definePreset } from '../utils/preset'
 
 export default definePreset({
+  name: 'node',
   setupNitro(nitroConfig, { manifest, resolver }) {
     nitroConfig.publicAssets ||= []
     nitroConfig.alias = nitroConfig.alias || {}

@@ -59,14 +59,11 @@ const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => l
         <UContentSearchButton />
       </UTooltip>
 
-      <UTooltip
-        text="Open on GitHub"
-        :kbds="['meta', 'G']"
-      >
+      <UTooltip text="Open on GitHub">
         <UButton
           color="neutral"
           variant="ghost"
-          to="https://github.com/nuxt/content/tree/v3"
+          to="https://github.com/nuxt/content"
           target="_blank"
           icon="i-simple-icons-github"
           aria-label="GitHub"

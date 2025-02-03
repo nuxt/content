@@ -1,6 +1,6 @@
 ---
-title: Migrate Nuxt UIPro Documentation Starter
-description: How to upgrade your Nuxt UI Pro documentation to Content and UIPro v3
+title: Migrate Nuxt UI Pro Documentation Starter
+description: How to upgrade your Nuxt UI Pro documentation to Content and UI v3
 image:
   src: /blog/migrate-docs-starter.png
 authors:
@@ -9,12 +9,11 @@ authors:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
     username: larbish
-date: 2025-01-07T01:00:00.000Z
+date: 2025-01-21T01:00:00.000Z
 category: Migration
-draft: true
 ---
 
-# How to upgrade your Nuxt UI Pro docs website to Content and UI v3
+# How to upgrade your Nuxt documentation website to Content x UI v3
 
 **2025 kicks off with the power of 3!**
 
@@ -22,7 +21,7 @@ This start of year is marked by major updates to our favorite tools. The UI team
 
 These updates mean that all our starter templates combining **Content** and **UI** will need to be updated to align with the latest versions. To help you make the transition, this guide walks through migrating the **Nuxt UI Pro Docs Starter** to the new **Content v3 and Nuxt UI v3** packages.
 
-::prose-tip{to="https://github.com/nuxt-ui-pro/docs"}
+::prose-tip{to="https://github.com/nuxt-ui-pro/docs/tree/v3"}
 Check the UI Pro documentation starter repository source code.
 ::
 
@@ -32,25 +31,25 @@ Check the UI Pro documentation starter repository source code.
 
 ::code-group
 ```bash [pnpm]
-pnpm add @nuxt/content@next
+pnpm add @nuxt/content@^3
 ```
 
 ```bash [yarn]
-yarn add @nuxt/content@next
+yarn add @nuxt/content@^3
 ```
 
 ```bash [npm]
-npm install @nuxt/content@next
+npm install @nuxt/content@^3
 ```
 
 ```bash [bun]
-bun add @nuxt/content@next
+bun add @nuxt/content@^3
 ```
 ::
 
 ### 2. Create `content.config.ts` file
 
-This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page, one for the landing page and another for the doc pages.
+This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page and another `docs` collection for the documentation pages.
 
 ```js [content.config.ts]
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
@@ -89,15 +88,14 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 ### 3. Migrate `app.vue`
 
 ::prose-steps{level="4"}
-
 #### Navigation fetch can be updated by moving from `fetchContentNavigation` to `queryCollectionNavigation` method
 
   :::prose-code-group
   ```ts [app.vue (v3)]
   const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
-
+  
   ```
-
+  
   ```ts [app.vue (v2)]
   const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
   ```
@@ -111,7 +109,7 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
     server: false,
   })
   ```
-
+  
   ```ts [app.vue (v2)]
   const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
     default: () => [],
@@ -124,14 +122,13 @@ The `type: page` means there is a 1-to-1 relationship between the content file a
 ### 4. Migrate landing page
 
 ::prose-steps{level="4"}
-
 #### Home page data fetching can be updated by moving from `queryContent` to `queryCollection` method
 
   :::prose-code-group
   ```ts [index.vue (v3)]
   const { data: page } = await useAsyncData('index', () => queryCollection('landing').path('/').first())
   ```
-
+  
   ```ts [index.vue (v2)]
   const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
   ```
@@ -156,7 +153,6 @@ useSeoMeta({
 ### 5. Migrate catch-all docs page
 
 ::prose-steps{level="4"}
-
 #### Docs page data and surround fetching can be updated and mutualised by moving from `queryContent` to `queryCollection` and `queryCollectionItemSurroundings` methods
 
   :::prose-code-group
@@ -169,14 +165,14 @@ useSeoMeta({
   ]), {
     transform: ([page, surround]) => ({ page, surround }),
   })
-
+  
   const page = computed(() => data.value?.page)
   const surround = computed(() => data.value?.surround)
   ```
-
+  
   ```ts [docs/[...slug\\].vue (v2)]
   const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-
+  
   const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent()
     .where({ _extension: 'md', navigation: { $ne: false } })
     .only(['title', 'description', '_path'])
@@ -219,7 +215,7 @@ All `_dir.yml` files become `.navigation.yml`
 
 ### 8. Migrate Studio activation
 
-Since the [studio module](https://nuxtlabs/studio-module) has been deprecated and a new generic `Preview API` has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependancies and from the `nuxt.config.ts` modules.
+Since the [studio module](https://nuxtlabs/studio-module) has been deprecated and a new generic `Preview API` has been implemented directly into Nuxt Content, we can remove the `@nuxthq/studio` package from our dependencies and from the `nuxt.config.ts` modules.
 
 Instead we just need to enable the preview mode in the Nuxt configuration file by binding the Studio API.
 
@@ -248,26 +244,25 @@ This is a migration case, it won't cover all breaking changes introduced by the 
 ### 1. Setup package to v3
 
 ::prose-note
-To maintain consistency with the UI versioning, which transitioned from v1 to v2. The Nuxt UIPro version 2 is being skipped, and the update jumps directly to v3.
+To maintain consistency with the UI versioning, which transitioned from v1 to v2. The Nuxt UI Pro version 2 is being skipped, and the update jumps directly to v3.
 ::
 
 ::prose-steps{level="4"}
-
 #### Install the Nuxt UI v3 alpha package
 
   :::code-group{sync="pm"}
   ```bash [pnpm]
   pnpm add @nuxt/ui-pro@next
   ```
-
+  
   ```bash [yarn]
   yarn add @nuxt/ui-pro@next
   ```
-
+  
   ```bash [npm]
   npm install @nuxt/ui-pro@next
   ```
-
+  
   ```bash [bun]
   bun add @nuxt/ui-pro@next
   ```
@@ -283,7 +278,7 @@ It's no longer required to add `@nuxt/ui` in modules as it is automatically impo
     modules: ['@nuxt/ui-pro']
   })
   ```
-
+  
   ```ts [nuxt.config.ts (v1)]
   export default defineNuxtConfig({
     extends: ['@nuxt/ui-pro'],
@@ -444,7 +439,7 @@ New `UError` component can be used as full page structure.
 - Instead of the `NavigationTree` component you can use the `NavigationMenu` component or the `ContentNavigation` component to display content navigation.
 
 ::prose-code-group
-```vue [header.vue (v3)]
+```vue [Header.vue (v3)]
 <script>
 // Content navigation provided by queryCollectionNavigation('docs')
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
@@ -462,7 +457,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 </template>
 ```
 
-```vue [header.vue (v1)]
+```vue [Header.vue (v1)]
 <script>
 // Content navigation provided by fetchContentNavigation()
 const navigation = inject<Ref<NavItem[]>>('navigation')
@@ -487,7 +482,6 @@ This decision was made because components used in Markdown no longer need to be 
 ::
 
 ::prose-steps{level="4"}
-
 #### Update content configuration
 
 ```ts [content.config.ts]
@@ -527,7 +521,7 @@ export default defineContentConfig({
     </UContainer>
   </template>
   ```
-
+  
   ```vue [index.vue (v1)]
   <template>
     <div>
@@ -553,9 +547,9 @@ export default defineContentConfig({
                 aria-hidden="true"
               />
             </NuxtLink>
-
+  
             {{ page.hero.headline.label }}
-
+  
             <UIcon
               v-if="page.hero.headline.icon"
               :name="page.hero.headline.icon"
@@ -563,17 +557,17 @@ export default defineContentConfig({
             />
           </UBadge>
         </template>
-
+  
         <template #title>
           <MDC :value="page.hero.title" />
         </template>
-
+  
         <MDC
           :value="page.hero.code"
           class="prose prose-primary dark:prose-invert mx-auto"
         />
       </ULandingHero>
-
+  
       <ULandingSection
         :title="page.features.title"
         :links="page.features.links"
@@ -601,8 +595,6 @@ Landing components have been reorganised and standardised as generic `Page` comp
 - `LandingSection` => `PageSection`
 - `LandingCard` => `PageCard` (we'll use the `PageFeature` instead)
 
-.
-
   :::prose-tip{to="https://github.com/nuxt-ui-pro/docs/blob/v3/content/index.md"}
   Have a look at the final `Markdown` result on GitHub.
   :::
@@ -611,13 +603,10 @@ Landing components have been reorganised and standardised as generic `Page` comp
 ### 6. Migrate docs page
 
 ::prose-steps{level="4"}
-
 #### Layout
 
 - `Aside` component has been renamed to `PageAside` .
 - `ContentNavigation` component can be used (instead of `NavigationTree`) to display the content navigation returned by `queryCollectionNavigation`.
-
-.
 
   :::prose-code-group
   ```vue [layout/docs.vue (v3)]
@@ -632,13 +621,13 @@ Landing components have been reorganised and standardised as generic `Page` comp
             />
           </UPageAside>
         </template>
-
+  
         <slot />
       </UPage>
     </UContainer>
   </template>
   ```
-
+  
   ```vue [layout/docs.vue (v1)]
   <template>
     <UContainer>
@@ -648,7 +637,7 @@ Landing components have been reorganised and standardised as generic `Page` comp
             <UNavigationTree :links="mapContentNavigation(navigation)" />
           </UAside>
         </template>
-
+  
         <slot />
       </UPage>
     </UContainer>
@@ -659,12 +648,30 @@ Landing components have been reorganised and standardised as generic `Page` comp
 #### Catch-all pages
 
 - `Divider` has been renamed to `Separator`
-- `FindPageHeadline` must be imported from `#ui-pro/utils/content`
+- `findPageHeadline` must be imported from `#ui-pro/utils/content`
 - `prose` property does not exist no more on `PageBody` component.
 ::
 
 ::prose-tip{to="https://github.com/nuxt-ui-pro/docs/tree/v3"}
-That's it! The docs starter is now fully running on both UI and Content v3 🎉 You check out the source code on GitHub.
+That's it! The docs starter is now fully running on both UI and Content v3 🎉
 ::
 
-## Bonus: Edit on Studio
+## Edit on Studio
+
+If you're using Nuxt Studio to edit your documentation you also need to migrate the related code.
+
+The Studio module has been deprecated and a new generic `Preview API` has been implemented directly into Nuxt Content, you can remove the `@nuxthq/studio` package from your dependencies and from the`nuxt.config.ts` modules. Instead you just need to enable the preview mode in the Nuxt configuration file by binding the Studio API.
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  content: {
+    preview: {
+      api: 'https://api.nuxt.studio'
+    }
+  },
+})
+```
+
+In order to keep the app config file updatable from Studio you need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
+
+:video{autoplay controls loop poster="https://res.cloudinary.com/nuxt/video/upload/v1737458923/studio/docs-v3_lqfasl.png" src="https://res.cloudinary.com/nuxt/video/upload/v1737458923/studio/docs-v3_lqfasl.mp4"}

@@ -7,7 +7,11 @@ import type { ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
-  binding: string
+  bindingName: string
+  /**
+   * @deprecated Use `bindingName` instead
+   */
+  binding?: string
 }
 
 export interface SqliteDatabaseConfig {
@@ -52,7 +56,7 @@ export interface ModuleOptions {
    * @private
    * @default { type: 'sqlite', filename: '.data/content/local.db' }
    */
-  _localDatabase?: SqliteDatabaseConfig
+  _localDatabase?: SqliteDatabaseConfig | D1DatabaseConfig
   /**
    * Production database configuration
    * @default { type: 'sqlite', filename: './contents.sqlite' }
@@ -83,6 +87,10 @@ export interface ModuleOptions {
     anchorLinks?: boolean | Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', boolean>>
   }
   build: {
+    /**
+     * List of user-defined transformers.
+     */
+    transformers?: string[]
     markdown: {
       /**
        * Control behavior of Table of Contents generation
@@ -178,6 +186,7 @@ export interface RuntimeConfig {
     version: string
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
+    integrityCheck: boolean
   }
 }
 

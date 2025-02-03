@@ -13,7 +13,7 @@ import { listen, type Listener } from 'listhen'
 import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
-import { getLocalDatabase } from './sqlite'
+import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
@@ -22,7 +22,7 @@ import { parseSourceBase } from './source'
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
 export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const db = await getLocalDatabase(options._localDatabase!.filename)
+  const db = await getLocalDatabase(options._localDatabase)
 
   let websocket: ReturnType<typeof createWebSocket>
   let listener: Listener
@@ -42,7 +42,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
   }
 
   async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key}';`
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
     await db.exec(removeQuery)
     if (insertQuery) {
       await Promise.all(insertQuery.map(query => db.exec(query)))
@@ -89,13 +89,14 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
   const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
 
-  const db = await getLocalDatabase(options._localDatabase!.filename)
+  const db = await getLocalDatabase(options._localDatabase!)
   const collections = manifest.collections
 
   const sourceMap = collections.flatMap((c) => {
-    return c.source
-      ? c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: withTrailingSlash(s.cwd) }))
-      : []
+    if (c.source) {
+      return c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: s.cwd && withTrailingSlash(s.cwd) }))
+    }
+    return []
   })
   const dirsToWatch = Array.from(new Set(sourceMap.map(({ source }) => source.cwd)))
     // Filter out empty cwd for custom collections
@@ -111,8 +112,15 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     if (pathOrError instanceof Error) {
       return
     }
-    let path = pathOrError as string
-    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
+    // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
+    let path = resolve(pathOrError as string)
+    const match = sourceMap.find(({ source, cwd }) => {
+      if (cwd && path.startsWith(cwd)) {
+        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+      }
+
+      return false
+    })
     if (match) {
       const { collection, source, cwd } = match
       // Remove the cwd prefix
@@ -128,26 +136,24 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       const checksum = getContentChecksum(content)
       const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
 
-      if (localCache && localCache.checksum === checksum) {
-        db.exec(`DELETE FROM ${collection.tableName} WHERE id = '${keyInCollection}'`)
-        const insertQuery = generateCollectionInsert(collection, JSON.parse(localCache.parsedContent))
-        await Promise.all(insertQuery.map(query => db.exec(query)))
-        return
+      let parsedContent = localCache?.parsedContent
+
+      // If the local cache is not present or the checksum does not match, we need to parse the content
+      if (!localCache || localCache?.checksum !== checksum) {
+        if (!collectionParsers[collection.name]) {
+          collectionParsers[collection.name] = await createParser(collection, nuxt)
+        }
+        const parser = collectionParsers[collection.name]!
+        parsedContent = await parser({
+          id: keyInCollection,
+          body: content,
+          path: fullPath,
+        }).then(result => JSON.stringify(result))
+
+        db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
       }
 
-      if (!collectionParsers[collection.name]) {
-        collectionParsers[collection.name] = await createParser(collection, nuxt)
-      }
-      const parser = collectionParsers[collection.name]!
-      const parsedContent = await parser({
-        id: keyInCollection,
-        body: content,
-        path: fullPath,
-      })
-
-      db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
-
-      const insertQuery = generateCollectionInsert(collection, parsedContent)
+      const insertQuery = generateCollectionInsert(collection, JSON.parse(parsedContent))
       await socket.broadcast(collection, keyInCollection, insertQuery)
     }
   }
@@ -156,8 +162,15 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     if (pathOrError instanceof Error) {
       return
     }
-    let path = pathOrError as string
-    const match = sourceMap.find(({ source, cwd }) => path.startsWith(cwd) && micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true }))
+    // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
+    let path = resolve(pathOrError as string)
+    const match = sourceMap.find(({ source, cwd }) => {
+      if (cwd && path.startsWith(cwd)) {
+        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+      }
+
+      return false
+    })
     if (match) {
       const { collection, source, cwd } = match
       // Remove the cwd prefix

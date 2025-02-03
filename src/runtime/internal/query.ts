@@ -20,7 +20,7 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
         case 'IN':
         case 'NOT IN':
           if (Array.isArray(value)) {
-            const values = value.map(val => `'${val}'`).join(', ')
+            const values = value.map(val => singleQuote(val)).join(', ')
             condition = `"${String(field)}" ${operator.toUpperCase()} (${values})`
           }
           else {
@@ -31,7 +31,7 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
         case 'BETWEEN':
         case 'NOT BETWEEN':
           if (Array.isArray(value) && value.length === 2) {
-            condition = `"${String(field)}" ${operator.toUpperCase()} '${value[0]}' AND '${value[1]}'`
+            condition = `"${String(field)}" ${operator.toUpperCase()} ${singleQuote(value[0])} AND ${singleQuote(value[1])}`
           }
           else {
             throw new Error(`Value for ${operator} must be an array with two elements`)
@@ -45,11 +45,11 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
 
         case 'LIKE':
         case 'NOT LIKE':
-          condition = `"${String(field)}" ${operator.toUpperCase()} '${value}'`
+          condition = `"${String(field)}" ${operator.toUpperCase()} ${singleQuote(value)}`
           break
 
         default:
-          condition = `"${String(field)}" ${operator} '${value}'`
+          condition = `"${String(field)}" ${operator} ${singleQuote(typeof value === 'boolean' ? Number(value) : value)}`
       }
       conditions.push(`${condition}`)
       return query
@@ -137,7 +137,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
-      query += `COUNT(${opts.count.distinct ? 'DISTINCT' : ''} ${opts.count.field}) as count`
+      query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${opts.count.field}) as count`
     }
     else {
       const fields = Array.from(new Set(params.selectedFields))
@@ -170,4 +170,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   return query
+}
+
+function singleQuote(value: unknown) {
+  return `'${String(value).replace(/'/g, '\'\'')}'`
 }

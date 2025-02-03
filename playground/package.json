@@ -8,11 +8,12 @@
     "generate": "nuxi generate",
     "dev:prepare": "nuxt prepare"
   },
-  "dependencies": {
-    "remark-code-import": "latest",
+  "devDependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "3.0.0-alpha.11",
-    "@nuxthub/core": "^0.8.11",
-    "nuxt": "^3.15.2"
+    "@nuxt/ui-pro": "3.0.0-alpha.12",
+    "@nuxthub/core": "^0.8.15",
+    "nuxt": "^3.15.4",
+    "remark-code-import": "latest",
+    "shiki-transformer-color-highlight": "^0.2.0"
   }
 }

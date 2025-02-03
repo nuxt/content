@@ -1,5 +1,45 @@
 # Changelog
 
+## [3.1.0](https://github.com/nuxt/content/compare/v3.0.1...v3.1.0) (2025-02-03)
+
+### Features
+
+* `node-sqlite3` connector ([#3032](https://github.com/nuxt/content/issues/3032)) ([1188550](https://github.com/nuxt/content/commit/118855015d36193e03320b12c74534591dc6e788))
+* **db:** drop built-in database adapters in favor of db0 connectors ([#3010](https://github.com/nuxt/content/issues/3010)) ([1a7371a](https://github.com/nuxt/content/commit/1a7371a61383d8d2e9b8bde18f89516371e94ef1))
+* integrate with NuxtHub database queries ([#3019](https://github.com/nuxt/content/issues/3019)) ([7b480c5](https://github.com/nuxt/content/commit/7b480c5cc638c6781c5e7209787ff93ee0b89acd))
+* **module:** extend content transformers ([#3056](https://github.com/nuxt/content/issues/3056)) ([5ac8532](https://github.com/nuxt/content/commit/5ac85329ddeb918b89a2cff34d7c69fbf2f36745))
+* **search:** allow filtering contents in search sections ([#3053](https://github.com/nuxt/content/issues/3053)) ([2dc38cf](https://github.com/nuxt/content/commit/2dc38cfcd6eada4aa65d2547d61c5c0b702ba653))
+
+### Bug Fixes
+
+* **changelog:** image size ([7c8e950](https://github.com/nuxt/content/commit/7c8e950a3f78ad8ccaf578ac8d66cc165bb7a58d))
+* convert boolean value to number in query condition ([#2927](https://github.com/nuxt/content/issues/2927)) ([#3018](https://github.com/nuxt/content/issues/3018)) ([c11f90a](https://github.com/nuxt/content/commit/c11f90abe020e804de1620320e16d26c6b9dd5bb))
+* fix broken install link ([#2990](https://github.com/nuxt/content/issues/2990)) ([b8da5ee](https://github.com/nuxt/content/commit/b8da5ee9f9e8a64dc8735654dc60bd67e9c6c618))
+* **highlighter:** support custom languages ([cfc9f43](https://github.com/nuxt/content/commit/cfc9f431d8c3b33377b2a72d8cccc77fbf0091fd)), closes [#3067](https://github.com/nuxt/content/issues/3067)
+* **hmr:** ignore sources without `cwd` ([1a8c2bd](https://github.com/nuxt/content/commit/1a8c2bdf85621722251a097d09931b7483185eb5))
+* invalid sqlite3 connector resolve ([74dd3e1](https://github.com/nuxt/content/commit/74dd3e18efed2f44b88d1e4bc38674a9002ba3a8))
+* migration doc typo ([#3017](https://github.com/nuxt/content/issues/3017)) ([ada613f](https://github.com/nuxt/content/commit/ada613ff32814add0b79e16382018aed86638d68))
+* **module:** clone layers to prevent side-effect ([b4e7dec](https://github.com/nuxt/content/commit/b4e7dec2a96c02ec19125af602766bfa04ce6b14))
+* **module:** collection detection on windown file-watcher ([#3006](https://github.com/nuxt/content/issues/3006)) ([3807fe9](https://github.com/nuxt/content/commit/3807fe983b925ff39955aeca3b734a90713dda72))
+* **module:** content parser error handling ([#3046](https://github.com/nuxt/content/issues/3046)) ([022c385](https://github.com/nuxt/content/commit/022c38588b94b6eb210647734e77a832e6578fe3))
+* **module:** remove `scule` from optimizeDps list ([ddb3bc8](https://github.com/nuxt/content/commit/ddb3bc8c4f1726df44474347b1d3e5883fe0204b)), closes [#3042](https://github.com/nuxt/content/issues/3042)
+* **nuxthub:** ensure database is enabled ([b46fc37](https://github.com/nuxt/content/commit/b46fc378019d77117e301e0099cf1ca0cd039c6f))
+* **nuxthub:** split queries into 1MB chunks ([083a47a](https://github.com/nuxt/content/commit/083a47a1461735a3e0196d04e4df9f828cfc36af))
+* parse new content when file is modified ([5dc3429](https://github.com/nuxt/content/commit/5dc342994ede1993c39fbaae3c61dcf812370f20))
+* **parser:** de-prioritise code highlighter plugin ([#3009](https://github.com/nuxt/content/issues/3009)) ([dc7d866](https://github.com/nuxt/content/commit/dc7d8661c0f8da9f7022999eb92a480fdcd058af))
+* **preview:** draft ready not received event ([a8ee72e](https://github.com/nuxt/content/commit/a8ee72e6aca6d63e32478c014bbc465f129ce545))
+* **preview:** handle index file in prefix folder (i18n) ([37d3008](https://github.com/nuxt/content/commit/37d30083a83ed99e7446b49ecf2fb46debffb751))
+* **preview:** optimize brace-expansion ([e84e7f4](https://github.com/nuxt/content/commit/e84e7f4f7a5188b18117987dad1a3bc933961e92))
+* **preview:** take exclude into account to find collection ([bddd834](https://github.com/nuxt/content/commit/bddd83430667d9852d312325e15c8159a32df417))
+* **query:** handle comments and improve single selection ([8de0f14](https://github.com/nuxt/content/commit/8de0f144008d60f3e2f89d9d2e68bd3087a6e136)), closes [#3054](https://github.com/nuxt/content/issues/3054)
+* **schema:** mark `ZodMap` as json field ([69a14fa](https://github.com/nuxt/content/commit/69a14faf3b915abccf91e7eb426d385a1ffd5a23))
+* **studio:** return when collection not found ([454a22d](https://github.com/nuxt/content/commit/454a22db7143d26b518da0a577994f184a5bff32))
+* **template:** demo url ([#2983](https://github.com/nuxt/content/issues/2983)) ([57ee33d](https://github.com/nuxt/content/commit/57ee33daa72dcd3a8e0e83b1c3f5173b4004c932))
+* **templates:** handle cors form studio ([06b57ac](https://github.com/nuxt/content/commit/06b57aca8e103a11eae87e12e5a850983492f460))
+* **vercel:** default database url ([042c548](https://github.com/nuxt/content/commit/042c5489157702ce832408eb25c8c0fd6a4fda03))
+* **wasm:** ignore OPFS warning as Nuxt Content does not depend on it ([5d5506c](https://github.com/nuxt/content/commit/5d5506ce2f478b944bad68e82a09bafe7ced1f55))
+* **wasm:** override logger functions ([#3024](https://github.com/nuxt/content/issues/3024)) ([99f5ac9](https://github.com/nuxt/content/commit/99f5ac9e9018e8cc1b8d91f3188659b28de0c95c))
+
 ## [3.0.1](https://github.com/nuxt/content/compare/v3.0.0...v3.0.1) (2025-01-27)
 
 ### Bug Fixes
