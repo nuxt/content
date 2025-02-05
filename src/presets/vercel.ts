@@ -6,11 +6,8 @@ export default definePreset({
   name: 'vercel',
   async setupNitro(nitroConfig, options) {
     if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
-      logger.warn('Deploying sqlite database to Vercel is not possible, switching to Postgres database with `POSTGRES_URL`.')
-      nitroConfig.runtimeConfig!.content!.database = {
-        type: 'postgres',
-        url: process.env.POSTGRES_URL,
-      }
+      logger.warn('Deploying sqlite database to Vercel is not recommended if you are prerendering your site.')
+      logger.info('We recommend using a hosted SQL database like Neon, Turso, Supabase or others.')
     }
 
     await nodePreset.setupNitro(nitroConfig, options)
