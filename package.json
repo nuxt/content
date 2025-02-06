@@ -140,7 +140,8 @@
     "wrangler": "^3.107.0"
   },
   "resolutions": {
-    "@nuxt/content": "workspace:*"
+    "@nuxt/content": "workspace:*",
+    "nitropack": "npm:nitropack-nightly@2.11.0-20250206-222257.57bd74bd"
   },
   "packageManager": "pnpm@9.15.4",
   "unbuild": {

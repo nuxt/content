@@ -6,6 +6,7 @@ settings:
 
 overrides:
   '@nuxt/content': workspace:*
+  nitropack: npm:nitropack-nightly@2.11.0-20250206-222257.57bd74bd
 
 importers:
 
@@ -1476,16 +1477,16 @@ packages:
   '@neon-rs/load@0.0.4':
     resolution: {integrity: sha512-kTPhdZyTQxB+2wpiRcFWrDcejc4JI6tkPuS7UZCG4l6Zvc5kU/gGQ/ozvHTh1XR5tS+UlfAfGuPajjzQjCiHCw==}
 
-  '@netlify/functions@2.8.2':
-    resolution: {integrity: sha512-DeoAQh8LuNPvBE4qsKlezjKj0PyXDryOFJfJKo3Z1qZLKzQ21sT314KQKPVjfvw6knqijj+IO+0kHXy/TJiqNA==}
-    engines: {node: '>=14.0.0'}
+  '@netlify/functions@3.0.0':
+    resolution: {integrity: sha512-XXf9mNw4+fkxUzukDpJtzc32bl1+YlXZwEhc5ZgMcTbJPLpgRLDs5WWSPJ4eY/Mv1ZFvtxmMwmfgoQYVt68Qog==}
+    engines: {node: '>=18.0.0'}
 
   '@netlify/node-cookies@0.1.0':
     resolution: {integrity: sha512-OAs1xG+FfLX0LoRASpqzVntVV/RpYkgpI0VrUnw2u0Q1qiZUzcPffxRK8HF3gc4GjuhG5ahOEMJ9bswBiZPq0g==}
     engines: {node: ^14.16.0 || >=16.0.0}
 
-  '@netlify/serverless-functions-api@1.26.1':
-    resolution: {integrity: sha512-q3L9i3HoNfz0SGpTIS4zTcKBbRkxzCRpd169eyiTuk3IwcPC3/85mzLHranlKo2b+HYT0gu37YxGB45aD8A3Tw==}
+  '@netlify/serverless-functions-api@1.30.1':
+    resolution: {integrity: sha512-JkbaWFeydQdeDHz1mAy4rw+E3bl9YtbCgkntfTxq+IlNX/aIMv2/b1kZnQZcil4/sPoZGL831Dq6E374qRpU1A==}
     engines: {node: '>=18.0.0'}
 
   '@nodelib/fs.scandir@2.1.5':
@@ -1816,6 +1817,17 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
+  '@poppinss/colors@4.1.4':
+    resolution: {integrity: sha512-FA+nTU8p6OcSH4tLDY5JilGYr1bVWHpNmcLr7xmMEdbWmKHa+3QZ+DqefrXKmdjO/brHTnQZo20lLSjaO7ydog==}
+    engines: {node: '>=18.16.0'}
+
+  '@poppinss/dumper@0.6.2':
+    resolution: {integrity: sha512-FhE9rY15aZ6Qp6ltQ0NZjseVRhwgWZ7+sg16343FqnjdUQvvBBi5eSeH/aZA4LF1ZOV5779DYrJXTHT42JlHNg==}
+
+  '@poppinss/exception@1.2.0':
+    resolution: {integrity: sha512-WLneXKQYNClhaMXccO111VQmZahSrcSRDaHRbV6KL5R4pTvK87fMn/MXLUcvOjk0X5dTHDPKF61tM7j826wrjQ==}
+    engines: {node: '>=20.6.0'}
+
   '@redocly/ajv@8.11.2':
     resolution: {integrity: sha512-io1JpnwtIcvojV7QKDUSIuMN/ikdOUd1ReEnUnMKGfDVridQZ31J0MmIuqwuRjWDZfmvr+Q0MqCcfHM2gTivOg==}
 
@@ -1959,6 +1971,15 @@ packages:
 
   '@rollup/plugin-node-resolve@15.3.1':
     resolution: {integrity: sha512-tgg6b91pAybXHJQMAAwW9VuWBO6Thi+q7BCNARLwSqlmsHz0XYURtGvh/AuwSADXSI4h/2uHbs7s4FzlZDGSGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.78.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-node-resolve@16.0.0':
+    resolution: {integrity: sha512-0FPvAeVUT/zdWoO0jnb/V5BlBsUSNfkIOtFHzMO4H9MOklrmQFY6FduVHKucNb/aTFxvnGhj4MNj/T1oNdDfNg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^2.78.0||^3.0.0||^4.0.0
@@ -2169,6 +2190,10 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
+  '@sindresorhus/is@7.0.1':
+    resolution: {integrity: sha512-QWLl2P+rsCJeofkDNIT3WFmb6NrRud1SUYW8dIhXK/46XFV8Q/g7Bsvib0Askb0reRLe+WYPeeE+l5cH7SlkuQ==}
+    engines: {node: '>=18'}
+
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
@@ -2179,6 +2204,9 @@ packages:
 
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
+
+  '@speed-highlight/core@1.2.7':
+    resolution: {integrity: sha512-0dxmVj4gxg3Jg879kvFS/msl4s9F3T9UXC1InxgOf7t5NvcPD97u/WTA5vL/IxWHMn7qSxBozqrnnE2wvl1m8g==}
 
   '@sqlite.org/sqlite-wasm@3.48.0-build4':
     resolution: {integrity: sha512-hI6twvUkzOmyGZhQMza1gpfqErZxXRw6JEsiVjUbo7tFanVD+8Oil0Ih3l2nGzHdxPI41zFmfUQG7GHqhciKZQ==}
@@ -2458,9 +2486,9 @@ packages:
   '@uploadthing/mime-types@0.3.4':
     resolution: {integrity: sha512-EB0o0a4y++UJFMLqS8LDVhSQgXUllG6t5fwl5cbmOM0Uay8YY5Nc/JjFwzJ8wccdIKz4oYwQW7EOSfUyaMPbfw==}
 
-  '@vercel/nft@0.27.10':
-    resolution: {integrity: sha512-zbaF9Wp/NsZtKLE4uVmL3FyfFwlpDyuymQM1kPbeT0mVOHKDQQNjnnfslB3REg3oZprmNFJuh3pkHBk2qAaizg==}
-    engines: {node: '>=16'}
+  '@vercel/nft@0.29.1':
+    resolution: {integrity: sha512-6239JJM1V9b3OjvZIjbe+47/hGxMr44FEzlbTErrqzebCaoKAHK+yvahn3gdNacybDUbTxVF8Zuh0vqaeM8aKQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
   '@vitejs/plugin-vue-jsx@4.1.1':
@@ -3250,6 +3278,10 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
+
+  cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
 
   copy-anything@3.0.5:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
@@ -4176,6 +4208,9 @@ packages:
     resolution: {integrity: sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  h3-nightly@1.15.0-20250205-193601-ae316c9:
+    resolution: {integrity: sha512-mWb1HWPTqCOuuOdmMlOwXoiMqdFeDm8EzGzspUX6kGGkuY/f8xJd7LKEE9qVq7Ec0w/+ZboG9/F4bS7z9MYm2A==}
+
   h3@1.14.0:
     resolution: {integrity: sha512-ao22eiONdgelqcnknw0iD645qW0s9NnrJHr5OBz4WOMdBdycfSas1EQf1wXRsm+PcB2Yoj43pjBPwqIpJQTeWg==}
 
@@ -4657,6 +4692,10 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
+  kleur@4.1.5:
+    resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
+    engines: {node: '>=6'}
+
   klona@2.0.6:
     resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
     engines: {node: '>= 8'}
@@ -4688,7 +4727,6 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
-    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lighthouse-logger@2.0.1:
@@ -5229,8 +5267,8 @@ packages:
   nitro-cloudflare-dev@0.2.1:
     resolution: {integrity: sha512-zHAN21dp+As0ldkAr5tWTop/I721j7MssZG6qb7a7EMorFwdRIhyTUwltr2L6v4qT4209S4eb2S9rszP1fxS7A==}
 
-  nitropack@2.10.4:
-    resolution: {integrity: sha512-sJiG/MIQlZCVSw2cQrFG1H6mLeSqHlYfFerRjLKz69vUfdu0EL2l0WdOxlQbzJr3mMv/l4cOlCCLzVRzjzzF/g==}
+  nitropack-nightly@2.11.0-20250206-222257.57bd74bd:
+    resolution: {integrity: sha512-WKVor/TnLKutQ1EGEoyx+ES/5UtZ82zQ9XjzzSBhWg6qHRRU1dX6eFWrlqqCsSqMtreClTeFxFsBoNZKJG7MZA==}
     engines: {node: ^16.11.0 || >=17.0.0}
     hasBin: true
     peerDependencies:
@@ -5285,6 +5323,9 @@ packages:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
     engines: {node: '>= 10.12.0'}
     hasBin: true
+
+  node-mock-http@1.0.0:
+    resolution: {integrity: sha512-0uGYQ1WQL1M5kKvGRXWQ3uZCHtLTO8hln3oBjIusM75WoesZ909uQJs/Hb946i2SS+Gsrhkaa6iAO17jRIv6DQ==}
 
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
@@ -6521,6 +6562,10 @@ packages:
     resolution: {integrity: sha512-5JRxVqC8I8NuOUjzBbvVJAKNM8qoVuH0O77h4WInc/qC2q5IreqKxYwgkga3PfA22OayK2ikceb/B26dztPl+Q==}
     engines: {node: '>=16'}
 
+  supports-color@10.0.0:
+    resolution: {integrity: sha512-HRVVSbCCMbj7/kdWF9Q+bbckjBHLtHMEoJWlkmYzzdwhYMkjkOwubLM6t7NbWKjgKamGDrWL1++KrjUO1t9oAQ==}
+    engines: {node: '>=18'}
+
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
@@ -6782,6 +6827,9 @@ packages:
 
   unenv@2.0.0-rc.1:
     resolution: {integrity: sha512-PU5fb40H8X149s117aB4ytbORcCvlASdtF97tfls4BPIyj4PeVxvpSuy1jAptqYHqB0vb2w2sHvzM0XWcp2OKg==}
+
+  unenv@2.0.0-rc.2:
+    resolution: {integrity: sha512-bO8CNyJRtXrZ+KlS+hOAHRKh49HiaTSJiI8whdHOTffzsBY8Vfe5rMxQZpoljmJ26ifEZdEyOnx3s5Lc5f824A==}
 
   unhead@1.11.18:
     resolution: {integrity: sha512-TWgGUoZMpYe2yJwY6jZ0/9kpQT18ygr2h5lI6cUXdfD9UzDc0ytM9jGaleSYkj9guJWXkk7izYBnzJvxl8mRvQ==}
@@ -7443,8 +7491,16 @@ packages:
   yoga-wasm-web@0.3.3:
     resolution: {integrity: sha512-N+d4UJSJbt/R3wqY7Coqs5pcV0aUj2j9IaQ3rNj9bVCLld8tTGKRa2USARjnvZJWVx1NDmQev8EknoczaOQDOA==}
 
+  youch-core@0.3.1:
+    resolution: {integrity: sha512-KOAmtABz17fgK+uBBJYIzaPpIgX+JgTRgY4t3zXH18akc5rRtFkRmcNTMCuSxLdbOJDY9+T/O3nyA/EQuN4EWA==}
+    engines: {node: '>=20.6.0'}
+
   youch@3.3.4:
     resolution: {integrity: sha512-UeVBXie8cA35DS6+nBkls68xaBBXCye0CNznrhszZjTbRVnJKQuNsyLKBTTL4ln1o1rh2PKtv35twV7irj5SEg==}
+
+  youch@4.1.0-beta.4:
+    resolution: {integrity: sha512-sknU8tgzmqx7PJBEqAdqBYjleLjHfNnFBTi3HwQTh6I+4OoJaIHkezxxUJ/ta7cpfgdG87bdYPCucVZV+GzhRA==}
+    engines: {node: '>=20.6.0'}
 
   yup@1.6.1:
     resolution: {integrity: sha512-JED8pB50qbA4FOkDol0bYF/p60qSEDQqBD0/qeIrUCG1KbPBIQ776fCUNb9ldbPcSTxA69g/47XTo4TqWiuXOA==}
@@ -8436,13 +8492,13 @@ snapshots:
 
   '@neon-rs/load@0.0.4': {}
 
-  '@netlify/functions@2.8.2':
+  '@netlify/functions@3.0.0':
     dependencies:
-      '@netlify/serverless-functions-api': 1.26.1
+      '@netlify/serverless-functions-api': 1.30.1
 
   '@netlify/node-cookies@0.1.0': {}
 
-  '@netlify/serverless-functions-api@1.26.1':
+  '@netlify/serverless-functions-api@1.30.1':
     dependencies:
       '@netlify/node-cookies': 0.1.0
       urlpattern-polyfill: 8.0.2
@@ -9513,6 +9569,18 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
+  '@poppinss/colors@4.1.4':
+    dependencies:
+      kleur: 4.1.5
+
+  '@poppinss/dumper@0.6.2':
+    dependencies:
+      '@poppinss/colors': 4.1.4
+      '@sindresorhus/is': 7.0.1
+      supports-color: 10.0.0
+
+  '@poppinss/exception@1.2.0': {}
+
   '@redocly/ajv@8.11.2':
     dependencies:
       fast-deep-equal: 3.1.3
@@ -9662,7 +9730,7 @@ snapshots:
     optionalDependencies:
       rollup: 3.29.5
 
-  '@rollup/plugin-node-resolve@15.3.1(rollup@4.34.1)':
+  '@rollup/plugin-node-resolve@16.0.0(rollup@4.34.1)':
     dependencies:
       '@rollup/pluginutils': 5.1.4(rollup@4.34.1)
       '@types/resolve': 1.20.2
@@ -9872,11 +9940,15 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
+  '@sindresorhus/is@7.0.1': {}
+
   '@sindresorhus/merge-streams@2.3.0': {}
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
   '@socket.io/component-emitter@3.1.2': {}
+
+  '@speed-highlight/core@1.2.7': {}
 
   '@sqlite.org/sqlite-wasm@3.48.0-build4': {}
 
@@ -10187,7 +10259,7 @@ snapshots:
 
   '@uploadthing/mime-types@0.3.4': {}
 
-  '@vercel/nft@0.27.10(encoding@0.1.13)(rollup@4.34.1)':
+  '@vercel/nft@0.29.1(encoding@0.1.13)(rollup@4.34.1)':
     dependencies:
       '@mapbox/node-pre-gyp': 2.0.0(encoding@0.1.13)
       '@rollup/pluginutils': 5.1.4(rollup@4.34.1)
@@ -11099,6 +11171,8 @@ snapshots:
   cookie-es@1.2.2: {}
 
   cookie@0.7.2: {}
+
+  cookie@1.0.2: {}
 
   copy-anything@3.0.5:
     dependencies:
@@ -12157,6 +12231,19 @@ snapshots:
     dependencies:
       duplexer: 0.1.2
 
+  h3-nightly@1.15.0-20250205-193601-ae316c9:
+    dependencies:
+      cookie-es: 1.2.2
+      crossws: 0.3.3
+      defu: 6.1.4
+      destr: 2.0.3
+      iron-webcrypto: 1.2.1
+      node-mock-http: 1.0.0
+      ohash: 1.1.4
+      radix3: 1.1.2
+      ufo: 1.5.4
+      uncrypto: 0.1.3
+
   h3@1.14.0:
     dependencies:
       cookie-es: 1.2.2
@@ -12737,6 +12824,8 @@ snapshots:
       json-buffer: 3.0.1
 
   kleur@3.0.3: {}
+
+  kleur@4.1.5: {}
 
   klona@2.0.6: {}
 
@@ -13496,20 +13585,20 @@ snapshots:
       mlly: 1.7.4
       pkg-types: 1.3.1
 
-  nitropack@2.10.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3):
+  nitropack-nightly@2.11.0-20250206-222257.57bd74bd(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
-      '@netlify/functions': 2.8.2
+      '@netlify/functions': 3.0.0
       '@rollup/plugin-alias': 5.1.1(rollup@4.34.1)
       '@rollup/plugin-commonjs': 28.0.2(rollup@4.34.1)
       '@rollup/plugin-inject': 5.0.5(rollup@4.34.1)
       '@rollup/plugin-json': 6.1.0(rollup@4.34.1)
-      '@rollup/plugin-node-resolve': 15.3.1(rollup@4.34.1)
+      '@rollup/plugin-node-resolve': 16.0.0(rollup@4.34.1)
       '@rollup/plugin-replace': 6.0.2(rollup@4.34.1)
       '@rollup/plugin-terser': 0.4.4(rollup@4.34.1)
       '@rollup/pluginutils': 5.1.4(rollup@4.34.1)
       '@types/http-proxy': 1.17.15
-      '@vercel/nft': 0.27.10(encoding@0.1.13)(rollup@4.34.1)
+      '@vercel/nft': 0.29.1(encoding@0.1.13)(rollup@4.34.1)
       archiver: 7.0.1
       c12: 2.0.1(magicast@0.3.5)
       chokidar: 3.6.0
@@ -13530,7 +13619,7 @@ snapshots:
       fs-extra: 11.3.0
       globby: 14.0.2
       gzip-size: 7.0.0
-      h3: 1.14.0
+      h3: h3-nightly@1.15.0-20250205-193601-ae316c9
       hookable: 5.5.3
       httpxy: 0.1.7
       ioredis: 5.4.2
@@ -13543,10 +13632,11 @@ snapshots:
       mime: 4.0.6
       mlly: 1.7.4
       node-fetch-native: 1.6.6
+      node-mock-http: 1.0.0
       ofetch: 1.4.1
       ohash: 1.1.4
       openapi-typescript: 7.6.1(typescript@5.7.3)
-      pathe: 1.1.2
+      pathe: 2.0.2
       perfect-debounce: 1.0.0
       pkg-types: 1.3.1
       pretty-bytes: 6.1.1
@@ -13557,15 +13647,19 @@ snapshots:
       semver: 7.7.0
       serve-placeholder: 2.0.2
       serve-static: 1.16.2
+      source-map: 0.7.4
       std-env: 3.8.0
       ufo: 1.5.4
+      ultrahtml: 1.5.3
       uncrypto: 0.1.3
       unctx: 2.4.1
-      unenv: 1.10.0
-      unimport: 3.14.6(rollup@4.34.1)
+      unenv: 2.0.0-rc.2
+      unimport: 4.0.0(rollup@4.34.1)
       unstorage: 1.14.4(db0@0.2.3(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(sqlite3@5.1.7))(ioredis@5.4.2)
       untyped: 1.5.2
       unwasm: 0.3.9
+      youch: 4.1.0-beta.4
+      youch-core: 0.3.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -13646,6 +13740,8 @@ snapshots:
       - bluebird
       - supports-color
     optional: true
+
+  node-mock-http@1.0.0: {}
 
   node-releases@2.0.19: {}
 
@@ -13824,7 +13920,7 @@ snapshots:
       magic-string: 0.30.17
       mlly: 1.7.4
       nanotar: 0.2.0
-      nitropack: 2.10.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3)
+      nitropack: nitropack-nightly@2.11.0-20250206-222257.57bd74bd(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3)
       nypm: 0.5.2
       ofetch: 1.4.1
       ohash: 1.1.4
@@ -13946,7 +14042,7 @@ snapshots:
       magic-string: 0.30.17
       mlly: 1.7.4
       nanotar: 0.2.0
-      nitropack: 2.10.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3)
+      nitropack: nitropack-nightly@2.11.0-20250206-222257.57bd74bd(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(encoding@0.1.13)(sqlite3@5.1.7)(typescript@5.7.3)
       nypm: 0.5.2
       ofetch: 1.4.1
       ohash: 1.1.4
@@ -15447,6 +15543,8 @@ snapshots:
     dependencies:
       copy-anything: 3.0.5
 
+  supports-color@10.0.0: {}
+
   supports-color@7.2.0:
     dependencies:
       has-flag: 4.0.0
@@ -15714,6 +15812,14 @@ snapshots:
       pathe: 1.1.2
 
   unenv@2.0.0-rc.1:
+    dependencies:
+      defu: 6.1.4
+      mlly: 1.7.4
+      ohash: 1.1.4
+      pathe: 1.1.2
+      ufo: 1.5.4
+
+  unenv@2.0.0-rc.2:
     dependencies:
       defu: 6.1.4
       mlly: 1.7.4
@@ -16556,11 +16662,23 @@ snapshots:
 
   yoga-wasm-web@0.3.3: {}
 
+  youch-core@0.3.1:
+    dependencies:
+      '@poppinss/exception': 1.2.0
+      error-stack-parser-es: 0.1.5
+
   youch@3.3.4:
     dependencies:
       cookie: 0.7.2
       mustache: 4.2.0
       stacktracey: 2.1.8
+
+  youch@4.1.0-beta.4:
+    dependencies:
+      '@poppinss/dumper': 0.6.2
+      '@speed-highlight/core': 1.2.7
+      cookie: 1.0.2
+      youch-core: 0.3.1
 
   yup@1.6.1:
     dependencies:
