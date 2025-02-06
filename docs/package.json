@@ -2,6 +2,9 @@
   "private": true,
   "name": "@nuxt/content-docs",
   "type": "module",
+  "resolutions": {
+    "nitropack": "npm:nitropack-nightly@2.11.0-20250206-222257.57bd74bd"
+  },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.25",
     "@iconify-json/simple-icons": "^1.2.22",
