@@ -1,7 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
-import type { Nuxt } from '@nuxt/schema'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
@@ -25,7 +24,7 @@ function isSqlite3Available() {
   }
 }
 
-export async function refineDatabaseConfig(database: ModuleOptions['database'], nuxt: Nuxt) {
+export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
   if (database.type === 'd1') {
     if (!('bindingName' in database)) {
       // @ts-expect-error bindingName
@@ -36,8 +35,12 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   if (database.type === 'sqlite') {
     const path = isAbsolute(database.filename)
       ? database.filename
-      : join(nuxt.options.rootDir, database.filename)
+      : join(opts.rootDir, database.filename)
     await mkdir(dirname(path), { recursive: true }).catch(() => {})
+
+    if (opts.updateSqliteFileName) {
+      database.filename = path
+    }
   }
 }
 

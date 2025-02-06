@@ -13,7 +13,7 @@ import {
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import { hash } from 'ohash'
-import { join, isAbsolute } from 'pathe'
+import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
@@ -75,14 +75,6 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   async setup(options, nuxt) {
-    // Provide default database configuration here since nuxt is merging defaults and user options
-    if (!options.database) {
-      options.database = {
-        type: 'sqlite',
-        filename: './contents.sqlite',
-      }
-    }
-
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
       checksum: {},
@@ -91,30 +83,8 @@ export default defineNuxtModule<ModuleOptions>({
       collections: [],
     }
 
-    // Create local database
-    await refineDatabaseConfig(options._localDatabase, nuxt)
-    if (options._localDatabase?.type === 'sqlite') {
-      options._localDatabase!.filename = isAbsolute(options._localDatabase!.filename)
-        ? options._localDatabase!.filename
-        : join(nuxt.options.rootDir, options._localDatabase!.filename)
-    }
-
-    // Create sql database
-    await refineDatabaseConfig(options.database, nuxt)
-
     const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections
-
-    // Module Options
-    nuxt.options.runtimeConfig.public.content = {
-      wsUrl: '',
-    }
-    nuxt.options.runtimeConfig.content = {
-      version,
-      database: options.database,
-      localDatabase: options._localDatabase!,
-      integrityCheck: true,
-    } as never
 
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
@@ -159,9 +129,25 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Load nitro preset and set db adapter
     const preset = findPreset(nuxt)
     await preset?.setup?.(options, nuxt)
+
+    // Provide default database configuration here since nuxt is merging defaults and user options
+    options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
+    await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
+    await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
+
+    // Module Options
+    nuxt.options.runtimeConfig.public.content = {
+      wsUrl: '',
+    }
+    nuxt.options.runtimeConfig.content = {
+      version,
+      database: options.database,
+      localDatabase: options._localDatabase!,
+      integrityCheck: true,
+    } as never
+
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })

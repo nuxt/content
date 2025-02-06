@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'pathe'
 import { definePreset } from '../utils/preset'
+import { logger } from '../utils/dev'
 import cfPreset from './cloudflare-pages'
 
 export default definePreset({
@@ -9,8 +10,16 @@ export default definePreset({
     // Make sure database is enabled
     const nuxthubOptions: { database?: boolean } = (nuxt.options as unknown as { hub: unknown }).hub ||= {}
     nuxthubOptions.database = true
+
+    // Set up database
+    options.database ||= { type: 'd1', bindingName: 'DB' }
   },
   async setupNitro(nitroConfig, options) {
+    if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
+      logger.warn('Deploying to NuxtHub requires using D1 database, switching to D1 database with binding `DB`.')
+      nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
+    }
+
     await cfPreset.setupNitro(nitroConfig, options)
 
     if (nitroConfig.dev === false) {
