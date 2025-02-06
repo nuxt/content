@@ -26,6 +26,8 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test ORDER BY id DESC': true,
     'SELECT * FROM _content_test ORDER BY id ASC,stem DESC': false,
     'SELECT * FROM _content_test ORDER BY id ASC, stem DESC': true,
+    'SELECT * FROM _content_test ORDER BY id ASC, publishedAt DESC': true,
+    'SELECT "PublishedAt" FROM _content_test ORDER BY id ASC, PublishedAt DESC': true,
     'SELECT * FROM _content_test ORDER BY id DESC -- comment is not allowed': false,
     'SELECT * FROM _content_test ORDER BY id DESC; SELECT * FROM _content_test ORDER BY id DESC': false,
     'SELECT * FROM _content_test ORDER BY id DESC LIMIT 10': true,

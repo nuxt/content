@@ -32,7 +32,7 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (
       columns[0] !== '*'
       && !columns[0].match(SQL_COUNT_REGEX)
-      && !columns[0].match(/^"[a-z_]\w+"$/)
+      && !columns[0].match(/^"[a-z_]\w+"$/i)
     ) {
       throw new Error('Invalid query')
     }
@@ -59,7 +59,7 @@ export function assertSafeQuery(sql: string, collection: string) {
 
   // ORDER BY
   const _order = (orderBy + ' ' + order).split(', ')
-  if (!_order.every(column => column.match(/^("[a-z_]+"|[a-z_]+) (ASC|DESC)$/))) {
+  if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
     throw new Error('Invalid query')
   }
 
