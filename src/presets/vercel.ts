@@ -4,10 +4,14 @@ import nodePreset from './node'
 
 export default definePreset({
   name: 'vercel',
+  async setup(options) {
+    options.database ||= { type: 'sqlite', filename: '/tmp/contents.sqlite' }
+  },
   async setupNitro(nitroConfig, options) {
-    if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
-      logger.warn('Deploying sqlite database to Vercel is not recommended if you are not prerendering your site.')
-      logger.info('We recommend using a hosted SQL database like Neon, Turso, Supabase or others.')
+    const database = nitroConfig.runtimeConfig?.content?.database
+    if (database?.type === 'sqlite' && !database?.filename?.startsWith('/tmp')) {
+      logger.warn('Deploying sqlite database to Vercel is possible only in `/tmp` directory. Using `/tmp/contents.sqlite` instead.')
+      database.filename = '/tmp/contents.sqlite'
     }
 
     await nodePreset.setupNitro(nitroConfig, options)
