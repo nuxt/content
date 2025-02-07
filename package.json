@@ -141,7 +141,7 @@
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
-    "nitropack": "npm:nitropack-nightly@2.11.0-20250206-222257.57bd74bd"
+    "nitropack": "npm:nitropack-nightly@2.11.0-20250207-024216.b15e015c"
   },
   "packageManager": "pnpm@9.15.4",
   "unbuild": {
