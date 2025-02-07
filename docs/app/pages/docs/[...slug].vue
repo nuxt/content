@@ -43,7 +43,7 @@ defineOgImageComponent('Docs', {
 const communityLinks = computed(() => [{
   icon: 'i-lucide-pencil',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/content/edit/v3/docs/content/${page.value?.stem}.${page.value?.extension}`,
+  to: `https://github.com/nuxt/content/edit/main/docs/content/${page.value?.stem}.${page.value?.extension}`,
   target: '_blank',
 }, {
   icon: 'i-lucide-star',
