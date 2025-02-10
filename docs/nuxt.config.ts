@@ -32,6 +32,9 @@ export default defineNuxtConfig({
           depth: 4,
           searchDepth: 4,
         },
+        highlight: {
+          langs: ['docker'],
+        },
       },
     },
     database: {
