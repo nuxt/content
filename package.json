@@ -142,7 +142,7 @@
   "resolutions": {
     "@nuxt/content": "workspace:*"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.3.0",
   "unbuild": {
     "entries": [
       "./src/module",
