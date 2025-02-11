@@ -3,7 +3,7 @@ import { logger } from '../utils/dev'
 import nodePreset from './node'
 
 export default definePreset({
-  name: 'vercel',
+  name: 'netlify',
   async setup(options) {
     options.database ||= { type: 'sqlite', filename: '/tmp/contents.sqlite' }
   },

@@ -17,7 +17,7 @@ export function findPreset(nuxt: Nuxt) {
     return cloudflare
   }
 
-  if (preset === 'netlify-legacy') {
+  if (preset === 'netlify-legacy' || process.env.NETLIFY === 'true') {
     return netlify
   }
 
