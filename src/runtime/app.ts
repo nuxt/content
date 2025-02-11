@@ -7,6 +7,10 @@ import { generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
 import { tryUseNuxtApp } from '#imports'
 
+export type {
+  ContentNavigationItem,
+}
+
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
   andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
