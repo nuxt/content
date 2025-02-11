@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.1](https://github.com/nuxt/content/compare/v3.1.0...v3.1.1) (2025-02-11)
+
+### Bug Fixes
+
+* **docs:** use `bindingName` instead of `binding` ([#3109](https://github.com/nuxt/content/issues/3109)) ([311609c](https://github.com/nuxt/content/commit/311609cfff3d2e145bed0e919be511ba51454713))
+* don't force pg for vercel ([#3093](https://github.com/nuxt/content/issues/3093)) ([0866008](https://github.com/nuxt/content/commit/086600852227c7704426ae77113a1a0b9a6f4ab2))
+* **preset:** allow presets to provide default options ([254fd24](https://github.com/nuxt/content/commit/254fd2453058980124e9566b55fef842457fe3f0))
+* **query:** allow uppercase in column names ([#3100](https://github.com/nuxt/content/issues/3100)) ([598dd13](https://github.com/nuxt/content/commit/598dd1354cfec2c5005231387e7dd9e608a72379))
+* **vercel:** use `/tmp` directory for sqlite db ([#3108](https://github.com/nuxt/content/issues/3108)) ([bfc58cc](https://github.com/nuxt/content/commit/bfc58ccf2a155b48d8f585ea8bf206f93c801c27))
+
 ## [3.1.0](https://github.com/nuxt/content/compare/v3.0.1...v3.1.0) (2025-02-03)
 
 ### Features
