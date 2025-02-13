@@ -1,4 +1,4 @@
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
@@ -19,11 +19,11 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
   return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
 }
 
-export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
+export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
   return chainablePromise(collection, qb => generateNavigationTree(qb, fields))
 }
 
-export function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
 }
 
