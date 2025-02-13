@@ -7,10 +7,6 @@ import { generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
 import { tryUseNuxtApp } from '#imports'
 
-export type {
-  ContentNavigationItem,
-}
-
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
   andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
@@ -23,11 +19,11 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
   return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
 }
 
-export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>) {
+export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
   return chainablePromise(collection, qb => generateNavigationTree(qb, fields))
 }
 
-export function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
 }
 
