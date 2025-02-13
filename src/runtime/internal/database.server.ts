@@ -10,15 +10,17 @@ import { tables, checksums } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
 
+let db: Connector
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
-  let db: Connector
-  if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-    db = localAdapter(refineDatabaseConfig(localDatabase))
-  }
-  else {
-    db = adapter(refineDatabaseConfig(database))
+  if (!db) {
+    if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+      db = localAdapter(refineDatabaseConfig(localDatabase))
+    }
+    else {
+      db = adapter(refineDatabaseConfig(database))
+    }
   }
 
   return <DatabaseAdapter>{
