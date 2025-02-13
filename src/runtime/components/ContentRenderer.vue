@@ -167,11 +167,12 @@ function resolveContentComponents(body: MDCRoot, meta: Record<string, unknown>) 
 
   const result = {} as Record<string, unknown>
   for (const [tag, component] of components) {
-    if (typeof component === 'object' && renderFunctions.some(fn => Object.hasOwnProperty.call(component, fn))) {
+    if (result[tag]) {
       continue
     }
 
-    if (result[tag]) {
+    if (typeof component === 'object' && renderFunctions.some(fn => Object.hasOwnProperty.call(component, fn))) {
+      result[tag] = component
       continue
     }
 
