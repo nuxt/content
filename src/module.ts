@@ -244,10 +244,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     collectionDump[collection.name] = []
-    // Collection table definition
-    collectionDump[collection.name]!.push(
-      ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
-    )
 
     if (!collection.source) {
       continue
@@ -302,14 +298,27 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       }
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      collectionDump[collection.name]!.push(...list.flatMap(([, sql]) => sql!))
+      const insertList = list.flatMap(([, sql]) => sql!)
 
-      collectionChecksum[collection.name] = hash(collectionDump[collection.name])
+      collectionChecksum[collection.name] = hash(insertList)
 
+      // we start by telling everyone that we are setting up the collection
+      // so we create a new entry in the info table saying that it is not ready yet
       collectionDump[collection.name]!.push(
         generateCollectionTableDefinition(infoCollection, { drop: false }),
         `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
-        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name], ready: false }),
+      )
+
+      // Collection table definition
+      collectionDump[collection.name]!.push(
+        ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
+      )
+
+      collectionDump[collection.name]!.push(...insertList)
+
+      collectionDump[collection.name]!.push(
+        `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'`,
       )
     }
   }
