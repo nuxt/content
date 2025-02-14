@@ -63,9 +63,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '', ready: true }))
 
-  // if another request has already started the initialization of this collection
+  // if another request has already started the initialization of
+  // this version of this collection
   // wait for it to finish
-  if (before.ready === false) {
+  if (before.ready === false && before.version === integrityVersion) {
     await new Promise((resolve) => {
       const interval = setInterval(async () => {
         const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
@@ -79,7 +80,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   }
 
   // if the collection is already initialized and the version is the same
-  if (before?.version) {
+  if (before.ready === true && before?.version) {
     if (before.version === integrityVersion) {
       return true
     }
