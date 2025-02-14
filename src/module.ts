@@ -244,6 +244,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     collectionDump[collection.name] = []
+
+    // we start by telling everyone that we are setting up the collection
+    collectionDump[collection.name]!.push(
+      generateCollectionTableDefinition(infoCollection, { drop: false }),
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, ready: false }),
+    )
+
     // Collection table definition
     collectionDump[collection.name]!.push(
       ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
@@ -307,9 +314,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionChecksum[collection.name] = hash(collectionDump[collection.name])
 
       collectionDump[collection.name]!.push(
-        generateCollectionTableDefinition(infoCollection, { drop: false }),
-        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
-        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
+        `UPDATE ${infoCollection.tableName} SET version = '${collectionChecksum[collection.name]}', ready = true WHERE id = 'checksum_${collection.name}'})`,
       )
     }
   }
