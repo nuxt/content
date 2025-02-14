@@ -61,12 +61,29 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
+  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '', ready: true }))
 
+  // if another request has already started the initialization of this collection
+  // wait for it to finish
+  if (before.ready === false) {
+    await new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
+        if (ready) {
+          clearInterval(interval)
+          resolve(0)
+        }
+      }, 200)
+    })
+    return true
+  }
+
+  // if the collection is already initialized and the version is the same
   if (before?.version) {
-    if (before?.version === integrityVersion) {
+    if (before.version === integrityVersion) {
       return true
     }
+
     // Delete old version
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }

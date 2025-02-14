@@ -246,9 +246,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     collectionDump[collection.name] = []
 
     // we start by telling everyone that we are setting up the collection
+    // so we create a new entry in the info table saying that it is not ready yet
     collectionDump[collection.name]!.push(
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, ready: false }),
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: '', ready: false }),
     )
 
     // Collection table definition
