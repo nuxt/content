@@ -1,10 +1,32 @@
-import type { ZodType, ZodOptionalDef } from 'zod'
+import type { ZodOptionalDef, ZodType } from 'zod'
 import { z as zod } from 'zod'
+
+declare module 'zod' {
+  interface ZodTypeDef {
+    editor?: EditorOptions
+  }
+}
+
+interface EditorOptions {
+  type?: 'text' | 'number' | 'date' | 'select' | 'boolean' | 'media' | 'icon'
+  values?: string
+  hide?: boolean
+}
+
+interface ZodTypeWithEditor extends ZodType {
+  editor: (options: EditorOptions) => this
+}
 
 export type ZodFieldType = 'ZodString' | 'ZodNumber' | 'ZodBoolean' | 'ZodDate' | 'ZodEnum'
 export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
 
-export const z = zod
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(zod.ZodType as any).prototype.editor = function (options: EditorOptions) {
+  this._def.editor = { ...this._def.editor, ...options }
+  return this
+}
+
+export const z: typeof zod & { ZodType: ZodTypeWithEditor } = zod as never
 
 export const ZodToSqlFieldTypes: Record<ZodFieldType, SqlFieldType> = {
   ZodString: 'VARCHAR',
@@ -21,7 +43,7 @@ export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
 // Function to get the underlying Zod type
 export function getUnderlyingType(zodType: ZodType): ZodType {
   while ((zodType._def as ZodOptionalDef).innerType) {
-    zodType = (zodType._def as ZodOptionalDef).innerType
+    zodType = (zodType._def as ZodOptionalDef).innerType as ZodType
   }
   return zodType
 }
