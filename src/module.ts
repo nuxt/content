@@ -296,7 +296,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           }
         }))
       }
-
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
       const insertList = list.flatMap(([, sql]) => sql!)
@@ -307,6 +306,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // so we create a new entry in the info table saying that it is not ready yet
       collectionDump[collection.name]!.push(
         generateCollectionTableDefinition(infoCollection, { drop: false }),
+        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
         ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: insertList, ready: false }),
       )
 
@@ -318,7 +318,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionDump[collection.name]!.push(...insertList)
 
       collectionDump[collection.name]!.push(
-        `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'})`,
+        `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'`,
       )
     }
   }
