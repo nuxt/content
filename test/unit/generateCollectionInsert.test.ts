@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { z } from 'zod'
-import { generateCollectionInsert, defineCollection, resolveCollection, getTableName } from '../../src/utils/collection'
+import { generateCollectionInsert, defineCollection, resolveCollection, getTableName, SLICE_SIZE, MAX_SQL_QUERY_SIZE } from '../../src/utils/collection'
 
 describe('generateCollectionInsert', () => {
   test('Respect Schema\'s default values', () => {
@@ -66,24 +66,41 @@ describe('generateCollectionInsert', () => {
       }),
     }))!
 
+    const content = (Array.from({ length: 20000 })).fill('lorem ipsum dolor sit amet - ').map((val, i) => val + i.toString()).join(' ')
+
     const sql = generateCollectionInsert(collection, {
       id: 'foo.md',
       stem: 'foo',
       extension: 'md',
       meta: {},
-      content: 'a' + 'b'.repeat(50000) + 'c'.repeat(50000),
+      content,
     })
+
+    const querySlices: string[] = [content.slice(0, SLICE_SIZE - 1)]
+    for (let i = 1; i < (content.length / SLICE_SIZE); i++) {
+      querySlices.push(content.slice((SLICE_SIZE * i) - 1, (SLICE_SIZE * (i + 1)) - 1))
+    }
+
+    // check that the content will be split into multiple queries
+    expect(content.length).toBeGreaterThan(MAX_SQL_QUERY_SIZE)
+
+    // check that concatenated all the values are equal to the original content
+    expect(content).toEqual(querySlices.join(''))
 
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', \'a' + 'b'.repeat(50000 - 1) + '\', \'md\', \'{}\', \'foo\');',
+      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo');`,
     ].join(''))
-    expect(sql[1]).toBe([
-      `UPDATE ${getTableName('content')}`,
-      ' SET',
-      ' content = CONCAT(content, \'b' + 'c'.repeat(50000) + '\')',
-      ' WHERE id = \'foo.md\';',
-    ].join(''))
+    let index = 1
+    while (index < sql.length - 1) {
+      expect(sql[index]).toBe([
+        `UPDATE ${getTableName('content')}`,
+        ' SET',
+        ` content = CONCAT(content, '${querySlices[index]}')`,
+        ' WHERE id = \'foo.md\';',
+      ].join(''))
+      index++
+    }
   })
 })

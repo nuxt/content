@@ -124,6 +124,18 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
   })
 }
 
+/**
+ * Limit of 100KB comes from a limitation in Cloudflare D1
+ * @see https://developers.cloudflare.com/d1/platform/limits/
+ */
+export const MAX_SQL_QUERY_SIZE = 100000
+
+/**
+ * When we split a value in multiple SQL queries, we want to allow for a buffer
+ * so if the rest of the query is a bit long, we will not hit the 100KB limit
+ */
+export const SLICE_SIZE = 70000
+
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): string[] {
   const fields: string[] = []
@@ -171,32 +183,32 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
-  if (sql.length < 100000) {
+  if (sql.length < MAX_SQL_QUERY_SIZE) {
     return [sql]
   }
 
-  // Split the SQL into multiple statements
-  const bigColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
-  const bigColumnIndex = values.indexOf(bigColumn)
+  // Split the SQL into multiple statements:
+  // Take the biggest column to insert (usually body) and split the column in multiple strings
+  // first we insert the row in the database, then we update it with the rest of the string by concatenation
+  const biggestColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
+  const bigColumnIndex = values.indexOf(biggestColumn)
   const bigColumnName = fields[bigColumnIndex]
 
-  if (typeof bigColumn === 'string') {
-    let splitIndex = Math.floor(bigColumn.length / 2)
-    while (['\'', '"', '\\'].includes(bigColumn[splitIndex])) {
-      splitIndex -= 1
-    }
-
-    const part1 = bigColumn.slice(0, splitIndex) + '\''
-    const part2 = '\'' + bigColumn.slice(splitIndex)
-
-    values[bigColumnIndex] = part1
+  if (typeof biggestColumn === 'string') {
+    let sliceIndex = SLICE_SIZE
+    values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
-
-    return [
-      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
-        .replace(/\?/g, () => values[index++] as string),
-      `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${part2}) WHERE id = ${values[0]};`,
+    const SQLQueries = [
+      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`.replace(/\?/g, () => values[index++] as string),
     ]
+    while (sliceIndex < biggestColumn.length) {
+      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (sliceIndex + SLICE_SIZE < biggestColumn.length ? '\'' : '')
+      SQLQueries.push(
+        `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}) WHERE id = ${values[0]};`,
+      )
+      sliceIndex += SLICE_SIZE
+    }
+    return SQLQueries
   }
 
   return [
