@@ -6,11 +6,18 @@ import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
-import { defu } from 'defu'
+import { createDefu } from 'defu'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
+
+const defu = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) && Array.isArray(value)) {
+    obj[key] = value
+    return true
+  }
+})
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
