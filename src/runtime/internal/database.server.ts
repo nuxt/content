@@ -73,7 +73,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     if (before.ready === false && before.version === integrityVersion) {
       // if another request has already started the initialization of
       // this version of this collection, wait for it to finish
-      await new Promise((resolve) => {
+      let iterationCount = 0
+      await new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
           const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
 
@@ -81,7 +82,16 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
             clearInterval(interval)
             resolve(0)
           }
+
+          // after timeout is reached, give up and stop the query
+          // it has to be that initialization has failed
+          if (iterationCount++ > 300) {
+            clearInterval(interval)
+            reject(new Error('Waiting for another database initialization timed out'))
+          }
         }, 1000)
+      }).catch((e) => {
+        throw e
       })
       return true
     }
