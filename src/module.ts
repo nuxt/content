@@ -244,6 +244,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     collectionDump[collection.name] = []
+    // Collection table definition
+    collectionDump[collection.name]!.push(
+      ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
+    )
 
     if (!collection.source) {
       continue
@@ -298,28 +302,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       }
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      const insertQueriesList = list.flatMap(([, sql]) => sql!)
+      collectionDump[collection.name]!.push(...list.flatMap(([, sql]) => sql!))
 
-      // Collection table definition
-      const insertQueriesListWithDefinition = [...generateCollectionTableDefinition(collection, { drop: true }).split('\n'), ...insertQueriesList]
+      collectionChecksum[collection.name] = hash(collectionDump[collection.name])
 
-      collectionChecksum[collection.name] = hash(insertQueriesListWithDefinition)
-
-      // we have to start the series of queries
-      // by telling everyone that we are setting up the collection so no
-      // other request start doing the same work and fail
-      // so we create a new entry in the info table saying that it is not ready yet
       collectionDump[collection.name]!.push(
         generateCollectionTableDefinition(infoCollection, { drop: false }),
         `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
-        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name], ready: false }),
-      )
-
-      collectionDump[collection.name]!.push(...insertQueriesListWithDefinition)
-
-      // and finally when we are finished, we update the info table to say that the init is done
-      collectionDump[collection.name]!.push(
-        `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'`,
+        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
       )
     }
   }

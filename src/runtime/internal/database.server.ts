@@ -45,9 +45,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   if (checkDatabaseIntegrity[String(collection)] !== false) {
     checkDatabaseIntegrity[String(collection)] = false
     integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
-      .then((isValid) => {
-        checkDatabaseIntegrity[String(collection)] = !isValid
-      })
+      .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
       .catch((error) => {
         console.error('Database integrity check failed', error)
         checkDatabaseIntegrity[String(collection)] = true
@@ -63,44 +61,13 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before: { version: string, ready: boolean } | null = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  const before = await db.first<{ version: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
 
   if (before?.version) {
-    if (before.ready === true && before.version === integrityVersion) {
-      // table is already initialized and ready, use it
+    if (before?.version === integrityVersion) {
       return true
     }
-
-    if (before.ready === false && before.version === integrityVersion) {
-      // if another request has already started the initialization of
-      // this version of this collection, wait for it to finish
-      // then respond that the database is ready
-      // NOTE: only wait if the version is the same so if the previous init
-      // was interrupted or has failed, it will not block the new init
-      let iterationCount = 0
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
-
-          if (ready) {
-            clearInterval(interval)
-            resolve(0)
-          }
-
-          // after timeout is reached, give up and stop the query
-          // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
-            clearInterval(interval)
-            reject(new Error('Waiting for another database initialization timed out'))
-          }
-        }, 1000)
-      }).catch((e) => {
-        throw e
-      })
-      return true
-    }
-
-    // Delete old version -- checksum exists but does not match with bundled checksum
+    // Delete old version
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
 
