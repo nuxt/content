@@ -313,7 +313,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionDump[collection.name]!.push(
         generateCollectionTableDefinition(infoCollection, { drop: false }),
         `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
-        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name], ready: false }),
+        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name], ready: false, origin: '-' }),
       )
 
       collectionDump[collection.name]!.push(...insertQueriesListWithDefinition)
