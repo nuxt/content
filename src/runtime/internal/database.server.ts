@@ -68,7 +68,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
-    if (before.origin.length > 1 && before.origin !== domain) {
+    if (before.origin && before.origin.length > 1 && before.origin !== domain) {
       throw new Error(`Database origin mismatch. Expected: ${before.origin}, Actual: ${domain}`)
     }
 
