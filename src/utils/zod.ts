@@ -5,15 +5,15 @@ declare module 'zod' {
   interface ZodTypeDef {
     editor?: EditorOptions
   }
+
+  interface ZodType {
+    editor(options: EditorOptions): this
+  }
 }
 
 interface EditorOptions {
-  type?: 'string' | 'number' | 'date' | 'boolean' | 'media' | 'icon'
-  hide?: boolean // Do not display the field in the editor
-}
-
-interface ZodTypeWithEditor extends ZodType {
-  editor: (options: EditorOptions) => this
+  input?: 'media' | 'icon' // Override the default input for the field
+  hidden?: boolean // Do not display the field in the editor
 }
 
 export type ZodFieldType = 'ZodString' | 'ZodNumber' | 'ZodBoolean' | 'ZodDate' | 'ZodEnum'
@@ -25,7 +25,7 @@ export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
   return this
 }
 
-export const z: typeof zod & { ZodType: ZodTypeWithEditor } = zod as never
+export const z = zod
 
 export const ZodToSqlFieldTypes: Record<ZodFieldType, SqlFieldType> = {
   ZodString: 'VARCHAR',
