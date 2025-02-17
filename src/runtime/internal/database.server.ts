@@ -103,16 +103,6 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
 
-  // if the collection is already initialized and the version is the same
-  if (before.ready === true && before?.version) {
-    if (before.version === integrityVersion) {
-      return true
-    }
-
-    // Delete old version
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
-  }
-
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
