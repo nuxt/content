@@ -1,6 +1,7 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
+import type { LLMSOptions } from '../features/llms/runtime/types'
 import type { ContentFile, MarkdownPlugin, TransformContentOptions } from './content'
 import type { PathMetaOptions } from './path-meta'
 import type { ResolvedCollection } from './collection'
@@ -72,6 +73,7 @@ export interface ModuleOptions {
    * @default { enabled: true }
    */
   watch?: Partial<ListenOptions> & { enabled?: boolean }
+
   renderer: {
     /**
      * Tags will be used to replace markdown components and render custom components instead of default ones.
@@ -86,6 +88,7 @@ export interface ModuleOptions {
      */
     anchorLinks?: boolean | Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', boolean>>
   }
+
   build: {
     /**
      * List of user-defined transformers.
@@ -179,6 +182,12 @@ export interface ModuleOptions {
     }
   }
 
+  /**
+   * Add/Maintain additional features
+   */
+  features?: {
+    llms?: false | LLMSOptions
+  }
 }
 
 export interface RuntimeConfig {

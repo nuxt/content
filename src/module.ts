@@ -9,6 +9,7 @@ import {
   addPlugin,
   updateTemplates,
   addComponent,
+  installModule,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -72,6 +73,9 @@ export default defineNuxtModule<ModuleOptions>({
         delimeter: ',',
         json: true,
       },
+    },
+    features: {
+      llms: false,
     },
   },
   async setup(options, nuxt) {
@@ -180,6 +184,9 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     await installMDCModule(options, nuxt)
+    if (options.features.llms) {
+      await installModule(resolver.resolve('./features/llms'))
+    }
 
     if (nuxt.options._prepare) {
       return
