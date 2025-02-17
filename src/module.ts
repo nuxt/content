@@ -301,7 +301,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       const insertQueriesList = list.flatMap(([, sql]) => sql!)
 
       // Collection table definition
-      const insertQueriesListWithDefinition = [...generateCollectionTableDefinition(collection, { drop: true }).split('\n'), ...insertQueriesList]
+      const insertQueriesListWithDefinition = generateCollectionTableDefinition(collection, { drop: true }).split('\n')
+      insertQueriesListWithDefinition.push(...insertQueriesList)
 
       collectionChecksum[collection.name] = hash(insertQueriesListWithDefinition)
 

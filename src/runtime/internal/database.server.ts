@@ -63,9 +63,15 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before: { version: string, ready: boolean } | null = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  const domain = new URL(event.req.originalUrl).hostname
+
+  const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
+    if (before.origin !== domain) {
+      throw new Error(`Database origin mismatch. Expected: ${before.origin}, Actual: ${domain}`)
+    }
+
     if (before.ready === true && before.version === integrityVersion) {
       // table is already initialized and ready, use it
       return true
@@ -114,6 +120,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       // throw error
     })
   }, Promise.resolve())
+
+  await db.exec(`UPDATE ${tables.info} SET origin = ? WHERE id = ?`, [domain, `checksum_${collection}`])
 
   const after = await db.first<{ version: string }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
