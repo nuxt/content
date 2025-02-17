@@ -8,9 +8,13 @@ import { useRuntimeConfig } from '#imports'
 
 const linkProps = ['href', 'src', 'to']
 
+async function importExternalPackage(name: string) {
+  return await import(name)
+}
+
 export default eventHandler(async (event) => {
-  const stringifyMarkdown = await import('@nuxtjs/mdc/runtime').then(res => res.stringifyMarkdown)
-  const visit = await import('unist-util-visit').then(res => res.visit)
+  const stringifyMarkdown = await importExternalPackage('@nuxtjs/mdc/runtime').then(res => res.stringifyMarkdown)
+  const visit = await importExternalPackage('unist-util-visit').then(res => res.visit)
 
   const options = useRuntimeConfig(event).llms as LLMSOptions
 
