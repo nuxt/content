@@ -68,7 +68,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
-    if (before.version === integrityVersion) {
+    if (before.version.toString() === integrityVersion.toString()) {
       console.log('collection hash match: ')
       if (before.ready === true) {
         // table is already initialized and ready, use it
