@@ -8,9 +8,9 @@ declare module 'zod' {
 }
 
 interface EditorOptions {
-  type?: 'text' | 'number' | 'date' | 'select' | 'boolean' | 'media' | 'icon'
-  values?: string
-  hide?: boolean
+  type?: 'string' | 'number' | 'date' | 'boolean' | 'media' | 'icon'
+  values?: string // Handle string as a select input
+  hide?: boolean // Do not display the field in the editor
 }
 
 interface ZodTypeWithEditor extends ZodType {
