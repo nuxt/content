@@ -66,12 +66,12 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const before: { version: string, ready: boolean } | null = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
-    if (before.ready === true && before.version === integrityVersion) {
+    if (before.version === integrityVersion) {
+      if (before.ready) {
       // table is already initialized and ready, use it
-      return true
-    }
+        return true
+      }
 
-    if (before.ready === false && before.version === integrityVersion) {
       // if another request has already started the initialization of
       // this version of this collection, wait for it to finish
       // then respond that the database is ready
