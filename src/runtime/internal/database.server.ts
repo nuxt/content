@@ -45,7 +45,9 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   if (checkDatabaseIntegrity[String(collection)] !== false) {
     checkDatabaseIntegrity[String(collection)] = false
     integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
-      .then((isValid) => { checkDatabaseIntegrity[String(collection)] = !isValid })
+      .then((isValid) => {
+        checkDatabaseIntegrity[String(collection)] = !isValid
+      })
       .catch((error) => {
         console.error('Database integrity check failed', error)
         checkDatabaseIntegrity[String(collection)] = true
@@ -61,22 +63,31 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '', ready: true }))
+  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => null)
 
-  // if another request has already started the initialization of
-  // this version of this collection
-  // wait for it to finish
-  if (before.ready === false && before.version === integrityVersion) {
-    await new Promise((resolve) => {
-      const interval = setInterval(async () => {
-        const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
-        if (ready) {
-          clearInterval(interval)
-          resolve(0)
-        }
-      }, 200)
-    })
-    return true
+  if (before?.version) {
+    if (before.ready === true && before.version === integrityVersion) {
+      return true
+    }
+
+    if (before.ready === false && before.version === integrityVersion) {
+      // if another request has already started the initialization of
+      // this version of this collection, wait for it to finish
+      await new Promise((resolve) => {
+        const interval = setInterval(async () => {
+          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
+
+          if (ready) {
+            clearInterval(interval)
+            resolve(0)
+          }
+        }, 1000)
+      })
+      return true
+    }
+
+    // Delete old version -- checksum exists but does not match with bundled checksum
+    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
 
   // if the collection is already initialized and the version is the same
