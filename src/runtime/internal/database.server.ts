@@ -68,45 +68,43 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
-    if (before.origin && before.origin.length > 1 && before.origin !== domain) {
-      throw new Error(`Database origin mismatch. Expected: ${before.origin}, Actual: ${domain}`)
+    if (before.version === integrityVersion) {
+      console.log('collection hash match: ')
+      if (before.ready === true) {
+        // table is already initialized and ready, use it
+        return true
+      }
+      else if (before.ready === false) {
+        // if another request has already started the initialization of
+        // this version of this collection, wait for it to finish
+        // then respond that the database is ready
+        // NOTE: only wait if the version is the same so if the previous init
+        // was interrupted or has failed, it will not block the new init
+        let iterationCount = 0
+        await new Promise((resolve, reject) => {
+          const interval = setInterval(async () => {
+            const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
+
+            if (ready) {
+              clearInterval(interval)
+              resolve(0)
+            }
+
+            // after timeout is reached, give up and stop the query
+            // it has to be that initialization has failed
+            if (iterationCount++ > 30) {
+              clearInterval(interval)
+              reject(new Error('Waiting for another database initialization timed out'))
+            }
+          }, 1000)
+        }).catch((e) => {
+          throw e
+        })
+        return true
+      }
     }
 
-    if (before.ready === true && before.version === integrityVersion) {
-      // table is already initialized and ready, use it
-      return true
-    }
-
-    if (before.ready === false && before.version === integrityVersion) {
-      // if another request has already started the initialization of
-      // this version of this collection, wait for it to finish
-      // then respond that the database is ready
-      // NOTE: only wait if the version is the same so if the previous init
-      // was interrupted or has failed, it will not block the new init
-      let iterationCount = 0
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
-
-          if (ready) {
-            clearInterval(interval)
-            resolve(0)
-          }
-
-          // after timeout is reached, give up and stop the query
-          // it has to be that initialization has failed
-          if (iterationCount++ > 30) {
-            clearInterval(interval)
-            reject(new Error('Waiting for another database initialization timed out'))
-          }
-        }, 1000)
-      }).catch((e) => {
-        throw e
-      })
-      return true
-    }
-
-    console.log('collection hash mismatch: ', `old hash ${integrityVersion}`, `new hash ${before.version}`)
+    console.log('collection hash mismatch: ', `old hash ${integrityVersion}`, `new hash ${before.version}`, `before.ready ${before.ready}`)
 
     // Delete old version -- checksum exists but does not match with bundled checksum
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
