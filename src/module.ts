@@ -315,7 +315,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
         ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name], ready: false }),
       )
 
-
       collectionDump[collection.name]!.push(...insertQueriesListWithDefinition)
 
       // and finally when we are finished, we update the info table to say that the init is done
