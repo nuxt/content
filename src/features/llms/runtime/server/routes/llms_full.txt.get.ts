@@ -57,10 +57,10 @@ export default eventHandler(async (event) => {
   function refineDocumentBody(body: MinimalTree, options: LLMSOptions) {
     const hastTree = decompressTree(body)
 
-    visit(hastTree, node => (node as MDCElement).props?.to || (node as MDCElement).props?.href || (node as MDCElement).props?.src, (node) => {
+    visit(hastTree, (node: MDCElement) => node.props?.to || node.props?.href || node.props?.src, (node: MDCElement) => {
       for (const prop of linkProps) {
-        if ((node as MDCElement).props[prop] && !hasProtocol((node as MDCElement).props[prop])) {
-          (node as MDCElement).props[prop] = joinURL(options.domain, (node as MDCElement).props[prop])
+        if (node.props[prop] && !hasProtocol(node.props[prop])) {
+          node.props[prop] = joinURL(options.domain, node.props[prop])
         }
       }
     })
