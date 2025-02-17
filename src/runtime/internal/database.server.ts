@@ -1,5 +1,5 @@
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
-import type { H3Event } from 'h3'
+import { type H3Event, getRequestHost } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
 import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/better-sqlite3'
@@ -63,7 +63,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const domain = new URL(event.node.req.originalUrl).hostname
+  const domain = getRequestHost(event)
 
   const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
