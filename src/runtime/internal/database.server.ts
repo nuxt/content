@@ -67,6 +67,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   if (before?.version) {
     if (before.ready === true && before.version === integrityVersion) {
+      // table is already initialized and ready, use it
       return true
     }
 
