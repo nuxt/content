@@ -95,7 +95,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
           // after timeout is reached, give up and stop the query
           // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
+          if (iterationCount++ > 30) {
             clearInterval(interval)
             reject(new Error('Waiting for another database initialization timed out'))
           }
@@ -106,9 +106,13 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       return true
     }
 
+    console.log('collection hash mismatch: ', `old hash ${integrityVersion}`, `new hash ${before.version}`)
+
     // Delete old version -- checksum exists but does not match with bundled checksum
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
+
+  console.log('initializing ', collection, ' with ', integrityVersion)
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
