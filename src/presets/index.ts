@@ -4,6 +4,7 @@ import cloudflare from './cloudflare-pages'
 import vercel from './vercel'
 import node from './node'
 import nuxthub from './nuxthub'
+import netlify from './netlify'
 
 export function findPreset(nuxt: Nuxt) {
   const preset = nuxt.options.nitro.preset?.replace(/_/g, '-')
@@ -14,6 +15,10 @@ export function findPreset(nuxt: Nuxt) {
 
   if (preset === 'cloudflare-pages') {
     return cloudflare
+  }
+
+  if (preset === 'netlify-legacy' || process.env.NETLIFY === 'true') {
+    return netlify
   }
 
   if (preset === 'vercel' || process.env.VERCEL === '1') {
