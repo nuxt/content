@@ -60,6 +60,9 @@ describe('decompressSQLDump', () => {
     await collectionQueryBuilder(mockCollection, mockFetch).all()
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
 
+    await collectionQueryBuilder(mockCollection, mockFetch).count()
+    expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
+
     await collectionQueryBuilder(mockCollection, mockFetch).count('stem')
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
 
