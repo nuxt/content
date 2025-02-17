@@ -63,7 +63,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const domain = new URL(event.req.originalUrl).hostname
+  const domain = new URL(event.node.req.originalUrl).hostname
 
   const before = await db.first<{ version: string, ready: boolean, origin: string }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
