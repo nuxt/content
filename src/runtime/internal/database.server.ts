@@ -73,6 +73,9 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     if (before.ready === false && before.version === integrityVersion) {
       // if another request has already started the initialization of
       // this version of this collection, wait for it to finish
+      // then respond that the database is ready
+      // NOTE: only wait if the version is the same so if the previous init
+      // was interrupted or has failed, it will not block the new init
       let iterationCount = 0
       await new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
