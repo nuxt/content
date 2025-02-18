@@ -29,13 +29,19 @@ import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupPreview } from './utils/preview/module'
+import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 
 // Export public utils
 export * from './utils'
 export type * from './types'
+
+/**
+ * Database version is used to identify schema changes
+ * and drop the info table when the version is not supported
+ */
+const databaseVersion = 'v3.2.0'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -146,6 +152,7 @@ export default defineNuxtModule<ModuleOptions>({
       wsUrl: '',
     }
     nuxt.options.runtimeConfig.content = {
+      databaseVersion,
       version,
       database: options.database,
       localDatabase: options._localDatabase!,
@@ -212,12 +219,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle preview mode
-      if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
-        // Only enable preview in production build or when explicitly enabled
-        if (nuxt.options.dev === true && !options.preview?.dev) {
-          return
-        }
-
+      if (shouldEnablePreview(nuxt, options)) {
         await setupPreview(options, nuxt, resolver, manifest)
       }
     })
@@ -250,11 +252,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       continue
     }
     const collectionHash = hash(collection)
-    collectionDump[collection.name] = []
-    // Collection table definition
-    collectionDump[collection.name]!.push(
-      ...generateCollectionTableDefinition(collection, { drop: true }).split('\n'),
-    )
+    const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
+      .split('\n')
 
     if (!collection.source) {
       continue
@@ -309,16 +308,26 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       }
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      collectionDump[collection.name]!.push(...list.flatMap(([, sql]) => sql!))
 
-      collectionChecksum[collection.name] = hash(collectionDump[collection.name])
-
-      collectionDump[collection.name]!.push(
-        generateCollectionTableDefinition(infoCollection, { drop: false }),
-        `DELETE FROM ${infoCollection.tableName} WHERE id = 'checksum_${collection.name}';`,
-        ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version: collectionChecksum[collection.name] }),
-      )
+      collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
+
+    const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+
+    collectionDump[collection.name] = [
+      // we have to start the series of queries
+      // by telling everyone that we are setting up the collection so no
+      // other request start doing the same work and fail
+      // so we create a new entry in the info table saying that it is not ready yet
+      generateCollectionTableDefinition(infoCollection, { drop: false }),
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }),
+
+      // Insert queries for the collection
+      ...collectionQueries,
+
+      // and finally when we are finished, we update the info table to say that the init is done
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+    ]
   }
 
   const sqlDumpList = Object.values(collectionDump).flatMap(a => a)

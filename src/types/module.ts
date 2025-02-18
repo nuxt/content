@@ -193,6 +193,7 @@ export interface ModuleOptions {
 export interface RuntimeConfig {
   content: {
     version: string
+    databaseVersion: string
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
     integrityCheck: boolean
