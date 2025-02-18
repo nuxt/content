@@ -63,51 +63,56 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  // check if the info table exists
+  const infoTableCheck = await db.first<{ name: string }>('SELECT name FROM sqlite_master WHERE type = ? AND name = ?', ['table', tables.info])
 
-  if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
-    // database version is not supported, drop the info table
-    await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
-    before.version = ''
-  }
+  if (infoTableCheck?.name === tables.info) {
+    const before = await db.first<{ version: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
 
-  if (before?.version) {
-    if (before.version === integrityVersion) {
-      if (before.ready) {
-        // table is already initialized and ready, use it
+    if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
+      // database version is not supported, drop the info table
+      await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
+      before.version = ''
+    }
+
+    if (before?.version) {
+      if (before.version === integrityVersion) {
+        if (before.ready) {
+          // table is already initialized and ready, use it
+          return true
+        }
+
+        // if another request has already started the initialization of
+        // this version of this collection, wait for it to finish
+        // then respond that the database is ready
+        // NOTE: only wait if the version is the same so if the previous init
+        // was interrupted or has failed, it will not block the new init
+        let iterationCount = 0
+        await new Promise((resolve, reject) => {
+          const interval = setInterval(async () => {
+            const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]) ?? { ready: true }
+
+            if (ready) {
+              clearInterval(interval)
+              resolve(0)
+            }
+
+            // after timeout is reached, give up and stop the query
+            // it has to be that initialization has failed
+            if (iterationCount++ > 300) {
+              clearInterval(interval)
+              reject(new Error('Waiting for another database initialization timed out'))
+            }
+          }, 1000)
+        }).catch((e) => {
+          throw e
+        })
         return true
       }
 
-      // if another request has already started the initialization of
-      // this version of this collection, wait for it to finish
-      // then respond that the database is ready
-      // NOTE: only wait if the version is the same so if the previous init
-      // was interrupted or has failed, it will not block the new init
-      let iterationCount = 0
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
-
-          if (ready) {
-            clearInterval(interval)
-            resolve(0)
-          }
-
-          // after timeout is reached, give up and stop the query
-          // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
-            clearInterval(interval)
-            reject(new Error('Waiting for another database initialization timed out'))
-          }
-        }, 1000)
-      }).catch((e) => {
-        throw e
-      })
-      return true
+      // Delete old version -- checksum exists but does not match with bundled checksum
+      await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
     }
-
-    // Delete old version -- checksum exists but does not match with bundled checksum
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
