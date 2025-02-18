@@ -66,9 +66,13 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version) {
+    if (typeof before.ready === 'undefined') {
+      await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
+      before.ready = false
+    }
     if (before.version === integrityVersion) {
       if (before.ready) {
-      // table is already initialized and ready, use it
+        // table is already initialized and ready, use it
         return true
       }
 
