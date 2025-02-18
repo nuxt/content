@@ -1,4 +1,4 @@
-import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { DatabaseAdapter, ResolvedCollection, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
@@ -6,9 +6,10 @@ import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
-import { tables, checksums } from '#content/manifest'
+import manifest, { tables, checksums } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
+import { convertFieldsToSqlFields } from '~/src/utils/collection'
 
 let db: Connector
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
@@ -60,54 +61,75 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
+async function checkInfoTableIntegrity(db: DatabaseAdapter) {
+  // check if the info table exists
+  const tableExists = await db.first<{ name: string }>('SELECT name FROM sqlite_master WHERE type = ? AND name = ?', ['table', tables.info])
+  if (!tableExists) return false
+
+  const infoTableCheck = await db.all<{ name: string, type: string }>(`PRAGMA table_info("${tables.info}")`)
+  const infoTableSchema = (manifest.collections as unknown as ResolvedCollection[]).find(({ name }) => name === tables.info)
+  const infoTableSqlSchema = convertFieldsToSqlFields(Object.keys(infoTableSchema.fields), infoTableSchema as unknown as ResolvedCollection)
+  return infoTableSqlSchema?.reduce((valid: boolean, schemaField) => {
+    // for each field, check that the type is the same in the table as in the definition
+    const liveField = infoTableCheck?.find(field => field.name === schemaField.key)
+    return valid && liveField && liveField.type === schemaField.sqlType
+  }, true) ?? false
+}
+
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  if (await checkInfoTableIntegrity(db)) {
+    const before = await db.first<{ version: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
 
-  if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
-    // database version is not supported, drop the info table
-    await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
-    before.version = ''
-  }
+    if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
+      // database version is not supported, drop the info table
+      await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
+      before.version = ''
+    }
 
-  if (before?.version) {
-    if (before.version === integrityVersion) {
-      if (before.ready) {
-        // table is already initialized and ready, use it
+    if (before?.version) {
+      if (before.version === integrityVersion) {
+        if (before.ready) {
+          // table is already initialized and ready, use it
+          return true
+        }
+
+        // if another request has already started the initialization of
+        // this version of this collection, wait for it to finish
+        // then respond that the database is ready
+        // NOTE: only wait if the version is the same so if the previous init
+        // was interrupted or has failed, it will not block the new init
+        let iterationCount = 0
+        await new Promise((resolve, reject) => {
+          const interval = setInterval(async () => {
+            const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]) ?? { ready: true }
+
+            if (ready) {
+              clearInterval(interval)
+              resolve(0)
+            }
+
+            // after timeout is reached, give up and stop the query
+            // it has to be that initialization has failed
+            if (iterationCount++ > 300) {
+              clearInterval(interval)
+              reject(new Error('Waiting for another database initialization timed out'))
+            }
+          }, 1000)
+        }).catch((e) => {
+          throw e
+        })
         return true
       }
 
-      // if another request has already started the initialization of
-      // this version of this collection, wait for it to finish
-      // then respond that the database is ready
-      // NOTE: only wait if the version is the same so if the previous init
-      // was interrupted or has failed, it will not block the new init
-      let iterationCount = 0
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
-
-          if (ready) {
-            clearInterval(interval)
-            resolve(0)
-          }
-
-          // after timeout is reached, give up and stop the query
-          // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
-            clearInterval(interval)
-            reject(new Error('Waiting for another database initialization timed out'))
-          }
-        }, 1000)
-      }).catch((e) => {
-        throw e
-      })
-      return true
+      // Delete old version -- checksum exists but does not match with bundled checksum
+      await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
     }
-
-    // Delete old version -- checksum exists but does not match with bundled checksum
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+  }
+  else {
+    // if info table not valid drop it
+    await db.exec(`DROP TABLE EXISTS ${tables.info}`)
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
