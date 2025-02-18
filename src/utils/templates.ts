@@ -1,15 +1,23 @@
 import { gzip } from 'node:zlib'
 import { printNode, zodToTs } from 'zod-to-ts'
-import { zodToJsonSchema } from 'zod-to-json-schema'
+import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
 import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
+import { createDefu } from 'defu'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
+
+const defu = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) && Array.isArray(value)) {
+    obj[key] = value
+    return true
+  }
+})
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
@@ -186,7 +194,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         source: collection.source?.filter(source => source.repository ? undefined : collection.source),
         type: collection.type,
         fields: collection.fields,
-        schema: zodToJsonSchema(collection.extendedSchema, collection.name),
+        schema: generateJsonSchema(collection),
         tableDefinition: generateCollectionTableDefinition(collection),
       }
       return acc
@@ -209,3 +217,23 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   },
   write: true,
 })
+
+function generateJsonSchema(collection: ResolvedCollection) {
+  const jsonSchema = zodToJsonSchema(collection.extendedSchema, collection.name)
+  const jsonSchemaWithEditorMeta = zodToJsonSchema(
+    collection.extendedSchema,
+    {
+      name: collection.name,
+      override: (def) => {
+        if (def.editor) {
+          return {
+            editor: def.editor,
+          } as never
+        }
+
+        return ignoreOverride
+      },
+    })
+
+  return defu(jsonSchema, jsonSchemaWithEditorMeta)
+}

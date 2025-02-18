@@ -26,7 +26,8 @@ export default definePreset({
       // Write SQL dump to database queries when not in dev mode
       await mkdir(resolve(nitroConfig.rootDir, '.data/hub/database/queries'), { recursive: true })
       let i = 1
-      let dump = ''
+      // Drop info table and prepare for new dump
+      let dump = 'DROP TABLE IF EXISTS _content_info;\n'
       const dumpFiles: Array<{ file: string, content: string }> = []
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
