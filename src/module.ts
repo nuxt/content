@@ -317,7 +317,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'`,
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
     ]
   }
 
