@@ -218,14 +218,14 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   ]
 }
 
-// Convert a collection with Zod schema to SQL table definition
-export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
-  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
-  const sqlFields = sortedKeys.map((key) => {
+export function convertFieldsToSqlFields(sortedKeys: string[], collection: ResolvedCollection) {
+  return sortedKeys.map((key) => {
     const type = (collection.extendedSchema).shape[key]!
     const underlyingType = getUnderlyingType(type)
 
-    if (key === 'id') return `${key} TEXT PRIMARY KEY`
+    if (key === 'id') {
+      return { key, sqlType: 'TEXT', constraints: ['PRIMARY KEY'] }
+    }
 
     let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
 
@@ -261,6 +261,14 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
       constraints.push(`DEFAULT ${defaultValue}`)
     }
 
+    return { key, sqlType, constraints }
+  })
+}
+
+// Convert a collection with Zod schema to SQL table definition
+export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
+  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
+  const sqlFields = convertFieldsToSqlFields(sortedKeys, collection).map(({ key, sqlType, constraints }) => {
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
 

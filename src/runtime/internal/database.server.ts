@@ -1,4 +1,4 @@
-import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { DatabaseAdapter, ResolvedCollection, RuntimeConfig } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
@@ -6,9 +6,10 @@ import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
-import { tables, checksums } from '#content/manifest'
+import manifest, { tables, checksums } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
+import { convertFieldsToSqlFields } from '~/src/utils/collection'
 
 let db: Connector
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
@@ -60,13 +61,25 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
+async function checkInfoTableIntegrity(db: DatabaseAdapter) {
+  // check if the info table exists
+  const tableExists = await db.first<{ name: string }>('SELECT name FROM sqlite_master WHERE type = ? AND name = ?', ['table', tables.info])
+  if (!tableExists) return false
+
+  const infoTableCheck = await db.all<{ name: string, type: string }>(`PRAGMA table_info("${tables.info}")`)
+  const infoTableSchema = (manifest.collections as unknown as ResolvedCollection[]).find(({ name }) => name === tables.info)
+  const infoTableSqlSchema = convertFieldsToSqlFields(Object.keys(infoTableSchema.fields), infoTableSchema as unknown as ResolvedCollection)
+  return infoTableCheck?.reduce((valid: boolean, { name, type }) => {
+    // for each field, check that the type is the same as in the definition
+    const liveField = infoTableSqlSchema?.find(field => field.key === name)
+    return valid && liveField && liveField.sqlType === type
+  }, true) ?? false
+}
+
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  // check if the info table exists
-  const infoTableCheck = await db.first<{ name: string }>('SELECT name FROM sqlite_master WHERE type = ? AND name = ?', ['table', tables.info])
-
-  if (infoTableCheck?.name === tables.info) {
+  if (await checkInfoTableIntegrity(db)) {
     const before = await db.first<{ version: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
 
     if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
