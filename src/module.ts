@@ -28,7 +28,7 @@ import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupPreview } from './utils/preview/module'
+import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 
@@ -205,12 +205,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle preview mode
-      if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
-        // Only enable preview in production build or when explicitly enabled
-        if (nuxt.options.dev === true && !options.preview?.dev) {
-          return
-        }
-
+      if (shouldEnablePreview(nuxt, options)) {
         await setupPreview(options, nuxt, resolver, manifest)
       }
     })
