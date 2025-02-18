@@ -26,21 +26,23 @@ export default defineNuxtConfig({
   },
 
   content: {
-    features: {
-      llms: {
-        domain: 'https://content.nuxt.com',
-        title: 'Nuxt Content',
-        description: 'Nuxt Content is a Git-based headless CMS for Nuxt.js.',
-        notes: [
-          'The documentation only includes Nuxt Content v3 docs.',
-          'The content is automatically generated from the same source as the official documentation.',
-        ],
-        sections: [
-          {
-            title: 'Getting Started',
-            collection: 'docs',
-          },
-        ],
+    llms: {
+      domain: 'https://content.nuxt.com',
+      title: 'Nuxt Content',
+      description: 'Nuxt Content is a Git-based headless CMS for Nuxt.js.',
+      notes: [
+        'The documentation only includes Nuxt Content v3 docs.',
+        'The content is automatically generated from the same source as the official documentation.',
+      ],
+      sections: [
+        {
+          title: 'Getting Started',
+          collection: 'docs',
+        },
+      ],
+      llmsFull: {
+        title: 'Complete Documentation',
+        description: 'The complete documentation including all content',
       },
     },
     build: {

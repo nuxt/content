@@ -182,12 +182,7 @@ export interface ModuleOptions {
     }
   }
 
-  /**
-   * Add/Maintain additional features
-   */
-  features?: {
-    llms?: false | LLMSOptions
-  }
+  llms?: false | LLMSOptions
 }
 
 export interface RuntimeConfig {
@@ -197,6 +192,7 @@ export interface RuntimeConfig {
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
     integrityCheck: boolean
+    llms?: LLMSOptions
   }
 }
 

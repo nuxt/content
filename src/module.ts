@@ -80,9 +80,7 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
-    features: {
-      llms: false,
-    },
+    llms: false,
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -191,7 +189,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     await installMDCModule(options, nuxt)
-    if (options.features.llms) {
+    if (options.llms) {
       await installModule(resolver.resolve('./features/llms'))
     }
 

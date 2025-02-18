@@ -1,9 +1,9 @@
 import { joinURL, hasProtocol } from 'ufo'
 import { eventHandler, setHeader } from 'h3'
-import type { MinimalTree } from '@nuxt/content'
+import type { MinimalTree, RuntimeConfig } from '@nuxt/content'
 import { decompressTree } from '@nuxt/content/runtime'
 import type { MDCElement } from '@nuxtjs/mdc'
-import type { LLMSOptions } from '../../types'
+import type { ContentLLMSCollectionSection, ContentLLMSLinksSection, LLMSOptions } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
 const linkProps = ['href', 'src', 'to']
@@ -16,19 +16,23 @@ export default eventHandler(async (event) => {
   const stringifyMarkdown = await importExternalPackage('@nuxtjs/mdc/runtime').then(res => res.stringifyMarkdown)
   const visit = await importExternalPackage('unist-util-visit').then(res => res.visit)
 
-  const options = useRuntimeConfig(event).llms as LLMSOptions
+  const options = (useRuntimeConfig(event).content as RuntimeConfig['content']).llms as LLMSOptions
 
   const llms = []
 
   for (const section of options.sections) {
+    if ((section as ContentLLMSLinksSection).links) {
+      // Ignore links section in llms_full.txt
+      continue
+    }
+
     // @ts-expect-error - typecheck does not derect server querryCollection
     const query = queryCollection(event, section.collection)
       .where('path', 'NOT LIKE', '%/.navigation')
 
-    if (section.filters) {
-      for (const filter of section.filters) {
-        query.where(filter.field, filter.operator, filter.value)
-      }
+    const filters = (section as ContentLLMSCollectionSection).filters || []
+    for (const filter of filters) {
+      query.where(filter.field, filter.operator, filter.value)
     }
 
     const docs = await query.all()
