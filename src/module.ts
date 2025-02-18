@@ -28,9 +28,10 @@ import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupPreview } from './utils/preview/module'
+import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import { enhanceZodWithEditor } from './utils/preview/zod'
 
 // Export public utils
 export * from './utils'
@@ -75,12 +76,18 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   async setup(options, nuxt) {
+    const isPreviewEnabled = shouldEnablePreview(nuxt, options)
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
       checksum: {},
       dump: {},
       components: [],
       collections: [],
+    }
+
+    // Handle preview mode
+    if (isPreviewEnabled) {
+      enhanceZodWithEditor()
     }
 
     const { collections } = await loadContentConfig(nuxt)
@@ -205,12 +212,7 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle preview mode
-      if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
-        // Only enable preview in production build or when explicitly enabled
-        if (nuxt.options.dev === true && !options.preview?.dev) {
-          return
-        }
-
+      if (isPreviewEnabled) {
         await setupPreview(options, nuxt, resolver, manifest)
       }
     })
