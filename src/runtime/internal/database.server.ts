@@ -69,10 +69,10 @@ async function checkInfoTableIntegrity(db: DatabaseAdapter) {
   const infoTableCheck = await db.all<{ name: string, type: string }>(`PRAGMA table_info("${tables.info}")`)
   const infoTableSchema = (manifest.collections as unknown as ResolvedCollection[]).find(({ name }) => name === tables.info)
   const infoTableSqlSchema = convertFieldsToSqlFields(Object.keys(infoTableSchema.fields), infoTableSchema as unknown as ResolvedCollection)
-  return infoTableCheck?.reduce((valid: boolean, { name, type }) => {
-    // for each field, check that the type is the same as in the definition
-    const liveField = infoTableSqlSchema?.find(field => field.key === name)
-    return valid && liveField && liveField.sqlType === type
+  return infoTableSqlSchema?.reduce((valid: boolean, schemaField) => {
+    // for each field, check that the type is the same in the table as in the definition
+    const liveField = infoTableCheck?.find(field => field.name === schemaField.key)
+    return valid && liveField && liveField.type === schemaField.sqlType
   }, true) ?? false
 }
 
@@ -126,6 +126,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       // Delete old version -- checksum exists but does not match with bundled checksum
       await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
     }
+  }
+  else {
+    // if info table not valid drop it
+    await db.exec(`DROP TABLE EXISTS ${tables.info}`)
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
