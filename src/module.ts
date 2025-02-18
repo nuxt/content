@@ -36,6 +36,12 @@ import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from '
 export * from './utils'
 export type * from './types'
 
+/**
+ * Database version is used to identify schema changes
+ * and drop the info table when the version is not supported
+ */
+const databaseVersion = 'v3.2.0'
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'Content',
@@ -142,6 +148,7 @@ export default defineNuxtModule<ModuleOptions>({
       wsUrl: '',
     }
     nuxt.options.runtimeConfig.content = {
+      databaseVersion,
       version,
       database: options.database,
       localDatabase: options._localDatabase!,
@@ -303,7 +310,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
-    const version = collectionChecksum[collection.name] = hash(collectionQueries)
+    const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     collectionDump[collection.name] = [
       // we have to start the series of queries
@@ -317,7 +324,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'`,
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
     ]
   }
 
