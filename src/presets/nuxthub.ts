@@ -27,7 +27,7 @@ export default definePreset({
       await mkdir(resolve(nitroConfig.rootDir, '.data/hub/database/queries'), { recursive: true })
       let i = 1
       // Drop info table and prepare for new dump
-      let dump = 'DROP TABLE _content_info;\n'
+      let dump = 'DROP TABLE IF EXISTS _content_info;\n'
       const dumpFiles: Array<{ file: string, content: string }> = []
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
