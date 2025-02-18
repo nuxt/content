@@ -61,14 +61,3 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
     include: manifest.components,
   })
 }
-
-export function shouldEnablePreview(nuxt: Nuxt, options: ModuleOptions) {
-  if (process.env.NUXT_CONTENT_PREVIEW_API || options.preview?.api) {
-    // Only enable preview in production build or when explicitly enabled
-    if (nuxt.options.dev === true && !options.preview?.dev) {
-      return false
-    }
-    return true
-  }
-  return false
-}
