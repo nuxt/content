@@ -166,6 +166,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
 
     return [
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
+      `export const checksumsStructure = ${JSON.stringify(manifest.checksumStructure, null, 2)}`,
       '',
       `export const tables = ${JSON.stringify(
         Object.fromEntries(manifest.collections.map(c => [c.name, c.tableName])),

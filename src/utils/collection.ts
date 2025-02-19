@@ -85,11 +85,13 @@ export function resolveCollections(collections: Record<string, DefinedCollection
     schema: z.object({
       id: z.string(),
       version: z.string(),
+      structureVersion: z.string(),
       ready: z.boolean(),
     }),
     extendedSchema: z.object({
       id: z.string(),
       version: z.string(),
+      structureVersion: z.string(),
       ready: z.boolean(),
     }),
     fields: {},

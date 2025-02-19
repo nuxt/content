@@ -198,6 +198,7 @@ export default defineNuxtModule<ModuleOptions>({
       const fest = await processCollectionItems(nuxt, manifest.collections, options)
 
       // Update manifest
+      manifest.checksumStructure = fest.checksumStructure
       manifest.checksum = fest.checksum
       manifest.dump = fest.dump
       manifest.components = fest.components
@@ -222,6 +223,7 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
+  const collectionChecksumStructure: Record<string, string> = {}
   const db = await getLocalDatabase(options._localDatabase)
   const databaseContents = await db.fetchDevelopmentCache()
 
@@ -252,9 +254,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       continue
     }
 
-    const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
-
     const parse = await createParser(collection, nuxt)
+
+    const structureVersion = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     // initialize the hash array with padding
     // 0: hashList comment
@@ -320,6 +322,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
+    const version = collectionChecksumStructure[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+
     collectionDump[collection.name] = [
       `-- ${JSON.stringify(insertedRecordsHashList)}`,
       // we have to start the series of queries
@@ -327,7 +331,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }).queries,
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
 
       // Insert queries for the collection
       ...collectionQueries,
@@ -358,6 +362,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return {
+    checksumStructure: collectionChecksumStructure,
     checksum: collectionChecksum,
     dump: collectionDump,
     components: uniqueTags,

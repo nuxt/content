@@ -6,7 +6,7 @@ import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
-import { tables, checksums } from '#content/manifest'
+import { tables, checksums, checksumsStructure } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
 
@@ -44,7 +44,7 @@ const integrityCheckPromise = {} as Record<string, Promise<void> | null>
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
   if (checkDatabaseIntegrity[String(collection)] !== false) {
     checkDatabaseIntegrity[String(collection)] = false
-    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], config)
+    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)], checksumsStructure[String(collection)], config)
       .then((isValid) => {
         checkDatabaseIntegrity[String(collection)] = !isValid
       })
@@ -60,10 +60,10 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
+async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string, ready: boolean }>(`select * from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
   if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
     // database version is not supported, drop the info table
@@ -71,10 +71,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     before.version = ''
   }
 
-  const unchangedStructure = before?.version === integrityVersion
+  const unchangedStructure = before?.structureVersion === structureIntegrityVersion
 
   if (before?.version) {
-    if (unchangedStructure) {
+    if (before.version === integrityVersion) {
       if (before.ready) {
         // table is already initialized and ready, use it
         return true
@@ -88,7 +88,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       let iterationCount = 0
       await new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`select ready from ${tables.info} where id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
+          const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
 
           if (ready) {
             clearInterval(interval)
@@ -97,7 +97,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
           // after timeout is reached, give up and stop the query
           // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
+          if (iterationCount++ > 90) {
             clearInterval(interval)
             reject(new Error('Waiting for another database initialization timed out'))
           }
@@ -111,9 +111,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // Delete old version -- checksum exists but does not match with bundled checksum
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
 
-    // if the hash has changed it means the structure has changed
-    // we need to drop the table and recreate it
-    await db.exec(`DROP TABLE IF EXISTS ${tables[collection]}`)
+    if (!unchangedStructure) {
+      // we need to drop the table and recreate it
+      await db.exec(`DROP TABLE IF EXISTS ${tables[collection]}`)
+    }
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
@@ -166,7 +167,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     })
   }, Promise.resolve())
 
-  const after = await db.first<{ version: string }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
+  const after = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
 }
 
