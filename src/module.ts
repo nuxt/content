@@ -323,7 +323,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
-    const version = collectionChecksumStructure[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+    const version = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
     collectionDump[collection.name] = [
       `-- ${JSON.stringify(insertedRecordsHashList)}`,
