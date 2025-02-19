@@ -40,7 +40,7 @@ export type * from './types'
  * Database version is used to identify schema changes
  * and drop the info table when the version is not supported
  */
-const databaseVersion = 'v3.2.0'
+const databaseVersion = 'v3.2.1'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
