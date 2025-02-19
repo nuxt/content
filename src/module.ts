@@ -253,6 +253,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const parse = await createParser(collection, nuxt)
 
+    const insertedRecordsHashList: string[] = []
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare({ rootDir: nuxt.options.rootDir })
@@ -291,8 +292,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
               }
             }
-
-            list.push([key, generateCollectionInsert(collection, parsedContent)])
+            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+            list.push([key, queries])
+            insertedRecordsHashList.push(hash)
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
@@ -308,12 +310,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     collectionDump[collection.name] = [
+      `-- ${JSON.stringify(insertedRecordsHashList)}`,
       // we have to start the series of queries
       // by telling everyone that we are setting up the collection so no
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }),
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }).queries,
 
       // Insert queries for the collection
       ...collectionQueries,

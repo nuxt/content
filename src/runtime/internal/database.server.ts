@@ -112,8 +112,12 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
-  await dump.reduce(async (prev: Promise<void>, sql: string) => {
+  await dump.reduce(async (prev: Promise<void>, sql: string, index: number) => {
     await prev
+    // skip the first line since it contains the list of hashes
+    if (index === 0) {
+      return Promise.resolve()
+    }
     await db.exec(sql).catch((err: Error) => {
       const message = err.message || 'Unknown error'
       console.error(`Failed to execute SQL ${sql}: ${message}`)
