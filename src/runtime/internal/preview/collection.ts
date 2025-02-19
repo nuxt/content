@@ -5,6 +5,7 @@ import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
+import { hash } from 'ohash'
 
 export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
   let matchedSource: ResolvedCollectionSource
@@ -125,6 +126,9 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
       values.push(valueToInsert)
     }
   })
+
+  // add the hash in local dev database
+  values.push(`'${hash(values)}'`)
 
   return values
 }
