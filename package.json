@@ -140,7 +140,9 @@
     "wrangler": "^3.108.1"
   },
   "resolutions": {
-    "@nuxt/content": "workspace:*"
+    "@nuxt/content": "workspace:*",
+    "@nuxt/eslint-config": "1.0.1",
+    "@nuxt/devtools-kit": "1.7.0"
   },
   "packageManager": "pnpm@9.15.4",
   "unbuild": {
