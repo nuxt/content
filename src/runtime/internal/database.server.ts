@@ -71,8 +71,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     before.version = ''
   }
 
+  const unchangedStructure = before?.version === integrityVersion
+
   if (before?.version) {
-    if (before.version === integrityVersion) {
+    if (unchangedStructure) {
       if (before.ready) {
         // table is already initialized and ready, use it
         return true
@@ -108,20 +110,59 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
     // Delete old version -- checksum exists but does not match with bundled checksum
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+
+    // if the hash has changed it means the structure has changed
+    // we need to drop the table and recreate it
+    await db.exec(`DROP TABLE IF EXISTS ${tables[collection]}`)
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
+  const indexesToInsert: number[] = []
+  if (unchangedStructure) {
+    // get the list of hash to insert
+    const hashListFromTheDump: string[] = JSON.parse(dump[0].slice(3))
+
+    // get the list of hash in the database
+    const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
+    const hashesInDb = hashesInDbRecords.map(r => r.__hash__)
+
+    // get the list of hash to delete
+    const hashesToDelete = hashesInDb.filter(hash => !hashListFromTheDump.includes(hash))
+    if (hashesToDelete.length) {
+      await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${hashesToDelete.map(() => '?').join(',')})`, hashesToDelete)
+    }
+
+    // get the list indexes of the queries we will insert/update
+    let listIndex = 0
+    for (const hash of hashListFromTheDump) {
+      const index = hashesInDb.indexOf(hash)
+      // if the hash was not found in db, we will insert it
+      if (index === -1) {
+        indexesToInsert.push(listIndex)
+      }
+      listIndex++
+    }
+  }
+
   await dump.reduce(async (prev: Promise<void>, sql: string, index: number) => {
     await prev
-    // skip the first line since it contains the list of hashes
-    if (index === 0) {
+
+    // skip sql comment
+    if (sql.startsWith('-- ')) {
       return Promise.resolve()
     }
+
+    // If the structure has not changed,
+    // skip any insert/update line whose hash is already in the database.
+    // If not, since we dropped the table, no record is skipped, insert them all again.
+    if (unchangedStructure && (sql.startsWith('INSERT ') || sql.startsWith('UPDATE ')) && !indexesToInsert.includes(index)) {
+      return Promise.resolve()
+    }
+
     await db.exec(sql).catch((err: Error) => {
       const message = err.message || 'Unknown error'
       console.error(`Failed to execute SQL ${sql}: ${message}`)
-      // throw error
     })
   }, Promise.resolve())
 

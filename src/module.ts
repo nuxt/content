@@ -245,15 +245,23 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       continue
     }
     const collectionHash = hash(collection)
-    const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
+    const collectionQueries = generateCollectionTableDefinition(collection, { drop: false })
       .split('\n')
 
     if (!collection.source) {
       continue
     }
+
+    collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+
     const parse = await createParser(collection, nuxt)
 
-    const insertedRecordsHashList: string[] = []
+    // initialize the hash array with padding
+    // 0: hashList comment
+    // 1: create info table
+    // 2: insert the collection info in the info table
+    // 3: create the collection table
+    const insertedRecordsHashList: string[] = Array(4).fill('')
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare({ rootDir: nuxt.options.rootDir })
@@ -295,19 +303,24 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
             list.push([key, queries])
             insertedRecordsHashList.push(hash)
+            // if there are update queries, we pad the hash list with the same hash
+            if (queries.length > 1) {
+              insertedRecordsHashList.push(...Array(queries.length - 1).fill(hash))
+            }
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
           }
         }))
       }
+
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
 
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
-    const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+    const version =
 
     collectionDump[collection.name] = [
       `-- ${JSON.stringify(insertedRecordsHashList)}`,
