@@ -257,7 +257,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     const parse = await createParser(collection, nuxt)
 
-    const structureVersion = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
+    const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
     // initialize the hash array with padding
     // 0: hashList comment
@@ -322,7 +322,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
-    const version = collectionChecksumStructure[collection.name] = hash(collectionQueries)
+    const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     collectionDump[collection.name] = [
       `-- ${JSON.stringify(insertedRecordsHashList)}`,
