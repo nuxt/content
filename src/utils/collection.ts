@@ -245,9 +245,7 @@ export function convertFieldsToSqlFields(sortedKeys: string[], collection: Resol
     }
 
     // Handle optional fields
-    const constraints = [
-      type.isNullable() ? ' NULL' : '',
-    ]
+    const constraints = type.isNullable() ? ['NULL'] : []
 
     // Handle default values
     if (type._def.defaultValue !== undefined) {
@@ -269,7 +267,7 @@ export function convertFieldsToSqlFields(sortedKeys: string[], collection: Resol
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
   const sqlFields = convertFieldsToSqlFields(sortedKeys, collection).map(({ key, sqlType, constraints }) => {
-    return `"${key}" ${sqlType}${constraints.join(' ')}`
+    return `"${key}" ${sqlType}${constraints?.length ? ' ' : ''}${constraints.join(' ')}`
   })
 
   let definition = `CREATE TABLE IF NOT EXISTS ${collection.tableName} (${sqlFields.join(', ')});`

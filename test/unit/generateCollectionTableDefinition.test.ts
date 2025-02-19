@@ -12,7 +12,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "title" VARCHAR,',
       ' "body" TEXT,',
       ' "description" VARCHAR,',
@@ -38,7 +38,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "title" VARCHAR,',
       ' "body" TEXT,',
       ' "customField" VARCHAR,',
@@ -65,7 +65,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -87,7 +87,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" VARCHAR(64) DEFAULT \'foo\',',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -108,7 +108,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" INT DEFAULT 13,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -129,7 +129,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" BOOLEAN DEFAULT false,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -150,7 +150,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" DATE,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -174,7 +174,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" TEXT,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -198,7 +198,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "customField" TEXT,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
@@ -229,7 +229,7 @@ describe('generateCollectionTableDefinition', () => {
 
     expect(sql).toBe([
       `CREATE TABLE IF NOT EXISTS ${getTableName('content')} (`,
-      'id TEXT PRIMARY KEY,',
+      '"id" TEXT PRIMARY KEY,',
       ' "extension" VARCHAR,',
       ' "f1" BOOLEAN NULL,',
       ' "f2" VARCHAR NULL,',
