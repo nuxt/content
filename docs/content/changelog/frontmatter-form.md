@@ -1,8 +1,8 @@
 ---
 name: Visual front-matter edition
-title: Visual front-matter edition
+title: Visual Front-matter Edition
 description: Your page metadata is now editable through a visual interface instead of YAML.
-date: '2024-10-17T00:00:00.000Z'
+date: 2024-10-17T00:00:00.000Z
 image:
   src: /blog/frontmatters.png
 authors:
@@ -57,7 +57,7 @@ We're actively working on the next major update of Nuxt Content which will bring
 
 A key challenge with Nuxt Content v2 was the large bundle size required to store all content files. It was an issue when deploying to edge platforms like [NuxtHub](https://hub.nuxt.com/).
 
-To address this, Nuxt Content v3 moves away from the file based storing in production and leverage SQL database system. This switch is transparent to users. We're providing a zero config support for development mode, static generation, server rendering and  edge deployments with NuxtHub.
+To address this, Nuxt Content v3 moves away from the file based storing in production and leverage SQL database system. This switch is transparent to users. We're providing a zero config support for development mode, static generation, server rendering and edge deployments with NuxtHub.
 
 ### Introducing Collections
 

@@ -2,7 +2,7 @@
 name: Visual YAML and JSON File Edition
 title: Visual YAML and JSON File Edition
 description: Edit YAML and JSON files with an automatically generated form.
-date: '2024-10-28T01:00:00.000Z'
+date: 2024-10-28T01:00:00.000Z
 image:
   src: /docs/studio/json-yml-forms.png
 authors:
