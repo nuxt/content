@@ -188,9 +188,9 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    // if (hasNuxtModule('nuxt-llms')) {
-    //   installModule(resolver.resolve('./features/llms'))
-    // }
+    if (hasNuxtModule('nuxt-llms')) {
+      installModule(resolver.resolve('./features/llms'))
+    }
     await installMDCModule(options, nuxt)
 
     if (nuxt.options._prepare) {
