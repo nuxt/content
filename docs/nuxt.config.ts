@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    'nuxt-llms',
+    // 'nuxt-llms',
   ],
 
   app: {
