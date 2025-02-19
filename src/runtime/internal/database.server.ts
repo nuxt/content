@@ -60,6 +60,12 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
+/**
+ * Timeout for waiting for another request to finish the database initialization
+ * Or to finish the init itself
+ */
+const REQUEST_TIMEOUT = 90
+
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
@@ -95,7 +101,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
           // after timeout is reached, give up and stop the query
           // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
+          if (iterationCount++ > REQUEST_TIMEOUT) {
             clearInterval(interval)
             reject(new Error('Waiting for another database initialization timed out'))
           }
@@ -112,8 +118,18 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
 
+  const timer = new Date().getTime()
+
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
+    const nextTimer = new Date().getTime()
+
+    // instead of failing the init and locking init for everyone, give up and error out
+    // if the initialization takes too long
+    if ((nextTimer - timer) > (1000 * REQUEST_TIMEOUT)) {
+      await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+      throw new Error('Database initialization timed out')
+    }
     await db.exec(sql).catch((err: Error) => {
       const message = err.message || 'Unknown error'
       console.error(`Failed to execute SQL ${sql}: ${message}`)
