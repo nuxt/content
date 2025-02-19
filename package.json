@@ -154,16 +154,16 @@
       "./src/preview",
       "./src/runtime",
       {
-          "input": "src/features/",
-          "outDir": "dist/features",
-          "addRelativeDeclarationExtensions": true,
-          "ext": "js",
-          "esbuild": {
-            "jsxImportSource": "vue",
-            "jsx": "automatic",
-            "jsxFactory": "h"
-          }
+        "input": "src/features/",
+        "outDir": "dist/features",
+        "addRelativeDeclarationExtensions": true,
+        "ext": "js",
+        "esbuild": {
+          "jsxImportSource": "vue",
+          "jsx": "automatic",
+          "jsxFactory": "h"
         }
+      }
     ],
     "externals": [
       "untyped",

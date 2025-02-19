@@ -1,7 +1,6 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
-import type { LLMSOptions } from '../features/llms/runtime/types'
 import type { ContentFile, MarkdownPlugin, TransformContentOptions } from './content'
 import type { PathMetaOptions } from './path-meta'
 import type { ResolvedCollection } from './collection'
@@ -181,8 +180,6 @@ export interface ModuleOptions {
       delimeter?: string
     }
   }
-
-  llms?: false | LLMSOptions
 }
 
 export interface RuntimeConfig {
@@ -192,7 +189,6 @@ export interface RuntimeConfig {
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig
     integrityCheck: boolean
-    llms?: LLMSOptions
   }
 }
 

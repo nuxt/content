@@ -7,6 +7,7 @@ import {
   addImports,
   addServerImports,
   addPlugin,
+  hasNuxtModule,
   updateTemplates,
   addComponent,
   installModule,
@@ -80,7 +81,6 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
-    llms: false,
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -188,10 +188,10 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    await installMDCModule(options, nuxt)
-    if (options.llms) {
-      await installModule(resolver.resolve('./features/llms'))
+    if (hasNuxtModule('nuxt-llms')) {
+      installModule(resolver.resolve('./features/llms'))
     }
+    await installMDCModule(options, nuxt)
 
     if (nuxt.options._prepare) {
       return

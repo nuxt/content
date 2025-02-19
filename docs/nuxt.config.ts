@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@vueuse/nuxt',
     'nuxt-og-image',
+    'nuxt-llms',
   ],
 
   app: {
@@ -24,27 +25,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://content.nuxt.com',
   },
-
   content: {
-    llms: {
-      domain: 'https://content.nuxt.com',
-      title: 'Nuxt Content',
-      description: 'Nuxt Content is a Git-based headless CMS for Nuxt.js.',
-      notes: [
-        'The documentation only includes Nuxt Content v3 docs.',
-        'The content is automatically generated from the same source as the official documentation.',
-      ],
-      sections: [
-        {
-          title: 'Getting Started',
-          collection: 'docs',
-        },
-      ],
-      llmsFull: {
-        title: 'Complete Documentation',
-        description: 'The complete documentation including all content',
-      },
-    },
     build: {
       markdown: {
         toc: {
@@ -118,6 +99,27 @@ export default defineNuxtConfig({
 
   image: {
     provider: 'ipx',
+  },
+  llms: {
+    domain: 'https://content.nuxt.com',
+    title: 'Nuxt Content',
+    description: 'Nuxt Content is a Git-based headless CMS for Nuxt.js.',
+    notes: [
+      'The documentation only includes Nuxt Content v3 docs.',
+      'The content is automatically generated from the same source as the official documentation.',
+    ],
+    sections: [
+      {
+        title: 'Getting Started',
+        contentCollection: 'docs',
+        links: [],
+        contentFilters: [],
+      },
+    ],
+    llmsFull: {
+      title: 'Complete Documentation',
+      description: 'The complete documentation including all content',
+    },
   },
 
   ogImage: {
