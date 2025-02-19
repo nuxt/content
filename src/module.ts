@@ -83,6 +83,7 @@ export default defineNuxtModule<ModuleOptions>({
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
+      checksumStructure: {},
       checksum: {},
       dump: {},
       components: [],
