@@ -62,7 +62,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 
 /**
  * Timeout for waiting for another request to finish the database initialization
- * Or to finish the init itself
+ * or to finish the init itself
  */
 const REQUEST_TIMEOUT = 90
 
@@ -133,7 +133,6 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     await db.exec(sql).catch((err: Error) => {
       const message = err.message || 'Unknown error'
       console.error(`Failed to execute SQL ${sql}: ${message}`)
-      // throw error
     })
   }, Promise.resolve())
 
