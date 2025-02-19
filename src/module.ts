@@ -320,8 +320,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
 
-
-
     collectionDump[collection.name] = [
       `-- ${JSON.stringify(insertedRecordsHashList)}`,
       // we have to start the series of queries

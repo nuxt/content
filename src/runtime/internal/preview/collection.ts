@@ -2,10 +2,10 @@ import { minimatch } from 'minimatch'
 import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
 import { joinURL, withoutLeadingSlash } from 'ufo'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
+import { hash } from 'ohash'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
-import { hash } from 'ohash'
 
 export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
   let matchedSource: ResolvedCollectionSource
