@@ -276,7 +276,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       filesCount += _keys.length
 
-      const list: Array<[string, Array<string>]> = []
+      const list: Array<[string, Array<string>, string]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
           const keyInCollection = join(collection.name, source?.prefix || '', key)
@@ -304,12 +304,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               }
             }
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-            list.push([key, queries])
-            insertedRecordsHashList.push(hash)
-            // if there are update queries, we pad the hash list with the same hash
-            if (queries.length > 1) {
-              insertedRecordsHashList.push(...Array(queries.length - 1).fill(hash))
-            }
+            list.push([key, queries, hash])
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
@@ -319,6 +314,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+
+      // Insert the hash of the records in the list in the same order as the list
+      // If there is more tha one statement, insert as many hash as necessary
+      insertedRecordsHashList.push(...list.flatMap(([, sql, hash]) => Array(sql.length).fill(hash)))
 
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
