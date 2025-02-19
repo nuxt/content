@@ -1,7 +1,7 @@
-import { decompressTree } from '@nuxt/content/runtime'
 import type { MinimalTree } from '@nuxt/content'
 import type { MDCElement } from '@nuxtjs/mdc'
 import { withBase } from 'ufo'
+import { decompressTree } from '../../../../runtime/internal/abstract-tree'
 import type { PageCollectionItemBase } from '~/src/types'
 
 const linkProps = ['href', 'src', 'to']

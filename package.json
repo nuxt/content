@@ -25,11 +25,7 @@
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.cjs"
     },
-    "./runtime": {
-      "types": "./dist/runtime.d.ts",
-      "import": "./dist/runtime.mjs",
-      "require": "./dist/runtime.cjs"
-    }
+    "./runtime":  "./dist/runtime/index.js"
   },
   "main": "./dist/module.cjs",
   "types": "./dist/module.d.ts",
@@ -154,7 +150,6 @@
     "entries": [
       "./src/module",
       "./src/preview",
-      "./src/runtime",
       {
         "input": "src/features/",
         "outDir": "dist/features",
