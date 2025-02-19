@@ -5,7 +5,7 @@ description: Studio forms are dynamically generated based on the collection
   schema defined in your content configuration file.
 date: 2025-02-20T01:00:00.000Z
 image:
-  src: /blog/frontmatter-form-generation.png
+  src: /blog/studio-form-generation.png
   alt: Frontmatter form generation based on collection schema
 authors:
   - name: Baptiste Leproux
