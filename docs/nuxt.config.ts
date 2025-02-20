@@ -112,13 +112,7 @@ export default defineNuxtConfig({
       'The documentation only includes Nuxt Content v3 docs.',
       'The content is automatically generated from the same source as the official documentation.',
     ],
-    sections: [
-      {
-        title: 'Getting Started',
-        contentCollection: 'docs',
-      },
-    ],
-    llmsFull: {
+    full: {
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
     },
