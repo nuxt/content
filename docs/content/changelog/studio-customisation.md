@@ -92,16 +92,14 @@ mainScreen: z.string().editor({ input: 'media' })
 
 #### Options
 
-#### `input: 'media' | 'icon'`
+##### `input: 'media' | 'icon'`
 
 You can set the editor input type. Currently both icon and media are available since there are handled in Studio editor.
 
-#### `hidden: Boolean`
+##### `hidden: Boolean`
 
 This option can be set to avoid the display of a field in the Studio editor.
 
 ::prose-tip
 Studio inputs are fully extensible. We can create as many input as we want based on our users needs.
 ::
-
-###
