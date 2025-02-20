@@ -78,7 +78,7 @@ const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => l
       />
     </template>
 
-    <template #content>
+    <template #body>
       <UNavigationMenu
         orientation="vertical"
         :items="links"

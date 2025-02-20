@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     },
   },
 
+  css: [
+    '~/assets/css/main.css',
+  ],
+
   site: {
     url: 'https://content.nuxt.com',
   },
