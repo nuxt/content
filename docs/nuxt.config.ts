@@ -112,8 +112,6 @@ export default defineNuxtConfig({
       {
         title: 'Getting Started',
         contentCollection: 'docs',
-        links: [],
-        contentFilters: [],
       },
     ],
     llmsFull: {
