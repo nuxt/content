@@ -3,6 +3,7 @@ import { withBase } from 'ufo'
 import { onLLMsGenerate, onLLMsGenerateFull } from 'nuxt-llms/runtime'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
+import { defineNitroPlugin } from '#imports'
 
 // @ts-expect-error - typecheck does not derect
 export default defineNitroPlugin(() => {
