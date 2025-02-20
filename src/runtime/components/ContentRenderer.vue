@@ -134,8 +134,11 @@ function resolveVueComponent(component: string | Renderable) {
     }
     else if (localComponents.includes(pascalCase(component))) {
       _component = defineAsyncComponent(() => {
-        // @ts-expect-error - typescript doesn't know about the import
-        return import('#content/components').then(m => m[pascalCase(component)]())
+        return import('#content/components')
+          .then((m) => {
+            const comp = m[pascalCase(component)] as unknown as () => unknown
+            return comp ? comp() : undefined
+          })
       })
     }
     if (typeof _component === 'string') {
