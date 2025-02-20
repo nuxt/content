@@ -107,7 +107,7 @@ export default defineNuxtConfig({
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
-    description: 'Nuxt Content is a Git-based headless CMS for Nuxt.js.',
+    description: 'Nuxt Content is a Git-based headless CMS for Nuxt',
     notes: [
       'The documentation only includes Nuxt Content v3 docs.',
       'The content is automatically generated from the same source as the official documentation.',
