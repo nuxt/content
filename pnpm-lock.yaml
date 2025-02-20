@@ -243,8 +243,8 @@ importers:
         specifier: ^1.2.25
         version: 1.2.25
       '@iconify-json/vscode-icons':
-        specifier: ^1.2.14
-        version: 1.2.14
+        specifier: ^1.2.15
+        version: 1.2.15
       '@nuxt/content':
         specifier: workspace:*
         version: link:..
@@ -1153,8 +1153,8 @@ packages:
   '@iconify-json/simple-icons@1.2.25':
     resolution: {integrity: sha512-2E1/gOCO97rF6usfhhiXxwzCb+UhdEsxW3lW1Sew+xZY0COY6dp82Z/r1rUt2fWKneWjuoGcNeJHHXQyG8mIuw==}
 
-  '@iconify-json/vscode-icons@1.2.14':
-    resolution: {integrity: sha512-DLFEWtKpqpzzWbn8DWQoBb2j/KK8KASLHPKQ7763/F4SJelMZg2xVUPUEWrceLNcTu8OVtKQcd/+3Ysa3WcAsg==}
+  '@iconify-json/vscode-icons@1.2.15':
+    resolution: {integrity: sha512-L4IgpPqpZLUvO4NgMYV8jo4idIRn3xfXwBKQCUxKFqa50v65Vc12tipI392Mv+QodagQcouqWAt2emFufGJJ8A==}
 
   '@iconify/collections@1.0.519':
     resolution: {integrity: sha512-XAPskD6bgLzdjaZBn2fUZn5Q73gSqhEqi1k5P9iDKjV+WnPIUvvHPsrUjNcwEAIgtuv0UhsPMD++1/U6O1Uvjg==}
@@ -8185,7 +8185,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/vscode-icons@1.2.14':
+  '@iconify-json/vscode-icons@1.2.15':
     dependencies:
       '@iconify/types': 2.0.0
 
