@@ -13,7 +13,7 @@ authors:
     avatar:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
 category: content
-draft: true
+draft: false
 ---
 
 The [Studio](https://nuxt.studio) forms are dynamically generated based on the collection schema defined in your content configuration file. This behaviour applies whether you’re editing the [frontmatter](/docs/files/markdown#frontmatter) of a `Markdown` file or a `JSON` / `YAML` file.
