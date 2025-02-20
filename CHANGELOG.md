@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.2.0](https://github.com/nuxt/content/compare/v3.1.1...v3.2.0) (2025-02-20)
+
+### Features
+
+* **collection:** repair SQL query slicing for content larger than 200Kb ([#3131](https://github.com/nuxt/content/issues/3131)) ([9d6b6c3](https://github.com/nuxt/content/commit/9d6b6c338191a70fdb66a11a63e2c444a8846683))
+* database version ([#3148](https://github.com/nuxt/content/issues/3148)) ([045d602](https://github.com/nuxt/content/commit/045d6022742c94b83678295e8b2d4c6bec2f979c))
+* **llms:** zero config integration with `nuxt-llms` ([#3143](https://github.com/nuxt/content/issues/3143)) ([541beeb](https://github.com/nuxt/content/commit/541beebd17079303de564769a350f59e053b6c04))
+* netlify preset ([#3122](https://github.com/nuxt/content/issues/3122)) ([7191516](https://github.com/nuxt/content/commit/7191516eeeb59129288677b76f1c1b34a4773857))
+* **zod:** editor metadata ([#3133](https://github.com/nuxt/content/issues/3133)) ([7a9ca9e](https://github.com/nuxt/content/commit/7a9ca9ed2a874300ac73a2f9a939aa32ec41a579))
+
+### Bug Fixes
+
+* `queryCollectionItemSurroundings` type definition in built module ([#3121](https://github.com/nuxt/content/issues/3121)) ([808c133](https://github.com/nuxt/content/commit/808c133536e59f2549297928a1ea493e805cafa2))
+* allow `count(*)` query ([71221d3](https://github.com/nuxt/content/commit/71221d33f4e1c228028818f1edc903f57b52e55d)), closes [#3136](https://github.com/nuxt/content/issues/3136)
+* constant initialization of content tables ([#3146](https://github.com/nuxt/content/issues/3146)) ([b2b1b4e](https://github.com/nuxt/content/commit/b2b1b4e0b746d8e4ad6d72334f1d691a9bcd62c2))
+* **database:** prevent creating multiple database connections ([#3126](https://github.com/nuxt/content/issues/3126)) ([06a7014](https://github.com/nuxt/content/commit/06a7014394056cc5e99d2640274860ad41f451a3))
+* generate checksum after processing all sources ([e97c787](https://github.com/nuxt/content/commit/e97c787daeabb039d012612b7f78099d50558c19))
+* manage concurent initializations ([#3132](https://github.com/nuxt/content/issues/3132)) ([c351947](https://github.com/nuxt/content/commit/c351947a93f74e68a2898c1bdc37c56b44f1ef77))
+* nuxtlabs studio url in migration ([#3150](https://github.com/nuxt/content/issues/3150)) ([5e69bf2](https://github.com/nuxt/content/commit/5e69bf2f50be61c8dbe8723e4e362c0fabed84d3))
+* remove zod from server bundle ([842bcd6](https://github.com/nuxt/content/commit/842bcd670550383d7987d27fa878fc33bfc4572d))
+* **renderer:** do not ignore component objects ([#3127](https://github.com/nuxt/content/issues/3127)) ([8a66225](https://github.com/nuxt/content/commit/8a6622543e434ff0d7b08b4800a53ecb4ce514db))
+* **type:** register module hooks types ([#3166](https://github.com/nuxt/content/issues/3166)) ([afcf815](https://github.com/nuxt/content/commit/afcf8150d14771bb55a861be899db7495efbe40f))
+* **type:** type error on built package ([7be1a2b](https://github.com/nuxt/content/commit/7be1a2b197871697697aaa5fa8eb6c1cee991ce7))
+* use a 90 seconds timeout to prevent Cloudflare from timing out ([#3160](https://github.com/nuxt/content/issues/3160)) ([7552090](https://github.com/nuxt/content/commit/755209056e907afa3c014e3272320598994c7c80))
+
 ## [3.1.1](https://github.com/nuxt/content/compare/v3.1.0...v3.1.1) (2025-02-11)
 
 ### Bug Fixes
