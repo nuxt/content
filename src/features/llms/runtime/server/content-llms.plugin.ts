@@ -17,7 +17,6 @@ export default defineNitroPlugin(() => {
         continue
       }
 
-      // @ts-expect-error - typecheck does not derect server querryCollection
       const query = queryCollection(event, section.contentCollection)
         .select('path', 'title', 'seo', 'description')
         .where('path', 'NOT LIKE', '%/.navigation')
@@ -61,7 +60,6 @@ export default defineNitroPlugin(() => {
         continue
       }
 
-      // @ts-expect-error - typecheck does not derect server querryCollection
       const query = queryCollection(event, section.contentCollection)
         .where('path', 'NOT LIKE', '%/.navigation')
 
