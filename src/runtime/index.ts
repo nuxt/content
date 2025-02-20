@@ -1,1 +1,1 @@
-export * from './runtime/internal/abstract-tree'
+export * from './internal/abstract-tree'
