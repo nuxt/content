@@ -120,7 +120,7 @@
     "@nuxt/kit": "^3.15.4",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.15.4",
-    "@nuxt/test-utils": "^3.15.4",
+    "@nuxt/test-utils": "^3.16.0",
     "@release-it/conventional-changelog": "^10.0.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/bun": "^1.2.2",
