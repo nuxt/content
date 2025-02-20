@@ -16,7 +16,7 @@
     "joi": "^17.13.3",
     "minisearch": "^7.1.2",
     "nuxt": "3.15.4",
-    "nuxt-llms": "^0.0.1",
+    "nuxt-llms": "^0.0.2",
     "nuxt-og-image": "^4.1.4",
     "prettier": "^3.5.1",
     "shiki-transformer-color-highlight": "^0.2.0",
