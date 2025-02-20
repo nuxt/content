@@ -3,9 +3,9 @@ import { withBase } from 'ufo'
 import { onLLMsGenerate, onLLMsGenerateFull } from 'nuxt-llms/runtime'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
+// @ts-expect-error - typecheck does not detect defineNitroPlugin in imports
 import { defineNitroPlugin } from '#imports'
 
-// @ts-expect-error - typecheck does not derect
 export default defineNitroPlugin(() => {
   onLLMsGenerate(async (event, options) => {
     prepareContentSections(options.sections)
