@@ -60,6 +60,11 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
+/**
+ * Timeout for waiting for another request to finish the database initialization
+ */
+const REQUEST_TIMEOUT = 90
+
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
@@ -95,7 +100,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
           // after timeout is reached, give up and stop the query
           // it has to be that initialization has failed
-          if (iterationCount++ > 300) {
+          if (iterationCount++ > REQUEST_TIMEOUT) {
             clearInterval(interval)
             reject(new Error('Waiting for another database initialization timed out'))
           }
