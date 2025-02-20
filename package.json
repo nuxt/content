@@ -24,7 +24,8 @@
       "types": "./dist/preview.d.ts",
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.cjs"
-    }
+    },
+    "./runtime":  "./dist/runtime/index.js"
   },
   "main": "./dist/module.cjs",
   "types": "./dist/module.d.ts",
@@ -148,7 +149,18 @@
   "unbuild": {
     "entries": [
       "./src/module",
-      "./src/preview"
+      "./src/preview",
+      {
+        "input": "src/features/",
+        "outDir": "dist/features",
+        "addRelativeDeclarationExtensions": true,
+        "ext": "js",
+        "esbuild": {
+          "jsxImportSource": "vue",
+          "jsx": "automatic",
+          "jsxFactory": "h"
+        }
+      }
     ],
     "externals": [
       "untyped",
