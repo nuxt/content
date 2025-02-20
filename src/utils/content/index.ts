@@ -9,9 +9,8 @@ import { defu } from 'defu'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
-import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions } from '../../types/module'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ContentFile, ContentTransformer } from '../../types'
 import { logger } from '../dev'
-import type { ContentFile, ContentTransformer } from '../../types'
 import { transformContent } from './transformers'
 
 let parserOptions = {
@@ -147,7 +146,6 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       file.extension = file.extension ?? file.path.includes('.') ? '.' + file.path.split('.').pop() : undefined
     }
     const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
-    // @ts-expect-error runtime type
     await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
     const { file: hookedFile } = beforeParseCtx
 
@@ -183,7 +181,6 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     }
 
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
-    // @ts-expect-error runtime type
     await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
     return afterParseCtx.content
   }
