@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
-import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
+import { resolveComponent, toRaw, defineAsyncComponent, computed, type AsyncComponentLoader } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
@@ -133,13 +133,14 @@ function resolveVueComponent(component: string | Renderable) {
       _component = resolveComponent(component, false)
     }
     else if (localComponents.includes(pascalCase(component))) {
-      _component = defineAsyncComponent(() => {
+      const loader: AsyncComponentLoader = () => {
         return import('#content/components')
           .then((m) => {
-            const comp = m[pascalCase(component)] as unknown as () => unknown
+            const comp = m[pascalCase(component) as keyof typeof m] as unknown as () => unknown
             return comp ? comp() : undefined
           })
-      })
+      }
+      _component = defineAsyncComponent(loader)
     }
     if (typeof _component === 'string') {
       return _component
