@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.1](https://github.com/nuxt/content/compare/v3.2.0...v3.2.1) (2025-02-21)
+
+### Bug Fixes
+
+* **bunsqlite:** polyfills not being loaded ([#3176](https://github.com/nuxt/content/issues/3176)) ([139744c](https://github.com/nuxt/content/commit/139744c9b54cd17018150b2a03cd555466672ce1))
+* **client-database:** prevent concurrent initialization ([#3174](https://github.com/nuxt/content/issues/3174)) ([49531dd](https://github.com/nuxt/content/commit/49531dd5600de00c8913602875244921bc9cfe27))
+* **ContentRenderer:** async loader types ([f1a9b8e](https://github.com/nuxt/content/commit/f1a9b8e1d67a4a753a184efcf536f365dbb70354))
+* **llms:** add missing import for `defineNitroPlugin` ([#3170](https://github.com/nuxt/content/issues/3170)) ([b091253](https://github.com/nuxt/content/commit/b0912539029da9946693ec0d2766436ab1fdd6e3))
+* **llms:** add missing import on `queryCollection` ([2fe61e6](https://github.com/nuxt/content/commit/2fe61e60fe221c66a7bbfdb194c5ebcc0020afc1))
+
 ## [3.2.0](https://github.com/nuxt/content/compare/v3.1.1...v3.2.0) (2025-02-20)
 
 ### Features
