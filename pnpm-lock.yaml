@@ -101,8 +101,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0(magicast@0.3.5)(rollup@3.29.5)
       ohash:
-        specifier: ^1.1.4
-        version: 1.1.4
+        specifier: ^2.0.4
+        version: 2.0.4
       parse-git-config:
         specifier: ^3.0.0
         version: 3.0.0
@@ -5652,6 +5652,9 @@ packages:
 
   ohash@1.1.4:
     resolution: {integrity: sha512-FlDryZAahJmEF3VR3w1KogSEdWX3WhA5GPakFx4J81kEAiHyLMpdLLElS8n8dfNadMgAne/MywcvmogzscVt4g==}
+
+  ohash@2.0.4:
+    resolution: {integrity: sha512-ac+SFwzhdHb0hp48/dbR7Jta39qfbuj7t3hApd9uyHS8bisHTfVzSEvjOVgV0L3zG7VR2/7JjkSGimP75D+hOQ==}
 
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
@@ -15205,6 +15208,8 @@ snapshots:
       ufo: 1.5.4
 
   ohash@1.1.4: {}
+
+  ohash@2.0.4: {}
 
   on-finished@2.4.1:
     dependencies:
