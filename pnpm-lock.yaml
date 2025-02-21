@@ -276,8 +276,8 @@ importers:
         specifier: 3.15.4
         version: 3.15.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(@parcel/watcher@2.5.1)(@types/node@22.13.4)(better-sqlite3@11.8.1)(db0@0.2.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(sqlite3@5.1.7))(encoding@0.1.13)(eslint@9.20.1(jiti@2.4.2))(ioredis@5.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.34.1)(sqlite3@5.1.7)(terser@5.37.0)(typescript@5.7.3)(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(vue-tsc@2.2.2(typescript@5.7.3))(yaml@2.7.0)
       nuxt-llms:
-        specifier: ^0.0.2
-        version: 0.0.2(magicast@0.3.5)(rollup@4.34.1)
+        specifier: https://pkg.pr.new/nuxtlabs/nuxt-llms@60fbed3
+        version: https://pkg.pr.new/nuxtlabs/nuxt-llms@60fbed3(magicast@0.3.5)(rollup@4.34.1)
       nuxt-og-image:
         specifier: ^4.1.4
         version: 4.1.4(magicast@0.3.5)(rollup@4.34.1)(unstorage@1.14.4(db0@0.2.4(@electric-sql/pglite@0.2.16)(@libsql/client@0.14.0)(better-sqlite3@11.8.1)(sqlite3@5.1.7))(ioredis@5.4.2))(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
@@ -4951,7 +4951,6 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
-    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lighthouse-logger@2.0.1:
@@ -5602,8 +5601,9 @@ packages:
     resolution: {integrity: sha512-iq7hbSnfp4Ff/PTMYBF8pYabTQuF3u7HVN66Kb3hOnrnaPEdXEn/q6HkAn5V8UjOVSgXYpvycM0wSnwyADYNVA==}
     hasBin: true
 
-  nuxt-llms@0.0.2:
-    resolution: {integrity: sha512-86gBPIWC0WdzV4vZB7NOf2vOzfGBQ81LllcJgViMdsjDf+I5S/RJRyBlblYP4sCzDmfV8YJ7FZTHn1WYEQG7mA==}
+  nuxt-llms@https://pkg.pr.new/nuxtlabs/nuxt-llms@60fbed3:
+    resolution: {tarball: https://pkg.pr.new/nuxtlabs/nuxt-llms@60fbed3}
+    version: 0.0.2
 
   nuxt-og-image@4.1.4:
     resolution: {integrity: sha512-2U5bMefPWQJnoqPb9G2mIXJu41ZplU+/duB9UdmQo5zYVsHo+I/Acunc04Ngqhq9p2DBeQQ4irneysfZx37UZA==}
@@ -14735,7 +14735,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-llms@0.0.2(magicast@0.3.5)(rollup@4.34.1):
+  nuxt-llms@https://pkg.pr.new/nuxtlabs/nuxt-llms@60fbed3(magicast@0.3.5)(rollup@4.34.1):
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)(rollup@4.34.1)
     transitivePeerDependencies:
