@@ -91,7 +91,7 @@
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
-    "ws": "^8.18.0",
+    "ws": "^8.18.1",
     "zod": "^3.24.2",
     "zod-to-json-schema": "^3.24.2",
     "zod-to-ts": "^1.2.0"
@@ -120,7 +120,7 @@
     "@nuxt/kit": "^3.15.4",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.15.4",
-    "@nuxt/test-utils": "^3.16.0",
+    "@nuxt/test-utils": "^3.17.0",
     "@release-it/conventional-changelog": "^10.0.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/bun": "^1.2.2",
