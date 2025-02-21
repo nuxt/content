@@ -1,5 +1,6 @@
 import type { ContentNavigationItem, PageCollectionItemBase, CollectionQueryBuilder } from '@nuxt/content'
 import { pascalCase } from 'scule'
+import { pick } from './utils'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.
@@ -188,21 +189,6 @@ function sortAndClear(nav: ContentNavigationItem[]) {
   }
 
   return nav
-}
-
-/**
- * Returns a new object with the specified keys
- */
-function pick(keys?: string[]) {
-  return (obj: Record<string, unknown>) => {
-    obj = obj || {}
-    if (keys && keys.length) {
-      return keys
-        .filter(key => typeof obj[key] !== 'undefined')
-        .reduce((newObj, key) => Object.assign(newObj, { [key]: obj[key] }), {})
-    }
-    return obj
-  }
 }
 
 function isObject(obj: unknown) {
