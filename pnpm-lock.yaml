@@ -146,8 +146,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       ws:
-        specifier: ^8.18.0
-        version: 8.18.0
+        specifier: ^8.18.1
+        version: 8.18.1
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -177,8 +177,8 @@ importers:
         specifier: ^3.15.4
         version: 3.15.4
       '@nuxt/test-utils':
-        specifier: ^3.16.0
-        version: 3.16.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)
+        specifier: ^3.17.0
+        version: 3.17.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)
       '@release-it/conventional-changelog':
         specifier: ^10.0.0
         version: 10.0.0(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.0.0)(release-it@18.1.2(@types/node@22.13.4)(typescript@5.7.3))
@@ -1702,8 +1702,8 @@ packages:
     engines: {node: '>=18.20.5'}
     hasBin: true
 
-  '@nuxt/test-utils@3.16.0':
-    resolution: {integrity: sha512-ISllWsRtcPIEUJVjG2fR78Ng0fV+uBtjkeiHf7qLsYBlJRIp/UZrNyqTYJ4yyiZjk6x1kw0j3XwD5F9NE1um5g==}
+  '@nuxt/test-utils@3.17.0':
+    resolution: {integrity: sha512-NfKES2wGXxV8bNec30W0+rjegy7azFxXT7TJZ3SIcg6CxWQiO8Q+Xh743UnoqPw2WF03GNEndovf6AqwIRjNJQ==}
     engines: {node: ^18.20.5 || ^20.9.0 || ^22.0.0 || >=23.0.0}
     peerDependencies:
       '@cucumber/cucumber': ^10.3.1 || ^11.0.0
@@ -7713,6 +7713,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.18.1:
+    resolution: {integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xdg-basedir@5.1.0:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
     engines: {node: '>=12'}
@@ -8818,7 +8830,7 @@ snapshots:
   '@libsql/isomorphic-ws@0.1.5':
     dependencies:
       '@types/ws': 8.5.14
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -9020,7 +9032,7 @@ snapshots:
       vite-plugin-inspect: 0.8.9(@nuxt/kit@3.15.4(magicast@0.3.5)(rollup@3.29.5))(rollup@3.29.5)(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       vite-plugin-vue-inspector: 5.3.1(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       which: 3.0.1
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - rollup
@@ -9067,7 +9079,7 @@ snapshots:
       vite-plugin-inspect: 0.8.9(@nuxt/kit@3.15.4(magicast@0.3.5)(rollup@4.34.1))(rollup@4.34.1)(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       vite-plugin-vue-inspector: 5.3.1(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       which: 3.0.1
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - rollup
@@ -9114,7 +9126,7 @@ snapshots:
       vite-plugin-inspect: 0.8.9(@nuxt/kit@3.15.4(magicast@0.3.5)(rollup@3.29.5))(rollup@4.34.1)(vite@6.1.1(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       vite-plugin-vue-inspector: 5.3.1(vite@6.1.1(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))
       which: 3.0.1
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - rollup
@@ -9498,7 +9510,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/test-utils@3.16.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)':
+  '@nuxt/test-utils@3.17.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)(rollup@3.29.5)
       '@nuxt/schema': 3.15.4
@@ -17369,7 +17381,7 @@ snapshots:
       debug: 4.4.0(supports-color@9.4.0)
       es-module-lexer: 1.6.0
       pathe: 2.0.3
-      vite: 6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite: 6.1.1(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -17390,7 +17402,7 @@ snapshots:
       debug: 4.4.0(supports-color@9.4.0)
       es-module-lexer: 1.6.0
       pathe: 2.0.3
-      vite: 6.0.11(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
+      vite: 6.1.1(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -17553,7 +17565,7 @@ snapshots:
 
   vitest-environment-nuxt@1.0.1(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0):
     dependencies:
-      '@nuxt/test-utils': 3.16.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)
+      '@nuxt/test-utils': 3.17.0(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(magicast@0.3.5)(playwright-core@1.50.1)(rollup@3.29.5)(terser@5.37.0)(typescript@5.7.3)(vitest@3.0.6(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -17814,6 +17826,8 @@ snapshots:
   ws@8.17.1: {}
 
   ws@8.18.0: {}
+
+  ws@8.18.1: {}
 
   xdg-basedir@5.1.0: {}
 
