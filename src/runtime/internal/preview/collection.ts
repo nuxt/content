@@ -2,6 +2,7 @@ import { minimatch } from 'minimatch'
 import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
 import { joinURL, withoutLeadingSlash } from 'ufo'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
+import { hash } from 'ohash'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
@@ -125,6 +126,9 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
       values.push(valueToInsert)
     }
   })
+
+  // add the hash in local dev database
+  values.push(`'${hash(values)}'`)
 
   return values
 }

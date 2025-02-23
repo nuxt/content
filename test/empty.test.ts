@@ -82,7 +82,6 @@ describe('empty', async () => {
 
       const parsedDump = await decompressSQLDump(dump)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
@@ -94,7 +93,6 @@ describe('empty', async () => {
 
       const parsedDump = await decompressSQLDump(response as string)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)

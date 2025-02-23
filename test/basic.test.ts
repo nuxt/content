@@ -76,7 +76,6 @@ describe('basic', async () => {
 
       const parsedDump = await decompressSQLDump(dump)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info & home page are inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(2)
@@ -88,14 +87,13 @@ describe('basic', async () => {
 
       const parsedDump = await decompressSQLDump(response as string)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info & home page is inserted
       expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(2)
     })
   })
 
-  describe('refine retrived document', () => {
+  describe('refine retrieved document', () => {
     test('retrieve document', async () => {
       const doc: Record<string, unknown> = await $fetch('/api/content/get?path=/')
 

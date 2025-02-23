@@ -21,7 +21,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "navigation" TEXT DEFAULT true,',
       ' "path" VARCHAR,',
       ' "seo" TEXT DEFAULT \'{}\',',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -48,7 +49,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "navigation" TEXT DEFAULT true,',
       ' "path" VARCHAR,',
       ' "seo" TEXT DEFAULT \'{}\',',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -69,7 +71,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" VARCHAR,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -91,7 +94,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" VARCHAR(64) DEFAULT \'foo\',',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -112,7 +116,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" INT DEFAULT 13,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -133,7 +138,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" BOOLEAN DEFAULT false,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -154,7 +160,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" DATE,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -178,7 +185,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" TEXT,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -202,7 +210,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "customField" TEXT,',
       ' "extension" VARCHAR,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })
@@ -238,7 +247,8 @@ describe('generateCollectionTableDefinition', () => {
       ' "f5" TEXT NULL,',
       ' "f6" TEXT NULL,',
       ' "meta" TEXT,',
-      ' "stem" VARCHAR',
+      ' "stem" VARCHAR,',
+      ' "__hash__" TEXT UNIQUE',
       ');',
     ].join(''))
   })

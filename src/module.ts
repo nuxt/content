@@ -42,7 +42,7 @@ export type * from './types'
  * Database version is used to identify schema changes
  * and drop the info table when the version is not supported
  */
-const databaseVersion = 'v3.2.0'
+const databaseVersion = 'v3.2.1'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -85,6 +85,7 @@ export default defineNuxtModule<ModuleOptions>({
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
+      checksumStructure: {},
       checksum: {},
       dump: {},
       components: [],
@@ -203,6 +204,7 @@ export default defineNuxtModule<ModuleOptions>({
       const fest = await processCollectionItems(nuxt, manifest.collections, options)
 
       // Update manifest
+      manifest.checksumStructure = fest.checksumStructure
       manifest.checksum = fest.checksum
       manifest.dump = fest.dump
       manifest.components = fest.components
@@ -227,6 +229,7 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
+  const collectionChecksumStructure: Record<string, string> = {}
   const db = await getLocalDatabase(options._localDatabase)
   const databaseContents = await db.fetchDevelopmentCache()
 
@@ -250,14 +253,23 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       continue
     }
     const collectionHash = hash(collection)
-    const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
+    const collectionQueries = generateCollectionTableDefinition(collection, { drop: false })
       .split('\n')
 
     if (!collection.source) {
       continue
     }
+
     const parse = await createParser(collection, nuxt)
 
+    const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
+
+    // initialize the hash array with padding
+    // 0: hashList comment
+    // 1: create info table
+    // 2: insert the collection info in the info table
+    // 3: create the collection table
+    const insertedRecordsHashList: string[] = Array(4).fill('')
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare({ rootDir: nuxt.options.rootDir })
@@ -269,7 +281,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       filesCount += _keys.length
 
-      const list: Array<[string, Array<string>]> = []
+      const list: Array<[string, Array<string>, string]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
           const keyInCollection = join(collection.name, source?.prefix || '', key)
@@ -296,16 +308,21 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
               }
             }
-
-            list.push([key, generateCollectionInsert(collection, parsedContent)])
+            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+            list.push([key, queries, hash])
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
           }
         }))
       }
+
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+
+      // Insert the hash of the records in the list in the same order as the list
+      // If there is more tha one statement, insert as many hash as necessary
+      insertedRecordsHashList.push(...list.flatMap(([, sql, hash]) => Array(sql.length).fill(hash)))
 
       collectionQueries.push(...list.flatMap(([, sql]) => sql!))
     }
@@ -313,12 +330,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     collectionDump[collection.name] = [
+      `-- ${JSON.stringify(insertedRecordsHashList)}`,
       // we have to start the series of queries
       // by telling everyone that we are setting up the collection so no
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }),
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
 
       // Insert queries for the collection
       ...collectionQueries,
@@ -349,6 +367,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return {
+    checksumStructure: collectionChecksumStructure,
     checksum: collectionChecksum,
     dump: collectionDump,
     components: uniqueTags,
