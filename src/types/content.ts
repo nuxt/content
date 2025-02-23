@@ -79,3 +79,5 @@ export interface MarkdownRoot extends MDCRoot {
   props?: Record<string, unknown>
   toc?: Toc
 }
+
+export type ParsedContentFile = Record<string, unknown>

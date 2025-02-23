@@ -13,7 +13,7 @@ authors:
     avatar:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
 category: content
-draft: true
+draft: false
 ---
 
 The [Studio](https://nuxt.studio) forms are dynamically generated based on the collection schema defined in your content configuration file. This behaviour applies whether you’re editing the [frontmatter](/docs/files/markdown#frontmatter) of a `Markdown` file or a `JSON` / `YAML` file.
@@ -92,16 +92,14 @@ mainScreen: z.string().editor({ input: 'media' })
 
 #### Options
 
-#### `input: 'media' | 'icon'`
+##### `input: 'media' | 'icon'`
 
 You can set the editor input type. Currently both icon and media are available since there are handled in Studio editor.
 
-#### `hidden: Boolean`
+##### `hidden: Boolean`
 
 This option can be set to avoid the display of a field in the Studio editor.
 
 ::prose-tip
 Studio inputs are fully extensible. We can create as many input as we want based on our users needs.
 ::
-
-###

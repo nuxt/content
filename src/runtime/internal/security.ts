@@ -12,6 +12,10 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]
  * @returns True if the query is safe, false otherwise
  */
 export function assertSafeQuery(sql: string, collection: string) {
+  if (!sql) {
+    throw new Error('Invalid query')
+  }
+
   const cleanedupQuery = cleanupQuery(sql)
 
   // Query is invalid if the cleaned up query is not the same as the original query (it contains comments)

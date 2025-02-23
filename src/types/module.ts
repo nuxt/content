@@ -1,9 +1,8 @@
 import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
 import type { GitInfo } from '../utils/git'
-import type { ContentFile, MarkdownPlugin, TransformContentOptions } from './content'
+import type { MarkdownPlugin } from './content'
 import type { PathMetaOptions } from './path-meta'
-import type { ResolvedCollection } from './collection'
 
 export interface D1DatabaseConfig {
   type: 'd1'
@@ -72,6 +71,7 @@ export interface ModuleOptions {
    * @default { enabled: true }
    */
   watch?: Partial<ListenOptions> & { enabled?: boolean }
+
   renderer: {
     /**
      * Tags will be used to replace markdown components and render custom components instead of default ones.
@@ -86,6 +86,7 @@ export interface ModuleOptions {
      */
     anchorLinks?: boolean | Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6', boolean>>
   }
+
   build: {
     /**
      * List of user-defined transformers.
@@ -178,7 +179,6 @@ export interface ModuleOptions {
       delimeter?: string
     }
   }
-
 }
 
 export interface RuntimeConfig {
@@ -196,23 +196,4 @@ export interface PublicRuntimeConfig {
     api?: string
     iframeMessagingAllowedOrigins?: string
   }
-}
-
-// TODO improve types
-export type ParsedContentFile = Record<string, unknown>
-
-export interface FileBeforeParseHook {
-  collection: Readonly<ResolvedCollection>
-  file: ContentFile
-  parserOptions: TransformContentOptions
-}
-export interface FileAfterParseHook {
-  collection: Readonly<ResolvedCollection>
-  file: ContentFile
-  content: ParsedContentFile
-}
-
-export interface ModuleHooks {
-  'content:file:beforeParse': (hook: FileBeforeParseHook) => void | Promise<void>
-  'content:file:afterParse': (hook: FileAfterParseHook) => void | Promise<void>
 }

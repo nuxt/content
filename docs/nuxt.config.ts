@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@vueuse/nuxt',
     'nuxt-og-image',
+    'nuxt-llms',
   ],
 
   app: {
@@ -21,10 +22,13 @@ export default defineNuxtConfig({
     },
   },
 
+  css: [
+    '~/assets/css/main.css',
+  ],
+
   site: {
     url: 'https://content.nuxt.com',
   },
-
   content: {
     build: {
       markdown: {
@@ -36,13 +40,6 @@ export default defineNuxtConfig({
           langs: ['docker'],
         },
       },
-    },
-    database: {
-      type: 'd1',
-      bindingName: 'DB',
-      // type: 'libsql',
-      // url: process.env.TURSO_DATABASE_URL!,
-      // authToken: process.env.TURSO_AUTH_TOKEN!,
     },
     preview: {
       dev: true,
@@ -106,6 +103,19 @@ export default defineNuxtConfig({
 
   image: {
     provider: 'ipx',
+  },
+  llms: {
+    domain: 'https://content.nuxt.com',
+    title: 'Nuxt Content',
+    description: 'Nuxt Content is a Git-based headless CMS for Nuxt',
+    notes: [
+      'The documentation only includes Nuxt Content v3 docs.',
+      'The content is automatically generated from the same source as the official documentation.',
+    ],
+    full: {
+      title: 'Complete Documentation',
+      description: 'The complete documentation including all content',
+    },
   },
 
   ogImage: {

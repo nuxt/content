@@ -6,7 +6,16 @@ import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
+let dbPromise: Promise<Database>
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
+  async function loadAdapter(collection: T) {
+    if (!db) {
+      dbPromise = dbPromise || loadAndInitializeDatabase(collection)
+      db = await dbPromise
+    }
+    return db
+  }
+
   return {
     all: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
@@ -33,7 +42,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   }
 }
 
-async function loadAdapter<T>(collection: T) {
+async function loadAndInitializeDatabase<T>(collection: T) {
   if (!db) {
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     // @ts-expect-error sqlite3ApiConfig is not defined in the module

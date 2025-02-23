@@ -159,6 +159,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
+        type: collection.type,
         fields: collection.fields,
       }
       return acc

@@ -17,6 +17,7 @@ describe('decompressSQLDump', () => {
   })
 
   const queries = {
+    '': false,
     'SELECT * FROM sqlite_master': false,
     'INSERT INTO _test VALUES (\'abc\')': false,
     'CREATE TABLE _test (id TEXT PRIMARY KEY)': false,
