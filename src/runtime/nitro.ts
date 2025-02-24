@@ -25,7 +25,7 @@ export function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCol
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections(event: H3Event, collection: keyof Collections, opts?: { ignoredTags: string[] }) {
+export function queryCollectionSearchSectionsWithEvent(event: H3Event, collection: keyof Collections, opts?: { ignoredTags: string[] }) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 
