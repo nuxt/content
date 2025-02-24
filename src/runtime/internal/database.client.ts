@@ -6,13 +6,22 @@ import { fetchDatabase } from './api'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
-let dbPromise: Promise<Database>
+const loadedCollections: Record<string, string> = {}
+const dbPromises: Record<string, Promise<Database>> = {}
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
     if (!db) {
-      dbPromise = dbPromise || loadAndInitializeDatabase(collection)
-      db = await dbPromise
+      dbPromises._ = dbPromises._ || initializeDatabase()
+      db = await dbPromises._
+      dbPromises._ = undefined
     }
+    if (!loadedCollections[String(collection)]) {
+      dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
+      await dbPromises[String(collection)]
+      loadedCollections[String(collection)] = 'loaded'
+      dbPromises[String(collection)] = undefined
+    }
+
     return db
   }
 
@@ -42,7 +51,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   }
 }
 
-async function loadAndInitializeDatabase<T>(collection: T) {
+async function initializeDatabase() {
   if (!db) {
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     // @ts-expect-error sqlite3ApiConfig is not defined in the module
@@ -63,7 +72,10 @@ async function loadAndInitializeDatabase<T>(collection: T) {
     const sqlite3 = await sqlite3InitModule()
     db = new sqlite3.oo1.DB()
   }
+  return db
+}
 
+async function loadCollectionDatabase<T>(collection: T) {
   // Do not initialize database with dump for preview mode
   if (window.sessionStorage.getItem('previewToken')) {
     return db
