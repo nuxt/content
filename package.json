@@ -56,7 +56,7 @@
     "@sqlite.org/sqlite-wasm": "3.49.0-build3",
     "@webcontainer/env": "^1.1.1",
     "better-sqlite3": "^11.8.1",
-    "c12": "^2.0.2",
+    "c12": "^2.0.4",
     "chokidar": "^4.0.3",
     "consola": "^3.4.0",
     "db0": "^0.2.4",
@@ -93,7 +93,7 @@
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.1",
     "zod": "^3.24.2",
-    "zod-to-json-schema": "^3.24.2",
+    "zod-to-json-schema": "^3.24.3",
     "zod-to-ts": "^1.2.0"
   },
   "peerDependencies": {
@@ -123,29 +123,29 @@
     "@nuxt/test-utils": "^3.17.0",
     "@release-it/conventional-changelog": "^10.0.0",
     "@types/better-sqlite3": "^7.6.12",
-    "@types/bun": "^1.2.2",
+    "@types/bun": "^1.2.3",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^5.1.2",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.5",
     "@types/pg": "^8.11.11",
     "@types/ws": "^8.5.14",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.20.1",
+    "eslint": "^9.21.0",
     "mdclint": "^0.0.2",
     "micromark-util-types": "^2.0.1",
     "nuxt": "^3.15.4",
     "release-it": "^18.1.2",
     "typescript": "5.7.3",
     "vitest": "^3.0.6",
-    "vue-tsc": "^2.2.2",
-    "wrangler": "^3.109.2"
+    "vue-tsc": "^2.2.4",
+    "wrangler": "^3.109.3"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
     "@nuxt/eslint-config": "^1.1.0",
     "@nuxt/devtools-kit": "1.7.0"
   },
-  "packageManager": "pnpm@9.15.5",
+  "packageManager": "pnpm@9.15.6",
   "unbuild": {
     "entries": [
       "./src/module",
