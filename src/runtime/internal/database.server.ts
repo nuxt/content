@@ -123,35 +123,24 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
+  let hashesInDb: string[] = []
 
-  const indexesToInsert: number[] = []
   if (unchangedStructure) {
     // get the list of hash to insert
     const hashListFromTheDump: string[] = JSON.parse(dump[0].slice(3))
 
     // get the list of hash in the database
     const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
-    const hashesInDb = hashesInDbRecords.map(r => r.__hash__)
+    hashesInDb = hashesInDbRecords.map(r => r.__hash__)
 
     // get the list of hash to delete
     const hashesToDelete = hashesInDb.filter(hash => !hashListFromTheDump.includes(hash))
     if (hashesToDelete.length) {
       await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${hashesToDelete.map(() => '?').join(',')})`, hashesToDelete)
     }
-
-    // get the list indexes of the queries we will insert/update
-    let listIndex = 0
-    for (const hash of hashListFromTheDump) {
-      const index = hashesInDb.indexOf(hash)
-      // if the hash was not found in db, we will insert it
-      if (index === -1) {
-        indexesToInsert.push(listIndex)
-      }
-      listIndex++
-    }
   }
 
-  await dump.reduce(async (prev: Promise<void>, sql: string, index: number) => {
+  await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
 
     // skip sql comment
@@ -162,8 +151,18 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
-    if (unchangedStructure && (sql.startsWith('INSERT ') || sql.startsWith('UPDATE ')) && !indexesToInsert.includes(index)) {
-      return Promise.resolve()
+    if (unchangedStructure) {
+      if (sql.startsWith('/* ')) {
+        const hash = /\/\* (\w+) \*\//.exec(sql)?.[1]
+        if (hash && !hashesInDb.includes(hash)) {
+          return Promise.resolve()
+        }
+      }
+      // skip any statement that is structure related
+      // since the structure has not changed
+      else {
+        return Promise.resolve()
+      }
     }
 
     await db.exec(sql).catch((err: Error) => {

@@ -42,7 +42,7 @@ export type * from './types'
  * Database version is used to identify schema changes
  * and drop the info table when the version is not supported
  */
-const databaseVersion = 'v3.2.1'
+const databaseVersion = 'v3.2.3'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -253,7 +253,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       continue
     }
     const collectionHash = hash(collection)
-    const collectionQueries = generateCollectionTableDefinition(collection, { drop: false })
+    const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
       .split('\n')
 
     if (!collection.source) {
@@ -264,12 +264,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
-    // initialize the hash array with padding
-    // 0: hashList comment
-    // 1: create info table
-    // 2: insert the collection info in the info table
-    // 3: create the collection table
-    const insertedRecordsHashList: string[] = Array(4).fill('')
+    const insertedRecordsHashList: string[] = []
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare({ rootDir: nuxt.options.rootDir })
@@ -281,6 +276,12 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       filesCount += _keys.length
 
+      /**
+       * list is an array of tuples
+       * 0: filePath/key
+       * 1: queries
+       * 2: hash
+       */
       const list: Array<[string, Array<string>, string]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
@@ -308,6 +309,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
               }
             }
+
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
             list.push([key, queries, hash])
           }
@@ -324,7 +326,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // If there is more tha one statement, insert as many hash as necessary
       insertedRecordsHashList.push(...list.flatMap(([, sql, hash]) => Array(sql.length).fill(hash)))
 
-      collectionQueries.push(...list.flatMap(([, sql]) => sql!))
+      collectionQueries.push(...list.flatMap(([hash, sql]) => `/* ${hash} */ ${sql}`))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
@@ -342,7 +344,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+      // NOTE: the comment at the beginning of line is to force the dump extraction to execute this line
+      // all lines without a comment are considered structure related and are skipped if the structure has not changed
+      `/* successful-init */ UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
     ]
   }
 
