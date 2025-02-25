@@ -143,11 +143,6 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
 
-    // skip sql comment
-    if (sql.startsWith('-- ')) {
-      return Promise.resolve()
-    }
-
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
