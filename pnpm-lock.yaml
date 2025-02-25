@@ -23,8 +23,8 @@ importers:
         specifier: ^3.15.4
         version: 3.15.4(magicast@0.3.5)(rollup@3.29.5)
       '@nuxtjs/mdc':
-        specifier: npm:@nuxtjs/mdc-edge@0.13.6-29008400.6c6a036
-        version: '@nuxtjs/mdc-edge@0.13.6-29008400.6c6a036(magicast@0.3.5)(rollup@3.29.5)'
+        specifier: ^0.14.0
+        version: 0.14.0(magicast@0.3.5)(rollup@3.29.5)
       '@shikijs/langs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -1765,8 +1765,8 @@ packages:
     resolution: {integrity: sha512-rSIZ0p97A/II5P1Rf5f7oboWvViQKU23rP4iOD0KrNpIDnmO796C1g+4ifTpMo38SskwVxdGVWqvcuxOJ/XmyA==}
     engines: {node: ^14.16.0 || >=16.11.0}
 
-  '@nuxtjs/mdc-edge@0.13.6-29008400.6c6a036':
-    resolution: {integrity: sha512-Ypazff7S3zoVH4oZmhVhQqvyKRCdcl3gN5QAD5wQ2nzZaxWjK41K/6beAr5XPWuZ3fZf5zWGiEFzOtskwZx6cw==}
+  '@nuxtjs/mdc@0.14.0':
+    resolution: {integrity: sha512-EoPsKDKMWzMr9XSOhWcIdJq/O+apZV88vCHXhqPYa/zLXqEchyvDVdAJbNSaOZ9b8UN2C3KA7k2UvmOydnOxzA==}
 
   '@nuxtjs/plausible@1.2.0':
     resolution: {integrity: sha512-pjfps32fFN77BhjqHmq2Jx4XCNso9TcYnB+S4IR2qH/c26WDfYB5mQxN5pOEiWRlMkiKq+Y45mBBFtSOVKClCA==}
@@ -10079,7 +10079,7 @@ snapshots:
       - typescript
       - vue
 
-  '@nuxtjs/mdc-edge@0.13.6-29008400.6c6a036(magicast@0.3.5)(rollup@3.29.5)':
+  '@nuxtjs/mdc@0.14.0(magicast@0.3.5)(rollup@3.29.5)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)(rollup@3.29.5)
       '@shikijs/transformers': 3.0.0
