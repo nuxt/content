@@ -125,9 +125,13 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
   let hashesInDb: string[] = []
 
+  const CHECKSUM_REGEXP = /\/\* checksum: (\w+) \*\/$/
+
   if (unchangedStructure) {
     // get the list of hash to insert
-    const hashListFromTheDump: string[] = JSON.parse(dump[0].slice(3))
+    const hashListFromTheDump: string[] = dump.map((sql) => {
+      return CHECKSUM_REGEXP.exec(sql)?.[1]
+    }).filter(Boolean) as string[]
 
     // get the list of hash in the database
     const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
@@ -140,6 +144,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     }
   }
 
+  CHECKSUM_REGEXP.lastIndex = 0
+
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
 
@@ -147,15 +153,15 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
     if (unchangedStructure) {
-      if (sql.startsWith('/* ')) {
-        const hash = /^\/\* (\w+) \*\//.exec(sql)?.[1]
-        if (hash && !hashesInDb.includes(hash)) {
-          return Promise.resolve()
-        }
+      // skip any line that is structure related,
+      // the structure is unchanged
+      if (/\/\* structure \*\/$/.test(sql)) {
+        return Promise.resolve()
       }
-      // skip any statement that is structure related
-      // since the structure has not changed
-      else {
+
+      // skip any record whose hash is not already in the DB
+      const hash = CHECKSUM_REGEXP.exec(sql)?.[1]
+      if (hash && !hashesInDb.includes(hash)) {
         return Promise.resolve()
       }
     }

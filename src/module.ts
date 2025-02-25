@@ -254,7 +254,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
-      .split('\n')
+      .split('\n').map(q => `${q} /* structure */`)
 
     if (!collection.source) {
       continue
@@ -264,7 +264,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
-    const insertedRecordsHashList: string[] = []
     for await (const source of collection.source) {
       if (source.prepare) {
         await source.prepare({ rootDir: nuxt.options.rootDir })
@@ -322,31 +321,26 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
 
-      // Insert the hash of the records in the list in the same order as the list
-      // If there is more tha one statement, insert as many hash as necessary
-      insertedRecordsHashList.push(...list.flatMap(([, sql, hash]) => Array(sql.length).fill(hash)))
-
-      collectionQueries.push(...list.flatMap(([hash, sql]) => sql.map(q => `/* ${hash} */ ${q}`)))
+      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} /* checksum: ${hash} */`)))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
 
     collectionDump[collection.name] = [
-      `-- ${JSON.stringify(insertedRecordsHashList)}`,
       // we have to start the series of queries
       // by telling everyone that we are setting up the collection so no
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
-      generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries.map(q => `/* starting_init */ ${q}`),
+      // NOTE: all queries having the structure comment at the end, will be ignored at init if no
+      // structure changes are detected in the structureVersion
+      `${generateCollectionTableDefinition(infoCollection, { drop: false })} /* structure */`,
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
 
       // Insert queries for the collection
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      // NOTE: the comment at the beginning of line is to force the dump extraction to execute this line
-      // all lines without a comment are considered structure related and are skipped if the structure has not changed
-      `/* successful_init */ UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'; /* version: successful init */`,
     ]
   }
 
