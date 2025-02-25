@@ -148,7 +148,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // If not, since we dropped the table, no record is skipped, insert them all again.
     if (unchangedStructure) {
       if (sql.startsWith('/* ')) {
-        const hash = /\/\* (\w+) \*\//.exec(sql)?.[1]
+        const hash = /^\/\* (\w+) \*\//.exec(sql)?.[1]
         if (hash && !hashesInDb.includes(hash)) {
           return Promise.resolve()
         }

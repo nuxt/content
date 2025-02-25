@@ -84,7 +84,7 @@ describe('empty', async () => {
 
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.includes('INSERT INTO'))).toHaveLength(1)
     })
 
     test('is downloadable', async () => {
@@ -95,7 +95,7 @@ describe('empty', async () => {
 
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.includes('INSERT INTO'))).toHaveLength(1)
     })
   })
 })
