@@ -41,6 +41,6 @@ In the coming months, we’ll focus on testing and refining Nuxt Content v3 to e
 
 - **Merging the Studio module**: Soon, the Studio module will be integrated directly into Nuxt Content. Once Nuxt Content v3 is released, activating Studio will be as simple as setting `content.editor: true` in your `nuxt.config.ts` file. This simplification means no extra module is required for Studio, making setup faster.
 - **Unified documentation**: With the module integration, we’ll also merge the [Content](https://content.nuxt.com) and [Studio](https://nuxt.studio) documentation and websites into one comprehensive resource. Only the Studio platform (available once the user is logged) will remain as a standalone site.
-- **Take advantage of data structures and collections in Studio**: With Nuxt Content v3, the Studio platform will support and adapt its behaviour to [collections](https://content.nuxt.com/getting-started/collections) and user-defined schemas. This enhancement will allow schema-generated forms for both YAML and JSON files as well as front-matter within Markdown files.
+- **Take advantage of data structures and collections in Studio**: With Nuxt Content v3, the Studio platform will support and adapt its behaviour to [collections](/docs/collections/define) and user-defined schemas. This enhancement will allow schema-generated forms for both YAML and JSON files as well as front-matter within Markdown files.
 
 These updates reflect our commitment to providing the best content editing platform for your Nuxt website. Stay tuned!

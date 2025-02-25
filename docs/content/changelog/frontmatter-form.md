@@ -25,12 +25,12 @@ You can now edit your markdown front-matter without writing in the `YAML` syntax
 
 ## What is the front-matter?
 
-Front-matter is a convention used in Markdown-based CMSs to provide metadata for pages, such as descriptions, titles, and more. In [Nuxt Content](https://content.nuxt.com/usage/markdown#front-matter), the front-matter uses the YAML syntax.
+Front-matter is a convention used in Markdown-based CMSs to provide metadata for pages, such as descriptions, titles, and more. In [Nuxt Content](/docs/files/markdown#front-matter), the front-matter uses the YAML syntax.
 
 ::callout
 ---
 icon: i-ph-info
-to: https://content.nuxt.com/usage/markdown#front-matter
+to: /docs/files/markdown#front-matter
 ---
 For more detailed information about front-matter syntax, visit the Nuxt Content documentation.
 ::

@@ -1,13 +1,13 @@
 import type { PageCollectionItemBase } from '@nuxt/content'
 import { withBase } from 'ufo'
-import { onLLMsGenerate, onLLMsGenerateFull } from 'nuxt-llms/runtime'
+import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
 // @ts-expect-error - typecheck does not detect defineNitroPlugin in imports
 import { defineNitroPlugin, queryCollection } from '#imports'
 
-export default defineNitroPlugin(() => {
-  onLLMsGenerate(async (event, options) => {
+export default defineNitroPlugin((nitroApp: NitroApp) => {
+  nitroApp.hooks.hook('llms:generate', async (event, options) => {
     prepareContentSections(options.sections)
 
     const sectionsToRemove = [] as string[]
@@ -49,7 +49,7 @@ export default defineNitroPlugin(() => {
     })
   })
 
-  onLLMsGenerateFull(async (event, options, contents) => {
+  nitroApp.hooks.hook('llms:generate:full', async (event, options, contents) => {
     prepareContentSections(options.sections)
 
     const generateDocument = await createDocumentGenerator()

@@ -34,7 +34,7 @@ This article explains the technical processes behind the visual editor, explorin
 
 ![Edit directly markdown on Nuxt Studio](/blog/markdown-editor.webp)
 
-The Markdown editor in Nuxt Studio provides full control over your content, allowing you to write directly in [MDC](https://content.nuxt.com/usage/markdown) (an empowered Markdown syntax). This syntax enables integration of Vue components directly into your Markdown files, offering more flexibility to structure your pages.
+The Markdown editor in Nuxt Studio provides full control over your content, allowing you to write directly in [MDC](/docs/files/markdown) (an empowered Markdown syntax). This syntax enables integration of Vue components directly into your Markdown files, offering more flexibility to structure your pages.
 
 When your file is saved with the Markdown editor, the content is stored exactly as you've written it, preserving all specific syntax and formatting. This editor is ideal for users comfortable with Markdown who want precise control over the layout and structure of their content.
 
@@ -60,7 +60,7 @@ As the Visual Editor translates the visual formatting back into Markdown, it app
 
 #### **Critical Changes**
 
-Ideally, every feature in Markdown has a direct and accurate equivalent in the Visual Editor. We've built custom TipTap extensions to support custom MDC syntax such as [Vue components](https://content.nuxt.com/usage/markdown#vue-components) edition or [front-matter](https://content.nuxt.com/usage/markdown#front-matter). However, in rare cases, particularly with complex or unconventional Markdown elements, the Visual Editor may not fully support or correctly interpret these elements. When this happens, the editor might approximate, simplify, or even omit these elements during the parsing process.
+Ideally, every feature in Markdown has a direct and accurate equivalent in the Visual Editor. We've built custom TipTap extensions to support custom MDC syntax such as [Vue components](/docs/files/markdown#vue-components) edition or [front-matter](/docs/files/markdown#front-matter). However, in rare cases, particularly with complex or unconventional Markdown elements, the Visual Editor may not fully support or correctly interpret these elements. When this happens, the editor might approximate, simplify, or even omit these elements during the parsing process.
 
 Such discrepancies can result in data loss or regressions when converting back to Markdown. While these occurrences are rare, they can disrupt the intended display or functionality of your content.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/nuxt/content/compare/v3.2.1...v3.2.2) (2025-02-24)
+
+### Bug Fixes
+
+* **client-database:** separate db init from collection dump fetch ([#3188](https://github.com/nuxt/content/issues/3188)) ([82425a5](https://github.com/nuxt/content/commit/82425a56edee43d95930b456c83e108ad3859b47))
+* **search:** invalid helper naming ([895c220](https://github.com/nuxt/content/commit/895c22055c382ceedbd2d9106014fdadbdfd7bee)), closes [#3186](https://github.com/nuxt/content/issues/3186)
+
 ## [3.2.1](https://github.com/nuxt/content/compare/v3.2.0...v3.2.1) (2025-02-21)
 
 ### Bug Fixes
