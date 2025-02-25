@@ -326,7 +326,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // If there is more tha one statement, insert as many hash as necessary
       insertedRecordsHashList.push(...list.flatMap(([, sql, hash]) => Array(sql.length).fill(hash)))
 
-      collectionQueries.push(...list.flatMap(([hash, sql]) => `/* ${hash} */ ${sql}`))
+      collectionQueries.push(...list.flatMap(([hash, sql]) => sql.map(q => `/* ${hash} */ ${q}`)))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
