@@ -338,7 +338,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
       generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries.map(q => `/* starting_init */ ${q}`),
 
       // Insert queries for the collection
       ...collectionQueries,
@@ -346,7 +346,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // and finally when we are finished, we update the info table to say that the init is done
       // NOTE: the comment at the beginning of line is to force the dump extraction to execute this line
       // all lines without a comment are considered structure related and are skipped if the structure has not changed
-      `/* successful-init */ UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+      `/* successful_init */ UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
     ]
   }
 
