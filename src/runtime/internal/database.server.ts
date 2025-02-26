@@ -70,8 +70,6 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
-  console.log('before', before)
-
   if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
     // database version is not supported, drop the info table
     await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
@@ -127,7 +125,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
   let hashesInDb: string[] = []
 
-  const CHECKSUM_REGEXP = /\/\* checksum: (\w+) \*\/$/
+  const CHECKSUM_REGEXP = /-- checksum: (\w+)$/
 
   if (unchangedStructure) {
     // get the list of hash to insert
@@ -155,14 +153,14 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
     if (unchangedStructure) {
-      // skip any line that is structure related,
-      // the structure is unchanged
-      if (/\/\* structure \*\/$/.test(sql)) {
+      // Skip any line that is structure related:
+      // since the structure is unchanged
+      if (sql.endsWith('-- structure')) {
         return Promise.resolve()
       }
 
-      // skip any record whose hash is already in the DB
-      // we do not need to insert what is already there
+      // Skip any record whose hash is already in the DB:
+      // We do not need to insert what is already there
       const hash = CHECKSUM_REGEXP.exec(sql)?.[1]
       if (hash && hashesInDb.includes(hash)) {
         return Promise.resolve()

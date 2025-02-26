@@ -254,7 +254,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
-      .split('\n').map(q => `${q} /* structure */`)
+      .split('\n').map(q => `${q} -- structure`)
 
     if (!collection.source) {
       continue
@@ -321,7 +321,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
 
-      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} /* checksum: ${hash} */`)))
+      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} -- checksum: ${hash}`)))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
@@ -333,7 +333,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // so we create a new entry in the info table saying that it is not ready yet
       // NOTE: all queries having the structure comment at the end, will be ignored at init if no
       // structure changes are detected in the structureVersion
-      `${generateCollectionTableDefinition(infoCollection, { drop: false })} /* structure */`,
+      `${generateCollectionTableDefinition(infoCollection, { drop: false })} -- structure`,
       ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
 
       // Insert queries for the collection
