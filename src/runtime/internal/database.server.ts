@@ -146,7 +146,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // in D1, there is a bug where semicolons and comments can't work together
     // so we need to split the SQL and remove the comment
     // @see https://github.com/cloudflare/workers-sdk/issues/3892
-    const [statement, hash] = sql.split(' -- ')
+    const hash = sql.split(' -- ').pop()
+    const statement = sql.substring(0, -hash.length - 4)
 
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
