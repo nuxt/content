@@ -321,7 +321,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
 
-      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} -- checksum: ${hash}`)))
+      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} -- ${hash}`)))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
@@ -334,13 +334,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // NOTE: all queries having the structure comment at the end, will be ignored at init if no
       // structure changes are detected in the structureVersion
       `${generateCollectionTableDefinition(infoCollection, { drop: false })} -- structure`,
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries,
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries.map(row => `${row} -- meta`),
 
       // Insert queries for the collection
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'; -- meta`,
     ]
   }
 
