@@ -127,14 +127,14 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   if (unchangedStructure) {
     // get the list of hash to insert
-    const hashListFromTheDump: string[] = dump.map(row => row.split(' -- ').pop()).filter(Boolean) as string[]
+    const hashListFromTheDump = new Set(dump.map(row => row.split(' -- ').pop()).filter(Boolean))
 
     // get the list of hash in the database
     const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
     hashesInDb = hashesInDbRecords.map(r => r.__hash__)
 
     // get the list of hash to delete
-    const hashesToDelete = hashesInDb.filter(hash => !hashListFromTheDump.includes(hash))
+    const hashesToDelete = hashesInDb.filter(hash => !hashListFromTheDump.has(hash))
     if (hashesToDelete.length) {
       await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${hashesToDelete.map(() => '?').join(',')})`, hashesToDelete)
     }
