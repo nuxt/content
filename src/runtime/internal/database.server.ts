@@ -60,11 +60,6 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-/**
- * Timeout for waiting for another request to finish the database initialization
- */
-const REQUEST_TIMEOUT = 90
-
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
   const db = loadDatabaseAdapter(config)
 
@@ -90,26 +85,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       // then respond that the database is ready
       // NOTE: only wait if the version is the same so if the previous init
       // was interrupted or has failed, it will not block the new init
-      let iterationCount = 0
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(async () => {
-          const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ ready: true }))
+      await waitUntilDatabaseIsReady(db, collection)
 
-          if (ready) {
-            clearInterval(interval)
-            resolve(0)
-          }
-
-          // after timeout is reached, give up and stop the query
-          // it has to be that initialization has failed
-          if (iterationCount++ > REQUEST_TIMEOUT) {
-            clearInterval(interval)
-            reject(new Error('Waiting for another database initialization timed out'))
-          }
-        }, 1000)
-      }).catch((e) => {
-        throw e
-      })
       return true
     }
 
@@ -123,30 +100,31 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   }
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
-  let hashesInDb: string[] = []
+  const dumpLinesHash = dump.map(row => row.split(' -- ').pop())
+  let hashesInDb = new Set<string>()
 
   if (unchangedStructure) {
     // get the list of hash to insert
-    const hashListFromTheDump = new Set(dump.map(row => row.split(' -- ').pop()).filter(Boolean))
+    const hashListFromTheDump = new Set(dumpLinesHash)
 
     // get the list of hash in the database
     const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
-    hashesInDb = hashesInDbRecords.map(r => r.__hash__)
+    hashesInDb = new Set(hashesInDbRecords.map(r => r.__hash__))
 
     // get the list of hash to delete
-    const hashesToDelete = hashesInDb.filter(hash => !hashListFromTheDump.has(hash))
-    if (hashesToDelete.length) {
-      await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${hashesToDelete.map(() => '?').join(',')})`, hashesToDelete)
+    const hashesToDelete = hashesInDb.difference(hashListFromTheDump)
+    if (hashesToDelete.size) {
+      await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${Array(hashesToDelete.size).fill('?').join(',')})`, Array.from(hashesToDelete))
     }
   }
 
-  await dump.reduce(async (prev: Promise<void>, sql: string) => {
+  await dump.reduce(async (prev: Promise<void>, sql: string, index: number) => {
     await prev
 
     // in D1, there is a bug where semicolons and comments can't work together
     // so we need to split the SQL and remove the comment
     // @see https://github.com/cloudflare/workers-sdk/issues/3892
-    const hash = sql.split(' -- ').pop()
+    const hash = dumpLinesHash[index]
     const statement = sql.substring(0, -hash.length - 4)
 
     // If the structure has not changed,
@@ -161,7 +139,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
       // Skip any record whose hash is already in the DB:
       // We do not need to insert what is already there
-      if (hashesInDb.includes(hash)) {
+      if (hashesInDb.has(hash)) {
         return Promise.resolve()
       }
     }
@@ -174,6 +152,45 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const after = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
+}
+
+/**
+ * Timeout for waiting for another request to finish the database initialization
+ */
+const REQUEST_TIMEOUT = 90
+
+/**
+ * Wait until another request has finished the database initialization
+ * @param db - Database adapter
+ * @param collection - Collection name
+ */
+async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string) {
+  let iterationCount = 0
+  let interval: NodeJS.Timer
+  await new Promise((resolve, reject) => {
+    interval = setInterval(async () => {
+      const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+        .catch(() => ({ ready: true }))
+
+      if (ready) {
+        clearInterval(interval)
+        resolve(0)
+      }
+
+      // after timeout is reached, give up and stop the query
+      // it has to be that initialization has failed
+      if (iterationCount++ > REQUEST_TIMEOUT) {
+        clearInterval(interval)
+        reject(new Error('Waiting for another database initialization timed out'))
+      }
+    }, 1000)
+  }).catch((e) => {
+    throw e
+  }).finally(() => {
+    if (interval) {
+      clearInterval(interval)
+    }
+  })
 }
 
 async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
