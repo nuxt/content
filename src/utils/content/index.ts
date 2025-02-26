@@ -44,7 +44,7 @@ async function getHighlightPluginInstance(options: HighlighterOptions) {
 async function _getHighlightPlugin(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
   if (!highlightPlugin || highlightPlugin.key !== key) {
-    const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', 'typescript', ...(options.langs || [])]))
+    const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'typescript', ...(options.langs || [])]))
     const themesObject = typeof options.theme === 'string' ? { default: options.theme } : options.theme || { default: 'material-theme-palenight' }
     const bundledThemes = await Promise.all(Object.entries(themesObject)
       .map(async ([name, theme]) => [
