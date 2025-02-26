@@ -95,7 +95,7 @@ describe('basic', async () => {
     })
   })
 
-  describe('refine retrived document', () => {
+  describe('refine retrieved document', () => {
     test('retrieve document', async () => {
       const doc: Record<string, unknown> = await $fetch('/api/content/get?path=/')
 

@@ -5,9 +5,10 @@ interface Window {
 declare module '#content/manifest' {
   const manifest: Record<string, unknown>
   const checksums: Record<string, string>
+  const checksumsStructure: Record<string, string>
   const tables: Record<string, string>
 
-  export { manifest as default, checksums, tables }
+  export { manifest as default, checksums, checksumsStructure, tables }
 }
 
 declare module '#content/components' {

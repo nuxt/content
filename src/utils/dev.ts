@@ -153,7 +153,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
         db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
       }
 
-      const insertQuery = generateCollectionInsert(collection, JSON.parse(parsedContent))
+      const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
       await socket.broadcast(collection, keyInCollection, insertQuery)
     }
   }

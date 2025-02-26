@@ -1,4 +1,5 @@
 import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
+import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys } from '../runtime/internal/schema'
 import type { ParsedContentFile } from '../types'
@@ -84,11 +85,13 @@ export function resolveCollections(collections: Record<string, DefinedCollection
     schema: z.object({
       id: z.string(),
       version: z.string(),
+      structureVersion: z.string(),
       ready: z.boolean(),
     }),
     extendedSchema: z.object({
       id: z.string(),
       version: z.string(),
+      structureVersion: z.string(),
       ready: z.boolean(),
     }),
     fields: {},
@@ -139,7 +142,7 @@ export const MAX_SQL_QUERY_SIZE = 100000
 export const SLICE_SIZE = 70000
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): string[] {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
@@ -181,12 +184,19 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     }
   })
 
+  const valuesHash = hash(values)
+
+  values.push(`'${valuesHash}'`)
+
   let index = 0
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
   if (sql.length < MAX_SQL_QUERY_SIZE) {
-    return [sql]
+    return {
+      queries: [sql],
+      hash: valuesHash,
+    }
   }
 
   // Split the SQL into multiple statements:
@@ -210,12 +220,13 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       )
       sliceIndex += SLICE_SIZE
     }
-    return SQLQueries
+    return { queries: SQLQueries, hash: valuesHash }
   }
 
-  return [
-    sql,
-  ]
+  return {
+    queries: [sql],
+    hash: valuesHash,
+  }
 }
 
 // Convert a collection with Zod schema to SQL table definition
@@ -263,6 +274,9 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
 
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
+
+  // add __hash__ field for inserts
+  sqlFields.push('"__hash__" TEXT UNIQUE')
 
   let definition = `CREATE TABLE IF NOT EXISTS ${collection.tableName} (${sqlFields.join(', ')});`
 
