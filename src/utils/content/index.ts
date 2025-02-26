@@ -53,7 +53,7 @@ async function _getHighlightPlugin(options: HighlighterOptions) {
       ]))
     const bundledLangs = await Promise.all(langs.map(async lang => [
       typeof lang === 'string' ? lang : (lang as unknown as LanguageRegistration).name,
-      typeof lang === 'string' ? await import(`@shikijs/langs/${lang}`).then(m => m.default || m) : lang,
+      typeof lang === 'string' ? await import(`@shikijs/langs/${lang}.mjs`).then(m => m.default || m) : lang,
     ]))
 
     const highlighter = createShikiHighlighter({
