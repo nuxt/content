@@ -143,12 +143,15 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   await dump.reduce(async (prev: Promise<void>, sql: string) => {
     await prev
 
+    // in D1, there is a bug where semicolons and comments can't work together
+    // so we need to split the SQL and remove the comment
+    // @see https://github.com/cloudflare/workers-sdk/issues/3892
+    const [statement, hash] = sql.split(' -- ')
+
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
     if (unchangedStructure) {
-      const hash = sql.split(' -- ').pop()
-
       // Skip any line that is structure related:
       // since the structure is unchanged
       if (hash === 'structure') {
@@ -162,7 +165,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       }
     }
 
-    await db.exec(sql).catch((err: Error) => {
+    await db.exec(statement).catch((err: Error) => {
       const message = err.message || 'Unknown error'
       console.error(`Failed to execute SQL ${sql}: ${message}`)
     })
