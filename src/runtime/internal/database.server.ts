@@ -70,6 +70,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
+  console.log('before', before)
+
   if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
     // database version is not supported, drop the info table
     await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
@@ -159,9 +161,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
         return Promise.resolve()
       }
 
-      // skip any record whose hash is not already in the DB
+      // skip any record whose hash is already in the DB
+      // we do not need to insert what is already there
       const hash = CHECKSUM_REGEXP.exec(sql)?.[1]
-      if (hash && !hashesInDb.includes(hash)) {
+      if (hash && hashesInDb.includes(hash)) {
         return Promise.resolve()
       }
     }
