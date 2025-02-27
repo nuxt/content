@@ -70,8 +70,14 @@ export function parseGitHubUrl(url: string) {
   if (match) {
     const org = match[1]
     const repo = match[2]
-    const branch = match[3] || 'main' // Default to 'main' if no branch is provided
-    const path = match[4] || ''
+    let branch = match[3] || 'main' // Default to 'main' if no branch is provided
+    let path = match[4] || ''
+
+    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
+      const pathParts = path.split('/')
+      branch = join(branch, pathParts[0])
+      path = pathParts.slice(1).join('/')
+    }
 
     return {
       org: org,
