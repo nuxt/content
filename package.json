@@ -59,7 +59,7 @@
     "c12": "^2.0.4",
     "chokidar": "^4.0.3",
     "consola": "^3.4.0",
-    "db0": "^0.2.4",
+    "db0": "^0.3.1",
     "defu": "^6.1.4",
     "destr": "^2.0.3",
     "fast-glob": "^3.3.3",
@@ -138,7 +138,7 @@
     "typescript": "5.7.3",
     "vitest": "^3.0.7",
     "vue-tsc": "^2.2.4",
-    "wrangler": "^3.110.0"
+    "wrangler": "^3.111.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
