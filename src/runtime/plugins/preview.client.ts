@@ -1,7 +1,8 @@
 import type { PublicRuntimeConfig } from '@nuxt/content'
+import type { NuxtApp } from 'nuxt/app'
 import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest } from '#imports'
 
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp: NuxtApp) => {
   const previewConfig: PublicRuntimeConfig['preview'] = useRuntimeConfig().public.preview || {}
   const route = useRoute()
   const previewToken = useCookie('previewToken', { sameSite: 'none', secure: true })

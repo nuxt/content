@@ -143,7 +143,8 @@
   "resolutions": {
     "@nuxt/content": "workspace:*",
     "@nuxt/eslint-config": "^1.1.0",
-    "@nuxt/devtools-kit": "1.7.0"
+    "@nuxt/devtools-kit": "1.7.0",
+    "vite": "6.1.1"
   },
   "packageManager": "pnpm@9.15.6",
   "unbuild": {
