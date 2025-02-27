@@ -127,7 +127,19 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
     write: true,
     getContents: ({ app, nuxt, options }) => {
       const componentsMap = app.components
-        .filter(c => !c.island && (nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global))
+        .filter((c) => {
+          // Ignore island components
+          if (c.island) {
+            return false
+          }
+
+          // Ignore css modules
+          if (c.filePath.endsWith('.css')) {
+            return false
+          }
+
+          return nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global
+        })
         .reduce((map, c) => {
           map[c.pascalName] = map[c.pascalName] || [
             c.pascalName,
