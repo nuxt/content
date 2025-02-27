@@ -21,7 +21,7 @@ plans:
     button:
       label: Get started for free
       color: neutral
-      to: ''
+      to: 'https://nuxt.studio'
     cycle: ''
   team:
     title: Team
@@ -40,7 +40,7 @@ plans:
       - All solo features
     button:
       label: Start 14-day free trial
-      to: ''
+      to: 'https://nuxt.studio'
       target: _blank
   unlimited:
     title: Unlimited
@@ -56,7 +56,7 @@ plans:
       - Priority support
     button:
       label: Start 14-day free trial
-      to: ''
+      to: 'https://nuxt.studio'
       target: _blank
 features:
   title: All Features
