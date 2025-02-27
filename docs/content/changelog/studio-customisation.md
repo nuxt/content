@@ -80,6 +80,8 @@ Primitive Zod types are automatically mapped to appropriate form inputs in **Stu
 - **Arrays of strings** → List of badge inputs
 - **Arrays of objects** → Accordion of items with embedded form
 
+:video{autoplay controls loop poster="https://res.cloudinary.com/nuxt/video/upload/v1740679550/arrayobjectandstring_r1jpvz.jpg" src="https://res.cloudinary.com/nuxt/video/upload/v1740679550/arrayobjectandstring_r1jpvz.mp4"}
+
 ### Custom Inputs Mapping
 
 Content goes beyond primitive types. You can customise form fields using the `editor` method, which extends Zod types with metadata to empower editor interface.
