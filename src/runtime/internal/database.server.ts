@@ -26,7 +26,6 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {
       return db.prepare(sql).all(...params)
-        .then(result => 'results' in result && Array.isArray(result.results) ? result.results : result)
         .then(result => (result || []).map((item: unknown) => refineContentFields(sql, item)))
     },
     first: async (sql, params = []) => {
