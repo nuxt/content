@@ -112,7 +112,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     : undefined
 
   // Load transformers
-  const jiti = createJiti(nuxt.options.rootDir)
+  const jiti = createJiti(nuxt?.options?.rootDir)
   const extraTransformers: ContentTransformer[] = await Promise.all(transformers.map(async (transformer) => {
     const resolved = resolveAlias(transformer, nuxt?.options?.alias)
 
