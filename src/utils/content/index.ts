@@ -6,6 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
+import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
@@ -111,13 +112,15 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     : undefined
 
   // Load transformers
+  const jiti = createJiti(nuxt.options.rootDir)
   const extraTransformers: ContentTransformer[] = await Promise.all(transformers.map(async (transformer) => {
     const resolved = resolveAlias(transformer, nuxt?.options?.alias)
-    return import(resolved).then(m => m.default || m).catch((e: unknown) => {
+
+    return jiti.import(resolved).then(m => (m as { default: ContentTransformer }).default || m).catch((e: unknown) => {
       logger.error(`Failed to load transformer ${transformer}`, e)
       return false
     })
-  })).then(transformers => transformers.filter(Boolean))
+  })).then(transformers => transformers.filter(Boolean)) as ContentTransformer[]
 
   const parserOptions = {
     pathMeta: pathMeta,
