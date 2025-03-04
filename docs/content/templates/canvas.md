@@ -13,7 +13,7 @@ name: canvas
 owner: HugoRCD
 image1: /templates/canvas-portfolio-1.png
 image2: /templates/canvas-portfolio-2.png
-draft: false
+draft: true
 image3: /templates/canvas-portfolio-3.png
 ---
 
