@@ -124,7 +124,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // so we need to split the SQL and remove the comment
     // @see https://github.com/cloudflare/workers-sdk/issues/3892
     const hash = dumpLinesHash[index]
-    const statement = sql.substring(0, -hash.length - 4)
+    const statement = sql.substring(0, sql.length - hash.length - 4)
 
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
