@@ -125,6 +125,8 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // @see https://github.com/cloudflare/workers-sdk/issues/3892
     const hash = dumpLinesHash[index]
     const statement = sql.substring(0, -hash.length - 4)
+    console.log('hash', hash)
+    console.log('statement', statement)
 
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
