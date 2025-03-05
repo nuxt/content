@@ -4,8 +4,13 @@ import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import FastGlob from 'fast-glob'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
 import { downloadRepository, parseGitHubUrl } from './git'
+import { logger } from './dev'
 
 export function defineLocalSource(source: CollectionSource | ResolvedCollectionSource): ResolvedCollectionSource {
+  if (source.include.startsWith('./') || source.include.startsWith('../')) {
+    logger.warn('Collection source should not start with `./` or `../`.')
+    source.include = source.include.replace(/^(\.\/|\.\.\/|\/)*/, '')
+  }
   const { fixed } = parseSourceBase(source)
   const resolvedSource: ResolvedCollectionSource = {
     _resolved: true,
