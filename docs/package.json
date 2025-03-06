@@ -19,7 +19,7 @@
     "nuxt-llms": "^0.1.0",
     "nuxt-og-image": "^4.1.4",
     "prettier": "^3.5.2",
-    "shiki-transformer-color-highlight": "^0.2.0",
+    "shiki-transformer-color-highlight": "^1.0.0",
     "ufo": "^1.5.4",
     "valibot": "^0.42.1",
     "yup": "^1.6.1",
