@@ -65,36 +65,36 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
 export function defineBitbucketSource(
   source: CollectionSource,
 ): ResolvedCollectionSource {
-  const resolvedSource = defineLocalSource(source);
+  const resolvedSource = defineLocalSource(source)
 
   resolvedSource.prepare = async ({ rootDir }) => {
-    const repository =
-      source?.repository && parseBitBucketUrl(source.repository!);
+    const repository
+      = source?.repository && parseBitBucketUrl(source.repository!)
     if (repository) {
-      const { org, repo, branch } = repository;
+      const { org, repo, branch } = repository
       resolvedSource.cwd = join(
         rootDir,
-        ".data",
-        "content",
+        '.data',
+        'content',
         `bitbucket-${org}-${repo}-${branch}`,
-      );
+      )
 
-      let headers: Record<string, string> = {};
+      let headers: Record<string, string> = {}
       if (resolvedSource.authBasic) {
-        const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`;
-        const encodedCredentials = btoa(credentials);
+        const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`
+        const encodedCredentials = btoa(credentials)
         headers = {
           Authorization: `Basic ${encodedCredentials}`,
-        };
+        }
       }
 
-      const url = `https://bitbucket.org/${org}/${repo}/get/${branch}.tar.gz`;
+      const url = `https://bitbucket.org/${org}/${repo}/get/${branch}.tar.gz`
 
-      await downloadRepository(url, resolvedSource.cwd!, { headers });
+      await downloadRepository(url, resolvedSource.cwd!, { headers })
     }
   }
 
-  return resolvedSource;
+  return resolvedSource
 }
 
 export function parseSourceBase(source: CollectionSource) {

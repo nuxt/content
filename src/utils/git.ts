@@ -90,7 +90,7 @@ export function parseGitHubUrl(url: string) {
   return null
 }
 
-export function parseBitBucketUrl(url: string){
+export function parseBitBucketUrl(url: string) {
   const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/get\/([^.]+)\.tar.gz)?/
   const bitbucketMatch = url.match(bitbucketRegex)
 
