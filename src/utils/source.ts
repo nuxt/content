@@ -3,7 +3,7 @@ import { join } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import FastGlob from 'fast-glob'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
-import { downloadRepository, parseGitHubUrl } from './git'
+import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
 import { logger } from './dev'
 
 export function defineLocalSource(source: CollectionSource | ResolvedCollectionSource): ResolvedCollectionSource {
@@ -54,6 +54,41 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
       const url = headers.Authorization
         ? `https://api.github.com/repos/${org}/${repo}/tarball/${branch}`
         : `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`
+
+      await downloadRepository(url, resolvedSource.cwd!, { headers })
+    }
+  }
+
+  return resolvedSource
+}
+
+export function defineBitbucketSource(
+  source: CollectionSource,
+): ResolvedCollectionSource {
+  const resolvedSource = defineLocalSource(source)
+
+  resolvedSource.prepare = async ({ rootDir }) => {
+    const repository
+      = source?.repository && parseBitBucketUrl(source.repository!)
+    if (repository) {
+      const { org, repo, branch } = repository
+      resolvedSource.cwd = join(
+        rootDir,
+        '.data',
+        'content',
+        `bitbucket-${org}-${repo}-${branch}`,
+      )
+
+      let headers: Record<string, string> = {}
+      if (resolvedSource.authBasic) {
+        const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`
+        const encodedCredentials = btoa(credentials)
+        headers = {
+          Authorization: `Basic ${encodedCredentials}`,
+        }
+      }
+
+      const url = `https://bitbucket.org/${org}/${repo}/get/${branch}.tar.gz`
 
       await downloadRepository(url, resolvedSource.cwd!, { headers })
     }

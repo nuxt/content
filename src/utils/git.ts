@@ -90,6 +90,33 @@ export function parseGitHubUrl(url: string) {
   return null
 }
 
+export function parseBitBucketUrl(url: string) {
+  const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/src\/([^/]+))?(?:\/(.+))?/
+  const bitbucketMatch = url.match(bitbucketRegex)
+
+  if (bitbucketMatch) {
+    const org = bitbucketMatch[1]
+    const repo = bitbucketMatch[2]
+    let branch = bitbucketMatch[3] || 'main' // Default to 'main' if no branch is provided
+    let path = bitbucketMatch[4] || ''
+
+    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
+      const pathParts = path.split('/')
+      branch = join(branch, pathParts[0])
+      path = pathParts.slice(1).join('/')
+    }
+
+    return {
+      org: org,
+      repo: repo,
+      branch: branch,
+      path: path,
+    }
+  }
+
+  return null
+}
+
 export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefined> {
   const remote = await getLocalGitRemote(rootDir)
   if (!remote) {
