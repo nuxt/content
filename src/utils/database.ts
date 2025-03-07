@@ -8,22 +8,6 @@ import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, SqliteData
 import type { ModuleOptions } from '../types/module'
 import { logger } from './dev'
 
-function isSqlite3Available() {
-  if (!isWebContainer()) {
-    return false
-  }
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('sqlite3')
-    return true
-  }
-  catch {
-    logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
-    process.exit(1)
-  }
-}
-
 export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
   if (database.type === 'd1') {
     if (!('bindingName' in database)) {
@@ -44,13 +28,10 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function getDefaultSqliteAdapter() {
-  return process.versions.bun ? 'bunsqlite' : 'sqlite'
-}
-
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1', resolver: Resolver) {
+export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', resolver: Resolver) {
   const databaseConnectors = {
-    sqlite: isSqlite3Available() ? 'db0/connectors/sqlite3' : 'db0/connectors/better-sqlite3',
+    sqlite: findBestSqliteAdapter(),
+    nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
     libsql: 'db0/connectors/libsql/web',
@@ -70,8 +51,7 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig): P
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
 
-  const type = getDefaultSqliteAdapter()
-  return import(type === 'bunsqlite' ? 'db0/connectors/bun-sqlite' : (isSqlite3Available() ? 'db0/connectors/sqlite3' : 'db0/connectors/better-sqlite3'))
+  return import(findBestSqliteAdapter())
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })
@@ -126,5 +106,44 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     insertDevelopmentCache,
     deleteDevelopmentCache,
     dropContentTables,
+  }
+}
+
+function findBestSqliteAdapter() {
+  if (process.versions.bun) {
+    return 'db0/connectors/bun-sqlite'
+  }
+
+  // if node:sqlite is available, use it
+  if (isNodeSqliteAvailable()) {
+    return 'db0/connectors/node-sqlite'
+  }
+
+  return isSqlite3Available() ? 'db0/connectors/sqlite3' : 'db0/connectors/better-sqlite3'
+}
+
+function isNodeSqliteAvailable() {
+  try {
+    const module = globalThis.process?.getBuiltinModule?.('node:sqlite')
+    return Boolean(module)
+  }
+  catch {
+    return false
+  }
+}
+
+function isSqlite3Available() {
+  if (!isWebContainer()) {
+    return false
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('sqlite3')
+    return true
+  }
+  catch {
+    logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
+    process.exit(1)
   }
 }
