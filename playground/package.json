@@ -12,7 +12,7 @@
     "@nuxt/content": "latest",
     "@nuxt/ui-pro": "3.0.0-alpha.13",
     "@nuxthub/core": "^0.8.17",
-    "nuxt": "^3.15.4",
+    "nuxt": "^3.16.0",
     "remark-code-import": "latest",
     "shiki-transformer-color-highlight": "^1.0.0"
   }
