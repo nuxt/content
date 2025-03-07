@@ -91,19 +91,26 @@ export function parseGitHubUrl(url: string) {
 }
 
 export function parseBitBucketUrl(url: string) {
-  const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/get\/([^.]+)\.tar.gz)?/
+  const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/src\/([^/]+))?(?:\/(.+))?/
   const bitbucketMatch = url.match(bitbucketRegex)
 
   if (bitbucketMatch) {
     const org = bitbucketMatch[1]
     const repo = bitbucketMatch[2]
-    const branch = bitbucketMatch[3] || 'main' // Default to 'main' if no branch is provided
+    let branch = bitbucketMatch[3] || 'main' // Default to 'main' if no branch is provided
+    let path = bitbucketMatch[4] || ''
+
+    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
+      const pathParts = path.split('/')
+      branch = join(branch, pathParts[0])
+      path = pathParts.slice(1).join('/')
+    }
 
     return {
       org: org,
       repo: repo,
       branch: branch,
-      path: '',
+      path: path,
     }
   }
 

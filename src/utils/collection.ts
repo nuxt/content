@@ -122,7 +122,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
     }
 
     if (source.repository) {
-      if (source.repository.includes('bitbucket')) {
+      if (source.repository.startsWith('https://bitbucket.org/')) {
         return defineBitbucketSource(source)
       }
       return defineGitHubSource(source)
