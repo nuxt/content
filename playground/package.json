@@ -14,6 +14,6 @@
     "@nuxthub/core": "^0.8.17",
     "nuxt": "^3.15.4",
     "remark-code-import": "latest",
-    "shiki-transformer-color-highlight": "^0.2.0"
+    "shiki-transformer-color-highlight": "^1.0.0"
   }
 }
