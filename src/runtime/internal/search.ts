@@ -1,6 +1,7 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import type { MinimalTree } from '@nuxt/content'
 import { decompressTree } from './abstract-tree'
+import { pick } from './utils'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '~/src/types'
 
 type Section = {
@@ -26,23 +27,25 @@ interface SectionablePage {
   body: MDCRoot
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags: string[] }) {
-  const { ignoredTags = [] } = opts || {}
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T> }) {
+  const { ignoredTags = [], extraFields = [] } = opts || {}
 
   const documents = await queryBuilder
     .where('extension', '=', 'md')
-    .select('path', 'body', 'description', 'title')
+    .select('path', 'body', 'description', 'title', ...(extraFields || []))
     .all()
 
-  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags }))
+  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[] }))
 }
 
-function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignoredTags: string[] }) {
+function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields }: { ignoredTags: string[], extraFields: Array<string> }) {
   const body = (!page.body || page.body?.type === 'root') ? page.body : decompressTree(page.body as unknown as MinimalTree)
   const path = (page.path ?? '')
+  const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
 
   // TODO: title in frontmatter must be added
   const sections: Section[] = [{
+    ...extraFieldsData,
     id: path,
     title: page.title as string || '',
     titles: [],
@@ -79,6 +82,7 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags }: { ignored
       }
 
       sections.push({
+        ...extraFieldsData,
         id: `${path}#${(item as MDCElement).props?.id}`,
         title,
         titles: [...titles],
