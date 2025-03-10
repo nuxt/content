@@ -77,7 +77,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 
   nuxt.hook('close', async () => {
     // Close WebSocket server
-    await websocket.close()
+    await websocket?.close()
     await listener.server.close()
   })
 
