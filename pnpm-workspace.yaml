@@ -3,3 +3,4 @@ packages:
   - "playground"
   - "docs"
   - "examples/*"
+  - "test/fixtures/*"

@@ -12,7 +12,7 @@
     "@nuxt/content": "next",
     "@nuxtjs/i18n": "latest",
     "@nuxt/ui-pro": "next",
-    "nuxt": "latest",
+    "nuxt": "^3.16.0",
     "vue": "latest",
     "vue-router": "latest"
   }

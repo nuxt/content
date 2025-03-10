@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
 import { extract } from 'tar'
-import { findNearestFile } from 'pkg-types'
+import { readGitConfig } from 'pkg-types'
 // @ts-expect-error import does exist
 import gitUrlParse from 'git-url-parse'
 
@@ -180,17 +180,11 @@ export function getGitEnv(): GitInfo {
 
 async function getLocalGitRemote(dir: string) {
   try {
-    // https://www.npmjs.com/package/parse-git-config#options
-    const parseGitConfig = await import('parse-git-config' as string).then(
-      m => m.promise || m.default || m,
-    ) as (opts: { path: string }) => Promise<Record<string, Record<string, string>>>
-    const gitDir = await findNearestFile('.git/config', { startingFrom: dir })
-    const parsed = await parseGitConfig({ path: gitDir })
+    const parsed = await readGitConfig(dir)
     if (!parsed) {
       return
     }
-    const gitRemote = parsed['remote "origin"'].url
-    return gitRemote
+    return parsed.remote['origin'].url
   }
   catch {
     // Ignore error
