@@ -1,7 +1,7 @@
 import { dirname } from 'node:path'
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
-import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions, MdcThemeOptions } from '@nuxtjs/mdc'
+import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
