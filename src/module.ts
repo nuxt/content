@@ -168,7 +168,7 @@ export default defineNuxtModule<ModuleOptions>({
 
       config.handlers ||= []
       config.handlers.push({
-        route: '/api/content/:collection/query',
+        route: '/__nuxt_content/:collection/query',
         handler: resolver.resolve('./runtime/api/query.post'),
       })
 
@@ -185,7 +185,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules ||= {}
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/api/content/${collection.name}/database.sql`] = { prerender: true }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
       }
     })
 
