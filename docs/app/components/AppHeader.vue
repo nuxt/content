@@ -17,7 +17,7 @@ const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => l
     <template #left>
       <NuxtLink
         to="/"
-        class="flex items-end gap-2 font-bold text-xl text-[--ui-text-highlighted] min-w-0"
+        class="flex items-end gap-2 font-bold text-xl text-(--ui-text-highlighted) min-w-0"
         aria-label="Nuxt Content"
       >
         <AppLogo class="w-auto h-6 shrink-0" />
@@ -35,7 +35,7 @@ const linksWithoutIcon = computed(() => links.value.map(({ icon, ...link }) => l
             trailing-icon="i-lucide-chevron-down"
             size="xs"
             class="-mb-[3px] font-semibold rounded-full truncate hidden sm:flex"
-            :class="[open && 'bg-[var(--ui-primary)]/15 ']"
+            :class="[open && 'bg-(--ui-primary)/15 ']"
             :ui="{
               trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' '),
             }"

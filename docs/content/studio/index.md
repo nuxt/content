@@ -51,7 +51,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   GitHub & Google Authentication
-  
+
   #description{unwrap="p"}
   Personalized workspace for each role: developers, writers, and clients.
   :::
@@ -62,7 +62,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Easy content updates
-  
+
   #description{unwrap="p"}
   From Markdown to YAML edition, our visual editor is designed for non technical users.
   :::
@@ -73,7 +73,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Real-time Collaboration
-  
+
   #description{unwrap="p"}
   Write as a team in real-time with our collaboration features.
   :::
@@ -84,7 +84,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   From Code to Edition
-  
+
   #description{unwrap="p"}
   Developers build the foundation while writers can safely edit the content.
   :::
@@ -95,7 +95,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Review before publishing
-  
+
   #description{unwrap="p"}
   Review your changes before making them live on your website.
   :::
@@ -106,7 +106,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Ready-to-use Templates
-  
+
   #description{unwrap="p"}
   Get started quickly with pre-built templates for Saas sites, blogs, docs and more.
   :::
@@ -126,7 +126,7 @@ orientation: horizontal
       },
     })
   </script>
-  
+
   <template>
     <div class="flex items-start gap-3">
       <div class="flex items-center justify-center border rounded-lg p-1.5">
@@ -143,7 +143,7 @@ orientation: horizontal
     </div>
   </template>
   ```
-  
+
   ```mdc [content/index.md]
   ::home-feature
     ---
@@ -155,14 +155,14 @@ orientation: horizontal
     Edit slots and props inside the Notion-like editor.
   ::
   ```
-  
+
     ::::preview-card{icon="i-lucide-eye" label="Editor"}
     ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
     ::::
   :::
 
 #title{unwrap="p"}
-Developers create the [editing experience]{.text-[var(--ui-primary)]}
+Developers create the [editing experience]{.text-(--ui-primary)}
 
 #description
 Developers build the foundation their way: custom components, media library, and site configuration.
@@ -211,10 +211,10 @@ orientation: horizontal
 ---
 :video{autoplay controls loop poster="/assets/home/videos/HomeNotionLikePoster.webp" src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
- 
+
 
 #title{unwrap="p"}
-Let [anyone edit]{.text-[var(--ui-primary)]} your Nuxt Content website
+Let [anyone edit]{.text-(--ui-primary)} your Nuxt Content website
 
 #description
 Teams and clients get a powerful visual editor for content management, from text edition to media management - all without touching code.
@@ -258,7 +258,7 @@ orientation: horizontal
   :::
 
 #title
-[Edit together]{.text-[var(--ui-primary)]} , preview instantly
+[Edit together]{.text-(--ui-primary)} , preview instantly
 
 #description
 Edit content as a team and see your site come to life with live preview. From text editing to component updates, every change reflects your final website design. Experience seamless content creation without delays or manual refreshes.
@@ -301,7 +301,7 @@ Edit content as a team and see your site come to life with live preview. From te
   :::
 
 #title
-The [best way]{.text-[var(--ui-primary)]} to edit your [Nuxt Content]{.text-[var(--ui-primary)]} website
+The [best way]{.text-(--ui-primary)} to edit your [Nuxt Content]{.text-(--ui-primary)} website
 
 #links
   :::u-button
