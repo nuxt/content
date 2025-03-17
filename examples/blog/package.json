@@ -10,7 +10,7 @@
     "dev:prepare": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "^3.0.0-alpha.1",
+    "@nuxt/content": "^3.3.0",
     "nuxt": "^3.16.0"
   }
 }
