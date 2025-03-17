@@ -9,9 +9,9 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@nuxt/content": "next",
+    "@nuxt/content": "latest",
     "@nuxtjs/i18n": "latest",
-    "@nuxt/ui-pro": "next",
+    "@nuxt/ui-pro": "^3.0.0",
     "nuxt": "^3.16.0",
     "vue": "latest",
     "vue-router": "latest"

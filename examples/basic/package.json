@@ -9,7 +9,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@nuxt/content": "next",
+    "@nuxt/content": "latest",
     "nuxt": "^3.16.0",
     "vue": "latest",
     "vue-router": "latest"
