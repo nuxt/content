@@ -25,7 +25,7 @@ const { setLocale, locales, locale } = useI18n()
 </template>
 
 <style>
-@import "tailwindcss";
+@import "tailwindcss" theme(static);
 @import "@nuxt/ui-pro";
 
 @source "../content/**/*";

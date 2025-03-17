@@ -294,7 +294,7 @@ It's no longer required to add `@nuxt/ui` in modules as it is automatically impo
 #### Import Tailwind CSS and Nuxt UI Pro in your CSS
 
 ```css [assets/css/main.css]
-@import "tailwindcss";
+@import "tailwindcss" theme(static);
 @import "@nuxt/ui-pro";
 ```
 
@@ -314,7 +314,7 @@ Nuxt UI v3 uses Tailwind CSS v4 that follows a CSS-first configuration approach.
 - Use the `@source` directive in order for Tailwind to detect classes in `markdown` files.
 
 ```css [assets/css/main.css]
-@import "tailwindcss";
+@import "tailwindcss" theme(static);
 @import "@nuxt/ui-pro";
 
 @source "../content/**/*";
@@ -559,11 +559,12 @@ export default defineContentConfig({
         </template>
   
         <template #title>
-          <MDC :value="page.hero.title" />
+          <MDC cache-key="head-title" :value="page.hero.title" />
         </template>
   
         <MDC
           :value="page.hero.code"
+          cache-key="head-code"
           class="prose prose-primary dark:prose-invert mx-auto"
         />
       </ULandingHero>

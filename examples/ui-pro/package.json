@@ -10,9 +10,7 @@
   },
   "dependencies": {
     "@nuxt/ui-pro": "^3.0.0",
-    "@nuxt/content": "latest",
-    "nuxt": "^3.16.0",
-    "vue": "latest",
-    "vue-router": "latest"
+    "@nuxt/content": "^3.3.0",
+    "nuxt": "^3.16.0"
   }
 }

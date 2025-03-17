@@ -80,7 +80,7 @@
     "ohash": "^1.1.4",
     "pathe": "^2.0.3",
     "pkg-types": "^2.1.0",
-    "remark-mdc": "latest",
+    "remark-mdc": "^3.5.3",
     "scule": "^1.3.0",
     "shiki": "^3.2.1",
     "slugify": "^1.6.6",
