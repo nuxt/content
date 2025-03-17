@@ -42,7 +42,7 @@ export const moduleTemplates = {
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   fullCompressedDump: 'content/database.compressed.mjs',
-  fullRawDump: 'content/database.sql',
+  fullRawDump: 'content/sql_dump',
 }
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
