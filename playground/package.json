@@ -9,11 +9,11 @@
     "dev:prepare": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "3.0.0-alpha.13",
+    "@nuxt/content": "^3.3.0",
+    "@nuxt/ui-pro": "3.0.0",
     "@nuxthub/core": "^0.8.18",
     "nuxt": "^3.16.0",
-    "remark-code-import": "latest",
+    "remark-code-import": "^1.2.0",
     "shiki-transformer-color-highlight": "^1.0.0"
   }
 }
