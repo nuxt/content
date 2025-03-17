@@ -52,13 +52,13 @@
   "dependencies": {
     "@nuxt/kit": "^3.16.0",
     "@nuxtjs/mdc": "^0.15.0",
-    "@shikijs/langs": "^3.1.0",
+    "@shikijs/langs": "^3.2.1",
     "@sqlite.org/sqlite-wasm": "3.49.1-build2",
     "@webcontainer/env": "^1.1.1",
-    "better-sqlite3": "^11.8.1",
+    "better-sqlite3": "^11.9.0",
     "c12": "^2.0.4",
     "chokidar": "^4.0.3",
-    "consola": "^3.4.0",
+    "consola": "^3.4.1",
     "db0": "^0.3.1",
     "defu": "^6.1.4",
     "destr": "^2.0.3",
@@ -82,7 +82,7 @@
     "pkg-types": "^2.1.0",
     "remark-mdc": "latest",
     "scule": "^1.3.0",
-    "shiki": "^3.1.0",
+    "shiki": "^3.2.1",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
@@ -92,7 +92,7 @@
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.1",
     "zod": "^3.24.2",
-    "zod-to-json-schema": "^3.24.3",
+    "zod-to-json-schema": "^3.24.4",
     "zod-to-ts": "^1.2.0"
   },
   "peerDependencies": {
@@ -112,7 +112,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250303.0",
+    "@cloudflare/workers-types": "^4.20250313.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.2.1",
     "@nuxt/eslint-config": "^1.2.0",
@@ -122,7 +122,7 @@
     "@nuxt/test-utils": "^3.17.2",
     "@release-it/conventional-changelog": "^10.0.0",
     "@types/better-sqlite3": "^7.6.12",
-    "@types/bun": "^1.2.4",
+    "@types/bun": "^1.2.5",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^22.13.10",
@@ -135,9 +135,9 @@
     "nuxt": "^3.16.0",
     "release-it": "^18.1.2",
     "typescript": "5.8.2",
-    "vitest": "^3.0.8",
+    "vitest": "^3.0.9",
     "vue-tsc": "^2.2.8",
-    "wrangler": "^3.114.0"
+    "wrangler": "^4.0.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*",
