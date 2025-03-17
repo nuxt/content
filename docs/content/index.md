@@ -8,7 +8,7 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]
@@ -155,7 +155,7 @@ Everything you need for content management
 #description
 Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
 
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute top-0 inset-0
@@ -405,7 +405,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
 ::
 
 ::u-page-section
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]

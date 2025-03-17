@@ -5,7 +5,7 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
@@ -290,7 +290,7 @@ Edit content as a team and see your site come to life with live preview. From te
 ::
 
 ::u-page-section
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
