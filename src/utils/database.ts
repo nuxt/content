@@ -28,9 +28,9 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, options: ModuleOptions }) {
+export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, nativeSqlite?: boolean }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter({ nativeSqlite: opts.options.experimental?.nativeSqlite }),
+    sqlite: findBestSqliteAdapter({ nativeSqlite: opts.nativeSqlite }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
