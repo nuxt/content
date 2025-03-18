@@ -69,14 +69,14 @@ const data = computed(() => {
 const cell = (type: 'solo' | 'team' | 'unlimited', row: any) => {
   const value = row.original[type]
   const color = value === 'Coming soon'
-    ? '!text-[var(--ui-text-muted)]'
-    : type === 'team' ? 'text-[var(--ui-primary)]' : 'text-[var(--ui-text-highlighted)]'
+    ? '!text-(--ui-text-muted)'
+    : type === 'team' ? 'text-(--ui-primary)' : 'text-(--ui-text-highlighted)'
   const background = type === 'team' ? 'bg-gray-300/10 dark:bg-gray-800/50' : ''
-  const borderBottom = row.original.main ? 'border-b border-[var(--ui-color-neutral-100)] dark:border-[var(--ui-color-neutral-800)]' : ''
-  const borderSide = type === 'team' ? 'border-l border-r !border-r-[var(--ui-primary)] !border-l-[var(--ui-primary)]' : ''
-  const borderClosed = type === 'team' && row.original.title?.includes('Commit') ? 'border-b border-b-[var(--ui-primary)] rounded-b-lg' : ''
+  const borderBottom = row.original.main ? 'border-b border-(--ui-color-neutral-100) dark:border-(--ui-color-neutral-800)' : ''
+  const borderSide = type === 'team' ? 'border-l border-r !border-r-(--ui-primary) !border-l-(--ui-primary)' : ''
+  const borderClosed = type === 'team' && row.original.title?.includes('Commit') ? 'border-b border-b-(--ui-primary) rounded-b-lg' : ''
 
-  return h('div', { class: `flex justify-center border-primary p-4 text-[var(--ui-text-highlighted)] ${color} ${background} ${borderBottom} ${borderSide} ${borderClosed}` },
+  return h('div', { class: `flex justify-center border-primary p-4 text-(--ui-text-highlighted) ${color} ${background} ${borderBottom} ${borderSide} ${borderClosed}` },
     typeof value === 'string'
       ? h('span', { class: 'h-5' }, value)
       : value === true
@@ -86,11 +86,11 @@ const cell = (type: 'solo' | 'team' | 'unlimited', row: any) => {
 }
 
 const header = (type: 'solo' | 'team' | 'unlimited') => {
-  const border = type === 'team' ? 'border-l border-r  border-t border-[var(--ui-primary)] rounded-t-lg' : ''
-  const gradient = type === 'team' ? 'bg-gradient-to-b from-[var(--ui-primary)]/10 to-gray-300/10 dark:from-[var(--ui-primary)]/20 dark:to-gray-800/50' : ''
+  const border = type === 'team' ? 'border-l border-r  border-t border-(--ui-primary) rounded-t-lg' : ''
+  const gradient = type === 'team' ? 'bg-gradient-to-b from-(--ui-primary)/10 to-gray-300/10 dark:from-(--ui-primary)/20 dark:to-gray-800/50' : ''
   return h('div', { class: `flex flex-col items-center p-4 ${border} ${gradient}` }, [
     h('span', { class: 'text-lg font-semibold' }, page.value?.plans?.[type]?.title),
-    h('span', { class: 'text-sm text-[var(--ui-text-muted)]' }, `${page.value?.plans?.[type]?.price}${page.value?.plans?.[type]?.cycle}`),
+    h('span', { class: 'text-sm text-(--ui-text-muted)' }, `${page.value?.plans?.[type]?.price}${page.value?.plans?.[type]?.cycle}`),
   ])
 }
 
@@ -100,8 +100,8 @@ const columns: TableColumn<Feature>[] = [
     header: '',
     cell: ({ row }) => {
       return row.original.main
-        ? h('span', { class: 'flex text-[var(--ui-text-highlighted)] font-medium border-b border-[var(--ui-color-neutral-100)] dark:border-[var(--ui-color-neutral-800)] p-4 w-full' }, row.original.title)
-        : h('span', { class: 'text-[var(--ui-text-muted)] p-4' }, row.original.title)
+        ? h('span', { class: 'flex text-(--ui-text-highlighted) font-medium border-b border-(--ui-color-neutral-100) dark:border-(--ui-color-neutral-800) p-4 w-full' }, row.original.title)
+        : h('span', { class: 'text-(--ui-text-muted) p-4' }, row.original.title)
     },
   },
   {
@@ -142,7 +142,7 @@ const columns: TableColumn<Feature>[] = [
     <UPageSection
       :title="page.onboarding.title"
       :ui="{
-        root: 'bg-[var(--ui-bg-elevated)]/25 border-t border-b border-[var(--ui-border)] mt-8 sm:mt-12 lg:mt-16',
+        root: 'bg-(--ui-bg-elevated)/25 border-t border-b border-(--ui-border) mt-8 sm:mt-12 lg:mt-16',
         container: 'py-8 sm:py-12 lg:py-16',
       }"
     >

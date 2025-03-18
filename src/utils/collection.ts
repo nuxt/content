@@ -3,7 +3,7 @@ import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys } from '../runtime/internal/schema'
 import type { ParsedContentFile } from '../types'
-import { defineLocalSource, defineGitHubSource } from './source'
+import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
 import { metaSchema, pageSchema } from './schema'
 import type { ZodFieldType } from './zod'
 import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
@@ -122,6 +122,9 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
     }
 
     if (source.repository) {
+      if (source.repository.startsWith('https://bitbucket.org/')) {
+        return defineBitbucketSource(source)
+      }
       return defineGitHubSource(source)
     }
 

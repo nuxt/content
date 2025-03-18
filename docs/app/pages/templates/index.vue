@@ -36,7 +36,7 @@ useSeoMeta({
             :image="template.mainScreen"
             :to="`/templates/${template.slug}`"
             :ui="{
-              root: 'hover:ring-2 hover:ring-[var(--ui-primary)]',
+              root: 'hover:ring-2 hover:ring-(--ui-primary)',
               description: 'text-pretty',
               image: 'group-hover:scale-100',
               header: 'aspect-auto',
