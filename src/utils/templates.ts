@@ -42,7 +42,7 @@ export const moduleTemplates = {
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   fullCompressedDump: 'content/database.compressed.mjs',
-  fullRawDump: 'content/database.sql',
+  fullRawDump: 'content/sql_dump',
 }
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
@@ -127,7 +127,19 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
     write: true,
     getContents: ({ app, nuxt, options }) => {
       const componentsMap = app.components
-        .filter(c => !c.island && (nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global))
+        .filter((c) => {
+          // Ignore island components
+          if (c.island) {
+            return false
+          }
+
+          // Ignore css modules
+          if (c.filePath.endsWith('.css')) {
+            return false
+          }
+
+          return nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global
+        })
         .reduce((map, c) => {
           map[c.pascalName] = map[c.pascalName] || [
             c.pascalName,
@@ -167,6 +179,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
 
     return [
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
+      `export const checksumsStructure = ${JSON.stringify(manifest.checksumStructure, null, 2)}`,
       '',
       `export const tables = ${JSON.stringify(
         Object.fromEntries(manifest.collections.map(c => [c.name, c.tableName])),

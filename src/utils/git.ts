@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
 import { extract } from 'tar'
-import { findNearestFile } from 'pkg-types'
+import { readGitConfig } from 'pkg-types'
 // @ts-expect-error import does exist
 import gitUrlParse from 'git-url-parse'
 
@@ -70,8 +70,41 @@ export function parseGitHubUrl(url: string) {
   if (match) {
     const org = match[1]
     const repo = match[2]
-    const branch = match[3] || 'main' // Default to 'main' if no branch is provided
-    const path = match[4] || ''
+    let branch = match[3] || 'main' // Default to 'main' if no branch is provided
+    let path = match[4] || ''
+
+    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
+      const pathParts = path.split('/')
+      branch = join(branch, pathParts[0])
+      path = pathParts.slice(1).join('/')
+    }
+
+    return {
+      org: org,
+      repo: repo,
+      branch: branch,
+      path: path,
+    }
+  }
+
+  return null
+}
+
+export function parseBitBucketUrl(url: string) {
+  const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/src\/([^/]+))?(?:\/(.+))?/
+  const bitbucketMatch = url.match(bitbucketRegex)
+
+  if (bitbucketMatch) {
+    const org = bitbucketMatch[1]
+    const repo = bitbucketMatch[2]
+    let branch = bitbucketMatch[3] || 'main' // Default to 'main' if no branch is provided
+    let path = bitbucketMatch[4] || ''
+
+    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
+      const pathParts = path.split('/')
+      branch = join(branch, pathParts[0])
+      path = pathParts.slice(1).join('/')
+    }
 
     return {
       org: org,
@@ -147,17 +180,11 @@ export function getGitEnv(): GitInfo {
 
 async function getLocalGitRemote(dir: string) {
   try {
-    // https://www.npmjs.com/package/parse-git-config#options
-    const parseGitConfig = await import('parse-git-config' as string).then(
-      m => m.promise || m.default || m,
-    ) as (opts: { path: string }) => Promise<Record<string, Record<string, string>>>
-    const gitDir = await findNearestFile('.git/config', { startingFrom: dir })
-    const parsed = await parseGitConfig({ path: gitDir })
+    const parsed = await readGitConfig(dir)
     if (!parsed) {
       return
     }
-    const gitRemote = parsed['remote "origin"'].url
-    return gitRemote
+    return parsed.remote['origin'].url
   }
   catch {
     // Ignore error

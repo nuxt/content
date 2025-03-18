@@ -25,6 +25,7 @@ describe('basic', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     dev: true,
   })
+  console.log('setup')
 
   describe('`content.config.ts`', async () => {
     test('Default collection is defined', async () => {
@@ -57,7 +58,7 @@ describe('basic', async () => {
     })
 
     test('load database', async () => {
-      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url)) })
+      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url)) }, { nativeSqlite: true })
     })
 
     test('content table is created', async () => {
@@ -83,7 +84,7 @@ describe('basic', async () => {
     })
 
     test('is downloadable', async () => {
-      const response: string = await $fetch('/api/content/content/database.sql', { responseType: 'text' })
+      const response: string = await $fetch('/__nuxt_content/content/sql_dump', { responseType: 'text' })
       expect(response).toBeDefined()
 
       const parsedDump = await decompressSQLDump(response as string)
@@ -95,7 +96,7 @@ describe('basic', async () => {
     })
   })
 
-  describe('refine retrived document', () => {
+  describe('refine retrieved document', () => {
     test('retrieve document', async () => {
       const doc: Record<string, unknown> = await $fetch('/api/content/get?path=/')
 

@@ -14,7 +14,7 @@ describe('generateCollectionInsert', () => {
         date: z.date().default(new Date('2022-01-01')),
       }),
     }))!
-    const sql = generateCollectionInsert(collection, {
+    const { queries: sql } = generateCollectionInsert(collection, {
       id: 'foo.md',
       stem: 'foo',
       extension: 'md',
@@ -24,7 +24,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\');',
+      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\', \'vPdICyZ7sjhw1YY4ISEATbCTIs_HqNpMVWHnBWhOOYY\');',
     ].join(''))
   })
 
@@ -39,7 +39,7 @@ describe('generateCollectionInsert', () => {
         date: z.date().default(new Date('2022-01-01')),
       }),
     }))!
-    const sql = generateCollectionInsert(collection, {
+    const { queries: sql } = generateCollectionInsert(collection, {
       id: 'foo.md',
       stem: 'foo',
       extension: 'md',
@@ -53,7 +53,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\');',
+      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\', \'R5zX5zuyfvCtvXPcgINuEjEoHmZnse8kATeDd4V7I-c\');',
     ].join(''))
   })
 
@@ -68,7 +68,7 @@ describe('generateCollectionInsert', () => {
 
     const content = (Array.from({ length: 20000 })).fill('lorem ipsum dolor sit amet - ').map((val, i) => val + i.toString()).join(' ')
 
-    const sql = generateCollectionInsert(collection, {
+    const { queries: sql } = generateCollectionInsert(collection, {
       id: 'foo.md',
       stem: 'foo',
       extension: 'md',
@@ -90,7 +90,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo');`,
+      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg');`,
     ].join(''))
     let index = 1
     while (index < sql.length - 1) {

@@ -63,7 +63,7 @@ describe('empty', async () => {
     })
 
     test('load database', async () => {
-      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)) })
+      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)) }, { nativeSqlite: true })
     })
 
     test('content table is created', async () => {
@@ -82,22 +82,20 @@ describe('empty', async () => {
 
       const parsedDump = await decompressSQLDump(dump)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.includes('INSERT INTO'))).toHaveLength(1)
     })
 
     test('is downloadable', async () => {
-      const response: string = await $fetch('/api/content/content/database.sql', { responseType: 'text' })
+      const response: string = await $fetch('/__nuxt_content/content/sql_dump', { responseType: 'text' })
       expect(response).toBeDefined()
 
       const parsedDump = await decompressSQLDump(response as string)
 
-      expect(parsedDump.filter(item => item.startsWith('DROP TABLE IF EXISTS'))).toHaveLength(1)
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted
-      expect(parsedDump.filter(item => item.startsWith('INSERT INTO'))).toHaveLength(1)
+      expect(parsedDump.filter(item => item.includes('INSERT INTO'))).toHaveLength(1)
     })
   })
 })

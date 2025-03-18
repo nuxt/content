@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     '@nuxthub/core',
   ],
   content: {
+    experimental: {
+      nativeSqlite: true,
+    },
     build: {
       markdown: {
         remarkPlugins: {

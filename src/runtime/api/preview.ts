@@ -31,13 +31,12 @@ export default eventHandler(async () => {
   const runtimeConfig = useRuntimeConfig()
   const { content } = runtimeConfig
   const { preview } = runtimeConfig.public
-  const { database, version } = content as RuntimeConfig['content']
+  const { version } = content as RuntimeConfig['content']
 
   return {
     version,
     preview,
     gitInfo,
-    database,
     collections,
     appConfigSchema,
     appConfig,

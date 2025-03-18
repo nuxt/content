@@ -64,7 +64,7 @@ export default defineContentConfig({
 ```
 
   :::preview-card{icon="i-lucide-eye" label="Generated Form"}
-  ![Form preview](/blog/generated-form.png)
+  ![Form preview](/docs/studio/preview-schema.png)
   :::
 ::
 
@@ -77,6 +77,10 @@ Primitive Zod types are automatically mapped to appropriate form inputs in **Stu
 - **Number** → Number input (counter)
 - **Boolean** → Toggle switch
 - **Enum** → Select dropdown
+- **Arrays of strings** → List of badge inputs
+- **Arrays of objects** → Accordion of items with embedded form
+
+:video{autoplay controls loop poster="https://res.cloudinary.com/nuxt/video/upload/v1740679550/arrayobjectandstring_r1jpvz.jpg" src="https://res.cloudinary.com/nuxt/video/upload/v1740679550/arrayobjectandstring_r1jpvz.mp4"}
 
 ### Custom Inputs Mapping
 

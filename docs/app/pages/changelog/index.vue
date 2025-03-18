@@ -96,11 +96,11 @@ watch(() => arrivedState.bottom, () => {
                 <div class="relative hidden lg:flex lg:min-w-[150px]">
                   <div
                     ref="dots"
-                    class="hidden w-2 h-2 rounded-full lg:block bg-[var(--ui-primary)]"
+                    class="hidden w-2 h-2 rounded-full lg:block bg-(--ui-primary)"
                     :class="{ neon: index === 0 }"
                   />
 
-                  <div class="absolute left-[3.5px] top-0.5 h-full w-[1px] bg-[var(--ui-primary)]" />
+                  <div class="absolute left-[3.5px] top-0.5 h-full w-[1px] bg-(--ui-primary)" />
                 </div>
                 <div class="pb-32">
                   <UBlogPost

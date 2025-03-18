@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.3.0](https://github.com/nuxt/content/compare/v3.2.2...v3.3.0) (2025-03-05)
+
+### Features
+
+* page level caching ([#3158](https://github.com/nuxt/content/issues/3158)) ([f4e4f4c](https://github.com/nuxt/content/commit/f4e4f4ce9fc921c28ee7e1b960b1b16d2f01c560))
+
+### Bug Fixes
+
+* **collection:** detect two part branches ([b0a743b](https://github.com/nuxt/content/commit/b0a743b71cabbd5af761d98e100d216fc00239c0))
+* **database:** remove comments form dump queries ([#3221](https://github.com/nuxt/content/issues/3221)) ([474c224](https://github.com/nuxt/content/commit/474c224c131806601924156e2ff8026d6c0b53e2))
+* **module:** load `ts` transformers ([#3218](https://github.com/nuxt/content/issues/3218)) ([819ab7f](https://github.com/nuxt/content/commit/819ab7fa2df5c4f160f893db67493793d76cd239))
+* **module:** prevent adding css modules in components template ([1a48095](https://github.com/nuxt/content/commit/1a48095503d311501f4997cebc2ab896c88ea617)), closes [#3206](https://github.com/nuxt/content/issues/3206)
+* **preview:** remove db ([ad62971](https://github.com/nuxt/content/commit/ad6297105c6a844540deff3723de02726f3e0317))
+* warn about using `./` and `../` in source ([7a7b3b2](https://github.com/nuxt/content/commit/7a7b3b206c8f7c28e187a732d6cd6850a86163b9)), closes [#3215](https://github.com/nuxt/content/issues/3215)
+
+## [3.2.2](https://github.com/nuxt/content/compare/v3.2.1...v3.2.2) (2025-02-24)
+
+### Bug Fixes
+
+* **client-database:** separate db init from collection dump fetch ([#3188](https://github.com/nuxt/content/issues/3188)) ([82425a5](https://github.com/nuxt/content/commit/82425a56edee43d95930b456c83e108ad3859b47))
+* **search:** invalid helper naming ([895c220](https://github.com/nuxt/content/commit/895c22055c382ceedbd2d9106014fdadbdfd7bee)), closes [#3186](https://github.com/nuxt/content/issues/3186)
+
 ## [3.2.1](https://github.com/nuxt/content/compare/v3.2.0...v3.2.1) (2025-02-21)
 
 ### Bug Fixes

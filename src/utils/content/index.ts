@@ -6,6 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
+import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
@@ -34,69 +35,75 @@ let highlightPlugin: {
 }
 let highlightPluginPromise: Promise<typeof highlightPlugin>
 async function getHighlightPluginInstance(options: HighlighterOptions) {
+  const key = hash(JSON.stringify(options || {}))
+
+  // If the key is different, reset the plugin
+  if (highlightPlugin && highlightPlugin.key !== key) {
+    highlightPlugin = undefined
+    highlightPluginPromise = undefined
+  }
+
+  // If the plugin is not initialized, initialize it
   if (!highlightPlugin) {
-    highlightPluginPromise = highlightPluginPromise || _getHighlightPlugin(options)
+    highlightPluginPromise = highlightPluginPromise || _getHighlightPlugin(key, options)
     await highlightPluginPromise
   }
 
   return highlightPlugin
 }
-async function _getHighlightPlugin(options: HighlighterOptions) {
-  const key = hash(JSON.stringify(options || {}))
-  if (!highlightPlugin || highlightPlugin.key !== key) {
-    const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'ts', 'typescript', ...(options.langs || [])]))
-    const themesObject = typeof options.theme === 'string' ? { default: options.theme } : options.theme || { default: 'material-theme-palenight' }
-    const bundledThemes = await Promise.all(Object.entries(themesObject)
-      .map(async ([name, theme]) => [
-        name,
-        typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`).then(m => m.default || m)) : theme,
-      ]))
-    const bundledLangs = await Promise.all(langs.map(async lang => [
-      typeof lang === 'string' ? lang : (lang as unknown as LanguageRegistration).name,
-      typeof lang === 'string' ? await import(`@shikijs/langs/${lang}`).then(m => m.default || m) : lang,
+async function _getHighlightPlugin(key: string, options: HighlighterOptions) {
+  const langs = Array.from(new Set(['bash', 'html', 'mdc', 'vue', 'yml', 'scss', 'ts', 'typescript', ...(options.langs || [])]))
+  const themesObject = typeof options.theme === 'string' ? { default: options.theme } : options.theme || { default: 'material-theme-palenight' }
+  const bundledThemes = await Promise.all(Object.entries(themesObject)
+    .map(async ([name, theme]) => [
+      name,
+      typeof theme === 'string' ? (await import(`shiki/themes/${theme}.mjs`).then(m => m.default || m)) : theme,
     ]))
+  const bundledLangs = await Promise.all(langs.map(async lang => [
+    typeof lang === 'string' ? lang : (lang as unknown as LanguageRegistration).name,
+    typeof lang === 'string' ? await import(`@shikijs/langs/${lang}`).then(m => m.default || m) : lang,
+  ]))
 
-    const highlighter = createShikiHighlighter({
-      bundledThemes: Object.fromEntries(bundledThemes),
-      // Configure the bundled languages
-      bundledLangs: Object.fromEntries(bundledLangs),
-      engine: createOnigurumaEngine(import('shiki/wasm')),
-      getMdcConfigs: () => Promise.resolve(parserOptions.mdcConfigs),
-    })
+  const highlighter = createShikiHighlighter({
+    bundledThemes: Object.fromEntries(bundledThemes),
+    // Configure the bundled languages
+    bundledLangs: Object.fromEntries(bundledLangs),
+    engine: createOnigurumaEngine(import('shiki/wasm')),
+    getMdcConfigs: () => Promise.resolve(parserOptions.mdcConfigs),
+  })
 
-    highlightPlugin = {
-      key,
-      instance: rehypeHighlight,
-      ...options,
-      options: {
-        highlighter: async (code, lang, theme, opts) => {
-          const result = await highlighter(code, lang, theme, opts)
-          const visitTree = {
-            type: 'element',
-            children: result.tree as Array<unknown>,
-          }
-          if (options.compress) {
-            const stylesMap: Record<string, string> = {}
-            visit(
-              visitTree,
-              node => !!(node as HighlightedNode).properties?.style,
-              (_node) => {
-                const node = _node as HighlightedNode
-                const style = node.properties!.style!
-                stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
-                node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
-                node.properties!.style = undefined
-              },
-            )
+  highlightPlugin = {
+    key,
+    instance: rehypeHighlight,
+    ...options,
+    options: {
+      highlighter: async (code, lang, theme, opts) => {
+        const result = await highlighter(code, lang, theme, opts)
+        const visitTree = {
+          type: 'element',
+          children: result.tree as Array<unknown>,
+        }
+        if (options.compress) {
+          const stylesMap: Record<string, string> = {}
+          visit(
+            visitTree,
+            node => !!(node as HighlightedNode).properties?.style,
+            (_node) => {
+              const node = _node as HighlightedNode
+              const style = node.properties!.style!
+              stylesMap[style] = stylesMap[style] || 's' + hash(style).substring(0, 4)
+              node.properties!.class = `${node.properties!.class || ''} ${stylesMap[style]}`.trim()
+              node.properties!.style = undefined
+            },
+          )
 
-            result.style = Object.entries(stylesMap).map(([style, cls]) => `html pre.shiki code .${cls}, html code.shiki .${cls}{${style}}`).join('') + result.style
-          }
+          result.style = Object.entries(stylesMap).map(([style, cls]) => `html pre.shiki code .${cls}, html code.shiki .${cls}{${style}}`).join('') + result.style
+        }
 
-          return result
-        },
-        theme: Object.fromEntries(bundledThemes),
+        return result
       },
-    }
+      theme: Object.fromEntries(bundledThemes),
+    },
   }
   return highlightPlugin
 }
@@ -111,13 +118,15 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     : undefined
 
   // Load transformers
+  const jiti = createJiti(nuxt?.options?.rootDir)
   const extraTransformers: ContentTransformer[] = await Promise.all(transformers.map(async (transformer) => {
     const resolved = resolveAlias(transformer, nuxt?.options?.alias)
-    return import(resolved).then(m => m.default || m).catch((e: unknown) => {
+
+    return jiti.import(resolved).then(m => (m as { default: ContentTransformer }).default || m).catch((e: unknown) => {
       logger.error(`Failed to load transformer ${transformer}`, e)
       return false
     })
-  })).then(transformers => transformers.filter(Boolean))
+  })).then(transformers => transformers.filter(Boolean)) as ContentTransformer[]
 
   const parserOptions = {
     pathMeta: pathMeta,

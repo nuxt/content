@@ -17,8 +17,9 @@ export default defineNuxtConfig({
 
   app: {
     rootAttrs: {
+      // @ts-expect-error - vaul-drawer-wrapper is not typed
       'vaul-drawer-wrapper': '',
-      'class': 'bg-[--ui-bg]',
+      'class': 'bg-(--ui-bg)',
     },
   },
 
@@ -29,7 +30,11 @@ export default defineNuxtConfig({
   site: {
     url: 'https://content.nuxt.com',
   },
+
   content: {
+    experimental: {
+      nativeSqlite: true,
+    },
     build: {
       markdown: {
         toc: {
@@ -52,11 +57,13 @@ export default defineNuxtConfig({
       noApiRoute: false,
     },
   },
+
   runtimeConfig: {
     public: {
       version: pkg.version,
     },
   },
+
   routeRules: {
     ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
       .split('\n')
@@ -104,6 +111,7 @@ export default defineNuxtConfig({
   image: {
     provider: 'ipx',
   },
+
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',

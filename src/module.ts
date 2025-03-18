@@ -42,7 +42,7 @@ export type * from './types'
  * Database version is used to identify schema changes
  * and drop the info table when the version is not supported
  */
-const databaseVersion = 'v3.2.0'
+const databaseVersion = 'v3.3.0'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -81,10 +81,14 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
+    experimental: {
+      nativeSqlite: false,
+    },
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const manifest: Manifest = {
+      checksumStructure: {},
       checksum: {},
       dump: {},
       components: [],
@@ -161,13 +165,14 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
 
+      const resolveOptions = { resolver, nativeSqlite: options.experimental?.nativeSqlite }
       config.alias ||= {}
-      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolver)
-      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolver)
+      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
+      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
       config.handlers.push({
-        route: '/api/content/:collection/query',
+        route: '/__nuxt_content/:collection/query',
         handler: resolver.resolve('./runtime/api/query.post'),
       })
 
@@ -184,7 +189,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules ||= {}
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/api/content/${collection.name}/database.sql`] = { prerender: true }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
       }
     })
 
@@ -203,6 +208,7 @@ export default defineNuxtModule<ModuleOptions>({
       const fest = await processCollectionItems(nuxt, manifest.collections, options)
 
       // Update manifest
+      manifest.checksumStructure = fest.checksumStructure
       manifest.checksum = fest.checksum
       manifest.dump = fest.dump
       manifest.components = fest.components
@@ -227,7 +233,8 @@ export default defineNuxtModule<ModuleOptions>({
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
-  const db = await getLocalDatabase(options._localDatabase)
+  const collectionChecksumStructure: Record<string, string> = {}
+  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
@@ -251,12 +258,15 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
     const collectionHash = hash(collection)
     const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
-      .split('\n')
+      .split('\n').map(q => `${q} -- structure`)
 
     if (!collection.source) {
       continue
     }
+
     const parse = await createParser(collection, nuxt)
+
+    const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
     for await (const source of collection.source) {
       if (source.prepare) {
@@ -269,7 +279,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       filesCount += _keys.length
 
-      const list: Array<[string, Array<string>]> = []
+      /**
+       * list is an array of tuples
+       * 0: filePath/key
+       * 1: queries
+       * 2: hash
+       */
+      const list: Array<[string, Array<string>, string]> = []
       for await (const chunk of chunks(_keys, 25)) {
         await Promise.all(chunk.map(async (key) => {
           const keyInCollection = join(collection.name, source?.prefix || '', key)
@@ -297,17 +313,19 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               }
             }
 
-            list.push([key, generateCollectionInsert(collection, parsedContent)])
+            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+            list.push([key, queries, hash])
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
           }
         }))
       }
+
       // Sort by file name to ensure consistent order
       list.sort((a, b) => String(a[0]).localeCompare(String(b[0])))
 
-      collectionQueries.push(...list.flatMap(([, sql]) => sql!))
+      collectionQueries.push(...list.flatMap(([, sql, hash]) => sql.map(q => `${q} -- ${hash}`)))
     }
 
     const version = collectionChecksum[collection.name] = `${databaseVersion}--${hash(collectionQueries)}`
@@ -317,14 +335,16 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // by telling everyone that we are setting up the collection so no
       // other request start doing the same work and fail
       // so we create a new entry in the info table saying that it is not ready yet
-      generateCollectionTableDefinition(infoCollection, { drop: false }),
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, ready: false }),
+      // NOTE: all queries having the structure comment at the end, will be ignored at init if no
+      // structure changes are detected in the structureVersion
+      `${generateCollectionTableDefinition(infoCollection, { drop: false })} -- structure`,
+      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries.map(row => `${row} -- meta`),
 
       // Insert queries for the collection
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}';`,
+      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'; -- meta`,
     ]
   }
 
@@ -349,6 +369,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
   return {
+    checksumStructure: collectionChecksumStructure,
     checksum: collectionChecksum,
     dump: collectionDump,
     components: uniqueTags,
