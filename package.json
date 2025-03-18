@@ -56,7 +56,7 @@
     "@sqlite.org/sqlite-wasm": "3.49.1-build2",
     "@webcontainer/env": "^1.1.1",
     "better-sqlite3": "^11.9.0",
-    "c12": "^2.0.4",
+    "c12": "^3.0.2",
     "chokidar": "^4.0.3",
     "consola": "^3.4.1",
     "db0": "^0.3.1",

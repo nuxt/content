@@ -36,8 +36,8 @@ importers:
         specifier: ^11.9.0
         version: 11.9.0
       c12:
-        specifier: ^2.0.4
-        version: 2.0.4(magicast@0.3.5)
+        specifier: ^3.0.2
+        version: 3.0.2(magicast@0.3.5)
       chokidar:
         specifier: ^4.0.3
         version: 4.0.3
