@@ -92,7 +92,7 @@ function copyLink() {
                 variant="outline"
                 color="neutral"
               />
-              <time class="text-[var(--ui-text)]">{{ formatDateByLocale(post.date) }}</time>
+              <time class="text-(--ui-text)">{{ formatDateByLocale(post.date) }}</time>
             </div>
           </div>
         </template>

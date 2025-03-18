@@ -8,7 +8,7 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]
@@ -155,7 +155,7 @@ Everything you need for content management
 #description
 Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
 
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute top-0 inset-0
@@ -226,7 +226,7 @@ orientation: horizontal
   :::
 
 #title
-Markdown meets [Vue]{.text-[var(--ui-primary)]} components
+Markdown meets [Vue]{.text-(--ui-primary)} components
 
 #description
 We created the MDC syntax to let you use Vue components with props and slots inside your Markdown files.
@@ -313,7 +313,7 @@ orientation: horizontal
   :::
 
 #title
-Query with [Type-Safety]{.text-[var(--ui-secondary)]}
+Query with [Type-Safety]{.text-(--ui-secondary)}
 
 #description
 Define your content structure with collections and query them with schema validation and full type-safety.
@@ -363,7 +363,7 @@ orientation: horizontal
 :video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
 #title{unwrap="p"}
-Let [anyone edit]{.text-[var(--ui-primary)]} your website
+Let [anyone edit]{.text-(--ui-primary)} your website
 
 #description
 Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editor and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
@@ -405,7 +405,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
 ::
 
 ::u-page-section
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]
