@@ -28,11 +28,11 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', resolver: Resolver) {
+export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, options: ModuleOptions }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter(),
+    sqlite: findBestSqliteAdapter({ nativeSqlite: opts.options.experimental?.nativeSqlite }),
     nodesqlite: 'db0/connectors/node-sqlite',
-    bunsqlite: resolver.resolve('./runtime/internal/connectors/bunsqlite'),
+    bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
     libsql: 'db0/connectors/libsql/web',
     d1: 'db0/connectors/cloudflare-d1',
@@ -46,12 +46,12 @@ export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgr
   return databaseConnectors[adapter]
 }
 
-async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig): Promise<Connector> {
+async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, opts: { nativeSqlite?: boolean }): Promise<Connector> {
   if (database.type === 'd1') {
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
 
-  return import(findBestSqliteAdapter())
+  return import(findBestSqliteAdapter(opts))
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })
@@ -59,9 +59,9 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig): P
 }
 
 const _localDatabase: Record<string, Connector> = {}
-export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, connector?: Connector): Promise<LocalDevelopmentDatabase> {
+export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, { connector, nativeSqlite }: { connector?: Connector, nativeSqlite?: boolean } = {}): Promise<LocalDevelopmentDatabase> {
   const databaseLocation = database.type === 'sqlite' ? database.filename : database.bindingName
-  const db = _localDatabase[databaseLocation] || connector || await getDatabase(database)
+  const db = _localDatabase[databaseLocation] || connector || await getDatabase(database, { nativeSqlite })
 
   _localDatabase[databaseLocation] = db
   await db.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
@@ -109,13 +109,13 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-function findBestSqliteAdapter() {
+function findBestSqliteAdapter(opts: { nativeSqlite?: boolean }) {
   if (process.versions.bun) {
     return 'db0/connectors/bun-sqlite'
   }
 
   // if node:sqlite is available, use it
-  if (isNodeSqliteAvailable()) {
+  if (opts.nativeSqlite && isNodeSqliteAvailable()) {
     return 'db0/connectors/node-sqlite'
   }
 
@@ -125,7 +125,31 @@ function findBestSqliteAdapter() {
 function isNodeSqliteAvailable() {
   try {
     const module = globalThis.process?.getBuiltinModule?.('node:sqlite')
-    return Boolean(module)
+
+    if (module) {
+      // When using the SQLite Node.js prints warnings about the experimental feature
+      // This is workaround to surpass the SQLite warning
+      // Inspired by Yarn https://github.com/yarnpkg/berry/blob/182046546379f3b4e111c374946b32d92be5d933/packages/yarnpkg-pnp/sources/loader/applyPatch.ts#L307-L328
+      const originalEmit = process.emit
+      // @ts-expect-error - TS complains about the return type of originalEmit.apply
+      process.emit = function (...args) {
+        const name = args[0]
+        const data = args[1] as { name: string, message: string }
+        if (
+          name === `warning`
+          && typeof data === `object`
+          && data.name === `ExperimentalWarning`
+          && data.message.includes(`SQLite is an experimental feature`)
+        ) {
+          return false
+        }
+        return originalEmit.apply(process, args as unknown as Parameters<typeof process.emit>)
+      }
+
+      return true
+    }
+
+    return false
   }
   catch {
     return false

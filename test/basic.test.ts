@@ -58,7 +58,7 @@ describe('basic', async () => {
     })
 
     test('load database', async () => {
-      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url)) })
+      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/basic/.data/content/contents.sqlite', import.meta.url)) }, { nativeSqlite: true })
     })
 
     test('content table is created', async () => {
