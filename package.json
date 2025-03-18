@@ -77,7 +77,7 @@
     "micromatch": "^4.0.8",
     "minimatch": "^10.0.1",
     "nuxt-component-meta": "^0.10.0",
-    "ohash": "^1.1.4",
+    "ohash": "^2.0.11",
     "pathe": "^2.0.3",
     "pkg-types": "^2.1.0",
     "remark-mdc": "^3.5.3",
