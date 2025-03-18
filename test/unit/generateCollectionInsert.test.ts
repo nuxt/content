@@ -24,7 +24,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\', \'mQvteGg7Ce\');',
+      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\', \'vPdICyZ7sjhw1YY4ISEATbCTIs_HqNpMVWHnBWhOOYY\');',
     ].join(''))
   })
 
@@ -53,7 +53,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\', \'JQYUxSZR3f\');',
+      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\', \'R5zX5zuyfvCtvXPcgINuEjEoHmZnse8kATeDd4V7I-c\');',
     ].join(''))
   })
 
@@ -90,7 +90,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', 'AeIX0GRxup');`,
+      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg');`,
     ].join(''))
     let index = 1
     while (index < sql.length - 1) {

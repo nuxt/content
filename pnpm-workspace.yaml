@@ -1,6 +1,14 @@
 packages:
-  - "./"
-  - "playground"
-  - "docs"
-  - "examples/*"
-  - "test/fixtures/*"
+  - ./
+  - playground
+  - docs
+  - examples/*
+  - test/fixtures/*
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - better-sqlite3
+  - esbuild
+  - sharp
+  - sqlite3
+  - vue-demi
+  - workerd
