@@ -3,7 +3,7 @@ slug: docs
 subtitle: Create your documentation in seconds
 title: Docs
 baseDir: .
-branch: v3
+branch: main
 category: docs
 createdAt: 2023-11-15T17:41:03.087Z
 demo: https://v3.docs-template-3erl.pages.dev/
