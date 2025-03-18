@@ -81,6 +81,9 @@ export default defineNuxtModule<ModuleOptions>({
         json: true,
       },
     },
+    experimental: {
+      nativeSqlite: false,
+    },
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -162,9 +165,10 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
 
+      const resolveOptions = { resolver, nativeSqlite: options.experimental?.nativeSqlite }
       config.alias ||= {}
-      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolver)
-      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolver)
+      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
+      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
       config.handlers.push({
@@ -230,7 +234,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
   const collectionChecksumStructure: Record<string, string> = {}
-  const db = await getLocalDatabase(options._localDatabase)
+  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({

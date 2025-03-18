@@ -22,7 +22,7 @@ import { parseSourceBase } from './source'
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
 export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const db = await getLocalDatabase(options._localDatabase)
+  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
 
   let websocket: ReturnType<typeof createWebSocket>
   let listener: Listener
@@ -89,7 +89,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
   const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
 
-  const db = await getLocalDatabase(options._localDatabase!)
+  const db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })
   const collections = manifest.collections
 
   const sourceMap = collections.flatMap((c) => {

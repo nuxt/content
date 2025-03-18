@@ -179,6 +179,16 @@ export interface ModuleOptions {
       delimeter?: string
     }
   }
+
+  experimental?: {
+    /**
+     * Use Node.js native SQLite bindings instead of `better-sqlite3` if available
+     * Node.js SQLite introduced in v22.5.0
+     *
+     * @default false
+     */
+    nativeSqlite?: boolean
+  }
 }
 
 export interface RuntimeConfig {

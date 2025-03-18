@@ -14,7 +14,7 @@ describe('Local database', () => {
   })
 
   test('load database', async () => {
-    db = await getLocalDatabase({ type: 'sqlite', filename: ':memory:' })
+    db = await getLocalDatabase({ type: 'sqlite', filename: ':memory:' }, { nativeSqlite: true })
     expect(db).toBeDefined()
   })
 
