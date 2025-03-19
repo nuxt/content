@@ -9,7 +9,7 @@ export interface CollectionQueryBuilder<T> {
   skip(skip: number): CollectionQueryBuilder<T>
   limit(limit: number): CollectionQueryBuilder<T>
   all(): Promise<T[]>
-  first(): Promise<T>
+  first(): Promise<T | null>
   count(field?: keyof T | '*', distinct?: boolean): Promise<number>
   where(field: string, operator: SQLOperator, value?: unknown): CollectionQueryBuilder<T>
   andWhere(groupFactory: QueryGroupFunction<T>): CollectionQueryBuilder<T>

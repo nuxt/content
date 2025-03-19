@@ -124,7 +124,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async all(): Promise<Collections[T][]> {
       return fetch(collection, buildQuery()).then(res => (res || []) as Collections[T][])
     },
-    async first(): Promise<Collections[T]> {
+    async first(): Promise<Collections[T] | null> {
       return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
     },
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
