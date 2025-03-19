@@ -12,7 +12,6 @@
     "src/types/shim.d.ts"
   ],
   "compilerOptions": {
-    "strictNullChecks": false,
     "types": ["@types/bun"]
   },
 }

@@ -123,7 +123,7 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     // in D1, there is a bug where semicolons and comments can't work together
     // so we need to split the SQL and remove the comment
     // @see https://github.com/cloudflare/workers-sdk/issues/3892
-    const hash = dumpLinesHash[index]
+    const hash = dumpLinesHash[index]!
     const statement = sql.substring(0, sql.length - hash.length - 4)
 
     // If the structure has not changed,
@@ -168,10 +168,10 @@ async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string)
   let interval: NodeJS.Timer
   await new Promise((resolve, reject) => {
     interval = setInterval(async () => {
-      const { ready } = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+      const row = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
         .catch(() => ({ ready: true }))
 
-      if (ready) {
+      if (row?.ready) {
         clearInterval(interval)
         resolve(0)
       }

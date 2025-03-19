@@ -54,9 +54,15 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
 }
 
 export function defineCollectionSource(source: CustomCollectionSource): ResolvedCustomCollectionSource {
+  const resolvedSource = resolveSource({ ...source, cwd: '', include: '' })?.[0]
+
+  if (!resolvedSource) {
+    throw new Error('Invalid collection source')
+  }
+
   return {
     _custom: true,
-    ...resolveSource({ ...source, cwd: '', include: '' })?.[0],
+    ...resolvedSource,
   }
 }
 

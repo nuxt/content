@@ -125,6 +125,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add content types to Nuxt and Nitro
     const typesTemplateDst = addTypeTemplate(contentTypesTemplate(manifest.collections)).dst
+    nuxt.options.nitro.typescript ||= {}
     nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
       include: [typesTemplateDst],
     })
@@ -275,7 +276,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
       const { fixed } = parseSourceBase(source)
       const cwd = source.cwd
-      const _keys = await source.getKeys()
+      const _keys = await source.getKeys?.() || []
 
       filesCount += _keys.length
 
@@ -293,7 +294,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
           const cache = databaseContents[keyInCollection]
 
           try {
-            const content = await source.getItem(key)
+            const content = await source.getItem?.(key) || ''
             const checksum = getContentChecksum(configHash + collectionHash + content)
 
             let parsedContent

@@ -30,6 +30,8 @@ declare module 'nuxt-llms' {
       },
       write: true,
     }).dst
+    nuxt.options.nitro ||= {}
+    nuxt.options.nitro.typescript ||= {}
     nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
       include: [typeTemplate],
     })

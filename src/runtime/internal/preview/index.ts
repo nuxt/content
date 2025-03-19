@@ -45,14 +45,14 @@ const initializePreview = async (data: DraftSyncData) => {
 const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: DraftSyncFile) => {
   // Fetch corresponding collection
   const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
-  if (!collection) {
+  if (!collection || !matchedSource) {
     console.warn(`Content Preview: collection not found for file: ${file.path}, skipping insertion.`)
     return
   }
 
   const db = loadDatabaseAdapter(collection.name)
 
-  const v3File = v2ToV3ParsedFile(file, collection, matchedSource)
+  const v3File = v2ToV3ParsedFile(file, collection, matchedSource)!
 
   const query = generateCollectionInsert(collection, v3File)
 
@@ -93,7 +93,7 @@ export function mountPreviewUI() {
 
 export function initIframeCommunication() {
   const nuxtApp = useNuxtApp()
-  const previewConfig: PublicRuntimeConfig['preview'] = useRuntimeConfig().public.preview
+  const previewConfig = useRuntimeConfig().public.preview as PublicRuntimeConfig['preview']
 
   // Not in an iframe
   if (!window.parent || window.self === window.parent) {
@@ -211,14 +211,14 @@ export function initIframeCommunication() {
 
     async function handleFileUpdate(file: PreviewFile, navigate: boolean) {
       const { collection, matchedSource } = getCollectionByFilePath(file.path, collections)
-      if (!collection) {
+      if (!collection || !matchedSource) {
         console.warn(`Content Preview: collection not found for file: ${file.path}, skipping update.`)
         return
       }
 
       const stem = generateStemFromPath(file.path)
 
-      const v3File = v2ToV3ParsedFile({ path: file.path, parsed: file.parsed }, collection, matchedSource)
+      const v3File = v2ToV3ParsedFile({ path: file.path, parsed: file.parsed }, collection, matchedSource)!
 
       const query = generateRecordUpdate(collection, stem, v3File)
 

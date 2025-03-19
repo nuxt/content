@@ -205,7 +205,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
         // Remove source from collection meta if it's a remote collection
-        source: collection.source?.filter(source => source.repository ? undefined : collection.source),
+        source: collection.source?.filter(source => source.repository ? undefined : collection.source) || [],
         type: collection.type,
         fields: collection.fields,
         schema: generateJsonSchema(collection),
@@ -232,7 +232,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   write: true,
 })
 
-function generateJsonSchema(collection: ResolvedCollection) {
+function generateJsonSchema(collection: ResolvedCollection): ReturnType<typeof zodToJsonSchema> {
   const jsonSchema = zodToJsonSchema(collection.extendedSchema, collection.name)
   const jsonSchemaWithEditorMeta = zodToJsonSchema(
     collection.extendedSchema,
@@ -249,5 +249,5 @@ function generateJsonSchema(collection: ResolvedCollection) {
       },
     })
 
-  return defu(jsonSchema, jsonSchemaWithEditorMeta)
+  return defu(jsonSchema, jsonSchemaWithEditorMeta) as ReturnType<typeof zodToJsonSchema>
 }

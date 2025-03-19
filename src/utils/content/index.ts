@@ -31,9 +31,8 @@ let highlightPlugin: {
     theme?: Record<string, unknown>
     highlighter: Highlighter
   }
-
-}
-let highlightPluginPromise: Promise<typeof highlightPlugin>
+} | undefined
+let highlightPluginPromise: Promise<typeof highlightPlugin> | undefined
 async function getHighlightPluginInstance(options: HighlighterOptions) {
   const key = hash(JSON.stringify(options || {}))
 
@@ -118,16 +117,18 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     : undefined
 
   // Load transformers
-  const jiti = createJiti(nuxt?.options?.rootDir)
-  const extraTransformers: ContentTransformer[] = await Promise.all(transformers.map(async (transformer) => {
-    const resolved = resolveAlias(transformer, nuxt?.options?.alias)
+  let extraTransformers: ContentTransformer[] = []
+  if (nuxt?.options?.rootDir) {
+    const jiti = createJiti(nuxt.options.rootDir)
+    extraTransformers = await Promise.all(transformers.map(async (transformer) => {
+      const resolved = resolveAlias(transformer, nuxt?.options?.alias)
 
-    return jiti.import(resolved).then(m => (m as { default: ContentTransformer }).default || m).catch((e: unknown) => {
-      logger.error(`Failed to load transformer ${transformer}`, e)
-      return false
-    })
-  })).then(transformers => transformers.filter(Boolean)) as ContentTransformer[]
-
+      return jiti.import(resolved).then(m => (m as { default: ContentTransformer }).default || m).catch((e: unknown) => {
+        logger.error(`Failed to load transformer ${transformer}`, e)
+        return false
+      })
+    })).then(transformers => transformers.filter(Boolean)) as ContentTransformer[]
+  }
   const parserOptions = {
     pathMeta: pathMeta,
     markdown: {
@@ -145,7 +146,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
         ...mdcOptions?.remarkPlugins,
         ...markdown?.remarkPlugins,
       },
-      highlight: undefined as HighlighterOptions,
+      highlight: undefined,
     },
   }
 

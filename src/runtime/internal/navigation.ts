@@ -100,8 +100,8 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
           Object.assign(existed, {
             page: undefined,
             children: [
-              ...navItem.children,
-              ...existed.children,
+              ...(navItem.children || []),
+              ...(existed.children || []),
             ],
           })
         }
@@ -152,8 +152,8 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
           ...navItem,
           page: undefined,
           children: [
-            ...navItem.children,
-            ...existed.children,
+            ...(navItem.children || []),
+            ...(existed.children || []),
           ],
         })
       }

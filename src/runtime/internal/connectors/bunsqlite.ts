@@ -8,7 +8,7 @@ const connector: typeof bunSqliteConnector = (opts) => {
   if (!globalThis.CompressionStream) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const make = (ctx: unknown, handle: any) =>
-      Object.assign(ctx, {
+      Object.assign(ctx as object, {
         writable: new WritableStream({
           write: (chunk: ArrayBufferView) => handle.write(chunk),
           close: () => handle.end(),
