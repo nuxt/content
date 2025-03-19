@@ -137,7 +137,7 @@
     "typescript": "5.8.2",
     "vitest": "^3.0.9",
     "vue-tsc": "^2.2.8",
-    "wrangler": "^4.1.0"
+    "wrangler": "^4.2.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
