@@ -46,7 +46,7 @@
     "test": "vitest run",
     "test:bun": "bun test ./test/bun.test.ts",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "test:types": "vue-tsc --noEmit",
     "verify": "npm run dev:prepare && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {

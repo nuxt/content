@@ -55,7 +55,7 @@ export interface ModuleOptions {
    * @private
    * @default { type: 'sqlite', filename: '.data/content/local.db' }
    */
-  _localDatabase?: SqliteDatabaseConfig | D1DatabaseConfig
+  _localDatabase: SqliteDatabaseConfig | D1DatabaseConfig
   /**
    * Production database configuration
    * @default { type: 'sqlite', filename: './contents.sqlite' }

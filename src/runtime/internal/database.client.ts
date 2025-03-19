@@ -13,13 +13,13 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
     if (!db) {
       dbPromises._ = dbPromises._ || initializeDatabase()
       db = await dbPromises._
-      dbPromises._ = undefined
+      Reflect.deleteProperty(dbPromises, '_')
     }
     if (!loadedCollections[String(collection)]) {
       dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
       await dbPromises[String(collection)]
       loadedCollections[String(collection)] = 'loaded'
-      dbPromises[String(collection)] = undefined
+      Reflect.deleteProperty(dbPromises, String(collection))
     }
 
     return db

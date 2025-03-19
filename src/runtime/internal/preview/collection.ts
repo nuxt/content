@@ -7,8 +7,8 @@ import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutRoot } from './files'
 
-export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
-  let matchedSource: ResolvedCollectionSource
+export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo | undefined, matchedSource: ResolvedCollectionSource | undefined } => {
+  let matchedSource: ResolvedCollectionSource | undefined
   const collection = Object.values(collections).find((collection) => {
     if (!collection.source || collection.source.length === 0) {
       return
@@ -28,21 +28,21 @@ export const getCollectionByFilePath = (path: string, collections: Record<string
   }
 }
 
-export const getCollectionByRoutePath = (routePath: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo, matchedSource: ResolvedCollectionSource } => {
-  let matchedSource: ResolvedCollectionSource
+export const getCollectionByRoutePath = (routePath: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo | undefined, matchedSource: ResolvedCollectionSource | undefined } => {
+  let matchedSource: ResolvedCollectionSource | undefined
   const collection = Object.values(collections).find((collection) => {
     if (!collection.source || collection.source.length === 0) {
       return
     }
 
     matchedSource = collection.source.find((source) => {
-      if (!routePath.startsWith(source.prefix)) {
+      if (!source.prefix || !routePath.startsWith(source.prefix)) {
         return
       }
 
       if (routePath === '/' || routePath === source.prefix) {
         const indexFiles = ['index.yml', 'index.yaml', 'index.md', 'index.json']
-        const files = routePath === '/' ? indexFiles : indexFiles.map(file => withoutLeadingSlash(joinURL(source.prefix, file)))
+        const files = routePath === '/' ? indexFiles : indexFiles.map(file => withoutLeadingSlash(joinURL(source.prefix!, file)))
         return files.some((p) => {
           return collection.source.find(source => minimatch(p, source.include) && !source.exclude?.some(exclude => minimatch(p, exclude)))
         })
@@ -98,7 +98,7 @@ export function generateRecordSelectByColumn(collection: CollectionInfo, column:
 function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: Record<string, unknown>) {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const properties = (collection.schema.definitions[collection.name] as JsonSchema7ObjectType).properties
+  const properties = (collection.schema.definitions![collection.name] as JsonSchema7ObjectType).properties
   const sortedKeys = getOrderedSchemaKeys(properties)
 
   sortedKeys.forEach((key) => {

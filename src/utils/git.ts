@@ -184,7 +184,7 @@ async function getLocalGitRemote(dir: string) {
     if (!parsed) {
       return
     }
-    return parsed.remote['origin'].url
+    return parsed.remote?.['origin']?.url
   }
   catch {
     // Ignore error

@@ -37,6 +37,7 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
   nuxt.hook('schema:resolved', (schema: Schema) => {
     // Add preview templates once schema is resolved
     const template = addTemplate(previewTemplate(manifest.collections, gitInfo, schema)).dst
+    nuxt.options.nitro.alias ||= {}
     nuxt.options.nitro.alias['#content/preview'] = template
     nuxt.options.alias['#content/preview'] = template
   })

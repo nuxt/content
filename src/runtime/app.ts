@@ -31,7 +31,7 @@ export function queryCollectionSearchSections(collection: keyof Collections, opt
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
-async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event, collection: T, sql: string) {
+async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
   if (import.meta.client) {
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }

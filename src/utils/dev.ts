@@ -22,7 +22,7 @@ import { parseSourceBase } from './source'
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
 export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
+  const db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })
 
   let websocket: ReturnType<typeof createWebSocket>
   let listener: Listener
@@ -136,7 +136,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       const checksum = getContentChecksum(content)
       const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
 
-      let parsedContent = localCache?.parsedContent
+      let parsedContent = localCache?.parsedContent || ''
 
       // If the local cache is not present or the checksum does not match, we need to parse the content
       if (!localCache || localCache?.checksum !== checksum) {

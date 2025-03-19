@@ -1,5 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod'
-import type { JsonSchema7Type } from 'zod-to-json-schema'
+import type { zodToJsonSchema } from 'zod-to-json-schema'
 import type { MarkdownRoot } from './content'
 
 export interface PageCollections {}
@@ -81,10 +81,7 @@ export interface CollectionInfo {
   tableName: string
   source: ResolvedCollectionSource[]
   type: CollectionType
-  schema: JsonSchema7Type & {
-    $schema?: string
-    definitions?: { [key: string]: JsonSchema7Type }
-  }
+  schema: ReturnType<typeof zodToJsonSchema>
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   tableDefinition: string
 }

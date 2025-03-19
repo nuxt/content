@@ -99,7 +99,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
       db.exec(sql)
     },
     close() {
-      _localDatabase[databaseLocation] = undefined
+      Reflect.deleteProperty(_localDatabase, databaseLocation)
     },
     fetchDevelopmentCache,
     fetchDevelopmentCacheForKey,

@@ -24,7 +24,7 @@ export default definePreset({
 
     if (nitroConfig.dev === false) {
       // Write SQL dump to database queries when not in dev mode
-      await mkdir(resolve(nitroConfig.rootDir, '.data/hub/database/queries'), { recursive: true })
+      await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
       let i = 1
       // Drop info table and prepare for new dump
       let dump = 'DROP TABLE IF EXISTS _content_info;\n'
@@ -45,9 +45,11 @@ export default definePreset({
         dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
       }
       for (const dumpFile of dumpFiles) {
-        await writeFile(resolve(nitroConfig.rootDir, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
       }
       // Disable integrity check in production for performance
+      nitroConfig.runtimeConfig ||= {}
+      nitroConfig.runtimeConfig.content ||= {}
       nitroConfig.runtimeConfig.content.integrityCheck = false
     }
   },
