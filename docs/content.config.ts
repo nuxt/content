@@ -1,6 +1,6 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
-const pricingPlan = z.object({
+const createPricingPlanSchema = () => z.object({
   title: z.string(),
   description: z.string(),
   price: z.string(),
@@ -16,7 +16,7 @@ const pricingPlan = z.object({
   }),
 })
 
-const pricingFeature = z.object({
+const createPricingFeatureSchema = () => z.object({
   title: z.string(),
   plans: z.array(z.enum(['solo', 'team', 'unlimited'])).optional(),
   value: z.array(z.string()).optional(),
@@ -67,65 +67,65 @@ export default defineContentConfig({
           }),
         }),
         plans: z.object({
-          solo: pricingPlan,
-          team: pricingPlan,
-          unlimited: pricingPlan,
+          solo: createPricingPlanSchema(),
+          team: createPricingPlanSchema(),
+          unlimited: createPricingPlanSchema(),
         }),
         features: z.object({
           title: z.string(),
           description: z.string(),
           includes: z.object({
-            projects: pricingFeature,
-            members: pricingFeature,
-            media: pricingFeature,
-            support: pricingFeature,
-            dedicated: pricingFeature,
-            roles: pricingFeature,
-            collaboration: pricingFeature,
+            projects: createPricingFeatureSchema(),
+            members: createPricingFeatureSchema(),
+            media: createPricingFeatureSchema(),
+            support: createPricingFeatureSchema(),
+            dedicated: createPricingFeatureSchema(),
+            roles: createPricingFeatureSchema(),
+            collaboration: createPricingFeatureSchema(),
             sync: z.object({
               title: z.string(),
               includes: z.object({
-                repositories: pricingFeature,
-                workflow: pricingFeature,
+                repositories: createPricingFeatureSchema(),
+                workflow: createPricingFeatureSchema(),
               }),
             }),
             project: z.object({
               title: z.string(),
               includes: z.object({
-                clone: pricingFeature,
-                import: pricingFeature,
+                clone: createPricingFeatureSchema(),
+                import: createPricingFeatureSchema(),
               }),
             }),
             editors: z.object({
               title: z.string(),
               includes: z.object({
-                markdown: pricingFeature,
-                json: pricingFeature,
-                appconfig: pricingFeature,
-                drag: pricingFeature,
+                markdown: createPricingFeatureSchema(),
+                json: createPricingFeatureSchema(),
+                appconfig: createPricingFeatureSchema(),
+                drag: createPricingFeatureSchema(),
               }),
             }),
             preview: z.object({
               title: z.string(),
               includes: z.object({
-                draft: pricingFeature,
-                branches: pricingFeature,
-                prs: pricingFeature,
+                draft: createPricingFeatureSchema(),
+                branches: createPricingFeatureSchema(),
+                prs: createPricingFeatureSchema(),
               }),
             }),
             deploy: z.object({
               title: z.string(),
               includes: z.object({
-                gh: pricingFeature,
-                self: pricingFeature,
+                gh: createPricingFeatureSchema(),
+                self: createPricingFeatureSchema(),
               }),
             }),
             publish: z.object({
               title: z.string(),
               includes: z.object({
-                preview: pricingFeature,
-                branch: pricingFeature,
-                commit: pricingFeature,
+                preview: createPricingFeatureSchema(),
+                branch: createPricingFeatureSchema(),
+                commit: createPricingFeatureSchema(),
               }),
             }),
           }),
