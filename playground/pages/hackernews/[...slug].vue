@@ -8,30 +8,27 @@ const { data } = await useAsyncData('news' + route.path, async () => {
 
   return await queryCollection('hackernews').where('id', '=', route.params.slug).first()
 })
-
-definePageMeta({
-  layout: 'empty',
-  layoutTransition: false,
-})
 </script>
 
 <template>
-  <div class="content-page">
-    <div v-if="Array.isArray(data)">
-      <UCard
-        v-for="item in data"
-        :key="item.id"
-      >
-        <h2>{{ item.title }}</h2>
-        <p>date: {{ item.date }}</p>
-        <p>score: {{ item.score }}</p>
-        <p>url: {{ item.url }}</p>
-        <p>by: {{ item.by }}</p>
-      </UCard>
-    </div>
-    <ContentRenderer
-      v-else-if="data"
-      :value="data"
-    />
-  </div>
+  <UPage v-if="data">
+    <UPageBody>
+      <UBlogPosts v-if="Array.isArray(data)">
+        <UBlogPost
+          v-for="(post, index) in data"
+          :key="index"
+          :title="post.title"
+          :date="post.date"
+          :authors="[{ name: post.by }]"
+          :to="post.url"
+          :target="'_blank'"
+          :badge="{ label: 'Score: ' + post.score.toString() }"
+        />
+      </UBlogPosts>
+      <ContentRenderer
+        v-else-if="data"
+        :value="data"
+      />
+    </UPageBody>
+  </UPage>
 </template>
