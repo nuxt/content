@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.4.0](https://github.com/nuxt/content/compare/v3.3.0...v3.4.0) (2025-03-20)
+
+### Features
+
+* **collection:** add support for Bitbucket repository  ([#3226](https://github.com/nuxt/content/issues/3226)) ([55b0e5b](https://github.com/nuxt/content/commit/55b0e5b7dd5893e74c3707d42049f8a112e82163))
+* **db:** experimental `node:sqlite` under flag  ([#3230](https://github.com/nuxt/content/issues/3230)) ([e97d579](https://github.com/nuxt/content/commit/e97d579f100a8d7d26421876a1174eaa35bfb438))
+* **search:** retrieve extra fields in search sections ([#3178](https://github.com/nuxt/content/issues/3178)) ([29f4b3e](https://github.com/nuxt/content/commit/29f4b3e57867be2670eb4c79aa0130f5f4e10256))
+
+### Bug Fixes
+
+* check for ws existence before closing ([#3238](https://github.com/nuxt/content/issues/3238)) ([6ec0eb8](https://github.com/nuxt/content/commit/6ec0eb8bc5db94760db6672e83635dcc91dfbf22))
+* **module:** prevent conflict with auth & security tools ([#3245](https://github.com/nuxt/content/issues/3245)) ([dc27bc9](https://github.com/nuxt/content/commit/dc27bc94c1a4ab09adb8169a08d08ffbb85f9ddf))
+* **parser:** recreate highlighter when options did change ([53875b1](https://github.com/nuxt/content/commit/53875b1eac74f4f07e381a361241446229d88d62))
+
 ## [3.3.0](https://github.com/nuxt/content/compare/v3.2.2...v3.3.0) (2025-03-05)
 
 ### Features
