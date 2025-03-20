@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.16.1",
-    "@nuxtjs/mdc": "^0.16.0",
+    "@nuxtjs/mdc": "^0.16.1",
     "@shikijs/langs": "^3.2.1",
     "@sqlite.org/sqlite-wasm": "3.49.1-build2",
     "@webcontainer/env": "^1.1.1",
