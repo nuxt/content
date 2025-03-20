@@ -16,7 +16,7 @@
     "minisearch": "^7.1.2",
     "nuxt": "^3.16.1",
     "nuxt-llms": "^0.1.0",
-    "nuxt-og-image": "^5.0.4",
+    "nuxt-og-image": "^5.0.5",
     "prettier": "^3.5.3",
     "shiki-transformer-color-highlight": "^1.0.0",
     "ufo": "^1.5.4"
