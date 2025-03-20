@@ -4,7 +4,18 @@ const { data } = await useAsyncData('data', () => queryCollection('data').path(`
 </script>
 
 <template>
-  <div>
-    <pre>{{ data }}</pre>
-  </div>
+  <UPage>
+    <UPageBody>
+      <UCard>
+        <template #header>
+          <h3>
+            Data
+          </h3>
+        </template>
+        <ProsePre class="min-h-[100px]">
+          {{ data }}
+        </ProsePre>
+      </UCard>
+    </UPageBody>
+  </UPage>
 </template>
