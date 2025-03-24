@@ -98,7 +98,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
       db.exec(`DROP TABLE ${name}`)
     }
     return {
-      upToDateTables: upToDateTables.values().toArray(),
+      upToDateTables: [...upToDateTables.values()],
     }
   }
 
