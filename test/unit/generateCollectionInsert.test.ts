@@ -12,6 +12,8 @@ describe('generateCollectionInsert', () => {
         otherField: z.string().default('untitled'),
         otherField2: z.boolean().default(true),
         date: z.date().default(new Date('2022-01-01')),
+        object: z.object({ foo: z.string() }).default(() => ({ foo: 'bar' })),
+        array: z.array(z.string()).default(() => []),
       }),
     }))!
     const { queries: sql } = generateCollectionInsert(collection, {
@@ -24,7 +26,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\', \'vPdICyZ7sjhw1YY4ISEATbCTIs_HqNpMVWHnBWhOOYY\');',
+      ' (\'foo.md\', \'[]\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"bar"}\', \'untitled\', true, \'foo\', \'bnUQ85H_Zf72faGIQhV0i9QeTEnf1ueEIaMAO8aAAGw\');',
     ].join(''))
   })
 
@@ -37,6 +39,8 @@ describe('generateCollectionInsert', () => {
         otherField: z.string().default('untitled'),
         otherField2: z.boolean().default(true),
         date: z.date().default(new Date('2022-01-01')),
+        object: z.object({ foo: z.string() }).default(() => ({ foo: 'bar' })),
+        array: z.array(z.string()).default(() => []),
       }),
     }))!
     const { queries: sql } = generateCollectionInsert(collection, {
@@ -48,12 +52,14 @@ describe('generateCollectionInsert', () => {
       otherField: 'foo',
       otherField2: false,
       date: new Date('2022-01-02'),
+      object: { foo: 'baz' },
+      array: ['foo'],
     })
 
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\', \'R5zX5zuyfvCtvXPcgINuEjEoHmZnse8kATeDd4V7I-c\');',
+      ' (\'foo.md\', \'["foo"]\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"baz"}\', \'foo\', false, \'foo\', \'ImMjHvkHl82Jx1bjlpanb9d3i_HQIbjNFverKKbZLME\');',
     ].join(''))
   })
 
