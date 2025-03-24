@@ -6,6 +6,7 @@ import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions } from '../types/module'
+import type { ResolvedCollection } from '../module'
 import { logger } from './dev'
 
 export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
@@ -85,11 +86,19 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
   }
 
-  const dropContentTables = async () => {
+  const dropOldContentTables = async (collections: ResolvedCollection[]) => {
     const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
       .all('table', '_content_%') as { name: string }[]
+    const upToDateTables = new Set<string>()
     for (const { name } of tables) {
+      if (collections.some(c => c.tableName === name)) {
+        upToDateTables.add(name)
+        continue
+      }
       db.exec(`DROP TABLE ${name}`)
+    }
+    return {
+      upToDateTables: upToDateTables.values().toArray(),
     }
   }
 
@@ -105,7 +114,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     fetchDevelopmentCacheForKey,
     insertDevelopmentCache,
     deleteDevelopmentCache,
-    dropContentTables,
+    dropOldContentTables,
   }
 }
 

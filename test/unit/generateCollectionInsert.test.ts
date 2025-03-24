@@ -22,7 +22,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql[0]).toBe([
-      `INSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content', collection.hash)}`,
       ' VALUES',
       ' (\'foo.md\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'untitled\', true, \'foo\', \'vPdICyZ7sjhw1YY4ISEATbCTIs_HqNpMVWHnBWhOOYY\');',
     ].join(''))
@@ -51,7 +51,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql[0]).toBe([
-      `INSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content', collection.hash)}`,
       ' VALUES',
       ' (\'foo.md\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'foo\', false, \'foo\', \'R5zX5zuyfvCtvXPcgINuEjEoHmZnse8kATeDd4V7I-c\');',
     ].join(''))
@@ -88,14 +88,14 @@ describe('generateCollectionInsert', () => {
     expect(content).toEqual(querySlices.join(''))
 
     expect(sql[0]).toBe([
-      `INSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content', collection.hash)}`,
       ' VALUES',
       ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg');`,
     ].join(''))
     let index = 1
     while (index < sql.length - 1) {
       expect(sql[index]).toBe([
-        `UPDATE ${getTableName('content')}`,
+        `UPDATE ${getTableName('content', collection.hash)}`,
         ' SET',
         ` content = CONCAT(content, '${querySlices[index]}')`,
         ' WHERE id = \'foo.md\';',
