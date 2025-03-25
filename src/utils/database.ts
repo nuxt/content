@@ -95,7 +95,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
         upToDateTables.add(name)
         continue
       }
-      db.exec(`DROP TABLE ${name}`)
+      db.exec(`DROP TABLE IF EXISTS ${name}`)
     }
     return {
       upToDateTables: [...upToDateTables.values()],
