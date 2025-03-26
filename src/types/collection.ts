@@ -73,6 +73,7 @@ export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
    * Private collections will not be available in the runtime.
    */
   private: boolean
+  hash: string
 }
 
 export interface CollectionInfo {

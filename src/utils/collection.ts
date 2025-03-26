@@ -11,8 +11,9 @@ import { logger } from './dev'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny', 'ZodMap']
 
-export function getTableName(name: string) {
-  return `_content_${name}`
+export function getTableName(name: string, collectionHash: string) {
+  const tableNameSafeHash = collectionHash.split('-').join('').toLowerCase().substring(0, 4)
+  return `_content_${name}_${tableNameSafeHash}`
 }
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
@@ -75,12 +76,19 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     return undefined
   }
 
-  return {
+  const resolvedCollection: Omit<ResolvedCollection, 'hash' | 'tableName'> = {
     ...collection,
     name,
     type: collection.type || 'page',
-    tableName: getTableName(name),
     private: name === 'info',
+  }
+
+  const collectionHash = hash(resolvedCollection)
+
+  return {
+    ...resolvedCollection,
+    tableName: getTableName(name, collectionHash),
+    hash: collectionHash,
   }
 }
 

@@ -250,14 +250,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let cachedFilesCount = 0
   let parsedFilesCount = 0
 
-  // Remove all existing content collections to start with a clean state
-  db.dropContentTables()
+  // Remove all out of date collections and only create new ones
+  const { upToDateTables } = await db.dropOldContentTables(collections)
+  const newCollections = collections.filter(c => !upToDateTables.includes(c.name))
   // Create database dump
-  for await (const collection of collections) {
+  for await (const collection of newCollections) {
     if (collection.name === 'info') {
       continue
     }
-    const collectionHash = hash(collection)
     const collectionQueries = generateCollectionTableDefinition(collection, { drop: true })
       .split('\n').map(q => `${q} -- structure`)
 
@@ -295,7 +295,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
           try {
             const content = await source.getItem?.(key) || ''
-            const checksum = getContentChecksum(configHash + collectionHash + content)
+            const checksum = getContentChecksum(configHash + collection.hash + content)
 
             let parsedContent
             if (cache && cache.checksum === checksum) {
