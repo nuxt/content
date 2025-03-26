@@ -160,11 +160,8 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     const value = (collection.extendedSchema).shape[key]
     const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
 
-    let defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
+    const defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
 
-    if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
-      defaultValue = JSON.stringify(defaultValue)
-    }
     const valueToInsert = (typeof data[key] === 'undefined' || String(data[key]) === 'null')
       ? defaultValue
       : data[key]
