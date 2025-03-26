@@ -4,9 +4,11 @@ import type { Resolver } from '@nuxt/kit'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
-import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, SqliteDatabaseConfig } from '../types'
+import { z } from 'zod'
+import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions } from '../types/module'
 import { logger } from './dev'
+import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
 
 export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
   if (database.type === 'd1') {
@@ -63,8 +65,22 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   const databaseLocation = database.type === 'sqlite' ? database.filename : database.bindingName
   const db = _localDatabase[databaseLocation] || connector || await getDatabase(database, { nativeSqlite })
 
+  const cacheCollection = {
+    tableName: '_development_cache',
+    extendedSchema: z.object({
+      id: z.string(),
+      checksum: z.string(),
+      parsedContent: z.string(),
+    }),
+    fields: {
+      id: 'string',
+      checksum: 'string',
+      parsedContent: 'string',
+    },
+  } as unknown as ResolvedCollection
+
   _localDatabase[databaseLocation] = db
-  await db.exec('CREATE TABLE IF NOT EXISTS _development_cache (id TEXT PRIMARY KEY, checksum TEXT, parsedContent TEXT)')
+  await db.exec(generateCollectionTableDefinition(cacheCollection))
 
   const fetchDevelopmentCache = async () => {
     const result = await db.prepare('SELECT * FROM _development_cache').all() as CacheEntry[]
@@ -77,8 +93,10 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 
   const insertDevelopmentCache = async (id: string, checksum: string, parsedContent: string) => {
     deleteDevelopmentCache(id)
-    db.prepare(`INSERT INTO _development_cache (id, checksum, parsedContent) VALUES (?, ?, ?)`)
-      .run(id, checksum, parsedContent)
+    const insert = generateCollectionInsert(cacheCollection, { id, checksum, parsedContent })
+    for (const query of insert.queries) {
+      await db.exec(query)
+    }
   }
 
   const deleteDevelopmentCache = async (id: string) => {
