@@ -134,10 +134,10 @@ orientation: horizontal
       </div>
       <div class="flex flex-col">
         <h3 class="font-semibold">
-          <ContentSlot name="title" />
+          <slot name="title" />
         </h3>
         <span>
-          <ContentSlot name="description" />
+          <slot name="description" />
         </span>
       </div>
     </div>
