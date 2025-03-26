@@ -4,10 +4,11 @@ import { useStorage } from 'nitropack/runtime'
 export default eventHandler(async (event) => {
   const collection = getRouterParam(event, 'collection')!
 
-  if (event?.context?.cloudflare?.env.ASSETS) {
-    const url = new URL(event.context.cloudflare.request.url)
+  const ASSETS = event?.context?.cloudflare?.env.ASSETS || process.env.ASSETS
+  if (ASSETS) {
+    const url = new URL(event.context.cloudflare?.request?.url || 'http://localhost')
     url.pathname = `/dump.${collection}.sql`
-    return await event.context.cloudflare.env.ASSETS.fetch(url).then((r: Response) => r.text())
+    return await ASSETS.fetch(url).then((r: Response) => r.text())
   }
 
   return await useStorage().getItem(`build:content:raw:dump.${collection}.sql`) || ''
