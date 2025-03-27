@@ -100,18 +100,18 @@ const data = computed(() => {
 const proseComponentMap = Object.fromEntries(['p', 'a', 'blockquote', 'code', 'pre', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'img', 'ul', 'ol', 'li', 'strong', 'table', 'thead', 'tbody', 'td', 'th', 'tr', 'script'].map(t => [t, `prose-${t}`]))
 
 const { mdc } = useRuntimeConfig().public || {}
-const tags = {
+const tags = computed(() => ({
   ...mdc?.components?.prose && props.prose !== false ? proseComponentMap : {},
   ...mdc?.components?.map || {},
   ...toRaw(props.data?.mdc?.components || {}),
   ...props.components,
-}
+}))
 
 const key = computed(() => {
   if (!import.meta.dev) {
     return undefined
   }
-  const res = Array.from(new Set(body.value ? loadComponents(body.value, { tags }) : []))
+  const res = Array.from(new Set(body.value ? loadComponents(body.value, { tags: tags.value }) : []))
     .filter(t => localComponents.includes(pascalCase(String(t))))
     .sort()
     .join('.')
@@ -120,7 +120,7 @@ const key = computed(() => {
 })
 
 const componentsMap = computed(() => {
-  return body.value ? resolveContentComponents(body.value, { tags }) : {}
+  return body.value ? resolveContentComponents(body.value, { tags: tags.value }) : {}
 })
 
 function resolveVueComponent(component: string | Renderable) {
