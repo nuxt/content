@@ -107,18 +107,6 @@ const tags = computed(() => ({
   ...props.components,
 }))
 
-const key = computed(() => {
-  if (!import.meta.dev) {
-    return undefined
-  }
-  const res = Array.from(new Set(body.value ? loadComponents(body.value, { tags: tags.value }) : []))
-    .filter(t => localComponents.includes(pascalCase(String(t))))
-    .sort()
-    .join('.')
-
-  return res
-})
-
 const componentsMap = computed(() => {
   return body.value ? resolveContentComponents(body.value, { tags: tags.value }) : {}
 })
@@ -214,7 +202,6 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
 <template>
   <MDCRenderer
     v-if="!isEmpty"
-    :key="key"
     :body="body"
     :data="data"
     :class="props.class"
