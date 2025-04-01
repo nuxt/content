@@ -21,8 +21,8 @@ importers:
         specifier: ^3.16.1
         version: 3.16.1(magicast@0.3.5)
       '@nuxtjs/mdc':
-        specifier: ^0.16.1
-        version: 0.16.1(magicast@0.3.5)
+        specifier: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd
+        version: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd(magicast@0.3.5)
       '@shikijs/langs':
         specifier: ^3.2.1
         version: 3.2.1
@@ -1724,8 +1724,9 @@ packages:
     resolution: {integrity: sha512-Rsdv3u4QdhA2ysD5Argu3RkEUgYKyeqfrrUY6tbm7DZSnMafOE2RsmPwbF/eKNEC9uHHUdcLZblBEJ8z7r01sw==}
     engines: {node: ^14.16.0 || >=16.11.0}
 
-  '@nuxtjs/mdc@0.16.1':
-    resolution: {integrity: sha512-di9Ox9QY5pO2eIkQPyKFe9O8L3RvIrGbmjI3rJQRj1xGYRFj2S9RvBPCFbvfaqQGOTjOfxHLg8KtQIGj1Iw/lg==}
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd':
+    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd}
+    version: 0.16.1
 
   '@nuxtjs/plausible@1.2.0':
     resolution: {integrity: sha512-pjfps32fFN77BhjqHmq2Jx4XCNso9TcYnB+S4IR2qH/c26WDfYB5mQxN5pOEiWRlMkiKq+Y45mBBFtSOVKClCA==}
@@ -9544,9 +9545,11 @@ snapshots:
       - typescript
       - vue
 
-  '@nuxtjs/mdc@0.16.1(magicast@0.3.5)':
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd(magicast@0.3.5)':
     dependencies:
       '@nuxt/kit': 3.16.1(magicast@0.3.5)
+      '@shikijs/langs': 3.2.1
+      '@shikijs/themes': 3.2.1
       '@shikijs/transformers': 3.2.1
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
