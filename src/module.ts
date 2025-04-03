@@ -188,13 +188,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Prerender database.sql routes for each collection to fetch dump
     nuxt.options.routeRules ||= {}
+
+    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
+    // @see https://github.com/nuxt/content/pull/3299
+    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = {
-          prerender: true,
-          // @ts-expect-error - Only used in @nuxtjs/sitemap
-          robots: false,
-        }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
       }
     })
 
