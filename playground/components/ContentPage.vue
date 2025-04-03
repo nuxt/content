@@ -65,7 +65,10 @@ const bodyTocLinksWithDebug = computed(() => {
     />
 
     <UPageBody>
+      <pre v-if="data.stem === 'csv' || data.stem === 'yml'">{{ data.body }}</pre>
+
       <ContentRenderer
+        v-else
         :value="data"
       >
         <template #empty>
