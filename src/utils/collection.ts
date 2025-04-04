@@ -151,7 +151,7 @@ export const MAX_SQL_QUERY_SIZE = 100000
 export const SLICE_SIZE = 70000
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile, opts: { hashColumn?: boolean } = {}): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
@@ -191,8 +191,9 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   })
 
   const valuesHash = hash(values)
-
-  values.push(`'${valuesHash}'`)
+  if (opts.hashColumn !== false) {
+    values.push(`'${valuesHash}'`)
+  }
 
   let index = 0
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
@@ -236,7 +237,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 }
 
 // Convert a collection with Zod schema to SQL table definition
-export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
+export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean, hashColumn?: boolean } = {}) {
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
     const type = (collection.extendedSchema).shape[key]!
@@ -281,8 +282,10 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
 
-  // add __hash__ field for inserts
-  sqlFields.push('"__hash__" TEXT UNIQUE')
+  if (opts.hashColumn !== false) {
+    // add __hash__ field for inserts
+    sqlFields.push('"__hash__" TEXT UNIQUE')
+  }
 
   let definition = `CREATE TABLE IF NOT EXISTS ${collection.tableName} (${sqlFields.join(', ')});`
 

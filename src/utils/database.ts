@@ -80,7 +80,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   } as unknown as ResolvedCollection
 
   _localDatabase[databaseLocation] = db
-  await db.exec(generateCollectionTableDefinition(cacheCollection))
+  await db.exec(generateCollectionTableDefinition(cacheCollection, { hashColumn: false }))
 
   const fetchDevelopmentCache = async () => {
     const result = await db.prepare('SELECT * FROM _development_cache').all() as CacheEntry[]
@@ -93,7 +93,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 
   const insertDevelopmentCache = async (id: string, checksum: string, parsedContent: string) => {
     deleteDevelopmentCache(id)
-    const insert = generateCollectionInsert(cacheCollection, { id, checksum, parsedContent })
+    const insert = generateCollectionInsert(cacheCollection, { id, checksum, parsedContent }, { hashColumn: false })
     for (const query of insert.queries) {
       await db.exec(query)
     }
