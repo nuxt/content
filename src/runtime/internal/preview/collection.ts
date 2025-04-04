@@ -112,7 +112,8 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
     if (type === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
-    else if (type === 'string') {
+    // @ts-expect-error format does exist
+    else if (type === 'string' || ['string', 'enum'].includes(value.type)) {
       // @ts-expect-error format does exist
       if (['data', 'datetime'].includes(value.format)) {
         values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString()}'` : defaultValue)
