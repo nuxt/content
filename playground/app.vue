@@ -38,7 +38,7 @@ const items = ref([
   {
     label: 'Data',
     icon: 'i-lucide-folder-open',
-    to: '/data',
+    to: '/data/foo',
   },
 ])
 </script>

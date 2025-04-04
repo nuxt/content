@@ -18,7 +18,7 @@ const { data: surround } = await useAsyncData('vue-docs-surround' + route.path, 
 <template>
   <ContentPage
     :data="data"
-    :navigation="navigation.value?.[0]?.children"
+    :navigation="navigation?.[0]?.children"
     :surround="surround"
   />
 </template>

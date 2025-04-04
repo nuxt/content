@@ -77,7 +77,7 @@ export default defineNuxtModule<ModuleOptions>({
       markdown: {},
       yaml: {},
       csv: {
-        delimeter: ',',
+        delimiter: ',',
         json: true,
       },
     },

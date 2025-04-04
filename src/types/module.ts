@@ -176,7 +176,7 @@ export interface ModuleOptions {
      */
     csv?: false | {
       json?: boolean
-      delimeter?: string
+      delimiter?: string
     }
   }
 
