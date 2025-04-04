@@ -46,8 +46,10 @@ const databaseVersion = 'v3.3.0'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'Content',
+    name: '@nuxt/content',
     configKey: 'content',
+    version,
+    docs: 'https://content.nuxt.com',
   },
   defaults: {
     _localDatabase: {

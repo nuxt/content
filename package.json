@@ -6,7 +6,10 @@
   "keywords": [
     "nuxt",
     "content",
-    "module"
+    "nuxt-module",
+    "cms",
+    "markdown",
+    "mdc"
   ],
   "repository": {
     "type": "git",
