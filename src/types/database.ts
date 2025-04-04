@@ -1,4 +1,5 @@
 import type { Primitive, Connector } from 'db0'
+import type { ResolvedCollection } from '../module'
 
 export type CacheEntry = { id: string, checksum: string, parsedContent: string }
 
@@ -19,7 +20,7 @@ export interface LocalDevelopmentDatabase {
   fetchDevelopmentCacheForKey(key: string): Promise<CacheEntry | undefined>
   insertDevelopmentCache(id: string, checksum: string, parsedContent: string): void
   deleteDevelopmentCache(id: string): void
-  dropContentTables(): void
+  dropOldContentTables(collections: ResolvedCollection[]): Promise<{ upToDateTables: string[] }>
   exec(sql: string): void
   close(): void
   database?: Connector
