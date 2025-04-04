@@ -103,25 +103,27 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
 
   sortedKeys.forEach((key) => {
     const value = (properties)[key]
-    // const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
-    const underlyingType = (value as JsonSchema7ObjectType).type
-
+    const type = collection.fields[key]
     const defaultValue = value.default !== undefined ? value.default : 'NULL'
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
 
     fields.push(key)
-    if (collection.fields[key] === 'json') {
+
+    if (type === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
-    else if (['string', 'enum'].includes(underlyingType)) {
-      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+    else if (type === 'string') {
+      // @ts-expect-error format does exist
+      if (['data', 'datetime'].includes(value.format)) {
+        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString()}'` : defaultValue)
+      }
+      else {
+        values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+      }
     }
-    // else if (['Date'].includes(underlyingType)) {
-    //   values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert as string).toISOString()}'` : defaultValue)
-    // }
-    // else if (underlyingType.constructor.name === 'ZodBoolean') {
-    //   values.push(valueToInsert !== 'NULL' ? !!valueToInsert : valueToInsert)
-    // }
+    else if (type === 'boolean') {
+      values.push(valueToInsert !== 'NULL' ? !!valueToInsert : valueToInsert)
+    }
     else {
       values.push(valueToInsert)
     }
