@@ -11,13 +11,10 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
+defineProps<{
   features: {
-    type: Array as PropType<{
-      label: string
-      content: string
-    }[]>,
-    default: () => [],
-  },
-})
+    label: string
+    content: string
+  }[]
+}>()
 </script>
