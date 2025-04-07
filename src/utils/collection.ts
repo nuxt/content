@@ -191,12 +191,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   })
 
   const valuesHash = hash(values)
-  if (opts.hashColumn !== false) {
-    values.push(`'${valuesHash}'`)
-  }
+
+  const valuesWithHash = opts.hashColumn !== false ? [...values, `'${valuesHash}'`] : values
 
   let index = 0
-  const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
+  const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(valuesWithHash.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
   if (sql.length < MAX_SQL_QUERY_SIZE) {
@@ -215,16 +214,21 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
   if (typeof biggestColumn === 'string') {
     let sliceIndex = SLICE_SIZE
+    let prevSliceIndex = sliceIndex
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
+    const bigValueSliceWithHash = [...values, `'${valuesHash}-${sliceIndex}'`]
     const SQLQueries = [
-      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`.replace(/\?/g, () => values[index++] as string),
+      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
     while (sliceIndex < biggestColumn.length) {
-      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (sliceIndex + SLICE_SIZE < biggestColumn.length ? '\'' : '')
+      const isLastSlice = sliceIndex + SLICE_SIZE < biggestColumn.length
+      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (isLastSlice ? '\'' : '')
+      const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
       SQLQueries.push(
-        `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}) WHERE id = ${values[0]};`,
+        `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}), SET __hash__ = '${sliceHash}' WHERE id = ${values[0]} AND __hash__ = '${valuesHash}-${prevSliceIndex}';`,
       )
+      prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
     }
     return { queries: SQLQueries, hash: valuesHash }
