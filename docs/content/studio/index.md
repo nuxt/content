@@ -1,11 +1,14 @@
 ---
 seo:
   title: Meet Studio, content edition for everyone.
-  description: Nuxt Studio brings visual editing to your Nuxt Content projects. Anyone can contribute to the website thanks to our versatile editor that adapt to markdown, YAML, or JSON – no technical expertise needed. Built for developers, made for everyone.
+  description: Nuxt Studio brings visual editing to your Nuxt Content projects.
+    Anyone can contribute to the website thanks to our versatile editor that
+    adapt to markdown, YAML, or JSON – no technical expertise needed. Built for
+    developers, made for everyone.
 ---
 
 ::u-page-hero
-  :::div{class="hidden sm:block"}
+  :::div{.hidden.sm:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
@@ -51,7 +54,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   GitHub & Google Authentication
-
+  
   #description{unwrap="p"}
   Personalized workspace for each role: developers, writers, and clients.
   :::
@@ -62,7 +65,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Easy content updates
-
+  
   #description{unwrap="p"}
   From Markdown to YAML edition, our visual editor is designed for non technical users.
   :::
@@ -73,7 +76,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Real-time Collaboration
-
+  
   #description{unwrap="p"}
   Write as a team in real-time with our collaboration features.
   :::
@@ -84,7 +87,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   From Code to Edition
-
+  
   #description{unwrap="p"}
   Developers build the foundation while writers can safely edit the content.
   :::
@@ -95,7 +98,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Review before publishing
-
+  
   #description{unwrap="p"}
   Review your changes before making them live on your website.
   :::
@@ -106,7 +109,7 @@ Meet Studio, content edition :br for everyone.
   ---
   #title{unwrap="p"}
   Ready-to-use Templates
-
+  
   #description{unwrap="p"}
   Get started quickly with pre-built templates for Saas sites, blogs, docs and more.
   :::
@@ -126,7 +129,7 @@ orientation: horizontal
       },
     })
   </script>
-
+  
   <template>
     <div class="flex items-start gap-3">
       <div class="flex items-center justify-center border rounded-lg p-1.5">
@@ -143,7 +146,7 @@ orientation: horizontal
     </div>
   </template>
   ```
-
+  
   ```mdc [content/index.md]
   ::home-feature
     ---
@@ -155,7 +158,7 @@ orientation: horizontal
     Edit slots and props inside the Notion-like editor.
   ::
   ```
-
+  
     ::::preview-card{icon="i-lucide-eye" label="Editor"}
     ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
     ::::
@@ -209,9 +212,7 @@ Developers build the foundation their way: custom components, media library, and
 reverse: true
 orientation: horizontal
 ---
-:video{autoplay controls loop poster="/assets/home/videos/HomeNotionLikePoster.webp" src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
-
-
+:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1744126742/studio/finalpropscomps_usfabp.mp4"}
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-(--ui-primary)} your Nuxt Content website
@@ -290,7 +291,7 @@ Edit content as a team and see your site come to life with live preview. From te
 ::
 
 ::u-page-section
-  :::div{class="hidden sm:block"}
+  :::div{.hidden.sm:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
