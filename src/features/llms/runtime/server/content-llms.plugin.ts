@@ -71,6 +71,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       const docs = await query.all()
 
       for (const doc of docs) {
+        await nitroApp.hooks.callHook('content:llms:generate:document', doc)
         const markdown = await generateDocument(doc, options)
         contents.push(markdown)
       }
