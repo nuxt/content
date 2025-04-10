@@ -224,15 +224,15 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
     while (sliceIndex < biggestColumn.length) {
-      const isLastSlice = sliceIndex + SLICE_SIZE < biggestColumn.length
-      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (isLastSlice ? '\'' : '')
-      const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
+      const isLastSlice = sliceIndex + SLICE_SIZE > biggestColumn.length
+      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (!isLastSlice ? '\'' : '')
+      const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex + SLICE_SIZE}`
       const setValues = `SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice})${hashColumn ? `, SET __hash__ = '${sliceHash}'` : ''}`
       const whereCondition = `id = ${values[0]}${hashColumn ? ` AND __hash__ = '${valuesHash}-${prevSliceIndex}'` : ''};`
       SQLQueries.push(
         `UPDATE ${collection.tableName} ${setValues} WHERE ${whereCondition}`,
       )
-      prevSliceIndex = sliceIndex
+      prevSliceIndex = sliceIndex + SLICE_SIZE
       sliceIndex += SLICE_SIZE
     }
     return { queries: SQLQueries, hash: valuesHash }
