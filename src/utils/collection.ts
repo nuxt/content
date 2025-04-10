@@ -190,11 +190,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     }
   })
 
-  console.log('values', values)
-
   const valuesHash = hash(values)
-
-  console.log('valuesHash', valuesHash)
 
   const hashColumn = opts.hashColumn !== false
 
