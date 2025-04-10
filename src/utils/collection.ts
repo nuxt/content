@@ -190,7 +190,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     }
   })
 
+  console.log('values', values)
+
   const valuesHash = hash(values)
+
+  console.log('valuesHash', valuesHash)
 
   const hashColumn = opts.hashColumn !== false
 
@@ -198,7 +202,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
   let index = 0
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(valuesWithHash.length).slice(0, -2)});`
-    .replace(/\?/g, () => values[index++] as string)
+    .replace(/\?/g, () => valuesWithHash[index++] as string)
 
   if (sql.length < MAX_SQL_QUERY_SIZE) {
     return {
