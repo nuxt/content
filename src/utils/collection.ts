@@ -192,7 +192,9 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
   const valuesHash = hash(values)
 
-  const valuesWithHash = opts.hashColumn !== false ? [...values, `'${valuesHash}'`] : values
+  const hashColumn = opts.hashColumn !== false
+
+  const valuesWithHash = hashColumn ? [...values, `'${valuesHash}'`] : values
 
   let index = 0
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(valuesWithHash.length).slice(0, -2)});`
@@ -217,7 +219,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     let prevSliceIndex = sliceIndex
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
-    const bigValueSliceWithHash = [...values, `'${valuesHash}-${sliceIndex}'`]
+    const bigValueSliceWithHash = hashColumn ? [...values, `'${valuesHash}-${sliceIndex}'`] : values
     const SQLQueries = [
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
@@ -225,8 +227,10 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       const isLastSlice = sliceIndex + SLICE_SIZE < biggestColumn.length
       const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (isLastSlice ? '\'' : '')
       const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
+      const setValues = `SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice})${hashColumn ? `, SET __hash__ = '${sliceHash}'` : ''}`
+      const whereCondition = `id = ${values[0]}${hashColumn ? ` AND __hash__ = '${valuesHash}-${prevSliceIndex}'` : ''};`
       SQLQueries.push(
-        `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}), SET __hash__ = '${sliceHash}' WHERE id = ${values[0]} AND __hash__ = '${valuesHash}-${prevSliceIndex}';`,
+        `UPDATE ${collection.tableName} ${setValues} WHERE ${whereCondition}`,
       )
       prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
