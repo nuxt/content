@@ -111,10 +111,9 @@ describe('generateCollectionInsert', () => {
         `UPDATE ${getTableName('content')}`,
         ' SET',
         ` content = CONCAT(content, '${querySlices[index]}')`,
-        ', SET ',
-        `__hash__ = '${nextHash}'`,
+        `, "__hash__" = '${nextHash}'`,
         ' WHERE id = \'foo.md\'',
-        ` AND __hash__ = '${hash}-${sliceIndexes[index - 1]}';`,
+        ` AND "__hash__" = '${hash}-${sliceIndexes[index - 1]}';`,
       ].join(''))
       index++
     }

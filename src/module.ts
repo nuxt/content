@@ -32,17 +32,11 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
-import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 
 // Export public utils
 export * from './utils'
 export type * from './types'
-
-/**
- * Database version is used to identify schema changes
- * and drop the info table when the version is not supported
- */
-const databaseVersion = 'v3.3.0'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -307,7 +301,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             let parsedContent
             if (cache && cache.checksum === checksum) {
               cachedFilesCount += 1
-              parsedContent = JSON.parse(cache.parsedContent)
+              parsedContent = JSON.parse(cache.value)
             }
             else {
               parsedFilesCount += 1
@@ -317,7 +311,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 path: fullPath,
               })
               if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
+                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
               }
             }
 

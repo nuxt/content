@@ -136,7 +136,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       const checksum = getContentChecksum(content)
       const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
 
-      let parsedContent = localCache?.parsedContent || ''
+      let parsedContent = localCache?.value || ''
 
       // If the local cache is not present or the checksum does not match, we need to parse the content
       if (!localCache || localCache?.checksum !== checksum) {
