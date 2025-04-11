@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "^3.0.0",
-    "@nuxthub/core": "^0.8.18",
-    "nuxt": "^3.16.1",
+    "@nuxt/ui-pro": "^3.0.2",
+    "@nuxthub/core": "^0.8.24",
+    "nuxt": "^3.16.2",
     "remark-code-import": "^1.2.0",
     "shiki-transformer-color-highlight": "^1.0.0"
   }
