@@ -10,6 +10,12 @@ import type { ModuleOptions } from '../types/module'
 import { logger } from './dev'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
 
+/**
+ * Database version is used to identify schema changes
+ * and drop the info table when the version is not supported
+ */
+export const databaseVersion = 'v3.5.0'
+
 export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
   if (database.type === 'd1') {
     if (!('bindingName' in database)) {
@@ -69,31 +75,51 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     tableName: '_development_cache',
     extendedSchema: z.object({
       id: z.string(),
+      value: z.string(),
       checksum: z.string(),
-      parsedContent: z.string(),
     }),
     fields: {
       id: 'string',
+      value: 'string',
       checksum: 'string',
-      parsedContent: 'string',
     },
   } as unknown as ResolvedCollection
 
-  _localDatabase[databaseLocation] = db
-  await db.exec(generateCollectionTableDefinition(cacheCollection, { hashColumn: false }))
+  // If the database is already initialized, we need to drop the cache table
+  if (!_localDatabase[databaseLocation]) {
+    _localDatabase[databaseLocation] = db
+
+    let dropCacheTable = false
+    try {
+      dropCacheTable = await db.prepare('SELECT * FROM _development_cache WHERE id = ?')
+        .get('__DATABASE_VERSION__').then(row => (row as unknown as { value: string })?.value !== databaseVersion)
+    }
+    catch {
+      dropCacheTable = true
+    }
+
+    const initQueries = generateCollectionTableDefinition(cacheCollection, { drop: Boolean(dropCacheTable) })
+    for (const query of initQueries.split('\n')) {
+      await db.exec(query)
+    }
+    // Initialize the database version
+    if (dropCacheTable) {
+      await db.exec(generateCollectionInsert(cacheCollection, { id: '__DATABASE_VERSION__', value: databaseVersion, checksum: databaseVersion }).queries[0])
+    }
+  }
 
   const fetchDevelopmentCache = async () => {
     const result = await db.prepare('SELECT * FROM _development_cache').all() as CacheEntry[]
     return result.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {} as Record<string, CacheEntry>)
   }
 
-  const fetchDevelopmentCacheForKey = async (key: string) => {
-    return await db.prepare('SELECT * FROM _development_cache WHERE id = ?').get(key) as CacheEntry | undefined
+  const fetchDevelopmentCacheForKey = async (id: string) => {
+    return await db.prepare('SELECT * FROM _development_cache WHERE id = ?').get(id) as CacheEntry | undefined
   }
 
-  const insertDevelopmentCache = async (id: string, checksum: string, parsedContent: string) => {
+  const insertDevelopmentCache = async (id: string, value: string, checksum: string) => {
     deleteDevelopmentCache(id)
-    const insert = generateCollectionInsert(cacheCollection, { id, checksum, parsedContent }, { hashColumn: false })
+    const insert = generateCollectionInsert(cacheCollection, { id, value, checksum })
     for (const query of insert.queries) {
       await db.exec(query)
     }

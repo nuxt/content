@@ -151,7 +151,7 @@ export const MAX_SQL_QUERY_SIZE = 100000
 export const SLICE_SIZE = 70000
 
 // Convert collection data to SQL insert statement
-export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile, opts: { hashColumn?: boolean } = {}): { queries: string[], hash: string } {
+export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
@@ -191,9 +191,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   })
 
   const valuesHash = hash(values)
-  if (opts.hashColumn !== false) {
-    values.push(`'${valuesHash}'`)
-  }
+  values.push(`'${valuesHash}'`)
 
   let index = 0
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
@@ -217,15 +215,26 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     let sliceIndex = SLICE_SIZE
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
+
+    const bigValueSliceWithHash = [...values.slice(0, -1), `'${valuesHash}-${sliceIndex}'`]
+
     const SQLQueries = [
-      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`.replace(/\?/g, () => values[index++] as string),
+      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
     while (sliceIndex < biggestColumn.length) {
-      const newSlice = `'${biggestColumn.slice(sliceIndex, sliceIndex + SLICE_SIZE)}` + (sliceIndex + SLICE_SIZE < biggestColumn.length ? '\'' : '')
-      SQLQueries.push(
-        `UPDATE ${collection.tableName} SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}) WHERE id = ${values[0]};`,
-      )
+      const prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
+
+      const isLastSlice = sliceIndex > biggestColumn.length
+      const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
+      const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
+      SQLQueries.push([
+        'UPDATE',
+        collection.tableName,
+        `SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}), "__hash__" = '${sliceHash}'`,
+        'WHERE',
+        `id = ${values[0]} AND "__hash__" = '${valuesHash}-${prevSliceIndex}';`,
+      ].join(' '))
     }
     return { queries: SQLQueries, hash: valuesHash }
   }
@@ -237,7 +246,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 }
 
 // Convert a collection with Zod schema to SQL table definition
-export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean, hashColumn?: boolean } = {}) {
+export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
     const type = (collection.extendedSchema).shape[key]!
@@ -282,10 +291,8 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
 
-  if (opts.hashColumn !== false) {
-    // add __hash__ field for inserts
-    sqlFields.push('"__hash__" TEXT UNIQUE')
-  }
+  // add __hash__ field for inserts
+  sqlFields.push('"__hash__" TEXT UNIQUE')
 
   let definition = `CREATE TABLE IF NOT EXISTS ${collection.tableName} (${sqlFields.join(', ')});`
 

@@ -83,8 +83,10 @@ describe('generateCollectionInsert', () => {
     })
 
     const querySlices: string[] = [content.slice(0, SLICE_SIZE - 1)]
+    const sliceIndexes = [SLICE_SIZE]
     for (let i = 1; i < (content.length / SLICE_SIZE); i++) {
       querySlices.push(content.slice((SLICE_SIZE * i) - 1, (SLICE_SIZE * (i + 1)) - 1))
+      sliceIndexes.push(SLICE_SIZE * (i + 1))
     }
 
     // check that the content will be split into multiple queries
@@ -93,18 +95,25 @@ describe('generateCollectionInsert', () => {
     // check that concatenated all the values are equal to the original content
     expect(content).toEqual(querySlices.join(''))
 
+    const hash = 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg'
+
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg');`,
+      ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', '${hash}-${sliceIndexes[0]}');`,
     ].join(''))
     let index = 1
-    while (index < sql.length - 1) {
+
+    while (index < sql.length) {
+      // last statement should update the hash column to the hash itself
+      const nextHash = index === sql.length - 1 ? hash : `${hash}-${sliceIndexes[index]}`
       expect(sql[index]).toBe([
         `UPDATE ${getTableName('content')}`,
         ' SET',
         ` content = CONCAT(content, '${querySlices[index]}')`,
-        ' WHERE id = \'foo.md\';',
+        `, "__hash__" = '${nextHash}'`,
+        ' WHERE id = \'foo.md\'',
+        ` AND "__hash__" = '${hash}-${sliceIndexes[index - 1]}';`,
       ].join(''))
       index++
     }
