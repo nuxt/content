@@ -19,19 +19,19 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/module.d.ts",
+      "types": "./dist/module.d.mts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     },
     "./preview": {
-      "types": "./dist/preview.d.ts",
+      "types": "./dist/preview.d.mts",
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.cjs"
     },
     "./runtime": "./dist/runtime/index.js"
   },
   "main": "./dist/module.cjs",
-  "types": "./dist/module.d.ts",
+  "types": "./dist/module.d.mts",
   "files": [
     "dist"
   ],
