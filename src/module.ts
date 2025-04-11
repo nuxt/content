@@ -278,7 +278,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     for await (const source of collection.source) {
       if (source.prepare) {
-        await source.prepare({ rootDir: nuxt.options.rootDir })
+        // @ts-expect-error - `__rootDir` is a private property to store the layer's cwd
+        const rootDir = collection.__rootDir || nuxt.options.rootDir
+        await source.prepare({ rootDir })
       }
 
       const { fixed } = parseSourceBase(source)
