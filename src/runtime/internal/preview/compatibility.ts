@@ -1,7 +1,7 @@
 import type { CollectionInfo, DraftSyncFile, ResolvedCollectionSource } from '@nuxt/content'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { join } from 'pathe'
-import { parseSourceBase } from './utils'
+import { parseSourceBase, withoutPrefixNumber } from './utils'
 
 export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo, source: ResolvedCollectionSource) => {
   const { fixed } = parseSourceBase(source)
@@ -9,9 +9,9 @@ export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo
     return undefined
   }
 
-  const fixedWithoutPrefix = fixed.replace(/^\d+\./, '')
-  const prefixWithoutPrefix = (source?.prefix || '').replace(/\/\d+\./, '/')
-  const path = file.parsed._path!.substring(fixedWithoutPrefix.length)
+  const fixedWithoutPrefixNumber = withoutPrefixNumber(fixed || '')
+  const prefixWithoutPrefix = withoutPrefixNumber(source?.prefix || '', true)
+  const path = file.parsed._path!.substring(fixedWithoutPrefixNumber.length)
   const pathInCollection = join(prefixWithoutPrefix, path)
 
   // TODO - Handle data collections (remove path...)
