@@ -8,8 +8,11 @@ export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo
   if (!file.parsed) {
     return undefined
   }
-  const path = file.parsed._path!.substring(fixed.length)
-  const pathInCollection = join(source?.prefix || '', path)
+
+  const fixedWithoutPrefix = fixed.replace(/^\d+\./, '')
+  const prefixWithoutPrefix = (source?.prefix || '').replace(/\/\d+\./, '/')
+  const path = file.parsed._path!.substring(fixedWithoutPrefix.length)
+  const pathInCollection = join(prefixWithoutPrefix, path)
 
   // TODO - Handle data collections (remove path...)
   const mappedFile: Record<string, unknown> = {
