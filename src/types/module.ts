@@ -186,8 +186,16 @@ export interface ModuleOptions {
      * Node.js SQLite introduced in v22.5.0
      *
      * @default false
+     * @deprecated Use `sqliteConnector: 'native'` instead
      */
     nativeSqlite?: boolean
+
+    /**
+     * Use given SQLite connector instead of `better-sqlite3` if available
+     *
+     * @default undefined
+     */
+    sqliteConnector?: SQLiteConnector
   }
 }
 
@@ -207,3 +215,5 @@ export interface PublicRuntimeConfig {
     iframeMessagingAllowedOrigins?: string
   }
 }
+
+export type SQLiteConnector = 'native' | 'sqlite3' | 'better-sqlite3'

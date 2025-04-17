@@ -23,6 +23,7 @@ dist
 .vercel_build_output
 .build-*
 .netlify
+.amplify-hosting
 
 # Env
 .env

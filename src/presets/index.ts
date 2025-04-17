@@ -5,6 +5,7 @@ import vercel from './vercel'
 import node from './node'
 import nuxthub from './nuxthub'
 import netlify from './netlify'
+import awsAmplify from './aws-amplify'
 
 export function findPreset(nuxt: Nuxt) {
   const preset = nuxt.options.nitro.preset?.replace(/_/g, '-')
@@ -23,6 +24,10 @@ export function findPreset(nuxt: Nuxt) {
 
   if (preset === 'vercel' || process.env.VERCEL === '1') {
     return vercel
+  }
+
+  if (preset === 'aws-amplify' || typeof process.env.AWS_AMPLIFY_DEPLOYMENT_ID !== 'undefined') {
+    return awsAmplify
   }
 
   return node
