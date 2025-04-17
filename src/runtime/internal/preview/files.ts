@@ -15,6 +15,10 @@ export function withoutRoot(path: string) {
 
 // Remove leading number from path
 export function withoutPrefixNumber(path: string, leadingSlash = false) {
+  if (!path) {
+    return path
+  }
+
   return leadingSlash ? withLeadingSlash(path.replace(/\/\d+\./, '/')) : withoutLeadingSlash(path.replace(/^\d+\./, ''))
 }
 

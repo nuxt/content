@@ -17,7 +17,13 @@ export const getCollectionByFilePath = (path: string, collections: Record<string
     const pathWithoutRoot = withoutRoot(path)
     const paths = pathWithoutRoot === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [pathWithoutRoot]
     return paths.some((p) => {
-      matchedSource = collection.source.find(source => minimatch(p, source.include) && !source.exclude?.some(exclude => minimatch(p, exclude)))
+      matchedSource = collection.source.find((source) => {
+        const include = minimatch(p, source.include)
+        const exclude = source.exclude?.some(exclude => minimatch(p, exclude))
+
+        return include && !exclude
+      })
+
       return matchedSource
     })
   })
@@ -45,9 +51,9 @@ export const getCollectionByRoutePath = (routePath: string, collections: Record<
         return
       }
 
-      if (routePath === '/' || routePath === prefixWithoutPrefixNumber) {
+      if (routePath === '/') {
         const indexFiles = ['index.yml', 'index.yaml', 'index.md', 'index.json']
-        const files = routePath === '/' ? indexFiles : indexFiles.map(file => withoutLeadingSlash(joinURL(prefixWithoutPrefixNumber, file)))
+        const files = routePath === '/' ? indexFiles : indexFiles.map(indexFile => withoutLeadingSlash(joinURL(prefixWithoutPrefixNumber, indexFile)))
         return files.some((p) => {
           const include = minimatch(p, withoutPrefixNumber(source.include))
           const exclude = source.exclude?.some(exclude => minimatch(p, withoutPrefixNumber(exclude)))
