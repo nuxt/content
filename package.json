@@ -136,7 +136,7 @@
     "mdclint": "^0.0.2",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^3.16.2",
-    "release-it": "^18.1.2",
+    "release-it": "^19.0.1",
     "typescript": "5.8.3",
     "vitest": "^3.1.1",
     "vue-tsc": "^2.2.8",
