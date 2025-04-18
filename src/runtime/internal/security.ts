@@ -46,7 +46,7 @@ export function assertSafeQuery(sql: string, collection: string) {
   }
 
   // FROM
-  if (from !== `_content_${collection}`) {
+  if (!from.match(`^_content_${collection}_[a-z0-9]{4}$`)) {
     throw new Error('Invalid query')
   }
 
