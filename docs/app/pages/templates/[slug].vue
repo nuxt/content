@@ -114,6 +114,7 @@ const images = computed(() => template.value
 
       <UPageBody>
         <UCarousel
+          v-if="images.length"
           v-slot="{ item }"
           dots
           :items="images"
