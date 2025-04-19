@@ -7,6 +7,7 @@ import { isWebContainer } from '@webcontainer/env'
 import { z } from 'zod'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions } from '../types/module'
+import type { ResolvedCollection } from '../module'
 import { logger } from './dev'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
 
@@ -129,11 +130,19 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
   }
 
-  const dropContentTables = async () => {
+  const dropOldContentTables = async (collections: ResolvedCollection[]) => {
     const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
       .all('table', '_content_%') as { name: string }[]
+    const upToDateTables = new Set<string>()
     for (const { name } of tables) {
-      db.exec(`DROP TABLE ${name}`)
+      if (collections.some(c => c.tableName === name)) {
+        upToDateTables.add(name)
+        continue
+      }
+      db.exec(`DROP TABLE IF EXISTS ${name}`)
+    }
+    return {
+      upToDateTables: [...upToDateTables.values()],
     }
   }
 
@@ -149,7 +158,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     fetchDevelopmentCacheForKey,
     insertDevelopmentCache,
     deleteDevelopmentCache,
-    dropContentTables,
+    dropOldContentTables,
   }
 }
 

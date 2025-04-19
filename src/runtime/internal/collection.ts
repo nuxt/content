@@ -32,5 +32,5 @@ function findCollectionFields(sql: string): Record<string, 'string' | 'number' |
 }
 
 function getCollectionName(table: string) {
-  return table.replace(/^_content_/, '')
+  return table.replace(/^_content_/, '').replace(/_[a-z0-9]{4}$/, '')
 }

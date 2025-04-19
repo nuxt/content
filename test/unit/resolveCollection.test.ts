@@ -10,4 +10,20 @@ describe('resolveCollection', () => {
     const resolvedCollection = resolveCollection('invalid-name', collection)
     expect(resolvedCollection).toBeUndefined()
   })
+
+  test('Collection hash changes with content', () => {
+    const collectionA = defineCollection({
+      type: 'page',
+      source: '**',
+    })
+    const collectionB = defineCollection({
+      type: 'page',
+      source: 'someEmpty/**',
+    })
+    const resolvedCollectionA = resolveCollection('collection', collectionA)
+    const resolvedCollectionB = resolveCollection('collection', collectionB)
+    expect(resolvedCollectionA?.hash).toBeDefined()
+    expect(resolvedCollectionB?.hash).toBeDefined()
+    expect(resolvedCollectionA?.hash).not.toBe(resolvedCollectionB?.hash)
+  })
 })

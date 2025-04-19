@@ -61,12 +61,13 @@ describe('basic', async () => {
     })
 
     test('content table is created', async () => {
-      const cache = await db.database?.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`)
-        .all(getTableName('content')) as { name: string }[]
+      const tableNameNoHash = getTableName('content', 'xxxx').slice(0, -4)
+      const cache = await db.database?.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name LIKE ? || '%';`)
+        .all(tableNameNoHash) as { name: string }[]
 
       expect(cache).toBeDefined()
       expect(cache).toHaveLength(1)
-      expect(cache![0].name).toBe(getTableName('content'))
+      expect(cache![0].name.slice(0, -4)).toBe(tableNameNoHash)
     })
   })
 
