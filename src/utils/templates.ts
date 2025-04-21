@@ -85,7 +85,7 @@ export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
       if (options.manifest.collections.find(c => c.name === key)?.private) {
         return ''
       }
-      const compressedDump = await compress(JSON.stringify(dump));
+      const compressedDump = await compress(JSON.stringify(dump))
       result.push(`export const ${key} = "${compressedDump}"`)
     }
 
