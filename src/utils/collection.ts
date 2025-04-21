@@ -180,7 +180,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (underlyingType.constructor.name === 'ZodString') {
-      values.push(`'${String(valueToInsert)}'`)
+      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (collection.fields[key] === 'date') {
       values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
