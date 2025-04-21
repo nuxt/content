@@ -1,4 +1,4 @@
-export async function decompressSQLDump(base64Str: string, compressionType: CompressionFormat = 'gzip'): Promise<string[]> {
+export async function decompressSQLDump(base64Str: string, compressionType: CompressionFormat = 'gzip'): Promise<string> {
   // Decode Base64 to binary data
   const binaryData = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0))
 
@@ -6,7 +6,5 @@ export async function decompressSQLDump(base64Str: string, compressionType: Comp
   const response = new Response(new Blob([binaryData]))
   const decompressedStream = response.body?.pipeThrough(new DecompressionStream(compressionType))
   // Read the decompressed data as text
-  const decompressedText = await new Response(decompressedStream).text()
-
-  return decompressedText.split('\n')
+  return new Response(decompressedStream).text()
 }
