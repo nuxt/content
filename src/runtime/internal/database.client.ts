@@ -126,11 +126,13 @@ async function loadCollectionDatabase<T>(collection: T) {
       await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
     }
 
-    try {
-      await db.exec(dump)
-    }
-    catch (error) {
-      console.error('Error executing command', error)
+    for (const command of dump) {
+      try {
+        await db.exec(command)
+      }
+      catch (error) {
+        console.error('Error executing command', error)
+      }
     }
   }
 
