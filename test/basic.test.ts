@@ -25,12 +25,11 @@ describe('basic', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     dev: true,
   })
-  console.log('setup')
 
   describe('`content.config.ts`', async () => {
     test('Default collection is defined', async () => {
       const rootDir = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
-      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt, { defaultFallback: true })
+      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt)
 
       // Pages collection + info collection
       expect(config.collections.length).toBe(2)

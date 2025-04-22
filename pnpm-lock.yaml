@@ -21,8 +21,8 @@ importers:
         specifier: ^3.16.2
         version: 3.16.2(magicast@0.3.5)
       '@nuxtjs/mdc':
-        specifier: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd
-        version: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd(magicast@0.3.5)
+        specifier: https://pkg.pr.new/@nuxtjs/mdc@c44090f
+        version: https://pkg.pr.new/@nuxtjs/mdc@c44090f(magicast@0.3.5)
       '@shikijs/langs':
         specifier: ^3.2.2
         version: 3.2.2
@@ -1789,8 +1789,8 @@ packages:
     resolution: {integrity: sha512-pw8xU6PFzCop8tYts5IqqoL4F5eol18Xg+0wgVeptlzdki4LR0NnNQkO5nHhwsKUK8e+g8+Efc6ppqKdTqPGig==}
     engines: {node: '>=18.12.0'}
 
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd':
-    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd}
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@c44090f':
+    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@c44090f}
     version: 0.16.1
 
   '@nuxtjs/plausible@1.2.0':
@@ -2582,9 +2582,6 @@ packages:
 
   '@shikijs/langs@3.2.2':
     resolution: {integrity: sha512-NY0Urg2dV9ETt3JIOWoMPuoDNwte3geLZ4M1nrPHbkDS8dWMpKcEwlqiEIGqtwZNmt5gKyWpR26ln2Bg2ecPgw==}
-
-  '@shikijs/themes@3.2.1':
-    resolution: {integrity: sha512-k5DKJUT8IldBvAm8WcrDT5+7GA7se6lLksR+2E3SvyqGTyFMzU2F9Gb7rmD+t+Pga1MKrYFxDIeyWjMZWM6uBQ==}
 
   '@shikijs/themes@3.2.2':
     resolution: {integrity: sha512-Zuq4lgAxVKkb0FFdhHSdDkALuRpsj1so1JdihjKNQfgM78EHxV2JhO10qPsMrm01FkE3mDRTdF68wfmsqjt6HA==}
@@ -9899,11 +9896,11 @@ snapshots:
       - supports-color
       - vue
 
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@cd1c4fd(magicast@0.3.5)':
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@c44090f(magicast@0.3.5)':
     dependencies:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
       '@shikijs/langs': 3.2.2
-      '@shikijs/themes': 3.2.1
+      '@shikijs/themes': 3.2.2
       '@shikijs/transformers': 3.2.1
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -10584,10 +10581,6 @@ snapshots:
   '@shikijs/langs@3.2.2':
     dependencies:
       '@shikijs/types': 3.2.2
-
-  '@shikijs/themes@3.2.1':
-    dependencies:
-      '@shikijs/types': 3.2.1
 
   '@shikijs/themes@3.2.2':
     dependencies:
