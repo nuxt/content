@@ -8,7 +8,7 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]

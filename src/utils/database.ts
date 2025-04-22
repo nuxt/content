@@ -6,9 +6,15 @@ import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
 import { z } from 'zod'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
-import type { ModuleOptions } from '../types/module'
+import type { ModuleOptions, SQLiteConnector } from '../types/module'
 import { logger } from './dev'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
+
+/**
+ * Database version is used to identify schema changes
+ * and drop the info table when the version is not supported
+ */
+export const databaseVersion = 'v3.5.0'
 
 export async function refineDatabaseConfig(database: ModuleOptions['database'], opts: { rootDir: string, updateSqliteFileName?: boolean }) {
   if (database.type === 'd1') {
@@ -30,9 +36,9 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, nativeSqlite?: boolean }) {
+export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter({ nativeSqlite: opts.nativeSqlite }),
+    sqlite: findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
@@ -48,7 +54,7 @@ export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgr
   return databaseConnectors[adapter]
 }
 
-async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, opts: { nativeSqlite?: boolean }): Promise<Connector> {
+async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, opts: { sqliteConnector?: SQLiteConnector }): Promise<Connector> {
   if (database.type === 'd1') {
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
@@ -61,39 +67,59 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, op
 }
 
 const _localDatabase: Record<string, Connector> = {}
-export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, { connector, nativeSqlite }: { connector?: Connector, nativeSqlite?: boolean } = {}): Promise<LocalDevelopmentDatabase> {
+export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, { connector, sqliteConnector }: { connector?: Connector, nativeSqlite?: boolean, sqliteConnector?: SQLiteConnector } = {}): Promise<LocalDevelopmentDatabase> {
   const databaseLocation = database.type === 'sqlite' ? database.filename : database.bindingName
-  const db = _localDatabase[databaseLocation] || connector || await getDatabase(database, { nativeSqlite })
+  const db = _localDatabase[databaseLocation] || connector || await getDatabase(database, { sqliteConnector })
 
   const cacheCollection = {
     tableName: '_development_cache',
     extendedSchema: z.object({
       id: z.string(),
+      value: z.string(),
       checksum: z.string(),
-      parsedContent: z.string(),
     }),
     fields: {
       id: 'string',
+      value: 'string',
       checksum: 'string',
-      parsedContent: 'string',
     },
   } as unknown as ResolvedCollection
 
-  _localDatabase[databaseLocation] = db
-  await db.exec(generateCollectionTableDefinition(cacheCollection, { hashColumn: false }))
+  // If the database is already initialized, we need to drop the cache table
+  if (!_localDatabase[databaseLocation]) {
+    _localDatabase[databaseLocation] = db
+
+    let dropCacheTable = false
+    try {
+      dropCacheTable = await db.prepare('SELECT * FROM _development_cache WHERE id = ?')
+        .get('__DATABASE_VERSION__').then(row => (row as unknown as { value: string })?.value !== databaseVersion)
+    }
+    catch {
+      dropCacheTable = true
+    }
+
+    const initQueries = generateCollectionTableDefinition(cacheCollection, { drop: Boolean(dropCacheTable) })
+    for (const query of initQueries.split('\n')) {
+      await db.exec(query)
+    }
+    // Initialize the database version
+    if (dropCacheTable) {
+      await db.exec(generateCollectionInsert(cacheCollection, { id: '__DATABASE_VERSION__', value: databaseVersion, checksum: databaseVersion }).queries[0])
+    }
+  }
 
   const fetchDevelopmentCache = async () => {
     const result = await db.prepare('SELECT * FROM _development_cache').all() as CacheEntry[]
     return result.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {} as Record<string, CacheEntry>)
   }
 
-  const fetchDevelopmentCacheForKey = async (key: string) => {
-    return await db.prepare('SELECT * FROM _development_cache WHERE id = ?').get(key) as CacheEntry | undefined
+  const fetchDevelopmentCacheForKey = async (id: string) => {
+    return await db.prepare('SELECT * FROM _development_cache WHERE id = ?').get(id) as CacheEntry | undefined
   }
 
-  const insertDevelopmentCache = async (id: string, checksum: string, parsedContent: string) => {
+  const insertDevelopmentCache = async (id: string, value: string, checksum: string) => {
     deleteDevelopmentCache(id)
-    const insert = generateCollectionInsert(cacheCollection, { id, checksum, parsedContent }, { hashColumn: false })
+    const insert = generateCollectionInsert(cacheCollection, { id, value, checksum })
     for (const query of insert.queries) {
       await db.exec(query)
     }
@@ -127,17 +153,34 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-function findBestSqliteAdapter(opts: { nativeSqlite?: boolean }) {
+function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   if (process.versions.bun) {
     return 'db0/connectors/bun-sqlite'
   }
 
   // if node:sqlite is available, use it
-  if (opts.nativeSqlite && isNodeSqliteAvailable()) {
+  if (opts.sqliteConnector === 'native' && isNodeSqliteAvailable()) {
     return 'db0/connectors/node-sqlite'
   }
 
-  return isSqlite3Available() ? 'db0/connectors/sqlite3' : 'db0/connectors/better-sqlite3'
+  if (opts.sqliteConnector === 'sqlite3') {
+    return 'db0/connectors/sqlite3'
+  }
+
+  if (opts.sqliteConnector === 'better-sqlite3') {
+    return 'db0/connectors/better-sqlite3'
+  }
+
+  if (isWebContainer()) {
+    if (!isSqlite3PackageInstalled()) {
+      logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
+      process.exit(1)
+    }
+
+    return 'db0/connectors/sqlite3'
+  }
+
+  return 'db0/connectors/better-sqlite3'
 }
 
 function isNodeSqliteAvailable() {
@@ -174,18 +217,12 @@ function isNodeSqliteAvailable() {
   }
 }
 
-function isSqlite3Available() {
-  if (!isWebContainer()) {
-    return false
-  }
-
+function isSqlite3PackageInstalled() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('sqlite3')
+    require.resolve('sqlite3')
     return true
   }
   catch {
-    logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
-    process.exit(1)
+    return false
   }
 }

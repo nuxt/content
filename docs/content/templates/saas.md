@@ -8,14 +8,15 @@ category: docs
 demo: https://saas-template.nuxt.dev/
 description: It includes a landing page, a pricing page, a documentation and a blog.
 licenseType: nuxt-ui-pro
-mainScreen: /templates/saas-main.webp
+mainScreen: /templates/saas-main.png
 name: SaaS
 owner: nuxt-ui-pro
-image1: /templates/saas-1.webp
-image2: /templates/saas-2.webp
-image3: /templates/saas-3.webp
-draft: true
+draft: false
 ---
+
+::div{.flex.justify-center}
+:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1744979325/studio/saas_cafkml.mp4"}
+::
 
 ::template-core
 [Nuxt UI Pro](https://ui.nuxt.com/pro) is a collection of premium components, an extension of [Nuxt UI](https://ui.nuxt.com), designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.

@@ -1,6 +1,6 @@
 import type { Primitive, Connector } from 'db0'
 
-export type CacheEntry = { id: string, checksum: string, parsedContent: string }
+export type CacheEntry = { id: string, value: string, checksum: string }
 
 export type DatabaseBindParams = Primitive[]
 

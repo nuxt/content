@@ -7,7 +7,7 @@ import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
 import { getTableName } from '../src/utils/collection'
 import { getLocalDatabase } from '../src/utils/database'
-import type { LocalDevelopmentDatabase } from '../dist/module'
+import type { LocalDevelopmentDatabase } from '../src/module'
 
 async function cleanup() {
   await fs.rm(fileURLToPath(new URL('./fixtures/basic/node_modules', import.meta.url)), { recursive: true, force: true })
@@ -25,12 +25,11 @@ describe('basic', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     dev: true,
   })
-  console.log('setup')
 
   describe('`content.config.ts`', async () => {
     test('Default collection is defined', async () => {
       const rootDir = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
-      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt, { defaultFallback: true })
+      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt)
 
       // Pages collection + info collection
       expect(config.collections.length).toBe(2)

@@ -1,5 +1,5 @@
 import { dirname, parse, join } from 'pathe'
-import { withoutLeadingSlash } from 'ufo'
+import { withoutLeadingSlash, withLeadingSlash } from 'ufo'
 import type { DraftFile, DraftSyncFile } from '~/src/types/preview'
 
 export const PreviewConfigFiles = {
@@ -11,6 +11,15 @@ export const PreviewConfigFiles = {
 // Removing `content/` prefix only if path is starting with content/
 export function withoutRoot(path: string) {
   return path?.startsWith('content/') ? path.split('/').slice(1).join('/') : withoutLeadingSlash(path)
+}
+
+// Remove leading number from path
+export function withoutPrefixNumber(path: string, leadingSlash = false) {
+  if (!path) {
+    return path
+  }
+
+  return leadingSlash ? withLeadingSlash(path.replace(/\/\d+\./, '/')) : withoutLeadingSlash(path.replace(/^\d+\./, ''))
 }
 
 // Generate stem (path without extension)

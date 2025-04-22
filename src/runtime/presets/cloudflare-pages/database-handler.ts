@@ -1,8 +1,9 @@
-import { eventHandler, getRouterParam } from 'h3'
+import { eventHandler, getRouterParam, setHeader } from 'h3'
 import { useStorage } from 'nitropack/runtime'
 
 export default eventHandler(async (event) => {
   const collection = getRouterParam(event, 'collection')!
+  setHeader(event, 'Content-Type', 'text/plain')
 
   const ASSETS = event?.context?.cloudflare?.env.ASSETS || process.env.ASSETS
   if (ASSETS) {

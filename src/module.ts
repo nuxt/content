@@ -32,17 +32,11 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
-import { getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 
 // Export public utils
 export * from './utils'
 export type * from './types'
-
-/**
- * Database version is used to identify schema changes
- * and drop the info table when the version is not supported
- */
-const databaseVersion = 'v3.3.0'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -144,6 +138,19 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
+    // Prerender database.sql routes for each collection to fetch dump
+    nuxt.options.routeRules ||= {}
+
+    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
+    // @see https://github.com/nuxt/content/pull/3299
+    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+
+    manifest.collections.forEach((collection) => {
+      if (!collection.private) {
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
+      }
+    })
+
     const preset = findPreset(nuxt)
     await preset?.setup?.(options, nuxt)
 
@@ -168,7 +175,7 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
 
-      const resolveOptions = { resolver, nativeSqlite: options.experimental?.nativeSqlite }
+      const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
       config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
       config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
@@ -185,19 +192,6 @@ export default defineNuxtModule<ModuleOptions>({
         await watchComponents(nuxt)
         const socket = await startSocketServer(nuxt, options, manifest)
         await watchContents(nuxt, options, manifest, socket)
-      }
-    })
-
-    // Prerender database.sql routes for each collection to fetch dump
-    nuxt.options.routeRules ||= {}
-
-    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-    // @see https://github.com/nuxt/content/pull/3299
-    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
-
-    manifest.collections.forEach((collection) => {
-      if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
       }
     })
 
@@ -242,7 +236,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
   const collectionChecksumStructure: Record<string, string> = {}
-  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
+  const db = await getLocalDatabase(options._localDatabase, {
+    sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined),
+  })
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({
@@ -278,7 +274,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
     for await (const source of collection.source) {
       if (source.prepare) {
-        await source.prepare({ rootDir: nuxt.options.rootDir })
+        // @ts-expect-error - `__rootDir` is a private property to store the layer's cwd
+        const rootDir = collection.__rootDir || nuxt.options.rootDir
+        await source.prepare({ rootDir })
       }
 
       const { fixed } = parseSourceBase(source)
@@ -307,7 +305,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             let parsedContent
             if (cache && cache.checksum === checksum) {
               cachedFilesCount += 1
-              parsedContent = JSON.parse(cache.parsedContent)
+              parsedContent = JSON.parse(cache.value)
             }
             else {
               parsedFilesCount += 1
@@ -317,7 +315,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 path: fullPath,
               })
               if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, checksum, JSON.stringify(parsedContent))
+                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
               }
             }
 

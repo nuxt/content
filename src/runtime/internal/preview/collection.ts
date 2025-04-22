@@ -5,7 +5,7 @@ import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { hash } from 'ohash'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
-import { withoutRoot } from './files'
+import { withoutPrefixNumber, withoutRoot } from './files'
 
 export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo | undefined, matchedSource: ResolvedCollectionSource | undefined } => {
   let matchedSource: ResolvedCollectionSource | undefined
@@ -17,7 +17,13 @@ export const getCollectionByFilePath = (path: string, collections: Record<string
     const pathWithoutRoot = withoutRoot(path)
     const paths = pathWithoutRoot === '/' ? ['index.yml', 'index.yaml', 'index.md', 'index.json'] : [pathWithoutRoot]
     return paths.some((p) => {
-      matchedSource = collection.source.find(source => minimatch(p, source.include) && !source.exclude?.some(exclude => minimatch(p, exclude)))
+      matchedSource = collection.source.find((source) => {
+        const include = minimatch(p, source.include)
+        const exclude = source.exclude?.some(exclude => minimatch(p, exclude))
+
+        return include && !exclude
+      })
+
       return matchedSource
     })
   })
@@ -36,29 +42,39 @@ export const getCollectionByRoutePath = (routePath: string, collections: Record<
     }
 
     matchedSource = collection.source.find((source) => {
-      if (!source.prefix || !routePath.startsWith(source.prefix)) {
+      if (!source.prefix) {
         return
       }
 
-      if (routePath === '/' || routePath === source.prefix) {
+      const prefixWithoutPrefixNumber = withoutPrefixNumber(source.prefix, true)
+      if (!routePath.startsWith(prefixWithoutPrefixNumber)) {
+        return
+      }
+
+      if (routePath === '/') {
         const indexFiles = ['index.yml', 'index.yaml', 'index.md', 'index.json']
-        const files = routePath === '/' ? indexFiles : indexFiles.map(file => withoutLeadingSlash(joinURL(source.prefix!, file)))
+        const files = routePath === '/' ? indexFiles : indexFiles.map(indexFile => withoutLeadingSlash(joinURL(prefixWithoutPrefixNumber, indexFile)))
         return files.some((p) => {
-          return collection.source.find(source => minimatch(p, source.include) && !source.exclude?.some(exclude => minimatch(p, exclude)))
+          const include = minimatch(p, withoutPrefixNumber(source.include))
+          const exclude = source.exclude?.some(exclude => minimatch(p, withoutPrefixNumber(exclude)))
+
+          return include && !exclude
         })
       }
 
-      const pathWithoutPrefix = routePath.substring(source.prefix.length)
-
       const { fixed } = parseSourceBase(source)
-
-      const path = joinURL(fixed, pathWithoutPrefix)
+      const fixedWithoutPrefixNumber = withoutPrefixNumber(fixed || '')
+      const pathWithoutPrefix = routePath.substring(prefixWithoutPrefixNumber.length)
+      const path = joinURL(fixedWithoutPrefixNumber, pathWithoutPrefix)
 
       const removeExtension = (pattern: string) => {
         return pattern.replace(/\.[^/.]+$/, '')
       }
 
-      return minimatch(path, removeExtension(source.include)) && !source.exclude?.some(exclude => minimatch(path, removeExtension(exclude)))
+      const include = minimatch(path, removeExtension(withoutPrefixNumber(source.include)))
+      const exclude = source.exclude?.some(exclude => minimatch(path, removeExtension(withoutPrefixNumber(exclude))))
+
+      return include && !exclude
     })
 
     return matchedSource
