@@ -3,8 +3,8 @@
   "name": "@nuxt/content-docs",
   "type": "module",
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.35",
-    "@iconify-json/simple-icons": "^1.2.31",
+    "@iconify-json/lucide": "^1.2.38",
+    "@iconify-json/simple-icons": "^1.2.33",
     "@iconify-json/vscode-icons": "^1.2.19",
     "@nuxt/content": "latest",
     "@nuxt/image": "^1.10.0",
@@ -16,7 +16,7 @@
     "minisearch": "^7.1.2",
     "nuxt": "^3.16.2",
     "nuxt-llms": "^0.1.2",
-    "nuxt-og-image": "^5.1.1",
+    "nuxt-og-image": "^5.1.2",
     "prettier": "^3.5.3",
     "shiki-transformer-color-highlight": "^1.0.0",
     "ufo": "^1.6.1"
