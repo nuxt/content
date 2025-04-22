@@ -24,7 +24,7 @@ interface SectionablePage {
   path: string
   title: string
   description: string
-  body: MDCRoot
+  body: MDCRoot | MinimalTree
 }
 
 export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T> }) {
