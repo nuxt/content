@@ -163,7 +163,7 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
     return 'db0/connectors/node-sqlite'
   }
 
-  if (opts.sqliteConnector === 'sqlite3' && isSqlite3PackageInstalled()) {
+  if (opts.sqliteConnector === 'sqlite3') {
     return 'db0/connectors/sqlite3'
   }
 
