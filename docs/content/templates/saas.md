@@ -1,12 +1,12 @@
 ---
 slug: saas
-subtitle: A fully built SaaS application to launch your next project
+subtitle: ""
 title: Saas
 baseDir: .
 branch: main
 category: docs
 demo: https://saas-template.nuxt.dev/
-description: It includes a landing page, a pricing page, a documentation and a blog.
+description: A fully built SaaS application to launch your next project.
 licenseType: nuxt-ui-pro
 mainScreen: /templates/saas.jpg
 name: SaaS

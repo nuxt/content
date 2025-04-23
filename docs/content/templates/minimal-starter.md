@@ -1,6 +1,6 @@
 ---
 slug: minimal-starter
-subtitle: The minimalist template
+subtitle: ""
 title: Minimal Starter
 baseDir: .
 branch: content

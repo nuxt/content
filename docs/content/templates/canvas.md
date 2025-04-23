@@ -1,6 +1,6 @@
 ---
 slug: canvas
-subtitle: The i18n portfolio template
+subtitle: ""
 title: Canvas
 baseDir: .
 branch: main

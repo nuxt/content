@@ -1,13 +1,13 @@
 ---
 slug: docs
-subtitle: Create your documentation in seconds
+subtitle: ""
 title: Docs
 baseDir: .
 branch: main
 category: docs
 createdAt: 2023-11-15T17:41:03.087Z
 demo: https://v3.docs-template-3erl.pages.dev/
-description: Create your documentation in seconds with this template
+description: Create your documentation in seconds with this template.
 licenseType: nuxt-ui-pro
 mainScreen: /templates/docs.jpg
 name: docs

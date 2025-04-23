@@ -1,12 +1,12 @@
 ---
 slug: landing
-subtitle: A landing page template you can use as a starting point for your next idea.
+subtitle: ""
 title: Landing
 baseDir: .
 branch: main
 category: minimal
 demo: https://landing-template.nuxt.dev/
-description: You can change the content easily in the yaml index file.
+description: A simple template you can use as a starting point for your next idea.
 licenseType: nuxt-ui-pro
 mainScreen: /templates/landing.jpg
 name: Landing
