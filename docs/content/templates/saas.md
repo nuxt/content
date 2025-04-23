@@ -8,7 +8,7 @@ category: docs
 demo: https://saas-template.nuxt.dev/
 description: It includes a landing page, a pricing page, a documentation and a blog.
 licenseType: nuxt-ui-pro
-mainScreen: /templates/saas-main.png
+mainScreen: /templates/saas.jpg
 name: SaaS
 owner: nuxt-ui-pro
 draft: false

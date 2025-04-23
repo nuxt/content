@@ -9,7 +9,7 @@ createdAt: 2023-11-15T17:41:03.087Z
 demo: https://v3.docs-template-3erl.pages.dev/
 description: Create your documentation in seconds with this template
 licenseType: nuxt-ui-pro
-mainScreen: /templates/docs-main.webp
+mainScreen: /templates/docs.jpg
 name: docs
 owner: nuxt-ui-pro
 image1: /templates/docs-1.webp

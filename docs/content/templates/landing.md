@@ -8,7 +8,7 @@ category: minimal
 demo: https://landing-template.nuxt.dev/
 description: You can change the content easily in the yaml index file.
 licenseType: nuxt-ui-pro
-mainScreen: /templates/landing.png
+mainScreen: /templates/landing.jpg
 name: Landing
 owner: nuxt-ui-pro
 draft: false

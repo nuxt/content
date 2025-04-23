@@ -8,7 +8,7 @@ category: portofolio
 demo: https://canvas.hrcd.fr/
 description: This is a fully customizable portfolio template with internationalization.
 licenseType: free
-mainScreen: /templates/canvas-portfolio-main.png
+mainScreen: /templates/canvas.jpg
 name: canvas
 owner: HugoRCD
 image1: /templates/canvas-portfolio-1.png
