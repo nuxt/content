@@ -21,8 +21,8 @@ importers:
         specifier: ^3.16.2
         version: 3.16.2(magicast@0.3.5)
       '@nuxtjs/mdc':
-        specifier: https://pkg.pr.new/@nuxtjs/mdc@418852c
-        version: https://pkg.pr.new/@nuxtjs/mdc@418852c(magicast@0.3.5)
+        specifier: https://pkg.pr.new/@nuxtjs/mdc@fc8c294
+        version: https://pkg.pr.new/@nuxtjs/mdc@fc8c294(magicast@0.3.5)
       '@shikijs/langs':
         specifier: ^3.3.0
         version: 3.3.0
@@ -1666,8 +1666,8 @@ packages:
     resolution: {integrity: sha512-pw8xU6PFzCop8tYts5IqqoL4F5eol18Xg+0wgVeptlzdki4LR0NnNQkO5nHhwsKUK8e+g8+Efc6ppqKdTqPGig==}
     engines: {node: '>=18.12.0'}
 
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@418852c':
-    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@418852c}
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@fc8c294':
+    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@fc8c294}
     version: 0.16.1
 
   '@nuxtjs/plausible@1.2.0':
@@ -9589,7 +9589,7 @@ snapshots:
       - supports-color
       - vue
 
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@418852c(magicast@0.3.5)':
+  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@fc8c294(magicast@0.3.5)':
     dependencies:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
       '@shikijs/langs': 3.3.0
@@ -13537,7 +13537,7 @@ snapshots:
   micromark-extension-gfm-footnote@2.1.0:
     dependencies:
       devlop: 1.1.0
-      micromark-core-commonmark: 2.0.2
+      micromark-core-commonmark: 2.0.3
       micromark-factory-space: 2.0.1
       micromark-util-character: 2.1.1
       micromark-util-normalize-identifier: 2.0.1
