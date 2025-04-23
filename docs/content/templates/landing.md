@@ -1,5 +1,5 @@
 ---
-slug: saas
+slug: landing
 subtitle: A landing page template you can use as a starting point for your next idea.
 title: Landing
 baseDir: .
