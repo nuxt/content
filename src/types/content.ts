@@ -1,4 +1,5 @@
-import type { Highlighter, MDCRoot, Toc } from '@nuxtjs/mdc'
+import type { Highlighter, Toc } from '@nuxtjs/mdc'
+import type { MinimalTree } from './tree'
 
 export type { Toc, TocLink } from '@nuxtjs/mdc'
 
@@ -75,7 +76,7 @@ export const ContentFileType = {
   Csv: 'csv',
 } as const
 
-export interface MarkdownRoot extends MDCRoot {
+export interface MarkdownRoot extends MinimalTree {
   props?: Record<string, unknown>
   toc?: Toc
 }

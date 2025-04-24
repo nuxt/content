@@ -1,6 +1,6 @@
 import type { ZodObject, ZodRawShape } from 'zod'
 import type { zodToJsonSchema } from 'zod-to-json-schema'
-import type { MinimalTree } from './tree'
+import type { MarkdownRoot } from './content'
 
 export interface PageCollections {}
 export interface Collections {}
@@ -103,7 +103,7 @@ export interface PageCollectionItemBase extends CollectionItemBase {
 
     [key: string]: unknown
   }
-  body: MinimalTree
+  body: MarkdownRoot
   navigation?: boolean | {
     title: string
     description: string
