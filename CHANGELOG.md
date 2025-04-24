@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.5.1](https://github.com/nuxt/content/compare/v3.5.0...v3.5.1) (2025-04-24)
+
+### Bug Fixes
+
+* prevenr hydration when content contains `\r` ([c10269d](https://github.com/nuxt/content/commit/c10269d02d9a7f2d38baabcac72fd4d2186c79de))
+
 ## [3.5.0](https://github.com/nuxt/content/compare/v3.4.0...v3.5.0) (2025-04-23)
 
 ### Features
