@@ -14,7 +14,7 @@
     "@octokit/rest": "^21.1.1",
     "@vueuse/nuxt": "^13.1.0",
     "minisearch": "^7.1.2",
-    "nuxt": "^3.16.2",
+    "nuxt": "^3.17.2",
     "nuxt-llms": "^0.1.2",
     "nuxt-og-image": "^5.1.2",
     "prettier": "^3.5.3",
