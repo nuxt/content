@@ -1,6 +1,6 @@
 ---
 slug: minimal-starter
-subtitle: The minimalist template
+subtitle: ""
 title: Minimal Starter
 baseDir: .
 branch: content
@@ -8,7 +8,7 @@ category: minimal
 demo: https://codesandbox.io/p/sandbox/github/nuxt/starter/tree/content
 description: "Minimalist start, limitless possibilities: craft your vision!"
 licenseType: free
-mainScreen: /templates/starter-main.webp
+mainScreen: /templates/starter.jpg
 name: starter
 owner: nuxt
 image1: /templates/starter-1.webp

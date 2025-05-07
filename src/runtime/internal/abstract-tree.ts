@@ -51,3 +51,23 @@ function compressNode(input: MDCElement | MDCText | MDCComment): MinimalNode | u
     ...input.children.map(compressNode).filter(v => v !== undefined),
   ]
 }
+
+export function visit(tree: MinimalTree, checker: (node: MinimalNode) => boolean, visitor: (node: MinimalNode) => MinimalNode | undefined) {
+  function walk(node: MinimalNode, parent: MinimalElement | MinimalNode[], index: number) {
+    if (checker(node)) {
+      const res = visitor(node)
+      if (res !== undefined) {
+        parent[index] = res
+      }
+    }
+    if (Array.isArray(node) && node.length > 2) {
+      for (let i = 2; i < node.length; i++) {
+        walk(node[i] as MinimalNode, node, i)
+      }
+    }
+  }
+
+  tree.value.forEach((node, i) => {
+    walk(node, tree.value, i)
+  })
+}

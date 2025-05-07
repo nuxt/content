@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.5.1](https://github.com/nuxt/content/compare/v3.5.0...v3.5.1) (2025-04-24)
+
+### Bug Fixes
+
+* prevenr hydration when content contains `\r` ([c10269d](https://github.com/nuxt/content/commit/c10269d02d9a7f2d38baabcac72fd4d2186c79de))
+
+## [3.5.0](https://github.com/nuxt/content/compare/v3.4.0...v3.5.0) (2025-04-23)
+
+### Features
+
+* aws amplify preset ([#3316](https://github.com/nuxt/content/issues/3316)) ([ecd345f](https://github.com/nuxt/content/commit/ecd345f0431eb2e379a789d0127937bce5a2f68b))
+* **LLMS:** call hook before generating markdown ([#3323](https://github.com/nuxt/content/issues/3323)) ([fd14e32](https://github.com/nuxt/content/commit/fd14e32c024f9c19fee9a9f7ea12f07eab0ac5db))
+
+### Bug Fixes
+
+* **cache:** split large queries ([ef50925](https://github.com/nuxt/content/commit/ef50925b7dd3461a4bb0ed83d7c51082c4b410e3))
+* **cloudflare:** load sql dump from assets ([#3275](https://github.com/nuxt/content/issues/3275)) ([453ba2e](https://github.com/nuxt/content/commit/453ba2ea6bc2200087f42911156869af6899c353))
+* **collection:** avoid double update of some record by using the hash column as index ([#3304](https://github.com/nuxt/content/issues/3304)) ([ebfb6e5](https://github.com/nuxt/content/commit/ebfb6e516f02fb657382da0c8a66005831cafc95))
+* **dev:** do not create hash column on local cache table ([8fff15c](https://github.com/nuxt/content/commit/8fff15c374b12dada89307e7c37e9f20f7938a71))
+* Disallow crawlers from crawling `/__nuxt_content` paths. ([#3299](https://github.com/nuxt/content/issues/3299)) ([849e79d](https://github.com/nuxt/content/commit/849e79dbf23b0eba7371001318bb1a41c6603274))
+* explicitly set the dump's content type ([#3302](https://github.com/nuxt/content/issues/3302)) ([e1a98d4](https://github.com/nuxt/content/commit/e1a98d4f475b2569da3c7b125e09653803c6e515))
+* generate correct collection insert for object and array default values ([#3277](https://github.com/nuxt/content/issues/3277)) ([a9587ee](https://github.com/nuxt/content/commit/a9587eee2548d1c30c64422539747a5a8eb321b9))
+* **module:** invalid rootDir of layer sources ([#3308](https://github.com/nuxt/content/issues/3308)) ([2579910](https://github.com/nuxt/content/commit/257991064ef69c92a8f06239fc0400eed72413de))
+* **preview:** handle collection search with prefixed sources ([#3317](https://github.com/nuxt/content/issues/3317)) ([c152782](https://github.com/nuxt/content/commit/c1527826b199c48b92f7c430c9da9aead4d13b42))
+* **preview:** handle strings format when generating insert query ([c18e094](https://github.com/nuxt/content/commit/c18e094365d32c0c182c9f8eb618ec91485d8d9b))
+* **preview:** remove prefix when parsing files ([498168f](https://github.com/nuxt/content/commit/498168f2792301100ccd64b8bdd61c80dc4e293c))
+* **preview:** transform value based on schema for sql query generation ([994ae98](https://github.com/nuxt/content/commit/994ae98cc4eb64f589cd66c839791f9b8f12076d))
+* reactively load components when `body` changes ([#3283](https://github.com/nuxt/content/issues/3283)) ([b6a30aa](https://github.com/nuxt/content/commit/b6a30aaac0418bcd8ebb7938dd134dacb258f966))
+* **templates:** props definition ([997fc65](https://github.com/nuxt/content/commit/997fc65200f95722c95d9afdcbb68c29d8611214))
+* update csv docs & fix csv options typo ([#3300](https://github.com/nuxt/content/issues/3300)) ([2c2fc77](https://github.com/nuxt/content/commit/2c2fc77e9ee5c215506e0f50164313fe80ec7042))
+
 ## [3.4.0](https://github.com/nuxt/content/compare/v3.3.0...v3.4.0) (2025-03-20)
 
 ### Features

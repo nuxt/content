@@ -140,6 +140,19 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
+    // Prerender database.sql routes for each collection to fetch dump
+    nuxt.options.routeRules ||= {}
+
+    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
+    // @see https://github.com/nuxt/content/pull/3299
+    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+
+    manifest.collections.forEach((collection) => {
+      if (!collection.private) {
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
+      }
+    })
+
     const preset = findPreset(nuxt)
     await preset?.setup?.(options, nuxt)
 
@@ -164,7 +177,7 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
 
-      const resolveOptions = { resolver, nativeSqlite: options.experimental?.nativeSqlite }
+      const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
       config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
       config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
@@ -181,19 +194,6 @@ export default defineNuxtModule<ModuleOptions>({
         await watchComponents(nuxt)
         const socket = await startSocketServer(nuxt, options, manifest)
         await watchContents(nuxt, options, manifest, socket)
-      }
-    })
-
-    // Prerender database.sql routes for each collection to fetch dump
-    nuxt.options.routeRules ||= {}
-
-    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-    // @see https://github.com/nuxt/content/pull/3299
-    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
-
-    manifest.collections.forEach((collection) => {
-      if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
       }
     })
 
@@ -307,7 +307,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
   const collectionChecksumStructure: Record<string, string> = {}
-  const db = await getLocalDatabase(options._localDatabase, { nativeSqlite: options.experimental?.nativeSqlite })
+  const db = await getLocalDatabase(options._localDatabase, {
+    sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined),
+  })
   const databaseContents = await db.fetchDevelopmentCache()
 
   const configHash = hash({

@@ -1,21 +1,22 @@
 ---
-slug: saas
+slug: portfolio
 subtitle: ""
-title: Saas
+title: Portfolio
 baseDir: .
 branch: main
-category: docs
+category: minimal
 demo: https://saas-template.nuxt.dev/
-description: A fully built SaaS application to launch your next project.
+description: A sleek, modern portfolio template to showcase your work, skills,
+  blog posts, speaking engagements, and provide contact information.
 licenseType: nuxt-ui-pro
-mainScreen: /templates/saas.jpg
-name: SaaS
+mainScreen: /templates/portfolio.jpg
+name: portfolio
 owner: nuxt-ui-pro
 draft: false
 ---
 
 ::div{.flex.justify-center}
-:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1744979325/studio/saas_cafkml.mp4"}
+:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1746088224/studio/d53kg6qoo802zy3dzmh0.mp4"}
 ::
 
 ::template-core
@@ -44,8 +45,6 @@ The Nuxt UI team is dedicated to deliver the best integration and customization 
       content: A fully typed development experience.
     - label: Nuxt Studio
       content: Supported by Nuxt Studio for fast updates and previews.
-    - label: Search
-      content: A full-text search modal empowered by Fuse.js.
   ---
   :::
 ::
