@@ -26,7 +26,7 @@ export default definePreset({
     // Add raw content dump to public assets
     nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
     nitroConfig.handlers.push({
-      route: '/__nuxt_content/:collection/sql_dump',
+      route: '/__nuxt_content/:collection/sql_dump.txt',
       handler: resolver.resolve('./runtime/presets/cloudflare-pages/database-handler'),
     })
   },
