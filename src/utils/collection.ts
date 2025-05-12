@@ -1,12 +1,11 @@
-import type { ZodObject, ZodOptionalDef, ZodRawShape, ZodStringDef, ZodType } from 'zod'
+import type { ZodObject, ZodRawShape } from 'zod'
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
-import { getOrderedSchemaKeys } from '../runtime/internal/schema'
-import type { ParsedContentFile } from '../types'
+import { getOrderedSchemaKeys, describeProperty } from '../runtime/internal/schema'
+import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
-import { metaSchema, pageSchema } from './schema'
-import type { ZodFieldType } from './zod'
-import { getUnderlyingType, ZodToSqlFieldTypes, z, getUnderlyingTypeName } from './zod'
+import { emptyStandardSchema, mergeStandardSchema, metaSchema, metaStandardSchema, pageSchema, pageStandardSchema } from './schema'
+import { getUnderlyingTypeName, z, zodToStandardSchema } from './zod'
 import { logger } from './dev'
 
 const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny', 'ZodMap']
@@ -16,18 +15,25 @@ export function getTableName(name: string) {
 }
 
 export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
+  let standardSchema: Draft07 = emptyStandardSchema
+  if (collection.schema instanceof z.ZodObject) {
+    standardSchema = zodToStandardSchema(collection.schema, '__SCHEMA__')
+  }
   let schema = collection.schema || z.object({})
+  let extendedSchema: Draft07 = standardSchema
   if (collection.type === 'page') {
     schema = pageSchema.extend((schema as ZodObject<ZodRawShape>).shape)
+    extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
   schema = metaSchema.extend((schema as ZodObject<ZodRawShape>).shape)
+  extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
   return {
     type: collection.type,
     source: resolveSource(collection.source),
-    schema: collection.schema || z.object({}),
-    extendedSchema: schema,
+    schema: standardSchema, // zodToStandardSchema(collection.schema || z.object({}), '__SCHEMA__'),
+    extendedSchema: extendedSchema, // zodToStandardSchema(schema, '__SCHEMA__'),
     fields: Object.keys(schema.shape).reduce((acc, key) => {
       const underlyingType = getUnderlyingTypeName(schema.shape[key as keyof typeof schema.shape])
       if (JSON_FIELDS_TYPES.includes(underlyingType)) {
@@ -85,21 +91,17 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
+  const infoSchema = zodToStandardSchema(z.object({
+    id: z.string(),
+    version: z.string(),
+    structureVersion: z.string(),
+    ready: z.boolean(),
+  }), 'info')
   collections.info = {
     type: 'data',
     source: undefined,
-    schema: z.object({
-      id: z.string(),
-      version: z.string(),
-      structureVersion: z.string(),
-      ready: z.boolean(),
-    }),
-    extendedSchema: z.object({
-      id: z.string(),
-      version: z.string(),
-      structureVersion: z.string(),
-      ready: z.boolean(),
-    }),
+    schema: infoSchema,
+    extendedSchema: infoSchema,
     fields: {},
   }
 
@@ -154,13 +156,14 @@ export const SLICE_SIZE = 70000
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
-  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
+
+  const sortedKeys = getOrderedSchemaKeys(collection.extendedSchema)
 
   sortedKeys.forEach((key) => {
-    const value = (collection.extendedSchema).shape[key]
-    const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
+    const property = describeProperty(collection.extendedSchema, key)
+    // const value = (collection.extendedSchema).shape[key]
 
-    const defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
+    const defaultValue = property?.default ? property.default : 'NULL'
 
     const valueToInsert = (typeof data[key] === 'undefined' || String(data[key]) === 'null')
       ? defaultValue
@@ -176,7 +179,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     if (collection.fields[key] === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
-    else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
+    else if ((property?.sqlType || '').match(/^(VARCHAR|TEXT)/)) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (collection.fields[key] === 'date') {
@@ -185,8 +188,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     else if (collection.fields[key] === 'boolean') {
       values.push(!!valueToInsert)
     }
+    else if (collection.fields[key] === 'number') {
+      values.push(Number(valueToInsert))
+    }
     else {
-      values.push(valueToInsert)
+      values.push(String(valueToInsert))
     }
   })
 
@@ -247,40 +253,31 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
 // Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
-  const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
+  const sortedKeys = getOrderedSchemaKeys(collection.extendedSchema)
   const sqlFields = sortedKeys.map((key) => {
-    const type = (collection.extendedSchema).shape[key]!
-    const underlyingType = getUnderlyingType(type)
-
     if (key === 'id') return `${key} TEXT PRIMARY KEY`
 
-    let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
+    const property = describeProperty(collection.extendedSchema, key)
 
-    // Convert nested objects to TEXT
-    if (JSON_FIELDS_TYPES.includes(underlyingType.constructor.name)) {
-      sqlType = 'TEXT'
-    }
+    let sqlType = property?.sqlType
 
-    if (!sqlType) throw new Error(`Unsupported Zod type: ${underlyingType.constructor.name}`)
+    if (!sqlType) throw new Error(`Unsupported Zod type: ${property?.type}`)
 
     // Handle string length
-    if (underlyingType.constructor.name === 'ZodString') {
-      const checks = (underlyingType._def as ZodStringDef).checks || []
-      if (checks.some(check => check.kind === 'max')) {
-        sqlType += `(${checks.find(check => check.kind === 'max')?.value})`
-      }
+    if (property.sqlType === 'VARCHAR' && property.maxLength) {
+      sqlType += `(${property.maxLength})`
     }
 
     // Handle optional fields
-    const constraints = [
-      type.isNullable() ? ' NULL' : '',
+    const constraints: string[] = [
+      property?.nullable ? ' NULL' : '',
     ]
 
     // Handle default values
-    if (type._def.defaultValue !== undefined) {
-      let defaultValue = typeof type._def.defaultValue() === 'string'
-        ? `'${type._def.defaultValue()}'`
-        : type._def.defaultValue()
+    if ('default' in property) {
+      let defaultValue = typeof property.default === 'string'
+        ? `'${property.default}'`
+        : property.default
 
       if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
         defaultValue = `'${JSON.stringify(defaultValue)}'`

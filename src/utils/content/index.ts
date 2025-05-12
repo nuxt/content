@@ -10,8 +10,9 @@ import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
-import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ContentFile, ContentTransformer } from '../../types'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ContentFile, ContentTransformer, ParsedContentFile } from '../../types'
 import { logger } from '../dev'
+import { getOrderedSchemaKeys } from '../../runtime/internal/schema'
 import { transformContent } from './transformers'
 
 let parserOptions = {
@@ -169,10 +170,10 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       transformers: extraTransformers,
     })
     const { id: id, ...parsedContentFields } = parsedContent
-    const result = { id } as typeof collection.extendedSchema._type
+    const result = { id } as ParsedContentFile
     const meta = {} as Record<string, unknown>
 
-    const collectionKeys = Object.keys(collection.extendedSchema.shape)
+    const collectionKeys = getOrderedSchemaKeys(collection.extendedSchema)
     for (const key of Object.keys(parsedContentFields)) {
       if (collectionKeys.includes(key)) {
         result[key] = parsedContent[key]
@@ -190,9 +191,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     }
 
     if (collectionKeys.includes('seo')) {
-      result.seo = result.seo || {}
-      result.seo.title = result.seo.title || result.title
-      result.seo.description = result.seo.description || result.description
+      const seo = result.seo = (result.seo || {}) as Record<string, unknown>
+      seo.title = seo.title || result.title
+      seo.description = seo.description || result.description
     }
 
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
