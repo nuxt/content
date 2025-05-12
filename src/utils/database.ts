@@ -168,17 +168,21 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   }
 
   if (opts.sqliteConnector === 'better-sqlite3') {
+    requireBetterSqlite3()
+
     return 'db0/connectors/better-sqlite3'
   }
 
   if (isWebContainer()) {
-    if (!isSqlite3PackageInstalled()) {
+    if (!isPackageInstalled('sqlite3')) {
       logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
       process.exit(1)
     }
 
     return 'db0/connectors/sqlite3'
   }
+
+  requireBetterSqlite3()
 
   return 'db0/connectors/better-sqlite3'
 }
@@ -217,9 +221,16 @@ function isNodeSqliteAvailable() {
   }
 }
 
-function isSqlite3PackageInstalled() {
+function requireBetterSqlite3() {
+  if (!isPackageInstalled('better-sqlite3')) {
+    logger.error('Nuxt Content requires `better-sqlite3` module to work in Node environment. Please run `npm install better-sqlite3` to install it and try again.')
+    process.exit(1)
+  }
+}
+
+function isPackageInstalled(packageName: string) {
   try {
-    require.resolve('sqlite3')
+    require.resolve(packageName)
     return true
   }
   catch {
