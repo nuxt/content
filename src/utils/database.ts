@@ -36,9 +36,9 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
+export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
+    sqlite: await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
@@ -59,7 +59,7 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, op
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
 
-  return import(findBestSqliteAdapter(opts))
+  return import(await findBestSqliteAdapter(opts))
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })
@@ -153,7 +153,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
+async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   if (process.versions.bun) {
     return 'db0/connectors/bun-sqlite'
   }
@@ -172,7 +172,7 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   }
 
   if (isWebContainer()) {
-    if (!isSqlite3PackageInstalled()) {
+    if (!await isSqlite3PackageInstalled()) {
       logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
       process.exit(1)
     }
@@ -217,9 +217,9 @@ function isNodeSqliteAvailable() {
   }
 }
 
-function isSqlite3PackageInstalled() {
+async function isSqlite3PackageInstalled() {
   try {
-    require.resolve('sqlite3')
+    await import('sqlite3')
     return true
   }
   catch {
