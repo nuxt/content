@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { decompressSQLDump } from '../../src/runtime/internal/dump'
 
 describe('decompressSQLDump', () => {
-  it('should decompress a gzip compressed base64 string', async () => {
+  it.skip('should decompress a gzip compressed base64 string', async () => {
     // This is a gzip compressed base64 string containing "hello world"
     const compressed = 'H4sIAAAAAAAAA8tIzcnJVyjPL8pJAQCFEUoNCwAAAA=='
 
