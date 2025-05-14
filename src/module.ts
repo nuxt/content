@@ -147,7 +147,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
       }
     })
 

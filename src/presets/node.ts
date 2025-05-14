@@ -11,7 +11,7 @@ export default definePreset({
 
     nitroConfig.alias['#content/dump'] = addTemplate(fullDatabaseCompressedDumpTemplate(manifest)).dst
     nitroConfig.handlers.push({
-      route: '/__nuxt_content/:collection/sql_dump',
+      route: '/__nuxt_content/:collection/sql_dump.txt',
       handler: resolver.resolve('./runtime/presets/node/database-handler'),
     })
   },
