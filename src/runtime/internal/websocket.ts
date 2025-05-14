@@ -79,7 +79,9 @@ export function useContentWebSocket() {
     }
 
     // WebSocket Base URL
-    const wsURL = `${(useRuntimeConfig().public.content as { wsUrl: string }).wsUrl}ws`
+    const wsURL = new URL(`${(useRuntimeConfig().public.content as { wsUrl: string }).wsUrl}ws`)
+    wsURL.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    wsURL.hostname = window.location.hostname
 
     logger.log(`WS connect to ${wsURL}`)
 
