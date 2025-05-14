@@ -6,5 +6,6 @@ export async function decompressSQLDump(base64Str: string, compressionType: Comp
   const response = new Response(new Blob([binaryData]))
   const decompressedStream = response.body?.pipeThrough(new DecompressionStream(compressionType))
   // Parse the decompress text back into an array
-  return JSON.parse(await new Response(decompressedStream).text())
+  const text = await new Response(decompressedStream).text()
+  return JSON.parse(text)
 }

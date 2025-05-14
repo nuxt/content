@@ -71,7 +71,7 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
     websocket?.broadcast({
       key,
       collection: collection.name,
-      queries: insertQuery ? [removeQuery, insertQuery] : [removeQuery],
+      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
     })
   }
 

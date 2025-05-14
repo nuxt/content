@@ -113,7 +113,7 @@ export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
 export const collectionDumpTemplate = (collection: string, manifest: Manifest) => ({
   filename: `content/raw/dump.${collection}.sql`,
   getContents: async ({ options }: { options: { manifest: Manifest } }) => {
-    return compress((options.manifest.dump[collection] || []).join('\n'))
+    return compress(JSON.stringify((options.manifest.dump[collection] || [])))
   },
   write: true,
   options: {
