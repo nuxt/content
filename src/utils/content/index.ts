@@ -155,6 +155,11 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       file.dirname = file.dirname ?? dirname(file.path)
       file.extension = file.extension ?? file.path.includes('.') ? '.' + file.path.split('.').pop() : undefined
     }
+    // Replace all \r\n with \n to avoid hydration errors on Windows
+    if (String(file.body).includes('\r\n')) {
+      file.body = file.body.replace(/\r\n/g, '\n')
+    }
+
     const beforeParseCtx: FileBeforeParseHook = { file, collection, parserOptions }
     await nuxt?.callHook?.('content:file:beforeParse', beforeParseCtx)
     const { file: hookedFile } = beforeParseCtx

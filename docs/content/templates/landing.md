@@ -1,21 +1,21 @@
 ---
-slug: saas
+slug: landing
 subtitle: ""
-title: Saas
+title: Landing
 baseDir: .
 branch: main
-category: docs
-demo: https://saas-template.nuxt.dev/
-description: A fully built SaaS application to launch your next project.
+category: minimal
+demo: https://landing-template.nuxt.dev/
+description: A simple template you can use as a starting point for your next idea.
 licenseType: nuxt-ui-pro
-mainScreen: /templates/saas.jpg
-name: SaaS
+mainScreen: /templates/landing.jpg
+name: Landing
 owner: nuxt-ui-pro
 draft: false
 ---
 
 ::div{.flex.justify-center}
-:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1744979325/studio/saas_cafkml.mp4"}
+:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1745425967/studio/landing_q03gdo.mp4"}
 ::
 
 ::template-core
@@ -23,11 +23,8 @@ draft: false
 
 The Nuxt UI team is dedicated to deliver the best integration and customization experience, while the Studio team is providing full compatibility with Nuxt Studio.
 
-- **Fully customizable**: change the style of any component from your App Config or customize them specifically through the ui prop.
-- **Write Markdown with ease**: Nuxt UI Pro overrides Nuxt Content prose components to make them awesome but also adds new ones like Callout, CodeGroup, Field, etc.
+- **Fully customizable**: change the style of your UI from your App Config or edit your landing page content from the `index.yml` file.
 - **Beautiful Typography styles**: Tailwind CSS typography plugin is pre-configured and styled to match Nuxt UI components and colors.
-- **Full-Text Search out of the box**: Nuxt UI Pro ships with a ready to use command palette component. No need to setup Algolia DocSearch anymore.
-- **Slots for everything**: Each component leverages the power of Vue's slots to give you the flexibility to build anything.
 - **Responsive by design**: Nuxt UI Pro components aims to structure your content, they are responsive by design and will adapt to any screen size.
 
 #right
@@ -36,16 +33,14 @@ The Nuxt UI team is dedicated to deliver the best integration and customization 
   features:
     - label: Nuxt 3
       content: Powered by Nuxt 3 for optimal performances and SEO.
-    - label: Markdown
-      content: Write your pages with MDC thanks to Nuxt Content.
-    - label: Nuxt UI
+    - label: Content v3
+      content: Write your content in yaml files or use Markdown with the MDC syntax.
+    - label: Nuxt UI v3
       content: Offers a very large set of full customizable components.
     - label: TypeScript
       content: A fully typed development experience.
     - label: Nuxt Studio
       content: Supported by Nuxt Studio for fast updates and previews.
-    - label: Search
-      content: A full-text search modal empowered by Fuse.js.
   ---
   :::
 ::

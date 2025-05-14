@@ -7,7 +7,7 @@ import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
 import { getTableName } from '../src/utils/collection'
 import { getLocalDatabase } from '../src/utils/database'
-import type { LocalDevelopmentDatabase } from '../dist/module'
+import type { LocalDevelopmentDatabase } from '../src/module'
 
 async function cleanup() {
   await fs.rm(fileURLToPath(new URL('./fixtures/basic/node_modules', import.meta.url)), { recursive: true, force: true })

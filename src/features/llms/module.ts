@@ -15,7 +15,7 @@ export default defineNuxtModule({
       filename: 'content/llms.d.ts' as `${string}.d.ts`,
       getContents: () => {
         return `
-import type { SQLOperator, PageCollections } from '@nuxt/content'
+import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@nuxt/content'
 declare module 'nuxt-llms' {
   interface LLMsSection {
     contentCollection?: keyof PageCollections
@@ -26,6 +26,13 @@ declare module 'nuxt-llms' {
     }>
   }
 }
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    'content:llms:generate:document': (event: H3Event, doc: PageCollectionItemBase, options: ModuleOptions) => void
+  }
+}
+
         `
       },
       write: true,

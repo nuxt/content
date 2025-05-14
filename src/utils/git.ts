@@ -5,7 +5,6 @@ import { promisify } from 'node:util'
 import { join } from 'pathe'
 import { extract } from 'tar'
 import { readGitConfig } from 'pkg-types'
-// @ts-expect-error import does exist
 import gitUrlParse from 'git-url-parse'
 
 export interface GitInfo {
@@ -124,7 +123,7 @@ export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefi
   }
 
   // https://www.npmjs.com/package/git-url-parse#clipboard-example
-  const { name, owner, source } = gitUrlParse(remote) as Record<string, string>
+  const { name, owner, source } = gitUrlParse(remote)
   const url = `https://${source}/${owner}/${name}`
 
   return {
@@ -162,7 +161,7 @@ export function getGitEnv(): GitInfo {
   // If only url available (ex: Netlify)
   if (!envInfo.name && !envInfo.owner && envInfo.url) {
     try {
-      const { name, owner } = gitUrlParse(envInfo.url) as Record<string, string>
+      const { name, owner } = gitUrlParse(envInfo.url)
       envInfo.name = name
       envInfo.owner = owner
     }

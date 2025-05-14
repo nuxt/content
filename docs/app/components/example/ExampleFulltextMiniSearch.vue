@@ -14,7 +14,7 @@ const miniSearch = new MiniSearch({
 })
 
 // Add data to the MiniSearch instance
-miniSearch.addAll(toValue(data.value))
+miniSearch.addAll(toValue(data.value || []))
 const result = computed(() => miniSearch.search(toValue(query)).slice(0, 10))
 </script>
 

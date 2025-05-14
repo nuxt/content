@@ -58,7 +58,7 @@ const images = computed(() => template.value
         <template #title>
           <div class="flex flex-row gap-3 text-2xl">
             <span class="font-semibold">
-              {{ template.title }} - {{ template.subtitle }}
+              {{ template.title }}
             </span>
             <span class="hidden xl:flex items-center gap-2">
               <span class="text-gray-500 dark:text-gray-400">
