@@ -31,7 +31,7 @@ export default definePreset({
       const dumpFiles: Array<{ file: string, content: string }> = []
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
-          if ((dump.length + line.length) < 1000000) {
+          if ((dump.length + line.length) < 100000) {
             dump += line + '\n'
           }
           else {
