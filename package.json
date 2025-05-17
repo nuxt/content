@@ -1,6 +1,6 @@
 {
-  "name": "@nuxt/content",
-  "version": "3.5.1",
+  "name": "acidjazz-content",
+  "version": "3.5.2",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
