@@ -23,29 +23,60 @@ export default definePreset({
     await cfPreset.setupNitro(nitroConfig, options)
 
     if (nitroConfig.dev === false) {
-      // Write SQL dump to database queries when not in dev mode
       await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
-      let i = 1
-      // Drop info table and prepare for new dump
-      let dump = 'DROP TABLE IF EXISTS _content_info;\n'
+      let fileIndex = 1
+      const MAX_FILE_SIZE = 100 * 1024 // 100KB - https://developers.cloudflare.com/d1/platform/limits/
       const dumpFiles: Array<{ file: string, content: string }> = []
+      const initialStatement = 'DROP TABLE IF EXISTS _content_info;\n'
+
+      let currentFileContent = initialStatement
+
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
-          if ((dump.length + line.length) < 100000) {
-            dump += line + '\n'
+          const statement = line.trim() + '\n'
+          if (statement.trim().length === 0) {
+            return
+          }
+
+          if (currentFileContent.length + statement.length > MAX_FILE_SIZE && currentFileContent !== initialStatement) {
+            dumpFiles.push({
+              file: `content-database-${String(fileIndex++).padStart(3, '0')}.sql`,
+              content: currentFileContent.trim(),
+            })
+            currentFileContent = initialStatement + statement
+          }
+          else if (currentFileContent.length + statement.length > MAX_FILE_SIZE && currentFileContent === initialStatement) {
+            if (initialStatement.trim().length > 0) {
+              dumpFiles.push({
+                file: `content-database-${String(fileIndex++).padStart(3, '0')}.sql`,
+                content: initialStatement.trim(),
+              })
+            }
+            currentFileContent = statement
           }
           else {
-            dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
-            dump = line
-            i += 1
+            currentFileContent += statement
           }
         })
       })
-      if (dump.length > 0) {
-        dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
+
+      if (currentFileContent.trim().length > 0 && currentFileContent.trim() !== initialStatement.trim()) {
+        dumpFiles.push({
+          file: `content-database-${String(fileIndex).padStart(3, '0')}.sql`,
+          content: currentFileContent.trim(),
+        })
       }
+      else if (dumpFiles.length === 0 && initialStatement.trim().length > 0) {
+        dumpFiles.push({
+          file: `content-database-${String(fileIndex).padStart(3, '0')}.sql`,
+          content: initialStatement.trim(),
+        })
+      }
+
       for (const dumpFile of dumpFiles) {
-        await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        if (dumpFile.content && dumpFile.content.trim().length > 0) {
+          await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        }
       }
       // Disable integrity check in production for performance
       nitroConfig.runtimeConfig ||= {}
