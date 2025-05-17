@@ -142,7 +142,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
  * Limit of 100KB comes from a limitation in Cloudflare D1
  * @see https://developers.cloudflare.com/d1/platform/limits/
  */
-export const MAX_SQL_QUERY_SIZE = 100000
+export const MAX_SQL_QUERY_SIZE = 90000
 
 /**
  * When we split a value in multiple SQL queries, we want to allow for a buffer
