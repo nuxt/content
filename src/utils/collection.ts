@@ -142,13 +142,13 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
  * Limit of 100KB comes from a limitation in Cloudflare D1
  * @see https://developers.cloudflare.com/d1/platform/limits/
  */
-export const MAX_SQL_QUERY_SIZE = 100000
+export const MAX_SQL_QUERY_SIZE = 80000
 
 /**
  * When we split a value in multiple SQL queries, we want to allow for a buffer
  * so if the rest of the query is a bit long, we will not hit the 100KB limit
  */
-export const SLICE_SIZE = 20000
+export const SLICE_SIZE = 40000
 
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
