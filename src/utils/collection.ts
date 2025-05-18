@@ -174,13 +174,15 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     }
 
     if (collection.fields[key] === 'json') {
-      values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
+      // Ensure valueToInsert is stringified if it's an object/array, then sanitize and escape
+      const jsonString = typeof valueToInsert === 'string' ? valueToInsert : JSON.stringify(valueToInsert)
+      values.push(`'${jsonString.replace(/\0/g, '').replace(/'/g, '\'\'')}'`)
     }
     else if (underlyingType.constructor.name === 'ZodEnum') {
-      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace(/\0/g, '').replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (underlyingType.constructor.name === 'ZodString') {
-      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace(/\0/g, '').replace(/'/g, '\'\'')}'`)
     }
     else if (collection.fields[key] === 'date') {
       values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
