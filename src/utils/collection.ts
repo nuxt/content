@@ -150,6 +150,11 @@ export const MAX_SQL_QUERY_SIZE = 100000
  */
 export const SLICE_SIZE = 70000
 
+// Helper to calculate byte length of a string (Cloudflare D1 limits are expressed in bytes)
+function byteLength(str: string) {
+  return Buffer.byteLength(str, 'utf8')
+}
+
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
@@ -200,7 +205,8 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
-  if (sql.length < MAX_SQL_QUERY_SIZE) {
+  // Cloudflare D1 counts statement length in BYTES
+  if (byteLength(sql) < MAX_SQL_QUERY_SIZE) {
     return {
       queries: [sql],
       hash: valuesHash,
@@ -210,26 +216,49 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   // Split the SQL into multiple statements:
   // Take the biggest column to insert (usually body) and split the column in multiple strings
   // first we insert the row in the database, then we update it with the rest of the string by concatenation
-  const biggestColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
+  const biggestColumn = [...values].sort((a, b) => byteLength(String(b)) - byteLength(String(a)))[0]
   const bigColumnIndex = values.indexOf(biggestColumn)
   const bigColumnName = fields[bigColumnIndex]
 
   if (typeof biggestColumn === 'string') {
-    let sliceIndex = SLICE_SIZE
-    values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
+    const biggestColumnBytes = byteLength(biggestColumn)
+
+    // Calculate how many bytes from the biggest column we can safely keep in the initial INSERT
+    const otherBytes = byteLength(sql) - biggestColumnBytes
+    // Reserve a small buffer (1KB) to be extra safe
+    const SAFE_BUFFER = 1024
+    let firstSliceBytes = Math.min(
+      SLICE_SIZE,
+      Math.max(1, MAX_SQL_QUERY_SIZE - otherBytes - SAFE_BUFFER),
+    )
+
+    // fall back to at least 1 char if calculations go negative
+    if (firstSliceBytes <= 0) {
+      firstSliceBytes = Math.min(1024, biggestColumnBytes)
+    }
+
+    // Slice the biggest column by bytes to avoid cutting multibyte characters
+    const firstSlice = Buffer.from(biggestColumn, 'utf8').subarray(0, firstSliceBytes).toString()
+
+    values[bigColumnIndex] = `${firstSlice}'`
+
+    let sliceIndex = firstSliceBytes
     index = 0
 
+    // For the initial INSERT we use a modified hash (hash-sliceIndex) so that subsequent
+    // UPDATE statements can target the same row while we are still concatenating slices
     const bigValueSliceWithHash = [...values.slice(0, -1), `'${valuesHash}-${sliceIndex}'`]
-
     const SQLQueries = [
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
-    while (sliceIndex < biggestColumn.length) {
+    const biggestBuffer = Buffer.from(biggestColumn, 'utf8')
+    while (sliceIndex < biggestColumnBytes) {
       const prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
 
-      const isLastSlice = sliceIndex > biggestColumn.length
-      const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
+      const isLastSlice = sliceIndex > biggestColumnBytes
+      const nextBuffer = biggestBuffer.subarray(prevSliceIndex, sliceIndex)
+      const newSlice = `'${nextBuffer.toString()}` + (!isLastSlice ? '\'' : '')
       const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
       SQLQueries.push([
         'UPDATE',
