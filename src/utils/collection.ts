@@ -150,11 +150,12 @@ export const MAX_SQL_QUERY_SIZE = 80000
  */
 export const SLICE_SIZE = 40000
 
-// Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
+
+  const largeFieldIndexes: number[] = []
 
   sortedKeys.forEach((key) => {
     const value = (collection.extendedSchema).shape[key]
@@ -168,29 +169,35 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
     fields.push(key)
 
+    let sqlValue: string | number | boolean
     if (valueToInsert === 'NULL') {
-      values.push(valueToInsert)
-      return
+      sqlValue = valueToInsert
     }
-
-    if (collection.fields[key] === 'json') {
-      values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
+    else if (collection.fields[key] === 'json') {
+      sqlValue = `'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`
     }
     else if (underlyingType.constructor.name === 'ZodEnum') {
-      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+      sqlValue = `'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`
     }
     else if (underlyingType.constructor.name === 'ZodString') {
-      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
+      sqlValue = `'${String(valueToInsert).replace(/'/g, '\'\'')}'`
     }
     else if (collection.fields[key] === 'date') {
-      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
+      sqlValue = `'${new Date(valueToInsert as string).toISOString()}'`
     }
     else if (collection.fields[key] === 'boolean') {
-      values.push(!!valueToInsert)
+      sqlValue = !!valueToInsert
     }
     else {
-      values.push(valueToInsert)
+      sqlValue = valueToInsert
     }
+
+    // Track large fields for splitting
+    if (typeof sqlValue === 'string' && sqlValue.length > SLICE_SIZE) {
+      largeFieldIndexes.push(fields.length - 1)
+    }
+
+    values.push(sqlValue)
   })
 
   const valuesHash = hash(values)
@@ -200,23 +207,13 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
-  if (sql.length < MAX_SQL_QUERY_SIZE) {
-    return {
-      queries: [sql],
-      hash: valuesHash,
-    }
-  }
-
-  // Split the SQL into multiple statements:
-  // Take the biggest column to insert (usually body) and split the column in multiple strings
-  // first we insert the row in the database, then we update it with the rest of the string by concatenation
-  const biggestColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
-  const bigColumnIndex = values.indexOf(biggestColumn)
-  const bigColumnName = fields[bigColumnIndex]
-
-  if (typeof biggestColumn === 'string') {
+  // If the SQL is too big, split all large fields
+  if (sql.length >= MAX_SQL_QUERY_SIZE && largeFieldIndexes.length > 0) {
+    // Only split one field at a time (for simplicity)
+    const bigIndex = largeFieldIndexes[0]
+    const bigValue = values[bigIndex] as string
     let sliceIndex = SLICE_SIZE
-    values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
+    values[bigIndex] = `${bigValue.slice(0, sliceIndex)}'`
     index = 0
 
     const bigValueSliceWithHash = [...values.slice(0, -1), `'${valuesHash}-${sliceIndex}'`]
@@ -224,17 +221,17 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     const SQLQueries = [
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
-    while (sliceIndex < biggestColumn.length) {
+    while (sliceIndex < bigValue.length) {
       const prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
 
-      const isLastSlice = sliceIndex > biggestColumn.length
-      const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
+      const isLastSlice = sliceIndex > bigValue.length
+      const newSlice = `'${bigValue.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
       const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
       SQLQueries.push([
         'UPDATE',
         collection.tableName,
-        `SET ${bigColumnName} = CONCAT(${bigColumnName}, ${newSlice}), "__hash__" = '${sliceHash}'`,
+        `SET ${fields[bigIndex]} = CONCAT(${fields[bigIndex]}, ${newSlice}), "__hash__" = '${sliceHash}'`,
         'WHERE',
         `id = ${values[0]} AND "__hash__" = '${valuesHash}-${prevSliceIndex}';`,
       ].join(' '))
