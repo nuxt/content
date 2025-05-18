@@ -298,7 +298,27 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
         `id = ${values[0]} AND "__hash__" = '${valuesHash}-${prevSliceIndex}';`,
       ].join(' '))
     }
+    // Final safety check & optional debug logging
+    SQLQueries.forEach((q, idx) => {
+      const len = byteLength(q)
+      if (process.env.DEBUG_CONTENT_SQL === '1') {
+        console.log(`[content] ${collection.name}:${data.id} query #${idx} -> ${len} bytes`)
+      }
+      if (len >= MAX_SQL_QUERY_SIZE) {
+        throw new Error(`Generated SQL query is ${len} bytes which exceeds the ${MAX_SQL_QUERY_SIZE}B limit.`)
+      }
+    })
+
     return { queries: SQLQueries, hash: valuesHash }
+  }
+
+  // Safety check for the single-statement path
+  if (byteLength(sql) >= MAX_SQL_QUERY_SIZE) {
+    throw new Error(`Generated SQL query is ${byteLength(sql)} bytes which exceeds the ${MAX_SQL_QUERY_SIZE}B limit.`)
+  }
+
+  if (process.env.DEBUG_CONTENT_SQL === '1') {
+    console.log(`[content] ${collection.name}:${data.id} single query -> ${byteLength(sql)} bytes`)
   }
 
   return {
