@@ -225,6 +225,10 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
 
     // Calculate how many bytes from the biggest column we can safely keep in the initial INSERT
     const otherBytes = byteLength(sql) - biggestColumnBytes
+
+    // Buffer representation to slice safely by bytes
+    const biggestBuffer = Buffer.from(biggestColumn, 'utf8')
+
     // Reserve a small buffer (1KB) to be extra safe
     const SAFE_BUFFER = 1024
     let firstSliceBytes = Math.min(
@@ -237,21 +241,47 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       firstSliceBytes = Math.min(1024, biggestColumnBytes)
     }
 
-    // Slice the biggest column by bytes to avoid cutting multibyte characters
-    const firstSlice = Buffer.from(biggestColumn, 'utf8').subarray(0, firstSliceBytes).toString()
+    // Helper to rebuild initial INSERT for a given slice length
+    const buildInitialInsert = (sliceBytes: number) => {
+      const sliceStr = biggestBuffer.subarray(0, sliceBytes).toString()
+      // Mutate values array temporarily
+      const original = values[bigColumnIndex]
+      values[bigColumnIndex] = `${sliceStr}'`
+      // build
+      const insertValues = [...values.slice(0, -1), `'${valuesHash}-${sliceBytes}'`]
+      let i = 0
+      const insert = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(insertValues.length).slice(0, -2)});`
+        .replace(/\?/g, () => insertValues[i++] as string)
+      // restore
+      values[bigColumnIndex] = original
+      return insert
+    }
 
-    values[bigColumnIndex] = `${firstSlice}'`
+    // Adjust slice length until statement fits
+    while (firstSliceBytes > 0) {
+      const testInsert = buildInitialInsert(firstSliceBytes)
+      if (byteLength(testInsert) < MAX_SQL_QUERY_SIZE) {
+        // Use this slice length
+        const firstSlice = biggestBuffer.subarray(0, firstSliceBytes).toString()
+        values[bigColumnIndex] = `${firstSlice}'`
+        break
+      }
+      // Reduce slice by 4KB chunks
+      firstSliceBytes -= 4096
+    }
+
+    if (firstSliceBytes <= 0) {
+      throw new Error('Unable to split value to satisfy SQL length constraints')
+    }
 
     let sliceIndex = firstSliceBytes
     index = 0
 
-    // For the initial INSERT we use a modified hash (hash-sliceIndex) so that subsequent
-    // UPDATE statements can target the same row while we are still concatenating slices
     const bigValueSliceWithHash = [...values.slice(0, -1), `'${valuesHash}-${sliceIndex}'`]
     const SQLQueries = [
       `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
     ]
-    const biggestBuffer = Buffer.from(biggestColumn, 'utf8')
+
     while (sliceIndex < biggestColumnBytes) {
       const prevSliceIndex = sliceIndex
       sliceIndex += SLICE_SIZE
