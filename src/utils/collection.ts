@@ -142,13 +142,13 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
  * Limit of 100KB comes from a limitation in Cloudflare D1
  * @see https://developers.cloudflare.com/d1/platform/limits/
  */
-export const MAX_SQL_QUERY_SIZE = 25000
+export const MAX_SQL_QUERY_SIZE = 100000
 
 /**
  * When we split a value in multiple SQL queries, we want to allow for a buffer
  * so if the rest of the query is a bit long, we will not hit the 100KB limit
  */
-export const SLICE_SIZE = 15000
+export const SLICE_SIZE = 70000
 
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
@@ -174,15 +174,13 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     }
 
     if (collection.fields[key] === 'json') {
-      // Ensure valueToInsert is stringified if it's an object/array, then sanitize and escape
-      const jsonString = typeof valueToInsert === 'string' ? valueToInsert : JSON.stringify(valueToInsert)
-      values.push(`'${jsonString.replace(/\\u0000/g, '').replace(/\0/g, '').replace(/'/g, '\'\'')}'`)
+      values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (underlyingType.constructor.name === 'ZodEnum') {
-      values.push(`'${String(valueToInsert).replace(/\0/g, '').replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if (underlyingType.constructor.name === 'ZodString') {
-      values.push(`'${String(valueToInsert).replace(/\0/g, '').replace(/'/g, '\'\'')}'`)
+      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (collection.fields[key] === 'date') {
       values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
