@@ -156,96 +156,127 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
 
   const largeFieldIndexes: number[] = []
+  const rawStringValues: { [key: string]: string } = {}
 
   sortedKeys.forEach((key) => {
-    const value = (collection.extendedSchema).shape[key]
-    const underlyingType = getUnderlyingType(value as ZodType<unknown, ZodOptionalDef>)
+    const zodType = (collection.extendedSchema).shape[key]!
+    const underlyingType = getUnderlyingType(zodType as ZodType<unknown, ZodOptionalDef>)
 
-    const defaultValue = value?._def.defaultValue ? value?._def.defaultValue() : 'NULL'
+    const defaultValue = zodType?._def.defaultValue ? zodType._def.defaultValue() : 'NULL'
 
-    const valueToInsert = (typeof data[key] === 'undefined' || String(data[key]) === 'null')
+    const rawValue = (typeof data[key] === 'undefined' || data[key] === null || data[key] === undefined)
       ? defaultValue
       : data[key]
 
     fields.push(key)
 
     let sqlValue: string | number | boolean
-    if (valueToInsert === 'NULL') {
-      sqlValue = valueToInsert
+    if (rawValue === 'NULL') {
+      sqlValue = rawValue
     }
     else if (collection.fields[key] === 'json') {
-      sqlValue = `'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`
+      sqlValue = `'${JSON.stringify(rawValue).replace(/'/g, '\'\'')}'`
     }
     else if (underlyingType.constructor.name === 'ZodEnum') {
-      sqlValue = `'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`
+      sqlValue = `'${String(rawValue).replace(/'/g, '\'\'')}'`
     }
     else if (underlyingType.constructor.name === 'ZodString') {
-      sqlValue = `'${String(valueToInsert).replace(/'/g, '\'\'')}'`
+      const stringValue = String(rawValue)
+      rawStringValues[key] = stringValue
+      if (stringValue.length > SLICE_SIZE - 1) {
+        largeFieldIndexes.push(fields.length - 1)
+      }
+      sqlValue = `'${stringValue.replace(/'/g, '\'\'')}'`
     }
     else if (collection.fields[key] === 'date') {
-      sqlValue = `'${new Date(valueToInsert as string).toISOString()}'`
+      sqlValue = `'${new Date(rawValue as string | number | Date).toISOString()}'`
     }
     else if (collection.fields[key] === 'boolean') {
-      sqlValue = !!valueToInsert
+      sqlValue = !!rawValue
     }
     else {
-      sqlValue = valueToInsert
+      sqlValue = rawValue
     }
-
-    // Track large fields for splitting
-    if (typeof sqlValue === 'string' && sqlValue.length > SLICE_SIZE) {
-      largeFieldIndexes.push(fields.length - 1)
-    }
-
     values.push(sqlValue)
   })
 
-  const valuesHash = hash(values)
+  const dataValuesForHashing = [...values]
+  const valuesHash = hash(dataValuesForHashing)
   values.push(`'${valuesHash}'`)
 
-  let index = 0
-  const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
-    .replace(/\?/g, () => values[index++] as string)
+  let sqlInsertIndex = 0
+  const initialSql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
+    .replace(/\?/g, () => values[sqlInsertIndex++] as string)
 
-  // If the SQL is too big, split all large fields
-  if (sql.length >= MAX_SQL_QUERY_SIZE && largeFieldIndexes.length > 0) {
-    // Only split one field at a time (for simplicity)
-    const bigIndex = largeFieldIndexes[0]
-    const bigValue = values[bigIndex] as string
-    let sliceIndex = SLICE_SIZE
-    values[bigIndex] = `${bigValue.slice(0, sliceIndex)}'`
-    index = 0
+  const SQLQueries: string[] = []
 
-    const bigValueSliceWithHash = [...values.slice(0, -1), `'${valuesHash}-${sliceIndex}'`]
+  if (initialSql.length >= MAX_SQL_QUERY_SIZE && largeFieldIndexes.length > 0) {
+    const bigFieldIndex = largeFieldIndexes[0]
+    const fieldNameToSplit = fields[bigFieldIndex]
+    const rawStringToSplit = rawStringValues[fieldNameToSplit]
 
-    const SQLQueries = [
-      `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(bigValueSliceWithHash.length).slice(0, -2)});`.replace(/\?/g, () => bigValueSliceWithHash[index++] as string),
-    ]
-    while (sliceIndex < bigValue.length) {
-      const prevSliceIndex = sliceIndex
-      sliceIndex += SLICE_SIZE
+    const insertValues = [...values]
 
-      const isLastSlice = sliceIndex > bigValue.length
-      const newSlice = `'${bigValue.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
-      const sliceHash = isLastSlice ? valuesHash : `${valuesHash}-${sliceIndex}`
+    const firstChunkRaw = rawStringToSplit.slice(0, SLICE_SIZE - 1)
+    insertValues[bigFieldIndex] = `'${firstChunkRaw.replace(/'/g, '\'\'')}'`
+
+    const insertHashMarker = `${valuesHash}-${SLICE_SIZE}`
+    insertValues[insertValues.length - 1] = `'${insertHashMarker}'`
+
+    sqlInsertIndex = 0
+    const insertQuery = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(insertValues.length).slice(0, -2)});`
+      .replace(/\?/g, () => insertValues[sqlInsertIndex++] as string)
+    SQLQueries.push(insertQuery)
+
+    let currentRawOffset = SLICE_SIZE - 1
+    let previousHashSuffixInLoop = SLICE_SIZE
+    let updateLoopIndex = 0
+
+    while (currentRawOffset < rawStringToSplit.length) {
+      const nextRawChunkEndOffset = Math.min(currentRawOffset + SLICE_SIZE, rawStringToSplit.length)
+      const chunkRaw = rawStringToSplit.slice(currentRawOffset, nextRawChunkEndOffset)
+
+      if (chunkRaw.length === 0) break
+
+      const chunkSqlEscaped = `'${chunkRaw.replace(/'/g, '\'\'')}'`
+      const isLastSlice = nextRawChunkEndOffset >= rawStringToSplit.length
+
+      const oldHashForWhereClause = `${valuesHash}-${previousHashSuffixInLoop}`
+
+      let newHashForSetClause: string
+      let nextHashSuffix: number | undefined = undefined
+      if (isLastSlice) {
+        newHashForSetClause = valuesHash
+      }
+      else {
+        nextHashSuffix = (updateLoopIndex + 2) * SLICE_SIZE
+        newHashForSetClause = `${valuesHash}-${nextHashSuffix}`
+      }
+
       SQLQueries.push([
         'UPDATE',
         collection.tableName,
-        `SET ${fields[bigIndex]} = CONCAT(${fields[bigIndex]}, ${newSlice}), "__hash__" = '${sliceHash}'`,
+        `SET ${fieldNameToSplit} = CONCAT(${fieldNameToSplit}, ${chunkSqlEscaped}), "__hash__" = '${newHashForSetClause}'`,
         'WHERE',
-        `id = ${values[0]} AND "__hash__" = '${valuesHash}-${prevSliceIndex}';`,
+        `${fields[0]} = ${values[0]} AND "__hash__" = '${oldHashForWhereClause}';`,
       ].join(' '))
+
+      if (!isLastSlice && nextHashSuffix !== undefined) {
+        previousHashSuffixInLoop = nextHashSuffix
+      }
+      currentRawOffset = nextRawChunkEndOffset
+      updateLoopIndex++
     }
     return { queries: SQLQueries, hash: valuesHash }
   }
 
+  SQLQueries.push(initialSql)
   return {
-    queries: [sql],
+    queries: SQLQueries,
     hash: valuesHash,
   }
 }
 
-// Convert a collection with Zod schema to SQL table definition
 export function generateCollectionTableDefinition(collection: ResolvedCollection, opts: { drop?: boolean } = {}) {
   const sortedKeys = getOrderedSchemaKeys((collection.extendedSchema).shape)
   const sqlFields = sortedKeys.map((key) => {
@@ -256,14 +287,12 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
 
     let sqlType: string = ZodToSqlFieldTypes[underlyingType.constructor.name as ZodFieldType]
 
-    // Convert nested objects to TEXT
     if (JSON_FIELDS_TYPES.includes(underlyingType.constructor.name)) {
       sqlType = 'TEXT'
     }
 
     if (!sqlType) throw new Error(`Unsupported Zod type: ${underlyingType.constructor.name}`)
 
-    // Handle string length
     if (underlyingType.constructor.name === 'ZodString') {
       const checks = (underlyingType._def as ZodStringDef).checks || []
       if (checks.some(check => check.kind === 'max')) {
@@ -271,12 +300,10 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
       }
     }
 
-    // Handle optional fields
     const constraints = [
       type.isNullable() ? ' NULL' : '',
     ]
 
-    // Handle default values
     if (type._def.defaultValue !== undefined) {
       let defaultValue = typeof type._def.defaultValue() === 'string'
         ? `'${type._def.defaultValue()}'`
@@ -291,7 +318,6 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
     return `"${key}" ${sqlType}${constraints.join(' ')}`
   })
 
-  // add __hash__ field for inserts
   sqlFields.push('"__hash__" TEXT UNIQUE')
 
   let definition = `CREATE TABLE IF NOT EXISTS ${collection.tableName} (${sqlFields.join(', ')});`
