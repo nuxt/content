@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
-import FastGlob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
 import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
 import { logger } from './dev'
@@ -21,7 +21,7 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
         : join(rootDir, 'content')
     },
     getKeys: async () => {
-      const _keys = await FastGlob(source.include, { cwd: resolvedSource.cwd, ignore: source!.exclude || [], dot: true })
+      const _keys = await glob(source.include, { cwd: resolvedSource.cwd, ignore: source!.exclude || [], dot: true, expandDirectories: false })
         .catch((): [] => [])
       return _keys.map(key => key.substring(fixed.length))
     },
