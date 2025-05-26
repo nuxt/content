@@ -11,7 +11,7 @@
     "@nuxt/ui-pro": "^3.0.2",
     "@nuxthub/core": "^0.8.25",
     "@nuxtjs/plausible": "^1.2.0",
-    "@octokit/rest": "^21.1.1",
+    "@octokit/rest": "^22.0.0",
     "@vueuse/nuxt": "^13.1.0",
     "minisearch": "^7.1.2",
     "nuxt": "^3.16.2",
