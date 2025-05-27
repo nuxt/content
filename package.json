@@ -28,7 +28,8 @@
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.cjs"
     },
-    "./runtime": "./dist/runtime/index.js"
+    "./runtime": "./dist/runtime/index.js",
+    "./nitro": "./dist/runtime/nitro.js" 
   },
   "main": "./dist/module.cjs",
   "types": "./dist/module.d.mts",
@@ -77,6 +78,7 @@
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
+    "minimark": "^0.0.2",
     "minimatch": "^10.0.1",
     "nuxt-component-meta": "^0.11.0",
     "ohash": "^2.0.11",

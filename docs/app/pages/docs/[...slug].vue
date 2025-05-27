@@ -61,20 +61,10 @@ const communityLinks = computed(() => [{
 
 <template>
   <UPage v-if="page">
-    <UPageHeader
-      :title="page.title"
-      :links="page.links"
+    <PageHeader
+      :page="page"
       :headline="headline"
-    >
-      <template #description>
-        <MDC
-          v-if="page.description"
-          :cache-key="`${kebabCase(route.path)}-description`"
-          :value="page.description"
-          unwrap="p"
-        />
-      </template>
-    </UPageHeader>
+    />
 
     <UPageBody>
       <ContentRenderer

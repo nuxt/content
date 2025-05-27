@@ -13,24 +13,24 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
 }
 
-export const queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
+export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
   return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
 }
 
-export function queryCollectionNavigationWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
+export function queryCollectionNavigation<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateNavigationTree(qb, fields))
 }
 
-export function queryCollectionItemSurroundingsWithEvent<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export function queryCollectionItemSurroundings<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSectionsWithEvent(event: H3Event, collection: keyof Collections, opts?: { ignoredTags: string[] }) {
+export function queryCollectionSearchSections(event: H3Event, collection: keyof Collections, opts?: { ignoredTags: string[] }) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 
 function chainablePromise<T extends keyof PageCollections, Result>(event: H3Event, collection: T, fn: (qb: CollectionQueryBuilder<PageCollections[T]>) => Promise<Result>) {
-  const queryBuilder = queryCollectionWithEvent(event, collection)
+  const queryBuilder = queryCollection(event, collection)
 
   const chainable: ChainablePromise<T, Result> = {
     where(field, operator, value) {
