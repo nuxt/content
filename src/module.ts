@@ -256,6 +256,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let cachedFilesCount = 0
   let parsedFilesCount = 0
 
+  // Store components used in the content provided by
+  // custom parsers using the `__metadata.components` field.
+  // This will allow to correctly generate production imports
+  const usedComponents: Array<string> = []
+
   // Remove all existing content collections to start with a clean state
   db.dropContentTables()
   // Create database dump
@@ -322,6 +327,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               }
             }
 
+            // Add manually provided components from the content
+            if (parsedContent) {
+              usedComponents.push(...(parsedContent.meta?.__components || []))
+            }
+
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
             list.push([key, queries, hash])
           }
@@ -369,6 +379,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const uniqueTags = [
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
+    ...new Set(usedComponents),
   ]
     .map(tag => getMappedTag(tag, options?.renderer?.alias))
     .filter(tag => !htmlTags.includes(kebabCase(tag)))
