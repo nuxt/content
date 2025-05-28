@@ -1,5 +1,5 @@
 import type { Collections } from '@nuxt/content'
-import { queryCollection } from '@nuxt/content/nitro'
+// import { queryCollection } from '@nuxt/content/nitro'
 import { stringify } from 'minimark'
 import { withLeadingSlash } from 'ufo'
 
@@ -16,6 +16,12 @@ export default eventHandler(async (event) => {
     .path(path).first()
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+  }
+
+  // Add title and description to the top of the page if missing
+  if (page.body.value[0]?.[0] !== 'h1') {
+    page.body.value.unshift(['blockquote', {}, page.description])
+    page.body.value.unshift(['h1', {}, page.title])
   }
 
   setHeader(event, 'Content-Type', 'text/markdown')
