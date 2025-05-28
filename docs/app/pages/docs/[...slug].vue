@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { kebabCase } from 'scule'
 import { findPageHeadline } from '#ui-pro/utils/content'
 
 const route = useRoute()
