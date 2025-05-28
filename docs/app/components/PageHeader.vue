@@ -12,25 +12,36 @@ const route = useRoute()
 
 const copyStatus = ref<'idle' | 'copying' | 'copied'>('idle')
 const items = ref<DropdownMenuItem[]>([
-  {
-    label: 'View as Markdown',
-    icon: 'i-simple-icons:markdown',
-    onSelect() {
-      window.open(`${window.location.origin}/raw${route.path}.md`, '_blank')
-    },
-  },
-  // {
-  //   label: 'Open in ChatGPT',
-  //   icon: 'i-simple-icons:openai',
-  //   onSelect() {
-  //     window.open(`https://chatgpt.com/?hints=search&q=${encodeURIComponent(`Read from ${window.location.origin}/raw${route.path}.md so I can ask questions about it.`)}`, '_blank')
-  //   },
-  // },
+
   {
     label: 'Copy Markdown Link',
     icon: 'i-lucide-link',
     onSelect() {
       navigator.clipboard.writeText(`${window.location.origin}/raw${route.path}.md`)
+    },
+  },
+  {
+    label: 'View as Markdown',
+    icon: 'i-simple-icons:markdown',
+    target: '_blank',
+    onSelect() {
+      window.open(`${window.location.origin}/raw${route.path}.md`, '_blank')
+    },
+  },
+  {
+    label: 'Open in ChatGPT',
+    icon: 'i-simple-icons:openai',
+    target: '_blank',
+    onSelect() {
+      window.open(`https://chatgpt.com/?hints=search&q=${encodeURIComponent(`Read ${window.location.origin}/raw${route.path}.md so I can ask questions about it.`)}`, '_blank')
+    },
+  },
+  {
+    label: 'Open in Claude',
+    icon: 'i-simple-icons:anthropic',
+    target: '_blank',
+    onSelect() {
+      window.open(`https://claude.ai/new?q=${encodeURIComponent(`Read ${window.location.origin}/raw${route.path}.md so I can ask questions about it.`)}`, '_blank')
     },
   },
 ])
