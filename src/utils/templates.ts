@@ -42,7 +42,7 @@ export const moduleTemplates = {
   manifest: 'content/manifest.ts',
   components: 'content/components.ts',
   fullCompressedDump: 'content/database.compressed.mjs',
-  fullRawDump: 'content/sql_dump',
+  fullRawDump: 'content/sql_dump.txt',
 }
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
@@ -85,7 +85,7 @@ export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
       if (options.manifest.collections.find(c => c.name === key)?.private) {
         return ''
       }
-      const compressedDump = await compress(dump.join('\n'))
+      const compressedDump = await compress(JSON.stringify(dump))
       result.push(`export const ${key} = "${compressedDump}"`)
     }
 
@@ -113,7 +113,7 @@ export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
 export const collectionDumpTemplate = (collection: string, manifest: Manifest) => ({
   filename: `content/raw/dump.${collection}.sql`,
   getContents: async ({ options }: { options: { manifest: Manifest } }) => {
-    return compress((options.manifest.dump[collection] || []).join('\n'))
+    return compress(JSON.stringify((options.manifest.dump[collection] || [])))
   },
   write: true,
   options: {

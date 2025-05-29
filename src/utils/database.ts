@@ -37,9 +37,9 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
+export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
+    sqlite: await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
@@ -175,7 +175,7 @@ async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }
   }
 
   if (isWebContainer()) {
-    if (!isPackageInstalled('sqlite3')) {
+    if (!await isPackageInstalled('sqlite3')) {
       logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
       process.exit(1)
     }
@@ -223,7 +223,7 @@ function isNodeSqliteAvailable() {
 }
 
 async function requireBetterSqlite3() {
-  if (!isPackageInstalled('better-sqlite3')) {
+  if (!await isPackageInstalled('better-sqlite3')) {
     logger.error('Nuxt Content requires `better-sqlite3` module to work in Node environment.')
 
     const confirm = await logger.prompt('Do you want to install `better-sqlite3` package?', {
@@ -240,9 +240,9 @@ async function requireBetterSqlite3() {
   }
 }
 
-function isPackageInstalled(packageName: string) {
+async function isPackageInstalled(packageName: string) {
   try {
-    require.resolve(packageName)
+    await import(packageName)
     return true
   }
   catch {

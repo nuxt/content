@@ -98,6 +98,9 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
+    // Ignore content directory files in building
+    nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
+
     // Helpers are designed to be enviroment agnostic
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/app') },
@@ -147,7 +150,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
       }
     })
 

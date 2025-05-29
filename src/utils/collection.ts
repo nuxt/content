@@ -176,8 +176,11 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     if (collection.fields[key] === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
-    else if (['ZodString', 'ZodEnum'].includes(underlyingType.constructor.name)) {
+    else if (underlyingType.constructor.name === 'ZodEnum') {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
+    }
+    else if (underlyingType.constructor.name === 'ZodString') {
+      values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
     else if (collection.fields[key] === 'date') {
       values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
