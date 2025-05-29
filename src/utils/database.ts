@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
+import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
@@ -168,17 +169,21 @@ async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }
   }
 
   if (opts.sqliteConnector === 'better-sqlite3') {
+    await requireBetterSqlite3()
+
     return 'db0/connectors/better-sqlite3'
   }
 
   if (isWebContainer()) {
-    if (!await isSqlite3PackageInstalled()) {
+    if (!await isPackageInstalled('sqlite3')) {
       logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
       process.exit(1)
     }
 
     return 'db0/connectors/sqlite3'
   }
+
+  await requireBetterSqlite3()
 
   return 'db0/connectors/better-sqlite3'
 }
@@ -217,9 +222,27 @@ function isNodeSqliteAvailable() {
   }
 }
 
-async function isSqlite3PackageInstalled() {
+async function requireBetterSqlite3() {
+  if (!await isPackageInstalled('better-sqlite3')) {
+    logger.error('Nuxt Content requires `better-sqlite3` module to work in Node environment.')
+
+    const confirm = await logger.prompt('Do you want to install `better-sqlite3` package?', {
+      type: 'confirm',
+      name: 'confirm',
+      initial: true,
+    })
+
+    if (!confirm) {
+      process.exit(1)
+    }
+
+    await addDependency('better-sqlite3')
+  }
+}
+
+async function isPackageInstalled(packageName: string) {
   try {
-    await import('sqlite3')
+    await import(packageName)
     return true
   }
   catch {
