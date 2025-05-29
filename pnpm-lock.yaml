@@ -95,6 +95,9 @@ importers:
       nuxt-component-meta:
         specifier: ^0.11.0
         version: 0.11.0(magicast@0.3.5)
+      nypm:
+        specifier: ^0.6.0
+        version: 0.6.0
       ohash:
         specifier: ^2.0.11
         version: 2.0.11
