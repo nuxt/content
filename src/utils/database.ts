@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
+import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
@@ -59,7 +60,7 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, op
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
 
-  return import(findBestSqliteAdapter(opts))
+  return import(await findBestSqliteAdapter(opts))
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })
@@ -153,7 +154,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
+async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   if (process.versions.bun) {
     return 'db0/connectors/bun-sqlite'
   }
@@ -168,7 +169,7 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   }
 
   if (opts.sqliteConnector === 'better-sqlite3') {
-    requireBetterSqlite3()
+    await requireBetterSqlite3()
 
     return 'db0/connectors/better-sqlite3'
   }
@@ -182,7 +183,7 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
     return 'db0/connectors/sqlite3'
   }
 
-  requireBetterSqlite3()
+  await requireBetterSqlite3()
 
   return 'db0/connectors/better-sqlite3'
 }
@@ -221,10 +222,21 @@ function isNodeSqliteAvailable() {
   }
 }
 
-function requireBetterSqlite3() {
+async function requireBetterSqlite3() {
   if (!isPackageInstalled('better-sqlite3')) {
-    logger.error('Nuxt Content requires `better-sqlite3` module to work in Node environment. Please run `npm install better-sqlite3` to install it and try again.')
-    process.exit(1)
+    logger.error('Nuxt Content requires `better-sqlite3` module to work in Node environment.')
+
+    const confirm = await logger.prompt('Do you want to install `better-sqlite3` package?', {
+      type: 'confirm',
+      name: 'confirm',
+      initial: true,
+    })
+
+    if (!confirm) {
+      process.exit(1)
+    }
+
+    await addDependency('better-sqlite3')
   }
 }
 

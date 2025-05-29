@@ -177,8 +177,8 @@ export default defineNuxtModule<ModuleOptions>({
 
       const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
-      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
-      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
+      config.alias['#content/adapter'] = await resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
+      config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
       config.handlers.push({
