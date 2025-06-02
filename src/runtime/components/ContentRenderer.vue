@@ -4,7 +4,7 @@ import { resolveComponent, toRaw, defineAsyncComponent, computed, type AsyncComp
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
-import { minimarkToHast } from 'minimark/hast'
+import { toHast } from 'minimark/hast'
 import { globalComponents, localComponents } from '#content/components'
 import { useRuntimeConfig } from '#imports'
 
@@ -81,7 +81,7 @@ const body = computed(() => {
     body = props.value.excerpt
   }
   if (body.type === 'minimal' || body.type === 'minimark') {
-    return minimarkToHast({ type: 'minimark', value: body.value })
+    return toHast({ type: 'minimark', value: body.value })
   }
 
   return body

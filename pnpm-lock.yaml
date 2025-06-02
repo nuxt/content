@@ -90,8 +90,8 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
       minimark:
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.2.0
+        version: 0.2.0
       minimatch:
         specifier: ^10.0.1
         version: 10.0.1
@@ -5430,8 +5430,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  minimark@0.1.1:
-    resolution: {integrity: sha512-OgXBoFkHmdS5s1P6dUrSG1kLp2+YJIfoJSVPW51cdZ0z/09oWf1deKm6zWmCd+K19aoWC478rIoORHOmocgZFw==}
+  minimark@0.2.0:
+    resolution: {integrity: sha512-AmtWU9pO0C2/3AM2pikaVhJ//8E5rOpJ7+ioFQfjIq+wCsBeuZoxPd97hBFZ9qrI7DMHZudwGH3r8A7BMnsIew==}
 
   minimatch@10.0.1:
     resolution: {integrity: sha512-ethXTt3SGGR+95gudmqJ1eNhRO7eGEGIgYA9vnPatK4/etz2MEVDno5GMCibdMTuBMyElzIlgxMna3K94XDIDQ==}
@@ -13763,7 +13763,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  minimark@0.1.1: {}
+  minimark@0.2.0: {}
 
   minimatch@10.0.1:
     dependencies:

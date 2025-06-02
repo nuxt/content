@@ -4,7 +4,7 @@ import { normalizeUri } from 'micromark-util-sanitize-uri'
 import type { Properties, Element } from 'hast'
 import type { Link } from 'mdast'
 import { isRelative } from 'ufo'
-import { hastToMinimark } from 'minimark/hast'
+import { fromHast } from 'minimark/hast'
 import type { MarkdownOptions, MarkdownPlugin } from '../../../types/content'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
@@ -43,9 +43,9 @@ export default defineTransformer({
     if ((options as { compress: boolean }).compress) {
       return {
         ...parsed.data,
-        excerpt: parsed.excerpt ? hastToMinimark(parsed.excerpt) : undefined,
+        excerpt: parsed.excerpt ? fromHast(parsed.excerpt) : undefined,
         body: {
-          ...hastToMinimark(parsed.body),
+          ...fromHast(parsed.body),
           toc: parsed.toc,
         },
         id: file.id,

@@ -1,6 +1,6 @@
 import type { MDCRoot } from '@nuxtjs/mdc'
 import type { MinimalTree, MinimalNode } from '@nuxt/content'
-import { minimarkToHast, hastToMinimark } from 'minimark/hast'
+import { toHast, fromHast } from 'minimark/hast'
 import type { MinimarkNode, MinimarkTree } from 'minimark'
 import { visit as minimarkVisit } from 'minimark'
 
@@ -8,11 +8,11 @@ type Tree = MinimalTree | MinimarkTree
 type Node = MinimalNode | MinimarkNode
 
 export function compressTree(input: MDCRoot): MinimarkTree {
-  return hastToMinimark(input)
+  return fromHast(input)
 }
 
 export function decompressTree(input: Tree): MDCRoot {
-  return minimarkToHast({ type: 'minimark', value: input.value }) as MDCRoot
+  return toHast({ type: 'minimark', value: input.value }) as MDCRoot
 }
 
 export function visit(tree: Tree, checker: (node: Node) => boolean, visitor: (node: Node) => Node | undefined) {

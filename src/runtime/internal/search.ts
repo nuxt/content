@@ -1,5 +1,5 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
-import { minimarkToHast } from 'minimark/hast'
+import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
 import { pick } from './utils'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '~/src/types'
@@ -39,7 +39,7 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(q
 }
 
 function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields }: { ignoredTags: string[], extraFields: Array<string> }) {
-  const body = (!page.body || page.body?.type === 'root') ? page.body : minimarkToHast(page.body as unknown as MinimarkTree) as MDCRoot
+  const body = (!page.body || page.body?.type === 'root') ? page.body : toHast(page.body as unknown as MinimarkTree) as MDCRoot
   const path = (page.path ?? '')
   const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
 
