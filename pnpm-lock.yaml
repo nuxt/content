@@ -33,7 +33,7 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       better-sqlite3:
-        specifier: ^11.9.1
+        specifier: 11.x
         version: 11.9.1
       c12:
         specifier: ^3.0.3
@@ -95,6 +95,9 @@ importers:
       nuxt-component-meta:
         specifier: ^0.11.0
         version: 0.11.0(magicast@0.3.5)
+      nypm:
+        specifier: ^0.6.0
+        version: 0.6.0
       ohash:
         specifier: ^2.0.11
         version: 2.0.11

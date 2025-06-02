@@ -58,7 +58,6 @@
     "@shikijs/langs": "^3.3.0",
     "@sqlite.org/sqlite-wasm": "3.49.1-build4",
     "@webcontainer/env": "^1.1.1",
-    "better-sqlite3": "^11.9.1",
     "c12": "^3.0.3",
     "chokidar": "^4.0.3",
     "consola": "^3.4.2",
@@ -79,6 +78,7 @@
     "micromatch": "^4.0.8",
     "minimatch": "^10.0.1",
     "nuxt-component-meta": "^0.11.0",
+    "nypm": "^0.6.0",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
     "pkg-types": "^2.1.0",
@@ -101,7 +101,8 @@
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "sqlite3": "*"
+    "sqlite3": "*",
+    "better-sqlite3": "11.x"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -111,6 +112,9 @@
       "optional": true
     },
     "sqlite3": {
+      "optional": true
+    },
+    "better-sqlite3": {
       "optional": true
     }
   },
