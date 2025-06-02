@@ -4,7 +4,7 @@ import { resolveComponent, toRaw, defineAsyncComponent, computed, type AsyncComp
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
-import { decompressTree } from '../internal/abstract-tree'
+import { toHast } from 'minimark/hast'
 import { globalComponents, localComponents } from '#content/components'
 import { useRuntimeConfig } from '#imports'
 
@@ -80,8 +80,8 @@ const body = computed(() => {
   if (props.excerpt && props.value.excerpt) {
     body = props.value.excerpt
   }
-  if (body.type === 'minimal') {
-    return decompressTree(body)
+  if (body.type === 'minimal' || body.type === 'minimark') {
+    return toHast({ type: 'minimark', value: body.value })
   }
 
   return body

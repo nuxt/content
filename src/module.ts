@@ -109,10 +109,10 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
     ])
     addServerImports([
-      { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionSearchSectionsWithEvent', as: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
