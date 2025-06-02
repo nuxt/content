@@ -39,6 +39,12 @@ export function deepDelete(obj: Record<string, unknown>, newObj: Record<string, 
 export function deepAssign(obj: Record<string, unknown>, newObj: Record<string, unknown>) {
   for (const key in newObj) {
     const val = newObj[key]
+    if (val === '_DELETED_') {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete obj[key]
+      continue
+    }
+
     if (val !== null && typeof val === 'object') {
       // Replace array types
       if (Array.isArray(val) && Array.isArray(obj[key])) {
