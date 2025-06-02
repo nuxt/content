@@ -29,7 +29,7 @@
       "require": "./dist/preview.cjs"
     },
     "./runtime": "./dist/runtime/index.js",
-    "./nitro": "./dist/runtime/nitro.js" 
+    "./nitro": "./dist/runtime/nitro.js"
   },
   "main": "./dist/module.cjs",
   "types": "./dist/module.d.mts",
@@ -103,8 +103,8 @@
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "sqlite3": "*",
-    "better-sqlite3": "11.x"
+    "better-sqlite3": "11.x",
+    "sqlite3": "*"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
