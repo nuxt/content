@@ -1,8 +1,8 @@
 import type { Database } from '@sqlite.org/sqlite-wasm'
-import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { decompressSQLDump } from './dump'
 import { refineContentFields } from './collection'
 import { fetchDatabase } from './api'
+import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
