@@ -1,9 +1,10 @@
-import type { MinimalTree, PageCollectionItemBase, SQLOperator } from '@nuxt/content'
+import type { PageCollectionItemBase, SQLOperator } from '@nuxt/content'
 import type { MDCElement } from '@nuxtjs/mdc'
 import { withBase } from 'ufo'
 import { pascalCase } from 'scule'
 import type { LLMsSection } from 'nuxt-llms'
-import { decompressTree } from '../../../../runtime/internal/abstract-tree'
+import { minimarkToHast } from 'minimark/hast'
+import type { MinimarkTree } from 'minimark'
 import manifest from '#content/manifest'
 
 export interface ContentLLMSCollectionSection extends LLMsSection {
@@ -27,7 +28,7 @@ export async function createDocumentGenerator() {
   return generateDocument
 
   async function generateDocument(doc: PageCollectionItemBase, options: { domain: string }) {
-    const hastTree = refineDocumentBody(doc.body as unknown as MinimalTree, options)
+    const hastTree = refineDocumentBody(doc.body as unknown as MinimarkTree, options)
     let markdown = await stringifyMarkdown(hastTree, {})
 
     if (!markdown?.trim().startsWith('# ')) {
@@ -39,8 +40,8 @@ export async function createDocumentGenerator() {
     return markdown
   }
 
-  function refineDocumentBody(body: MinimalTree, options: { domain: string }) {
-    const hastTree = decompressTree(body)
+  function refineDocumentBody(body: MinimarkTree, options: { domain: string }) {
+    const hastTree = minimarkToHast(body)
 
     visit(hastTree, (node: MDCElement) => !!node.props?.to || !!node.props?.href || !!node.props?.src, (node: MDCElement) => {
       for (const prop of linkProps) {

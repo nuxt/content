@@ -4,8 +4,8 @@ import { normalizeUri } from 'micromark-util-sanitize-uri'
 import type { Properties, Element } from 'hast'
 import type { Link } from 'mdast'
 import { isRelative } from 'ufo'
+import { hastToMinimark } from 'minimark/hast'
 import type { MarkdownOptions, MarkdownPlugin } from '../../../types/content'
-import { compressTree } from '../../../runtime/internal/abstract-tree'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
 
@@ -43,9 +43,9 @@ export default defineTransformer({
     if ((options as { compress: boolean }).compress) {
       return {
         ...parsed.data,
-        excerpt: parsed.excerpt ? compressTree(parsed.excerpt) : undefined,
+        excerpt: parsed.excerpt ? hastToMinimark(parsed.excerpt) : undefined,
         body: {
-          ...compressTree(parsed.body),
+          ...hastToMinimark(parsed.body),
           toc: parsed.toc,
         },
         id: file.id,

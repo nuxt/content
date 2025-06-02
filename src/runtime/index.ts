@@ -1,1 +1,20 @@
-export * from './internal/abstract-tree'
+import type { MDCRoot } from '@nuxtjs/mdc'
+import type { MinimalTree, MinimalNode } from '@nuxt/content'
+import { minimarkToHast, hastToMinimark } from 'minimark/hast'
+import type { MinimarkNode, MinimarkTree } from 'minimark'
+import { visit as minimarkVisit } from 'minimark'
+
+type Tree = MinimalTree | MinimarkTree
+type Node = MinimalNode | MinimarkNode
+
+export function compressTree(input: MDCRoot): MinimarkTree {
+  return hastToMinimark(input)
+}
+
+export function decompressTree(input: Tree): MDCRoot {
+  return minimarkToHast({ type: 'minimark', value: input.value }) as MDCRoot
+}
+
+export function visit(tree: Tree, checker: (node: Node) => boolean, visitor: (node: Node) => Node | undefined) {
+  minimarkVisit({ type: 'minimark', value: tree.value }, checker, visitor)
+}
