@@ -102,7 +102,13 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     // Filter out empty cwd for custom collections
     .filter(Boolean)
 
-  const watcher = chokidar.watch(dirsToWatch, { ignoreInitial: true })
+  const watcher = chokidar.watch(dirsToWatch, {
+    ignoreInitial: true,
+    ignored: [
+      // TODO: source.exclude should be respected
+      /[/\\]node_modules[/\\]/,
+    ],
+  })
 
   watcher.on('add', onChange)
   watcher.on('change', onChange)
