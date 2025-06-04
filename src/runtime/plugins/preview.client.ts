@@ -1,5 +1,5 @@
-import type { PublicRuntimeConfig } from '@nuxt/content'
 import type { NuxtApp } from 'nuxt/app'
+import type { PublicRuntimeConfig } from '@nuxt/content'
 import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp: NuxtApp) => {

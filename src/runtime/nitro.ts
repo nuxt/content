@@ -1,10 +1,10 @@
-import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
+import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>

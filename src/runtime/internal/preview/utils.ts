@@ -1,5 +1,5 @@
-import type { CollectionSource } from '@nuxt/content'
 import { createDefu } from 'defu'
+import type { CollectionSource } from '@nuxt/content'
 
 export * from './files'
 

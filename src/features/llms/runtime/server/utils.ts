@@ -1,10 +1,10 @@
-import type { PageCollectionItemBase, SQLOperator } from '@nuxt/content'
 import type { MDCElement } from '@nuxtjs/mdc'
 import { withBase } from 'ufo'
 import { pascalCase } from 'scule'
 import type { LLMsSection } from 'nuxt-llms'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
+import type { PageCollectionItemBase, SQLOperator } from '@nuxt/content'
 import manifest from '#content/manifest'
 
 export interface ContentLLMSCollectionSection extends LLMsSection {

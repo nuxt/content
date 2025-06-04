@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import type { ContentNavigationItem } from '@nuxt/content'
 import { flattedData, generateItemSurround } from '../../src/runtime/internal/surround'
+import type { ContentNavigationItem } from '@nuxt/content'
 
 describe('generateItemSurround', () => {
   const mockQueryBuilder = {
