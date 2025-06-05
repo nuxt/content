@@ -1,7 +1,13 @@
+import { resolve } from 'node:path'
 import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
+    environment: 'node',
+    alias: {
+      '#content/manifest': resolve('./test/mock/content-manifest.ts'),
+    },
+    include: ['test/**/*.test.ts'],
     exclude: [
       './test/bun.test.ts',
       '**/.data/**',
