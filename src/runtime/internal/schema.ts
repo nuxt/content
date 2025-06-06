@@ -20,6 +20,14 @@ export function getOrderedSchemaKeys(schema: Draft07) {
   return Array.from(keys) as string[]
 }
 
+function isJSONProperty(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf) {
+  const propertyType = (property as Draft07DefinitionProperty).type
+  return propertyType === 'object'
+    || propertyType === 'array'
+    || !!(property as Draft07DefinitionPropertyAnyOf).anyOf
+    || !!(property as Draft07DefinitionPropertyAllOf).allOf
+}
+
 function getPropertyType(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf) {
   const propertyType = (property as Draft07DefinitionProperty).type
   let type = propertyTypes[propertyType as keyof typeof propertyTypes] || 'TEXT'
@@ -62,13 +70,14 @@ export function describeProperty(schema: Draft07, property: string) {
 
   const type = (shape[property] as Draft07DefinitionProperty).type
 
-  const result: { name: string, sqlType: string, type?: string, default?: unknown, nullable: boolean, maxLength?: number, enum?: string[] } = {
+  const result: { name: string, sqlType: string, type?: string, default?: unknown, nullable: boolean, maxLength?: number, enum?: string[], json?: boolean } = {
     name: property,
     sqlType: getPropertyType(shape[property]),
     type,
     nullable: false,
     maxLength: (shape[property] as Draft07DefinitionProperty).maxLength,
     enum: (shape[property] as Draft07DefinitionProperty).enum,
+    json: isJSONProperty(shape[property]),
   }
   if ((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf) {
     if (((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf).find(t => t.type === 'null')) {
@@ -89,4 +98,27 @@ export function describeProperty(schema: Draft07, property: string) {
   }
 
   return result
+}
+
+export function getCollectionFieldsTypes(schema: Draft07) {
+  const sortedKeys = getOrderedSchemaKeys(schema)
+  return sortedKeys.reduce((acc, key) => {
+    const property = describeProperty(schema, key)
+    if (property.json) {
+      acc[key] = 'json'
+    }
+    else if (property.sqlType === 'BOOLEAN') {
+      acc[key] = 'boolean'
+    }
+    else if (property.sqlType === 'DATE') {
+      acc[key] = 'date'
+    }
+    else if (property.sqlType === 'INT') {
+      acc[key] = 'number'
+    }
+    else {
+      acc[key] = 'string'
+    }
+    return acc
+  }, {} as Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>)
 }

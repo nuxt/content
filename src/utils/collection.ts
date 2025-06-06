@@ -1,14 +1,12 @@
-import type { ZodObject, ZodRawShape } from 'zod'
+import type { ZodRawShape } from 'zod'
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
-import { getOrderedSchemaKeys, describeProperty } from '../runtime/internal/schema'
+import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaSchema, metaStandardSchema, pageSchema, pageStandardSchema } from './schema'
-import { getUnderlyingTypeName, z, zodToStandardSchema } from './zod'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema } from './schema'
+import { z, zodToStandardSchema } from './zod'
 import { logger } from './dev'
-
-const JSON_FIELDS_TYPES = ['ZodObject', 'ZodArray', 'ZodRecord', 'ZodIntersection', 'ZodUnion', 'ZodAny', 'ZodMap']
 
 export function getTableName(name: string) {
   return `_content_${name}`
@@ -19,43 +17,20 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
   if (collection.schema instanceof z.ZodObject) {
     standardSchema = zodToStandardSchema(collection.schema, '__SCHEMA__')
   }
-  let schema = collection.schema || z.object({})
+
   let extendedSchema: Draft07 = standardSchema
   if (collection.type === 'page') {
-    schema = pageSchema.extend((schema as ZodObject<ZodRawShape>).shape)
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
-  schema = metaSchema.extend((schema as ZodObject<ZodRawShape>).shape)
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
   return {
     type: collection.type,
     source: resolveSource(collection.source),
-    schema: standardSchema, // zodToStandardSchema(collection.schema || z.object({}), '__SCHEMA__'),
-    extendedSchema: extendedSchema, // zodToStandardSchema(schema, '__SCHEMA__'),
-    fields: Object.keys(schema.shape).reduce((acc, key) => {
-      const underlyingType = getUnderlyingTypeName(schema.shape[key as keyof typeof schema.shape])
-      if (JSON_FIELDS_TYPES.includes(underlyingType)) {
-        acc[key] = 'json'
-      }
-      else if (['ZodString'].includes(underlyingType)) {
-        acc[key] = 'string'
-      }
-      else if (['ZodDate'].includes(underlyingType)) {
-        acc[key] = 'date'
-      }
-      else if (underlyingType === 'ZodBoolean') {
-        acc[key] = 'boolean'
-      }
-      else if (underlyingType === 'ZodNumber') {
-        acc[key] = 'number'
-      }
-      else {
-        acc[key] = 'string'
-      }
-      return acc
-    }, {} as Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>),
+    schema: standardSchema,
+    extendedSchema: extendedSchema,
+    fields: getCollectionFieldsTypes(extendedSchema),
   }
 }
 
@@ -176,23 +151,23 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       return
     }
 
-    if (collection.fields[key] === 'json') {
+    if (property?.json) {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
+    }
+    else if (property?.sqlType === 'BOOLEAN') {
+      values.push(!!valueToInsert)
+    }
+    else if (property?.sqlType === 'INT') {
+      values.push(Number(valueToInsert))
+    }
+    else if (property?.sqlType === 'DATE') {
+      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
     }
     else if (property?.enum) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if ((property?.sqlType || '').match(/^(VARCHAR|TEXT)/)) {
       values.push(`'${String(valueToInsert).replace(/'/g, '\'\'')}'`)
-    }
-    else if (collection.fields[key] === 'date') {
-      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
-    }
-    else if (collection.fields[key] === 'boolean') {
-      values.push(!!valueToInsert)
-    }
-    else if (collection.fields[key] === 'number') {
-      values.push(Number(valueToInsert))
     }
     else {
       values.push(String(valueToInsert))
