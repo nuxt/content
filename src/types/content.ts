@@ -1,5 +1,5 @@
 import type { Highlighter, Toc } from '@nuxtjs/mdc'
-import type { MinimalTree } from './tree'
+import type { MinimarkTree } from './tree'
 
 export type { Toc, TocLink } from '@nuxtjs/mdc'
 
@@ -13,6 +13,15 @@ export interface ContentFile extends Record<string, unknown> {
 
 export interface TransformedContent {
   id: string
+  /**
+   * `__metadata` is a special field that transformers can provide information about the file.
+   * This field will not be stored in the database.
+   */
+  __metadata?: {
+    components?: string[]
+
+    [key: string]: unknown
+  }
   [key: string]: unknown
 }
 
@@ -76,9 +85,10 @@ export const ContentFileType = {
   Csv: 'csv',
 } as const
 
-export interface MarkdownRoot extends MinimalTree {
+export interface MarkdownRoot extends MinimarkTree {
   props?: Record<string, unknown>
   toc?: Toc
 }
 
-export type ParsedContentFile = Record<string, unknown>
+export interface ParsedContentFile extends TransformedContent {
+}

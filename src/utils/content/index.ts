@@ -169,7 +169,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       ...beforeParseCtx.parserOptions,
       transformers: extraTransformers,
     })
-    const { id: id, ...parsedContentFields } = parsedContent
+    const { id: id, __metadata, ...parsedContentFields } = parsedContent
     const result = { id } as ParsedContentFile
     const meta = {} as Record<string, unknown>
 
@@ -185,6 +185,8 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
 
     result.meta = meta
 
+    result.__metadata = __metadata || {}
+
     // Storing `content` into `rawbody` field
     if (collectionKeys.includes('rawbody')) {
       result.rawbody = result.rawbody ?? file.body
@@ -196,7 +198,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       seo.description = seo.description || result.description
     }
 
-    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
+    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }
     await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
     return afterParseCtx.content
   }

@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
+import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
@@ -35,9 +36,9 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
+export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
-    sqlite: findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
+    sqlite: await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
@@ -58,7 +59,7 @@ async function getDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, op
     return cloudflareD1Connector({ bindingName: database.bindingName })
   }
 
-  return import(findBestSqliteAdapter(opts))
+  return import(await findBestSqliteAdapter(opts))
     .then((m) => {
       const connector = (m.default || m) as (config: unknown) => Connector
       return connector({ path: database.filename })
@@ -161,7 +162,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
+async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   if (process.versions.bun) {
     return 'db0/connectors/bun-sqlite'
   }
@@ -176,17 +177,18 @@ function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
   }
 
   if (opts.sqliteConnector === 'better-sqlite3') {
+    await ensurePackageInstalled('better-sqlite3')
+
     return 'db0/connectors/better-sqlite3'
   }
 
   if (isWebContainer()) {
-    if (!isSqlite3PackageInstalled()) {
-      logger.error('Nuxt Content requires `sqlite3` module to work in WebContainer environment. Please run `npm install sqlite3` to install it and try again.')
-      process.exit(1)
-    }
+    await ensurePackageInstalled('sqlite3')
 
     return 'db0/connectors/sqlite3'
   }
+
+  await ensurePackageInstalled('better-sqlite3')
 
   return 'db0/connectors/better-sqlite3'
 }
@@ -225,9 +227,28 @@ function isNodeSqliteAvailable() {
   }
 }
 
-function isSqlite3PackageInstalled() {
+async function ensurePackageInstalled(pkg: string) {
+  if (!await isPackageInstalled(pkg)) {
+    logger.error(`Nuxt Content requires \`${pkg}\` module to operate.`)
+
+    const confirm = await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
+      type: 'confirm',
+      name: 'confirm',
+      initial: true,
+    })
+
+    if (!confirm) {
+      logger.error(`Nuxt Content requires \`${pkg}\` module to operate. Please install \`${pkg}\` package manually and try again. \`npm install ${pkg}\``)
+      process.exit(1)
+    }
+
+    await addDependency(pkg)
+  }
+}
+
+async function isPackageInstalled(packageName: string) {
   try {
-    require.resolve('sqlite3')
+    await import(packageName)
     return true
   }
   catch {

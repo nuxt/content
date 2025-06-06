@@ -1,7 +1,7 @@
-import type { CollectionInfo, DraftSyncFile, ResolvedCollectionSource } from '@nuxt/content'
 import type { JsonSchema7ObjectType } from 'zod-to-json-schema'
 import { join } from 'pathe'
 import { parseSourceBase, withoutPrefixNumber } from './utils'
+import type { CollectionInfo, DraftSyncFile, ResolvedCollectionSource } from '@nuxt/content'
 
 export const v2ToV3ParsedFile = (file: DraftSyncFile, collection: CollectionInfo, source: ResolvedCollectionSource) => {
   const { fixed } = parseSourceBase(source)

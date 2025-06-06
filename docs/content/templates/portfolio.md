@@ -5,7 +5,7 @@ title: Portfolio
 baseDir: .
 branch: main
 category: minimal
-demo: https://saas-template.nuxt.dev/
+demo: https://portfolio-template.nuxt.dev/
 description: A sleek, modern portfolio template to showcase your work, skills,
   blog posts, speaking engagements, and provide contact information.
 licenseType: nuxt-ui-pro

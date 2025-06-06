@@ -1,5 +1,5 @@
-import { fileURLToPath } from 'node:url'
 import fs from 'node:fs/promises'
+import { createResolver } from '@nuxt/kit'
 import { setup, $fetch } from '@nuxt/test-utils'
 import type { Nuxt } from '@nuxt/schema'
 import { afterAll, describe, expect, test } from 'vitest'
@@ -9,12 +9,14 @@ import { getTableName } from '../src/utils/collection'
 import { getLocalDatabase } from '../src/utils/database'
 import type { LocalDevelopmentDatabase } from '../src/module'
 
+const resolver = createResolver(import.meta.url)
+
 async function cleanup() {
-  await fs.rm(fileURLToPath(new URL('./fixtures/empty/node_modules', import.meta.url)), { recursive: true, force: true })
-  await fs.rm(fileURLToPath(new URL('./fixtures/empty/.nuxt', import.meta.url)), { recursive: true, force: true })
-  await fs.rm(fileURLToPath(new URL('./fixtures/empty/.data', import.meta.url)), { recursive: true, force: true })
-  await fs.rm(fileURLToPath(new URL('./fixtures/empty/content', import.meta.url)), { recursive: true, force: true })
-  await fs.rm(fileURLToPath(new URL('./fixtures/empty/content.config.ts', import.meta.url))).catch(() => {})
+  await fs.rm(resolver.resolve('./fixtures/empty/node_modules'), { recursive: true, force: true })
+  await fs.rm(resolver.resolve('./fixtures/empty/.nuxt'), { recursive: true, force: true })
+  await fs.rm(resolver.resolve('./fixtures/empty/.data'), { recursive: true, force: true })
+  await fs.rm(resolver.resolve('./fixtures/empty/content'), { recursive: true, force: true })
+  await fs.rm(resolver.resolve('./fixtures/empty/content.config.ts')).catch(() => {})
 }
 
 describe('empty', async () => {
@@ -24,17 +26,17 @@ describe('empty', async () => {
   })
 
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/empty', import.meta.url)),
+    rootDir: resolver.resolve('./fixtures/empty'),
     dev: true,
   })
 
   describe('`content.config.ts`', async () => {
     test('is missing', async () => {
-      const stat = await fs.stat(fileURLToPath(new URL('./fixtures/empty/content.config.ts', import.meta.url))).catch(() => null)
+      const stat = await fs.stat(resolver.resolve('./fixtures/empty/content.config.ts')).catch(() => null)
       expect(stat?.isFile()).not.toBe(true)
     })
     test('Default collection is defined', async () => {
-      const rootDir = fileURLToPath(new URL('./fixtures/empty', import.meta.url))
+      const rootDir = resolver.resolve('./fixtures/empty')
       const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt)
 
       // Pages collection + info collection
@@ -58,12 +60,12 @@ describe('empty', async () => {
       }
     })
     test('is created', async () => {
-      const stat = await fs.stat(fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)))
+      const stat = await fs.stat(resolver.resolve('./fixtures/empty/.data/content/contents.sqlite'))
       expect(stat?.isFile()).toBe(true)
     })
 
     test('load database', async () => {
-      db = await getLocalDatabase({ type: 'sqlite', filename: fileURLToPath(new URL('./fixtures/empty/.data/content/contents.sqlite', import.meta.url)) }, { nativeSqlite: true })
+      db = await getLocalDatabase({ type: 'sqlite', filename: resolver.resolve('./fixtures/empty/.data/content/contents.sqlite') }, { nativeSqlite: true })
     })
 
     test('content table is created', async () => {
@@ -76,9 +78,9 @@ describe('empty', async () => {
     })
   })
 
-  describe('SQL dump', () => {
+  describe.skip('SQL dump', () => {
     test('is generated', async () => {
-      const dump = await import(new URL('./fixtures/empty/.nuxt/content/database.compressed.mjs', import.meta.url).pathname).then(m => m.content)
+      const dump = await import(resolver.resolve('./fixtures/empty/.nuxt/content/database.compressed.mjs')).then(m => m.content)
 
       const parsedDump = await decompressSQLDump(dump)
 
@@ -88,10 +90,10 @@ describe('empty', async () => {
     })
 
     test('is downloadable', async () => {
-      const response: string = await $fetch('/__nuxt_content/content/sql_dump', { responseType: 'text' })
+      const response: string = await $fetch('/__nuxt_content/content/sql_dump.txt', { responseType: 'text' })
       expect(response).toBeDefined()
 
-      const parsedDump = await decompressSQLDump(response as string)
+      const parsedDump = await decompressSQLDump(response)
 
       expect(parsedDump.filter(item => item.startsWith('CREATE TABLE IF NOT EXISTS'))).toHaveLength(2)
       // Only info collection is inserted

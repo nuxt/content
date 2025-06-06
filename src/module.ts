@@ -33,6 +33,7 @@ import type { Manifest } from './types/manifest'
 import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import type { ParsedContentFile } from './types'
 
 // Export public utils
 export * from './utils'
@@ -98,6 +99,9 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
 
+    // Ignore content directory files in building
+    nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
+
     // Helpers are designed to be enviroment agnostic
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/app') },
@@ -106,10 +110,10 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
     ])
     addServerImports([
-      { name: 'queryCollectionWithEvent', as: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionSearchSectionsWithEvent', as: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionNavigationWithEvent', as: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionItemSurroundingsWithEvent', as: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
@@ -147,7 +151,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump`] = { prerender: true }
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
       }
     })
 
@@ -177,8 +181,8 @@ export default defineNuxtModule<ModuleOptions>({
 
       const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
-      config.alias['#content/adapter'] = resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
-      config.alias['#content/local-adapter'] = resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
+      config.alias['#content/adapter'] = await resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
+      config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
       config.handlers.push({
@@ -253,6 +257,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let cachedFilesCount = 0
   let parsedFilesCount = 0
 
+  // Store components used in the content provided by
+  // custom parsers using the `__metadata.components` field.
+  // This will allow to correctly generate production imports
+  const usedComponents: Array<string> = []
+
   // Remove all existing content collections to start with a clean state
   db.dropContentTables()
   // Create database dump
@@ -302,7 +311,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             const content = await source.getItem?.(key) || ''
             const checksum = getContentChecksum(configHash + collectionHash + content)
 
-            let parsedContent
+            let parsedContent: ParsedContentFile
             if (cache && cache.checksum === checksum) {
               cachedFilesCount += 1
               parsedContent = JSON.parse(cache.value)
@@ -317,6 +326,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               if (parsedContent) {
                 db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
               }
+            }
+
+            // Add manually provided components from the content
+            if (parsedContent?.__metadata?.components) {
+              usedComponents.push(...parsedContent.__metadata.components)
             }
 
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
@@ -366,6 +380,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const uniqueTags = [
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
+    ...new Set(usedComponents),
   ]
     .map(tag => getMappedTag(tag, options?.renderer?.alias))
     .filter(tag => !htmlTags.includes(kebabCase(tag)))
