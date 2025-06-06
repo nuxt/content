@@ -33,6 +33,7 @@ import type { Manifest } from './types/manifest'
 import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import type { ParsedContentFile } from './types'
 
 // Export public utils
 export * from './utils'
@@ -256,6 +257,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   let cachedFilesCount = 0
   let parsedFilesCount = 0
 
+  // Store components used in the content provided by
+  // custom parsers using the `__metadata.components` field.
+  // This will allow to correctly generate production imports
+  const usedComponents: Array<string> = []
+
   // Remove all existing content collections to start with a clean state
   db.dropContentTables()
   // Create database dump
@@ -305,7 +311,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             const content = await source.getItem?.(key) || ''
             const checksum = getContentChecksum(configHash + collectionHash + content)
 
-            let parsedContent
+            let parsedContent: ParsedContentFile
             if (cache && cache.checksum === checksum) {
               cachedFilesCount += 1
               parsedContent = JSON.parse(cache.value)
@@ -320,6 +326,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               if (parsedContent) {
                 db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
               }
+            }
+
+            // Add manually provided components from the content
+            if (parsedContent?.__metadata?.components) {
+              usedComponents.push(...parsedContent.__metadata.components)
             }
 
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)
@@ -369,6 +380,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const uniqueTags = [
     ...Object.values(options.renderer.alias || {}),
     ...new Set(tags),
+    ...new Set(usedComponents),
   ]
     .map(tag => getMappedTag(tag, options?.renderer?.alias))
     .filter(tag => !htmlTags.includes(kebabCase(tag)))
