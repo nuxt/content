@@ -1,5 +1,15 @@
 import type { ZodOptionalDef, ZodType } from 'zod'
+import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
 import { z as zod } from 'zod'
+import { createDefu } from 'defu'
+import type { Draft07 } from '../types'
+
+const defu = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) && Array.isArray(value)) {
+    obj[key] = value
+    return true
+  }
+})
 
 declare module 'zod' {
   interface ZodTypeDef {
@@ -27,18 +37,6 @@ export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
 
 export const z = zod
 
-export const ZodToSqlFieldTypes: Record<ZodFieldType, SqlFieldType> = {
-  ZodString: 'VARCHAR',
-  ZodNumber: 'INT',
-  ZodBoolean: 'BOOLEAN',
-  ZodDate: 'DATE',
-  ZodEnum: 'VARCHAR',
-} as const
-
-export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
-  return Object.values(obj) as [(typeof obj)[keyof T]]
-}
-
 // Function to get the underlying Zod type
 export function getUnderlyingType(zodType: ZodType): ZodType {
   while ((zodType._def as ZodOptionalDef).innerType) {
@@ -49,4 +47,28 @@ export function getUnderlyingType(zodType: ZodType): ZodType {
 
 export function getUnderlyingTypeName(zodType: ZodType): string {
   return getUnderlyingType(zodType).constructor.name
+}
+
+export function zodToStandardSchema(schema: zod.ZodSchema, name: string): Draft07 {
+  const jsonSchema = zodToJsonSchema(schema, name) as Draft07
+  const jsonSchemaWithEditorMeta = zodToJsonSchema(
+    schema,
+    {
+      name,
+      override: (def) => {
+        if (def.editor) {
+          return {
+            $content: {
+              editor: def.editor,
+            },
+            // @deprecated Use $content.editor instead
+            editor: def.editor,
+          } as never
+        }
+
+        return ignoreOverride
+      },
+    }) as Draft07
+
+  return defu(jsonSchema, jsonSchemaWithEditorMeta)
 }

@@ -1,23 +1,14 @@
 import { gzip } from 'node:zlib'
-import { printNode, zodToTs } from 'zod-to-ts'
-import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
 import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { genDynamicImport } from 'knitwork'
+import { compile as jsonSchemaToTypescript, type JSONSchema } from 'json-schema-to-typescript'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
-import { createDefu } from 'defu'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
-
-const defu = createDefu((obj, key, value) => {
-  if (Array.isArray(obj[key]) && Array.isArray(value)) {
-    obj[key] = value
-    return true
-  }
-})
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
@@ -47,7 +38,7 @@ export const moduleTemplates = {
 
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
   filename: moduleTemplates.types as `${string}.d.ts`,
-  getContents: ({ options }) => {
+  getContents: async ({ options }) => {
     const publicCollections = (options.collections as ResolvedCollection[]).filter(c => !c.private)
     const pagesCollections = publicCollections.filter(c => c.type === 'page')
 
@@ -56,9 +47,13 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@nuxt/content\'',
       '',
       'declare module \'@nuxt/content\' {',
-      ...publicCollections.map(c =>
-        indentLines(`interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)} ${printNode(zodToTs(c.schema, pascalCase(c.name)).node)}`),
-      ),
+      ...(await Promise.all(
+        publicCollections.map(async (c) => {
+          const type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
+            .then(code => code.replace('export interface CLASS', `interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)}`))
+          return indentLines(` ${type}`)
+        }),
+      )),
       '',
       '  interface PageCollections {',
       ...pagesCollections.map(c => indentLines(`${c.name}: ${pascalCase(c.name)}CollectionItem`, 4)),
@@ -208,7 +203,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         source: collection.source?.filter(source => source.repository ? undefined : collection.source) || [],
         type: collection.type,
         fields: collection.fields,
-        schema: generateJsonSchema(collection),
+        schema: collection.schema,
         tableDefinition: generateCollectionTableDefinition(collection),
       }
       return acc
@@ -231,23 +226,3 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   },
   write: true,
 })
-
-function generateJsonSchema(collection: ResolvedCollection): ReturnType<typeof zodToJsonSchema> {
-  const jsonSchema = zodToJsonSchema(collection.extendedSchema, collection.name)
-  const jsonSchemaWithEditorMeta = zodToJsonSchema(
-    collection.extendedSchema,
-    {
-      name: collection.name,
-      override: (def) => {
-        if (def.editor) {
-          return {
-            editor: def.editor,
-          } as never
-        }
-
-        return ignoreOverride
-      },
-    })
-
-  return defu(jsonSchema, jsonSchemaWithEditorMeta) as ReturnType<typeof zodToJsonSchema>
-}
