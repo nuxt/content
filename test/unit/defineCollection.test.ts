@@ -37,7 +37,6 @@ describe('defineCollection', () => {
         customField: z.string(),
       }),
     })
-    console.log(collection.schema.definitions)
 
     expect(collection.schema.definitions.__SCHEMA__.properties).ownProperty('customField')
     expect(collection.extendedSchema.definitions.__SCHEMA__.properties).toHaveProperty('customField')

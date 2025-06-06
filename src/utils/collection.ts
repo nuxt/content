@@ -179,8 +179,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     if (collection.fields[key] === 'json') {
       values.push(`'${JSON.stringify(valueToInsert).replace(/'/g, '\'\'')}'`)
     }
-    // else if (underlyingType.constructor.name === 'ZodEnum') {
-    else if (collection.fields[key] === 'enum') {
+    else if (property?.enum) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
     }
     else if ((property?.sqlType || '').match(/^(VARCHAR|TEXT)/)) {

@@ -62,12 +62,13 @@ export function describeProperty(schema: Draft07, property: string) {
 
   const type = (shape[property] as Draft07DefinitionProperty).type
 
-  const result: { name: string, sqlType: string, type?: string, default?: unknown, nullable: boolean, maxLength?: number } = {
+  const result: { name: string, sqlType: string, type?: string, default?: unknown, nullable: boolean, maxLength?: number, enum?: string[] } = {
     name: property,
     sqlType: getPropertyType(shape[property]),
     type,
     nullable: false,
     maxLength: (shape[property] as Draft07DefinitionProperty).maxLength,
+    enum: (shape[property] as Draft07DefinitionProperty).enum,
   }
   if ((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf) {
     if (((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf).find(t => t.type === 'null')) {
