@@ -33,6 +33,7 @@ import type { Manifest } from './types/manifest'
 import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
+import type { ParsedContentFile } from './types'
 
 // Export public utils
 export * from './utils'
@@ -307,7 +308,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             const content = await source.getItem?.(key) || ''
             const checksum = getContentChecksum(configHash + collectionHash + content)
 
-            let parsedContent
+            let parsedContent: ParsedContentFile
             if (cache && cache.checksum === checksum) {
               cachedFilesCount += 1
               parsedContent = JSON.parse(cache.value)
@@ -325,8 +326,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             }
 
             // Add manually provided components from the content
-            if (parsedContent) {
-              usedComponents.push(...(parsedContent.meta?.__components || []))
+            if (parsedContent?.__metadata?.components) {
+              usedComponents.push(...parsedContent.__metadata.components)
             }
 
             const { queries, hash } = generateCollectionInsert(collection, parsedContent)

@@ -10,7 +10,7 @@ import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
 import type { ResolvedCollection } from '../../types/collection'
-import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ContentFile, ContentTransformer } from '../../types'
+import type { FileAfterParseHook, FileBeforeParseHook, ModuleOptions, ContentFile, ContentTransformer, ParsedContentFile } from '../../types'
 import { logger } from '../dev'
 import { transformContent } from './transformers'
 
@@ -168,7 +168,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       ...beforeParseCtx.parserOptions,
       transformers: extraTransformers,
     })
-    const { id: id, ...parsedContentFields } = parsedContent
+    const { id: id, __metadata, ...parsedContentFields } = parsedContent
     const result = { id } as typeof collection.extendedSchema._type
     const meta = {} as Record<string, unknown>
 
@@ -184,6 +184,8 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
 
     result.meta = meta
 
+    result.__metadata = __metadata || {}
+
     // Storing `content` into `rawbody` field
     if (collectionKeys.includes('rawbody')) {
       result.rawbody = result.rawbody ?? file.body
@@ -195,7 +197,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       result.seo.description = result.seo.description || result.description
     }
 
-    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result, collection }
+    const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }
     await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
     return afterParseCtx.content
   }
