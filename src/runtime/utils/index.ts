@@ -20,7 +20,9 @@ export function findPageBreadcrumb(navigation?: ContentNavigationItem[], path?: 
   }, [])
 }
 
-export function findPageChildren(navigation?: ContentNavigationItem[], path?: string | undefined | null): ContentNavigationItem[] {
+type FindPageChildrenOptions = { indexAsChild?: boolean }
+
+export function findPageChildren(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageChildrenOptions): ContentNavigationItem[] {
   if (!navigation?.length || !path) {
     return []
   }
@@ -28,9 +30,9 @@ export function findPageChildren(navigation?: ContentNavigationItem[], path?: st
   return navigation.reduce((children: ContentNavigationItem[], link: ContentNavigationItem) => {
     if (link.children) {
       if (path === link.path) {
-        return link.children.filter((c) => c.path !== path)
+        return link.children.filter((c) => c.path !== path || options?.indexAsChild)
       } else if ((path + '/').startsWith(link.path + '/')) {
-        return findPageChildren(link.children, path)
+        return findPageChildren(link.children, path, options)
       }
     }
 
@@ -38,12 +40,12 @@ export function findPageChildren(navigation?: ContentNavigationItem[], path?: st
   }, [])
 }
 
-export function findPageSiblings(navigation?: ContentNavigationItem[], path?: string | undefined | null): ContentNavigationItem[] {
+export function findPageSiblings(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageChildrenOptions): ContentNavigationItem[] {
   if (!navigation?.length || !path) {
     return []
   }
 
   const parentPath = path.substring(0, path.lastIndexOf('/'))
 
-  return findPageChildren(navigation, parentPath).filter((c) => c.path !== path)
+  return findPageChildren(navigation, parentPath, options).filter((c) => c.path !== path)
 }
