@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
+import {findPageBreadcrumb, findPageChildren, findPageSiblings} from '@nuxt/content/utils'
+import { mapContentNavigation } from '@nuxt/ui-pro/utils/content'
 
 interface TocLink {
   id: string
@@ -39,6 +41,12 @@ const bodyTocLinksWithDebug = computed(() => {
     },
   ]
 })
+
+const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(props.navigation, useRoute().path, {indexAsChild: false, current: true})))
+
+const children = computed(() => mapContentNavigation(findPageChildren(props.navigation, useRoute().path)))
+
+const siblings = computed(() => mapContentNavigation(findPageSiblings(props.navigation, useRoute().path)))
 </script>
 
 <template>
@@ -62,7 +70,11 @@ const bodyTocLinksWithDebug = computed(() => {
     <UPageHeader
       :title="data.title"
       :description="data.description"
-    />
+    >
+      <template #headline>
+        <UBreadcrumb :items="breadcrumb" />
+      </template>
+    </UPageHeader>
 
     <UPageBody>
       <pre v-if="data.stem === 'csv' || data.stem === 'yml'">{{ data.body }}</pre>
@@ -77,6 +89,16 @@ const bodyTocLinksWithDebug = computed(() => {
           </div>
         </template>
       </ContentRenderer>
+
+      <ProseH2>Children</ProseH2>
+      <ProseCardGroup>
+        <ProseCard v-for="child in children" :title="child.label" :to="child.to"></ProseCard>
+      </ProseCardGroup>
+
+      <ProseH2>Siblings</ProseH2>
+      <ProseCardGroup>
+        <ProseCard v-for="sibling in siblings" :title="sibling.label" :to="sibling.to"></ProseCard>
+      </ProseCardGroup>
 
       <template v-if="surround">
         <USeparator />
