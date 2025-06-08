@@ -30,8 +30,9 @@ export function findPageChildren(navigation?: ContentNavigationItem[], path?: st
   return navigation.reduce((children: ContentNavigationItem[], link: ContentNavigationItem) => {
     if (link.children) {
       if (path === link.path) {
-        return link.children.filter((c) => c.path !== path || options?.indexAsChild)
-      } else if ((path + '/').startsWith(link.path + '/')) {
+        return link.children.filter(c => c.path !== path || options?.indexAsChild)
+      }
+      else if ((path + '/').startsWith(link.path + '/')) {
         return findPageChildren(link.children, path, options)
       }
     }
@@ -47,5 +48,5 @@ export function findPageSiblings(navigation?: ContentNavigationItem[], path?: st
 
   const parentPath = path.substring(0, path.lastIndexOf('/'))
 
-  return findPageChildren(navigation, parentPath, options).filter((c) => c.path !== path)
+  return findPageChildren(navigation, parentPath, options).filter(c => c.path !== path)
 }

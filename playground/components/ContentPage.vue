@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import {findPageBreadcrumb, findPageChildren, findPageSiblings} from '@nuxt/content/utils'
+import { findPageBreadcrumb, findPageChildren, findPageSiblings } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui-pro/utils/content'
 
 interface TocLink {
@@ -42,7 +42,7 @@ const bodyTocLinksWithDebug = computed(() => {
   ]
 })
 
-const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(props.navigation, useRoute().path, {indexAsChild: false, current: true})))
+const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(props.navigation, useRoute().path, { indexAsChild: false, current: true })))
 
 const children = computed(() => mapContentNavigation(findPageChildren(props.navigation, useRoute().path)))
 
@@ -92,12 +92,22 @@ const siblings = computed(() => mapContentNavigation(findPageSiblings(props.navi
 
       <ProseH2>Children</ProseH2>
       <ProseCardGroup>
-        <ProseCard v-for="child in children" :title="child.label" :to="child.to"></ProseCard>
+        <ProseCard
+          v-for="(child, index) in children"
+          :key="index"
+          :title="child.label"
+          :to="child.to"
+        />
       </ProseCardGroup>
 
       <ProseH2>Siblings</ProseH2>
       <ProseCardGroup>
-        <ProseCard v-for="sibling in siblings" :title="sibling.label" :to="sibling.to"></ProseCard>
+        <ProseCard
+          v-for="(sibling, index) in siblings"
+          :key="index"
+          :title="sibling.label"
+          :to="sibling.to"
+        />
       </ProseCardGroup>
 
       <template v-if="surround">

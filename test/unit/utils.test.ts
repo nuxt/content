@@ -33,10 +33,10 @@ describe('utils', () => {
   ]
 
   function removeChildren(array) {
-    return array.map(obj => {
+    return array.map((obj) => {
       const { children, ...rest } = obj
       return rest
-    });
+    })
   }
 
   it('findPageBreadcrumb index', async () => {
@@ -53,7 +53,7 @@ describe('utils', () => {
         title: 'Guide Dir',
         path: '/guide',
         stem: 'guide',
-      }
+      },
     ])
   })
 
@@ -70,7 +70,7 @@ describe('utils', () => {
         title: 'Guide Index',
         path: '/guide',
         stem: 'guide/index',
-      }
+      },
     ])
   })
 
@@ -82,7 +82,7 @@ describe('utils', () => {
         title: 'Guide Dir',
         path: '/guide',
         stem: 'guide',
-      }
+      },
     ])
   })
 
@@ -94,7 +94,7 @@ describe('utils', () => {
         title: 'Guide Dir',
         path: '/guide',
         stem: 'guide',
-      }
+      },
     ])
   })
 
@@ -111,7 +111,7 @@ describe('utils', () => {
         title: 'Getting Started',
         path: '/guide/getting-started',
         stem: 'guide/getting-started',
-      }
+      },
     ])
   })
 
@@ -128,7 +128,7 @@ describe('utils', () => {
         title: 'Introduction',
         path: '/guide/introduction',
         stem: 'guide/introduction',
-      }
+      },
     ])
   })
 
@@ -150,7 +150,7 @@ describe('utils', () => {
         title: 'Introduction',
         path: '/guide/introduction',
         stem: 'guide/introduction',
-      }
+      },
     ])
   })
 
@@ -162,7 +162,7 @@ describe('utils', () => {
         title: 'Introduction',
         path: '/guide/introduction',
         stem: 'guide/introduction',
-      }
+      },
     ])
   })
 
@@ -179,7 +179,7 @@ describe('utils', () => {
         title: 'Introduction',
         path: '/guide/introduction',
         stem: 'guide/introduction',
-      }
+      },
     ])
   })
 })
