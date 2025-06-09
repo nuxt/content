@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const bodyTocLinksWithDebug = computed(() => {
   return [
-    ...props.data.body.toc.links,
+    ...(props.data?.body?.toc?.links || []),
     {
       id: 'debug-nuxt-content',
       depth: 0,
