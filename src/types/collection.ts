@@ -1,5 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod'
-import type { zodToJsonSchema } from 'zod-to-json-schema'
+import type { Draft07 } from '../types/schema'
 import type { MarkdownRoot } from './content'
 
 export interface PageCollections {}
@@ -52,22 +52,17 @@ export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
 
 export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> | DataCollection<T>
 
-export interface DefinedCollection<T extends ZodRawShape = ZodRawShape> {
+export interface DefinedCollection {
   type: CollectionType
   source: ResolvedCollectionSource[] | undefined
-  schema: ZodObject<T>
-  extendedSchema: ZodObject<T>
+  schema: Draft07
+  extendedSchema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
 }
 
-export interface ResolvedCollection<T extends ZodRawShape = ZodRawShape> {
+export interface ResolvedCollection extends DefinedCollection {
   name: string
   tableName: string
-  type: CollectionType
-  source: ResolvedCollectionSource[] | undefined
-  schema: ZodObject<T>
-  extendedSchema: ZodObject<T>
-  fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   /**
    * Whether the collection is private or not.
    * Private collections will not be available in the runtime.
@@ -81,7 +76,7 @@ export interface CollectionInfo {
   tableName: string
   source: ResolvedCollectionSource[]
   type: CollectionType
-  schema: ReturnType<typeof zodToJsonSchema>
+  schema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   tableDefinition: string
 }

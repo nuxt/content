@@ -71,6 +71,7 @@
     "destr": "^2.0.5",
     "git-url-parse": "^16.1.0",
     "jiti": "^2.4.2",
+    "json-schema-to-typescript": "^15.0.4",
     "knitwork": "^1.2.0",
     "listhen": "^1.9.0",
     "mdast-util-to-hast": "^13.2.0",
@@ -101,8 +102,7 @@
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.2",
     "zod": "^3.25.48",
-    "zod-to-json-schema": "^3.24.5",
-    "zod-to-ts": "^1.2.0"
+    "zod-to-json-schema": "^3.24.5"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",

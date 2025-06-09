@@ -115,7 +115,7 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
   const properties = (collection.schema.definitions![collection.name] as JsonSchema7ObjectType).properties
-  const sortedKeys = getOrderedSchemaKeys(properties)
+  const sortedKeys = getOrderedSchemaKeys(collection.schema)
 
   sortedKeys.forEach((key) => {
     const value = (properties)[key]

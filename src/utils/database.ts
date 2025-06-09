@@ -5,7 +5,6 @@ import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
-import { z } from 'zod'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions, SQLiteConnector } from '../types/module'
 import { logger } from './dev'
@@ -71,14 +70,23 @@ const _localDatabase: Record<string, Connector> = {}
 export async function getLocalDatabase(database: SqliteDatabaseConfig | D1DatabaseConfig, { connector, sqliteConnector }: { connector?: Connector, nativeSqlite?: boolean, sqliteConnector?: SQLiteConnector } = {}): Promise<LocalDevelopmentDatabase> {
   const databaseLocation = database.type === 'sqlite' ? database.filename : database.bindingName
   const db = _localDatabase[databaseLocation] || connector || await getDatabase(database, { sqliteConnector })
-
   const cacheCollection = {
     tableName: '_development_cache',
-    extendedSchema: z.object({
-      id: z.string(),
-      value: z.string(),
-      checksum: z.string(),
-    }),
+    extendedSchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $ref: '#/definitions/cache',
+      definitions: {
+        cache: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            value: { type: 'string' },
+            checksum: { type: 'string' },
+          },
+          required: ['id', 'value', 'checksum'],
+        },
+      },
+    },
     fields: {
       id: 'string',
       value: 'string',

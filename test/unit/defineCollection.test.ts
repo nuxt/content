@@ -5,7 +5,7 @@ import { defineCollection } from '../../src/utils/collection'
 const metaFields = ['id', 'stem', 'meta', 'extension']
 const pageFields = ['path', 'title', 'description', 'seo', 'body', 'navigation']
 
-function expectProperties(shape: z.ZodRawShape, fields: string[]) {
+function expectProperties(shape: Record<string, unknown>, fields: string[]) {
   fields.forEach(field => expect(shape).toHaveProperty(field))
 }
 
@@ -23,11 +23,10 @@ describe('defineCollection', () => {
         cwd: '',
       }],
     })
+    expect(collection.schema.definitions.__SCHEMA__.properties).not.toHaveProperty('title')
 
-    expect(collection.schema.shape).not.ownProperty('title')
-
-    expectProperties(collection.extendedSchema.shape, metaFields)
-    expectProperties(collection.extendedSchema.shape, pageFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, metaFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, pageFields)
   })
 
   test('Page with custom schema', () => {
@@ -39,11 +38,11 @@ describe('defineCollection', () => {
       }),
     })
 
-    expect(collection.schema.shape).ownProperty('customField')
-    expect(collection.extendedSchema.shape).toHaveProperty('customField')
+    expect(collection.schema.definitions.__SCHEMA__.properties).ownProperty('customField')
+    expect(collection.extendedSchema.definitions.__SCHEMA__.properties).toHaveProperty('customField')
 
-    expectProperties(collection.extendedSchema.shape, metaFields)
-    expectProperties(collection.extendedSchema.shape, pageFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, metaFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, pageFields)
   })
 
   test('Page with object source', () => {
@@ -69,10 +68,10 @@ describe('defineCollection', () => {
       }],
     })
 
-    expect(collection.schema.shape).ownProperty('customField')
-    expect(collection.extendedSchema.shape).toHaveProperty('customField')
+    expect(collection.schema.definitions.__SCHEMA__.properties).ownProperty('customField')
+    expect(collection.extendedSchema.definitions.__SCHEMA__.properties).toHaveProperty('customField')
 
-    expectProperties(collection.extendedSchema.shape, pageFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, pageFields)
   })
 
   test('Data with schema', () => {
@@ -93,11 +92,11 @@ describe('defineCollection', () => {
       }],
     })
 
-    expect(collection.schema.shape).toHaveProperty('customField')
-    expect(collection.extendedSchema.shape).toHaveProperty('customField')
-    expect(collection.schema.shape).not.toHaveProperty('title')
+    expect(collection.schema.definitions.__SCHEMA__.properties).toHaveProperty('customField')
+    expect(collection.extendedSchema.definitions.__SCHEMA__.properties).toHaveProperty('customField')
+    expect(collection.schema.definitions.__SCHEMA__.properties).not.toHaveProperty('title')
 
-    expectProperties(collection.extendedSchema.shape, metaFields)
+    expectProperties(collection.extendedSchema.definitions.__SCHEMA__.properties, metaFields)
   })
 
   test('Data with object source', () => {
