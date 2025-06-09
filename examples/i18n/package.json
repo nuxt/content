@@ -12,6 +12,6 @@
     "@nuxt/content": "latest",
     "@nuxtjs/i18n": "^9.5.5",
     "@nuxt/ui-pro": "^3.1.3",
-    "nuxt": "^3.17.4"
+    "nuxt": "^3.17.5"
   }
 }
