@@ -28,6 +28,10 @@
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.cjs"
     },
+    "./utils": {
+      "types": "./dist/runtime/utils/index.d.ts",
+      "import": "./dist/runtime/utils/index.js"
+    },
     "./runtime": "./dist/runtime/index.js",
     "./nitro": "./dist/runtime/nitro.js"
   },
