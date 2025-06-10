@@ -32,7 +32,7 @@ export function queryCollectionSearchSections(collection: keyof Collections, opt
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
-  if (import.meta.client) {
+  if (import.meta.client && window.WebAssembly) {
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }
   else {
