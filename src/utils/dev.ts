@@ -94,15 +94,37 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
   const sourceMap = collections.flatMap((c) => {
     if (c.source) {
-      return c.source.filter(s => !s.repository).map(s => ({ collection: c, source: s, cwd: s.cwd && withTrailingSlash(s.cwd) }))
+      return c.source.filter(s => !s.repository).map((s) => {
+        const { fixed } = parseSourceBase(s)
+        return { collection: c, source: s, cwd: s.cwd && withTrailingSlash(s.cwd), prefix: s.cwd && withTrailingSlash(join(s.cwd, fixed)) }
+      })
     }
     return []
-  })
+  }).filter(({ source }) => source.cwd)
+
   const dirsToWatch = Array.from(new Set(sourceMap.map(({ source }) => source.cwd)))
     // Filter out empty cwd for custom collections
     .filter(Boolean)
 
-  const watcher = chokidar.watch(dirsToWatch, { ignoreInitial: true })
+  const watcher = chokidar.watch(dirsToWatch, {
+    ignoreInitial: true,
+    ignored: (path) => {
+      const match = sourceMap.find(({ source, cwd, prefix }) => {
+        if (path + '/' === prefix) return true
+        if (prefix && path.startsWith(prefix)) {
+          return micromatch.isMatch(
+            path.substring(cwd.length),
+            source.include,
+            { ignore: source!.exclude || [], dot: true },
+          )
+        }
+
+        return false
+      })
+
+      return !match
+    },
+  })
 
   watcher.on('add', onChange)
   watcher.on('change', onChange)
