@@ -195,6 +195,12 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   filename: moduleTemplates.preview,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
+      const schemaWithCollectionName = {
+        ...collection.extendedSchema,
+        definitions: {
+          [collection.name]: collection.extendedSchema.definitions['__SCHEMA__'],
+        },
+      }
       acc[collection.name] = {
         name: collection.name,
         pascalName: pascalCase(collection.name),
@@ -203,7 +209,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         source: collection.source?.filter(source => source.repository ? undefined : collection.source) || [],
         type: collection.type,
         fields: collection.fields,
-        schema: collection.schema,
+        schema: schemaWithCollectionName,
         tableDefinition: generateCollectionTableDefinition(collection),
       }
       return acc
