@@ -138,7 +138,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     const property = describeProperty(collection.extendedSchema, key)
     // const value = (collection.extendedSchema).shape[key]
 
-    const defaultValue = property?.default ? property.default : 'NULL'
+    const defaultValue = 'default' in property ? property.default : 'NULL'
 
     const valueToInsert = (typeof data[key] === 'undefined' || String(data[key]) === 'null')
       ? defaultValue
