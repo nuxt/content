@@ -1,5 +1,5 @@
-import type { BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, LanguageRegistration, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { ListenOptions } from 'listhen'
+import type { LanguageRegistration, BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
 import type { PathMetaOptions } from './path-meta'
@@ -110,6 +110,15 @@ export interface ModuleOptions {
          */
         searchDepth?: number
       }
+      /**
+       * By default, Nuxt Content extracts content from the first H1 heading and paragraphs below it.
+       * And uses this title and paragraph as default value for the `title` and `description` fields.
+       *
+       * Setting this option to `false` will disable this behavior.
+       *
+       * @default true
+       */
+      contentHeading?: boolean
       /**
        * Register custom remark plugin to provide new feature into your markdown contents.
        * Checkout: https://github.com/remarkjs/remark/blob/main/doc/plugins.md
