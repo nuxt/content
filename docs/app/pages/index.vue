@@ -14,6 +14,7 @@ useSeoMeta({
   ogImage: `${siteConfig.url}/social.png`,
   twitterImage: `${siteConfig.url}/social.png`,
 })
+/* hidden sm:block */
 </script>
 
 <template>
