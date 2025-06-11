@@ -11,7 +11,7 @@
   "devDependencies": {
     "@nuxt/content": "latest",
     "@nuxt/ui-pro": "^3.1.3",
-    "@nuxthub/core": "^0.8.27",
+    "@nuxthub/core": "^0.9.0",
     "nuxt": "^3.17.5",
     "remark-code-import": "^1.2.0",
     "shiki-transformer-color-highlight": "^1.0.0"

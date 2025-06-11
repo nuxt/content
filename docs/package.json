@@ -9,7 +9,7 @@
     "@nuxt/content": "latest",
     "@nuxt/image": "^1.10.0",
     "@nuxt/ui-pro": "^3.1.3",
-    "@nuxthub/core": "^0.8.27",
+    "@nuxthub/core": "^0.9.0",
     "@nuxtjs/plausible": "^1.2.0",
     "@octokit/rest": "^22.0.0",
     "@vueuse/nuxt": "^13.3.0",
