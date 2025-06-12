@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.6.0](https://github.com/nuxt/content/compare/v3.5.1...v3.6.0) (2025-06-12)
+
+### Features
+
+* add `findPageBreadcrumb`, `findPageChildren` and `findPageSiblings` utils ([#3393](https://github.com/nuxt/content/issues/3393)) ([c74ec44](https://github.com/nuxt/content/commit/c74ec44a232a0a8032dc137d3446b9c5daaee801))
+* **parser:** allow extra transformers to provide components used ([#3355](https://github.com/nuxt/content/issues/3355)) ([baff541](https://github.com/nuxt/content/commit/baff541ee36073803971b787fc0487cc423aea0b))
+* **source:** do not watch for excluded files ([2ee1149](https://github.com/nuxt/content/commit/2ee1149dff313b25aeec8c2bc13087c29c4d5394))
+* toggle content heading extraction ([#3400](https://github.com/nuxt/content/issues/3400)) ([f01256a](https://github.com/nuxt/content/commit/f01256a2945b9b6d0dc6324051ca65a91bcdbb81))
+* use json schema instead of zod for internal routines ([#3347](https://github.com/nuxt/content/issues/3347)) ([3f2ff74](https://github.com/nuxt/content/commit/3f2ff743158eec228b0a74ef4e81d720510d78c2))
+
+### Bug Fixes
+
+* add `sql_dump` file extension ([#3339](https://github.com/nuxt/content/issues/3339)) ([d0ceeb6](https://github.com/nuxt/content/commit/d0ceeb62bd2c03d68bbd39ead9736654be74ad5d))
+* **collections:** default values ([10f3a06](https://github.com/nuxt/content/commit/10f3a06664293ff0c8182ababd36fd76976304df))
+* **deps:** remove optimized brace-expansion from preview module ([d5ac591](https://github.com/nuxt/content/commit/d5ac591ce9593f35287bc6cbb4fd7059c3a9d6f0))
+* do not escape newlines ([#3320](https://github.com/nuxt/content/issues/3320)) ([eb60ecb](https://github.com/nuxt/content/commit/eb60ecb9fe1f5e5c321d82cba5ecfb8b1d609577))
+* **module:** check modules existence using `import` ([#3348](https://github.com/nuxt/content/issues/3348)) ([bd84992](https://github.com/nuxt/content/commit/bd84992d4ebcb87748b2874747daa5fb1080b90f))
+* **module:** ignore files in content folder in nuxt building ([#3380](https://github.com/nuxt/content/issues/3380)) ([b01e307](https://github.com/nuxt/content/commit/b01e307721e3e88ae9a54997d95aaaec9a36d77f))
+* **preview:** handle deleted key in object ([231ef50](https://github.com/nuxt/content/commit/231ef50b89dc68efacff2fb6004f38d0da7ffe4a))
+* **templates:** populate preview template schema ([b7230cd](https://github.com/nuxt/content/commit/b7230cdbfc1e823713a30f0ed979b7b12d14aa69))
+* **websocket:** client url ([#3344](https://github.com/nuxt/content/issues/3344)) ([d67b63b](https://github.com/nuxt/content/commit/d67b63b3c87b1c3b1212fc5125ee04dc795768b7))
+
 ## [3.5.1](https://github.com/nuxt/content/compare/v3.5.0...v3.5.1) (2025-04-24)
 
 ### Bug Fixes
