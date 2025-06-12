@@ -22,10 +22,6 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
   const iframeMessagingAllowedOrigins = process.env.PREVIEW_ALLOWED_ORIGINS
   const gitInfo = previewOptions.gitInfo || await getLocalGitInfo(nuxt.options.rootDir) || getGitEnv() || {} as GitInfo
 
-  nuxt.options.vite.optimizeDeps ||= {}
-  nuxt.options.vite.optimizeDeps.include ||= []
-  nuxt.options.vite.optimizeDeps.include.push('brace-expansion')
-
   // Public runtimeConfig
   nuxt.options.runtimeConfig.public.preview = { api, iframeMessagingAllowedOrigins }
 
