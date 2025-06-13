@@ -1,14 +1,13 @@
 ---
 title: Docus, the Comeback
-description: The Nuxt documentation theme and CLI is back with version 2
+description: The Nuxt documentation theme and CLI is back with version 3
   rewritten from the ground up.
 seo:
-  title: Docus v2 — The Return of the Nuxt Docs Theme
-date: 2025-06-10T00:00:00.000Z
+  title: Docus v3 — The Return of the Nuxt Docs Theme
+date: 2025-06-13T00:00:00.000Z
 category: content
-draft: true
 image:
-  src: /blog/docus.webp
+  src: https://docus.dev/__og-image__/static/og.png
   alt: Docus Landing Page
 authors:
   - name: Baptiste Leproux
@@ -22,7 +21,7 @@ We’ve completely rewritten the [Docus](https://docus.dev) theme. Reviving it w
 
 The goal was simple: take **the best parts of the Nuxt ecosystem** and deliver a documentation theme that’s powerful, elegant and easy to maintain.
 
-## **What’s New in Docus v2?**
+## **What’s New in Docus v3?**
 
 ### **📦 A real** [Nuxt]{.text-primary} **app with just one dependency**
 
