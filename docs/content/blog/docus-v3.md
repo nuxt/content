@@ -44,7 +44,7 @@ Learn more about UI theming in Docus dedicated section.
 ::
 
 ::prose-note
-A UI Pro license is currently required, but we’re working to make it free for everyone soon
+A UI Pro license is currently required, but we’re working to make it free for everyone soon. Also, if you're currently building an OSS documentation, you can ask for the OSS license at `ui-pro@nuxt.com` .
 ::
 
 ### **✍️ Markdown with superpowers (MDC syntax by** [Nuxt]{.text-primary} **Content)**
