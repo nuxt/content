@@ -1,7 +1,7 @@
 import { hasNuxtModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import awsAmplify from './aws-amplify'
-import cloudflare from './cloudflare-pages'
+import cloudflare from './cloudflare'
 import netlify from './netlify'
 import node from './node'
 import nuxthub from './nuxthub'
