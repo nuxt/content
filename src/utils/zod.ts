@@ -50,11 +50,12 @@ export function getUnderlyingTypeName(zodType: ZodType): string {
 }
 
 export function zodToStandardSchema(schema: zod.ZodSchema, name: string): Draft07 {
-  const jsonSchema = zodToJsonSchema(schema, name) as Draft07
+  const jsonSchema = zodToJsonSchema(schema, { name, $refStrategy: 'none' }) as Draft07
   const jsonSchemaWithEditorMeta = zodToJsonSchema(
     schema,
     {
       name,
+      $refStrategy: 'none',
       override: (def) => {
         if (def.editor) {
           return {
