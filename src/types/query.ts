@@ -1,4 +1,4 @@
-export type SQLOperator = '=' | '>' | '<' | '<>' | 'IN' | 'BETWEEN' | 'NOT BETWEEN' | 'IS NULL' | 'IS NOT NULL' | 'LIKE' | 'NOT LIKE'
+export type SQLOperator = '=' | '>=' | '<=' | '>' | '<' | '<>' | 'IN' | 'BETWEEN' | 'NOT BETWEEN' | 'IS NULL' | 'IS NOT NULL' | 'LIKE' | 'NOT LIKE'
 
 export type QueryGroupFunction<T> = (group: CollectionQueryGroup<T>) => CollectionQueryGroup<T>
 
