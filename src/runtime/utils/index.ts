@@ -20,9 +20,9 @@ export function findPageBreadcrumb(navigation?: ContentNavigationItem[], path?: 
   }, [])
 }
 
-type FindPageChildrenOptions = { indexAsChild?: boolean }
+type FindPageOptions = { indexAsChild?: boolean }
 
-export function findPageChildren(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageChildrenOptions): ContentNavigationItem[] {
+export function findPageChildren(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageOptions): ContentNavigationItem[] {
   if (!navigation?.length || !path) {
     return []
   }
@@ -41,7 +41,7 @@ export function findPageChildren(navigation?: ContentNavigationItem[], path?: st
   }, [])
 }
 
-export function findPageSiblings(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageChildrenOptions): ContentNavigationItem[] {
+export function findPageSiblings(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageOptions): ContentNavigationItem[] {
   if (!navigation?.length || !path) {
     return []
   }
@@ -49,4 +49,40 @@ export function findPageSiblings(navigation?: ContentNavigationItem[], path?: st
   const parentPath = path.substring(0, path.lastIndexOf('/'))
 
   return findPageChildren(navigation, parentPath, options).filter(c => c.path !== path)
+}
+
+export function findPageHeadline(navigation?: ContentNavigationItem[], path?: string | undefined | null, options?: FindPageOptions): string | undefined {
+  if (!navigation?.length || !path) {
+    return
+  }
+
+  for (const link of navigation) {
+    if (options?.indexAsChild) {
+      if (link.children) {
+        const headline = findPageHeadline(link.children, path, options)
+        if (headline) {
+          return headline
+        }
+        for (const child of link.children) {
+          if (child.path === path) {
+            return link.title
+          }
+        }
+      }
+    }
+    else {
+      if (link.children) {
+        for (const child of link.children) {
+          const isIndex = child.stem?.endsWith('/index')
+          if (child.path === path && !isIndex) {
+            return link.title
+          }
+        }
+        const headline = findPageHeadline(link.children, path, options)
+        if (headline) {
+          return headline
+        }
+      }
+    }
+  }
 }
