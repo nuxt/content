@@ -2,6 +2,7 @@ packages:
   - ./
   - playground
   - docs
+  - docus
   - examples/*
   - test/fixtures/*
 onlyBuiltDependencies:

@@ -171,61 +171,62 @@ Combine file-based simplicity with Vue component power. Build content-rich websi
 reverse: true
 orientation: horizontal
 ---
-:::code-group
-  ::::preview-card{.!h-[458px] icon="i-lucide-eye" label="Preview"}
-    :::::example-landing-hero
-    ---
-    class: "!h-[458px]"
-    image: /mountains/everest.jpg
-    ---
-    #default
+  :::tabs
+    ::::tabs-item{icon="i-lucide-eye" label="Preview"}
+      :::::browser-frame
+        :::::u-page-hero
+        ![Everest visual](/mountains/everest.jpg)
 
+        #title
+        The Everest.
+        
+        #description
+        The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+        :::::
+      :::::
+    ::::
 
-    #title
-    The Everest.
-    
-    #description
-    The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-    :::::
-  ::::
-  
-  ```mdc [content/index.md]
-  ---
-  title: The Mountains Website
-  description: A website about the most iconic mountains in the world.
-  ---
-  
-  ::landing-hero
-  ---
-  image: /mountains/everest.png
-  ---
-  #title
-  The Everest.
-  
-  #description
-  The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-  ::
-  ```
-  
-  ```vue [components/LandingHero.vue]
-  <script setup lang="ts">
-  defineProps<{ image: string }>()
-  </script>
-  
-  <template>
-    <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
-      <div>
-        <h1 class="text-4xl font-semibold">
-          <slot name="title" />
-        </h1>
-        <div class="text-base text-gray-600 dark:text-gray-300">
-          <slot name="description" />
-        </div>
-      </div>
-      <img :src="image" class="w-1/2 rounded-lg">
-    </section>
-  </template>
-  ```
+    ::::tabs-item{icon="i-simple-icons-markdown" label="content/index.md"}
+      ```mdc [content/index.md]
+      ---
+      title: The Mountains Website
+      description: A website about the most iconic mountains in the world.
+      ---
+      
+      ::page-hero
+      ---
+      image: /mountains/everest.png
+      ---
+      #title
+      The Everest.
+      
+      #description
+      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+      ::
+      ```
+    ::::
+
+    ::::tabs-item{icon="i-simple-icons-vuedotjs" label="components/PageHero.vue"}
+      ```vue [components/PageHero.vue]
+        <script setup lang="ts">
+        defineProps<{ image: string }>()
+        </script>
+        
+        <template>
+          <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
+            <div>
+              <h1 class="text-4xl font-semibold">
+                <slot name="title" />
+              </h1>
+              <div class="text-base text-gray-600 dark:text-gray-300">
+                <slot name="description" />
+              </div>
+            </div>
+            <img :src="image" class="w-1/2 rounded-lg">
+          </section>
+        </template>
+      ```
+    ::::
   :::
 
 #title

@@ -1,0 +1,221 @@
+title: Get the right plan for your project
+description: Explore our options tailored to individual and team needs. Get started for free.
+onboarding:
+  title: Team Onboarding
+  image:
+    dark: /pricing/timeline-dark.webp
+    light: /pricing/timeline-light.webp
+plans:
+  solo:
+    title: Solo
+    description: For solo user signed up with their personal GitHub account.
+    price: Free
+    features:
+      - Unlimited projects
+      - 1 member
+      - Notion-like editor
+      - Live editing & preview
+      - Media library
+      - GitHub synchronization
+      - ... and much more
+    button:
+      label: Get started for free
+      color: neutral
+      to: 'https://nuxt.studio'
+    cycle: ''
+  team:
+    title: Team
+    description: For developers, editors and clients who want to collaborate.
+    price: $29
+    cycle: /project/month
+    highlight: true
+    badge: Most popular
+    features:
+      - 1 project
+      - 2 members included
+      - $9 per additional member
+      - Team & workflow management
+      - Real-time collaboration
+      - Priority support
+      - All solo features
+    button:
+      label: Start 14-day free trial
+      to: 'https://nuxt.studio'
+      target: _blank
+  unlimited:
+    title: Unlimited
+    description: For large teams looking to collaborate on multiple projects with no limits.
+    cycle: /month
+    price: $199
+    features:
+      - Unlimited projects
+      - Unlimited members
+      - All Solo features
+      - Team & workflow management
+      - Real-time collaboration
+      - Priority support
+    button:
+      label: Start 14-day free trial
+      to: 'https://nuxt.studio'
+      target: _blank
+features:
+  title: All Features
+  description: Studio has a per-project pricing model that can scale to meet your needs.
+  includes:
+    projects:
+      title: Projects
+      value:
+        - Unlimited
+        - '1'
+        - Unlimited
+    members:
+      title: Members
+      value:
+        - '1'
+        - 2 included ($9 per extra)
+        - Unlimited
+    media:
+      title: Media Library
+      plans:
+        - solo
+        - team
+        - unlimited
+    support:
+      title: Discord support
+      plans:
+        - solo
+        - team
+        - unlimited
+    dedicated:
+      title: Dedicated Discord channel
+      plans:
+        - team
+        - unlimited
+    roles:
+      title: Roles and permissions
+      plans:
+        - team
+        - unlimited
+    collaboration:
+      title: Live Collaboration
+      plans:
+        - team
+        - unlimited
+    sync:
+      title: GitHub syncing
+      includes:
+        repositories:
+          title: Repositories
+          plans:
+            - solo
+            - team
+            - unlimited
+        workflow:
+          title: Branches and Pull Requests
+          plans: []
+          soon: true
+        files:
+          title: Files
+          plans:
+            - solo
+            - team
+            - unlimited
+        actions:
+          title: Actions
+          plans:
+            - solo
+            - team
+            - unlimited
+    project:
+      title: Project
+      includes:
+        clone:
+          title: Clone a template
+          plans:
+            - solo
+            - team
+            - unlimited
+        import:
+          title: Import a repository
+          plans:
+            - solo
+            - team
+            - unlimited
+    editors:
+      title: Editors
+      includes:
+        markdown:
+          title: Markdown editor
+          plans:
+            - solo
+            - team
+            - unlimited
+        json:
+          title: JSON/YML form editor
+          plans:
+            - solo
+            - team
+            - unlimited
+        appconfig:
+          title: App config editor
+          plans:
+            - solo
+            - team
+            - unlimited
+        drag:
+          title: Drag'n drop
+          plans:
+            - solo
+            - team
+            - unlimited
+    preview:
+      title: Live Preview
+      includes:
+        draft:
+          title: Studio Draft
+          plans:
+            - solo
+            - team
+            - unlimited
+        branches:
+          title: Branches
+          plans: []
+          soon: true
+        prs:
+          title: Pull requests
+          plans: []
+          soon: true
+    deploy:
+      title: Deploy
+      includes:
+        gh:
+          title: GitHub Pages
+          plans:
+            - solo
+            - team
+            - unlimited
+        self:
+          title: Self Hosted
+          plans:
+            - solo
+            - team
+            - unlimited
+    publish:
+      title: Save changes
+      includes:
+        preview:
+          title: Preview differences
+          plans:
+            - solo
+            - team
+            - unlimited
+        branch:
+          title: Branch creation / merge
+          plans: []
+          soon: true
+        commit:
+          title: Commit
+          plans:
+            - solo
+            - team
+            - unlimited
