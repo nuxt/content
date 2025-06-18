@@ -7,6 +7,13 @@ import cfPreset from './cloudflare-pages'
 export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt) {
+    const indexOfNuxtHub = nuxt.options.modules.indexOf('@nuxthub/core')
+    const indexOfContentModule = nuxt.options.modules.indexOf('@nuxt/content')
+
+    if (!((nuxt.options as unknown as { hub: { database?: boolean } }).hub?.database) && indexOfNuxtHub < indexOfContentModule) {
+      logger.warn('NuxtHub database is not enabled. Please enable it in your NuxtHub configuration. It is recommended to register `@nuxt/content` before `@nuxthub/core`, so that `@nuxt/content` can automatically configure the database if needed.')
+    }
+
     // Make sure database is enabled
     const nuxthubOptions: { database?: boolean } = (nuxt.options as unknown as { hub: unknown }).hub ||= {}
     nuxthubOptions.database = true
