@@ -1,8 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'pathe'
-import { definePreset } from '../utils/preset'
 import { logger } from '../utils/dev'
-import cfPreset from './cloudflare-pages'
+import { definePreset } from '../utils/preset'
+import cfPreset from './cloudflare'
 
 export default definePreset({
   name: 'nuxthub',
