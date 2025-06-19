@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   css: ['../app/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
+    url: 'https://content.nuxt.com',
   },
   future: {
     compatibilityVersion: 4,
