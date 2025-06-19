@@ -8,10 +8,10 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden sm:block"}
     ::::u-color-mode-image
     ---
-    class: size-full absolute bottom-0 inset-0 z-[-1]
+    class: size-full absolute bottom-0 inset-0
     dark: /home/hero-dark.svg
     light: /home/hero-light.svg
     ---
@@ -172,11 +172,16 @@ reverse: true
 orientation: horizontal
 ---
   :::tabs
-    ::::tabs-item{icon="i-lucide-eye" label="Preview"}
+    ::::tabs-item
+    ---
+    icon: i-lucide-eye
+    label: Preview
+    ---
       :::::browser-frame
-        :::::u-page-hero
-        ![Everest visual](/mountains/everest.jpg)
-
+        :::::example-landing-hero
+        ---
+        image: /mountains/everest.jpg
+        ---
         #title
         The Everest.
         
@@ -186,16 +191,21 @@ orientation: horizontal
       :::::
     ::::
 
-    ::::tabs-item{icon="i-simple-icons-markdown" label="content/index.md"}
+    ::::tabs-item
+    ---
+    class: overflow-x-auto border border-muted rounded-lg p-4
+    icon: i-simple-icons-markdown
+    label: content/index.md
+    ---
       ```mdc [content/index.md]
       ---
       title: The Mountains Website
       description: A website about the most iconic mountains in the world.
       ---
-      
-      ::page-hero
+
+      ::landing-hero
       ---
-      image: /mountains/everest.png
+      image: /mountains/everest.jpg
       ---
       #title
       The Everest.
@@ -203,17 +213,25 @@ orientation: horizontal
       #description
       The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
       ::
+
       ```
     ::::
 
-    ::::tabs-item{icon="i-simple-icons-vuedotjs" label="components/PageHero.vue"}
-      ```vue [components/PageHero.vue]
+    ::::tabs-item
+    ---
+    class: overflow-x-auto border border-muted rounded-lg p-1.5 text-sm
+    icon: i-simple-icons-vuedotjs
+    label: components/LandingHero.vue
+    ---
+      ```vue [components/LandingHero.vue]
         <script setup lang="ts">
-        defineProps<{ image: string }>()
+        defineProps<{
+          image: string 
+        }>()
         </script>
         
         <template>
-          <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
+          <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12">
             <div>
               <h1 class="text-4xl font-semibold">
                 <slot name="title" />
@@ -276,44 +294,58 @@ We created the MDC syntax to let you use Vue components with props and slots ins
 ---
 orientation: horizontal
 ---
-  :::code-group
-  ```vue [pages/blog.vue]
-  <script setup lang="ts">
-  const { data: posts } = await useAsyncData('blog', () => {
-    return queryCollection('blog').all()
-  })
-  </script>
-  
-  <template>
-    <div>
-      <h1>Blog</h1>
-      <ul>
-        <li v-for="post in posts" :key="post.id">
-          <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
-        </li>
-      </ul>
-    </div>
-  </template>
-  ```
-  
-  ```ts [content.config.ts]
-  import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-  
-  export default defineContentConfig({
-    collections: {
-      blog: defineCollection({
-        source: 'blog/*.md',
-        type: 'page',
-        // Define custom schema for docs collection
-        schema: z.object({
-          tags: z.array(z.string()),
-          image: z.string(),
-          date: z.Date()
+  :::tabs
+    ::::tabs-item
+    ---
+    class: overflow-x-auto border border-muted rounded-lg p-4
+    icon: i-simple-icons-vuedotjs
+    label: pages/blog.vue
+    ---
+    ```vue [pages/blog.vue]
+    <script setup lang="ts">
+    const { data: posts } = await useAsyncData('blog', () => {
+      return queryCollection('blog').all()
+    })
+    </script>
+    
+    <template>
+      <div>
+        <h1>Blog</h1>
+        <ul>
+          <li v-for="post in posts" :key="post.id">
+            <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
+          </li>
+        </ul>
+      </div>
+    </template>
+    ```
+    ::::
+
+    ::::tabs-item
+    ---
+    class: overflow-x-auto border border-muted rounded-lg p-4
+    icon: i-simple-icons-typescript
+    label: content.config.ts
+    ---
+    ```ts [content.config.ts]
+    import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+
+    export default defineContentConfig({
+      collections: {
+        blog: defineCollection({
+          source: 'blog/*.md',
+          type: 'page',
+          // Define custom schema for docs collection
+          schema: z.object({
+            tags: z.array(z.string()),
+            image: z.string(),
+            date: z.Date()
+          })
         })
-      })
-    }
-  })
-  ```
+      }
+    })
+    ```
+    ::::
   :::
 
 #title
