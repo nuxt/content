@@ -295,8 +295,8 @@ importers:
         specifier: ^11.10.0
         version: 11.10.0
       docus:
-        specifier: latest
-        version: 3.0.2(7dee646ded917034475ae42eea927616)
+        specifier: 3.1.0-20250619-105902-65a477a
+        version: 3.1.0-20250619-105902-65a477a(7dee646ded917034475ae42eea927616)
       nuxt:
         specifier: ^3.17.3
         version: 3.17.5(@electric-sql/pglite@0.3.2)(@libsql/client@0.15.8)(@parcel/watcher@2.5.1)(@types/node@22.15.31)(better-sqlite3@11.10.0)(db0@0.3.2(@electric-sql/pglite@0.3.2)(@libsql/client@0.15.8)(better-sqlite3@11.10.0)(sqlite3@5.1.7))(encoding@0.1.13)(eslint@9.28.0(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.30.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.41.1)(sqlite3@5.1.7)(terser@5.40.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(yaml@2.8.0))(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
@@ -4080,8 +4080,8 @@ packages:
     resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
 
-  docus@3.0.2:
-    resolution: {integrity: sha512-OmY7EgQnN7Oli/qmgQ9fz4pD14AEEMDhoTGf9CNzvwHM/qCdhtsJNUSSBiB3sDUqlsMdgg9HPJSQQtZ8oJAATQ==}
+  docus@3.1.0-20250619-105902-65a477a:
+    resolution: {integrity: sha512-L2QIzjOVKw3TlybZz4mbSxt11PVNeJGVfwEjqnQApnin6f1jO0vbwV3xlDNQ1pZgJuCVTqxQPoVHVGUoREgluQ==}
     hasBin: true
     peerDependencies:
       better-sqlite3: 11.x
@@ -12374,7 +12374,7 @@ snapshots:
 
   diff@8.0.2: {}
 
-  docus@3.0.2(7dee646ded917034475ae42eea927616):
+  docus@3.1.0-20250619-105902-65a477a(7dee646ded917034475ae42eea927616):
     dependencies:
       '@iconify-json/lucide': 1.2.47
       '@iconify-json/simple-icons': 1.2.38

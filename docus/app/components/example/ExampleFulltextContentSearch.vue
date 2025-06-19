@@ -1,7 +1,7 @@
 <template>
   <UCard>
     <UButton
-      variant="ghost"
+      color="primary"
       icon="i-lucide-search"
       @click="useContentSearch().open.value = true"
     >

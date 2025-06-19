@@ -20,5 +20,13 @@ export default defineAppConfig({
         featureLeadingIcon: 'text-(--ui-text-highlighted)',
       },
     },
+    prose: {
+      codePreview: {
+        slots: {
+          preview: 'rounded-t-none border-(--ui-border-muted) bg-(--ui-bg-muted)',
+        },
+      },
+    },
+
   },
 })

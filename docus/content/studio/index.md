@@ -159,7 +159,7 @@ orientation: horizontal
   ::
   ```
   
-    ::::preview-card{icon="i-lucide-eye" label="Editor"}
+    ::::code-preview{icon="i-lucide-eye" label="Editor"}
     ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
     ::::
   :::
