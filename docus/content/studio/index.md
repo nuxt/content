@@ -8,7 +8,7 @@ seo:
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{.hidden.md:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
@@ -119,48 +119,70 @@ Meet Studio, content edition :br for everyone.
 ---
 orientation: horizontal
 ---
-  :::code-group
-  ```vue [components/content/HomeFeature.vue]
-  <script setup lang="ts">
-    defineProps({
-      icon: {
-        type: String,
-        default: 'i-ph-cursor-click',
-      },
-    })
-  </script>
-  
-  <template>
-    <div class="flex items-start gap-3">
-      <div class="flex items-center justify-center border rounded-lg p-1.5">
-        <UIcon :name="icon" />
-      </div>
-      <div class="flex flex-col">
-        <h3 class="font-semibold">
-          <slot name="title" />
-        </h3>
-        <span>
-          <slot name="description" />
-        </span>
-      </div>
-    </div>
-  </template>
-  ```
-  
-  ```mdc [content/index.md]
-  ::home-feature
+  :::tabs
+    ::::tabs-item
     ---
-    icon: i-mdi-vuejs
+    class: overflow-x-auto !text-sm
+    icon: i-simple-icons-markdown
+    label: content/index.md
     ---
-    #title
-    Embedded Vue components
-    #description
-    Edit slots and props inside the Notion-like editor.
-  ::
-  ```
-  
-    ::::code-preview{icon="i-lucide-eye" label="Editor"}
-    ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
+      ```mdc [content/index.md]
+      ---
+      title: The Mountains Website
+      description: A website about the most iconic mountains in the world.
+      ---
+
+      ::landing-hero
+      ---
+      image: /mountains/everest.jpg
+      ---
+      #title
+      The Everest.
+      
+      #description
+      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+      ::
+
+      ```
+    ::::
+
+    ::::tabs-item
+    ---
+    class: overflow-x-auto text-md
+    icon: i-simple-icons-vuedotjs
+    label: components/LandingHero.vue
+    ---
+      ```vue [components/LandingHero.vue]
+        <script setup lang="ts">
+        defineProps<{
+          image: string 
+        }>()
+        </script>
+        
+        <template>
+          <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12">
+            <div>
+              <h1 class="text-4xl font-semibold">
+                <slot name="title" />
+              </h1>
+              <div class="text-base text-gray-600 dark:text-gray-300">
+                <slot name="description" />
+              </div>
+            </div>
+            <img :src="image" class="w-1/2 rounded-lg">
+          </section>
+        </template>
+      ```
+    ::::
+
+    ::::tabs-item
+    ---
+    icon: i-lucide-eye
+    label: Preview
+    ---
+      :::::browser-frame
+        ![vue component edition on Studio](/docs/studio/home-content-studio-dark.webp)
+      :::::
     ::::
   :::
 
@@ -291,7 +313,7 @@ Edit content as a team and see your site come to life with live preview. From te
 ::
 
 ::u-page-section
-  :::div{.hidden.sm:block}
+  :::div{.hidden.md:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-x-4 z-[-1]
