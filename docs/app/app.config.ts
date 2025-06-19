@@ -1,4 +1,38 @@
 export default defineAppConfig({
+  socials: [
+    {
+      label: 'Nuxt Content on Discord',
+      icon: 'i-simple-icons-discord',
+      to: 'https://discord.gg/sBXDm6e8SP',
+      target: '_blank',
+      color: 'neutral',
+      variant: 'ghost',
+    },
+    {
+      label: 'Nuxt on BlueSKy',
+      icon: 'i-simple-icons-bluesky',
+      to: 'https://go.nuxt.com/bluesky',
+      target: '_blank',
+      color: 'neutral',
+      variant: 'ghost',
+    },
+    {
+      label: 'Nuxt on X',
+      icon: 'i-simple-icons-x',
+      to: 'https://x.com/nuxtstudio',
+      target: '_blank',
+      color: 'neutral',
+      variant: 'ghost',
+    },
+    {
+      label: 'Nuxt Content on GitHub',
+      icon: 'i-simple-icons-github',
+      to: 'https://github.com/nuxt/content',
+      target: '_blank',
+      color: 'neutral',
+      variant: 'ghost',
+    },
+  ],
   ui: {
     colors: {
       primary: 'green',

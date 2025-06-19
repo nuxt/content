@@ -5,8 +5,9 @@
     "build": "docus build"
   },
   "dependencies": {
-    "docus": "3.1.0-20250619-105902-65a477a",
+    "@vueuse/nuxt": "^13.3.0",
     "better-sqlite3": "^11.10.0",
+    "docus": "3.1.0-20250619-105902-65a477a",
     "nuxt": "^3.17.3"
   }
 }

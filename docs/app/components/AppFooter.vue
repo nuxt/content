@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { useAppConfig } from '#imports'
+
 const route = useRoute()
+
+const appConfig = useAppConfig()
+const socials = appConfig.socials || []
 
 // const items = [{
 //   label: 'Figma Kit',

@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/plausible'],
+
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt'],
   css: ['../app/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',

@@ -5,6 +5,7 @@ seo:
     manage content for your application. It allows developers to write their
     content in Markdown, YAML, or JSON files and then query and display it in
     their application.
+  ogImage: /social.png
 ---
 
 ::u-page-hero

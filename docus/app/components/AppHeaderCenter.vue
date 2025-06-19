@@ -23,16 +23,12 @@ const links = computed(() => [
     }],
   }, {
     label: 'Templates',
-    icon: 'i-lucide-panels-top-left',
+    icon: 'i-lucide-layout-template',
     to: '/templates',
   }, {
     label: 'Blog',
     icon: 'i-lucide-file-text',
     to: '/blog',
-  }, {
-    label: 'Changelog',
-    icon: 'i-lucide-history',
-    to: '/changelog',
   },
 ])
 </script>

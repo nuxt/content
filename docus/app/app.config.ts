@@ -1,4 +1,9 @@
 export default defineAppConfig({
+  socials: {
+    discord: 'https://discord.gg/sBXDm6e8SP',
+    bluesky: 'https://go.nuxt.com/bluesky',
+    x: 'https://x.com/nuxtstudio',
+  },
   ui: {
     colors: {
       primary: 'green',
@@ -27,6 +32,5 @@ export default defineAppConfig({
         },
       },
     },
-
   },
 })
