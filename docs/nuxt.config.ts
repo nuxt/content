@@ -1,10 +1,22 @@
-export default defineNuxtConfig({
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { defineNuxtConfig } from 'nuxt/config'
 
+export default defineNuxtConfig({
   modules: ['@nuxtjs/plausible', '@vueuse/nuxt'],
   css: ['../app/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
     url: 'https://content.nuxt.com',
+  },
+  routeRules: {
+    ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
+      .split('\n')
+      .filter(line => line.trim().length && !line.trim().startsWith('#'))
+      .reduce((acc, line) => {
+        const [from, to] = line.split('=') as [string, string]
+        return Object.assign(acc, { [from]: { redirect: to } })
+      }, {} as Record<string, { redirect: string }>),
   },
   future: {
     compatibilityVersion: 4,
