@@ -34,7 +34,7 @@ const result = computed<Array<{ item: typeof data.value[0] }>>(() => fuse.search
             :to="link.item.id"
           >
             <div class="flex flex-col">
-              <span class="text-white font-semibold">{{ link.item.title }}</span>
+              <span class="text-black dark:text-white font-semibold">{{ link.item.title }}</span>
               <span class="text-gray-500 text-xs truncate">
                 {{ link.item.content?.slice(0, 100) }}...
               </span>

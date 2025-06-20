@@ -38,7 +38,7 @@ const result = computed(() => miniSearch.search(toValue(query)).slice(0, 10))
             :to="link.id"
           >
             <div class="flex flex-col">
-              <span class="text-white font-semibold">{{ link.title }}</span>
+              <span class="text-black dark:text-white font-semibold">{{ link.title }}</span>
               <span class="text-gray-500 text-xs truncate">
                 {{ link.content?.slice(0, 100) }}...
               </span>

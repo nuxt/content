@@ -252,6 +252,9 @@ importers:
       docus:
         specifier: 3.1.0-20250619-105902-65a477a
         version: 3.1.0-20250619-105902-65a477a(4505dd65a4aab09d81e65022b00b8739)
+      minisearch:
+        specifier: ^7.1.2
+        version: 7.1.2
       nuxt:
         specifier: ^3.17.3
         version: 3.17.5(@electric-sql/pglite@0.3.2)(@libsql/client@0.15.8)(@parcel/watcher@2.5.1)(@types/node@22.15.31)(better-sqlite3@11.10.0)(db0@0.3.2(@electric-sql/pglite@0.3.2)(@libsql/client@0.15.8)(better-sqlite3@11.10.0)(sqlite3@5.1.7))(encoding@0.1.13)(eslint@9.28.0(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.30.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.41.1)(sqlite3@5.1.7)(terser@5.40.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(yaml@2.8.0))(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
@@ -5674,6 +5677,9 @@ packages:
   minipass@7.1.2:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
+
+  minisearch@7.1.2:
+    resolution: {integrity: sha512-R1Pd9eF+MD5JYDDSPAp/q1ougKglm14uEkPMvQ/05RGmx6G9wvmLTrTI/Q5iPNJLYqNdsDQ7qTGIcNWR+FrHmA==}
 
   minizlib@2.1.2:
     resolution: {integrity: sha512-bAxsR8BVfj60DWXHE3u30oHzfl4G7khkSuPW+qvpd7jFRHm7dLxOjUk1EHACJ/hxLY8phGJ0YhYHZo7jil7Qdg==}
@@ -14416,6 +14422,8 @@ snapshots:
   minipass@5.0.0: {}
 
   minipass@7.1.2: {}
+
+  minisearch@7.1.2: {}
 
   minizlib@2.1.2:
     dependencies:

@@ -194,7 +194,6 @@ orientation: horizontal
 
     ::::tabs-item
     ---
-    class: overflow-x-auto border border-muted rounded-lg p-4
     icon: i-simple-icons-markdown
     label: content/index.md
     ---
@@ -220,7 +219,6 @@ orientation: horizontal
 
     ::::tabs-item
     ---
-    class: overflow-x-auto border border-muted rounded-lg p-1.5 text-sm
     icon: i-simple-icons-vuedotjs
     label: components/LandingHero.vue
     ---
@@ -298,7 +296,6 @@ orientation: horizontal
   :::tabs
     ::::tabs-item
     ---
-    class: overflow-x-auto border border-muted rounded-lg p-4
     icon: i-simple-icons-vuedotjs
     label: pages/blog.vue
     ---
@@ -324,8 +321,7 @@ orientation: horizontal
 
     ::::tabs-item
     ---
-    class: overflow-x-auto border border-muted rounded-lg p-4
-    icon: i-simple-icons-typescript
+<    icon: i-simple-icons-typescript
     label: content.config.ts
     ---
     ```ts [content.config.ts]
