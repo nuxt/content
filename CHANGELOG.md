@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.6.1](https://github.com/nuxt/content/compare/v3.6.0...v3.6.1) (2025-06-20)
+
+### Features
+
+* add `findPageHeadline` utils ([#3416](https://github.com/nuxt/content/issues/3416)) ([a966c61](https://github.com/nuxt/content/commit/a966c61d2f4cdd496ceb98026c728f7723780b51))
+* **preset:** warn if nuxthub is loaded before without database ([#3405](https://github.com/nuxt/content/issues/3405)) ([f689cf0](https://github.com/nuxt/content/commit/f689cf0f08ce677ba1eaaf977f43b7336b09a819))
+* support `<=` and `>=` sql operators ([#3413](https://github.com/nuxt/content/issues/3413)) ([63dbf9f](https://github.com/nuxt/content/commit/63dbf9f3bb3159cd90b765909319a258949f2552))
+* support Cloudflare Workers ([#3407](https://github.com/nuxt/content/issues/3407)) ([7738aac](https://github.com/nuxt/content/commit/7738aac6b7dca2d8b510b5c8f6528878dd44fc57))
+
+### Bug Fixes
+
+* **dev:** support extension patterns like `**/*.md` ([#3414](https://github.com/nuxt/content/issues/3414)) ([f1b873b](https://github.com/nuxt/content/commit/f1b873ba5262bd76ddf3fafa8711bac331099376))
+* disable ref strategy of JsonSchema ([#3403](https://github.com/nuxt/content/issues/3403)) ([01cfac1](https://github.com/nuxt/content/commit/01cfac1b9c695ca10f166d23d8759a10668e68fa))
+
 ## [3.6.0](https://github.com/nuxt/content/compare/v3.5.1...v3.6.0) (2025-06-12)
 
 ### Features
