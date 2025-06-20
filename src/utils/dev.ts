@@ -114,7 +114,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
         if (prefix && path.startsWith(prefix)) {
           return micromatch.isMatch(
             path.substring(cwd.length),
-            source.include,
+            '**',
             { ignore: source!.exclude || [], dot: true },
           )
         }
