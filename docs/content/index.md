@@ -321,7 +321,7 @@ orientation: horizontal
 
     ::::tabs-item
     ---
-<    icon: i-simple-icons-typescript
+    icon: i-simple-icons-typescript
     label: content.config.ts
     ---
     ```ts [content.config.ts]
