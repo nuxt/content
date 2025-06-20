@@ -1,4 +1,5 @@
 ---
+prose: true
 seo:
   title: The git-based CMS for Nuxt projects
   description: Nuxt Content is a module for Nuxt that provides a simple way to
@@ -12,7 +13,7 @@ seo:
   :::div{class="hidden md:block"}
     ::::u-color-mode-image
     ---
-    class: size-full absolute bottom-0 inset-0
+    class: size-full absolute bottom-0 inset-0 z-[-1]
     dark: /home/hero-dark.svg
     light: /home/hero-light.svg
     ---
