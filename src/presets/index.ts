@@ -1,11 +1,11 @@
-import type { Nuxt } from '@nuxt/schema'
 import { hasNuxtModule } from '@nuxt/kit'
-import cloudflare from './cloudflare-pages'
-import vercel from './vercel'
+import type { Nuxt } from '@nuxt/schema'
+import awsAmplify from './aws-amplify'
+import cloudflare from './cloudflare'
+import netlify from './netlify'
 import node from './node'
 import nuxthub from './nuxthub'
-import netlify from './netlify'
-import awsAmplify from './aws-amplify'
+import vercel from './vercel'
 
 export function findPreset(nuxt: Nuxt) {
   const preset = nuxt.options.nitro.preset?.replace(/_/g, '-')
@@ -14,7 +14,7 @@ export function findPreset(nuxt: Nuxt) {
     return nuxthub
   }
 
-  if (preset === 'cloudflare-pages') {
+  if (['cloudflare-pages', 'cloudflare-module', 'cloudflare-durable'].includes(preset || '')) {
     return cloudflare
   }
 
