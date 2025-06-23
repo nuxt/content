@@ -250,8 +250,8 @@ importers:
         specifier: ^11.10.0
         version: 11.10.0
       docus:
-        specifier: 3.0.4-20250623-095727-5f8fbb3
-        version: 3.0.4-20250623-095727-5f8fbb3(4505dd65a4aab09d81e65022b00b8739)
+        specifier: 3.0.4-20250623-110750-cf683de
+        version: 3.0.4-20250623-110750-cf683de(4505dd65a4aab09d81e65022b00b8739)
       minisearch:
         specifier: ^7.1.2
         version: 7.1.2
@@ -3989,8 +3989,8 @@ packages:
     resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
 
-  docus@3.0.4-20250623-095727-5f8fbb3:
-    resolution: {integrity: sha512-DgpCsOc0xdOUuJyATDYfwydhmuQtpk4WyPVyiveNWxxT1mTiRKjLfrUFUE42qvAeLvaAPg9UcJeJJuLjyKFbfg==}
+  docus@3.0.4-20250623-110750-cf683de:
+    resolution: {integrity: sha512-XKNM743UYGmmSU1rI8JUU2ufemyMjFwN52JH9xxHtP1N1iDOdBn5tC/d1e3V9jpP0flSlf/NuzwQlLV6cgFxyw==}
     hasBin: true
     peerDependencies:
       better-sqlite3: 11.x
@@ -12225,7 +12225,7 @@ snapshots:
 
   diff@8.0.2: {}
 
-  docus@3.0.4-20250623-095727-5f8fbb3(4505dd65a4aab09d81e65022b00b8739):
+  docus@3.0.4-20250623-110750-cf683de(4505dd65a4aab09d81e65022b00b8739):
     dependencies:
       '@iconify-json/lucide': 1.2.51
       '@iconify-json/simple-icons': 1.2.39
