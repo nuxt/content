@@ -21,6 +21,11 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  nitro: {
+    cloudflare: {
+      nodeCompat: true,
+    },
+  },
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
