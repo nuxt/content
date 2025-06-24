@@ -143,6 +143,7 @@
     "@types/ws": "^8.18.1",
     "csvtojson": "^2.0.10",
     "eslint": "^9.28.0",
+    "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^3.17.5",
