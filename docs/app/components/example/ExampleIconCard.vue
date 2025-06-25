@@ -17,8 +17,8 @@ defineProps({
 
 <template>
   <div class="p-6 border bg-white dark:bg-black dark:border-gray-700 rounded">
-    <component
-      :is="icon"
+    <UIcon
+      :name="icon"
       class="w-20 h-20"
     />
     <h2 class="text-3xl font-semibold mb-2">

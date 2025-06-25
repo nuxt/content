@@ -5,8 +5,8 @@ defineProps<{
 </script>
 
 <template>
-  <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
-    <div>
+  <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12 h-[331px]">
+    <div class="flex flex-col gap-1">
       <h1 class="text-4xl font-semibold">
         <slot name="title" />
       </h1>

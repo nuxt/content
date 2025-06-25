@@ -1,14 +1,16 @@
 ---
+prose: true
 seo:
-  title: The git-based CMS for Nuxt projects.
+  title: The git-based CMS for Nuxt projects
   description: Nuxt Content is a module for Nuxt that provides a simple way to
     manage content for your application. It allows developers to write their
     content in Markdown, YAML, or JSON files and then query and display it in
     their application.
+  ogImage: https://content.nuxt.com/social.png
 ---
 
 ::u-page-hero
-  :::div{.hidden.sm:block}
+  :::div{class="hidden md:block"}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]
@@ -155,7 +157,7 @@ Everything you need for content management
 #description
 Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
 
-  :::div{.hidden.sm:block}
+  :::div{.hidden.md:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute top-0 inset-0
@@ -171,11 +173,39 @@ Combine file-based simplicity with Vue component power. Build content-rich websi
 reverse: true
 orientation: horizontal
 ---
-  :::code-group
-    ::::preview-card{.!h-[458px] icon="i-lucide-eye" label="Preview"}
-      :::::example-landing-hero
+  :::tabs
+    ::::tabs-item
+    ---
+    icon: i-lucide-eye
+    label: Preview
+    ---
+      :::::browser-frame
+        :::::example-landing-hero
+        ---
+        image: /mountains/everest.jpg
+        ---
+        #title
+        The Everest.
+        
+        #description
+        The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+        :::::
+      :::::
+    ::::
+
+    ::::tabs-item
+    ---
+    icon: i-simple-icons-markdown
+    label: content/index.md
+    ---
+      ```mdc [content/index.md]
       ---
-      class: "!h-[458px]"
+      title: The Mountains Website
+      description: A website about the most iconic mountains in the world.
+      ---
+
+      ::landing-hero
+      ---
       image: /mountains/everest.jpg
       ---
       #title
@@ -183,46 +213,38 @@ orientation: horizontal
       
       #description
       The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-      :::::
+      ::
+
+      ```
     ::::
-  
-  ```mdc [content/index.md]
-  ---
-  title: The Mountains Website
-  description: A website about the most iconic mountains in the world.
-  ---
-  
-  ::landing-hero
-  ---
-  image: /mountains/everest.png
-  ---
-  #title
-  The Everest.
-  
-  #description
-  The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-  ::
-  ```
-  
-  ```vue [components/LandingHero.vue]
-  <script setup lang="ts">
-  defineProps<{ image: string }>()
-  </script>
-  
-  <template>
-    <section class="flex flex-col sm:flex-row sm:items-center flex-col-reverse gap-4 py-8 sm:gap-12 sm:py-12">
-      <div>
-        <h1 class="text-4xl font-semibold">
-          <slot name="title" />
-        </h1>
-        <div class="text-base text-gray-600 dark:text-gray-300">
-          <slot name="description" />
-        </div>
-      </div>
-      <img :src="image" class="w-1/2 rounded-lg">
-    </section>
-  </template>
-  ```
+
+    ::::tabs-item
+    ---
+    icon: i-simple-icons-vuedotjs
+    label: components/LandingHero.vue
+    ---
+      ```vue [components/LandingHero.vue]
+        <script setup lang="ts">
+        defineProps<{
+          image: string 
+        }>()
+        </script>
+        
+        <template>
+          <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12">
+            <div>
+              <h1 class="text-4xl font-semibold">
+                <slot name="title" />
+              </h1>
+              <div class="text-base text-gray-600 dark:text-gray-300">
+                <slot name="description" />
+              </div>
+            </div>
+            <img :src="image" class="w-1/2 rounded-lg">
+          </section>
+        </template>
+      ```
+    ::::
   :::
 
 #title
@@ -272,44 +294,56 @@ We created the MDC syntax to let you use Vue components with props and slots ins
 ---
 orientation: horizontal
 ---
-  :::code-group
-  ```vue [pages/blog.vue]
-  <script setup lang="ts">
-  const { data: posts } = await useAsyncData('blog', () => {
-    return queryCollection('blog').all()
-  })
-  </script>
-  
-  <template>
-    <div>
-      <h1>Blog</h1>
-      <ul>
-        <li v-for="post in posts" :key="post.id">
-          <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
-        </li>
-      </ul>
-    </div>
-  </template>
-  ```
-  
-  ```ts [content.config.ts]
-  import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-  
-  export default defineContentConfig({
-    collections: {
-      blog: defineCollection({
-        source: 'blog/*.md',
-        type: 'page',
-        // Define custom schema for docs collection
-        schema: z.object({
-          tags: z.array(z.string()),
-          image: z.string(),
-          date: z.Date()
+  :::tabs
+    ::::tabs-item
+    ---
+    icon: i-simple-icons-vuedotjs
+    label: pages/blog.vue
+    ---
+    ```vue [pages/blog.vue]
+    <script setup lang="ts">
+    const { data: posts } = await useAsyncData('blog', () => {
+      return queryCollection('blog').all()
+    })
+    </script>
+    
+    <template>
+      <div>
+        <h1>Blog</h1>
+        <ul>
+          <li v-for="post in posts" :key="post.id">
+            <NuxtLink :to="post.path">{{ post.title }}</NuxtLink>
+          </li>
+        </ul>
+      </div>
+    </template>
+    ```
+    ::::
+
+    ::::tabs-item
+    ---
+    icon: i-simple-icons-typescript
+    label: content.config.ts
+    ---
+    ```ts [content.config.ts]
+    import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+
+    export default defineContentConfig({
+      collections: {
+        blog: defineCollection({
+          source: 'blog/*.md',
+          type: 'page',
+          // Define custom schema for docs collection
+          schema: z.object({
+            tags: z.array(z.string()),
+            image: z.string(),
+            date: z.Date()
+          })
         })
-      })
-    }
-  })
-  ```
+      }
+    })
+    ```
+    ::::
   :::
 
 #title
@@ -407,7 +441,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
 ::
 
 ::u-page-section
-  :::div{.hidden.sm:block}
+  :::div{.hidden.md:block}
     ::::u-color-mode-image
     ---
     class: size-full absolute bottom-0 inset-0 z-[-1]
