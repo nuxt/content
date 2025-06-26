@@ -2,7 +2,7 @@ import type { ZodOptionalDef, ZodType } from 'zod'
 import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
 import { z as zod } from 'zod'
 import { createDefu } from 'defu'
-import type { Draft07 } from '../types'
+import type { Draft07, EditorOptions } from '../types'
 
 const defu = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
@@ -19,11 +19,6 @@ declare module 'zod' {
   interface ZodType {
     editor(options: EditorOptions): this
   }
-}
-
-interface EditorOptions {
-  input?: 'media' | 'icon' // Override the default input for the field
-  hidden?: boolean // Do not display the field in the editor
 }
 
 export type ZodFieldType = 'ZodString' | 'ZodNumber' | 'ZodBoolean' | 'ZodDate' | 'ZodEnum'
@@ -62,8 +57,6 @@ export function zodToStandardSchema(schema: zod.ZodSchema, name: string): Draft0
             $content: {
               editor: def.editor,
             },
-            // @deprecated Use $content.editor instead
-            editor: def.editor,
           } as never
         }
 

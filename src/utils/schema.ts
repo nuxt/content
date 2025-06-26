@@ -157,6 +157,11 @@ export const pageStandardSchema: Draft07 = {
                 },
                 icon: {
                   type: 'string',
+                  $content: {
+                    editor: {
+                      input: 'icon',
+                    },
+                  },
                 },
               },
               required: [

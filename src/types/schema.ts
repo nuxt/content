@@ -21,10 +21,7 @@ export interface Draft07DefinitionProperty {
   enum?: string[]
   additionalProperties?: boolean | Record<string, Draft07DefinitionProperty>
   $content?: {
-    editor?: {
-      input?: 'media' | 'icon' // Override the default input for the field
-      hidden?: boolean // Do not display the field in the editor
-    }
+    editor?: EditorOptions
   }
 }
 
@@ -34,4 +31,10 @@ export interface Draft07DefinitionPropertyAnyOf {
 
 export interface Draft07DefinitionPropertyAllOf {
   allOf: Draft07DefinitionProperty[]
+}
+
+export interface EditorOptions {
+  input?: 'media' | 'icon' // Override the default input for the field
+  hidden?: boolean // Do not display the field in the editor
+  iconLibraries?: string[] // List of icon libraries to use for the icon input
 }
