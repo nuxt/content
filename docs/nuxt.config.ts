@@ -41,6 +41,9 @@ export default defineNuxtConfig({
     database: true,
     cache: true,
   },
+  github: {
+    rootDir: 'docs',
+  },
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
