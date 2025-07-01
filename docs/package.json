@@ -7,10 +7,10 @@
   "dependencies": {
     "@nuxt/content": "link:..",
     "@nuxtjs/plausible": "^1.2.0",
-    "@vueuse/nuxt": "^13.3.0",
+    "@vueuse/nuxt": "^13.4.0",
     "better-sqlite3": "^11.10.0",
-    "docus": "3.0.4-20250623-110750-cf683de",
+    "docus": "3.0.5",
     "minisearch": "^7.1.2",
-    "nuxt": "^3.17.3"
+    "nuxt": "^3.17.5"
   }
 }
