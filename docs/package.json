@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@nuxt/content": "link:..",
+    "@nuxthub/core": "0.9.0",
     "@nuxtjs/plausible": "^1.2.0",
     "@vueuse/nuxt": "^13.4.0",
     "better-sqlite3": "^11.10.0",

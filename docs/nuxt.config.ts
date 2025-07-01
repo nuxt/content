@@ -3,11 +3,27 @@ import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/plausible', '@vueuse/nuxt'],
-  css: ['../app/assets/css/main.css'],
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
     url: 'https://content.nuxt.com',
+  },
+  content: {
+    experimental: {
+      nativeSqlite: true,
+    },
+    build: {
+      markdown: {
+        highlight: {
+          langs: ['docker'],
+        },
+      },
+    },
+    preview: {
+      dev: true,
+      api: 'https://api.nuxt.studio',
+    },
   },
   routeRules: {
     ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
@@ -20,6 +36,10 @@ export default defineNuxtConfig({
   },
   future: {
     compatibilityVersion: 4,
+  },
+  hub: {
+    database: true,
+    cache: true,
   },
   llms: {
     domain: 'https://content.nuxt.com',
