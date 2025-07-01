@@ -76,7 +76,7 @@ const cell = (type: 'solo' | 'team' | 'unlimited', row: any) => {
   const borderSide = type === 'team' ? 'border-l border-r !border-r-(--ui-primary) !border-l-(--ui-primary)' : ''
   const borderClosed = type === 'team' && row.original.title?.includes('Commit') ? 'border-b border-b-(--ui-primary) rounded-b-lg' : ''
 
-  return h('div', { class: `flex justify-center border-primary p-4 text-(--ui-text-highlighted) ${color} ${background} ${borderBottom} ${borderSide} ${borderClosed}` },
+  return h('div', { class: `flex justify-center p-4 text-(--ui-text-highlighted) ${color} ${background} ${borderBottom} ${borderSide} ${borderClosed}` },
     typeof value === 'string'
       ? h('span', { class: 'h-5' }, value)
       : value === true

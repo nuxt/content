@@ -1,24 +1,17 @@
 {
-  "private": true,
-  "name": "@nuxt/content-docs",
-  "type": "module",
+  "name": "docus-starter",
+  "scripts": {
+    "dev": "docus dev",
+    "build": "docus build"
+  },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.47",
-    "@iconify-json/simple-icons": "^1.2.38",
-    "@iconify-json/vscode-icons": "^1.2.22",
-    "@nuxt/content": "latest",
-    "@nuxt/image": "^1.10.0",
-    "@nuxt/ui-pro": "^3.1.3",
-    "@nuxthub/core": "^0.9.0",
+    "@nuxt/content": "link:..",
+    "@nuxthub/core": "0.9.0",
     "@nuxtjs/plausible": "^1.2.0",
-    "@octokit/rest": "^22.0.0",
-    "@vueuse/nuxt": "^13.3.0",
+    "@vueuse/nuxt": "^13.4.0",
+    "better-sqlite3": "^11.10.0",
+    "docus": "3.0.5",
     "minisearch": "^7.1.2",
-    "nuxt": "^3.17.5",
-    "nuxt-llms": "^0.1.3",
-    "nuxt-og-image": "^5.1.6",
-    "prettier": "^3.5.3",
-    "shiki-transformer-color-highlight": "^1.0.0",
-    "ufo": "^1.6.1"
+    "nuxt": "^3.17.5"
   }
 }

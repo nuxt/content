@@ -1,46 +1,20 @@
 import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
-import { resolve } from 'pathe'
-import pkg from '../package.json'
 
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/ui-pro',
-    '@nuxt/content',
-    '@nuxt/image',
-    '@nuxthub/core',
-    '@nuxtjs/plausible',
-    '@vueuse/nuxt',
-    'nuxt-og-image',
-    'nuxt-llms',
-  ],
-
-  app: {
-    rootAttrs: {
-      // @ts-expect-error - vaul-drawer-wrapper is not typed
-      'vaul-drawer-wrapper': '',
-      'class': 'bg-(--ui-bg)',
-    },
-  },
-
-  css: [
-    '~/assets/css/main.css',
-  ],
-
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  css: ['../app/assets/css/main.css'],
   site: {
+    name: 'Nuxt Content',
     url: 'https://content.nuxt.com',
   },
-
   content: {
     experimental: {
       nativeSqlite: true,
     },
     build: {
       markdown: {
-        toc: {
-          depth: 4,
-          searchDepth: 4,
-        },
         highlight: {
           langs: ['docker'],
         },
@@ -51,19 +25,6 @@ export default defineNuxtConfig({
       api: 'https://api.nuxt.studio',
     },
   },
-
-  mdc: {
-    highlight: {
-      noApiRoute: false,
-    },
-  },
-
-  runtimeConfig: {
-    public: {
-      version: pkg.version,
-    },
-  },
-
   routeRules: {
     ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
       .split('\n')
@@ -73,45 +34,13 @@ export default defineNuxtConfig({
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
   },
-
   future: {
     compatibilityVersion: 4,
   },
-
-  compatibilityDate: '2024-07-09',
-
-  nitro: {
-    prerender: {
-      routes: ['/'],
-      crawlLinks: true,
-    },
-    cloudflare: {
-      pages: {
-        routes: {
-          exclude: [
-            '/docs/*',
-          ],
-        },
-      },
-    },
-  },
-
   hub: {
     database: true,
     cache: true,
   },
-
-  icon: {
-    clientBundle: {
-      scan: true,
-    },
-    serverBundle: 'local',
-  },
-
-  image: {
-    provider: 'ipx',
-  },
-
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
@@ -124,9 +53,5 @@ export default defineNuxtConfig({
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
     },
-  },
-
-  ogImage: {
-    zeroRuntime: true,
   },
 })

@@ -37,10 +37,12 @@ const result = computed(() => miniSearch.search(toValue(query)).slice(0, 10))
             class="w-full"
             :to="link.id"
           >
-            {{ link.title }}
-            <span class="text-gray-500 text-xs">
-              {{ link.content?.slice(0, 100) }}...
-            </span>
+            <div class="flex flex-col">
+              <span class="text-black dark:text-white font-semibold">{{ link.title }}</span>
+              <span class="text-gray-500 text-xs truncate">
+                {{ link.content?.slice(0, 100) }}...
+              </span>
+            </div>
           </UButton>
         </li>
       </ul>

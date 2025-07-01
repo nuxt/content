@@ -1,4 +1,9 @@
 export default defineAppConfig({
+  socials: {
+    discord: 'https://discord.gg/sBXDm6e8SP',
+    bluesky: 'https://go.nuxt.com/bluesky',
+    x: 'https://x.com/nuxtstudio',
+  },
   ui: {
     colors: {
       primary: 'green',
@@ -20,5 +25,15 @@ export default defineAppConfig({
         featureLeadingIcon: 'text-(--ui-text-highlighted)',
       },
     },
+    prose: {
+      codePreview: {
+        slots: {
+          preview: 'rounded-t-none border-(--ui-border-muted) bg-(--ui-bg-muted)',
+        },
+      },
+    },
+  },
+  github: {
+    rootDir: 'docs',
   },
 })

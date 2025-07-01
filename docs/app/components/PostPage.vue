@@ -115,8 +115,6 @@ function copyLink() {
           :value="post"
         />
 
-        <DocsCTA />
-
         <div class="flex items-center justify-between mt-12">
           <UButton
             :to="`/${type}`"
@@ -159,7 +157,7 @@ function copyLink() {
           :links="post.body.toc.links"
         >
           <template #bottom>
-            <div class="hidden lg:block">
+            <div class="hidden md:block">
               <UPageLinks
                 title="Links"
                 :links="links"

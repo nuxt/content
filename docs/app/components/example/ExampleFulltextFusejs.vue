@@ -33,10 +33,12 @@ const result = computed<Array<{ item: typeof data.value[0] }>>(() => fuse.search
             class="w-full"
             :to="link.item.id"
           >
-            {{ link.item.title }}
-            <span class="text-gray-500 text-xs">
-              {{ link.item.content?.slice(0, 100) }}...
-            </span>
+            <div class="flex flex-col">
+              <span class="text-black dark:text-white font-semibold">{{ link.item.title }}</span>
+              <span class="text-gray-500 text-xs truncate">
+                {{ link.item.content?.slice(0, 100) }}...
+              </span>
+            </div>
           </UButton>
         </li>
       </ul>
