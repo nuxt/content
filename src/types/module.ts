@@ -92,7 +92,7 @@ export interface ModuleOptions {
      * List of user-defined transformers.
      */
     transformers?: string[]
-    markdown: {
+    markdown?: {
       /**
        * Control behavior of Table of Contents generation
        */

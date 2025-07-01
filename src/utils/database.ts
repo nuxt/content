@@ -38,7 +38,6 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
 
 export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
-    sqlite: await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector }),
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
     postgres: 'db0/connectors/postgresql',
@@ -49,6 +48,10 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
   adapter = adapter || 'sqlite'
   if (adapter === 'sqlite' && process.versions.bun) {
     return databaseConnectors.bunsqlite
+  }
+
+  if (adapter === 'sqlite') {
+    return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector })
   }
 
   return databaseConnectors[adapter]
