@@ -84,7 +84,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.0.3",
-    "nuxt-component-meta": "^0.12.0",
+    "nuxt-component-meta": "^0.12.1",
     "nypm": "^0.6.0",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
@@ -150,7 +150,7 @@
     "release-it": "^19.0.3",
     "typescript": "5.8.3",
     "vitest": "^3.2.4",
-    "vue-tsc": "^3.0.0",
+    "vue-tsc": "^3.0.1",
     "wrangler": "^4.22.0"
   },
   "resolutions": {
