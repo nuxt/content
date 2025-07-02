@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
-import { resolveComponent, toRaw, defineAsyncComponent, computed, type AsyncComponentLoader } from 'vue'
+import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
+import type { AsyncComponentLoader } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'

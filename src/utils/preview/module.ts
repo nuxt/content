@@ -4,12 +4,14 @@ import {
   installModule,
   addPrerenderRoutes,
   addServerHandler,
-  type Resolver,
+
   addTemplate,
 } from '@nuxt/kit'
+import type { Resolver } from '@nuxt/kit'
 import type { Schema } from 'untyped'
 import type { Nuxt } from '@nuxt/schema'
-import { getGitEnv, getLocalGitInfo, type GitInfo } from '../git'
+import { getGitEnv, getLocalGitInfo } from '../git'
+import type { GitInfo } from '../git'
 import type { ModuleOptions } from '../../types'
 import { previewTemplate } from '../templates'
 import type { Manifest } from '../../types/manifest'

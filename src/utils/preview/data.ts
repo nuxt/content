@@ -1,9 +1,9 @@
 import { defu } from 'defu'
 import type { JSType, Schema, InputValue } from 'untyped'
 
-export type ConfigInputsTypes =
-  | Exclude<JSType, 'symbol' | 'function' | 'any' | 'bigint'>
-  | 'default' | 'icon' | 'file' | 'media' | 'component'
+export type ConfigInputsTypes
+  = | Exclude<JSType, 'symbol' | 'function' | 'any' | 'bigint'>
+    | 'default' | 'icon' | 'file' | 'media' | 'component'
 
 export type PickerTypes = 'media-picker' | 'icon-picker'
 
@@ -75,13 +75,13 @@ const supportedFields: { [key in ConfigInputsTypes]: Schema } = {
   },
 }
 
-export type PreviewFieldData =
-  PartialSchema &
-  {
-    type?: keyof typeof supportedFields
-    icon?: string
-    fields?: { [key: string]: InputValue }
-  }
+export type PreviewFieldData
+  = PartialSchema
+    & {
+      type?: keyof typeof supportedFields
+      icon?: string
+      fields?: { [key: string]: InputValue }
+    }
 
 /**
  * Helper to build preview compatible configuration schema.
