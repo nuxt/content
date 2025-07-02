@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.6.2](https://github.com/nuxt/content/compare/v3.6.1...v3.6.2) (2025-07-02)
+
+### Features
+
+* **schema:** set navigation.icon of page as icon for preview ([eff825d](https://github.com/nuxt/content/commit/eff825d910f7684351e9fb4563dc4521f47ce2d7))
+
+### Bug Fixes
+
+* check sqlite connector only if database type is sqlite ([#3425](https://github.com/nuxt/content/issues/3425)) ([9166169](https://github.com/nuxt/content/commit/916616960288cbd5b43bd70c7d2a9791211a8c1a))
+* **dev:** dont ignore subfolders ([#3421](https://github.com/nuxt/content/issues/3421)) ([78f461d](https://github.com/nuxt/content/commit/78f461da39143c208be463f8f683d2cba35f5ed2))
+* **docs:** update query method to use `first()` for consistency ([#3430](https://github.com/nuxt/content/issues/3430)) ([5fed4ea](https://github.com/nuxt/content/commit/5fed4ea3a8ee525400ad129028f34add78e6030a))
+* fallback to api call if webassembly is not supported ([#3399](https://github.com/nuxt/content/issues/3399)) ([cf5ca24](https://github.com/nuxt/content/commit/cf5ca24e80f3b3b07df9e819ac5b112eaffb5dde))
+
 ## [3.6.1](https://github.com/nuxt/content/compare/v3.6.0...v3.6.1) (2025-06-20)
 
 ### Features
