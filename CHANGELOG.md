@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.6.3](https://github.com/nuxt/content/compare/v3.6.2...v3.6.3) (2025-07-04)
+
+### Bug Fixes
+
+* Content Hot reload ([ad4479a](https://github.com/nuxt/content/commit/ad4479aded5e3e69d9dc8637f73243a8d43a8932)), closes [#3440](https://github.com/nuxt/content/issues/3440)
+
 ## [3.6.2](https://github.com/nuxt/content/compare/v3.6.1...v3.6.2) (2025-07-02)
 
 ### Features
