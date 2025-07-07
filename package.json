@@ -101,13 +101,13 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.3",
-    "zod": "^3.25.72",
+    "zod": "^3.25.75",
     "zod-to-json-schema": "^3.24.6"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "better-sqlite3": "^12.0.0",
+    "better-sqlite3": "^12.2.0",
     "sqlite3": "*"
   },
   "peerDependenciesMeta": {
@@ -125,7 +125,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250704.0",
+    "@cloudflare/workers-types": "^4.20250705.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.2",
     "@nuxt/eslint-config": "^1.5.2",
