@@ -18,7 +18,7 @@ import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
-import { parseSourceBase } from './source'
+import { getExcludedSourcePaths, parseSourceBase } from './source'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
@@ -116,7 +116,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
           return micromatch.isMatch(
             path.substring(cwd.length),
             '**',
-            { ignore: source!.exclude || [], dot: true },
+            { ignore: getExcludedSourcePaths(source), dot: true },
           )
         }
 
