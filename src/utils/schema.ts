@@ -1,6 +1,9 @@
 import * as z from 'zod'
 import { ContentFileExtension } from '../types/content'
-import type { Draft07 } from '../types'
+import type { Draft07, Draft07Definition, Draft07DefinitionProperty } from '../types'
+import { resolveModule, useNuxt } from '@nuxt/kit'
+import { getComponentMeta } from 'nuxt-component-meta/parser'
+import { propsToJsonSchema } from 'nuxt-component-meta/utils'
 
 export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
   return Object.values(obj) as [(typeof obj)[keyof T]]
@@ -203,4 +206,33 @@ export function mergeStandardSchema(s1: Draft07, s2: Draft07): Draft07 {
       }),
     ),
   }
+}
+
+export function replaceComponentSchemas<T extends Draft07Definition | Draft07DefinitionProperty>(property: T): T {
+  if (property.type !== 'object') {
+    return property
+  }
+
+  // If the property has a _inherit property, replace it with the component's props schema
+  if (property.properties?._inherit) {
+    const nuxt = useNuxt()
+    let path = String((property.properties._inherit as Draft07DefinitionProperty).default)
+    try {
+      path = resolveModule(path)
+    }
+    catch {
+    }
+
+    const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir })
+    return propsToJsonSchema(meta.props) as T
+  }
+
+  // Look for _inherit properties in nested objects
+  if (property.properties) {
+    Object.entries(property.properties).forEach(([key, value]) => {
+      property.properties![key] = replaceComponentSchemas(value as Draft07DefinitionProperty) as Draft07DefinitionProperty
+    })
+  }
+
+  return property
 }

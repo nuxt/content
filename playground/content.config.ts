@@ -34,6 +34,7 @@ const content = defineCollection({
   schema: z.object({
     date: z.date(),
     rawbody: z.string(),
+    testd: z.component('components/TestD.vue'),
   }),
 })
 
@@ -69,6 +70,11 @@ const collections = {
   content,
   data,
   pages,
+  buttons: defineCollection({
+    type: 'data',
+    source: 'testd/**',
+    schema: z.component('@nuxt/ui/components/Button.vue'),
+  }),
   contentV2: defineCollection({
     type: 'page',
     source: {

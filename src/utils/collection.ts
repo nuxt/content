@@ -4,7 +4,7 @@ import type { Collection, ResolvedCollection, CollectionSource, DefinedCollectio
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema } from './schema'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, replaceComponentSchemas } from './schema'
 import { z, zodToStandardSchema } from './zod'
 import { logger } from './dev'
 
@@ -17,6 +17,7 @@ export function defineCollection<T extends ZodRawShape>(collection: Collection<T
   if (collection.schema instanceof z.ZodObject) {
     standardSchema = zodToStandardSchema(collection.schema, '__SCHEMA__')
   }
+  standardSchema.definitions.__SCHEMA__ = replaceComponentSchemas(standardSchema.definitions.__SCHEMA__)
 
   let extendedSchema: Draft07 = standardSchema
   if (collection.type === 'page') {
