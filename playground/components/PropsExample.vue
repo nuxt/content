@@ -6,13 +6,19 @@
       <p><strong>Title (string):</strong> {{ title }}</p>
       <p><strong>Is Active (boolean):</strong> {{ isActive ? 'Yes' : 'No' }}</p>
     </div>
-    
-    <div class="conditional-content" v-if="isActive">
+
+    <div
+      v-if="isActive"
+      class="conditional-content"
+    >
       <p>This content is shown when isActive is true!</p>
       <p>Current count multiplied by 2: {{ count * 2 }}</p>
     </div>
-    
-    <div class="styled-title" :class="{ active: isActive }">
+
+    <div
+      class="styled-title"
+      :class="{ active: isActive }"
+    >
       {{ title }}
     </div>
   </div>
@@ -25,7 +31,7 @@ interface Props {
   isActive: boolean
 }
 
-const props = defineProps<Props>()
+efineProps<Props>()
 
 // You can also define props with default values like this:
 // const props = withDefaults(defineProps<Props>(), {

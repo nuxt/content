@@ -221,6 +221,7 @@ export function replaceComponentSchemas<T extends Draft07Definition | Draft07Def
       path = resolveModule(path)
     }
     catch {
+      // Ignore error
     }
 
     const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir })

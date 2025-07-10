@@ -12,7 +12,6 @@ defineProps<{
    */
   bar?: number
 }>()
-
 </script>
 
 <template>
