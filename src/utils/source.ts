@@ -10,7 +10,7 @@ export function getExcludedSourcePaths(source: CollectionSource) {
   return [
     ...(source!.exclude || []),
     // Ignore OS files
-    '.DS_Store',
+    '**/.DS_Store',
   ]
 }
 
