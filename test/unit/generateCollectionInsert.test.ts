@@ -98,7 +98,7 @@ describe('generateCollectionInsert', () => {
     const hash = 'QMyFxMru9gVfaNx0fzjs5is7SvAZMEy3tNDANjkdogg'
 
     expect(sql[0]).toBe([
-      `\nINSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
       ` ('foo.md', '${querySlices[0]}', 'md', '{}', 'foo', '${hash}-${sliceIndexes[0]}');`,
     ].join(''))
