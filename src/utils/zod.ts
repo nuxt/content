@@ -30,7 +30,14 @@ export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
   return this
 }
 
-export const z = zod
+export const z = {
+  ...zod,
+  component(component: string) {
+    return zod.object({
+      _inherit: zod.string().default(component),
+    })
+  },
+}
 
 // Function to get the underlying Zod type
 export function getUnderlyingType(zodType: ZodType): ZodType {
