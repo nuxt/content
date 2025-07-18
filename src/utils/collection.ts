@@ -178,7 +178,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   values.push(`'${valuesHash}'`)
 
   let index = 0
-  const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
+  const sql = `\nINSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
   if (sql.length < MAX_SQL_QUERY_SIZE) {
