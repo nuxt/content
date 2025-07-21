@@ -24,7 +24,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql[0]).toBe([
-      `\nINSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
       ' (\'foo.md\', \'[]\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"bar"}\', \'untitled\', true, \'foo\', \'bnUQ85H_Zf72faGIQhV0i9QeTEnf1ueEIaMAO8aAAGw\');',
     ].join(''))
@@ -57,7 +57,7 @@ describe('generateCollectionInsert', () => {
     })
 
     expect(sql[0]).toBe([
-      `\nINSERT INTO ${getTableName('content')}`,
+      `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
       ' (\'foo.md\', \'["foo"]\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"baz"}\', \'foo\', false, \'foo\', \'ImMjHvkHl82Jx1bjlpanb9d3i_HQIbjNFverKKbZLME\');',
     ].join(''))
