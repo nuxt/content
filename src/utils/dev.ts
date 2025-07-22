@@ -40,6 +40,12 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 
       listener.server.on('upgrade', websocket.serve)
     })
+
+    nuxt.hook('close', async () => {
+      // Close WebSocket server
+      await websocket?.close()
+      await listener?.server?.close()
+    })
   }
 
   async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
@@ -75,12 +81,6 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
       queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
     })
   }
-
-  nuxt.hook('close', async () => {
-    // Close WebSocket server
-    await websocket?.close()
-    await listener.server.close()
-  })
 
   return {
     broadcast,
