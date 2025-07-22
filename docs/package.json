@@ -12,6 +12,6 @@
     "better-sqlite3": "^12.2.0",
     "docus": "3.0.5",
     "minisearch": "^7.1.2",
-    "nuxt": "^3.17.6"
+    "nuxt": "^3.17.7"
   }
 }
