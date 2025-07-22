@@ -12,6 +12,7 @@
 /api/components/prose=/docs/components/prose
 /api/configuration=/docs/getting-started/configuration
 /recipes/hooks=/docs/advanced/hooks
+/docs/advanced/llms=/docs/integrations/llms
 
 # Content v2 redirects
 /guide/writing/content-directory=https://v2.content.nuxt.com/usage/content-directory
