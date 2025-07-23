@@ -84,7 +84,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.0.3",
-    "nuxt-component-meta": "https://pkg.pr.new/nuxt-component-meta@ff0edad",
+    "nuxt-component-meta": "^0.13.0",
     "nypm": "^0.6.0",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
