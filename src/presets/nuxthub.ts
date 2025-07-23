@@ -34,12 +34,12 @@ export default definePreset({
       await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
       let i = 1
       // Drop info table and prepare for new dump
-      let dump = 'DROP TABLE IF EXISTS _content_info;\n'
+      let dump = 'DROP TABLE IF EXISTS _content_info;'
       const dumpFiles: Array<{ file: string, content: string }> = []
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
           if ((dump.length + line.length) < 1000000) {
-            dump += line + '\n'
+            dump += '\n' + line
           }
           else {
             dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })

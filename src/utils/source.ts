@@ -6,6 +6,14 @@ import type { CollectionSource, ResolvedCollectionSource } from '../types/collec
 import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
 import { logger } from './dev'
 
+export function getExcludedSourcePaths(source: CollectionSource) {
+  return [
+    ...(source!.exclude || []),
+    // Ignore OS files
+    '**/.DS_Store',
+  ]
+}
+
 export function defineLocalSource(source: CollectionSource | ResolvedCollectionSource): ResolvedCollectionSource {
   if (source.include.startsWith('./') || source.include.startsWith('../')) {
     logger.warn('Collection source should not start with `./` or `../`.')
@@ -21,7 +29,7 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
         : join(rootDir, 'content')
     },
     getKeys: async () => {
-      const _keys = await glob(source.include, { cwd: resolvedSource.cwd, ignore: source!.exclude || [], dot: true, expandDirectories: false })
+      const _keys = await glob(source.include, { cwd: resolvedSource.cwd, ignore: getExcludedSourcePaths(source), dot: true, expandDirectories: false })
         .catch((): [] => [])
       return _keys.map(key => key.substring(fixed.length))
     },

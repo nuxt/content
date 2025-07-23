@@ -39,20 +39,6 @@ export default defineContentConfig({
         include: 'templates.yml',
       }],
     }),
-    docs: defineCollection({
-      type: 'page',
-      source: {
-        include: 'docs/**/*',
-      },
-      schema: z.object({
-        links: z.array(z.object({
-          label: z.string(),
-          icon: z.string(),
-          to: z.string(),
-          target: z.string().optional(),
-        })).optional(),
-      }),
-    }),
     pricing: defineCollection({
       type: 'page',
       source: 'studio/pricing.yml',
@@ -154,6 +140,7 @@ export default defineContentConfig({
       type: 'page',
       source: [{ include: 'blog/*.md' }, { include: 'changelog/*.md' }],
       schema: z.object({
+        categories: z.array(z.string()),
         draft: z.boolean().default(false),
         authors: z.array(z.object({
           slug: z.string(),

@@ -18,7 +18,7 @@ import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
-import { parseSourceBase } from './source'
+import { getExcludedSourcePaths, parseSourceBase } from './source'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
@@ -39,6 +39,12 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
       ;(nitro.options.runtimeConfig.public.content as Record<string, unknown>).wsUrl = listener.url.replace('http', 'ws')
 
       listener.server.on('upgrade', websocket.serve)
+    })
+
+    nuxt.hook('close', async () => {
+      // Close WebSocket server
+      await websocket?.close()
+      await listener?.server?.close()
     })
   }
 
@@ -76,12 +82,6 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
     })
   }
 
-  nuxt.hook('close', async () => {
-    // Close WebSocket server
-    await websocket?.close()
-    await listener.server.close()
-  })
-
   return {
     broadcast,
   }
@@ -116,7 +116,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
           return micromatch.isMatch(
             path.substring(cwd.length),
             '**',
-            { ignore: source!.exclude || [], dot: true },
+            { ignore: getExcludedSourcePaths(source), dot: true },
           )
         }
 
