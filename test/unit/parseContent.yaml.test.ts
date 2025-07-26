@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
