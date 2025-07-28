@@ -3,8 +3,8 @@ import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+  extends: ['docus'],
   modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
-  css: ['../app/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
     url: 'https://content.nuxt.com',
@@ -33,9 +33,6 @@ export default defineNuxtConfig({
         const [from, to] = line.split('=') as [string, string]
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
-  },
-  future: {
-    compatibilityVersion: 4,
   },
   hub: {
     database: true,
