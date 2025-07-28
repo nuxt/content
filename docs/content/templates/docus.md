@@ -2,7 +2,7 @@
 slug: docus
 subtitle: ""
 title: Docus
-baseDir: .starter
+baseDir: .starters/default
 branch: main
 category: docs
 createdAt: 2023-11-15T17:41:03.087Z
