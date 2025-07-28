@@ -18,45 +18,73 @@ image3: ""
 ---
 
 ::template-core
-Docus is a theme based on the [UI Pro documentation template](https://docs-template.nuxt.dev/). While the visual style comes ready out of the box, your focus should be on writing content using the Markdown and [MDC syntax](https://content.nuxt.com/docs/files/markdown#mdc-syntax) provided by [Nuxt Content](https://content.nuxt.com).
+> A beautiful, minimal starter for creating documentation with Docus
 
-We use this theme across all our Nuxt module documentations, including:
+This is the default Docus starter template that provides everything you need to build beautiful documentation sites with Markdown and Vue components.
 
-  :::card-group
-    ::::card
-    ---
-    icon: i-simple-icons-nuxtdotjs
-    target: _blank
-    title: Nuxt Image
-    to: https://image.nuxt.com
-    ---
-    The documentation of `@nuxt/image`
-    ::::
-  
-    ::::card
-    ---
-    icon: i-simple-icons-nuxtdotjs
-    target: _blank
-    title: Nuxt Supabase
-    to: https://supabase.nuxtjs.org
-    ---
-    The documentation of `@nuxt/supabase`
-    ::::
-  :::
+## ✨ Features
 
-## Key Features
+- 🎨 **Beautiful Design** - Clean, modern documentation theme
+- 📱 **Responsive** - Mobile-first responsive design  
+- 🌙 **Dark Mode** - Built-in dark/light mode support
+- 🔍 **Search** - Full-text search functionality
+- 📝 **Markdown Enhanced** - Extended markdown with custom components
+- 🎨 **Customizable** - Easy theming and brand customization
+- ⚡ **Fast** - Optimized for performance with Nuxt 4
+- 🔧 **TypeScript** - Full TypeScript support
 
-This theme includes a range of features designed to improve documentation management:
+## 🚀 Quick Start
 
-- **Powered by** [**Nuxt 3**](https://nuxt.com): Utilizes the latest Nuxt framework for optimal performance.
-- **Built with** [**Nuxt UI**](https://ui.nuxt.com) **and** [**Nuxt UI Pro**](https://ui.nuxt.com/pro): Integrates a comprehensive suite of UI components.
-- [**MDC Syntax**](https://content.nuxt.com/usage/markdown) **via** [**Nuxt Content**](https://content.nuxt.com): Supports Markdown with component integration for dynamic content.
-- [**Nuxt Studio**](https://content.nuxt.com/docs/studio) **Compatible**: Write and edit your content visually. No Markdown knowledge is required!
-- **Auto-generated Sidebar Navigation**: Automatically generates navigation from content structure.
-- **Full-Text Search**: Includes built-in search functionality for content discovery.
-- **Optimized Typography**: Features refined typography for enhanced readability.
-- **Dark Mode**: Offers dark mode support for user preference.
-- **Extensive Functionality**: Explore the theme to fully appreciate its capabilities.
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Your documentation site will be running at `http://localhost:3000`
+
+## 📁 Project Structure
+
+```
+my-docs/
+├── content/              # Your markdown content
+│   ├── index.md         # Homepage
+│   ├── 1.getting-started/  # Getting started section
+│   └── 2.essentials/    # Essential documentation
+├── public/              # Static assets
+└── package.json         # Dependencies and scripts
+```
+
+## ⚡ Built with
+
+This starter comes pre-configured with:
+
+- [Nuxt 4](https://nuxt.com) - The web framework
+- [Nuxt Content](https://content.nuxt.com/) - File-based CMS
+- [Nuxt UI Pro](https://ui.nuxt.com/pro) - Premium UI components
+- [Nuxt Image](https://image.nuxt.com/) - Optimized images
+- [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS
+- [Docus Layer](https://www.npmjs.com/package/docus) - Documentation theme
+
+## 📖 Documentation
+
+For detailed documentation on customizing your Docus project, visit the [Docus Documentation](https://docus.dev)
+
+## 🚀 Deployment
+
+Build for production:
+
+```bash
+npm run build
+```
+
+The built files will be in the `.output` directory, ready for deployment to any hosting provider that supports Node.js.
+
+## 📄 License
+
+[MIT License](https://opensource.org/licenses/MIT) 
 
 #right
   :::template-features
