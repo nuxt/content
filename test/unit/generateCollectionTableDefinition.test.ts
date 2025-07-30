@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { z } from 'zod/v4'
+import * as z from 'zod/v4/core'
 import { generateCollectionTableDefinition, defineCollection, resolveCollection, getTableName } from '../../src/utils/collection'
 
 describe('generateCollectionTableDefinition', () => {

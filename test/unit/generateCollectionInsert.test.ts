@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { z } from 'zod/v4'
+import * as z from 'zod/v4/core'
 import { generateCollectionInsert, defineCollection, resolveCollection, getTableName, SLICE_SIZE, MAX_SQL_QUERY_SIZE } from '../../src/utils/collection'
 
 describe('generateCollectionInsert', () => {

@@ -1,4 +1,4 @@
-import type { ZodObject, ZodRawShape } from 'zod/v4'
+import type { ZodObject, ZodRawShape } from 'zod/v4/core'
 import type { Draft07 } from '../types/schema'
 import type { MarkdownRoot } from './content'
 

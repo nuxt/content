@@ -1,4 +1,4 @@
-import * as z from 'zod/v4'
+import * as z from 'zod/v4/core'
 import { ContentFileExtension } from '../types/content'
 import type { Draft07 } from '../types'
 

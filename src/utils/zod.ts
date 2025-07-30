@@ -1,5 +1,5 @@
-import type { ZodType } from 'zod/v4'
-import { z as zod } from 'zod/v4'
+import type { ZodType } from 'zod/v4/core'
+import { z as zod } from 'zod/v4/core'
 import type { Draft07, EditorOptions, Draft07DefinitionProperty, Draft07DefinitionPropertyAnyOf, Draft07DefinitionPropertyAllOf } from '../types'
 
 interface JSONSchemaProperty {
@@ -10,7 +10,7 @@ interface JSONSchemaProperty {
   [key: string]: unknown
 }
 
-declare module 'zod/v4' {
+declare module 'zod/v4/core' {
   interface ZodTypeDef {
     editor?: EditorOptions
   }

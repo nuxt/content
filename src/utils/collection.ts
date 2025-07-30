@@ -1,4 +1,4 @@
-import type { ZodRawShape } from 'zod/v4'
+import type { ZodRawShape } from 'zod/v4/core'
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'

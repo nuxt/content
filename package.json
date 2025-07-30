@@ -101,14 +101,14 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.3",
-    "zod": "^3.25.76 || ^4.0.10"
+    "zod": "^4.0.14"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
     "better-sqlite3": "^12.2.0",
     "sqlite3": "*",
-    "zod": "^3.25.76 || ^4.0.10"
+    "zod": "^3.25.76 || ^4.0.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
