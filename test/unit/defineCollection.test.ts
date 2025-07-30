@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import * as z from 'zod/v4/core'
+import * as z from 'zod/v4'
 import { defineCollection } from '../../src/utils/collection'
 
 const metaFields = ['id', 'stem', 'meta', 'extension']

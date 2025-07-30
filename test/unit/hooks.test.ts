@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import * as z from 'zod/v4/core'
+import * as z from 'zod/v4'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import { parseContent } from '../utils/content'

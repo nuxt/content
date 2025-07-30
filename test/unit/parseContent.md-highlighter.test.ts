@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import * as z from 'zod/v4/core'
+import * as z from 'zod/v4'
 import GithubLight from 'shiki/themes/github-light.mjs'
 import type { MDCElement } from '@nuxtjs/mdc'
 import type { Nuxt } from '@nuxt/schema'

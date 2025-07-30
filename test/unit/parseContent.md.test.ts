@@ -1,5 +1,5 @@
 import { describe, test, expect, assert } from 'vitest'
-import * as z from 'zod/v4/core'
+import * as z from 'zod/v4'
 import { visit } from 'unist-util-visit'
 import type { Nuxt } from '@nuxt/schema'
 import { parseContent } from '../utils/content'
