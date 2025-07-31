@@ -47,13 +47,13 @@ const data = defineCollection({
     domain: z.array(z.string()),
     tutorial: z.array(
       z.record(
+        z.string(),
         z.object({
           name: z.string(),
           type: z.string(),
           born: z.number(),
         }),
-      ),
-    ),
+      )),
     author: z.string(),
     published: z.boolean(),
   }),
