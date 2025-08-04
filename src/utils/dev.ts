@@ -219,6 +219,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
     if (watcher) {
       watcher.removeAllListeners()
       watcher.close()
+      db.close()
     }
   })
 }
