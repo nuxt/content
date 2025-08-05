@@ -74,7 +74,7 @@ export function parseGitHubUrl(url: string) {
 
     if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
       const pathParts = path.split('/')
-      branch = join(branch, pathParts[0])
+      branch = join(branch, pathParts[0] || '')
       path = pathParts.slice(1).join('/')
     }
 
@@ -101,7 +101,7 @@ export function parseBitBucketUrl(url: string) {
 
     if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
       const pathParts = path.split('/')
-      branch = join(branch, pathParts[0])
+      branch = join(branch, pathParts[0] || '')
       path = pathParts.slice(1).join('/')
     }
 

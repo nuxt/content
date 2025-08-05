@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "^3.2.0",
-    "nuxt": "^3.17.6"
+    "@nuxt/ui-pro": "^3.3.0",
+    "nuxt": "^4.0.3"
   }
 }
