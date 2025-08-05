@@ -43,8 +43,13 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
 
     nuxt.hook('close', async () => {
       // Close WebSocket server
-      await websocket?.close()
-      await listener?.server?.close()
+      if (websocket) {
+        await websocket.close()
+      }
+      // Close listener server
+      if (listener) {
+        await listener.close()
+      }
     })
   }
 
@@ -211,8 +216,11 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
   }
 
   nuxt.hook('close', async () => {
-    watcher.close()
-    db.close()
+    if (watcher) {
+      watcher.removeAllListeners()
+      watcher.close()
+      db.close()
+    }
   })
 }
 
