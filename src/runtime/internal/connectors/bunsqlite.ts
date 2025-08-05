@@ -16,6 +16,7 @@ const connector: typeof bunSqliteConnector = (opts) => {
         readable: new ReadableStream({
           type: 'bytes',
           start(ctrl) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             handle.on('data', (chunk: any) => ctrl.enqueue(chunk))
             handle.once('end', () => ctrl.close())
           },
