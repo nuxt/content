@@ -6,7 +6,7 @@ const connector: typeof bunSqliteConnector = (opts) => {
    * CompressionStream and DecompressionStream polyfill for Bun
    */
   if (!globalThis.CompressionStream) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const make = (ctx: unknown, handle: any) =>
       Object.assign(ctx as object, {
         writable: new WritableStream({
@@ -16,7 +16,8 @@ const connector: typeof bunSqliteConnector = (opts) => {
         readable: new ReadableStream({
           type: 'bytes',
           start(ctrl) {
-            handle.on('data', (chunk: ArrayBufferView) => ctrl.enqueue(chunk))
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            handle.on('data', (chunk: any) => ctrl.enqueue(chunk))
             handle.once('end', () => ctrl.close())
           },
         }),
