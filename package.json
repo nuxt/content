@@ -150,7 +150,7 @@
     "micromark-util-types": "^2.0.2",
     "nuxt": "^3.18.1",
     "release-it": "^19.0.4",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.5",
     "wrangler": "^4.28.0"
@@ -158,7 +158,7 @@
   "resolutions": {
     "@nuxt/content": "workspace:*"
   },
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.14.0",
   "unbuild": {
     "entries": [
       "./src/module",
@@ -188,3 +188,4 @@
     }
   }
 }
+
