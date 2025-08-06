@@ -10,7 +10,7 @@
     "@nuxtjs/plausible": "^1.2.0",
     "@vueuse/nuxt": "^13.6.0",
     "better-sqlite3": "^12.2.0",
-    "docus": "4.0.2",
+    "docus": "4.0.3",
     "minisearch": "^7.1.2",
     "nuxt": "^4.0.3"
   }
