@@ -18,7 +18,7 @@ importers:
         specifier: '*'
         version: 0.15.10
       '@nuxt/kit':
-        specifier: ^3.17.6
+        specifier: ^3.18.1
         version: 3.18.1(magicast@0.3.5)
       '@nuxtjs/mdc':
         specifier: ^0.17.2
@@ -99,7 +99,7 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       nuxt-component-meta:
-        specifier: ^0.13.0
+        specifier: ^0.13.1
         version: 0.13.1(magicast@0.3.5)(vue-component-type-helpers@2.2.12)
       nypm:
         specifier: ^0.6.1
@@ -157,7 +157,7 @@ importers:
         version: 4.0.15
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20250805.0
+        specifier: ^4.20250806.0
         version: 4.20250806.0
       '@nuxt/content':
         specifier: workspace:*
@@ -172,7 +172,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@nuxt/cli@3.27.0(magicast@0.3.5))(@vue/compiler-core@3.5.18)(esbuild@0.25.8)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2))(vue@3.5.18(typescript@5.9.2))
       '@nuxt/schema':
-        specifier: ^3.17.6
+        specifier: ^3.18.1
         version: 3.18.1
       '@nuxt/test-utils':
         specifier: ^3.19.2
@@ -214,7 +214,7 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
       nuxt:
-        specifier: ^3.17.6
+        specifier: ^3.18.1
         version: 3.18.1(@electric-sql/pglite@0.3.7)(@libsql/client@0.15.10)(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@24.2.0)(@vue/compiler-sfc@3.5.18)(better-sqlite3@12.2.0)(db0@0.3.2(@electric-sql/pglite@0.3.7)(@libsql/client@0.15.10)(better-sqlite3@12.2.0)(sqlite3@5.1.7))(encoding@0.1.13)(eslint@9.32.0(jiti@2.5.1))(ioredis@5.7.0)(lightningcss@1.30.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.46.2)(sqlite3@5.1.7)(terser@5.43.1)(typescript@5.9.2)(vite@7.0.6(@types/node@24.2.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1))(vue-tsc@3.0.5(typescript@5.9.2))(yaml@2.8.1)
       release-it:
         specifier: ^19.0.4
@@ -229,7 +229,7 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5(typescript@5.9.2)
       wrangler:
-        specifier: ^4.27.0
+        specifier: ^4.28.0
         version: 4.28.0(@cloudflare/workers-types@4.20250806.0)
 
   docs:
