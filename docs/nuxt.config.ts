@@ -4,7 +4,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
-  css: ['../app/assets/css/main.css'],
+  // css: ['../app/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
     url: 'https://content.nuxt.com',

@@ -3,7 +3,7 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
-    environment: 'node',
+    environment: 'nuxt',
     alias: {
       '#content/manifest': resolve('./test/mock/content-manifest.ts'),
     },

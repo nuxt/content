@@ -110,7 +110,7 @@ async function loadCollectionDatabase<T>(collection: T) {
       compressedDump = await fetchDatabase(undefined, String(collection))
       if (!import.meta.dev) {
         try {
-          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)])
+          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
           window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
         }
         catch (error) {

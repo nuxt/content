@@ -60,16 +60,16 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
       await Promise.all(insertQuery.map(query => db.exec(query)))
     }
 
-    const collectionDump = manifest.dump[collection.name]
-    const keyIndex = collectionDump?.findIndex(item => item.includes(`'${key}'`))
-    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump?.length
+    const collectionDump = manifest.dump[collection.name]!
+    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
     if (insertQuery) {
-      collectionDump?.splice(indexToUpdate, itemsToRemove, ...insertQuery)
+      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
     }
     else {
-      collectionDump?.splice(indexToUpdate, itemsToRemove)
+      collectionDump.splice(indexToUpdate, itemsToRemove)
     }
 
     updateTemplates({

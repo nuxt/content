@@ -120,7 +120,7 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
   sortedKeys.forEach((key) => {
     const value = (properties)[key]
     const type = collection.fields[key]
-    const defaultValue = value.default !== undefined ? value.default : 'NULL'
+    const defaultValue = value?.default !== undefined ? value.default : 'NULL'
     const valueToInsert = typeof data[key] !== 'undefined' ? data[key] : defaultValue
 
     fields.push(key)

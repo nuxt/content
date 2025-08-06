@@ -116,7 +116,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     }
     // Initialize the database version
     if (dropCacheTable) {
-      await db.exec(generateCollectionInsert(cacheCollection, { id: '__DATABASE_VERSION__', value: databaseVersion, checksum: databaseVersion }).queries[0])
+      await db.exec(generateCollectionInsert(cacheCollection, { id: '__DATABASE_VERSION__', value: databaseVersion, checksum: databaseVersion }).queries[0]!)
     }
   }
 

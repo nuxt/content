@@ -192,7 +192,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   // Take the biggest column to insert (usually body) and split the column in multiple strings
   // first we insert the row in the database, then we update it with the rest of the string by concatenation
   const biggestColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
-  const bigColumnIndex = values.indexOf(biggestColumn)
+  const bigColumnIndex = values.indexOf(biggestColumn!)
   const bigColumnName = fields[bigColumnIndex]
 
   if (typeof biggestColumn === 'string') {
