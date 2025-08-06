@@ -58,7 +58,7 @@
     "verify": "npm run dev:prepare && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.18.1",
+    "@nuxt/kit": "^3.17.6",
     "@nuxtjs/mdc": "^0.17.2",
     "@shikijs/langs": "^3.9.2",
     "@sqlite.org/sqlite-wasm": "3.50.3-build1",
@@ -108,7 +108,7 @@
     "@libsql/client": "*",
     "better-sqlite3": "^12.2.0",
     "sqlite3": "*",
-    "zod": "^3.25.76 || ^4.0.0"
+    "zod": "^3.25.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -140,6 +140,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.2.19",
     "@types/micromatch": "^4.0.9",
+    "@types/minimatch": "^6.0.0",
     "@types/node": "^24.2.0",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
@@ -148,7 +149,7 @@
     "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
-    "nuxt": "^3.18.1",
+    "nuxt": "^3.17.6",
     "release-it": "^19.0.4",
     "typescript": "5.9.2",
     "vitest": "^3.2.4",
@@ -188,4 +189,3 @@
     }
   }
 }
-
