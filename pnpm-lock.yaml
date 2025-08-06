@@ -157,7 +157,7 @@ importers:
         version: 4.0.15
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20250806.0
+        specifier: ^4.20250805.0
         version: 4.20250806.0
       '@nuxt/content':
         specifier: workspace:*
@@ -172,7 +172,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@nuxt/cli@3.27.0(magicast@0.3.5))(@vue/compiler-core@3.5.18)(esbuild@0.25.8)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2))(vue@3.5.18(typescript@5.9.2))
       '@nuxt/schema':
-        specifier: ^3.18.1
+        specifier: ^3.17.6
         version: 3.18.1
       '@nuxt/test-utils':
         specifier: ^3.19.2
@@ -229,7 +229,7 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5(typescript@5.9.2)
       wrangler:
-        specifier: ^4.28.0
+        specifier: ^4.27.0
         version: 4.28.0(@cloudflare/workers-types@4.20250806.0)
 
   docs:

@@ -128,13 +128,13 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250806.0",
-    "@nuxt/content": "workspace:*",
+    "@cloudflare/workers-types": "^4.20250805.0",
+    "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.2",
     "@nuxt/eslint-config": "^1.7.1",
     "@nuxt/kit": "^3.17.6",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^3.18.1",
+    "@nuxt/schema": "^3.17.6",
     "@nuxt/test-utils": "^3.19.2",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/better-sqlite3": "^7.6.13",
@@ -153,7 +153,7 @@
     "typescript": "5.9.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.5",
-    "wrangler": "^4.28.0"
+    "wrangler": "^4.27.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
@@ -188,3 +188,4 @@
     }
   }
 }
+
