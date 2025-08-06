@@ -140,7 +140,6 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.2.19",
     "@types/micromatch": "^4.0.9",
-    "@types/minimatch": "^6.0.0",
     "@types/node": "^24.2.0",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
