@@ -99,7 +99,7 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       nuxt-component-meta:
-        specifier: ^0.13.1
+        specifier: ^0.13.0
         version: 0.13.1(magicast@0.3.5)(vue-component-type-helpers@2.2.12)
       nypm:
         specifier: ^0.6.1
