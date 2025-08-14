@@ -16,7 +16,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       db = await dbPromises._
       Reflect.deleteProperty(dbPromises, '_')
       // expose database adapter
-      useNuxtApp().provide('contentLocalDatabase', loadCollectionDatabase)
+      useNuxtApp().provide('contentLocalDatabase', loadDatabaseAdapter)
     }
     if (!loadedCollections[String(collection)]) {
       dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
