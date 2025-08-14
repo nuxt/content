@@ -33,6 +33,7 @@
       "import": "./dist/runtime/utils/index.js"
     },
     "./runtime": "./dist/runtime/index.js",
+    "./client": "./dist/runtime/client.js",
     "./server": "./dist/runtime/server.js",
     "./nitro": "./dist/runtime/nitro.js"
   },

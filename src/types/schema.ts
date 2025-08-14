@@ -14,6 +14,7 @@ export interface Draft07Definition {
 export interface Draft07DefinitionProperty {
   type?: string // missing type means any
   properties?: Record<string, Draft07DefinitionProperty>
+  items?: Draft07DefinitionProperty
   required?: string[]
   default?: unknown
   maxLength?: number

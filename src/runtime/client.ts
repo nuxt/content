@@ -40,10 +40,18 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
   }
 }
 
+/**
+ * Load the WebAssembly database adapter
+ * @private
+ */
+export async function loadWebAssemplyDatabaseAdapter() {
+  const adapter = await import('./internal/database.client.js').then(m => m.loadDatabaseAdapter)
+  return adapter
+}
+
 async function queryContentSqlClientWasm<T extends keyof Collections, Result = Collections[T]>(collection: T, sql: string) {
-  const rows = await import('./internal/database.client')
-    .then(m => m.loadDatabaseAdapter(collection))
-    .then(db => db.all<Result>(sql))
+  const rows = await loadWebAssemplyDatabaseAdapter()
+    .then(adapter => adapter(collection).all<Result>(sql))
 
   return rows as Result[]
 }
