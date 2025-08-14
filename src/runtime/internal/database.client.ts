@@ -4,6 +4,7 @@ import { refineContentFields } from './collection'
 import { fetchDatabase } from './api'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
+import { useNuxtApp } from '#imports'
 
 let db: Database
 const loadedCollections: Record<string, string> = {}
@@ -14,6 +15,8 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       dbPromises._ = dbPromises._ || initializeDatabase()
       db = await dbPromises._
       Reflect.deleteProperty(dbPromises, '_')
+      // expose database adapter
+      useNuxtApp().provide('contentLocalDatabase', loadCollectionDatabase)
     }
     if (!loadedCollections[String(collection)]) {
       dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
