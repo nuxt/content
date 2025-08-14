@@ -45,7 +45,7 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
  * @private
  */
 export async function loadWebAssemplyDatabaseAdapter() {
-  const adapter = await import('./internal/database.client.js').then(m => m.loadDatabaseAdapter)
+  const adapter = await import('./internal/database.client').then(m => m.loadDatabaseAdapter)
   return adapter
 }
 
