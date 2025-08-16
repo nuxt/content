@@ -1,17 +1,14 @@
-import type { ZodOptionalDef, ZodType } from 'zod'
-import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
-import { z as zod } from 'zod'
-import { createDefu } from 'defu'
-import type { Draft07, EditorOptions } from '../types'
+import type { ZodType } from 'zod/v4'
+import { z as zod } from 'zod/v4'
+import type {
+  Draft07,
+  EditorOptions,
+  Draft07DefinitionProperty,
+  Draft07DefinitionPropertyAnyOf,
+  Draft07DefinitionPropertyAllOf,
+} from '../types'
 
-const defu = createDefu((obj, key, value) => {
-  if (Array.isArray(obj[key]) && Array.isArray(value)) {
-    obj[key] = value
-    return true
-  }
-})
-
-declare module 'zod' {
+declare module 'zod/v4' {
   interface ZodTypeDef {
     editor?: EditorOptions
   }
@@ -21,12 +18,43 @@ declare module 'zod' {
   }
 }
 
-export type ZodFieldType = 'ZodString' | 'ZodNumber' | 'ZodBoolean' | 'ZodDate' | 'ZodEnum'
-export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
+export type ZodFieldType
+  = | 'ZodString'
+    | 'ZodNumber'
+    | 'ZodBoolean'
+    | 'ZodDate'
+    | 'ZodEnum'
+export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (zod.ZodType as any).prototype.editor = function (options: EditorOptions) {
-  this._def.editor = { ...this._def.editor, ...options }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const currentEditor = (this as any)._def?.editor || {}
+
+  const newDef = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...(this as any)._def,
+    editor: { ...currentEditor, ...options },
+  }
+
+  // Check if _def property is configurable before trying to redefine it
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const descriptor = Object.getOwnPropertyDescriptor(this as any, '_def')
+  if (descriptor && !descriptor.configurable) {
+    // If not configurable, directly modify the existing _def object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Object.assign((this as any)._def, { editor: { ...currentEditor, ...options } })
+  }
+  else {
+    // Use Object.defineProperty to replace the _def property
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Object.defineProperty(this as any, '_def', {
+      value: newDef,
+      writable: true,
+      enumerable: false,
+      configurable: true,
+    })
+  }
   return this
 }
 
@@ -34,35 +62,110 @@ export const z = zod
 
 // Function to get the underlying Zod type
 export function getUnderlyingType(zodType: ZodType): ZodType {
-  while ((zodType._def as ZodOptionalDef).innerType) {
-    zodType = (zodType._def as ZodOptionalDef).innerType as ZodType
+  let currentType = zodType
+  while (
+    currentType.constructor.name === 'ZodOptional'
+    || currentType.constructor.name === 'ZodNullable'
+    || currentType.constructor.name === 'ZodDefault'
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    currentType = (currentType as any)._def.innerType as ZodType
   }
-  return zodType
+  return currentType
 }
 
 export function getUnderlyingTypeName(zodType: ZodType): string {
   return getUnderlyingType(zodType).constructor.name
 }
 
-export function zodToStandardSchema(schema: zod.ZodSchema, name: string): Draft07 {
-  const jsonSchema = zodToJsonSchema(schema, { name, $refStrategy: 'none' }) as Draft07
-  const jsonSchemaWithEditorMeta = zodToJsonSchema(
-    schema,
-    {
-      name,
-      $refStrategy: 'none',
-      override: (def) => {
-        if (def.editor) {
-          return {
-            $content: {
-              editor: def.editor,
-            },
-          } as never
+export function zodToStandardSchema(
+  schema: zod.ZodSchema,
+  name: string,
+): Draft07 {
+  try {
+    const baseSchema = zod.toJSONSchema(schema, {
+      target: 'draft-7',
+      unrepresentable: 'any',
+      override: (ctx) => {
+        const def = ctx.zodSchema._zod?.def
+        if (def?.type === 'date') {
+          ctx.jsonSchema.type = 'string'
+          ctx.jsonSchema.format = 'date-time'
         }
-
-        return ignoreOverride
       },
-    }) as Draft07
+    })
 
-  return defu(jsonSchema, jsonSchemaWithEditorMeta)
+    const fixedRequired = fixRequiredArrayForNullableFields(
+      baseSchema.required || [],
+      baseSchema.properties || {},
+    )
+
+    const draft07Schema: Draft07 = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $ref: `#/definitions/${name}`,
+      definitions: {
+        [name]: {
+          type: (baseSchema.type as string) || 'object',
+          properties:
+            (baseSchema.properties as Record<
+              string,
+              | Draft07DefinitionProperty
+              | Draft07DefinitionPropertyAnyOf
+              | Draft07DefinitionPropertyAllOf
+            >) || {},
+          required: fixedRequired,
+          additionalProperties:
+            typeof baseSchema.additionalProperties === 'boolean'
+              ? baseSchema.additionalProperties
+              : false,
+        },
+      },
+    }
+
+    return draft07Schema
+  }
+  catch (error) {
+    console.error(
+      'Zod toJSONSchema error for schema:',
+      schema.constructor.name,
+      error,
+    )
+    return {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $ref: `#/definitions/${name}`,
+      definitions: {
+        [name]: {
+          type: 'object',
+          properties: {},
+          required: [],
+          additionalProperties: false,
+        },
+      },
+    }
+  }
+}
+
+function fixRequiredArrayForNullableFields(
+  required: string[],
+  properties: Record<string, unknown>,
+): string[] {
+  return required.filter((fieldName) => {
+    const property = properties[fieldName]
+
+    const isNullable
+      = property
+        && typeof property === 'object'
+        && property !== null
+        && 'anyOf' in property
+        && Array.isArray(property.anyOf)
+        && property.anyOf.some(
+          (item: unknown) =>
+            typeof item === 'object'
+            && item !== null
+            && 'type' in item
+            && item.type === 'null',
+        )
+
+    return !isNullable
+  })
 }

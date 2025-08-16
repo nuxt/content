@@ -1,4 +1,4 @@
-import type { ZodRawShape } from 'zod'
+import type { ZodRawShape } from 'zod/v4'
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
@@ -161,7 +161,8 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       values.push(Number(valueToInsert))
     }
     else if (property?.sqlType === 'DATE') {
-      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
+      const dateValue = valueToInsert instanceof Date ? valueToInsert : new Date(valueToInsert as string)
+      values.push(`'${dateValue.toISOString()}'`)
     }
     else if (property?.enum) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)

@@ -59,7 +59,7 @@
     "verify": "npm run dev:prepare && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "@nuxt/kit": "^4.0.3",
+    "@nuxt/kit": "^3.18.1",
     "@nuxtjs/mdc": "^0.17.2",
     "@shikijs/langs": "^3.9.2",
     "@sqlite.org/sqlite-wasm": "3.50.3-build1",
@@ -85,7 +85,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.0.3",
-    "nuxt-component-meta": "^0.13.0",
+    "nuxt-component-meta": "^0.13.1",
     "nypm": "^0.6.1",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
@@ -102,14 +102,14 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.3",
-    "zod": "^3.25.75",
-    "zod-to-json-schema": "^3.24.6"
+    "zod": "^4.0.17"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
     "better-sqlite3": "^12.2.0",
-    "sqlite3": "*"
+    "sqlite3": "*",
+    "zod": "^3.25.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -123,22 +123,24 @@
     },
     "better-sqlite3": {
       "optional": true
+    },
+    "zod": {
+      "optional": true
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250805.0",
-    "@nuxt/content": "link:.",
+    "@cloudflare/workers-types": "^4.20250806.0",
+    "@nuxt/content": "workspace:*",
     "@nuxt/devtools": "^2.6.2",
     "@nuxt/eslint-config": "^1.7.1",
     "@nuxt/kit": "^4.0.3",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.0.3",
+    "@nuxt/schema": "^3.18.1",
     "@nuxt/test-utils": "^3.19.2",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.2.19",
     "@types/micromatch": "^4.0.9",
-    "@types/minimatch": "^6.0.0",
     "@types/node": "^24.2.0",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
@@ -147,7 +149,7 @@
     "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
-    "nuxt": "^4.0.3",
+    "nuxt": "^3.18.1",
     "release-it": "^19.0.4",
     "typescript": "5.9.2",
     "vitest": "^3.2.4",
