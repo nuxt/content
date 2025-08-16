@@ -29,12 +29,31 @@ export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (zod.ZodType as any).prototype.editor = function (options: EditorOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currentEditor = (this as any)._def?.editor || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (this as any)._def = {
+  const currentEditor = (this as any)._def?.editor || {}
+
+  const newDef = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...(this as any)._def,
     editor: { ...currentEditor, ...options },
+  }
+
+  // Check if _def property is configurable before trying to redefine it
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const descriptor = Object.getOwnPropertyDescriptor(this as any, '_def')
+  if (descriptor && !descriptor.configurable) {
+    // If not configurable, directly modify the existing _def object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Object.assign((this as any)._def, { editor: { ...currentEditor, ...options } })
+  }
+  else {
+    // Use Object.defineProperty to replace the _def property
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Object.defineProperty(this as any, '_def', {
+      value: newDef,
+      writable: true,
+      enumerable: false,
+      configurable: true,
+    })
   }
   return this
 }

@@ -102,7 +102,7 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.3",
-    "zod": "^4.0.15"
+    "zod": "^4.0.17"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
