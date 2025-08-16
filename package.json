@@ -85,7 +85,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.0.3",
-    "nuxt-component-meta": "^0.13.0",
+    "nuxt-component-meta": "^0.13.1",
     "nypm": "^0.6.1",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
@@ -102,7 +102,7 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "ws": "^8.18.3",
-    "zod": "^3.25.75",
+    "zod": "^3.25.76",
     "zod-to-json-schema": "^3.24.6"
   },
   "peerDependencies": {
@@ -126,24 +126,24 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250805.0",
+    "@cloudflare/workers-types": "^4.20250816.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.2",
-    "@nuxt/eslint-config": "^1.7.1",
+    "@nuxt/eslint-config": "^1.8.0",
     "@nuxt/kit": "^4.0.3",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.0.3",
     "@nuxt/test-utils": "^3.19.2",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/better-sqlite3": "^7.6.13",
-    "@types/bun": "^1.2.19",
+    "@types/bun": "^1.2.20",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^6.0.0",
-    "@types/node": "^24.2.0",
+    "@types/node": "^24.3.0",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
@@ -152,7 +152,7 @@
     "typescript": "5.9.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.5",
-    "wrangler": "^4.28.0"
+    "wrangler": "^4.30.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
