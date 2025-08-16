@@ -31,12 +31,12 @@ export function assertSafeQuery(sql: string, collection: string) {
   const [_, select, from, where, orderBy, order, limit, offset] = match
 
   // COLUMNS
-  const columns = select.trim().split(', ')
+  const columns = select?.trim().split(', ') || []
   if (columns.length === 1) {
     if (
       columns[0] !== '*'
-      && !columns[0].match(SQL_COUNT_REGEX)
-      && !columns[0].match(/^"[a-z_]\w+"$/i)
+      && !columns[0]?.match(SQL_COUNT_REGEX)
+      && !columns[0]?.match(/^"[a-z_]\w+"$/i)
     ) {
       throw new Error('Invalid query')
     }

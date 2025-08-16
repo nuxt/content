@@ -27,7 +27,7 @@ function findCollectionFields(sql: string): Record<string, 'string' | 'number' |
     return {}
   }
 
-  const info = contentManifest[getCollectionName(table[1]) as keyof typeof contentManifest] as CollectionInfo
+  const info = contentManifest[getCollectionName(table[1]!) as keyof typeof contentManifest] as CollectionInfo
   return info?.fields || {}
 }
 
