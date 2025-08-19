@@ -10,9 +10,6 @@ export default defineNuxtConfig({
     url: 'https://content.nuxt.com',
   },
   content: {
-    encryption: {
-      enabled: true,
-    },
     experimental: {
       sqliteConnector: 'native',
     },
