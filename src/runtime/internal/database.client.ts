@@ -1,7 +1,8 @@
+import { useRuntimeConfig } from '#imports'
 import type { Database } from '@sqlite.org/sqlite-wasm'
-import { decompressSQLDump } from './dump'
+import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
 import { refineContentFields } from './collection'
-import { fetchDatabase } from './api'
+import { fetchDatabase, fetchDumpKey } from './api'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
@@ -16,7 +17,8 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       Reflect.deleteProperty(dbPromises, '_')
     }
     if (!loadedCollections[String(collection)]) {
-      dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
+      dbPromises[String(collection)]
+        = dbPromises[String(collection)] || loadCollectionDatabase(collection)
       await dbPromises[String(collection)]
       loadedCollections[String(collection)] = 'loaded'
       Reflect.deleteProperty(dbPromises, String(collection))
@@ -30,7 +32,12 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       await loadAdapter(collection)
 
       return db
-        .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
+        .exec({
+          sql,
+          bind: params,
+          rowMode: 'object',
+          returnValue: 'resultRows',
+        })
         .map(row => refineContentFields(sql, row) as T)
     },
     first: async <T>(sql: string, params?: DatabaseBindParams) => {
@@ -39,7 +46,12 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       return refineContentFields(
         sql,
         db
-          .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
+          .exec({
+            sql,
+            bind: params,
+            rowMode: 'object',
+            returnValue: 'resultRows',
+          })
           .shift(),
       ) as T
     },
@@ -53,11 +65,11 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 
 async function initializeDatabase() {
   if (!db) {
-    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
+    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(
+      m => m.default,
+    )
     // @ts-expect-error sqlite3ApiConfig is not defined in the module
     globalThis.sqlite3ApiConfig = {
-      // overriding default log function allows to avoid error when logger are dropped in build.
-      // For example `nuxt-security` module drops logger in production build by default.
       silent: true,
       debug: (...args: unknown[]) => console.debug(...args),
       warn: (...args: unknown[]) => {
@@ -87,7 +99,12 @@ async function loadCollectionDatabase<T>(collection: T) {
   const dumpId = `collection_${collection}`
   let checksumState = 'matched'
   try {
-    const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
+    const dbChecksum = db
+      .exec({
+        sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`,
+        rowMode: 'object',
+        returnValue: 'resultRows',
+      })
       .shift()
 
     if (dbChecksum?.version !== checksums[String(collection)]) {
@@ -100,7 +117,9 @@ async function loadCollectionDatabase<T>(collection: T) {
 
   if (checksumState !== 'matched') {
     if (!import.meta.dev) {
-      const localCacheVersion = window.localStorage.getItem(`content_${checksumId}`)
+      const localCacheVersion = window.localStorage.getItem(
+        `content_${checksumId}`,
+      )
       if (localCacheVersion === checksums[String(collection)]) {
         compressedDump = window.localStorage.getItem(`content_${dumpId}`)
       }
@@ -110,20 +129,43 @@ async function loadCollectionDatabase<T>(collection: T) {
       compressedDump = await fetchDatabase(undefined, String(collection))
       if (!import.meta.dev) {
         try {
-          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
+          window.localStorage.setItem(
+            `content_${checksumId}`,
+            checksums[String(collection)]!,
+          )
           window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
         }
         catch (error) {
-          console.error('Database integrity check failed, rebuilding database', error)
+          console.error(
+            'Database integrity check failed, rebuilding database',
+            error,
+          )
         }
       }
     }
 
-    const dump = await decompressSQLDump(compressedDump!)
+    const encEnabled = !!(useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } })?.content?.encryptionEnabled
 
-    await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
+    const dump = await (encEnabled
+      ? (async () => {
+          try {
+            const { k } = await fetchDumpKey(undefined, String(collection))
+            return await decryptAndDecompressSQLDump(compressedDump!, k)
+          }
+          catch (e) {
+            console.error('Failed to decrypt encrypted dump:', e)
+            throw e
+          }
+        })()
+      : decompressSQLDump(compressedDump!))
+
+    await db.exec({
+      sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}`,
+    })
     if (checksumState === 'mismatch') {
-      await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
+      await db.exec({
+        sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'`,
+      })
     }
 
     for (const command of dump) {

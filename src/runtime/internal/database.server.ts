@@ -9,13 +9,22 @@ import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
+import {
+  deriveContentKeyRaw,
+  isEncryptedEnvelope,
+  decryptEnvelopeToGzipBytes,
+  bytesToB64,
+} from './encryption'
 
 let db: Connector
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
   if (!db) {
-    if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+    if (
+      import.meta.dev
+        || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)
+    ) {
       db = localAdapter(refineDatabaseConfig(localDatabase))
     }
     else {
@@ -25,12 +34,18 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
 
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {
-      return db.prepare(sql).all(...params)
-        .then(result => (result || []).map((item: unknown) => refineContentFields(sql, item)))
+      return db
+        .prepare(sql)
+        .all(...params)
+        .then(result =>
+          (result || []).map((item: unknown) => refineContentFields(sql, item)),
+        )
     },
     first: async (sql, params = []) => {
-      return db.prepare(sql).get(...params)
-        .then(item => item ? refineContentFields(sql, item) : item)
+      return db
+        .prepare(sql)
+        .get(...params)
+        .then(item => (item ? refineContentFields(sql, item) : item))
     },
     exec: async (sql, params = []) => {
       return db.prepare(sql).run(...params)
@@ -40,18 +55,30 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
 
 const checkDatabaseIntegrity = {} as Record<string, boolean>
 const integrityCheckPromise = {} as Record<string, Promise<void> | null>
-export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
+export async function checkAndImportDatabaseIntegrity(
+  event: H3Event,
+  collection: string,
+  config: RuntimeConfig['content'],
+): Promise<void> {
   if (checkDatabaseIntegrity[String(collection)] !== false) {
     checkDatabaseIntegrity[String(collection)] = false
-    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)]!, checksumsStructure[String(collection)]!, config)
-      .then((isValid) => {
-        checkDatabaseIntegrity[String(collection)] = !isValid
-      })
-      .catch((error) => {
-        console.error('Database integrity check failed', error)
-        checkDatabaseIntegrity[String(collection)] = true
-        integrityCheckPromise[String(collection)] = null
-      })
+    integrityCheckPromise[String(collection)]
+      = integrityCheckPromise[String(collection)]
+        || _checkAndImportDatabaseIntegrity(
+          event,
+          collection,
+          checksums[String(collection)]!,
+          checksumsStructure[String(collection)]!,
+          config,
+        )
+          .then((isValid) => {
+            checkDatabaseIntegrity[String(collection)] = !isValid
+          })
+          .catch((error) => {
+            console.error('Database integrity check failed', error)
+            checkDatabaseIntegrity[String(collection)] = true
+            integrityCheckPromise[String(collection)] = null
+          })
   }
 
   if (integrityCheckPromise[String(collection)]) {
@@ -59,18 +86,33 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
+async function _checkAndImportDatabaseIntegrity(
+  event: H3Event,
+  collection: string,
+  integrityVersion: string,
+  structureIntegrityVersion: string,
+  config: RuntimeConfig['content'],
+) {
   const db = loadDatabaseAdapter(config)
 
-  const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
+  const before = await db
+    .first<{ version: string, structureVersion: string, ready: boolean }>(
+      `SELECT * FROM ${tables.info} WHERE id = ?`,
+      [`checksum_${collection}`],
+    )
+    .catch((): null => null)
 
-  if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
+  if (
+    before?.version
+    && !String(before.version)?.startsWith(`${config.databaseVersion}--`)
+  ) {
     // database version is not supported, drop the info table
     await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
     before.version = ''
   }
 
-  const unchangedStructure = before?.structureVersion === structureIntegrityVersion
+  const unchangedStructure
+    = before?.structureVersion === structureIntegrityVersion
 
   if (before?.version) {
     if (before.version === integrityVersion) {
@@ -90,7 +132,9 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     }
 
     // Delete old version -- checksum exists but does not match with bundled checksum
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [
+      `checksum_${collection}`,
+    ])
 
     if (!unchangedStructure) {
       // we need to drop the table and recreate it
@@ -98,7 +142,29 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     }
   }
 
-  const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
+  // --- fetch and normalize dump (handle encrypted envelope or legacy) ---
+
+  const raw = await loadDatabaseDump(event, collection).catch(() => '')
+  let gzBase64 = raw
+  if (isEncryptedEnvelope(raw)) {
+    const checksum = checksums[String(collection)] || ''
+    const masterKey = config?.encryption?.masterKey
+    if (!masterKey) {
+      throw new Error('Missing encryption masterKey')
+    }
+    const keyRaw = await deriveContentKeyRaw(
+      masterKey,
+      checksum,
+      collection,
+    )
+
+    // decrypt → gz bytes → base64 (what decompressSQLDump expects)
+    const gzBytes = await decryptEnvelopeToGzipBytes(raw, bytesToB64(keyRaw))
+    gzBase64 = bytesToB64(gzBytes)
+  }
+  const dump = await decompressSQLDump(gzBase64)
+  // ----------------------------------------------------------------------
+
   const dumpLinesHash = dump.map(row => row.split(' -- ').pop())
   let hashesInDb = new Set<string>()
 
@@ -107,13 +173,22 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     const hashListFromTheDump = new Set(dumpLinesHash)
 
     // get the list of hash in the database
-    const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
+    const hashesInDbRecords = await db
+      .all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`)
+      .catch(() => [] as { __hash__: string }[])
     hashesInDb = new Set(hashesInDbRecords.map(r => r.__hash__))
 
     // get the list of hash to delete
     const hashesToDelete = hashesInDb.difference(hashListFromTheDump)
     if (hashesToDelete.size) {
-      await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${Array(hashesToDelete.size).fill('?').join(',')})`, Array.from(hashesToDelete))
+      await db.exec(
+        `DELETE FROM ${tables[collection]} WHERE __hash__ IN (${Array(
+          hashesToDelete.size,
+        )
+          .fill('?')
+          .join(',')})`,
+        Array.from(hashesToDelete),
+      )
     }
   }
 
@@ -149,7 +224,12 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     })
   }, Promise.resolve())
 
-  const after = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
+  const after = await db
+    .first<{ version: string }>(
+      `SELECT version FROM ${tables.info} WHERE id = ?`,
+      [`checksum_${collection}`],
+    )
+    .catch(() => ({ version: '' }))
   return after?.version === integrityVersion
 }
 
@@ -163,12 +243,18 @@ const REQUEST_TIMEOUT = 90
  * @param db - Database adapter
  * @param collection - Collection name
  */
-async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string) {
-  let iterationCount = 0
-  let interval: NodeJS.Timer
+async function waitUntilDatabaseIsReady(
+  db: DatabaseAdapter,
+  collection: string,
+) {
+  let interval: ReturnType<typeof setInterval>
   await new Promise((resolve, reject) => {
     interval = setInterval(async () => {
-      const row = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+      const row = await db
+        .first<{ ready: boolean }>(
+          `SELECT ready FROM ${tables.info} WHERE id = ?`,
+          [`checksum_${collection}`],
+        )
         .catch(() => ({ ready: true }))
 
       if (row?.ready) {
@@ -180,24 +266,30 @@ async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string)
       // it has to be that initialization has failed
       if (iterationCount++ > REQUEST_TIMEOUT) {
         clearInterval(interval)
-        reject(new Error('Waiting for another database initialization timed out'))
+        reject(
+          new Error('Waiting for another database initialization timed out'),
+        )
       }
     }, 1000)
-  }).catch((e) => {
-    throw e
-  }).finally(() => {
-    if (interval) {
-      clearInterval(interval)
-    }
   })
+    .catch((e) => {
+      throw e
+    })
+    .finally(() => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    })
 }
 
-async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
-  return await fetchDatabase(event, String(collection))
-    .catch((e) => {
-      console.error('Failed to fetch compressed dump', e)
-      return ''
-    })
+async function loadDatabaseDump(
+  event: H3Event,
+  collection: string,
+): Promise<string> {
+  return await fetchDatabase(event, String(collection)).catch((e) => {
+    console.error('Failed to fetch compressed dump', e)
+    return ''
+  })
 }
 
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
@@ -212,11 +304,20 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     }
 
     if ('filename' in config) {
-      const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
-        ? config?.filename
-        : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+      const filename
+        = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
+          ? config?.filename
+          : new URL(
+            config.filename,
+            (
+              globalThis as unknown as { _importMeta_: { url: string } }
+            )._importMeta_.url,
+          ).pathname
 
-      _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
+      _config.path
+        = process.platform === 'win32' && filename.startsWith('/')
+          ? filename.slice(1)
+          : filename
     }
     return _config
   }
