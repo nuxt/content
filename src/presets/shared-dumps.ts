@@ -67,10 +67,13 @@ export function applyContentDumpsPreset(
   }
   else {
     nitroConfig.handlers.push(
+      // Encrypted dump
       { route: '/__nuxt_content/:collection/sql_dump.enc', handler: resolver.resolve(handlerPath) },
-      { route: '/api/__nuxt_content/:collection/key', handler: resolver.resolve(handlerPath) },
-      // optional: ensure .txt 404s via same handler in encrypted mode
+      // Key endpoint
+      { route: '/__nuxt_content/:collection/key', handler: resolver.resolve(handlerPath) },
+      // Ensure .txt 404s (or handled) while encryption is enabled
       { route: '/__nuxt_content/:collection/sql_dump.txt', handler: resolver.resolve(handlerPath) },
+
     )
   }
 }

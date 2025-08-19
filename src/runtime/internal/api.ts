@@ -21,7 +21,7 @@ export async function fetchDatabase(event: H3Event | undefined, collection: stri
   })
 }
 
-// Prefer API route for queries; fallback to legacy
+// Prefer API route for queries;
 export async function fetchQuery<Item>(event: H3Event | undefined, collection: string, sql: string): Promise<Item[]> {
   const common = {
     context: event ? { cloudflare: event.context.cloudflare } : {},
@@ -34,23 +34,18 @@ export async function fetchQuery<Item>(event: H3Event | undefined, collection: s
     body: { sql },
   }
 
-  try {
-    return await $fetch(`/api/__nuxt_content/${collection}/query`, common)
-  }
-  catch {
-    return await $fetch(`/__nuxt_content/${collection}/query`, common)
-  }
+  return await $fetch(`/__nuxt_content/${collection}/query`, common)
 }
 
 /**
  * Get a short-lived decryption key after authentication.
- * Cloudflare preset exposes this under /api/__nuxt_content/:collection/key
+ * Cloudflare preset exposes this under /__nuxt_content/:collection/key
  */
 export async function fetchDumpKey(
   event: H3Event | undefined,
   collection: string,
 ): Promise<{ kid: string, k: string }> {
-  return await $fetch(`/api/__nuxt_content/${collection}/key`, {
+  return await $fetch(`/__nuxt_content/${collection}/key`, {
     context: event ? { cloudflare: event.context.cloudflare } : {},
     headers: {
       'content-type': 'application/json',

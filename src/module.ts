@@ -147,11 +147,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules ||= {}
 
     // Prevent nuxtseo from indexing nuxt-content routes
-    // (legacy + API)
     // @ts-expect-error - routeRules uses string index globs which Nuxt supports at runtime but TypeScript cannot type
     nuxt.options.routeRules!['/__nuxt_content/**'] = { robots: false }
-    // @ts-expect-error - routeRules uses string index globs which Nuxt supports at runtime but TypeScript cannot type
-    nuxt.options.routeRules!['/api/__nuxt_content/**'] = { robots: false }
 
     if (options.encryption?.enabled && !options.encryption.masterKey) {
       options.encryption.masterKey = randomBytes(32).toString('base64')
@@ -205,14 +202,8 @@ export default defineNuxtModule<ModuleOptions>({
       config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
-      // Legacy query route
       config.handlers.push({
         route: '/__nuxt_content/:collection/query',
-        handler: resolver.resolve('./runtime/api/query.post'),
-      })
-      // Preferred API query route
-      config.handlers.push({
-        route: '/api/__nuxt_content/:collection/query',
         handler: resolver.resolve('./runtime/api/query.post'),
       })
 

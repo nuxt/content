@@ -142,7 +142,7 @@ async function _checkAndImportDatabaseIntegrity(
     }
   }
 
-  // --- fetch and normalize dump (handle encrypted envelope or legacy) ---
+  // --- fetch and normalize dump (handle encrypted envelope or plaintext) ---
 
   const raw = await loadDatabaseDump(event, collection).catch(() => '')
   let gzBase64 = raw

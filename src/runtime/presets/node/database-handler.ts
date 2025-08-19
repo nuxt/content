@@ -12,7 +12,7 @@ export default eventHandler(async (event) => {
   const encEnabled = !!runtime?.content?.encryption?.enabled
   const masterB64 = runtime?.content?.encryption?.masterKey
 
-  // --- /api/__nuxt_content/:collection/key ---
+  // --- /__nuxt_content/:collection/key ---
   if (url.pathname.endsWith('/key')) {
     if (!encEnabled) {
       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
@@ -53,7 +53,7 @@ export default eventHandler(async (event) => {
     return envelopeB64
   }
 
-  // --- /__nuxt_content/:collection/sql_dump.txt --- (plaintext legacy)
+  // --- /__nuxt_content/:collection/sql_dump.txt --- (plaintext)
   setHeader(event, 'Content-Type', 'text/plain')
 
   if (encEnabled) {
