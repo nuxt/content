@@ -248,6 +248,7 @@ async function waitUntilDatabaseIsReady(
   collection: string,
 ) {
   let interval: ReturnType<typeof setInterval>
+  let iterationCount = 0
   await new Promise((resolve, reject) => {
     interval = setInterval(async () => {
       const row = await db

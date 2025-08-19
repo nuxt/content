@@ -7,11 +7,15 @@ import { subtle, getRandomValues } from 'uncrypto'
 const te = new TextEncoder()
 
 export function b64ToBytes(b64: string): Uint8Array {
+  // Browser
   if (typeof atob === 'function') {
     return Uint8Array.from(atob(b64), c => c.charCodeAt(0))
   }
-  // Node fallback
-  return new Uint8Array(Buffer.from(b64, 'base64'))
+  // Node: build a fresh Uint8Array backed by a plain ArrayBuffer
+  const buf = Buffer.from(b64, 'base64')
+  const out = new Uint8Array(buf.length)
+  out.set(buf)
+  return out
 }
 
 export function bytesToB64(arr: Uint8Array): string {
@@ -36,6 +40,13 @@ export function bytesToB64(arr: Uint8Array): string {
   throw new Error('[content] No base64 encoder available in this runtime')
 }
 
+/** Ensure a clean ArrayBuffer view of a Uint8Array (no SharedArrayBuffer typing). */
+function toArrayBuffer(u8: Uint8Array): ArrayBuffer {
+  const out = new ArrayBuffer(u8.byteLength)
+  new Uint8Array(out).set(u8)
+  return out
+}
+
 /** HKDF(master, salt=checksum, info=`content:${collection}`) → raw 32 bytes (AES-256) */
 export async function deriveContentKeyRaw(
   masterKeyB64: string,
@@ -43,7 +54,13 @@ export async function deriveContentKeyRaw(
   collection: string,
 ): Promise<Uint8Array> {
   const master = b64ToBytes(masterKeyB64)
-  const hkdfKey = await subtle.importKey('raw', master, 'HKDF', false, ['deriveKey'])
+  const hkdfKey = await subtle.importKey(
+    'raw',
+    toArrayBuffer(master),
+    { name: 'HKDF' },
+    false,
+    ['deriveKey'],
+  )
   const derived = await subtle.deriveKey(
     { name: 'HKDF', hash: 'SHA-256', salt: te.encode(checksum || ''), info: te.encode(`content:${collection}`) },
     hkdfKey,
@@ -72,13 +89,21 @@ export async function encryptGzBase64Envelope(
   collection: string,
 ): Promise<string> {
   const keyRaw = await deriveContentKeyRaw(masterKeyB64, checksum, collection)
-  const key = await subtle.importKey('raw', keyRaw, { name: 'AES-GCM' }, false, ['encrypt'])
+  const key = await subtle.importKey(
+    'raw',
+    toArrayBuffer(keyRaw),
+    { name: 'AES-GCM' },
+    false,
+    ['encrypt'],
+  )
 
   // IV generation via Web Crypto; required in all supported runtimes
   const iv = getRandomValues(new Uint8Array(12))
 
   const gzBytes = b64ToBytes(gzBase64)
-  const ct = new Uint8Array(await subtle.encrypt({ name: 'AES-GCM', iv }, key, gzBytes))
+  const ct = new Uint8Array(
+    await subtle.encrypt({ name: 'AES-GCM', iv: toArrayBuffer(iv) }, key, toArrayBuffer(gzBytes)),
+  )
 
   const envelope = {
     v: 1,
@@ -138,9 +163,17 @@ export async function decryptEnvelopeToGzipBytes(
   const env = parseEnvelopeMaybeBase64(envelopeInput)
   if (!env) throw new Error('Invalid encrypted dump envelope')
   const keyBytes = b64ToBytes(keyRawB64)
-  const key = await subtle.importKey('raw', keyBytes, { name: 'AES-GCM' }, false, ['decrypt'])
+  const key = await subtle.importKey(
+    'raw',
+    toArrayBuffer(keyBytes),
+    { name: 'AES-GCM' },
+    false,
+    ['decrypt'],
+  )
   const iv = b64ToBytes(env.iv)
   const ciphertext = b64ToBytes(env.ciphertext)
-  const gz = new Uint8Array(await subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext))
+  const gz = new Uint8Array(
+    await subtle.decrypt({ name: 'AES-GCM', iv: toArrayBuffer(iv) }, key, toArrayBuffer(ciphertext)),
+  )
   return gz
 }
