@@ -1,3 +1,4 @@
+import { purgeContentCaches } from '../client/purge'
 import { useRuntimeConfig } from '#imports'
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
@@ -142,6 +143,38 @@ async function resetInMemoryTableAndChecksum(collection: string, checksumId: str
   }
 }
 
+async function autoReloadOnFatal(collection: string) {
+  if (typeof window === 'undefined') return
+  const buildVer = checksums[collection] || 'x'
+  const guardKey = `content:autoReloaded:${collection}:${buildVer}`
+  try {
+    if (sessionStorage.getItem(guardKey)) return
+    sessionStorage.setItem(guardKey, '1')
+  }
+  catch { console.error('Set item failed') }
+
+  try {
+    await purgeContentCaches(collection)
+  }
+  catch (err) {
+    console.warn('Auto-reload: purge failed (continuing to reload anyway)', err)
+  }
+
+  try {
+    sessionStorage.removeItem(healFlagKey(collection))
+  }
+  catch {
+    console.error('Remove item failed')
+  }
+
+  try {
+    window.location.reload()
+  }
+  catch (err) {
+    console.error('Auto-reload: window.location.reload() failed', err)
+  }
+}
+
 /* ---------- main loader with self-heal ---------- */
 
 async function loadCollectionDatabase<T>(collection: T) {
@@ -207,7 +240,7 @@ async function loadCollectionDatabase<T>(collection: T) {
       await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
     }
 
-    for (const command of dump) {
+    for (const command of await dump) {
       try {
         await db.exec(command)
       }
@@ -239,11 +272,13 @@ async function loadCollectionDatabase<T>(collection: T) {
       }
       catch (e2) {
         console.error('Self-heal retry failed:', e2)
+        await autoReloadOnFatal(collectionName)
         throw e2
       }
     }
 
     console.error('Failed to load collection database:', e)
+    await autoReloadOnFatal(collectionName)
     throw e
   }
 }

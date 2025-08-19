@@ -18,9 +18,7 @@ export async function purgeContentCaches(collection?: string) {
     }
 
     // Chrome: enumerate and delete content-like DBs
-    // @ts-expect-error non-standard
     if (indexedDB.databases) {
-      // @ts-expect-error non-standard
       const dbs: Array<{ name?: string }> = await indexedDB.databases()
       for (const db of dbs) {
         const n = db.name || ''
@@ -45,7 +43,6 @@ export async function purgeContentCaches(collection?: string) {
     const exact = [
       collection && `content_checksum_${collection}`,
       collection && `content_collection_${collection}`,
-      'hint_reveal_timestamp',
     ].filter(Boolean) as string[]
     for (const k of exact) {
       try {
