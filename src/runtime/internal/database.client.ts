@@ -18,8 +18,8 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       Reflect.deleteProperty(dbPromises, '_')
     }
     if (!loadedCollections[String(collection)]) {
-      dbPromises[String(collection)] =
-        dbPromises[String(collection)] || loadCollectionDatabase(collection)
+      dbPromises[String(collection)]
+        = dbPromises[String(collection)] || loadCollectionDatabase(collection)
       await dbPromises[String(collection)]
       loadedCollections[String(collection)] = 'loaded'
       Reflect.deleteProperty(dbPromises, String(collection))
@@ -88,14 +88,10 @@ function encEnabled(): boolean {
   return !!pub?.content?.encryptionEnabled
 }
 
-function buildId(): string {
-  const pub = useRuntimeConfig().public as Record<string, unknown>
-  return String((pub && (pub as any).buildId) || '0')
-}
-
 function shouldSelfHeal(e: unknown): boolean {
-  const msg = String((e as any)?.message || e)
-  const status = Number((e as any)?.statusCode || (e as any)?.response?.status || 0)
+  const err = e as { message?: string, statusCode?: number, response?: { status?: number } }
+  const msg = String(err?.message || e)
+  const status = Number(err?.statusCode || err?.response?.status || 0)
   const httpBad = [401, 403, 404].includes(status)
   const decryptish = /decrypt|aes|gcm|operationerror|checksum|invalid key|ciphertext|data length/i.test(msg)
   return httpBad || decryptish
@@ -108,23 +104,42 @@ function healFlagKey(collection: string) {
 function purgeLocalCollectionCache(collection: string) {
   try {
     localStorage.removeItem(`content_checksum_${collection}`)
+  }
+  catch {
+    // ignore
+  }
+  try {
     localStorage.removeItem(`content_collection_${collection}`)
-    // Optional: if you want to clear all collections:
-    // for (const k of Object.keys(localStorage)) {
-    //   if (k.startsWith('content_checksum_') || k.startsWith('content_collection_')) {
-    //     localStorage.removeItem(k)
-    //   }
-    // }
-  } catch {}
+  }
+  catch {
+    // ignore
+  }
+  // Optional: if you want to clear all collections:
+  // for (const k of Object.keys(localStorage)) {
+  //   if (k.startsWith('content_checksum_') || k.startsWith('content_collection_')) {
+  //     try {
+  //       localStorage.removeItem(k)
+  //     }
+  //     catch {
+  //       // ignore
+  //     }
+  //   }
+  // }
 }
 
 async function resetInMemoryTableAndChecksum(collection: string, checksumId: string) {
   try {
     await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
-  } catch {}
+  }
+  catch {
+    // ignore
+  }
   try {
     await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
-  } catch {}
+  }
+  catch {
+    // ignore
+  }
 }
 
 /* ---------- main loader with self-heal ---------- */
@@ -148,7 +163,8 @@ async function loadCollectionDatabase<T>(collection: T) {
       })
       .shift()
     if (dbChecksum?.version !== checksums[collectionName]) checksumState = 'mismatch'
-  } catch {
+  }
+  catch {
     checksumState = 'missing'
   }
 
@@ -169,7 +185,8 @@ async function loadCollectionDatabase<T>(collection: T) {
       try {
         localStorage.setItem(`content_${checksumId}`, checksums[collectionName]!)
         localStorage.setItem(`content_${dumpId}`, fresh!)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Database integrity check failed, rebuilding database', error)
       }
     }
@@ -193,7 +210,8 @@ async function loadCollectionDatabase<T>(collection: T) {
     for (const command of dump) {
       try {
         await db.exec(command)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error executing command', error)
       }
     }
@@ -204,7 +222,8 @@ async function loadCollectionDatabase<T>(collection: T) {
     const compressedDump = await getCompressedDump(false)
     await hydrateFromCompressed(compressedDump)
     return db
-  } catch (e) {
+  }
+  catch (e) {
     // Self-heal once per build+collection, only for decrypt/HTTP/cache issues
     if (shouldSelfHeal(e) && !sessionStorage.getItem(healFlagKey(collectionName))) {
       sessionStorage.setItem(healFlagKey(collectionName), '1')
@@ -217,7 +236,8 @@ async function loadCollectionDatabase<T>(collection: T) {
       try {
         await hydrateFromCompressed(compressedDump)
         return db
-      } catch (e2) {
+      }
+      catch (e2) {
         console.error('Self-heal retry failed:', e2)
         throw e2
       }
