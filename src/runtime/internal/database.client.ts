@@ -1,4 +1,3 @@
-import { purgeContentCaches } from '../client/purge'
 import { useRuntimeConfig } from '#imports'
 import type { Database } from '@sqlite.org/sqlite-wasm'
 import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
@@ -6,11 +5,11 @@ import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
+import { purgeContentCaches } from '../client/purge'
 
 let db: Database
 const loadedCollections: Record<string, string> = {}
 const dbPromises: Record<string, Promise<Database>> = {}
-
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
     if (!db) {
@@ -32,6 +31,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   return {
     all: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
+
       return db
         .exec({
           sql,
@@ -43,6 +43,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
     },
     first: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
+
       return refineContentFields(
         sql,
         db
@@ -57,6 +58,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
     },
     exec: async (sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
+
       await db.exec({ sql, bind: params })
     },
   }
@@ -64,183 +66,137 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 
 async function initializeDatabase() {
   if (!db) {
-    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
+    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(
+      m => m.default,
+    )
     // @ts-expect-error sqlite3ApiConfig is not defined in the module
     globalThis.sqlite3ApiConfig = {
       silent: true,
       debug: (...args: unknown[]) => console.debug(...args),
       warn: (...args: unknown[]) => {
-        if (String(args[0]).includes('OPFS sqlite3_vfs')) return
+        if (String(args[0]).includes('OPFS sqlite3_vfs')) {
+          return
+        }
         console.warn(...args)
       },
       error: (...args: unknown[]) => console.error(...args),
       log: (...args: unknown[]) => console.log(...args),
     }
     const sqlite3 = await sqlite3InitModule()
-    db = new sqlite3.oo1.DB() // in-memory
+    db = new sqlite3.oo1.DB()
   }
   return db
 }
 
-/* ---------- self-heal helpers ---------- */
-
-function encEnabled(): boolean {
-  const pub = useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } }
-  return !!pub?.content?.encryptionEnabled
-}
-
-function shouldSelfHeal(e: unknown): boolean {
-  const err = e as { message?: string, statusCode?: number, response?: { status?: number } }
-  const msg = String(err?.message || e)
-  const status = Number(err?.statusCode || err?.response?.status || 0)
-  const httpBad = [401, 403, 404].includes(status)
-  const decryptish = /decrypt|aes|gcm|operationerror|checksum|invalid key|ciphertext|data length/i.test(msg)
-  return httpBad || decryptish
-}
-
-function healFlagKey(collection: string) {
-  return `content:selfheal:done:${collection}`
-}
-
-function purgeLocalCollectionCache(collection: string) {
-  try {
-    localStorage.removeItem(`content_checksum_${collection}`)
-  }
-  catch {
-    // ignore
-  }
-  try {
-    localStorage.removeItem(`content_collection_${collection}`)
-  }
-  catch {
-    // ignore
-  }
-  // Optional: if you want to clear all collections:
-  // for (const k of Object.keys(localStorage)) {
-  //   if (k.startsWith('content_checksum_') || k.startsWith('content_collection_')) {
-  //     try {
-  //       localStorage.removeItem(k)
-  //     }
-  //     catch {
-  //       // ignore
-  //     }
-  //   }
-  // }
-}
-
-async function resetInMemoryTableAndChecksum(collection: string, checksumId: string) {
-  try {
-    await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
-  }
-  catch {
-    // ignore
-  }
-  try {
-    await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
-  }
-  catch {
-    // ignore
-  }
-}
-
-async function autoReloadOnFatal(collection: string) {
-  if (typeof window === 'undefined') return
-  const buildVer = checksums[collection] || 'x'
-  const guardKey = `content:autoReloaded:${collection}:${buildVer}`
-  try {
-    if (sessionStorage.getItem(guardKey)) return
-    sessionStorage.setItem(guardKey, '1')
-  }
-  catch { console.error('Set item failed') }
-
-  try {
-    await purgeContentCaches(collection)
-  }
-  catch (err) {
-    console.warn('Auto-reload: purge failed (continuing to reload anyway)', err)
-  }
-
-  try {
-    sessionStorage.removeItem(healFlagKey(collection))
-  }
-  catch {
-    console.error('Remove item failed')
-  }
-
-  try {
-    window.location.reload()
-  }
-  catch (err) {
-    console.error('Auto-reload: window.location.reload() failed', err)
-  }
-}
-
-/* ---------- main loader with self-heal ---------- */
-
 async function loadCollectionDatabase<T>(collection: T) {
-  // Skip in preview mode
-  if (window.sessionStorage.getItem('previewToken')) return db
+  // Do not initialize database with dump for preview mode
+  if (window.sessionStorage.getItem('previewToken')) {
+    return db
+  }
 
-  const collectionName = String(collection)
-  const checksumId = `checksum_${collectionName}`
-  const dumpId = `collection_${collectionName}`
+  let compressedDump: string | null = null
 
-  // Check current DB checksum
-  let checksumState: 'matched' | 'mismatch' | 'missing' = 'matched'
+  const checksumId = `checksum_${collection}`
+  const dumpId = `collection_${collection}`
+  let checksumState = 'matched'
   try {
     const dbChecksum = db
       .exec({
-        sql: `SELECT * FROM ${tables.info} WHERE id = '${checksumId}'`,
+        sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`,
         rowMode: 'object',
         returnValue: 'resultRows',
       })
       .shift()
-    if (dbChecksum?.version !== checksums[collectionName]) checksumState = 'mismatch'
+
+    if (dbChecksum?.version !== checksums[String(collection)]) {
+      checksumState = 'mismatch'
+    }
   }
   catch {
     checksumState = 'missing'
   }
 
-  if (checksumState === 'matched') return db
-
-  // A small inner function to get the dump (optionally forcing network)
-  async function getCompressedDump(forceNetwork: boolean): Promise<string> {
-    if (!import.meta.dev && !forceNetwork) {
-      const localVer = localStorage.getItem(`content_${checksumId}`)
-      if (localVer === checksums[collectionName]) {
-        const cached = localStorage.getItem(`content_${dumpId}`)
-        if (cached) return cached
-      }
-    }
-    // Force fresh network fetch
-    const fresh = await fetchDatabase(undefined, collectionName)
+  if (checksumState !== 'matched') {
     if (!import.meta.dev) {
-      try {
-        localStorage.setItem(`content_${checksumId}`, checksums[collectionName]!)
-        localStorage.setItem(`content_${dumpId}`, fresh!)
-      }
-      catch (error) {
-        console.error('Database integrity check failed, rebuilding database', error)
+      const localCacheVersion = window.localStorage.getItem(
+        `content_${checksumId}`,
+      )
+      if (localCacheVersion === checksums[String(collection)]) {
+        compressedDump = window.localStorage.getItem(`content_${dumpId}`)
       }
     }
-    return fresh
-  }
 
-  async function hydrateFromCompressed(compressed: string) {
-    const dump = encEnabled()
-      ? await (async () => {
-          const { k } = await fetchDumpKey(undefined, collectionName)
-          return await decryptAndDecompressSQLDump(compressed, k)
+    if (!compressedDump) {
+      compressedDump = await fetchDatabase(undefined, String(collection))
+      if (!import.meta.dev) {
+        try {
+          window.localStorage.setItem(
+            `content_${checksumId}`,
+            checksums[String(collection)]!,
+          )
+          window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
+        }
+        catch (error) {
+          console.error(
+            'Database integrity check failed, rebuilding database',
+            error,
+          )
+        }
+      }
+    }
+
+    const encEnabled = !!(useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } })?.content?.encryptionEnabled
+
+    const dump = await (encEnabled
+      ? (async () => {
+          // Attempt decryption, purge caches and retry once on OperationError
+          try {
+            const { k } = await fetchDumpKey(undefined, String(collection))
+            return await decryptAndDecompressSQLDump(compressedDump!, k)
+          }
+          catch (e) {
+            console.error('Failed to decrypt encrypted dump (first attempt):', e)
+            // If the error looks like a WebCrypto OperationError or checksum/key mismatch, try a full client purge
+            try {
+              await purgeContentCaches?.()
+            }
+            catch (purgeErr) {
+              console.debug?.('[content] purgeContentCaches failed during decrypt retry ' + purgeErr)
+            }
+
+            // Force-refetch a fresh dump and key, bypassing any stale local cache
+            try {
+              compressedDump = await fetchDatabase(undefined, String(collection))
+              if (!import.meta.dev) {
+                try {
+                  window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
+                  window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
+                }
+                catch (error) {
+                  console.error('Database integrity check failed while caching refreshed dump', error)
+                }
+              }
+              const { k: k2 } = await fetchDumpKey(undefined, String(collection))
+              return await decryptAndDecompressSQLDump(compressedDump!, k2)
+            }
+            catch (e2) {
+              console.error('Failed to decrypt encrypted dump (after purge & refetch):', e2)
+              throw e2
+            }
+          }
         })()
-      : decompressSQLDump(compressed)
+      : decompressSQLDump(compressedDump!))
 
-    // Freshen table + (if needed) clear old checksum row before applying new dump
-    await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[collectionName]}` })
+    await db.exec({
+      sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}`,
+    })
     if (checksumState === 'mismatch') {
-      await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
+      await db.exec({
+        sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'`,
+      })
     }
 
-    for (const command of await dump) {
+    for (const command of dump) {
       try {
         await db.exec(command)
       }
@@ -250,35 +206,5 @@ async function loadCollectionDatabase<T>(collection: T) {
     }
   }
 
-  // First attempt (use cache if valid)
-  try {
-    const compressedDump = await getCompressedDump(false)
-    await hydrateFromCompressed(compressedDump)
-    return db
-  }
-  catch (e) {
-    // Self-heal once per build+collection, only for decrypt/HTTP/cache issues
-    if (shouldSelfHeal(e) && !sessionStorage.getItem(healFlagKey(collectionName))) {
-      sessionStorage.setItem(healFlagKey(collectionName), '1')
-      // Purge just this collection’s local cache and in-memory table+checksum
-      purgeLocalCollectionCache(collectionName)
-      await resetInMemoryTableAndChecksum(collectionName, checksumId)
-
-      // Retry from network (ignore local cache)
-      const compressedDump = await getCompressedDump(true)
-      try {
-        await hydrateFromCompressed(compressedDump)
-        return db
-      }
-      catch (e2) {
-        console.error('Self-heal retry failed:', e2)
-        await autoReloadOnFatal(collectionName)
-        throw e2
-      }
-    }
-
-    console.error('Failed to load collection database:', e)
-    await autoReloadOnFatal(collectionName)
-    throw e
-  }
+  return db
 }
