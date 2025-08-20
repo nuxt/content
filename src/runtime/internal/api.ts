@@ -1,7 +1,6 @@
 // src/runtime/internal/api.ts
 import { useRuntimeConfig } from '#imports'
 import { checksums } from '#content/manifest'
-import { purgeContentCaches } from '../client/purge'
 
 import type { H3Event } from 'h3'
 
@@ -13,6 +12,7 @@ function encOn() {
   const pub = useRuntimeConfig().public as Partial<PublicRuntime>
   return !!pub?.content?.encryptionEnabled
 }
+
 function isRecoverable(e: unknown) {
   const err = e as ErrorLike
   const s = Number(err?.status ?? err?.statusCode ?? err?.response?.status ?? 0)
@@ -20,31 +20,26 @@ function isRecoverable(e: unknown) {
   return [401, 403, 404].includes(s)
     || /decrypt|aes|gcm|checksum|ciphertext|operationerror/i.test(m)
 }
+
 async function selfHealOnce(collection: string) {
+  // Minimal self-heal: only clear this collection’s cached dump + checksum
   try {
     localStorage.removeItem(`content_${'checksum_' + collection}`)
     localStorage.removeItem(`content_${'collection_' + collection}`)
   }
   catch (_err) {
     // Non-critical: best-effort cleanup
-
     console.debug?.('[content] selfHealOnce: localStorage cleanup failed ' + _err)
   }
-  // Clear IndexedDB and any other client caches (best-effort)
-  try {
-    await purgeContentCaches?.()
-  }
-  catch (_err) {
-    console.debug?.('[content] selfHealOnce: purgeContentCaches failed ' + _err)
-  }
+
+  // If encryption is enabled, proactively (best-effort) re-fetch the key
   if (encOn()) {
     try {
       await fetchDumpKey(undefined, collection)
     }
     catch (_err) {
       // Non-critical: key fetch may fail; we retry later
-
-      console.debug?.('[content] selfHealOnce: fetchDumpKey failed:' + _err)
+      console.debug?.('[content] selfHealOnce: fetchDumpKey failed: ' + _err)
     }
   }
 }

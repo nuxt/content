@@ -5,11 +5,11 @@ import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
-import { purgeContentCaches } from '../client/purge'
 
 let db: Database
 const loadedCollections: Record<string, string> = {}
 const dbPromises: Record<string, Promise<Database>> = {}
+
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
     if (!db) {
@@ -66,9 +66,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
 
 async function initializeDatabase() {
   if (!db) {
-    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(
-      m => m.default,
-    )
+    const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     // @ts-expect-error sqlite3ApiConfig is not defined in the module
     globalThis.sqlite3ApiConfig = {
       silent: true,
@@ -118,9 +116,7 @@ async function loadCollectionDatabase<T>(collection: T) {
 
   if (checksumState !== 'matched') {
     if (!import.meta.dev) {
-      const localCacheVersion = window.localStorage.getItem(
-        `content_${checksumId}`,
-      )
+      const localCacheVersion = window.localStorage.getItem(`content_${checksumId}`)
       if (localCacheVersion === checksums[String(collection)]) {
         compressedDump = window.localStorage.getItem(`content_${dumpId}`)
       }
@@ -130,41 +126,39 @@ async function loadCollectionDatabase<T>(collection: T) {
       compressedDump = await fetchDatabase(undefined, String(collection))
       if (!import.meta.dev) {
         try {
-          window.localStorage.setItem(
-            `content_${checksumId}`,
-            checksums[String(collection)]!,
-          )
+          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
           window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
         }
         catch (error) {
-          console.error(
-            'Database integrity check failed, rebuilding database',
-            error,
-          )
+          console.error('Database integrity check failed, rebuilding database', error)
         }
       }
     }
 
-    const encEnabled = !!(useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } })?.content?.encryptionEnabled
+    const encEnabled = !!(
+      useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } }
+    )?.content?.encryptionEnabled
 
     const dump = await (encEnabled
       ? (async () => {
-          // Attempt decryption, purge caches and retry once on OperationError
+          // Attempt decryption; on failure, clear only localStorage entries for this collection and retry once
           try {
             const { k } = await fetchDumpKey(undefined, String(collection))
             return await decryptAndDecompressSQLDump(compressedDump!, k)
           }
           catch (e) {
             console.error('Failed to decrypt encrypted dump (first attempt):', e)
-            // If the error looks like a WebCrypto OperationError or checksum/key mismatch, try a full client purge
+
+            // Minimal self-heal: wipe only this collection’s local cache
             try {
-              await purgeContentCaches?.()
+              window.localStorage.removeItem(`content_${checksumId}`)
+              window.localStorage.removeItem(`content_${dumpId}`)
             }
             catch (purgeErr) {
-              console.debug?.('[content] purgeContentCaches failed during decrypt retry ' + purgeErr)
+              console.debug?.('[content] decrypt retry: localStorage cleanup failed ' + purgeErr)
             }
 
-            // Force-refetch a fresh dump and key, bypassing any stale local cache
+            // Force-refetch a fresh dump + key, bypassing stale local cache
             try {
               compressedDump = await fetchDatabase(undefined, String(collection))
               if (!import.meta.dev) {
@@ -180,7 +174,7 @@ async function loadCollectionDatabase<T>(collection: T) {
               return await decryptAndDecompressSQLDump(compressedDump!, k2)
             }
             catch (e2) {
-              console.error('Failed to decrypt encrypted dump (after purge & refetch):', e2)
+              console.error('Failed to decrypt encrypted dump (after local purge & refetch):', e2)
               throw e2
             }
           }
