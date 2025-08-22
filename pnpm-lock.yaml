@@ -140,6 +140,9 @@ importers:
       ufo:
         specifier: ^1.6.1
         version: 1.6.1
+      uncrypto:
+        specifier: ^0.1.3
+        version: 0.1.3
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -257,7 +260,7 @@ importers:
         version: 12.2.0
       docus:
         specifier: 4.0.3
-        version: 4.0.3(ae23c4346d05e307c68508c0128aea20)
+        version: 4.0.3(2470cb4fccb874f060e14760d81231bb)
       minisearch:
         specifier: ^7.1.2
         version: 7.1.2
@@ -12627,7 +12630,7 @@ snapshots:
 
   diff@8.0.2: {}
 
-  docus@4.0.3(ae23c4346d05e307c68508c0128aea20):
+  docus@4.0.3(2470cb4fccb874f060e14760d81231bb):
     dependencies:
       '@iconify-json/lucide': 1.2.60
       '@iconify-json/simple-icons': 1.2.46

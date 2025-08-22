@@ -1,0 +1,707 @@
+diff --git a/src/runtime/internal/api.ts b/src/runtime/internal/api.ts
+index 36da8635..f7e7d0c4 100644
+--- a/src/runtime/internal/api.ts
++++ b/src/runtime/internal/api.ts
+@@ -1,122 +1,47 @@
+-// src/runtime/internal/api.ts
+-import { useRuntimeConfig } from '#imports'
+-import { checksums } from '#content/manifest'
+-
+-import type { H3Event } from 'h3'
+-
+-// Local types to avoid `any`
+-type PublicRuntime = { content?: { encryptionEnabled?: boolean } }
+-type ErrorLike = { status?: number, statusCode?: number, response?: { status?: number }, message?: string }
+-
+-function encOn() {
+-  const pub = useRuntimeConfig().public as Partial<PublicRuntime>
+-  return !!pub?.content?.encryptionEnabled
+-}
+-
+-function isRecoverable(e: unknown) {
+-  const err = e as ErrorLike
+-  const s = Number(err?.status ?? err?.statusCode ?? err?.response?.status ?? 0)
+-  const m = String(err?.message ?? '')
+-  return [401, 403, 404].includes(s)
+-    || /decrypt|aes|gcm|checksum|ciphertext|operationerror/i.test(m)
+-}
+-
+-async function selfHealOnce(collection: string) {
+-  // Minimal self-heal: only clear this collection’s cached dump + checksum
+-  try {
+-    localStorage.removeItem(`content_${'checksum_' + collection}`)
+-    localStorage.removeItem(`content_${'collection_' + collection}`)
+-  }
+-  catch (_err) {
+-    // Non-critical: best-effort cleanup
+-    console.debug?.('[content] selfHealOnce: localStorage cleanup failed ' + _err)
+-  }
+-
+-  // If encryption is enabled, proactively (best-effort) re-fetch the key
+-  if (encOn()) {
+-    try {
+-      await fetchDumpKey(undefined, collection)
+-    }
+-    catch (_err) {
+-      // Non-critical: key fetch may fail; we retry later
+-      console.debug?.('[content] selfHealOnce: fetchDumpKey failed: ' + _err)
+-    }
+-  }
+-}
+-
+-// override fetchDatabase
+-export async function fetchDatabase(event: H3Event | undefined, collection: string): Promise<string> {
+-  const base = encOn()
+-    ? `/__nuxt_content/${collection}/sql_dump.enc`
+-    : `/__nuxt_content/${collection}/sql_dump.txt`
+-  const query = { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined }
+-  try {
+-    return await $fetch(base, {
+-      context: event ? { cloudflare: event.context.cloudflare } : {},
+-      responseType: 'text',
+-      headers: {
+-        'content-type': 'text/plain',
+-        ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
+-      },
+-      query,
+-    })
+-  }
+-  catch (e) {
+-    if (!isRecoverable(e)) throw e
+-    await selfHealOnce(collection)
+-    return await $fetch(base, {
+-      context: event ? { cloudflare: event.context.cloudflare } : {},
+-      responseType: 'text',
+-      headers: {
+-        'content-type': 'text/plain',
+-        ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
+-      },
+-      query: { v: checksums[String(collection)], t: Date.now() },
+-    })
+-  }
+-}
+-
+-// override fetchQuery
+-export async function fetchQuery<Item>(
+-  event: H3Event | undefined,
+-  collection: string,
+-  sql: string,
+-): Promise<Item[]> {
+-  const opts = {
+-    context: event ? { cloudflare: event.context.cloudflare } : {},
+-    method: 'POST' as const,
+-    headers: {
+-      'content-type': 'application/json',
+-      ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
+-    },
+-    body: { sql },
+-  }
+-  const query = { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined }
+-
+-  try {
+-    return await $fetch(`/__nuxt_content/${collection}/query`, { ...opts, query })
+-  }
+-  catch (e) {
+-    if (!isRecoverable(e)) throw e
+-    await selfHealOnce(collection)
+-    return await $fetch(`/__nuxt_content/${collection}/query`, {
+-      ...opts,
+-      query: { v: checksums[String(collection)], t: Date.now() },
+-    })
+-  }
+-}
+-
+-// keep fetchDumpKey as-is
+-export async function fetchDumpKey(
+-  event: H3Event | undefined,
+-  collection: string,
+-): Promise<{ kid: string, k: string }> {
+-  return await $fetch(`/__nuxt_content/${collection}/key`, {
+-    context: event ? { cloudflare: event.context.cloudflare } : {},
+-    headers: {
+-      'content-type': 'application/json',
+-      ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
+-    },
+-    query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
+-  })
+-}
++import { useRuntimeConfig } from '#imports'
++import { checksums } from '#content/manifest'
++import type { H3Event } from 'h3'
++
++export async function fetchDatabase(event: H3Event | undefined, collection: string): Promise<string> {
++  const enc = (useRuntimeConfig().public as any)?.content?.encryptionEnabled
++  const path = enc
++    ? `/__nuxt_content/${collection}/sql_dump.enc`
++    : `/__nuxt_content/${collection}/sql_dump.txt`
++  return await $fetch(path, {
++    context: event ? { cloudflare: event.context.cloudflare } : {},
++    responseType: 'text',
++    headers: {
++      'content-type': 'text/plain',
++      ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
++    },
++    query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
++  })
++}
++
++export async function fetchQuery<Item>(event: H3Event | undefined, collection: string, sql: string): Promise<Item[]> {
++  return await $fetch(`/__nuxt_content/${collection}/query`, {
++    context: event ? { cloudflare: event.context.cloudflare } : {},
++    headers: {
++      'content-type': 'application/json',
++      ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
++    },
++    query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
++    method: 'POST',
++    body: { sql },
++  })
++}
++
++export async function fetchDumpKey(event: H3Event | undefined, collection: string): Promise<{ kid: string, k: string }> {
++  return await $fetch(`/__nuxt_content/${collection}/key`, {
++    context: event ? { cloudflare: event.context.cloudflare } : {},
++    headers: {
++      'content-type': 'application/json',
++      ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
++    },
++    query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
++  })
++}
+diff --git a/src/runtime/presets/cloudflare/database-handler.ts b/src/runtime/presets/cloudflare/database-handler.ts
+index fa423124..e1a5b6c0 100644
+--- a/src/runtime/presets/cloudflare/database-handler.ts
++++ b/src/runtime/presets/cloudflare/database-handler.ts
+@@ -1,68 +1,48 @@
+-import { eventHandler, getRouterParam, setHeader, createError } from 'h3'
+-import { useRuntimeConfig, useStorage } from 'nitropack/runtime'
+-import { deriveContentKeyB64, encryptGzBase64Envelope } from '../../internal/encryption'
++import { eventHandler, getRouterParam, setHeader, createError } from 'h3'
++import { useRuntimeConfig, useStorage } from 'nitropack/runtime'
++import { deriveContentKeyB64 } from '../../internal/encryption'
+ 
+ export default eventHandler(async (event) => {
+   const collection = getRouterParam(event, 'collection')!
+   // `event.node.req.url` may be relative; supply a base URL to avoid runtime errors.
+   const url = new URL(event.node.req.url || '', 'http://localhost')
+   const runtime = useRuntimeConfig()
+   const encEnabled = !!runtime?.content?.encryption?.enabled
+   const masterB64 = runtime?.content?.encryption?.masterKey
+ 
+   // --- /__nuxt_content/:collection/key ---
+   if (url.pathname.endsWith('/key')) {
+     if (!encEnabled) {
+       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+     }
+-    // TODO: Add your AuthN/Z here; deny if not allowed.
++    // TODO: Add your AuthN/Z here
+     const checksum = url.searchParams.get('v') || ''
+     if (!masterB64) {
+       throw createError({ statusCode: 500, statusMessage: 'Missing content.encryption.masterKey' })
+     }
+     const k = await deriveContentKeyB64(masterB64, checksum, collection)
+     setHeader(event, 'Content-Type', 'application/json')
+     setHeader(event, 'Cache-Control', 'no-store')
+     return { kid: `v1:${collection}:${checksum}`, k }
+   }
+ 
+   // --- /__nuxt_content/:collection/sql_dump.enc ---
+   if (url.pathname.endsWith('/sql_dump.enc')) {
+     if (!encEnabled) {
+       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+     }
+-    setHeader(event, 'Content-Type', 'application/octet-stream')
+-    // Prefer prebuilt encrypted dump if present
++    setHeader(event, 'Content-Type', 'application/octet-stream')
+     const prebuilt = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql.enc`)
+-    if (prebuilt) {
+-      setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-      return prebuilt
+-    }
+-
+-    // Fallback: encrypt the prebuilt plaintext on the fly
+-    const gzBase64 = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql`)
+-    if (!gzBase64 || !masterB64) {
+-      return ''
+-    }
+-    const checksum = url.searchParams.get('v') || ''
+-    const envelopeB64 = await encryptGzBase64Envelope(gzBase64, masterB64, checksum, collection)
++    if (!prebuilt) {
++      throw createError({ statusCode: 404, statusMessage: 'Not Found' })
++    }
+     setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-    return envelopeB64
++    return prebuilt
+   }
+ 
+   // --- plaintext dump /__nuxt_content/:collection/sql_dump.txt ---
+   // Served only when encryption is disabled
+   setHeader(event, 'Content-Type', 'text/plain')
+   if (encEnabled) {
+     // If someone hits .txt while enc is on, hide it
+     throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+   }
+-
+-  // Prefer prebuilt plaintext from Nitro storage
+   const plain = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql`)
+-  if (plain) {
+-    setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-    return plain
+-  }
+-  return ''
++  if (!plain) throw createError({ statusCode: 404, statusMessage: 'Not Found' })
++  setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
++  return plain
+ })
+diff --git a/src/runtime/presets/node/database-handler.ts b/src/runtime/presets/node/database-handler.ts
+index 4ac55705..7a2d9a31 100644
+--- a/src/runtime/presets/node/database-handler.ts
++++ b/src/runtime/presets/node/database-handler.ts
+@@ -1,72 +1,48 @@
+-import { eventHandler, getRouterParam, setHeader, createError } from 'h3'
+-import { useRuntimeConfig, useStorage } from 'nitropack/runtime'
+-import { deriveContentKeyB64, encryptGzBase64Envelope } from '../../internal/encryption'
++import { eventHandler, getRouterParam, setHeader, createError } from 'h3'
++import { useRuntimeConfig, useStorage } from 'nitropack/runtime'
++import { deriveContentKeyB64 } from '../../internal/encryption'
+ 
+ export default eventHandler(async (event) => {
+   const collection = getRouterParam(event, 'collection')!
+   // `event.node.req.url` can be a relative path, which causes `new URL` to throw.
+   // Provide a base to ensure a valid absolute URL is always created.
+   const url = new URL(event.node.req.url || '', 'http://localhost')
+ 
+   const runtime = useRuntimeConfig()
+   const encEnabled = !!runtime?.content?.encryption?.enabled
+   const masterB64 = runtime?.content?.encryption?.masterKey
+ 
+   // --- /__nuxt_content/:collection/key ---
+   if (url.pathname.endsWith('/key')) {
+     if (!encEnabled) {
+       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+     }
+-    // TODO: AuthN/Z — implement in your app before returning a key
++    // TODO: AuthN/Z
+     const checksum = url.searchParams.get('v') || ''
+     if (!masterB64) {
+       throw createError({ statusCode: 500, statusMessage: 'Missing content.encryption.masterKey' })
+     }
+     const k = await deriveContentKeyB64(masterB64, checksum, collection)
+     setHeader(event, 'Content-Type', 'application/json')
+     setHeader(event, 'Cache-Control', 'no-store')
+     return { kid: `v1:${collection}:${checksum}`, k }
+   }
+ 
+   // --- /__nuxt_content/:collection/sql_dump.enc ---
+   if (url.pathname.endsWith('/sql_dump.enc')) {
+     if (!encEnabled) {
+       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+     }
+     setHeader(event, 'Content-Type', 'application/octet-stream')
+-
+-    // Prefer prebuilt encrypted dump
+     const prebuilt = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql.enc`)
+-    if (prebuilt) {
+-      setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-      return prebuilt
+-    }
+-
+-    // Fallback: encrypt the prebuilt plaintext on the fly
+-    const gzBase64 = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql`)
+-    if (!gzBase64 || !masterB64) {
+-      return ''
+-    }
+-    const checksum = url.searchParams.get('v') || ''
+-    const envelopeB64 = await encryptGzBase64Envelope(gzBase64, masterB64, checksum, collection)
++    if (!prebuilt) {
++      throw createError({ statusCode: 404, statusMessage: 'Not Found' })
++    }
+     setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-    return envelopeB64
++    return prebuilt
+   }
+ 
+   // --- /__nuxt_content/:collection/sql_dump.txt --- (plaintext)
+   setHeader(event, 'Content-Type', 'text/plain')
+ 
+   if (encEnabled) {
+     // Hide plaintext in encrypted mode
+     throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+   }
+ 
+-  // Prefer prebuilt plaintext from Nitro storage
+   const plain = await useStorage().getItem<string>(`build:content:raw:dump.${collection}.sql`)
+-  if (plain) {
+-    setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
+-    return plain
+-  }
+-
+-  return ''
++  if (!plain) throw createError({ statusCode: 404, statusMessage: 'Not Found' })
++  setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
++  return plain
+ })
+diff --git a/src/utils/templates.ts b/src/utils/templates.ts
+index 8aa993f0..a7a3b9a4 100644
+--- a/src/utils/templates.ts
++++ b/src/utils/templates.ts
+@@ -10,7 +10,7 @@ import type { CollectionInfo, ResolvedCollection } from '../types/collection'
+ import type { Manifest } from '../types/manifest'
+ import type { GitInfo } from './git'
+ import { generateCollectionTableDefinition } from './collection'
+-import { encryptGzBase64Envelope } from '../runtime/internal/encryption'
++import { encryptGzBase64Envelope } from '../utils/build-encryption'
+ 
+ const compress = (text: string): Promise<string> => {
+   return new Promise((resolve, reject) =>
+diff --git a/src/utils/build-encryption.ts b/src/utils/build-encryption.ts
+new file mode 100644
+index 00000000..f1a3d3f2
+--- /dev/null
++++ b/src/utils/build-encryption.ts
+@@ -0,0 +1,93 @@
++// Build-time encryption utilities (Node context)
++// Produces base64(JSON envelope) from base64(gzip(JSON dump))
++import { subtle, getRandomValues } from 'uncrypto'
++
++const te = new TextEncoder()
++
++function b64ToBytes(b64: string): Uint8Array {
++  return Buffer.from(b64, 'base64')
++}
++function bytesToB64(arr: Uint8Array): string {
++  return Buffer.from(arr).toString('base64')
++}
++function toArrayBuffer(u8: Uint8Array): ArrayBuffer {
++  const out = new ArrayBuffer(u8.byteLength)
++  new Uint8Array(out).set(u8)
++  return out
++}
++
++async function deriveContentKeyRaw(
++  masterKeyB64: string,
++  checksum: string,
++  collection: string,
++): Promise<Uint8Array> {
++  const master = b64ToBytes(masterKeyB64)
++  const hkdfKey = await subtle.importKey(
++    'raw',
++    toArrayBuffer(master),
++    { name: 'HKDF' },
++    false,
++    ['deriveKey'],
++  )
++  const derived = await subtle.deriveKey(
++    { name: 'HKDF', hash: 'SHA-256', salt: te.encode(checksum || ''), info: te.encode(`content:${collection}`) },
++    hkdfKey,
++    { name: 'AES-GCM', length: 256 },
++    true,
++    ['encrypt'],
++  )
++  const raw = new Uint8Array(await subtle.exportKey('raw', derived))
++  return raw
++}
++
++export async function encryptGzBase64Envelope(
++  gzBase64: string,
++  masterKeyB64: string,
++  checksum: string,
++  collection: string,
++): Promise<string> {
++  const keyRaw = await deriveContentKeyRaw(masterKeyB64, checksum, collection)
++  const key = await subtle.importKey(
++    'raw',
++    toArrayBuffer(keyRaw),
++    { name: 'AES-GCM' },
++    false,
++    ['encrypt'],
++  )
++  const iv = getRandomValues(new Uint8Array(12))
++  const gzBytes = b64ToBytes(gzBase64)
++  const ct = new Uint8Array(
++    await subtle.encrypt({ name: 'AES-GCM', iv: toArrayBuffer(iv) }, key, toArrayBuffer(gzBytes)),
++  )
++
++  const envelope = {
++    v: 1,
++    alg: 'A256GCM',
++    kid: `v1:${collection}:${checksum}`,
++    iv: bytesToB64(iv),
++    ciphertext: bytesToB64(ct),
++  }
++  return Buffer.from(JSON.stringify(envelope), 'utf8').toString('base64')
++}
+diff --git a/src/runtime/internal/database.client.ts b/src/runtime/internal/database.client.ts
+index 82b21559..c8e1a3a7 100644
+--- a/src/runtime/internal/database.client.ts
++++ b/src/runtime/internal/database.client.ts
+@@ -1,15 +1,15 @@
+-import { useRuntimeConfig } from '#imports'
++import { useRuntimeConfig } from '#imports'
+ import type { Database } from '@sqlite.org/sqlite-wasm'
+ import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
+ import { refineContentFields } from './collection'
+ import { fetchDatabase, fetchDumpKey } from './api'
+ import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
+ import { checksums, tables } from '#content/manifest'
+ 
+ let db: Database
+ const loadedCollections: Record<string, string> = {}
+ const dbPromises: Record<string, Promise<Database>> = {}
+ 
+ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
+   async function loadAdapter(collection: T) {
+     if (!db) {
+@@ -87,7 +87,9 @@ async function loadCollectionDatabase<T>(collection: T) {
+   const dumpId = `collection_${collection}`
+   let checksumState = 'matched'
+   try {
+-    const dbChecksum = db
++    const dbChecksum = db
+       .exec({
+         sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`,
+         rowMode: 'object',
+@@ -119,59 +121,60 @@ async function loadCollectionDatabase<T>(collection: T) {
+       }
+     }
+ 
+-    const encEnabled = !!(
+-      useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } }
+-    )?.content?.encryptionEnabled
+-
+-    const dump = await (encEnabled
+-      ? (async () => {
+-          // Attempt decryption; on failure, clear only localStorage entries for this collection and retry once
+-          try {
+-            const { k } = await fetchDumpKey(undefined, String(collection))
+-            return await decryptAndDecompressSQLDump(compressedDump!, k)
+-          }
+-          catch (e) {
+-            console.error('Failed to decrypt encrypted dump (first attempt):', e)
+-
+-            // Minimal self-heal: wipe only this collection’s local cache
+-            try {
+-              window.localStorage.removeItem(`content_${checksumId}`)
+-              window.localStorage.removeItem(`content_${dumpId}`)
+-            }
+-            catch (purgeErr) {
+-              console.debug?.('[content] decrypt retry: localStorage cleanup failed ' + purgeErr)
+-            }
+-
+-            // Force-refetch a fresh dump + key, bypassing stale local cache
+-            try {
+-              compressedDump = await fetchDatabase(undefined, String(collection))
+-              if (!import.meta.dev) {
+-                try {
+-                  window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
+-                  window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
+-                }
+-                catch (error) {
+-                  console.error('Database integrity check failed while caching refreshed dump', error)
+-                }
+-              }
+-              const { k: k2 } = await fetchDumpKey(undefined, String(collection))
+-              return await decryptAndDecompressSQLDump(compressedDump!, k2)
+-            }
+-            catch (e2) {
+-              console.error('Failed to decrypt encrypted dump (after local purge & refetch):', e2)
+-              throw e2
+-            }
+-          }
+-        })()
+-      : decompressSQLDump(compressedDump!))
++    const encEnabled = !!((useRuntimeConfig().public as any)?.content?.encryptionEnabled)
++
++    let dump: string[]
++    if (!encEnabled) {
++      dump = await decompressSQLDump(compressedDump!)
++    } else {
++      // Self-heal on decrypt failure: clear only this collection, refetch, retry once
++      try {
++        const { k } = await fetchDumpKey(undefined, String(collection))
++        dump = await decryptAndDecompressSQLDump(compressedDump!, k)
++      } catch {
++        try {
++          localStorage.removeItem(`content_${checksumId}`)
++          localStorage.removeItem(`content_${dumpId}`)
++        } catch {}
++        const fresh = await fetchDatabase(undefined, String(collection))
++        if (!import.meta.dev) {
++          try {
++            localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
++            localStorage.setItem(`content_${dumpId}`, fresh)
++          } catch {}
++        }
++        const { k } = await fetchDumpKey(undefined, String(collection))
++        dump = await decryptAndDecompressSQLDump(fresh, k)
++      }
++    }
+ 
+-    await db.exec({
++    await db.exec({
+       sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}`,
+     })
+     if (checksumState === 'mismatch') {
+-      await db.exec({
++      await db.exec({
+         sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'`,
+       })
+     }
+ 
+     for (const command of dump) {
+diff --git a/src/module.ts b/src/module.ts
+index a43c4f64..f1f8a7a3 100644
+--- a/src/module.ts
++++ b/src/module.ts
+@@ -1,8 +1,7 @@
+ import { stat } from 'node:fs/promises'
+-import { randomBytes } from 'node:crypto'
+ import {
+   defineNuxtModule,
+   createResolver,
+@@ -145,22 +144,20 @@ export default defineNuxtModule<ModuleOptions>({
+     // Prerender database.sql routes for each collection to fetch dump
+     nuxt.options.routeRules ||= {}
+ 
+     // Prevent nuxtseo from indexing nuxt-content routes
+     // @ts-expect-error - routeRules uses string index globs which Nuxt supports at runtime but TypeScript cannot type
+     nuxt.options.routeRules!['/__nuxt_content/**'] = { robots: false }
+ 
+-    if (options.encryption?.enabled && !options.encryption.masterKey) {
+-      options.encryption.masterKey = randomBytes(32).toString('base64')
+-    }
+-    const encryptionEnabled = !!(options.encryption?.enabled && options.encryption.masterKey)
++    const encryptionEnabled = !!(options.encryption?.enabled && options.encryption.masterKey)
+ 
+     manifest.collections.forEach((collection) => {
+       if (collection.private) return
+-
+-      if (encryptionEnabled) {
++      if (encryptionEnabled) {
+         nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.enc`] = { prerender: true }
+-      }
+-      else {
++      } else {
+         nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
+       }
+     })
+@@ -166,13 +163,16 @@ export default defineNuxtModule<ModuleOptions>({
+     // Module Options
+     nuxt.options.runtimeConfig.public.content = {
+       wsUrl: '',
+       // Expose encryption status to client/runtime so fetchers know which endpoint to use.
+       encryptionEnabled,
+     } as never
+     nuxt.options.runtimeConfig.content = {
+       databaseVersion,
+       version,
+       database: options.database,
+       localDatabase: options._localDatabase!,
+       integrityCheck: true,
+-      encryption: {
++      encryption: {
+         enabled: encryptionEnabled,
+         masterKey: encryptionEnabled ? options.encryption!.masterKey : undefined,
+       },
+diff --git a/src/runtime/internal/database.server.ts b/src/runtime/internal/database.server.ts
+index af1dc082..6c2c8a54 100644
+--- a/src/runtime/internal/database.server.ts
++++ b/src/runtime/internal/database.server.ts
+@@ -1,15 +1,14 @@
+ import { isAbsolute } from 'pathe'
+ import type { H3Event } from 'h3'
+ import { readBody } from 'h3'
+ import { refineContentFields } from './collection'
+ import type { Connector } from '../types/connector'
+ import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+ import { tables, checksums, checksumsStructure } from '#content/manifest'
+ import adapter from '#content/adapter'
+ import localAdapter from '#content/local-adapter'
+-import {
+-  deriveContentKeyRaw,
+-  isEncryptedEnvelope,
+-  decryptEnvelopeToGzipBytes,
+-  bytesToB64,
+-} from './encryption'
++import { deriveContentKeyRaw, isEncryptedEnvelope, decryptEnvelopeToGzipBytes, bytesToB64 } from './encryption'
+@@ -98,7 +97,16 @@ async function _checkAndImportDatabaseIntegrity(
+-  const dump = await decompressSQLDump(gzBase64)
++  // If the dump is an encrypted envelope, decrypt it using server masterKey, else treat as gz base64
++  const raw = await loadDatabaseDump(event, collection).catch(() => '')
++  let gzBase64 = raw
++  if (isEncryptedEnvelope(raw)) {
++    const checksum = checksums[String(collection)] || ''
++    const masterKey = config?.encryption?.masterKey
++    if (!masterKey) throw new Error('Missing encryption masterKey')
++    const keyRaw = await deriveContentKeyRaw(masterKey, checksum, collection)
++    const gzBytes = await decryptEnvelopeToGzipBytes(raw, bytesToB64(keyRaw))
++    gzBase64 = bytesToB64(gzBytes)
++  }
++  const dump = await decompressSQLDump(gzBase64)
+diff --git a/src/runtime/internal/dump.ts b/src/runtime/internal/dump.ts
+index e304894e..e304894e 100644
+--- a/src/runtime/internal/dump.ts
++++ b/src/runtime/internal/dump.ts
+@@ -1,62 +1,62 @@
+ export async function decompressSQLDump(
+   base64Str: string,
+   compressionType: 'gzip' | 'deflate' = 'gzip',
+ ): Promise<string[]> {
+   // Browser/Workers fast path
+   if (typeof atob === 'function' && typeof (globalThis as unknown as { DecompressionStream?: unknown }).DecompressionStream !== 'undefined') {
+     const binaryData = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0))
+     const response = new Response(new Blob([binaryData]))
+     const decompressedStream = response.body?.pipeThrough(new DecompressionStream(compressionType))
+     const text = await new Response(decompressedStream).text()
+     return JSON.parse(text)
+   }
+ 
+   // Node fallback (no atob / DecompressionStream)
+   const { gunzipSync, inflateSync } = await import('node:zlib')
+   const buf = Buffer.from(base64Str, 'base64')
+   const out = compressionType === 'gzip' ? gunzipSync(buf) : inflateSync(buf)
+   return JSON.parse(out.toString('utf8'))
+ }
+ 
+ interface DumpEnvelope { v: number, alg: string, iv: string, ciphertext: string }
+ function isDumpEnvelope(o: unknown): o is DumpEnvelope {
+   return !!o && typeof o === 'object'
+     && typeof (o as Record<string, unknown>).v === 'number'
+     && typeof (o as Record<string, unknown>).alg === 'string'
+     && typeof (o as Record<string, unknown>).iv === 'string'
+     && typeof (o as Record<string, unknown>).ciphertext === 'string'
+ }
+ 
+ /**
+  * Decrypts an encrypted dump envelope (AES-256-GCM), then gunzips → JSON array.
+  * Accepts either base64(JSON) or raw JSON envelope (stringified).
+  */
+ export async function decryptAndDecompressSQLDump(
+   envelopeInput: string,
+   keyRawB64: string, // base64(32 bytes)
+ ): Promise<string[]> {
+   // Try base64(JSON) first; fall back to raw JSON string
+   let envelope: unknown
+   try {
+     const jsonBytes = Uint8Array.from(atob(envelopeInput), c => c.charCodeAt(0))
+     envelope = JSON.parse(new TextDecoder().decode(jsonBytes))
+   }
+   catch {
+     envelope = JSON.parse(envelopeInput)
+   }
+ 
+   if (!isDumpEnvelope(envelope) || envelope.v !== 1 || envelope.alg !== 'A256GCM') {
+     throw new Error('Unsupported dump envelope')
+   }
+ 
+   const iv = Uint8Array.from(atob(envelope.iv), c => c.charCodeAt(0))
+   const ciphertext = Uint8Array.from(atob(envelope.ciphertext), c => c.charCodeAt(0))
+   const keyBytes = Uint8Array.from(atob(keyRawB64), c => c.charCodeAt(0))
+   const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'AES-GCM' }, false, ['decrypt'])
+ 
+   const gzBytes = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, ciphertext))
+   const response = new Response(new Blob([gzBytes]))
+   const decompressedStream = response.body?.pipeThrough(new DecompressionStream('gzip'))
+   const text = await new Response(decompressedStream).text()
+   return JSON.parse(text)
+ }
