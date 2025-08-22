@@ -110,6 +110,7 @@ export async function fetchQuery<Item>(
 export async function fetchDumpKey(
   event: H3Event | undefined,
   collection: string,
+  kid?: string,
 ): Promise<{ kid: string, k: string }> {
   return await $fetch(`/__nuxt_content/${collection}/key`, {
     context: event ? { cloudflare: event.context.cloudflare } : {},
@@ -117,6 +118,9 @@ export async function fetchDumpKey(
       'content-type': 'application/json',
       ...(event?.node?.req?.headers?.cookie ? { cookie: event.node.req.headers.cookie } : {}),
     },
-    query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
+    // Prefer kid when available; fall back to legacy v=checksum for backward compatibility
+    query: kid
+      ? { kid, t: import.meta.dev ? Date.now() : undefined }
+      : { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
   })
 }

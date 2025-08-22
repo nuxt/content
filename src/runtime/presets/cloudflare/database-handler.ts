@@ -10,20 +10,33 @@ export default eventHandler(async (event) => {
   const encEnabled = !!runtime?.content?.encryption?.enabled
   const masterB64 = runtime?.content?.encryption?.masterKey
 
-  // --- /__nuxt_content/:collection/key ---
   if (url.pathname.endsWith('/key')) {
     if (!encEnabled) {
       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
     }
     // TODO: Add your AuthN/Z here; deny if not allowed.
-    const checksum = url.searchParams.get('v') || ''
+    const kidParam = url.searchParams.get('kid') || ''
+    const vParam = url.searchParams.get('v') || ''
     if (!masterB64) {
       throw createError({ statusCode: 500, statusMessage: 'Missing content.encryption.masterKey' })
     }
-    const k = await deriveContentKeyB64(masterB64, checksum, collection)
+
+    let derivedCollection = collection
+    let derivedChecksum = vParam
+
+    // Prefer kid if provided: format expected "v1:<collection>:<checksum>"
+    if (kidParam) {
+      const parts = kidParam.split(':')
+      if (parts.length >= 3) {
+        derivedCollection = parts[1] || derivedCollection
+        derivedChecksum = parts[2] || derivedChecksum
+      }
+    }
+
+    const k = await deriveContentKeyB64(masterB64, derivedChecksum, derivedCollection)
     setHeader(event, 'Content-Type', 'application/json')
     setHeader(event, 'Cache-Control', 'no-store')
-    return { kid: `v1:${collection}:${checksum}`, k }
+    return { kid: kidParam || `v1:${derivedCollection}:${derivedChecksum}`, k }
   }
 
   // --- /__nuxt_content/:collection/sql_dump.enc ---

@@ -18,14 +18,28 @@ export default eventHandler(async (event) => {
       throw createError({ statusCode: 404, statusMessage: 'Not Found' })
     }
     // TODO: AuthN/Z — implement in your app before returning a key
-    const checksum = url.searchParams.get('v') || ''
+    const kidParam = url.searchParams.get('kid') || ''
+    const vParam = url.searchParams.get('v') || ''
     if (!masterB64) {
       throw createError({ statusCode: 500, statusMessage: 'Missing content.encryption.masterKey' })
     }
-    const k = await deriveContentKeyB64(masterB64, checksum, collection)
+
+    let derivedCollection = collection
+    let derivedChecksum = vParam
+
+    // Prefer kid if provided: expected format "v1:<collection>:<checksum>"
+    if (kidParam) {
+      const parts = kidParam.split(':')
+      if (parts.length >= 3) {
+        derivedCollection = parts[1] || derivedCollection
+        derivedChecksum = parts[2] || derivedChecksum
+      }
+    }
+
+    const k = await deriveContentKeyB64(masterB64, derivedChecksum, derivedCollection)
     setHeader(event, 'Content-Type', 'application/json')
     setHeader(event, 'Cache-Control', 'no-store')
-    return { kid: `v1:${collection}:${checksum}`, k }
+    return { kid: kidParam || `v1:${derivedCollection}:${derivedChecksum}`, k }
   }
 
   // --- /__nuxt_content/:collection/sql_dump.enc ---
