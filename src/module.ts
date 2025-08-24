@@ -323,9 +323,6 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 body: content,
                 path: fullPath,
               })
-              if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
-              }
             }
 
             // Add manually provided components from the content
@@ -333,8 +330,29 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-            list.push([key, queries, hash])
+            // Special handling for CSV files
+            if (parsedContent.__metadata?.rows) {
+              const rows = parsedContent.__metadata?.rows as Array<Record<string, string>>
+              // Since csv files can contain multiple rows, we can't process it as a single ParsedContent
+              // As for id, priority: `id` field > first column > index
+              for (let i = 0; i < rows.length; i++) {
+                const rowid = rows[i].id || rows[i][Object.keys(rows[i])[0]] || String(i)
+                const rowContent = {
+                  id: parsedContent.id + '/' + rowid,
+                  ...rows[i],
+                }
+                db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(parsedContent), checksum)
+                const { queries, hash } = generateCollectionInsert(collection, rowContent)
+                list.push([key, queries, hash])
+              }
+            }
+            else {
+              if (parsedContent) {
+                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
+              }
+              const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+              list.push([key, queries, hash])
+            }
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
