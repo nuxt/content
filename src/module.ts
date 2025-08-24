@@ -332,7 +332,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
             // Special handling for CSV files
             if (parsedContent.extension === 'csv') {
-              const rows = parsedContent.body as Array<Record<string, string>>
+              const rows = (parsedContent.meta as { path: string, body: Array<Record<string, string>> })?.body
               if (rows && Array.isArray(rows)) {
                 // Since csv files can contain multiple rows, we can't process it as a single ParsedContent
                 // As for id, priority: `id` field > first column > index
@@ -346,7 +346,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                     id: parsedContent.id + '/' + rowid,
                     ...rows[i],
                   }
-                  db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(parsedContent), checksum)
+                  db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(rowContent), checksum)
                   const { queries, hash } = generateCollectionInsert(collection, rowContent)
                   list.push([key, queries, hash])
                 }
