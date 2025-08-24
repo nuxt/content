@@ -111,7 +111,7 @@ async function _getHighlightPlugin(key: string, options: HighlighterOptions) {
 export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) {
   const nuxtOptions = nuxt?.options as unknown as { content: ModuleOptions, mdc: MDCModuleOptions }
   const mdcOptions = nuxtOptions?.mdc || {}
-  const { pathMeta = {}, markdown = {}, transformers = [] } = nuxtOptions?.content?.build || {}
+  const { pathMeta = {}, markdown = {}, transformers = [], csv = {}, yaml = {} } = nuxtOptions?.content?.build || {}
 
   const rehypeHighlightPlugin = markdown.highlight !== false
     ? await getHighlightPluginInstance(defu(markdown.highlight as HighlighterOptions, mdcOptions.highlight, { compress: true }))
@@ -149,6 +149,8 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       },
       highlight: undefined,
     },
+    csv: csv,
+    yaml: yaml,
   }
 
   return async function parse(file: ContentFile) {
