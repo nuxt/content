@@ -55,7 +55,7 @@ export default defineTransformer({
 
     return {
       id: file.id,
-      __metadata: { rows: result },
+      body: result,
     }
   },
 })

@@ -331,19 +331,25 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             }
 
             // Special handling for CSV files
-            if (parsedContent.__metadata?.rows) {
-              const rows = parsedContent.__metadata?.rows as Array<Record<string, string>>
-              // Since csv files can contain multiple rows, we can't process it as a single ParsedContent
-              // As for id, priority: `id` field > first column > index
-              for (let i = 0; i < rows.length; i++) {
-                const rowid = rows[i].id || rows[i][Object.keys(rows[i])[0]] || String(i)
-                const rowContent = {
-                  id: parsedContent.id + '/' + rowid,
-                  ...rows[i],
+            if (parsedContent.extension === 'csv') {
+              const rows = parsedContent.body as Array<Record<string, string>>
+              if (rows && Array.isArray(rows)) {
+                // Since csv files can contain multiple rows, we can't process it as a single ParsedContent
+                // As for id, priority: `id` field > first column > index
+                for (let i = 0; i < rows.length; i++) {
+                  if (!rows[i]) {
+                    logger.warn(`"${keyInCollection}" row ${i} is undefined and will be ignored.`)
+                    continue
+                  }
+                  const rowid = rows[i]?.id || Object.values(rows[i] || {})?.at(0) || String(i)
+                  const rowContent = {
+                    id: parsedContent.id + '/' + rowid,
+                    ...rows[i],
+                  }
+                  db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(parsedContent), checksum)
+                  const { queries, hash } = generateCollectionInsert(collection, rowContent)
+                  list.push([key, queries, hash])
                 }
-                db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(parsedContent), checksum)
-                const { queries, hash } = generateCollectionInsert(collection, rowContent)
-                list.push([key, queries, hash])
               }
             }
             else {
