@@ -2,8 +2,8 @@ import { loadDatabaseAdapter } from './database.client'
 import { useRuntimeConfig, refreshNuxtData } from '#imports'
 
 const logger = {
-  log: (...args: unknown[]) => console.log('[Content]', ...args),
-  warn: (...args: unknown[]) => console.warn('[Content]', ...args),
+  log: (...args: unknown[]) => console.log('[Nuxt Content : Hot Content Reload]', ...args),
+  warn: (...args: unknown[]) => console.warn('[Nuxt Content : Hot Content Reload]', ...args),
 }
 
 let ws: WebSocket | undefined
