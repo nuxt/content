@@ -31,11 +31,11 @@ const value = computed(() => {
 
 const tags = ['TestA', 'TestB', 'TestC']
 const randomize = () => {
-  let tag = body.value.children[0].children[1].tag
-  while (tag === body.value.children[0].children[1].tag) {
+  let tag = body.value.children[0]?.children[1]?.tag
+  while (tag === body.value.children[0]?.children[1]?.tag) {
     tag = tags[Math.floor(Math.random() * tags.length)]
   }
-  body.value.children[0].children[1].tag = tag
-  body.value.children[0].children[1].children![0]!.value = `world (${tag})`
+  body.value.children[0]!.children[1]!.tag = tag
+  body.value.children[0]!.children[1]!.children![0]!.value = `world (${tag})`
 }
 </script>

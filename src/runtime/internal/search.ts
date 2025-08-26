@@ -1,10 +1,10 @@
-import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
-import { toHast } from 'minimark/hast'
+import type { MDCElement, MDCNode, MDCRoot } from '@nuxtjs/mdc'
 import type { MinimarkTree } from 'minimark'
-import { pick } from './utils'
+import { toHast } from 'minimark/hast'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '~/src/types'
+import { pick } from './utils'
 
-type Section = {
+export type Section = {
   // Path to the section
   id: string
   // Title of the section

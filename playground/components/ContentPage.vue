@@ -13,6 +13,7 @@ interface TocLink {
 interface ContentData {
   title?: string
   description?: string
+  stem?: string
   body?: {
     toc?: {
       links?: TocLink[]
@@ -21,8 +22,8 @@ interface ContentData {
 }
 
 interface Props {
-  data: ContentData | null
-  navigation?: ContentNavigationItem[] | null
+  data?: ContentData | null
+  navigation?: ContentNavigationItem[]
   surround?: ContentNavigationItem[] | null
 }
 

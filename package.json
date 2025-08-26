@@ -43,7 +43,7 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "nuxt typecheck && nuxt typecheck playground",
     "example": "run () { nuxt dev examples/$*; }; run",
     "docs": "nuxt dev -e docus docs",
     "docs:build": "nuxt-module-build build && nuxt build -e docus docs",
