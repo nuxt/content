@@ -1,5 +1,5 @@
 import type { PublicRuntimeConfig } from '@nuxt/content'
-import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest } from '#imports'
+import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest, queryCollection, queryCollectionItemSurroundings, queryCollectionNavigation, queryCollectionSearchSections } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const previewConfig: PublicRuntimeConfig['preview'] = useRuntimeConfig().public.preview || {}
@@ -27,6 +27,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     // Disable prerendering for preview
     const manifest = await getAppManifest()
     manifest.prerendered = []
+
+    nuxtApp.provide('content', {
+      queryCollection,
+      queryCollectionItemSurroundings,
+      queryCollectionNavigation,
+      queryCollectionSearchSections,
+      collections: await import('#content/preview').then(m => m.collections)
+    })
 
     nuxtApp.hook('app:mounted', async () => {
       await import('../internal/preview').then(({ mountPreviewUI, initIframeCommunication }) => {
