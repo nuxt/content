@@ -33,7 +33,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       queryCollectionItemSurroundings,
       queryCollectionNavigation,
       queryCollectionSearchSections,
-      collections: await import('#content/preview').then(m => m.collections)
+      collections: await import('#content/preview').then(m => m.collections),
     })
 
     nuxtApp.hook('app:mounted', async () => {
