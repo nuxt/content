@@ -19,7 +19,7 @@ export function queryCollection<T extends keyof Collections>(collection: T): Col
 export function queryCollection<T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]>
 export function queryCollection<T extends keyof Collections>(...args: [H3Event, T] | [T]): CollectionQueryBuilder<Collections[T]> {
   if (isEvent(args[0])) {
-    throw new Error("Unexpected H3Event. Use 'queryCollection(event, collection)' only in server-side context.")
+    throw new Error('Unexpected H3Event. Use \'queryCollection(event, collection)\' only in server-side context.')
   }
   const collection = args[0] as T
   const event = tryUseNuxtApp()?.ssrContext?.event
@@ -30,7 +30,7 @@ export function queryCollectionNavigation<T extends keyof PageCollections>(event
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]>
 export function queryCollectionNavigation<T extends keyof PageCollections>(...args: [H3Event, T, Array<keyof PageCollections[T]>?] | [T, Array<keyof PageCollections[T]>?]): ChainablePromise<T, ContentNavigationItem[]> {
   if (isEvent(args[0])) {
-    throw new Error("Unexpected H3Event. Use 'queryCollectionNavigation(event, collection, fields)' only in server-side context.")
+    throw new Error('Unexpected H3Event. Use \'queryCollectionNavigation(event, collection, fields)\' only in server-side context.')
   }
   const [collection, fields] = args as [T, Array<keyof PageCollections[T]>?]
   return chainablePromise(collection, qb => generateNavigationTree(qb, fields))
@@ -40,7 +40,7 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
 export function queryCollectionItemSurroundings<T extends keyof PageCollections>(collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]>
 export function queryCollectionItemSurroundings<T extends keyof PageCollections>(...args: [H3Event, T, string, SurroundOptions<keyof PageCollections[T]>?] | [T, string, SurroundOptions<keyof PageCollections[T]>?]): ChainablePromise<T, ContentNavigationItem[]> {
   if (isEvent(args[0])) {
-    throw new Error("Unexpected H3Event. Use 'queryCollectionItemSurroundings(event, collection, path, opts)' only in server-side context.")
+    throw new Error('Unexpected H3Event. Use \'queryCollectionItemSurroundings(event, collection, path, opts)\' only in server-side context.')
   }
   const [collection, path, opts] = args as [T, string, SurroundOptions<keyof PageCollections[T]>?]
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
@@ -50,7 +50,7 @@ export function queryCollectionSearchSections<T extends keyof Collections>(event
 export function queryCollectionSearchSections<T extends keyof Collections>(collection: T, opts?: { ignoredTags: string[] }): ChainablePromise<T, Section[]>
 export function queryCollectionSearchSections<T extends keyof Collections>(...args: [H3Event, T, { ignoredTags: string[] }?] | [T, { ignoredTags: string[] }?]): ChainablePromise<T, Section[]> {
   if (isEvent(args[0])) {
-    throw new Error("Unexpected H3Event. Use 'queryCollectionSearchSections(event, collection, opts)' only in server-side context.")
+    throw new Error('Unexpected H3Event. Use \'queryCollectionSearchSections(event, collection, opts)\' only in server-side context.')
   }
   const [collection, opts] = args as [T, { ignoredTags: string[] }?]
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
