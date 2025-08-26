@@ -1,4 +1,5 @@
 import type { PublicRuntimeConfig } from '@nuxt/content'
+// @ts-expect-error not exposed in queryCollection
 import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest, queryCollection, queryCollectionItemSurroundings, queryCollectionNavigation, queryCollectionSearchSections } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
