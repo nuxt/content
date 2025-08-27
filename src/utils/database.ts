@@ -46,7 +46,7 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
   }
 
   adapter = adapter || 'sqlite'
-  if (adapter === 'sqlite' && process.versions.bun) {
+  if (adapter === 'sqlite' && process.versions.bun && !opts.sqliteConnector) {
     return databaseConnectors.bunsqlite
   }
 
@@ -166,13 +166,14 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 }
 
 async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, resolver?: Resolver }) {
-  if (process.versions.bun) {
-    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
-  }
-
   // if node:sqlite is available, use it
-  if (opts.sqliteConnector === 'native' && isNodeSqliteAvailable()) {
-    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/node-sqlite') : 'db0/connectors/node-sqlite'
+  if (opts.sqliteConnector === 'native') {
+    if (isNodeSqliteAvailable()) {
+      return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/node-sqlite') : 'db0/connectors/node-sqlite'
+    }
+    if (process.versions.bun) {
+      return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
+    }
   }
 
   if (opts.sqliteConnector === 'sqlite3') {
