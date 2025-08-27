@@ -9,12 +9,8 @@ import type {
 } from '../types'
 
 declare module 'zod/v4' {
-  interface ZodTypeDef {
+  interface GlobalMeta {
     editor?: EditorOptions
-  }
-
-  interface ZodType {
-    editor(options: EditorOptions): this
   }
 }
 
@@ -24,41 +20,31 @@ export type ZodFieldType
     | 'ZodBoolean'
     | 'ZodDate'
     | 'ZodEnum'
-export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT';
+export type SqlFieldType = 'VARCHAR' | 'INT' | 'BOOLEAN' | 'DATE' | 'TEXT'
 
+// Loose helper type to silence any usage only at this augmentation point.
+// We intentionally keep it minimal to avoid leaking `any` elsewhere.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(zod.ZodType as any).prototype.editor = function (options: EditorOptions) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currentEditor = (this as any)._def?.editor || {}
+type ZodAny = any
 
-  const newDef = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ...(this as any)._def,
+;(zod.ZodType as unknown as { prototype: ZodAny }).prototype.editor = function (this: ZodAny, options: EditorOptions) {
+  const currentMeta = this.meta() || {}
+  const currentEditor = (currentMeta as { editor?: EditorOptions }).editor || {}
+
+  const newMeta = {
+    ...currentMeta,
     editor: { ...currentEditor, ...options },
   }
 
-  // Check if _def property is configurable before trying to redefine it
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const descriptor = Object.getOwnPropertyDescriptor(this as any, '_def')
-  if (descriptor && !descriptor.configurable) {
-    // If not configurable, directly modify the existing _def object
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Object.assign((this as any)._def, { editor: { ...currentEditor, ...options } })
-  }
-  else {
-    // Use Object.defineProperty to replace the _def property
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Object.defineProperty(this as any, '_def', {
-      value: newDef,
-      writable: true,
-      enumerable: false,
-      configurable: true,
-    })
-  }
-  return this
+  return this.meta(newMeta) as unknown as ZodType
 }
 
 export const z = zod
+
+export function getEditorOptions(schema: ZodType): EditorOptions | undefined {
+  const meta = schema.meta()
+  return meta ? (meta as { editor?: EditorOptions }).editor : undefined
+}
 
 // Function to get the underlying Zod type
 export function getUnderlyingType(zodType: ZodType): ZodType {
@@ -95,11 +81,6 @@ export function zodToStandardSchema(
       },
     })
 
-    const fixedRequired = fixRequiredArrayForNullableFields(
-      baseSchema.required || [],
-      baseSchema.properties || {},
-    )
-
     const draft07Schema: Draft07 = {
       $schema: 'http://json-schema.org/draft-07/schema#',
       $ref: `#/definitions/${name}`,
@@ -113,7 +94,7 @@ export function zodToStandardSchema(
               | Draft07DefinitionPropertyAnyOf
               | Draft07DefinitionPropertyAllOf
             >) || {},
-          required: fixedRequired,
+          required: (baseSchema.required as string[]) || [],
           additionalProperties:
             typeof baseSchema.additionalProperties === 'boolean'
               ? baseSchema.additionalProperties
@@ -143,29 +124,4 @@ export function zodToStandardSchema(
       },
     }
   }
-}
-
-function fixRequiredArrayForNullableFields(
-  required: string[],
-  properties: Record<string, unknown>,
-): string[] {
-  return required.filter((fieldName) => {
-    const property = properties[fieldName]
-
-    const isNullable
-      = property
-        && typeof property === 'object'
-        && property !== null
-        && 'anyOf' in property
-        && Array.isArray(property.anyOf)
-        && property.anyOf.some(
-          (item: unknown) =>
-            typeof item === 'object'
-            && item !== null
-            && 'type' in item
-            && item.type === 'null',
-        )
-
-    return !isNullable
-  })
 }
