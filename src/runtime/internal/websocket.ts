@@ -82,12 +82,6 @@ export function useContentWebSocket() {
     // WebSocket Base URL
     const wsURL = new URL(joinURL((useRuntimeConfig().public.content as { wsUrl: string }).wsUrl, 'ws'))
     wsURL.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    if (wsURL.hostname === 'localhost') {
-      // If the hostname is localhost, use the hostname of the current window
-      // This is useful for local development with a reverse proxy
-      // As alternative, you can use the `publicURL` option to set the public URL of the WebSocket server
-      wsURL.hostname = window.location.hostname
-    }
 
     logger.log(`WS connect to ${wsURL}`)
 
