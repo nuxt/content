@@ -39,7 +39,7 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
 export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
     nodesqlite: 'db0/connectors/node-sqlite',
-    bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
+    bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite'),
     postgres: 'db0/connectors/postgresql',
     libsql: 'db0/connectors/libsql/web',
     d1: 'db0/connectors/cloudflare-d1',
@@ -51,7 +51,7 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
   }
 
   if (adapter === 'sqlite') {
-    return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector })
+    return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector, resolver: opts.resolver })
   }
 
   return databaseConnectors[adapter]
@@ -165,14 +165,14 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
+async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, resolver?: Resolver }) {
   if (process.versions.bun) {
-    return 'db0/connectors/bun-sqlite'
+    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
   }
 
   // if node:sqlite is available, use it
   if (opts.sqliteConnector === 'native' && isNodeSqliteAvailable()) {
-    return 'db0/connectors/node-sqlite'
+    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/node-sqlite') : 'db0/connectors/node-sqlite'
   }
 
   if (opts.sqliteConnector === 'sqlite3') {
