@@ -36,7 +36,8 @@ export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, mani
       listener = await listen(() => 'Nuxt Content', websocketOptions)
 
       // Register ws url
-      ;(nitro.options.runtimeConfig.public.content as Record<string, unknown>).wsUrl = listener.url.replace('http', 'ws')
+      const publicConfig = nitro.options.runtimeConfig.public.content as Record<string, unknown>
+      publicConfig.wsUrl = (websocketOptions.publicURL || listener.url).replace('http', 'ws')
 
       listener.server.on('upgrade', websocket.serve)
     })

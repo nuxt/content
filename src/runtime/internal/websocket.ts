@@ -1,5 +1,6 @@
 import { loadDatabaseAdapter } from './database.client'
 import { useRuntimeConfig, refreshNuxtData } from '#imports'
+import { joinURL } from 'ufo'
 
 const logger = {
   log: (...args: unknown[]) => console.log('[Content]', ...args),
@@ -79,9 +80,8 @@ export function useContentWebSocket() {
     }
 
     // WebSocket Base URL
-    const wsURL = new URL(`${(useRuntimeConfig().public.content as { wsUrl: string }).wsUrl}ws`)
+    const wsURL = new URL(joinURL((useRuntimeConfig().public.content as { wsUrl: string }).wsUrl, 'ws'))
     wsURL.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    wsURL.hostname = window.location.hostname
 
     logger.log(`WS connect to ${wsURL}`)
 
