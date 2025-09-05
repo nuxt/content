@@ -67,11 +67,9 @@ export function isNodeSqliteAvailable() {
 
 export async function initiateValidatorsContext() {
   if (await isPackageInstalled('valibot') && await isPackageInstalled('@valibot/to-json-schema')) {
-    console.log('valibot')
     nuxtContentContext().set('valibot', await import('./schema/valibot'))
   }
   if (await isPackageInstalled('zod')) {
-    console.log('zod')
     nuxtContentContext().set('zod3', await import('./schema/zod3'))
     nuxtContentContext().set('zod4', await import('./schema/zod4'))
   }

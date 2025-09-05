@@ -143,6 +143,9 @@ importers:
       ufo:
         specifier: ^1.6.1
         version: 1.6.1
+      unctx:
+        specifier: ^2.4.1
+        version: 2.4.1
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -10179,7 +10182,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.12':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.29
 
   '@jridgewell/remapping@2.3.5':
@@ -10201,7 +10204,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.29':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.9':
     dependencies:
@@ -10591,7 +10594,7 @@ snapshots:
       h3: 1.15.4
       jiti: 2.5.1
       magic-regexp: 0.10.0
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       node-fetch-native: 1.6.7
       ohash: 2.0.11
       pathe: 2.0.3
@@ -10599,7 +10602,7 @@ snapshots:
       tinyglobby: 0.2.14
       ufo: 1.6.1
       unifont: 0.4.1
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unstorage: 1.16.1(@netlify/blobs@9.1.2)(db0@0.3.2(@electric-sql/pglite@0.3.7)(@libsql/client@0.15.10)(better-sqlite3@12.2.0)(sqlite3@5.1.7))(ioredis@5.7.0)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -11129,14 +11132,14 @@ snapshots:
       estree-walker: 3.0.3
       h3: 1.15.4
       knitwork: 1.2.0
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.7.4
       nuxt-define: 1.0.0
       oxc-parser: 0.72.3
       pathe: 2.0.3
       typescript: 5.9.2
       ufo: 1.6.1
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unplugin-vue-router: 0.12.0(vue-router@4.5.1(vue@3.5.21(typescript@5.9.2)))(vue@3.5.21(typescript@5.9.2))
       unstorage: 1.16.1(@netlify/blobs@9.1.2)(db0@0.3.2(@electric-sql/pglite@0.3.7)(@libsql/client@0.15.10)(better-sqlite3@12.2.0)(sqlite3@5.1.7))(ioredis@5.7.0)
       vue-i18n: 11.1.11(vue@3.5.21(typescript@5.9.2))
@@ -11815,7 +11818,7 @@ snapshots:
       estree-walker: 2.0.2
       fdir: 6.4.6(picomatch@4.0.3)
       is-reference: 1.2.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       picomatch: 4.0.3
     optionalDependencies:
       rollup: 4.46.2
@@ -11847,7 +11850,7 @@ snapshots:
   '@rollup/plugin-replace@6.0.2(rollup@4.46.2)':
     dependencies:
       '@rollup/pluginutils': 5.2.0(rollup@4.46.2)
-      magic-string: 0.30.17
+      magic-string: 0.30.18
     optionalDependencies:
       rollup: 4.46.2
 
@@ -12402,7 +12405,7 @@ snapshots:
   '@unocss/rule-utils@66.4.1':
     dependencies:
       '@unocss/core': 66.4.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     optional: true
@@ -12518,7 +12521,7 @@ snapshots:
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
-      magic-string: 0.30.17
+      magic-string: 0.30.18
     optionalDependencies:
       vite: 7.0.6(@types/node@24.3.0)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0)
 
@@ -12535,7 +12538,7 @@ snapshots:
   '@vitest/snapshot@3.2.4':
     dependencies:
       '@vitest/pretty-format': 3.2.4
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       pathe: 2.0.3
 
   '@vitest/spy@3.2.4':
@@ -12674,7 +12677,7 @@ snapshots:
       '@vue/compiler-ssr': 3.5.18
       '@vue/shared': 3.5.18
       estree-walker: 2.0.2
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       postcss: 8.5.6
       source-map-js: 1.2.1
 
@@ -14600,7 +14603,7 @@ snapshots:
 
   fix-dts-default-cjs-exports@1.0.1:
     dependencies:
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.7.4
       rollup: 4.46.2
 
@@ -14621,10 +14624,10 @@ snapshots:
       '@capsizecss/unpack': 2.4.0(encoding@0.1.13)
       css-tree: 3.1.0
       magic-regexp: 0.10.0
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       pathe: 2.0.3
       ufo: 1.6.1
-      unplugin: 2.3.5
+      unplugin: 2.3.10
     transitivePeerDependencies:
       - encoding
 
@@ -15648,7 +15651,7 @@ snapshots:
 
   magic-string-ast@0.7.1:
     dependencies:
-      magic-string: 0.30.17
+      magic-string: 0.30.18
 
   magic-string-ast@1.0.0:
     dependencies:
@@ -16510,7 +16513,7 @@ snapshots:
       defu: 6.1.4
       execa: 9.6.0
       image-size: 2.0.2
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mocked-exports: 0.1.1
       nuxt-site-config: 3.2.2(magicast@0.3.5)(vue@3.5.21(typescript@5.9.2))
       nypm: 0.6.1
@@ -16526,7 +16529,7 @@ snapshots:
       std-env: 3.9.0
       strip-literal: 3.0.0
       ufo: 1.6.1
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unstorage: 1.17.0(@netlify/blobs@9.1.2)(db0@0.3.2(@electric-sql/pglite@0.3.7)(@libsql/client@0.15.10)(better-sqlite3@12.2.0)(sqlite3@5.1.7))(ioredis@5.7.0)
       unwasm: 0.3.9
       yoga-wasm-web: 0.3.3
@@ -17726,7 +17729,7 @@ snapshots:
 
   rollup-plugin-dts@6.2.1(rollup@4.46.2)(typescript@5.9.2):
     dependencies:
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       rollup: 4.46.2
       typescript: 5.9.2
     optionalDependencies:
@@ -18446,8 +18449,8 @@ snapshots:
     dependencies:
       acorn: 8.15.0
       estree-walker: 3.0.3
-      magic-string: 0.30.17
-      unplugin: 2.3.5
+      magic-string: 0.30.18
+      unplugin: 2.3.10
 
   undici-types@6.21.0: {}
 
@@ -18506,7 +18509,7 @@ snapshots:
       escape-string-regexp: 5.0.0
       estree-walker: 3.0.3
       local-pkg: 1.1.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.8.0
       pathe: 2.0.3
       picomatch: 4.0.3
@@ -18514,7 +18517,7 @@ snapshots:
       scule: 1.3.0
       strip-literal: 3.0.0
       tinyglobby: 0.2.14
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unplugin-utils: 0.2.4
 
   unimport@5.2.0:
@@ -18604,10 +18607,10 @@ snapshots:
   unplugin-auto-import@19.3.0(@nuxt/kit@4.1.0(magicast@0.3.5))(@vueuse/core@13.9.0(vue@3.5.21(typescript@5.9.2))):
     dependencies:
       local-pkg: 1.1.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       picomatch: 4.0.3
       unimport: 4.2.0
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unplugin-utils: 0.2.4
     optionalDependencies:
       '@nuxt/kit': 4.1.0(magicast@0.3.5)
@@ -18623,10 +18626,10 @@ snapshots:
       chokidar: 3.6.0
       debug: 4.4.1
       local-pkg: 1.1.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.8.0
       tinyglobby: 0.2.14
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unplugin-utils: 0.2.4
       vue: 3.5.21(typescript@5.9.2)
     optionalDependencies:
@@ -18644,12 +18647,12 @@ snapshots:
       fast-glob: 3.3.3
       json5: 2.2.3
       local-pkg: 1.1.1
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       micromatch: 4.0.8
       mlly: 1.8.0
       pathe: 2.0.3
       scule: 1.3.0
-      unplugin: 2.3.5
+      unplugin: 2.3.10
       unplugin-utils: 0.2.4
       yaml: 2.8.0
     optionalDependencies:
@@ -18793,7 +18796,7 @@ snapshots:
   unwasm@0.3.11:
     dependencies:
       knitwork: 1.2.0
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.7.4
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -18802,7 +18805,7 @@ snapshots:
   unwasm@0.3.9:
     dependencies:
       knitwork: 1.2.0
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       mlly: 1.8.0
       pathe: 1.1.2
       pkg-types: 1.3.1
