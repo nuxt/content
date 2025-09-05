@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const csvs = `
 a,b,c
@@ -65,7 +66,9 @@ Stephen,Tyler,"7452 Terrace ""At the Plaza"" road",SomeTown,SD, 91234
 
 `.trim().split('\n---\n')
 
-describe('Parser (.csv)', () => {
+describe('Parser (.csv)', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'data',
     source: 'content/**',

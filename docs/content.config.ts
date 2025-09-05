@@ -1,4 +1,4 @@
-import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
 
 const createPricingPlanSchema = () => z.object({
   title: z.string(),
@@ -46,8 +46,9 @@ export default defineContentConfig({
         onboarding: z.object({
           title: z.string(),
           image: z.object({
+            // TODO: update editor usage to new syntax. This is kept to maintain backwards compatibility.
             dark: z.string().editor({ input: 'media' }),
-            light: z.string().editor({ input: 'media' }),
+            light: property(z.string()).editor({ input: 'media' }),
           }),
         }),
         plans: z.object({
@@ -121,19 +122,19 @@ export default defineContentConfig({
       source: 'templates/*.md',
       schema: z.object({
         draft: z.boolean().default(false),
-        slug: z.string().editor({ hidden: true }),
+        slug: property(z.string()).editor({ hidden: true }),
         subtitle: z.string(),
         baseDir: z.string(),
         branch: z.string(),
         category: z.enum(['docs', 'blog', 'minimal', 'saas']),
         demo: z.string(),
         licenseType: z.enum(['nuxt-ui-pro', 'free']),
-        mainScreen: z.string().editor({ input: 'media' }),
+        mainScreen: property(z.string()).editor({ input: 'media' }),
         name: z.string(),
         owner: z.string(),
-        image1: z.string().editor({ input: 'media' }),
-        image2: z.string().editor({ input: 'media' }),
-        image3: z.string().editor({ input: 'media' }),
+        image1: property(z.string()).editor({ input: 'media' }),
+        image2: property(z.string()).editor({ input: 'media' }),
+        image3: property(z.string()).editor({ input: 'media' }),
       }),
     }),
     posts: defineCollection({
@@ -155,7 +156,7 @@ export default defineContentConfig({
         category: z.enum(['studio', 'content']).optional(),
         date: z.date(),
         image: z.object({
-          src: z.string().editor({ input: 'media' }),
+          src: property(z.string()).editor({ input: 'media' }),
           alt: z.string(),
         }),
       }),

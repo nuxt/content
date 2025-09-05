@@ -34,6 +34,7 @@ import { setupPreview, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 import type { ParsedContentFile } from './types'
+import { initiateValidatorsContext } from './utils/dependencies'
 
 // Export public utils
 export * from './utils'
@@ -91,6 +92,9 @@ export default defineNuxtModule<ModuleOptions>({
       components: [],
       collections: [],
     }
+
+    // Detect installed validators and them into content context
+    await initiateValidatorsContext()
 
     const { collections } = await loadContentConfig(nuxt)
     manifest.collections = collections

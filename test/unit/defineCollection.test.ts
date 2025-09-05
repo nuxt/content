@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { defineCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const metaFields = ['id', 'stem', 'meta', 'extension']
 const pageFields = ['path', 'title', 'description', 'seo', 'body', 'navigation']
@@ -10,6 +11,10 @@ function expectProperties(shape: Record<string, unknown>, fields: string[]) {
 }
 
 describe('defineCollection', () => {
+  beforeAll(async () => {
+    await initiateValidatorsContext()
+  })
+
   test('Page without custom schema', () => {
     const collection = defineCollection({
       type: 'page',

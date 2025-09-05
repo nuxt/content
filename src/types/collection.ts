@@ -1,6 +1,6 @@
-import type { ZodObject, ZodRawShape } from 'zod'
 import type { Draft07 } from '../types/schema'
 import type { MarkdownRoot } from './content'
+import type { ContentStandardSchemaV1 } from './schema'
 
 export interface PageCollections {}
 export interface Collections {}
@@ -38,19 +38,19 @@ export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource
   _custom: true
 }
 
-export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
+export interface PageCollection<T> {
   type: 'page'
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
-  schema?: ZodObject<T>
+  schema?: ContentStandardSchemaV1<T>
 }
 
-export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
+export interface DataCollection<T> {
   type: 'data'
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
-  schema: ZodObject<T>
+  schema: ContentStandardSchemaV1<T>
 }
 
-export type Collection<T extends ZodRawShape = ZodRawShape> = PageCollection<T> | DataCollection<T>
+export type Collection<T> = PageCollection<T> | DataCollection<T>
 
 export interface DefinedCollection {
   type: CollectionType

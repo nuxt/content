@@ -7,6 +7,7 @@ import { loadContentConfig } from '../src/utils/config'
 import { decompressSQLDump } from '../src/runtime/internal/dump'
 import { getTableName } from '../src/utils/collection'
 import { getLocalDatabase } from '../src/utils/database'
+import { initiateValidatorsContext } from '../src/utils/dependencies'
 import type { LocalDevelopmentDatabase } from '../src/module'
 
 const resolver = createResolver(import.meta.url)
@@ -18,6 +19,8 @@ async function cleanup() {
 }
 
 describe('basic', async () => {
+  await initiateValidatorsContext()
+
   await cleanup()
   afterAll(async () => {
     await cleanup()

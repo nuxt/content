@@ -5,6 +5,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const nuxtMock = {
   options: {
@@ -31,7 +32,9 @@ const nuxtMock = {
   },
 } as unknown as Nuxt
 
-describe('Parser (.md)', () => {
+describe('Parser (.md)', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'page',
     source: 'content/**',

@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const json = `{
   "key": "value"
@@ -13,7 +14,9 @@ const jsonArray = JSON.stringify([
   'item 2',
 ])
 
-describe('Parser (json)', () => {
+describe('Parser (json)', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'data',
     source: 'content/**',
