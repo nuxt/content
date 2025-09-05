@@ -1,21 +1,23 @@
-import type { ZodRawShape } from 'zod'
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema } from './schema'
-import { z, zodToStandardSchema } from './zod'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor } from './schema'
 import { logger } from './dev'
+import nuxtContentContext from './context'
 
 export function getTableName(name: string) {
   return `_content_${name}`
 }
 
-export function defineCollection<T extends ZodRawShape>(collection: Collection<T>): DefinedCollection {
+export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
   let standardSchema: Draft07 = emptyStandardSchema
-  if (collection.schema instanceof z.ZodObject) {
-    standardSchema = zodToStandardSchema(collection.schema, '__SCHEMA__')
+
+  // Resolve schema context and convert schema to JSON Schema
+  if (collection.schema) {
+    const schemaCtx = nuxtContentContext().get(detectSchemaVendor(collection.schema))
+    standardSchema = schemaCtx.toJSONSchema(collection.schema!, '__SCHEMA__')
   }
 
   let extendedSchema: Draft07 = standardSchema
@@ -66,17 +68,11 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
-  const infoSchema = zodToStandardSchema(z.object({
-    id: z.string(),
-    version: z.string(),
-    structureVersion: z.string(),
-    ready: z.boolean(),
-  }), 'info')
   collections.info = {
     type: 'data',
     source: undefined,
-    schema: infoSchema,
-    extendedSchema: infoSchema,
+    schema: infoStandardSchema,
+    extendedSchema: infoStandardSchema,
     fields: {},
   }
 

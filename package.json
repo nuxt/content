@@ -59,10 +59,11 @@
     "verify": "npm run dev:prepare && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "@nuxt/kit": "^4.0.3",
+    "@nuxt/kit": "^4.1.0",
     "@nuxtjs/mdc": "^0.17.3",
-    "@shikijs/langs": "^3.12.1",
-    "@sqlite.org/sqlite-wasm": "3.50.3-build1",
+    "@shikijs/langs": "^3.12.2",
+    "@sqlite.org/sqlite-wasm": "3.50.4-build1",
+    "@standard-schema/spec": "^1.0.0",
     "@webcontainer/env": "^1.1.1",
     "c12": "^3.2.0",
     "chokidar": "^4.0.3",
@@ -92,7 +93,7 @@
     "pkg-types": "^2.3.0",
     "remark-mdc": "^3.6.0",
     "scule": "^1.3.0",
-    "shiki": "^3.12.1",
+    "shiki": "^3.12.2",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
@@ -109,7 +110,11 @@
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
     "better-sqlite3": "^12.2.0",
-    "sqlite3": "*"
+    "sqlite3": "*",
+    "zod": "*",
+    "zod-to-json-schema": "*",
+    "valibot": "^1.0.0",
+    "@valibot/to-json-schema": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -123,16 +128,28 @@
     },
     "better-sqlite3": {
       "optional": true
+    },
+    "zod": {
+      "optional": true
+    },
+    "zod-to-json-schema": {
+      "optional": true
+    },
+    "valibot": {
+      "optional": true
+    },
+    "@valibot/to-json-schema": {
+      "optional": true
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250831.0",
+    "@cloudflare/workers-types": "^4.20250904.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.3",
     "@nuxt/eslint-config": "^1.9.0",
-    "@nuxt/kit": "^4.0.3",
+    "@nuxt/kit": "^4.1.0",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.0.3",
+    "@nuxt/schema": "^4.1.0",
     "@nuxt/test-utils": "^3.19.2",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/better-sqlite3": "^7.6.13",
@@ -142,17 +159,19 @@
     "@types/node": "^24.3.0",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
+    "@valibot/to-json-schema": "^1.3.0",
     "csvtojson": "^2.0.10",
     "eslint": "^9.34.0",
     "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
-    "nuxt": "^4.0.3",
+    "nuxt": "^4.1.0",
     "release-it": "^19.0.4",
     "typescript": "5.9.2",
+    "valibot": "^1.1.0",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.6",
-    "wrangler": "^4.33.1"
+    "wrangler": "^4.33.2"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
