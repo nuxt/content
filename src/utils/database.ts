@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
-import type { Resolver } from '@nuxt/kit'
+import { tryUseNuxt, type Resolver } from '@nuxt/kit'
 import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
@@ -245,7 +245,9 @@ async function ensurePackageInstalled(pkg: string) {
       process.exit(1)
     }
 
-    await addDependency(pkg)
+    await addDependency(pkg, {
+      cwd: tryUseNuxt()?.options.rootDir,
+    })
   }
 }
 
