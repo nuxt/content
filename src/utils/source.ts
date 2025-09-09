@@ -58,8 +58,14 @@ export function defineGitSource(source: GitCollectionSource): ResolvedCollection
       // check branch & remote owner/name to use in the `cwd` folder name?
       resolvedSource.cwd = join(rootDir, '.data', 'content', `${formattedProvider}-${name}-clone`)
 
-      const url = repository.url!
-      await shallowCloneRepository(url, resolvedSource.cwd, source.branch)
+      let revision = 'HEAD'
+      if (source.gitRef) {
+        if (source.gitRef.branch) revision = `refs/heads/${source.gitRef.branch}`
+        if (source.gitRef.tag) revision = `refs/tags/${source.gitRef.tag}`
+      }
+
+      const url = source.repository!
+      await shallowCloneRepository(url, resolvedSource.cwd, revision)
     }
   }
 

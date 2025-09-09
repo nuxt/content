@@ -7,8 +7,6 @@ export interface Collections {}
 
 export type CollectionType = 'page' | 'data'
 
-export type RefType = 'branch' | 'tag'
-
 export type CollectionSource = {
   include: string
   prefix?: string
@@ -42,19 +40,21 @@ export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource
 }
 
 export interface GitCollectionSource extends CollectionSource {
-  branch?: string
-  tag?: string
+  gitRef?: {
+    branch?: string
+    tag?: string
+  }
 }
 
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'page'
-  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
+  source?: string | CollectionSource | CollectionSource[] | GitCollectionSource | GitCollectionSource[] | ResolvedCustomCollectionSource
   schema?: ZodObject<T>
 }
 
 export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'data'
-  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
+  source?: string | CollectionSource | CollectionSource[] | GitCollectionSource | GitCollectionSource[] | ResolvedCustomCollectionSource
   schema: ZodObject<T>
 }
 

@@ -1,5 +1,5 @@
 import { createWriteStream } from 'node:fs'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, rmdir, writeFile } from 'node:fs/promises'
 import { pipeline } from 'node:stream'
 import { promisify } from 'node:util'
 import { join } from 'pathe'
@@ -65,30 +65,33 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
   }
 }
 
-export async function shallowCloneRepository(url: string, cwd: string, branch?: string) {
+export async function shallowCloneRepository(url: string, cwd: string, revision: string) {
   const cacheFile = join(cwd, '.content.cache.json')
 
   const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
   if (cache) {
     // Directory exists, skip download if the hashes match
-    const commitHash = retrieveGitHash(url, branch)
-    if (commitHash === cache.commitHash) {
+    const commitHash = await retrieveGitHash(url, revision)
+    if (commitHash === cache.hash) {
       await writeFile(cacheFile, JSON.stringify({
         ...cache,
         updatedAt: new Date().toISOString(),
       }, null, 2))
       return
     }
+    else {
+      await rmdir(cwd)
+    }
   }
 
   await mkdir(cwd, { recursive: true })
 
   try {
-    if (!branch) {
+    if (!revision) {
       await simpleGit().clone(url, cwd, ['--depth=1'])
     }
     else {
-      await simpleGit().clone(url, cwd, ['--depth=1', '--single-branch', `--branch=${branch}`])
+      await simpleGit().clone(url, cwd, ['--depth=1', '--single-branch', `--revision=${revision}`])
     }
 
     const hash = await simpleGit().cwd(cwd).revparse(['HEAD'])
@@ -105,14 +108,15 @@ export async function shallowCloneRepository(url: string, cwd: string, branch?: 
   }
 }
 
-export async function retrieveGitHash(url: string, ref?: string) {
-  const git = simpleGit()
+export async function retrieveGitHash(url: string, revision?: string) {
+  const git = simpleGit({ timeout: { block: 4000 } })
+
+  // https://stackoverflow.com/a/468397
   const commitHashRegex = /\b([a-f0-9]{40})\b/
 
-  const branchRef = ref ?? 'HEAD'
+  const branchRef = revision ?? 'HEAD'
   const refList = await git.listRemote([url, branchRef])
   const matches = refList.match(commitHashRegex)
-
   if (matches) return matches[0]
 
   return null
