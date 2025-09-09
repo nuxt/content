@@ -122,6 +122,9 @@ importers:
       shiki:
         specifier: ^3.12.1
         version: 3.12.1
+      simple-git:
+        specifier: ^3.28.0
+        version: 3.28.0
       slugify:
         specifier: ^1.6.6
         version: 1.6.6

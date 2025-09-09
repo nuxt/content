@@ -78,6 +78,7 @@ const collections = {
       exclude: [
         '**/_dir.yml',
       ],
+      cloneRepository: true,
     },
   }),
   nuxt: defineCollection({
@@ -89,6 +90,9 @@ const collections = {
       exclude: [
         '**/_dir.yml',
       ],
+      gitRef: {
+        tag: 'v4.1.0',
+      },
     },
   }),
   vue: defineCollection({

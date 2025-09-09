@@ -17,6 +17,7 @@ export type CollectionSource = {
     username: string
     password: string
   }
+  cloneRepository?: boolean
   cwd?: string
 }
 
@@ -38,15 +39,22 @@ export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource
   _custom: true
 }
 
+export interface GitCollectionSource extends CollectionSource {
+  gitRef?: {
+    branch?: string
+    tag?: string
+  }
+}
+
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'page'
-  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
+  source?: string | CollectionSource | CollectionSource[] | GitCollectionSource | GitCollectionSource[] | ResolvedCustomCollectionSource
   schema?: ZodObject<T>
 }
 
 export interface DataCollection<T extends ZodRawShape = ZodRawShape> {
   type: 'data'
-  source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
+  source?: string | CollectionSource | CollectionSource[] | GitCollectionSource | GitCollectionSource[] | ResolvedCustomCollectionSource
   schema: ZodObject<T>
 }
 
