@@ -3,7 +3,7 @@ import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
-import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
+import { defineLocalSource, defineGitHubSource, defineBitbucketSource, defineGitSource } from './source'
 import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema } from './schema'
 import { z, zodToStandardSchema } from './zod'
 import { logger } from './dev'
@@ -102,6 +102,10 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
   return sources.map((source) => {
     if ((source as ResolvedCollectionSource)._resolved) {
       return source as ResolvedCollectionSource
+    }
+
+    if (source.cloneRepository) {
+      return defineGitSource(source)
     }
 
     if (source.repository) {

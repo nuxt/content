@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
-import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
-import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
+import type { CollectionSource, GitCollectionSource, ResolvedCollectionSource } from '../types/collection'
+import { downloadRepository, getLocalGitInfo, parseBitBucketUrl, parseGitHubUrl, shallowCloneRepository } from './git'
 import { logger } from './dev'
 
 export function getExcludedSourcePaths(source: CollectionSource) {
@@ -45,12 +45,34 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
   return resolvedSource
 }
 
-export function defineGitHubSource(source: CollectionSource): ResolvedCollectionSource {
+export function defineGitSource(source: GitCollectionSource): ResolvedCollectionSource {
+  const resolvedSource = defineLocalSource(source)
+
+  resolvedSource.prepare = async ({ rootDir }) => {
+    const repository = source?.repository && await getLocalGitInfo(source.repository!)
+
+    // Only registers if the `cloneRepository` option is true
+    if (repository && source.cloneRepository) {
+      const { name, source: provider } = repository
+      const formattedProvider = provider.split('.')[0]
+      // check branch & remote owner/name to use in the `cwd` folder name?
+      resolvedSource.cwd = join(rootDir, '.data', 'content', `${formattedProvider}-${name}-clone`)
+
+      const url = repository.url!
+      await shallowCloneRepository(url, resolvedSource.cwd, source.branch)
+    }
+  }
+
+  return resolvedSource
+}
+
+export function defineGitHubSource(source: GitCollectionSource): ResolvedCollectionSource {
   const resolvedSource = defineLocalSource(source)
 
   resolvedSource.prepare = async ({ rootDir }) => {
     const repository = source?.repository && parseGitHubUrl(source.repository!)
-    if (repository) {
+    // Only download if `cloneRepository` is set to false / undefined.
+    if (repository && !source.cloneRepository) {
       const { org, repo, branch } = repository
       resolvedSource.cwd = join(rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
 
@@ -71,14 +93,15 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
 }
 
 export function defineBitbucketSource(
-  source: CollectionSource,
+  source: GitCollectionSource,
 ): ResolvedCollectionSource {
   const resolvedSource = defineLocalSource(source)
 
   resolvedSource.prepare = async ({ rootDir }) => {
     const repository
       = source?.repository && parseBitBucketUrl(source.repository!)
-    if (repository) {
+      // Only download if `cloneRepository` is set to false / undefined.
+    if (repository && !source.cloneRepository) {
       const { org, repo, branch } = repository
       resolvedSource.cwd = join(
         rootDir,

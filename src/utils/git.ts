@@ -9,6 +9,8 @@ import gitUrlParse from 'git-url-parse'
 import simpleGit from 'simple-git'
 
 export interface GitInfo {
+  // Repository source (i.e. github.com, gitlab.org, etc.)
+  source: string
   // Repository name
   name: string
   // Repository owner/organization
@@ -82,7 +84,13 @@ export async function shallowCloneRepository(url: string, cwd: string, branch?: 
   await mkdir(cwd, { recursive: true })
 
   try {
-    await simpleGit().clone(url, cwd, ['--depth=1'])
+    if (!branch) {
+      await simpleGit().clone(url, cwd, ['--depth=1'])
+    }
+    else {
+      await simpleGit().clone(url, cwd, ['--depth=1', '--single-branch', `--branch=${branch}`])
+    }
+
     const hash = await simpleGit().cwd(cwd).revparse(['HEAD'])
 
     await writeFile(cacheFile, JSON.stringify({
@@ -177,6 +185,7 @@ export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefi
   return {
     name,
     owner,
+    source,
     url,
   }
 }
@@ -222,6 +231,7 @@ export function getGitEnv(): GitInfo {
     name: envInfo.name,
     owner: envInfo.owner,
     url: envInfo.url,
+    source: envInfo.provider,
   }
 }
 

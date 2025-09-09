@@ -78,6 +78,7 @@ const collections = {
       exclude: [
         '**/_dir.yml',
       ],
+      cloneRepository: true,
     },
   }),
   nuxt: defineCollection({

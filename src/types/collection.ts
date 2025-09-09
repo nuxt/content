@@ -7,6 +7,8 @@ export interface Collections {}
 
 export type CollectionType = 'page' | 'data'
 
+export type RefType = 'branch' | 'tag'
+
 export type CollectionSource = {
   include: string
   prefix?: string
@@ -17,6 +19,7 @@ export type CollectionSource = {
     username: string
     password: string
   }
+  cloneRepository?: boolean
   cwd?: string
 }
 
@@ -36,6 +39,11 @@ export interface CustomCollectionSource {
 
 export interface ResolvedCustomCollectionSource extends ResolvedCollectionSource {
   _custom: true
+}
+
+export interface GitCollectionSource extends CollectionSource {
+  branch?: string
+  tag?: string
 }
 
 export interface PageCollection<T extends ZodRawShape = ZodRawShape> {
