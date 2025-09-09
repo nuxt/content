@@ -61,7 +61,7 @@
   "dependencies": {
     "@nuxt/kit": "^4.0.3",
     "@nuxtjs/mdc": "^0.17.3",
-    "@shikijs/langs": "^3.12.1",
+    "@shikijs/langs": "^3.12.2",
     "@sqlite.org/sqlite-wasm": "3.50.3-build1",
     "@webcontainer/env": "^1.1.1",
     "c12": "^3.2.0",
@@ -92,11 +92,11 @@
     "pkg-types": "^2.3.0",
     "remark-mdc": "^3.6.0",
     "scule": "^1.3.0",
-    "shiki": "^3.12.1",
+    "shiki": "^3.12.2",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
-    "tinyglobby": "^0.2.14",
+    "tinyglobby": "^0.2.15",
     "ufo": "^1.6.1",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
@@ -126,7 +126,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250831.0",
+    "@cloudflare/workers-types": "^4.20250909.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.3",
     "@nuxt/eslint-config": "^1.9.0",
@@ -139,11 +139,11 @@
     "@types/bun": "^1.2.21",
     "@types/micromatch": "^4.0.9",
     "@types/minimatch": "^6.0.0",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.3.1",
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
     "csvtojson": "^2.0.10",
-    "eslint": "^9.34.0",
+    "eslint": "^9.35.0",
     "happy-dom": "^18.0.1",
     "mdclint": "^0.0.3",
     "micromark-util-types": "^2.0.2",
@@ -152,7 +152,7 @@
     "typescript": "5.9.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.6",
-    "wrangler": "^4.33.1"
+    "wrangler": "^4.34.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
