@@ -6,6 +6,7 @@ import { join } from 'pathe'
 import { extract } from 'tar'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
+import simpleGit from 'simple-git'
 
 export interface GitInfo {
   // Repository name
@@ -60,6 +61,53 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
   finally {
     await rm(tarFile, { force: true })
   }
+}
+
+export async function shallowCloneRepository(url: string, cwd: string, branch?: string) {
+  const cacheFile = join(cwd, '.content.cache.json')
+
+  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
+  if (cache) {
+    // Directory exists, skip download if the hashes match
+    const commitHash = retrieveGitHash(url, branch)
+    if (commitHash === cache.commitHash) {
+      await writeFile(cacheFile, JSON.stringify({
+        ...cache,
+        updatedAt: new Date().toISOString(),
+      }, null, 2))
+      return
+    }
+  }
+
+  await mkdir(cwd, { recursive: true })
+
+  try {
+    await simpleGit().clone(url, cwd, ['--depth=1'])
+    const hash = await simpleGit().cwd(cwd).revparse(['HEAD'])
+
+    await writeFile(cacheFile, JSON.stringify({
+      url: url,
+      hash: hash,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }, null, 2))
+  }
+  finally {
+    await rm(`${cwd}/.git`, { force: true, recursive: true })
+  }
+}
+
+export async function retrieveGitHash(url: string, ref?: string) {
+  const git = simpleGit()
+  const commitHashRegex = /\b([a-f0-9]{40})\b/
+
+  const branchRef = ref ?? 'HEAD'
+  const refList = await git.listRemote([url, branchRef])
+  const matches = refList.match(commitHashRegex)
+
+  if (matches) return matches[0]
+
+  return null
 }
 
 export function parseGitHubUrl(url: string) {

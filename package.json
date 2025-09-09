@@ -93,6 +93,7 @@
     "remark-mdc": "^3.6.0",
     "scule": "^1.3.0",
     "shiki": "^3.12.1",
+    "simple-git": "^3.28.0",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "tar": "^7.4.3",
