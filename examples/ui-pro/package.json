@@ -11,6 +11,6 @@
   "dependencies": {
     "@nuxt/content": "latest",
     "@nuxt/ui-pro": "^3.3.3",
-    "nuxt": "^4.1.0"
+    "nuxt": "^4.1.1"
   }
 }
