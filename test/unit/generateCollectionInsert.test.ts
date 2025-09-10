@@ -1,8 +1,13 @@
-import { describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionInsert, defineCollection, resolveCollection, getTableName, SLICE_SIZE, MAX_SQL_QUERY_SIZE } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 describe('generateCollectionInsert', () => {
+  beforeAll(async () => {
+    await initiateValidatorsContext()
+  })
+
   test('Respect Schema\'s default values', () => {
     const collection = resolveCollection('content', defineCollection({
       type: 'data',

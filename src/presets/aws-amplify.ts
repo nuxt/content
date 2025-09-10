@@ -12,7 +12,7 @@ export default definePreset({
     // Disable prerendering to avoid fetching assets on server side
     Object.keys(nuxt.options.routeRules || {}).forEach((route) => {
       if (route.startsWith('/__nuxt_content/') && route.endsWith('/sql_dump.txt')) {
-        nuxt.options.routeRules![route].prerender = false
+        nuxt.options.routeRules![route]!.prerender = false
       }
     })
 

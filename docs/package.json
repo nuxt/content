@@ -1,17 +1,17 @@
 {
   "name": "docus-starter",
   "scripts": {
-    "dev": "docus dev",
-    "build": "docus build"
+    "dev": "nuxt dev -e docus",
+    "build": "nuxt build -e docus"
   },
   "dependencies": {
     "@nuxt/content": "link:..",
     "@nuxthub/core": "0.9.0",
-    "@nuxtjs/plausible": "^1.2.0",
-    "@vueuse/nuxt": "^13.5.0",
+    "@nuxtjs/plausible": "^2.0.1",
+    "@vueuse/nuxt": "^13.9.0",
     "better-sqlite3": "^12.2.0",
-    "docus": "3.0.5",
+    "docus": "4.1.3",
     "minisearch": "^7.1.2",
-    "nuxt": "^3.17.6"
+    "nuxt": "^4.1.1"
   }
 }

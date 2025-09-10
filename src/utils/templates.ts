@@ -199,7 +199,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
       const schemaWithCollectionName = {
         ...collection.extendedSchema,
         definitions: {
-          [collection.name]: collection.extendedSchema.definitions['__SCHEMA__'],
+          [collection.name]: collection.extendedSchema.definitions['__SCHEMA__']!,
         },
       }
       acc[collection.name] = {

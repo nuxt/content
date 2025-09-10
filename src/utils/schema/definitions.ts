@@ -1,20 +1,38 @@
-import * as z from 'zod'
-import { ContentFileExtension } from '../types/content'
-import type { Draft07, Draft07Definition, Draft07DefinitionProperty } from '../types'
+import type { Draft07, Draft07Definition, Draft07DefinitionProperty } from '../../types'
 import { resolveModule, useNuxt } from '@nuxt/kit'
 import { getComponentMeta } from 'nuxt-component-meta/parser'
 import { propsToJsonSchema } from 'nuxt-component-meta/utils'
 
-export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
-  return Object.values(obj) as [(typeof obj)[keyof T]]
+export const infoStandardSchema: Draft07 = {
+  $ref: '#/definitions/info',
+  definitions: {
+    info: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+        },
+        version: {
+          type: 'string',
+        },
+        structureVersion: {
+          type: 'string',
+        },
+        ready: {
+          type: 'boolean',
+        },
+      },
+      required: [
+        'id',
+        'version',
+        'structureVersion',
+        'ready',
+      ],
+      additionalProperties: false,
+    },
+  },
+  $schema: 'http://json-schema.org/draft-07/schema#',
 }
-
-export const metaSchema = z.object({
-  id: z.string(),
-  stem: z.string(),
-  extension: z.enum(getEnumValues(ContentFileExtension)),
-  meta: z.record(z.string(), z.any()),
-})
 
 export const emptyStandardSchema: Draft07 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -68,31 +86,6 @@ export const metaStandardSchema: Draft07 = {
     },
   },
 }
-export const pageSchema = z.object({
-  path: z.string(),
-  title: z.string(),
-  description: z.string(),
-  seo: z.intersection(
-    z.object({
-      title: z.string().optional(),
-      description: z.string().optional(),
-    }),
-    z.record(z.string(), z.any()),
-  ).optional().default({}),
-  body: z.object({
-    type: z.string(),
-    children: z.any(),
-    toc: z.any(),
-  }),
-  navigation: z.union([
-    z.boolean(),
-    z.object({
-      title: z.string(),
-      description: z.string(),
-      icon: z.string(),
-    }),
-  ]).optional().default(true),
-})
 
 export const pageStandardSchema: Draft07 = {
   $schema: 'http://json-schema.org/draft-07/schema#',

@@ -10,7 +10,7 @@ const propertyTypes = {
 }
 
 export function getOrderedSchemaKeys(schema: Draft07) {
-  const shape = Object.values(schema.definitions)[0].properties
+  const shape = Object.values(schema.definitions)[0]?.properties || {}
   const keys = new Set([
     shape.id ? 'id' : undefined,
     shape.title ? 'title' : undefined,
@@ -47,8 +47,8 @@ function getPropertyType(property: Draft07DefinitionProperty | Draft07Definition
     const nullIndex = anyOf.findIndex(t => t.type === 'null')
     if (anyOf.length === 2 && nullIndex !== -1) {
       type = nullIndex === 0
-        ? getPropertyType(anyOf[1])
-        : getPropertyType(anyOf[0])
+        ? getPropertyType(anyOf[1]!)
+        : getPropertyType(anyOf[0]!)
     }
   }
 
@@ -63,7 +63,7 @@ function getPropertyType(property: Draft07DefinitionProperty | Draft07Definition
 
 export function describeProperty(schema: Draft07, property: string) {
   const def = Object.values(schema.definitions)[0]
-  const shape = def.properties
+  const shape = def?.properties || {}
   if (!shape[property]) {
     throw new Error(`Property ${property} not found in schema`)
   }
@@ -93,7 +93,7 @@ export function describeProperty(schema: Draft07, property: string) {
   if ('default' in shape[property]) {
     result.default = shape[property].default
   }
-  else if (!def.required.includes(property)) {
+  else if (!def?.required.includes(property)) {
     result.nullable = true
   }
 
