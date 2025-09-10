@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { join } from 'pathe'
+import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
@@ -25,7 +25,7 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
     prefix: withoutTrailingSlash(withLeadingSlash(fixed)),
     prepare: async ({ rootDir }) => {
       resolvedSource.cwd = source.cwd
-        ? String(source.cwd).replace(/^~~\//, rootDir)
+        ? String(normalize(source.cwd)).replace(/^~~\//, rootDir)
         : join(rootDir, 'content')
     },
     getKeys: async () => {
