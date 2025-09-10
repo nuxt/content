@@ -144,7 +144,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250909.0",
+    "@cloudflare/workers-types": "^4.20250910.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^2.6.3",
     "@nuxt/eslint-config": "^1.9.0",
