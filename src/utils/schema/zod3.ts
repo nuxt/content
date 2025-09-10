@@ -26,14 +26,7 @@ declare module 'zod' {
   return this
 }
 
-export const z = {
-  ...zod,
-  component(component: string) {
-    return zod.object({
-      _inherit: zod.string().default(component),
-    })
-  },
-}
+export const z = zod
 
 export function toJSONSchema(_schema: unknown, name: string): Draft07 {
   const schema = _schema as zod.ZodSchema

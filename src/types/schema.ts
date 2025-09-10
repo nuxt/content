@@ -38,7 +38,7 @@ export interface Draft07DefinitionPropertyAllOf {
 export interface ContentConfig {
   editor?: EditorOptions
   // markdown?: boolean
-  // inherit?: string
+  inherit?: string
 }
 
 export interface EditorOptions {

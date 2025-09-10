@@ -1,5 +1,7 @@
-import type { Draft07, EditorOptions, ContentConfig, ContentStandardSchemaV1 } from '../../types'
-
+import type { Draft07, EditorOptions, ContentConfig, ContentStandardSchemaV1, Draft07Definition, Draft07DefinitionProperty } from '../../types'
+import { resolveModule, useNuxt } from '@nuxt/kit'
+import { getComponentMeta } from 'nuxt-component-meta/parser'
+import { propsToJsonSchema } from 'nuxt-component-meta/utils'
 export * from './definitions'
 
 type Property<T> = T & {
@@ -47,12 +49,12 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
         //     return receiver
         //   }
         // }
-        // if (prop === 'inherit') {
-        //   return (componentPath: string) => {
-        //     $content.inherit = componentPath
-        //     return receiver
-        //   }
-        // }
+        if (prop === 'inherit') {
+          return (componentPath: string) => {
+            $content.inherit = componentPath
+            return receiver
+          }
+        }
 
         const value = Reflect.get(_target, prop, receiver)
 
@@ -105,4 +107,36 @@ export function detectSchemaVendor(schema: ContentStandardSchemaV1) {
   }
 
   return 'unknown'
+}
+
+export function replaceComponentSchemas<T = Draft07Definition | Draft07DefinitionProperty>(property: T): T {
+  if ((property as Draft07DefinitionProperty).type !== 'object') {
+    return property
+  }
+  // If the property has a `$content.inherit` property, replace it with the component's props schema
+  const $content = (property as Draft07DefinitionProperty).$content as ContentConfig
+
+  if ($content?.inherit) {
+    const nuxt = useNuxt()
+    let path = String($content?.inherit)
+    try {
+      path = resolveModule(path)
+    }
+    catch {
+      // Ignore error
+    }
+
+    const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir })
+    return propsToJsonSchema(meta.props) as T
+  }
+
+  // Look for _inherit properties in nested objects
+  if ((property as Draft07Definition).properties) {
+    Object.entries((property as Draft07Definition).properties).forEach(([key, value]) => {
+      (property as Draft07Definition).properties![key] = replaceComponentSchemas(value as Draft07DefinitionProperty) as Draft07DefinitionProperty
+    })
+  }
+  
+
+  return property as T
 }
