@@ -1,6 +1,7 @@
 import { addDependency } from 'nypm'
 import { logger } from './dev'
 import nuxtContentContext from './context'
+import { tryUseNuxt } from '@nuxt/kit'
 
 export async function isPackageInstalled(packageName: string) {
   try {
@@ -27,7 +28,9 @@ export async function ensurePackageInstalled(pkg: string) {
       process.exit(1)
     }
 
-    await addDependency(pkg)
+    await addDependency(pkg, {
+      cwd: tryUseNuxt()?.options.rootDir,
+    })
   }
 }
 
