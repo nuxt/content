@@ -131,7 +131,7 @@ export function replaceComponentSchemas<T = Draft07Definition | Draft07Definitio
     return propsToJsonSchema(meta.props) as T
   }
 
-  // Look for _inherit properties in nested objects
+  // Look for `$content.inherit` properties in nested objects
   if ((property as Draft07Definition).properties) {
     Object.entries((property as Draft07Definition).properties).forEach(([key, value]) => {
       (property as Draft07Definition).properties![key] = replaceComponentSchemas(value as Draft07DefinitionProperty) as Draft07DefinitionProperty
