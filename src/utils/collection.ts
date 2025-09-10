@@ -3,7 +3,7 @@ import type { Collection, ResolvedCollection, CollectionSource, DefinedCollectio
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor } from './schema'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 
@@ -19,6 +19,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     const schemaCtx = nuxtContentContext().get(detectSchemaVendor(collection.schema))
     standardSchema = schemaCtx.toJSONSchema(collection.schema!, '__SCHEMA__')
   }
+  standardSchema.definitions.__SCHEMA__ = replaceComponentSchemas(standardSchema.definitions.__SCHEMA__)!
 
   let extendedSchema: Draft07 = standardSchema
   if (collection.type === 'page') {
