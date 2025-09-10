@@ -2,6 +2,7 @@ import type { Draft07, EditorOptions, ContentConfig, ContentStandardSchemaV1, Dr
 import { resolveModule, useNuxt } from '@nuxt/kit'
 import { getComponentMeta } from 'nuxt-component-meta/parser'
 import { propsToJsonSchema } from 'nuxt-component-meta/utils'
+
 export * from './definitions'
 
 type Property<T> = T & {
@@ -136,7 +137,6 @@ export function replaceComponentSchemas<T = Draft07Definition | Draft07Definitio
       (property as Draft07Definition).properties![key] = replaceComponentSchemas(value as Draft07DefinitionProperty) as Draft07DefinitionProperty
     })
   }
-  
 
   return property as T
 }
