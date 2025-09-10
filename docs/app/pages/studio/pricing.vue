@@ -148,8 +148,7 @@ const columns: TableColumn<Feature>[] = [
     >
       <UColorModeImage
         class="size-full max-w-5xl mx-auto"
-        :dark="page.onboarding.image.dark"
-        :light="page.onboarding.image.light"
+        v-bind="page.onboarding.image"
         alt="Onboarding steps when creating a project on Nuxt Studio"
       />
     </UPageSection>

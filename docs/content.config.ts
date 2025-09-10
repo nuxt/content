@@ -1,21 +1,5 @@
 import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
 
-const createPricingPlanSchema = () => z.object({
-  title: z.string(),
-  description: z.string(),
-  price: z.string(),
-  cycle: z.string().optional(),
-  features: z.array(z.string()),
-  badge: z.string().optional(),
-  hightlight: z.boolean().optional(),
-  button: z.object({
-    label: z.string(),
-    color: z.enum(['error', 'primary', 'neutral', 'secondary', 'success', 'info', 'warning']),
-    to: z.string(),
-    target: z.string().optional(),
-  }),
-})
-
 const createPricingFeatureSchema = () => z.object({
   title: z.string(),
   plans: z.array(z.enum(['solo', 'team', 'unlimited'])).optional(),
@@ -46,15 +30,14 @@ export default defineContentConfig({
         onboarding: z.object({
           title: z.string(),
           image: z.object({
-            // TODO: update editor usage to new syntax. This is kept to maintain backwards compatibility.
-            dark: z.string().editor({ input: 'media' }),
+            dark: property(z.string()).editor({ input: 'media' }),
             light: property(z.string()).editor({ input: 'media' }),
           }),
         }),
         plans: z.object({
-          solo: createPricingPlanSchema(),
-          team: createPricingPlanSchema(),
-          unlimited: createPricingPlanSchema(),
+          solo: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          team: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          unlimited: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
         }),
         features: z.object({
           title: z.string(),

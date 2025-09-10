@@ -60,12 +60,7 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
         const value = Reflect.get(_target, prop, receiver)
 
         if (typeof value === 'function') {
-          return (...args: unknown[]) => {
-            const result = value.apply(_target, args)
-            // If method is chainable and returns a new schema, re-attach $content and re-wrap
-            attachContent(result)
-            return createProxy(result)
-          }
+          return (...args: unknown[]) => value.apply(_target, args)
         }
 
         return value
