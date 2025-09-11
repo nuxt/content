@@ -120,7 +120,7 @@ export function replaceComponentSchemas<T = Draft07Definition | Draft07Definitio
     const nuxt = useNuxt()
     let path = String($content?.inherit)
     try {
-      path = resolveModule(path)
+      path = resolveModule(path, { paths: [nuxt.options.rootDir] })
     }
     catch {
       // Ignore error

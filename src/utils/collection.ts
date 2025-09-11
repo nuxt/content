@@ -251,11 +251,11 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
     // Handle default values
     if ('default' in property) {
       let defaultValue = typeof property.default === 'string'
-        ? `'${property.default}'`
+        ? wrapWithSingleQuote(property.default)
         : property.default
 
       if (!(defaultValue instanceof Date) && typeof defaultValue === 'object') {
-        defaultValue = `'${JSON.stringify(defaultValue)}'`
+        defaultValue = wrapWithSingleQuote(JSON.stringify(defaultValue))
       }
       constraints.push(`DEFAULT ${defaultValue}`)
     }
@@ -273,4 +273,14 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
   }
 
   return definition
+}
+
+function wrapWithSingleQuote(value: string) {
+  if (value.startsWith('`') && value.endsWith('`')) {
+    value = value.slice(1, -1)
+  }
+  if (value.startsWith('\'') && value.endsWith('\'')) {
+    return value
+  }
+  return `'${value}'`
 }
