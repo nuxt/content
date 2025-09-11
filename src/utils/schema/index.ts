@@ -126,7 +126,7 @@ export function replaceComponentSchemas<T = Draft07Definition | Draft07Definitio
       // Ignore error
     }
 
-    const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir })
+    const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir, cache: true })
     return propsToJsonSchema(meta.props) as T
   }
 
