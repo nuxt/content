@@ -53,6 +53,13 @@ export default defineTransformer({
     })
     const { result } = await stream.process(file.body)
 
+    if (Array.isArray(result) && result.length === 1) {
+      return {
+        id: file.id,
+        ...result[0],
+      }
+    }
+
     return {
       id: file.id,
       body: result,
