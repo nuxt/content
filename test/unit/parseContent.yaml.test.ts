@@ -3,8 +3,11 @@ import { z } from 'zod'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
-describe('Parser (.yml)', () => {
+describe('Parser (.yml)', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'data',
     source: 'content/**',

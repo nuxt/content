@@ -7,6 +7,7 @@ import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import type { MarkdownRoot } from '../../src/types/content'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const nuxtMock = {
   options: {
@@ -37,7 +38,9 @@ const nuxtMock = {
   },
 } as unknown as Nuxt
 
-describe('Highlighter', () => {
+describe('Highlighter', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'page',
     source: 'content/**',

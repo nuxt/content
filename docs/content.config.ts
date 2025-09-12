@@ -1,20 +1,4 @@
-import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-
-const createPricingPlanSchema = () => z.object({
-  title: z.string(),
-  description: z.string(),
-  price: z.string(),
-  cycle: z.string().optional(),
-  features: z.array(z.string()),
-  badge: z.string().optional(),
-  hightlight: z.boolean().optional(),
-  button: z.object({
-    label: z.string(),
-    color: z.enum(['error', 'primary', 'neutral', 'secondary', 'success', 'info', 'warning']),
-    to: z.string(),
-    target: z.string().optional(),
-  }),
-})
+import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
 
 const createPricingFeatureSchema = () => z.object({
   title: z.string(),
@@ -46,14 +30,14 @@ export default defineContentConfig({
         onboarding: z.object({
           title: z.string(),
           image: z.object({
-            dark: z.string().editor({ input: 'media' }),
-            light: z.string().editor({ input: 'media' }),
+            dark: property(z.string()).editor({ input: 'media' }),
+            light: property(z.string()).editor({ input: 'media' }),
           }),
         }),
         plans: z.object({
-          solo: createPricingPlanSchema(),
-          team: createPricingPlanSchema(),
-          unlimited: createPricingPlanSchema(),
+          solo: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          team: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          unlimited: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
         }),
         features: z.object({
           title: z.string(),
@@ -121,19 +105,19 @@ export default defineContentConfig({
       source: 'templates/*.md',
       schema: z.object({
         draft: z.boolean().default(false),
-        slug: z.string().editor({ hidden: true }),
+        slug: property(z.string()).editor({ hidden: true }),
         subtitle: z.string(),
         baseDir: z.string(),
         branch: z.string(),
         category: z.enum(['docs', 'blog', 'minimal', 'saas']),
         demo: z.string(),
         licenseType: z.enum(['nuxt-ui-pro', 'free']),
-        mainScreen: z.string().editor({ input: 'media' }),
+        mainScreen: property(z.string()).editor({ input: 'media' }),
         name: z.string(),
         owner: z.string(),
-        image1: z.string().editor({ input: 'media' }),
-        image2: z.string().editor({ input: 'media' }),
-        image3: z.string().editor({ input: 'media' }),
+        image1: property(z.string()).editor({ input: 'media' }),
+        image2: property(z.string()).editor({ input: 'media' }),
+        image3: property(z.string()).editor({ input: 'media' }),
       }),
     }),
     posts: defineCollection({
@@ -155,7 +139,7 @@ export default defineContentConfig({
         category: z.enum(['studio', 'content']).optional(),
         date: z.date(),
         image: z.object({
-          src: z.string().editor({ input: 'media' }),
+          src: property(z.string()).editor({ input: 'media' }),
           alt: z.string(),
         }),
       }),

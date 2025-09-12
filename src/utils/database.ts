@@ -1,14 +1,13 @@
 import { mkdir } from 'node:fs/promises'
 import type { Connector } from 'db0'
 import type { Resolver } from '@nuxt/kit'
-import { addDependency } from 'nypm'
 import cloudflareD1Connector from 'db0/connectors/cloudflare-d1'
 import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions, SQLiteConnector } from '../types/module'
-import { logger } from './dev'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
+import { isNodeSqliteAvailable, ensurePackageInstalled } from './dependencies'
 
 /**
  * Database version is used to identify schema changes
@@ -39,7 +38,7 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
 export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
     nodesqlite: 'db0/connectors/node-sqlite',
-    bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bunsqlite'),
+    bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite'),
     postgres: 'db0/connectors/postgresql',
     libsql: 'db0/connectors/libsql/web',
     d1: 'db0/connectors/cloudflare-d1',
@@ -51,7 +50,7 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
   }
 
   if (adapter === 'sqlite') {
-    return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector })
+    return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector, resolver: opts.resolver })
   }
 
   return databaseConnectors[adapter]
@@ -165,14 +164,14 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 }
 
-async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }) {
+async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, resolver?: Resolver }) {
   if (process.versions.bun) {
-    return 'db0/connectors/bun-sqlite'
+    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
   }
 
   // if node:sqlite is available, use it
   if (opts.sqliteConnector === 'native' && isNodeSqliteAvailable()) {
-    return 'db0/connectors/node-sqlite'
+    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/node-sqlite') : 'db0/connectors/node-sqlite'
   }
 
   if (opts.sqliteConnector === 'sqlite3') {
@@ -194,67 +193,4 @@ async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector }
   await ensurePackageInstalled('better-sqlite3')
 
   return 'db0/connectors/better-sqlite3'
-}
-
-function isNodeSqliteAvailable() {
-  try {
-    const module = globalThis.process?.getBuiltinModule?.('node:sqlite')
-
-    if (module) {
-      // When using the SQLite Node.js prints warnings about the experimental feature
-      // This is workaround to surpass the SQLite warning
-      // Inspired by Yarn https://github.com/yarnpkg/berry/blob/182046546379f3b4e111c374946b32d92be5d933/packages/yarnpkg-pnp/sources/loader/applyPatch.ts#L307-L328
-      const originalEmit = process.emit
-      // @ts-expect-error - TS complains about the return type of originalEmit.apply
-      process.emit = function (...args) {
-        const name = args[0]
-        const data = args[1] as { name: string, message: string }
-        if (
-          name === `warning`
-          && typeof data === `object`
-          && data.name === `ExperimentalWarning`
-          && data.message.includes(`SQLite is an experimental feature`)
-        ) {
-          return false
-        }
-        return originalEmit.apply(process, args as unknown as Parameters<typeof process.emit>)
-      }
-
-      return true
-    }
-
-    return false
-  }
-  catch {
-    return false
-  }
-}
-
-async function ensurePackageInstalled(pkg: string) {
-  if (!await isPackageInstalled(pkg)) {
-    logger.error(`Nuxt Content requires \`${pkg}\` module to operate.`)
-
-    const confirm = await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
-      type: 'confirm',
-      name: 'confirm',
-      initial: true,
-    })
-
-    if (!confirm) {
-      logger.error(`Nuxt Content requires \`${pkg}\` module to operate. Please install \`${pkg}\` package manually and try again. \`npm install ${pkg}\``)
-      process.exit(1)
-    }
-
-    await addDependency(pkg)
-  }
-}
-
-async function isPackageInstalled(packageName: string) {
-  try {
-    await import(packageName)
-    return true
-  }
-  catch {
-    return false
-  }
 }
