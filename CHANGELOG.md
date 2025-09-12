@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.7.0](https://github.com/nuxt/content/compare/v3.6.3...v3.7.0) (2025-09-12)
+
+### Features
+
+* adopt standard schema spec and support different validators ([#3524](https://github.com/nuxt/content/issues/3524)) ([46a1004](https://github.com/nuxt/content/commit/46a1004c6eadae00c1c42f6f335b7dd5ac664b33))
+* inherit component prop types in content collection ([#3451](https://github.com/nuxt/content/issues/3451)) ([a620a2c](https://github.com/nuxt/content/commit/a620a2c877fb79e8d8193f4146c0156dee366116))
+
+### Bug Fixes
+
+* `ProseCode` preview syntax highlighting ([#3491](https://github.com/nuxt/content/issues/3491)) ([4a725bd](https://github.com/nuxt/content/commit/4a725bd97d42939a00c9a3a9bd8d3a7ed1b73468))
+* add dependency at Nuxt root dir ([#3525](https://github.com/nuxt/content/issues/3525)) ([71f2989](https://github.com/nuxt/content/commit/71f298942c9ca9dcbfe9129801ba76f1b198fab3))
+* block experimental sqlite warning on node ([5ac31da](https://github.com/nuxt/content/commit/5ac31da07ad73ecd4f9a56e516505cd9c6f88735))
+* deprecate `nitro` export in favor of `server` ([ec97064](https://github.com/nuxt/content/commit/ec97064fa3d75b8fe22b6f1923292fafd76a2d5b))
+* do not register `close` hook if websocket is disabled ([#3474](https://github.com/nuxt/content/issues/3474)) ([9edcc8f](https://github.com/nuxt/content/commit/9edcc8f9331fd428a35e4419d4e13115dc6da9af))
+* ignore .DS_Store files in all subdirectories ([c7a9af3](https://github.com/nuxt/content/commit/c7a9af3faed7a7dfb7303e666d650e6534cee317))
+* ignore OSX meta file `.DS_Store` ([fe5d7f9](https://github.com/nuxt/content/commit/fe5d7f913faa22a85c39f0e8bcd3f8e900e83324))
+* improve websocket and watcher cleanup handling ([#3478](https://github.com/nuxt/content/issues/3478)) ([8041807](https://github.com/nuxt/content/commit/8041807e81cbf9456ab92575a595f558ce85e316))
+* **inherit:** cache component meta ([e9658de](https://github.com/nuxt/content/commit/e9658de3b72a41347f2b7a5480a6f18117532364))
+* **inherit:** issue with property definition in arrays ([873b768](https://github.com/nuxt/content/commit/873b768741839ded833b2c5630cc6d62ea4e2951))
+* **inherit:** try resolve component from root directory ([b0073f1](https://github.com/nuxt/content/commit/b0073f1d6064159e87e4d2697121a50429b708fc))
+* **inherit:** type generation ([63500f3](https://github.com/nuxt/content/commit/63500f339965f05361bc975dd979293933acde7e))
+* normalize source cwd ([#3532](https://github.com/nuxt/content/issues/3532)) ([0a34742](https://github.com/nuxt/content/commit/0a347423e27cb7a007df585a8e619f3b5e1318bf))
+* **nuxthub:** missing line separator in database migrations ([#3464](https://github.com/nuxt/content/issues/3464)) ([4983443](https://github.com/nuxt/content/commit/4983443ad787fc122436e2e0f807081f18cd1338))
+* use listhen's `publicUrl` if available ([#3500](https://github.com/nuxt/content/issues/3500)) ([fb0f022](https://github.com/nuxt/content/commit/fb0f022e2b05470a3e1061a3a94992b7d816f4d6))
+
 ## [3.6.3](https://github.com/nuxt/content/compare/v3.6.2...v3.6.3) (2025-07-04)
 
 ### Bug Fixes
