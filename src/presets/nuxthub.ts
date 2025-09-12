@@ -53,6 +53,7 @@ export default definePreset({
       }
       for (const dumpFile of dumpFiles) {
         await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        console.log("Generated dump file", dumpFile.file)
       }
       // Disable integrity check in production for performance
       nitroConfig.runtimeConfig ||= {}

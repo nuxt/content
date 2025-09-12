@@ -8,12 +8,17 @@ export default eventHandler(async (event) => {
   const { sql } = await readBody(event)
   const collection = getRouterParam(event, 'collection')!
 
-  assertSafeQuery(sql, collection)
+  try {
+    assertSafeQuery(sql, collection)
 
-  const conf = useRuntimeConfig().content as RuntimeConfig['content']
-  if (conf.integrityCheck) {
-    await checkAndImportDatabaseIntegrity(event, collection, conf)
+    const conf = useRuntimeConfig().content as RuntimeConfig['content']
+    if (conf.integrityCheck) {
+      await checkAndImportDatabaseIntegrity(event, collection, conf)
+    }
+
+    return loadDatabaseAdapter(conf).all(sql)
+  } catch (error) {
+    console.error(error)
+    throw error
   }
-
-  return loadDatabaseAdapter(conf).all(sql)
 })
