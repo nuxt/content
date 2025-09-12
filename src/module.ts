@@ -327,6 +327,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 body: content,
                 path: fullPath,
               })
+              if (parsedContent) {
+                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
+              }
             }
 
             // Add manually provided components from the content
@@ -334,35 +337,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            // Special handling for CSV files
-            if (parsedContent.extension === 'csv') {
-              const rows = (parsedContent.meta as { path: string, body: Array<Record<string, string>> })?.body
-              if (rows && Array.isArray(rows)) {
-                // Since csv files can contain multiple rows, we can't process it as a single ParsedContent
-                // As for id, priority: `id` field > first column > index
-                for (let i = 0; i < rows.length; i++) {
-                  if (!rows[i]) {
-                    logger.warn(`"${keyInCollection}" row ${i} is undefined and will be ignored.`)
-                    continue
-                  }
-                  const rowid = rows[i]?.id || Object.values(rows[i] || {})?.at(0) || String(i)
-                  const rowContent = {
-                    id: parsedContent.id + '/' + rowid,
-                    ...rows[i],
-                  }
-                  db.insertDevelopmentCache(parsedContent.id + '/' + rowid, JSON.stringify(rowContent), checksum)
-                  const { queries, hash } = generateCollectionInsert(collection, rowContent)
-                  list.push([key, queries, hash])
-                }
-              }
-            }
-            else {
-              if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
-              }
-              const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-              list.push([key, queries, hash])
-            }
+            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+            list.push([key, queries, hash])
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
