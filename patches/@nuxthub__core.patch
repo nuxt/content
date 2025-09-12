@@ -1,0 +1,14 @@
+diff --git a/dist/runtime/database/server/utils/migrations/remote.js b/dist/runtime/database/server/utils/migrations/remote.js
+index 0cec3738637f5cf78305ca2883507afbbd5a276b..ddec035d325f5d9b8babb2d08dc641ba9bd2f2e2 100644
+--- a/dist/runtime/database/server/utils/migrations/remote.js
++++ b/dist/runtime/database/server/utils/migrations/remote.js
+@@ -63,7 +63,8 @@ export async function applyRemoteDatabaseQueries(hub) {
+   if (!queriesPaths.length) {
+     return true;
+   }
+-  for (const queryPath of queriesPaths) {
++  console.log("Applying remote database queries", queriesPaths)
++  for await (const queryPath of queriesPaths) {
+     let query = await queriesStorage.getItem(queryPath);
+     if (!query) continue;
+     if (query.replace(/\s$/, "").at(-1) !== ";") query += ";";

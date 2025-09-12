@@ -1,5 +1,5 @@
 {
-  "name": "docus-starter",
+  "name": "nuxt-content-docs",
   "scripts": {
     "dev": "nuxt dev -e docus",
     "build": "nuxt build -e docus"
