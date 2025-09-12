@@ -138,7 +138,7 @@ export function defineCSVSource(source: CollectionSource): ResolvedCollectionSou
           .on('data', function (chunk) {
             for (let i = 0; i < chunk.length; i += 1)
               if (chunk[i] == 10) {
-                csvKeys.push(`${keys[0]}#l${count}`)
+                csvKeys.push(`${keys[0]}#${count}`)
                 count += 1
               }
           })
