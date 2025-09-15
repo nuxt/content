@@ -138,7 +138,9 @@ export function defineCSVSource(source: CollectionSource): ResolvedCollectionSou
           .on('data', function (chunk) {
             for (let i = 0; i < chunk.length; i += 1)
               if (chunk[i] == 10) {
-                csvKeys.push(`${keys[0]}#${count}`)
+                if (count > 0) { // count === 0 is CSV header row and should not be included
+                  csvKeys.push(`${keys[0]}#${count}`)
+                }
                 count += 1
               }
           })
