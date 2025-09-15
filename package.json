@@ -130,12 +130,6 @@
     "better-sqlite3": {
       "optional": true
     },
-    "zod": {
-      "optional": true
-    },
-    "zod-to-json-schema": {
-      "optional": true
-    },
     "valibot": {
       "optional": true
     },
