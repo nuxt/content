@@ -1,6 +1,5 @@
 export type GitRefType = {
   branch?: string
-  commit?: string
   tag?: string
 }
 

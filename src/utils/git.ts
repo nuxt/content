@@ -6,6 +6,10 @@ import { join } from 'pathe'
 import { extract } from 'tar'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
+import git from 'isomorphic-git'
+import gitHttp from 'isomorphic-git/http/node'
+
+import type { GitRefType } from '../types'
 
 export interface GitInfo {
   // Repository name
@@ -130,6 +134,32 @@ export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefi
     name,
     owner,
     url,
+  }
+}
+
+export async function getGitRemoteHash(url: string, ref?: GitRefType): Promise<string | undefined> {
+  try {
+    const remote = await git.getRemoteInfo({ http: gitHttp, url })
+    if (ref) {
+      if (ref.branch) {
+        const headRef = remote.refs.heads![ref.branch]
+        return headRef
+      }
+
+      if (ref.tag) {
+        const tagsRef = remote.refs.tags![ref.tag]
+        return tagsRef
+      }
+    }
+    else {
+      // default to the HEAD ref provided by the server
+      const head = remote.HEAD!.replace('refs/heads/', '')
+      const headRef = remote.refs.heads![head]
+      return headRef
+    }
+  }
+  catch {
+    // ignore error
   }
 }
 
