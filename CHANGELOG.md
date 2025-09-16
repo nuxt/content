@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.7.1](https://github.com/nuxt/content/compare/v3.7.0...v3.7.1) (2025-09-16)
+
+### Bug Fixes
+
+* remove `zod` and `zod-to-json-schema` from optional deps ([#3541](https://github.com/nuxt/content/issues/3541)) ([8e038f0](https://github.com/nuxt/content/commit/8e038f0db643b05ebde15a250d0a0262eba25d2c))
+
 ## [3.7.0](https://github.com/nuxt/content/compare/v3.6.3...v3.7.0) (2025-09-12)
 
 ### Features
