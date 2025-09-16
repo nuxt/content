@@ -5,10 +5,10 @@ export type GitRefType = {
 
 export type GitBasicAuth = {
   username?: string
-  password: string
+  password?: string
 }
 
 export type GitTokenAuth = {
   username?: string
-  authToken: string
+  token?: string
 }

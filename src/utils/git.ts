@@ -1,4 +1,5 @@
-import { createWriteStream } from 'node:fs'
+import fs from 'node:fs'
+
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { pipeline } from 'node:stream'
 import { promisify } from 'node:util'
@@ -9,7 +10,7 @@ import gitUrlParse from 'git-url-parse'
 import git from 'isomorphic-git'
 import gitHttp from 'isomorphic-git/http/node'
 
-import type { GitRefType } from '../types'
+import type { GitBasicAuth, GitRefType, GitTokenAuth } from '../types'
 
 export interface GitInfo {
   // Repository name
@@ -42,7 +43,7 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
 
   try {
     const response = await fetch(url, { headers })
-    const stream = createWriteStream(tarFile)
+    const stream = fs.createWriteStream(tarFile)
     await promisify(pipeline)(response.body as unknown as ReadableStream[], stream)
 
     await extract({
@@ -64,6 +65,57 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
   finally {
     await rm(tarFile, { force: true })
   }
+}
+
+export async function downloadGitRepository(url: string, cwd: string, auth?: GitBasicAuth | GitTokenAuth | string, ref?: GitRefType) {
+  const cacheFile = join(cwd, '.content.cache.json')
+  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
+  const hash = await getGitRemoteHash(url, ref)
+
+  if (cache) {
+    // Directory exists, skip download
+    const hash = await getGitRemoteHash(url, ref)
+    if (hash === cache.hash) {
+      await writeFile(cacheFile, JSON.stringify({
+        ...cache,
+        updatedAt: new Date().toISOString(),
+      }, null, 2))
+      return
+    }
+  }
+
+  await mkdir(cwd, { recursive: true })
+
+  let formattedRef: string | undefined
+  if (ref) {
+    if (ref.branch) formattedRef = `refs/heads/${ref.branch}`
+    if (ref.tag) formattedRef = `refs/tags/${ref.tag}`
+  }
+
+  const authUrl = new URL(url)
+  if (typeof (auth) === 'string') {
+    authUrl.password = auth
+  }
+  if (typeof (auth) === 'object') {
+    if (auth.username) authUrl.username = auth.username
+
+    if ('token' in auth) {
+      authUrl.password = auth.token!
+    }
+
+    if ('password' in auth) {
+      authUrl.password = auth.password!
+    }
+  }
+
+  await git.clone({ fs, http: gitHttp, dir: cwd, url: authUrl.toString(), depth: 1, singleBranch: true, ref: formattedRef })
+
+  await writeFile(cacheFile, JSON.stringify({
+    url: url,
+    hash: hash,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }, null, 2))
 }
 
 export function parseGitHubUrl(url: string) {

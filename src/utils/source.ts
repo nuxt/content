@@ -3,8 +3,9 @@ import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
-import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
+import { downloadGitRepository, downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
 import { logger } from './dev'
+import gitUrlParse from 'git-url-parse'
 
 export function getExcludedSourcePaths(source: CollectionSource) {
   return [
@@ -55,8 +56,11 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
       resolvedSource.cwd = join(rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
 
       let headers: Record<string, string> = {}
-      if (resolvedSource.authToken) {
+      if (typeof resolvedSource.authToken === 'string') {
         headers = { Authorization: `Bearer ${resolvedSource.authToken}` }
+      }
+      if (typeof resolvedSource.authToken === 'object') {
+        headers = { Authorization: `Bearer ${resolvedSource.authToken.token}` }
       }
 
       const url = headers.Authorization
@@ -67,6 +71,25 @@ export function defineGitHubSource(source: CollectionSource): ResolvedCollection
     }
   }
 
+  return resolvedSource
+}
+
+export function defineGitSource(source: CollectionSource): ResolvedCollectionSource {
+  const resolvedSource = defineLocalSource(source)
+  resolvedSource.prepare = async ({ rootDir }) => {
+    const repository = source?.repository && gitUrlParse(source.repository!)
+    if (repository) {
+      const { source: gitSource, name } = repository
+      resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${name}-clone`)
+
+      if (resolvedSource.authBasic) {
+        await downloadGitRepository(source.repository!, resolvedSource.cwd!, resolvedSource.authBasic, source.ref)
+      }
+      else {
+        await downloadGitRepository(source.repository!, resolvedSource.cwd!, resolvedSource.authToken, source.ref)
+      }
+    }
+  }
   return resolvedSource
 }
 

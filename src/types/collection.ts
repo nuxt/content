@@ -14,7 +14,7 @@ export type CollectionSource = {
   exclude?: string[]
   repository?: string
   authBasic?: GitBasicAuth
-  authToken?: GitTokenAuth | GitTokenAuth['authToken']
+  authToken?: GitTokenAuth | GitTokenAuth['token']
   cloneRepository?: boolean
   ref?: GitRefType
   cwd?: string
