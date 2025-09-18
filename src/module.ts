@@ -93,7 +93,7 @@ export default defineNuxtModule<ModuleOptions>({
     manifest.collections = collections
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
-      exclude: ['@sqlite.org/sqlite-wasm']
+      exclude: ['@sqlite.org/sqlite-wasm'],
     })
 
     // Ignore content directory files in building
@@ -126,7 +126,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.typescript = defu(nuxt.options.nitro.typescript, {
       tsConfig: {
         include: [typesTemplateDst],
-      }
+      },
     })
 
     // Register user components
