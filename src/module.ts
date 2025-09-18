@@ -12,7 +12,6 @@ import {
   addComponent,
   installModule,
   addVitePlugin,
-  addWebpackPlugin,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -26,7 +25,7 @@ import { generateCollectionInsert, generateCollectionTableDefinition } from './u
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
-import { getContentChecksum, logger, watchContents, chunks, watchComponents, NuxtContentHMRUnplugin } from './utils/dev'
+import { getContentChecksum, logger, chunks, NuxtContentHMRUnplugin } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
@@ -90,7 +89,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Detect installed validators and them into content context
     await initiateValidatorsContext()
 
-    const { collections } = await loadContentConfig(nuxt)
+    const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
 
     nuxt.options.vite.optimizeDeps ||= {}
@@ -189,18 +188,13 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle HMR changes
-      if (nuxt.options.dev) {
-        if (options.watch?.enabled !== false) {
-          // Install unified HMR plugin for Vite/Webpack
-          addVitePlugin(NuxtContentHMRUnplugin.vite())
-          if (typeof addWebpackPlugin === 'function') {
-            addWebpackPlugin(NuxtContentHMRUnplugin.webpack())
-          }
-        }
-
+      if (nuxt.options.dev && options.watch?.enabled !== false) {
         addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-        watchContents(nuxt, options, manifest)
-        watchComponents(nuxt)
+        addVitePlugin(NuxtContentHMRUnplugin.vite({
+          nuxt,
+          moduleOptions: options,
+          manifest,
+        }))
       }
     })
 

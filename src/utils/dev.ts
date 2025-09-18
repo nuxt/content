@@ -4,7 +4,7 @@ import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
-import { addVitePlugin, isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
+import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
@@ -24,12 +24,29 @@ export const contentHooks = createHooks<{
   'hmr:content:update': (data: { key: string, collection: string, queries: string[] }) => void
 }>()
 
-export const NuxtContentHMRUnplugin = createUnplugin(() => {
+interface HMRPluginOptions {
+  nuxt: Nuxt
+  moduleOptions: ModuleOptions
+  manifest: Manifest
+}
+
+export const NuxtContentHMRUnplugin = createUnplugin((opts: HMRPluginOptions) => {
+  const { nuxt, moduleOptions, manifest } = opts
+  const componentsTemplatePath = join(nuxt.options.buildDir, 'content/components.ts')
+
+  watchContents(nuxt, moduleOptions, manifest)
+  watchComponents(nuxt)
+
   return {
     name: 'nuxt-content-hmr-unplugin',
     vite: {
-      name: 'nuxt-content-hmr-unplugin',
       configureServer(server: ViteDevServer) {
+        server.watcher.on('change', (file) => {
+          if (file === componentsTemplatePath) {
+            return server.ws.send({ type: 'full-reload' })
+          }
+        })
+
         contentHooks.hook('hmr:content:update', (data) => {
           server.ws.send({
             type: 'custom',
@@ -38,12 +55,6 @@ export const NuxtContentHMRUnplugin = createUnplugin(() => {
           })
         })
       },
-    },
-    webpack(_compiler) {
-      contentHooks.hook('hmr:content:update', (_data) => {
-        // TODO: Implement webpack support
-      })
-      return
     },
   }
 })
@@ -250,31 +261,6 @@ export function watchComponents(nuxt: Nuxt) {
         filter: template => [moduleTemplates.components].includes(template.filename),
       })
     }
-  })
-  // Reload page when content/components.ts is changed
-  addVitePlugin({
-    name: 'reload',
-    configureServer(server) {
-      server.watcher.on('change', (file) => {
-        if (file === componentsTemplatePath) {
-          server.ws.send({
-            type: 'full-reload',
-          })
-        }
-      })
-    },
-  })
-}
-
-export function watchConfig(nuxt: Nuxt) {
-  nuxt.hook('nitro:init', async (nitro) => {
-    nitro.storage.watch(async (_event, key) => {
-      if ('root:content.config.ts' === key) {
-        logger.info(`\`${key.split(':').pop()}\` updated, restarting the Nuxt server...`)
-
-        nuxt.hooks.callHook('restart', { hard: true })
-      }
-    })
   })
 }
 
