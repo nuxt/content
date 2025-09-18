@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "3.6.3",
+  "version": "3.7.1",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -113,9 +113,7 @@
     "@valibot/to-json-schema": "^1.0.0",
     "better-sqlite3": "^12.2.0",
     "sqlite3": "*",
-    "valibot": "^1.0.0",
-    "zod": "*",
-    "zod-to-json-schema": "*"
+    "valibot": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -128,12 +126,6 @@
       "optional": true
     },
     "better-sqlite3": {
-      "optional": true
-    },
-    "zod": {
-      "optional": true
-    },
-    "zod-to-json-schema": {
       "optional": true
     },
     "valibot": {
