@@ -24,7 +24,6 @@ export const contentHooks = createHooks<{
   'hmr:content:update': (data: { key: string, collection: string, queries: string[] }) => void
 }>()
 
-
 export const NuxtContentHMRUnplugin = createUnplugin(() => {
   return {
     name: 'nuxt-content-hmr-unplugin',

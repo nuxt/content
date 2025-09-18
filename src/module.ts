@@ -55,15 +55,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: '.data/content/contents.sqlite',
     },
     preview: {},
-    watch: {
-      enabled: true,
-      port: {
-        port: 4000,
-        portRange: [4000, 4040],
-      },
-      hostname: 'localhost',
-      showURL: false,
-    },
+    watch: { enabled: true },
     renderer: {
       alias: {},
       anchorLinks: {
@@ -198,11 +190,12 @@ export default defineNuxtModule<ModuleOptions>({
 
       // Handle HMR changes
       if (nuxt.options.dev) {
-
-        // Install unified HMR plugin for Vite/Webpack
-        addVitePlugin(NuxtContentHMRUnplugin.vite())
-        if (typeof addWebpackPlugin === 'function') {
-          addWebpackPlugin(NuxtContentHMRUnplugin.webpack())
+        if (options.watch?.enabled !== false) {
+          // Install unified HMR plugin for Vite/Webpack
+          addVitePlugin(NuxtContentHMRUnplugin.vite())
+          if (typeof addWebpackPlugin === 'function') {
+            addWebpackPlugin(NuxtContentHMRUnplugin.webpack())
+          }
         }
 
         addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
