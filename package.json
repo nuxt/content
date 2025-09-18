@@ -103,6 +103,7 @@
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
+    "unplugin": "^2.3.10",
     "zod": "^3.25.76",
     "zod-to-json-schema": "^3.24.6"
   },
