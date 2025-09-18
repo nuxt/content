@@ -1,16 +1,13 @@
+import { createUnplugin } from 'unplugin'
+import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import type { IncomingMessage } from 'node:http'
 import { join, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import { addVitePlugin, isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
-import type { WebSocket } from 'ws'
-import { WebSocketServer } from 'ws'
-import { listen } from 'listhen'
-import type { Listener } from 'listhen'
 import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
@@ -19,85 +16,50 @@ import { generateCollectionInsert } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
+import { createHooks } from 'hookable'
 
 export const logger: ConsolaInstance = useLogger('@nuxt/content')
 
-export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
-  const db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })
+export const contentHooks = createHooks<{
+  'hmr:content:update': (data: { key: string, collection: string, queries: string[] }) => void
+}>()
 
-  let websocket: ReturnType<typeof createWebSocket>
-  let listener: Listener
-  const websocketOptions = options.watch || {}
-  if (websocketOptions.enabled) {
-    nuxt.hook('nitro:init', async (nitro) => {
-      websocket = createWebSocket()
 
-      // Listen dev server
-      listener = await listen(() => 'Nuxt Content', websocketOptions)
-
-      // Register ws url
-      const publicConfig = nitro.options.runtimeConfig.public.content as Record<string, unknown>
-      publicConfig.wsUrl = (websocketOptions.publicURL || listener.url).replace('http', 'ws')
-
-      listener.server.on('upgrade', websocket.serve)
-    })
-
-    nuxt.hook('close', async () => {
-      // Close WebSocket server
-      if (websocket) {
-        await websocket.close()
-      }
-      // Close listener server
-      if (listener) {
-        await listener.close()
-      }
-    })
-  }
-
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
-    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
-    await db.exec(removeQuery)
-    if (insertQuery) {
-      await Promise.all(insertQuery.map(query => db.exec(query)))
-    }
-
-    const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
-    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
-    const itemsToRemove = keyIndex === -1 ? 0 : 1
-
-    if (insertQuery) {
-      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
-    }
-    else {
-      collectionDump.splice(indexToUpdate, itemsToRemove)
-    }
-
-    updateTemplates({
-      filter: template => [
-        moduleTemplates.manifest,
-        moduleTemplates.fullCompressedDump,
-        // moduleTemplates.raw,
-      ].includes(template.filename),
-    })
-
-    websocket?.broadcast({
-      key,
-      collection: collection.name,
-      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
-    })
-  }
-
+export const NuxtContentHMRUnplugin = createUnplugin(() => {
   return {
-    broadcast,
+    name: 'nuxt-content-hmr-unplugin',
+    vite: {
+      name: 'nuxt-content-hmr-unplugin',
+      configureServer(server: ViteDevServer) {
+        contentHooks.hook('hmr:content:update', (data) => {
+          server.ws.send({
+            type: 'custom',
+            event: 'nuxt-content:update',
+            data,
+          })
+        })
+      },
+    },
+    webpack(_compiler) {
+      contentHooks.hook('hmr:content:update', (_data) => {
+        // TODO: Implement webpack support
+      })
+      return
+    },
   }
-}
+})
 
-export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest, socket: Awaited<ReturnType<typeof startSocketServer>>) {
+export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
   const collectionParsers = {} as Record<string, Awaited<ReturnType<typeof createParser>>>
 
-  const db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })
   const collections = manifest.collections
+  let db: Awaited<ReturnType<typeof getLocalDatabase>>
+  async function getDb() {
+    if (!db) {
+      db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })
+    }
+    return db
+  }
 
   const sourceMap = collections.flatMap((c) => {
     if (c.source) {
@@ -151,6 +113,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       return false
     })
     if (match) {
+      const db = await getDb()
       const { collection, source, cwd } = match
       // Remove the cwd prefix
       path = path.substring(cwd.length)
@@ -183,7 +146,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       }
 
       const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-      await socket.broadcast(collection, keyInCollection, insertQuery)
+      await broadcast(collection, keyInCollection, insertQuery)
     }
   }
 
@@ -201,6 +164,7 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
       return false
     })
     if (match) {
+      const db = await getDb()
       const { collection, source, cwd } = match
       // Remove the cwd prefix
       path = path.substring(cwd.length)
@@ -212,15 +176,50 @@ export async function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest
 
       await db.deleteDevelopmentCache(keyInCollection)
 
-      await socket.broadcast(collection, keyInCollection)
+      await broadcast(collection, keyInCollection)
     }
+  }
+
+  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+    const db = await getDb()
+    const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
+    await db.exec(removeQuery)
+    if (insertQuery) {
+      await Promise.all(insertQuery.map(query => db.exec(query)))
+    }
+
+    const collectionDump = manifest.dump[collection.name]!
+    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
+    const itemsToRemove = keyIndex === -1 ? 0 : 1
+
+    if (insertQuery) {
+      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
+    }
+    else {
+      collectionDump.splice(indexToUpdate, itemsToRemove)
+    }
+
+    updateTemplates({
+      filter: template => [
+        moduleTemplates.manifest,
+        moduleTemplates.fullCompressedDump,
+        // moduleTemplates.raw,
+      ].includes(template.filename),
+    })
+
+    contentHooks.callHook('hmr:content:update', {
+      key,
+      collection: collection.name,
+      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
+    })
   }
 
   nuxt.hook('close', async () => {
     if (watcher) {
       watcher.removeAllListeners()
       watcher.close()
-      db.close()
+      db?.close()
     }
   })
 }
@@ -278,43 +277,6 @@ export function watchConfig(nuxt: Nuxt) {
       }
     })
   })
-}
-
-/**
- * WebSocket server useful for live content reload.
- */
-export function createWebSocket() {
-  const wss = new WebSocketServer({ noServer: true })
-
-  const serve = (req: IncomingMessage, socket = req.socket, head: Buffer) =>
-    wss.handleUpgrade(req, socket, head, (client: WebSocket) => {
-      wss.emit('connection', client, req)
-    })
-
-  const broadcast = (data: unknown) => {
-    const message = JSON.stringify(data)
-
-    for (const client of wss.clients) {
-      try {
-        client.send(message)
-      }
-      catch (err) {
-        /* Ignore error (if client not ready to receive event) */
-        console.log(err)
-      }
-    }
-  }
-
-  return {
-    serve,
-    broadcast,
-    close: () => {
-      // disconnect all clients
-      wss.clients.forEach(client => client.close())
-      // close the server
-      return new Promise(resolve => wss.close(resolve))
-    },
-  }
 }
 
 export function getContentChecksum(content: string) {

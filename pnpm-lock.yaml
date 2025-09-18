@@ -59,6 +59,9 @@ importers:
       git-url-parse:
         specifier: ^16.1.0
         version: 16.1.0
+      hookable:
+        specifier: ^5.5.3
+        version: 5.5.3
       jiti:
         specifier: ^2.5.1
         version: 2.5.1
@@ -68,9 +71,6 @@ importers:
       knitwork:
         specifier: ^1.2.0
         version: 1.2.0
-      listhen:
-        specifier: ^1.9.0
-        version: 1.9.0
       mdast-util-to-hast:
         specifier: ^13.2.0
         version: 13.2.0
@@ -155,9 +155,6 @@ importers:
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
-      ws:
-        specifier: ^8.18.3
-        version: 8.18.3
       zod:
         specifier: ^3.25.76
         version: 3.25.76
