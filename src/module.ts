@@ -92,9 +92,9 @@ export default defineNuxtModule<ModuleOptions>({
     const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
 
-    nuxt.options.vite.optimizeDeps ||= {}
-    nuxt.options.vite.optimizeDeps.exclude ||= []
-    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+      exclude: ['@sqlite.org/sqlite-wasm']
+    })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
@@ -115,16 +115,18 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
     // Add Templates & aliases
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
-    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
+    nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
+      '#content/components': addTemplate(componentsManifestTemplate(manifest)).dst,
+      '#content/manifest': addTemplate(manifestTemplate(manifest)).dst,
+    })
 
     // Add content types to Nuxt and Nitro
     const typesTemplateDst = addTypeTemplate(contentTypesTemplate(manifest.collections)).dst
-    nuxt.options.nitro.typescript ||= {}
-    nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
-      include: [typesTemplateDst],
+    nuxt.options.nitro.typescript = defu(nuxt.options.nitro.typescript, {
+      tsConfig: {
+        include: [typesTemplateDst],
+      }
     })
 
     // Register user components
