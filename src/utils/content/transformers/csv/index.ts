@@ -53,13 +53,12 @@ export default defineTransformer({
     })
     const { result } = await stream.process(file.body)
 
-    if (Array.isArray(result) && result.length === 1) {
-      return {
-        id: file.id,
-        ...result[0],
-      }
+    // If the file id includes a row index, parse the file as a single object
+    if (file.id.includes('#')) {
+      return { id: file.id, ...result[0] }
     }
 
+    // Otherwise, parse the file as an array
     return {
       id: file.id,
       body: result,

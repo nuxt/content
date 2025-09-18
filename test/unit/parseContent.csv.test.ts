@@ -83,20 +83,11 @@ describe('Parser (.csv)', async () => {
       expect(parsed).toHaveProperty('id')
       assert(parsed.id === 'content/index.csv')
 
-      // Single line CSV files maps to a single object
-      if (csv.split('\n').length === 2) {
-        const truth = (await csvToJson({ output: 'json' }).fromString(csv))[0]
-        Object.keys(truth).forEach((key) => {
-          expect(parsed[key] || (parsed.meta as Record<string, unknown>)[key]).toBe(truth[key])
-        })
-      }
-      else {
-        expect(parsed).toHaveProperty('body')
-        expect(Array.isArray(parsed.body)).toBeTruthy()
-        const truth = await csvToJson({ output: 'json' }).fromString(csv)
+      expect(parsed).toHaveProperty('body')
+      expect(Array.isArray(parsed.body)).toBeTruthy()
+      const truth = await csvToJson({ output: 'json' }).fromString(csv)
 
-        expect(parsed.body).toMatchObject(truth)
-      }
+      expect(parsed.body).toMatchObject(truth)
     })
   }
 })
