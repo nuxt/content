@@ -116,7 +116,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Add Templates & aliases
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
+    nuxt.options.alias = defu(nuxt.options.alias, {
       '#content/components': addTemplate(componentsManifestTemplate(manifest)).dst,
       '#content/manifest': addTemplate(manifestTemplate(manifest)).dst,
     })
