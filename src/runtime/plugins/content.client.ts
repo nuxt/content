@@ -4,9 +4,8 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       content: {
-        loadLocalDatabase: (collection: string) => {
-          return import('../internal/database.client')
-            .then(({ loadDatabaseAdapter }) => loadDatabaseAdapter(collection))
+        loadLocalDatabase: () => {
+          return import('../internal/database.client').then(m => m.loadDatabaseAdapter)
         },
       },
     },
