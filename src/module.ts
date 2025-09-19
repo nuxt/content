@@ -98,6 +98,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    addPlugin({ src: resolver.resolve('./runtime/plugins/content.client'), mode: 'client' })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
