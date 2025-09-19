@@ -1,0 +1,14 @@
+export type GitRefType = {
+  branch?: string
+  tag?: string
+}
+
+export type GitBasicAuth = {
+  username?: string
+  password?: string
+}
+
+export type GitTokenAuth = {
+  username?: string
+  token?: string
+}

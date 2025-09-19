@@ -2,7 +2,7 @@ import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
-import { defineLocalSource, defineGitHubSource, defineBitbucketSource } from './source'
+import { defineLocalSource, defineGitHubSource, defineBitbucketSource, defineGitSource } from './source'
 import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
 import nuxtContentContext from './context'
@@ -102,6 +102,10 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
     }
 
     if (source.repository) {
+      if (source.cloneRepository === true) {
+        return defineGitSource(source)
+      }
+
       if (source.repository.startsWith('https://bitbucket.org/')) {
         return defineBitbucketSource(source)
       }
