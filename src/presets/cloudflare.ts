@@ -1,34 +1,28 @@
-import { addTemplate } from '@nuxt/kit'
-import { join } from 'pathe'
+// src/presets/cloudflare.ts
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
-import { collectionDumpTemplate } from '../utils/templates'
+import { applyContentDumpsPreset } from './shared-dumps'
 
 export default definePreset({
   name: 'cloudflare',
-  async setupNitro(nitroConfig, { manifest, resolver }) {
+  async setup(options) {
+    if (!options.database || options.database.type !== 'd1') {
+      options.database = { type: 'd1', bindingName: 'DB' }
+      return
+    }
+
+    if ('binding' in options.database && options.database.binding && !options.database.bindingName) {
+      options.database.bindingName = options.database.binding
+    }
+
+    options.database.bindingName ||= 'DB'
+  },
+  async setupNitro(nitroConfig, ctx) {
     if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
       logger.warn('Deploying to Cloudflare requires using D1 database, switching to D1 database with binding `DB`.')
       nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
     }
 
-    nitroConfig.publicAssets ||= []
-    nitroConfig.alias = nitroConfig.alias || {}
-    nitroConfig.handlers ||= []
-
-    // Add raw content dump
-    manifest.collections.map(async (collection) => {
-      if (!collection.private) {
-        addTemplate(collectionDumpTemplate(collection.name, manifest))
-      }
-    })
-
-    // Add raw content dump to public assets
-    nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
-    nitroConfig.handlers.push({
-      route: '/__nuxt_content/:collection/sql_dump.txt',
-      handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
-    })
+    applyContentDumpsPreset(nitroConfig, { ...ctx, platform: 'cloudflare' })
   },
-
 })
