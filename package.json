@@ -1,5 +1,5 @@
 {
-  "name": "@nuxt/content",
+  "name": "@ripka/content",
   "version": "3.7.1",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
@@ -197,5 +197,10 @@
       },
       "emitCJS": true
     }
+  },
+"pnpm": {
+  "overrides": {
+    "@nuxt/content": "link:."
   }
+}
 }

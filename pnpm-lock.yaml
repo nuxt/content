@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@nuxt/content': workspace:*
+  '@nuxt/content': link:.
 
 importers:
 
@@ -169,7 +169,7 @@ importers:
         specifier: ^4.20250910.0
         version: 4.20250910.0
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: 'link:'
         version: 'link:'
       '@nuxt/devtools':
         specifier: ^2.6.3
@@ -253,7 +253,7 @@ importers:
   docs:
     dependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:..
         version: link:..
       '@nuxthub/core':
         specifier: https://pkg.pr.new/@nuxthub/core@3d374d9
@@ -280,7 +280,7 @@ importers:
   examples/basic:
     dependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:../..
         version: link:../..
       nuxt:
         specifier: ^4.1.1
@@ -289,7 +289,7 @@ importers:
   examples/blog:
     dependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:../..
         version: link:../..
       nuxt:
         specifier: ^4.1.1
@@ -298,7 +298,7 @@ importers:
   examples/i18n:
     dependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:../..
         version: link:../..
       '@nuxt/ui-pro':
         specifier: ^3.3.3
@@ -316,7 +316,7 @@ importers:
   examples/ui-pro:
     dependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:../..
         version: link:../..
       '@nuxt/ui-pro':
         specifier: ^3.3.3
@@ -328,7 +328,7 @@ importers:
   playground:
     devDependencies:
       '@nuxt/content':
-        specifier: workspace:*
+        specifier: link:..
         version: link:..
       '@nuxt/ui-pro':
         specifier: ^3.3.3
@@ -6530,8 +6530,8 @@ packages:
   remark-gfm@4.0.1:
     resolution: {integrity: sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==}
 
-  remark-mdc-edge@3.6.0-29188159.11fd52e:
-    resolution: {integrity: sha512-M46a7zOcFdg9caUSQSrAnpTma3WkzWNCPNPzdENRzB4K1mJw8HUONCbRDC1QllD2KCmRQ455sJPsQjFdoCbtbQ==}
+  remark-mdc-edge@3.6.0-29310522.024adeb:
+    resolution: {integrity: sha512-CgarS3r2N6WX1e8pg/gsg/d3flCrGdbnqlyGm0qU6dxQuXyiGxVfCASzg4GsgPVJmpJcByt8Tc/AxTJEO2bjdQ==}
 
   remark-mdc@3.6.0:
     resolution: {integrity: sha512-f+zgMYMBChoZJnpWM2AkfMwIC2sS5+vFQQdOVho58tUOh5lDP9SnZj2my8PeXBgt8MFQ+jc97vFFzWH21JXICQ==}
@@ -13627,7 +13627,7 @@ snapshots:
       citty: 0.1.6
       eslint: 9.35.0(jiti@2.5.1)
       glob: 11.0.3
-      remark-mdc: remark-mdc-edge@3.6.0-29188159.11fd52e
+      remark-mdc: remark-mdc-edge@3.6.0-29310522.024adeb
     transitivePeerDependencies:
       - magicast
       - supports-color
@@ -15272,7 +15272,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-mdc-edge@3.6.0-29188159.11fd52e:
+  remark-mdc-edge@3.6.0-29310522.024adeb:
     dependencies:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
