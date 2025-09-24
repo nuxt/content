@@ -1,6 +1,6 @@
 import { pascalCase } from 'scule'
 import { pick } from './utils'
-import type { ContentNavigationItem, PageCollectionItemBase, CollectionQueryBuilder } from '@nuxt/content'
+import type { ContentNavigationItem, PageCollectionItemBase, CollectionQueryBuilder } from '@ripka/content'
 
 /**
  * Create NavItem array to be consumed from runtime plugin.

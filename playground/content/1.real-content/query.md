@@ -29,7 +29,7 @@ Query server exposes `one` API:
 
 ## Composables
 
-**@nuxt/content** provide composables to work with content server:
+**@ripka/content** provide composables to work with content server:
 
 - `queryContent(...pathParts)`
 

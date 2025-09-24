@@ -2,7 +2,7 @@ import { withBase } from 'ufo'
 import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
-import type { PageCollectionItemBase } from '@nuxt/content'
+import type { PageCollectionItemBase } from '@ripka/content'
 // @ts-expect-error - typecheck does not detect defineNitroPlugin in imports
 import { defineNitroPlugin, queryCollection } from '#imports'
 

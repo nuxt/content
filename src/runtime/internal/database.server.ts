@@ -5,7 +5,7 @@ import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
-import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
+import type { DatabaseAdapter, RuntimeConfig } from '@ripka/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'

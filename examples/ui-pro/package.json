@@ -9,7 +9,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@nuxt/content": "latest",
+    "@ripka/content": "latest",
     "@nuxt/ui-pro": "^3.3.3",
     "nuxt": "^4.1.1"
   }

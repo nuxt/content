@@ -5,7 +5,7 @@ import { hash } from 'ohash'
 import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutPrefixNumber, withoutRoot } from './files'
-import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
+import type { CollectionInfo, ResolvedCollectionSource } from '@ripka/content'
 
 export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo | undefined, matchedSource: ResolvedCollectionSource | undefined } => {
   let matchedSource: ResolvedCollectionSource | undefined

@@ -15,7 +15,7 @@ export default defineNuxtModule({
       filename: 'content/llms.d.ts' as `${string}.d.ts`,
       getContents: () => {
         return `
-import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@nuxt/content'
+import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@ripka/content'
 declare module 'nuxt-llms' {
   interface LLMsSection {
     contentCollection?: keyof PageCollections

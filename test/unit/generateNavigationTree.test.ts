@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { generateNavigationTree } from '../../src/runtime/internal/navigation'
-import type { CollectionQueryBuilder, PageCollectionItemBase } from '@nuxt/content'
+import type { CollectionQueryBuilder, PageCollectionItemBase } from '@ripka/content'
 
 describe('generateNavigationTree', () => {
   const mockQueryBuilder = (items: PageCollectionItemBase[]) => ({

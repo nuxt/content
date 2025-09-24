@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, onUnmounted } from 'vue'
 import type { Socket } from 'socket.io-client'
-import type { DraftSyncData } from '@nuxt/content'
+import type { DraftSyncData } from '@ripka/content'
 import { useCookie, useNuxtApp, useRouter } from '#app'
 
 const props = defineProps({

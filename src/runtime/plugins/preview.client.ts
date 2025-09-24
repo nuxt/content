@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig } from '@nuxt/content'
+import type { PublicRuntimeConfig } from '@ripka/content'
 import { defineNuxtPlugin, useCookie, useRoute, useRuntimeConfig, getAppManifest } from '#imports'
 
 export default defineNuxtPlugin(async (nuxtApp) => {

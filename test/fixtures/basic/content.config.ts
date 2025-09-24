@@ -1,4 +1,4 @@
-import { defineCollection, defineContentConfig } from '@nuxt/content'
+import { defineCollection, defineContentConfig } from '@ripka/content'
 import { z } from 'zod'
 
 export default defineContentConfig({

@@ -46,9 +46,9 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
 
     const parentInterface = (c: ResolvedCollection) => c.type === 'page' ? 'PageCollectionItemBase' : 'DataCollectionItemBase'
     return [
-      'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@nuxt/content\'',
+      'import type { PageCollectionItemBase, DataCollectionItemBase } from \'@ripka/content\'',
       '',
-      'declare module \'@nuxt/content\' {',
+      'declare module \'@ripka/content\' {',
       ...(await Promise.all(
         publicCollections.map(async (c) => {
           const type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')

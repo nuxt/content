@@ -1,6 +1,6 @@
 import type { ComponentMeta } from 'vue-component-meta'
 import { eventHandler } from 'h3'
-import type { RuntimeConfig } from '@nuxt/content'
+import type { RuntimeConfig } from '@ripka/content'
 import { useRuntimeConfig, useAppConfig } from '#imports'
 // @ts-expect-error import does exist
 import components from '#nuxt-component-meta/nitro'

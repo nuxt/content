@@ -20,7 +20,7 @@ import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
 
-export const logger: ConsolaInstance = useLogger('@nuxt/content')
+export const logger: ConsolaInstance = useLogger('@ripka/content')
 
 export async function startSocketServer(nuxt: Nuxt, options: ModuleOptions, manifest: Manifest) {
   const db = await getLocalDatabase(options._localDatabase!, { nativeSqlite: options.experimental?.nativeSqlite })

@@ -68,7 +68,7 @@ You'll be able to define collections in the `content.config.ts` file which is us
 Schemas enforce consistency within collections and improve TypeScript typings for better integration with Nuxt Content utilities.
 
 ```ts [content.config.ts]
-import { defineCollection, z } from '@nuxt/content'
+import { defineCollection, z } from '@ripka/content'
 
 // Export collections
 export const collections = {

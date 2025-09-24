@@ -44,8 +44,8 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
   extendViteConfig((config) => {
     config.optimizeDeps ||= {}
     config.optimizeDeps.include ||= []
-    config.optimizeDeps.include.push('@nuxt/content > slugify')
+    config.optimizeDeps.include.push('@ripka/content > slugify')
     config.optimizeDeps.include = config.optimizeDeps.include
-      .map(id => id.replace(/^@nuxtjs\/mdc > /, '@nuxt/content > @nuxtjs/mdc > '))
+      .map(id => id.replace(/^@nuxtjs\/mdc > /, '@ripka/content > @nuxtjs/mdc > '))
   })
 }

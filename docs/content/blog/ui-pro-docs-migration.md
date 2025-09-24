@@ -31,19 +31,19 @@ Check the UI Pro documentation starter repository source code.
 
 ::code-group
 ```bash [pnpm]
-pnpm add @nuxt/content@^3
+pnpm add @ripka/content@^3
 ```
 
 ```bash [yarn]
-yarn add @nuxt/content@^3
+yarn add @ripka/content@^3
 ```
 
 ```bash [npm]
-npm install @nuxt/content@^3
+npm install @ripka/content@^3
 ```
 
 ```bash [bun]
-bun add @nuxt/content@^3
+bun add @ripka/content@^3
 ```
 ::
 
@@ -52,7 +52,7 @@ bun add @nuxt/content@^3
 This configuration file defines your data structure. A collection represents a set of related items. In the case of the docs starter, there are two different collections, the `landing` collection representing the home page and another `docs` collection for the documentation pages.
 
 ```js [content.config.ts]
-import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, z } from '@ripka/content'
 
 export default defineContentConfig({
   collections: {
@@ -204,7 +204,7 @@ Types have been significantly enhanced in Content v3, eliminating the need for m
 Concerning the documentation starter, the only typing needed concerns the navigation items where `NavItem` can be replaced by `ContentNavigationItem` .
 
 ```ts
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentNavigationItem } from '@ripka/content'
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 ```
@@ -229,7 +229,7 @@ export default defineNuxtConfig({
 })
 ```
 
-Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio, we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
+Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio, we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@ripka/content/preview`.
 
 ::prose-tip
 That's it, content v3 is now powering the starter. Let's now migrate to version 3 of [Nuxt UI / UI Pro](https://ui3.nuxt.dev).
@@ -673,6 +673,6 @@ export default defineNuxtConfig({
 })
 ```
 
-In order to keep the app config file updatable from Studio you need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
+In order to keep the app config file updatable from Studio you need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@ripka/content/preview`.
 
 :video{autoplay controls loop poster="https://res.cloudinary.com/nuxt/video/upload/v1737458923/studio/docs-v3_lqfasl.png" src="https://res.cloudinary.com/nuxt/video/upload/v1737458923/studio/docs-v3_lqfasl.mp4"}

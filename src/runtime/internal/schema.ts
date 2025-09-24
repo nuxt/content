@@ -1,4 +1,4 @@
-import type { Draft07, Draft07DefinitionProperty, Draft07DefinitionPropertyAllOf, Draft07DefinitionPropertyAnyOf } from '@nuxt/content'
+import type { Draft07, Draft07DefinitionProperty, Draft07DefinitionPropertyAllOf, Draft07DefinitionPropertyAnyOf } from '@ripka/content'
 
 const propertyTypes = {
   string: 'VARCHAR',

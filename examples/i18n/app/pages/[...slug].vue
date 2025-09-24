@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { withLeadingSlash } from 'ufo'
-import type { Collections } from '@nuxt/content'
+import type { Collections } from '@ripka/content'
 
 const route = useRoute()
 const { locale, localeProperties } = useI18n()

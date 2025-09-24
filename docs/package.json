@@ -5,7 +5,7 @@
     "build": "nuxt build -e docus"
   },
   "dependencies": {
-    "@nuxt/content": "link:..",
+    "@ripka/content": "link:..",
     "@nuxthub/core": "https://pkg.pr.new/@nuxthub/core@3d374d9",
     "@nuxtjs/plausible": "^2.0.1",
     "@vueuse/nuxt": "^13.9.0",

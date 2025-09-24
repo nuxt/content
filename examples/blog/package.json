@@ -10,7 +10,7 @@
     "dev:prepare": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "latest",
+    "@ripka/content": "latest",
     "nuxt": "^4.1.1"
   }
 }

@@ -4,7 +4,7 @@ Content server uses Nuxt storages to fetch contents.
 
 Storages can define `content.sources` options inside `nuxt.config`.
 
-By default **@nuxt/content** uses `content` directory at project root.
+By default **@ripka/content** uses `content` directory at project root.
 
 ```ts
 export default defineNuxtConfig({
@@ -101,7 +101,7 @@ Path-meta is a built-in transformer that extract multiple meta informations from
 
 - **Ordering**
 
-**@nuxt/content** use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
+**@ripka/content** use special notation to order content. Adding `X.` as prefix to file/directory name will define content's order.
 
 ```text
 1.hello.md

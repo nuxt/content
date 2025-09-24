@@ -1,8 +1,8 @@
 {
-  "name": "@nuxt/content",
-  "version": "3.7.1",
-  "description": "Write your content inside your Nuxt app",
-  "homepage": "https://content.nuxt.com",
+  "name": "@ripka/content",
+  "version": "3.7.1-ripka.0",
+  "description": "Fork of Nuxt Content with encryption helpers and extras",
+  "homepage": "https://github.com/oripka/content",
   "keywords": [
     "nuxt",
     "content",
@@ -13,7 +13,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nuxt/content.git"
+    "url": "git+https://github.com/oripka/content.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT",
   "type": "module",
@@ -137,7 +140,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250910.0",
-    "@nuxt/content": "link:.",
+    "@ripka/content": "link:.",
     "@nuxt/devtools": "^2.6.3",
     "@nuxt/eslint-config": "^1.9.0",
     "@nuxt/kit": "^4.1.1",
@@ -167,7 +170,7 @@
     "wrangler": "^4.35.0"
   },
   "resolutions": {
-    "@nuxt/content": "workspace:*"
+    "@ripka/content": "workspace:*"
   },
   "packageManager": "pnpm@10.15.1",
   "unbuild": {

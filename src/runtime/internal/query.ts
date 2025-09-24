@@ -1,5 +1,5 @@
 import { withoutTrailingSlash } from 'ufo'
-import type { Collections, CollectionQueryBuilder, CollectionQueryGroup, QueryGroupFunction, SQLOperator } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, CollectionQueryGroup, QueryGroupFunction, SQLOperator } from '@ripka/content'
 import { tables } from '#content/manifest'
 
 const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR') => {

@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui-pro',
-    '@nuxt/content',
+    '@ripka/content',
     '@nuxthub/core',
   ],
   content: {
