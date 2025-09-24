@@ -1,7 +1,7 @@
 import { eventHandler, getRouterParam, readBody } from 'h3'
 import loadDatabaseAdapter, { checkAndImportDatabaseIntegrity, ensureDatabaseReady } from '../internal/database.server'
 import { assertSafeQuery } from '../internal/security'
-import type { RuntimeConfig } from '@ripka/content'
+import type { RuntimeConfig } from '@nuxt/content'
 import { useRuntimeConfig } from '#imports'
 
 export default eventHandler(async (event) => {

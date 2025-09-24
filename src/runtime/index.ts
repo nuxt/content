@@ -2,7 +2,7 @@ import type { MDCRoot } from '@nuxtjs/mdc'
 import { toHast, fromHast } from 'minimark/hast'
 import type { MinimarkNode, MinimarkTree } from 'minimark'
 import { visit as minimarkVisit } from 'minimark'
-import type { MinimalTree, MinimalNode } from '@ripka/content'
+import type { MinimalTree, MinimalNode } from '@nuxt/content'
 
 type Tree = MinimalTree | MinimarkTree
 type Node = MinimalNode | MinimarkNode

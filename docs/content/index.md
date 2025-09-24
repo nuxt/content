@@ -326,7 +326,7 @@ orientation: horizontal
     label: content.config.ts
     ---
     ```ts [content.config.ts]
-    import { defineContentConfig, defineCollection, z } from '@ripka/content'
+    import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
     export default defineContentConfig({
       collections: {

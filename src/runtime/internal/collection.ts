@@ -1,4 +1,4 @@
-import type { CollectionInfo } from '@ripka/content'
+import type { CollectionInfo } from '@nuxt/content'
 import contentManifest from '#content/manifest'
 
 export function refineContentFields<T>(sql: string, doc: T) {

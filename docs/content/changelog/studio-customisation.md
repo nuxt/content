@@ -28,7 +28,7 @@ Nuxt Content leverages [zod](https://github.com/colinhacks/zod) to let you defin
 
 You can define your Content schema by adding the `schema` property to your collection and by using a [zod](https://github.com/colinhacks/zod) schema.
 
-`@ripka/content` exposes a `z` object that contains a set of [Zod](/) utilities for common data types.
+`@nuxt/content` exposes a `z` object that contains a set of [Zod](/) utilities for common data types.
 
 ::prose-code-group
 ```ts [content.config.ts]

@@ -43,10 +43,10 @@ export type * from './types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: '@ripka/content',
+    name: '@nuxt/content',
     configKey: 'content',
     version,
-    docs: 'https://github.com/oripka/content',
+    docs: 'https://content.nuxt.com',
   },
   defaults: {
     _localDatabase: {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { findPageBreadcrumb, findPageChildren, findPageSiblings, findPageHeadline } from '@ripka/content/utils'
+import { findPageBreadcrumb, findPageChildren, findPageSiblings, findPageHeadline } from '@nuxt/content/utils'
 
 describe('utils', () => {
   const navigation = [

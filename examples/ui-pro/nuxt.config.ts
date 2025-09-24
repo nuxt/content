@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui-pro',
-    '@ripka/content',
+    '@nuxt/content',
   ],
   devtools: { enabled: true },
   future: {

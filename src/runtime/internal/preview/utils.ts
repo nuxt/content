@@ -1,5 +1,5 @@
 import { createDefu } from 'defu'
-import type { CollectionSource } from '@ripka/content'
+import type { CollectionSource } from '@nuxt/content'
 
 export * from './files'
 

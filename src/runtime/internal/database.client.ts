@@ -3,7 +3,7 @@ import type { Database } from '@sqlite.org/sqlite-wasm'
 import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
 import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
-import type { DatabaseAdapter, DatabaseBindParams } from '@ripka/content'
+import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
 function extractKidFromEnvelope(b64: string | null): string | null {

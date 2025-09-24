@@ -1,4 +1,4 @@
-import { defineContentConfig, defineCollectionSource, defineCollection, z, property } from '@ripka/content'
+import { defineContentConfig, defineCollectionSource, defineCollection, z, property } from '@nuxt/content'
 
 const hackernews = defineCollection({
   type: 'data',

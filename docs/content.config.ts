@@ -1,4 +1,4 @@
-import { defineContentConfig, defineCollection, property, z } from '@ripka/content'
+import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
 
 const createPricingFeatureSchema = () => z.object({
   title: z.string(),

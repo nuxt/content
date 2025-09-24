@@ -1,12 +1,5 @@
 # Changelog
 
-## 3.7.1-ripka.0
-
-### Chores
-
-* rename the package to `@ripka/content` and document publishing instructions for the fork
-
-
 ## [3.7.1](https://github.com/nuxt/content/compare/v3.7.0...v3.7.1) (2025-09-16)
 
 ### Bug Fixes
