@@ -1,4 +1,3 @@
-import type { ListenOptions } from 'listhen'
 import type { LanguageRegistration, BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
@@ -70,7 +69,7 @@ export interface ModuleOptions {
    * Development HMR
    * @default { enabled: true }
    */
-  watch?: Partial<ListenOptions> & { enabled?: boolean }
+  watch?: { enabled?: boolean }
 
   renderer: {
     /**
