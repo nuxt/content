@@ -3,8 +3,9 @@ import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
-import { downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
+import { downloadGitRepository } from './git'
 import { logger } from './dev'
+import gitUrlParse from 'git-url-parse'
 
 export function getExcludedSourcePaths(source: CollectionSource) {
   return [
@@ -45,63 +46,43 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
   return resolvedSource
 }
 
-export function defineGitHubSource(source: CollectionSource): ResolvedCollectionSource {
+export function defineGitSource(source: CollectionSource): ResolvedCollectionSource {
   const resolvedSource = defineLocalSource(source)
-
   resolvedSource.prepare = async ({ rootDir }) => {
-    const repository = source?.repository && parseGitHubUrl(source.repository!)
-    if (repository) {
-      const { org, repo, branch } = repository
-      resolvedSource.cwd = join(rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
+    if (typeof (source.repository) === 'string') {
+      const repository = source?.repository && gitUrlParse(source.repository)
+      if (repository) {
+        const { source: gitSource, owner, name } = repository
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
 
-      let headers: Record<string, string> = {}
-      if (resolvedSource.authToken) {
-        headers = { Authorization: `Bearer ${resolvedSource.authToken}` }
+        await downloadGitRepository(source.repository!, resolvedSource.cwd!)
       }
-
-      const url = headers.Authorization
-        ? `https://api.github.com/repos/${org}/${repo}/tarball/${branch}`
-        : `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`
-
-      await downloadRepository(url, resolvedSource.cwd!, { headers })
     }
-  }
 
-  return resolvedSource
-}
+    if (typeof (source.repository) === 'object') {
+      const repository = source?.repository && gitUrlParse(source.repository.url)
+      if (repository) {
+        const { source: gitSource, owner, name } = repository
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
 
-export function defineBitbucketSource(
-  source: CollectionSource,
-): ResolvedCollectionSource {
-  const resolvedSource = defineLocalSource(source)
+        let ref: object | undefined
 
-  resolvedSource.prepare = async ({ rootDir }) => {
-    const repository
-      = source?.repository && parseBitBucketUrl(source.repository!)
-    if (repository) {
-      const { org, repo, branch } = repository
-      resolvedSource.cwd = join(
-        rootDir,
-        '.data',
-        'content',
-        `bitbucket-${org}-${repo}-${branch}`,
-      )
+        if (source.repository.branch && source.repository.tag) {
+          throw new Error('Cannot specify both branch and tag for git repository. Please specify one of `branch` or `tag`.')
+        }
 
-      let headers: Record<string, string> = {}
-      if (resolvedSource.authBasic) {
-        const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`
-        const encodedCredentials = btoa(credentials)
-        headers = {
-          Authorization: `Basic ${encodedCredentials}`,
+        if (source.repository.branch) ref = { branch: source.repository.branch }
+        if (source.repository.tag) ref = { tag: source.repository.tag }
+
+        if (source.repository.auth) {
+          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
+        }
+        else {
+          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, undefined, ref)
         }
       }
-
-      const url = `https://bitbucket.org/${org}/${repo}/get/${branch}.tar.gz`
-
-      await downloadRepository(url, resolvedSource.cwd!, { headers })
     }
   }
-
   return resolvedSource
 }
 

@@ -72,6 +72,7 @@
     "defu": "^6.1.4",
     "destr": "^2.0.5",
     "git-url-parse": "^16.1.0",
+    "isomorphic-git": "^1.33.1",
     "jiti": "^2.5.1",
     "json-schema-to-typescript": "^15.0.4",
     "knitwork": "^1.2.0",
