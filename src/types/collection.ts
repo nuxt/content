@@ -1,6 +1,6 @@
 import type { Draft07 } from '../types/schema'
 import type { MarkdownRoot } from './content'
-import type { GitBasicAuth, GitRefType, GitTokenAuth } from './git'
+import type { GitRepositoryType } from './git'
 import type { ContentStandardSchemaV1 } from './schema'
 
 export interface PageCollections {}
@@ -12,11 +12,7 @@ export type CollectionSource = {
   include: string
   prefix?: string
   exclude?: string[]
-  repository?: string
-  authBasic?: GitBasicAuth
-  authToken?: GitTokenAuth | GitTokenAuth['token']
-  cloneRepository?: boolean
-  ref?: GitRefType
+  repository?: string | GitRepositoryType
   cwd?: string
 }
 

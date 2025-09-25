@@ -3,7 +3,7 @@ import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
-import { downloadGitRepository, downloadRepository, parseBitBucketUrl, parseGitHubUrl } from './git'
+import { downloadGitRepository } from './git'
 import { logger } from './dev'
 import gitUrlParse from 'git-url-parse'
 
@@ -46,85 +46,36 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
   return resolvedSource
 }
 
-export function defineGitHubSource(source: CollectionSource): ResolvedCollectionSource {
-  const resolvedSource = defineLocalSource(source)
-
-  resolvedSource.prepare = async ({ rootDir }) => {
-    const repository = source?.repository && parseGitHubUrl(source.repository!)
-    if (repository) {
-      const { org, repo, branch } = repository
-      resolvedSource.cwd = join(rootDir, '.data', 'content', `github-${org}-${repo}-${branch}`)
-
-      let headers: Record<string, string> = {}
-      if (typeof resolvedSource.authToken === 'string') {
-        headers = { Authorization: `Bearer ${resolvedSource.authToken}` }
-      }
-      if (typeof resolvedSource.authToken === 'object') {
-        headers = { Authorization: `Bearer ${resolvedSource.authToken.token}` }
-      }
-
-      const url = headers.Authorization
-        ? `https://api.github.com/repos/${org}/${repo}/tarball/${branch}`
-        : `https://github.com/${org}/${repo}/archive/refs/heads/${branch}.tar.gz`
-
-      await downloadRepository(url, resolvedSource.cwd!, { headers })
-    }
-  }
-
-  return resolvedSource
-}
-
 export function defineGitSource(source: CollectionSource): ResolvedCollectionSource {
   const resolvedSource = defineLocalSource(source)
   resolvedSource.prepare = async ({ rootDir }) => {
-    const repository = source?.repository && gitUrlParse(source.repository!)
-    if (repository) {
-      const { source: gitSource, name } = repository
-      resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${name}-clone`)
+    if (typeof (source.repository) === 'string') {
+      const repository = source?.repository && gitUrlParse(source.repository)
+      if (repository) {
+        const { source: gitSource, owner, name } = repository
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
 
-      if (resolvedSource.authBasic) {
-        await downloadGitRepository(source.repository!, resolvedSource.cwd!, resolvedSource.authBasic, source.ref)
-      }
-      else {
-        await downloadGitRepository(source.repository!, resolvedSource.cwd!, resolvedSource.authToken, source.ref)
+        await downloadGitRepository(source.repository!, resolvedSource.cwd!)
       }
     }
-  }
-  return resolvedSource
-}
 
-export function defineBitbucketSource(
-  source: CollectionSource,
-): ResolvedCollectionSource {
-  const resolvedSource = defineLocalSource(source)
+    if (typeof (source.repository) === 'object') {
+      const repository = source?.repository && gitUrlParse(source.repository.url)
+      if (repository) {
+        const { source: gitSource, name } = repository
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${name}-clone`)
 
-  resolvedSource.prepare = async ({ rootDir }) => {
-    const repository
-      = source?.repository && parseBitBucketUrl(source.repository!)
-    if (repository) {
-      const { org, repo, branch } = repository
-      resolvedSource.cwd = join(
-        rootDir,
-        '.data',
-        'content',
-        `bitbucket-${org}-${repo}-${branch}`,
-      )
+        let ref: object | undefined
 
-      let headers: Record<string, string> = {}
-      if (resolvedSource.authBasic) {
-        const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`
-        const encodedCredentials = btoa(credentials)
-        headers = {
-          Authorization: `Basic ${encodedCredentials}`,
+        if (source.repository.branch) ref = { branch: source.repository.branch }
+        if (source.repository.tag) ref = { tag: source.repository.tag }
+
+        if (source.repository.auth) {
+          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
         }
       }
-
-      const url = `https://bitbucket.org/${org}/${repo}/get/${branch}.tar.gz`
-
-      await downloadRepository(url, resolvedSource.cwd!, { headers })
     }
   }
-
   return resolvedSource
 }
 

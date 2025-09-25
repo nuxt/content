@@ -1,3 +1,10 @@
+export type GitRepositoryType = {
+  url: string
+  branch?: GitRefType['branch']
+  tag?: GitRefType['tag']
+  auth?: GitBasicAuth | GitTokenAuth
+}
+
 export type GitRefType = {
   branch?: string
   tag?: string
