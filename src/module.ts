@@ -102,16 +102,17 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    addPlugin({ src: resolver.resolve('./runtime/plugins/content.client'), mode: 'client' })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
 
     // Helpers are designed to be enviroment agnostic
     addImports([
-      { name: 'queryCollection', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
