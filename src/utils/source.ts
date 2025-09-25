@@ -73,6 +73,9 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
         if (source.repository.auth) {
           await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
         }
+        else {
+          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, ref)
+        }
       }
     }
   }

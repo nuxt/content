@@ -74,7 +74,6 @@ export async function downloadGitRepository(url: string, cwd: string, auth?: Git
 
   if (cache) {
     // Directory exists, skip download
-    const hash = await getGitRemoteHash(url, ref)
     if (hash === cache.hash) {
       await writeFile(cacheFile, JSON.stringify({
         ...cache,

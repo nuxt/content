@@ -102,7 +102,7 @@ function resolveSource(source: string | CollectionSource | CollectionSource[] | 
     }
 
     if (source.repository) {
-      defineGitSource(source)
+      return defineGitSource(source)
     }
 
     return defineLocalSource(source)
