@@ -62,10 +62,14 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
     if (typeof (source.repository) === 'object') {
       const repository = source?.repository && gitUrlParse(source.repository.url)
       if (repository) {
-        const { source: gitSource, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${name}-clone`)
+        const { source: gitSource, owner, name } = repository
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
 
         let ref: object | undefined
+
+        if (source.repository.branch && source.repository.tag) {
+          throw new Error('Cannot specify both branch and tag for git repository. Please specify one of `branch` or `tag`.')
+        }
 
         if (source.repository.branch) ref = { branch: source.repository.branch }
         if (source.repository.tag) ref = { tag: source.repository.tag }
@@ -74,7 +78,7 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
           await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
         }
         else {
-          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, ref)
+          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, undefined, ref)
         }
       }
     }
