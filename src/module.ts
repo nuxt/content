@@ -1,4 +1,5 @@
 import { stat } from 'node:fs/promises'
+import { randomBytes } from 'node:crypto'
 import {
   defineNuxtModule,
   createResolver,
@@ -149,12 +150,22 @@ export default defineNuxtModule<ModuleOptions>({
     // Prerender database.sql routes for each collection to fetch dump
     nuxt.options.routeRules ||= {}
 
-    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-    // @see https://github.com/nuxt/content/pull/3299
-    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+    // Prevent nuxtseo from indexing nuxt-content routes
+    // @ts-expect-error - routeRules uses string index globs which Nuxt supports at runtime but TypeScript cannot type
+    nuxt.options.routeRules!['/__nuxt_content/**'] = { robots: false }
+
+    if (options.encryption?.enabled && !options.encryption.masterKey) {
+      options.encryption.masterKey = randomBytes(32).toString('base64')
+    }
+    const encryptionEnabled = !!(options.encryption?.enabled && options.encryption.masterKey)
 
     manifest.collections.forEach((collection) => {
-      if (!collection.private) {
+      if (collection.private) return
+
+      if (encryptionEnabled) {
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.enc`] = { prerender: true }
+      }
+      else {
         nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
       }
     })
@@ -170,13 +181,18 @@ export default defineNuxtModule<ModuleOptions>({
     // Module Options
     nuxt.options.runtimeConfig.public.content = {
       wsUrl: '',
-    }
+      encryptionEnabled,
+    } as never
     nuxt.options.runtimeConfig.content = {
       databaseVersion,
       version,
       database: options.database,
       localDatabase: options._localDatabase!,
       integrityCheck: true,
+      encryption: {
+        enabled: encryptionEnabled,
+        masterKey: encryptionEnabled ? options.encryption!.masterKey : undefined,
+      },
     } as never
 
     nuxt.hook('nitro:config', async (config) => {
