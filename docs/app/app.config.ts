@@ -10,8 +10,6 @@ export default defineAppConfig({
       secondary: 'sky',
       neutral: 'slate',
     },
-  },
-  uiPro: {
     pageHero: {
       slots: {
         title: 'font-semibold sm:text-6xl',

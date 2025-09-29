@@ -7,25 +7,23 @@ branch: main
 category: minimal
 demo: https://landing-template.nuxt.dev/
 description: A simple template you can use as a starting point for your next idea.
-licenseType: nuxt-ui-pro
-mainScreen: /templates/landing.jpg
+licenseType: nuxt-ui
+mainScreen: /templates/landing-dark.png
 name: Landing
-owner: nuxt-ui-pro
+owner: nuxt-ui-templates
 draft: false
+image1: /templates/landing-light.png
+image2: /templates/landing-dark.png
 ---
 
-::div{.flex.justify-center}
-:video{.rounded-lg autoplay controls loop :width='1000' src="https://res.cloudinary.com/nuxt/video/upload/v1745425967/studio/landing_q03gdo.mp4"}
-::
-
 ::template-core
-[Nuxt UI Pro](https://ui.nuxt.com/pro) is a collection of premium components, an extension of [Nuxt UI](https://ui.nuxt.com), designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.
+[Nuxt UI](https://ui.nuxt.com) is a collection of premium components designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.
 
 The Nuxt UI team is dedicated to deliver the best integration and customization experience, while the Studio team is providing full compatibility with Nuxt Studio.
 
 - **Fully customizable**: change the style of your UI from your App Config or edit your landing page content from the `index.yml` file.
 - **Beautiful Typography styles**: Tailwind CSS typography plugin is pre-configured and styled to match Nuxt UI components and colors.
-- **Responsive by design**: Nuxt UI Pro components aims to structure your content, they are responsive by design and will adapt to any screen size.
+- **Responsive by design**: Nuxt UI components aims to structure your content, they are responsive by design and will adapt to any screen size.
 
 #right
   :::template-features

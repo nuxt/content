@@ -35,9 +35,9 @@ export default defineContentConfig({
           }),
         }),
         plans: z.object({
-          solo: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
-          team: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
-          unlimited: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          solo: property(z.object({})),
+          team: property(z.object({})),
+          unlimited: property(z.object({})),
         }),
         features: z.object({
           title: z.string(),
@@ -111,7 +111,7 @@ export default defineContentConfig({
         branch: z.string(),
         category: z.enum(['docs', 'blog', 'minimal', 'saas']),
         demo: z.string(),
-        licenseType: z.enum(['nuxt-ui-pro', 'free']),
+        licenseType: z.enum(['nuxt-ui', 'free']),
         mainScreen: property(z.string()).editor({ input: 'media' }),
         name: z.string(),
         owner: z.string(),

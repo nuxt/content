@@ -8,10 +8,10 @@ category: docs
 createdAt: 2023-11-15T17:41:03.087Z
 demo: https://docus.dev
 description: Write beautiful docs with Markdown
-licenseType: nuxt-ui-pro
+licenseType: nuxt-ui
 mainScreen: /templates/docus.webp
 name: docus
-owner: nuxtlabs
+owner: nuxt-content
 image1: /blog/docus.webp
 image2: ""
 image3: ""
@@ -63,7 +63,7 @@ This starter comes pre-configured with:
 
 - [Nuxt 4](https://nuxt.com) - The web framework
 - [Nuxt Content](https://content.nuxt.com/) - File-based CMS
-- [Nuxt UI Pro](https://ui.nuxt.com/pro) - Premium UI components
+- [Nuxt UI](https://ui.nuxt.com) - Premium UI components
 - [Nuxt Image](https://image.nuxt.com/) - Optimized images
 - [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS
 - [Docus Layer](https://www.npmjs.com/package/docus) - Documentation theme

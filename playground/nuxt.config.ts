@@ -1,6 +1,7 @@
 export default defineNuxtConfig({
+  extends: ['docus'],
   modules: [
-    '@nuxt/ui-pro',
+    '@nuxt/ui',
     '@nuxt/content',
     '@nuxthub/core',
   ],
