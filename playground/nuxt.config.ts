@@ -1,5 +1,4 @@
 export default defineNuxtConfig({
-  extends: ['docus'],
   modules: [
     '@nuxt/ui',
     '@nuxt/content',
