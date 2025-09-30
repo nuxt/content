@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/ui-pro', '@nuxtjs/i18n', '@nuxt/content', '@nuxthub/core'],
+  modules: ['@nuxt/ui', '@nuxtjs/i18n', '@nuxt/content', '@nuxthub/core'],
   devtools: { enabled: true },
   future: {
     compatibilityVersion: 4,
