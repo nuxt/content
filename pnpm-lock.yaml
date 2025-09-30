@@ -102,8 +102,8 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       nuxt-component-meta:
-        specifier: ^0.14.0
-        version: 0.14.0(magicast@0.3.5)
+        specifier: https://pkg.pr.new/nuxt-component-meta@6b22580
+        version: https://pkg.pr.new/nuxt-component-meta@6b22580(magicast@0.3.5)
       nypm:
         specifier: ^0.6.1
         version: 0.6.2
@@ -5841,8 +5841,9 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxt-component-meta@0.14.0:
-    resolution: {integrity: sha512-RaL6bHJujuZmw/G+uNWAHYktf3k4hdlBIy+FqudXji42IefrJKdSMkh5ixyhsfEHWsuTYGKxD2NU3sq990KGrQ==}
+  nuxt-component-meta@https://pkg.pr.new/nuxt-component-meta@6b22580:
+    resolution: {tarball: https://pkg.pr.new/nuxt-component-meta@6b22580}
+    version: 0.14.0
     hasBin: true
 
   nuxt-define@1.0.0:
@@ -14141,7 +14142,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-component-meta@0.14.0(magicast@0.3.5):
+  nuxt-component-meta@https://pkg.pr.new/nuxt-component-meta@6b22580(magicast@0.3.5):
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
       citty: 0.1.6
