@@ -271,8 +271,8 @@ importers:
         specifier: ^12.4.1
         version: 12.4.1
       docus:
-        specifier: 5.1.0
-        version: 5.1.0(d3a96d6b3910eae2a0539d718196d2cf)
+        specifier: https://pkg.pr.new/docus@1194
+        version: https://pkg.pr.new/docus@1194(d3a96d6b3910eae2a0539d718196d2cf)
       minisearch:
         specifier: ^7.2.0
         version: 7.2.0
@@ -4091,8 +4091,9 @@ packages:
     resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
 
-  docus@5.1.0:
-    resolution: {integrity: sha512-LU/wfducOl4t6XOhGFvDsgGofO/Q3ADj/ECh9mduYR1WpxrO5CO1wJ5OG17akWu6Mxc056BJhZpTBesGNWgZsw==}
+  docus@https://pkg.pr.new/docus@1194:
+    resolution: {tarball: https://pkg.pr.new/docus@1194}
+    version: 5.1.0
     peerDependencies:
       better-sqlite3: 12.x
       nuxt: 4.x
@@ -11823,7 +11824,7 @@ snapshots:
 
   diff@8.0.2: {}
 
-  docus@5.1.0(d3a96d6b3910eae2a0539d718196d2cf):
+  docus@https://pkg.pr.new/docus@1194(d3a96d6b3910eae2a0539d718196d2cf):
     dependencies:
       '@iconify-json/lucide': 1.2.68
       '@iconify-json/simple-icons': 1.2.53
