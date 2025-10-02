@@ -5,6 +5,9 @@ onMounted(() => {
   if (!el.value) {
     return
   }
+  if (document.querySelector('#_carbonads_js')) {
+    return
+  }
 
   const script = document.createElement('script')
   script.setAttribute('type', 'text/javascript')
