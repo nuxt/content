@@ -66,6 +66,21 @@ const pages = defineCollection({
 })
 
 const collections = {
+  people: defineCollection({
+    type: 'data',
+    source: 'org/people.csv',
+    schema: z.object({
+      name: z.string(),
+      email: z.string().email(),
+    }),
+  }),
+  org: defineCollection({
+    type: 'data',
+    source: 'org/**.csv',
+    schema: z.object({
+      body: z.array(z.any()),
+    }),
+  }),
   hackernews,
   content,
   data,
