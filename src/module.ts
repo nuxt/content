@@ -30,7 +30,7 @@ import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupPreview, shouldEnablePreview } from './utils/preview/module'
+import { setupPreview, setupPreviewWithAPI, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 import type { ParsedContentFile } from './types'
@@ -98,7 +98,6 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
-    addPlugin({ src: resolver.resolve('./runtime/plugins/content.client'), mode: 'client' })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
@@ -203,6 +202,7 @@ export default defineNuxtModule<ModuleOptions>({
     if (hasNuxtModule('nuxt-llms')) {
       installModule(resolver.resolve('./features/llms'))
     }
+
     await installMDCModule(options, nuxt)
 
     if (nuxt.options._prepare) {
@@ -230,8 +230,11 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle preview mode
-      if (shouldEnablePreview(nuxt, options)) {
+      if (hasNuxtModule('nuxt-studio')) {
         await setupPreview(options, nuxt, resolver, manifest)
+      }
+      if (shouldEnablePreview(nuxt, options)) {
+        await setupPreviewWithAPI(options, nuxt, resolver, manifest)
       }
     })
   },
