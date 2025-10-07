@@ -11,6 +11,7 @@ import {
   updateTemplates,
   addComponent,
   installModule,
+  addVitePlugin,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -24,7 +25,7 @@ import { generateCollectionInsert, generateCollectionTableDefinition } from './u
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
-import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
+import { getContentChecksum, logger, chunks, NuxtContentHMRUnplugin } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
 import { installMDCModule } from './utils/mdc'
@@ -53,15 +54,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: '.data/content/contents.sqlite',
     },
     preview: {},
-    watch: {
-      enabled: true,
-      port: {
-        port: 4000,
-        portRange: [4000, 4040],
-      },
-      hostname: 'localhost',
-      showURL: false,
-    },
+    watch: { enabled: true },
     renderer: {
       alias: {},
       anchorLinks: {
@@ -96,12 +89,12 @@ export default defineNuxtModule<ModuleOptions>({
     // Detect installed validators and them into content context
     await initiateValidatorsContext()
 
-    const { collections } = await loadContentConfig(nuxt)
+    const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
 
-    nuxt.options.vite.optimizeDeps ||= {}
-    nuxt.options.vite.optimizeDeps.exclude ||= []
-    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+      exclude: ['@sqlite.org/sqlite-wasm'],
+    })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
@@ -122,16 +115,18 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
     // Add Templates & aliases
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
-    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
+    nuxt.options.alias = defu(nuxt.options.alias, {
+      '#content/components': addTemplate(componentsManifestTemplate(manifest)).dst,
+      '#content/manifest': addTemplate(manifestTemplate(manifest)).dst,
+    })
 
     // Add content types to Nuxt and Nitro
     const typesTemplateDst = addTypeTemplate(contentTypesTemplate(manifest.collections)).dst
-    nuxt.options.nitro.typescript ||= {}
-    nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
-      include: [typesTemplateDst],
+    nuxt.options.nitro.typescript = defu(nuxt.options.nitro.typescript, {
+      tsConfig: {
+        include: [typesTemplateDst],
+      },
     })
 
     // Register user components
@@ -195,11 +190,13 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle HMR changes
-      if (nuxt.options.dev) {
+      if (nuxt.options.dev && options.watch?.enabled !== false) {
         addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-        await watchComponents(nuxt)
-        const socket = await startSocketServer(nuxt, options, manifest)
-        await watchContents(nuxt, options, manifest, socket)
+        addVitePlugin(NuxtContentHMRUnplugin.vite({
+          nuxt,
+          moduleOptions: options,
+          manifest,
+        }))
       }
     })
 

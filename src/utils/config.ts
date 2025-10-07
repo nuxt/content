@@ -1,7 +1,7 @@
 import { loadConfig, watchConfig, createDefineConfig } from 'c12'
 import { relative } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
-import type { DefinedCollection } from '../types'
+import type { DefinedCollection, ModuleOptions } from '../types'
 import { defineCollection, resolveCollections } from './collection'
 import { logger } from './dev'
 
@@ -20,8 +20,9 @@ const defaultConfig: NuxtContentConfig = {
 
 export const defineContentConfig = createDefineConfig<NuxtContentConfig>()
 
-export async function loadContentConfig(nuxt: Nuxt) {
-  const loader: typeof watchConfig = nuxt.options.dev
+export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
+  const watch = nuxt.options.dev && options?.watch?.enabled !== false
+  const loader: typeof watchConfig = watch
     ? opts => watchConfig({
       ...opts,
       onWatch: (e) => {
@@ -44,7 +45,7 @@ export async function loadContentConfig(nuxt: Nuxt) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delete (globalThis as any).defineContentConfig
 
-  if (nuxt.options.dev) {
+  if (watch) {
     nuxt.hook('close', () => Promise.all(contentConfigs.map(c => c.unwatch())).then(() => {}))
   }
 
