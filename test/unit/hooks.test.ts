@@ -4,8 +4,10 @@ import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import { parseContent } from '../utils/content'
 import type { FileAfterParseHook, FileBeforeParseHook } from '../../src/types'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
-describe('Hooks', () => {
+describe('Hooks', async () => {
+  await initiateValidatorsContext()
   const collection = resolveCollection('hookTest', defineCollection({
     type: 'data',
     source: 'content/**',

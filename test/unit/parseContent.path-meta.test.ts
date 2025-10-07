@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 const testCases = {
   'content:3.index.md': {
@@ -80,7 +81,9 @@ const testCases = {
   },
 }
 
-describe('Transformer (path-meta)', () => {
+describe('Transformer (path-meta)', async () => {
+  await initiateValidatorsContext()
+
   const collection = resolveCollection('content', defineCollection({
     type: 'page',
     source: 'content/**',

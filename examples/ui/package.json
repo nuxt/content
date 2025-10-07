@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-content-ui-pro-starter",
+  "name": "nuxt-content-ui-starter",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui-pro": "^3.3.0",
-    "nuxt": "^4.0.3"
+    "@nuxt/ui": "^4.0.0",
+    "nuxt": "^4.1.1"
   }
 }

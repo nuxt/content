@@ -1,4 +1,4 @@
-import { defineContentConfig, defineCollectionSource, defineCollection, z } from '@nuxt/content'
+import { defineContentConfig, defineCollectionSource, defineCollection, z, property } from '@nuxt/content'
 
 const hackernews = defineCollection({
   type: 'data',
@@ -34,6 +34,7 @@ const content = defineCollection({
   schema: z.object({
     date: z.date(),
     rawbody: z.string(),
+    testd: property(z.object({})).inherit('components/TestD.vue'),
   }),
 })
 
@@ -69,6 +70,11 @@ const collections = {
   content,
   data,
   pages,
+  buttons: defineCollection({
+    type: 'data',
+    source: 'testd/**',
+    schema: property(z.object({})).inherit('@nuxt/ui/components/Button.vue'),
+  }),
   contentV2: defineCollection({
     type: 'page',
     source: {

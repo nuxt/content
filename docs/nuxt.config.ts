@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+  extends: ['docus'],
   modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
   css: ['~/assets/css/main.css'],
   site: {

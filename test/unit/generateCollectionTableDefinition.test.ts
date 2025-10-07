@@ -1,8 +1,13 @@
-import { describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 import { generateCollectionTableDefinition, defineCollection, resolveCollection, getTableName } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 describe('generateCollectionTableDefinition', () => {
+  beforeAll(async () => {
+    await initiateValidatorsContext()
+  })
+
   test('Page without custom schema', () => {
     const collection = resolveCollection('content', defineCollection({
       type: 'page',

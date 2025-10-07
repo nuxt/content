@@ -16,10 +16,11 @@ jobs:
     env:
       COREPACK_DEFAULT_TO_LATEST: 0
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          package-manager-cache: false
+          node-version: '24'
       - run: npm i -g --force corepack && corepack enable
       - run: pnpm install
       - run: pnpm dev:prepare
