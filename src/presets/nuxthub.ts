@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'pathe'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
-import cfPreset from './cloudflare'
+import { applyContentDumpsPreset } from './shared-dumps'
 
 export default definePreset({
   name: 'nuxthub',
@@ -27,33 +27,42 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
     }
 
-    await cfPreset.setupNitro(nitroConfig, options)
+    // Apply Cloudflare-style dumps setup (encrypted or plaintext depending on config)
+    applyContentDumpsPreset(nitroConfig, { ...options, platform: 'nuxthub' })
 
     if (nitroConfig.dev === false) {
+      const encryptionEnabled = !!nitroConfig.runtimeConfig?.content?.encryption?.enabled
+
+      if (!encryptionEnabled) {
       // Write SQL dump to database queries when not in dev mode
-      await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
-      let i = 1
-      // Drop info table and prepare for new dump
-      let dump = 'DROP TABLE IF EXISTS _content_info;'
-      const dumpFiles: Array<{ file: string, content: string }> = []
-      Object.values(options.manifest.dump).forEach((value) => {
-        value.forEach((line) => {
-          if ((dump.length + line.length) < 1000000) {
-            dump += '\n' + line
-          }
-          else {
-            dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
-            dump = line
-            i += 1
-          }
+        await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
+        let i = 1
+        // Drop info table and prepare for new dump
+        let dump = 'DROP TABLE IF EXISTS _content_info;'
+        const dumpFiles: Array<{ file: string, content: string }> = []
+        Object.values(options.manifest.dump).forEach((value) => {
+          value.forEach((line) => {
+            if ((dump.length + line.length) < 1000000) {
+              dump += '\n' + line
+            }
+            else {
+              dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
+              dump = line
+              i += 1
+            }
+          })
         })
-      })
-      if (dump.length > 0) {
-        dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
+        if (dump.length > 0) {
+          dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
+        }
+        for (const dumpFile of dumpFiles) {
+          await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        }
       }
-      for (const dumpFile of dumpFiles) {
-        await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+      else {
+        logger.info('[content] encryption enabled — skipping NuxtHub plaintext query emission.')
       }
+
       // Disable integrity check in production for performance
       nitroConfig.runtimeConfig ||= {}
       nitroConfig.runtimeConfig.content ||= {}
