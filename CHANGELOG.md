@@ -8,6 +8,34 @@
 
 ## [3.7.0](https://github.com/nuxt/content/compare/v3.6.3...v3.7.0) (2025-09-12)
 
+### Deprecations
+
+The following features are deprecated and will be removed in a future release:
+- `z` re-export from `@nuxt/content`
+- Calling `.editor()` directly on zod schemas (e.g. `z.string().editor(...)`)
+
+Migration guide :
+```diff
+- import { defineContentConfig, defineCollection, z } from '@nuxt/content'
++ import { defineContentConfig, defineCollection, property } from '@nuxt/content'
++ import { z } from 'zod' // or 'zod/v3' if your setup exposes this subpath
+
+  export default defineContentConfig({
+    collections: {
+      posts: defineCollection({
+        type: 'page',
+        source: 'blog/*.md',
+        schema: z.object({
+        image: z.object({
+-         src: z.string().editor({ input: 'media' }),
++         src: property(z.string()).editor({ input: 'media' }),
+          alt: z.string(),
+        }),
+      }),
+    },
+  })
+```
+
 ### Features
 
 * adopt standard schema spec and support different validators ([#3524](https://github.com/nuxt/content/issues/3524)) ([46a1004](https://github.com/nuxt/content/commit/46a1004c6eadae00c1c42f6f335b7dd5ac664b33))

@@ -1,4 +1,5 @@
-import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, property } from '@nuxt/content'
+import z from 'zod'
 
 const createPricingFeatureSchema = () => z.object({
   title: z.string(),
