@@ -12,7 +12,7 @@
     "better-sqlite3": "^12.4.1",
     "docus": "https://pkg.pr.new/docus@1194",
     "minisearch": "^7.2.0",
-    "@nuxt/ui": "^4.0.0",
-    "nuxt": "^4.1.2"
+    "@nuxt/ui": "^4.0.1",
+    "nuxt": "^4.1.3"
   }
 }
