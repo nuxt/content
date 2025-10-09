@@ -16,6 +16,10 @@ category: content
 draft: false
 ---
 
+::warning
+This article was published before v3.7, learn [this guide](https://github.com/nuxt/content/blob/main/CHANGELOG.md#370-2025-09-12) to migrate.
+::
+
 The [Studio](https://nuxt.studio) forms are dynamically generated based on the collection schema defined in your content configuration file. This behaviour applies whether you’re editing the [frontmatter](/docs/files/markdown#frontmatter) of a `Markdown` file or a `JSON` / `YAML` file.
 
 :video{autoplay controls poster="https://res.cloudinary.com/nuxt/video/upload/v1739982761/frontmatterform_yjafgt.png" src="https://res.cloudinary.com/nuxt/video/upload/v1739982761/frontmatterform_yjafgt.mp4"}
