@@ -2,6 +2,10 @@ interface Window {
   sendNavigateMessageInPreview: (path: string, navigate: boolean) => void
 }
 
+interface ImportMeta {
+  readonly preview?: boolean
+}
+
 declare module '#content/manifest' {
   const manifest: Record<string, unknown>
   const checksums: Record<string, string>
