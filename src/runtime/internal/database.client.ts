@@ -3,7 +3,7 @@ import type { Database } from '@sqlite.org/sqlite-wasm'
 import { decompressSQLDump, decryptAndDecompressSQLDump } from './dump'
 import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
-import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
+import type { DatabaseAdapter, DatabaseBindParams, ClearContentClientStorageOptions } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
 function extractKidFromEnvelope(b64: string | null): string | null {
@@ -19,7 +19,7 @@ function extractKidFromEnvelope(b64: string | null): string | null {
   }
 }
 
-let db: Database
+let db: Database | null = null
 const loadedCollections: Record<string, string> = {}
 const dbPromises: Record<string, Promise<Database>> = {}
 
@@ -37,23 +37,33 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       Reflect.deleteProperty(dbPromises, String(collection))
     }
 
-    return db
+    return db as Database
   }
 
   return {
     all: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
-      return db
+      const activeDb = db
+      if (!activeDb) {
+        throw new Error('Client content database is not initialized')
+      }
+
+      return activeDb
         .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
         .map(row => refineContentFields(sql, row) as T)
     },
     first: async <T>(sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
+      const activeDb = db
+      if (!activeDb) {
+        throw new Error('Client content database is not initialized')
+      }
+
       return refineContentFields(
         sql,
-        db
+        activeDb
           .exec({ sql, bind: params, rowMode: 'object', returnValue: 'resultRows' })
           .shift(),
       ) as T
@@ -61,12 +71,17 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
     exec: async (sql: string, params?: DatabaseBindParams) => {
       await loadAdapter(collection)
 
-      await db.exec({ sql, bind: params })
+      const activeDb = db
+      if (!activeDb) {
+        throw new Error('Client content database is not initialized')
+      }
+
+      await activeDb.exec({ sql, bind: params })
     },
   }
 }
 
-async function initializeDatabase() {
+async function initializeDatabase(): Promise<Database> {
   if (!db) {
     const sqlite3InitModule = await import('@sqlite.org/sqlite-wasm').then(m => m.default)
     // @ts-expect-error sqlite3ApiConfig is not defined in the module
@@ -87,13 +102,17 @@ async function initializeDatabase() {
     const sqlite3 = await sqlite3InitModule()
     db = new sqlite3.oo1.DB()
   }
-  return db
+  return db as Database
 }
 
-async function loadCollectionDatabase<T>(collection: T) {
+async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
+  const activeDb = db
+  if (!activeDb) {
+    throw new Error('Client content database is not initialized')
+  }
   // Do not initialize database with dump for preview mode
   if (window.sessionStorage.getItem('previewToken')) {
-    return db
+    return activeDb
   }
 
   let compressedDump: string | null = null
@@ -102,7 +121,7 @@ async function loadCollectionDatabase<T>(collection: T) {
   const dumpId = `collection_${collection}`
   let checksumState = 'matched'
   try {
-    const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
+    const dbChecksum = activeDb.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
       .shift()
 
     if (dbChecksum?.version !== checksums[String(collection)]) {
@@ -236,14 +255,14 @@ async function loadCollectionDatabase<T>(collection: T) {
         })()
       : decompressSQLDump(compressedDump!))
 
-    await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
+    await activeDb.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
     if (checksumState === 'mismatch') {
-      await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
+      await activeDb.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
     }
 
     for (const command of dump) {
       try {
-        await db.exec(command)
+        await activeDb.exec(command)
       }
       catch (error) {
         console.error('Error executing command', error)
@@ -251,5 +270,73 @@ async function loadCollectionDatabase<T>(collection: T) {
     }
   }
 
-  return db
+  return activeDb
+}
+
+export async function clearClientStorage<T>(options: ClearContentClientStorageOptions<T> = {}) {
+  if (!import.meta.client) {
+    return
+  }
+
+  const targets = options.collections?.length
+    ? Array.from(new Set(options.collections.map(collection => String(collection))))
+    : Object.keys(checksums)
+
+  const removeLocalStorageItem = (key: string) => {
+    try {
+      window.localStorage.removeItem(key)
+    }
+    catch (err) {
+      console.debug?.('[content] failed to remove localStorage item', key, err)
+    }
+  }
+
+  const activeDb = db
+
+  for (const collection of targets) {
+    const checksumId = `content_checksum_${collection}`
+    const dumpId = `content_collection_${collection}`
+    removeLocalStorageItem(checksumId)
+    removeLocalStorageItem(dumpId)
+
+    Reflect.deleteProperty(loadedCollections, collection)
+    Reflect.deleteProperty(dbPromises, collection)
+
+    if (activeDb) {
+      const tableName = tables[String(collection)]
+      if (tableName) {
+        try {
+          await activeDb.exec({ sql: `DROP TABLE IF EXISTS ${tableName}` })
+        }
+        catch (err) {
+          console.debug?.('[content] failed to drop content table', tableName, err)
+        }
+      }
+
+      try {
+        await activeDb.exec({ sql: `DELETE FROM ${tables.info} WHERE id = 'checksum_${collection}'` })
+      }
+      catch (err) {
+        console.debug?.('[content] failed to purge checksum metadata', collection, err)
+      }
+    }
+  }
+
+  if (options.includeDerivedKeys ?? true) {
+    try {
+      const derivedKeys: string[] = []
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i)
+        if (key?.startsWith('content_key_')) {
+          derivedKeys.push(key)
+        }
+      }
+      for (const key of derivedKeys) {
+        window.localStorage.removeItem(key)
+      }
+    }
+    catch (err) {
+      console.debug?.('[content] failed to clear cached derived keys', err)
+    }
+  }
 }

@@ -113,6 +113,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
+      { name: 'clearContentClientStorage', from: resolver.resolve('./runtime/app') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
