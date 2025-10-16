@@ -101,6 +101,9 @@ importers:
       minimatch:
         specifier: ^10.0.3
         version: 10.0.3
+      modern-tar:
+        specifier: ^0.5.4
+        version: 0.5.4
       nuxt-component-meta:
         specifier: https://pkg.pr.new/nuxt-component-meta@e3eb2c4
         version: https://pkg.pr.new/nuxt-component-meta@e3eb2c4(magicast@0.3.5)
@@ -134,9 +137,6 @@ importers:
       sqlite3:
         specifier: '*'
         version: 5.1.7
-      tar:
-        specifier: ^7.5.1
-        version: 7.5.1
       tinyglobby:
         specifier: ^0.2.15
         version: 0.2.15
@@ -5716,6 +5716,10 @@ packages:
 
   mocked-exports@0.1.1:
     resolution: {integrity: sha512-aF7yRQr/Q0O2/4pIXm6PZ5G+jAd7QS4Yu8m+WEeEHGnbo+7mE36CbLSDQiXYV8bVL3NfmdeqPJct0tUlnjVSnA==}
+
+  modern-tar@0.5.4:
+    resolution: {integrity: sha512-WqxWd82TgUbnindiHcXV8+H6qS0MlN5zrgwKm2gD5M+JyHyCk22xw3RLfpR8cHrQCQwsNIxQu+ve0SumlaLGQQ==}
+    engines: {node: '>=18.0.0'}
 
   motion-dom@12.23.12:
     resolution: {integrity: sha512-RcR4fvMCTESQBD/uKQe49D5RUeDOokkGRmz4ceaJKDBgHYtZtntC/s2vLvY38gqGaytinij/yi3hMcWVcEF5Kw==}
@@ -14128,6 +14132,8 @@ snapshots:
       ufo: 1.6.1
 
   mocked-exports@0.1.1: {}
+
+  modern-tar@0.5.4: {}
 
   motion-dom@12.23.12:
     dependencies:
