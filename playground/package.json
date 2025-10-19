@@ -12,7 +12,7 @@
     "@electric-sql/pglite": "^0.3.10",
     "@nuxt/content": "latest",
     "@nuxt/ui": "^4.0.1",
-    "@nuxthub/core": "link:/Users/atinux/Projects/nuxthub/core",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@latest",
     "better-sqlite3": "^12.4.1",
     "nuxt": "^4.1.3",
     "pg": "^8.16.3",
