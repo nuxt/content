@@ -8,8 +8,8 @@ export default definePreset({
   async setup(options) {
     options.database ||= { type: 'sqlite', filename: '/tmp/contents.sqlite' }
   },
-  async setupNitro(nitroConfig) {
-    const database = nitroConfig.runtimeConfig?.content?.database
+  async setupNitro(nitro) {
+    const database = nitro.options.runtimeConfig?.content?.database
     if (database?.type === 'sqlite' && !database?.filename?.startsWith('/tmp')) {
       logger.warn('Deploying sqlite database to Vercel is possible only in `/tmp` directory. Using `/tmp/contents.sqlite` instead.')
       database.filename = '/tmp/contents.sqlite'

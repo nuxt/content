@@ -221,5 +221,15 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     return _config
   }
 
+  if (config.type === 'pglite') {
+    // PGlite uses dataDir for storage location
+    // If no dataDir is provided, it will use in-memory storage
+    return {
+      dataDir: config.dataDir,
+      // Pass through any other PGlite-specific options
+      ...config
+    }
+  }
+
   return config
 }

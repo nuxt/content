@@ -154,29 +154,11 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    const preset = findPreset(nuxt)
-    await preset?.setup?.(options, nuxt)
 
-    // Provide default database configuration here since nuxt is merging defaults and user options
-    options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
-    await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
-    await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
-
-    // Module Options
-    nuxt.options.runtimeConfig.public.content = {
-      wsUrl: '',
-    }
-    nuxt.options.runtimeConfig.content = {
-      databaseVersion,
-      version,
-      database: options.database,
-      localDatabase: options._localDatabase!,
-      integrityCheck: true,
-    } as never
-
-    nuxt.hook('nitro:config', async (config) => {
+    nuxt.hook('nitro:init', async (nitro) => {
+      const config = nitro.options
       const preset = findPreset(nuxt)
-      await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
+      await preset.setupNitro(nitro, { manifest, resolver, moduleOptions: options, nuxt })
 
       const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
@@ -205,6 +187,27 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installMDCModule(options, nuxt)
+
+    nuxt.hook('modules:done', async () => {
+      const preset = findPreset(nuxt)
+      await preset?.setup?.(options, nuxt)
+      // Provide default database configuration here since nuxt is merging defaults and user options
+      options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
+      await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
+      await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
+
+      // Module Options
+      nuxt.options.runtimeConfig.public.content = {
+        wsUrl: '',
+      }
+      nuxt.options.runtimeConfig.content = {
+        databaseVersion,
+        version,
+        database: options.database,
+        localDatabase: options._localDatabase!,
+        integrityCheck: true,
+      } as never
+    })
 
     if (nuxt.options._prepare) {
       return

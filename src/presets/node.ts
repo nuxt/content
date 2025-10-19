@@ -4,13 +4,13 @@ import { definePreset } from '../utils/preset'
 
 export default definePreset({
   name: 'node',
-  setupNitro(nitroConfig, { manifest, resolver }) {
-    nitroConfig.publicAssets ||= []
-    nitroConfig.alias = nitroConfig.alias || {}
-    nitroConfig.handlers ||= []
+  setupNitro(nitro, { manifest, resolver }) {
+    nitro.options.publicAssets ||= []
+    nitro.options.alias = nitro.options.alias || {}
+    nitro.options.handlers ||= []
 
-    nitroConfig.alias['#content/dump'] = addTemplate(fullDatabaseCompressedDumpTemplate(manifest)).dst
-    nitroConfig.handlers.push({
+    nitro.options.alias['#content/dump'] = addTemplate(fullDatabaseCompressedDumpTemplate(manifest)).dst
+    nitro.options.handlers.push({
       route: '/__nuxt_content/:collection/sql_dump.txt',
       handler: resolver.resolve('./runtime/presets/node/database-handler'),
     })

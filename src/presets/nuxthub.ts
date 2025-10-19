@@ -7,31 +7,57 @@ import cfPreset from './cloudflare'
 export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt) {
-    const indexOfNuxtHub = nuxt.options.modules.indexOf('@nuxthub/core')
-    const indexOfContentModule = nuxt.options.modules.indexOf('@nuxt/content')
-
-    if (!((nuxt.options as unknown as { hub: { database?: boolean } }).hub?.database) && indexOfNuxtHub < indexOfContentModule) {
-      logger.warn('NuxtHub database is not enabled. Please enable it in your NuxtHub configuration. It is recommended to register `@nuxt/content` before `@nuxthub/core`, so that `@nuxt/content` can automatically configure the database if needed.')
+    if (!((nuxt.options as unknown as { hub: { database?: boolean | string } }).hub?.database)) {
+      logger.warn('NuxtHub dedected but `hub.database` is not enabled. Using local SQLite as default database instead.')
+      return
     }
 
-    // Make sure database is enabled
-    const nuxthubOptions: { database?: boolean } = (nuxt.options as unknown as { hub: unknown }).hub ||= {}
-    nuxthubOptions.database = true
-
+    // Read from the final hub database configuration
+    const hubDb = nuxt.options.dev ? nuxt.options.nitro.devDatabase?.db : nuxt.options.nitro.database?.db
     // Set up database
-    options.database ||= { type: 'd1', bindingName: 'DB' }
+    if (typeof nuxt.options.hub?.database === 'string' && hubDb) {
+      const type = hubDb.connector === 'better-sqlite3' ? 'sqlite' : hubDb.connector
+      options.database = { type, ...hubDb.options }
+    } else if (nuxt.options.hub?.database === true) {
+      options.database ||= { type: 'd1', bindingName: 'DB' }
+    }
   },
-  async setupNitro(nitroConfig, options) {
-    if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
-      logger.warn('Deploying to NuxtHub requires using D1 database, switching to D1 database with binding `DB`.')
-      nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
+  async setupNitro(nitro, options) {
+    const { nuxt } = options
+    // NuxtHub < v1
+    if (nuxt.options.hub?.database === true) {
+      if (nitro.options.runtimeConfig?.content?.database?.type === 'sqlite') {
+        logger.warn('Deploying to NuxtHub requires using D1 database, switching to D1 database with binding `DB`.')
+        nitro.options.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
+      }
+      await cfPreset.setupNitro(nitro, options)
+    } else if (typeof nuxt.options.hub?.database === 'string') {
+      // set and interval all 10ms until nitro.options.database.db.connector is not undefined
+      // it must be a promise that resolves when the valus is not undefined, with a timeout of 5 seconds
+      const hubDb = await new Promise((resolve) => {
+        const interval = setInterval(() => {
+          const db = nuxt.options._prepare || nuxt.options.dev ? nitro.options.devDatabase?.db : nitro.options.database?.db
+          if (db) {
+            clearInterval(interval)
+            resolve(db)
+          }
+        }, 10)
+        setTimeout(() => {
+          clearInterval(interval)
+          resolve(false)
+        }, 5000)
+      })
+      if (hubDb) {
+        const type = hubDb.connector === 'better-sqlite3' ? 'sqlite' : hubDb.connector
+        nitro.options.runtimeConfig!.content!.database = { type, ...hubDb.options }
+      } else {
+        throw new Error('Could not find NuxtHub database')
+      }
     }
 
-    await cfPreset.setupNitro(nitroConfig, options)
-
-    if (nitroConfig.dev === false) {
+    if (nitro.options.dev === false) {
       // Write SQL dump to database queries when not in dev mode
-      await mkdir(resolve(nitroConfig.rootDir!, '.data/hub/database/queries'), { recursive: true })
+      await mkdir(resolve(nitro.options.rootDir!, '.data/hub/database/queries'), { recursive: true })
       let i = 1
       // Drop info table and prepare for new dump
       let dump = 'DROP TABLE IF EXISTS _content_info;'
@@ -52,12 +78,11 @@ export default definePreset({
         dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
       }
       for (const dumpFile of dumpFiles) {
-        await writeFile(resolve(nitroConfig.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
+        await writeFile(resolve(nitro.options.rootDir!, '.data/hub/database/queries', dumpFile.file), dumpFile.content)
       }
       // Disable integrity check in production for performance
-      nitroConfig.runtimeConfig ||= {}
-      nitroConfig.runtimeConfig.content ||= {}
-      nitroConfig.runtimeConfig.content.integrityCheck = false
+      nitro.options.runtimeConfig!.content ||= {}
+      nitro.options.runtimeConfig.content.integrityCheck = false
     }
   },
 })

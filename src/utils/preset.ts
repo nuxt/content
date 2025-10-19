@@ -1,4 +1,4 @@
-import type { NitroConfig } from 'nitropack'
+import type { Nitro } from 'nitropack'
 import type { Resolver } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions } from '../types/module'
@@ -8,12 +8,13 @@ interface Options {
   manifest: Manifest
   resolver: Resolver
   moduleOptions: ModuleOptions
+  nuxt: Nuxt
 }
 export interface Preset {
   name: string
   parent?: Preset
   setup?: (options: ModuleOptions, nuxt: Nuxt) => Promise<void> | void
-  setupNitro: (nitroConfig: NitroConfig, opts: Options) => void | Promise<void>
+  setupNitro: (nitro: Nitro, opts: Options) => void | Promise<void>
 }
 
 export function definePreset(preset: Preset) {
@@ -25,11 +26,11 @@ export function definePreset(preset: Preset) {
       }
       await preset.setup?.(options, nuxt)
     },
-    setupNitro: async (nitroConfig, opts) => {
+    setupNitro: async (nitro, opts) => {
       if (preset.parent) {
-        await preset.parent.setupNitro?.(nitroConfig, opts)
+        await preset.parent.setupNitro?.(nitro, opts)
       }
-      await preset.setupNitro?.(nitroConfig, opts)
+      await preset.setupNitro?.(nitro, opts)
     },
   }
   return _preset
