@@ -18,7 +18,8 @@ export default definePreset({
     if (typeof nuxt.options.hub?.database === 'string' && hubDb) {
       const type = hubDb.connector === 'better-sqlite3' ? 'sqlite' : hubDb.connector
       options.database = { type, ...hubDb.options }
-    } else if (nuxt.options.hub?.database === true) {
+    }
+    else if (nuxt.options.hub?.database === true) {
       options.database ||= { type: 'd1', bindingName: 'DB' }
     }
   },
@@ -31,7 +32,8 @@ export default definePreset({
         nitro.options.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
       await cfPreset.setupNitro(nitro, options)
-    } else if (typeof nuxt.options.hub?.database === 'string') {
+    }
+    else if (typeof nuxt.options.hub?.database === 'string') {
       // set and interval all 10ms until nitro.options.database.db.connector is not undefined
       // it must be a promise that resolves when the valus is not undefined, with a timeout of 5 seconds
       const hubDb = await new Promise((resolve) => {
@@ -50,7 +52,8 @@ export default definePreset({
       if (hubDb) {
         const type = hubDb.connector === 'better-sqlite3' ? 'sqlite' : hubDb.connector
         nitro.options.runtimeConfig!.content!.database = { type, ...hubDb.options }
-      } else {
+      }
+      else {
         throw new Error('Could not find NuxtHub database')
       }
     }

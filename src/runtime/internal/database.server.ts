@@ -227,7 +227,7 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     return {
       dataDir: config.dataDir,
       // Pass through any other PGlite-specific options
-      ...config
+      ...config,
     }
   }
 

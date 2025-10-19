@@ -154,7 +154,6 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-
     nuxt.hook('nitro:init', async (nitro) => {
       const config = nitro.options
       const preset = findPreset(nuxt)
