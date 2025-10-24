@@ -31,7 +31,7 @@ export type LibSQLDatabaseConfig = {
   /**
    * The authentication token for the libSQL/Turso database
    */
-  authToken: string
+  authToken?: string
 }
 
 export type PGliteDatabaseConfig = {

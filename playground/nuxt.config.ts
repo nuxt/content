@@ -40,6 +40,6 @@ export default defineNuxtConfig({
   hub: {
     database: 'sqlite',
     // Or use PGlite with NuxtHub:
-    // database: 'pglite',
+    // database: 'postgresql',
   },
 })

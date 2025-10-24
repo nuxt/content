@@ -154,10 +154,9 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    nuxt.hook('nitro:init', async (nitro) => {
-      const config = nitro.options
+    nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
-      await preset.setupNitro(nitro, { manifest, resolver, moduleOptions: options, nuxt })
+      await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
 
       const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}

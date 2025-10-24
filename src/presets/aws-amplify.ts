@@ -27,8 +27,8 @@ export default definePreset({
       process.exit(1)
     }
   },
-  async setupNitro(nitro) {
-    const database = nitro.options.runtimeConfig?.content?.database
+  async setupNitro(nitroConfig) {
+    const database = nitroConfig.runtimeConfig?.content?.database
     if (database?.type === 'sqlite' && !database?.filename?.startsWith('/tmp')) {
       logger.warn('Deploying sqlite database to AWS Amplify is possible only in `/tmp` directory. Using `/tmp/contents.sqlite` instead.')
       database.filename = '/tmp/contents.sqlite'

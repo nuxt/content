@@ -41,7 +41,7 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite'),
     postgres: 'db0/connectors/postgresql', // legacy
     postgresql: 'db0/connectors/postgresql',
-    libsql: 'db0/connectors/libsql/web',
+    libsql: 'db0/connectors/libsql/node',
     d1: 'db0/connectors/cloudflare-d1',
     pglite: 'db0/connectors/pglite',
   }

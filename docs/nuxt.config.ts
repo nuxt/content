@@ -39,11 +39,8 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   hub: {
-    database: true,
+    database: 'sqlite',
     cache: true,
-  },
-  github: {
-    rootDir: 'docs',
   },
   llms: {
     domain: 'https://content.nuxt.com',
