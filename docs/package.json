@@ -13,6 +13,6 @@
     "docus": "https://pkg.pr.new/docus@1194",
     "minisearch": "^7.2.0",
     "@nuxt/ui": "^4.0.1",
-    "nuxt": "^4.1.3"
+    "nuxt": "^4.2.0"
   }
 }
