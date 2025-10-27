@@ -102,8 +102,8 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       modern-tar:
-        specifier: ^0.5.4
-        version: 0.5.4
+        specifier: ^0.6.1
+        version: 0.6.1
       nuxt-component-meta:
         specifier: https://pkg.pr.new/nuxt-component-meta@e3eb2c4
         version: https://pkg.pr.new/nuxt-component-meta@e3eb2c4(magicast@0.3.5)
@@ -5717,8 +5717,8 @@ packages:
   mocked-exports@0.1.1:
     resolution: {integrity: sha512-aF7yRQr/Q0O2/4pIXm6PZ5G+jAd7QS4Yu8m+WEeEHGnbo+7mE36CbLSDQiXYV8bVL3NfmdeqPJct0tUlnjVSnA==}
 
-  modern-tar@0.5.4:
-    resolution: {integrity: sha512-WqxWd82TgUbnindiHcXV8+H6qS0MlN5zrgwKm2gD5M+JyHyCk22xw3RLfpR8cHrQCQwsNIxQu+ve0SumlaLGQQ==}
+  modern-tar@0.6.1:
+    resolution: {integrity: sha512-PS5kTfMLBrIP7X7dj3x+N17T1Fc2InnFJAe/pGleM0hT9GhDFkltsLYxB1eQisg55bjnvgLsbTRFYp47AUhcbg==}
     engines: {node: '>=18.0.0'}
 
   motion-dom@12.23.12:
@@ -14133,7 +14133,7 @@ snapshots:
 
   mocked-exports@0.1.1: {}
 
-  modern-tar@0.5.4: {}
+  modern-tar@0.6.1: {}
 
   motion-dom@12.23.12:
     dependencies:

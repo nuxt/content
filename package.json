@@ -86,7 +86,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.0.3",
-    "modern-tar": "^0.5.4",
+    "modern-tar": "^0.6.1",
     "nuxt-component-meta": "https://pkg.pr.new/nuxt-component-meta@e3eb2c4",
     "nypm": "^0.6.2",
     "ohash": "^2.0.11",

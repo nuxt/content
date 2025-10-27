@@ -1,6 +1,7 @@
 import { createReadStream, createWriteStream } from 'node:fs'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { pipeline } from 'node:stream/promises'
+import { createGunzip } from 'node:zlib'
 import { join } from 'pathe'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
@@ -42,6 +43,7 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
 
     await pipeline(
       createReadStream(tarFile),
+      createGunzip(),
       unpackTar(cwd, {
         strip: 1, // Remove root directory from zip contents to save files directly in cwd
       }),
