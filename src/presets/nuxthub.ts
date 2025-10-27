@@ -4,6 +4,7 @@ import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
 import cfPreset from './cloudflare'
 import type { Nuxt } from 'nuxt/schema'
+import type { LibSQLDatabaseConfig, PGliteDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
 
 export default definePreset({
   name: 'nuxthub',
@@ -13,7 +14,7 @@ export default definePreset({
       return
     }
 
-    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { database?: boolean | { driver: string, connection: any } } }
+    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { database?: boolean | { driver: string, connection: { url?: string } } } }
     const nuxtOptions = nuxt.options as unknown as { hub: { database?: boolean | string | object } }
     // Read from the final hub database configuration
     const hubDb = runtimeConfig.hub.database
@@ -26,10 +27,10 @@ export default definePreset({
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
       else if (hubDb.driver === 'node-postgres') {
-        options.database ||= { type: 'postgresql', url: hubDb.connection.url }
+        options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
       }
       else {
-        options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection }
+        options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
       }
     }
   },
