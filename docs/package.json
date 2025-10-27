@@ -8,7 +8,7 @@
     "@nuxt/content": "link:..",
     "@nuxthub/core": "https://pkg.pr.new/@nuxthub/core@3d374d9",
     "@nuxtjs/plausible": "^2.0.1",
-    "@vueuse/nuxt": "^13.9.0",
+    "@vueuse/nuxt": "^14.0.0",
     "better-sqlite3": "^12.4.1",
     "docus": "https://pkg.pr.new/docus@1194",
     "minisearch": "^7.2.0",
