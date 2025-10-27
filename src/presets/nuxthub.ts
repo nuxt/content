@@ -21,17 +21,17 @@ export default definePreset({
     const hubDb = runtimeConfig.hub.database
     // NuxtHub < 1
     if (nuxtOptions.hub?.database === true) {
-      options.database ||= { type: 'd1', bindingName: 'DB' }
+      options.database = { type: 'd1', bindingName: 'DB' }
     }
     else if (typeof nuxtOptions.hub?.database === 'string' && typeof hubDb === 'object') {
       if (hubDb.driver === 'D1') {
-        options.database ||= { type: 'd1', bindingName: 'DB' }
+        options.database = { type: 'd1', bindingName: 'DB' }
       }
       else if (hubDb.driver === 'node-postgres') {
-        options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
+        options.database = { type: 'postgresql', url: hubDb.connection.url as string }
       }
       else {
-        options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+        options.database = { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
       }
     }
   },
@@ -48,13 +48,13 @@ export default definePreset({
     else if (typeof nuxt.options.hub?.database === 'string') {
       const hubDb = hubConfig.database as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'D1') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
+        nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
       else if (hubDb.driver === 'node-postgres') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', ...hubDb.connection }
+        nitroConfig.runtimeConfig!.content!.database = { type: 'postgresql', ...hubDb.connection }
       }
       else {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: hubDb.driver, ...hubDb.connection }
+        nitroConfig.runtimeConfig!.content!.database = { type: hubDb.driver, ...hubDb.connection }
       }
     }
 
