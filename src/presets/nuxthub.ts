@@ -58,12 +58,6 @@ export default definePreset({
       }
     }
 
-    // Handle local database
-    const database = nitroConfig.runtimeConfig?.content?.database
-    if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
-      logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
-      database.url = 'file:/tmp/sqlite.db'
-    }
     // apply migrations during build if enabled
     if (!nuxt.options.dev && hubConfig.database?.applyMigrationsDuringBuild) {
       // Write SQL dump to database queries when not in dev mode
@@ -93,6 +87,15 @@ export default definePreset({
       // Disable integrity check in production for performance
       nitroConfig.runtimeConfig!.content ||= {}
       nitroConfig.runtimeConfig!.content.integrityCheck = false
+    }
+    // Handle local database
+    const database = nitroConfig.runtimeConfig?.content?.database
+    if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
+      logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
+      database.url = 'file:/tmp/sqlite.db'
+      // Enable integrity check in production as local database cannot be re-used after build
+      nitroConfig.runtimeConfig!.content ||= {}
+      nitroConfig.runtimeConfig!.content.integrityCheck = true
     }
 
     // Add support for querying dump during SSR or CSR
