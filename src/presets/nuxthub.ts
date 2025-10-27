@@ -3,6 +3,7 @@ import { resolve } from 'pathe'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
 import cfPreset from './cloudflare'
+import type { Nuxt } from 'nuxt/schema'
 
 export default definePreset({
   name: 'nuxthub',
@@ -12,13 +13,15 @@ export default definePreset({
       return
     }
 
+    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { database?: boolean | { driver: string, connection: any } } }
+    const nuxtOptions = nuxt.options as unknown as { hub: { database?: boolean | string | object } }
     // Read from the final hub database configuration
-    const hubDb = nuxt.options.runtimeConfig.hub.database
+    const hubDb = runtimeConfig.hub.database
     // NuxtHub < 1
-    if (nuxt.options.hub?.database === true) {
+    if (nuxtOptions.hub?.database === true) {
       options.database ||= { type: 'd1', bindingName: 'DB' }
     }
-    else if (typeof nuxt.options.hub?.database === 'string' && typeof hubDb === 'object') {
+    else if (typeof nuxtOptions.hub?.database === 'string' && typeof hubDb === 'object') {
       if (hubDb.driver === 'D1') {
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
@@ -26,13 +29,13 @@ export default definePreset({
         options.database ||= { type: 'postgresql', url: hubDb.connection.url }
       }
       else {
-        options.database ||= { type: hubDb.driver, ...hubDb.connection }
+        options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection }
       }
     }
   },
   async setupNitro(nitroConfig, options) {
-    const { nuxt } = options
-    const hubConfig = nuxt.options.runtimeConfig.hub
+    const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { database?: boolean | object } } } }
+    const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { database: unknown, dir: string }
     // NuxtHub < v1
     if (nuxt.options.hub?.database === true) {
       if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
@@ -42,13 +45,13 @@ export default definePreset({
       await cfPreset.setupNitro(nitroConfig, options)
     }
     else if (typeof nuxt.options.hub?.database === 'string') {
-      const hubDb = hubConfig.database
+      const hubDb = hubConfig.database as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'D1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
         await cfPreset.setupNitro(nitroConfig, options)
       }
       else if (hubDb.driver === 'node-postgres') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', url: hubDb.connection.url }
+        nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', ...hubDb.connection }
       }
       else {
         nitroConfig.runtimeConfig!.content!.database ||= { type: hubDb.driver, ...hubDb.connection }

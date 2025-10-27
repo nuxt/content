@@ -219,8 +219,8 @@ export interface RuntimeConfig {
   content: {
     version: string
     databaseVersion: string
-    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
-    localDatabase: SqliteDatabaseConfig
+    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
+    localDatabase: SqliteDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     integrityCheck: boolean
   }
 }
