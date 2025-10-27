@@ -1,8 +1,9 @@
+import { addTemplate } from '@nuxt/kit'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
-import cfPreset from './cloudflare'
+import { collectionDumpTemplate } from '../utils/templates'
 import type { Nuxt } from 'nuxt/schema'
 import type { LibSQLDatabaseConfig, PGliteDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
 
@@ -36,20 +37,18 @@ export default definePreset({
   },
   async setupNitro(nitroConfig, options) {
     const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { database?: boolean | object } } } }
-    const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { database: unknown, dir: string }
+    const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { database: unknown & { applyMigrationsDuringBuild?: boolean }, dir: string }
     // NuxtHub < v1
     if (nuxt.options.hub?.database === true) {
       if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
         logger.warn('Deploying with NuxtHub < 1 requires using D1 database, switching to D1 database with binding `DB`.')
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
-      await cfPreset.setupNitro(nitroConfig, options)
     }
     else if (typeof nuxt.options.hub?.database === 'string') {
       const hubDb = hubConfig.database as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'D1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
-        await cfPreset.setupNitro(nitroConfig, options)
       }
       else if (hubDb.driver === 'node-postgres') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', ...hubDb.connection }
@@ -59,7 +58,14 @@ export default definePreset({
       }
     }
 
-    if (!nuxt.options.dev) {
+    // Handle local database
+    const database = nitroConfig.runtimeConfig?.content?.database
+    if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
+      logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
+      database.url = 'file:/tmp/sqlite.db'
+    }
+    // apply migrations during build if enabled
+    if (!nuxt.options.dev && hubConfig.database?.applyMigrationsDuringBuild) {
       // Write SQL dump to database queries when not in dev mode
       await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'database/queries'), { recursive: true })
       let i = 1
@@ -88,5 +94,25 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content ||= {}
       nitroConfig.runtimeConfig!.content.integrityCheck = false
     }
+
+    // Add support for querying dump during SSR or CSR
+    const { manifest, resolver } = options
+    nitroConfig.publicAssets ||= []
+    nitroConfig.alias = nitroConfig.alias || {}
+    nitroConfig.handlers ||= []
+
+    // Add raw content dump
+    manifest.collections.map(async (collection) => {
+      if (!collection.private) {
+        addTemplate(collectionDumpTemplate(collection.name, manifest))
+      }
+    })
+
+    // Add raw content dump to public assets
+    nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
+    nitroConfig.handlers.push({
+      route: '/__nuxt_content/:collection/sql_dump.txt',
+      handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+    })
   },
 })
