@@ -96,6 +96,7 @@
     "shiki": "^3.14.0",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
+    "std-env": "^3.10.0",
     "tar": "^7.5.1",
     "tinyglobby": "^0.2.15",
     "ufo": "^1.6.1",

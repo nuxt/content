@@ -5,14 +5,16 @@
     "build": "nuxt build"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "@nuxt/content": "link:..",
-    "@nuxthub/core": "https://pkg.pr.new/@nuxthub/core@3d374d9",
+    "@nuxt/ui": "^4.1.0",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251028-004316-83d4099",
     "@nuxtjs/plausible": "^2.0.1",
     "@vueuse/nuxt": "^14.0.0",
     "better-sqlite3": "^12.4.1",
-    "docus": "https://pkg.pr.new/docus@1194",
+    "docus": "^5.2.1",
+    "drizzle-orm": "^0.44.7",
     "minisearch": "^7.2.0",
-    "@nuxt/ui": "^4.1.0",
     "nuxt": "^4.2.0"
   }
 }
