@@ -8,6 +8,7 @@ interface Options {
   manifest: Manifest
   resolver: Resolver
   moduleOptions: ModuleOptions
+  nuxt: Nuxt
 }
 export interface Preset {
   name: string

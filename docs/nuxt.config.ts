@@ -3,7 +3,8 @@ import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  extends: ['docus'],
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core', 'nuxt-studio'],
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
@@ -20,10 +21,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    preview: {
-      dev: true,
-      api: 'https://api.nuxt.studio',
-    },
   },
   routeRules: {
     ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
@@ -34,15 +31,23 @@ export default defineNuxtConfig({
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
   },
-  future: {
-    compatibilityVersion: 4,
+  nitro: {
+    compatibilityDate: {
+      // Don't generate observability routes
+      vercel: '2025-07-14',
+    },
   },
   hub: {
-    database: true,
+    database: 'sqlite',
     cache: true,
   },
-  github: {
-    rootDir: 'docs',
+  contentStudio: {
+    repository: {
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main',
+      rootDir: 'docs',
+    },
   },
   llms: {
     domain: 'https://content.nuxt.com',

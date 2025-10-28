@@ -1,4 +1,5 @@
-import { defineContentConfig, defineCollectionSource, defineCollection, z, property } from '@nuxt/content'
+import { defineContentConfig, defineCollectionSource, defineCollection, property } from '@nuxt/content'
+import { z } from 'zod'
 
 const hackernews = defineCollection({
   type: 'data',

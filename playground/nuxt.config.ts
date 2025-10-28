@@ -1,13 +1,18 @@
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/ui-pro',
-    '@nuxt/content',
+    '@nuxt/ui',
     '@nuxthub/core',
+    '@nuxt/content',
   ],
   content: {
     experimental: {
       nativeSqlite: true,
     },
+    // Uncomment to use PGlite instead of SQLite
+    // database: {
+    //   type: 'pglite',
+    //   dataDir: '.data/content/pglite' // or omit for in-memory database
+    // },
     build: {
       markdown: {
         remarkPlugins: {
@@ -31,8 +36,10 @@ export default defineNuxtConfig({
       },
     },
   },
-  compatibilityDate: '2024-07-24',
+  compatibilityDate: '2025-10-15',
   hub: {
-    database: true,
+    database: 'sqlite',
+    // Or use PGlite with NuxtHub:
+    // database: 'postgresql',
   },
 })

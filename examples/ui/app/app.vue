@@ -23,7 +23,7 @@ useServerSeoMeta({
 
 <style>
 @import "tailwindcss" theme(static);
-@import "@nuxt/ui-pro";
+@import "@nuxt/ui";
 
 @source "../content/**/*";
 

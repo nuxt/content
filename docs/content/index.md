@@ -326,7 +326,8 @@ orientation: horizontal
     label: content.config.ts
     ---
     ```ts [content.config.ts]
-    import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+    import { defineContentConfig, defineCollection } from '@nuxt/content'
+    import { z } from 'zod'
 
     export default defineContentConfig({
       collections: {

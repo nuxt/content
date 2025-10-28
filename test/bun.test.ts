@@ -4,11 +4,13 @@ import { getLocalDatabase } from '../src/utils/database.ts'
 
 describe('Local database', () => {
   let db: LocalDevelopmentDatabase
+
   afterAll(async () => {
     if (db) {
       await db.close()
     }
   })
+
   test('Is Bun', async () => {
     expect(process.versions.bun).toBeDefined()
   })

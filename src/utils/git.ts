@@ -1,14 +1,14 @@
 import fs from 'node:fs'
-
+import { createReadStream, createWriteStream } from 'node:fs'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
-import { pipeline } from 'node:stream'
-import { promisify } from 'node:util'
+import { pipeline } from 'node:stream/promises'
+import { createGunzip } from 'node:zlib'
 import { join } from 'pathe'
-import { extract } from 'tar'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
 import git from 'isomorphic-git'
 import gitHttp from 'isomorphic-git/http/node'
+import { unpackTar } from 'modern-tar/fs'
 
 import type { GitBasicAuth, GitRefType, GitTokenAuth } from '../types'
 
@@ -43,17 +43,16 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
 
   try {
     const response = await fetch(url, { headers })
-    const stream = fs.createWriteStream(tarFile)
-    await promisify(pipeline)(response.body as unknown as ReadableStream[], stream)
+    const stream = createWriteStream(tarFile)
+    await pipeline(response.body as unknown as ReadableStream[], stream)
 
-    await extract({
-      file: tarFile,
-      cwd: cwd,
-      onentry(entry) {
-        // Remove root directory from zip contents to save files directly in cwd
-        entry.path = entry.path.split('/').splice(1).join('/')
-      },
-    })
+    await pipeline(
+      createReadStream(tarFile),
+      createGunzip(),
+      unpackTar(cwd, {
+        strip: 1, // Remove root directory from zip contents to save files directly in cwd
+      }),
+    )
 
     await writeFile(cacheFile, JSON.stringify({
       url: url,

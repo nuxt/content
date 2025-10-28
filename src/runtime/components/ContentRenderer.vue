@@ -74,7 +74,7 @@ const props = defineProps({
   },
 })
 
-const debug = import.meta.dev
+const debug = import.meta.dev || import.meta.preview
 
 const body = computed(() => {
   let body = props.value.body || props.value
@@ -101,10 +101,11 @@ const data = computed(() => {
 const proseComponentMap = Object.fromEntries(['p', 'a', 'blockquote', 'code', 'pre', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'img', 'ul', 'ol', 'li', 'strong', 'table', 'thead', 'tbody', 'td', 'th', 'tr', 'script'].map(t => [t, `prose-${t}`]))
 
 const { mdc } = useRuntimeConfig().public || {}
+const propsDataMDC = computed(() => props.data.mdc)
 const tags = computed(() => ({
   ...mdc?.components?.prose && props.prose !== false ? proseComponentMap : {},
   ...mdc?.components?.map || {},
-  ...toRaw(props.data?.mdc?.components || {}),
+  ...toRaw(propsDataMDC.value?.components || {}),
   ...props.components,
 }))
 
