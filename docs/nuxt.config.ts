@@ -4,7 +4,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   extends: ['docus'],
-  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core', 'nuxt-studio'],
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
@@ -20,10 +20,6 @@ export default defineNuxtConfig({
           langs: ['docker'],
         },
       },
-    },
-    preview: {
-      dev: true,
-      api: 'https://api.nuxt.studio',
     },
   },
   routeRules: {
@@ -44,6 +40,14 @@ export default defineNuxtConfig({
   hub: {
     database: 'sqlite',
     cache: true,
+  },
+  contentStudio: {
+    repository: {
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main',
+      rootDir: 'docs',
+    },
   },
   llms: {
     domain: 'https://content.nuxt.com',
