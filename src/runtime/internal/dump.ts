@@ -8,11 +8,13 @@ export async function decompressSQLDump(base64Str: string, compressionType: Comp
     const buffer = Buffer.from(base64Str, 'base64')
     // Create a new Uint8Array from the buffer values
     binaryData = Uint8Array.from(buffer)
-  } else if (typeof atob !== 'undefined') {
+  }
+  else if (typeof atob !== 'undefined') {
     // Browser environment
     binaryData = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0))
-  } else {
-    throw new Error('No base64 decoding method available')
+  }
+  else {
+    throw new TypeError('No base64 decoding method available')
   }
 
   // Create a Response from the Blob and use the DecompressionStream

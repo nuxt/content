@@ -102,7 +102,8 @@ export default definePreset({
     const preset = (process.env.NITRO_PRESET || nuxt.options.nitro.preset || provider).replace(/_/g, '-')
     if (preset.includes('cloudflare')) {
       await cloudflarePreset.setupNitro(nitroConfig, options)
-    } else {
+    }
+    else {
       await nodePreset.setupNitro(nitroConfig, options)
     }
   },
