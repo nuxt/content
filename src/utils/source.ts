@@ -53,7 +53,7 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
       const repository = source?.repository && gitUrlParse(source.repository)
       if (repository) {
         const { source: gitSource, owner, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
 
         await downloadGitRepository(source.repository!, resolvedSource.cwd!)
       }
@@ -63,7 +63,7 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
       const repository = source?.repository && gitUrlParse(source.repository.url)
       if (repository) {
         const { source: gitSource, owner, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-clone`)
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
 
         let ref: object | undefined
 

@@ -25,7 +25,7 @@ describe('remote-repository', async () => {
 
   describe('Repository', () => {
     test('is cloned', async () => {
-      const stat = await fs.stat(resolver.resolve('./fixtures/remote-repository/.data/content/github-nuxt-content-main'))
+      const stat = await fs.stat(resolver.resolve('./fixtures/remote-repository/.data/content/github.com-nuxt-content-main'))
       expect(stat?.isDirectory()).toBe(true)
     })
   })
