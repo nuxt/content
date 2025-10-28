@@ -1,5 +1,4 @@
-import fs from 'node:fs'
-import { createReadStream, createWriteStream } from 'node:fs'
+import fs, { createReadStream, createWriteStream } from 'node:fs'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { pipeline } from 'node:stream/promises'
 import { createGunzip } from 'node:zlib'
