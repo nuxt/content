@@ -95,7 +95,7 @@ export default definePreset({
       database.url = 'file:/tmp/sqlite.db'
       // Enable integrity check in production as local database cannot be re-used after build
       nitroConfig.runtimeConfig!.content ||= {}
-      nitroConfig.runtimeConfig!.content.integrityCheck = false
+      nitroConfig.runtimeConfig!.content.integrityCheck = true
     }
 
     // Add support for querying dump during SSR or CSR
