@@ -10,6 +10,8 @@
     "@nuxt/ui": "^4.1.0",
     "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251028-004316-83d4099",
     "@nuxtjs/plausible": "^2.0.1",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "@vueuse/nuxt": "^14.0.0",
     "better-sqlite3": "^12.4.1",
     "docus": "^5.2.1",
