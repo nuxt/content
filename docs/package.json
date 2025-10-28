@@ -8,7 +8,7 @@
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "link:..",
     "@nuxt/ui": "^4.1.0",
-    "@nuxthub/core": "^0.9.0",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251028-004316-83d4099",
     "@nuxtjs/plausible": "^2.0.1",
     "@vueuse/nuxt": "^14.0.0",
     "better-sqlite3": "^12.4.1",

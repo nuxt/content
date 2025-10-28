@@ -42,7 +42,7 @@ export default defineNuxtConfig({
     },
   },
   hub: {
-    database: true,
+    database: 'sqlite',
     cache: true,
   },
   llms: {
