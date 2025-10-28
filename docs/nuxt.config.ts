@@ -41,15 +41,6 @@ export default defineNuxtConfig({
     database: 'sqlite',
     cache: true,
   },
-  studio: {
-    route: '/admin',
-    repository: {
-      owner: 'nuxt',
-      repo: 'content',
-      branch: 'main',
-      rootDir: 'docs',
-    },
-  },
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
@@ -61,6 +52,15 @@ export default defineNuxtConfig({
     full: {
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
+    },
+  },
+  studio: {
+    route: '/admin',
+    repository: {
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main',
+      rootDir: 'docs',
     },
   },
 })
