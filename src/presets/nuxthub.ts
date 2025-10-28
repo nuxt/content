@@ -1,11 +1,12 @@
-import { addTemplate } from '@nuxt/kit'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { join, resolve } from 'pathe'
+import { resolve } from 'pathe'
+import { provider } from 'std-env'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
-import { collectionDumpTemplate } from '../utils/templates'
 import type { Nuxt } from 'nuxt/schema'
 import type { LibSQLDatabaseConfig, PGliteDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
+import cloudflarePreset from './cloudflare'
+import nodePreset from './node'
 
 export default definePreset({
   name: 'nuxthub',
@@ -88,7 +89,7 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content ||= {}
       nitroConfig.runtimeConfig!.content.integrityCheck = false
     }
-    // Handle local database
+    // Handle local database (cannot be populated during build)
     const database = nitroConfig.runtimeConfig?.content?.database
     if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
       logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
@@ -98,24 +99,11 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content.integrityCheck = true
     }
 
-    // Add support for querying dump during SSR or CSR
-    const { manifest, resolver } = options
-    nitroConfig.publicAssets ||= []
-    nitroConfig.alias = nitroConfig.alias || {}
-    nitroConfig.handlers ||= []
-
-    // Add raw content dump
-    manifest.collections.map(async (collection) => {
-      if (!collection.private) {
-        addTemplate(collectionDumpTemplate(collection.name, manifest))
-      }
-    })
-
-    // Add raw content dump to public assets
-    nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
-    nitroConfig.handlers.push({
-      route: '/__nuxt_content/:collection/sql_dump.txt',
-      handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
-    })
+    const preset = (process.env.NITRO_PRESET || nuxt.options.nitro.preset || provider).replace(/_/g, '-')
+    if (preset.includes('cloudflare')) {
+      await cloudflarePreset.setupNitro(nitroConfig, options)
+    } else {
+      await nodePreset.setupNitro(nitroConfig, options)
+    }
   },
 })
