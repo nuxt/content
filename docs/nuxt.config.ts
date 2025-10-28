@@ -41,7 +41,8 @@ export default defineNuxtConfig({
     database: 'sqlite',
     cache: true,
   },
-  contentStudio: {
+  studio: {
+    route: '/admin',
     repository: {
       owner: 'nuxt',
       repo: 'content',
