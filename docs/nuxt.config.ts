@@ -35,15 +35,15 @@ export default defineNuxtConfig({
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
   },
-  future: {
-    compatibilityVersion: 4,
+  nitro: {
+    compatibilityDate: {
+      // Don't generate observability routes
+      vercel: '2025-07-14',
+    },
   },
   hub: {
-    database: true,
+    database: 'sqlite',
     cache: true,
-  },
-  github: {
-    rootDir: 'docs',
   },
   llms: {
     domain: 'https://content.nuxt.com',

@@ -90,7 +90,10 @@ export function defineBitbucketSource(
       let headers: Record<string, string> = {}
       if (resolvedSource.authBasic) {
         const credentials = `${resolvedSource.authBasic.username}:${resolvedSource.authBasic.password}`
-        const encodedCredentials = btoa(credentials)
+        // Use platform-appropriate base64 encoding
+        const encodedCredentials = typeof Buffer !== 'undefined'
+          ? Buffer.from(credentials).toString('base64') // Node.js environment
+          : btoa(credentials) // Browser environment (fallback)
         headers = {
           Authorization: `Basic ${encodedCredentials}`,
         }
