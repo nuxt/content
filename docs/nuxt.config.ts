@@ -5,6 +5,12 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   extends: ['docus'],
   modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  nitro: {
+    compatibilityDate: {
+      // Don't generate observability routes
+      vercel: '2025-07-14'
+    }
+  },
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
@@ -34,9 +40,6 @@ export default defineNuxtConfig({
         const [from, to] = line.split('=') as [string, string]
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
-  },
-  future: {
-    compatibilityVersion: 4,
   },
   hub: {
     database: 'sqlite',
