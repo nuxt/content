@@ -9,7 +9,7 @@
     "dev:prepare": "nuxt prepare"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.10",
+    "@electric-sql/pglite": "^0.3.11",
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "latest",
     "@nuxt/ui": "^4.1.0",
