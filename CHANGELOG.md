@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.8.0](https://github.com/nuxt/content/compare/v3.7.1...v3.8.0) (2025-10-29)
+
+### Features
+
+* add support for nuxthub v1 ([#3576](https://github.com/nuxt/content/issues/3576)) ([e166063](https://github.com/nuxt/content/commit/e1660637e24705d922a928ec8ca711a2fbec4e18))
+* client utils ([#3506](https://github.com/nuxt/content/issues/3506)) ([2467057](https://github.com/nuxt/content/commit/24670578f859c119b717082636bd216d1a50f477))
+* use Vite and Webpack server for content hot reload ([#3546](https://github.com/nuxt/content/issues/3546)) ([ee06d16](https://github.com/nuxt/content/commit/ee06d16cbcf03abd4093275fc03595169ec1dfdf))
+
+### Bug Fixes
+
+* extend inherited schema ([dd054ea](https://github.com/nuxt/content/commit/dd054ea9a960125af4bf9ebf696f51536e92b5dd))
+
+### Performance Improvements
+
+* **git:** use modern-tar over tar ([#3569](https://github.com/nuxt/content/issues/3569)) ([dd854d5](https://github.com/nuxt/content/commit/dd854d5e43648082d7f75516ecd941073c8fc380))
+
 ## [3.7.1](https://github.com/nuxt/content/compare/v3.7.0...v3.7.1) (2025-09-16)
 
 ### Bug Fixes
