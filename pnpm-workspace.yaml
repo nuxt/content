@@ -4,6 +4,7 @@ packages:
   - docs
   - examples/*
   - test/fixtures/*
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
@@ -14,3 +15,6 @@ onlyBuiltDependencies:
   - unrs-resolver
   - vue-demi
   - workerd
+
+patchedDependencies:
+  '@nuxt/vite-builder': patches/@nuxt__vite-builder.patch
