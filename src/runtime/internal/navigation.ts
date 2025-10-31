@@ -5,22 +5,22 @@ import type { ContentNavigationItem, PageCollectionItemBase, CollectionQueryBuil
 /**
  * Create NavItem array to be consumed from runtime plugin.
  */
-export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = []) {
+export async function generateNavigationTree<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, extraFields: Array<keyof T> = [], { signal }: { signal?: AbortSignal } = {}): Promise<ContentNavigationItem[]> {
   // @ts-expect-error -- internal
   const params = queryBuilder.__params
   if (!params?.orderBy?.length) {
     queryBuilder = queryBuilder.order('stem', 'ASC')
   }
 
-  const collecitonItems = await queryBuilder
+  const collectionItems = await queryBuilder
     .orWhere(group => group
       .where('navigation', '<>', 'false')
       .where('navigation', 'IS NULL'),
     )
     .select('navigation', 'stem', 'path', 'title', 'meta', ...(extraFields || []))
-    .all() as unknown as PageCollectionItemBase[]
+    .all({ signal }) as unknown as PageCollectionItemBase[]
 
-  const { contents, configs } = collecitonItems.reduce((acc, c) => {
+  const { contents, configs } = collectionItems.reduce((acc, c) => {
     if (String(c.stem).split('/').pop() === '.navigation') {
       c.title = c.title?.toLowerCase() === 'navigation' ? '' : c.title
       const key = c.path!.split('/').slice(0, -1).join('/') || '/'

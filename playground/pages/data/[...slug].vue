@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const route = useRoute()
-const { data } = await useAsyncData('data', () => queryCollection('data').path(route.path).first())
+const { data } = await useAsyncData('data', (_nuxtApp, { signal }) => queryCollection('data').path(route.path).first({ signal }))
 </script>
 
 <template>

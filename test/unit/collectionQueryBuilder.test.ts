@@ -12,7 +12,7 @@ vi.mock('#content/manifest', () => ({
 const mockFetch = vi.fn().mockResolvedValue(Promise.resolve([{}]))
 const mockCollection = 'articles' as never
 
-describe('collectionQueryBuilder', () => {
+describe.only('collectionQueryBuilder', () => {
   beforeEach(() => {
     mockFetch.mockClear()
   })
@@ -21,17 +21,34 @@ describe('collectionQueryBuilder', () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.all()
 
-    expect(mockFetch).toHaveBeenCalledWith('articles', 'SELECT * FROM _articles ORDER BY stem ASC')
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with where clause', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.where('title', '=', 'Test Article').all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("title" = \'Test Article\') ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("title" = 'Test Article') ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with multiple where clauses', async () => {
@@ -41,10 +58,17 @@ describe('collectionQueryBuilder', () => {
       .where('published', '=', true)
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("title" = \'Test Article\') AND ("published" = \'1\') ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("title" = 'Test Article') AND ("published" = '1') ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with IN operator', async () => {
@@ -53,10 +77,17 @@ describe('collectionQueryBuilder', () => {
       .where('category', 'IN', ['news', 'tech'])
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("category" IN (\'news\', \'tech\')) ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("category" IN ('news', 'tech')) ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with BETWEEN operator', async () => {
@@ -65,10 +96,17 @@ describe('collectionQueryBuilder', () => {
       .where('date', 'BETWEEN', ['2023-01-01', '2023-12-31'])
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("date" BETWEEN \'2023-01-01\' AND \'2023-12-31\') ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("date" BETWEEN '2023-01-01' AND '2023-12-31') ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with selected fields', async () => {
@@ -77,10 +115,17 @@ describe('collectionQueryBuilder', () => {
       .select('title', 'date', 'author')
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT "title", "date", "author" FROM _articles ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT "title", "date", "author" FROM _articles ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with order by', async () => {
@@ -89,10 +134,17 @@ describe('collectionQueryBuilder', () => {
       .order('date', 'DESC')
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles ORDER BY "date" DESC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles ORDER BY "date" DESC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with limit without skip', async () => {
@@ -101,10 +153,17 @@ describe('collectionQueryBuilder', () => {
       .limit(5)
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles ORDER BY stem ASC LIMIT 5',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles ORDER BY stem ASC LIMIT 5",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with limit and offset', async () => {
@@ -114,40 +173,68 @@ describe('collectionQueryBuilder', () => {
       .skip(20)
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles ORDER BY stem ASC LIMIT 10 OFFSET 20',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles ORDER BY stem ASC LIMIT 10 OFFSET 20",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with first()', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.first()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles ORDER BY stem ASC LIMIT 1',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles ORDER BY stem ASC LIMIT 1",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds count query', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds distinct count query', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count('author', true)
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT COUNT(DISTINCT author) as count FROM _articles ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT COUNT(DISTINCT author) as count FROM _articles ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with complex where conditions using andWhere', async () => {
@@ -163,10 +250,17 @@ describe('collectionQueryBuilder', () => {
       )
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("published" = \'1\') AND ("category" = \'tech\' AND ("tags" LIKE \'%javascript%\' OR "tags" LIKE \'%typescript%\')) ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("published" = '1') AND ("category" = 'tech' AND ("tags" LIKE '%javascript%' OR "tags" LIKE '%typescript%')) ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
   })
 
   it('builds query with path', async () => {
@@ -175,9 +269,44 @@ describe('collectionQueryBuilder', () => {
       .path('/blog/my-article')
       .all()
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("path" = \'/blog/my-article\') ORDER BY stem ASC',
-    )
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("path" = '/blog/my-article') ORDER BY stem ASC",
+          {
+            "signal": undefined,
+          },
+        ],
+      ]
+    `)
+  })
+
+  it.only('builds query with signal', async () => {
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    const abortController = new AbortController()
+    await query
+      .where('title', '=', 'Test Article')
+      .all({ signal: abortController.signal })
+
+    expect(mockFetch.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "articles",
+          "SELECT * FROM _articles WHERE ("title" = 'Test Article') ORDER BY stem ASC",
+          {
+            "signal": AbortSignal {
+              Symbol(kEvents): Map {},
+              Symbol(events.maxEventTargetListeners): 0,
+              Symbol(events.maxEventTargetListenersWarned): false,
+              Symbol(kHandlers): Map {},
+              Symbol(kAborted): false,
+              Symbol(kReason): undefined,
+              Symbol(kComposite): false,
+            },
+          },
+        ],
+      ]
+    `)
   })
 })

@@ -11,9 +11,9 @@ const { type } = defineProps({
 const route = useRoute()
 const siteConfig = useSiteConfig()
 
-const { data } = await useAsyncData(route.path, () => Promise.all([
-  queryCollection('posts').path(route.path).first(),
-  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] })
+const { data } = await useAsyncData(route.path, (_nuxtApp, { signal }) => Promise.all([
+  queryCollection('posts').path(route.path).first({ signal }),
+  queryCollectionItemSurroundings('posts', route.path, { fields: ['title', 'description'] }, { signal })
     .where('path', 'LIKE', `/${type}%`)
     .where('draft', '=', 0)
     .order('date', 'DESC'),

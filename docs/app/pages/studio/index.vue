@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('studio-landing', () => queryCollection('landing').path('/studio').first())
+const { data: page } = await useAsyncData('studio-landing', (_nuxtApp, { signal }) => queryCollection('landing').path('/studio').first({ signal }))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

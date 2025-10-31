@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { data } = await useAsyncData('news' + route.path, async () => {
+const { data } = await useAsyncData('news' + route.path, async (_nuxtApp, { signal }) => {
   if (route.path === '/hackernews') {
-    return await queryCollection('hackernews').all()
+    return await queryCollection('hackernews').all({ signal })
   }
 
-  return await queryCollection('hackernews').where('id', '=', route.params.slug).first()
+  return await queryCollection('hackernews').where('id', '=', route.params.slug).first({ signal })
 })
 </script>
 

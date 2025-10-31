@@ -13,7 +13,11 @@ export async function fetchDatabase(event: H3Event | undefined, collection: stri
   })
 }
 
-export async function fetchQuery<Item>(event: H3Event | undefined, collection: string, sql: string): Promise<Item[]> {
+export interface FetchQueryOptions {
+  signal?: AbortSignal
+}
+
+export async function fetchQuery<Item>(event: H3Event | undefined, collection: string, sql: string, { signal }: FetchQueryOptions = {}): Promise<Item[]> {
   return await $fetch(`/__nuxt_content/${collection}/query`, {
     context: event ? { cloudflare: event.context.cloudflare } : {},
     headers: {
@@ -25,5 +29,6 @@ export async function fetchQuery<Item>(event: H3Event | undefined, collection: s
     body: {
       sql,
     },
+    signal,
   })
 }
