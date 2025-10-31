@@ -3,16 +3,16 @@ import { titleCase } from 'scule'
 
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
+const { data: page } = await useAsyncData('blog-landing', (_nuxtApp, { signal }) => queryCollection('landing').path('/blog').first({ signal }))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('blog-posts', () => queryCollection('posts')
+const { data: posts } = await useAsyncData('blog-posts', (_nuxtApp, { signal }) => queryCollection('posts')
   .where('path', 'LIKE', '/blog%')
   .where('draft', '=', 0)
   .order('date', 'DESC')
-  .all(),
+  .all({ signal }),
 )
 
 useSeoMeta({

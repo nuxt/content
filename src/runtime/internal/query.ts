@@ -69,7 +69,7 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
   return query
 }
 
-export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string, opts: { signal?: AbortSignal }) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -121,16 +121,16 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       params.orderBy.push(`"${String(field)}" ${direction}`)
       return query
     },
-    async all(): Promise<Collections[T][]> {
-      return fetch(collection, buildQuery()).then(res => (res || []) as Collections[T][])
+    async all({ signal }: { signal?: AbortSignal } = {}): Promise<Collections[T][]> {
+      return fetch(collection, buildQuery(), { signal }).then(res => (res || []) as Collections[T][])
     },
-    async first(): Promise<Collections[T] | null> {
-      return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
+    async first({ signal }: { signal?: AbortSignal } = {}): Promise<Collections[T] | null> {
+      return fetch(collection, buildQuery({ limit: 1 }), { signal }).then(res => res[0] || null)
     },
-    async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
+    async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false, { signal }: { signal?: AbortSignal } = {}) {
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
-      })).then(m => (m[0] as { count: number }).count)
+      }), { signal }).then(m => (m[0] as { count: number }).count)
     },
   }
 

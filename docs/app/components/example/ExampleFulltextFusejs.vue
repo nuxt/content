@@ -2,7 +2,7 @@
 import Fuse from 'fuse.js'
 
 const query = ref('')
-const { data } = await useAsyncData('search-data', () => queryCollectionSearchSections('docs'))
+const { data } = await useAsyncData('search-data', (_nuxtApp, { signal }) => queryCollectionSearchSections('docs', { signal }))
 
 const fuse = new Fuse(data.value || [], {
   keys: [
