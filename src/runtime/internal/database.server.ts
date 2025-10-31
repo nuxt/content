@@ -38,24 +38,27 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   }
 }
 
-const checkDatabaseIntegrity = {} as Record<string, boolean>
-const integrityCheckPromise = {} as Record<string, Promise<void> | null>
+const checkDatabaseIntegrity = new Map<string, boolean>()
+const integrityCheckPromise = new Map<string, Promise<void> | null>()
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
-  if (checkDatabaseIntegrity[String(collection)] !== false) {
-    checkDatabaseIntegrity[String(collection)] = false
-    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)]!, checksumsStructure[String(collection)]!, config)
-      .then((isValid) => {
-        checkDatabaseIntegrity[String(collection)] = !isValid
-      })
-      .catch((error) => {
-        console.error('Database integrity check failed', error)
-        checkDatabaseIntegrity[String(collection)] = true
-        integrityCheckPromise[String(collection)] = null
-      })
+  if (checkDatabaseIntegrity.get(String(collection)) !== false) {
+    checkDatabaseIntegrity.set(String(collection), false)
+    if (!integrityCheckPromise.has(String(collection))) {
+      integrityCheckPromise.set(String(collection), _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)]!, checksumsStructure[String(collection)]!, config)
+        .then((isValid) => {
+          checkDatabaseIntegrity.set(String(collection), !isValid)
+        })
+        .catch((error) => {
+          console.error('Database integrity check failed', error)
+          checkDatabaseIntegrity.set(String(collection), true)
+          integrityCheckPromise.set(String(collection), null)
+        }),
+      )
+    }
   }
 
-  if (integrityCheckPromise[String(collection)]) {
-    await integrityCheckPromise[String(collection)]
+  if (integrityCheckPromise.has(String(collection))) {
+    await integrityCheckPromise.get(String(collection))!
   }
 }
 
