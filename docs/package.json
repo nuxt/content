@@ -14,7 +14,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "@vueuse/nuxt": "^14.0.0",
     "better-sqlite3": "^12.4.1",
-    "docus": "^5.2.1",
+    "docus": "https://pkg.pr.new/docus@1203",
     "drizzle-orm": "^0.44.7",
     "minisearch": "^7.2.0",
     "nuxt": "^4.2.0",
