@@ -23,7 +23,7 @@ export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
       }
       await dbPromises.get(String(collection))
       loadedCollections.set(String(collection), 'loaded')
-      Reflect.deleteProperty(dbPromises, String(collection))
+      dbPromises.delete(String(collection))
     }
 
     return db
