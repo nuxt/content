@@ -18,6 +18,6 @@
     "drizzle-orm": "^0.44.7",
     "minisearch": "^7.2.0",
     "nuxt": "^4.2.0",
-    "nuxt-studio": "https://pkg.pr.new/nuxt-content/studio/nuxt-studio@5979374"
+    "nuxt-studio": "https://pkg.pr.new/nuxt-content/studio/nuxt-studio@c3571e8"
   }
 }
