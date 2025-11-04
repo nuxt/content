@@ -10,20 +10,22 @@ const loadedCollections = new Map<string, string>()
 const dbPromises = new Map<string, Promise<Database>>()
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
+    const collectionKey = String(collection)
     if (!db) {
       if (!dbPromises.has('_')) {
         dbPromises.set('_', initializeDatabase())
       }
       db = await dbPromises.get('_')!
-      Reflect.deleteProperty(dbPromises, '_')
+      dbPromises.delete('_')
     }
-    if (!loadedCollections.has(String(collection))) {
-      if (!dbPromises.has(String(collection))) {
-        dbPromises.set(String(collection), loadCollectionDatabase(collection))
+    if (!loadedCollections.has(collectionKey)) {
+      if (!dbPromises.has(collectionKey)) {
+        dbPromises.set(collectionKey, loadCollectionDatabase(collection))
       }
-      await dbPromises.get(String(collection))
-      loadedCollections.set(String(collection), 'loaded')
-      dbPromises.delete(String(collection))
+
+      await dbPromises.get(collectionKey)
+      loadedCollections.set(collectionKey, 'loaded')
+      dbPromises.delete(collectionKey)
     }
 
     return db
