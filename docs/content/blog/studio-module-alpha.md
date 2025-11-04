@@ -1,11 +1,5 @@
 ---
 title: Nuxt Studio Alpha Release
-description: Introducing the first alpha release of Nuxt Studio as a free, open-source Nuxt module. Edit your content in production with GitHub integration and real-time preview.
-date: 2025-11-04
-draft: false
-image:
-  src: /blog/nuxt-studio-module-alpha.png
-  alt: Nuxt Studio Alpha Release
 authors:
   - name: Baptiste Leproux
     avatar:
@@ -18,6 +12,12 @@ authors:
     to: https://x.com/farnabaz
     username: farnabaz
 category: Release
+date: 2025-11-04T00:00:00.000Z
+description: Introducing the first alpha release of Nuxt Studio as a free, open-source Nuxt module. Edit your content in production with GitHub integration and real-time preview.
+draft: false
+image:
+  src: /blog/nuxt-studio-module-alpha.png
+  alt: Nuxt Studio Alpha Release
 ---
 
 When NuxtLabs joined Vercel, we promised to transform [nuxt.studio](https://nuxt.studio) from a hosted platform into a free, open-source module. Today, we're excited to announce the **first alpha release** of the Nuxt Studio module.
