@@ -4,7 +4,7 @@ description: Introducing the first alpha release of Nuxt Studio as a free, open-
 date: 2025-11-04
 draft: false
 image:
-  src: /blog/studio-module-alpha.png
+  src: /blog/nuxt-studio-module-alpha.png
   alt: Nuxt Studio Alpha Release
 authors:
   - name: Baptiste Leproux
