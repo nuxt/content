@@ -59,7 +59,7 @@ export default defineNuxtConfig({
     repository: {
       owner: 'nuxt',
       repo: 'content',
-      branch: 'main',
+      branch: 'feat/new-studio-module',
       rootDir: 'docs',
     },
   },
