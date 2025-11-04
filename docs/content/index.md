@@ -35,17 +35,6 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   trailingIcon: i-lucide-arrow-right
   ---
   :::
-
-  :::u-button
-  ---
-  color: neutral
-  label: Open Visual Editor
-  size: xl
-  target: _blank
-  to: https://nuxt.studio
-  variant: subtle
-  ---
-  :::
 ::
 
 ::u-page-section
@@ -403,7 +392,17 @@ orientation: horizontal
 Let [anyone edit]{.text-(--ui-primary)} your website
 
 #description
-Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-like Markdown editor and generated forms for `YAML` and `JSON` files. Live preview and online collaboration included.
+:::u-button
+---
+color: primary
+label: Currently in alpha
+target: _blank
+to: https://github.com/nuxt-content/studio
+variant: outline
+---
+:::
+
+Edit your Nuxt Content website with the **Studio module**, our free and open-source visual interface to edit your content in production.
 
 #features
   :::u-page-feature
@@ -411,7 +410,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   icon: i-lucide-mouse-pointer-click
   ---
   #title{unwrap="p"}
-  Visual editor with drag and drop for Markdown
+  Live preview of your content directly on your production website
   :::
 
   :::u-page-feature
@@ -419,7 +418,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   icon: i-lucide-file-text
   ---
   #title{unwrap="p"}
-  Form generation for YML and JSON files
+  Visual editor for Markdown, YML and JSON files (coming in beta)
   :::
 
   :::u-page-feature
@@ -427,17 +426,7 @@ Edit your Nuxt Content website with **Studio**, our CMS platform with Notion-lik
   icon: i-simple-icons-google
   ---
   #title{unwrap="p"}
-  Invite editors to login with Google and publish changes
-  :::
-
-#links
-  :::u-button
-  ---
-  color: neutral
-  label: Discover Studio
-  to: /studio
-  trailingIcon: i-lucide-arrow-right
-  ---
+  Publish changes directly on GitHub
   :::
 ::
 
@@ -461,16 +450,6 @@ Add a git-based CMS to your Nuxt project.
   label: Start reading docs
   to: /docs/getting-started/installation
   trailingIcon: i-lucide-arrow-right
-  ---
-  :::
-
-  :::u-button
-  ---
-  color: neutral
-  label: Open Studio
-  target: _blank
-  to: https://nuxt.studio
-  variant: outline
   ---
   :::
 ::

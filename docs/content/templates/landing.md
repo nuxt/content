@@ -19,7 +19,7 @@ image2: /templates/landing-dark.png
 ::template-core
 [Nuxt UI](https://ui.nuxt.com) is a collection of premium components designed to facilitate the creation of appealing and responsive Nuxt applications in a matter of minutes.
 
-The Nuxt UI team is dedicated to deliver the best integration and customization experience, while the Studio team is providing full compatibility with Nuxt Studio.
+The Nuxt UI team is dedicated to deliver the best integration and customization experience, while the Studio team is providing full compatibility with Nuxt Studio module.
 
 - **Fully customizable**: change the style of your UI from your App Config or edit your landing page content from the `index.yml` file.
 - **Beautiful Typography styles**: Tailwind CSS typography plugin is pre-configured and styled to match Nuxt UI components and colors.
