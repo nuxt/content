@@ -51,20 +51,15 @@ The only trade-off is that Studio now requires a server-side route for authentic
 
 The alpha release focuses on **core infrastructure and stability** without risking any bugs introduced by the Visual editor. We're using Monaco editor to ensure all file operations and GitHub workflows are rock-solid before introducing visual editing.
 
-**Monaco Code Editor**
-Professional editing experience with syntax highlighting for Markdown, YAML, and JSON, including full MDC syntax support and split-screen diff viewer for conflicts.
+**Monaco Code Editor** → IDE editing experience with syntax highlighting for Markdown, YAML, and JSON, including full MDC syntax support and split-screen diff viewer for conflicts.
 
-**File Operations**
-Complete CRUD operations for your `content/` directory—create, edit, delete, rename, and move files with built-in draft management.
+**File Operations** → Complete CRUD operations for your `content/` directory.Create, edit, delete, rename, and move files with built-in draft management.
 
-**Media Management**
-Centralized library for assets in your `public/` directory with upload, organize, preview, and integrate capabilities.
+**Media Management** → Centralized library for assets in your `public/` directory with upload, organize, preview, and integrate capabilities.
 
-**Git Integration**
-Direct commits to GitHub via OAuth with conflict detection, author attribution, and custom commit messages.
+**Git Integration** → Direct commits to GitHub via OAuth with conflict detection, author attribution, and custom commit messages.
 
-**Real-time Preview**
-Live preview of draft changes on your production website with instant updates and side-by-side editing.
+**Real-time Preview** → Live preview of draft changes on your production website with instant updates and side-by-side editing.
 
 ## 🗺️ The Road Ahead
 
@@ -91,7 +86,7 @@ Studio uses a three-tier storage architecture to keep content synchronized betwe
 
 ### Production Database `SQLite WASM`
 
-When your Nuxt Content website loads, Nuxt Content v3 downloads a SQLite database dump from your server and initializes a local WASM database containing all content from your deployed branch. This database stays in sync with GitHub as long as your last deployment completed successfully. This is the production database that is used updated by Studio when you edit content.
+When your Nuxt Content website loads, Nuxt Content v3 downloads a SQLite database dump from your server and initializes a local WASM database containing all content from your deployed branch. This database stays in sync with GitHub as long as your last deployment completed successfully. This is the production database updated by Studio when you edit content.
 
 ### Draft Storage `IndexedDB`
 
@@ -139,12 +134,14 @@ The local SQLite database is updated to include your draft content, allowing ins
 
 Studio compares your draft content against the latest version on GitHub to detect possible conflicts.
 
-::note
-**Conflicts can occur when:**
-:br
-- Someone pushes a commit that modifies the same file and its version is currently building.
-- A deployment fails or hasn’t completed, leaving the production out of date and unsync with GitHub.
-::
+  :::note
+  **Conflicts can occur when:**
+  
+  :br
+  
+  - Someone pushes a commit that modifies the same file and its version is currently building.
+  - A deployment fails or hasn’t completed, leaving the production out of date and unsync with GitHub.
+  :::
 ::
 
 ### Publishing Changes
@@ -185,4 +182,3 @@ Check out the [setup guide](/docs/studio/setup) for complete installation and co
 ---
 
 We're excited to see what you build with Nuxt Studio. Join the conversation on [GitHub Discussions](https://github.com/nuxt-content/studio/discussions) or [join our Discord](https://discord.gg/sBXDm6e8SP) to help shape the future of the module.
-
