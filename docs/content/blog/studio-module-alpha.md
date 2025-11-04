@@ -2,6 +2,7 @@
 title: Nuxt Studio Alpha Release
 description: Introducing the first alpha release of Nuxt Studio as a free, open-source Nuxt module. Edit your content in production with GitHub integration and real-time preview.
 date: 2025-11-04
+draft: false
 image:
   src: /blog/studio-module-alpha.png
   alt: Nuxt Studio Alpha Release
