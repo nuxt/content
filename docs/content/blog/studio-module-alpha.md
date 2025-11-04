@@ -11,6 +11,11 @@ authors:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
     username: larbish
+  - name: Ahad Birang
+    avatar:
+      src: https://avatars.githubusercontent.com/u/2047945?v=4
+    to: https://x.com/farnabaz
+    username: farnabaz
 category: Release
 ---
 
@@ -22,7 +27,7 @@ You can now enable content editing directly in production, with real-time previe
 The alpha version includes a Monaco code editor for Markdown, YAML, and JSON files. The visual Notion-like editor will arrive in the beta release.
 ::
 
-## From Hosted Platform to Self-Hosted Module
+## 🏠 From Hosted Platform to Self-Hosted Module
 
 This milestone wouldn't have been possible without Vercel's support. Their backing allowed us to dedicate the resources needed to rebuild Studio as an open-source module.
 
@@ -41,7 +46,7 @@ This means content editors can manage and update content directly in production,
 The only trade-off is that Studio now requires a server-side route for authentication. While static generation remains supported with [Nuxt hybrid rendering](https://nuxt.com/docs/4.x/guide/concepts/rendering#route-rules), your site must be deployed on a platform that supports SSR.
 ::
 
-## What's Shipped in Alpha
+## 📦 What's Shipped in Alpha
 
 The alpha release focuses on **core infrastructure and stability** without risking any bugs introduced by the Visual editor. We're using Monaco editor to ensure all file operations and GitHub workflows are rock-solid before introducing visual editing.
 
@@ -60,7 +65,7 @@ Direct commits to GitHub via OAuth with conflict detection, author attribution, 
 **Real-time Preview**
 Live preview of draft changes on your production website with instant updates and side-by-side editing.
 
-## The Road Ahead
+## 🗺️ The Road Ahead
 
 ### Beta Release `Q4 2025`
 
@@ -79,9 +84,7 @@ Production-ready features, performance optimizations, and enhanced stability.
 
 AI-powered content suggestions, multiple git providers, and community-driven features.
 
-## Dig deeper
-
-### How the sync works
+## 🗄️ Storage Architecture
 
 Studio uses a three-tier storage architecture to keep content synchronized between your browser and GitHub.
 
@@ -101,19 +104,74 @@ Drafts are stored only in your browser. They're not shared between editors or de
 
 When you publish, Studio commits your draft changes directly to GitHub through the GitHub API. Your CI/CD pipeline then rebuilds and redeploys your site automatically. After deployment, you'll need to refresh to update your browser database with the latest content.
 
-### The Sync Flow
+## ⚡ The Sync Flow
 
-1. **Initial Load:** SQLite database downloaded + existing drafts recovered from IndexedDB
-2. **Editing:** Changes saved to IndexedDB + local SQLite database updated for instant preview
-3. **Conflict Detection:** Draft content compared against latest GitHub version
-4. **Publishing:** Drafts committed to GitHub → CI/CD triggered → site rebuilds
-5. **Post-Deploy:** Studio clears drafts and waits for deployment to complete
+### Initial Load
 
-::tip
-Studio will automatically notify you when a new deployment is detected and your database needs refreshing.
+::prose-steps{level="4"}
+#### Database Initialization
+
+Nuxt Content downloads the SQLite database dump generated during the build process. :br
+This file contains all parsed content from your `content/` directory.
+
+#### Draft Recovery
+
+Studio checks IndexedDB for any existing drafts from previous sessions and loads them into the SQLite database.
+
+#### Preview
+
+Studio refreshes the site preview so you can view your latest drafts and edits directly on your production website.
 ::
 
-## Get Started Today
+### Editing Content
+
+::prose-steps{level="4"}
+#### Draft Modification
+
+Changes are saved immediately in IndexedDB as draft items with a status of `created`, `modified`, or `deleted`.
+
+#### Database Update
+
+The local SQLite database is updated to include your draft content, allowing instant visual preview.
+
+#### Conflict Detection
+
+Studio compares your draft content against the latest version on GitHub to detect possible conflicts.
+
+::note
+**Conflicts can occur when:**
+:br
+- Someone pushes a commit that modifies the same file and its version is currently building.
+- A deployment fails or hasn’t completed, leaving the production out of date and unsync with GitHub.
+::
+::
+
+### Publishing Changes
+
+::prose-steps{level="4"}
+#### Draft Collection
+
+Studio gathers all draft items that contain changes.
+
+#### GitHub Commit
+
+Using the GitHub API, Studio creates a new commit with all updated files.
+
+#### Deployment Trigger
+
+Your CI/CD platform detects the commit and automatically rebuilds and redeploys your website.
+
+#### Deployment Wait
+
+After publication, Studio clears the local drafts and waits for the deployment to complete. :br
+During this time, a loading state is shown while the production SQLite database catches up with your latest commit.
+
+  :::warning
+  Until your commit is deployed, Studio remains in a pending state where the production database is not yet up to date.
+  :::
+::
+
+## 🚀 Get Started Today
 
 Install the module and configure your GitHub OAuth app to start editing content in production:
 
