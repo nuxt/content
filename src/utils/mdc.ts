@@ -27,7 +27,7 @@ export async function installMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt
   }, options.mdc) as MDCModuleOptions
 
   // Hook into mdc configs and store them for parser
-  await nuxt.hook('mdc:configSources', async (mdcConfigs) => {
+  nuxt.hook('mdc:configSources', async (mdcConfigs) => {
     if (mdcConfigs.length) {
       const jiti = createJiti(nuxt.options.rootDir)
       const configs = await Promise.all(mdcConfigs.map(path => jiti.import(path).then(m => (m as { default: MdcConfig }).default || m)))
