@@ -168,7 +168,8 @@
     "wrangler": "^4.45.1"
   },
   "resolutions": {
-    "@nuxt/content": "workspace:*"
+    "@nuxt/content": "workspace:*",
+    "remark-mdc": "3.8.1"
   },
   "packageManager": "pnpm@10.19.0",
   "unbuild": {

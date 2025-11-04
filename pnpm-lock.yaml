@@ -6,6 +6,7 @@ settings:
 
 overrides:
   '@nuxt/content': workspace:*
+  remark-mdc: 3.8.1
 
 patchedDependencies:
   '@nuxt/vite-builder':
@@ -125,7 +126,7 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       remark-mdc:
-        specifier: ^3.8.1
+        specifier: 3.8.1
         version: 3.8.1
       scule:
         specifier: ^1.3.0
@@ -7474,9 +7475,6 @@ packages:
   remark-gfm@4.0.1:
     resolution: {integrity: sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==}
 
-  remark-mdc-edge@3.6.0-29333381.8558577:
-    resolution: {integrity: sha512-kI1hczSecJMgLPzD5YKNpsOsmMBroZNaF8XitfbBxx7dGP9V3O5CBEHxCjgkVBmfOXN50i8db/bLuk8lbLsjmg==}
-
   remark-mdc@3.8.1:
     resolution: {integrity: sha512-TGFY61OhgziAITAomenbw4THQvEHC7MxZI1kO1YL/VuWQTHZ0RG20G6GGATIFeGnq65IUe7dngiQVcVIeFdB/g==}
 
@@ -11238,7 +11236,7 @@ snapshots:
       rehype-sort-attributes: 5.0.1
       remark-emoji: 5.0.2
       remark-gfm: 4.0.1
-      remark-mdc: remark-mdc-edge@3.6.0-29333381.8558577
+      remark-mdc: 3.8.1
       remark-parse: 11.0.0
       remark-rehype: 11.1.2
       remark-stringify: 11.0.0
@@ -15655,7 +15653,7 @@ snapshots:
       citty: 0.1.6
       eslint: 9.38.0(jiti@2.6.1)
       glob: 11.0.3
-      remark-mdc: remark-mdc-edge@3.6.0-29333381.8558577
+      remark-mdc: 3.8.1
     transitivePeerDependencies:
       - magicast
       - supports-color
@@ -17764,29 +17762,6 @@ snapshots:
       remark-parse: 11.0.0
       remark-stringify: 11.0.0
       unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
-
-  remark-mdc-edge@3.6.0-29333381.8558577:
-    dependencies:
-      '@types/mdast': 4.0.4
-      '@types/unist': 3.0.3
-      flat: 6.0.1
-      mdast-util-from-markdown: 2.0.2
-      mdast-util-to-markdown: 2.1.2
-      micromark: 4.0.2
-      micromark-core-commonmark: 2.0.3
-      micromark-factory-space: 2.0.1
-      micromark-factory-whitespace: 2.0.1
-      micromark-util-character: 2.1.1
-      micromark-util-types: 2.0.2
-      parse-entities: 4.0.2
-      scule: 1.3.0
-      stringify-entities: 4.0.4
-      unified: 11.0.5
-      unist-util-visit: 5.0.0
-      unist-util-visit-parents: 6.0.2
-      yaml: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
