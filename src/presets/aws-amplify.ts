@@ -16,7 +16,7 @@ export default definePreset({
       }
     })
 
-    try {
+    /*try {
       await import('sqlite3')
 
       options.experimental ||= {}
@@ -25,7 +25,7 @@ export default definePreset({
     catch {
       logger.error('Nuxt Content requires `sqlite3` module to work in AWS Amplify environment. Please run `npm install sqlite3` to install it and try again.')
       process.exit(1)
-    }
+    }*/
   },
   async setupNitro(nitroConfig) {
     const database = nitroConfig.runtimeConfig?.content?.database
