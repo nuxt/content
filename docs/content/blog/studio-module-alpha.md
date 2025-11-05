@@ -35,7 +35,7 @@ You can now enable content editing directly in production, with real-time previe
 
 :video{controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
-::u-button{to="/admin?id=posts/blog/studio-module-alpha.md" icon="i-lucide-mouse-pointer-click" external color="neutral" class="mt-4"}
+::u-button{to="/admin?redirect=/blog/studio-module-alpha" icon="i-lucide-mouse-pointer-click" external color="neutral" class="mt-4"}
 Try editing this page
 ::
 
