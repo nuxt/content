@@ -35,8 +35,8 @@ You can now enable content editing directly in production, with real-time previe
 
 :video{controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
-::prose-note
-The alpha version includes a Monaco code editor for Markdown, YAML, and JSON files. The visual Notion-like editor will arrive in the beta release.
+::u-button{to="/admin?id=posts/blog/studio-module-alpha.md" icon="i-lucide-mouse-pointer-click" external color="neutral" class="mt-4"}
+Try editing this page
 ::
 
 ## 🏠 From Hosted Platform to Self-Hosted Module
