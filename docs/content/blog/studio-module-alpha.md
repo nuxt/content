@@ -187,7 +187,7 @@ During this time, a loading state is shown while the production SQLite database 
 Install the module and configure your GitHub OAuth app to start editing content in production:
 
 ```bash
-npx nuxi module add nuxt-studio
+npx nuxi module add nuxt-studio@alpha
 ```
 
 Check out the [setup guide](/docs/studio/setup) for complete installation and configuration instructions.
