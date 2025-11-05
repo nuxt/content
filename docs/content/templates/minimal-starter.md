@@ -28,8 +28,7 @@ Unleash your imagination with our minimalist starter:
     - label: Nuxt Architecture
       content: Harness the full power of Nuxt 3 and its modules ecosystem.
     - label: Nuxt Studio ready
-      content: Edit your theme content and appearance with live-preview within Nuxt
-        Studio.
+      content: Edit your content with live-preview with Nuxt Studio module.
     - label: Vue Components
       content: Use built-in components (or your own) inside your content.
     - label: Write Markdown

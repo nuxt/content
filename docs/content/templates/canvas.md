@@ -18,7 +18,7 @@ image3: /templates/canvas-portfolio-3.png
 ---
 
 ::template-core
-Canvas Portfolio is a fully customizable i18n portfolio template built with Nuxt and Nuxt UI, designed to help you showcase your work, testimonials, and key information with ease. The template integrates with Nuxt Studio for a smooth editing experience, while leveraging Nuxt Content for content management. Built with performance, flexibility, and responsiveness in mind, Canvas Portfolio provides a robust foundation for developers and creatives alike.
+Canvas Portfolio is a fully customizable i18n portfolio template built with Nuxt and Nuxt UI, designed to help you showcase your work, testimonials, and key information with ease. The template integrates with Nuxt Studio module for a smooth editing experience, while leveraging Nuxt Content for content management. Built with performance, flexibility, and responsiveness in mind, Canvas Portfolio provides a robust foundation for developers and creatives alike.
 
 - **Modern Components & Layouts** – Includes built-in components.
 - **Nuxt UI v3** – Utilize pre-built, customizable UI components.
@@ -38,8 +38,7 @@ Canvas Portfolio is a fully customizable i18n portfolio template built with Nuxt
     - label: Nuxt Architecture
       content: Harness the full power of Nuxt 3 and its modules ecosystem.
     - label: Nuxt Studio ready
-      content: Edit your theme content and appearance with live-preview within Nuxt
-        Studio.
+      content: Edit your content with live-preview with Nuxt Studio module.
     - label: Vue Components
       content: Insert built-in components (or your own) inside your content.
     - label: Write Markdown

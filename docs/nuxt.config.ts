@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     build: {
       markdown: {
         highlight: {
-          langs: ['docker'],
+          langs: ['docker', 'json'],
         },
       },
     },
@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
-    description: 'Nuxt Content is a Git-based headless CMS for Nuxt',
+    description: 'Nuxt Content is a git-based CMS for Nuxt projects.',
     notes: [
       'The documentation only includes Nuxt Content v3 docs.',
       'The content is automatically generated from the same source as the official documentation.',
@@ -59,7 +59,7 @@ export default defineNuxtConfig({
     repository: {
       owner: 'nuxt',
       repo: 'content',
-      branch: 'main',
+      branch: 'feat/new-studio-module',
       rootDir: 'docs',
     },
   },

@@ -86,25 +86,13 @@ const images = computed(() => template.value
               :to="template.demo"
               target="_blank"
             />
-
-            <UDropdownMenu
-              :items="[{
-                label: 'Import on Studio',
-                to: 'https://nuxt.studio/signin',
-                target: '_blank',
-              }, {
-                label: 'Clone on GitHub',
-                to: `https://github.com/${template.owner}/${template.name}/tree/${template.branch}`,
-                target: '_blank',
-              }]"
-            >
-              <UButton
-                label="Use it"
-                color="primary"
-                variant="solid"
-                trailing-icon="i-ph-arrow-right"
-              />
-            </UDropdownMenu>
+            <UButton
+              label="Clone on GitHub"
+              color="primary"
+              variant="solid"
+              :to="`https://github.com/${template.owner}/${template.name}/tree/${template.branch}`"
+              trailing-icon="i-ph-arrow-right"
+            />
           </div>
         </template>
       </UPageHeader>
