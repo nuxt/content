@@ -3,139 +3,181 @@ prose: true
 seo:
   title: The git-based CMS for Nuxt projects
   description: Nuxt Content is a module for Nuxt that provides a simple way to
-    manage content for your application. It allows developers to write their
-    content in Markdown, YAML, or JSON files and then query and display it in
+    manage content for your application, within your git repository. It allows developers to write their
+    content in Markdown, YAML or JSON files and then query and display it in
     their application.
   ogImage: https://content.nuxt.com/social.png
 ---
 
 ::u-page-hero
-  :::div{class="hidden md:block"}
-    ::::u-color-mode-image
-    ---
-    class: size-full absolute bottom-0 inset-0 z-[-1]
-    dark: /home/hero-dark.svg
-    light: /home/hero-light.svg
-    ---
-    ::::
+---
+orientation: horizontal
+---
+#headline
+  :::u-button
+  ---
+  size: sm
+  to: /blog/studio-module-alpha
+  variant: outline
+  trailing-icon: i-lucide-arrow-right
+  class: mb-3 rounded-full
+  ---
+  Nuxt Studio alpha is out
   :::
-
-#title{unwrap="p"}
-The git-based CMS for :br Nuxt projects.
+#title
+The [git-based]{.text-primary} :br CMS for Nuxt.
 
 #description
-Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML, CSV or JSON files and then query and display it in their application.
+Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML or JSON files and then query and display it in their application.
 
-#links{unwrap="p"}
+#links
   :::u-button
   ---
   label: Get Started
-  size: xl
+  size: lg
   to: /docs/getting-started/installation
   trailingIcon: i-lucide-arrow-right
   ---
   :::
+  :u-input-copy{value="npx nuxt module add content"}
+
+#default
+  ::code-group
+  ```mdc [content/index.md]
+  ---
+  title: The Mountains Website
+  description: A website about the most iconic mountains in the world.
+  ---
+
+  ::my-vue-hero-component{orientation="horizontal"}
+  #title
+  Welcome to the Mountains Website.
+  #description
+  This is a description of the Mountains Website.
+  ::
+
+  This is a paragraph with **bold** and _italic_ text.
+  ```
+  ```vue [pages/index.vue]
+  <script setup lang="ts">
+  const { data } = await useAsyncData('home', () => {
+    return queryCollection('content').path('/').first()
+  })
+
+  useSeoMeta({
+    title: data.value?.title,
+    description: data.value?.description
+  })
+  </script>
+
+  <template>
+    <ContentRenderer :value="data" />
+  </template>
+  ```
+  ::
 ::
 
-::u-page-section
-#features
-  :::u-page-feature
-  ---
-  icon: i-lucide-files
-  ---
-  #title{unwrap="p"}
-  File-based CMS
-  
-  #description{unwrap="p"}
-  Write your content in Markdown, YAML, CSV or JSON and query it in your components.
-  :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-filter
-  ---
-  #title{unwrap="p"}
-  Query Builder
-  
-  #description{unwrap="p"}
-  Query your content with a MongoDB-like API to fetch the right data at the right time.
-  :::
+::u-container{class="pb-12 xl:pb-24"}
+  :::u-page-grid
+    :::u-page-feature
+    ---
+    icon: i-lucide-files
+    ---
+    #title{unwrap="p"}
+    File-based CMS
+    
+    #description{unwrap="p"}
+    Write your content in Markdown, YAML, CSV or JSON and query it in your components.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-database
-  ---
-  #title{unwrap="p"}
-  SQLite powered
-  
-  #description{unwrap="p"}
-  Add custom fields to your content, making it suitable for various types of projects.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-lucide-filter
+    ---
+    #title{unwrap="p"}
+    Query Builder
+    
+    #description{unwrap="p"}
+    Query your content with a MongoDB-like API to fetch the right data at the right time.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-markdown
-  ---
-  #title{unwrap="p"}
-  Markdown with Vue
-  
-  #description{unwrap="p"}
-  Use Vue components in Markdown files, with props, slots and nested components.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-lucide-database
+    ---
+    #title{unwrap="p"}
+    SQLite powered
+    
+    #description{unwrap="p"}
+    Add custom fields to your content, making it suitable for various types of projects.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-list-minus
-  ---
-  #title{unwrap="p"}
-  Code highlighting
-  
-  #description{unwrap="p"}
-  Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-simple-icons-markdown
+    ---
+    #title{unwrap="p"}
+    Markdown with Vue
+    
+    #description{unwrap="p"}
+    Use Vue components in Markdown files, with props, slots and nested components.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-mouse-pointer-click
-  ---
-  #title{unwrap="p"}
-  Visual Editor
-  
-  #description{unwrap="p"}
-  Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-lucide-list-minus
+    ---
+    #title{unwrap="p"}
+    Code highlighting
+    
+    #description{unwrap="p"}
+    Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-panel-left
-  ---
-  #title{unwrap="p"}
-  Navigation Generation
-  
-  #description{unwrap="p"}
-  Generate a structured object from your content files and display a navigation menu in minutes.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-lucide-mouse-pointer-click
+    ---
+    #title{unwrap="p"}
+    Visual Editor
+    
+    #description{unwrap="p"}
+    Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-heading-1
-  ---
-  #title{unwrap="p"}
-  Prose Components
-  
-  #description{unwrap="p"}
-  Customize HTML typography tags with Vue components to give your content a consistent style.
-  :::
+    :::u-page-feature
+    ---
+    icon: i-lucide-panel-left
+    ---
+    #title{unwrap="p"}
+    Navigation Generation
+    
+    #description{unwrap="p"}
+    Generate a structured object from your content files and display a navigation menu in minutes.
+    :::
 
-  :::u-page-feature
-  ---
-  icon: i-lucide-globe
-  ---
-  #title{unwrap="p"}
-  Deploy everywhere
-  
-  #description{unwrap="p"}
-  Nuxt Content works on all hosting providers, static, server, serverless & edge.
+    :::u-page-feature
+    ---
+    icon: i-lucide-heading-1
+    ---
+    #title{unwrap="p"}
+    Prose Components
+    
+    #description{unwrap="p"}
+    Customize HTML typography tags with Vue components to give your content a consistent style.
+    :::
+
+    :::u-page-feature
+    ---
+    icon: i-lucide-globe
+    ---
+    #title{unwrap="p"}
+    Deploy everywhere
+    
+    #description{unwrap="p"}
+    Nuxt Content works on all hosting providers, static, server, serverless & edge.
+    :::
   :::
 ::
 

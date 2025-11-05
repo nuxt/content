@@ -11,6 +11,11 @@ authors:
       src: https://avatars.githubusercontent.com/u/2047945?v=4
     to: https://x.com/farnabaz
     username: farnabaz
+  - name: Sébastien Chopin
+    avatar:
+      src: https://avatars.githubusercontent.com/u/904724?v=4
+    to: https://x.com/atinux
+    username: atinux
 category: Release
 date: 2025-11-04T00:00:00.000Z
 description: Introducing the first alpha release of Nuxt Studio as a free, open-source Nuxt module. Edit your content in production with GitHub integration and real-time preview.
@@ -22,7 +27,13 @@ image:
 
 When NuxtLabs joined Vercel, we promised to transform [nuxt.studio](https://nuxt.studio) from a hosted platform into a free, open-source module. Today, we're excited to announce the **first alpha release** of the Nuxt Studio module.
 
+::u-button{to="https://github.com/nuxt-content/studio" icon="i-simple-icons-github" target="_blank" color="neutral" variant="subtle"}
+Discover the Nuxt Studio module on GitHub.
+::
+
 You can now enable content editing directly in production, with real-time preview and GitHub integration, all from within your own Nuxt application.
+
+:video{controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
 
 ::prose-note
 The alpha version includes a Monaco code editor for Markdown, YAML, and JSON files. The visual Notion-like editor will arrive in the beta release.
@@ -34,18 +45,16 @@ This milestone wouldn't have been possible without Vercel's support. Their backi
 
 ### What's Different?
 
-Originally offered as a hosted platform at [nuxt.studio](https://nuxt.studio), Studio has evolved into an open-source Nuxt module that you can deploy alongside your Nuxt Content website.
+Originally provided as a hosted platform at [nuxt.studio](https://nuxt.studio), Studio is now a free and open-source Nuxt module that you can deploy alongside your Nuxt Content website.
 
-This means content editors can manage and update content directly in production, on your website, without the need of local development tools or Git knowledge.
+This means content editors can manage and update content directly in production, on their website, without the need of local development tools or Git knowledge.
 
 - **Self-hosted** — runs entirely on your infrastructure alongside your Nuxt app
 - **No external dependencies** — no APIs or third-party services required
 - **Free and open-source** — released under the MIT license
 - **Direct integration** — a simple GitHub OAuth app is needed to get started
 
-::warning
-The only trade-off is that Studio now requires a server-side route for authentication. While static generation remains supported with [Nuxt hybrid rendering](https://nuxt.com/docs/4.x/guide/concepts/rendering#route-rules), your site must be deployed on a platform that supports SSR.
-::
+The only trade-off is that Studio now requires a server-side route for authentication. While static generation remains supported with [Nuxt hybrid rendering](https://nuxt.com/docs/4.x/guide/concepts/rendering#hybrid-rendering), your site must be deployed on a platform that supports SSR.
 
 ## 📦 What's Shipped in Alpha
 
@@ -53,7 +62,7 @@ The alpha release focuses on **core infrastructure and stability** without riski
 
 **Monaco Code Editor** → IDE editing experience with syntax highlighting for Markdown, YAML, and JSON, including full MDC syntax support and split-screen diff viewer for conflicts.
 
-**File Operations** → Complete CRUD operations for your `content/` directory.Create, edit, delete, rename, and move files with built-in draft management.
+**File Operations** → Complete CRUD operations for your `content/` directory. Create, edit, delete, rename, and move files with built-in draft management.
 
 **Media Management** → Centralized library for assets in your `public/` directory with upload, organize, preview, and integrate capabilities.
 
@@ -67,7 +76,7 @@ The alpha release focuses on **core infrastructure and stability** without riski
 
 Inspired from what we've built on [nuxt.studio](https://nuxt.studio), the beta phase will introduce the open-source visual editor, making Studio accessible to non-technical users:
 
-- **Visual Editor** — Notion-inspired WYSIWYG experience for Markdown
+- **Markdown Editor** — Notion-inspired experience for Markdown
 - **Form-based Editing** — Schema-based forms for Markdown frontmatter, YAML, and JSON files
 - **Vue Component Edition** — Visual interface for editing component props and slots
 - **Google OAuth** — Alternative authentication for non-GitHub users
@@ -75,6 +84,10 @@ Inspired from what we've built on [nuxt.studio](https://nuxt.studio), the beta p
 ### Stable Release `End of Year 2025`
 
 Production-ready features, performance optimizations, and enhanced stability.
+
+::warning
+At the end of year, the hosted platform will be sunset and the module will be the only way to edit your Nuxt Content website.
+::
 
 ### Beyond `2026`
 
@@ -100,7 +113,7 @@ Drafts are stored only in your browser. They're not shared between editors or de
 
 When you publish, Studio commits your draft changes directly to GitHub through the GitHub API. Your CI/CD pipeline then rebuilds and redeploys your site automatically. After deployment, you'll need to refresh to update your browser database with the latest content.
 
-## ⚡ The Sync Flow
+## 🔄 The Sync Flow
 
 ### Initial Load
 
