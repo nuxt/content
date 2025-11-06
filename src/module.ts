@@ -28,7 +28,7 @@ import type { ModuleOptions } from './types/module'
 import { getContentChecksum, logger, chunks, NuxtContentHMRUnplugin } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
-import { installMDCModule } from './utils/mdc'
+import { configureMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview, setupPreviewWithAPI, shouldEnablePreview } from './utils/preview/module'
@@ -41,40 +41,69 @@ import { initiateValidatorsContext } from './utils/dependencies'
 export * from './utils'
 export type * from './types'
 
+const moduleDefaults: Partial<ModuleOptions> = {
+  _localDatabase: {
+    type: 'sqlite',
+    filename: '.data/content/contents.sqlite',
+  },
+  preview: {},
+  watch: { enabled: true },
+  renderer: {
+    alias: {},
+    anchorLinks: {
+      h2: true,
+      h3: true,
+      h4: true,
+    },
+  },
+  build: {
+    pathMeta: {},
+    markdown: {},
+    yaml: {},
+    csv: {
+      delimiter: ',',
+      json: true,
+    },
+  },
+  experimental: {
+    nativeSqlite: false,
+  },
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/content',
     configKey: 'content',
     version,
+    compatibility: {
+      nuxt: '>=4.1.0 || ^3.19.0',
+    },
     docs: 'https://content.nuxt.com',
   },
-  defaults: {
-    _localDatabase: {
-      type: 'sqlite',
-      filename: '.data/content/contents.sqlite',
-    },
-    preview: {},
-    watch: { enabled: true },
-    renderer: {
-      alias: {},
-      anchorLinks: {
-        h2: true,
-        h3: true,
-        h4: true,
+  defaults: moduleDefaults,
+  moduleDependencies(nuxt) {
+    const nuxtOptions = nuxt.options as unknown as { content: ModuleOptions }
+    const contentOptions = defu(nuxtOptions.content, moduleDefaults)
+
+    return {
+      '@nuxtjs/mdc': {
+        overrides: {
+          highlight: contentOptions.build?.markdown?.highlight,
+          components: {
+            prose: true,
+            map: contentOptions.renderer.alias,
+          },
+          headings: {
+            anchorLinks: contentOptions.renderer.anchorLinks,
+          },
+          remarkPlugins: contentOptions.build?.markdown?.remarkPlugins,
+          rehypePlugins: contentOptions.build?.markdown?.rehypePlugins,
+        },
+        defaults: {
+          highlight: { noApiRoute: true },
+        },
       },
-    },
-    build: {
-      pathMeta: {},
-      markdown: {},
-      yaml: {},
-      csv: {
-        delimiter: ',',
-        json: true,
-      },
-    },
-    experimental: {
-      nativeSqlite: false,
-    },
+    }
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -184,7 +213,7 @@ export default defineNuxtModule<ModuleOptions>({
       installModule(resolver.resolve('./features/llms'))
     }
 
-    await installMDCModule(options, nuxt)
+    await configureMDCModule(options, nuxt)
 
     nuxt.hook('modules:done', async () => {
       const preset = findPreset(nuxt)
