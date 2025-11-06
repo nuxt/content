@@ -38,24 +38,28 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   }
 }
 
-const checkDatabaseIntegrity = {} as Record<string, boolean>
-const integrityCheckPromise = {} as Record<string, Promise<void> | null>
+const checkDatabaseIntegrity = new Map<string, boolean>()
+const integrityCheckPromise = new Map<string, Promise<void> | null>()
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
-  if (checkDatabaseIntegrity[String(collection)] !== false) {
-    checkDatabaseIntegrity[String(collection)] = false
-    integrityCheckPromise[String(collection)] = integrityCheckPromise[String(collection)] || _checkAndImportDatabaseIntegrity(event, collection, checksums[String(collection)]!, checksumsStructure[String(collection)]!, config)
-      .then((isValid) => {
-        checkDatabaseIntegrity[String(collection)] = !isValid
-      })
-      .catch((error) => {
-        console.error('Database integrity check failed', error)
-        checkDatabaseIntegrity[String(collection)] = true
-        integrityCheckPromise[String(collection)] = null
-      })
+  if (checkDatabaseIntegrity.get(collection) !== false) {
+    checkDatabaseIntegrity.set(collection, false)
+    if (!integrityCheckPromise.has(collection)) {
+      const _integrityCheck = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config)
+        .then((isValid) => {
+          checkDatabaseIntegrity.set(collection, !isValid)
+        })
+        .catch((error) => {
+          console.error('Database integrity check failed', error)
+          checkDatabaseIntegrity.set(collection, true)
+          integrityCheckPromise.delete(collection)
+        })
+
+      integrityCheckPromise.set(collection, _integrityCheck)
+    }
   }
 
-  if (integrityCheckPromise[String(collection)]) {
-    await integrityCheckPromise[String(collection)]
+  if (integrityCheckPromise.has(collection)) {
+    await integrityCheckPromise.get(collection)!
   }
 }
 
@@ -193,7 +197,7 @@ async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string)
 }
 
 async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
-  return await fetchDatabase(event, String(collection))
+  return await fetchDatabase(event, collection)
     .catch((e) => {
       console.error('Failed to fetch compressed dump', e)
       return ''
