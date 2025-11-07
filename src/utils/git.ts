@@ -1,11 +1,15 @@
-import { createReadStream, createWriteStream } from 'node:fs'
+import fs, { createReadStream, createWriteStream } from 'node:fs'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { pipeline } from 'node:stream/promises'
 import { createGunzip } from 'node:zlib'
 import { join } from 'pathe'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
+import git from 'isomorphic-git'
+import gitHttp from 'isomorphic-git/http/node'
 import { unpackTar } from 'modern-tar/fs'
+
+import type { GitBasicAuth, GitRefType, GitTokenAuth } from '../types'
 
 export interface GitInfo {
   // Repository name
@@ -59,6 +63,56 @@ export async function downloadRepository(url: string, cwd: string, { headers }: 
   finally {
     await rm(tarFile, { force: true })
   }
+}
+
+export async function downloadGitRepository(url: string, cwd: string, auth?: GitBasicAuth | GitTokenAuth | string, ref?: GitRefType) {
+  const cacheFile = join(cwd, '.content.cache.json')
+  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
+  const hash = await getGitRemoteHash(url, ref)
+
+  if (cache) {
+    // Directory exists, skip download
+    if (hash === cache.hash) {
+      await writeFile(cacheFile, JSON.stringify({
+        ...cache,
+        updatedAt: new Date().toISOString(),
+      }, null, 2))
+      return
+    }
+  }
+
+  await mkdir(cwd, { recursive: true })
+
+  let formattedRef: string | undefined
+  if (ref) {
+    if (ref.branch) formattedRef = `refs/heads/${ref.branch}`
+    if (ref.tag) formattedRef = `refs/tags/${ref.tag}`
+  }
+
+  const authUrl = new URL(url)
+  if (typeof (auth) === 'string') {
+    authUrl.password = auth
+  }
+  if (typeof (auth) === 'object') {
+    if (auth.username) authUrl.username = auth.username
+
+    if ('token' in auth) {
+      authUrl.password = auth.token!
+    }
+
+    if ('password' in auth) {
+      authUrl.password = auth.password!
+    }
+  }
+
+  await git.clone({ fs, http: gitHttp, dir: cwd, url: authUrl.toString(), depth: 1, singleBranch: true, ref: formattedRef })
+
+  await writeFile(cacheFile, JSON.stringify({
+    url: url,
+    hash: hash,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }, null, 2))
 }
 
 export function parseGitHubUrl(url: string) {
@@ -129,6 +183,32 @@ export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefi
     name,
     owner,
     url,
+  }
+}
+
+export async function getGitRemoteHash(url: string, ref?: GitRefType): Promise<string | undefined> {
+  try {
+    const remote = await git.getRemoteInfo({ http: gitHttp, url })
+    if (ref) {
+      if (ref.branch) {
+        const headRef = remote.refs.heads![ref.branch]
+        return headRef
+      }
+
+      if (ref.tag) {
+        const tagsRef = remote.refs.tags![ref.tag]
+        return tagsRef
+      }
+    }
+    else {
+      // default to the HEAD ref provided by the server
+      const head = remote.HEAD!.replace('refs/heads/', '')
+      const headRef = remote.refs.heads![head]
+      return headRef
+    }
+  }
+  catch {
+    // ignore error
   }
 }
 
