@@ -6,9 +6,9 @@ const route = useRoute()
 const { locale, localeProperties } = useI18n()
 const slug = computed(() => withLeadingSlash(String(route.params.slug)))
 
-const { data: page } = await useAsyncData('page-' + slug.value, async () => {
+const { data: page } = await useAsyncData('page-' + slug.value, async (_nuxtApp, { signal }) => {
   const collection = ('content_' + locale.value) as keyof Collections
-  const content = await queryCollection(collection).path(slug.value).first()
+  const content = await queryCollection(collection).path(slug.value).first({ signal })
 
   // Possibly fallback to default locale if content is missing in non-default locale
 

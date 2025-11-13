@@ -8,9 +8,9 @@ export interface CollectionQueryBuilder<T> {
   order(field: keyof T, direction: 'ASC' | 'DESC'): CollectionQueryBuilder<T>
   skip(skip: number): CollectionQueryBuilder<T>
   limit(limit: number): CollectionQueryBuilder<T>
-  all(): Promise<T[]>
-  first(): Promise<T | null>
-  count(field?: keyof T | '*', distinct?: boolean): Promise<number>
+  all(opts?: { signal?: AbortSignal }): Promise<T[]>
+  first(opts?: { signal?: AbortSignal }): Promise<T | null>
+  count(field?: keyof T | '*', distinct?: boolean, opts?: { signal?: AbortSignal }): Promise<number>
   where(field: string, operator: SQLOperator, value?: unknown): CollectionQueryBuilder<T>
   andWhere(groupFactory: QueryGroupFunction<T>): CollectionQueryBuilder<T>
   orWhere(groupFactory: QueryGroupFunction<T>): CollectionQueryBuilder<T>
