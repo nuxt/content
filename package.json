@@ -139,7 +139,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251014.0",
     "@nuxt/content": "link:.",
-    "@nuxt/devtools": "^2.7.0",
+    "@nuxt/devtools": "^3.1.0",
     "@nuxt/eslint-config": "^1.9.0",
     "@nuxt/kit": "^4.2.0",
     "@nuxt/module-builder": "^1.0.2",
