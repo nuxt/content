@@ -62,7 +62,7 @@
     "@nuxt/kit": "^4.2.1",
     "@nuxtjs/mdc": "^0.18.3",
     "@shikijs/langs": "^3.15.0",
-    "@sqlite.org/sqlite-wasm": "3.51.1-build1",
+    "@sqlite.org/sqlite-wasm": "3.50.4-build1",
     "@standard-schema/spec": "^1.0.0",
     "@webcontainer/env": "^1.1.1",
     "c12": "^3.3.2",
