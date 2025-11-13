@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.8.1](https://github.com/nuxt/content/compare/v3.8.0...v3.8.1) (2025-11-13)
+
+### Bug Fixes
+
+* **deps:** nuxt 4.2 patch ([91a1de7](https://github.com/nuxt/content/commit/91a1de7391d8b010fff85befe3d75fb8e0fd1788))
+* **docs:** docs collection prefix ([72cc17d](https://github.com/nuxt/content/commit/72cc17d5d912f46c0358b1af48cf44d49e18925a))
+* make sure last char of column is not special char ([#3610](https://github.com/nuxt/content/issues/3610)) ([d763452](https://github.com/nuxt/content/commit/d763452db17b2e81ccae4a84c25c58e50c6a5e68))
+
+### Performance Improvements
+
+* replace internal object records with maps ([#3591](https://github.com/nuxt/content/issues/3591)) ([7b16de3](https://github.com/nuxt/content/commit/7b16de31106062d82654b0be9cddaaf88ac1b1fb))
+* use `moduleDependencies` to install mdc module ([#3597](https://github.com/nuxt/content/issues/3597)) ([9600533](https://github.com/nuxt/content/commit/960053395ccb3c1a991f06948523558fcff62ea1))
+
 ## [3.8.0](https://github.com/nuxt/content/compare/v3.7.1...v3.8.0) (2025-10-29)
 
 ### Features
