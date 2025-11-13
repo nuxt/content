@@ -1,5 +1,7 @@
 # Changelog
 
+## [3.8.2](https://github.com/nuxt/content/compare/v3.8.1...v3.8.2) (2025-11-13)
+
 ## [3.8.1](https://github.com/nuxt/content/compare/v3.8.0...v3.8.1) (2025-11-13)
 
 ### Bug Fixes
