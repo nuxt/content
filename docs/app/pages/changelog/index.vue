@@ -46,7 +46,7 @@ watch(() => y.value, () => {
     const containersHeight = containers.value.map(container => container.getBoundingClientRect().height)
     const height = containersHeight.slice(0, i).reduce((acc, curr) => acc + curr, 0)
 
-    // If the marker is located between the top of the container and the bottom of the container (variant with the gap), it is hightlighted
+    // If the marker is located between the top of the container and the bottom of the container (variant with the gap), it is highlighted
     const GAP = 150
     if (markerTop.value >= height - GAP && markerTop.value <= height + containersHeight[i]! - GAP) {
       dots.value[i]!.classList.add('neon')
