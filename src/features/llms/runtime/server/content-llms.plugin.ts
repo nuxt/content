@@ -43,7 +43,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       }))
     }
 
-    // Delete emoty auto generated sections
+    // Delete empty auto generated sections
     sectionsToRemove.reverse().forEach((index) => {
       options.sections.splice(Number(index), 1)
     })
