@@ -1,11 +1,10 @@
-import { addServerHandler, addTemplate, createResolver } from '@nuxt/kit'
+import { addServerHandler, addTemplate } from '@nuxt/kit'
 import { fullDatabaseCompressedDumpTemplate } from '../utils/templates'
 import { definePreset } from '../utils/preset'
 
 export default definePreset({
   name: 'node',
-  setup(_options, _nuxt) {
-    const resolver = createResolver(import.meta.url)
+  setup(_options, _nuxt, { resolver }) {
     addServerHandler({
       route: '/__nuxt_content/:collection/sql_dump.txt',
       handler: resolver.resolve('./runtime/presets/node/database-handler'),

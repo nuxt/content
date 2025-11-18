@@ -217,7 +217,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('modules:done', async () => {
       const preset = findPreset(nuxt)
-      await preset?.setup?.(options, nuxt)
+      await preset?.setup?.(options, nuxt, { resolver })
       // Provide default database configuration here since nuxt is merging defaults and user options
       options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
       await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })

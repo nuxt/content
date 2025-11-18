@@ -1,4 +1,4 @@
-import { addServerHandler, addTemplate, createResolver } from '@nuxt/kit'
+import { addServerHandler, addTemplate } from '@nuxt/kit'
 import { join } from 'pathe'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
@@ -6,8 +6,7 @@ import { collectionDumpTemplate } from '../utils/templates'
 
 export default definePreset({
   name: 'cloudflare',
-  setup(_options, _nuxt) {
-    const resolver = createResolver(import.meta.url)
+  setup(_options, _nuxt, { resolver }) {
     addServerHandler({
       route: '/__nuxt_content/:collection/sql_dump.txt',
       handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
