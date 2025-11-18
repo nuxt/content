@@ -118,6 +118,37 @@ function evictLargestCachedDump(excludeCollections: Set<string> = new Set()) {
   }
 }
 
+function pruneDerivedKeysForCollection(collection: string, keepChecksum?: string) {
+  try {
+    const targets: string[] = []
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i) || ''
+      if (!key.startsWith('content_key_')) {
+        continue
+      }
+      const kid = key.replace(/^content_key_/, '')
+      const parts = kid.split(':')
+      const kidCollection = parts.length >= 2 ? parts[1] : ''
+      const kidChecksum = parts.length >= 3 ? parts[2] : ''
+      const keep = keepChecksum && kidChecksum === keepChecksum && kidCollection === collection
+      if (kidCollection === collection && !keep) {
+        targets.push(key)
+      }
+    }
+    for (const key of targets) {
+      try {
+        window.localStorage.removeItem(key)
+      }
+      catch {
+        // Best-effort; ignore failures
+      }
+    }
+  }
+  catch (err) {
+    console.debug?.('[content] failed to prune derived keys', err)
+  }
+}
+
 function safeSetLocalStorage(
   key: string,
   value: string,
@@ -330,6 +361,7 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
             // Cache the derived key for offline use, keyed by kid
             if (kid) {
               safeSetLocalStorage(`content_key_${kid}`, k, { excludeCollections: new Set([String(collection)]) })
+              pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
             }
             return result
           }
@@ -366,6 +398,7 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
               const ok2 = await decryptAndDecompressSQLDump(compressedDump!, k2)
               if (kid2) {
                 safeSetLocalStorage(`content_key_${kid2}`, k2, { excludeCollections: new Set([String(collection)]) })
+                pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
               }
               return ok2
             }
