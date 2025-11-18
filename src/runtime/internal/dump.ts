@@ -1,3 +1,4 @@
+import { subtle } from 'uncrypto'
 import { b64ToBytes, normalizeBase64, toArrayBuffer } from './encryption'
 
 export async function decompressSQLDump(
@@ -57,10 +58,10 @@ export async function decryptAndDecompressSQLDump(
   const iv = b64ToBytes(envelope.iv)
   const ciphertext = b64ToBytes(envelope.ciphertext)
   const keyBytes = b64ToBytes(keyRawB64)
-  const cryptoKey = await crypto.subtle.importKey('raw', toArrayBuffer(keyBytes), { name: 'AES-GCM' }, false, ['decrypt'])
+  const cryptoKey = await subtle.importKey('raw', toArrayBuffer(keyBytes), { name: 'AES-GCM' }, false, ['decrypt'])
 
   const gzBytes = new Uint8Array(
-    await crypto.subtle.decrypt({ name: 'AES-GCM', iv: toArrayBuffer(iv) }, cryptoKey, toArrayBuffer(ciphertext)),
+    await subtle.decrypt({ name: 'AES-GCM', iv: toArrayBuffer(iv) }, cryptoKey, toArrayBuffer(ciphertext)),
   )
   const response = new Response(new Blob([toArrayBuffer(gzBytes)]))
   const decompressedStream = response.body?.pipeThrough(new DecompressionStream('gzip'))
