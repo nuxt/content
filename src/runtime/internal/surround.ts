@@ -2,9 +2,13 @@ import { generateNavigationTree } from './navigation'
 import type { ContentNavigationItem, PageCollectionItemBase, SurroundOptions } from '@nuxt/content'
 import type { CollectionQueryBuilder } from '~/src/types'
 
-export async function generateItemSurround<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, path: string, opts?: SurroundOptions<keyof T>) {
+export interface GenerateItemSurroundOptions<F> extends SurroundOptions<F> {
+  signal?: AbortSignal
+}
+
+export async function generateItemSurround<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, path: string, opts?: GenerateItemSurroundOptions<keyof T>) {
   const { before = 1, after = 1, fields = [] } = opts || {}
-  const navigation = await generateNavigationTree(queryBuilder, fields)
+  const navigation = await generateNavigationTree(queryBuilder, fields, { signal: opts?.signal })
 
   const flatData = flattedData(navigation)
   const index = flatData.findIndex(item => item.path === path)
