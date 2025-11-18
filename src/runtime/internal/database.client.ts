@@ -22,6 +22,144 @@ function extractKidFromEnvelope(b64: string | null): string | null {
 let db: Database | null = null
 const loadedCollections: Record<string, string> = {}
 const dbPromises: Record<string, Promise<Database>> = {}
+let staleCachePruned = false
+
+function activeCollections(): Set<string> {
+  return new Set(Object.keys(checksums).map(String))
+}
+
+function isQuotaError(error: unknown) {
+  return typeof error === 'object'
+    && error !== null
+    && ['QuotaExceededError', 'NS_ERROR_DOM_QUOTA_REACHED'].includes((error as { name?: string }).name || '')
+}
+
+function pruneStaleClientCaches() {
+  if (staleCachePruned || !import.meta.client) {
+    return
+  }
+
+  const collections = activeCollections()
+  const keysToRemove: string[] = []
+
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i) || ''
+      if (key.startsWith('content_checksum_') || key.startsWith('content_collection_')) {
+        const collection = key.replace(/^content_(?:checksum_|collection_)/, '')
+        if (!collections.has(collection)) {
+          keysToRemove.push(key)
+          keysToRemove.push(`content_checksum_${collection}`)
+          keysToRemove.push(`content_collection_${collection}`)
+        }
+      }
+      else if (key.startsWith('content_key_')) {
+        // content_key_kid where kid is usually v1:<collection>:<checksum>
+        const kid = key.replace(/^content_key_/, '')
+        const parts = kid.split(':')
+        const collection = parts.length >= 2 ? parts[1] : ''
+        if (collection && !collections.has(collection)) {
+          keysToRemove.push(key)
+        }
+      }
+    }
+
+    for (const key of new Set(keysToRemove)) {
+      try {
+        window.localStorage.removeItem(key)
+      }
+      catch {
+        // Best-effort; ignore failures
+      }
+    }
+
+    staleCachePruned = true
+  }
+  catch (err) {
+    console.debug?.('[content] failed to prune stale client caches', err)
+  }
+}
+
+function evictLargestCachedDump(excludeCollections: Set<string> = new Set()) {
+  try {
+    let largestKey: string | null = null
+    let largestCollection: string | null = null
+    let largestSize = -1
+
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i) || ''
+      if (!key.startsWith('content_collection_')) {
+        continue
+      }
+      const collection = key.replace(/^content_collection_/, '')
+      if (excludeCollections.has(collection)) {
+        continue
+      }
+      const value = window.localStorage.getItem(key)
+      const size = value?.length ?? 0
+      if (size > largestSize) {
+        largestSize = size
+        largestKey = key
+        largestCollection = collection
+      }
+    }
+
+    if (!largestKey || !largestCollection) {
+      return false
+    }
+
+    window.localStorage.removeItem(largestKey)
+    window.localStorage.removeItem(`content_checksum_${largestCollection}`)
+    return true
+  }
+  catch (err) {
+    console.debug?.('[content] failed to evict cached dump', err)
+    return false
+  }
+}
+
+function safeSetLocalStorage(
+  key: string,
+  value: string,
+  options: { excludeCollections?: Set<string> } = {},
+): boolean {
+  try {
+    window.localStorage.setItem(key, value)
+    return true
+  }
+  catch (err) {
+    if (!isQuotaError(err)) {
+      console.debug?.('[content] failed to cache item', key, err)
+      return false
+    }
+
+    // First pass: drop stale caches (old collections, stray keys)
+    pruneStaleClientCaches()
+    try {
+      window.localStorage.setItem(key, value)
+      return true
+    }
+    catch (errAfterPrune) {
+      if (!isQuotaError(errAfterPrune)) {
+        console.debug?.('[content] failed to cache item after prune', key, errAfterPrune)
+        return false
+      }
+      // Second pass: evict the largest cached dump (excluding current)
+      if (evictLargestCachedDump(options.excludeCollections)) {
+        try {
+          window.localStorage.setItem(key, value)
+          return true
+        }
+        catch (errAfterEvict) {
+          console.debug?.('[content] failed to cache item after eviction', key, errAfterEvict)
+          return false
+        }
+      }
+      console.debug?.('[content] localStorage full, could not cache item', key)
+      return false
+    }
+  }
+}
 
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
@@ -120,6 +258,8 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
   const checksumId = `checksum_${collection}`
   const dumpId = `collection_${collection}`
   let checksumState = 'matched'
+
+  pruneStaleClientCaches()
   try {
     const dbChecksum = activeDb.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
       .shift()
@@ -143,13 +283,9 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
     if (!compressedDump) {
       compressedDump = await fetchDatabase(undefined, String(collection))
       if (!import.meta.dev) {
-        try {
-          window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
-          window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
-        }
-        catch (error) {
-          console.error('Database integrity check failed, rebuilding database', error)
-        }
+        const exclude = new Set([String(collection)])
+        safeSetLocalStorage(`content_${checksumId}`, checksums[String(collection)]!, { excludeCollections: exclude })
+        safeSetLocalStorage(`content_${dumpId}`, compressedDump!, { excludeCollections: exclude })
       }
     }
 
@@ -193,12 +329,7 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
             const result = await decryptAndDecompressSQLDump(compressedDump!, k)
             // Cache the derived key for offline use, keyed by kid
             if (kid) {
-              try {
-                window.localStorage.setItem(`content_key_${kid}`, k)
-              }
-              catch (cacheKeyErr) {
-                console.debug?.('[content] failed to cache derived key for offline use', cacheKeyErr)
-              }
+              safeSetLocalStorage(`content_key_${kid}`, k, { excludeCollections: new Set([String(collection)]) })
             }
             return result
           }
@@ -226,24 +357,15 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
             try {
               compressedDump = await fetchDatabase(undefined, String(collection))
               if (!import.meta.dev) {
-                try {
-                  window.localStorage.setItem(`content_${checksumId}`, checksums[String(collection)]!)
-                  window.localStorage.setItem(`content_${dumpId}`, compressedDump!)
-                }
-                catch (cacheErr) {
-                  console.error('Database integrity check failed while caching refreshed dump', cacheErr)
-                }
+                const exclude = new Set([String(collection)])
+                safeSetLocalStorage(`content_${checksumId}`, checksums[String(collection)]!, { excludeCollections: exclude })
+                safeSetLocalStorage(`content_${dumpId}`, compressedDump!, { excludeCollections: exclude })
               }
               const kid2 = extractKidFromEnvelope(compressedDump!)
               const { k: k2 } = await fetchDumpKey(undefined, String(collection), kid2 || undefined)
               const ok2 = await decryptAndDecompressSQLDump(compressedDump!, k2)
               if (kid2) {
-                try {
-                  window.localStorage.setItem(`content_key_${kid2}`, k2)
-                }
-                catch (cacheKeyErr) {
-                  console.debug?.('[content] failed to cache derived key for offline use', cacheKeyErr)
-                }
+                safeSetLocalStorage(`content_key_${kid2}`, k2, { excludeCollections: new Set([String(collection)]) })
               }
               return ok2
             }
