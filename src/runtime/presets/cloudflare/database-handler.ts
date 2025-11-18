@@ -86,14 +86,13 @@ export default eventHandler(async (event) => {
       throw createError({ statusCode: 500, statusMessage: 'Missing content.encryption.masterKey' })
     }
 
-    let derivedCollection = collection
+    const derivedCollection = collection
     let derivedChecksum = vParam
 
     // Prefer kid if provided: format expected "v1:<collection>:<checksum>"
     if (kidParam) {
       const parts = kidParam.split(':')
       if (parts.length >= 3) {
-        derivedCollection = parts[1] || derivedCollection
         derivedChecksum = parts[2] || derivedChecksum
       }
     }
