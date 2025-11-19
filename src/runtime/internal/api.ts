@@ -1,6 +1,7 @@
 // src/runtime/internal/api.ts
 import { useRuntimeConfig } from '#imports'
 import { checksums } from '#content/manifest'
+import { forceClientRefresh } from './client-reload'
 
 import type { H3Event } from 'h3'
 
@@ -113,6 +114,11 @@ export async function fetchDatabase(event: H3Event | undefined, collection: stri
     }
   }
 
+  if (import.meta.client) {
+    // Every attempt failed which usually means the browser is running an outdated bundle.
+    // Force a silent refresh so the next load uses the new manifest + dumps.
+    await forceClientRefresh('dump-fetch-failed', { collection })
+  }
   throw lastError ?? new Error('Failed to fetch content dump')
 }
 
@@ -147,13 +153,21 @@ export async function fetchQuery<Item>(
     }
     await selfHealOnce(event, collection)
     const retryStamp = Date.now()
-    return await $fetch<Item[]>(
-      `/__nuxt_content/${collection}/query`,
-      withCloudflareContext(event, {
-        ...opts,
-        query: { v: checksum, t: retryStamp },
-      }),
-    )
+    try {
+      return await $fetch<Item[]>(
+        `/__nuxt_content/${collection}/query`,
+        withCloudflareContext(event, {
+          ...opts,
+          query: { v: checksum, t: retryStamp },
+        }),
+      )
+    }
+    catch (retryErr) {
+      if (isRecoverable(retryErr) && import.meta.client) {
+        await forceClientRefresh('query-retry-failed', { collection })
+      }
+      throw retryErr
+    }
   }
 }
 

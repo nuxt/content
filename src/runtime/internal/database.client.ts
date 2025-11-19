@@ -5,6 +5,7 @@ import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
 import type { DatabaseAdapter, DatabaseBindParams, ClearContentClientStorageOptions } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
+import { forceClientRefresh } from './client-reload'
 
 function extractKidFromEnvelope(b64: string | null): string | null {
   if (!b64) return null
@@ -324,91 +325,101 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
       useRuntimeConfig().public as unknown as { content?: { encryptionEnabled?: boolean } }
     )?.content?.encryptionEnabled
 
-    const dump = await (encEnabled
-      ? (async () => {
-          const kid = extractKidFromEnvelope(compressedDump!)
+    let dump: string[] = []
+    try {
+      dump = await (encEnabled
+        ? (async () => {
+            const kid = extractKidFromEnvelope(compressedDump!)
 
-          // 1) Try cached derived key first (enables offline reads)
-          if (kid) {
-            try {
-              const cachedK = window.localStorage.getItem(`content_key_${kid}`)
-              if (cachedK) {
-                try {
-                  const ok = await decryptAndDecompressSQLDump(compressedDump!, cachedK)
-                  // Decryption worked with cached key
-                  return ok
-                }
-                catch {
+            // 1) Try cached derived key first (enables offline reads)
+            if (kid) {
+              try {
+                const cachedK = window.localStorage.getItem(`content_key_${kid}`)
+                if (cachedK) {
+                  try {
+                    const ok = await decryptAndDecompressSQLDump(compressedDump!, cachedK)
+                    // Decryption worked with cached key
+                    return ok
+                  }
+                  catch {
                   // Cached key is stale — purge it and continue to fetch a fresh one
+                    try {
+                      window.localStorage.removeItem(`content_key_${kid}`)
+                    }
+                    catch (purgeErr) {
+                      console.debug?.('[content] could not remove stale cached key', purgeErr)
+                    }
+                  }
+                }
+              }
+              catch (readErr) {
+                console.debug?.('[content] reading cached key failed', readErr)
+              }
+            }
+
+            // 2) No (working) cached key — fetch using kid when available (source of truth = envelope)
+            try {
+              const { k } = await fetchDumpKey(undefined, String(collection), kid || undefined)
+              const result = await decryptAndDecompressSQLDump(compressedDump!, k)
+              // Cache the derived key for offline use, keyed by kid
+              if (kid) {
+                safeSetLocalStorage(`content_key_${kid}`, k, { excludeCollections: new Set([String(collection)]) })
+                pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
+              }
+              return result
+            }
+            catch (e) {
+              console.error('Failed to decrypt encrypted dump (first attempt):', e)
+
+              // Minimal self-heal: wipe only this collection’s local cache
+              try {
+                window.localStorage.removeItem(`content_${checksumId}`)
+                window.localStorage.removeItem(`content_${dumpId}`)
+                if (kid) {
                   try {
                     window.localStorage.removeItem(`content_key_${kid}`)
                   }
-                  catch (purgeErr) {
-                    console.debug?.('[content] could not remove stale cached key', purgeErr)
+                  catch (purgeKeyErr) {
+                    console.debug?.('[content] failed to remove cached derived key', purgeKeyErr)
                   }
                 }
               }
-            }
-            catch (readErr) {
-              console.debug?.('[content] reading cached key failed', readErr)
-            }
-          }
+              catch (purgeErr) {
+                console.debug?.('[content] decrypt retry: localStorage cleanup failed', purgeErr)
+              }
 
-          // 2) No (working) cached key — fetch using kid when available (source of truth = envelope)
-          try {
-            const { k } = await fetchDumpKey(undefined, String(collection), kid || undefined)
-            const result = await decryptAndDecompressSQLDump(compressedDump!, k)
-            // Cache the derived key for offline use, keyed by kid
-            if (kid) {
-              safeSetLocalStorage(`content_key_${kid}`, k, { excludeCollections: new Set([String(collection)]) })
-              pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
-            }
-            return result
-          }
-          catch (e) {
-            console.error('Failed to decrypt encrypted dump (first attempt):', e)
-
-            // Minimal self-heal: wipe only this collection’s local cache
-            try {
-              window.localStorage.removeItem(`content_${checksumId}`)
-              window.localStorage.removeItem(`content_${dumpId}`)
-              if (kid) {
-                try {
-                  window.localStorage.removeItem(`content_key_${kid}`)
+              // Force-refetch a fresh dump + key, bypassing stale local cache
+              try {
+                compressedDump = await fetchDatabase(undefined, String(collection))
+                if (!import.meta.dev) {
+                  const exclude = new Set([String(collection)])
+                  safeSetLocalStorage(`content_${checksumId}`, checksums[String(collection)]!, { excludeCollections: exclude })
+                  safeSetLocalStorage(`content_${dumpId}`, compressedDump!, { excludeCollections: exclude })
                 }
-                catch (purgeKeyErr) {
-                  console.debug?.('[content] failed to remove cached derived key', purgeKeyErr)
+                const kid2 = extractKidFromEnvelope(compressedDump!)
+                const { k: k2 } = await fetchDumpKey(undefined, String(collection), kid2 || undefined)
+                const ok2 = await decryptAndDecompressSQLDump(compressedDump!, k2)
+                if (kid2) {
+                  safeSetLocalStorage(`content_key_${kid2}`, k2, { excludeCollections: new Set([String(collection)]) })
+                  pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
                 }
+                return ok2
+              }
+              catch (e2) {
+                console.error('Failed to decrypt encrypted dump (after local purge & refetch):', e2)
+                throw e2
               }
             }
-            catch (purgeErr) {
-              console.debug?.('[content] decrypt retry: localStorage cleanup failed', purgeErr)
-            }
-
-            // Force-refetch a fresh dump + key, bypassing stale local cache
-            try {
-              compressedDump = await fetchDatabase(undefined, String(collection))
-              if (!import.meta.dev) {
-                const exclude = new Set([String(collection)])
-                safeSetLocalStorage(`content_${checksumId}`, checksums[String(collection)]!, { excludeCollections: exclude })
-                safeSetLocalStorage(`content_${dumpId}`, compressedDump!, { excludeCollections: exclude })
-              }
-              const kid2 = extractKidFromEnvelope(compressedDump!)
-              const { k: k2 } = await fetchDumpKey(undefined, String(collection), kid2 || undefined)
-              const ok2 = await decryptAndDecompressSQLDump(compressedDump!, k2)
-              if (kid2) {
-                safeSetLocalStorage(`content_key_${kid2}`, k2, { excludeCollections: new Set([String(collection)]) })
-                pruneDerivedKeysForCollection(String(collection), checksums[String(collection)]!)
-              }
-              return ok2
-            }
-            catch (e2) {
-              console.error('Failed to decrypt encrypted dump (after local purge & refetch):', e2)
-              throw e2
-            }
-          }
-        })()
-      : decompressSQLDump(compressedDump!))
+          })()
+        : decompressSQLDump(compressedDump!))
+    }
+    catch (error) {
+      // A corrupt or outdated dump means we need a hard refresh to pick up the new manifest.
+      if (import.meta.client) {
+        await forceClientRefresh('dump-parse-failed', { collection: String(collection) })
+      }
+      throw error
+    }
 
     await activeDb.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
     if (checksumState === 'mismatch') {
@@ -421,6 +432,12 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
       }
       catch (error) {
         console.error('Error executing command', error)
+        // Re-rendering with a partially written SQLite DB leaves the UI blank.
+        // Force a silent reload so we can repopulate the table with a fresh dump.
+        if (import.meta.client) {
+          await forceClientRefresh('dump-write-failed', { collection: String(collection) })
+        }
+        throw error
       }
     }
   }
