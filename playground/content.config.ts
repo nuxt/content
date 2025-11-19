@@ -67,6 +67,21 @@ const pages = defineCollection({
 })
 
 const collections = {
+  authors: defineCollection({
+    type: 'data',
+    source: {
+      include: 'authors/**/*.yml',
+    },
+    schema: z.object({
+      name: z.string(),
+      avatar: z.object({
+        src: z.string(),
+        alt: z.string(),
+      }),
+      to: z.string(),
+      username: z.string(),
+    }),
+  }),
   hackernews,
   content,
   data,
