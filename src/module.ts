@@ -208,6 +208,12 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     const syncRuntimeConfig = () => {
+      const hubOptions = (nuxt.options as unknown as { hub?: { database?: unknown } }).hub
+      if (hubOptions?.database && !nuxt.options.runtimeConfig.hub?.database) {
+        nuxt.options.runtimeConfig.hub ||= {} as never
+        nuxt.options.runtimeConfig.hub.database = hubOptions.database as never
+      }
+
       const encryptionState = !!(options.encryption?.enabled && options.encryption.masterKey)
       nuxt.options.runtimeConfig.public ||= {} as never
       nuxt.options.runtimeConfig.public.content = {
