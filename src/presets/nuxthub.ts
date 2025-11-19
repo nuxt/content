@@ -12,7 +12,14 @@ import { applyContentDumpsPreset } from './shared-dumps'
 export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt) {
-    if (!((nuxt.options as unknown as { hub: { database?: unknown } }).hub?.database)) {
+    const nuxtWithHub = nuxt.options as unknown as { hub?: { database?: unknown } }
+    nuxt.options.runtimeConfig ||= {} as never
+    nuxt.options.runtimeConfig.hub ||= {} as never
+    if (nuxtWithHub.hub?.database && !nuxt.options.runtimeConfig.hub.database) {
+      nuxt.options.runtimeConfig.hub.database = nuxtWithHub.hub.database as never
+    }
+
+    if (!(nuxtWithHub.hub?.database)) {
       logger.warn('NuxtHub dedected but `hub.database` is not enabled. Using local SQLite as default database instead.')
       return
     }
