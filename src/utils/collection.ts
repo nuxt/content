@@ -192,8 +192,17 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const bigColumnIndex = values.indexOf(biggestColumn!)
   const bigColumnName = fields[bigColumnIndex]
 
+  function getSliceIndex(column: string, initialIndex: number) {
+    let sliceIndex = initialIndex
+    while (['\\', '"', '\''].includes(column[sliceIndex - 1]!)) {
+      sliceIndex -= 1
+    }
+    return sliceIndex
+  }
+
   if (typeof biggestColumn === 'string') {
-    let sliceIndex = SLICE_SIZE
+    let sliceIndex = getSliceIndex(biggestColumn, SLICE_SIZE)
+
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
 
@@ -204,7 +213,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     ]
     while (sliceIndex < biggestColumn.length) {
       const prevSliceIndex = sliceIndex
-      sliceIndex += SLICE_SIZE
+      sliceIndex = getSliceIndex(biggestColumn, sliceIndex + SLICE_SIZE)
 
       const isLastSlice = sliceIndex > biggestColumn.length
       const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')

@@ -1,0 +1,16 @@
+{
+  "name": "nuxt-content-ui-starter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "latest",
+    "@nuxt/ui": "^4.1.0",
+    "nuxt": "^4.2.1"
+  }
+}

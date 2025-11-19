@@ -74,7 +74,7 @@ const props = defineProps({
   },
 })
 
-const debug = import.meta.dev
+const debug = import.meta.dev || import.meta.preview
 
 const body = computed(() => {
   let body = props.value.body || props.value

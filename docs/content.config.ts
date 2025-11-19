@@ -1,4 +1,5 @@
-import { defineContentConfig, defineCollection, property, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, property } from '@nuxt/content'
+import z from 'zod'
 
 const createPricingFeatureSchema = () => z.object({
   title: z.string(),
@@ -9,6 +10,20 @@ const createPricingFeatureSchema = () => z.object({
 
 export default defineContentConfig({
   collections: {
+    docs: defineCollection({
+      type: 'page',
+      source: {
+        include: 'docs/**',
+      },
+      schema: z.object({
+        links: z.array(z.object({
+          label: z.string(),
+          icon: z.string(),
+          to: z.string(),
+          target: z.string().optional(),
+        })).optional(),
+      }),
+    }),
     landing: defineCollection({
       type: 'page',
       source: [{
@@ -35,9 +50,9 @@ export default defineContentConfig({
           }),
         }),
         plans: z.object({
-          solo: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
-          team: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
-          unlimited: property(z.object({})).inherit('@nuxt/ui-pro/runtime/components/PricingPlan.vue'),
+          solo: property(z.object({})),
+          team: property(z.object({})),
+          unlimited: property(z.object({})),
         }),
         features: z.object({
           title: z.string(),
@@ -111,7 +126,7 @@ export default defineContentConfig({
         branch: z.string(),
         category: z.enum(['docs', 'blog', 'minimal', 'saas']),
         demo: z.string(),
-        licenseType: z.enum(['nuxt-ui-pro', 'free']),
+        licenseType: z.enum(['nuxt-ui', 'free']),
         mainScreen: property(z.string()).editor({ input: 'media' }),
         name: z.string(),
         owner: z.string(),

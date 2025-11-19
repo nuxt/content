@@ -35,13 +35,15 @@ export async function refineDatabaseConfig(database: ModuleOptions['database'], 
   }
 }
 
-export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'libsql' | 'd1' | 'nodesqlite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
+export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | 'postgres' | 'postgresql' | 'libsql' | 'd1' | 'nodesqlite' | 'pglite', opts: { resolver: Resolver, sqliteConnector?: SQLiteConnector }) {
   const databaseConnectors = {
     nodesqlite: 'db0/connectors/node-sqlite',
     bunsqlite: opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite'),
-    postgres: 'db0/connectors/postgresql',
-    libsql: 'db0/connectors/libsql/web',
+    postgres: 'db0/connectors/postgresql', // legacy
+    postgresql: 'db0/connectors/postgresql',
+    libsql: 'db0/connectors/libsql/node',
     d1: 'db0/connectors/cloudflare-d1',
+    pglite: 'db0/connectors/pglite',
   }
 
   adapter = adapter || 'sqlite'

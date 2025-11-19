@@ -1,10 +1,7 @@
 import { subtle } from 'uncrypto'
 import { b64ToBytes, normalizeBase64, toArrayBuffer } from './encryption'
 
-export async function decompressSQLDump(
-  base64Str: string,
-  compressionType: 'gzip' | 'deflate' = 'gzip',
-): Promise<string[]> {
+export async function decompressSQLDump(base64Str: string, compressionType: CompressionFormat = 'gzip'): Promise<string[]> {
   // Browser/Workers fast path
   if (
     typeof atob === 'function'
@@ -18,10 +15,14 @@ export async function decompressSQLDump(
   }
 
   // Node fallback (no atob / DecompressionStream)
-  const { gunzipSync, inflateSync } = await import('node:zlib')
-  const buf = Buffer.from(normalizeBase64(base64Str), 'base64')
-  const out = compressionType === 'gzip' ? gunzipSync(buf) : inflateSync(buf)
-  return JSON.parse(out.toString('utf8'))
+  if (typeof Buffer !== 'undefined') {
+    const { gunzipSync, inflateSync } = await import('node:zlib')
+    const buf = Buffer.from(normalizeBase64(base64Str), 'base64')
+    const out = compressionType === 'gzip' ? gunzipSync(buf) : inflateSync(buf)
+    return JSON.parse(out.toString('utf8'))
+  }
+
+  throw new TypeError('No base64 decoding method available')
 }
 
 interface DumpEnvelope { v: number, alg: string, iv: string, ciphertext: string }

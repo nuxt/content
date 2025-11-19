@@ -274,7 +274,7 @@ describe('Parser (.md)', async () => {
     const tests = [
       { markdown: `::component\nHello\n::`, firstChild: { type: 'text', value: 'Hello' } },
       { markdown: `::component\nHello :world\n::`, firstChild: { type: 'text', value: 'Hello ' } },
-      { markdown: `::component\n - item 1\n - item 2\n::`, firstChild: { type: 'element', tag: 'li' } },
+      { markdown: `::component\n - item 1\n - item 2\n::`, firstChild: { type: 'element', tag: 'ul' } },
       { markdown: `:::component\n::nested-component\nHello\n::\n:::`, firstChild: { type: 'element', tag: 'nested-component' } },
 
     ]

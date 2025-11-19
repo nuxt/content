@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb, findPageChildren, findPageSiblings } from '@nuxt/content/utils'
-import { mapContentNavigation } from '@nuxt/ui-pro/utils/content'
+import { mapContentNavigation } from '@nuxt/ui/utils/content'
 
 interface TocLink {
   id: string

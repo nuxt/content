@@ -16,7 +16,26 @@ import type { ModuleOptions } from '../../types'
 import { previewTemplate } from '../templates'
 import type { Manifest } from '../../types/manifest'
 
-export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver: Resolver, manifest: Manifest) {
+export async function setupPreview(_options: ModuleOptions, nuxt: Nuxt, resolver: Resolver, manifest: Manifest) {
+  nuxt.hook('schema:resolved', (schema: Schema) => {
+    // Add preview templates once schema is resolved
+    const template = addTemplate(previewTemplate(manifest.collections, {} as GitInfo, schema)).dst
+    nuxt.options.nitro.alias ||= {}
+    nuxt.options.nitro.alias['#content/preview'] = template
+    nuxt.options.alias['#content/preview'] = template
+  })
+
+  // Add plugins
+  addPlugin(resolver.resolve('./runtime/plugins/preview.client'))
+
+  // // Install dependencies
+  await installModule('nuxt-component-meta', {
+    globalsOnly: true,
+    include: manifest.components,
+  })
+}
+
+export async function setupPreviewWithAPI(options: ModuleOptions, nuxt: Nuxt, resolver: Resolver, manifest: Manifest) {
   const previewOptions = options.preview!
 
   const { resolve } = resolver
@@ -41,7 +60,7 @@ export async function setupPreview(options: ModuleOptions, nuxt: Nuxt, resolver:
   })
 
   // Add plugins
-  addPlugin(resolver.resolve('./runtime/plugins/preview.client'))
+  addPlugin(resolver.resolve('./runtime/plugins/preview-with-api.client'))
 
   // Register preview banner component
   addComponent({ name: 'ContentPreviewMode', filePath: resolver.resolve('./runtime/components/ContentPreviewMode.vue') })

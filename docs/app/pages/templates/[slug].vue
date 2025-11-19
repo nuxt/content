@@ -16,7 +16,7 @@ useSeoMeta({
   twitterImage: template.value?.mainScreen ? `${siteConfig.url}/${template.value?.mainScreen}` : `${siteConfig.url}/social.png`,
 })
 
-const isNuxtUIProTemplate = computed(() => template.value?.licenseType === 'nuxt-ui-pro')
+const isNuxtUITemplate = computed(() => template.value?.licenseType === 'nuxt-ui')
 
 const images = computed(() => template.value
   ? [
@@ -64,12 +64,9 @@ const images = computed(() => template.value
               <span class="text-gray-500 dark:text-gray-400">
                 By
               </span>
-              <UColorModeImage
-                v-if="isNuxtUIProTemplate"
-                :light="`/nuxt-ui-pro-light.svg`"
-                :dark="`/nuxt-ui-pro-dark.svg`"
-                alt="nuxt ui pro templates"
-                class="h-6"
+              <NuxtUILogo
+                v-if="isNuxtUITemplate"
+                class="h-6 w-auto flex"
               />
               <span
                 v-else
@@ -89,25 +86,13 @@ const images = computed(() => template.value
               :to="template.demo"
               target="_blank"
             />
-
-            <UDropdownMenu
-              :items="[{
-                label: 'Import on Studio',
-                to: 'https://nuxt.studio/signin',
-                target: '_blank',
-              }, {
-                label: 'Clone on GitHub',
-                to: `https://github.com/${template.owner}/${template.name}/tree/${template.branch}`,
-                target: '_blank',
-              }]"
-            >
-              <UButton
-                label="Use it"
-                color="primary"
-                variant="solid"
-                trailing-icon="i-ph-arrow-right"
-              />
-            </UDropdownMenu>
+            <UButton
+              label="Clone on GitHub"
+              color="primary"
+              variant="solid"
+              :to="`https://github.com/${template.owner}/${template.name}/tree/${template.branch}`"
+              trailing-icon="i-ph-arrow-right"
+            />
           </div>
         </template>
       </UPageHeader>
