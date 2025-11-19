@@ -196,7 +196,39 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     const preset = findPreset(nuxt)
-    await preset?.setup?.(options, nuxt)
+    let presetSetupPromise: Promise<void> | undefined
+    const setupPresetOnce = async () => {
+      if (!preset?.setup) {
+        presetSetupPromise ||= Promise.resolve()
+      }
+      else if (!presetSetupPromise) {
+        presetSetupPromise = Promise.resolve(preset.setup(options, nuxt)).then(() => undefined)
+      }
+      return presetSetupPromise
+    }
+
+    const syncRuntimeConfig = () => {
+      const encryptionState = !!(options.encryption?.enabled && options.encryption.masterKey)
+      nuxt.options.runtimeConfig.public ||= {} as never
+      nuxt.options.runtimeConfig.public.content = {
+        wsUrl: '',
+        encryptionEnabled: encryptionState,
+      } as never
+      nuxt.options.runtimeConfig.content ||= {} as never
+      nuxt.options.runtimeConfig.content = {
+        databaseVersion,
+        version,
+        database: options.database,
+        localDatabase: options._localDatabase!,
+        integrityCheck: true,
+        encryption: {
+          enabled: encryptionState,
+          masterKey: encryptionState ? options.encryption!.masterKey : undefined,
+        },
+      } as never
+    }
+
+    await setupPresetOnce()
 
     // Provide default database configuration here since nuxt is merging defaults and user options
     options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
@@ -204,21 +236,7 @@ export default defineNuxtModule<ModuleOptions>({
     await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
 
     // Module Options
-    nuxt.options.runtimeConfig.public.content = {
-      wsUrl: '',
-      encryptionEnabled,
-    } as never
-    nuxt.options.runtimeConfig.content = {
-      databaseVersion,
-      version,
-      database: options.database,
-      localDatabase: options._localDatabase!,
-      integrityCheck: true,
-      encryption: {
-        enabled: encryptionEnabled,
-        masterKey: encryptionEnabled ? options.encryption!.masterKey : undefined,
-      },
-    } as never
+    syncRuntimeConfig()
 
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
@@ -253,24 +271,14 @@ export default defineNuxtModule<ModuleOptions>({
     await configureMDCModule(options, nuxt)
 
     nuxt.hook('modules:done', async () => {
-      const preset = findPreset(nuxt)
-      await preset?.setup?.(options, nuxt)
+      await setupPresetOnce()
       // Provide default database configuration here since nuxt is merging defaults and user options
       options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
       await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
       await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
 
       // Module Options
-      nuxt.options.runtimeConfig.public.content = {
-        wsUrl: '',
-      }
-      nuxt.options.runtimeConfig.content = {
-        databaseVersion,
-        version,
-        database: options.database,
-        localDatabase: options._localDatabase!,
-        integrityCheck: true,
-      } as never
+      syncRuntimeConfig()
     })
 
     if (nuxt.options._prepare) {
