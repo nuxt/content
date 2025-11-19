@@ -200,7 +200,8 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
 export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
-    const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
+    const currentManifest = options.manifest
+    const collectionsMeta = currentManifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
@@ -209,11 +210,12 @@ export const manifestTemplate = (manifest: Manifest) => ({
     }, {} as Record<string, unknown>)
 
     return [
-      `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
-      `export const checksumsStructure = ${JSON.stringify(manifest.checksumStructure, null, 2)}`,
+      `export const checksums = ${JSON.stringify(currentManifest.checksum, null, 2)}`,
+      `export const checksumsStructure = ${JSON.stringify(currentManifest.checksumStructure, null, 2)}`,
+      `export const manifestVersion = ${JSON.stringify(currentManifest.version || '')}`,
       '',
       `export const tables = ${JSON.stringify(
-        Object.fromEntries(manifest.collections.map(c => [c.name, c.tableName])),
+        Object.fromEntries(currentManifest.collections.map(c => [c.name, c.tableName])),
         null,
         2,
       )}`,

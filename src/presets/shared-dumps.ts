@@ -32,6 +32,11 @@ export function applyContentDumpsPreset(
   nitroConfig.alias ||= {}
   nitroConfig.handlers ||= []
 
+  nitroConfig.handlers.push({
+    route: '/__nuxt_content/manifest.json',
+    handler: resolver.resolve('./runtime/internal/manifest-version-handler'),
+  })
+
   // 1) Expose /_nuxt/content/raw if you want CDN to serve blobs
   if (exposePublicAssets) {
     nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })

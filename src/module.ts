@@ -108,13 +108,14 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const manifest: Manifest = {
-      checksumStructure: {},
-      checksum: {},
-      dump: {},
-      components: [],
-      collections: [],
-    }
+  const manifest: Manifest = {
+    checksumStructure: {},
+    checksum: {},
+    dump: {},
+    components: [],
+    collections: [],
+    version: '',
+  }
 
     // Detect installed validators and them into content context
     await initiateValidatorsContext()
@@ -136,6 +137,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
       { name: 'clearContentClientStorage', from: resolver.resolve('./runtime/client') },
+      { name: 'useContentUpdates', from: resolver.resolve('./runtime/composables/useContentUpdates') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
@@ -295,6 +297,7 @@ export default defineNuxtModule<ModuleOptions>({
       manifest.checksum = fest.checksum
       manifest.dump = fest.dump
       manifest.components = fest.components
+      manifest.version = fest.version
 
       await updateTemplates({
         filter: template => [
@@ -469,11 +472,18 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const endTime = performance.now()
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
+  const manifestVersion = hash({
+    checksum: collectionChecksum,
+    checksumStructure: collectionChecksumStructure,
+    databaseVersion,
+  })
+
   return {
     checksumStructure: collectionChecksumStructure,
     checksum: collectionChecksum,
     dump: collectionDump,
     components: uniqueTags,
+    version: manifestVersion,
   }
 }
 
