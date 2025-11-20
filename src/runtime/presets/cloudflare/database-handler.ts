@@ -7,8 +7,9 @@ export default eventHandler(async (event) => {
 
   const ASSETS = event?.context?.cloudflare?.env.ASSETS || process.env.ASSETS
   if (ASSETS) {
+    const config = event?.context?.nitro?.runtimeConfig
     const url = new URL(event.context.cloudflare?.request?.url || 'http://localhost')
-    url.pathname = `/dump.${collection}.sql`
+    url.pathname = `${config?.app?.baseURL || '/'}dump.${collection}.sql`
     return await ASSETS.fetch(url).then((r: Response) => r.text())
   }
 
