@@ -13,19 +13,19 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]
  */
 export function assertSafeQuery(sql: string, collection: string) {
   if (!sql) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: Query cannot be empty')
   }
 
   const cleanedupQuery = cleanupQuery(sql)
 
   // Query is invalid if the cleaned up query is not the same as the original query (it contains comments)
   if (cleanedupQuery !== sql) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: SQL comments are not allowed')
   }
 
   const match = sql.match(SQL_SELECT_REGEX)
   if (!match) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: Query must be a valid SELECT statement with proper syntax')
   }
 
   const [_, select, from, where, orderBy, order, limit, offset] = match
@@ -38,43 +38,44 @@ export function assertSafeQuery(sql: string, collection: string) {
       && !columns[0]?.match(SQL_COUNT_REGEX)
       && !columns[0]?.match(/^"[a-z_]\w+"$/i)
     ) {
-      throw new Error('Invalid query')
+      throw new Error(`Invalid query: Column '${columns[0]}' has invalid format. Expected *, COUNT(), or a quoted column name`)
     }
   }
   else if (!columns.every(column => column.match(/^"[a-z_]\w+"$/i))) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: Multiple columns must be properly quoted and alphanumeric')
   }
 
   // FROM
   if (from !== `_content_${collection}`) {
-    throw new Error('Invalid query')
+    const collection = String(from || '').replace(/^_content_/, '')
+    throw new Error(`Invalid query: Collection '${collection}' does not exist`)
   }
 
   // WHERE
   if (where) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
-      throw new Error('Invalid query')
+      throw new Error('Invalid query: WHERE clause must be properly enclosed in parentheses')
     }
     const noString = cleanupQuery(where, { removeString: true })
     if (noString.match(SQL_COMMANDS)) {
-      throw new Error('Invalid query')
+      throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
     }
   }
 
   // ORDER BY
   const _order = (orderBy + ' ' + order).split(', ')
   if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
   }
 
   // LIMIT
   if (limit !== undefined && !limit.match(/^ LIMIT \d+$/)) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: LIMIT clause must be a positive number')
   }
 
   // OFFSET
   if (offset !== undefined && !offset.match(/^ OFFSET \d+$/)) {
-    throw new Error('Invalid query')
+    throw new Error('Invalid query: OFFSET clause must be a positive number')
   }
 
   return true
