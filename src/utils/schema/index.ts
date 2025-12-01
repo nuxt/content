@@ -106,7 +106,7 @@ export function detectSchemaVendor(schema: ContentStandardSchemaV1) {
 }
 
 export function replaceComponentSchemas<T = Draft07Definition | Draft07DefinitionProperty>(property: T): T {
-  if ((property as Draft07DefinitionProperty).type === 'array') {
+  if ((property as Draft07DefinitionProperty).type === 'array' && (property as Draft07DefinitionProperty).items) {
     (property as Draft07DefinitionProperty).items = replaceComponentSchemas((property as Draft07DefinitionProperty).items as Draft07DefinitionProperty) as Draft07DefinitionProperty
   }
 
