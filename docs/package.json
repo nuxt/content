@@ -8,7 +8,7 @@
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "link:..",
     "@nuxt/ui": "^4.2.1",
-    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251126-154447-593c918",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251128-232930-0579c39",
     "@nuxtjs/plausible": "^2.0.1",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",

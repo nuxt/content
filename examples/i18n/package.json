@@ -11,7 +11,7 @@
   "dependencies": {
     "@nuxt/content": "latest",
     "@nuxt/ui": "^4.1.0",
-    "@nuxthub/core": "0.9.0",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251128-232930-0579c39",
     "@nuxtjs/i18n": "^10.2.0",
     "nuxt": "^4.2.1"
   }
