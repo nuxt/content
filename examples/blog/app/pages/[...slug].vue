@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 const route = useRoute()
 const pageId = computed(() => 'blog-' + route.path)
-const { data: post } = await useAsyncData(pageId, () => {
+const { data: post } = await useAsyncData(pageId, (_nuxtApp, { signal }) => {
   return queryCollection('blog')
     .path(route.path)
-    .first()
+    .first({ signal })
 })
 </script>
 

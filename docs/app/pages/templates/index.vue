@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first())
+const { data: page } = await useAsyncData('templates-landing', (_nuxtApp, { signal }) => queryCollection('landing').path('/templates').first({ signal }))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: templates } = await useAsyncData('templates', () => queryCollection('templates').where('draft', '=', 0).all())
+const { data: templates } = await useAsyncData('templates', (_nuxtApp, { signal }) => queryCollection('templates').where('draft', '=', 0).all({ signal }))
 
 useSeoMeta({
   title: page.value.seo?.title,

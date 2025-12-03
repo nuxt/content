@@ -2,7 +2,7 @@
 import MiniSearch from 'minisearch'
 
 const query = ref('')
-const { data } = await useAsyncData('search-data', () => queryCollectionSearchSections('docs'))
+const { data } = await useAsyncData('search-data', (_nuxtApp, { signal }) => queryCollectionSearchSections('docs', { signal }))
 
 const miniSearch = new MiniSearch({
   fields: ['title', 'content'],
