@@ -126,6 +126,7 @@ orientation: horizontal
     icon: i-simple-icons-markdown
     label: content/index.md
     ---
+
       ```mdc [content/index.md]
       ---
       title: The Mountains Website
@@ -144,6 +145,7 @@ orientation: horizontal
       ::
 
       ```
+
     ::::
 
     ::::tabs-item
@@ -152,6 +154,7 @@ orientation: horizontal
     icon: i-simple-icons-vuedotjs
     label: components/LandingHero.vue
     ---
+
       ```vue [components/LandingHero.vue]
         <script setup lang="ts">
         defineProps<{
@@ -173,6 +176,7 @@ orientation: horizontal
           </section>
         </template>
       ```
+
     ::::
 
     ::::tabs-item
