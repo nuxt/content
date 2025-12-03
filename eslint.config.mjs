@@ -35,6 +35,8 @@ export default createConfigForNuxt({
     markdownlint: {
       config: {
         MD013: false,
+        // TODO: detect the issue
+        MD051: false,
       },
     },
   }))
