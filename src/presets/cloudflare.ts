@@ -6,10 +6,12 @@ import { collectionDumpTemplate } from '../utils/templates'
 
 export default definePreset({
   name: 'cloudflare',
-  setup(_options, _nuxt, { resolver }) {
-    addServerHandler({
-      route: '/__nuxt_content/:collection/sql_dump.txt',
-      handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+  setup(_options, _nuxt, { resolver, manifest }) {
+    manifest.collections.map(async (collection) => {
+      addServerHandler({
+        route: `/__nuxt_content/${collection.name}/sql_dump.txt`,
+        handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+      })
     })
   },
   async setupNitro(nitroConfig, { manifest }) {

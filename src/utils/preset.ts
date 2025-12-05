@@ -13,7 +13,7 @@ interface Options {
 export interface Preset {
   name: string
   parent?: Preset
-  setup?: (options: ModuleOptions, nuxt: Nuxt, opts: { resolver: Resolver }) => Promise<void> | void
+  setup?: (options: ModuleOptions, nuxt: Nuxt, opts: { resolver: Resolver, manifest: Manifest }) => Promise<void> | void
   setupNitro: (nitroConfig: NitroConfig, opts: Options) => void | Promise<void>
 }
 
