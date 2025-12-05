@@ -25,7 +25,6 @@ export default defineTransformer({
 
     return {
       ...parsed,
-      body: parsed.body || parsed,
       id,
     }
   },
