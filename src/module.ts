@@ -176,7 +176,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.routeRules![`/__nuxt_content/**`] = {
       ...nuxt.options.routeRules![`/__nuxt_content/**`],
       // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-      robots: false
+      robots: false,
     }
 
     manifest.collections.forEach((collection) => {
