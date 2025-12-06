@@ -61,7 +61,7 @@
   "dependencies": {
     "@nuxt/kit": "^4.2.1",
     "@nuxtjs/mdc": "^0.19.1",
-    "@shikijs/langs": "^3.18.0",
+    "@shikijs/langs": "^3.19.0",
     "@sqlite.org/sqlite-wasm": "3.50.4-build1",
     "@standard-schema/spec": "^1.0.0",
     "@webcontainer/env": "^1.1.1",
@@ -94,7 +94,7 @@
     "pkg-types": "^2.3.0",
     "remark-mdc": "^3.9.0",
     "scule": "^1.3.0",
-    "shiki": "^3.18.0",
+    "shiki": "^3.19.0",
     "slugify": "^1.6.6",
     "socket.io-client": "^4.8.1",
     "std-env": "^3.10.0",
@@ -111,7 +111,7 @@
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "@valibot/to-json-schema": "^1.3.0",
+    "@valibot/to-json-schema": "^1.4.0",
     "better-sqlite3": "^12.5.0",
     "sqlite3": "*",
     "valibot": "^1.2.0"
@@ -137,14 +137,14 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251128.0",
+    "@cloudflare/workers-types": "^4.20251205.0",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^3.1.1",
     "@nuxt/eslint-config": "^1.11.0",
     "@nuxt/kit": "^4.2.1",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.2.1",
-    "@nuxt/test-utils": "^3.20.1",
+    "@nuxt/test-utils": "^3.21.0",
     "@release-it/conventional-changelog": "^10.0.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.3.3",
@@ -153,7 +153,7 @@
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "@types/ws": "^8.18.1",
-    "@valibot/to-json-schema": "^1.3.0",
+    "@valibot/to-json-schema": "^1.4.0",
     "csvtojson": "^2.0.14",
     "eslint": "^9.39.1",
     "happy-dom": "^20.0.11",
@@ -163,9 +163,9 @@
     "release-it": "^19.0.6",
     "typescript": "5.9.3",
     "valibot": "^1.2.0",
-    "vitest": "^4.0.14",
-    "vue-tsc": "^3.1.5",
-    "wrangler": "^4.51.0"
+    "vitest": "^4.0.15",
+    "vue-tsc": "^3.1.6",
+    "wrangler": "^4.53.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
