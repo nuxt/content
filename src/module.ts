@@ -196,9 +196,11 @@ export default defineNuxtModule<ModuleOptions>({
       config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
-      config.handlers.push({
-        route: '/__nuxt_content/:collection/query',
-        handler: resolver.resolve('./runtime/api/query.post'),
+      manifest.collections.forEach((collection) => {
+        config.handlers!.push({
+          route: `/__nuxt_content/${collection.name}/query`,
+          handler: resolver.resolve('./runtime/api/query.post'),
+        })
       })
 
       // Handle HMR changes

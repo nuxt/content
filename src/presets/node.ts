@@ -8,7 +8,7 @@ export default definePreset({
     // Due to prerender enabling in the module, Nuxt create a route for each collection
     // These routes cause issue while enabling cache in Nuxt.
     // So we need to add a server handler for each collection to handle the request.
-    manifest.collections.map(async (collection) => {
+    manifest.collections.map((collection) => {
       addServerHandler({
         route: `/__nuxt_content/${collection.name}/sql_dump.txt`,
         handler: resolver.resolve('./runtime/presets/node/database-handler'),

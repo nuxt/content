@@ -7,7 +7,7 @@ import { collectionDumpTemplate } from '../utils/templates'
 export default definePreset({
   name: 'cloudflare',
   setup(_options, _nuxt, { resolver, manifest }) {
-    manifest.collections.map(async (collection) => {
+    manifest.collections.map((collection) => {
       addServerHandler({
         route: `/__nuxt_content/${collection.name}/sql_dump.txt`,
         handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
