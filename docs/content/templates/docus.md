@@ -47,7 +47,7 @@ Your documentation site will be running at `http://localhost:3000`
 
 ## 📁 Project Structure
 
-```
+```text
 my-docs/
 ├── content/              # Your markdown content
 │   ├── index.md         # Homepage
@@ -84,7 +84,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
 
 ## 📄 License
 
-[MIT License](https://opensource.org/licenses/MIT) 
+[MIT License](https://opensource.org/licenses/MIT)
 
 #right
   :::template-features

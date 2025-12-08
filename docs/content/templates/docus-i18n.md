@@ -50,12 +50,13 @@ Your multilingual documentation site will be running at `http://localhost:3000`
 ## 🌍 Languages
 
 This starter comes pre-configured with:
+
 - 🇺🇸 **English** (`en`) - Default language
 - 🇫🇷 **Français** (`fr`) - French translation
 
 ## 📁 Project Structure
 
-```
+```text
 my-docs/
 ├── content/              # Your markdown content
 │   ├── en/              # English content
@@ -73,7 +74,7 @@ my-docs/
 
 The content is organized by language, making it easy to manage translations:
 
-```
+```text
 content/
 ├── en/                   # English content
 │   ├── index.md
@@ -129,7 +130,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
 
 ## 📄 License
 
-[MIT License](https://opensource.org/licenses/MIT) 
+[MIT License](https://opensource.org/licenses/MIT)
 
 #right
   :::template-features
@@ -150,7 +151,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
     - label: Nuxt Image
       content: A powerful image component.
     - label: Nuxt Content
-      content: A powerful content component.    
+      content: A powerful content component.
   ---
   :::
 ::

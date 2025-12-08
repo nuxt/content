@@ -38,8 +38,8 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-10-15',
   hub: {
-    database: 'sqlite',
+    db: 'sqlite',
     // Or use PGlite with NuxtHub:
-    // database: 'postgresql',
+    // db: 'postgresql',
   },
 })
