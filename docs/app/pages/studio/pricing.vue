@@ -4,7 +4,7 @@ import type { TableColumn } from '@nuxt/ui'
 const siteConfig = useSiteConfig()
 const UIcon = resolveComponent('UIcon')
 
-const { data: page } = await useAsyncData('pricing-landing', () => queryCollection('pricing').path('/studio/pricing').first())
+const { data: page } = await useAsyncData('pricing-landing', (_nuxtApp, { signal }) => queryCollection('pricing').path('/studio/pricing').first({ signal }))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

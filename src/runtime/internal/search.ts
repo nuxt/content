@@ -27,13 +27,19 @@ interface SectionablePage {
   body: MDCRoot | MinimarkTree
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T> }) {
-  const { ignoredTags = [], extraFields = [] } = opts || {}
+export interface GenerateSearchSectionsOptions<F> {
+  ignoredTags?: string[]
+  extraFields?: Array<F>
+  signal?: AbortSignal
+}
+
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions<keyof T>) {
+  const { ignoredTags = [], extraFields = [], signal } = opts || {}
 
   const documents = await queryBuilder
     .where('extension', '=', 'md')
     .select('path', 'body', 'description', 'title', ...(extraFields || []))
-    .all()
+    .all({ signal })
 
   return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[] }))
 }

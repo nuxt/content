@@ -11,16 +11,16 @@ const { isScrolling, arrivedState } = useScroll(document)
 
 const siteConfig = useSiteConfig()
 
-const { data: page } = await useAsyncData('changelog-landing', () => queryCollection('landing').path('/changelog').first())
+const { data: page } = await useAsyncData('changelog-landing', (_nuxtApp, { signal }) => queryCollection('landing').path('/changelog').first({ signal }))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: posts } = await useAsyncData('changelog-posts', () => queryCollection('posts')
+const { data: posts } = await useAsyncData('changelog-posts', (_nuxtApp, { signal }) => queryCollection('posts')
   .where('path', 'LIKE', '/changelog%')
   .where('draft', '=', 0)
   .order('date', 'DESC')
-  .all(),
+  .all({ signal }),
 )
 
 useSeoMeta({

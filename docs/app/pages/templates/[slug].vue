@@ -2,7 +2,7 @@
 const route = useRoute()
 const siteConfig = useSiteConfig()
 
-const { data: template } = await useAsyncData(`template-${route.params.slug}`, () => queryCollection('templates').path(route.path).first())
+const { data: template } = await useAsyncData(`template-${route.params.slug}`, (_nuxtApp, { signal }) => queryCollection('templates').path(route.path).first({ signal }))
 if (!template.value) {
   showError({ statusCode: 404, statusMessage: 'Template Not Found' })
 }
