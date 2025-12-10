@@ -268,12 +268,12 @@ export function generateCollectionIndexStatements(collection: ResolvedCollection
   for (const index of collection.indexes) {
     // Validate columns exist in schema
     const invalidColumns = index.columns.filter(
-      column => !collection.fields[column] && column !== 'id'
+      column => !collection.fields[column] && column !== 'id',
     )
 
     if (invalidColumns.length > 0) {
       logger.warn(
-        `Index references non-existent column(s) "${invalidColumns.join(', ')}" in collection "${collection.name}". Skipping this index.`
+        `Index references non-existent column(s) "${invalidColumns.join(', ')}" in collection "${collection.name}". Skipping this index.`,
       )
       continue
     }
