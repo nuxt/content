@@ -1,6 +1,6 @@
 {
-  "name": "@ripka/content",
-  "version": "3.9.2",
+  "name": "@nuxt/content",
+  "version": "3.9.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
