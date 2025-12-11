@@ -94,8 +94,8 @@ export async function ensureDatabaseReady(
     return
   }
 
-  checkDatabaseIntegrity[key] = true
-  integrityCheckPromise[key] = null
+  checkDatabaseIntegrity.set(key, true)
+  integrityCheckPromise.set(key, null)
 
   await checkAndImportDatabaseIntegrity(event, collection, config)
 }

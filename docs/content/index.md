@@ -43,6 +43,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
 #default
   ::code-group
+
   ```mdc [content/index.md]
   ---
   title: The Mountains Website
@@ -58,6 +59,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
   This is a paragraph with **bold** and _italic_ text.
   ```
+
   ```vue [pages/index.vue]
   <script setup lang="ts">
   const { data } = await useAsyncData('home', () => {
@@ -77,7 +79,6 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   ::
 ::
 
-
 ::u-container{class="pb-12 xl:pb-24"}
   :::u-page-grid
     :::u-page-feature
@@ -86,7 +87,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     File-based CMS
-    
+
     #description{unwrap="p"}
     Write your content in Markdown, YAML, CSV or JSON and query it in your components.
     :::
@@ -97,7 +98,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Query Builder
-    
+
     #description{unwrap="p"}
     Query your content with a MongoDB-like API to fetch the right data at the right time.
     :::
@@ -108,7 +109,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     SQLite powered
-    
+
     #description{unwrap="p"}
     Add custom fields to your content, making it suitable for various types of projects.
     :::
@@ -119,7 +120,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Markdown with Vue
-    
+
     #description{unwrap="p"}
     Use Vue components in Markdown files, with props, slots and nested components.
     :::
@@ -130,7 +131,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Code highlighting
-    
+
     #description{unwrap="p"}
     Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
     :::
@@ -141,7 +142,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Visual Editor
-    
+
     #description{unwrap="p"}
     Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
     :::
@@ -152,7 +153,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Navigation Generation
-    
+
     #description{unwrap="p"}
     Generate a structured object from your content files and display a navigation menu in minutes.
     :::
@@ -163,7 +164,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Prose Components
-    
+
     #description{unwrap="p"}
     Customize HTML typography tags with Vue components to give your content a consistent style.
     :::
@@ -174,7 +175,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     #title{unwrap="p"}
     Deploy everywhere
-    
+
     #description{unwrap="p"}
     Nuxt Content works on all hosting providers, static, server, serverless & edge.
     :::
@@ -217,7 +218,7 @@ orientation: horizontal
         ---
         #title
         The Everest.
-        
+
         #description
         The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
         :::::
@@ -229,6 +230,7 @@ orientation: horizontal
     icon: i-simple-icons-markdown
     label: content/index.md
     ---
+
       ```mdc [content/index.md]
       ---
       title: The Mountains Website
@@ -247,6 +249,7 @@ orientation: horizontal
       ::
 
       ```
+
     ::::
 
     ::::tabs-item
@@ -254,6 +257,7 @@ orientation: horizontal
     icon: i-simple-icons-vuedotjs
     label: components/LandingHero.vue
     ---
+
       ```vue [components/LandingHero.vue]
         <script setup lang="ts">
         defineProps<{
@@ -275,6 +279,7 @@ orientation: horizontal
           </section>
         </template>
       ```
+
     ::::
   :::
 
@@ -331,6 +336,7 @@ orientation: horizontal
     icon: i-simple-icons-vuedotjs
     label: pages/blog.vue
     ---
+
     ```vue [pages/blog.vue]
     <script setup lang="ts">
     const { data: posts } = await useAsyncData('blog', () => {
@@ -349,6 +355,7 @@ orientation: horizontal
       </div>
     </template>
     ```
+
     ::::
 
     ::::tabs-item
@@ -356,6 +363,7 @@ orientation: horizontal
     icon: i-simple-icons-typescript
     label: content.config.ts
     ---
+
     ```ts [content.config.ts]
     import { defineContentConfig, defineCollection } from '@nuxt/content'
     import { z } from 'zod'
@@ -375,6 +383,7 @@ orientation: horizontal
       }
     })
     ```
+
     ::::
   :::
 
@@ -427,8 +436,6 @@ reverse: true
 orientation: horizontal
 ---
 :video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
-
- 
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-(--ui-primary)} your website

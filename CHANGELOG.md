@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.9.0](///compare/v3.8.2...v3.9.0) (2025-12-03)
+
+### Features
+
+* **amplity:** use`node:sqlite` on AWS Amplify if Node.js > 22 ([#3598](undefined/undefined/undefined/issues/3598)) e74bb6d
+
+### Bug Fixes
+
+* **fs-watcher:** add timeout to deal with race-condition c07336e
+* prepare for NuxtHub 0.10 with hub.db ([#3624](undefined/undefined/undefined/issues/3624)) 8a9f9d3
+* respect `app.baseURL` in Cloudflare database handler ([#3608](undefined/undefined/undefined/issues/3608)) 1af6adc
+
 ## [3.8.2](https://github.com/nuxt/content/compare/v3.8.1...v3.8.2) (2025-11-13)
 
 ## [3.8.1](https://github.com/nuxt/content/compare/v3.8.0...v3.8.1) (2025-11-13)

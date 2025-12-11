@@ -7,17 +7,17 @@
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "link:..",
-    "@nuxt/ui": "^4.1.0",
-    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251028-004316-83d4099",
+    "@nuxt/ui": "^4.2.1",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251128-232930-0579c39",
     "@nuxtjs/plausible": "^2.0.1",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
-    "@vueuse/nuxt": "^14.0.0",
-    "better-sqlite3": "^12.4.1",
-    "docus": "^5.2.1",
+    "@vercel/analytics": "^1.6.1",
+    "@vercel/speed-insights": "^1.3.1",
+    "@vueuse/nuxt": "^14.1.0",
+    "better-sqlite3": "^12.5.0",
+    "docus": "^5.4.0",
     "drizzle-orm": "^0.44.7",
     "minisearch": "^7.2.0",
     "nuxt": "^4.2.1",
-    "nuxt-studio": "1.0.0-alpha.2"
+    "nuxt-studio": "1.0.0-alpha.4"
   }
 }

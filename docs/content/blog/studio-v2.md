@@ -24,13 +24,13 @@ We are excited to announce the release of Nuxt Studio v2, a major update bringin
 Studio is optimized for **Nuxt Content** project but the only real requirement is to have a *content* folder with Markdown files. This simple setup is enough to start editing and publishing your files with the platform.
 ::
 
-### **A more intuitive interface**
+## **A more intuitive interface**
 
 ![Nuxt studio v2 interface](/blog/v2-interface.webp)
 
 The main improvement in Version 2 is a **complete rework of the interface**. We have designed it to be more intuitive and user-friendly, especially for non-technical users. Our goal was to simplify the user experience, making it easier to create and set up projects with minimal hassle. The new interface is light, straightforward, and designed to streamline your workflow.
 
-### **Google authentication**
+## **Google authentication**
 
 ![Google and GitHub authentication](/blog/google-github.webp)
 
@@ -40,7 +40,7 @@ We now have two different authentication methods. You can either login with **Gi
 Since a Google user can not create a project, he has to **join a team** with existing projects to edit them.
 ::
 
-### **Minimal setup to edit your files**
+## **Minimal setup to edit your files**
 
 You can now edit your content **without any setup**, just import your repository and this is it. You can navigate through your files and medias, edit your content and publish on GitHub.
 
@@ -52,7 +52,7 @@ Collaboration is available for teams.
 Medias in the editor are not displayed until you set up the live preview (see section below).
 ::
 
-### Simplified setup for live preview
+## Simplified setup for live preview
 
 ![preview enable between notion like editor and website](/blog/preview.webp)
 
@@ -64,13 +64,13 @@ While GitHub pages deployment remains available and still does not require any c
 It's crucial to use the latest version of the **Studio module** to ensure compatibility and access to new features.
 ::
 
-### New documentation
+## New documentation
 
 With a revamped platform comes a [new documentation](https://nuxt.studio/docs/get-started/introduction). Don't hesitate to check it out to learn everything about the new Studio.
 
 Whether you are an [editor](https://nuxt.studio/docs/editors/introduction) or a [developer](https://nuxt.studio/docs/developers/introduction) you now have your dedicated section in the docs.
 
-### A new direction for Studio
+## A new direction for Studio
 
 Most available CMS solutions have to choose between being very customizable for developers or highly user friendly for content editors, with Studio we want to do both.
 
@@ -80,4 +80,4 @@ Most available CMS solutions have to choose between being very customizable for 
 Our Notion-like editor has a bright future ahead, and we want to develop it collaboratively with the community.
 ::
 
-###
+##

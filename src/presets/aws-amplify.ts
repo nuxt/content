@@ -1,6 +1,7 @@
 import { definePreset } from '../utils/preset'
 import { logger } from '../utils/dev'
 import nodePreset from './node'
+import { isNodeSqliteAvailable } from '../utils/dependencies'
 
 export default definePreset({
   name: 'aws-amplify',
@@ -17,10 +18,15 @@ export default definePreset({
     })
 
     try {
-      await import('sqlite3')
-
       options.experimental ||= {}
-      options.experimental.sqliteConnector = 'sqlite3'
+      if (isNodeSqliteAvailable()) {
+        options.experimental.sqliteConnector = 'native'
+      }
+      else {
+        await import('sqlite3')
+
+        options.experimental.sqliteConnector = 'sqlite3'
+      }
     }
     catch {
       logger.error('Nuxt Content requires `sqlite3` module to work in AWS Amplify environment. Please run `npm install sqlite3` to install it and try again.')

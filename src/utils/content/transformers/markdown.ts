@@ -49,6 +49,7 @@ export default defineTransformer({
           toc: parsed.toc,
         },
         id: file.id,
+        title: parsed.data?.title || undefined,
       }
     }
 
@@ -60,6 +61,7 @@ export default defineTransformer({
         toc: parsed.toc,
       },
       id: file.id,
+      title: parsed.data?.title || undefined,
     }
   },
 })

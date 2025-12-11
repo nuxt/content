@@ -12,27 +12,20 @@ import { applyContentDumpsPreset } from './shared-dumps'
 export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt) {
-    const nuxtWithHub = nuxt.options as unknown as { hub?: { database?: unknown } }
-    nuxt.options.runtimeConfig ||= {} as never
-    nuxt.options.runtimeConfig.hub ||= {} as never
-    if (nuxtWithHub.hub?.database && !nuxt.options.runtimeConfig.hub.database) {
-      nuxt.options.runtimeConfig.hub.database = nuxtWithHub.hub.database as never
-    }
-
-    if (!(nuxtWithHub.hub?.database)) {
-      logger.warn('NuxtHub dedected but `hub.database` is not enabled. Using local SQLite as default database instead.')
+    const nuxtOptions = nuxt.options as unknown as { hub: { db?: string | object | false, database?: boolean } }
+    if (!nuxtOptions.hub?.db && !nuxtOptions.hub?.database) {
+      logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
       return
     }
 
-    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { database?: boolean | { driver: string, connection: { url?: string } } } }
-    const nuxtOptions = nuxt.options as unknown as { hub: { database?: boolean | string | object } }
+    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { db?: boolean | { driver: string, connection: { url?: string } }, database?: boolean | { driver: string, connection: { url?: string } } } }
     // Read from the final hub database configuration
-    const hubDb = runtimeConfig.hub.database
-    // NuxtHub < 1
+    const hubDb = runtimeConfig.hub.db || runtimeConfig.hub.database
+    // NuxtHub <= 0.9
     if (nuxtOptions.hub?.database === true) {
       options.database ||= { type: 'd1', bindingName: 'DB' }
     }
-    else if (typeof nuxtOptions.hub?.database === 'string' && typeof hubDb === 'object') {
+    else if (typeof nuxtOptions.hub?.db === 'string' && typeof hubDb === 'object') {
       if (hubDb.driver === 'd1') {
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
@@ -45,20 +38,21 @@ export default definePreset({
     }
   },
   async setupNitro(nitroConfig, options) {
-    const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { database?: boolean | object } } } }
-    const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { database: unknown & { applyMigrationsDuringBuild?: boolean }, dir: string }
+    const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { db?: boolean | object, database?: boolean } } } }
+    const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { db: unknown & { applyMigrationsDuringBuild?: boolean }, dir: string }
 
     applyContentDumpsPreset(nitroConfig, { ...options, platform: 'nuxthub' })
 
-    // NuxtHub < v1
-    if (nuxt.options.hub?.database === true) {
+    const nuxthubVersion = nuxt.options.hub?.database === true ? 0.9 : 0.10
+    // NuxtHub <= 0.9
+    if (nuxthubVersion <= 0.9) {
       if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
         logger.warn('Deploying with NuxtHub < 1 requires using D1 database, switching to D1 database with binding `DB`.')
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
     }
-    else if (typeof nuxt.options.hub?.database === 'string') {
-      const hubDb = hubConfig.database as unknown as { driver: string, connection: object }
+    else if (nuxthubVersion >= 0.10) {
+      const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'd1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
       }
@@ -71,12 +65,12 @@ export default definePreset({
     }
 
     // apply migrations during build if enabled
-    if (!nuxt.options.dev && hubConfig.database?.applyMigrationsDuringBuild) {
+    if (!nuxt.options.dev && hubConfig.db?.applyMigrationsDuringBuild) {
       const encryptionEnabled = !!nitroConfig.runtimeConfig?.content?.encryption?.enabled
 
       if (!encryptionEnabled) {
         // Write SQL dump to database queries when not in dev mode
-        await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'database/queries'), { recursive: true })
+        await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries'), { recursive: true })
         let i = 1
         // Drop info table and prepare for new dump
         let dump = 'DROP TABLE IF EXISTS _content_info;'
@@ -93,14 +87,15 @@ export default definePreset({
             }
           })
         })
+        
         if (dump.length > 0) {
           dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
         }
+
         for (const dumpFile of dumpFiles) {
-          await writeFile(resolve(nitroConfig.rootDir!, hubConfig.dir, 'database/queries', dumpFile.file), dumpFile.content)
+          await writeFile(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries', dumpFile.file), dumpFile.content)
         }
-      }
-      else {
+      } else {
         logger.info('[content] encryption enabled — skipping NuxtHub plaintext query emission.')
       }
 
