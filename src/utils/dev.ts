@@ -156,6 +156,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           id: keyInCollection,
           body: content,
           path: fullPath,
+          collectionType: collection.type,
         }).then(result => JSON.stringify(result))
 
         db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)

@@ -357,6 +357,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 id: keyInCollection,
                 body: content,
                 path: fullPath,
+                collectionType: collection.type,
               })
               if (parsedContent) {
                 db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
