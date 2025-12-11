@@ -8,6 +8,21 @@ let pendingReload: Promise<never> | null = null
 
 const isClient = () => typeof window !== 'undefined' && typeof document !== 'undefined'
 
+const RELOAD_LIMIT = 3
+const RELOAD_COUNTER_KEY = '__nuxt_content_reload_count__'
+
+export function resetClientReloadCount() {
+  if (!import.meta.client || !isClient()) {
+    return
+  }
+  try {
+    window.sessionStorage.removeItem(RELOAD_COUNTER_KEY)
+  }
+  catch {
+    // sessionStorage may be unavailable
+  }
+}
+
 export async function forceClientRefresh(
   reason: string,
   options: { collection?: string } = {},
@@ -21,6 +36,12 @@ export async function forceClientRefresh(
   }
 
   try {
+    const count = parseInt(window.sessionStorage.getItem(RELOAD_COUNTER_KEY) || '0', 10)
+    if (count >= RELOAD_LIMIT) {
+      console.warn(`[content] Infinite reload loop prevented. Logic tried to reload for reason: ${reason}, but limit (${RELOAD_LIMIT}) was reached.`)
+      return
+    }
+    window.sessionStorage.setItem(RELOAD_COUNTER_KEY, String(count + 1))
     window.sessionStorage.setItem(RELOAD_GUARD, `${Date.now()}:${reason}`)
   }
   catch {

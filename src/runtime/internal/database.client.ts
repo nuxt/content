@@ -5,7 +5,7 @@ import { refineContentFields } from './collection'
 import { fetchDatabase, fetchDumpKey } from './api'
 import type { DatabaseAdapter, DatabaseBindParams, ClearContentClientStorageOptions } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
-import { forceClientRefresh } from './client-reload'
+import { forceClientRefresh, resetClientReloadCount } from './client-reload'
 
 function extractKidFromEnvelope(b64: string | null): string | null {
   if (!b64) return null
@@ -448,6 +448,7 @@ async function loadCollectionDatabase<T>(collection: T): Promise<Database> {
     }
   }
 
+  resetClientReloadCount()
   return activeDb
 }
 
