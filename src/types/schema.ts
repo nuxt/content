@@ -8,7 +8,7 @@ export interface Draft07 {
 
 export interface Draft07Definition {
   type: string
-  properties: Record<string, Draft07DefinitionProperty | Draft07DefinitionPropertyAnyOf | Draft07DefinitionPropertyAllOf>
+  properties: Record<string, Draft07DefinitionProperty | Draft07DefinitionPropertyAnyOf | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyOneOf>
   required: string[]
   additionalProperties: boolean
 }
@@ -34,6 +34,10 @@ export interface Draft07DefinitionPropertyAnyOf {
 
 export interface Draft07DefinitionPropertyAllOf {
   allOf: Draft07DefinitionProperty[]
+}
+
+export interface Draft07DefinitionPropertyOneOf {
+  oneOf: Draft07DefinitionProperty[]
 }
 
 export interface ContentConfig {
