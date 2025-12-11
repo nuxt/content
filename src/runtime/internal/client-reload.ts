@@ -36,7 +36,7 @@ export async function forceClientRefresh(
   }
 
   try {
-    const count = parseInt(window.sessionStorage.getItem(RELOAD_COUNTER_KEY) || '0', 10)
+    const count = Number.parseInt(window.sessionStorage.getItem(RELOAD_COUNTER_KEY) || '0', 10)
     if (count >= RELOAD_LIMIT) {
       console.warn(`[content] Infinite reload loop prevented. Logic tried to reload for reason: ${reason}, but limit (${RELOAD_LIMIT}) was reached.`)
       return

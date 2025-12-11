@@ -108,14 +108,14 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-  const manifest: Manifest = {
-    checksumStructure: {},
-    checksum: {},
-    dump: {},
-    components: [],
-    collections: [],
-    version: '',
-  }
+    const manifest: Manifest = {
+      checksumStructure: {},
+      checksum: {},
+      dump: {},
+      components: [],
+      collections: [],
+      version: '',
+    }
 
     // Detect installed validators and them into content context
     await initiateValidatorsContext()

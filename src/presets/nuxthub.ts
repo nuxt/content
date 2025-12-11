@@ -91,7 +91,7 @@ export default definePreset({
             }
           })
         })
-        
+
         if (dump.length > 0) {
           dumpFiles.push({ file: `content-database-${String(i).padStart(3, '0')}.sql`, content: dump.trim() })
         }
@@ -99,7 +99,8 @@ export default definePreset({
         for (const dumpFile of dumpFiles) {
           await writeFile(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries', dumpFile.file), dumpFile.content)
         }
-      } else {
+      }
+      else {
         logger.info('[content] encryption enabled — skipping NuxtHub plaintext query emission.')
       }
 
