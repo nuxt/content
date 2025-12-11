@@ -13,6 +13,10 @@ export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt) {
     const nuxtOptions = nuxt.options as unknown as { hub: { db?: string | object | false, database?: boolean } }
+
+    // Ensure runtimeConfig.hub exists
+    nuxt.options.runtimeConfig.hub ||= {} as never
+
     if (!nuxtOptions.hub?.db && !nuxtOptions.hub?.database) {
       logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
       return
@@ -20,7 +24,7 @@ export default definePreset({
 
     const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { db?: boolean | { driver: string, connection: { url?: string } }, database?: boolean | { driver: string, connection: { url?: string } } } }
     // Read from the final hub database configuration
-    const hubDb = runtimeConfig.hub.db || runtimeConfig.hub.database
+    const hubDb = runtimeConfig.hub?.db || runtimeConfig.hub?.database
     // NuxtHub <= 0.9
     if (nuxtOptions.hub?.database === true) {
       options.database ||= { type: 'd1', bindingName: 'DB' }
@@ -52,7 +56,7 @@ export default definePreset({
       }
     }
     else if (nuxthubVersion >= 0.10) {
-      const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
+      const hubDb = hubConfig?.db as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'd1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
       }
