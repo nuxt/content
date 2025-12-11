@@ -69,6 +69,21 @@ export interface ModuleOptions {
    */
   database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
   /**
+   * Encrypted dumps configuration
+   */
+  encryption?: {
+    /**
+     * Enable encrypted dumps + key endpoint.
+     * When enabled, static plaintext dumps are not exposed on Cloudflare preset.
+     */
+    enabled?: boolean
+    /**
+     * Base64(32 bytes) master key used to derive per-dump keys (HKDF).
+     * Keep this private. Not exposed to the client.
+     */
+    masterKey?: string
+  }
+  /**
    * Preview mode configuration
    * @default {}
    */
@@ -222,6 +237,10 @@ export interface RuntimeConfig {
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     integrityCheck: boolean
+    encryption?: {
+      enabled?: boolean
+      masterKey?: string
+    }
   }
 }
 
@@ -229,6 +248,9 @@ export interface PublicRuntimeConfig {
   preview: {
     api?: string
     iframeMessagingAllowedOrigins?: string
+  }
+  content: {
+    encryptionEnabled?: boolean
   }
 }
 

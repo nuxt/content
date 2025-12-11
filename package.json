@@ -100,6 +100,7 @@
     "std-env": "^3.10.0",
     "tinyglobby": "^0.2.15",
     "ufo": "^1.6.1",
+    "uncrypto": "^0.1.3",
     "unctx": "^2.4.1",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
@@ -200,6 +201,11 @@
         "exports": "named"
       },
       "emitCJS": true
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "@nuxt/content": "link:."
     }
   }
 }

@@ -9,6 +9,12 @@ import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
 import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
+import {
+  deriveContentKeyB64,
+  isEncryptedEnvelope,
+  decryptEnvelopeToGzipBytes,
+  bytesToB64,
+} from './encryption'
 
 let db: Connector
 export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
@@ -63,7 +69,44 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
+export async function ensureDatabaseReady(
+  event: H3Event,
+  collection: string,
+  config: RuntimeConfig['content'],
+): Promise<void> {
+  const key = String(collection)
+  const expectedVersion = checksums[key]
+  const expectedStructure = checksumsStructure[key]
+
+  if (!expectedVersion || !expectedStructure) {
+    return
+  }
+
+  const db = loadDatabaseAdapter(config)
+  const status = await db
+    .first<{ version: string, structureVersion: string, ready: boolean }>(
+      `SELECT version, structureVersion, ready FROM ${tables.info} WHERE id = ?`,
+      [`checksum_${collection}`],
+    )
+    .catch(() => null)
+
+  if (status?.ready && status.version === expectedVersion && status.structureVersion === expectedStructure) {
+    return
+  }
+
+  checkDatabaseIntegrity.set(key, true)
+  integrityCheckPromise.set(key, null)
+
+  await checkAndImportDatabaseIntegrity(event, collection, config)
+}
+
+async function _checkAndImportDatabaseIntegrity(
+  event: H3Event,
+  collection: string,
+  integrityVersion: string,
+  structureIntegrityVersion: string,
+  config: RuntimeConfig['content'],
+) {
   const db = loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
@@ -102,7 +145,15 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     }
   }
 
-  const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
+  // --- fetch and normalize dump (handle encrypted envelope or plaintext) ---
+
+  const raw = await loadDatabaseDump(event, collection)
+  const envelopeDetected = isEncryptedEnvelope(raw)
+  const dump = await (envelopeDetected
+    ? decryptEncryptedDump(raw, collection, config)
+    : decompressSQLDump(raw))
+  // ----------------------------------------------------------------------
+
   const dumpLinesHash = dump.map(row => row.split(' -- ').pop())
   let hashesInDb = new Set<string>()
 
@@ -202,6 +253,29 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
       console.error('Failed to fetch compressed dump', e)
       return ''
     })
+}
+
+async function decryptEncryptedDump(
+  envelope: string,
+  collection: string,
+  config: RuntimeConfig['content'],
+): Promise<string[]> {
+  const checksum = checksums[String(collection)] || ''
+  const masterKey = config?.encryption?.masterKey
+
+  if (!masterKey) {
+    throw new Error('Missing encryption masterKey')
+  }
+
+  const derivedKeyB64 = await deriveContentKeyB64(
+    masterKey,
+    checksum,
+    collection,
+  )
+
+  const gzBytes = await decryptEnvelopeToGzipBytes(envelope, derivedKeyB64)
+  const gzBase64 = bytesToB64(gzBytes)
+  return await decompressSQLDump(gzBase64)
 }
 
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
