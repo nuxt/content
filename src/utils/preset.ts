@@ -13,18 +13,18 @@ interface Options {
 export interface Preset {
   name: string
   parent?: Preset
-  setup?: (options: ModuleOptions, nuxt: Nuxt) => Promise<void> | void
+  setup?: (options: ModuleOptions, nuxt: Nuxt, opts: { resolver: Resolver, manifest: Manifest }) => Promise<void> | void
   setupNitro: (nitroConfig: NitroConfig, opts: Options) => void | Promise<void>
 }
 
 export function definePreset(preset: Preset) {
   const _preset: Preset = {
     ...preset,
-    setup: async (options, nuxt) => {
+    setup: async (options, nuxt, opts) => {
       if (preset.parent) {
-        await preset.parent.setup?.(options, nuxt)
+        await preset.parent.setup?.(options, nuxt, opts)
       }
-      await preset.setup?.(options, nuxt)
+      await preset.setup?.(options, nuxt, opts)
     },
     setupNitro: async (nitroConfig, opts) => {
       if (preset.parent) {
