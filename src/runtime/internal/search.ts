@@ -18,7 +18,7 @@ type Section = {
 }
 
 const HEADING = /^h([1-6])$/
-const isHeading = (tag: string) => HEADING.test(tag)
+const headingLevel = (tag: string) => Number(tag.match(HEADING)?.[1] ?? 0)
 
 interface SectionablePage {
   path: string
@@ -27,18 +27,20 @@ interface SectionablePage {
   body: MDCRoot | MinimarkTree
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T> }) {
-  const { ignoredTags = [], extraFields = [] } = opts || {}
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T>, minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`, maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}` }) {
+  const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
+  const minLevel = headingLevel(minHeading)
+  const maxLevel = headingLevel(maxHeading)
 
   const documents = await queryBuilder
     .where('extension', '=', 'md')
     .select('path', 'body', 'description', 'title', ...(extraFields || []))
     .all()
 
-  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[] }))
+  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
 }
 
-function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields }: { ignoredTags: string[], extraFields: Array<string> }) {
+function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number }) {
   const body = (!page.body || page.body?.type === 'root') ? page.body : toHast(page.body as unknown as MinimarkTree) as MDCRoot
   const path = (page.path ?? '')
   const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
@@ -57,27 +59,22 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields
     return sections
   }
 
-  // No section
   let section = 1
   let previousHeadingLevel = 0
   const titles = [page.title ?? '']
   for (const item of body.children) {
     const tag = (item as MDCElement).tag || ''
-    if (isHeading(tag)) {
-      const currentHeadingLevel: number = Number(tag.match(HEADING)?.[1] ?? 0)
-
+    const level = headingLevel(tag)
+    if (level >= minLevel && level <= maxLevel) {
       const title = extractTextFromAst(item).trim()
 
-      if (currentHeadingLevel === 1) {
-        // Reset the titles
+      if (level === 1) {
         titles.splice(0, titles.length)
       }
-      else if (currentHeadingLevel < previousHeadingLevel) {
-        // Go up tree, remove every title after the current level
-        titles.splice(currentHeadingLevel - 1, titles.length - 1)
+      else if (level < previousHeadingLevel) {
+        titles.splice(level - 1, titles.length - 1)
       }
-      else if (currentHeadingLevel === previousHeadingLevel) {
-        // Same level, remove the last title (add title later to avoid to it in titles)
+      else if (level === previousHeadingLevel) {
         titles.pop()
       }
 
@@ -87,13 +84,11 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields
         title,
         titles: [...titles],
         content: '',
-        level: currentHeadingLevel,
+        level,
       })
 
       titles.push(title)
-
-      // Swap to a new section
-      previousHeadingLevel = currentHeadingLevel
+      previousHeadingLevel = level
       section += 1
     }
     else {
