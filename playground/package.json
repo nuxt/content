@@ -16,7 +16,7 @@
     "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251128-232930-0579c39",
     "better-sqlite3": "^12.5.0",
     "drizzle-orm": "^0.44.7",
-    "nuxt": "^4.2.1",
+    "nuxt": "^4.2.2",
     "pg": "^8.16.3",
     "remark-code-import": "^1.2.0",
     "shiki-transformer-color-highlight": "^1.0.0"
