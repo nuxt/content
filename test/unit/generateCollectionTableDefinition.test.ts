@@ -257,4 +257,179 @@ describe('generateCollectionTableDefinition', () => {
       ');',
     ].join(''))
   })
+
+  // Indexes
+  test('Single column index', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        author: z.string(),
+      }),
+      indexes: [
+        { columns: ['author'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_posts_author ON _content_posts ("author");')
+  })
+
+  test('Multiple single column indexes', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        author: z.string(),
+        category: z.string(),
+      }),
+      indexes: [
+        { columns: ['author'] },
+        { columns: ['category'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_posts_author ON _content_posts ("author");')
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_posts_category ON _content_posts ("category");')
+  })
+
+  test('Composite index', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        category: z.string(),
+        publishedAt: z.date(),
+      }),
+      indexes: [
+        { columns: ['category', 'publishedAt'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_posts_category_publishedAt ON _content_posts ("category", "publishedAt");')
+  })
+
+  test('Unique index', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        slug: z.string(),
+      }),
+      indexes: [
+        { columns: ['slug'], unique: true },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE UNIQUE INDEX IF NOT EXISTS idx_posts_slug ON _content_posts ("slug");')
+  })
+
+  test('Custom index name', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        author: z.string(),
+        publishedAt: z.date(),
+      }),
+      indexes: [
+        { columns: ['author', 'publishedAt'], name: 'idx_custom_author_date' },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_custom_author_date ON _content_posts ("author", "publishedAt");')
+  })
+
+  test('Index on id column', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      indexes: [
+        { columns: ['id'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    // Should create index without warning (id is always valid)
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_posts_id ON _content_posts ("id");')
+  })
+
+  test('No indexes defined', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        author: z.string(),
+      }),
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    // Should not contain any CREATE INDEX statements
+    expect(sql).not.toContain('CREATE INDEX')
+  })
+
+  test('Empty indexes array', () => {
+    const collection = resolveCollection('posts', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        author: z.string(),
+      }),
+      indexes: [],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    // Should not contain any CREATE INDEX statements
+    expect(sql).not.toContain('CREATE INDEX')
+  })
+
+  test('Long index name truncation', () => {
+    const collection = resolveCollection('very_long_collection_name_that_exceeds_limits', defineCollection({
+      type: 'page',
+      source: 'blog/**',
+      schema: z.object({
+        very_long_field_name_first: z.string(),
+        very_long_field_name_second: z.string(),
+        very_long_field_name_third: z.string(),
+      }),
+      indexes: [
+        { columns: ['very_long_field_name_first', 'very_long_field_name_second', 'very_long_field_name_third'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    // Should contain an index with a truncated name (max 63 chars for PostgreSQL)
+    const indexMatch = sql.match(/CREATE INDEX IF NOT EXISTS (\S+) ON/)
+    expect(indexMatch).toBeTruthy()
+    expect(indexMatch![1]!.length).toBeLessThanOrEqual(63)
+  })
+
+  test('Multiple indexes with composite and unique', () => {
+    const collection = resolveCollection('products', defineCollection({
+      type: 'data',
+      source: 'products/**',
+      schema: z.object({
+        sku: z.string(),
+        price: z.number(),
+        inStock: z.boolean(),
+        category: z.string(),
+      }),
+      indexes: [
+        { columns: ['sku'], unique: true },
+        { columns: ['price'] },
+        { columns: ['category', 'price'] },
+        { columns: ['inStock', 'category'] },
+      ],
+    }))!
+    const sql = generateCollectionTableDefinition(collection)
+
+    expect(sql).toContain('CREATE UNIQUE INDEX IF NOT EXISTS idx_products_sku ON _content_products ("sku");')
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_products_price ON _content_products ("price");')
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_products_category_price ON _content_products ("category", "price");')
+    expect(sql).toContain('CREATE INDEX IF NOT EXISTS idx_products_inStock_category ON _content_products ("inStock", "category");')
+  })
 })
