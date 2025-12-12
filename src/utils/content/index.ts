@@ -169,6 +169,10 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     const parsedContent = await transformContent(hookedFile, {
       ...beforeParseCtx.parserOptions,
       transformers: extraTransformers,
+      markdown: {
+        ...beforeParseCtx.parserOptions?.markdown,
+        contentHeading: !file?.collectionType || file?.collectionType === 'page',
+      },
     })
 
     const collectionKeys = getOrderedSchemaKeys(collection.extendedSchema)
