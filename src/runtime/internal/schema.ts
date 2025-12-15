@@ -92,8 +92,15 @@ export function describeProperty(schema: Draft07, property: string) {
     enum: (shape[property] as Draft07DefinitionProperty).enum,
     json: isJSONProperty(shape[property]),
   }
+
   if ((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf) {
     if (((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf).find(t => t.type === 'null')) {
+      result.nullable = true
+    }
+  }
+
+  if ((shape[property] as Draft07DefinitionPropertyOneOf).oneOf) {
+    if (((shape[property] as Draft07DefinitionPropertyOneOf).oneOf).find(t => t.type === 'null')) {
       result.nullable = true
     }
   }
