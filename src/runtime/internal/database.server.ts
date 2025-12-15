@@ -212,7 +212,7 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
   if (config.type === 'sqlite') {
     const _config = { ...config } as SqliteConnectorOptions
     if (config.filename === ':memory:') {
-      return { name: 'memory' }
+      return { name: ':memory:' }
     }
 
     if ('filename' in config) {
