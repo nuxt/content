@@ -17,12 +17,12 @@ orientation: horizontal
   :::u-button
   ---
   size: sm
-  to: /blog/studio-module-alpha
+  to: https://github.com/nuxt-content/studio/releases/tag/v1.0.0-beta.0
   variant: outline
   trailing-icon: i-lucide-arrow-right
   class: mb-3 rounded-full
   ---
-  Nuxt Studio alpha is out
+  Nuxt Studio beta is out
   :::
 #title
 The [git-based]{.text-primary} :br CMS for Nuxt.
@@ -444,7 +444,7 @@ Let [anyone edit]{.text-(--ui-primary)} your website
 :::u-button
 ---
 color: primary
-label: Currently in alpha
+label: Currently in beta
 target: _blank
 to: https://github.com/nuxt-content/studio
 variant: outline

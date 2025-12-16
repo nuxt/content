@@ -10,7 +10,7 @@ const links = computed(() => [
   }, {
     label: 'Studio',
     badge: {
-      label: 'alpha',
+      label: 'beta',
       color: 'primary',
     },
     icon: 'i-lucide-file-pen-line',
