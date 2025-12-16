@@ -17,7 +17,7 @@
     "docus": "^5.4.0",
     "drizzle-orm": "^0.44.7",
     "minisearch": "^7.2.0",
-    "nuxt": "^4.2.1",
+    "nuxt": "^4.2.2",
     "nuxt-studio": "1.0.0-beta.0"
   }
 }
