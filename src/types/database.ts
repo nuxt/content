@@ -24,3 +24,16 @@ export interface LocalDevelopmentDatabase {
   close(): void
   database?: Connector
 }
+
+export interface ClearContentClientStorageOptions<T = string> {
+  /**
+   * Explicit list of collections to purge from the client cache.
+   * When omitted, all known collections are cleared.
+   */
+  collections?: T[]
+  /**
+   * Remove cached derived encryption keys (`content_key_*`).
+   * Enabled by default.
+   */
+  includeDerivedKeys?: boolean
+}

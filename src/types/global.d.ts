@@ -11,8 +11,9 @@ declare module '#content/manifest' {
   const checksums: Record<string, string>
   const checksumsStructure: Record<string, string>
   const tables: Record<string, string>
+  const manifestVersion: string
 
-  export { manifest as default, checksums, checksumsStructure, tables }
+  export { manifest as default, checksums, checksumsStructure, tables, manifestVersion }
 }
 
 declare module '#content/components' {

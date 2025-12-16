@@ -4,7 +4,7 @@ import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, ClearContentClientStorageOptions } from '@nuxt/content'
 import { tryUseNuxtApp } from '#imports'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
@@ -29,6 +29,15 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
 
 export function queryCollectionSearchSections(collection: keyof Collections, opts?: { ignoredTags?: string[], separators?: string[] }) {
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
+}
+
+export async function clearContentClientStorage<T extends keyof Collections>(options?: ClearContentClientStorageOptions<T>) {
+  if (!import.meta.client) {
+    return
+  }
+
+  const { clearClientStorage } = await import('./internal/database.client')
+  await clearClientStorage<T>(options)
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {

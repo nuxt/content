@@ -10,6 +10,7 @@ import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
+import { encryptGzBase64Envelope } from '../runtime/internal/encryption'
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
@@ -79,7 +80,7 @@ export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
     for (const [key, dump] of Object.entries(options.manifest.dump)) {
       // Ignore provate collections
       if (options.manifest.collections.find(c => c.name === key)?.private) {
-        return ''
+        continue
       }
       const compressedDump = await compress(JSON.stringify(dump))
       result.push(`export const ${key} = "${compressedDump}"`)
@@ -115,6 +116,40 @@ export const collectionDumpTemplate = (collection: string, manifest: Manifest) =
   options: {
     manifest,
   },
+})
+
+/**
+ * Encrypted per-collection dump template (.sql.enc)
+ * Requires you to pass `encryption` options when registering the template.
+ */
+export const collectionEncryptedDumpTemplate = (
+  collection: string,
+  manifest: Manifest,
+  encryption: { enabled?: boolean, masterKey?: string },
+) => ({
+  filename: `content/raw/dump.${collection}.sql.enc`,
+  getContents: async ({ options }: { options: { manifest: Manifest } }) => {
+    // Fallback to plain if encryption is not enabled/configured
+    if (!encryption?.enabled || !encryption.masterKey) {
+      const gzBase64 = await compress(
+        JSON.stringify(options.manifest.dump[collection] || []),
+      )
+      return gzBase64
+    }
+
+    const dumpArr = options.manifest.dump[collection] || []
+    const gzBase64 = await compress(JSON.stringify(dumpArr))
+    const checksum = (options.manifest.checksum?.[collection] as string) || ''
+    // Produce base64(JSON envelope)
+    return await encryptGzBase64Envelope(
+      gzBase64,
+      encryption.masterKey,
+      checksum,
+      collection,
+    )
+  },
+  write: true,
+  options: { manifest },
 })
 
 export const componentsManifestTemplate = (manifest: Manifest) => {
@@ -165,7 +200,8 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
 export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
-    const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
+    const currentManifest = options.manifest
+    const collectionsMeta = currentManifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
@@ -174,11 +210,12 @@ export const manifestTemplate = (manifest: Manifest) => ({
     }, {} as Record<string, unknown>)
 
     return [
-      `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,
-      `export const checksumsStructure = ${JSON.stringify(manifest.checksumStructure, null, 2)}`,
+      `export const checksums = ${JSON.stringify(currentManifest.checksum, null, 2)}`,
+      `export const checksumsStructure = ${JSON.stringify(currentManifest.checksumStructure, null, 2)}`,
+      `export const manifestVersion = ${JSON.stringify(currentManifest.version || '')}`,
       '',
       `export const tables = ${JSON.stringify(
-        Object.fromEntries(manifest.collections.map(c => [c.name, c.tableName])),
+        Object.fromEntries(currentManifest.collections.map(c => [c.name, c.tableName])),
         null,
         2,
       )}`,

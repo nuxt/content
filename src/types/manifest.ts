@@ -6,4 +6,5 @@ export interface Manifest {
   dump: Record<string, string[]>
   components: string[]
   collections: ResolvedCollection[]
+  version?: string
 }

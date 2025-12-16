@@ -1,4 +1,5 @@
 import { stat } from 'node:fs/promises'
+import { randomBytes } from 'node:crypto'
 import {
   defineNuxtModule,
   createResolver,
@@ -113,6 +114,7 @@ export default defineNuxtModule<ModuleOptions>({
       dump: {},
       components: [],
       collections: [],
+      version: '',
     }
 
     // Detect installed validators and them into content context
@@ -134,6 +136,8 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
+      { name: 'clearContentClientStorage', from: resolver.resolve('./runtime/client') },
+      { name: 'useContentUpdates', from: resolver.resolve('./runtime/composables/useContentUpdates') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
@@ -173,15 +177,68 @@ export default defineNuxtModule<ModuleOptions>({
     // Prerender database.sql routes for each collection to fetch dump
     nuxt.options.routeRules ||= {}
 
-    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-    // @see https://github.com/nuxt/content/pull/3299
-    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+    // Prevent nuxtseo from indexing nuxt-content routes
+    // @ts-expect-error - routeRules uses string index globs which Nuxt supports at runtime but TypeScript cannot type
+    nuxt.options.routeRules!['/__nuxt_content/**'] = { robots: false }
+
+    if (options.encryption?.enabled && !options.encryption.masterKey) {
+      options.encryption.masterKey = randomBytes(32).toString('base64')
+    }
+    const encryptionEnabled = !!(options.encryption?.enabled && options.encryption.masterKey)
 
     manifest.collections.forEach((collection) => {
-      if (!collection.private) {
+      if (collection.private) return
+
+      if (encryptionEnabled) {
+        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.enc`] = { prerender: true }
+      }
+      else {
         nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
       }
     })
+
+    const preset = findPreset(nuxt)
+    let presetSetupPromise: Promise<void> | undefined
+    const setupPresetOnce = async () => {
+      if (!preset?.setup) {
+        presetSetupPromise ||= Promise.resolve()
+      }
+      else if (!presetSetupPromise) {
+        presetSetupPromise = Promise.resolve(preset.setup(options, nuxt)).then(() => undefined)
+      }
+      return presetSetupPromise
+    }
+
+    const syncRuntimeConfig = () => {
+      const encryptionState = !!(options.encryption?.enabled && options.encryption.masterKey)
+      nuxt.options.runtimeConfig.public ||= {} as never
+      nuxt.options.runtimeConfig.public.content = {
+        wsUrl: '',
+        encryptionEnabled: encryptionState,
+      } as never
+      nuxt.options.runtimeConfig.content ||= {} as never
+      nuxt.options.runtimeConfig.content = {
+        databaseVersion,
+        version,
+        database: options.database,
+        localDatabase: options._localDatabase!,
+        integrityCheck: true,
+        encryption: {
+          enabled: encryptionState,
+          masterKey: encryptionState ? options.encryption!.masterKey : undefined,
+        },
+      } as never
+    }
+
+    await setupPresetOnce()
+
+    // Provide default database configuration here since nuxt is merging defaults and user options
+    options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
+    await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
+    await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
+
+    // Module Options
+    syncRuntimeConfig()
 
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
@@ -216,24 +273,14 @@ export default defineNuxtModule<ModuleOptions>({
     await configureMDCModule(options, nuxt)
 
     nuxt.hook('modules:done', async () => {
-      const preset = findPreset(nuxt)
-      await preset?.setup?.(options, nuxt)
+      await setupPresetOnce()
       // Provide default database configuration here since nuxt is merging defaults and user options
       options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
       await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
       await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
 
       // Module Options
-      nuxt.options.runtimeConfig.public.content = {
-        wsUrl: '',
-      }
-      nuxt.options.runtimeConfig.content = {
-        databaseVersion,
-        version,
-        database: options.database,
-        localDatabase: options._localDatabase!,
-        integrityCheck: true,
-      } as never
+      syncRuntimeConfig()
     })
 
     if (nuxt.options._prepare) {
@@ -250,6 +297,7 @@ export default defineNuxtModule<ModuleOptions>({
       manifest.checksum = fest.checksum
       manifest.dump = fest.dump
       manifest.components = fest.components
+      manifest.version = fest.version
 
       await updateTemplates({
         filter: template => [
@@ -425,11 +473,18 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const endTime = performance.now()
   logger.success(`Processed ${collections.length} collections and ${filesCount} files in ${(endTime - startTime).toFixed(2)}ms (${cachedFilesCount} cached, ${parsedFilesCount} parsed)`)
 
+  const manifestVersion = hash({
+    checksum: collectionChecksum,
+    checksumStructure: collectionChecksumStructure,
+    databaseVersion,
+  })
+
   return {
     checksumStructure: collectionChecksumStructure,
     checksum: collectionChecksum,
     dump: collectionDump,
     components: uniqueTags,
+    version: manifestVersion,
   }
 }
 
