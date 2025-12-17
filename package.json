@@ -157,7 +157,7 @@
     "csvtojson": "^2.0.14",
     "eslint": "^9.39.1",
     "happy-dom": "^20.0.11",
-    "mdclint": "https://pkg.pr.new/nuxt-content/mdclint@126e6c6",
+    "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^4.2.2",
     "release-it": "^19.0.6",
