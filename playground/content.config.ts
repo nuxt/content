@@ -90,7 +90,7 @@ const collections = {
   nuxt: defineCollection({
     type: 'page',
     source: {
-      repository: 'https://github.com/nuxt/nuxt',
+      repository: 'https://github.com/nuxt/nuxt/tree/main',
       include: 'docs/**',
       prefix: '/nuxt',
       exclude: [

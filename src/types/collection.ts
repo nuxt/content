@@ -1,5 +1,6 @@
 import type { Draft07 } from '../types/schema'
 import type { MarkdownRoot } from './content'
+import type { GitBasicAuth, GitRepositoryType } from './git'
 import type { ContentStandardSchemaV1 } from './schema'
 
 export interface PageCollections {}
@@ -33,13 +34,16 @@ export type CollectionSource = {
   include: string
   prefix?: string
   exclude?: string[]
-  repository?: string
-  authToken?: string
-  authBasic?: {
-    username: string
-    password: string
-  }
+  repository?: string | GitRepositoryType
   cwd?: string
+  /**
+   * @deprecated Use `repository.auth` instead
+   */
+  authToken?: string
+  /**
+   * @deprecated Use `repository.auth` instead
+   */
+  authBasic?: GitBasicAuth
 }
 
 export interface ResolvedCollectionSource extends CollectionSource {
