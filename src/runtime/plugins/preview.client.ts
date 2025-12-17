@@ -1,6 +1,7 @@
 import { defineNuxtPlugin } from '#imports'
+import type { Plugin } from 'nuxt/app'
 
-export default defineNuxtPlugin(async () => {
+const previewPlugin: Plugin = defineNuxtPlugin(async () => {
   return {
     provide: {
       content: {
@@ -11,3 +12,5 @@ export default defineNuxtPlugin(async () => {
     },
   }
 })
+
+export default previewPlugin
