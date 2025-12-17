@@ -134,7 +134,13 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       const keyInCollection = join(collection.name, source?.prefix || '', filePath)
       const fullPath = join(cwd, path)
 
-      const content = await readFile(fullPath, 'utf8')
+      let content = await readFile(fullPath, 'utf8')
+      if (content === '') {
+        // If users edit the file very quickly, in some race-condition, the file content might be read as empty.
+        // To deal with this scenario, we wait for 50ms if the file is empty and try again.
+        content = await new Promise<string>(resolve => setTimeout(resolve, 50))
+          .then(() => readFile(fullPath, 'utf8'))
+      }
       const checksum = getContentChecksum(content)
       const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
 
@@ -150,6 +156,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           id: keyInCollection,
           body: content,
           path: fullPath,
+          collectionType: collection.type,
         }).then(result => JSON.stringify(result))
 
         db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)

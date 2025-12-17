@@ -1,5 +1,48 @@
 # Changelog
 
+## [3.9.0](///compare/v3.8.2...v3.9.0) (2025-12-03)
+
+### Features
+
+* **amplity:** use`node:sqlite` on AWS Amplify if Node.js > 22 ([#3598](undefined/undefined/undefined/issues/3598)) e74bb6d
+
+### Bug Fixes
+
+* **fs-watcher:** add timeout to deal with race-condition c07336e
+* prepare for NuxtHub 0.10 with hub.db ([#3624](undefined/undefined/undefined/issues/3624)) 8a9f9d3
+* respect `app.baseURL` in Cloudflare database handler ([#3608](undefined/undefined/undefined/issues/3608)) 1af6adc
+
+## [3.8.2](https://github.com/nuxt/content/compare/v3.8.1...v3.8.2) (2025-11-13)
+
+## [3.8.1](https://github.com/nuxt/content/compare/v3.8.0...v3.8.1) (2025-11-13)
+
+### Bug Fixes
+
+* **deps:** nuxt 4.2 patch ([91a1de7](https://github.com/nuxt/content/commit/91a1de7391d8b010fff85befe3d75fb8e0fd1788))
+* **docs:** docs collection prefix ([72cc17d](https://github.com/nuxt/content/commit/72cc17d5d912f46c0358b1af48cf44d49e18925a))
+* make sure last char of column is not special char ([#3610](https://github.com/nuxt/content/issues/3610)) ([d763452](https://github.com/nuxt/content/commit/d763452db17b2e81ccae4a84c25c58e50c6a5e68))
+
+### Performance Improvements
+
+* replace internal object records with maps ([#3591](https://github.com/nuxt/content/issues/3591)) ([7b16de3](https://github.com/nuxt/content/commit/7b16de31106062d82654b0be9cddaaf88ac1b1fb))
+* use `moduleDependencies` to install mdc module ([#3597](https://github.com/nuxt/content/issues/3597)) ([9600533](https://github.com/nuxt/content/commit/960053395ccb3c1a991f06948523558fcff62ea1))
+
+## [3.8.0](https://github.com/nuxt/content/compare/v3.7.1...v3.8.0) (2025-10-29)
+
+### Features
+
+* add support for nuxthub v1 ([#3576](https://github.com/nuxt/content/issues/3576)) ([e166063](https://github.com/nuxt/content/commit/e1660637e24705d922a928ec8ca711a2fbec4e18))
+* client utils ([#3506](https://github.com/nuxt/content/issues/3506)) ([2467057](https://github.com/nuxt/content/commit/24670578f859c119b717082636bd216d1a50f477))
+* use Vite and Webpack server for content hot reload ([#3546](https://github.com/nuxt/content/issues/3546)) ([ee06d16](https://github.com/nuxt/content/commit/ee06d16cbcf03abd4093275fc03595169ec1dfdf))
+
+### Bug Fixes
+
+* extend inherited schema ([dd054ea](https://github.com/nuxt/content/commit/dd054ea9a960125af4bf9ebf696f51536e92b5dd))
+
+### Performance Improvements
+
+* **git:** use modern-tar over tar ([#3569](https://github.com/nuxt/content/issues/3569)) ([dd854d5](https://github.com/nuxt/content/commit/dd854d5e43648082d7f75516ecd941073c8fc380))
+
 ## [3.7.1](https://github.com/nuxt/content/compare/v3.7.0...v3.7.1) (2025-09-16)
 
 ### Bug Fixes

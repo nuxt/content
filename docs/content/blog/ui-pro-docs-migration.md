@@ -229,8 +229,6 @@ export default defineNuxtConfig({
 })
 ```
 
-Finally, in order to keep the [app config file updatable](/docs/studio/config) from Studio, we just need to update the helper import of the `nuxt.schema.ts` file from `@nuxthq/studio/theme` to `@nuxt/content/preview`.
-
 ::prose-tip
 That's it, content v3 is now powering the starter. Let's now migrate to version 3 of [Nuxt UI / UI Pro](https://ui3.nuxt.dev).
 ::

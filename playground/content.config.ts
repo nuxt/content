@@ -40,7 +40,7 @@ const content = defineCollection({
 })
 
 const data = defineCollection({
-  type: 'page',
+  type: 'data',
   source: 'data/**',
   schema: z.object({
     path: z.string(),

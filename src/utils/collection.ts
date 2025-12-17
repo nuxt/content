@@ -34,6 +34,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     schema: standardSchema,
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
+    indexes: collection.indexes,
   }
 }
 
@@ -189,8 +190,17 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const bigColumnIndex = values.indexOf(biggestColumn!)
   const bigColumnName = fields[bigColumnIndex]
 
+  function getSliceIndex(column: string, initialIndex: number) {
+    let sliceIndex = initialIndex
+    while (['\\', '"', '\''].includes(column[sliceIndex - 1]!)) {
+      sliceIndex -= 1
+    }
+    return sliceIndex
+  }
+
   if (typeof biggestColumn === 'string') {
-    let sliceIndex = SLICE_SIZE
+    let sliceIndex = getSliceIndex(biggestColumn, SLICE_SIZE)
+
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
 
@@ -201,7 +211,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     ]
     while (sliceIndex < biggestColumn.length) {
       const prevSliceIndex = sliceIndex
-      sliceIndex += SLICE_SIZE
+      sliceIndex = getSliceIndex(biggestColumn, sliceIndex + SLICE_SIZE)
 
       const isLastSlice = sliceIndex > biggestColumn.length
       const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
@@ -221,6 +231,64 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     queries: [sql],
     hash: valuesHash,
   }
+}
+
+/**
+ * Generate a safe index name following SQL naming conventions
+ * Ensures name is within database limits (PostgreSQL 63 char limit)
+ */
+function generateIndexName(collectionName: string, columns: string[]): string {
+  const base = `idx_${collectionName}_${columns.join('_')}`
+
+  // Limit to 63 characters (PostgreSQL limit, most restrictive common limit)
+  // SQLite allows 1024, D1 follows SQLite
+  if (base.length > 63) {
+    // Truncate and add hash to ensure uniqueness
+    const hashSuffix = hash(base).slice(0, 8)
+    return base.slice(0, 54) + '_' + hashSuffix
+  }
+
+  return base
+}
+
+/**
+ * Generate CREATE INDEX statements for a collection
+ * Returns array of SQL statements (one per index)
+ */
+export function generateCollectionIndexStatements(collection: ResolvedCollection): string[] {
+  if (!collection.indexes || collection.indexes.length === 0) {
+    return []
+  }
+
+  const statements: string[] = []
+
+  for (const index of collection.indexes) {
+    // Validate columns exist in schema
+    const invalidColumns = index.columns.filter(
+      column => !collection.fields[column] && column !== 'id',
+    )
+
+    if (invalidColumns.length > 0) {
+      logger.warn(
+        `Index references non-existent column(s) "${invalidColumns.join(', ')}" in collection "${collection.name}". Skipping this index.`,
+      )
+      continue
+    }
+
+    // Generate index name
+    const indexName = index.name || generateIndexName(collection.name, index.columns)
+
+    // Quote column names for SQL safety
+    const quotedColumns = index.columns.map(col => `"${col}"`).join(', ')
+
+    // Build CREATE INDEX statement
+    const uniqueKeyword = index.unique ? 'UNIQUE ' : ''
+    const statement = `CREATE ${uniqueKeyword}INDEX IF NOT EXISTS ${indexName} ON ${collection.tableName} (${quotedColumns});`
+
+    statements.push(statement)
+  }
+
+  return statements
 }
 
 // Convert a collection with Zod schema to SQL table definition
@@ -267,6 +335,12 @@ export function generateCollectionTableDefinition(collection: ResolvedCollection
 
   if (opts.drop) {
     definition = `DROP TABLE IF EXISTS ${collection.tableName};\n${definition}`
+  }
+
+  // Add index statements
+  const indexStatements = generateCollectionIndexStatements(collection)
+  if (indexStatements.length > 0) {
+    definition += '\n' + indexStatements.join('\n')
   }
 
   return definition

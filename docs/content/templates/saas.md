@@ -41,7 +41,7 @@ The Nuxt UI team is dedicated to deliver the best integration and customization 
     - label: TypeScript
       content: A fully typed development experience.
     - label: Nuxt Studio
-      content: Supported by Nuxt Studio for fast updates and previews.
+      content: Use Nuxt Studio module for fast updates and previews.
     - label: Search
       content: A full-text search modal empowered by Fuse.js.
   ---
