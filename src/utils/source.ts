@@ -57,8 +57,8 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
           ...source,
           repository: {
             url: `${protocol}://${host}/${full_name}`,
-            branch: ref || "main",
-          }
+            branch: ref || 'main',
+          },
         }
       }
     }
