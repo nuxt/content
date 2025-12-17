@@ -1,13 +1,10 @@
-import fs, { createReadStream, createWriteStream } from 'node:fs'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
-import { pipeline } from 'node:stream/promises'
-import { createGunzip } from 'node:zlib'
+import fs from 'node:fs'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
 import git from 'isomorphic-git'
 import gitHttp from 'isomorphic-git/http/node'
-import { unpackTar } from 'modern-tar/fs'
 
 import type { GitBasicAuth, GitRefType, GitTokenAuth } from '../types'
 
@@ -18,51 +15,6 @@ export interface GitInfo {
   owner: string
   // Repository URL
   url: string
-}
-
-export async function downloadRepository(url: string, cwd: string, { headers }: { headers?: Record<string, string> } = {}) {
-  const tarFile = join(cwd, '.content.clone.tar.gz')
-  const cacheFile = join(cwd, '.content.cache.json')
-
-  const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
-  if (cache) {
-    // Directory exists, skip download
-    const response = await fetch(url, { method: 'HEAD', headers })
-    const etag = response.headers.get('etag')
-    if (etag === cache.etag) {
-      await writeFile(cacheFile, JSON.stringify({
-        ...cache,
-        updatedAt: new Date().toISOString(),
-      }, null, 2))
-      return
-    }
-  }
-
-  await mkdir(cwd, { recursive: true })
-
-  try {
-    const response = await fetch(url, { headers })
-    const stream = createWriteStream(tarFile)
-    await pipeline(response.body as unknown as ReadableStream[], stream)
-
-    await pipeline(
-      createReadStream(tarFile),
-      createGunzip(),
-      unpackTar(cwd, {
-        strip: 1, // Remove root directory from zip contents to save files directly in cwd
-      }),
-    )
-
-    await writeFile(cacheFile, JSON.stringify({
-      url: url,
-      etag: response.headers.get('etag'),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }, null, 2))
-  }
-  finally {
-    await rm(tarFile, { force: true })
-  }
 }
 
 export async function downloadGitRepository(url: string, cwd: string, auth?: GitBasicAuth | GitTokenAuth | string, ref?: GitRefType) {
@@ -113,60 +65,6 @@ export async function downloadGitRepository(url: string, cwd: string, auth?: Git
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }, null, 2))
-}
-
-export function parseGitHubUrl(url: string) {
-  const regex = /https:\/\/github\.com\/([^/]+)\/([^/]+)(?:\/tree\/([^/]+))?(?:\/(.+))?/
-  const match = url.match(regex)
-
-  if (match) {
-    const org = match[1]
-    const repo = match[2]
-    let branch = match[3] || 'main' // Default to 'main' if no branch is provided
-    let path = match[4] || ''
-
-    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
-      const pathParts = path.split('/')
-      branch = join(branch, pathParts[0] || '')
-      path = pathParts.slice(1).join('/')
-    }
-
-    return {
-      org: org,
-      repo: repo,
-      branch: branch,
-      path: path,
-    }
-  }
-
-  return null
-}
-
-export function parseBitBucketUrl(url: string) {
-  const bitbucketRegex = /https:\/\/bitbucket\.org\/([^/]+)\/([^/]+)(?:\/src\/([^/]+))?(?:\/(.+))?/
-  const bitbucketMatch = url.match(bitbucketRegex)
-
-  if (bitbucketMatch) {
-    const org = bitbucketMatch[1]
-    const repo = bitbucketMatch[2]
-    let branch = bitbucketMatch[3] || 'main' // Default to 'main' if no branch is provided
-    let path = bitbucketMatch[4] || ''
-
-    if (['fix', 'feat', 'chore', 'test', 'docs'].includes(branch)) {
-      const pathParts = path.split('/')
-      branch = join(branch, pathParts[0] || '')
-      path = pathParts.slice(1).join('/')
-    }
-
-    return {
-      org: org,
-      repo: repo,
-      branch: branch,
-      path: path,
-    }
-  }
-
-  return null
 }
 
 export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefined> {
