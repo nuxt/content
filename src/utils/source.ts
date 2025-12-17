@@ -74,12 +74,19 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
         if (source.repository.branch) ref = { branch: source.repository.branch }
         if (source.repository.tag) ref = { tag: source.repository.tag }
 
-        if (source.repository.auth) {
-          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
+        if (!source.repository?.auth && source.authBasic) {
+          source.repository.auth = {
+            username: source.authBasic.username,
+            password: source.authBasic.password,
+          }
         }
-        else {
-          await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, undefined, ref)
+        if (!source.repository?.auth && source.authToken) {
+          source.repository.auth = {
+            token: source.authToken,
+          }
         }
+
+        await downloadGitRepository(source.repository.url!, resolvedSource.cwd!, source.repository.auth, ref)
       }
     }
   }
