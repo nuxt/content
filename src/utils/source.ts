@@ -52,10 +52,14 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
     if (typeof (source.repository) === 'string') {
       const repository = source?.repository && gitUrlParse(source.repository)
       if (repository) {
-        const { source: gitSource, owner, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
-
-        await downloadGitRepository(source.repository!, resolvedSource.cwd!)
+        const { protocol, host, full_name, ref } = repository
+        source = {
+          ...source,
+          repository: {
+            url: `${protocol}://${host}/${full_name}`,
+            branch: ref || "main",
+          }
+        }
       }
     }
 
