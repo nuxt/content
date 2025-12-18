@@ -7,8 +7,8 @@
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "link:..",
-    "@nuxt/ui": "^4.2.1",
-    "@nuxthub/core": "^0.10.2",
+    "@nuxt/ui": "^4.3.0",
+    "@nuxthub/core": "^0.10.3",
     "@nuxtjs/plausible": "^2.0.1",
     "@vercel/analytics": "^1.6.1",
     "@vercel/speed-insights": "^1.3.1",
@@ -18,6 +18,6 @@
     "drizzle-orm": "^0.45.1",
     "minisearch": "^7.2.0",
     "nuxt": "^4.2.2",
-    "nuxt-studio": "1.0.0-beta.0"
+    "nuxt-studio": "1.0.0-beta.1"
   }
 }
