@@ -389,6 +389,8 @@ importers:
 
   test/fixtures/basic: {}
 
+  test/fixtures/csv: {}
+
 packages:
 
   '@alloc/quick-lru@5.2.0':

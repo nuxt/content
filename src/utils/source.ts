@@ -126,17 +126,26 @@ export function defineCSVSource(source: CollectionSource): ResolvedCollectionSou
       return new Promise((resolve) => {
         const csvKeys: string[] = []
         let count = 0
+        let lastByteWasNewline = true
         createReadStream(join(resolvedSource.cwd, fixed, keys[0]!))
           .on('data', function (chunk) {
-            for (let i = 0; i < chunk.length; i += 1)
+            for (let i = 0; i < chunk.length; i += 1) {
               if (chunk[i] == 10) {
                 if (count > 0) { // count === 0 is CSV header row and should not be included
                   csvKeys.push(`${keys[0]}#${count}`)
                 }
                 count += 1
               }
+              lastByteWasNewline = chunk[i] == 10
+            }
           })
-          .on('end', () => resolve(csvKeys))
+          .on('end', () => {
+            // If file doesn't end with newline and we have at least one data row, add the last row
+            if (!lastByteWasNewline && count > 0) {
+              csvKeys.push(`${keys[0]}#${count}`)
+            }
+            resolve(csvKeys)
+          })
       })
     },
     getItem: async (key) => {
