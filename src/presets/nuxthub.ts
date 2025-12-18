@@ -10,7 +10,7 @@ import nodePreset from './node'
 
 export default definePreset({
   name: 'nuxthub',
-  async setup(options, nuxt) {
+  async setup(options, nuxt, config) {
     const nuxtOptions = nuxt.options as unknown as { hub: { db?: string | object | false, database?: boolean } }
     if (!nuxtOptions.hub?.db && !nuxtOptions.hub?.database) {
       logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
@@ -34,6 +34,13 @@ export default definePreset({
       else {
         options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
       }
+    }
+    const preset = (process.env.NITRO_PRESET || nuxt.options.nitro.preset || provider).replace(/_/g, '-')
+    if (preset.includes('cloudflare')) {
+      await cloudflarePreset.setup?.(options, nuxt, config)
+    }
+    else {
+      await nodePreset.setup?.(options, nuxt, config)
     }
   },
   async setupNitro(nitroConfig, options) {
