@@ -32,14 +32,12 @@ export default createConfigForNuxt({
       'examples/**/*.md',
       'README.md',
     ],
-    markdownlint: {
-      config: {
-        MD013: false,
-        // TODO: detect the issue
-        MD051: false,
+    config: {
+      MD013: false,
+      // TODO: detect the issue
+      MD051: false,
 
-        // TODO: fix the issue
-        MD060: false,
-      },
+      // TODO: fix the issue
+      MD060: false,
     },
   }))
