@@ -96,6 +96,10 @@ export const collections = {
 
 ### Built with Nuxt Studio in mind
 
+::warning
+This article was published before v3.7, learn [this guide](https://github.com/nuxt/content/blob/main/CHANGELOG.md#370-2025-09-12) to migrate.
+::
+
 Nuxt Studio was originally developed alongside Nuxt Content v2, but with v3, we're building the module with Nuxt Studio experience in mind. Our goal is to create the best CMS platform for content editing, while still offering the best developers experience.
 
 For example, collection schemas will help us further enhance form generation in Studio. Among other things, you'll be able to set the editor type for a field directly in your schema.

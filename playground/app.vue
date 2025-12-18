@@ -76,7 +76,7 @@ const items = ref([
 
 <style>
 @import "tailwindcss" theme(static);
-@import "@nuxt/ui-pro";
+@import "@nuxt/ui";
 
 @source "./content/**/*";
 </style>

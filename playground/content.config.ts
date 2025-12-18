@@ -1,4 +1,5 @@
-import { defineContentConfig, defineCollectionSource, defineCollection, z, property } from '@nuxt/content'
+import { defineContentConfig, defineCollectionSource, defineCollection, property } from '@nuxt/content'
+import { z } from 'zod'
 
 const hackernews = defineCollection({
   type: 'data',
@@ -39,7 +40,7 @@ const content = defineCollection({
 })
 
 const data = defineCollection({
-  type: 'page',
+  type: 'data',
   source: 'data/**',
   schema: z.object({
     path: z.string(),
@@ -104,7 +105,7 @@ const collections = {
   nuxt: defineCollection({
     type: 'page',
     source: {
-      repository: 'https://github.com/nuxt/nuxt',
+      repository: 'https://github.com/nuxt/nuxt/tree/main',
       include: 'docs/**',
       prefix: '/nuxt',
       exclude: [

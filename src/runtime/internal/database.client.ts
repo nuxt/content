@@ -6,20 +6,26 @@ import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
 let db: Database
-const loadedCollections: Record<string, string> = {}
-const dbPromises: Record<string, Promise<Database>> = {}
+const loadedCollections = new Map<string, string>()
+const dbPromises = new Map<string, Promise<Database>>()
 export function loadDatabaseAdapter<T>(collection: T): DatabaseAdapter {
   async function loadAdapter(collection: T) {
+    const collectionKey = String(collection)
     if (!db) {
-      dbPromises._ = dbPromises._ || initializeDatabase()
-      db = await dbPromises._
-      Reflect.deleteProperty(dbPromises, '_')
+      if (!dbPromises.has('_')) {
+        dbPromises.set('_', initializeDatabase())
+      }
+      db = await dbPromises.get('_')!
+      dbPromises.delete('_')
     }
-    if (!loadedCollections[String(collection)]) {
-      dbPromises[String(collection)] = dbPromises[String(collection)] || loadCollectionDatabase(collection)
-      await dbPromises[String(collection)]
-      loadedCollections[String(collection)] = 'loaded'
-      Reflect.deleteProperty(dbPromises, String(collection))
+    if (!loadedCollections.has(collectionKey)) {
+      if (!dbPromises.has(collectionKey)) {
+        dbPromises.set(collectionKey, loadCollectionDatabase(collection))
+      }
+
+      await dbPromises.get(collectionKey)
+      loadedCollections.set(collectionKey, 'loaded')
+      dbPromises.delete(collectionKey)
     }
 
     return db

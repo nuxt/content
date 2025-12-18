@@ -4,7 +4,6 @@ import type { ContentTransformer, TransformContentOptions, ContentFile } from '.
 import csv from './csv'
 import markdown from './markdown'
 import yaml from './yaml'
-import pathMeta from './path-meta'
 import json from './json'
 
 const TRANSFORMERS = [
@@ -12,7 +11,6 @@ const TRANSFORMERS = [
   markdown,
   json,
   yaml,
-  pathMeta,
 ]
 
 function getParser(ext: string, additionalTransformers: ContentTransformer[] = []): ContentTransformer | undefined {

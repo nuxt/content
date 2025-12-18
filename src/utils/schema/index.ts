@@ -127,7 +127,19 @@ export function replaceComponentSchemas<T = Draft07Definition | Draft07Definitio
     }
 
     const meta = getComponentMeta(path, { rootDir: nuxt.options.rootDir, cache: true })
-    return propsToJsonSchema(meta.props) as T
+    const schema = propsToJsonSchema(meta.props) as T
+
+    return {
+      ...schema,
+      required: [...((schema as Draft07DefinitionProperty).required || []), ...(property as Draft07DefinitionProperty).required || []],
+      properties: {
+        ...(schema as Draft07DefinitionProperty).properties,
+        ...(property as Draft07DefinitionProperty).properties,
+      },
+      additionalProperties: (schema as Draft07DefinitionProperty).additionalProperties
+        || (property as Draft07DefinitionProperty).additionalProperties
+        || false,
+    }
   }
 
   // Look for `$content.inherit` properties in nested objects

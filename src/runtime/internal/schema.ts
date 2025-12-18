@@ -1,4 +1,4 @@
-import type { Draft07, Draft07DefinitionProperty, Draft07DefinitionPropertyAllOf, Draft07DefinitionPropertyAnyOf } from '@nuxt/content'
+import type { Draft07, Draft07DefinitionProperty, Draft07DefinitionPropertyAllOf, Draft07DefinitionPropertyAnyOf, Draft07DefinitionPropertyOneOf } from '@nuxt/content'
 
 const propertyTypes = {
   string: 'VARCHAR',
@@ -20,15 +20,16 @@ export function getOrderedSchemaKeys(schema: Draft07) {
   return Array.from(keys) as string[]
 }
 
-function isJSONProperty(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf) {
+function isJSONProperty(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf | Draft07DefinitionPropertyOneOf) {
   const propertyType = (property as Draft07DefinitionProperty).type
   return propertyType === 'object'
     || propertyType === 'array'
     || !!(property as Draft07DefinitionPropertyAnyOf).anyOf
     || !!(property as Draft07DefinitionPropertyAllOf).allOf
+    || !!(property as Draft07DefinitionPropertyOneOf).oneOf
 }
 
-function getPropertyType(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf) {
+function getPropertyType(property: Draft07DefinitionProperty | Draft07DefinitionPropertyAllOf | Draft07DefinitionPropertyAnyOf | Draft07DefinitionPropertyOneOf) {
   const propertyType = (property as Draft07DefinitionProperty).type
   let type = propertyTypes[propertyType as keyof typeof propertyTypes] || 'TEXT'
 
@@ -49,6 +50,18 @@ function getPropertyType(property: Draft07DefinitionProperty | Draft07Definition
       type = nullIndex === 0
         ? getPropertyType(anyOf[1]!)
         : getPropertyType(anyOf[0]!)
+    }
+  }
+
+  if ((property as Draft07DefinitionPropertyOneOf).oneOf) {
+    type = 'TEXT'
+
+    const oneOf = (property as Draft07DefinitionPropertyOneOf).oneOf
+    const nullIndex = oneOf.findIndex(t => t.type === 'null')
+    if (oneOf.length === 2 && nullIndex !== -1) {
+      type = nullIndex === 0
+        ? getPropertyType(oneOf[1]!)
+        : getPropertyType(oneOf[0]!)
     }
   }
 
@@ -79,8 +92,15 @@ export function describeProperty(schema: Draft07, property: string) {
     enum: (shape[property] as Draft07DefinitionProperty).enum,
     json: isJSONProperty(shape[property]),
   }
+
   if ((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf) {
     if (((shape[property] as Draft07DefinitionPropertyAnyOf).anyOf).find(t => t.type === 'null')) {
+      result.nullable = true
+    }
+  }
+
+  if ((shape[property] as Draft07DefinitionPropertyOneOf).oneOf) {
+    if (((shape[property] as Draft07DefinitionPropertyOneOf).oneOf).find(t => t.type === 'null')) {
       result.nullable = true
     }
   }

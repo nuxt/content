@@ -8,10 +8,10 @@ category: docs
 createdAt: 2023-11-15T17:41:03.087Z
 demo: https://docus.dev
 description: Write beautiful internationalized docs with Markdown and Nuxt I18n uesssh
-licenseType: nuxt-ui-pro
+licenseType: nuxt-ui
 mainScreen: /templates/docus.webp
 name: docus
-owner: nuxtlabs
+owner: nuxt-content
 image1: /blog/docus.webp
 image2: ""
 image3: ""
@@ -50,12 +50,13 @@ Your multilingual documentation site will be running at `http://localhost:3000`
 ## 🌍 Languages
 
 This starter comes pre-configured with:
+
 - 🇺🇸 **English** (`en`) - Default language
 - 🇫🇷 **Français** (`fr`) - French translation
 
 ## 📁 Project Structure
 
-```
+```text
 my-docs/
 ├── content/              # Your markdown content
 │   ├── en/              # English content
@@ -73,7 +74,7 @@ my-docs/
 
 The content is organized by language, making it easy to manage translations:
 
-```
+```text
 content/
 ├── en/                   # English content
 │   ├── index.md
@@ -108,7 +109,7 @@ This starter comes pre-configured with:
 - [Nuxt 4](https://nuxt.com) - The web framework
 - [Nuxt Content](https://content.nuxt.com/) - File-based CMS
 - [Nuxt i18n](https://i18n.nuxt.com/) - Internationalization
-- [Nuxt UI Pro](https://ui.nuxt.com/pro) - Premium UI components
+- [Nuxt UI](https://ui.nuxt.com) - Premium UI components
 - [Nuxt Image](https://image.nuxt.com/) - Optimized images
 - [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS
 - [Docus Layer](https://www.npmjs.com/package/docus) - Documentation theme
@@ -129,7 +130,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
 
 ## 📄 License
 
-[MIT License](https://opensource.org/licenses/MIT) 
+[MIT License](https://opensource.org/licenses/MIT)
 
 #right
   :::template-features
@@ -139,7 +140,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
       content: The web framework
     - label: Nuxt I18n
       content: Internationalization support.
-    - label: Nuxt UI Pro
+    - label: Nuxt UI
       content: Offers a very large set of full customizable components.
     - label: TypeScript
       content: A fully typed development experience.
@@ -150,7 +151,7 @@ The built files will be in the `.output` directory, ready for deployment to any 
     - label: Nuxt Image
       content: A powerful image component.
     - label: Nuxt Content
-      content: A powerful content component.    
+      content: A powerful content component.
   ---
   :::
 ::

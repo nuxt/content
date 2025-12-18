@@ -11,6 +11,7 @@ import {
   updateTemplates,
   addComponent,
   installModule,
+  addVitePlugin,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -24,13 +25,13 @@ import { generateCollectionInsert, generateCollectionTableDefinition } from './u
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
-import { getContentChecksum, logger, watchContents, chunks, watchComponents, startSocketServer } from './utils/dev'
+import { getContentChecksum, logger, chunks, NuxtContentHMRUnplugin } from './utils/dev'
 import { loadContentConfig } from './utils/config'
 import { createParser } from './utils/content'
-import { installMDCModule } from './utils/mdc'
+import { configureMDCModule } from './utils/mdc'
 import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
-import { setupPreview, shouldEnablePreview } from './utils/preview/module'
+import { setupPreview, setupPreviewWithAPI, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 import type { ParsedContentFile } from './types'
@@ -40,48 +41,69 @@ import { initiateValidatorsContext } from './utils/dependencies'
 export * from './utils'
 export type * from './types'
 
+const moduleDefaults: Partial<ModuleOptions> = {
+  _localDatabase: {
+    type: 'sqlite',
+    filename: '.data/content/contents.sqlite',
+  },
+  preview: {},
+  watch: { enabled: true },
+  renderer: {
+    alias: {},
+    anchorLinks: {
+      h2: true,
+      h3: true,
+      h4: true,
+    },
+  },
+  build: {
+    pathMeta: {},
+    markdown: {},
+    yaml: {},
+    csv: {
+      delimiter: ',',
+      json: true,
+    },
+  },
+  experimental: {
+    nativeSqlite: false,
+  },
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/content',
     configKey: 'content',
     version,
+    compatibility: {
+      nuxt: '>=4.1.0 || ^3.19.0',
+    },
     docs: 'https://content.nuxt.com',
   },
-  defaults: {
-    _localDatabase: {
-      type: 'sqlite',
-      filename: '.data/content/contents.sqlite',
-    },
-    preview: {},
-    watch: {
-      enabled: true,
-      port: {
-        port: 4000,
-        portRange: [4000, 4040],
+  defaults: moduleDefaults,
+  moduleDependencies(nuxt) {
+    const nuxtOptions = nuxt.options as unknown as { content: ModuleOptions }
+    const contentOptions = defu(nuxtOptions.content, moduleDefaults)
+
+    return {
+      '@nuxtjs/mdc': {
+        overrides: {
+          highlight: contentOptions.build?.markdown?.highlight,
+          components: {
+            prose: true,
+            map: contentOptions.renderer.alias,
+          },
+          headings: {
+            anchorLinks: contentOptions.renderer.anchorLinks,
+          },
+          remarkPlugins: contentOptions.build?.markdown?.remarkPlugins,
+          rehypePlugins: contentOptions.build?.markdown?.rehypePlugins,
+        },
+        defaults: {
+          highlight: { noApiRoute: true },
+        },
       },
-      hostname: 'localhost',
-      showURL: false,
-    },
-    renderer: {
-      alias: {},
-      anchorLinks: {
-        h2: true,
-        h3: true,
-        h4: true,
-      },
-    },
-    build: {
-      pathMeta: {},
-      markdown: {},
-      yaml: {},
-      csv: {
-        delimiter: ',',
-        json: true,
-      },
-    },
-    experimental: {
-      nativeSqlite: false,
-    },
+    }
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -96,22 +118,22 @@ export default defineNuxtModule<ModuleOptions>({
     // Detect installed validators and them into content context
     await initiateValidatorsContext()
 
-    const { collections } = await loadContentConfig(nuxt)
+    const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
 
-    nuxt.options.vite.optimizeDeps ||= {}
-    nuxt.options.vite.optimizeDeps.exclude ||= []
-    nuxt.options.vite.optimizeDeps.exclude.push('@sqlite.org/sqlite-wasm')
+    nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+      exclude: ['@sqlite.org/sqlite-wasm'],
+    })
 
     // Ignore content directory files in building
     nuxt.options.ignore = [...(nuxt.options.ignore || []), 'content/**']
 
     // Helpers are designed to be enviroment agnostic
     addImports([
-      { name: 'queryCollection', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/app') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/app') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
@@ -122,16 +144,18 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
     // Add Templates & aliases
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     addTemplate(fullDatabaseRawDumpTemplate(manifest))
-    nuxt.options.alias['#content/components'] = addTemplate(componentsManifestTemplate(manifest)).dst
-    nuxt.options.alias['#content/manifest'] = addTemplate(manifestTemplate(manifest)).dst
+    nuxt.options.alias = defu(nuxt.options.alias, {
+      '#content/components': addTemplate(componentsManifestTemplate(manifest)).dst,
+      '#content/manifest': addTemplate(manifestTemplate(manifest)).dst,
+    })
 
     // Add content types to Nuxt and Nitro
     const typesTemplateDst = addTypeTemplate(contentTypesTemplate(manifest.collections)).dst
-    nuxt.options.nitro.typescript ||= {}
-    nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
-      include: [typesTemplateDst],
+    nuxt.options.nitro.typescript = defu(nuxt.options.nitro.typescript, {
+      tsConfig: {
+        include: [typesTemplateDst],
+      },
     })
 
     // Register user components
@@ -159,29 +183,9 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    const preset = findPreset(nuxt)
-    await preset?.setup?.(options, nuxt)
-
-    // Provide default database configuration here since nuxt is merging defaults and user options
-    options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
-    await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
-    await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
-
-    // Module Options
-    nuxt.options.runtimeConfig.public.content = {
-      wsUrl: '',
-    }
-    nuxt.options.runtimeConfig.content = {
-      databaseVersion,
-      version,
-      database: options.database,
-      localDatabase: options._localDatabase!,
-      integrityCheck: true,
-    } as never
-
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
-      await preset.setupNitro(config, { manifest, resolver, moduleOptions: options })
+      await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
 
       const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
       config.alias ||= {}
@@ -195,18 +199,42 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle HMR changes
-      if (nuxt.options.dev) {
+      if (nuxt.options.dev && options.watch?.enabled !== false) {
         addPlugin({ src: resolver.resolve('./runtime/plugins/websocket.dev'), mode: 'client' })
-        await watchComponents(nuxt)
-        const socket = await startSocketServer(nuxt, options, manifest)
-        await watchContents(nuxt, options, manifest, socket)
+        addVitePlugin(NuxtContentHMRUnplugin.vite({
+          nuxt,
+          moduleOptions: options,
+          manifest,
+        }))
       }
     })
 
     if (hasNuxtModule('nuxt-llms')) {
       installModule(resolver.resolve('./features/llms'))
     }
-    await installMDCModule(options, nuxt)
+
+    await configureMDCModule(options, nuxt)
+
+    nuxt.hook('modules:done', async () => {
+      const preset = findPreset(nuxt)
+      await preset?.setup?.(options, nuxt)
+      // Provide default database configuration here since nuxt is merging defaults and user options
+      options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
+      await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })
+      await refineDatabaseConfig(options.database, { rootDir: nuxt.options.rootDir })
+
+      // Module Options
+      nuxt.options.runtimeConfig.public.content = {
+        wsUrl: '',
+      }
+      nuxt.options.runtimeConfig.content = {
+        databaseVersion,
+        version,
+        database: options.database,
+        localDatabase: options._localDatabase!,
+        integrityCheck: true,
+      } as never
+    })
 
     if (nuxt.options._prepare) {
       return
@@ -233,8 +261,11 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Handle preview mode
-      if (shouldEnablePreview(nuxt, options)) {
+      if (hasNuxtModule('nuxt-studio')) {
         await setupPreview(options, nuxt, resolver, manifest)
+      }
+      if (shouldEnablePreview(nuxt, options)) {
+        await setupPreviewWithAPI(options, nuxt, resolver, manifest)
       }
     })
   },
@@ -326,6 +357,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 id: keyInCollection,
                 body: content,
                 path: fullPath,
+                collectionType: collection.type,
               })
               if (parsedContent) {
                 db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)

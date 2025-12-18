@@ -3,7 +3,8 @@ import { resolve } from 'node:path'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core'],
+  extends: ['docus'],
+  modules: ['@nuxtjs/plausible', '@vueuse/nuxt', '@nuxthub/core', 'nuxt-studio'],
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt Content',
@@ -16,13 +17,9 @@ export default defineNuxtConfig({
     build: {
       markdown: {
         highlight: {
-          langs: ['docker'],
+          langs: ['docker', 'json'],
         },
       },
-    },
-    preview: {
-      dev: true,
-      api: 'https://api.nuxt.studio',
     },
   },
   routeRules: {
@@ -34,20 +31,20 @@ export default defineNuxtConfig({
         return Object.assign(acc, { [from]: { redirect: to } })
       }, {} as Record<string, { redirect: string }>),
   },
-  future: {
-    compatibilityVersion: 4,
+  nitro: {
+    compatibilityDate: {
+      // Don't generate observability routes
+      vercel: '2025-07-14',
+    },
   },
   hub: {
-    database: true,
+    db: 'sqlite',
     cache: true,
-  },
-  github: {
-    rootDir: 'docs',
   },
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',
-    description: 'Nuxt Content is a Git-based headless CMS for Nuxt',
+    description: 'Nuxt Content is a git-based CMS for Nuxt projects.',
     notes: [
       'The documentation only includes Nuxt Content v3 docs.',
       'The content is automatically generated from the same source as the official documentation.',
@@ -55,6 +52,15 @@ export default defineNuxtConfig({
     full: {
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
+    },
+  },
+  studio: {
+    route: '/admin',
+    repository: {
+      owner: 'nuxt',
+      repo: 'content',
+      branch: 'main',
+      rootDir: 'docs',
     },
   },
 })

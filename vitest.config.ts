@@ -2,6 +2,11 @@ import { resolve } from 'node:path'
 import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
+  resolve: {
+    alias: {
+      'bun:test': resolve('./test/mock/bun-test-stub.ts'),
+    },
+  },
   test: {
     environment: 'nuxt',
     alias: {

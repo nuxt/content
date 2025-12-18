@@ -1,4 +1,3 @@
-import type { ListenOptions } from 'listhen'
 import type { LanguageRegistration, BuiltinLanguage as ShikiLang, BuiltinTheme as ShikiTheme, ThemeRegistrationAny, ThemeRegistrationRaw } from 'shiki'
 import type { GitInfo } from '../utils/git'
 import type { MarkdownPlugin } from './content'
@@ -19,7 +18,7 @@ export interface SqliteDatabaseConfig {
 }
 
 export type PostgreSQLDatabaseConfig = {
-  type: 'postgres'
+  type: 'postgresql' | 'postgres'
   url: string
 }
 
@@ -32,7 +31,15 @@ export type LibSQLDatabaseConfig = {
   /**
    * The authentication token for the libSQL/Turso database
    */
-  authToken: string
+  authToken?: string
+}
+
+export type PGliteDatabaseConfig = {
+  type: 'pglite'
+  /**
+   * Path to the PGlite data directory (optional, defaults to in-memory)
+   */
+  dataDir?: string
 }
 
 export interface PreviewOptions {
@@ -60,7 +67,7 @@ export interface ModuleOptions {
    * Production database configuration
    * @default { type: 'sqlite', filename: './contents.sqlite' }
    */
-  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig
+  database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
   /**
    * Preview mode configuration
    * @default {}
@@ -70,7 +77,7 @@ export interface ModuleOptions {
    * Development HMR
    * @default { enabled: true }
    */
-  watch?: Partial<ListenOptions> & { enabled?: boolean }
+  watch?: { enabled?: boolean }
 
   renderer: {
     /**
@@ -212,8 +219,8 @@ export interface RuntimeConfig {
   content: {
     version: string
     databaseVersion: string
-    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig
-    localDatabase: SqliteDatabaseConfig
+    database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
+    localDatabase: SqliteDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     integrityCheck: boolean
   }
 }

@@ -1,5 +1,6 @@
 import type { Highlighter, Toc } from '@nuxtjs/mdc'
 import type { MinimarkTree } from './tree'
+import type { CollectionType } from './collection'
 
 export type { Toc, TocLink } from '@nuxtjs/mdc'
 
@@ -9,6 +10,7 @@ export interface ContentFile extends Record<string, unknown> {
   path: string
   dirname?: string
   extension?: string
+  collectionType?: CollectionType
 }
 
 export interface TransformedContent {

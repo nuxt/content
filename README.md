@@ -12,7 +12,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 
 - [📖 &nbsp;Read the documentation](https://content.nuxt.com)
 - [✨ &nbsp;Intro video](https://www.youtube.com/watch?v=o9e12WbKrd8)
-- [✍️ &nbsp;Nuxt Studio](https://content.nuxt.com/studio)
+- [✍️ &nbsp;Nuxt Studio](https://content.nuxt.com/docs/studio/setup)
 
 ## Features
 
@@ -48,7 +48,7 @@ Nuxt Content reads the `content/` directory in your project, parses `.md`, `.yml
 [license-src]: https://img.shields.io/github/license/nuxt/content.svg?style=flat&colorA=18181B&colorB=28CF8D
 [license-href]: https://github.com/nuxt/content/blob/main/LICENSE
 
-[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt
 [nuxt-href]: https://nuxt.com
 
 [volta-src]: https://user-images.githubusercontent.com/904724/209143798-32345f6c-3cf8-4e06-9659-f4ace4a6acde.svg

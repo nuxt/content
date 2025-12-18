@@ -7,8 +7,8 @@ export const TEMPLATE_BADGES = {
     color: 'secondary' as const,
     label: 'Free',
   },
-  'nuxt-ui-pro': {
+  'nuxt-ui': {
     color: 'primary' as const,
-    label: 'Nuxt UI Pro',
+    label: 'Nuxt UI',
   },
 }
