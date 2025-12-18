@@ -173,13 +173,17 @@ export default defineNuxtModule<ModuleOptions>({
     // Prerender database.sql routes for each collection to fetch dump
     nuxt.options.routeRules ||= {}
 
-    // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
-    // @see https://github.com/nuxt/content/pull/3299
-    nuxt.options.routeRules![`/__nuxt_content/**`] = { robots: false }
+    nuxt.options.routeRules![`/__nuxt_content/**`] = {
+      ...nuxt.options.routeRules![`/__nuxt_content/**`],
+      // @ts-expect-error - Prevent nuxtseo from indexing nuxt-content routes
+      robots: false,
+      cache: false,
+    }
 
     manifest.collections.forEach((collection) => {
       if (!collection.private) {
-        nuxt.options.routeRules![`/__nuxt_content/${collection.name}/sql_dump.txt`] = { prerender: true }
+        const key = `/__nuxt_content/${collection.name}/sql_dump.txt`
+        nuxt.options.routeRules![key] = { ...nuxt.options.routeRules![key], prerender: true }
       }
     })
 
@@ -193,9 +197,11 @@ export default defineNuxtModule<ModuleOptions>({
       config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
 
       config.handlers ||= []
-      config.handlers.push({
-        route: '/__nuxt_content/:collection/query',
-        handler: resolver.resolve('./runtime/api/query.post'),
+      manifest.collections.forEach((collection) => {
+        config.handlers!.push({
+          route: `/__nuxt_content/${collection.name}/query`,
+          handler: resolver.resolve('./runtime/api/query.post'),
+        })
       })
 
       // Handle HMR changes
@@ -217,7 +223,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.hook('modules:done', async () => {
       const preset = findPreset(nuxt)
-      await preset?.setup?.(options, nuxt)
+      await preset?.setup?.(options, nuxt, { resolver, manifest })
       // Provide default database configuration here since nuxt is merging defaults and user options
       options.database ||= { type: 'sqlite', filename: './contents.sqlite' }
       await refineDatabaseConfig(options._localDatabase, { rootDir: nuxt.options.rootDir, updateSqliteFileName: true })

@@ -1,4 +1,4 @@
-import { addTemplate } from '@nuxt/kit'
+import { addServerHandler, addTemplate } from '@nuxt/kit'
 import { join } from 'pathe'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
@@ -6,7 +6,15 @@ import { collectionDumpTemplate } from '../utils/templates'
 
 export default definePreset({
   name: 'cloudflare',
-  async setupNitro(nitroConfig, { manifest, resolver }) {
+  setup(_options, _nuxt, { resolver, manifest }) {
+    manifest.collections.map((collection) => {
+      addServerHandler({
+        route: `/__nuxt_content/${collection.name}/sql_dump.txt`,
+        handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+      })
+    })
+  },
+  async setupNitro(nitroConfig, { manifest }) {
     if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
       logger.warn('Deploying to Cloudflare requires using D1 database, switching to D1 database with binding `DB`.')
       nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
@@ -25,10 +33,6 @@ export default definePreset({
 
     // Add raw content dump to public assets
     nitroConfig.publicAssets.push({ dir: join(nitroConfig.buildDir!, 'content', 'raw'), maxAge: 60 })
-    nitroConfig.handlers.push({
-      route: '/__nuxt_content/:collection/sql_dump.txt',
-      handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
-    })
   },
 
 })

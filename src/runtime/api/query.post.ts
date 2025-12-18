@@ -6,7 +6,7 @@ import { useRuntimeConfig } from '#imports'
 
 export default eventHandler(async (event) => {
   const { sql } = await readBody(event)
-  const collection = getRouterParam(event, 'collection')!
+  const collection = getRouterParam(event, 'collection')! || event.path?.split('/')?.[2] || ''
 
   assertSafeQuery(sql, collection)
 
