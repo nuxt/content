@@ -65,8 +65,8 @@ importers:
         specifier: ^16.1.0
         version: 16.1.0
       hookable:
-        specifier: ^5.5.3
-        version: 5.5.3
+        specifier: ^6.0.1
+        version: 6.0.1
       isomorphic-git:
         specifier: ^1.36.1
         version: 1.36.1
@@ -5755,6 +5755,9 @@ packages:
 
   hookable@6.0.0-rc.1:
     resolution: {integrity: sha512-HTdlk761/7uL1OuzvMicnj5F5pGq+iITNCYuKVXakQGn95zyYl5b8u/t407RrU34Jv0vYMiqtkFXEJKHYSFViQ==}
+
+  hookable@6.0.1:
+    resolution: {integrity: sha512-uKGyY8BuzN/a5gvzvA+3FVWo0+wUjgtfSdnmjtrOVwQCZPHpHDH2WRO3VZSOeluYrHoDCiXFffZXs8Dj1ULWtw==}
 
   hosted-git-info@8.1.0:
     resolution: {integrity: sha512-Rw/B2DNQaPBICNXEm8balFz9a6WpZrkCGpcWFpy7nCj+NyhSdqXipmfvtmWt9xGfp0wZnBxB+iVpLmQMYt47Tw==}
@@ -15167,6 +15170,8 @@ snapshots:
   hookable@5.5.3: {}
 
   hookable@6.0.0-rc.1: {}
+
+  hookable@6.0.1: {}
 
   hosted-git-info@8.1.0:
     dependencies:
