@@ -2,6 +2,9 @@ contact_links:
   - name: 📚 Documentation
     url: https://content.nuxt.com/
     about: Check documentation for usage
+  - name: ✏️ Studio repository
+    url: https://github.com/nuxt-content/studio
+    about: Feature request, report bug, …
   - name: 💬 Discussions
     url: https://github.com/nuxt/content/discussions
     about: Use discussions if you have an idea for improvement and asking questions
