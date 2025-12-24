@@ -43,7 +43,7 @@ Discover the Nuxt Studio module on GitHub.
 
 ## 🌄 Why We're Sunsetting [nuxt.studio](https://nuxt.studio)
 
-When NuxtLabs joined Vercel, we promised to make our premium products free and open source. We're following the same approach already taken with [Nuxt UI](https://ui.nuxt.com) and soon applied to [NuxtHub](https://hub.nuxt.com).
+When NuxtLabs joined Vercel, we promised to make our premium products free and open source.We're following the same approach already taken with [Nuxt UI](https://ui.nuxt.com) and soon applied to [NuxtHub](https://hub.nuxt.com).
 
 For us, this means everything. It's the opportunity to focus entirely on building tools that are **free, open source, and accessible to everyone**.
 
@@ -68,9 +68,9 @@ Try editing this page
 
 - **Self-hosted** — runs entirely on your infrastructure alongside your Nuxt app
 - **Free and open-source** — released under the MIT license
-- **Dev integration** — works also in development mode
+- **Dev integration** — works also in development mode
 
-## 📦 Features
+## 📦 Features
 
 This stable release includes everything you need to edit content in production:
 
@@ -147,12 +147,12 @@ Follow the complete setup guide for detailed installation instructions.
 
 ## 📅 Sunset Timeline
 
-::prose-steps{level="4"}
-#### Now
+::prose-steps
+### Now
 
 You can already migrate to the new module and cancel your subscription. The new Studio module and legacy platform can run simultaneously during the transition.
 
-#### First Week of January 2026
+### First Week of January 2026
 
 The legacy nuxt.studio platform will be permanently shut down and all subscriptions will end automatically
 ::
@@ -174,7 +174,7 @@ Migration is extremely simple:
 We're committed to making the open-source module an even better experience. Here's what's coming in 2026:
 
 - **AI-powered content generation** — intelligent content suggestions and assistance
-- **TipTap extension exposal** — we'll expose the TipTap extensions we've built (related to MDC syntax) so you can use it with the [Nuxt UI Editor](https://ui.nuxt.com/docs/components/editor).
+- **TipTap extension exposal** — we'll expose the TipTap extensions we've built (related to MDC syntax) so you can use it with the [Nuxt UI Editor](https://ui.nuxt.com/docs/components/editor).
 - **Community-driven features** — shaped by your feedback
 
 ## 🙏 Thank You
