@@ -13,7 +13,7 @@
     "@libsql/client": "^0.15.15",
     "@nuxt/content": "latest",
     "@nuxt/ui": "^4.3.0",
-    "@nuxthub/core": "^0.10.3",
+    "@nuxthub/core": "^0.10.4",
     "better-sqlite3": "^12.5.0",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.2.2",
