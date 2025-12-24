@@ -17,6 +17,7 @@ orientation: horizontal
   :::u-button
   ---
   size: sm
+  label: Nuxt Studio is out
   to: https://github.com/nuxt-content/studio
   variant: outline
   trailing-icon: i-lucide-arrow-right
