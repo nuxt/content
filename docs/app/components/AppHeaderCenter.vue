@@ -9,10 +9,6 @@ const links = computed(() => [
     active: route.path.startsWith('/docs') && !route.path.startsWith('/docs/studio'),
   }, {
     label: 'Studio',
-    badge: {
-      label: 'beta',
-      color: 'primary',
-    },
     icon: 'i-lucide-file-pen-line',
     to: '/docs/studio/setup',
     active: route.path.startsWith('/docs/studio'),
