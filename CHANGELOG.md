@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.10.0](https://github.com/nuxt/content/compare/v3.9.0...v3.10.0) (2025-12-24)
+
+### Features
+
+* add optional database indexes ([#3637](https://github.com/nuxt/content/issues/3637)) ([8ab6ff1](https://github.com/nuxt/content/commit/8ab6ff119d20fb9237a5f59ea476e93c6c1a7bca))
+* **search:** add minHeading/maxHeading options to queryCollectionSearchSections ([#3636](https://github.com/nuxt/content/issues/3636)) ([8053ae7](https://github.com/nuxt/content/commit/8053ae7119bdc0e2a246ba0c9c51b9f8782fd140))
+* shallow clone git repository sources ([#3542](https://github.com/nuxt/content/issues/3542)) ([e6bf06f](https://github.com/nuxt/content/commit/e6bf06f02e594a628665dfb4a63778ebf2b3a54c))
+* single CSV file collections ([#3513](https://github.com/nuxt/content/issues/3513)) ([8d88738](https://github.com/nuxt/content/commit/8d88738d0c86dc193bfd060357c16a85f93e73ef))
+
+### Bug Fixes
+
+* **database:** sqlite memory driver syntax ([#3635](https://github.com/nuxt/content/issues/3635)) ([9b4b4f2](https://github.com/nuxt/content/commit/9b4b4f2e910b1bbdf979235b15ec8962eeaf14fa))
+* **docs:** prerendering issues ([b8c5225](https://github.com/nuxt/content/commit/b8c522566b204c6afed0aadabeea837978ece979))
+* **lint:** configs ([1ef7768](https://github.com/nuxt/content/commit/1ef7768b59c76eb5627c31cbf6648eb991d4811d))
+* **lint:** unique headings ([c5cc00c](https://github.com/nuxt/content/commit/c5cc00c478ddba999e3655b29a5daf33c34f32a0))
+* **module:** work with route rules `cache: true` ([#3617](https://github.com/nuxt/content/issues/3617)) ([fa6c267](https://github.com/nuxt/content/commit/fa6c2670f528fd561f43db07b779f3e21463d176))
+* **nuxthub:** inherit preset form node/cloudflare ([551a7fb](https://github.com/nuxt/content/commit/551a7fb8fd9256aec13f1ffcaba7141131ec44ab))
+* **parser:** do not extract content title & description from body on data collections ([4f4e958](https://github.com/nuxt/content/commit/4f4e9583b2581c2c2524aacffac04565a21ada04))
+* **path-meta:** apply path meta fields if they exists in schema ([#3632](https://github.com/nuxt/content/issues/3632)) ([b3d7464](https://github.com/nuxt/content/commit/b3d7464edbafd5c712eaca745684c783a09e7576))
+
 ## [3.9.0](///compare/v3.8.2...v3.9.0) (2025-12-03)
 
 ### Features
