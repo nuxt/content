@@ -98,6 +98,10 @@ export function detectSchemaVendor(schema: ContentStandardSchemaV1) {
     return 'valibot'
   }
 
+  if (schema['~standard']?.vendor === 'effect') {
+    return 'effect'
+  }
+
   if (schema['~standard']?.vendor === 'zod') {
     return (schema as unknown as Record<string, unknown>).def ? 'zod4' : 'zod3'
   }
