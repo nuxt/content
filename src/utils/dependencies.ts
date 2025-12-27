@@ -72,7 +72,7 @@ export async function initiateValidatorsContext() {
   if (await isPackageInstalled('valibot') && await isPackageInstalled('@valibot/to-json-schema')) {
     nuxtContentContext().set('valibot', await import('./schema/valibot'))
   }
-  if (await isPackageInstalled('effect') && await isPackageInstalled('@valibot/to-json-schema')) {
+  if (await isPackageInstalled('effect')) {
     nuxtContentContext().set('effect', await import('./schema/effect'))
   }
   if (await isPackageInstalled('zod')) {
