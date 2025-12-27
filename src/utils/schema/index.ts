@@ -22,6 +22,9 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
       case 'valibot':
         schema.$content = $content
         return
+      case 'effect':
+        schema.$content = $content
+        return
       case 'zod4':
         (schema as unknown as { def: { $content: ContentConfig } }).def.$content = $content
         return
