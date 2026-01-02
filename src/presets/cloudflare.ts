@@ -20,6 +20,11 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
     }
 
+    // Exclude sql_dump.txt routes from prerendering (they need cloudflare bindings at runtime)
+    nitroConfig.prerender ||= {}
+    nitroConfig.prerender.ignore ||= []
+    nitroConfig.prerender.ignore.push(/^\/__nuxt_content\/.*\/sql_dump\.txt/)
+
     nitroConfig.publicAssets ||= []
     nitroConfig.alias = nitroConfig.alias || {}
     nitroConfig.handlers ||= []
