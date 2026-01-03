@@ -23,4 +23,9 @@ export interface LocalDevelopmentDatabase {
   exec(sql: string): void
   close(): void
   database?: Connector
+  /**
+   * Whether the database supports BEGIN/COMMIT SQL statements.
+   * D1 uses batch() instead: https://developers.cloudflare.com/d1/worker-api/d1-database/#batch
+   */
+  supportsTransactions: boolean
 }
