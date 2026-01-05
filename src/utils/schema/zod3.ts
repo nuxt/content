@@ -30,12 +30,13 @@ export const z = zod
 
 export function toJSONSchema(_schema: unknown, name: string): Draft07 {
   const schema = _schema as zod.ZodSchema
-  const jsonSchema = zodToJsonSchema(schema, { name, $refStrategy: 'none' }) as Draft07
+  const jsonSchema = zodToJsonSchema(schema, { name, $refStrategy: 'none', dateStrategy: 'format:date' }) as Draft07
   const jsonSchemaWithEditorMeta = zodToJsonSchema(
     schema,
     {
       name,
       $refStrategy: 'none',
+      dateStrategy: 'format:date',
       override: (_def) => {
         const def = _def as unknown as Record<string, unknown>
         if (def.editor) {

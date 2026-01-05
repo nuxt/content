@@ -6,7 +6,7 @@ export function toJSONSchema(schema: unknown, name: string): Draft07 {
   const definitions = valibotToJsonSchema(schema as any, {
     overrideSchema(context) {
       if (context.valibotSchema.type === 'date') {
-        return { type: 'string', format: 'date-time' }
+        return { type: 'string', format: 'date' }
       }
       if ((context.valibotSchema as unknown as { $content: Record<string, unknown> }).$content) {
         return {
