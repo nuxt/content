@@ -435,7 +435,7 @@ Define your content structure with collections and query them with schema valida
 reverse: true
 orientation: horizontal
 ---
-:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1766072891/studio/studioAlpha3_q9mgdj.mp4"}
+:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1767647099/studio/studio-demo_eiofld.mp4"}
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-(--ui-primary)} your website
