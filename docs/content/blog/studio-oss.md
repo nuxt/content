@@ -56,16 +56,6 @@ This is why Studio platform will be discontinued.
 
 We rebuilt Studio from the ground up as a Nuxt module. The result is a fully self-hosted content management solution that runs alongside your Nuxt Content website.
 
-::u-button
----
-class: mt-4
-color: neutral
-icon: i-lucide-mouse-pointer-click
-to: /admin?redirect=/blog/studio-oss
----
-Try editing this page
-::
-
 ### What's Different?
 
 - **Self-hosted** — runs entirely on your infrastructure alongside your Nuxt app
