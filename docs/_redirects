@@ -64,3 +64,16 @@
 /v1/getting-started/introduction=https://v2.content.nuxt.com/v1/getting-started/introduction
 /document-driven=https://v2.content.nuxt.com/document-driven/introduction
 /document-driven/introduction=https://v2.content.nuxt.com/document-driven/introduction
+
+# Studio module redirects (moved to nuxt.studio)
+/docs/studio=https://nuxt.studio/docs/get-started/introduction
+/docs/studio/introduction=https://nuxt.studio/docs/get-started/introduction
+/docs/studio/setup=https://nuxt.studio/docs/get-started/setup
+/docs/studio/git-providers=https://nuxt.studio/docs/developers/git-providers
+/docs/studio/auth-providers=https://nuxt.studio/docs/developers/auth-providers
+/docs/studio/content=https://nuxt.studio/docs/editors/content
+/docs/studio/medias=https://nuxt.studio/docs/editors/medias
+/docs/studio/roadmap=https://nuxt.studio/docs/get-started/introduction
+/docs/studio/advanced=https://nuxt.studio/docs/developers/advanced
+/studio=https://nuxt.studio
+/studio/**=https://nuxt.studio

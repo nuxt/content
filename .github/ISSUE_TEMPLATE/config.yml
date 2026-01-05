@@ -3,7 +3,7 @@ contact_links:
     url: https://content.nuxt.com/
     about: Check documentation for usage
   - name: ✏️ Studio repository
-    url: https://github.com/nuxt-content/studio
+    url: https://github.com/nuxt-content/nuxt-studio
     about: Feature request, report bug, …
   - name: 💬 Discussions
     url: https://github.com/nuxt/content/discussions

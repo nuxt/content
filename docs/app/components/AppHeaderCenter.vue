@@ -10,8 +10,8 @@ const links = computed(() => [
   }, {
     label: 'Studio',
     icon: 'i-lucide-file-pen-line',
-    to: '/docs/studio/setup',
-    active: route.path.startsWith('/docs/studio'),
+    to: 'https://nuxt.studio',
+    target: '_blank',
   }, {
     label: 'Templates',
     icon: 'i-lucide-layout-template',

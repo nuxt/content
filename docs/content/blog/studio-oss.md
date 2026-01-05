@@ -1,41 +1,44 @@
 ---
 title: Nuxt Studio is Now Free and Open Source
-description: We're officially releasing Nuxt Studio as a free, open-source, self-hosted module. The legacy nuxt.studio platform is being sunset. Your content editing experience continues, now on your own terms.
+description: We're officially releasing Nuxt Studio as a free, open-source, self-hosted module. The legacy nuxt.studio platform is being sunset and now becomes the official documentation. Your content editing experience continues, now on your own terms.
 authors:
   - name: Baptiste Leproux
     avatar:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
     username: larbish
-  - name: Sébastien Chopin
-    avatar:
-      src: https://avatars.githubusercontent.com/u/904724?v=4
-    to: https://x.com/atinux
-    username: atinux
   - name: Ahad Birang
     avatar:
       src: https://avatars.githubusercontent.com/u/2047945?v=4
     to: https://x.com/farnabaz
     username: farnabaz
+  - name: Sébastien Chopin
+    avatar:
+      src: https://avatars.githubusercontent.com/u/904724?v=4
+    to: https://x.com/atinux
+    username: atinux
 categories: []
 category: release
-date: 2025-12-24T00:00:00.000Z
+date: 2026-01-05
 draft: false
 image:
   src: /blog/Nuxt-Studio-is-Dead.png
   alt: Nuxt Studio Official Release
+seo:
+  title: Nuxt Studio is Now Free and Open Source
+  description: We're officially releasing Nuxt Studio as a free, open-source, self-hosted module. The legacy nuxt.studio platform is being sunset. Your content editing experience continues, now on your own terms.
 ---
 
 **Nuxt Studio is dead, long live Nuxt Studio.**
 
-We promised to deliver by the end of the year and today we're keeping that promise: we're officially releasing the first stable version of Nuxt Studio as a **free, open-source Nuxt module**. At the same time, we're sunsetting the legacy [nuxt.studio](https://nuxt.studio) platform.
+We promised to deliver by the end of the 2025 year and today we're keeping that promise: we're officially releasing the first stable version of Nuxt Studio as a **free, open-source Nuxt module**. At the same time, we're sunsetting the legacy [nuxt.studio](https://nuxt.studio) platform. It now becomes the new official documentation.
 
 ::u-button
 ---
 color: neutral
 icon: i-simple-icons-github
 target: _blank
-to: https://github.com/nuxt-content/studio
+to: https://github.com/nuxt-content/nuxt-studio
 variant: outline
 ---
 Discover the Nuxt Studio module on GitHub.
@@ -57,9 +60,8 @@ We rebuilt Studio from the ground up as a Nuxt module. The result is a fully sel
 ---
 class: mt-4
 color: neutral
-external: ""
 icon: i-lucide-mouse-pointer-click
-to: /admin?redirect=/blog/studio-v1
+to: /admin?redirect=/blog/studio-oss
 ---
 Try editing this page
 ::
@@ -141,7 +143,7 @@ export default defineNuxtConfig({
 })
 ```
 
-::tip{to="/docs/studio/setup"}
+::tip{to="https://nuxt.studio/setup"}
 Follow the complete setup guide for detailed installation instructions.
 ::
 
@@ -150,11 +152,11 @@ Follow the complete setup guide for detailed installation instructions.
 ::prose-steps
 ### Now
 
-You can already migrate to the new module and cancel your subscription. The new Studio module and legacy platform can run simultaneously during the transition.
+You can already migrate to the new module. All existing subscription have been canceled.
 
-### First Week of January 2026
+### 2026
 
-The legacy nuxt.studio platform will be permanently shut down and all subscriptions will end automatically
+The legacy nuxt.studio platform becomes the new official documentation and we'll keep improving this module day after day.
 ::
 
 ::note
@@ -165,8 +167,8 @@ The [nuxt.studio](http://nuxt.studio) platform has always been just an editing l
 
 Migration is extremely simple:
 
-1. **Install the module**: Follow the [setup documentation](/docs/studio/setup)
-2. **Configure authentication**: Set up [GitHub](/docs/studio/git-providers), [GitLab](/docs/studio/git-providers), or [Google OAuth](/docs/studio/auth-providers)
+1. **Install the module**: Follow the [setup documentation](https://nuxt.studio/setup)
+2. **Configure authentication**: Set up [GitHub](https://nuxt.studio/git-providers#github), [GitLab](https://nuxt.studio/git-providers#gitlab), or [Google OAuth](https://nuxt.studio/auth-providers#google)
 3. **Remove legacy code**: Upcoming versions of Nuxt Content will automatically remove all legacy Studio code, but you can already remove the `preview` key in your Nuxt Content configuration.
 
 ## 🗺 What's Next
@@ -183,7 +185,7 @@ Your feedback shaped both the old and new Studio. Your support made this transit
 
 Thanks to Vercel for making this happen. Their pushing towards open source.
 
-We're excited to see what you build with the new Nuxt Studio module. Join the conversation on [GitHub Discussions](https://github.com/nuxt-content/studio/discussions) or [join our Discord](https://discord.gg/sBXDm6e8SP) to help shape the future of content editing.
+We're excited to see what you build with the new Nuxt Studio module. Join the conversation on [GitHub Discussions](https://github.com/nuxt-content/nuxt-studio/discussions) or [join our Discord](https://discord.gg/sBXDm6e8SP) to help shape the future of content editing.
 
 ---
 

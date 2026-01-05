@@ -17,7 +17,7 @@ orientation: horizontal
   :::u-button
   ---
   size: sm
-  to: https://github.com/nuxt-content/studio
+  to: https://nuxt.studio
   variant: outline
   trailing-icon: i-lucide-arrow-right
   class: mb-3 rounded-full
@@ -435,7 +435,7 @@ Define your content structure with collections and query them with schema valida
 reverse: true
 orientation: horizontal
 ---
-:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
+:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1766072891/studio/studioAlpha3_q9mgdj.mp4"}
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-(--ui-primary)} your website
@@ -445,9 +445,10 @@ Let [anyone edit]{.text-(--ui-primary)} your website
 ---
 color: primary
 target: _blank
-to: https://github.com/nuxt-content/studio
+to: https://nuxt.studio
 variant: outline
 ---
+Try Nuxt Studio
 :::
 
 Edit your Nuxt Content website with the **Studio module**, our free and open-source visual interface to edit your content in production.
@@ -471,10 +472,10 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
 
   :::u-page-feature
   ---
-  icon: i-simple-icons-google
+  icon: i-simple-icons-git
   ---
   #title{unwrap="p"}
-  Publish changes directly on GitHub
+  Publish changes directly on your Git provider
   :::
 ::
 
