@@ -31,7 +31,8 @@ export default definePreset({
           options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
         }
       }
-    } else {
+    }
+    else {
       logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
     }
 
