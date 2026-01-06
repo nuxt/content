@@ -16,11 +16,6 @@ export default definePreset({
     })
   },
   setupNitro(nitroConfig, { manifest }) {
-    // Exclude sql_dump.txt routes from prerendering
-    nitroConfig.prerender ||= {}
-    nitroConfig.prerender.ignore ||= []
-    nitroConfig.prerender.ignore.push(/^\/__nuxt_content\/.*\/sql_dump\.txt/)
-
     nitroConfig.publicAssets ||= []
     nitroConfig.alias = nitroConfig.alias || {}
     nitroConfig.handlers ||= []
