@@ -14,7 +14,7 @@ type Property<T> = T & {
 export function property<T extends ContentStandardSchemaV1>(input?: T): Property<T> {
   const $content = {} as ContentConfig
 
-  const attachContent = (schema: ContentStandardSchemaV1) => {
+  const attachContent = (schema: ContentStandardSchemaV1 | null) => {
     if (!schema) return
     const vendor = detectSchemaVendor(schema)
 
@@ -31,7 +31,7 @@ export function property<T extends ContentStandardSchemaV1>(input?: T): Property
     }
   }
 
-  attachContent(input || {})
+  attachContent(input || null)
 
   const createProxy = (target: unknown): Property<T> =>
     new Proxy(target as object, {
