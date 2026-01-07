@@ -163,6 +163,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     insertDevelopmentCache,
     deleteDevelopmentCache,
     dropContentTables,
+    supportsTransactions: database.type !== 'd1', // D1 uses batch() instead
   }
 }
 
