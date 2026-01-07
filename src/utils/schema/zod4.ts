@@ -14,7 +14,7 @@ export function toJSONSchema(
         const def = ctx.zodSchema._zod?.def as unknown as Record<string, unknown>
         if (def?.type === 'date') {
           ctx.jsonSchema.type = 'string'
-          ctx.jsonSchema.format = 'date-time'
+          ctx.jsonSchema.format = 'date'
         }
         if (def?.$content) {
           ctx.jsonSchema.$content = def.$content
