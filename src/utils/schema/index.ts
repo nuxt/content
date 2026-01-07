@@ -11,7 +11,7 @@ type Property<T> = T & {
   inherit: (componentPath: string) => Property<T>
 }
 
-export function property<T extends ContentStandardSchemaV1>(input: T): Property<T> {
+export function property<T extends ContentStandardSchemaV1>(input?: T): Property<T> {
   const $content = {} as ContentConfig
 
   const attachContent = (schema: ContentStandardSchemaV1) => {
@@ -67,7 +67,7 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
       },
     }) as unknown as Property<T>
 
-  return createProxy(input)
+  return createProxy(input || {})
 }
 
 export function getEnumValues<T extends Record<string, unknown>>(obj: T) {
