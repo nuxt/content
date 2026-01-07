@@ -1,6 +1,6 @@
 import { createContext } from 'unctx'
 
-type ContextKey = 'zod3' | 'zod4' | 'valibot' | 'unknown'
+type ContextKey = 'zod3' | 'zod4' | 'valibot' | 'effect' | 'unknown'
 
 const nuxtContentContext = {
   zod3: {
@@ -24,6 +24,14 @@ const nuxtContentContext = {
       throw new Error(
         'It seems you are using Valibot for collection schema, but Valibot is not installed, '
         + 'Nuxt Content does not ship with valibot, install `valibot` and `@valibot/to-json-schema` and it will work.',
+      )
+    },
+  },
+  effect: {
+    toJSONSchema: (_schema: unknown, _name: string) => {
+      throw new Error(
+        'It seems you are using Effect Schema for collection schema, but Effect is not installed, '
+        + 'Nuxt Content does not ship with effect, install `effect` it will work.',
       )
     },
   },
