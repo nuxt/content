@@ -12,29 +12,30 @@ export default definePreset({
   name: 'nuxthub',
   async setup(options, nuxt, config) {
     const nuxtOptions = nuxt.options as unknown as { hub: { db?: string | object | false, database?: boolean } }
-    if (!nuxtOptions.hub?.db && !nuxtOptions.hub?.database) {
-      logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
-      return
-    }
-
-    const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { db?: boolean | { driver: string, connection: { url?: string } }, database?: boolean | { driver: string, connection: { url?: string } } } }
-    // Read from the final hub database configuration
-    const hubDb = runtimeConfig.hub.db || runtimeConfig.hub.database
-    // NuxtHub <= 0.9
-    if (nuxtOptions.hub?.database === true) {
-      options.database ||= { type: 'd1', bindingName: 'DB' }
-    }
-    else if (typeof nuxtOptions.hub?.db === 'string' && typeof hubDb === 'object') {
-      if (hubDb.driver === 'd1') {
+    if (nuxtOptions.hub?.db || nuxtOptions.hub?.database) {
+      const runtimeConfig = nuxt.options.runtimeConfig as unknown as { hub: { db?: boolean | { driver: string, connection: { url?: string } }, database?: boolean | { driver: string, connection: { url?: string } } } }
+      // Read from the final hub database configuration
+      const hubDb = runtimeConfig.hub.db || runtimeConfig.hub.database
+      // NuxtHub <= 0.9
+      if (nuxtOptions.hub?.database === true) {
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
-      else if (hubDb.driver === 'node-postgres') {
-        options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
-      }
-      else {
-        options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+      else if (typeof nuxtOptions.hub?.db === 'string' && typeof hubDb === 'object') {
+        if (hubDb.driver === 'd1') {
+          options.database ||= { type: 'd1', bindingName: 'DB' }
+        }
+        else if (hubDb.driver === 'node-postgres') {
+          options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
+        }
+        else {
+          options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+        }
       }
     }
+    else {
+      logger.warn('NuxtHub dedected but the database is not enabled. Using local SQLite as default database instead.')
+    }
+
     const preset = (process.env.NITRO_PRESET || nuxt.options.nitro.preset || provider).replace(/_/g, '-')
     if (preset.includes('cloudflare')) {
       await cloudflarePreset.setup?.(options, nuxt, config)
