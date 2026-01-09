@@ -54,7 +54,7 @@ export default definePreset({
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
     }
-    else if (typeof nuxt.options.hub?.db === 'string' && typeof nuxt.options.hub.db === 'object') {
+    else if (typeof nuxt.options.hub?.db === 'string' && typeof hubConfig.db === 'object') {
       const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'd1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
