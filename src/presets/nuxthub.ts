@@ -47,15 +47,14 @@ export default definePreset({
   async setupNitro(nitroConfig, options) {
     const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { db?: boolean | object, database?: boolean } } } }
     const hubConfig = nuxt.options.runtimeConfig.hub as unknown as { db: unknown & { applyMigrationsDuringBuild?: boolean }, dir: string }
-    const nuxthubVersion = nuxt.options.hub?.database === true ? 0.9 : 0.10
     // NuxtHub <= 0.9
-    if (nuxthubVersion <= 0.9) {
+    if (nuxt.options.hub?.database === true) {
       if (nitroConfig.runtimeConfig?.content?.database?.type === 'sqlite') {
         logger.warn('Deploying with NuxtHub < 1 requires using D1 database, switching to D1 database with binding `DB`.')
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
     }
-    else if (nuxthubVersion >= 0.10) {
+    else if (typeof nuxt.options.hub?.db === 'string' && typeof nuxt.options.hub.db === 'object') {
       const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
       if (hubDb.driver === 'd1') {
         nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
