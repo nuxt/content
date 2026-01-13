@@ -3,7 +3,7 @@ import type { JSType, Schema, InputValue } from 'untyped'
 
 export type ConfigInputsTypes
   = | Exclude<JSType, 'symbol' | 'function' | 'any' | 'bigint'>
-    | 'default' | 'icon' | 'file' | 'media' | 'component'
+    | 'default' | 'icon' | 'file' | 'media' | 'component' | 'textarea'
 
 export type PickerTypes = 'media-picker' | 'icon-picker'
 
@@ -71,6 +71,12 @@ const supportedFields: { [key in ConfigInputsTypes]: Schema } = {
     type: 'string',
     tags: [
       '@previewInput icon',
+    ],
+  },
+  textarea: {
+    type: 'string',
+    tags: [
+      '@previewInput textarea',
     ],
   },
 }
