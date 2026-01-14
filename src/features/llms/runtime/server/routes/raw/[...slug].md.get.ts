@@ -18,7 +18,7 @@ export default eventHandler(async (event) => {
     path = path.substring(0, path.length - 6)
   }
 
-  const _collections = Object.entries(collections as unknown as Record<string, ResolvedCollection)
+  const _collections = Object.entries(collections as Record<string, ResolvedCollection>)
     .filter(([_key, value]) => value.type === 'page')
     .map(([key]) => key) as string[]
 
