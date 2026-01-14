@@ -15,6 +15,21 @@ export default defineNuxtModule({
     }
     addServerHandler({ route: '/try-md/**:slug', handler: resolve('runtime/server/routes/try-md/[...slug].get') })
 
+    nuxt.hook('modules:done', () => {
+      // @ts-expect-error -- TODO: fix types
+      nuxt.options.llms ||= {}
+      // @ts-expect-error -- TODO: fix types
+      nuxt.options.llms.contentRawMD = defu(nuxt.options.llms.contentRawMD, {
+        excludeCollections: [],
+      })
+
+      nuxt.options.runtimeConfig.llms ||= {}
+      // @ts-expect-error -- TODO: fix types
+      nuxt.options.runtimeConfig.llms.contentRawMD = defu(nuxt.options.llms.contentRawMD, {
+        excludeCollections: [],
+      })
+    })
+
     const typeTemplate = addTypeTemplate({
       filename: 'content/llms.d.ts' as `${string}.d.ts`,
       getContents: () => {
