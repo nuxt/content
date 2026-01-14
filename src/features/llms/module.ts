@@ -13,6 +13,7 @@ export default defineNuxtModule({
     if ((nuxt.options as unknown as { llms: { contentRawMD: false | { excludeCollections: string[] } } })?.llms?.contentRawMD !== false) {
       addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
     }
+    addServerHandler({ route: '/try-md/**:slug', handler: resolve('runtime/server/routes/try-md/[...slug].get') })
 
     const typeTemplate = addTypeTemplate({
       filename: 'content/llms.d.ts' as `${string}.d.ts`,
