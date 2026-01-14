@@ -1,7 +1,7 @@
 import { withLeadingSlash } from 'ufo'
 import { getRouterParams, eventHandler, setHeader } from 'h3'
 // @ts-expect-error is not typed
-import { isPublicAssetURL } from '#nitro/virtual/public-assets'
+import { isPublicAssetURL } from '#nitro-internal-virtual/public-assets'
 
 export default eventHandler(async (event) => {
   const rawSlug = withLeadingSlash(getRouterParams(event)['slug']!)
