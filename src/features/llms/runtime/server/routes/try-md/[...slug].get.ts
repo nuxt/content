@@ -1,5 +1,6 @@
 import { withLeadingSlash } from 'ufo'
 import { getRouterParams, eventHandler, setHeader } from 'h3'
+// @ts-ignore is not typed
 import { isPublicAssetURL } from '#nitro/virtual/public-assets'
 
 export default eventHandler(async (event) => {
