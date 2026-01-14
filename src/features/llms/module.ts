@@ -13,7 +13,6 @@ export default defineNuxtModule({
     if ((nuxt.options as unknown as { llms: { contentRawMD: false | { excludeCollections: string[] } } })?.llms?.contentRawMD !== false) {
       addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
     }
-    addServerHandler({ route: '/try-md/**:slug', handler: resolve('runtime/server/routes/try-md/[...slug].get') })
 
     nuxt.hook('modules:done', () => {
       // @ts-expect-error -- TODO: fix types
