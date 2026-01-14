@@ -1,3 +1,4 @@
+import { appendHeader } from 'h3'
 import { withBase } from 'ufo'
 import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
@@ -5,8 +6,10 @@ import { createDocumentGenerator, prepareContentSections } from './utils'
 import type { PageCollectionItemBase } from '@nuxt/content'
 // @ts-expect-error - typecheck does not detect defineNitroPlugin in imports
 import { defineNitroPlugin, queryCollection } from '#imports'
+import type { ModuleOptions } from 'nuxt-llms'
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {
+  const prerenderPaths = new Set<string>()
   nitroApp.hooks.hook('llms:generate', async (event, options) => {
     prepareContentSections(options.sections)
 
@@ -38,7 +41,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         return {
           title: doc.title || doc?.seo?.title || '',
           description: doc.description || doc?.seo?.description || '',
-          href: withBase(doc.path, options.domain),
+          href: getDocumentLink(doc.path, section.contentCollection!, options),
         }
       }))
     }
@@ -78,4 +81,29 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       }
     }
   })
+
+  if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+    nitroApp.hooks.hook('beforeResponse', (event) => {
+      if (event.path === '/') {
+        appendHeader(event, 'x-nitro-prerender', Array.from(prerenderPaths))
+      }
+    })
+  }
+
+  function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
+    const contentRawMD = (options as unknown as { contentRawMD: false | { excludeCollections: string[] } })?.contentRawMD
+    if (contentRawMD === false || contentRawMD?.excludeCollections?.includes(collection)) {
+      return withBase(link, options.domain)
+    }
+
+    link = `/raw${link}.md`
+
+    if (link.endsWith('/.md')) {
+      link = link.slice(0, -3) + 'index.md'
+    }
+
+    prerenderPaths.add(link)
+
+    return withBase(link, options.domain)
+  }
 })
