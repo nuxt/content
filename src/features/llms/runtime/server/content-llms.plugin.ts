@@ -91,19 +91,19 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
   }
 
   function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
-    if (options.contentRawMD === false || options.contentRawMD?.excludeCollections?.includes(collection)) {
+    const contentRawMD = (options as unknown as { contentRawMD: false | { excludeCollections: string[] } })?.contentRawMD
+    if (contentRawMD === false || contentRawMD?.excludeCollections?.includes(collection)) {
       return withBase(link, options.domain)
     }
-  
+
     link = `/raw${link}.md`
-  
+
     if (link.endsWith('/.md')) {
       link = link.slice(0, -3) + 'index.md'
     }
-  
+
     prerenderPaths.add(link)
-  
-  
+
     return withBase(link, options.domain)
   }
 })

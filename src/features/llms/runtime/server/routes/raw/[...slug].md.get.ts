@@ -1,7 +1,7 @@
 import { withLeadingSlash } from 'ufo'
 import { stringify } from 'minimark/stringify'
 import { queryCollection } from '@nuxt/content/server'
-import type { Collections } from '@nuxt/content'
+import type { Collections, PageCollectionItemBase, ResolvedCollection } from '@nuxt/content'
 import { getRouterParams, eventHandler, createError, setHeader } from 'h3'
 import { useRuntimeConfig } from '#imports'
 import collections from '#content/manifest'
@@ -9,7 +9,7 @@ import collections from '#content/manifest'
 export default eventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const slug = getRouterParams(event)['slug.md']
-  if (!slug?.endsWith('.md') || config.llms?.contentRawMD === false) {
+  if (!slug?.endsWith('.md') || (config.llms as { contentRawMD: false | { excludeCollections: string[] } })?.contentRawMD === false) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
   }
 
@@ -18,13 +18,13 @@ export default eventHandler(async (event) => {
     path = path.substring(0, path.length - 6)
   }
 
-  const _collections = Object.entries(collections)
-    .filter(([key, value]) => value.type === 'page')
+  const _collections = Object.entries(collections as unknown as Record<string, ResolvedCollection)
+    .filter(([_key, value]) => value.type === 'page')
     .map(([key]) => key) as string[]
 
-  let page = null
+  let page: PageCollectionItemBase | null = null
   for (const collection of _collections) {
-    page = await queryCollection(event, collection as keyof Collections).path(path).first()
+    page = await queryCollection(event, collection as keyof Collections).path(path).first() as PageCollectionItemBase | null
     if (page) {
       break
     }

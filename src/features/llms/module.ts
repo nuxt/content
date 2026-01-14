@@ -10,7 +10,7 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
 
     addServerPlugin(resolve('runtime/server/content-llms.plugin'))
-    if (nuxt.options.llms?.contentRawMD !== false) {
+    if ((nuxt.options as unknown as { llms: { contentRawMD: false | { excludeCollections: string[] } } })?.llms?.contentRawMD !== false) {
       addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
     }
 
