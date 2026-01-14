@@ -1,5 +1,5 @@
 import defu from 'defu'
-import { createResolver, defineNuxtModule, addTypeTemplate, addServerPlugin } from '@nuxt/kit'
+import { createResolver, defineNuxtModule, addTypeTemplate, addServerPlugin, addServerHandler } from '@nuxt/kit'
 
 export default defineNuxtModule({
   meta: {
@@ -10,6 +10,9 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
 
     addServerPlugin(resolve('runtime/server/content-llms.plugin'))
+    if (nuxt.options.llms?.contentRawMD !== false) {
+      addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
+    }
 
     const typeTemplate = addTypeTemplate({
       filename: 'content/llms.d.ts' as `${string}.d.ts`,
@@ -17,6 +20,11 @@ export default defineNuxtModule({
         return `
 import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@nuxt/content'
 declare module 'nuxt-llms' {
+  interface ModuleOptions {
+    contentRawMD?: false | {
+      excludeCollections?: string[]
+    }
+  }
   interface LLMsSection {
     contentCollection?: keyof PageCollections
     contentFilters?: Array<{
