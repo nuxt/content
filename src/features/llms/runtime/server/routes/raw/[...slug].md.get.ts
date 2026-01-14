@@ -8,9 +8,9 @@ import collections from '#content/manifest'
 
 export default eventHandler(async (event) => {
   const config = useRuntimeConfig(event)
-  const llmsConfig = config.llms as { contentRawMD: false | { excludeCollections: string[] } }
+  const llmsConfig = config.llms as { contentRawMarkdown: false | { excludeCollections: string[] } }
   const slug = getRouterParams(event)['slug.md']
-  if (!slug?.endsWith('.md') || llmsConfig?.contentRawMD === false) {
+  if (!slug?.endsWith('.md') || llmsConfig?.contentRawMarkdown === false) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
   }
 
@@ -19,7 +19,7 @@ export default eventHandler(async (event) => {
     path = path.substring(0, path.length - 6)
   }
 
-  const excludeCollections = llmsConfig?.contentRawMD?.excludeCollections || []
+  const excludeCollections = llmsConfig?.contentRawMarkdown?.excludeCollections || []
   const _collections = Object.entries(collections as Record<string, ResolvedCollection>)
     .filter(([_key, value]) => value.type === 'page' && !excludeCollections.includes(_key))
     .map(([key]) => key) as string[]

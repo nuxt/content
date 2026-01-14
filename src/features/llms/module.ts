@@ -10,7 +10,7 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
 
     addServerPlugin(resolve('runtime/server/content-llms.plugin'))
-    if ((nuxt.options as unknown as { llms: { contentRawMD: false | { excludeCollections: string[] } } })?.llms?.contentRawMD !== false) {
+    if ((nuxt.options as unknown as { llms: { contentRawMarkdown: false | { excludeCollections: string[] } } })?.llms?.contentRawMarkdown !== false) {
       addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
     }
 
@@ -18,13 +18,13 @@ export default defineNuxtModule({
       // @ts-expect-error -- TODO: fix types
       nuxt.options.llms ||= {}
       // @ts-expect-error -- TODO: fix types
-      nuxt.options.llms.contentRawMD = defu(nuxt.options.llms.contentRawMD, {
+      nuxt.options.llms.contentRawMarkdown = defu(nuxt.options.llms.contentRawMarkdown, {
         excludeCollections: [],
       })
 
       nuxt.options.runtimeConfig.llms ||= {}
       // @ts-expect-error -- TODO: fix types
-      nuxt.options.runtimeConfig.llms.contentRawMD = defu(nuxt.options.llms.contentRawMD, {
+      nuxt.options.runtimeConfig.llms.contentRawMarkdown = defu(nuxt.options.llms.contentRawMarkdown, {
         excludeCollections: [],
       })
     })
@@ -36,7 +36,7 @@ export default defineNuxtModule({
 import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@nuxt/content'
 declare module 'nuxt-llms' {
   interface ModuleOptions {
-    contentRawMD?: false | {
+    contentRawMarkdown?: false | {
       excludeCollections?: string[]
     }
   }

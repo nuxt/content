@@ -53,7 +53,7 @@ export default defineNuxtConfig({
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
     },
-    contentRawMD: {
+    contentRawMarkdown: {
       excludeCollections: ['landing'],
     },
   },
