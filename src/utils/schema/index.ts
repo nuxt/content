@@ -22,6 +22,9 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
       case 'valibot':
         schema.$content = $content
         return
+      case 'effect':
+        schema.$content = $content
+        return
       case 'zod4':
         (schema as unknown as { def: { $content: ContentConfig } }).def.$content = $content
         return
@@ -96,6 +99,10 @@ export function mergeStandardSchema(s1: Draft07, s2: Draft07): Draft07 {
 export function detectSchemaVendor(schema: ContentStandardSchemaV1) {
   if (schema['~standard']?.vendor === 'valibot') {
     return 'valibot'
+  }
+
+  if (schema['~standard']?.vendor === 'effect') {
+    return 'effect'
   }
 
   if (schema['~standard']?.vendor === 'zod') {
