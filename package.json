@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.2.2",
-    "@nuxtjs/mdc": "^0.19.2",
+    "@nuxtjs/mdc": "^0.20.0",
     "@shikijs/langs": "^3.20.0",
     "@sqlite.org/sqlite-wasm": "3.50.4-build1",
     "@standard-schema/spec": "^1.1.0",
@@ -87,7 +87,7 @@
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
     "minimatch": "^10.1.1",
-    "nuxt-component-meta": "0.16.0",
+    "nuxt-component-meta": "0.17.0",
     "nypm": "^0.6.2",
     "ohash": "^2.0.11",
     "pathe": "^2.0.3",
@@ -99,14 +99,14 @@
     "socket.io-client": "^4.8.3",
     "std-env": "^3.10.0",
     "tinyglobby": "^0.2.15",
-    "ufo": "^1.6.1",
+    "ufo": "^1.6.3",
     "unctx": "^2.5.0",
     "unified": "^11.0.5",
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.0.0",
     "unplugin": "^2.3.11",
     "zod": "^3.25.76",
-    "zod-to-json-schema": "^3.25.0"
+    "zod-to-json-schema": "^3.25.1"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
@@ -160,7 +160,7 @@
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^4.2.2",
-    "release-it": "^19.2.1",
+    "release-it": "^19.2.3",
     "typescript": "5.9.3",
     "valibot": "^1.2.0",
     "vitest": "^4.0.16",
