@@ -445,7 +445,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     ...new Set(usedComponents),
   ]
     .map(tag => getMappedTag(tag, options?.renderer?.alias))
-    .filter(tag => !htmlTags.has(kebabCase(tag)))
+    .filter(tag => !htmlTags.includes(kebabCase(tag)))
     .map(tag => pascalCase(tag))
 
   const endTime = performance.now()

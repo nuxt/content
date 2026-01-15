@@ -116,7 +116,7 @@ const componentsMap = computed(() => {
 function resolveVueComponent(component: string | Renderable) {
   let _component: unknown = component
   if (typeof component === 'string') {
-    if (htmlTags.has(component)) {
+    if (htmlTags.includes(component)) {
       return component
     }
     if (globalComponents.includes(pascalCase(component))) {
@@ -183,7 +183,7 @@ function loadComponents(node: MDCRoot | MDCElement, documentMeta: { tags: Record
   }
   const renderTag = findMappedTag(node as unknown as MDCElement, documentMeta.tags)
   const components2 = [] as Array<[string, unknown]>
-  if ((node as unknown as MDCRoot).type !== 'root' && !htmlTags.has(renderTag)) {
+  if ((node as unknown as MDCRoot).type !== 'root' && !htmlTags.includes(renderTag)) {
     components2.push([tag, renderTag])
   }
   for (const child of node.children || []) {
