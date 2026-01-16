@@ -5,6 +5,7 @@ const propertyTypes = {
   number: 'INT',
   boolean: 'BOOLEAN',
   date: 'DATE',
+  datetime: 'DATETIME',
   enum: 'VARCHAR',
   object: 'TEXT',
 }
@@ -33,8 +34,12 @@ function getPropertyType(property: Draft07DefinitionProperty | Draft07Definition
   const propertyType = (property as Draft07DefinitionProperty).type
   let type = propertyTypes[propertyType as keyof typeof propertyTypes] || 'TEXT'
 
-  if ((property as Draft07DefinitionProperty).format === 'date-time') {
+  if ((property as Draft07DefinitionProperty).format === 'date') {
     type = 'DATE'
+  }
+
+  if ((property as Draft07DefinitionProperty).format === 'date-time') {
+    type = 'DATETIME'
   }
 
   if ((property as Draft07DefinitionPropertyAllOf).allOf) {
