@@ -37,6 +37,15 @@ import type { SQLOperator, PageCollections, PageCollectionItemBase } from '@nuxt
 declare module 'nuxt-llms' {
   interface ModuleOptions {
     contentRawMarkdown?: false | {
+      /**
+       * Whether to rewrite the LLMs.txt file to use the raw markdown endpoint
+       * @default true
+       */
+      rewriteLLMSTxt?: boolean
+      /**
+       * Whether to exclude specific collections from the raw markdown endpoint
+       * @default []
+       */
       excludeCollections?: string[]
     }
   }

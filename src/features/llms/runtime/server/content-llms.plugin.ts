@@ -91,8 +91,8 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
   }
 
   function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
-    const contentRawMarkdown = (options as unknown as { contentRawMarkdown: false | { excludeCollections: string[] } })?.contentRawMarkdown
-    if (contentRawMarkdown === false || contentRawMarkdown?.excludeCollections?.includes(collection)) {
+    const contentRawMarkdown = (options as unknown as { contentRawMarkdown: false | { rewriteLLMSTxt: boolean, excludeCollections: string[] } })?.contentRawMarkdown
+    if (contentRawMarkdown === false || contentRawMarkdown?.rewriteLLMSTxt === false || contentRawMarkdown?.excludeCollections?.includes(collection)) {
       return withBase(link, options.domain)
     }
 
