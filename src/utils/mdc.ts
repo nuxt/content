@@ -1,4 +1,4 @@
-import type { MdcConfig } from '@nuxtjs/mdc'
+import type { MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
 import type { Nuxt } from '@nuxt/schema'
 import { extendViteConfig } from '@nuxt/kit'
 import { createJiti } from 'jiti'
@@ -6,6 +6,12 @@ import type { ModuleOptions } from '../types'
 import { setParserOptions } from './content'
 
 export async function configureMDCModule(contentOptions: ModuleOptions, nuxt: Nuxt) {
+  const mdcOptions = (nuxt.options as unknown as { mdc: MDCModuleOptions }).mdc
+  contentOptions.renderer.alias = {
+    ...(mdcOptions?.components?.map || {}),
+    ...(contentOptions.renderer.alias || {}),
+  }
+
   // Hook into mdc configs and store them for parser
   nuxt.hook('mdc:configSources', async (mdcConfigs) => {
     if (mdcConfigs.length) {
