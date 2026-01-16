@@ -41,7 +41,7 @@ declare module 'nuxt-llms' {
     }
   }
   interface LLMsSection {
-    contentCollection?: keyof PageCollections
+    contentCollection?: string | keyof PageCollections
     contentFilters?: Array<{
       field: string
       operator: SQLOperator
@@ -55,11 +55,10 @@ declare module 'nitropack/types' {
     'content:llms:generate:document': (event: H3Event, doc: PageCollectionItemBase, options: ModuleOptions) => void
   }
 }
-
         `
       },
       write: true,
-    }).dst
+    }, { node: true }).dst
     nuxt.options.nitro ||= {}
     nuxt.options.nitro.typescript ||= {}
     nuxt.options.nitro.typescript.tsConfig = defu(nuxt.options.nitro.typescript.tsConfig, {
