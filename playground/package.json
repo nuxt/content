@@ -14,7 +14,7 @@
     "@nuxt/content": "latest",
     "@nuxt/ui": "^4.3.0",
     "@nuxthub/core": "^0.10.4",
-    "better-sqlite3": "^12.6.0",
+    "better-sqlite3": "^12.6.2",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.2.2",
     "pg": "^8.17.1",
