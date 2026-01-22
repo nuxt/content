@@ -35,7 +35,7 @@ const content = defineCollection({
   schema: z.object({
     date: z.date(),
     rawbody: z.string(),
-    testd: property(z.object({})).inherit('components/TestD.vue'),
+    testd: property().inherit('components/TestD.vue'),
   }),
 })
 
