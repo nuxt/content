@@ -16,17 +16,17 @@ export default defineNuxtModule({
 
     nuxt.hook('modules:done', () => {
       // @ts-expect-error -- TODO: fix types
-      nuxt.options.llms ||= {}
-      // @ts-expect-error -- TODO: fix types
-      nuxt.options.llms.contentRawMarkdown = defu(nuxt.options.llms.contentRawMarkdown, {
+      const contentRawMarkdown = nuxt.options.llms?.contentRawMarkdown === false ? false : defu(nuxt.options.llms.contentRawMarkdown, {
         excludeCollections: [],
       })
+      // @ts-expect-error -- TODO: fix types
+      nuxt.options.llms ||= {}
+      // @ts-expect-error -- TODO: fix types
+      nuxt.options.llms.contentRawMarkdown = contentRawMarkdown
 
       nuxt.options.runtimeConfig.llms ||= {}
       // @ts-expect-error -- TODO: fix types
-      nuxt.options.runtimeConfig.llms.contentRawMarkdown = defu(nuxt.options.llms.contentRawMarkdown, {
-        excludeCollections: [],
-      })
+      nuxt.options.runtimeConfig.llms.contentRawMarkdown = contentRawMarkdown
     })
 
     const typeTemplate = addTypeTemplate({
