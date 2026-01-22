@@ -10,15 +10,18 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
 
     addServerPlugin(resolve('runtime/server/content-llms.plugin'))
-    if ((nuxt.options as unknown as { llms: { contentRawMarkdown: false | { excludeCollections: string[] } } })?.llms?.contentRawMarkdown !== false) {
+
+    const llmsOption = (nuxt.options as unknown as { llms: { contentRawMarkdown: false | { excludeCollections: string[] } } })?.llms
+    if (llmsOption?.contentRawMarkdown !== false) {
       addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
     }
 
     nuxt.hook('modules:done', () => {
-      // @ts-expect-error -- TODO: fix types
-      const contentRawMarkdown = nuxt.options.llms?.contentRawMarkdown === false ? false : defu(nuxt.options.llms.contentRawMarkdown, {
-        excludeCollections: [],
-      })
+      const contentRawMarkdown = llmsOption?.contentRawMarkdown === false
+        ? false
+        : defu(llmsOption?.contentRawMarkdown, {
+            excludeCollections: [],
+          })
       // @ts-expect-error -- TODO: fix types
       nuxt.options.llms ||= {}
       // @ts-expect-error -- TODO: fix types
