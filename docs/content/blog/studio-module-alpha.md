@@ -27,7 +27,7 @@ image:
 
 When NuxtLabs joined Vercel, we promised to transform [nuxt.studio](https://nuxt.studio) from a hosted platform into a free, open-source module. Today, we're excited to announce the **first alpha release** of the Nuxt Studio module.
 
-::u-button{to="https://github.com/nuxt-content/studio" icon="i-simple-icons-github" target="_blank" color="neutral" variant="subtle"}
+::u-button{to="https://github.com/nuxt-content/nuxt-studio" icon="i-simple-icons-github" target="_blank" color="neutral" variant="subtle"}
 Discover the Nuxt Studio module on GitHub.
 ::
 
@@ -194,4 +194,4 @@ Check out the [setup guide](/docs/studio/setup) for complete installation and co
 
 ---
 
-We're excited to see what you build with Nuxt Studio. Join the conversation on [GitHub Discussions](https://github.com/nuxt-content/studio/discussions) or [join our Discord](https://discord.gg/sBXDm6e8SP) to help shape the future of the module.
+We're excited to see what you build with Nuxt Studio. Join the conversation on [GitHub Discussions](https://github.com/nuxt-content/nuxt-studio/discussions) or [join our Discord](https://discord.gg/sBXDm6e8SP) to help shape the future of the module.

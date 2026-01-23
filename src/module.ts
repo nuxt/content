@@ -414,8 +414,28 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
   // Drop info table and recreate it
   db.exec(`DROP TABLE IF EXISTS ${infoCollection.tableName}`)
-  for (const sql of sqlDumpList) {
-    db.exec(sql)
+  // Use transaction for faster execution (SQLite only)
+  try {
+    if (db.supportsTransactions) {
+      db.exec('BEGIN TRANSACTION')
+    }
+    for (const sql of sqlDumpList) {
+      db.exec(sql)
+    }
+    if (db.supportsTransactions) {
+      db.exec('COMMIT')
+    }
+  }
+  catch (error) {
+    if (db.supportsTransactions) {
+      try {
+        db.exec('ROLLBACK')
+      }
+      catch {
+        // Ignore rollback errors, original error takes precedence
+      }
+    }
+    throw error
   }
 
   const tags = sqlDumpList.flatMap((sql: string): RegExpMatchArray | [] => sql.match(/(?<=(^|,|\[)\[")[^"]+(?=")/g) || [])
@@ -425,7 +445,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     ...new Set(usedComponents),
   ]
     .map(tag => getMappedTag(tag, options?.renderer?.alias))
-    .filter(tag => !htmlTags.includes(kebabCase(tag)))
+    .filter(tag => !htmlTags.has(kebabCase(tag)))
     .map(tag => pascalCase(tag))
 
   const endTime = performance.now()

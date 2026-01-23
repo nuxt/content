@@ -47,7 +47,7 @@ export interface ContentConfig {
 }
 
 export interface EditorOptions {
-  input?: 'media' | 'icon' // Override the default input for the field
+  input?: 'media' | 'icon' | 'textarea' // Override the default input for the field
   hidden?: boolean // Do not display the field in the editor
   iconLibraries?: string[] // List of icon libraries to use for the icon input
 }

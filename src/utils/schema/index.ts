@@ -31,7 +31,7 @@ export function property<T extends ContentStandardSchemaV1>(input: T): Property<
     }
   }
 
-  attachContent(input)
+  attachContent(input || {})
 
   const createProxy = (target: unknown): Property<T> =>
     new Proxy(target as object, {

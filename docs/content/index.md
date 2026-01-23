@@ -17,12 +17,12 @@ orientation: horizontal
   :::u-button
   ---
   size: sm
-  to: https://github.com/nuxt-content/studio/releases/tag/v1.0.0-beta.0
+  to: https://nuxt.studio
   variant: outline
   trailing-icon: i-lucide-arrow-right
   class: mb-3 rounded-full
   ---
-  Nuxt Studio beta is out
+  Nuxt Studio is out
   :::
 #title
 The [git-based]{.text-primary} :br CMS for Nuxt.
@@ -435,7 +435,7 @@ Define your content structure with collections and query them with schema valida
 reverse: true
 orientation: horizontal
 ---
-:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1733494722/contentv3final_rc8bvu.mp4"}
+:video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1767647099/studio/studio-demo_eiofld.mp4"}
 
 #title{unwrap="p"}
 Let [anyone edit]{.text-(--ui-primary)} your website
@@ -444,11 +444,11 @@ Let [anyone edit]{.text-(--ui-primary)} your website
 :::u-button
 ---
 color: primary
-label: Currently in beta
 target: _blank
-to: https://github.com/nuxt-content/studio
+to: https://nuxt.studio
 variant: outline
 ---
+Try Nuxt Studio
 :::
 
 Edit your Nuxt Content website with the **Studio module**, our free and open-source visual interface to edit your content in production.
@@ -467,15 +467,15 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
   icon: i-lucide-file-text
   ---
   #title{unwrap="p"}
-  Visual editor for Markdown, YML and JSON files (coming in beta)
+  Visual editor for Markdown, YML and JSON files
   :::
 
   :::u-page-feature
   ---
-  icon: i-simple-icons-google
+  icon: i-simple-icons-git
   ---
   #title{unwrap="p"}
-  Publish changes directly on GitHub
+  Publish changes directly on your Git provider
   :::
 ::
 

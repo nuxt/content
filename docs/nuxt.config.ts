@@ -53,6 +53,9 @@ export default defineNuxtConfig({
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
     },
+    contentRawMarkdown: {
+      excludeCollections: ['landing'],
+    },
   },
   studio: {
     route: '/admin',

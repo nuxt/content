@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.11.0](https://github.com/nuxt/content/compare/v3.10.0...v3.11.0) (2026-01-16)
+
+### Features
+
+* **api:** use request fetch ([#3677](https://github.com/nuxt/content/issues/3677)) ([2b32a4d](https://github.com/nuxt/content/commit/2b32a4d833a337cb5c06b0938f93157b337a8837))
+* auto generate markdown version of documents ([#3688](https://github.com/nuxt/content/issues/3688)) ([340fdf4](https://github.com/nuxt/content/commit/340fdf48984d54050fde02f55c04d984be3fc498))
+* cast date field from datetime to date string format ([#3673](https://github.com/nuxt/content/issues/3673)) ([f1a2ca4](https://github.com/nuxt/content/commit/f1a2ca4a1c8e4492677e4f9036e16351b22a2888))
+* **collection:** allow hidden property in editor without redefine validation ([#3661](https://github.com/nuxt/content/issues/3661)) ([24af55a](https://github.com/nuxt/content/commit/24af55a6d47c2839810e1f7bf2f3bd1b625e73a9))
+* **nuxt-llms:** `rewriteLLMSTxt` option to disable rewriting paths in `llms.txt` ([38e57ec](https://github.com/nuxt/content/commit/38e57ec3236892001a865a2027a39bc30cceaa52))
+
+### Bug Fixes
+
+* add `mdc.components.map` to renderer aliases ([7eebe27](https://github.com/nuxt/content/commit/7eebe27a2585b9d9a7bb19cd66c8d6aceb46e84e)), closes [#3681](https://github.com/nuxt/content/issues/3681)
+* **nuxthub:** handle nuxthub version correctly ([#3680](https://github.com/nuxt/content/issues/3680)) ([695bd2e](https://github.com/nuxt/content/commit/695bd2e8168f180c0d5abf8ac04e8d1f23b06e6e))
+* **nuxthub:** register sql_dump route even if the database is disabled ([#3668](https://github.com/nuxt/content/issues/3668)) ([bb78812](https://github.com/nuxt/content/commit/bb788126e492812478dd929ce111687dffe7e006))
+
+### Performance Improvements
+
+* wrap SQL queries in transaction ([#3670](https://github.com/nuxt/content/issues/3670)) ([030dc27](https://github.com/nuxt/content/commit/030dc275a4090788f290af80e78250cf4708effb))
+
+### Reverts
+
+* Revert "chore: upgrade deps" ([c4a3228](https://github.com/nuxt/content/commit/c4a3228a8c0a9c9033f83339e89c11cfb77e1675))
+* Revert "chore: upgrade deps" ([841b360](https://github.com/nuxt/content/commit/841b3605b653ca3157a6f914369bd7af990ed073))
+
 ## [3.10.0](https://github.com/nuxt/content/compare/v3.9.0...v3.10.0) (2025-12-24)
 
 ### Features
