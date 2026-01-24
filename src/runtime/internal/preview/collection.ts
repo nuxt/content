@@ -131,8 +131,12 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
     // @ts-expect-error format does exist
     else if (type === 'string' || ['string', 'enum'].includes(value.type)) {
       // @ts-expect-error format does exist
-      if (['data', 'datetime'].includes(value.format)) {
-        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString()}'` : defaultValue)
+      if (value.format === 'date') {
+        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString().slice(0, 10)}'` : defaultValue)
+      }
+      // @ts-expect-error format does exist
+      else if (value.format === 'datetime') {
+        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString().slice(0, 19).replace('T', ' ')}'` : defaultValue)
       }
       else {
         values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)

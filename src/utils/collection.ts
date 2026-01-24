@@ -156,7 +156,10 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       values.push(Number(valueToInsert))
     }
     else if (property?.sqlType === 'DATE') {
-      values.push(`'${new Date(valueToInsert as string).toISOString()}'`)
+      values.push(`'${new Date(valueToInsert as string).toISOString().slice(0, 10)}'`)
+    }
+    else if (property?.sqlType === 'DATETIME') {
+      values.push(`'${new Date(valueToInsert as string).toISOString().slice(0, 19).replace('T', ' ')}'`)
     }
     else if (property?.enum) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
