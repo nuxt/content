@@ -12,7 +12,8 @@ async function fetchContent<T>(
   const fetchOptions = {
     ...options,
     headers: {
-      ...headers,
+      ...(headers.cookie ? { cookie: headers.cookie } : {}),
+      ...(event?.context.nitro.runtimeConfig?.csurf.headerName && event.context.csrfToken ? { [event.context.nitro.runtimeConfig.csurf.headerName]: event.context.csrfToken } : {}),
       ...options.headers,
     },
     query: { v: checksums[String(collection)], t: import.meta.dev ? Date.now() : undefined },
