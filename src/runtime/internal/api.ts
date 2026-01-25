@@ -8,6 +8,8 @@ async function fetchContent<T>(
   options: NonNullable<Parameters<typeof $fetch>[1]>,
 ): Promise<T> {
   const headers = event ? getRequestHeaders(event) : {}
+  headers['accept-encoding'] = undefined // prevent unsupported enconding issue (https://github.com/nuxt/content/pull/3701)
+
   const url = `/__nuxt_content/${collection}/${path}`
   const fetchOptions = {
     ...options,
