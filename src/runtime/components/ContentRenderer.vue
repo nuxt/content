@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
 import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
-import type { AsyncComponentLoader } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
 import { toHast } from 'minimark/hast'
-import { globalComponents, localComponents } from '#content/components'
+import * as contentComponents from '#content/components'
 import { useRuntimeConfig } from '#imports'
+
+const { globalComponents, localComponents } = contentComponents
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
@@ -123,14 +124,8 @@ function resolveVueComponent(component: string | Renderable) {
       _component = resolveComponent(component, false)
     }
     else if (localComponents.includes(pascalCase(component))) {
-      const loader: AsyncComponentLoader = () => {
-        return import('#content/components')
-          .then((m) => {
-            const comp = m[pascalCase(component) as keyof typeof m] as unknown as () => unknown
-            return comp ? comp() : undefined
-          })
-      }
-      _component = defineAsyncComponent(loader)
+      // Use component directly (exported as ESM default re-export for SSR compatibility)
+      _component = contentComponents[pascalCase(component) as keyof typeof contentComponents]
     }
     if (typeof _component === 'string') {
       return _component
