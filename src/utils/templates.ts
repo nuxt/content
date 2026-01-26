@@ -151,7 +151,8 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const globalComponents = componentsList.filter(c => c[2]).map(c => c[0])
       const localComponents = componentsList.filter(c => !c[2])
       return [
-        ...localComponents.map(([pascalName, type]) => `export const ${pascalName} = () => ${type}`),
+        // Export local components directly for SSR compatibility (fixes #3700)
+        ...localComponents.map(([pascalName, type]) => `export { default as ${pascalName} } from ${(type as string).replace(/^import\(/, '').replace(/\)$/, '')}`),
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
