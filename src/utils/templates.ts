@@ -1,9 +1,8 @@
 import { gzip } from 'node:zlib'
 import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
-import { genDynamicImport } from 'knitwork'
-import { compile as jsonSchemaToTypescript } from 'json-schema-to-typescript-lite'
-import type { JSONSchema } from 'json-schema-to-typescript-lite'
+import { compile as jsonSchemaToTypescript } from 'json-schema-to-typescript'
+import type { JSONSchema } from 'json-schema-to-typescript'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
@@ -137,13 +136,10 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
           return nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global
         })
         .reduce((map, c) => {
-          map[c.pascalName] = map[c.pascalName] || [
-            c.pascalName,
-            `${genDynamicImport(isAbsolute(c.filePath)
-              ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
-              : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}`,
-            c.global,
-          ]
+          const importPath = isAbsolute(c.filePath)
+            ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
+            : c.filePath.replace(/\b\.(?!vue)\w+$/g, '')
+          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global]
           return map
         }, {} as Record<string, unknown[]>)
 
@@ -151,8 +147,20 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const globalComponents = componentsList.filter(c => c[2]).map(c => c[0])
       const localComponents = componentsList.filter(c => !c[2])
       return [
-        // Export local components directly for SSR compatibility (fixes #3700)
-        ...localComponents.map(([pascalName, type]) => `export { default as ${pascalName} } from ${(type as string).replace(/^import\(/, '').replace(/\)$/, '')}`),
+        'const pickExport = (mod, exportName, componentName, path) => {',
+        '  const resolved = exportName === \'default\' ? mod?.default : mod?.[exportName]',
+        '  if (!resolved) {',
+        '    throw new Error(`[nuxt-content] Missing export "${exportName}" for component "${componentName}" in "${path}".`)',
+        '  }',
+        '  return resolved',
+        '}',
+        'export const localComponentLoaders = {',
+        ...localComponents.map(([pascalName, path]) => {
+          const pathLiteral = JSON.stringify(path)
+          const nameLiteral = JSON.stringify(pascalName)
+          return `  ${pascalName}: () => import(${pathLiteral}).then(m => pickExport(m, 'default', ${nameLiteral}, ${pathLiteral})),`
+        }),
+        '}',
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
