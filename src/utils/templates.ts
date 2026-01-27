@@ -1,7 +1,6 @@
 import { gzip } from 'node:zlib'
 import type { NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
-import { genDynamicImport } from 'knitwork'
 import { compile as jsonSchemaToTypescript } from 'json-schema-to-typescript'
 import type { JSONSchema } from 'json-schema-to-typescript'
 import { pascalCase } from 'scule'
@@ -137,13 +136,10 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
           return nuxt.options.dev || options.manifest.components.includes(c.pascalName) || c.global
         })
         .reduce((map, c) => {
-          map[c.pascalName] = map[c.pascalName] || [
-            c.pascalName,
-            `${genDynamicImport(isAbsolute(c.filePath)
-              ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
-              : c.filePath.replace(/\b\.(?!vue)\w+$/g, ''), { wrapper: false, singleQuotes: true })}`,
-            c.global,
-          ]
+          const importPath = isAbsolute(c.filePath)
+            ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
+            : c.filePath.replace(/\b\.(?!vue)\w+$/g, '')
+          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global, c.export || 'default']
           return map
         }, {} as Record<string, unknown[]>)
 
@@ -151,7 +147,8 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const globalComponents = componentsList.filter(c => c[2]).map(c => c[0])
       const localComponents = componentsList.filter(c => !c[2])
       return [
-        ...localComponents.map(([pascalName, type]) => `export const ${pascalName} = () => ${type}`),
+        // Export local components directly for SSR compatibility (fixes #3700)
+        ...localComponents.map(([pascalName, path, , exp]) => `export { ${exp} as ${pascalName} } from '${path}'`),
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
