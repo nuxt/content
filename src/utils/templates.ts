@@ -139,7 +139,7 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
           const importPath = isAbsolute(c.filePath)
             ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
             : c.filePath.replace(/\b\.(?!vue)\w+$/g, '')
-          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global]
+          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global, c.export || 'default']
           return map
         }, {} as Record<string, unknown[]>)
 
@@ -148,22 +148,23 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const localComponents = componentsList.filter(c => !c[2])
       return [
         'const pickExport = (mod, exportName, componentName, path) => {',
-        '  const resolved = exportName === \'default\' ? mod?.default : mod?.[exportName]',
+        '  const resolved = exportName === \\'default\\' ? mod?.default : mod?.[exportName]',
         '  if (!resolved) {',
-        '    throw new Error(`[nuxt-content] Missing export "${exportName}" for component "${componentName}" in "${path}".`)',
+        '    throw new Error(`[nuxt-content] Missing export \"${exportName}\" for component \"${componentName}\" in \"${path}\".`)',
         '  }',
         '  return resolved',
         '}',
         'export const localComponentLoaders = {',
-        ...localComponents.map(([pascalName, path]) => {
+        ...localComponents.map(([pascalName, path, , exp]) => {
           const pathLiteral = JSON.stringify(path)
+          const exportLiteral = JSON.stringify(exp)
           const nameLiteral = JSON.stringify(pascalName)
-          return `  ${pascalName}: () => import(${pathLiteral}).then(m => pickExport(m, 'default', ${nameLiteral}, ${pathLiteral})),`
+          return `  ${pascalName}: () => import(${pathLiteral}).then(m => pickExport(m, ${exportLiteral}, ${nameLiteral}, ${pathLiteral})),`
         }),
         '}',
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
-      ].join('\n')
+      ].join('\\n')
     },
     options: {
       manifest,
