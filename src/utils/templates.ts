@@ -139,7 +139,7 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
           const importPath = isAbsolute(c.filePath)
             ? './' + relative(join(nuxt.options.buildDir, 'content'), c.filePath).replace(/\b\.(?!vue)\w+$/g, '')
             : c.filePath.replace(/\b\.(?!vue)\w+$/g, '')
-          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global]
+          map[c.pascalName] = map[c.pascalName] || [c.pascalName, importPath, c.global, c.export || 'default']
           return map
         }, {} as Record<string, unknown[]>)
 
@@ -148,7 +148,7 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const localComponents = componentsList.filter(c => !c[2])
       return [
         // Export local components directly for SSR compatibility (fixes #3700)
-        ...localComponents.map(([pascalName, path]) => `export { default as ${pascalName} } from '${path}'`),
+        ...localComponents.map(([pascalName, path, , exp]) => `export { ${exp} as ${pascalName} } from '${path}'`),
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
