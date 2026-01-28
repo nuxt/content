@@ -226,6 +226,52 @@ describe('generateSearchSections', () => {
       { id: '/test#h3', title: 'H3', titles: ['Test Page', 'H2'], content: 'P3 H4 P4', level: 3 },
     ])
   })
+
+  it('should add extra fields to results', async () => {
+    const mockQueryBuilder = createMockQueryBuilder([{
+      path: '/test',
+      title: 'Test Page',
+      description: 'Page description',
+      author: 'John Doe',
+      body: {
+        type: 'root',
+        children: [
+          {
+            type: 'element',
+            tag: 'h2',
+            props: { id: 'section-1' },
+            children: [{ type: 'text', value: 'Section 1' }],
+          },
+          {
+            type: 'element',
+            tag: 'p',
+            children: [{ type: 'text', value: 'Section 1 content' }],
+          },
+        ],
+      },
+    }])
+
+    const sections = await generateSearchSections(mockQueryBuilder, { extraFields: ['author'] })
+
+    expect(sections).toEqual([
+      {
+        id: '/test',
+        title: 'Test Page',
+        titles: [],
+        content: 'Page description',
+        level: 1,
+        author: 'John Doe',
+      },
+      {
+        id: '/test#section-1',
+        title: 'Section 1',
+        titles: ['Test Page'],
+        content: 'Section 1 content',
+        level: 2,
+        author: 'John Doe',
+      },
+    ])
+  })
 })
 
 function createMockQueryBuilder(result: unknown[]) {
