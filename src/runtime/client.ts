@@ -27,7 +27,7 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections(collection: keyof Collections, opts?: { ignoredTags?: string[], separators?: string[] }) {
+export function queryCollectionSearchSections<T extends keyof PageCollections>(collection: T, opts?: { ignoredTags?: string[], extraFields?: Array<keyof PageCollections[T]>, minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`, maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}` }) {
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
