@@ -59,6 +59,7 @@
     "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
+    "@internationalized/date": "^3.10.1",
     "@nuxt/kit": "^4.2.2",
     "@nuxtjs/mdc": "^0.20.0",
     "@shikijs/langs": "^3.21.0",

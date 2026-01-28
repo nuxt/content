@@ -17,6 +17,8 @@ describe('generateCollectionInsert', () => {
         otherField: z.string().default('untitled'),
         otherField2: z.boolean().default(true),
         date: z.date().default(new Date('2022-01-01')),
+        dateString: z.string().date().default('2022-01-01'),
+        datetimeString: z.string().datetime().default('2022-01-01 20:00:00'),
         object: z.object({ foo: z.string() }).default(() => ({ foo: 'bar' })),
         array: z.array(z.string()).default(() => []),
       }),
@@ -31,7 +33,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', \'[]\', 13, \'2022-01-01T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"bar"}\', \'untitled\', true, \'foo\', \'bnUQ85H_Zf72faGIQhV0i9QeTEnf1ueEIaMAO8aAAGw\');',
+      ' (\'foo.md\', \'[]\', 13, \'2022-01-01\', \'2022-01-01\', \'2022-01-01 20:00:00\', \'md\', \'{}\', \'{"foo":"bar"}\', \'untitled\', true, \'foo\', \'qOlPCMRxWbrtFhHMqkJLriaEnrze1H-G48FLCfDo13M\');',
     ].join(''))
   })
 
@@ -64,7 +66,7 @@ describe('generateCollectionInsert', () => {
     expect(sql[0]).toBe([
       `INSERT INTO ${getTableName('content')}`,
       ' VALUES',
-      ' (\'foo.md\', \'["foo"]\', 42, \'2022-01-02T00:00:00.000Z\', \'md\', \'{}\', \'{"foo":"baz"}\', \'foo\', false, \'foo\', \'ImMjHvkHl82Jx1bjlpanb9d3i_HQIbjNFverKKbZLME\');',
+      ' (\'foo.md\', \'["foo"]\', 42, \'2022-01-02\', \'md\', \'{}\', \'{"foo":"baz"}\', \'foo\', false, \'foo\', \'uppo29zBKkTDGdRbmj29XkaEcWcpEnA1UYLgajzyWw0\');',
     ].join(''))
   })
 
