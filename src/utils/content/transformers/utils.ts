@@ -1,4 +1,4 @@
-import { fromDate, toCalendarDateTime, toCalendarDate } from '@internationalized/date'
+import { fromDate, toCalendarDateTime, toCalendarDate, getLocalTimeZone } from '@internationalized/date'
 import type { ContentTransformer } from '../../../types/content'
 
 export const defineTransformer = (transformer: ContentTransformer) => {
@@ -6,9 +6,9 @@ export const defineTransformer = (transformer: ContentTransformer) => {
 }
 
 export const formatDateTime = (datetime: string): string => {
-  return toCalendarDateTime(fromDate(new Date(datetime))).toString().replace('T', ' ')
+  return toCalendarDateTime(fromDate(new Date(datetime), getLocalTimeZone())).toString().replace('T', ' ')
 }
 
 export const formatDate = (date: string): string => {
-  return toCalendarDate(fromDate(new Date(date))).toString()
+  return toCalendarDate(fromDate(new Date(date), getLocalTimeZone())).toString()
 }
