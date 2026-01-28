@@ -6,6 +6,7 @@ import { getOrderedSchemaKeys } from '../schema'
 import { parseSourceBase } from './utils'
 import { withoutPrefixNumber, withoutRoot } from './files'
 import type { CollectionInfo, ResolvedCollectionSource } from '@nuxt/content'
+import { formatDate, formatDateTime } from '../../../utils/content/transformers/utils'
 
 export const getCollectionByFilePath = (path: string, collections: Record<string, CollectionInfo>): { collection: CollectionInfo | undefined, matchedSource: ResolvedCollectionSource | undefined } => {
   let matchedSource: ResolvedCollectionSource | undefined
@@ -132,11 +133,11 @@ function computeValuesBasedOnCollectionSchema(collection: CollectionInfo, data: 
     else if (type === 'string' || ['string', 'enum'].includes(value.type)) {
       // @ts-expect-error format does exist
       if (value.format === 'date') {
-        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString().slice(0, 10)}'` : defaultValue)
+        values.push(valueToInsert !== 'NULL' ? `'${formatDate(valueToInsert)}'` : defaultValue)
       }
       // @ts-expect-error format does exist
       else if (value.format === 'datetime') {
-        values.push(valueToInsert !== 'NULL' ? `'${new Date(valueToInsert).toISOString().slice(0, 19).replace('T', ' ')}'` : defaultValue)
+        values.push(valueToInsert !== 'NULL' ? `'${formatDateTime(valueToInsert)}'` : defaultValue)
       }
       else {
         values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)

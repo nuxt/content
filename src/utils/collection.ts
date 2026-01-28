@@ -6,6 +6,7 @@ import { defineLocalSource, defineGitSource } from './source'
 import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
 import nuxtContentContext from './context'
+import { formatDate, formatDateTime } from './content/transformers/utils'
 
 export function getTableName(name: string) {
   return `_content_${name}`
@@ -156,10 +157,10 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
       values.push(Number(valueToInsert))
     }
     else if (property?.sqlType === 'DATE') {
-      values.push(`'${new Date(valueToInsert as string).toISOString().slice(0, 10)}'`)
+      values.push(`'${formatDate(valueToInsert as string)}'`)
     }
     else if (property?.sqlType === 'DATETIME') {
-      values.push(`'${new Date(valueToInsert as string).toISOString().slice(0, 19).replace('T', ' ')}'`)
+      values.push(`'${formatDateTime(valueToInsert as string)}'`)
     }
     else if (property?.enum) {
       values.push(`'${String(valueToInsert).replace(/\n/g, '\\n').replace(/'/g, '\'\'')}'`)
