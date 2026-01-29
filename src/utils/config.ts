@@ -1,9 +1,11 @@
 import { loadConfig, watchConfig, createDefineConfig } from 'c12'
 import { relative } from 'pathe'
+import { hasNuxtModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { DefinedCollection, ModuleOptions } from '../types'
 import { defineCollection, resolveCollections } from './collection'
 import { logger } from './dev'
+import { resolveStudioCollection } from './studio'
 
 type NuxtContentConfig = {
   collections: Record<string, DefinedCollection>
@@ -62,6 +64,11 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
 
     return acc
   }, {} as Record<string, DefinedCollection>)
+
+  // If nuxt-studio is installed, automatically configure studio collection
+  if (hasNuxtModule('nuxt-studio')) {
+    resolveStudioCollection(nuxt, collectionsConfig)
+  }
 
   const hasNoCollections = Object.keys(collectionsConfig || {}).length === 0
   if (hasNoCollections) {
