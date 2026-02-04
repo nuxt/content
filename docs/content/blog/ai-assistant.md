@@ -39,7 +39,7 @@ AI changes this dynamic. Instead of adapting their question to your navigation s
 ## Activation With One Environment Variable
 
 ::note
-The AI Assistant requires **deployment on Vercel** to access the AI Gateway. This feature is currently not available on other hosting platforms.
+The AI Assistant requires a **Vercel AI Gateway API key** (Vercel account needed). Test it for free with $5 credits offer!
 ::
 
 Docus abstracts the AI setup complexity and enables your own AI assistant chat with one environment variable.
