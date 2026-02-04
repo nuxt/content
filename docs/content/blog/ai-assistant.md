@@ -156,9 +156,11 @@ You control the AI provider through Vercel AI Gateway, allowing you to choose mo
 
 ::prose-tip
 **New to Docus?** Create a complete documentation site with AI assistant built-in:
+
 ```bash
 npx skills add nuxt-content/docus
 ```
+
 Then run `/create-docs` in your AI agent (Claude, Cursor, or any agent supporting skills) to generate everything automatically.
 ::
 
