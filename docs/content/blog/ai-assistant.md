@@ -26,6 +26,8 @@ Documentation is only as valuable as the answers users can extract from it. We'r
 
 The AI Assistant searches your content and generates code examples users can copy directly. The best part? **It activates with a single environment variable.**
 
+<video src="https://res.cloudinary.com/nuxt/video/upload/v1770204403/studio/docus-assistant_e8xmxu.mp4" controls autoplay muted loop playsinline class="w-full h-auto rounded-md"></video>
+
 ## The Documentation Discovery Problem
 
 Users arrive at your docs with questions, not keywords. They scroll through navigation, guess search terms, and scan pages hoping to find what they need. Even well-organized documentation creates friction between the question in their mind and the answer on the page.
