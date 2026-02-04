@@ -45,7 +45,7 @@ AI_GATEWAY_API_KEY=your-api-key
 ```
 
 ::note
-The AI Assistant requires a **Vercel AI Gateway API key** (Vercel account needed) or zero config if you deploy to Vercel. Test it for free with $5 credits offer!
+A **Vercel AI Gateway API key** is required unless you deploy to Vercel, in which case no API key or configuration is needed. Test it for free with $5 credits offer!
 ::
 
 That's it. Deploy your docs and the AI Assistant activates automatically. No configuration files, no API setup, no infrastructure changes.
