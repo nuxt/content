@@ -38,6 +38,10 @@ AI changes this dynamic. Instead of adapting their question to your navigation s
 
 ## Activation With One Environment Variable
 
+::note
+The AI Assistant requires **deployment on Vercel** to access the AI Gateway. This feature is currently not available on other hosting platforms.
+::
+
 Docus abstracts the AI setup complexity and enables your own AI assistant chat with one environment variable.
 
 ```bash [.env]
@@ -68,7 +72,7 @@ The MCP protocol is an open standard that allows AI models to interact with exte
 
 ### AI Customization
 
-The real power of the MCP integration is **extensibility**. Docus uses `@nuxtjs/mcp-toolkit` under the hood. It allows to add custom tools that expand what the AI assistant can do beyond just searching documentation.
+The real power of the MCP integration is **extensibility**. Docus uses `@nuxtjs/mcp-toolkit` under the hood. It allows to add custom tools that expand what the AI assistant can do beyond just searching documentation.
 
 Want your AI to check API status, fetch live data, run code examples, or interact with your own services? Add custom MCP tools in your project:
 
@@ -109,7 +113,7 @@ Learn more about MCP customization in the Docus documentation.
 
 Users can ask questions without leaving the page they're reading. The assistant understands the current context and can reference the page you're viewing.
 
-Configuration is optional but powerful. Pre-populate common questions, adjust UI visibility, customize keyboard shortcuts, or disable features you don't need in the \`app.config.ts\` file.
+Configuration is optional but powerful. Pre-populate common questions, adjust UI visibility, customize keyboard shortcuts, or disable features you don't need in the `app.config.ts` file.
 
 ```typescript [app.config.ts]
 export default defineAppConfig({
@@ -131,8 +135,6 @@ export default defineAppConfig({
   }
 })
 ```
-
-Configuration is optional but powerful. Pre-populate common questions, adjust UI visibility, customize keyboard shortcuts, or disable features you don't need
 
 ### Internationalization
 
