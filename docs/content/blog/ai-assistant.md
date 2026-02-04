@@ -3,7 +3,7 @@ title: Meet the AI Assistant for Docus
 description: Quick responses, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
 seo:
   title: Meet the AI Assistant for Docus | Add AI to Your Documentation
-  description: AI-powered documentation search that actually works. Cite sources, generate code, extend with custom tools. Zero infrastructure, just add your API key.
+  description: AI-powered documentation search that actually works. Generate code, extend with custom tools. Zero infrastructure, just add your API key.
 date: 2026-02-04T00:00:00.000Z
 category: docus
 image:
@@ -24,13 +24,13 @@ authors:
 
 Documentation is only as valuable as the answers users can extract from it. We're introducing the Docus AI Assistant, a native, embedded chat experience that transforms how developers interact with your documentation.
 
-The AI Assistant searches your content, cites sources with navigable links, and generates code examples users can copy directly. The best part? **It activates with a single environment variable.**
+The AI Assistant searches your content and generates code examples users can copy directly. The best part? **It activates with a single environment variable.**
 
 ## The Documentation Discovery Problem
 
 Users arrive at your docs with questions, not keywords. They scroll through navigation, guess search terms, and scan pages hoping to find what they need. Even well-organized documentation creates friction between the question in their mind and the answer on the page.
 
-AI changes this dynamic. Instead of adapting their question to your navigation structure, users ask naturally and receive answers grounded in your actual documentation, with links to the source material.
+AI changes this dynamic. Instead of adapting their question to your navigation structure, users ask naturally and receive answers grounded in your actual documentation.
 
 ## One Environment Variable, Full AI Integration
 
@@ -44,7 +44,7 @@ That's it. Deploy your docs and the AI Assistant activates automatically. No con
 
 The assistant works through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), supporting OpenAI, Anthropic, Google, and other providers. Choose your preferred model and budget, the integration remains the same.
 
-::prose-tip{to="https://docus.dev/ai/assistant"}
+::prose-tip{to="https://docus.dev/en/ai/assistant#quick-start"}
 Read the full setup guide in the Docus documentation.
 ::
 
@@ -54,15 +54,15 @@ The AI Assistant leverages the **Model Context Protocol (MCP)** to give AI model
 
 1. Docus automatically exposes an **MCP server** at `/mcp` that provides tools to search and retrieve your documentation
 2. When you provide an `AI_GATEWAY_API_KEY`, AI models connect to your MCP server
-3. The AI uses MCP tools to search your docs in real-time and cite sources accurately
+3. The AI uses MCP tools to search your docs in real-time and provide accurate answers
 
-This approach prevents hallucination by grounding every response in actual content. The AI can only answer based on what's in your documentation, and every answer includes source links for verification.
+This approach prevents hallucination by grounding every response in actual content. The AI can only answer based on what's in your documentation.
 
 The MCP protocol is an open standard that allows AI models to interact with external data sources through well-defined tools. Docus implements this automatically, you just provide the API key.
 
 ## Extend the Assistant with Custom Tools
 
-The real power of the MCP integration is **extensibility**. Docus uses `@nuxtjs/mcp-toolkit`, allowing you to add custom tools that expand what the AI assistant can do beyond just searching documentation.
+The real power of the MCP integration is **extensibility**. Docus uses [`@nuxtjs/mcp-toolkit`](https://mcp-toolkit.nuxt.dev/), allowing you to add custom tools that expand what the AI assistant can do beyond just searching documentation.
 
 Want your AI to check API status, fetch live data, run code examples, or interact with your own services? Add custom MCP tools in your project:
 
@@ -170,14 +170,6 @@ Read the complete AI Assistant documentation.
 
 ## What's Next
 
-We're exploring additional AI capabilities across the documentation experience:
+We're constantly exploring new ways to make documentation more interactive and helpful. The AI Assistant is just the beginning of what's possible when you combine great documentation with intelligent tooling.
 
-- **Contextual Suggestions**: Proactive recommendations based on the current page
-- **Code Explanations**: Inline AI explanations for complex code blocks
-- **Migration Assistants**: AI-guided version upgrades with automatic code modifications
-
-Documentation is evolving from static reference material into an interactive learning environment. The Docus AI Assistant is the first step.
-
----
-
-**Ready to add AI to your docs?** The AI Assistant is available now in Docus. Get your API key, set one environment variable, and ship.
+Documentation is evolving from static reference material into an interactive learning environment, and we're excited to see where this journey takes us.
