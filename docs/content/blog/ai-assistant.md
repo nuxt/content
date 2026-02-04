@@ -1,9 +1,9 @@
 ---
-title: Native AI Assistant for Your Documentation
-description: Add an intelligent AI chat to your Docus documentation with a single environment variable. Powered by MCP protocol for accurate, context-aware answers.
+title: Meet the AI Assistant for Docus
+description: Introducing the Docus AI Assistant. Instant answers, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
 seo:
-  title: Add AI Assistant to Your Nuxt Documentation in Seconds
-  description: Integrate an AI-powered chat assistant into your Docus docs. One-line setup with AI Gateway, MCP server integration, and automatic i18n support.
+  title: Meet the AI Assistant for Docus | Add AI to Your Documentation
+  description: AI-powered documentation search that actually works. Cite sources, generate code, extend with custom tools. Zero infrastructure, just add your API key.
 date: 2026-02-04T00:00:00.000Z
 category: content
 image:
@@ -22,7 +22,7 @@ authors:
     username: larbish
 ---
 
-Documentation is only as valuable as the answers users can extract from it. We're introducing the Docus AI Assistant,a native, embedded chat experience that transforms how developers interact with your documentation.
+Documentation is only as valuable as the answers users can extract from it. We're introducing the Docus AI Assistant, a native, embedded chat experience that transforms how developers interact with your documentation.
 
 The AI Assistant searches your content, cites sources with navigable links, and generates code examples users can copy directly. The best part? **It activates with a single environment variable.**
 
@@ -30,7 +30,7 @@ The AI Assistant searches your content, cites sources with navigable links, and 
 
 Users arrive at your docs with questions, not keywords. They scroll through navigation, guess search terms, and scan pages hoping to find what they need. Even well-organized documentation creates friction between the question in their mind and the answer on the page.
 
-AI changes this dynamic. Instead of adapting their question to your navigation structure, users ask naturally and receive answers grounded in your actual documentation,with links to the source material.
+AI changes this dynamic. Instead of adapting their question to your navigation structure, users ask naturally and receive answers grounded in your actual documentation, with links to the source material.
 
 ## One Environment Variable, Full AI Integration
 
@@ -42,7 +42,7 @@ AI_GATEWAY_API_KEY=your-api-key
 
 That's it. Deploy your docs and the AI Assistant activates automatically. No configuration files, no API setup, no infrastructure changes.
 
-The assistant works through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), supporting OpenAI, Anthropic, Google, and other providers. Choose your preferred model and budget,the integration remains the same.
+The assistant works through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), supporting OpenAI, Anthropic, Google, and other providers. Choose your preferred model and budget, the integration remains the same.
 
 ::prose-tip{to="https://docus.dev/ai/assistant"}
 Read the full setup guide in the Docus documentation.
@@ -58,7 +58,7 @@ The AI Assistant leverages the **Model Context Protocol (MCP)** to give AI model
 
 This approach prevents hallucination by grounding every response in actual content. The AI can only answer based on what's in your documentation, and every answer includes source links for verification.
 
-The MCP protocol is an open standard that allows AI models to interact with external data sources through well-defined tools. Docus implements this automatically,you just provide the API key.
+The MCP protocol is an open standard that allows AI models to interact with external data sources through well-defined tools. Docus implements this automatically, you just provide the API key.
 
 ## Extend the Assistant with Custom Tools
 
@@ -84,7 +84,7 @@ export default defineMcpTool({
 })
 ```
 
-The AI assistant automatically discovers and uses your custom tools. Users can now ask "Is the API down?" and get real-time answers,not just documentation.
+The AI assistant automatically discovers and uses your custom tools. Users can now ask "Is the API down?" and get real-time answers, not just documentation.
 
 ### What You Can Add
 
@@ -146,7 +146,7 @@ The assistant understands your API structure, knows your conventions, and genera
 
 ## Privacy and Control
 
-Your documentation content stays within your control. The AI Assistant queries your published docs,the same content publicly available on your site. No separate indexing, no data collection, no external databases.
+Your documentation content stays within your control. The AI Assistant queries your published docs, the same content publicly available on your site. No separate indexing, no data collection, no external databases.
 
 You control the AI provider through Vercel AI Gateway, allowing you to choose models based on privacy requirements, latency needs, or cost constraints. Switch providers without changing your documentation code.
 
