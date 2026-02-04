@@ -152,15 +152,21 @@ You control the AI provider through Vercel AI Gateway, allowing you to choose mo
 
 ## Get Started Today
 
-Add the AI Assistant to your Docus documentation:
-
+::prose-tip
+**New to Docus?** Create a complete documentation site with AI assistant built-in:
 ```bash
-# Get an API key from Vercel AI Gateway
-# Add to your .env file
-echo "AI_GATEWAY_API_KEY=your-api-key" >> .env
-
-# Deploy - the assistant activates automatically
+npx skills add nuxt-content/docus
 ```
+Then run `/create-docs` in your AI agent (Claude, Cursor, or any agent supporting skills) to generate everything automatically.
+::
+
+Already have a Docus site? Add the AI Assistant with one environment variable:
+
+```bash [.env]
+AI_GATEWAY_API_KEY=your-api-key
+```
+
+Deploy and the assistant activates automatically.
 
 The AI Assistant represents a shift in how developers interact with documentation. Instead of searching for answers, they have a conversation. Instead of parsing examples, they generate code.
 
