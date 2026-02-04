@@ -1,13 +1,13 @@
 ---
 title: Meet the AI Assistant for Docus
-description: Introducing the Docus AI Assistant. Instant answers, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
+description: Quick responses, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
 seo:
   title: Meet the AI Assistant for Docus | Add AI to Your Documentation
   description: AI-powered documentation search that actually works. Cite sources, generate code, extend with custom tools. Zero infrastructure, just add your API key.
 date: 2026-02-04T00:00:00.000Z
-category: content
+category: docus
 image:
-  src: /blog/ai-assistant.png
+  src: /blog/docus-assistant.png
   alt: Docus AI Assistant Interface
 authors:
   - name: Hugo Richard
