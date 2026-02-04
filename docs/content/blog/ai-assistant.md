@@ -1,14 +1,5 @@
 ---
 title: Meet the AI Assistant for Docus
-description: Quick responses, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
-seo:
-  title: Meet the AI Assistant for Docus | Add AI to Your Documentation
-  description: AI-powered documentation search that actually works. Generate code, extend with custom tools. Zero infrastructure, just add your API key.
-date: 2026-02-04T00:00:00.000Z
-category: docus
-image:
-  src: /blog/docus-assistant.png
-  alt: Docus AI Assistant Interface
 authors:
   - name: Hugo Richard
     avatar:
@@ -20,13 +11,23 @@ authors:
       src: https://avatars.githubusercontent.com/u/7290030?v=4
     to: https://x.com/_larbish
     username: larbish
+category: docus
+date: 2026-02-04T00:00:00.000Z
+description: Quick responses, real-time search, and extensible with custom tools. Setup in seconds with a single environment variable.
+draft: false
+image:
+  src: /blog/docus-assistant.png
+  alt: Docus AI Assistant Interface
+seo:
+  title: Meet the AI Assistant for Docus | Add AI to Your Documentation
+  description: AI-powered documentation search that actually works. Generate code, extend with custom tools. Zero infrastructure, just add your API key.
 ---
 
 Documentation is only as valuable as the answers users can extract from it. We're introducing the Docus AI Assistant, a native, embedded chat experience that transforms how developers interact with your documentation.
 
 The AI Assistant searches your content and generates code examples users can copy directly. The best part? **It activates with a single environment variable.**
 
-<video src="https://res.cloudinary.com/nuxt/video/upload/v1770204403/studio/docus-assistant_e8xmxu.mp4" controls autoplay muted loop playsinline class="w-full h-auto rounded-md"></video>
+:video{autoplay controls loop muted playsinline src="https://res.cloudinary.com/nuxt/video/upload/v1770204403/studio/docus-assistant_e8xmxu.mp4" class="w-full h-auto rounded-md"}
 
 ## The Documentation Discovery Problem
 
