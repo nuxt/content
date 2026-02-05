@@ -65,17 +65,18 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
     return acc
   }, {} as Record<string, DefinedCollection>)
 
-  // If nuxt-studio is installed, automatically configure studio collection
-  if (hasNuxtModule('nuxt-studio')) {
-    resolveStudioCollection(nuxt, collectionsConfig)
-  }
-
   const hasNoCollections = Object.keys(collectionsConfig || {}).length === 0
   if (hasNoCollections) {
     logger.warn('No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/docs/getting-started/installation')
   }
 
-  const collections = resolveCollections(hasNoCollections ? defaultConfig.collections : collectionsConfig)
+  const finalCollectionsConfig = hasNoCollections ? defaultConfig.collections : collectionsConfig
+  // If nuxt-studio is installed, automatically configure studio collection
+  if (hasNuxtModule('nuxt-studio')) {
+    resolveStudioCollection(nuxt, finalCollectionsConfig)
+  }
+
+  const collections = resolveCollections(finalCollectionsConfig)
 
   return { collections }
 }
