@@ -147,8 +147,21 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const globalComponents = componentsList.filter(c => c[2]).map(c => c[0])
       const localComponents = componentsList.filter(c => !c[2])
       return [
-        // Export local components directly for SSR compatibility (fixes #3700)
-        ...localComponents.map(([pascalName, path, , exp]) => `export { ${exp} as ${pascalName} } from '${path}'`),
+        'const pickExport = (mod, exportName, componentName, path) => {',
+        '  const resolved = exportName === \'default\' ? mod?.default : mod?.[exportName]',
+        '  if (!resolved) {',
+        '    throw new Error(`[nuxt-content] Missing export "${exportName}" for component "${componentName}" in "${path}".`)',
+        '  }',
+        '  return resolved',
+        '}',
+        'export const localComponentLoaders = {',
+        ...localComponents.map(([pascalName, path, , exp]) => {
+          const pathLiteral = JSON.stringify(path)
+          const exportLiteral = JSON.stringify(exp)
+          const nameLiteral = JSON.stringify(pascalName)
+          return `  ${pascalName}: () => import(${pathLiteral}).then(m => pickExport(m, ${exportLiteral}, ${nameLiteral}, ${pathLiteral})),`
+        }),
+        '}',
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
       ].join('\n')
