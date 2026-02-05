@@ -30,7 +30,8 @@ export function resolveStudioCollection(
 ): void {
   /* @ts-expect-error - studio is not typed */
   const studioAIConfig: StudioAIConfig = nuxt.options.studio?.ai || {}
-  if (!studioAIConfig.apiKey) {
+  const apiKey = studioAIConfig.apiKey || process.env.AI_GATEWAY_API_KEY
+  if (!apiKey) {
     return
   }
 
