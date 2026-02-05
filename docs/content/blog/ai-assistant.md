@@ -38,15 +38,15 @@ AI changes this dynamic. Instead of adapting their question to your navigation s
 
 ## Activation With One Environment Variable
 
-::note
-The AI Assistant requires a **Vercel AI Gateway API key** (Vercel account needed). Test it for free with $5 credits offer!
-::
-
 Docus abstracts the AI setup complexity and enables your own AI assistant chat with one environment variable.
 
 ```bash [.env]
 AI_GATEWAY_API_KEY=your-api-key
 ```
+
+::note
+A **Vercel AI Gateway API key** is required unless you deploy to Vercel, in which case no API key or configuration is needed. Test it for free with $5 credits offer!
+::
 
 That's it. Deploy your docs and the AI Assistant activates automatically. No configuration files, no API setup, no infrastructure changes.
 
