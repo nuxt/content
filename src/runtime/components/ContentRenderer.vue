@@ -5,10 +5,8 @@ import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
 import { toHast } from 'minimark/hast'
-import * as contentComponents from '#content/components'
+import { globalComponents, localComponents, localComponentLoaders } from '#content/components'
 import { useRuntimeConfig } from '#imports'
-
-const { globalComponents, localComponents } = contentComponents
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
@@ -124,8 +122,8 @@ function resolveVueComponent(component: string | Renderable) {
       _component = resolveComponent(component, false)
     }
     else if (localComponents.includes(pascalCase(component))) {
-      // Use component directly (exported as ESM default re-export for SSR compatibility)
-      _component = contentComponents[pascalCase(component) as keyof typeof contentComponents]
+      const loader = localComponentLoaders[pascalCase(component) as keyof typeof localComponentLoaders]
+      _component = loader ? defineAsyncComponent(loader) : undefined
     }
     if (typeof _component === 'string') {
       return _component

@@ -148,9 +148,9 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
       const localComponents = componentsList.filter(c => !c[2])
       return [
         'const pickExport = (mod, exportName, componentName, path) => {',
-        '  const resolved = exportName === \\'default\\' ? mod?.default : mod?.[exportName]',
+        '  const resolved = exportName === \'default\' ? mod?.default : mod?.[exportName]',
         '  if (!resolved) {',
-        '    throw new Error(`[nuxt-content] Missing export \"${exportName}\" for component \"${componentName}\" in \"${path}\".`)',
+        '    throw new Error(`[nuxt-content] Missing export "${exportName}" for component "${componentName}" in "${path}".`)',
         '  }',
         '  return resolved',
         '}',
