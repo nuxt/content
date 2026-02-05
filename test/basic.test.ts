@@ -34,7 +34,7 @@ describe('basic', async () => {
   describe('`content.config.ts`', async () => {
     test('Default collection is defined', async () => {
       const rootDir = resolver.resolve('./fixtures/basic')
-      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt)
+      const config = await loadContentConfig({ options: { _installedModules: [], modules: [], _layers: [{ config: { rootDir } }] } } as Nuxt)
 
       // Pages collection + info collection
       expect(config.collections.length).toBe(2)

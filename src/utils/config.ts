@@ -1,6 +1,6 @@
 import { loadConfig, watchConfig, createDefineConfig } from 'c12'
 import { relative } from 'pathe'
-import { hasNuxtModule } from '@nuxt/kit'
+import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { DefinedCollection, ModuleOptions } from '../types'
 import { defineCollection, resolveCollections } from './collection'
@@ -11,14 +11,12 @@ type NuxtContentConfig = {
   collections: Record<string, DefinedCollection>
 }
 
-const defaultConfig: NuxtContentConfig = {
-  collections: {
-    content: defineCollection({
-      type: 'page',
-      source: '**/*',
-    }),
-  },
-}
+const createDefaultCollections = (): NuxtContentConfig['collections'] => ({
+  content: defineCollection({
+    type: 'page',
+    source: '**/*',
+  }),
+})
 
 export const defineContentConfig = createDefineConfig<NuxtContentConfig>()
 
@@ -70,9 +68,10 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
     logger.warn('No content configuration found, falling back to default collection. In order to have full control over your collections, create the config file in project root. See: https://content.nuxt.com/docs/getting-started/installation')
   }
 
-  const finalCollectionsConfig = hasNoCollections ? defaultConfig.collections : collectionsConfig
+  const finalCollectionsConfig = hasNoCollections ? createDefaultCollections() : collectionsConfig
+
   // If nuxt-studio is installed, automatically configure studio collection
-  if (hasNuxtModule('nuxt-studio')) {
+  if (hasNuxtModule('nuxt-studio', nuxt || useNuxt())) {
     resolveStudioCollection(nuxt, finalCollectionsConfig)
   }
 
