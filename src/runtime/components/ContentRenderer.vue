@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
 import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
-import type { AsyncComponentLoader } from 'vue'
-import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
+import type { AsyncComponentLoader, PropType } from 'vue'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
-import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
-import { toHast } from 'minimark/hast'
+import { MDCRenderer } from 'mdc-syntax/vue'
 import { globalComponents, localComponents } from '#content/components'
 import { useRuntimeConfig } from '#imports'
+import type { MinimarkElement, MinimarkTree } from 'minimark'
 
 interface Renderable {
   render?: (props: Record<string, unknown>) => unknown
@@ -21,7 +20,7 @@ const props = defineProps({
    * Content to render
    */
   value: {
-    type: Object,
+    type: Object as PropType<{ id?: string, body: MinimarkTree, excerpt: MinimarkTree }>,
     required: true,
   },
   /**
@@ -81,14 +80,10 @@ const body = computed(() => {
   if (props.excerpt && props.value.excerpt) {
     body = props.value.excerpt
   }
-  if (body.type === 'minimal' || body.type === 'minimark') {
-    return toHast({ type: 'minimark', value: body.value })
-  }
-
   return body
 })
 
-const isEmpty = computed(() => !body.value?.children?.length)
+const isEmpty = computed(() => !body.value?.value?.length)
 
 const data = computed(() => {
   const { body, excerpt, ...data } = props.value
@@ -153,12 +148,11 @@ function resolveVueComponent(component: string | Renderable) {
   return componentObject
 }
 
-function resolveContentComponents(body: MDCRoot, meta: Record<string, unknown>) {
+function resolveContentComponents(body: MinimarkTree, meta: Record<string, unknown>) {
   if (!body) {
     return
   }
   const components = Array.from(new Set(loadComponents(body, meta as { tags: Record<string, string> })))
-
   const result = {} as Record<string, unknown>
   for (const [tag, component] of components) {
     if (result[tag]) {
@@ -173,31 +167,46 @@ function resolveContentComponents(body: MDCRoot, meta: Record<string, unknown>) 
     result[tag] = resolveVueComponent(component as string)
   }
 
-  return result as Exclude<(InstanceType<typeof MDCRenderer>)['$props']['components'], undefined>
+  return result as Record<string, unknown>
 }
 
-function loadComponents(node: MDCRoot | MDCElement, documentMeta: { tags: Record<string, string> }) {
-  const tag = (node as unknown as MDCElement).tag
-  if ((node as unknown as MDCText).type === 'text' || tag === 'binding' || (node as unknown as MDCComment).type === 'comment') {
+function loadComponents(node: MinimarkTree | MinimarkElement, documentMeta: { tags: Record<string, string> }) {
+  const components2 = [] as Array<[string, unknown]>
+  if ((node as MinimarkTree).type === 'minimark') {
+    for (const child of (node as MinimarkTree).value || []) {
+      if (typeof child === 'string' || child[0] === 'binding' || child[0] === 'comment') {
+        continue
+      }
+      components2.push(...loadComponents(child as MinimarkElement, documentMeta))
+    }
+    return components2
+  }
+
+  const tag = (node as MinimarkElement)[0]
+  if (tag === 'binding' || tag === 'comment') {
     return []
   }
-  const renderTag = findMappedTag(node as unknown as MDCElement, documentMeta.tags)
-  const components2 = [] as Array<[string, unknown]>
-  if ((node as unknown as MDCRoot).type !== 'root' && !htmlTags.has(renderTag)) {
+  const renderTag = findMappedTag(node as MinimarkElement, documentMeta.tags)
+  if (!htmlTags.has(renderTag)) {
     components2.push([tag, renderTag])
   }
-  for (const child of node.children || []) {
-    components2.push(...loadComponents(child as MDCElement, documentMeta))
+
+  for (let i = 2; i < (node as MinimarkElement).length; i++) {
+    const child = (node as MinimarkElement)[i] as MinimarkElement
+    if (typeof child === 'string' || child[0] === 'binding' || child[0] === 'comment') {
+      continue
+    }
+    components2.push(...loadComponents((node as MinimarkElement)[i] as MinimarkElement, documentMeta))
   }
   return components2
 }
 
-function findMappedTag(node: MDCElement, tags: Record<string, string>) {
-  const tag = node.tag
-  if (!tag || typeof node.props?.__ignoreMap !== 'undefined') {
+function findMappedTag(node: MinimarkElement, tags: Record<string, string>) {
+  const tag = node[0]
+  if (!tag || typeof node[1]?.__ignoreMap !== 'undefined') {
     return tag
   }
-  return tags[tag] || tags[pascalCase(tag)] || tags[kebabCase(node.tag)] || tag
+  return tags[tag] || tags[pascalCase(tag)] || tags[kebabCase(node[0])] || tag
 }
 </script>
 
@@ -212,6 +221,7 @@ function findMappedTag(node: MDCElement, tags: Record<string, string>) {
     :unwrap="props.unwrap"
     :components="componentsMap"
     :data-content-id="debug ? value.id : undefined"
+    :stream="false"
   />
   <slot
     v-else
