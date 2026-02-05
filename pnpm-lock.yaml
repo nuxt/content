@@ -26,8 +26,8 @@ importers:
         specifier: ^4.2.2
         version: 4.2.2(magicast@0.5.1)
       '@nuxtjs/mdc':
-        specifier: ^0.20.0
-        version: 0.20.0(magicast@0.5.1)
+        specifier: ^0.20.1
+        version: 0.20.1(magicast@0.5.1)
       '@shikijs/langs':
         specifier: ^3.21.0
         version: 3.21.0
@@ -1913,8 +1913,8 @@ packages:
   '@nuxtjs/mdc@0.19.2':
     resolution: {integrity: sha512-mtwBb9D5U7H1R3kpqEmqwML1RudN6qOJqJwebrqLxk+EWhtGUXAdUBXC2L/kPWiCNA4Yz/EO+tSfSQV8Idh5nw==}
 
-  '@nuxtjs/mdc@0.20.0':
-    resolution: {integrity: sha512-CV1FuCZppBpNjtWT+OaV+t7qbm/dD+2bbf7Or0h1gxperlf1bB3VZnDoBkOTRjgPWyYvzzRS7FUOQJLQG28MEA==}
+  '@nuxtjs/mdc@0.20.1':
+    resolution: {integrity: sha512-fGmtLDQAmmDHF5Z37Apfc3k806rb2XWDOQFhb5xlDSL7+HiiUjyFy3ctx3qWdlC08dRzfAetmsGOYbfDqYsB/w==}
 
   '@nuxtjs/plausible@2.0.1':
     resolution: {integrity: sha512-Edr7oFIeZ9Og2lS21NhC3MRgcR7X9H1Hyjve8EsM2CycJGBlCcGKHs0+vi4KpbCVi33VlTXUUYNRPtGyeUX6Fw==}
@@ -11220,7 +11220,7 @@ snapshots:
       - magicast
       - supports-color
 
-  '@nuxtjs/mdc@0.20.0(magicast@0.5.1)':
+  '@nuxtjs/mdc@0.20.1(magicast@0.5.1)':
     dependencies:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       '@shikijs/core': 3.21.0
