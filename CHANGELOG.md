@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.11.2](https://github.com/nuxt/content/compare/v3.11.1...v3.11.2) (2026-02-05)
+
+### Bug Fixes
+
+* **studio:** fallback to env variable to detect ai feature ([#3713](https://github.com/nuxt/content/issues/3713)) ([3fc8b7b](https://github.com/nuxt/content/commit/3fc8b7b06fa45136d48258e64d49cca1961c313d))
+
 ## [3.11.1](https://github.com/nuxt/content/compare/v3.11.0...v3.11.1) (2026-02-05)
 
 ### Features
