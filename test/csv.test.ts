@@ -32,7 +32,7 @@ describe('csv single-file collection', async () => {
   describe('`content.config.ts`', async () => {
     test('single-file csv source is resolved', async () => {
       const rootDir = resolver.resolve('./fixtures/csv')
-      const config = await loadContentConfig({ options: { _layers: [{ config: { rootDir } }] } } as Nuxt)
+      const config = await loadContentConfig({ options: { _installedModules: [], modules: [], _layers: [{ config: { rootDir } }] } } as Nuxt)
 
       expect(config.collections.map(c => c.name)).toContain('people')
 
