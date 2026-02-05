@@ -164,7 +164,7 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
         '}',
         `export const globalComponents: string[] = ${JSON.stringify(globalComponents)}`,
         `export const localComponents: string[] = ${JSON.stringify(localComponents.map(c => c[0]))}`,
-      ].join('\\n')
+      ].join('\n')
     },
     options: {
       manifest,
