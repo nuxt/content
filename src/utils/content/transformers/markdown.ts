@@ -1,57 +1,28 @@
-import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import type { State } from 'mdast-util-to-hast'
 import { normalizeUri } from 'micromark-util-sanitize-uri'
 import type { Properties, Element } from 'hast'
 import type { Link } from 'mdast'
 import { isRelative } from 'ufo'
-import { fromHast } from 'minimark/hast'
 import type { MarkdownOptions, MarkdownPlugin } from '../../../types/content'
 import { defineTransformer } from './utils'
 import { generatePath } from './path-meta'
+import { parseAsync } from 'mdc-syntax'
 
 export default defineTransformer({
   name: 'markdown',
   extensions: ['.md'],
   parse: async (file, options: Partial<MarkdownOptions> = {}) => {
-    const config = { ...options } as MarkdownOptions
-    config.rehypePlugins = await importPlugins(config.rehypePlugins)
-    config.remarkPlugins = await importPlugins(config.remarkPlugins)
-
-    const highlight = options.highlight
-      ? {
-          ...options.highlight,
-          // Pass only when it's an function. String values are handled by `@nuxtjs/mdc`
-          highlighter: typeof options.highlight?.highlighter === 'function'
-            ? options.highlight.highlighter
-            : undefined,
-        }
-      : undefined
-
-    const parsed = await parseMarkdown(file.body as string, {
-      ...config,
-      highlight,
-      toc: config.toc,
-      remark: { plugins: config.remarkPlugins },
-      rehype: {
-        plugins: config.rehypePlugins,
-        options: { handlers: { link } },
-      },
-    }, {
-      fileOptions: file,
-    })
-
-    if ((options as { compress: boolean }).compress) {
-      return {
-        ...parsed.data,
-        excerpt: parsed.excerpt ? fromHast(parsed.excerpt) : undefined,
-        body: {
-          ...fromHast(parsed.body),
-          toc: parsed.toc,
-        },
-        id: file.id,
-        title: parsed.data?.title || undefined,
+    const highlightOptions = (options.highlight as unknown as boolean | undefined) === false ? undefined : {
+      themes: {
+        light: (options.highlight?.theme as unknown as Record<string, string>)?.default || (options.highlight?.theme as unknown as Record<string, string>)?.light || 'material-theme-lighter',
+        dark: (options.highlight?.theme as unknown as Record<string, string>)?.dark || 'material-theme-palenight',
       }
     }
+
+    const parsed = await parseAsync(file.body as string, {
+      highlight: highlightOptions
+    })
+
 
     return {
       ...parsed.data,
@@ -65,22 +36,6 @@ export default defineTransformer({
     }
   },
 })
-
-async function importPlugins(plugins: Record<string, false | MarkdownPlugin> = {}) {
-  const resolvedPlugins: Record<string, false | MarkdownPlugin> = {}
-  for (const [name, plugin] of Object.entries(plugins)) {
-    if (plugin) {
-      resolvedPlugins[name] = {
-        instance: plugin.instance || await import(/* @vite-ignore */ name).then(m => m.default || m),
-        options: plugin.options || {},
-      }
-    }
-    else {
-      resolvedPlugins[name] = false
-    }
-  }
-  return resolvedPlugins
-}
 
 function link(state: State, node: Link & { attributes?: Properties }) {
   const properties: Properties = {

@@ -39,7 +39,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
   trailingIcon: i-lucide-arrow-right
   ---
   :::
-  :u-input-copy{value="npx nuxt module add content"}
+
+  :::u-input-copy{value="npx nuxt module add content"}
+  :::
 
 #default
   ::code-group
@@ -85,10 +87,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-files
     ---
-    #title{unwrap="p"}
+    #title
     File-based CMS
 
-    #description{unwrap="p"}
+    #description
     Write your content in Markdown, YAML, CSV or JSON and query it in your components.
     :::
 
@@ -96,10 +98,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-filter
     ---
-    #title{unwrap="p"}
+    #title
     Query Builder
 
-    #description{unwrap="p"}
+    #description
     Query your content with a MongoDB-like API to fetch the right data at the right time.
     :::
 
@@ -107,10 +109,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-database
     ---
-    #title{unwrap="p"}
+    #title
     SQLite powered
 
-    #description{unwrap="p"}
+    #description
     Add custom fields to your content, making it suitable for various types of projects.
     :::
 
@@ -118,10 +120,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-simple-icons-markdown
     ---
-    #title{unwrap="p"}
+    #title
     Markdown with Vue
 
-    #description{unwrap="p"}
+    #description
     Use Vue components in Markdown files, with props, slots and nested components.
     :::
 
@@ -129,10 +131,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-list-minus
     ---
-    #title{unwrap="p"}
+    #title
     Code highlighting
 
-    #description{unwrap="p"}
+    #description
     Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
     :::
 
@@ -140,10 +142,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-mouse-pointer-click
     ---
-    #title{unwrap="p"}
+    #title
     Visual Editor
 
-    #description{unwrap="p"}
+    #description
     Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
     :::
 
@@ -151,10 +153,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-panel-left
     ---
-    #title{unwrap="p"}
+    #title
     Navigation Generation
 
-    #description{unwrap="p"}
+    #description
     Generate a structured object from your content files and display a navigation menu in minutes.
     :::
 
@@ -162,10 +164,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-heading-1
     ---
-    #title{unwrap="p"}
+    #title
     Prose Components
 
-    #description{unwrap="p"}
+    #description
     Customize HTML typography tags with Vue components to give your content a consistent style.
     :::
 
@@ -173,10 +175,10 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     ---
     icon: i-lucide-globe
     ---
-    #title{unwrap="p"}
+    #title
     Deploy everywhere
 
-    #description{unwrap="p"}
+    #description
     Nuxt Content works on all hosting providers, static, server, serverless & edge.
     :::
   :::
@@ -202,7 +204,7 @@ Combine file-based simplicity with Vue component power. Build content-rich websi
 
 ::u-page-section
 ---
-reverse: true
+:reverse: true
 orientation: horizontal
 ---
   :::tabs
@@ -294,7 +296,7 @@ We created the MDC syntax to let you use Vue components with props and slots ins
   ---
   icon: i-lucide-list
   ---
-  #title{unwrap="p"}
+  #title
   Specify props with frontmatter syntax
   :::
 
@@ -302,7 +304,7 @@ We created the MDC syntax to let you use Vue components with props and slots ins
   ---
   icon: i-lucide-hash
   ---
-  #title{unwrap="p"}
+  #title
   Use components slots with `#`
   :::
 
@@ -310,7 +312,7 @@ We created the MDC syntax to let you use Vue components with props and slots ins
   ---
   icon: i-lucide-code-xml
   ---
-  #title{unwrap="p"}
+  #title
   Add any other html attributes
   :::
 
@@ -398,7 +400,7 @@ Define your content structure with collections and query them with schema valida
   ---
   icon: i-lucide-layout-grid
   ---
-  #title{unwrap="p"}
+  #title
   Create collections for similar content files
   :::
 
@@ -406,7 +408,7 @@ Define your content structure with collections and query them with schema valida
   ---
   icon: i-lucide-circle-check
   ---
-  #title{unwrap="p"}
+  #title
   Define schema for the collection frontmatter
   :::
 
@@ -414,7 +416,7 @@ Define your content structure with collections and query them with schema valida
   ---
   icon: i-lucide-text-cursor
   ---
-  #title{unwrap="p"}
+  #title
   Get auto-completion in your Vue files
   :::
 
@@ -432,12 +434,12 @@ Define your content structure with collections and query them with schema valida
 
 ::u-page-section
 ---
-reverse: true
+:reverse: true
 orientation: horizontal
 ---
 :video{autoplay controls loop src="https://res.cloudinary.com/nuxt/video/upload/v1767647099/studio/studio-demo_eiofld.mp4"}
 
-#title{unwrap="p"}
+#title
 Let [anyone edit]{.text-(--ui-primary)} your website
 
 #description
@@ -458,7 +460,7 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
   ---
   icon: i-lucide-mouse-pointer-click
   ---
-  #title{unwrap="p"}
+  #title
   Live preview of your content directly on your production website
   :::
 
@@ -466,7 +468,7 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
   ---
   icon: i-lucide-file-text
   ---
-  #title{unwrap="p"}
+  #title
   Visual editor for Markdown, YML and JSON files
   :::
 
@@ -474,7 +476,7 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
   ---
   icon: i-simple-icons-git
   ---
-  #title{unwrap="p"}
+  #title
   Publish changes directly on your Git provider
   :::
 ::
