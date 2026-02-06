@@ -6,6 +6,10 @@ export const defineTransformer = (transformer: ContentTransformer) => {
 
 export const formatDateTime = (datetime: string): string => {
   const d = new Date(datetime)
+  if (Number.isNaN(d.getTime())) {
+    throw new TypeError(`Invalid datetime value: "${datetime}"`)
+  }
+
   const hours = d.getHours()
   const minutes = d.getMinutes()
   const seconds = d.getSeconds()
@@ -15,6 +19,10 @@ export const formatDateTime = (datetime: string): string => {
 
 export const formatDate = (date: string): string => {
   const d = new Date(date)
+  if (Number.isNaN(d.getTime())) {
+    throw new TypeError(`Invalid date value: "${date}"`)
+  }
+
   const year = d.getFullYear()
   const month = d.getMonth() + 1
   const day = d.getDate()
