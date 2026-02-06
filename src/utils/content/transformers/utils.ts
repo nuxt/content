@@ -6,9 +6,19 @@ export const defineTransformer = (transformer: ContentTransformer) => {
 }
 
 export const formatDateTime = (datetime: string): string => {
-  return toCalendarDateTime(fromDate(new Date(datetime), getLocalTimeZone())).toString().replace('T', ' ')
+  const d = new Date(datetime)
+  const hours = d.getHours()
+  const minutes = d.getMinutes()
+  const seconds = d.getSeconds()
+
+  return `${formatDate(datetime)} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
 export const formatDate = (date: string): string => {
-  return toCalendarDate(fromDate(new Date(date), getLocalTimeZone())).toString()
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = d.getMonth() + 1
+  const day = d.getDate()
+
+  return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
 }
