@@ -1,0 +1,74 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 92c4dc2d11f8350c8539a624ac9589d696228448..923662ae47f46516b9b17f9074217ff1de2af445 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -239,6 +239,10 @@ const MarkdownItMdcBlock = (md) => {
+       let start = state.bMarks[startLine] + state.tShift[startLine];
+       let max = state.eMarks[startLine];
+       const indent = state.sCount[startLine];
++      let inCodeFence = false;
++      let codeFenceCharCode = 0;
++      let codeFenceCount = 0;
++      let nestingDepth = 0;
+       if (state.src[start] !== ":")
+         return false;
+       for (pos = start + 1; pos <= max; pos++) {
+@@ -265,7 +269,32 @@ const MarkdownItMdcBlock = (md) => {
+         if (start < max && state.sCount[nextLine] < state.blkIndent) {
+           break;
+         }
+-        if (marker_char !== state.src.charCodeAt(start))
++        const lineCharCode = state.src.charCodeAt(start);
++        if (inCodeFence) {
++          if (lineCharCode === codeFenceCharCode) {
++            let fencePos = start + 1;
++            while (fencePos < max && state.src.charCodeAt(fencePos) === codeFenceCharCode)
++              fencePos++;
++            if (fencePos - start >= codeFenceCount) {
++              const afterFence = state.skipSpaces(fencePos);
++              if (afterFence >= max)
++                inCodeFence = false;
++            }
++          }
++          continue;
++        }
++        if (lineCharCode === 96 || lineCharCode === 126) {
++          let fencePos = start + 1;
++          while (fencePos < max && state.src.charCodeAt(fencePos) === lineCharCode)
++            fencePos++;
++          if (fencePos - start >= 3) {
++            inCodeFence = true;
++            codeFenceCharCode = lineCharCode;
++            codeFenceCount = fencePos - start;
++            continue;
++          }
++        }
++        if (marker_char !== lineCharCode)
+           continue;
+         for (pos = start + 1; pos <= max; pos++) {
+           if (marker_str !== state.src[pos])
+@@ -274,8 +303,14 @@ const MarkdownItMdcBlock = (md) => {
+         if (pos - start !== marker_count)
+           continue;
+         pos = state.skipSpaces(pos);
+-        if (pos < max)
++        if (pos < max) {
++          nestingDepth++;
++          continue;
++        }
++        if (nestingDepth > 0) {
++          nestingDepth--;
+           continue;
++        }
+         auto_closed = true;
+         break;
+       }
+@@ -349,7 +384,7 @@ const MarkdownItMdcBlock = (md) => {
+         const yaml = state.src.slice(state.bMarks[startLine + 1], state.eMarks[lineEnd - 1]);
+         const data = parse(yaml);
+         const token = state.env.mdcBlockTokens[0];
+-        Object.entries(data).forEach(([key, value]) => {
++        Object.entries(data || {}).forEach(([key, value]) => {
+           if (key === "class")
+             token.attrJoin(key, value);
+           else

@@ -11,6 +11,9 @@ patchedDependencies:
   '@nuxt/vite-builder':
     hash: dbfb7f37d331cee8de42bac0867af36d698e9207ed6dfd1415b4b243177e569e
     path: patches/@nuxt__vite-builder.patch
+  markdown-it-mdc:
+    hash: 981b7994599d585b60159a9ddc752a6ca8c989c6acb2459a0333638448f2a8a6
+    path: patches/markdown-it-mdc.patch
 
 importers:
 
@@ -87,7 +90,7 @@ importers:
         version: 4.0.0
       mdc-syntax:
         specifier: https://pkg.pr.new/nuxt-content/mdc-syntax@857e0e6
-        version: https://pkg.pr.new/nuxt-content/mdc-syntax@857e0e6(@types/markdown-it@14.1.2)(vue@3.5.26(typescript@5.9.3))
+        version: https://pkg.pr.new/nuxt-content/mdc-syntax@857e0e6(@types/markdown-it@14.1.2)
       micromark:
         specifier: ^4.0.2
         version: 4.0.2
@@ -190,7 +193,7 @@ importers:
         version: 1.12.1(@typescript-eslint/utils@8.53.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(@vue/compiler-sfc@3.5.26)(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       '@nuxt/module-builder':
         specifier: ^1.0.2
-        version: 1.0.2(@nuxt/cli@3.32.0(cac@6.7.14)(magicast@0.5.1))(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))
+        version: 1.0.2(@nuxt/cli@3.32.0(cac@6.7.14)(magicast@0.5.1))(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))
       '@nuxt/schema':
         specifier: ^4.2.2
         version: 4.2.2
@@ -10640,7 +10643,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/module-builder@1.0.2(@nuxt/cli@3.32.0(cac@6.7.14)(magicast@0.5.1))(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))':
+  '@nuxt/module-builder@1.0.2(@nuxt/cli@3.32.0(cac@6.7.14)(magicast@0.5.1))(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))':
     dependencies:
       '@nuxt/cli': 3.32.0(cac@6.7.14)(magicast@0.5.1)
       citty: 0.1.6
@@ -10648,14 +10651,14 @@ snapshots:
       defu: 6.1.4
       jiti: 2.6.1
       magic-regexp: 0.10.0
-      mkdist: 2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)))(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))
+      mkdist: 2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2))(vue-tsc@3.2.2(typescript@5.9.3))
       mlly: 1.8.0
       pathe: 2.0.3
       pkg-types: 2.3.0
       tsconfck: 3.1.6(typescript@5.9.3)
       typescript: 5.9.3
-      unbuild: 3.6.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)))(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))
-      vue-sfc-transformer: 0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3))
+      unbuild: 3.6.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2))(vue-tsc@3.2.2(typescript@5.9.3))
+      vue-sfc-transformer: 0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)
     transitivePeerDependencies:
       - '@vue/compiler-core'
       - esbuild
@@ -15740,7 +15743,7 @@ snapshots:
       - supports-color
     optional: true
 
-  markdown-it-mdc@0.2.9(@types/markdown-it@14.1.2)(markdown-it@14.1.0):
+  markdown-it-mdc@0.2.9(patch_hash=981b7994599d585b60159a9ddc752a6ca8c989c6acb2459a0333638448f2a8a6)(@types/markdown-it@14.1.2)(markdown-it@14.1.0):
     dependencies:
       '@types/markdown-it': 14.1.2
       markdown-it: 14.1.0
@@ -15883,16 +15886,14 @@ snapshots:
     dependencies:
       md4w: 0.2.7
 
-  mdc-syntax@https://pkg.pr.new/nuxt-content/mdc-syntax@857e0e6(@types/markdown-it@14.1.2)(vue@3.5.26(typescript@5.9.3)):
+  mdc-syntax@https://pkg.pr.new/nuxt-content/mdc-syntax@857e0e6(@types/markdown-it@14.1.2):
     dependencies:
       markdown-it: 14.1.0
-      markdown-it-mdc: 0.2.9(@types/markdown-it@14.1.2)(markdown-it@14.1.0)
+      markdown-it-mdc: 0.2.9(patch_hash=981b7994599d585b60159a9ddc752a6ca8c989c6acb2459a0333638448f2a8a6)(@types/markdown-it@14.1.2)(markdown-it@14.1.0)
       minimark: https://pkg.pr.new/minimark@24c408f
       shiki: 3.22.0
-      shiki-stream: 0.1.4(vue@3.5.26(typescript@5.9.3))
+      shiki-stream: 0.1.4
       yaml: 2.8.2
-    optionalDependencies:
-      vue: 3.5.26(typescript@5.9.3)
     transitivePeerDependencies:
       - '@types/markdown-it'
       - solid-js
@@ -16228,7 +16229,7 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  mkdist@2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)))(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3)):
+  mkdist@2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2))(vue-tsc@3.2.2(typescript@5.9.3)):
     dependencies:
       autoprefixer: 10.4.23(postcss@8.5.6)
       citty: 0.1.6
@@ -16245,8 +16246,7 @@ snapshots:
       tinyglobby: 0.2.15
     optionalDependencies:
       typescript: 5.9.3
-      vue: 3.5.26(typescript@5.9.3)
-      vue-sfc-transformer: 0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3))
+      vue-sfc-transformer: 0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)
       vue-tsc: 3.2.2(typescript@5.9.3)
 
   mlly@1.8.0:
@@ -18302,11 +18302,9 @@ snapshots:
 
   shell-quote@1.8.3: {}
 
-  shiki-stream@0.1.4(vue@3.5.26(typescript@5.9.3)):
+  shiki-stream@0.1.4:
     dependencies:
       '@shikijs/core': 3.21.0
-    optionalDependencies:
-      vue: 3.5.26(typescript@5.9.3)
 
   shiki-transformer-color-highlight@1.0.0:
     dependencies:
@@ -18815,7 +18813,7 @@ snapshots:
 
   ultrahtml@1.6.0: {}
 
-  unbuild@3.6.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)))(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3)):
+  unbuild@3.6.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2))(vue-tsc@3.2.2(typescript@5.9.3)):
     dependencies:
       '@rollup/plugin-alias': 5.1.1(rollup@4.55.1)
       '@rollup/plugin-commonjs': 28.0.9(rollup@4.55.1)
@@ -18831,7 +18829,7 @@ snapshots:
       hookable: 5.5.3
       jiti: 2.6.1
       magic-string: 0.30.21
-      mkdist: 2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)))(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))
+      mkdist: 2.4.1(typescript@5.9.3)(vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2))(vue-tsc@3.2.2(typescript@5.9.3))
       mlly: 1.8.0
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -19425,12 +19423,11 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.26(typescript@5.9.3)
 
-  vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2)(vue@3.5.26(typescript@5.9.3)):
+  vue-sfc-transformer@0.1.17(@vue/compiler-core@3.5.26)(esbuild@0.27.2):
     dependencies:
       '@babel/parser': 7.28.6
       '@vue/compiler-core': 3.5.26
       esbuild: 0.27.2
-      vue: 3.5.26(typescript@5.9.3)
 
   vue-tsc@3.2.2(typescript@5.9.3):
     dependencies:

@@ -41,6 +41,14 @@ export default defineNuxtConfig({
     db: 'sqlite',
     cache: true,
   },
+  build: {
+    transpile: ['mdc-syntax'],
+  },
+  vite: {
+    optimizeDeps: {
+      include: ['mdc-syntax'],
+    },
+  },
   llms: {
     domain: 'https://content.nuxt.com',
     title: 'Nuxt Content',

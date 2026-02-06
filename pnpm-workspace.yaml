@@ -18,3 +18,4 @@ onlyBuiltDependencies:
 
 patchedDependencies:
   '@nuxt/vite-builder': patches/@nuxt__vite-builder.patch
+  markdown-it-mdc: patches/markdown-it-mdc.patch
