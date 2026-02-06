@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import { generateSearchSections } from './internal/search'
+import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
 import { fetchQuery } from './internal/api'
 import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
@@ -25,7 +25,7 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections<T extends keyof PageCollections>(event: H3Event, collection: T, opts?: { ignoredTags?: string[], extraFields?: Array<keyof PageCollections[T]>, minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`, maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}` }) {
+export function queryCollectionSearchSections<T extends keyof PageCollections>(event: H3Event, collection: T, opts?: GenerateSearchSectionsOptions) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 

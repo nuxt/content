@@ -27,7 +27,14 @@ interface SectionablePage {
   body: MDCRoot | MinimarkTree
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: (string | symbol | number)[], minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`, maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}` }) {
+export type GenerateSearchSectionsOptions = {
+  ignoredTags?: string[]
+  extraFields?: (string | symbol | number)[]
+  minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
+  maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
+}
+
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions) {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
   const minLevel = headingLevel(minHeading)
   const maxLevel = headingLevel(maxHeading)
