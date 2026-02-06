@@ -27,14 +27,21 @@ interface SectionablePage {
   body: MDCRoot | MinimarkTree
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: { ignoredTags?: string[], extraFields?: Array<keyof T>, minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`, maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}` }) {
+export type GenerateSearchSectionsOptions = {
+  ignoredTags?: string[]
+  extraFields?: (string | symbol | number)[]
+  minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
+  maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
+}
+
+export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions) {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
   const minLevel = headingLevel(minHeading)
   const maxLevel = headingLevel(maxHeading)
 
   const documents = await queryBuilder
     .where('extension', '=', 'md')
-    .select('path', 'body', 'description', 'title', ...(extraFields || []))
+    .select('path', 'body', 'description', 'title', ...(extraFields as Array<keyof T> || []))
     .all()
 
   return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
