@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from 'vitest'
 import { z } from 'zod'
-import { generateCollectionInsert, defineCollection, resolveCollection, getTableName, SLICE_SIZE, MAX_SQL_QUERY_SIZE } from '../../src/utils/collection'
+import { generateCollectionInsert, defineCollection, resolveCollection, getTableName, SLICE_SIZE, MAX_SQL_QUERY_SIZE, utf8ByteLength } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
 
 describe('generateCollectionInsert', () => {
@@ -122,5 +122,49 @@ describe('generateCollectionInsert', () => {
       ].join(''))
       index++
     }
+  })
+
+  test('Split multibyte (UTF-8) values that exceed byte limit', () => {
+    const collection = resolveCollection('content', defineCollection({
+      type: 'data',
+      source: '**',
+      schema: z.object({
+        content: z.string(),
+      }),
+    }))!
+
+    // '心' is 3 bytes in UTF-8. 35000 chars = 105000 bytes > MAX_SQL_QUERY_SIZE (100000)
+    const content = '心'.repeat(35000)
+
+    const { queries: sql } = generateCollectionInsert(collection, {
+      id: 'multibyte.md',
+      stem: 'multibyte',
+      extension: 'md',
+      meta: {},
+      content,
+    })
+
+    // Must be split into multiple queries
+    expect(sql.length).toBeGreaterThan(1)
+
+    // Each query must fit within the byte limit
+    for (const query of sql) {
+      expect(utf8ByteLength(query)).toBeLessThan(MAX_SQL_QUERY_SIZE)
+    }
+
+    // First query should be INSERT, subsequent should be UPDATE
+    expect(sql[0]).toContain('INSERT INTO')
+    for (let i = 1; i < sql.length; i++) {
+      expect(sql[i]).toContain('UPDATE')
+    }
+
+    // Reconstruct the content from all queries and verify it matches the original
+    const insertMatch = sql[0]!.match(/'(心+)'/)
+    let reconstructed = insertMatch![1]!
+    for (let i = 1; i < sql.length; i++) {
+      const updateMatch = sql[i]!.match(/CONCAT\(content, '(心+)'\)/)
+      reconstructed += updateMatch![1]!
+    }
+    expect(reconstructed).toBe(content)
   })
 })
