@@ -3,7 +3,12 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxthub/core',
     '@nuxt/content',
+    'nuxt-llms',
   ],
+  llms: {
+    domain: 'http://localhost:3000',
+    title: 'Content Playground',
+  },
   content: {
     experimental: {
       nativeSqlite: true,
