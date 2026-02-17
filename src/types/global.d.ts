@@ -18,6 +18,7 @@ declare module '#content/manifest' {
 declare module '#content/components' {
   export const globalComponents: string[]
   export const localComponents: string[]
+  export const localComponentLoaders: Record<string, import('vue').AsyncComponentLoader>
 }
 
 declare module '#content/dump' {
