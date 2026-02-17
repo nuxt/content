@@ -78,6 +78,8 @@ const collections = {
     schema: z.object({
       name: z.string(),
       email: z.string().email(),
+      birthday: z.string().date(),
+      lastloginat: z.string().datetime(),
     }),
   }),
   org: defineCollection({
