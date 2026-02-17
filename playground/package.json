@@ -17,6 +17,7 @@
     "better-sqlite3": "^12.6.0",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.2.2",
+    "nuxt-llms": "^0.2.0",
     "pg": "^8.17.1",
     "remark-code-import": "^1.2.0",
     "shiki-transformer-color-highlight": "^1.0.0"

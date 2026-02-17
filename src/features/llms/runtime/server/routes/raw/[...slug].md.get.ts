@@ -2,6 +2,7 @@ import { withLeadingSlash } from 'ufo'
 import { stringify } from 'minimark/stringify'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections, PageCollectionItemBase, ResolvedCollection } from '@nuxt/content'
+import type { MinimarkNode } from '../../../../../../types/tree'
 import { getRouterParams, eventHandler, createError, setHeader } from 'h3'
 import { useRuntimeConfig } from '#imports'
 import collections from '#content/manifest'
@@ -40,6 +41,18 @@ export default eventHandler(async (event) => {
   if (page.body.value[0]?.[0] !== 'h1') {
     page.body.value.unshift(['blockquote', {}, page.description])
     page.body.value.unshift(['h1', {}, page.title])
+  }
+
+  // Append related links at the end if present
+  const links = (page as unknown as Record<string, unknown>).links || (page.meta as Record<string, unknown>)?.links
+  if (Array.isArray(links) && links.length > 0) {
+    const linkItems = links
+      .filter((link: { label?: string, to?: string }) => link.label && link.to)
+      .map((link: { label: string, to: string }) => ['li', {}, ['a', { href: link.to }, link.label]])
+    if (linkItems.length > 0) {
+      page.body.value.push(['hr'] as unknown as MinimarkNode)
+      page.body.value.push(['ul', {}, ...linkItems] as unknown as MinimarkNode)
+    }
   }
 
   setHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
