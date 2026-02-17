@@ -119,8 +119,27 @@ export const MAX_SQL_QUERY_SIZE = 100000
 /**
  * When we split a value in multiple SQL queries, we want to allow for a buffer
  * so if the rest of the query is a bit long, we will not hit the 100KB limit
+ * NOTE: This is the byte limit, not the character limit
  */
 export const SLICE_SIZE = 70000
+
+const encoder = new TextEncoder()
+
+/**
+ * Calculate UTF-8 byte length of a string
+ */
+export function utf8ByteLength(str: string): number {
+  return encoder.encode(str).byteLength
+}
+
+/**
+ * Return the largest character index such that str.slice(0, result) has UTF-8 byte length <= targetBytes
+ */
+export function charIndexAtByteOffset(str: string, targetBytes: number): number {
+  const buf = new Uint8Array(targetBytes)
+  const { read } = encoder.encodeInto(str, buf)
+  return read
+}
 
 // Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
@@ -176,7 +195,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   const sql = `INSERT INTO ${collection.tableName} VALUES (${'?, '.repeat(values.length).slice(0, -2)});`
     .replace(/\?/g, () => values[index++] as string)
 
-  if (sql.length < MAX_SQL_QUERY_SIZE) {
+  if (utf8ByteLength(sql) < MAX_SQL_QUERY_SIZE) {
     return {
       queries: [sql],
       hash: valuesHash,
@@ -186,7 +205,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   // Split the SQL into multiple statements:
   // Take the biggest column to insert (usually body) and split the column in multiple strings
   // first we insert the row in the database, then we update it with the rest of the string by concatenation
-  const biggestColumn = [...values].sort((a, b) => String(b).length - String(a).length)[0]
+  const biggestColumn = [...values].sort((a, b) => utf8ByteLength(String(b)) - utf8ByteLength(String(a)))[0]
   const bigColumnIndex = values.indexOf(biggestColumn!)
   const bigColumnName = fields[bigColumnIndex]
 
@@ -199,7 +218,7 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
   }
 
   if (typeof biggestColumn === 'string') {
-    let sliceIndex = getSliceIndex(biggestColumn, SLICE_SIZE)
+    let sliceIndex = getSliceIndex(biggestColumn, charIndexAtByteOffset(biggestColumn, SLICE_SIZE))
 
     values[bigColumnIndex] = `${biggestColumn.slice(0, sliceIndex)}'`
     index = 0
@@ -211,7 +230,8 @@ export function generateCollectionInsert(collection: ResolvedCollection, data: P
     ]
     while (sliceIndex < biggestColumn.length) {
       const prevSliceIndex = sliceIndex
-      sliceIndex = getSliceIndex(biggestColumn, sliceIndex + SLICE_SIZE)
+      const rawIndex = charIndexAtByteOffset(biggestColumn.slice(sliceIndex), SLICE_SIZE) + sliceIndex
+      sliceIndex = rawIndex >= biggestColumn.length ? biggestColumn.length + 1 : getSliceIndex(biggestColumn, rawIndex)
 
       const isLastSlice = sliceIndex > biggestColumn.length
       const newSlice = `'${biggestColumn.slice(prevSliceIndex, sliceIndex)}` + (!isLastSlice ? '\'' : '')
