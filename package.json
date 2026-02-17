@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "3.11.1",
+  "version": "3.11.2",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.2.2",
-    "@nuxtjs/mdc": "^0.20.0",
+    "@nuxtjs/mdc": "^0.20.1",
     "@shikijs/langs": "^3.21.0",
     "@sqlite.org/sqlite-wasm": "3.50.4-build1",
     "@standard-schema/spec": "^1.1.0",
