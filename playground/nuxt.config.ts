@@ -5,10 +5,6 @@ export default defineNuxtConfig({
     '@nuxt/content',
     'nuxt-llms',
   ],
-  llms: {
-    domain: 'http://localhost:3000',
-    title: 'Content Playground',
-  },
   content: {
     experimental: {
       nativeSqlite: true,
@@ -46,5 +42,9 @@ export default defineNuxtConfig({
     db: 'sqlite',
     // Or use PGlite with NuxtHub:
     // db: 'postgresql',
+  },
+  llms: {
+    domain: 'http://localhost:3000',
+    title: 'Content Playground',
   },
 })
