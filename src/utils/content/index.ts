@@ -173,7 +173,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       transformers: extraTransformers,
       markdown: {
         ...beforeParseCtx.parserOptions?.markdown,
-        contentHeading: !file?.collectionType || file?.collectionType === 'page',
+        contentHeading: beforeParseCtx.parserOptions?.markdown?.contentHeading === false
+          ? false
+          : (!file?.collectionType || file?.collectionType === 'page'),
       },
     })
 
