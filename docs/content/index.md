@@ -238,6 +238,7 @@ orientation: horizontal
     icon: i-simple-icons-vuedotjs
     label: components/LandingHero.vue
     ---
+
     ```vue [components/LandingHero.vue]
       <script setup lang="ts">
       defineProps<{
