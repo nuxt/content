@@ -2,10 +2,7 @@
 prose: true
 seo:
   title: The git-based CMS for Nuxt projects
-  description: Nuxt Content is a module for Nuxt that provides a simple way to
-    manage content for your application, within your git repository. It allows developers to write their
-    content in Markdown, YAML or JSON files and then query and display it in
-    their application.
+  description: Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application, within your git repository. It allows developers to write their content in Markdown, YAML or JSON files and then query and display it in their application.
   ogImage: https://content.nuxt.com/social.png
 ---
 
@@ -13,37 +10,7 @@ seo:
 ---
 orientation: horizontal
 ---
-#headline
-  :::u-button
-  ---
-  size: sm
-  to: https://nuxt.studio
-  variant: outline
-  trailing-icon: i-lucide-arrow-right
-  class: mb-3 rounded-full
-  ---
-  Nuxt Studio is out
-  :::
-#title
-The [git-based]{.text-primary} :br CMS for Nuxt.
-
-#description
-Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML or JSON files and then query and display it in their application.
-
-#links
-  :::u-button
-  ---
-  label: Get Started
-  size: lg
-  to: /docs/getting-started/installation
-  trailingIcon: i-lucide-arrow-right
-  ---
-  :::
-  :u-input-copy{value="npx nuxt module add content"}
-
-#default
-  ::code-group
-
+  :::code-group
   ```mdc [content/index.md]
   ---
   title: The Mountains Website
@@ -76,12 +43,42 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
     <ContentRenderer :value="data" />
   </template>
   ```
-  ::
+  :::
+
+#headline
+  :::u-button
+  ---
+  class: mb-3 rounded-full
+  size: sm
+  to: https://nuxt.studio
+  trailing-icon: i-lucide-arrow-right
+  variant: outline
+  ---
+  Nuxt Studio is out
+  :::
+
+#title
+The [git-based]{.text-primary} :br CMS for Nuxt.
+
+#description
+Nuxt Content is a module for Nuxt that provides a simple way to manage content for your application. It allows developers to write their content in Markdown, YAML or JSON files and then query and display it in their application.
+
+#links
+  :::u-button
+  ---
+  label: Get Started
+  size: lg
+  to: /docs/getting-started/installation
+  trailingIcon: i-lucide-arrow-right
+  ---
+  :::
+
+:u-input-copy{value="npx nuxt module add content"}
 ::
 
-::u-container{class="pb-12 xl:pb-24"}
+::u-container{.pb-12.xl:pb-24}
   :::u-page-grid
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-files
     ---
@@ -90,9 +87,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Write your content in Markdown, YAML, CSV or JSON and query it in your components.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-filter
     ---
@@ -101,9 +98,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Query your content with a MongoDB-like API to fetch the right data at the right time.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-database
     ---
@@ -112,9 +109,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Add custom fields to your content, making it suitable for various types of projects.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-simple-icons-markdown
     ---
@@ -123,9 +120,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Use Vue components in Markdown files, with props, slots and nested components.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-list-minus
     ---
@@ -134,9 +131,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Display beautiful code blocks on your website with the Shiki integration supporting VS Code themes.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-mouse-pointer-click
     ---
@@ -145,9 +142,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Let your team edit your Nuxt Content project with Nuxt Studio, our visual editor.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-panel-left
     ---
@@ -156,9 +153,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Generate a structured object from your content files and display a navigation menu in minutes.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-heading-1
     ---
@@ -167,9 +164,9 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Customize HTML typography tags with Vue components to give your content a consistent style.
-    :::
+    ::::
 
-    :::u-page-feature
+    ::::u-page-feature
     ---
     icon: i-lucide-globe
     ---
@@ -178,7 +175,7 @@ Nuxt Content is a module for Nuxt that provides a simple way to manage content f
 
     #description{unwrap="p"}
     Nuxt Content works on all hosting providers, static, server, serverless & edge.
-    :::
+    ::::
   :::
 ::
 
@@ -190,13 +187,7 @@ Everything you need for content management
 Combine file-based simplicity with Vue component power. Build content-rich websites, from documentation pages to complex applications.
 
   :::div{.hidden.md:block}
-    ::::u-color-mode-image
-    ---
-    class: size-full absolute top-0 inset-0
-    dark: /home/features-dark.svg
-    light: /home/features-light.svg
-    ---
-    ::::
+  :u-color-mode-image{.size-full.absolute.top-0.inset-0 dark="/home/features-dark.svg" light="/home/features-light.svg"}
   :::
 ::
 
@@ -206,13 +197,9 @@ reverse: true
 orientation: horizontal
 ---
   :::tabs
-    ::::tabs-item
-    ---
-    icon: i-lucide-eye
-    label: Preview
-    ---
+    ::::tabs-item{icon="i-lucide-eye" label="Preview"}
       :::::browser-frame
-        :::::example-landing-hero
+        ::::::example-landing-hero
         ---
         image: /mountains/everest.jpg
         ---
@@ -221,35 +208,29 @@ orientation: horizontal
 
         #description
         The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-        :::::
+        ::::::
       :::::
     ::::
 
-    ::::tabs-item
+    ::::tabs-item{icon="i-simple-icons-markdown" label="content/index.md"}
+    ```mdc [content/index.md]
     ---
-    icon: i-simple-icons-markdown
-    label: content/index.md
+    title: The Mountains Website
+    description: A website about the most iconic mountains in the world.
     ---
 
-      ```mdc [content/index.md]
-      ---
-      title: The Mountains Website
-      description: A website about the most iconic mountains in the world.
-      ---
+    ::landing-hero
+    ---
+    image: /mountains/everest.jpg
+    ---
+    #title
+    The Everest.
 
-      ::landing-hero
-      ---
-      image: /mountains/everest.jpg
-      ---
-      #title
-      The Everest.
-      
-      #description
-      The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
-      ::
+    #description
+    The Everest is the highest mountain in the world, standing at 8,848 meters above sea level.
+    ::
 
-      ```
-
+    ```
     ::::
 
     ::::tabs-item
@@ -257,29 +238,27 @@ orientation: horizontal
     icon: i-simple-icons-vuedotjs
     label: components/LandingHero.vue
     ---
-
-      ```vue [components/LandingHero.vue]
-        <script setup lang="ts">
-        defineProps<{
-          image: string 
-        }>()
-        </script>
-        
-        <template>
-          <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12">
-            <div>
-              <h1 class="text-4xl font-semibold">
-                <slot name="title" />
-              </h1>
-              <div class="text-base text-gray-600 dark:text-gray-300">
-                <slot name="description" />
-              </div>
+    ```vue [components/LandingHero.vue]
+      <script setup lang="ts">
+      defineProps<{
+        image: string 
+      }>()
+      </script>
+      
+      <template>
+        <section class="flex flex-col sm:flex-row sm:items-center gap-4 py-8 sm:gap-12 sm:py-12">
+          <div>
+            <h1 class="text-4xl font-semibold">
+              <slot name="title" />
+            </h1>
+            <div class="text-base text-gray-600 dark:text-gray-300">
+              <slot name="description" />
             </div>
-            <img :src="image" class="w-1/2 rounded-lg">
-          </section>
-        </template>
-      ```
-
+          </div>
+          <img :src="image" class="w-1/2 rounded-lg">
+        </section>
+      </template>
+    ```
     ::::
   :::
 
@@ -331,19 +310,14 @@ We created the MDC syntax to let you use Vue components with props and slots ins
 orientation: horizontal
 ---
   :::tabs
-    ::::tabs-item
-    ---
-    icon: i-simple-icons-vuedotjs
-    label: pages/blog.vue
-    ---
-
+    ::::tabs-item{icon="i-simple-icons-vuedotjs" label="pages/blog.vue"}
     ```vue [pages/blog.vue]
     <script setup lang="ts">
     const { data: posts } = await useAsyncData('blog', () => {
       return queryCollection('blog').all()
     })
     </script>
-    
+
     <template>
       <div>
         <h1>Blog</h1>
@@ -355,15 +329,9 @@ orientation: horizontal
       </div>
     </template>
     ```
-
     ::::
 
-    ::::tabs-item
-    ---
-    icon: i-simple-icons-typescript
-    label: content.config.ts
-    ---
-
+    ::::tabs-item{icon="i-simple-icons-typescript" label="content.config.ts"}
     ```ts [content.config.ts]
     import { defineContentConfig, defineCollection } from '@nuxt/content'
     import { z } from 'zod'
@@ -383,7 +351,6 @@ orientation: horizontal
       }
     })
     ```
-
     ::::
   :::
 
@@ -441,15 +408,15 @@ orientation: horizontal
 Let [anyone edit]{.text-(--ui-primary)} your website
 
 #description
-:::u-button
----
-color: primary
-target: _blank
-to: https://nuxt.studio
-variant: outline
----
-Try Nuxt Studio
-:::
+  :::u-button
+  ---
+  color: primary
+  target: _blank
+  to: https://nuxt.studio
+  variant: outline
+  ---
+  Try Nuxt Studio
+  :::
 
 Edit your Nuxt Content website with the **Studio module**, our free and open-source visual interface to edit your content in production.
 
@@ -481,24 +448,12 @@ Edit your Nuxt Content website with the **Studio module**, our free and open-sou
 
 ::u-page-section
   :::div{.hidden.md:block}
-    ::::u-color-mode-image
-    ---
-    class: size-full absolute bottom-0 inset-0 z-[-1]
-    dark: /home/cta-dark.svg
-    light: /home/cta-light.svg
-    ---
-    ::::
+  :u-color-mode-image{.size-full.absolute.bottom-0.inset-0.z-[-1] dark="/home/cta-dark.svg" light="/home/cta-light.svg"}
   :::
 
 #title
 Add a git-based CMS to your Nuxt project.
 
 #links
-  :::u-button
-  ---
-  label: Start reading docs
-  to: /docs/getting-started/installation
-  trailingIcon: i-lucide-arrow-right
-  ---
-  :::
+:u-button{label="Start reading docs" to="/docs/getting-started/installation" trailing-icon="i-lucide-arrow-right"}
 ::
