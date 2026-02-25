@@ -77,7 +77,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         // @ts-expect-error -- TODO: fix types
         await nitroApp.hooks.callHook('content:llms:generate:document', event, doc, options)
         const markdown = await generateDocument(doc, options)
-        contents.push(markdown)
+        contents.push(markdown!)
       }
     }
   })
