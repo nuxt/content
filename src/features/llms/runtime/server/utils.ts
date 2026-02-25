@@ -6,8 +6,6 @@ import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
 import type { PageCollectionItemBase, SQLOperator } from '@nuxt/content'
 import manifest from '#content/manifest'
-import { visit } from 'unist-util-visit'
-import { stringifyMarkdown } from '@nuxtjs/mdc/runtime'
 
 export interface ContentLLMSCollectionSection extends LLMsSection {
   __nuxt_content_auto_generate?: boolean
@@ -22,6 +20,9 @@ export interface ContentLLMSCollectionSection extends LLMsSection {
 const linkProps = ['href', 'src', 'to']
 
 export async function createDocumentGenerator() {
+  const { visit } = await import('unist-util-visit')
+  const { stringifyMarkdown } = await import('@nuxtjs/mdc/runtime')
+
   return generateDocument
 
   async function generateDocument(doc: PageCollectionItemBase, options: { domain: string }) {
