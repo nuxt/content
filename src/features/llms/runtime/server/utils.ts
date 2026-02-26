@@ -1,4 +1,4 @@
-import type { MDCElement } from '@nuxtjs/mdc'
+import type { MDCElement, MDCRoot } from '@nuxtjs/mdc'
 import { withBase } from 'ufo'
 import { pascalCase } from 'scule'
 import type { LLMsSection } from 'nuxt-llms'
@@ -19,17 +19,15 @@ export interface ContentLLMSCollectionSection extends LLMsSection {
 
 const linkProps = ['href', 'src', 'to']
 
-const importExternalPackage = async (name: string) => await import(name)
-
 export async function createDocumentGenerator() {
-  const visit = await importExternalPackage('unist-util-visit').then(res => res.visit)
-  const stringifyMarkdown = await importExternalPackage('@nuxtjs/mdc/runtime').then(res => res.stringifyMarkdown)
+  const { visit } = await import('unist-util-visit')
+  const { stringifyMarkdown } = await import('@nuxtjs/mdc/runtime')
 
   return generateDocument
 
   async function generateDocument(doc: PageCollectionItemBase, options: { domain: string }) {
     const hastTree = refineDocumentBody(doc.body as unknown as MinimarkTree, options)
-    let markdown = await stringifyMarkdown(hastTree, {})
+    let markdown = await stringifyMarkdown(hastTree as unknown as MDCRoot, {})
 
     if (!markdown?.trim().startsWith('# ')) {
       const title = doc.title || doc.seo?.title || ''
@@ -43,10 +41,14 @@ export async function createDocumentGenerator() {
   function refineDocumentBody(body: MinimarkTree, options: { domain: string }) {
     const hastTree = toHast(body)
 
-    visit(hastTree, (node: MDCElement) => !!node.props?.to || !!node.props?.href || !!node.props?.src, (node: MDCElement) => {
+    visit(hastTree, (node) => {
+      const el = node as unknown as MDCElement
+      if (!el.props?.to && !el.props?.href && !el.props?.src) {
+        return
+      }
       for (const prop of linkProps) {
-        if (node.props?.[prop]) {
-          node.props[prop] = withBase(node.props[prop], options.domain)
+        if (el.props?.[prop]) {
+          el.props[prop] = withBase(el.props[prop], options.domain)
         }
       }
     })
