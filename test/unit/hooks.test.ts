@@ -91,7 +91,7 @@ foo: 'bar'
     expect(manifest.collections).toHaveLength(2)
     // new collection is visible
     expect(manifest.collections.find(c => c.name === 'injected')).toBeDefined()
-    // original collection is still exists
+    // original collection still exists
     expect(manifest.collections.find(c => c.name === 'hookTest')).toBeDefined()
   })
 })
