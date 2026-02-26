@@ -93,7 +93,7 @@ foo: 'bar'
     expect(hookCtx).toBeDefined()
     expect(hookCtx!.collections).toHaveLength(2)
     expect(hookCtx!.collections[0].name).toEqual('hookTest')
-    expect(hookCtx!.collections[1].name).toEqual('injecte2')
+    expect(hookCtx!.collections[1].name).toEqual('injected')
     // Ensure the manifest object is mutated by reference
     expect(manifest.collections).toHaveLength(2)
   })
