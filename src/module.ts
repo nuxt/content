@@ -120,6 +120,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
+    nuxt.callHook('content:manifest', manifest)
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       exclude: ['@sqlite.org/sqlite-wasm'],

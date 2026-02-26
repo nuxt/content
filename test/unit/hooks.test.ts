@@ -59,9 +59,7 @@ foo: 'bar'
     expect(parsed.bar).toEqual('foo')
   })
 
-  it('content:manifest', async () => {
-    let hookCtx: Manifest | undefined
-
+  it('content:manifest mutations are reflected in manifest', async () => {
     const extraCollection = resolveCollection('injected', defineCollection({
       type: 'data',
       source: 'extra/**',
@@ -78,23 +76,22 @@ foo: 'bar'
       collections: [collection],
     }
 
+    // Simulate the module calling the hook
     const nuxtMock = {
       callHook(hook: string, ctx: Manifest) {
         if (hook === 'content:manifest') {
           ctx.collections.push(extraCollection)
-          hookCtx = ctx
         }
       },
     }
 
-    // Simulate the hook call as done in the module setup
     nuxtMock.callHook('content:manifest', manifest)
 
-    expect(hookCtx).toBeDefined()
-    expect(hookCtx!.collections).toHaveLength(2)
-    expect(hookCtx!.collections[0].name).toEqual('hookTest')
-    expect(hookCtx!.collections[1].name).toEqual('injected')
-    // Ensure the manifest object is mutated by reference
+    // must be visible on original manifest object
     expect(manifest.collections).toHaveLength(2)
+    // new collection is visible
+    expect(manifest.collections.find(c => c.name === 'injected')).toBeDefined()
+    // original collection is still exists
+    expect(manifest.collections.find(c => c.name === 'hookTest')).toBeDefined()
   })
 })
