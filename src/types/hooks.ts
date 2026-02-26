@@ -1,7 +1,7 @@
 import type { ResolvedCollection } from './collection'
 import type { ContentFile, ParsedContentFile } from './content'
 import type { PathMetaOptions } from './path-meta'
-import type { Manifest } from './manifest';
+import type { Manifest } from './manifest'
 
 // Parser options interface
 interface ParserOptions {
