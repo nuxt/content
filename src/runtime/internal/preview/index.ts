@@ -62,7 +62,7 @@ const syncDraftFile = async (collections: Record<string, CollectionInfo>, file: 
 const syncDraftAppConfig = (appConfig?: Record<string, unknown>) => {
   const nuxtApp = useNuxtApp()
 
-  const _appConfig = callWithNuxt(nuxtApp, useAppConfig) as AppConfig
+  const _appConfig = callWithNuxt(nuxtApp, useAppConfig) as unknown as AppConfig
 
   // Using `defu` to merge with initial config
   // This is important to revert to default values for missing properties
