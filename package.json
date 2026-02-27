@@ -84,7 +84,7 @@
     "micromark-util-resolve-all": "^2.0.1",
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
-    "minimark": "^0.2.0",
+    "minimark": "^1.0.0",
     "minimatch": "^10.2.4",
     "nuxt-component-meta": "0.17.2",
     "nypm": "^0.6.5",
