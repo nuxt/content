@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.12.0](https://github.com/nuxt/content/compare/v3.11.2...v3.12.0) (2026-02-27)
+
+### Features
+
+* **llms:** add related links to raw markdown endpoint ([#3724](https://github.com/nuxt/content/issues/3724)) ([fadaf71](https://github.com/nuxt/content/commit/fadaf716e153ae19ad309d448d7ff7b3f3fa05f9))
+
+### Bug Fixes
+
+* `syntax error` with datetime fields and standardize date/datetime formats ([#3698](https://github.com/nuxt/content/issues/3698)) ([eb9f8b6](https://github.com/nuxt/content/commit/eb9f8b61bfeed10ef20bfd9425ad98a1be5576b9))
+* **api:** do not forward accept encoding header ([#3701](https://github.com/nuxt/content/issues/3701)) ([1d92be5](https://github.com/nuxt/content/commit/1d92be5908a87d01aa8299e960f6f5f6245aa0de))
+* **collection:** use UTF-8 byte length for SQL query size check ([#3717](https://github.com/nuxt/content/issues/3717)) ([9f8402a](https://github.com/nuxt/content/commit/9f8402a2f98c2edeb3c27889b0b3b41ed048890a))
+* disable title extraction when `contentHeading === false` ([#3725](https://github.com/nuxt/content/issues/3725)) ([f5a4679](https://github.com/nuxt/content/commit/f5a46797019ed662e8087c05535d1909926ce877))
+* **llms:** avoid `import(variableName)` pattern ([#3733](https://github.com/nuxt/content/issues/3733)) ([89c0b25](https://github.com/nuxt/content/commit/89c0b2576c1afe23fa1817203c84bd71bde08fec))
+* **queryCollectionSearchSections:** fix options types ([#3705](https://github.com/nuxt/content/issues/3705)) ([b3fa025](https://github.com/nuxt/content/commit/b3fa02598152967209de75328ec3c073844a53b5))
+* **ssr:** local content components on Cloudflare Workers ([#3704](https://github.com/nuxt/content/issues/3704)) ([7cff2b9](https://github.com/nuxt/content/commit/7cff2b9f3ec60619d51c5f23fa0a5446c3f979d6))
+
 ## [3.11.2](https://github.com/nuxt/content/compare/v3.11.1...v3.11.2) (2026-02-05)
 
 ### Bug Fixes
