@@ -12,14 +12,14 @@
     "@electric-sql/pglite": "^0.3.15",
     "@libsql/client": "^0.17.0",
     "@nuxt/content": "latest",
-    "@nuxt/ui": "^4.3.0",
-    "@nuxthub/core": "^0.10.4",
-    "better-sqlite3": "^12.6.0",
+    "@nuxt/ui": "^4.5.0",
+    "@nuxthub/core": "^0.10.6",
+    "better-sqlite3": "^12.6.2",
     "drizzle-orm": "^0.45.1",
-    "nuxt": "^4.2.2",
+    "nuxt": "^4.3.1",
     "nuxt-llms": "^0.2.0",
-    "pg": "^8.17.1",
+    "pg": "^8.19.0",
     "remark-code-import": "^1.2.0",
-    "shiki-transformer-color-highlight": "^1.0.0"
+    "shiki-transformer-color-highlight": "^1.1.0"
   }
 }
