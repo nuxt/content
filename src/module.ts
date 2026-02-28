@@ -22,7 +22,13 @@ import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
-import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
+import {
+  componentsManifestTemplate,
+  contentTypesTemplate,
+  fullDatabaseRawDumpTemplate,
+  manifestTemplate,
+  moduleTemplates,
+} from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
 import { getContentChecksum, logger, chunks, NuxtContentHMRUnplugin } from './utils/dev'
@@ -120,6 +126,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
+    await nuxt.callHook('content:manifest', manifest)
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -191,7 +198,10 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
 
-      const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
+      const resolveOptions = {
+        resolver,
+        sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined),
+      }
       config.alias ||= {}
       config.alias['#content/adapter'] = await resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
       config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
@@ -400,13 +410,20 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
       // NOTE: all queries having the structure comment at the end, will be ignored at init if no
       // structure changes are detected in the structureVersion
       `${generateCollectionTableDefinition(infoCollection, { drop: false })} -- structure`,
-      ...generateCollectionInsert(infoCollection, { id: `checksum_${collection.name}`, version, structureVersion, ready: false }).queries.map(row => `${row} -- meta`),
+      ...generateCollectionInsert(infoCollection, {
+        id: `checksum_${collection.name}`,
+        version,
+        structureVersion,
+        ready: false,
+      }).queries.map(row => `${row} -- meta`),
 
       // Insert queries for the collection
       ...collectionQueries,
 
       // and finally when we are finished, we update the info table to say that the init is done
-      `UPDATE ${infoCollection.tableName} SET ready = true WHERE id = 'checksum_${collection.name}'; -- meta`,
+      `UPDATE ${infoCollection.tableName}
+       SET ready = true
+       WHERE id = 'checksum_${collection.name}'; -- meta`,
     ]
   }
 
@@ -460,6 +477,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 }
 
 const proseTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'strong', 'em', 's', 'code', 'span', 'blockquote', 'pre', 'hr', 'img', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td']
+
 function getMappedTag(tag: string, additionalTags: Record<string, string> = {}) {
   if (proseTags.includes(tag)) {
     return `prose-${tag}`

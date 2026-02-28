@@ -1,6 +1,7 @@
 import type { ResolvedCollection } from './collection'
 import type { ContentFile, ParsedContentFile } from './content'
 import type { PathMetaOptions } from './path-meta'
+import type { Manifest } from './manifest'
 
 // Parser options interface
 interface ParserOptions {
@@ -32,5 +33,6 @@ declare module '@nuxt/schema' {
   interface NuxtHooks {
     'content:file:beforeParse': (ctx: FileBeforeParseHook) => Promise<void> | void
     'content:file:afterParse': (ctx: FileAfterParseHook) => Promise<void> | void
+    'content:manifest': (manifest: Manifest) => Promise<void> | void
   }
 }
