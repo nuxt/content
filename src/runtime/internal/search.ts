@@ -27,27 +27,39 @@ interface SectionablePage {
   body: MDCRoot | MinimarkTree
 }
 
-export type GenerateSearchSectionsOptions = {
+export type GenerateSearchSectionsOptions<T = PageCollectionItemBase, K extends keyof T = never> = {
   ignoredTags?: string[]
-  extraFields?: (string | symbol | number)[]
+  extraFields?: K[]
   minHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
   maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions) {
+export async function generateSearchSections<T extends PageCollectionItemBase, K extends keyof T = never>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions<T, K>,
+): Promise<Array<Section & Pick<T, K>>> {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
   const minLevel = headingLevel(minHeading)
   const maxLevel = headingLevel(maxHeading)
 
   const documents = await queryBuilder
     .where('extension', '=', 'md')
-    .select('path', 'body', 'description', 'title', ...(extraFields as Array<keyof T> || []))
+    .select('path' as keyof T, 'body' as keyof T, 'description' as keyof T, 'title' as keyof T, ...(extraFields as K[]))
     .all()
 
-  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
+  return documents.flatMap(doc => splitPageIntoSections(doc, {
+    ignoredTags,
+    extraFields: extraFields as string[],
+    minLevel,
+    maxLevel,
+  }),
+  ) as Array<Section & Pick<T, K>>
 }
 
-function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number }) {
+function splitPageIntoSections<T extends Record<string, unknown>>(
+  page: SectionablePage & T,
+  { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number },
+): Array<Section & T> {
   const body = (!page.body || page.body?.type === 'root') ? page.body : toHast(page.body as unknown as MinimarkTree) as MDCRoot
   const path = (page.path ?? '')
   const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
@@ -63,7 +75,7 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields
   }]
 
   if (!body?.children) {
-    return sections
+    return sections as Array<Section & T>
   }
 
   let section = 1
@@ -109,7 +121,7 @@ function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields
     }
   }
 
-  return sections
+  return sections as Array<Section & T>
 }
 
 function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
