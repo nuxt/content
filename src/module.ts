@@ -1,4 +1,6 @@
-import { stat } from 'node:fs/promises'
+import { stat, readFile } from 'node:fs/promises'
+import zlib from 'node:zlib'
+import { promisify } from 'node:util'
 import {
   defineNuxtModule,
   createResolver,
@@ -250,7 +252,6 @@ export default defineNuxtModule<ModuleOptions>({
     // `modules:done` is triggered for all environments
     nuxt.hook('modules:done', async () => {
       const fest = await processCollectionItems(nuxt, manifest.collections, options)
-
       // Update manifest
       manifest.checksumStructure = fest.checksumStructure
       manifest.checksum = fest.checksum
@@ -274,8 +275,78 @@ export default defineNuxtModule<ModuleOptions>({
         await setupPreviewWithAPI(options, nuxt, resolver, manifest)
       }
     })
+
+    nuxt.hook('nitro:build:public-assets', async () => {
+      try {
+        const fest = await processCollectionItems(nuxt, manifest.collections, options)
+        // validate content
+        for (const collection of manifest.collections) {
+          if (!collection.private) {
+            // load the compressed dump
+            const route = `/__nuxt_content/${collection.name}/sql_dump`
+            const outputPath = `.output/public${route}`
+            try {
+              const stats = await stat(outputPath)
+              let path = outputPath
+              if (stats.isDirectory()) {
+                path = join(outputPath, 'index.html')
+              }
+              // decompress content and validate
+              await validateContent(path, fest.dump[collection.name])
+            }
+            catch (error) {
+              console.error(`Failed to read file ${outputPath}: ${error}`)
+              throw error
+            }
+          }
+        }
+      }
+      catch (error) {
+        logger.error('Build process terminated due to validation failure:', error)
+        process.exit(1)
+      }
+    })
   },
 })
+
+const gunzip = promisify(zlib.gunzip)
+// decompress content
+async function decompressContent(content: string): Promise<string> {
+  const buffer = Buffer.from(content, 'base64')
+  const decompressed = await gunzip(buffer)
+  return decompressed.toString('utf-8')
+}
+
+// validate content is same as the original
+async function validateContent(dumpPath: string, dump: Array<string>) {
+  try {
+    // read the compressed content
+    const compressedContent = await readFile(dumpPath, 'utf-8')
+
+    // decompress the content
+    const decompressedContent = await decompressContent(compressedContent)
+
+    // join the dump array into a single string
+    const dumpSQLContent = dump.join('\n')
+    if (dumpSQLContent === decompressedContent) {
+      logger.success(`Content of ${dumpPath} checks out OK`)
+    }
+    else {
+      logger.error(`Content of ${dumpPath} does not match`)
+      throw new Error(`Validation failed for ${dumpPath}: Content does not match`)
+    }
+  }
+  catch (error: unknown) {
+    if (error instanceof Error) {
+      logger.error(`Error validating content of ${dumpPath}:`, error.message, 'please check your config or server/middleware')
+      throw error
+    }
+    else {
+      logger.error(`Error validating content of ${dumpPath}:`, error)
+      throw new Error(`Unknown error occurred during validation of ${dumpPath}`)
+    }
+  }
+}
 
 async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
   const collectionDump: Record<string, string[]> = {}
