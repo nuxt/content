@@ -47,10 +47,6 @@ export async function resolveDatabaseAdapter(adapter: 'sqlite' | 'bunsqlite' | '
   }
 
   adapter = adapter || 'sqlite'
-  if (adapter === 'sqlite' && process.versions.bun) {
-    return databaseConnectors.bunsqlite
-  }
-
   if (adapter === 'sqlite') {
     return await findBestSqliteAdapter({ sqliteConnector: opts.sqliteConnector, resolver: opts.resolver })
   }
@@ -168,11 +164,13 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 }
 
 async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, resolver?: Resolver }) {
-  if (process.versions.bun) {
+  if (opts.sqliteConnector === 'bun') {
+    if (!process.versions.bun) {
+      console.warn('[nuxt/content] `sqliteConnector: \'bun\'` is set but the build is running on Node.js. Ensure the deployment target supports `bun:sqlite`.')
+    }
     return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
   }
 
-  // if node:sqlite is available, use it
   if (opts.sqliteConnector === 'native' && isNodeSqliteAvailable()) {
     return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/node-sqlite') : 'db0/connectors/node-sqlite'
   }
@@ -185,6 +183,11 @@ async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, 
     await ensurePackageInstalled('better-sqlite3')
 
     return 'db0/connectors/better-sqlite3'
+  }
+
+  // Auto-detect Bun runtime when no explicit connector is set
+  if (process.versions.bun) {
+    return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
   }
 
   if (isWebContainer()) {
