@@ -166,7 +166,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 async function findBestSqliteAdapter(opts: { sqliteConnector?: SQLiteConnector, resolver?: Resolver }) {
   if (opts.sqliteConnector === 'bun') {
     if (!process.versions.bun) {
-      console.warn('[nuxt/content] `sqliteConnector: \'bun\'` is set but the build is running on Node.js. Ensure the deployment target supports `bun:sqlite`.')
+      console.warn('[nuxt/content] `sqliteConnector: \'bun\'` targets Bun runtime — the build-time database will use a Node.js-compatible fallback.')
     }
     return opts.resolver ? opts.resolver.resolve('./runtime/internal/connectors/bun-sqlite') : 'db0/connectors/bun-sqlite'
   }

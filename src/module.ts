@@ -191,10 +191,14 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
 
-      const resolveOptions = { resolver, sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined) }
+      const sqliteConnector = options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined)
+      const resolveOptions = { resolver, sqliteConnector }
       config.alias ||= {}
       config.alias['#content/adapter'] = await resolveDatabaseAdapter(config.runtimeConfig!.content!.database?.type || options.database.type, resolveOptions)
-      config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', resolveOptions)
+      // Build-time local adapter must use a connector compatible with the build environment.
+      // When targeting Bun but building on Node.js, fall back to a Node.js-compatible connector.
+      const localSqliteConnector = (sqliteConnector === 'bun' && !process.versions.bun) ? undefined : sqliteConnector
+      config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', { resolver, sqliteConnector: localSqliteConnector })
 
       config.handlers ||= []
       manifest.collections.forEach((collection) => {
@@ -281,8 +285,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
   const collectionChecksumStructure: Record<string, string> = {}
+  const requestedConnector = options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined)
+  const buildConnector = (requestedConnector === 'bun' && !process.versions.bun) ? undefined : requestedConnector
   const db = await getLocalDatabase(options._localDatabase, {
-    sqliteConnector: options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined),
+    sqliteConnector: buildConnector,
   })
   const databaseContents = await db.fetchDevelopmentCache()
 
