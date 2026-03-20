@@ -75,7 +75,7 @@
     "hookable": "^5.5.3",
     "isomorphic-git": "^1.37.2",
     "jiti": "^2.6.1",
-    "json-schema-to-typescript": "^15.0.4",
+    "json-schema-to-typescript-lite": "^15.0.0",
     "mdast-util-to-hast": "^13.2.1",
     "mdast-util-to-string": "^4.0.0",
     "micromark": "^4.0.2",
