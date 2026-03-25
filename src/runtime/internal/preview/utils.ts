@@ -68,3 +68,45 @@ export function parseSourceBase(source: CollectionSource) {
     dynamic: '*' + rest.join('*'),
   }
 }
+
+/**
+ * Format a date string as `YYYY-MM-DD` for SQL DATE columns.
+ *
+ * Duplicated from `src/utils/content/transformers/utils.ts` because that
+ * file lives outside the `runtime/` subtree and is not emitted to dist.
+ * Importing it from the preview runtime causes a broken path in the
+ * published package.
+ *
+ * @see https://github.com/nuxt/content/issues/3742
+ */
+export const formatDate = (date: string): string => {
+  const d = new Date(date)
+  if (Number.isNaN(d.getTime())) {
+    throw new TypeError(`Invalid date value: "${date}"`)
+  }
+
+  const year = d.getFullYear()
+  const month = d.getMonth() + 1
+  const day = d.getDate()
+
+  return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+}
+
+/**
+ * Format a date string as `YYYY-MM-DD HH:mm:ss` for SQL DATETIME columns.
+ *
+ * @see {@link formatDate} for why this is duplicated here.
+ * @see https://github.com/nuxt/content/issues/3742
+ */
+export const formatDateTime = (datetime: string): string => {
+  const d = new Date(datetime)
+  if (Number.isNaN(d.getTime())) {
+    throw new TypeError(`Invalid datetime value: "${datetime}"`)
+  }
+
+  const hours = d.getHours()
+  const minutes = d.getMinutes()
+  const seconds = d.getSeconds()
+
+  return `${formatDate(datetime)} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
