@@ -16,11 +16,10 @@ import { getOrderedSchemaKeys } from '../../runtime/internal/schema'
 import { transformContent } from './transformers'
 import pathMetaTransformer from './transformers/path-meta'
 
-let parserOptions = {
-  mdcConfigs: [] as MdcConfig[],
-}
-export function setParserOptions(opts: Partial<typeof parserOptions>) {
-  parserOptions = defu(opts, parserOptions)
+let _getMdcConfigs: (() => Promise<MdcConfig[]>) | undefined
+
+export function setMdcConfigResolver(fn: () => Promise<MdcConfig[]>) {
+  _getMdcConfigs = fn
 }
 
 type HighlighterOptions = Exclude<MDCModuleOptions['highlight'], false | undefined> & { compress: boolean }
@@ -70,7 +69,7 @@ async function _getHighlightPlugin(key: string, options: HighlighterOptions) {
     // Configure the bundled languages
     bundledLangs: Object.fromEntries(bundledLangs),
     engine: createOnigurumaEngine(import('shiki/wasm')),
-    getMdcConfigs: () => Promise.resolve(parserOptions.mdcConfigs),
+    getMdcConfigs: () => _getMdcConfigs?.() ?? Promise.resolve([]),
   })
 
   highlightPlugin = {
