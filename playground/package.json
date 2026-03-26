@@ -16,7 +16,7 @@
     "@nuxthub/core": "^0.10.6",
     "better-sqlite3": "^12.6.2",
     "drizzle-orm": "^0.45.1",
-    "nuxt": "^4.3.1",
+    "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",
     "pg": "^8.19.0",
     "remark-code-import": "^1.2.0",
