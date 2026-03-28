@@ -176,9 +176,9 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      // Compute stem prefix: join(collectionName, sourcePrefix) — what gets prepended to the filename in the stem
+      // Stem prefix = source prefix only (collection name is stripped by describeId in path-meta.ts)
       const sourcePrefix = collection.source?.[0]?.prefix || ''
-      const stemPrefix = [collection.name, sourcePrefix].filter(Boolean).join('/').replace(/^\/|\/$/g, '')
+      const stemPrefix = sourcePrefix.replace(/^\/|\/$/g, '')
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
