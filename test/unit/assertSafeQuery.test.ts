@@ -2,10 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { assertSafeQuery } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
-// Mock tables from manifest
+// Mock tables and collection metadata from manifest
 vi.mock('#content/manifest', () => ({
   tables: {
     test: '_content_test',
+  },
+  default: {
+    test: { type: 'data', fields: {} },
   },
 }))
 const mockFetch = vi.fn().mockResolvedValue(Promise.resolve([{}]))

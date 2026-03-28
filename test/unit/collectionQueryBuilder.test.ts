@@ -1,10 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
-// Mock tables from manifest
+// Mock tables and collection metadata from manifest
 vi.mock('#content/manifest', () => ({
   tables: {
     articles: '_articles',
+  },
+  default: {
+    articles: {
+      type: 'data',
+      fields: {},
+      i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+    },
   },
 }))
 
@@ -260,5 +267,52 @@ describe('collectionQueryBuilder', () => {
       'articles',
       'SELECT COUNT(*) as count FROM _articles',
     )
+  })
+
+  describe('auto-locale detection', () => {
+    it('auto-applies detected locale with fallback when collection has i18n', async () => {
+      mockFetch
+        .mockResolvedValueOnce([{ stem: 'a', locale: 'fr' }])
+        .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }])
+
+      // Pass 'fr' as detectedLocale (3rd arg) — simulates what client.ts/server.ts do
+      const results = await collectionQueryBuilder(mockCollection, mockFetch, 'fr').all()
+
+      // Should auto-apply locale with fallback to defaultLocale ('en')
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'fr\') ORDER BY stem ASC',
+      )
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+      )
+      expect(results).toHaveLength(2)
+    })
+
+    it('does not auto-apply locale when .locale() is called explicitly', async () => {
+      // Pass 'fr' as detectedLocale, but call .locale('de') explicitly
+      const query = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
+      await query.locale('de').all()
+
+      // Should use the explicit 'de', not auto-detected 'fr'
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'de\') ORDER BY stem ASC',
+      )
+    })
+
+    it('does not auto-apply locale when no detectedLocale is provided', async () => {
+      // No detectedLocale (undefined) — no auto-locale
+      const query = collectionQueryBuilder(mockCollection, mockFetch)
+      await query.all()
+
+      // Should query without locale filter
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles ORDER BY stem ASC',
+      )
+    })
   })
 })

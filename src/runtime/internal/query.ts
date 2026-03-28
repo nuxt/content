@@ -1,6 +1,6 @@
 import { withoutTrailingSlash } from 'ufo'
 import type { Collections, CollectionQueryBuilder, CollectionQueryGroup, QueryGroupFunction, SQLOperator } from '@nuxt/content'
-import { tables } from '#content/manifest'
+import manifestMeta, { tables } from '#content/manifest'
 
 const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR') => {
   const conditions = (group as unknown as { _conditions: Array<string> })._conditions
@@ -69,7 +69,13 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
   return query
 }
 
-export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>): CollectionQueryBuilder<Collections[T]> => {
+export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>, detectedLocale?: string): CollectionQueryBuilder<Collections[T]> => {
+  // Auto-detect i18n config from manifest for this collection
+  const collectionMeta = (manifestMeta as Record<string, { i18n?: { locales: string[], defaultLocale: string } }>)[String(collection)]
+  const i18nConfig = collectionMeta?.i18n
+  // Track whether .locale() was called explicitly
+  let localeExplicitlySet = false
+
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -102,6 +108,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('path', '=', withoutTrailingSlash(path))
     },
     locale(locale: string, opts?: { fallback?: string }) {
+      localeExplicitlySet = true
       if (opts?.fallback) {
         params.localeFallback = { locale, fallback: opts.fallback }
       }
@@ -133,26 +140,43 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
+      applyAutoLocale()
       if (params.localeFallback) {
         return fetchWithLocaleFallback()
       }
       return fetch(collection, buildQuery()).then(res => (res || []) as Collections[T][])
     },
     async first(): Promise<Collections[T] | null> {
+      applyAutoLocale()
       if (params.localeFallback) {
         return fetchWithLocaleFallback({ limit: 1 }).then(res => res[0] || null)
       }
       return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
     },
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
+      applyAutoLocale()
       if (params.localeFallback) {
-        // Count the merged deduplicated result set
         return fetchWithLocaleFallback().then(res => res.length)
       }
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
       })).then(m => (m[0] as { count: number }).count)
     },
+  }
+
+  /**
+   * Auto-apply locale filter when:
+   * 1. The collection has i18n configured (in manifest)
+   * 2. No explicit .locale() call was made
+   * 3. A locale was detected from @nuxtjs/i18n
+   * Runs once before query execution (all/first/count).
+   */
+  let autoLocaleApplied = false
+  function applyAutoLocale() {
+    if (autoLocaleApplied || localeExplicitlySet || !i18nConfig || !detectedLocale) return
+    autoLocaleApplied = true
+    // Auto-apply with fallback to the collection's default locale
+    params.localeFallback = { locale: detectedLocale, fallback: i18nConfig.defaultLocale }
   }
 
   async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {

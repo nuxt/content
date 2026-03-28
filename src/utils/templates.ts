@@ -179,6 +179,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
+        ...(collection.i18n ? { i18n: collection.i18n } : {}),
       }
       return acc
     }, {} as Record<string, unknown>)

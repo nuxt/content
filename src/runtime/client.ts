@@ -16,8 +16,12 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  const event = tryUseNuxtApp()?.ssrContext?.event
-  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
+  const nuxtApp = tryUseNuxtApp()
+  const event = nuxtApp?.ssrContext?.event
+  // Auto-detect locale from @nuxtjs/i18n (client: $i18n.locale, SSR: event.context.nuxtI18n)
+  const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } })?.locale?.value
+    || (event?.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectedLocale)
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {

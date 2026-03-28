@@ -15,7 +15,9 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
+  // Auto-detect locale from @nuxtjs/i18n server context
+  const detectedLocale = (event.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
+  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectedLocale)
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
