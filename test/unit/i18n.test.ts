@@ -204,6 +204,36 @@ describe('i18n - inline expansion', () => {
     expect(items[1].info).toEqual({ age: 25, country: 'Schweiz' })
   })
 
+  it('deep-merges array items by index, preserving untranslated fields', () => {
+    const content: ParsedContentFile = {
+      id: 'nav:navbar.yml',
+      items: [
+        { id: 'overview', label: 'Overview', route: '/' },
+        { id: 'tech', label: 'Technologies', route: '/technologies' },
+      ],
+      stem: 'navbar',
+      extension: 'yml',
+      meta: {
+        i18n: {
+          fr: {
+            items: [
+              { label: 'Vue d\'ensemble' },
+              { label: 'Technologies' },
+            ],
+          },
+        },
+      },
+    }
+
+    const items = expandI18n(content, i18nConfig)
+    const frItem = items.find(i => i.locale === 'fr')
+    // Array items merged by index: label overridden, id + route preserved from default
+    expect(frItem?.items).toEqual([
+      { id: 'overview', label: 'Vue d\'ensemble', route: '/' },
+      { id: 'tech', label: 'Technologies', route: '/technologies' },
+    ])
+  })
+
   it('does not include default locale in expanded items', () => {
     const content: ParsedContentFile = {
       id: 'blog:post.yml',
