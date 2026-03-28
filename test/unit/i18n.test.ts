@@ -58,6 +58,9 @@ function expandI18n(
  * Detect locale from path prefix and strip it.
  * This is the same logic used in createParser (src/utils/content/index.ts).
  */
+/**
+ * Mirrors the production logic in src/utils/content/index.ts exactly.
+ */
 function detectLocaleFromPath(
   path: string,
   stem: string,
@@ -68,8 +71,15 @@ function detectLocaleFromPath(
 
   if (firstPart && i18nConfig.locales.includes(firstPart)) {
     const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
-    const stemParts = stem.split('/')
-    const newStem = stemParts[0] === firstPart ? stemParts.slice(1).join('/') : stem
+
+    // Stem stripping: same string logic as production (no RegExp)
+    let newStem = stem
+    if (stem === firstPart) {
+      newStem = ''
+    }
+    else if (stem.startsWith(firstPart + '/')) {
+      newStem = stem.slice(firstPart.length + 1)
+    }
 
     return {
       locale: firstPart,

@@ -231,8 +231,12 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
         }
         // Always strip locale prefix from stem (regardless of stem format)
         const currentStem = result.stem || pathMetaFields.stem || ''
-        result.stem = currentStem
-          .replace(new RegExp(`^${firstPart}(/|$)`), '')
+        if (currentStem === firstPart) {
+          result.stem = ''
+        }
+        else if (currentStem.startsWith(firstPart + '/')) {
+          result.stem = currentStem.slice(firstPart.length + 1)
+        }
       }
       else {
         // No locale prefix - assign default locale

@@ -160,7 +160,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           collectionType: collection.type,
         }).then(result => JSON.stringify(result))
 
-        db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+        db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
       }
 
       const parsed: ParsedContentFile = JSON.parse(parsedContent)

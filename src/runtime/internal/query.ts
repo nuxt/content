@@ -145,6 +145,10 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
     },
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
+      if (params.localeFallback) {
+        // Count the merged deduplicated result set
+        return fetchWithLocaleFallback().then(res => res.length)
+      }
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
       })).then(m => (m[0] as { count: number }).count)
@@ -154,14 +158,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {
     const { locale, fallback } = params.localeFallback!
 
-    // Query for the requested locale
+    // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result
     const localeCondition = `("locale" = ${singleQuote(locale)})`
-    const localeQuery = buildQuery({ extraCondition: localeCondition })
+    const localeQuery = buildQuery({ extraCondition: localeCondition, noLimitOffset: true })
     const localeResults = await fetch(collection, localeQuery).then(res => res || [])
 
-    // Query for the fallback locale
     const fallbackCondition = `("locale" = ${singleQuote(fallback)})`
-    const fallbackQuery = buildQuery({ extraCondition: fallbackCondition })
+    const fallbackQuery = buildQuery({ extraCondition: fallbackCondition, noLimitOffset: true })
     const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
 
     // Merge: prefer locale results, fill gaps from fallback
@@ -173,22 +176,25 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
         merged.push(item)
       }
     }
-    // Re-sort by stem only when no custom ORDER BY was specified (default ordering)
-    // When the user provides a custom .order(), both sub-queries already respect it
-    // and we preserve that order (locale results first, then fallback fills)
+    // Re-sort by stem only when no custom ORDER BY was specified
     if (params.orderBy.length === 0) {
       merged.sort((a, b) => getStem(a).localeCompare(getStem(b)))
     }
 
-    // Apply limit if specified
-    if (opts.limit && opts.limit > 0) {
-      return merged.slice(0, opts.limit) as Collections[T][]
+    // Apply offset then limit on the merged result
+    let result = merged
+    if (params.offset > 0) {
+      result = result.slice(params.offset)
+    }
+    const limit = opts.limit ?? (params.limit > 0 ? params.limit : 0)
+    if (limit > 0) {
+      result = result.slice(0, limit)
     }
 
-    return merged as Collections[T][]
+    return result as Collections[T][]
   }
 
-  function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number, extraCondition?: string } = {}) {
+  function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number, extraCondition?: string, noLimitOffset?: boolean } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
       query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${opts.count.field}) as count`
@@ -216,7 +222,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     }
 
     const limit = opts?.limit || params.limit
-    if (limit > 0) {
+    if (!opts?.noLimitOffset && limit > 0) {
       if (params.offset > 0) {
         query += ` LIMIT ${limit} OFFSET ${params.offset}`
       }
