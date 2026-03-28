@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { hash } from 'ohash'
-import defu from 'defu'
+import { defuByIndex } from '../../src/utils/i18n'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile } from '../../src/types'
 
@@ -42,7 +42,7 @@ function expandI18n(
 
     // Deep merge for data collections: translated fields override, untranslated fields preserved
     const localeItem: ParsedContentFile = {
-      ...defu(overrides, parsedContent) as ParsedContentFile,
+      ...defuByIndex(overrides, parsedContent) as ParsedContentFile,
       id: `${parsedContent.id}#${locale}`,
       locale,
       meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },

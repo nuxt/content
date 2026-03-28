@@ -20,6 +20,7 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
+import { defuByIndex } from './utils/i18n'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
@@ -409,7 +410,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 // Deep merge for data collections (safe — no body AST to corrupt)
                 // Shallow spread for page collections (body AST would be corrupted by defu)
                 const merged = collection.type === 'data'
-                  ? defu(overrides, defaultItem) as ParsedContentFile
+                  ? defuByIndex(overrides, defaultItem) as ParsedContentFile
                   : { ...defaultItem, ...overrides }
                 const localeItem: ParsedContentFile = {
                   ...merged,
