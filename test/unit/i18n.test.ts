@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import defu from 'defu'
+import { hash } from 'ohash'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile } from '../../src/types'
 
@@ -27,6 +28,14 @@ function expandI18n(
     parsedContent.locale = i18nConfig.defaultLocale
   }
 
+  // Compute source hash from default locale's translatable fields
+  const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
+  const sourceFields: Record<string, unknown> = {}
+  for (const field of translatedFields) {
+    sourceFields[field] = parsedContent[field]
+  }
+  const i18nSourceHash = hash(sourceFields)
+
   const items: ParsedContentFile[] = [parsedContent]
 
   for (const [locale, overrides] of Object.entries(i18nData)) {
@@ -36,7 +45,7 @@ function expandI18n(
       ...defu(overrides, parsedContent) as ParsedContentFile,
       id: `${parsedContent.id}#${locale}`,
       locale,
-      meta: { ...cleanMeta },
+      meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
     }
 
     items.push(localeItem)
@@ -282,5 +291,96 @@ describe('i18n - path-based locale detection', () => {
     expect(result.locale).toBe('en')
     expect(result.path).toBe('/docs/guide/intro')
     expect(result.stem).toBe('docs/guide/intro')
+  })
+})
+
+describe('i18n - source hash for change tracking', () => {
+  const i18nConfig: CollectionI18nConfig = {
+    locales: ['en', 'fr', 'de'],
+    defaultLocale: 'en',
+  }
+
+  it('adds _i18nSourceHash to non-default locale items', () => {
+    const content: ParsedContentFile = {
+      id: 'blog:post.yml',
+      title: 'My Post',
+      description: 'Hello',
+      stem: 'post',
+      extension: 'yml',
+      meta: {
+        i18n: {
+          fr: { title: 'Mon Article' },
+        },
+      },
+    }
+
+    const items = expandI18n(content, i18nConfig)
+
+    // Default locale should NOT have _i18nSourceHash
+    expect(items[0].meta._i18nSourceHash).toBeUndefined()
+
+    // French locale SHOULD have _i18nSourceHash
+    expect(items[1].meta._i18nSourceHash).toBeDefined()
+    expect(typeof items[1].meta._i18nSourceHash).toBe('string')
+  })
+
+  it('source hash is based on translated fields only', () => {
+    const content1: ParsedContentFile = {
+      id: 'blog:post.yml',
+      title: 'My Post',
+      description: 'Hello',
+      untranslatedField: 'ignored',
+      stem: 'post',
+      extension: 'yml',
+      meta: {
+        i18n: { fr: { title: 'Mon Article' } },
+      },
+    }
+
+    const content2: ParsedContentFile = {
+      id: 'blog:post.yml',
+      title: 'My Post',
+      description: 'Hello',
+      untranslatedField: 'different value',
+      stem: 'post',
+      extension: 'yml',
+      meta: {
+        i18n: { fr: { title: 'Mon Article' } },
+      },
+    }
+
+    const items1 = expandI18n(content1, i18nConfig)
+    const items2 = expandI18n(content2, i18nConfig)
+
+    // Hash should be the same since only 'title' is translated and it's unchanged
+    expect(items1[1].meta._i18nSourceHash).toBe(items2[1].meta._i18nSourceHash)
+  })
+
+  it('source hash changes when default locale translated fields change', () => {
+    const content1: ParsedContentFile = {
+      id: 'blog:post.yml',
+      title: 'My Post',
+      stem: 'post',
+      extension: 'yml',
+      meta: {
+        i18n: { fr: { title: 'Mon Article' } },
+      },
+    }
+
+    const content2: ParsedContentFile = {
+      id: 'blog:post.yml',
+      title: 'My Updated Post', // title changed
+      stem: 'post',
+      extension: 'yml',
+      meta: {
+        i18n: { fr: { title: 'Mon Article' } },
+      },
+    }
+
+    const items1 = expandI18n(content1, i18nConfig)
+    const items2 = expandI18n(content2, i18nConfig)
+
+    // Hash should differ because source 'title' changed
+    expect(items1[1].meta._i18nSourceHash).not.toBe(items2[1].meta._i18nSourceHash)
   })
 })

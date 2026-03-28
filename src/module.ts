@@ -134,12 +134,14 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/client') },
     ])
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/nitro') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
@@ -386,6 +388,15 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 parsedContent.locale = collection.i18n.defaultLocale
               }
 
+              // Compute source hash from default locale's translatable fields
+              // Used by translators / Studio to detect when the source content changes
+              const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
+              const sourceFields: Record<string, unknown> = {}
+              for (const field of translatedFields) {
+                sourceFields[field] = parsedContent[field]
+              }
+              const i18nSourceHash = hash(sourceFields)
+
               const defaultItem = parsedContent
               const { queries: defaultQueries, hash: defaultHash } = generateCollectionInsert(collection, defaultItem)
               list.push([`${key}#${defaultItem.locale}`, defaultQueries, defaultHash])
@@ -398,7 +409,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                   ...defu(overrides, defaultItem) as ParsedContentFile,
                   id: `${parsedContent.id}#${locale}`,
                   locale,
-                  meta: { ...cleanMeta },
+                  meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
                 }
 
                 const { queries: localeQueries, hash: localeHash } = generateCollectionInsert(collection, localeItem)

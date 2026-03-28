@@ -172,5 +172,48 @@ describe('i18n', async () => {
       // Name should fall back to default since it's not translated
       expect(jane?.name).toBe('Jane Doe')
     })
+
+    test('non-default locale items have _i18nSourceHash in meta', async () => {
+      const members = await $fetch<Record<string, unknown>[]>('/api/content/team?locale=fr')
+      const jane = members.find(m => m.name === 'Jane Doe')
+      const meta = jane?.meta as Record<string, unknown>
+
+      expect(meta?._i18nSourceHash).toBeDefined()
+      expect(typeof meta?._i18nSourceHash).toBe('string')
+    })
+
+    test('default locale items do NOT have _i18nSourceHash', async () => {
+      const members = await $fetch<Record<string, unknown>[]>('/api/content/team?locale=en')
+      const jane = members.find(m => m.name === 'Jane Doe')
+      const meta = jane?.meta as Record<string, unknown>
+
+      expect(meta?._i18nSourceHash).toBeUndefined()
+    })
+  })
+
+  describe('queryCollectionLocales helper', () => {
+    test('returns all locale variants for a given stem', async () => {
+      const locales = await $fetch<{ locale: string, path: string }[]>(
+        '/api/content/locales?collection=blog&stem=blog/hello',
+      )
+
+      expect(locales.length).toBe(2)
+      const localeCodes = locales.map(l => l.locale).sort()
+      expect(localeCodes).toEqual(['en', 'fr'])
+
+      // Both should have the same path
+      for (const entry of locales) {
+        expect(entry.path).toBe('/blog/hello')
+      }
+    })
+
+    test('returns single locale for untranslated content', async () => {
+      const locales = await $fetch<{ locale: string, path: string }[]>(
+        '/api/content/locales?collection=blog&stem=blog/only-english',
+      )
+
+      expect(locales.length).toBe(1)
+      expect(locales[0].locale).toBe('en')
+    })
   })
 })

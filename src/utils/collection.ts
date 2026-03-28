@@ -79,6 +79,8 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
+    // Ensure i18n: true is never passed through (should be resolved in config.ts)
+    i18n: collection.i18n === true ? undefined : collection.i18n,
   }
 }
 

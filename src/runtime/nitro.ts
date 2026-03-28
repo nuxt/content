@@ -28,3 +28,8 @@ export const queryCollectionItemSurroundings = server.queryCollectionItemSurroun
  * @deprecated Import from `@nuxt/content/server` instead
  */
 export const queryCollectionSearchSections = server.queryCollectionSearchSections
+
+/**
+ * @deprecated Import from `@nuxt/content/server` instead
+ */
+export const queryCollectionLocales = server.queryCollectionLocales
