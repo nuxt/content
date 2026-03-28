@@ -176,10 +176,14 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
+      // Compute stem prefix: join(collectionName, sourcePrefix) — what gets prepended to the filename in the stem
+      const sourcePrefix = collection.source?.[0]?.prefix || ''
+      const stemPrefix = [collection.name, sourcePrefix].filter(Boolean).join('/').replace(/^\/|\/$/g, '')
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
         ...(collection.i18n ? { i18n: collection.i18n } : {}),
+        ...(stemPrefix ? { stemPrefix } : {}),
       }
       return acc
     }, {} as Record<string, unknown>)

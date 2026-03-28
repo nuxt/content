@@ -70,9 +70,10 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
 }
 
 export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>, detectedLocale?: string): CollectionQueryBuilder<Collections[T]> => {
-  // Auto-detect i18n config from manifest for this collection
-  const collectionMeta = (manifestMeta as Record<string, { i18n?: { locales: string[], defaultLocale: string } }>)[String(collection)]
+  // Read collection metadata from manifest
+  const collectionMeta = (manifestMeta as Record<string, { i18n?: { locales: string[], defaultLocale: string }, stemPrefix?: string }>)[String(collection)]
   const i18nConfig = collectionMeta?.i18n
+  const stemPrefix = collectionMeta?.stemPrefix || ''
   // Track whether .locale() was called explicitly
   let localeExplicitlySet = false
 
@@ -106,6 +107,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     },
     path(path: string) {
       return query.where('path', '=', withoutTrailingSlash(path))
+    },
+    stem(stem: string) {
+      // Resolve full stem by prepending the collection's source prefix if not already present
+      const fullStem = stemPrefix && !stem.startsWith(stemPrefix)
+        ? `${stemPrefix}/${stem}`
+        : stem
+      return query.where('stem', '=', fullStem)
     },
     locale(locale: string, opts?: { fallback?: string }) {
       localeExplicitlySet = true

@@ -11,6 +11,7 @@ vi.mock('#content/manifest', () => ({
       type: 'data',
       fields: {},
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+      stemPrefix: 'articles',
     },
   },
 }))
@@ -237,6 +238,27 @@ describe('collectionQueryBuilder', () => {
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
       'SELECT * FROM _articles WHERE ("locale" = \'de\') AND ("path" = \'/blog/post\') ORDER BY stem ASC',
+    )
+  })
+
+  it('.stem() auto-prefixes with collection stemPrefix', async () => {
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    await query.stem('navbar').all()
+
+    // stemPrefix is 'articles', so 'navbar' → 'articles/navbar'
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("stem" = \'articles/navbar\') ORDER BY stem ASC',
+    )
+  })
+
+  it('.stem() does not double-prefix when full stem is passed', async () => {
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    await query.stem('articles/navbar').all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("stem" = \'articles/navbar\') ORDER BY stem ASC',
     )
   })
 

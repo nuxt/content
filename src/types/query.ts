@@ -5,6 +5,12 @@ export type QueryGroupFunction<T> = (group: CollectionQueryGroup<T>) => Collecti
 export interface CollectionQueryBuilder<T> {
   path(path: string): CollectionQueryBuilder<T>
   /**
+   * Filter by stem (filename without extension).
+   * Automatically resolves the full stem path including the collection's source prefix.
+   * e.g., `.stem('navbar')` matches `content/navigation/navbar.yml` when the collection source is `navigation/*.yml`
+   */
+  stem(stem: string): CollectionQueryBuilder<T>
+  /**
    * Filter results by locale.
    * @param locale - The locale code to filter by (e.g. 'fr')
    * @param opts - Options for locale filtering
