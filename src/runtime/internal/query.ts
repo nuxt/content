@@ -172,9 +172,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const localeStemSet = new Set(localeResults.map(getStem))
     const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
 
-    // Both sub-queries share the same ORDER BY, so we merge two sorted arrays.
-    // Use interleaved merge to preserve the DB-provided sort order.
-    const merged = mergeSortedArrays(localeResults, fallbackOnly, getStem)
+    // When using the default ORDER BY (stem ASC), we can do a proper sorted merge.
+    // When a custom ORDER BY is specified, both sub-queries are already DB-sorted
+    // by that field — we keep locale items first and append fallback items after,
+    // preserving each group's DB order. A full interleave would require parsing
+    // the SQL ORDER BY clause in JS, which is not feasible.
+    const merged = params.orderBy.length === 0
+      ? mergeSortedArrays(localeResults, fallbackOnly, getStem)
+      : [...localeResults, ...fallbackOnly]
 
     // Apply offset then limit on the merged result
     let result = merged
