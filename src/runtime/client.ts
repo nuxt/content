@@ -47,13 +47,19 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
 /**
  * useAsyncData wrapper for queryCollection.
  * Provides a chainable API that auto-wraps execution in useAsyncData
- * with an auto-generated cache key.
+ * with an auto-generated cache key. Locale is auto-detected from @nuxtjs/i18n.
+ *
+ * Must be called in a Vue component setup context (like useAsyncData, useFetch).
  *
  * @example
  * const { data } = await useQueryCollection('technologies').all()
  * const { data } = await useQueryCollection('navigation').stem('navbar').first()
  */
 export function useQueryCollection<T extends keyof Collections>(collection: T) {
+  const nuxtApp = tryUseNuxtApp()
+  // Capture detected locale for cache key (same logic as queryCollection)
+  const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } })?.locale?.value
+    || (nuxtApp?.ssrContext?.event?.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
   const qb = queryCollection(collection)
 
   type Item = Collections[T]
@@ -100,31 +106,36 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
       return builder
     },
     all(): AsyncData<Item[], NuxtError> {
-      const key = generateKey(collection, qb)
-      return useAsyncData(key, () => qb.all()) as AsyncData<Item[], NuxtError>
+      return useAsyncData(buildKey('all'), () => qb.all()) as AsyncData<Item[], NuxtError>
     },
     first(): AsyncData<Item | null, NuxtError> {
-      const key = generateKey(collection, qb)
-      return useAsyncData(key, () => qb.first()) as AsyncData<Item | null, NuxtError>
+      return useAsyncData(buildKey('first'), () => qb.first()) as AsyncData<Item | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      const key = generateKey(collection, qb)
-      return useAsyncData(key, () => qb.count(field, distinct)) as AsyncData<number, NuxtError>
+      return useAsyncData(buildKey('count'), () => qb.count(field, distinct)) as AsyncData<number, NuxtError>
     },
   }
 
-  return builder
-}
+  function buildKey(method: string): string {
+    const params = (qb as unknown as { __params: Record<string, unknown> }).__params
+    const parts = [String(collection)]
+    // Include all query-differentiating params
+    const conditions = params.conditions as string[]
+    if (conditions?.length) parts.push(...conditions)
+    const fallback = params.localeFallback as { locale: string } | undefined
+    if (fallback) parts.push(`l:${fallback.locale}`)
+    else if (detectedLocale) parts.push(`l:${detectedLocale}`)
+    const orderBy = params.orderBy as string[]
+    if (orderBy?.length) parts.push(`o:${orderBy.join(',')}`)
+    if (params.offset) parts.push(`s:${params.offset}`)
+    if (params.limit) parts.push(`n:${params.limit}`)
+    const fields = params.selectedFields as string[]
+    if (fields?.length) parts.push(`f:${fields.join(',')}`)
+    parts.push(method)
+    return `content:${parts.join(':')}`
+  }
 
-function generateKey<T extends keyof Collections>(collection: T, qb: CollectionQueryBuilder<Collections[T]>): string {
-  // Use internal params to build a stable cache key
-  const params = (qb as unknown as { __params: Record<string, unknown> }).__params
-  const parts = [String(collection)]
-  const conditions = params.conditions as string[]
-  if (conditions?.length) parts.push(...conditions)
-  const fallback = params.localeFallback as { locale: string } | undefined
-  if (fallback) parts.push(`locale:${fallback.locale}`)
-  return `content:${parts.join(':')}`
+  return builder
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
