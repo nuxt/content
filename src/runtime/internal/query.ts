@@ -175,8 +175,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   function applyAutoLocale() {
     if (autoLocaleApplied || localeExplicitlySet || !i18nConfig || !detectedLocale) return
     autoLocaleApplied = true
-    // Auto-apply with fallback to the collection's default locale
-    params.localeFallback = { locale: detectedLocale, fallback: i18nConfig.defaultLocale }
+    if (detectedLocale === i18nConfig.defaultLocale) {
+      // Default locale: single query, no fallback needed
+      params.conditions.push(`("locale" = ${singleQuote(detectedLocale)})`)
+    }
+    else {
+      // Non-default locale: query with fallback to default
+      params.localeFallback = { locale: detectedLocale, fallback: i18nConfig.defaultLocale }
+    }
   }
 
   async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {

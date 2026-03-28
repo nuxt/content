@@ -15,8 +15,11 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  // Auto-detect locale from @nuxtjs/i18n server context
-  const detectedLocale = (event.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
+  // Auto-detect locale from @nuxtjs/i18n server context (resilient to different i18n versions)
+  const i18nCtx = event.context?.nuxtI18n as Record<string, unknown> | undefined
+  const detectedLocale = (i18nCtx?.vueI18nOptions as { locale?: string })?.locale
+    || (i18nCtx?.locale as string)
+    || undefined
   return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectedLocale)
 }
 
@@ -33,7 +36,8 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(e
 }
 
 export function queryCollectionLocales<T extends keyof Collections>(event: H3Event, collection: T, stem: string): Promise<ContentLocaleEntry[]> {
-  const qb = queryCollection(event, collection)
+  // Skip auto-locale: this helper needs ALL locale variants, not just the current one
+  const qb = collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
   return generateCollectionLocales(qb, stem)
 }
 

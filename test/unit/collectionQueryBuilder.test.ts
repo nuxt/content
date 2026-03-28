@@ -314,5 +314,17 @@ describe('collectionQueryBuilder', () => {
         'SELECT * FROM _articles ORDER BY stem ASC',
       )
     })
+
+    it('uses single query (no fallback) when detectedLocale equals defaultLocale', async () => {
+      // Default locale 'en' — should use a single WHERE, not two-query fallback
+      const query = collectionQueryBuilder(mockCollection, mockFetch, 'en')
+      await query.all()
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+      )
+    })
   })
 })
