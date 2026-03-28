@@ -57,13 +57,15 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
  * const { data } = await useQueryCollection('technologies').all()
  * const { data } = await useQueryCollection('navigation').stem('navbar').first()
  */
-export function useQueryCollection<T extends keyof Collections>(collection: T) {
+export function useQueryCollection<R = never, T extends keyof Collections = keyof Collections>(collection: T) {
   const nuxtApp = tryUseNuxtApp()
   const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> })?.locale
   // Reactive locale for cache key and watch
   const localeValue = computed(() => i18nLocaleRef?.value || '')
 
   type Item = Collections[T]
+  // Use the consumer's type override if provided, otherwise the collection type
+  type Result = [R] extends [never] ? Item : R
 
   // Collect query chain operations to replay on each execution
   const ops: Array<(qb: CollectionQueryBuilder<Item>) => void> = []
@@ -111,13 +113,13 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
       ops.push(qb => qb.locale(locale, opts))
       return builder
     },
-    all(): AsyncData<Item[], NuxtError> {
+    all(): AsyncData<Result[], NuxtError> {
       const key = buildKey('all')
-      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Item[], NuxtError>
+      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
     },
-    first(): AsyncData<Item | null, NuxtError> {
+    first(): AsyncData<Result | null, NuxtError> {
       const key = buildKey('first')
-      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Item | null, NuxtError>
+      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
       const key = buildKey('count')
