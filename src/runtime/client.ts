@@ -71,45 +71,70 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
   const ops: Array<(qb: CollectionQueryBuilder<Item>) => void> = []
   let explicitLocale = false
 
+  // Track key-relevant params directly — avoids creating a full query builder in buildKey
+  const keyParts = {
+    conditions: [] as string[],
+    orderBy: [] as string[],
+    offset: 0,
+    limit: 0,
+    selectedFields: [] as string[],
+    localeFallback: undefined as { locale: string, fallback: string } | undefined,
+  }
+
   const builder = {
     where(field: string, operator: SQLOperator, value?: unknown) {
+      keyParts.conditions.push(`${field}${operator}${value}`)
       ops.push(qb => qb.where(field, operator, value))
       return builder
     },
     andWhere(groupFactory: QueryGroupFunction<Item>) {
+      keyParts.conditions.push('andWhere')
       ops.push(qb => qb.andWhere(groupFactory))
       return builder
     },
     orWhere(groupFactory: QueryGroupFunction<Item>) {
+      keyParts.conditions.push('orWhere')
       ops.push(qb => qb.orWhere(groupFactory))
       return builder
     },
     order(field: keyof Item, direction: 'ASC' | 'DESC') {
+      keyParts.orderBy.push(`${String(field)}:${direction}`)
       ops.push(qb => qb.order(field, direction))
       return builder
     },
     select<K extends keyof Item>(...fields: K[]) {
+      keyParts.selectedFields.push(...fields.map(String))
       ops.push(qb => qb.select(...fields))
       return builder
     },
     skip(skip: number) {
+      keyParts.offset = skip
       ops.push(qb => qb.skip(skip))
       return builder
     },
     limit(limit: number) {
+      keyParts.limit = limit
       ops.push(qb => qb.limit(limit))
       return builder
     },
     path(path: string) {
+      keyParts.conditions.push(`path=${path}`)
       ops.push(qb => qb.path(path))
       return builder
     },
     stem(stem: string) {
+      keyParts.conditions.push(`stem=${stem}`)
       ops.push(qb => qb.stem(stem))
       return builder
     },
     locale(locale: string, opts?: { fallback?: string }) {
       explicitLocale = true
+      if (opts?.fallback) {
+        keyParts.localeFallback = { locale, fallback: opts.fallback }
+      }
+      else {
+        keyParts.conditions.push(`locale=${locale}`)
+      }
       ops.push(qb => qb.locale(locale, opts))
       return builder
     },
@@ -117,10 +142,10 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
     },
     first(): AsyncData<Result | null, NuxtError> {
-      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result[], NuxtError> as unknown as AsyncData<Result | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
+      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<Result[], NuxtError> as unknown as AsyncData<number, NuxtError>
     },
   }
 
@@ -135,24 +160,16 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
     return qb
   }
 
+  /** Build cache key from tracked params — no query builder instantiation needed. */
   function buildKey(method: string): string {
     const parts = [String(collection)]
-    // Replay ops on a temporary builder to read params
-    const tmpQb = queryCollection(collection)
-    for (const op of ops) op(tmpQb)
-    const params = (tmpQb as unknown as { __params: Record<string, unknown> }).__params
-    const conditions = params.conditions as string[]
-    if (conditions?.length) parts.push(...conditions)
-    // Include locale in key — with a function key, this is re-evaluated reactively
-    const fb = params.localeFallback as { locale: string, fallback: string } | undefined
-    if (fb) parts.push(`l:${fb.locale}:fb:${fb.fallback}`)
+    if (keyParts.conditions.length) parts.push(...keyParts.conditions)
+    if (keyParts.localeFallback) parts.push(`l:${keyParts.localeFallback.locale}:fb:${keyParts.localeFallback.fallback}`)
     else if (localeValue.value && !explicitLocale) parts.push(`l:${localeValue.value}`)
-    const orderBy = params.orderBy as string[]
-    if (orderBy?.length) parts.push(`o:${orderBy.join(',')}`)
-    if (params.offset) parts.push(`s:${params.offset}`)
-    if (params.limit) parts.push(`n:${params.limit}`)
-    const fields = params.selectedFields as string[]
-    if (fields?.length) parts.push(`f:${fields.join(',')}`)
+    if (keyParts.orderBy.length) parts.push(`o:${keyParts.orderBy.join(',')}`)
+    if (keyParts.offset) parts.push(`s:${keyParts.offset}`)
+    if (keyParts.limit) parts.push(`n:${keyParts.limit}`)
+    if (keyParts.selectedFields.length) parts.push(`f:${keyParts.selectedFields.join(',')}`)
     parts.push(method)
     return `content:${parts.join(':')}`
   }
