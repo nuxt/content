@@ -7,7 +7,8 @@ import { generateCollectionLocales } from './internal/locales'
 import { fetchQuery } from './internal/api'
 import type { Collections, PageCollections, CollectionQueryBuilder, ContentLocaleEntry, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
 import type { AsyncData, NuxtError } from '#app'
-import { tryUseNuxtApp, useAsyncData } from '#imports'
+import type { Ref } from 'vue'
+import { tryUseNuxtApp, useAsyncData, computed } from '#imports'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -47,7 +48,8 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
 /**
  * useAsyncData wrapper for queryCollection.
  * Provides a chainable API that auto-wraps execution in useAsyncData
- * with an auto-generated cache key. Locale is auto-detected from @nuxtjs/i18n.
+ * with an auto-generated cache key. Locale is auto-detected from @nuxtjs/i18n
+ * and content automatically re-fetches when the locale changes.
  *
  * Must be called in a Vue component setup context (like useAsyncData, useFetch).
  *
@@ -57,75 +59,94 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
  */
 export function useQueryCollection<T extends keyof Collections>(collection: T) {
   const nuxtApp = tryUseNuxtApp()
-  // Capture detected locale for cache key (same logic as queryCollection)
-  const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } })?.locale?.value
-    || (nuxtApp?.ssrContext?.event?.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
-  const qb = queryCollection(collection)
+  const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> })?.locale
+  // Reactive locale for cache key and watch
+  const localeValue = computed(() => i18nLocaleRef?.value || '')
 
   type Item = Collections[T]
 
+  // Collect query chain operations to replay on each execution
+  const ops: Array<(qb: CollectionQueryBuilder<Item>) => void> = []
+  let explicitLocale = false
+
   const builder = {
     where(field: string, operator: SQLOperator, value?: unknown) {
-      qb.where(field, operator, value)
+      ops.push(qb => qb.where(field, operator, value))
       return builder
     },
     andWhere(groupFactory: QueryGroupFunction<Item>) {
-      qb.andWhere(groupFactory)
+      ops.push(qb => qb.andWhere(groupFactory))
       return builder
     },
     orWhere(groupFactory: QueryGroupFunction<Item>) {
-      qb.orWhere(groupFactory)
+      ops.push(qb => qb.orWhere(groupFactory))
       return builder
     },
     order(field: keyof Item, direction: 'ASC' | 'DESC') {
-      qb.order(field, direction)
+      ops.push(qb => qb.order(field, direction))
       return builder
     },
     select<K extends keyof Item>(...fields: K[]) {
-      qb.select(...fields)
+      ops.push(qb => qb.select(...fields))
       return builder
     },
     skip(skip: number) {
-      qb.skip(skip)
+      ops.push(qb => qb.skip(skip))
       return builder
     },
     limit(limit: number) {
-      qb.limit(limit)
+      ops.push(qb => qb.limit(limit))
       return builder
     },
     path(path: string) {
-      qb.path(path)
+      ops.push(qb => qb.path(path))
       return builder
     },
     stem(stem: string) {
-      qb.stem(stem)
+      ops.push(qb => qb.stem(stem))
       return builder
     },
     locale(locale: string, opts?: { fallback?: string }) {
-      qb.locale(locale, opts)
+      explicitLocale = true
+      ops.push(qb => qb.locale(locale, opts))
       return builder
     },
     all(): AsyncData<Item[], NuxtError> {
-      return useAsyncData(buildKey('all'), () => qb.all()) as AsyncData<Item[], NuxtError>
+      const key = buildKey('all')
+      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
+      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources }) as AsyncData<Item[], NuxtError>
     },
     first(): AsyncData<Item | null, NuxtError> {
-      return useAsyncData(buildKey('first'), () => qb.first()) as AsyncData<Item | null, NuxtError>
+      const key = buildKey('first')
+      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
+      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources }) as AsyncData<Item | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      return useAsyncData(buildKey('count'), () => qb.count(field, distinct)) as AsyncData<number, NuxtError>
+      const key = buildKey('count')
+      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
+      return useAsyncData(key, () => buildQuery().count(field, distinct), { watch: watchSources }) as AsyncData<number, NuxtError>
     },
   }
 
+  /** Rebuild a fresh query builder with all chained ops replayed. */
+  function buildQuery(): CollectionQueryBuilder<Item> {
+    const qb = queryCollection(collection)
+    for (const op of ops) op(qb)
+    return qb
+  }
+
   function buildKey(method: string): string {
-    const params = (qb as unknown as { __params: Record<string, unknown> }).__params
+    // Build key from the ops chain description + locale
     const parts = [String(collection)]
-    // Include all query-differentiating params
+    // Replay ops on a temporary builder to read params
+    const tmpQb = queryCollection(collection)
+    for (const op of ops) op(tmpQb)
+    const params = (tmpQb as unknown as { __params: Record<string, unknown> }).__params
     const conditions = params.conditions as string[]
     if (conditions?.length) parts.push(...conditions)
     const fallback = params.localeFallback as { locale: string } | undefined
-    const localeExplicit = params.localeExplicitlySet as boolean
     if (fallback) parts.push(`l:${fallback.locale}`)
-    else if (detectedLocale && !localeExplicit) parts.push(`l:${detectedLocale}`)
+    else if (localeValue.value && !explicitLocale) parts.push(`l:${localeValue.value}`)
     const orderBy = params.orderBy as string[]
     if (orderBy?.length) parts.push(`o:${orderBy.join(',')}`)
     if (params.offset) parts.push(`s:${params.offset}`)
