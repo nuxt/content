@@ -130,23 +130,23 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
-  it('builds count query', async () => {
+  it('builds count query without ORDER BY', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count()
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
+      'SELECT COUNT(*) as count FROM _articles',
     )
   })
 
-  it('builds distinct count query', async () => {
+  it('builds distinct count query without ORDER BY', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count('author', true)
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(DISTINCT author) as count FROM _articles ORDER BY stem ASC',
+      'SELECT COUNT(DISTINCT author) as count FROM _articles',
     )
   })
 
@@ -230,6 +230,35 @@ describe('collectionQueryBuilder', () => {
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
       'SELECT * FROM _articles WHERE ("locale" = \'de\') AND ("path" = \'/blog/post\') ORDER BY stem ASC',
+    )
+  })
+
+  it('locale fallback merges results in stem order', async () => {
+    // fr has stem c, en has stems a, b, c — fallback should interleave a, b
+    mockFetch
+      .mockResolvedValueOnce([{ stem: 'c', locale: 'fr' }])
+      .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }, { stem: 'c', locale: 'en' }])
+
+    const results = await collectionQueryBuilder(mockCollection, mockFetch)
+      .locale('fr', { fallback: 'en' })
+      .all()
+
+    expect(results).toHaveLength(3)
+    expect(results.map((r: { stem: string }) => r.stem)).toEqual(['a', 'b', 'c'])
+    // stem 'c' should come from fr (locale preferred)
+    expect(results[2]).toEqual({ stem: 'c', locale: 'fr' })
+    // stems 'a' and 'b' come from en (fallback)
+    expect(results[0]).toEqual({ stem: 'a', locale: 'en' })
+    expect(results[1]).toEqual({ stem: 'b', locale: 'en' })
+  })
+
+  it('count query omits ORDER BY', async () => {
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    await query.count()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT COUNT(*) as count FROM _articles',
     )
   })
 })

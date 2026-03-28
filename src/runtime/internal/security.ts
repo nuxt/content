@@ -1,6 +1,6 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?([a-z_]\w+|\*)\)/i
-const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
+const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
  * Assert that the query is safe
@@ -28,7 +28,7 @@ export function assertSafeQuery(sql: string, collection: string) {
     throw new Error('Invalid query: Query must be a valid SELECT statement with proper syntax')
   }
 
-  const [_, select, from, where, orderBy, order, limit, offset] = match
+  const [_, select, from, where, _orderByFull, orderBy, order, limit, offset] = match
 
   // COLUMNS
   const columns = select?.trim().split(', ') || []
@@ -62,10 +62,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     }
   }
 
-  // ORDER BY
-  const _order = (orderBy + ' ' + order).split(', ')
-  if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
-    throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
+  // ORDER BY (optional — COUNT queries omit it)
+  if (orderBy && order) {
+    const _order = (orderBy + ' ' + order).split(', ')
+    if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
+      throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
+    }
   }
 
   // LIMIT

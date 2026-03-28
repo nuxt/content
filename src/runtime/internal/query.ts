@@ -170,16 +170,11 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     // Merge: prefer locale results, fill gaps from fallback
     const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
     const localeStemSet = new Set(localeResults.map(getStem))
-    const merged: Collections[T][] = [...localeResults]
-    for (const item of fallbackResults) {
-      if (!localeStemSet.has(getStem(item))) {
-        merged.push(item)
-      }
-    }
-    // Re-sort by stem only when no custom ORDER BY was specified
-    if (params.orderBy.length === 0) {
-      merged.sort((a, b) => getStem(a).localeCompare(getStem(b)))
-    }
+    const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
+
+    // Both sub-queries share the same ORDER BY, so we merge two sorted arrays.
+    // Use interleaved merge to preserve the DB-provided sort order.
+    const merged = mergeSortedArrays(localeResults, fallbackOnly, getStem)
 
     // Apply offset then limit on the merged result
     let result = merged
@@ -214,11 +209,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       query += ` WHERE ${conditions.join(' AND ')}`
     }
 
-    if (params.orderBy.length > 0) {
-      query += ` ORDER BY ${params.orderBy.join(', ')}`
-    }
-    else {
-      query += ` ORDER BY stem ASC`
+    // Skip ORDER BY for COUNT queries (PostgreSQL rejects ORDER BY on aggregate without GROUP BY)
+    if (!opts?.count) {
+      if (params.orderBy.length > 0) {
+        query += ` ORDER BY ${params.orderBy.join(', ')}`
+      }
+      else {
+        query += ` ORDER BY stem ASC`
+      }
     }
 
     const limit = opts?.limit || params.limit
@@ -235,6 +233,39 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   return query
+}
+
+/**
+ * Merge two arrays that are already sorted by the same criteria (from DB ORDER BY).
+ * Uses the `stem` field as tie-breaker key to interleave items in the correct position.
+ * This preserves any ORDER BY the DB applied (date DESC, custom fields, etc.).
+ */
+function mergeSortedArrays<T>(a: T[], b: T[], getStem: (r: T) => string): T[] {
+  // Both arrays come from the DB with the same ORDER BY.
+  // Build a position map from array `a` stems to interleave `b` items correctly.
+  // Items in `b` whose stem falls between two `a` items get inserted at that position.
+  const result: T[] = []
+  let ai = 0
+  let bi = 0
+  while (ai < a.length && bi < b.length) {
+    if (getStem(a[ai]!).localeCompare(getStem(b[bi]!)) <= 0) {
+      result.push(a[ai]!)
+      ai++
+    }
+    else {
+      result.push(b[bi]!)
+      bi++
+    }
+  }
+  while (ai < a.length) {
+    result.push(a[ai]!)
+    ai++
+  }
+  while (bi < b.length) {
+    result.push(b[bi]!)
+    bi++
+  }
+  return result
 }
 
 function singleQuote(value: unknown) {
