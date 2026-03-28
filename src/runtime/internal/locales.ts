@@ -1,11 +1,4 @@
-import type { CollectionQueryBuilder } from '@nuxt/content'
-
-export interface ContentLocaleEntry {
-  locale: string
-  path: string
-  stem: string
-  title?: string
-}
+import type { CollectionQueryBuilder, ContentLocaleEntry } from '@nuxt/content'
 
 /**
  * Query all locale variants for a given content stem within an i18n-enabled collection.

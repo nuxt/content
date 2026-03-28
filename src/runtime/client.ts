@@ -3,9 +3,9 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
-import { type ContentLocaleEntry, generateCollectionLocales } from './internal/locales'
+import { generateCollectionLocales } from './internal/locales'
 import { fetchQuery } from './internal/api'
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
+import type { Collections, PageCollections, CollectionQueryBuilder, ContentLocaleEntry, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
 import { tryUseNuxtApp } from '#imports'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
@@ -32,7 +32,7 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(c
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
-export function queryCollectionLocales<T extends keyof PageCollections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
   const qb = queryCollection(collection)
   return generateCollectionLocales(qb, stem)
 }

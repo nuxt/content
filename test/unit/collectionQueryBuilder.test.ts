@@ -193,10 +193,10 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
-  it('builds query with locale and fallback (two queries)', async () => {
+  it('builds query with locale and fallback (two queries, sorted by stem)', async () => {
     mockFetch
-      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'fr' }])
-      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'en' }, { stem: 'post-b', locale: 'en' }])
+      .mockResolvedValueOnce([{ stem: 'post-c', locale: 'fr' }])
+      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'en' }, { stem: 'post-c', locale: 'en' }])
 
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     const results = await query
@@ -214,10 +214,10 @@ describe('collectionQueryBuilder', () => {
       'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
     )
 
-    // Results should merge: fr items preferred, en items fill gaps
+    // Merged results: fr preferred over en duplicate, sorted by stem
     expect(results).toHaveLength(2)
-    expect(results[0]).toEqual({ stem: 'post-a', locale: 'fr' })
-    expect(results[1]).toEqual({ stem: 'post-b', locale: 'en' })
+    expect(results[0]).toEqual({ stem: 'post-a', locale: 'en' }) // fallback, sorted first
+    expect(results[1]).toEqual({ stem: 'post-c', locale: 'fr' }) // locale preferred over en
   })
 
   it('builds query with locale and path', async () => {

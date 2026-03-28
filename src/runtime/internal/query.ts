@@ -164,14 +164,16 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const fallbackQuery = buildQuery({ extraCondition: fallbackCondition })
     const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
 
-    // Merge: prefer locale results, fill gaps from fallback by stem
-    const stemSet = new Set(localeResults.map((r: Collections[T]) => (r as unknown as { stem: string }).stem))
-    const merged = [...localeResults]
+    // Merge: prefer locale results, fill gaps from fallback — preserve stem order
+    const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
+    const localeByIndex = new Map(localeResults.map((r, i) => [getStem(r), i]))
+    const merged: Collections[T][] = [...localeResults]
     for (const item of fallbackResults) {
-      if (!stemSet.has((item as unknown as { stem: string }).stem)) {
+      if (!localeByIndex.has(getStem(item))) {
         merged.push(item)
       }
     }
+    merged.sort((a, b) => getStem(a).localeCompare(getStem(b)))
 
     // Apply limit if specified
     if (opts.limit && opts.limit > 0) {
