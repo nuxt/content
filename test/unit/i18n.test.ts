@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { hash } from 'ohash'
+import defu from 'defu'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile } from '../../src/types'
 
@@ -39,10 +40,9 @@ function expandI18n(
   for (const [locale, overrides] of Object.entries(i18nData)) {
     if (locale === parsedContent.locale) continue
 
-    // Shallow spread: overrides replace whole top-level fields (not deep-merge)
+    // Deep merge for data collections: translated fields override, untranslated fields preserved
     const localeItem: ParsedContentFile = {
-      ...parsedContent,
-      ...overrides,
+      ...defu(overrides, parsedContent) as ParsedContentFile,
       id: `${parsedContent.id}#${locale}`,
       locale,
       meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
@@ -179,7 +179,7 @@ describe('i18n - inline expansion', () => {
     expect(items[1].title).toBe('My Post')
   })
 
-  it('shallow-replaces nested objects in locale overrides', () => {
+  it('deep-merges nested objects in locale overrides for data collections', () => {
     const content: ParsedContentFile = {
       id: 'team:jane.yml',
       name: 'Jane Doe',
@@ -200,9 +200,8 @@ describe('i18n - inline expansion', () => {
     // Default keeps original
     expect(items[0].info).toEqual({ age: 25, country: 'Switzerland' })
 
-    // German override replaces the whole `info` object (shallow spread, not deep-merge)
-    // This prevents corrupting complex objects like body AST
-    expect(items[1].info).toEqual({ country: 'Schweiz' })
+    // German override deep-merges: country overridden, age preserved
+    expect(items[1].info).toEqual({ age: 25, country: 'Schweiz' })
   })
 
   it('does not include default locale in expanded items', () => {

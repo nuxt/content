@@ -3,6 +3,7 @@ import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
+import defu from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
@@ -185,9 +186,11 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         for (const [locale, overrides] of Object.entries(i18nData)) {
           if (locale === parsed.locale) continue
           const localeKey = `${keyInCollection}#${locale}`
+          const merged = collection.type === 'data'
+            ? defu(overrides, parsed) as ParsedContentFile
+            : { ...parsed, ...overrides }
           const localeItem: ParsedContentFile = {
-            ...parsed,
-            ...overrides,
+            ...merged,
             id: localeKey,
             locale,
             meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
