@@ -123,8 +123,9 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
     const conditions = params.conditions as string[]
     if (conditions?.length) parts.push(...conditions)
     const fallback = params.localeFallback as { locale: string } | undefined
+    const localeExplicit = params.localeExplicitlySet as boolean
     if (fallback) parts.push(`l:${fallback.locale}`)
-    else if (detectedLocale) parts.push(`l:${detectedLocale}`)
+    else if (detectedLocale && !localeExplicit) parts.push(`l:${detectedLocale}`)
     const orderBy = params.orderBy as string[]
     if (orderBy?.length) parts.push(`o:${orderBy.join(',')}`)
     if (params.offset) parts.push(`s:${params.offset}`)

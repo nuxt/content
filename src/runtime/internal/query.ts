@@ -74,9 +74,6 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   const collectionMeta = (manifestMeta as Record<string, { i18n?: { locales: string[], defaultLocale: string }, stemPrefix?: string }>)[String(collection)]
   const i18nConfig = collectionMeta?.i18n
   const stemPrefix = collectionMeta?.stemPrefix || ''
-  // Track whether .locale() was called explicitly
-  let localeExplicitlySet = false
-
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -90,6 +87,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     },
     // Locale fallback (handled via two queries + JS merge)
     localeFallback: undefined as { locale: string, fallback: string } | undefined,
+    // Track whether .locale() was called explicitly (exposed for cache key generation)
+    localeExplicitlySet: false,
   }
 
   const query: CollectionQueryBuilder<Collections[T]> = {
@@ -116,7 +115,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('stem', '=', fullStem)
     },
     locale(locale: string, opts?: { fallback?: string }) {
-      localeExplicitlySet = true
+      params.localeExplicitlySet = true
       if (opts?.fallback) {
         params.localeFallback = { locale, fallback: opts.fallback }
       }
@@ -181,7 +180,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    */
   let autoLocaleApplied = false
   function applyAutoLocale() {
-    if (autoLocaleApplied || localeExplicitlySet || !i18nConfig || !detectedLocale) return
+    if (autoLocaleApplied || params.localeExplicitlySet || !i18nConfig || !detectedLocale) return
     autoLocaleApplied = true
     if (detectedLocale === i18nConfig.defaultLocale) {
       // Default locale: single query, no fallback needed
