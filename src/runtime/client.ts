@@ -114,22 +114,18 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return builder
     },
     all(): AsyncData<Result[], NuxtError> {
-      const key = buildKey('all')
-      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
+      return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
     },
     first(): AsyncData<Result | null, NuxtError> {
-      const key = buildKey('first')
-      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      const key = buildKey('count')
-      return useAsyncData(key, () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
+      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
     },
   }
 
-  /** Watch locale ref for auto-refetch — only when i18n ref exists and locale isn't explicit. */
   function watchSources() {
-    return !explicitLocale && i18nLocaleRef ? [localeValue] : undefined
+    return !explicitLocale && i18nLocaleRef ? [i18nLocaleRef] : undefined
   }
 
   /** Rebuild a fresh query builder with all chained ops replayed. */
@@ -147,6 +143,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
     const params = (tmpQb as unknown as { __params: Record<string, unknown> }).__params
     const conditions = params.conditions as string[]
     if (conditions?.length) parts.push(...conditions)
+    // Include locale in key — with a function key, this is re-evaluated reactively
     const fb = params.localeFallback as { locale: string, fallback: string } | undefined
     if (fb) parts.push(`l:${fb.locale}:fb:${fb.fallback}`)
     else if (localeValue.value && !explicitLocale) parts.push(`l:${localeValue.value}`)
