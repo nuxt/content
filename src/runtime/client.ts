@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import { collectionQueryBuilder } from './internal/query'
+import { collectionQueryBuilder, collectionQueryGroup } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
@@ -88,12 +88,16 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return builder
     },
     andWhere(groupFactory: QueryGroupFunction<Item>) {
-      keyParts.conditions.push('andWhere')
+      const group = groupFactory(collectionQueryGroup(collection))
+      const cond = (group as unknown as { _conditions: string[] })._conditions.join(' AND ')
+      keyParts.conditions.push(`and(${cond})`)
       ops.push(qb => qb.andWhere(groupFactory))
       return builder
     },
     orWhere(groupFactory: QueryGroupFunction<Item>) {
-      keyParts.conditions.push('orWhere')
+      const group = groupFactory(collectionQueryGroup(collection))
+      const cond = (group as unknown as { _conditions: string[] })._conditions.join(' OR ')
+      keyParts.conditions.push(`or(${cond})`)
       ops.push(qb => qb.orWhere(groupFactory))
       return builder
     },
