@@ -113,19 +113,21 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
     },
     all(): AsyncData<Item[], NuxtError> {
       const key = buildKey('all')
-      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
-      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources }) as AsyncData<Item[], NuxtError>
+      return useAsyncData(key, () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Item[], NuxtError>
     },
     first(): AsyncData<Item | null, NuxtError> {
       const key = buildKey('first')
-      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
-      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources }) as AsyncData<Item | null, NuxtError>
+      return useAsyncData(key, () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Item | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
       const key = buildKey('count')
-      const watchSources = !explicitLocale && localeValue.value ? [localeValue] : undefined
-      return useAsyncData(key, () => buildQuery().count(field, distinct), { watch: watchSources }) as AsyncData<number, NuxtError>
+      return useAsyncData(key, () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
     },
+  }
+
+  /** Watch locale ref for auto-refetch — only when i18n ref exists and locale isn't explicit. */
+  function watchSources() {
+    return !explicitLocale && i18nLocaleRef ? [localeValue] : undefined
   }
 
   /** Rebuild a fresh query builder with all chained ops replayed. */
@@ -136,7 +138,6 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
   }
 
   function buildKey(method: string): string {
-    // Build key from the ops chain description + locale
     const parts = [String(collection)]
     // Replay ops on a temporary builder to read params
     const tmpQb = queryCollection(collection)
@@ -144,8 +145,8 @@ export function useQueryCollection<T extends keyof Collections>(collection: T) {
     const params = (tmpQb as unknown as { __params: Record<string, unknown> }).__params
     const conditions = params.conditions as string[]
     if (conditions?.length) parts.push(...conditions)
-    const fallback = params.localeFallback as { locale: string } | undefined
-    if (fallback) parts.push(`l:${fallback.locale}`)
+    const fb = params.localeFallback as { locale: string, fallback: string } | undefined
+    if (fb) parts.push(`l:${fb.locale}:fb:${fb.fallback}`)
     else if (localeValue.value && !explicitLocale) parts.push(`l:${localeValue.value}`)
     const orderBy = params.orderBy as string[]
     if (orderBy?.length) parts.push(`o:${orderBy.join(',')}`)
