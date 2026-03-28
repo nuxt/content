@@ -195,6 +195,11 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {
     const { locale, fallback } = params.localeFallback!
 
+    // Ensure `stem` is always fetched — needed for merge-key deduplication
+    if (params.selectedFields.length > 0 && !params.selectedFields.includes('stem' as keyof Collections[T])) {
+      params.selectedFields.push('stem' as keyof Collections[T])
+    }
+
     // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result
     const localeCondition = `("locale" = ${singleQuote(locale)})`
     const localeQuery = buildQuery({ extraCondition: localeCondition, noLimitOffset: true })

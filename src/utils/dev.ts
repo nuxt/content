@@ -254,7 +254,10 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    // Use exact key match: look for the id as a complete SQL string literal ('key',) to avoid
+    // substring matches (e.g., 'team.yml' matching 'team.yml#fr')
+    const escapedKey = key.replace(/'/g, '\'\'')
+    const keyIndex = collectionDump.findIndex(item => item.includes(`'${escapedKey}',`) || item.endsWith(`'${escapedKey}')`))
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
