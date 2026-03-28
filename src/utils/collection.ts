@@ -27,8 +27,10 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
-  // Add locale field when i18n is configured
-  if (collection.i18n) {
+  // Add locale field when i18n is fully configured (not `true` shorthand —
+  // that gets resolved later in loadContentConfig via resolveI18nConfig)
+  const hasI18nConfig = collection.i18n && collection.i18n !== true
+  if (hasI18nConfig) {
     extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
   }
 
@@ -36,7 +38,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
 
   // Auto-add composite index on (locale, stem) for i18n collections
   const indexes = collection.indexes ? [...collection.indexes] : []
-  if (collection.i18n) {
+  if (hasI18nConfig) {
     indexes.push({ columns: ['locale', 'stem'] })
   }
 

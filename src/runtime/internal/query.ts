@@ -164,16 +164,21 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const fallbackQuery = buildQuery({ extraCondition: fallbackCondition })
     const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
 
-    // Merge: prefer locale results, fill gaps from fallback — preserve stem order
+    // Merge: prefer locale results, fill gaps from fallback
     const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
-    const localeByIndex = new Map(localeResults.map((r, i) => [getStem(r), i]))
+    const localeStemSet = new Set(localeResults.map(getStem))
     const merged: Collections[T][] = [...localeResults]
     for (const item of fallbackResults) {
-      if (!localeByIndex.has(getStem(item))) {
+      if (!localeStemSet.has(getStem(item))) {
         merged.push(item)
       }
     }
-    merged.sort((a, b) => getStem(a).localeCompare(getStem(b)))
+    // Re-sort by stem only when no custom ORDER BY was specified (default ordering)
+    // When the user provides a custom .order(), both sub-queries already respect it
+    // and we preserve that order (locale results first, then fallback fills)
+    if (params.orderBy.length === 0) {
+      merged.sort((a, b) => getStem(a).localeCompare(getStem(b)))
+    }
 
     // Apply limit if specified
     if (opts.limit && opts.limit > 0) {

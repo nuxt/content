@@ -4,6 +4,8 @@ import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { CollectionI18nConfig, DefinedCollection, ModuleOptions } from '../types'
 import { defineCollection, resolveCollections } from './collection'
+import { localeStandardSchema, mergeStandardSchema } from './schema'
+import { getCollectionFieldsTypes } from '../runtime/internal/schema'
 import { logger } from './dev'
 import { resolveStudioCollection } from './studio'
 
@@ -116,6 +118,11 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
 
     if (resolvedConfig) {
       collection.i18n = resolvedConfig
+      // Merge locale schema + index now that we have the real config
+      // (defineCollection deferred this because i18n was `true`)
+      collection.extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
+      collection.fields = getCollectionFieldsTypes(collection.extendedSchema)
+      collection.indexes = [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
     }
     else {
       logger.warn(

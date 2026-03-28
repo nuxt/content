@@ -16,8 +16,8 @@ export async function generateCollectionLocales<T extends Record<string, unknown
     const record = item as unknown as Record<string, unknown>
     return {
       locale: record.locale as string,
-      path: record.path as string,
       stem: record.stem as string,
+      path: record.path as string | undefined,
       title: record.title as string | undefined,
     }
   })

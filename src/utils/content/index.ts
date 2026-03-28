@@ -224,16 +224,15 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
 
       if (firstPart && collection.i18n.locales.includes(firstPart)) {
         result.locale = firstPart
-        // Strip locale prefix from path and stem
+        // Strip locale prefix from path
         const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
         if (collectionKeys.includes('path')) {
           result.path = pathWithoutLocale === '/' ? '/' : pathWithoutLocale
         }
+        // Always strip locale prefix from stem (regardless of stem format)
         const currentStem = result.stem || pathMetaFields.stem || ''
-        const stemParts = currentStem.split('/')
-        if (stemParts[0] === firstPart) {
-          result.stem = stemParts.slice(1).join('/')
-        }
+        result.stem = currentStem
+          .replace(new RegExp(`^${firstPart}(/|$)`), '')
       }
       else {
         // No locale prefix - assign default locale

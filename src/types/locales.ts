@@ -4,7 +4,9 @@
  */
 export interface ContentLocaleEntry {
   locale: string
-  path: string
   stem: string
+  /** Only present for `page` collections. */
+  path?: string
+  /** Only present for `page` collections. */
   title?: string
 }

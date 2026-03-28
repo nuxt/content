@@ -405,8 +405,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               for (const [locale, overrides] of Object.entries(i18nData)) {
                 if (locale === defaultItem.locale) continue
 
+                // Shallow spread: overrides replace whole top-level fields
+                // (defu would deep-merge body AST / nested objects, corrupting them)
                 const localeItem: ParsedContentFile = {
-                  ...defu(overrides, defaultItem) as ParsedContentFile,
+                  ...defaultItem,
+                  ...overrides,
                   id: `${parsedContent.id}#${locale}`,
                   locale,
                   meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },

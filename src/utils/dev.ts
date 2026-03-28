@@ -9,7 +9,8 @@ import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
-import type { ModuleOptions, ResolvedCollection } from '../types'
+import { hash } from 'ohash'
+import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
@@ -162,8 +163,49 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
       }
 
-      const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-      await broadcast(collection, keyInCollection, insertQuery)
+      const parsed: ParsedContentFile = JSON.parse(parsedContent)
+
+      // i18n: expand inline translations to per-locale DB rows (same logic as processCollectionItems)
+      if (collection.i18n && parsed?.meta?.i18n) {
+        const i18nData = parsed.meta.i18n as Record<string, Record<string, unknown>>
+        const { i18n: _removed, ...cleanMeta } = parsed.meta
+        parsed.meta = cleanMeta
+        if (!parsed.locale) parsed.locale = collection.i18n.defaultLocale
+
+        const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
+        const sourceFields: Record<string, unknown> = {}
+        for (const field of translatedFields) sourceFields[field] = parsed[field]
+        const i18nSourceHash = hash(sourceFields)
+
+        // Upsert default locale row
+        const { queries: defaultQueries } = generateCollectionInsert(collection, parsed)
+        await broadcast(collection, keyInCollection, defaultQueries)
+
+        // Upsert each non-default locale row
+        for (const [locale, overrides] of Object.entries(i18nData)) {
+          if (locale === parsed.locale) continue
+          const localeKey = `${keyInCollection}#${locale}`
+          const localeItem: ParsedContentFile = {
+            ...parsed,
+            ...overrides,
+            id: localeKey,
+            locale,
+            meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
+          }
+          const { queries: localeQueries } = generateCollectionInsert(collection, localeItem)
+          await broadcast(collection, localeKey, localeQueries)
+        }
+
+        // Remove locale rows that are no longer in the i18n section
+        for (const locale of collection.i18n.locales) {
+          if (locale === parsed.locale || locale in i18nData) continue
+          await broadcast(collection, `${keyInCollection}#${locale}`)
+        }
+      }
+      else {
+        const { queries: insertQuery } = generateCollectionInsert(collection, parsed)
+        await broadcast(collection, keyInCollection, insertQuery)
+      }
     }
   }
 
@@ -193,7 +235,13 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
       await db.deleteDevelopmentCache(keyInCollection)
 
+      // Remove main row and all locale variant rows
       await broadcast(collection, keyInCollection)
+      if (collection.i18n) {
+        for (const locale of collection.i18n.locales) {
+          await broadcast(collection, `${keyInCollection}#${locale}`)
+        }
+      }
     }
   }
 
