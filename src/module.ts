@@ -375,8 +375,40 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-            list.push([key, queries, hash])
+            // i18n: expand inline translations to per-locale rows
+            if (collection.i18n && parsedContent?.meta?.i18n) {
+              const i18nData = parsedContent.meta.i18n as Record<string, Record<string, unknown>>
+              const { i18n: _removed, ...cleanMeta } = parsedContent.meta
+              parsedContent.meta = cleanMeta
+
+              // Default locale item
+              if (!parsedContent.locale) {
+                parsedContent.locale = collection.i18n.defaultLocale
+              }
+
+              const defaultItem = parsedContent
+              const { queries: defaultQueries, hash: defaultHash } = generateCollectionInsert(collection, defaultItem)
+              list.push([`${key}#${defaultItem.locale}`, defaultQueries, defaultHash])
+
+              // Create one item per non-default locale
+              for (const [locale, overrides] of Object.entries(i18nData)) {
+                if (locale === defaultItem.locale) continue
+
+                const localeItem: ParsedContentFile = {
+                  ...defu(overrides, defaultItem) as ParsedContentFile,
+                  id: `${parsedContent.id}#${locale}`,
+                  locale,
+                  meta: { ...cleanMeta },
+                }
+
+                const { queries: localeQueries, hash: localeHash } = generateCollectionInsert(collection, localeItem)
+                list.push([`${key}#${locale}`, localeQueries, localeHash])
+              }
+            }
+            else {
+              const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+              list.push([key, queries, hash])
+            }
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)

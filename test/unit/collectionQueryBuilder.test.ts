@@ -180,4 +180,56 @@ describe('collectionQueryBuilder', () => {
       'SELECT * FROM _articles WHERE ("path" = \'/blog/my-article\') ORDER BY stem ASC',
     )
   })
+
+  it('builds query with locale', async () => {
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    await query
+      .locale('fr')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("locale" = \'fr\') ORDER BY stem ASC',
+    )
+  })
+
+  it('builds query with locale and fallback (two queries)', async () => {
+    mockFetch
+      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'fr' }])
+      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'en' }, { stem: 'post-b', locale: 'en' }])
+
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    const results = await query
+      .locale('fr', { fallback: 'en' })
+      .all()
+
+    // Should have called fetch twice: once for locale, once for fallback
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("locale" = \'fr\') ORDER BY stem ASC',
+    )
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+    )
+
+    // Results should merge: fr items preferred, en items fill gaps
+    expect(results).toHaveLength(2)
+    expect(results[0]).toEqual({ stem: 'post-a', locale: 'fr' })
+    expect(results[1]).toEqual({ stem: 'post-b', locale: 'en' })
+  })
+
+  it('builds query with locale and path', async () => {
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
+    await query
+      .locale('de')
+      .path('/blog/post')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("locale" = \'de\') AND ("path" = \'/blog/post\') ORDER BY stem ASC',
+    )
+  })
 })

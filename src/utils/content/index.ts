@@ -216,6 +216,31 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       }
     }
 
+    // i18n: detect locale from path prefix when collection has i18n configured
+    if (collection.i18n && collectionKeys.includes('locale')) {
+      const currentPath = result.path || pathMetaFields.path || ''
+      const pathParts = currentPath.split('/').filter(Boolean)
+      const firstPart = pathParts[0]
+
+      if (firstPart && collection.i18n.locales.includes(firstPart)) {
+        result.locale = firstPart
+        // Strip locale prefix from path and stem
+        const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
+        if (collectionKeys.includes('path')) {
+          result.path = pathWithoutLocale === '/' ? '/' : pathWithoutLocale
+        }
+        const currentStem = result.stem || pathMetaFields.stem || ''
+        const stemParts = currentStem.split('/')
+        if (stemParts[0] === firstPart) {
+          result.stem = stemParts.slice(1).join('/')
+        }
+      }
+      else {
+        // No locale prefix - assign default locale
+        result.locale = collection.i18n.defaultLocale
+      }
+    }
+
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }
     await nuxt?.callHook?.('content:file:afterParse', afterParseCtx)
     return afterParseCtx.content

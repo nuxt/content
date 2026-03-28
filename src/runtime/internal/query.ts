@@ -81,6 +81,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       field: '' as keyof Collections[T] | '*',
       distinct: false,
     },
+    // Locale fallback (handled via two queries + JS merge)
+    localeFallback: undefined as { locale: string, fallback: string } | undefined,
   }
 
   const query: CollectionQueryBuilder<Collections[T]> = {
@@ -98,6 +100,15 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     },
     path(path: string) {
       return query.where('path', '=', withoutTrailingSlash(path))
+    },
+    locale(locale: string, opts?: { fallback?: string }) {
+      if (opts?.fallback) {
+        params.localeFallback = { locale, fallback: opts.fallback }
+      }
+      else {
+        query.where('locale', '=', locale)
+      }
+      return query
     },
     skip(skip: number) {
       params.offset = skip
@@ -122,9 +133,15 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query
     },
     async all(): Promise<Collections[T][]> {
+      if (params.localeFallback) {
+        return fetchWithLocaleFallback()
+      }
       return fetch(collection, buildQuery()).then(res => (res || []) as Collections[T][])
     },
     async first(): Promise<Collections[T] | null> {
+      if (params.localeFallback) {
+        return fetchWithLocaleFallback({ limit: 1 }).then(res => res[0] || null)
+      }
       return fetch(collection, buildQuery({ limit: 1 })).then(res => res[0] || null)
     },
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
@@ -134,7 +151,37 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     },
   }
 
-  function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number } = {}) {
+  async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {
+    const { locale, fallback } = params.localeFallback!
+
+    // Query for the requested locale
+    const localeCondition = `("locale" = ${singleQuote(locale)})`
+    const localeQuery = buildQuery({ extraCondition: localeCondition })
+    const localeResults = await fetch(collection, localeQuery).then(res => res || [])
+
+    // Query for the fallback locale
+    const fallbackCondition = `("locale" = ${singleQuote(fallback)})`
+    const fallbackQuery = buildQuery({ extraCondition: fallbackCondition })
+    const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
+
+    // Merge: prefer locale results, fill gaps from fallback by stem
+    const stemSet = new Set(localeResults.map((r: Collections[T]) => (r as unknown as { stem: string }).stem))
+    const merged = [...localeResults]
+    for (const item of fallbackResults) {
+      if (!stemSet.has((item as unknown as { stem: string }).stem)) {
+        merged.push(item)
+      }
+    }
+
+    // Apply limit if specified
+    if (opts.limit && opts.limit > 0) {
+      return merged.slice(0, opts.limit) as Collections[T][]
+    }
+
+    return merged as Collections[T][]
+  }
+
+  function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number, extraCondition?: string } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
       query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${opts.count.field}) as count`
@@ -145,8 +192,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     }
     query += ` FROM ${tables[String(collection)]}`
 
-    if (params.conditions.length > 0) {
-      query += ` WHERE ${params.conditions.join(' AND ')}`
+    const conditions = [...params.conditions]
+    if (opts.extraCondition) {
+      conditions.push(opts.extraCondition)
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(' AND ')}`
     }
 
     if (params.orderBy.length > 0) {

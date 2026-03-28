@@ -9,6 +9,21 @@ export interface Collections {}
 export type CollectionType = 'page' | 'data'
 
 /**
+ * Configuration for i18n support on a collection.
+ * When set, a `locale` column is automatically added to the collection schema.
+ */
+export interface CollectionI18nConfig {
+  /**
+   * List of supported locale codes (e.g. ['en', 'fr', 'de'])
+   */
+  locales: string[]
+  /**
+   * Default locale code used as fallback (e.g. 'en')
+   */
+  defaultLocale: string
+}
+
+/**
  * Defines an index on collection columns for optimizing database queries
  */
 export interface CollectionIndex {
@@ -69,6 +84,11 @@ export interface PageCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema?: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Enable i18n support for this collection.
+   * Adds a `locale` field and enables path-based locale detection and inline i18n expansion.
+   */
+  i18n?: CollectionI18nConfig
 }
 
 export interface DataCollection<T> {
@@ -76,6 +96,11 @@ export interface DataCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Enable i18n support for this collection.
+   * Adds a `locale` field and enables inline i18n expansion.
+   */
+  i18n?: CollectionI18nConfig
 }
 
 export type Collection<T> = PageCollection<T> | DataCollection<T>
@@ -87,6 +112,7 @@ export interface DefinedCollection {
   extendedSchema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   indexes?: CollectionIndex[]
+  i18n?: CollectionI18nConfig
 }
 
 export interface ResolvedCollection extends DefinedCollection {
@@ -115,6 +141,11 @@ export interface CollectionItemBase {
   stem: string
   extension: string
   meta: Record<string, unknown>
+  /**
+   * Locale code for this content item.
+   * Only present when the collection has i18n enabled.
+   */
+  locale?: string
 }
 
 export interface PageCollectionItemBase extends CollectionItemBase {

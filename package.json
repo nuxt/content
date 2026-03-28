@@ -56,7 +56,8 @@
     "test:bun": "bun test ./test/bun.test.ts",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit",
-    "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
+    "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck",
+    "prepare": "skilld prepare || true"
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.2",

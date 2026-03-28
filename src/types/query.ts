@@ -4,6 +4,14 @@ export type QueryGroupFunction<T> = (group: CollectionQueryGroup<T>) => Collecti
 
 export interface CollectionQueryBuilder<T> {
   path(path: string): CollectionQueryBuilder<T>
+  /**
+   * Filter results by locale.
+   * @param locale - The locale code to filter by (e.g. 'fr')
+   * @param opts - Options for locale filtering
+   * @param opts.fallback - Fallback locale code. When set, items missing in the
+   *   requested locale will be filled from the fallback locale.
+   */
+  locale(locale: string, opts?: { fallback?: string }): CollectionQueryBuilder<T>
   select<K extends keyof T>(...fields: K[]): CollectionQueryBuilder<Pick<T, K>>
   order(field: keyof T, direction: 'ASC' | 'DESC'): CollectionQueryBuilder<T>
   skip(skip: number): CollectionQueryBuilder<T>
