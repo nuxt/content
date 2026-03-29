@@ -28,7 +28,7 @@ export const defuByIndex = createDefu((obj, key, value) => {
         result.push(overrideItem !== undefined ? overrideItem : defaultItem)
       }
     }
-    obj[key] = result
+    ;(obj as Record<string, unknown>)[key as string] = result
     return true
   }
 })

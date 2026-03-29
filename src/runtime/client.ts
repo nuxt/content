@@ -146,10 +146,10 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
     },
     first(): AsyncData<Result | null, NuxtError> {
-      return useAsyncData<Result | null, NuxtError>(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() })
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      return useAsyncData<number, NuxtError>(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() })
+      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
     },
   }
 

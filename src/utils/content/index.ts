@@ -218,7 +218,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
 
     // i18n: detect locale from path prefix when collection has i18n configured
     if (collection.i18n && collectionKeys.includes('locale')) {
-      const currentPath = result.path || pathMetaFields.path || ''
+      const currentPath = String(result.path || pathMetaFields.path || '')
       const pathParts = currentPath.split('/').filter(Boolean)
       const firstPart = pathParts[0]
 
@@ -230,7 +230,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
           result.path = pathWithoutLocale === '/' ? '/' : pathWithoutLocale
         }
         // Always strip locale prefix from stem (regardless of stem format)
-        const currentStem = result.stem || pathMetaFields.stem || ''
+        const currentStem = String(result.stem || pathMetaFields.stem || '')
         if (currentStem === firstPart) {
           result.stem = ''
         }

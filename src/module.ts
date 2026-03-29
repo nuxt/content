@@ -380,9 +380,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             }
 
             // i18n: expand inline translations to per-locale rows
-            if (collection.i18n && parsedContent?.meta?.i18n) {
-              const i18nData = parsedContent.meta.i18n as Record<string, Record<string, unknown>>
-              const { i18n: _removed, ...cleanMeta } = parsedContent.meta
+            if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
+              const i18nData = (parsedContent.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
+              const { i18n: _removed, ...cleanMeta } = parsedContent.meta as Record<string, unknown>
               parsedContent.meta = cleanMeta
 
               // Default locale item

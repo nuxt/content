@@ -167,9 +167,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       const parsed: ParsedContentFile = JSON.parse(parsedContent)
 
       // i18n: expand inline translations to per-locale DB rows (same logic as processCollectionItems)
-      if (collection.i18n && parsed?.meta?.i18n) {
-        const i18nData = parsed.meta.i18n as Record<string, Record<string, unknown>>
-        const { i18n: _removed, ...cleanMeta } = parsed.meta
+      if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
+        const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
+        const { i18n: _removed, ...cleanMeta } = parsed.meta as Record<string, unknown>
         parsed.meta = cleanMeta
         if (!parsed.locale) parsed.locale = collection.i18n.defaultLocale
 
