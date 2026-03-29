@@ -49,6 +49,36 @@ describe('decompressSQLDump', () => {
     'SELECT "id" FROM _content_test WHERE (x=$\'$ OR x IN (SELECT BLAH) OR x=$\'$) ORDER BY id ASC': false,
   }
 
+  const securityQueries = {
+    // Newline injection
+    'SELECT * FROM _content_test ORDER BY id ASC\nDROP TABLE _content_test': false,
+    'SELECT * FROM _content_test ORDER BY id ASC\rDROP TABLE _content_test': false,
+    // Escaped quotes in WHERE values should pass (not be treated as comments)
+    'SELECT * FROM _content_test WHERE ("title" = \'L\'\'été\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("title" = \'it\'\'s\') ORDER BY stem ASC': true,
+    // Triple-quote edge case — should NOT bypass keyword detection
+    'SELECT * FROM _content_test WHERE ("x" = \'a\'\'\') UNION SELECT 1 ORDER BY stem ASC': false,
+    // COUNT with quoted field
+    'SELECT COUNT("title") as count FROM _content_test': true,
+    'SELECT COUNT(DISTINCT "author") as count FROM _content_test': true,
+    // COUNT without ORDER BY
+    'SELECT COUNT(*) as count FROM _content_test': true,
+    // Locale-filtered query (typical auto-locale output)
+    'SELECT * FROM _content_test WHERE ("locale" = \'fr\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("locale" = \'fr\') AND ("stem" = \'navbar\') ORDER BY stem ASC': true,
+  }
+
+  Object.entries(securityQueries).forEach(([query, isValid]) => {
+    it(`security: ${query.slice(0, 60)}...`, () => {
+      if (isValid) {
+        expect(() => assertSafeQuery(query, 'test')).not.toThrow()
+      }
+      else {
+        expect(() => assertSafeQuery(query, 'test')).toThrow()
+      }
+    })
+  })
+
   Object.entries(queries).forEach(([query, isValid]) => {
     it(`${query}`, () => {
       if (isValid) {

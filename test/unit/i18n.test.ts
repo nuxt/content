@@ -286,6 +286,36 @@ describe('i18n - inline expansion', () => {
   })
 })
 
+describe('i18n - defuByIndex standalone', () => {
+  it('merges nested arrays recursively', () => {
+    const base = {
+      items: [
+        { title: 'Base', links: [{ title: 'More', url: '/page', icon: { name: 'chevron' } }] },
+      ],
+    }
+    const override = {
+      items: [
+        { title: 'Override', links: [{ title: 'Savoir plus' }] },
+      ],
+    }
+    const result = defuByIndex(override, base) as typeof base
+    expect(result.items[0].title).toBe('Override')
+    expect(result.items[0].links[0].title).toBe('Savoir plus')
+    expect(result.items[0].links[0].url).toBe('/page')
+    expect(result.items[0].links[0].icon).toEqual({ name: 'chevron' })
+  })
+
+  it('does not mutate input objects', () => {
+    const base = { items: [{ a: 1, b: 2 }] }
+    const override = { items: [{ a: 10 }] }
+    const baseCopy = JSON.parse(JSON.stringify(base))
+    const overrideCopy = JSON.parse(JSON.stringify(override))
+    defuByIndex(override, base)
+    expect(base).toEqual(baseCopy)
+    expect(override).toEqual(overrideCopy)
+  })
+})
+
 describe('i18n - path-based locale detection', () => {
   const i18nConfig: CollectionI18nConfig = {
     locales: ['en', 'fr', 'de'],
