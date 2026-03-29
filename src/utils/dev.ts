@@ -186,9 +186,10 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         for (const [locale, overrides] of Object.entries(i18nData)) {
           if (locale === parsed.locale) continue
           const localeKey = `${keyInCollection}#${locale}`
-          const merged = collection.type === 'data'
-            ? defuByIndex(overrides, parsed) as ParsedContentFile
-            : { ...parsed, ...overrides }
+          const merged = defuByIndex(overrides, parsed) as ParsedContentFile
+          if (collection.type === 'page' && overrides.body) {
+            merged.body = overrides.body
+          }
           const localeItem: ParsedContentFile = {
             ...merged,
             id: localeKey,

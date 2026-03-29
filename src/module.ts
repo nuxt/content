@@ -407,11 +407,12 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               for (const [locale, overrides] of Object.entries(i18nData)) {
                 if (locale === defaultItem.locale) continue
 
-                // Deep merge for data collections (safe — no body AST to corrupt)
-                // Shallow spread for page collections (body AST would be corrupted by defu)
-                const merged = collection.type === 'data'
-                  ? defuByIndex(overrides, defaultItem) as ParsedContentFile
-                  : { ...defaultItem, ...overrides }
+                // Deep merge preserves untranslated fields (routes, IDs, icons).
+                // For page collections, body AST must not be deep-merged — replace it wholesale.
+                const merged = defuByIndex(overrides, defaultItem) as ParsedContentFile
+                if (collection.type === 'page' && overrides.body) {
+                  merged.body = overrides.body
+                }
                 const localeItem: ParsedContentFile = {
                   ...merged,
                   id: `${parsedContent.id}#${locale}`,
