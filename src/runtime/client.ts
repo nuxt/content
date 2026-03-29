@@ -142,15 +142,15 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       ops.push(qb => qb.locale(locale, opts))
       return builder
     },
-    all(): AsyncData<Result[], NuxtError> {
-      return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
+    all(): AsyncData<Result[] | undefined, NuxtError | undefined> {
+      return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[] | undefined, NuxtError | undefined>
     },
-    first(): AsyncData<Result | null, NuxtError> {
-      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
+    first(): AsyncData<Result | null | undefined, NuxtError | undefined> {
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null | undefined, NuxtError | undefined>
     },
-    count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
+    count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number | undefined, NuxtError | undefined> {
       const countKey = `count:${String(field ?? '*')}:${distinct ? 'd' : ''}`
-      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
+      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number | undefined, NuxtError | undefined>
     },
   }
 
