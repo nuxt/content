@@ -3,16 +3,15 @@ import type { CollectionQueryBuilder, ContentLocaleEntry } from '@nuxt/content'
 /**
  * Query all locale variants for a given content stem within an i18n-enabled collection.
  * Returns one entry per locale, useful for building language switchers and hreflang tags.
- * Only fetches the fields needed (locale, stem, path, title) — not full body ASTs.
  */
 export async function generateCollectionLocales<T extends Record<string, unknown>>(
   queryBuilder: CollectionQueryBuilder<T>,
   stem: string,
 ): Promise<ContentLocaleEntry[]> {
-  // Select only the lightweight fields we need — avoids fetching large body ASTs
+  // No .select() — data collections lack path/title columns; SELECT * is safe here
+  // because ContentLocaleEntry marks path? and title? as optional.
   const items = await (queryBuilder as unknown as CollectionQueryBuilder<Record<string, unknown>>)
-    .select('locale' as never, 'stem' as never, 'path' as never, 'title' as never)
-    .where('stem', '=', stem)
+    .stem(stem)
     .all()
 
   return items.map((item) => {

@@ -108,8 +108,9 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('path', '=', withoutTrailingSlash(path))
     },
     stem(stem: string) {
-      // Resolve full stem by prepending the collection's source prefix if not already present
-      const fullStem = stemPrefix && !stem.startsWith(stemPrefix)
+      // Resolve full stem by prepending the collection's source prefix if not already present.
+      // Check segment boundary to avoid false matches (e.g. prefix "navigation" matching "navigation2/foo").
+      const fullStem = stemPrefix && !(stem === stemPrefix || stem.startsWith(stemPrefix + '/'))
         ? `${stemPrefix}/${stem}`
         : stem
       return query.where('stem', '=', fullStem)
@@ -195,9 +196,11 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {
     const { locale, fallback } = params.localeFallback!
 
-    // Ensure `stem` is always fetched — needed for merge-key deduplication
-    if (params.selectedFields.length > 0 && !params.selectedFields.includes('stem' as keyof Collections[T])) {
-      params.selectedFields.push('stem' as keyof Collections[T])
+    // Ensure `stem` is always fetched — needed for merge-key deduplication.
+    // Use a local copy to avoid mutating the shared selectedFields array.
+    const savedFields = params.selectedFields
+    if (savedFields.length > 0 && !savedFields.includes('stem' as keyof Collections[T])) {
+      params.selectedFields = [...savedFields, 'stem' as keyof Collections[T]]
     }
 
     // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result
@@ -209,16 +212,21 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const fallbackQuery = buildQuery({ extraCondition: fallbackCondition, noLimitOffset: true })
     const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
 
+    // Restore original selectedFields to avoid side-effects on repeated calls
+    params.selectedFields = savedFields
+
     // Merge: prefer locale results, fill gaps from fallback
     const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
     const localeStemSet = new Set(localeResults.map(getStem))
     const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
 
-    // When using the default ORDER BY (stem ASC), we can do a proper sorted merge.
-    // When a custom ORDER BY is specified, both sub-queries are already DB-sorted
-    // by that field — we keep locale items first and append fallback items after,
-    // preserving each group's DB order. A full interleave would require parsing
-    // the SQL ORDER BY clause in JS, which is not feasible.
+    // When using the default ORDER BY (stem ASC), we can do a proper sorted merge
+    // because mergeSortedArrays compares by stem.
+    // LIMITATION: when a custom ORDER BY is specified, we cannot interleave the
+    // two result sets correctly because that would require parsing the SQL ORDER BY
+    // clause and re-implementing the comparison in JS. Instead we concatenate
+    // locale items first, then fallback items — each group retains its DB order
+    // but the overall sequence may not match a single-query ORDER BY.
     const merged = params.orderBy.length === 0
       ? mergeSortedArrays(localeResults, fallbackOnly, getStem)
       : [...localeResults, ...fallbackOnly]
@@ -284,9 +292,10 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
 }
 
 /**
- * Merge two arrays that are already sorted by the same criteria (from DB ORDER BY).
- * Uses the `stem` field as tie-breaker key to interleave items in the correct position.
- * This preserves any ORDER BY the DB applied (date DESC, custom fields, etc.).
+ * Merge two arrays that are both sorted by `stem` ASC (the default ORDER BY).
+ * Interleaves items using lexicographic comparison of their `stem` values.
+ * Precondition: both arrays must be sorted by stem ASC — this function does NOT
+ * handle arbitrary ORDER BY clauses (use concatenation for custom sorts).
  */
 function mergeSortedArrays<T>(a: T[], b: T[], getStem: (r: T) => string): T[] {
   // Both arrays come from the DB with the same ORDER BY.

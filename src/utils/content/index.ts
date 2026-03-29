@@ -223,7 +223,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       const firstPart = pathParts[0]
 
       if (firstPart && collection.i18n.locales.includes(firstPart)) {
-        result.locale = firstPart
+        result.locale = result.locale ?? firstPart
         // Strip locale prefix from path
         const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
         if (collectionKeys.includes('path')) {
@@ -239,8 +239,8 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
         }
       }
       else {
-        // No locale prefix - assign default locale
-        result.locale = collection.i18n.defaultLocale
+        // No locale prefix - assign default locale (only if not already set)
+        result.locale = result.locale ?? collection.i18n.defaultLocale
       }
     }
 

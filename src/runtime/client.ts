@@ -146,10 +146,10 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[], NuxtError>
     },
     first(): AsyncData<Result | null, NuxtError> {
-      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result[], NuxtError> as unknown as AsyncData<Result | null, NuxtError>
+      return useAsyncData<Result | null, NuxtError>(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() })
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<Result[], NuxtError> as unknown as AsyncData<number, NuxtError>
+      return useAsyncData<number, NuxtError>(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() })
     },
   }
 
@@ -175,7 +175,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
     if (keyParts.limit) parts.push(`n:${keyParts.limit}`)
     if (keyParts.selectedFields.length) parts.push(`f:${keyParts.selectedFields.join(',')}`)
     parts.push(method)
-    return `content:${parts.join(':')}`
+    return `content:${JSON.stringify(parts)}`
   }
 
   return builder
