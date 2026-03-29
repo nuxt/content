@@ -1,5 +1,5 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
-const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?([a-z_]\w+|\*)\)/i
+const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\)/i
 const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
@@ -14,6 +14,11 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\
 export function assertSafeQuery(sql: string, collection: string) {
   if (!sql) {
     throw new Error('Invalid query: Query cannot be empty')
+  }
+
+  // Reject newlines to prevent multi-statement injection
+  if (sql.includes('\n') || sql.includes('\r')) {
+    throw new Error('Invalid query: Newlines are not allowed in queries')
   }
 
   const cleanedupQuery = cleanupQuery(sql)

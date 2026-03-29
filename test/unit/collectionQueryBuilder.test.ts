@@ -154,7 +154,7 @@ describe('collectionQueryBuilder', () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(DISTINCT author) as count FROM _articles',
+      'SELECT COUNT(DISTINCT "author") as count FROM _articles',
     )
   })
 

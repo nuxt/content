@@ -239,7 +239,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   function buildQuery(opts: { count?: { field: string, distinct: boolean }, limit?: number, extraCondition?: string, noLimitOffset?: boolean } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
-      query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${opts.count.field}) as count`
+      const countField = opts.count.field === '*' ? '*' : `"${opts.count.field.replace(/"/g, '')}"`
+      query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${countField}) as count`
     }
     else {
       const fields = Array.from(new Set(params.selectedFields))
