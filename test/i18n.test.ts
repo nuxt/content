@@ -26,6 +26,7 @@ describe('i18n', async () => {
   await setup({
     rootDir: resolver.resolve('./fixtures/i18n'),
     dev: true,
+    port: 0, // Let OS assign a free port to avoid EADDRINUSE on CI
   })
 
   describe('database', () => {
