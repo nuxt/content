@@ -23,6 +23,7 @@ export const queryCollection = <T extends keyof Collections>(collection: T): Col
   // Auto-detect locale from @nuxtjs/i18n (client: $i18n.locale, SSR: event.context.nuxtI18n)
   const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } })?.locale?.value
     || (event?.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
+    || (event?.context?.nuxtI18n as { locale?: string })?.locale
   return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectedLocale)
 }
 
