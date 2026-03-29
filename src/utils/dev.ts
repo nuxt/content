@@ -206,6 +206,12 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         }
       }
       else {
+        // Clean up stale locale variants if i18n was previously present but removed
+        if (collection.i18n) {
+          for (const locale of collection.i18n.locales) {
+            await broadcast(collection, `${keyInCollection}#${locale}`)
+          }
+        }
         const { queries: insertQuery } = generateCollectionInsert(collection, parsed)
         await broadcast(collection, keyInCollection, insertQuery)
       }

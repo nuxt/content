@@ -116,14 +116,13 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
       continue
     }
 
-    // Not in string
+    // Not in string — opening quote starts string tracking regardless of removeString mode
     if (char === '\'' || char === '"') {
-      if (options?.removeString) {
-        inString = true
-        stringFence = char
-        continue
+      inString = true
+      stringFence = char
+      if (!options?.removeString) {
+        result += char
       }
-      result += char
       continue
     }
 

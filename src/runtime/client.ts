@@ -149,7 +149,8 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null, NuxtError>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number, NuxtError> {
-      return useAsyncData(() => buildKey('count'), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
+      const countKey = `count:${String(field ?? '*')}:${distinct ? 'd' : ''}`
+      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number, NuxtError>
     },
   }
 
