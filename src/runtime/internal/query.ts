@@ -164,7 +164,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       applyAutoLocale()
       if (params.localeFallback) {
-        return fetchWithLocaleFallback().then(res => res.length)
+        return fetchWithLocaleFallback({ preserveField: field !== '*' ? String(field) : undefined }).then((res) => {
+          if (field === '*') return res.length
+          const values = res
+            .map(r => (r as unknown as Record<string, unknown>)[String(field)])
+            .filter(v => v !== null && v !== undefined)
+          return distinct ? new Set(values).size : values.length
+        })
       }
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
@@ -193,13 +199,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     }
   }
 
-  async function fetchWithLocaleFallback(opts: { limit?: number } = {}): Promise<Collections[T][]> {
+  async function fetchWithLocaleFallback(opts: { limit?: number, preserveField?: string } = {}): Promise<Collections[T][]> {
     const { locale, fallback } = params.localeFallback!
 
     // Ensure `stem` is always fetched — needed for merge-key deduplication.
-    // Use a local copy to avoid mutating the shared selectedFields array.
+    // Track whether we injected it so we can strip it from results later.
     const savedFields = params.selectedFields
-    if (savedFields.length > 0 && !savedFields.includes('stem' as keyof Collections[T])) {
+    const stemInjected = savedFields.length > 0 && !savedFields.includes('stem' as keyof Collections[T])
+    if (stemInjected) {
       params.selectedFields = [...savedFields, 'stem' as keyof Collections[T]]
     }
 
@@ -239,6 +246,15 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const limit = opts.limit ?? (params.limit > 0 ? params.limit : 0)
     if (limit > 0) {
       result = result.slice(0, limit)
+    }
+
+    // Strip internally-injected 'stem' if the caller didn't select it
+    // (unless it's needed by a count() call targeting that field)
+    if (stemInjected && opts.preserveField !== 'stem') {
+      return result.map((item) => {
+        const { stem: _, ...rest } = item as unknown as Record<string, unknown>
+        return rest as Collections[T]
+      })
     }
 
     return result as Collections[T][]
