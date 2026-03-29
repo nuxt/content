@@ -164,7 +164,20 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       applyAutoLocale()
       if (params.localeFallback) {
-        return fetchWithLocaleFallback({ preserveField: field !== '*' ? String(field) : undefined }).then((res) => {
+        // Ensure the counted field is fetched and bypass pagination for accurate counts
+        const countField = field !== '*' ? String(field) : undefined
+        const savedFields = params.selectedFields
+        const savedOffset = params.offset
+        const savedLimit = params.limit
+        if (countField && savedFields.length > 0 && !savedFields.includes(field as keyof Collections[T])) {
+          params.selectedFields = [...savedFields, field as keyof Collections[T]]
+        }
+        params.offset = 0
+        params.limit = 0
+        return fetchWithLocaleFallback({ preserveField: countField }).then((res) => {
+          params.selectedFields = savedFields
+          params.offset = savedOffset
+          params.limit = savedLimit
           if (field === '*') return res.length
           const values = res
             .map(r => (r as unknown as Record<string, unknown>)[String(field)])
