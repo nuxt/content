@@ -101,7 +101,11 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
       if (char === stringFence) {
         if (nextChar === stringFence) {
           // Doubled quote escape (e.g., '' inside a string) — skip both, stay in string
+          if (!options?.removeString) {
+            result += char + char // preserve both quotes
+          }
           i++
+          continue
         }
         else {
           // String closing quote
@@ -109,7 +113,7 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
           stringFence = ''
         }
       }
-      // Inside string: skip character (don't add to result when removeString is active)
+      // Inside string: keep character when not removing strings
       if (!options?.removeString) {
         result += char
       }
