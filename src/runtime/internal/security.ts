@@ -95,49 +95,53 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
   let result = ''
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
-    const prevChar = query[i - 1]
     const nextChar = query[i + 1]
 
-    if (char === '\'' || char === '"') {
+    if (inString) {
+      if (char === stringFence) {
+        if (nextChar === stringFence) {
+          // Doubled quote escape (e.g., '' inside a string) — skip both, stay in string
+          i++
+        }
+        else {
+          // String closing quote
+          inString = false
+          stringFence = ''
+        }
+      }
+      // Inside string: skip character (don't add to result when removeString is active)
       if (!options?.removeString) {
         result += char
-        continue
       }
+      continue
+    }
 
-      if (inString) {
-        if (char !== stringFence || nextChar === stringFence || prevChar === stringFence) {
-          // skip character, it's part of a string
-          continue
-        }
-
-        inString = false
-        stringFence = ''
-        continue
-      }
-      else {
+    // Not in string
+    if (char === '\'' || char === '"') {
+      if (options?.removeString) {
         inString = true
         stringFence = char
         continue
       }
-    }
-
-    if (!inString) {
-      if (char === '-' && nextChar === '-') {
-        // everything after this is a comment
-        return result
-      }
-
-      if (char === '/' && nextChar === '*') {
-        i += 2
-        while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
-          i += 1
-        }
-        i += 2
-        continue
-      }
-
       result += char
+      continue
     }
+
+    if (char === '-' && nextChar === '-') {
+      // everything after this is a comment
+      return result
+    }
+
+    if (char === '/' && nextChar === '*') {
+      i += 2
+      while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
+        i += 1
+      }
+      i += 2
+      continue
+    }
+
+    result += char
   }
   return result
 }
