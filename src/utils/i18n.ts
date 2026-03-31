@@ -41,10 +41,18 @@ export const defuByIndex = createDefu((obj, key, value) => {
  * The default locale keeps the original content; non-default locales get a deep-merged
  * copy where only overridden fields differ. Non-default items include `_i18nSourceHash`
  * for tracking whether the source content has changed since translation.
+ *
+ * For page collections (`collectionType: 'page'`), the body AST is replaced wholesale
+ * rather than deep-merged, since body is a parsed markdown tree that cannot be meaningfully merged.
+ *
+ * Note: this function mutates `parsedContent.meta` (removes the `i18n` key) and
+ * sets `parsedContent.locale` if not already set. This is acceptable because the
+ * source content is always consumed (inserted into DB) immediately after expansion.
  */
 export function expandI18nData(
   parsedContent: ParsedContentFile,
   i18nConfig: CollectionI18nConfig,
+  collectionType?: 'page' | 'data',
 ): ParsedContentFile[] {
   const i18nData = parsedContent.meta?.i18n as Record<string, Record<string, unknown>> | undefined
   if (!i18nData) {
@@ -74,8 +82,15 @@ export function expandI18nData(
   for (const [locale, overrides] of Object.entries(i18nData)) {
     if (locale === parsedContent.locale) continue
 
+    // Deep merge preserves untranslated fields (routes, IDs, icons).
+    // For page collections, body AST must not be deep-merged — replace it wholesale.
+    const merged = defuByIndex(overrides, parsedContent) as ParsedContentFile
+    if (collectionType === 'page' && overrides.body) {
+      merged.body = overrides.body
+    }
+
     const localeItem: ParsedContentFile = {
-      ...defuByIndex(overrides, parsedContent) as ParsedContentFile,
+      ...merged,
       id: `${parsedContent.id}#${locale}`,
       locale,
       meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },

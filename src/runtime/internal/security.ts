@@ -1,6 +1,6 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\)/i
-const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
+const SQL_SELECT_REGEX = /^SELECT (.*?) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
  * Assert that the query is safe
@@ -140,7 +140,7 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
       while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
         i += 1
       }
-      i += 2
+      if (i < query.length) i += 2
       continue
     }
 

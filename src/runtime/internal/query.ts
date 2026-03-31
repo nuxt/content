@@ -201,6 +201,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   let autoLocaleApplied = false
   function applyAutoLocale() {
     if (autoLocaleApplied || params.localeExplicitlySet || !i18nConfig || !detectedLocale) return
+    if (!i18nConfig.locales.includes(detectedLocale)) return
     autoLocaleApplied = true
     if (detectedLocale === i18nConfig.defaultLocale) {
       // Default locale: single query, no fallback needed

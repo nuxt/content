@@ -20,7 +20,7 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
-import { defuByIndex } from './utils/i18n'
+import { expandI18nData } from './utils/i18n'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
@@ -381,47 +381,11 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
 
             // i18n: expand inline translations to per-locale rows
             if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
-              const i18nData = (parsedContent.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
-              const { i18n: _removed, ...cleanMeta } = parsedContent.meta as Record<string, unknown>
-              parsedContent.meta = cleanMeta
-
-              // Default locale item
-              if (!parsedContent.locale) {
-                parsedContent.locale = collection.i18n.defaultLocale
-              }
-
-              // Compute source hash from default locale's translatable fields
-              // Used by translators / Studio to detect when the source content changes
-              const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
-              const sourceFields: Record<string, unknown> = {}
-              for (const field of translatedFields) {
-                sourceFields[field] = parsedContent[field]
-              }
-              const i18nSourceHash = hash(sourceFields)
-
-              const defaultItem = parsedContent
-              const { queries: defaultQueries, hash: defaultHash } = generateCollectionInsert(collection, defaultItem)
-              list.push([`${key}#${defaultItem.locale}`, defaultQueries, defaultHash])
-
-              // Create one item per non-default locale
-              for (const [locale, overrides] of Object.entries(i18nData)) {
-                if (locale === defaultItem.locale) continue
-
-                // Deep merge preserves untranslated fields (routes, IDs, icons).
-                // For page collections, body AST must not be deep-merged — replace it wholesale.
-                const merged = defuByIndex(overrides, defaultItem) as ParsedContentFile
-                if (collection.type === 'page' && overrides.body) {
-                  merged.body = overrides.body
-                }
-                const localeItem: ParsedContentFile = {
-                  ...merged,
-                  id: `${parsedContent.id}#${locale}`,
-                  locale,
-                  meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
-                }
-
-                const { queries: localeQueries, hash: localeHash } = generateCollectionInsert(collection, localeItem)
-                list.push([`${key}#${locale}`, localeQueries, localeHash])
+              const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type)
+              for (const item of expandedItems) {
+                const itemKey = item.locale ? `${key}#${item.locale}` : key
+                const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
+                list.push([itemKey, itemQueries, itemHash])
               }
             }
             else {

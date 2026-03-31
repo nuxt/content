@@ -3,14 +3,13 @@ import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
-import { defuByIndex } from './i18n'
+import { expandI18nData } from './i18n'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
-import { hash } from 'ohash'
 import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
@@ -166,38 +165,15 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
       const parsed: ParsedContentFile = JSON.parse(parsedContent)
 
-      // i18n: expand inline translations to per-locale DB rows (same logic as processCollectionItems)
+      // i18n: expand inline translations to per-locale DB rows
       if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
         const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
-        const { i18n: _removed, ...cleanMeta } = parsed.meta as Record<string, unknown>
-        parsed.meta = cleanMeta
-        if (!parsed.locale) parsed.locale = collection.i18n.defaultLocale
 
-        const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
-        const sourceFields: Record<string, unknown> = {}
-        for (const field of translatedFields) sourceFields[field] = parsed[field]
-        const i18nSourceHash = hash(sourceFields)
-
-        // Upsert default locale row
-        const { queries: defaultQueries } = generateCollectionInsert(collection, parsed)
-        await broadcast(collection, keyInCollection, defaultQueries)
-
-        // Upsert each non-default locale row
-        for (const [locale, overrides] of Object.entries(i18nData)) {
-          if (locale === parsed.locale) continue
-          const localeKey = `${keyInCollection}#${locale}`
-          const merged = defuByIndex(overrides, parsed) as ParsedContentFile
-          if (collection.type === 'page' && overrides.body) {
-            merged.body = overrides.body
-          }
-          const localeItem: ParsedContentFile = {
-            ...merged,
-            id: localeKey,
-            locale,
-            meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
-          }
-          const { queries: localeQueries } = generateCollectionInsert(collection, localeItem)
-          await broadcast(collection, localeKey, localeQueries)
+        const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
+        for (const item of expandedItems) {
+          const itemKey = item.locale ? `${keyInCollection}#${item.locale}` : keyInCollection
+          const { queries } = generateCollectionInsert(collection, item)
+          await broadcast(collection, itemKey, queries)
         }
 
         // Remove locale rows that are no longer in the i18n section
