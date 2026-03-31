@@ -246,9 +246,18 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     // Use exact key match: look for the id as a complete SQL string literal ('key',) to avoid
     // substring matches (e.g., 'team.yml' matching 'team.yml#fr')
     const escapedKey = key.replace(/'/g, '\'\'')
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${escapedKey}',`) || item.endsWith(`'${escapedKey}')`))
+    const keyMatch = (item: string) => item.includes(`'${escapedKey}',`) || item.endsWith(`'${escapedKey}')`)
+    const keyIndex = collectionDump.findIndex(keyMatch)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
-    const itemsToRemove = keyIndex === -1 ? 0 : 1
+
+    // Count all consecutive dump entries belonging to this key (large content splits
+    // into INSERT + UPDATE fragments that each reference the same key literal)
+    let itemsToRemove = 0
+    if (keyIndex !== -1) {
+      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]); i++) {
+        itemsToRemove++
+      }
+    }
 
     if (insertQuery) {
       collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
