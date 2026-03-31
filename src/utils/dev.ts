@@ -256,7 +256,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     // into INSERT + UPDATE fragments that each reference the same key literal)
     let itemsToRemove = 0
     if (keyIndex !== -1) {
-      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]); i++) {
+      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]!); i++) {
         itemsToRemove++
       }
     }

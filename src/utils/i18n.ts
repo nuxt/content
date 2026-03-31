@@ -54,7 +54,8 @@ export function expandI18nData(
   i18nConfig: CollectionI18nConfig,
   collectionType?: 'page' | 'data',
 ): ParsedContentFile[] {
-  const i18nData = parsedContent.meta?.i18n as Record<string, Record<string, unknown>> | undefined
+  const meta = parsedContent.meta as Record<string, unknown> | undefined
+  const i18nData = meta?.i18n as Record<string, Record<string, unknown>> | undefined
   if (!i18nData) {
     if (!parsedContent.locale) {
       parsedContent.locale = i18nConfig.defaultLocale
@@ -62,7 +63,7 @@ export function expandI18nData(
     return [parsedContent]
   }
 
-  const { i18n: _removed, ...cleanMeta } = parsedContent.meta
+  const { i18n: _removed, ...cleanMeta } = meta!
   parsedContent.meta = cleanMeta
 
   if (!parsedContent.locale) {
