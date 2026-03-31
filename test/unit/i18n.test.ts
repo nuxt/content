@@ -236,6 +236,11 @@ describe('i18n', () => {
       expect(result).toMatchObject({ locale: 'en', path: '/blog/fr/post', stem: 'blog/fr/post' })
     })
 
+    it('leaves stem unchanged when it does not start with locale prefix', () => {
+      const result = detectLocaleFromPath('/fr/docs/guide', 'docs/guide', i18nConfig)
+      expect(result).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+    })
+
     it('handles nested locale paths', () => {
       const result = detectLocaleFromPath('/en/docs/guide/intro', 'en/docs/guide/intro', i18nConfig)
       expect(result).toMatchObject({ locale: 'en', path: '/docs/guide/intro', stem: 'docs/guide/intro' })

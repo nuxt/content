@@ -168,6 +168,8 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       // i18n: expand inline translations to per-locale DB rows
       if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
         const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
+        // Capture source locale before expandI18nData mutates parsed.locale
+        const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
 
         const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
         for (const item of expandedItems) {
@@ -181,7 +183,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
         // Remove locale rows that are no longer in the i18n section
         for (const locale of collection.i18n.locales) {
-          if (locale === parsed.locale || locale in i18nData) continue
+          if (locale === sourceLocale || locale in i18nData) continue
           await broadcast(collection, `${keyInCollection}#${locale}`)
         }
       }

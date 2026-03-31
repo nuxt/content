@@ -383,14 +383,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
               const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type)
               for (const item of expandedItems) {
-                const itemKey = item.locale ? `${key}#${item.locale}` : key
+                const itemKey = item.locale ? `${keyInCollection}#${item.locale}` : keyInCollection
                 const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
                 list.push([itemKey, itemQueries, itemHash])
               }
             }
             else {
               const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-              list.push([key, queries, hash])
+              list.push([keyInCollection, queries, hash])
             }
           }
           catch (e: unknown) {
