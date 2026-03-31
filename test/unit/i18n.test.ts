@@ -1,650 +1,469 @@
 import { describe, it, expect } from 'vitest'
-import { hash } from 'ohash'
-import { defuByIndex } from '../../src/utils/i18n'
+import { defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile } from '../../src/types'
 
-/**
- * Expand inline i18n data from a parsed content file into per-locale items.
- * This is the same logic used in processCollectionItems (src/module.ts).
- */
-function expandI18n(
-  parsedContent: ParsedContentFile,
-  i18nConfig: CollectionI18nConfig,
-): ParsedContentFile[] {
-  const i18nData = parsedContent.meta?.i18n as Record<string, Record<string, unknown>> | undefined
-  if (!i18nData) {
-    if (!parsedContent.locale) {
-      parsedContent.locale = i18nConfig.defaultLocale
-    }
-    return [parsedContent]
-  }
-
-  const { i18n: _removed, ...cleanMeta } = parsedContent.meta
-  parsedContent.meta = cleanMeta
-
-  if (!parsedContent.locale) {
-    parsedContent.locale = i18nConfig.defaultLocale
-  }
-
-  // Compute source hash from default locale's translatable fields
-  const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
-  const sourceFields: Record<string, unknown> = {}
-  for (const field of translatedFields) {
-    sourceFields[field] = parsedContent[field]
-  }
-  const i18nSourceHash = hash(sourceFields)
-
-  const items: ParsedContentFile[] = [parsedContent]
-
-  for (const [locale, overrides] of Object.entries(i18nData)) {
-    if (locale === parsedContent.locale) continue
-
-    // Deep merge for data collections: translated fields override, untranslated fields preserved
-    const localeItem: ParsedContentFile = {
-      ...defuByIndex(overrides, parsedContent) as ParsedContentFile,
-      id: `${parsedContent.id}#${locale}`,
-      locale,
-      meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
-    }
-
-    items.push(localeItem)
-  }
-
-  return items
+const i18nConfig: CollectionI18nConfig = {
+  locales: ['en', 'fr', 'de'],
+  defaultLocale: 'en',
 }
 
-/**
- * Detect locale from path prefix and strip it.
- * This is the same logic used in createParser (src/utils/content/index.ts).
- */
-/**
- * Mirrors the production logic in src/utils/content/index.ts exactly.
- */
-function detectLocaleFromPath(
-  path: string,
-  stem: string,
-  i18nConfig: CollectionI18nConfig,
-): { locale: string, path: string, stem: string } {
-  const pathParts = path.split('/').filter(Boolean)
-  const firstPart = pathParts[0]
-
-  if (firstPart && i18nConfig.locales.includes(firstPart)) {
-    const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
-
-    // Stem stripping: same string logic as production (no RegExp)
-    let newStem = stem
-    if (stem === firstPart) {
-      newStem = ''
-    }
-    else if (stem.startsWith(firstPart + '/')) {
-      newStem = stem.slice(firstPart.length + 1)
-    }
-
-    return {
-      locale: firstPart,
-      path: pathWithoutLocale === '/' ? '/' : pathWithoutLocale,
-      stem: newStem,
-    }
-  }
-
-  return {
-    locale: i18nConfig.defaultLocale,
-    path,
-    stem,
-  }
-}
-
-describe('i18n - inline expansion', () => {
-  const i18nConfig: CollectionI18nConfig = {
-    locales: ['en', 'fr', 'de'],
-    defaultLocale: 'en',
-  }
-
-  it('expands inline i18n to per-locale items', () => {
-    const content: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      description: 'Hello world',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: { title: 'Mon Article', description: 'Bonjour le monde' },
-          de: { title: 'Mein Artikel' },
+describe('i18n', () => {
+  describe('inline expansion', () => {
+    it('expands inline i18n to per-locale items', () => {
+      const content: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        description: 'Hello world',
+        stem: 'post',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            fr: { title: 'Mon Article', description: 'Bonjour le monde' },
+            de: { title: 'Mein Artikel' },
+          },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
+      const items = expandI18nData(content, i18nConfig)
 
-    expect(items).toHaveLength(3)
+      expect(items).toHaveLength(3)
+      expect(items[0]).toMatchObject({ id: 'blog:post.yml', locale: 'en', title: 'My Post', description: 'Hello world' })
+      expect(items[0].meta.i18n).toBeUndefined()
+      expect(items[1]).toMatchObject({ id: 'blog:post.yml#fr', locale: 'fr', title: 'Mon Article', description: 'Bonjour le monde' })
+      expect(items[2]).toMatchObject({ id: 'blog:post.yml#de', locale: 'de', title: 'Mein Artikel', description: 'Hello world' })
+    })
 
-    // Default locale item
-    expect(items[0].id).toBe('blog:post.yml')
-    expect(items[0].locale).toBe('en')
-    expect(items[0].title).toBe('My Post')
-    expect(items[0].description).toBe('Hello world')
-    expect(items[0].meta.i18n).toBeUndefined()
+    it('returns single item with default locale when no i18n section', () => {
+      const content: ParsedContentFile = {
+        id: 'blog:simple.yml',
+        title: 'Simple Post',
+        stem: 'simple',
+        extension: 'yml',
+        meta: {},
+      }
 
-    // French item
-    expect(items[1].id).toBe('blog:post.yml#fr')
-    expect(items[1].locale).toBe('fr')
-    expect(items[1].title).toBe('Mon Article')
-    expect(items[1].description).toBe('Bonjour le monde')
+      const items = expandI18nData(content, i18nConfig)
 
-    // German item - description falls back to default
-    expect(items[2].id).toBe('blog:post.yml#de')
-    expect(items[2].locale).toBe('de')
-    expect(items[2].title).toBe('Mein Artikel')
-    expect(items[2].description).toBe('Hello world')
-  })
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({ locale: 'en', title: 'Simple Post' })
+    })
 
-  it('returns single item with default locale when no i18n section', () => {
-    const content: ParsedContentFile = {
-      id: 'blog:simple.yml',
-      title: 'Simple Post',
-      stem: 'simple',
-      extension: 'yml',
-      meta: {},
-    }
-
-    const items = expandI18n(content, i18nConfig)
-
-    expect(items).toHaveLength(1)
-    expect(items[0].locale).toBe('en')
-    expect(items[0].title).toBe('Simple Post')
-  })
-
-  it('preserves existing locale on parsed content', () => {
-    const content: ParsedContentFile = {
-      id: 'blog:post.yml',
-      locale: 'fr',
-      title: 'Mon Article',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          en: { title: 'My Post' },
+    it('preserves existing locale on parsed content', () => {
+      const content: ParsedContentFile = {
+        id: 'blog:post.yml',
+        locale: 'fr',
+        title: 'Mon Article',
+        stem: 'post',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            en: { title: 'My Post' },
+          },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
+      const items = expandI18nData(content, i18nConfig)
 
-    expect(items).toHaveLength(2)
-    expect(items[0].locale).toBe('fr')
-    expect(items[0].title).toBe('Mon Article')
-    expect(items[1].locale).toBe('en')
-    expect(items[1].title).toBe('My Post')
-  })
+      expect(items).toHaveLength(2)
+      expect(items[0]).toMatchObject({ locale: 'fr', title: 'Mon Article' })
+      expect(items[1]).toMatchObject({ locale: 'en', title: 'My Post' })
+    })
 
-  it('deep-merges nested objects in locale overrides for data collections', () => {
-    const content: ParsedContentFile = {
-      id: 'team:jane.yml',
-      name: 'Jane Doe',
-      info: { age: 25, country: 'Switzerland' },
-      stem: 'jane',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          de: { info: { country: 'Schweiz' } },
+    it('deep-merges nested objects in locale overrides', () => {
+      const content: ParsedContentFile = {
+        id: 'team:jane.yml',
+        name: 'Jane Doe',
+        info: { age: 25, country: 'Switzerland' },
+        stem: 'jane',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            de: { info: { country: 'Schweiz' } },
+          },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
+      const items = expandI18nData(content, i18nConfig)
 
-    expect(items).toHaveLength(2)
+      expect(items).toHaveLength(2)
+      expect(items[0].info).toEqual({ age: 25, country: 'Switzerland' })
+      expect(items[1].info).toEqual({ age: 25, country: 'Schweiz' })
+    })
 
-    // Default keeps original
-    expect(items[0].info).toEqual({ age: 25, country: 'Switzerland' })
+    it('deep-merges array items by index, preserving untranslated fields', () => {
+      const content: ParsedContentFile = {
+        id: 'nav:navbar.yml',
+        items: [
+          { id: 'overview', label: 'Overview', route: '/' },
+          { id: 'tech', label: 'Technologies', route: '/technologies' },
+        ],
+        stem: 'navbar',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            fr: {
+              items: [
+                { label: 'Vue d\'ensemble' },
+                { label: 'Technologies' },
+              ],
+            },
+          },
+        },
+      }
 
-    // German override deep-merges: country overridden, age preserved
-    expect(items[1].info).toEqual({ age: 25, country: 'Schweiz' })
-  })
+      const items = expandI18nData(content, i18nConfig)
+      const frItem = items.find(i => i.locale === 'fr')
 
-  it('deep-merges array items by index, preserving untranslated fields', () => {
-    const content: ParsedContentFile = {
-      id: 'nav:navbar.yml',
-      items: [
-        { id: 'overview', label: 'Overview', route: '/' },
+      expect(frItem?.items).toEqual([
+        { id: 'overview', label: 'Vue d\'ensemble', route: '/' },
         { id: 'tech', label: 'Technologies', route: '/technologies' },
-      ],
-      stem: 'navbar',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: {
-            items: [
-              { label: 'Vue d\'ensemble' },
-              { label: 'Technologies' },
-            ],
+      ])
+    })
+
+    it('does not include default locale in expanded items', () => {
+      const content: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        stem: 'post',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            en: { title: 'English Post' },
+            fr: { title: 'Article Francais' },
           },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
-    const frItem = items.find(i => i.locale === 'fr')
-    // Array items merged by index: label overridden, id + route preserved from default
-    expect(frItem?.items).toEqual([
-      { id: 'overview', label: 'Vue d\'ensemble', route: '/' },
-      { id: 'tech', label: 'Technologies', route: '/technologies' },
-    ])
-  })
+      const items = expandI18nData(content, i18nConfig)
 
-  it('does not include default locale in expanded items', () => {
-    const content: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          en: { title: 'English Post' }, // same as default locale
-          fr: { title: 'Article Francais' },
-        },
-      },
-    }
+      expect(items).toHaveLength(2)
+      expect(items[0]).toMatchObject({ locale: 'en', title: 'My Post' })
+      expect(items[1]).toMatchObject({ locale: 'fr' })
+    })
 
-    const items = expandI18n(content, i18nConfig)
-
-    // Should have 2 items: default (en) + fr
-    // The 'en' key in i18n is skipped since it matches defaultLocale
-    expect(items).toHaveLength(2)
-    expect(items[0].locale).toBe('en')
-    expect(items[0].title).toBe('My Post') // top-level value, not from i18n.en
-    expect(items[1].locale).toBe('fr')
-  })
-
-  it('generates unique IDs with locale suffix', () => {
-    const content: ParsedContentFile = {
-      id: 'data:team/member.json',
-      name: 'John',
-      stem: 'team/member',
-      extension: 'json',
-      meta: {
-        i18n: {
-          fr: { name: 'Jean' },
-          de: { name: 'Johann' },
-        },
-      },
-    }
-
-    const items = expandI18n(content, i18nConfig)
-    const ids = items.map(i => i.id)
-
-    expect(ids).toEqual([
-      'data:team/member.json',
-      'data:team/member.json#fr',
-      'data:team/member.json#de',
-    ])
-
-    // All IDs are unique
-    expect(new Set(ids).size).toBe(3)
-  })
-})
-
-describe('i18n - defuByIndex standalone', () => {
-  it('merges nested arrays recursively', () => {
-    const base = {
-      items: [
-        { title: 'Base', links: [{ title: 'More', url: '/page', icon: { name: 'chevron' } }] },
-      ],
-    }
-    const override = {
-      items: [
-        { title: 'Override', links: [{ title: 'Savoir plus' }] },
-      ],
-    }
-    const result = defuByIndex(override, base) as typeof base
-    expect(result.items[0].title).toBe('Override')
-    expect(result.items[0].links[0].title).toBe('Savoir plus')
-    expect(result.items[0].links[0].url).toBe('/page')
-    expect(result.items[0].links[0].icon).toEqual({ name: 'chevron' })
-  })
-
-  it('does not mutate input objects', () => {
-    const base = { items: [{ a: 1, b: 2 }] }
-    const override = { items: [{ a: 10 }] }
-    const baseCopy = JSON.parse(JSON.stringify(base))
-    const overrideCopy = JSON.parse(JSON.stringify(override))
-    defuByIndex(override, base)
-    expect(base).toEqual(baseCopy)
-    expect(override).toEqual(overrideCopy)
-  })
-})
-
-describe('i18n - path-based locale detection', () => {
-  const i18nConfig: CollectionI18nConfig = {
-    locales: ['en', 'fr', 'de'],
-    defaultLocale: 'en',
-  }
-
-  it('detects locale from first path segment', () => {
-    const result = detectLocaleFromPath('/fr/blog/post', 'fr/blog/post', i18nConfig)
-
-    expect(result.locale).toBe('fr')
-    expect(result.path).toBe('/blog/post')
-    expect(result.stem).toBe('blog/post')
-  })
-
-  it('assigns default locale when no locale prefix', () => {
-    const result = detectLocaleFromPath('/blog/post', 'blog/post', i18nConfig)
-
-    expect(result.locale).toBe('en')
-    expect(result.path).toBe('/blog/post')
-    expect(result.stem).toBe('blog/post')
-  })
-
-  it('handles root path with locale', () => {
-    const result = detectLocaleFromPath('/de', 'de', i18nConfig)
-
-    expect(result.locale).toBe('de')
-    expect(result.path).toBe('/')
-    expect(result.stem).toBe('')
-  })
-
-  it('does not treat non-locale segments as locale', () => {
-    const result = detectLocaleFromPath('/blog/fr/post', 'blog/fr/post', i18nConfig)
-
-    // 'blog' is not a locale, so default is used
-    expect(result.locale).toBe('en')
-    expect(result.path).toBe('/blog/fr/post')
-    expect(result.stem).toBe('blog/fr/post')
-  })
-
-  it('handles nested locale paths', () => {
-    const result = detectLocaleFromPath('/en/docs/guide/intro', 'en/docs/guide/intro', i18nConfig)
-
-    expect(result.locale).toBe('en')
-    expect(result.path).toBe('/docs/guide/intro')
-    expect(result.stem).toBe('docs/guide/intro')
-  })
-})
-
-describe('i18n - defuByIndex edge cases', () => {
-  const i18nConfig: CollectionI18nConfig = {
-    locales: ['en', 'fr', 'de'],
-    defaultLocale: 'en',
-  }
-
-  it('preserves extra default array items when override has fewer', () => {
-    const content: ParsedContentFile = {
-      id: 'nav:navbar.yml',
-      items: [
-        { id: 'a', label: 'A', route: '/a' },
-        { id: 'b', label: 'B', route: '/b' },
-        { id: 'c', label: 'C', route: '/c' },
-      ],
-      stem: 'navbar',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: {
-            items: [
-              { label: 'A-fr' },
-              { label: 'B-fr' },
-              // No 3rd item — should preserve default 'C'
-            ],
+    it('generates unique IDs with locale suffix', () => {
+      const content: ParsedContentFile = {
+        id: 'data:team/member.json',
+        name: 'John',
+        stem: 'team/member',
+        extension: 'json',
+        meta: {
+          i18n: {
+            fr: { name: 'Jean' },
+            de: { name: 'Johann' },
           },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
-    const frItem = items.find(i => i.locale === 'fr')
+      const items = expandI18nData(content, i18nConfig)
+      const ids = items.map(i => i.id)
 
-    expect(frItem?.items).toHaveLength(3)
-    expect(frItem?.items[0]).toEqual({ id: 'a', label: 'A-fr', route: '/a' })
-    expect(frItem?.items[1]).toEqual({ id: 'b', label: 'B-fr', route: '/b' })
-    expect(frItem?.items[2]).toEqual({ id: 'c', label: 'C', route: '/c' })
+      expect(ids).toEqual([
+        'data:team/member.json',
+        'data:team/member.json#fr',
+        'data:team/member.json#de',
+      ])
+      expect(new Set(ids).size).toBe(3)
+    })
   })
 
-  it('deep-merges nested arrays within array items (e.g. links inside items)', () => {
-    const content: ParsedContentFile = {
-      id: 'nav:banners.yml',
-      items: [
-        {
-          description: 'Default text',
-          links: [
-            { title: 'More', url: '/page', icon: { name: 'chevron' } },
+  describe('path-based locale detection', () => {
+    it('detects locale from first path segment', () => {
+      const result = detectLocaleFromPath('/fr/blog/post', 'fr/blog/post', i18nConfig)
+      expect(result).toMatchObject({ locale: 'fr', path: '/blog/post', stem: 'blog/post' })
+    })
+
+    it('assigns default locale when no locale prefix', () => {
+      const result = detectLocaleFromPath('/blog/post', 'blog/post', i18nConfig)
+      expect(result).toMatchObject({ locale: 'en', path: '/blog/post', stem: 'blog/post' })
+    })
+
+    it('handles root path with locale', () => {
+      const result = detectLocaleFromPath('/de', 'de', i18nConfig)
+      expect(result).toMatchObject({ locale: 'de', path: '/', stem: '' })
+    })
+
+    it('does not treat non-locale segments as locale', () => {
+      const result = detectLocaleFromPath('/blog/fr/post', 'blog/fr/post', i18nConfig)
+      expect(result).toMatchObject({ locale: 'en', path: '/blog/fr/post', stem: 'blog/fr/post' })
+    })
+
+    it('handles nested locale paths', () => {
+      const result = detectLocaleFromPath('/en/docs/guide/intro', 'en/docs/guide/intro', i18nConfig)
+      expect(result).toMatchObject({ locale: 'en', path: '/docs/guide/intro', stem: 'docs/guide/intro' })
+    })
+  })
+
+  describe('defuByIndex', () => {
+    it('merges nested arrays recursively', () => {
+      const base = {
+        items: [
+          { title: 'Base', links: [{ title: 'More', url: '/page', icon: { name: 'chevron' } }] },
+        ],
+      }
+      const override = {
+        items: [
+          { title: 'Override', links: [{ title: 'Savoir plus' }] },
+        ],
+      }
+      const result = defuByIndex(override, base) as typeof base
+
+      expect(result.items[0]).toMatchObject({
+        title: 'Override',
+        links: [{ title: 'Savoir plus', url: '/page', icon: { name: 'chevron' } }],
+      })
+    })
+
+    it('does not mutate input objects', () => {
+      const base = { items: [{ a: 1, b: 2 }] }
+      const override = { items: [{ a: 10 }] }
+      const baseCopy = JSON.parse(JSON.stringify(base))
+      const overrideCopy = JSON.parse(JSON.stringify(override))
+      defuByIndex(override, base)
+      expect(base).toEqual(baseCopy)
+      expect(override).toEqual(overrideCopy)
+    })
+
+    describe('edge cases', () => {
+      it('preserves extra default array items when override has fewer', () => {
+        const content: ParsedContentFile = {
+          id: 'nav:navbar.yml',
+          items: [
+            { id: 'a', label: 'A', route: '/a' },
+            { id: 'b', label: 'B', route: '/b' },
+            { id: 'c', label: 'C', route: '/c' },
           ],
-        },
-      ],
-      stem: 'banners',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: {
-            items: [
-              {
-                description: 'Texte francais',
-                links: [
-                  { title: 'En savoir plus' },
+          stem: 'navbar',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: {
+                items: [
+                  { label: 'A-fr' },
+                  { label: 'B-fr' },
                 ],
               },
-            ],
+            },
           },
-        },
-      },
-    }
+        }
 
-    const items = expandI18n(content, i18nConfig)
-    const frItem = items.find(i => i.locale === 'fr')
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.locale === 'fr')
 
-    // Description overridden
-    expect(frItem?.items[0].description).toBe('Texte francais')
-    // Link title overridden, but url and icon preserved from default
-    expect(frItem?.items[0].links[0].title).toBe('En savoir plus')
-    expect(frItem?.items[0].links[0].url).toBe('/page')
-    expect(frItem?.items[0].links[0].icon).toEqual({ name: 'chevron' })
-  })
+        expect(frItem?.items).toHaveLength(3)
+        expect(frItem?.items[0]).toMatchObject({ id: 'a', label: 'A-fr', route: '/a' })
+        expect(frItem?.items[1]).toMatchObject({ id: 'b', label: 'B-fr', route: '/b' })
+        expect(frItem?.items[2]).toMatchObject({ id: 'c', label: 'C', route: '/c' })
+      })
 
-  it('handles empty i18n overrides object', () => {
-    const content: ParsedContentFile = {
-      id: 'data:config.yml',
-      title: 'Config',
-      stem: 'config',
-      extension: 'yml',
-      meta: {
-        i18n: {},
-      },
-    }
-
-    const items = expandI18n(content, i18nConfig)
-
-    expect(items).toHaveLength(1)
-    expect(items[0].locale).toBe('en')
-    expect(items[0].title).toBe('Config')
-  })
-
-  it('does not mutate original content or override objects', () => {
-    const original = {
-      id: 'data:test.yml',
-      items: [{ label: 'Original', route: '/' }],
-      stem: 'test',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: { items: [{ label: 'French' }] },
-        },
-      },
-    } as ParsedContentFile
-
-    const originalItemsRef = original.items
-    const frOverrideRef = (original.meta.i18n as Record<string, unknown>).fr
-
-    expandI18n(original, i18nConfig)
-
-    // Original items array should not be mutated
-    expect(originalItemsRef[0].label).toBe('Original')
-    // Override object should not be mutated
-    expect((frOverrideRef as Record<string, unknown[]>).items[0]).toEqual({ label: 'French' })
-  })
-
-  it('handles override with extra array items beyond default length', () => {
-    const content: ParsedContentFile = {
-      id: 'nav:test.yml',
-      items: [{ id: 'a', label: 'A' }],
-      stem: 'test',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: {
-            items: [
-              { label: 'A-fr' },
-              { id: 'b', label: 'B-fr', route: '/b' },
-            ],
+      it('deep-merges nested arrays within array items', () => {
+        const content: ParsedContentFile = {
+          id: 'nav:banners.yml',
+          items: [
+            {
+              description: 'Default text',
+              links: [
+                { title: 'More', url: '/page', icon: { name: 'chevron' } },
+              ],
+            },
+          ],
+          stem: 'banners',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: {
+                items: [
+                  {
+                    description: 'Texte francais',
+                    links: [{ title: 'En savoir plus' }],
+                  },
+                ],
+              },
+            },
           },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.locale === 'fr')
+
+        expect(frItem?.items[0]).toMatchObject({
+          description: 'Texte francais',
+          links: [{ title: 'En savoir plus', url: '/page', icon: { name: 'chevron' } }],
+        })
+      })
+
+      it('handles empty i18n overrides object', () => {
+        const content: ParsedContentFile = {
+          id: 'data:config.yml',
+          title: 'Config',
+          stem: 'config',
+          extension: 'yml',
+          meta: { i18n: {} },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        expect(items).toHaveLength(1)
+        expect(items[0]).toMatchObject({ locale: 'en', title: 'Config' })
+      })
+
+      it('does not mutate original content or override objects', () => {
+        const original = {
+          id: 'data:test.yml',
+          items: [{ label: 'Original', route: '/' }],
+          stem: 'test',
+          extension: 'yml',
+          meta: {
+            i18n: { fr: { items: [{ label: 'French' }] } },
+          },
+        } as ParsedContentFile
+
+        const originalItemsRef = original.items
+        const frOverrideRef = (original.meta.i18n as Record<string, unknown>).fr
+
+        expandI18nData(original, i18nConfig)
+
+        expect(originalItemsRef[0].label).toBe('Original')
+        expect((frOverrideRef as Record<string, unknown[]>).items[0]).toEqual({ label: 'French' })
+      })
+
+      it('handles override with extra array items beyond default length', () => {
+        const content: ParsedContentFile = {
+          id: 'nav:test.yml',
+          items: [{ id: 'a', label: 'A' }],
+          stem: 'test',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: {
+                items: [
+                  { label: 'A-fr' },
+                  { id: 'b', label: 'B-fr', route: '/b' },
+                ],
+              },
+            },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.locale === 'fr')
+
+        expect(frItem?.items).toHaveLength(2)
+        expect(frItem?.items[0]).toMatchObject({ id: 'a', label: 'A-fr' })
+        expect(frItem?.items[1]).toMatchObject({ id: 'b', label: 'B-fr', route: '/b' })
+      })
+
+      it('handles scalar arrays without merging', () => {
+        const content: ParsedContentFile = {
+          id: 'data:tags.yml',
+          tags: ['javascript', 'vue', 'nuxt'],
+          stem: 'tags',
+          extension: 'yml',
+          meta: {
+            i18n: { de: { tags: ['JavaScript', 'Vue', 'Nuxt'] } },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const deItem = items.find(i => i.locale === 'de')
+        expect(deItem?.tags).toEqual(['JavaScript', 'Vue', 'Nuxt'])
+      })
+
+      it('preserves non-translated top-level fields across all locales', () => {
+        const content: ParsedContentFile = {
+          id: 'data:config.yml',
+          title: 'Site Config',
+          apiUrl: 'https://api.example.com',
+          maxRetries: 3,
+          stem: 'config',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: { title: 'Config du site' },
+              de: { title: 'Seitenkonfiguration' },
+            },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+
+        for (const item of items) {
+          expect(item).toMatchObject({ apiUrl: 'https://api.example.com', maxRetries: 3 })
+        }
+        expect(items[1]).toMatchObject({ title: 'Config du site' })
+        expect(items[2]).toMatchObject({ title: 'Seitenkonfiguration' })
+      })
+    })
+  })
+
+  describe('source hash for change tracking', () => {
+    it('adds _i18nSourceHash to non-default locale items', () => {
+      const content: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        description: 'Hello',
+        stem: 'post',
+        extension: 'yml',
+        meta: {
+          i18n: { fr: { title: 'Mon Article' } },
         },
-      },
-    }
+      }
 
-    const items = expandI18n(content, i18nConfig)
-    const frItem = items.find(i => i.locale === 'fr')
+      const items = expandI18nData(content, i18nConfig)
 
-    expect(frItem?.items).toHaveLength(2)
-    expect(frItem?.items[0]).toEqual({ id: 'a', label: 'A-fr' })
-    expect(frItem?.items[1]).toEqual({ id: 'b', label: 'B-fr', route: '/b' })
-  })
+      expect(items[0].meta._i18nSourceHash).toBeUndefined()
+      expect(items[1].meta._i18nSourceHash).toBeDefined()
+      expect(typeof items[1].meta._i18nSourceHash).toBe('string')
+    })
 
-  it('handles scalar arrays (not objects) without merging', () => {
-    const content: ParsedContentFile = {
-      id: 'data:tags.yml',
-      tags: ['javascript', 'vue', 'nuxt'],
-      stem: 'tags',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          de: { tags: ['JavaScript', 'Vue', 'Nuxt'] },
-        },
-      },
-    }
+    it('source hash is based on translated fields only', () => {
+      const content1: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        description: 'Hello',
+        untranslatedField: 'ignored',
+        stem: 'post',
+        extension: 'yml',
+        meta: { i18n: { fr: { title: 'Mon Article' } } },
+      }
 
-    const items = expandI18n(content, i18nConfig)
-    const deItem = items.find(i => i.locale === 'de')
+      const content2: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        description: 'Hello',
+        untranslatedField: 'different value',
+        stem: 'post',
+        extension: 'yml',
+        meta: { i18n: { fr: { title: 'Mon Article' } } },
+      }
 
-    // Scalar arrays: override replaces entirely (no object merge)
-    expect(deItem?.tags).toEqual(['JavaScript', 'Vue', 'Nuxt'])
-  })
+      const items1 = expandI18nData(content1, i18nConfig)
+      const items2 = expandI18nData(content2, i18nConfig)
 
-  it('preserves non-translated top-level fields across all locales', () => {
-    const content: ParsedContentFile = {
-      id: 'data:config.yml',
-      title: 'Site Config',
-      apiUrl: 'https://api.example.com',
-      maxRetries: 3,
-      stem: 'config',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: { title: 'Config du site' },
-          de: { title: 'Seitenkonfiguration' },
-        },
-      },
-    }
+      expect(items1[1].meta._i18nSourceHash).toBe(items2[1].meta._i18nSourceHash)
+    })
 
-    const items = expandI18n(content, i18nConfig)
+    it('source hash changes when default locale translated fields change', () => {
+      const content1: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        stem: 'post',
+        extension: 'yml',
+        meta: { i18n: { fr: { title: 'Mon Article' } } },
+      }
 
-    for (const item of items) {
-      // Locale-invariant fields preserved in all locale variants
-      expect(item.apiUrl).toBe('https://api.example.com')
-      expect(item.maxRetries).toBe(3)
-    }
-    expect(items[1].title).toBe('Config du site')
-    expect(items[2].title).toBe('Seitenkonfiguration')
-  })
-})
+      const content2: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Updated Post',
+        stem: 'post',
+        extension: 'yml',
+        meta: { i18n: { fr: { title: 'Mon Article' } } },
+      }
 
-describe('i18n - source hash for change tracking', () => {
-  const i18nConfig: CollectionI18nConfig = {
-    locales: ['en', 'fr', 'de'],
-    defaultLocale: 'en',
-  }
+      const items1 = expandI18nData(content1, i18nConfig)
+      const items2 = expandI18nData(content2, i18nConfig)
 
-  it('adds _i18nSourceHash to non-default locale items', () => {
-    const content: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      description: 'Hello',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: {
-          fr: { title: 'Mon Article' },
-        },
-      },
-    }
-
-    const items = expandI18n(content, i18nConfig)
-
-    // Default locale should NOT have _i18nSourceHash
-    expect(items[0].meta._i18nSourceHash).toBeUndefined()
-
-    // French locale SHOULD have _i18nSourceHash
-    expect(items[1].meta._i18nSourceHash).toBeDefined()
-    expect(typeof items[1].meta._i18nSourceHash).toBe('string')
-  })
-
-  it('source hash is based on translated fields only', () => {
-    const content1: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      description: 'Hello',
-      untranslatedField: 'ignored',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: { fr: { title: 'Mon Article' } },
-      },
-    }
-
-    const content2: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      description: 'Hello',
-      untranslatedField: 'different value',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: { fr: { title: 'Mon Article' } },
-      },
-    }
-
-    const items1 = expandI18n(content1, i18nConfig)
-    const items2 = expandI18n(content2, i18nConfig)
-
-    // Hash should be the same since only 'title' is translated and it's unchanged
-    expect(items1[1].meta._i18nSourceHash).toBe(items2[1].meta._i18nSourceHash)
-  })
-
-  it('source hash changes when default locale translated fields change', () => {
-    const content1: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Post',
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: { fr: { title: 'Mon Article' } },
-      },
-    }
-
-    const content2: ParsedContentFile = {
-      id: 'blog:post.yml',
-      title: 'My Updated Post', // title changed
-      stem: 'post',
-      extension: 'yml',
-      meta: {
-        i18n: { fr: { title: 'Mon Article' } },
-      },
-    }
-
-    const items1 = expandI18n(content1, i18nConfig)
-    const items2 = expandI18n(content2, i18nConfig)
-
-    // Hash should differ because source 'title' changed
-    expect(items1[1].meta._i18nSourceHash).not.toBe(items2[1].meta._i18nSourceHash)
+      expect(items1[1].meta._i18nSourceHash).not.toBe(items2[1].meta._i18nSourceHash)
+    })
   })
 })

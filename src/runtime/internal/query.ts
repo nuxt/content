@@ -212,6 +212,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     }
   }
 
+  /**
+   * Two-query locale fallback: fetches locale-specific rows and default-locale rows,
+   * then merges by stem (locale items take priority, fallback fills gaps).
+   * Internally injects 'stem' into selectedFields for merge-key deduplication,
+   * stripping it from results when the caller didn't explicitly select it.
+   * Accepts an optional limit override and a preserveField to keep for count operations.
+   */
   async function fetchWithLocaleFallback(opts: { limit?: number, preserveField?: string } = {}): Promise<Collections[T][]> {
     const { locale, fallback } = params.localeFallback!
 
