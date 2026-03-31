@@ -176,6 +176,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           await broadcast(collection, itemKey, queries)
         }
 
+        // Clean up the bare (un-suffixed) row in case i18n was just added to this file
+        await broadcast(collection, keyInCollection)
+
         // Remove locale rows that are no longer in the i18n section
         for (const locale of collection.i18n.locales) {
           if (locale === parsed.locale || locale in i18nData) continue
