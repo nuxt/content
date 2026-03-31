@@ -4,7 +4,7 @@ import type { CollectionQueryBuilder, ContentLocaleEntry } from '@nuxt/content'
  * Query all locale variants for a given content stem within an i18n-enabled collection.
  * Returns one entry per locale, useful for building language switchers and hreflang tags.
  */
-export async function generateCollectionLocales<T extends Record<string, unknown>>(
+export async function generateCollectionLocales<T = Record<string, unknown>>(
   queryBuilder: CollectionQueryBuilder<T>,
   stem: string,
 ): Promise<ContentLocaleEntry[]> {
