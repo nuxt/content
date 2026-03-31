@@ -338,5 +338,75 @@ describe('collectionQueryBuilder', () => {
         'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
       )
     })
+
+    it('rejects unknown detectedLocale values', async () => {
+      // 'xx' is not in i18nConfig.locales — should be ignored (no locale filter)
+      const query = collectionQueryBuilder(mockCollection, mockFetch, 'xx')
+      await query.all()
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles ORDER BY stem ASC',
+      )
+    })
+
+    it('injects and strips stem when using select() with locale fallback', async () => {
+      mockFetch
+        .mockResolvedValueOnce([{ title: 'Bonjour', locale: 'fr', stem: 'hello' }])
+        .mockResolvedValueOnce([
+          { title: 'Hello', locale: 'en', stem: 'hello' },
+          { title: 'World', locale: 'en', stem: 'world' },
+        ])
+
+      const results = await collectionQueryBuilder(mockCollection, mockFetch)
+        .select('title' as never, 'locale' as never)
+        .locale('fr', { fallback: 'en' })
+        .all()
+
+      // stem should be stripped from results since it was not explicitly selected
+      expect(results[0]).not.toHaveProperty('stem')
+      // Merge should work correctly: fr 'hello' replaces en 'hello', en 'world' is fallback
+      expect(results).toHaveLength(2)
+      expect(results[0]).toMatchObject({ title: 'Bonjour', locale: 'fr' })
+      expect(results[1]).toMatchObject({ title: 'World', locale: 'en' })
+    })
+
+    it('counts correctly with locale fallback', async () => {
+      mockFetch
+        .mockResolvedValueOnce([
+          { title: 'Bonjour', stem: 'hello' },
+        ])
+        .mockResolvedValueOnce([
+          { title: 'Hello', stem: 'hello' },
+          { title: 'World', stem: 'world' },
+        ])
+
+      const count = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .count()
+
+      // fr has 'hello', en has 'hello' + 'world'. Merged: 2 unique stems
+      expect(count).toBe(2)
+    })
+
+    it('counts distinct with locale fallback', async () => {
+      mockFetch
+        .mockResolvedValueOnce([
+          { title: 'Same', stem: 'a' },
+          { title: 'Same', stem: 'b' },
+        ])
+        .mockResolvedValueOnce([
+          { title: 'Same', stem: 'a' },
+          { title: 'Different', stem: 'c' },
+        ])
+
+      const count = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .count('title' as never, true)
+
+      // Merged items: a='Same', b='Same', c='Different'. Distinct titles: 2
+      expect(count).toBe(2)
+    })
   })
 })

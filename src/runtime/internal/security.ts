@@ -52,8 +52,8 @@ export function assertSafeQuery(sql: string, collection: string) {
 
   // FROM
   if (from !== `_content_${collection}`) {
-    const collection = String(from || '').replace(/^_content_/, '')
-    throw new Error(`Invalid query: Collection '${collection}' does not exist`)
+    const invalidCollection = String(from || '').replace(/^_content_/, '')
+    throw new Error(`Invalid query: Collection '${invalidCollection}' does not exist`)
   }
 
   // WHERE

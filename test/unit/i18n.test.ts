@@ -166,6 +166,53 @@ describe('i18n', () => {
       ])
       expect(new Set(ids).size).toBe(3)
     })
+
+    it('replaces body wholesale for page collections instead of deep-merging', () => {
+      const defaultBody = { type: 'root', children: [{ type: 'text', value: 'Hello' }] }
+      const frBody = { type: 'root', children: [{ type: 'text', value: 'Bonjour' }] }
+
+      const content: ParsedContentFile = {
+        id: 'pages:index.md',
+        title: 'Home',
+        body: defaultBody,
+        stem: 'index',
+        extension: 'md',
+        meta: {
+          i18n: {
+            fr: { title: 'Accueil', body: frBody },
+          },
+        },
+      }
+
+      const items = expandI18nData(content, i18nConfig, 'page')
+      const frItem = items.find(i => i.locale === 'fr')
+
+      // Body should be replaced, not deep-merged
+      expect(frItem?.body).toEqual(frBody)
+      expect(frItem?.body).not.toEqual(defaultBody)
+      expect(frItem?.title).toBe('Accueil')
+    })
+
+    it('deep-merges body for data collections (no replacement)', () => {
+      const content: ParsedContentFile = {
+        id: 'data:config.yml',
+        title: 'Config',
+        body: { nested: { key: 'value', other: 'kept' } },
+        stem: 'config',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            fr: { body: { nested: { key: 'valeur' } } },
+          },
+        },
+      }
+
+      const items = expandI18nData(content, i18nConfig, 'data')
+      const frItem = items.find(i => i.locale === 'fr')
+
+      // Body should be deep-merged for data collections
+      expect(frItem?.body).toMatchObject({ nested: { key: 'valeur', other: 'kept' } })
+    })
   })
 
   describe('path-based locale detection', () => {

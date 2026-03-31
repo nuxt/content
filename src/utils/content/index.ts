@@ -6,6 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
+import { detectLocaleFromPath } from '../i18n'
 import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
@@ -219,29 +220,14 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     // i18n: detect locale from path prefix when collection has i18n configured
     if (collection.i18n && collectionKeys.includes('locale')) {
       const currentPath = String(result.path || pathMetaFields.path || '')
-      const pathParts = currentPath.split('/').filter(Boolean)
-      const firstPart = pathParts[0]
+      const currentStem = String(result.stem || pathMetaFields.stem || '')
+      const detected = detectLocaleFromPath(currentPath, currentStem, collection.i18n)
 
-      if (firstPart && collection.i18n.locales.includes(firstPart)) {
-        result.locale = result.locale ?? firstPart
-        // Strip locale prefix from path
-        const pathWithoutLocale = '/' + pathParts.slice(1).join('/')
-        if (collectionKeys.includes('path')) {
-          result.path = pathWithoutLocale === '/' ? '/' : pathWithoutLocale
-        }
-        // Always strip locale prefix from stem (regardless of stem format)
-        const currentStem = String(result.stem || pathMetaFields.stem || '')
-        if (currentStem === firstPart) {
-          result.stem = ''
-        }
-        else if (currentStem.startsWith(firstPart + '/')) {
-          result.stem = currentStem.slice(firstPart.length + 1)
-        }
+      result.locale = result.locale ?? detected.locale
+      if (collectionKeys.includes('path')) {
+        result.path = detected.path
       }
-      else {
-        // No locale prefix - assign default locale (only if not already set)
-        result.locale = result.locale ?? collection.i18n.defaultLocale
-      }
+      result.stem = detected.stem
     }
 
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }

@@ -9,8 +9,8 @@ import type { ParsedContentFile } from '../types'
  * Used for inline i18n expansion: locale overrides merge with default locale items
  * so untranslated fields (routes, IDs, icons, URLs) are preserved from the default.
  *
- * In createDefu's merger: obj[key] = accumulated result (has defaults), value = override.
- * Override items take priority; default items fill gaps for missing fields.
+ * In createDefu's merger: obj[key] = accumulated result (built from source/overrides),
+ * value = current default being merged in. Source items take priority; defaults fill gaps.
  */
 export const defuByIndex = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
