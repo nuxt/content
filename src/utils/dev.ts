@@ -3,13 +3,14 @@ import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
+import { expandI18nData } from './i18n'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
-import type { ModuleOptions, ResolvedCollection } from '../types'
+import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
@@ -159,11 +160,43 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           collectionType: collection.type,
         }).then(result => JSON.stringify(result))
 
-        db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+        db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
       }
 
-      const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-      await broadcast(collection, keyInCollection, insertQuery)
+      const parsed: ParsedContentFile = JSON.parse(parsedContent)
+
+      // i18n: expand inline translations to per-locale DB rows
+      if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
+        const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
+        // Capture source locale before expandI18nData mutates parsed.locale
+        const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
+
+        const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
+        for (const item of expandedItems) {
+          const itemKey = item.locale ? `${keyInCollection}#${item.locale}` : keyInCollection
+          const { queries } = generateCollectionInsert(collection, item)
+          await broadcast(collection, itemKey, queries)
+        }
+
+        // Clean up the bare (un-suffixed) row in case i18n was just added to this file
+        await broadcast(collection, keyInCollection)
+
+        // Remove locale rows that are no longer in the i18n section
+        for (const locale of collection.i18n.locales) {
+          if (locale === sourceLocale || locale in i18nData) continue
+          await broadcast(collection, `${keyInCollection}#${locale}`)
+        }
+      }
+      else {
+        // Clean up stale locale variants if i18n was previously present but removed
+        if (collection.i18n) {
+          for (const locale of collection.i18n.locales) {
+            await broadcast(collection, `${keyInCollection}#${locale}`)
+          }
+        }
+        const { queries: insertQuery } = generateCollectionInsert(collection, parsed)
+        await broadcast(collection, keyInCollection, insertQuery)
+      }
     }
   }
 
@@ -193,7 +226,13 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
       await db.deleteDevelopmentCache(keyInCollection)
 
+      // Remove main row and all locale variant rows
       await broadcast(collection, keyInCollection)
+      if (collection.i18n) {
+        for (const locale of collection.i18n.locales) {
+          await broadcast(collection, `${keyInCollection}#${locale}`)
+        }
+      }
     }
   }
 
@@ -206,9 +245,21 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    // Use exact key match: look for the id as a complete SQL string literal ('key',) to avoid
+    // substring matches (e.g., 'team.yml' matching 'team.yml#fr')
+    const escapedKey = key.replace(/'/g, '\'\'')
+    const keyMatch = (item: string) => item.includes(`'${escapedKey}',`) || item.endsWith(`'${escapedKey}')`)
+    const keyIndex = collectionDump.findIndex(keyMatch)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
-    const itemsToRemove = keyIndex === -1 ? 0 : 1
+
+    // Count all consecutive dump entries belonging to this key (large content splits
+    // into INSERT + UPDATE fragments that each reference the same key literal)
+    let itemsToRemove = 0
+    if (keyIndex !== -1) {
+      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]!); i++) {
+        itemsToRemove++
+      }
+    }
 
     if (insertQuery) {
       collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)

@@ -9,6 +9,21 @@ export interface Collections {}
 export type CollectionType = 'page' | 'data'
 
 /**
+ * Configuration for i18n support on a collection.
+ * When set, a `locale` column is automatically added to the collection schema.
+ */
+export interface CollectionI18nConfig {
+  /**
+   * List of supported locale codes (e.g. ['en', 'fr', 'de'])
+   */
+  locales: string[]
+  /**
+   * Default locale code used as fallback (e.g. 'en')
+   */
+  defaultLocale: string
+}
+
+/**
  * Defines an index on collection columns for optimizing database queries
  */
 export interface CollectionIndex {
@@ -69,6 +84,12 @@ export interface PageCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema?: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Enable i18n support for this collection.
+   * Pass `true` to auto-detect from `@nuxtjs/i18n` module config, or
+   * pass a `CollectionI18nConfig` object to configure manually.
+   */
+  i18n?: true | CollectionI18nConfig
 }
 
 export interface DataCollection<T> {
@@ -76,6 +97,12 @@ export interface DataCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Enable i18n support for this collection.
+   * Pass `true` to auto-detect from `@nuxtjs/i18n` module config, or
+   * pass a `CollectionI18nConfig` object to configure manually.
+   */
+  i18n?: true | CollectionI18nConfig
 }
 
 export type Collection<T> = PageCollection<T> | DataCollection<T>
@@ -87,9 +114,14 @@ export interface DefinedCollection {
   extendedSchema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   indexes?: CollectionIndex[]
+  /**
+   * `true` is the shorthand resolved from `@nuxtjs/i18n` in config loading.
+   * After resolution, this is always `CollectionI18nConfig | undefined`.
+   */
+  i18n?: true | CollectionI18nConfig
 }
 
-export interface ResolvedCollection extends DefinedCollection {
+export interface ResolvedCollection extends Omit<DefinedCollection, 'i18n'> {
   name: string
   tableName: string
   /**
@@ -97,6 +129,10 @@ export interface ResolvedCollection extends DefinedCollection {
    * Private collections will not be available in the runtime.
    */
   private: boolean
+  /**
+   * Fully resolved i18n config (never `true` — that's resolved before this point).
+   */
+  i18n?: CollectionI18nConfig
 }
 
 export interface CollectionInfo {
@@ -115,6 +151,11 @@ export interface CollectionItemBase {
   stem: string
   extension: string
   meta: Record<string, unknown>
+  /**
+   * Locale code for this content item.
+   * Only present when the collection has i18n enabled.
+   */
+  locale?: string
 }
 
 export interface PageCollectionItemBase extends CollectionItemBase {

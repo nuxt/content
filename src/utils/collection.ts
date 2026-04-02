@@ -3,7 +3,7 @@ import type { Collection, ResolvedCollection, CollectionSource, DefinedCollectio
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, localeStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 import { formatDate, formatDateTime } from './content/transformers/utils'
@@ -27,7 +27,20 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
+  // Add locale field when i18n is fully configured (not `true` shorthand —
+  // that gets resolved later in loadContentConfig via resolveI18nConfig)
+  const hasI18nConfig = collection.i18n && collection.i18n !== true
+  if (hasI18nConfig) {
+    extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
+  }
+
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
+
+  // Auto-add composite index on (locale, stem) for i18n collections
+  const indexes = collection.indexes ? [...collection.indexes] : []
+  if (hasI18nConfig) {
+    indexes.push({ columns: ['locale', 'stem'] })
+  }
 
   return {
     type: collection.type,
@@ -35,7 +48,8 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     schema: standardSchema,
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
-    indexes: collection.indexes,
+    indexes,
+    i18n: collection.i18n,
   }
 }
 
@@ -67,6 +81,8 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
+    // Ensure i18n: true is never passed through (should be resolved in config.ts)
+    i18n: collection.i18n === true ? undefined : collection.i18n,
   }
 }
 

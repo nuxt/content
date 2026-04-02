@@ -3,8 +3,9 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
+import { generateCollectionLocales } from './internal/locales'
 import { fetchQuery } from './internal/api'
-import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, ContentLocaleEntry, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -14,7 +15,12 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
+  // Auto-detect locale from @nuxtjs/i18n server context (resilient to different i18n versions)
+  const i18nCtx = event.context?.nuxtI18n as Record<string, unknown> | undefined
+  const detectedLocale = (i18nCtx?.vueI18nOptions as { locale?: string })?.locale
+    || (i18nCtx?.locale as string)
+    || undefined
+  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectedLocale)
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
@@ -27,6 +33,12 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
 
 export function queryCollectionSearchSections<T extends keyof PageCollections>(event: H3Event, collection: T, opts?: GenerateSearchSectionsOptions) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
+}
+
+export function queryCollectionLocales<T extends keyof Collections>(event: H3Event, collection: T, stem: string): Promise<ContentLocaleEntry[]> {
+  // Skip auto-locale: this helper needs ALL locale variants, not just the current one
+  const qb = collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
+  return generateCollectionLocales(qb, stem)
 }
 
 function chainablePromise<T extends keyof PageCollections, Result>(event: H3Event, collection: T, fn: (qb: CollectionQueryBuilder<PageCollections[T]>) => Promise<Result>) {

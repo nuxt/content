@@ -176,9 +176,14 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
+      // Stem prefix = source prefix only (collection name is stripped by describeId in path-meta.ts)
+      const sourcePrefix = collection.source?.[0]?.prefix || ''
+      const stemPrefix = sourcePrefix.replace(/^\/|\/$/g, '')
       acc[collection.name] = {
         type: collection.type,
         fields: collection.fields,
+        ...(collection.i18n ? { i18n: collection.i18n } : {}),
+        ...(stemPrefix ? { stemPrefix } : {}),
       }
       return acc
     }, {} as Record<string, unknown>)

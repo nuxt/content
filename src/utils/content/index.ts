@@ -6,6 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
+import { detectLocaleFromPath } from '../i18n'
 import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
@@ -214,6 +215,19 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       if (collectionKeys.includes(key) && result[key] === undefined) {
         result[key] = pathMetaFields[key]
       }
+    }
+
+    // i18n: detect locale from path prefix when collection has i18n configured
+    if (collection.i18n && collectionKeys.includes('locale')) {
+      const currentPath = String(result.path || pathMetaFields.path || '')
+      const currentStem = String(result.stem || pathMetaFields.stem || '')
+      const detected = detectLocaleFromPath(currentPath, currentStem, collection.i18n)
+
+      result.locale = result.locale ?? detected.locale
+      if (collectionKeys.includes('path')) {
+        result.path = detected.path
+      }
+      result.stem = detected.stem
     }
 
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }
