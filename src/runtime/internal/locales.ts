@@ -10,16 +10,17 @@ export async function generateCollectionLocales<T = Record<string, unknown>>(
 ): Promise<ContentLocaleEntry[]> {
   // No .select() — data collections lack path/title columns; SELECT * is safe here
   // because ContentLocaleEntry marks path? and title? as optional.
-  const items = await (queryBuilder as unknown as CollectionQueryBuilder<Record<string, unknown>>)
+  const items = await queryBuilder
     .stem(stem)
     .all()
 
   return items.map((item) => {
+    const row = item as Record<string, unknown>
     return {
-      locale: item.locale as string,
-      stem: item.stem as string,
-      path: item.path as string | undefined,
-      title: item.title as string | undefined,
+      locale: row.locale as string,
+      stem: row.stem as string,
+      path: row.path as string | undefined,
+      title: row.title as string | undefined,
     }
   })
 }
