@@ -60,12 +60,12 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.2",
-    "@nuxtjs/mdc": "^0.21.0",
+    "@nuxtjs/mdc": "^0.21.1",
     "@shikijs/langs": "^4.0.2",
     "@sqlite.org/sqlite-wasm": "3.50.4-build1",
     "@standard-schema/spec": "^1.1.0",
     "@webcontainer/env": "^1.1.1",
-    "c12": "^3.3.3",
+    "c12": "^3.3.4",
     "chokidar": "^5.0.0",
     "consola": "^3.4.2",
     "db0": "^0.3.4",
@@ -85,7 +85,7 @@
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
-    "minimatch": "^10.2.4",
+    "minimatch": "^10.2.5",
     "nuxt-component-meta": "0.17.2",
     "nypm": "^0.6.5",
     "ohash": "^2.0.11",
@@ -94,7 +94,7 @@
     "remark-mdc": "^3.10.0",
     "scule": "^1.3.0",
     "shiki": "^4.0.2",
-    "slugify": "^1.6.8",
+    "slugify": "^1.6.9",
     "socket.io-client": "^4.8.3",
     "std-env": "^4.0.0",
     "tinyglobby": "^0.2.15",
@@ -110,10 +110,10 @@
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "@valibot/to-json-schema": "^1.5.0",
-    "better-sqlite3": "^12.5.0",
+    "@valibot/to-json-schema": "^1.6.0",
+    "better-sqlite3": "^12.8.0",
     "sqlite3": "*",
-    "valibot": "^1.2.0"
+    "valibot": "^1.3.1"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -136,7 +136,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260317.1",
+    "@cloudflare/workers-types": "^4.20260404.1",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/eslint-config": "^1.15.2",
@@ -148,13 +148,13 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.3.11",
     "@types/micromatch": "^4.0.10",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "@types/pg": "^8.20.0",
     "@types/ws": "^8.18.1",
     "@valibot/to-json-schema": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "csvtojson": "^2.0.14",
-    "eslint": "^10.1.0",
+    "eslint": "^10.2.0",
     "happy-dom": "^20.8.9",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.2",
@@ -164,7 +164,7 @@
     "valibot": "^1.3.1",
     "vitest": "^4.1.2",
     "vue-tsc": "^3.2.6",
-    "wrangler": "^4.77.0"
+    "wrangler": "^4.80.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
