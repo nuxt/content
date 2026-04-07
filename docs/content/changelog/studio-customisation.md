@@ -111,3 +111,15 @@ This option can be set to avoid the display of a field in the Studio editor.
 ::prose-tip
 Studio inputs are fully extensible. We can create as many input as we want based on our users needs.
 ::
+
+##### `fieldName: String`
+
+You can set the editor input name in Studio editor.
+
+##### `fieldDescription: String`
+
+You can set an extra text under the field name in Studio editor.
+
+##### `tooltip: String`
+
+Display an info-bubble next to the field name in Studio editor.
