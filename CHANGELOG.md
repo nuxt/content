@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.0](https://github.com/nuxt/content/compare/v3.12.0...v3.13.0) (2026-04-13)
+
+### Bug Fixes
+
+* get mdc configs by calling `mdc:configSources` hook ([#3736](https://github.com/nuxt/content/issues/3736)) ([57f5552](https://github.com/nuxt/content/commit/57f5552ff910e8b66005c0ab50df5db7b878bcb3))
+* **preview:** move formatDate/formatDateTime into runtime subtree ([#3749](https://github.com/nuxt/content/issues/3749)) ([4a76b2a](https://github.com/nuxt/content/commit/4a76b2ac4ca1ee2cee29688d477e86fcff6e23a9))
+
 ## [3.12.0](https://github.com/nuxt/content/compare/v3.11.2...v3.12.0) (2026-02-27)
 
 ### Features
