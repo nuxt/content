@@ -206,6 +206,14 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   filename: moduleTemplates.preview,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
+      // Skip collections without a source (e.g. the internal `info` collection).
+      // They cannot be edited from the preview/studio UI, and serializing them
+      // with an empty `source: []` array breaks downstream consumers that expect
+      // at least one `ResolvedCollectionSource` entry.
+      if (!collection.source) {
+        return acc
+      }
+
       const schemaWithCollectionName = {
         ...collection.extendedSchema,
         definitions: {
@@ -217,7 +225,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
         // Remove source from collection meta if it's a remote collection
-        source: collection.source?.filter(source => source.repository ? undefined : collection.source) || [],
+        source: collection.source.filter(source => !source.repository),
         type: collection.type,
         fields: collection.fields,
         schema: schemaWithCollectionName,
