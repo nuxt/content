@@ -206,11 +206,15 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   filename: moduleTemplates.preview,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
-      // Skip collections without a source (e.g. the internal `info` collection).
-      // They cannot be edited from the preview/studio UI, and serializing them
-      // with an empty `source: []` array breaks downstream consumers that expect
-      // at least one `ResolvedCollectionSource` entry.
-      if (!collection.source) {
+      // Skip collections that would be serialized with an empty `source` array,
+      // because downstream consumers (e.g. nuxt-studio) iterate `source[0]` and
+      // crash on empty arrays. This covers two cases:
+      //   1. Collections with no source at all (e.g. the internal `info` collection).
+      //   2. Collections whose sources are all remote repositories — those are
+      //      filtered out below and should not appear in the preview manifest,
+      //      since they cannot be edited from the preview/studio UI either.
+      const localSources = collection.source?.filter(source => !source.repository) ?? []
+      if (localSources.length === 0) {
         return acc
       }
 
@@ -224,8 +228,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         name: collection.name,
         pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
-        // Remove source from collection meta if it's a remote collection
-        source: collection.source.filter(source => !source.repository),
+        source: localSources,
         type: collection.type,
         fields: collection.fields,
         schema: schemaWithCollectionName,
