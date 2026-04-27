@@ -108,7 +108,6 @@ You can set the editor input type. Currently both icon and media are available s
 Studio inputs are fully extensible. We can create as many input as we want based on our users needs.
 ::
 
-
 ##### `hidden: Boolean`
 
 This option can be set to avoid the display of a field in the Studio editor.
