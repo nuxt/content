@@ -50,9 +50,9 @@ export interface EditorOptions {
   input?: 'media' | 'icon' | 'textarea' // Override the default input for the field
   hidden?: boolean // Do not display the field in the editor
   iconLibraries?: string[] // List of icon libraries to use for the icon input
-  fieldName?: string // Override auto-generated field name with a custom one
-  fieldDescription?: string // When defined, set a description for the field
-  tooltip?: string // When defined, set a tooltip info-bubble next to the field name
+  label?: string // Override auto-generated label with a custom one
+  description?: string // When defined, set a description for the field
+  tooltip?: string // When defined, set a tooltip info-bubble next to the label
 }
 
 export interface ContentStandardSchemaV1<Input = unknown, Output = Input> extends StandardSchemaV1<Input, Output> {
