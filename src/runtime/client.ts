@@ -27,8 +27,14 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections<T extends keyof PageCollections>(collection: T, opts?: GenerateSearchSectionsOptions) {
-  return chainablePromise(collection, qb => generateSearchSections(qb, opts))
+export function queryCollectionSearchSections<
+  T extends keyof PageCollections,
+  K extends keyof PageCollections[T] = never,
+>(
+  collection: T,
+  opts?: GenerateSearchSectionsOptions<PageCollections[T], K>,
+) {
+  return chainablePromise(collection, qb => generateSearchSections<PageCollections[T], K>(qb, opts))
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
