@@ -9,13 +9,13 @@
     "dev:prepare": "nuxt prepare"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.4.2",
-    "@libsql/client": "^0.17.2",
+    "@electric-sql/pglite": "^0.4.5",
+    "@libsql/client": "^0.17.3",
     "@nuxt/content": "latest",
-    "@nuxt/ui": "^4.6.0",
+    "@nuxt/ui": "^4.7.1",
     "@nuxthub/core": "^0.10.7",
-    "better-sqlite3": "^12.8.0",
-    "drizzle-orm": "^0.45.1",
+    "better-sqlite3": "^12.9.0",
+    "drizzle-orm": "^0.45.2",
     "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",
     "pg": "^8.20.0",
