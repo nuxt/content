@@ -1,6 +1,11 @@
 import type { CollectionInfo } from '@nuxt/content'
 import contentManifest from '#content/manifest'
 
+/**
+ * Refine raw fields from D1/SQLite query results into their proper JS types.
+ * Handles JSON parsing, boolean coercion (preserving null for absent fields),
+ * and removes empty JSON objects that arise from D1 column defaults.
+ */
 export function refineContentFields<T>(sql: string, doc: T) {
   const fields = findCollectionFields(sql)
   const item = { ...doc } as T
@@ -32,6 +37,7 @@ export function refineContentFields<T>(sql: string, doc: T) {
   return item
 }
 
+/** Extract the field type map for the collection referenced in the SQL query. */
 function findCollectionFields(sql: string): Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'> {
   const table = sql.match(/FROM\s+(\w+)/)
   if (!table) {
@@ -42,6 +48,7 @@ function findCollectionFields(sql: string): Record<string, 'string' | 'number' |
   return info?.fields || {}
 }
 
+/** Strip the `_content_` prefix from a D1 table name to get the collection name. */
 function getCollectionName(table: string) {
   return table.replace(/^_content_/, '')
 }
