@@ -2,7 +2,7 @@ import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
 import { pick } from './utils'
-import type { CollectionQueryBuilder, PageCollectionItemBase } from '~/src/types'
+import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
 type Section = {
   // Path to the section
@@ -15,6 +15,50 @@ type Section = {
   level: number
   // Content of the section
   content: string
+}
+
+export type SearchResult = {
+  collection: string
+  id: string
+  title: string
+  titles: string[]
+  level: number
+  content: string
+  rank: number
+  snippet?: string
+}
+
+export type SearchCollectionOptions = {
+  /**
+   * Maximum number of results to return.
+   * @default 50
+   */
+  limit?: number
+  /** Restrict search to specific columns. Searches all columns when omitted. */
+  fields?: ('title' | 'content' | 'titles')[]
+  /**
+   * Ignore search terms shorter than this value.
+   * @default 1
+   */
+  minMatchCharLength?: number
+  /** Return a text snippet with highlighted matches. */
+  snippet?: {
+    /**
+     * Which column to extract the snippet from.
+     * @default 'content'
+     */
+    column?: 'title' | 'content'
+    /**
+     * Number of tokens around the match to include.
+     * @default 30
+     */
+    around?: number
+    /**
+     * HTML tag used to wrap matched terms.
+     * @default 'mark'
+     */
+    tag?: string
+  }
 }
 
 const HEADING = /^h([1-6])$/
@@ -131,4 +175,96 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
   }
 
   return text
+}
+
+const FTS_TABLE = '_fts_search'
+const indexedCollections = new Set<string>()
+let ftsTableCreated = false
+
+export function _resetFTSState() {
+  indexedCollections.clear()
+  ftsTableCreated = false
+}
+
+export async function buildFTSIndex<T extends PageCollectionItemBase>(
+  db: DatabaseAdapter,
+  collection: string,
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+) {
+  if (indexedCollections.has(collection)) {
+    return
+  }
+
+  if (!ftsTableCreated) {
+    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, titles, content, level UNINDEXED)`)
+    ftsTableCreated = true
+  }
+
+  const sections = await generateSearchSections(queryBuilder, opts)
+
+  for (const section of sections) {
+    await db.exec(
+      `INSERT INTO ${FTS_TABLE} (collection, id, title, titles, content, level) VALUES (?, ?, ?, ?, ?, ?)`,
+      [collection, section.id, section.title, JSON.stringify(section.titles), section.content, section.level],
+    )
+  }
+
+  indexedCollections.add(collection)
+}
+
+export async function queryFTS(
+  db: DatabaseAdapter,
+  collections: string[],
+  query: string,
+  opts?: SearchCollectionOptions,
+): Promise<SearchResult[]> {
+  const { limit = 50, snippet, fields, minMatchCharLength = 1 } = opts || {}
+
+  const tag = snippet?.tag ?? 'mark'
+  const pre = `<${tag}>`
+  const post = `</${tag}>`
+
+  const placeholders = collections.map(() => '?').join(', ')
+  const collectionFilter = `collection IN (${placeholders})`
+
+  let selectClause = `collection, id, title, titles, content, level, rank`
+  if (snippet) {
+    const col = snippet.column === 'title' ? 2 : 4
+    const around = snippet.around ?? 30
+    selectClause += `, snippet(${FTS_TABLE}, ${col}, '${pre}', '${post}', '...', ${around}) as snippet`
+  }
+
+  const terms = query.split(/\s+/).filter(t => t.length >= minMatchCharLength)
+  if (!terms.length) return []
+
+  const ftsQuery = terms.map((term) => {
+    const escaped = term.replace(/"/g, '""')
+    if (fields?.length) {
+      return fields.map(f => `${f} : "${escaped}"*`).join(' OR ')
+    }
+    return `"${escaped}"*`
+  }).join(' ')
+
+  const sql = `SELECT ${selectClause} FROM ${FTS_TABLE} WHERE ${FTS_TABLE} MATCH ? AND ${collectionFilter} ORDER BY rank LIMIT ?`
+  const params = [ftsQuery, ...collections, limit]
+
+  let rows: Record<string, unknown>[]
+  try {
+    rows = await db.all<Record<string, unknown>>(sql, params)
+  }
+  catch {
+    return []
+  }
+
+  return rows.map(row => ({
+    collection: row.collection as string,
+    id: row.id as string,
+    title: row.title as string,
+    titles: JSON.parse((row.titles as string) || '[]'),
+    level: row.level as number,
+    content: row.content as string,
+    rank: row.rank as number,
+    ...(snippet && { snippet: row.snippet as string }),
+  }))
 }

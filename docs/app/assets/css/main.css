@@ -5,6 +5,8 @@
 @source "../../../node_modules/docus/app/**/*";
 
 @theme static {
+  --container-8xl: 90rem;
+
   --font-sans: 'Public Sans', sans-serif;
 
   --color-green-50: #EFFDF5;
@@ -18,4 +20,8 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+}
+
+:root {
+  --ui-container: var(--container-8xl);
 }
