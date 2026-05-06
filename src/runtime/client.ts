@@ -40,7 +40,9 @@ async function executeContentQuery<T extends keyof Collections, Result = Collect
           return result as Result[]
         }
       }
-      catch {}
+      catch {
+        // WASM query failed — fall through to server fetch
+      }
       return fetchQuery(event, String(collection), sql) as Promise<Result[]>
     }
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
