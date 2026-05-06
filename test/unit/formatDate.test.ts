@@ -29,6 +29,11 @@ describe('formatDate', () => {
     expect(formatDate('2022-06-15 14:30:00')).toBe('2022-06-15')
   })
 
+  it('handles Date object input', () => {
+    const date = new Date('2022-06-15T14:30:00.000Z')
+    expect(formatDate(date as unknown as string)).toBe('2022-06-15')
+  })
+
   it('throws on invalid date', () => {
     expect(() => formatDate('not-a-date')).toThrow(TypeError)
     expect(() => formatDate('not-a-date')).toThrow('Invalid date value')

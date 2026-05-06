@@ -4,11 +4,12 @@ export const defineTransformer = (transformer: ContentTransformer) => {
   return transformer
 }
 
-export const formatDateTime = (datetime: string): string => {
-  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(datetime)) {
-    return datetime
+export const formatDateTime = (datetime: string | Date): string => {
+  const input = datetime instanceof Date ? datetime.toISOString() : String(datetime)
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(input)) {
+    return input
   }
-  const normalized = datetime.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?$/, '$1T$2$3Z')
+  const normalized = input.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?$/, '$1T$2$3Z')
   const d = new Date(normalized)
   if (Number.isNaN(d.getTime())) {
     throw new TypeError(`Invalid datetime value: "${datetime}"`)
@@ -24,11 +25,12 @@ export const formatDateTime = (datetime: string): string => {
   return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
-export const formatDate = (date: string): string => {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date
+export const formatDate = (date: string | Date): string => {
+  const input = date instanceof Date ? date.toISOString() : String(date)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    return input
   }
-  const normalized = date.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?$/, '$1T$2$3Z')
+  const normalized = input.replace(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?$/, '$1T$2$3Z')
   const d = new Date(normalized)
   if (Number.isNaN(d.getTime())) {
     throw new TypeError(`Invalid date value: "${date}"`)
