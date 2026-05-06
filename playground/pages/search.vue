@@ -43,28 +43,24 @@ watch(query, debouncedSearch)
       <h1 class="text-2xl font-bold mb-2">
         FTS5 Search
       </h1>
-      <p class="text-gray-500">
+      <p class="text-muted">
         Full-text search powered by SQLite FTS5. Supports prefix queries (word*), phrase matching ("exact phrase"), and boolean operators (word1 OR word2).
       </p>
     </div>
 
-    <UInput
-      v-model="query"
-      placeholder="Search content..."
-      icon="i-lucide-search"
-      size="lg"
-      autofocus
-    />
+    <div class="flex items-center gap-2">
+      <UInput v-model="query" placeholder="Search content..." icon="i-lucide-search" size="lg" autofocus />
 
-    <div v-if="status === 'loading'" class="text-sm text-gray-400">
-      Building search index...
+      <div v-if="status === 'loading'" class="text-sm text-dimmed">
+        Building search index...
+      </div>
+
+      <div v-else-if="searchTime > 0" class="text-sm text-dimmed">
+        {{ results.length }} results in {{ searchTime }}ms
+      </div>
     </div>
 
-    <div v-else-if="searchTime > 0" class="text-sm text-gray-400">
-      {{ results.length }} results in {{ searchTime }}ms
-    </div>
-
-    <div v-if="loading" class="text-gray-400">
+    <div v-if="loading" class="text-dimmed">
       Searching...
     </div>
 
@@ -80,23 +76,23 @@ watch(query, debouncedSearch)
             </UBadge>
           </div>
 
-          <div v-if="result.titles.length" class="text-xs text-gray-400">
+          <div v-if="result.titles.length" class="text-sm text-muted">
             {{ result.titles.join(' > ') }}
           </div>
 
-          <p v-if="result.snippet" class="text-sm text-gray-500" v-html="result.snippet" />
-          <p v-else class="text-sm text-gray-500">
+          <p v-if="result.snippet" class="text-sm text-dimmed" v-html="result.snippet" />
+          <p v-else class="text-sm text-dimmed">
             {{ result.content?.slice(0, 150) }}
           </p>
 
-          <div class="text-xs text-gray-400">
+          <div class="text-xs text-muted">
             rank: {{ result.rank.toFixed(3) }}
           </div>
         </div>
       </UCard>
     </div>
 
-    <div v-else-if="query && !loading" class="text-gray-400">
+    <div v-else-if="query && !loading" class="text-dimmed">
       No results found.
     </div>
   </div>

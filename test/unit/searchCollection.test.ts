@@ -234,8 +234,8 @@ describe('searchCollection FTS5', () => {
         snippet: { column: 'content', around: 20, tag: 'b' },
       })
 
-      expect(allCalls[0]!.sql).toContain("'<b>'")
-      expect(allCalls[0]!.sql).toContain("'</b>'")
+      expect(allCalls[0]!.sql).toContain('\'<b>\'')
+      expect(allCalls[0]!.sql).toContain('\'</b>\'')
     })
   })
 })
