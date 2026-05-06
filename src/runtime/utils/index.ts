@@ -65,7 +65,7 @@ export function findPageHeadline(navigation?: ContentNavigationItem[], path?: st
         }
         for (const child of link.children) {
           if (child.path === path) {
-            return link.title
+            return typeof link.title === 'string' ? link.title : String(link.title ?? '')
           }
         }
       }
@@ -75,7 +75,7 @@ export function findPageHeadline(navigation?: ContentNavigationItem[], path?: st
         for (const child of link.children) {
           const isIndex = child.stem?.endsWith('/index')
           if (child.path === path && !isIndex) {
-            return link.title
+            return typeof link.title === 'string' ? link.title : String(link.title ?? '')
           }
         }
         const headline = findPageHeadline(link.children, path, options)
