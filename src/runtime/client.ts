@@ -34,15 +34,16 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(c
 /**
  * Execute a content query using either the client-side WASM SQLite database
  * or the server-side fetch API. In preview mode, falls back to server fetch
- * when the WASM query returns empty (e.g. for newly created drafts).
+ * when the WASM query returns empty (e.g. for newly created drafts not yet
+ * synced to the client-side database).
  */
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
   if (import.meta.client && window.WebAssembly) {
     if (window.sessionStorage?.getItem('previewToken')) {
       try {
         const result = await queryContentSqlClientWasm<T, Result>(collection, sql)
-        if (result && (Array.isArray(result) ? result.length > 0 : true)) {
-          return result as Result[]
+        if (result?.length) {
+          return result
         }
       }
       catch {
