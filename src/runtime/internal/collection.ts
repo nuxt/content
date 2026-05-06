@@ -6,10 +6,21 @@ export function refineContentFields<T>(sql: string, doc: T) {
   const item = { ...doc } as T
   for (const key in item) {
     if (fields[key as string] === 'json' && item[key] && item[key] !== 'undefined') {
-      item[key] = JSON.parse(item[key] as string)
+      const parsed = JSON.parse(item[key] as string)
+      if (key !== 'meta' && parsed && typeof parsed === 'object' && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
+        delete item[key]
+      }
+      else {
+        item[key] = parsed
+      }
     }
     if (fields[key as string] === 'boolean' && item[key] !== 'undefined') {
-      item[key] = Boolean(item[key]) as never
+      if (item[key] == null) {
+        delete item[key]
+      }
+      else {
+        item[key] = Boolean(item[key]) as never
+      }
     }
   }
 
