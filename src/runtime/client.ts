@@ -31,6 +31,11 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(c
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
+/**
+ * Execute a content query using either the client-side WASM SQLite database
+ * or the server-side fetch API. In preview mode, falls back to server fetch
+ * when the WASM query returns empty (e.g. for newly created drafts).
+ */
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
   if (import.meta.client && window.WebAssembly) {
     if (window.sessionStorage?.getItem('previewToken')) {
