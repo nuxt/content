@@ -33,6 +33,16 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(c
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
   if (import.meta.client && window.WebAssembly) {
+    if (window.sessionStorage?.getItem('previewToken')) {
+      try {
+        const result = await queryContentSqlClientWasm<T, Result>(collection, sql)
+        if (result && (Array.isArray(result) ? result.length > 0 : true)) {
+          return result as Result[]
+        }
+      }
+      catch {}
+      return fetchQuery(event, String(collection), sql) as Promise<Result[]>
+    }
     return queryContentSqlClientWasm<T, Result>(collection, sql) as Promise<Result[]>
   }
   else {
