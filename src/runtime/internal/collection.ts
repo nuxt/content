@@ -8,7 +8,7 @@ export function refineContentFields<T>(sql: string, doc: T) {
     if (fields[key as string] === 'json' && item[key] && item[key] !== 'undefined') {
       const parsed = JSON.parse(item[key] as string)
       if (key !== 'meta' && parsed && typeof parsed === 'object' && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
-        Reflect.deleteProperty(item, key)
+        Reflect.deleteProperty(item as object, key)
       }
       else {
         item[key] = parsed
@@ -16,7 +16,7 @@ export function refineContentFields<T>(sql: string, doc: T) {
     }
     if (fields[key as string] === 'boolean' && item[key] !== 'undefined') {
       if (item[key] == null) {
-        Reflect.deleteProperty(item, key)
+        Reflect.deleteProperty(item as object, key)
       }
       else {
         item[key] = Boolean(item[key]) as never
