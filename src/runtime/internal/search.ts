@@ -221,7 +221,7 @@ export async function queryFTS(
 ): Promise<SearchResult[]> {
   const { limit = 50, snippet, fields, minMatchCharLength = 1 } = opts || {}
 
-  const tag = snippet?.tag ?? 'mark'
+  const tag = (snippet?.tag ?? 'mark').replace(/[^a-z0-9]/gi, '')
   const pre = `<${tag}>`
   const post = `</${tag}>`
 
@@ -231,7 +231,7 @@ export async function queryFTS(
   let selectClause = `collection, id, title, titles, content, level, rank`
   if (snippet) {
     const col = snippet.column === 'title' ? 2 : 4
-    const around = snippet.around ?? 30
+    const around = Number(snippet.around) || 30
     selectClause += `, snippet(${FTS_TABLE}, ${col}, '${pre}', '${post}', '...', ${around}) as snippet`
   }
 
