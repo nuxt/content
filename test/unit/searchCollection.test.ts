@@ -59,6 +59,7 @@ describe('searchCollection FTS5', () => {
         'docs',
         '/docs/intro',
         'Introduction',
+        'Introduction',
         '[]',
         'Getting started guide',
         1,
@@ -68,6 +69,7 @@ describe('searchCollection FTS5', () => {
       expect(execCalls[2]!.params).toEqual([
         'docs',
         '/docs/intro#setup',
+        'Setup',
         'Setup',
         '["Introduction"]',
         'Install the package',
@@ -146,7 +148,7 @@ describe('searchCollection FTS5', () => {
         snippet: { column: 'content', around: 20 },
       })
 
-      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 4, \'<mark>\', \'</mark>\', \'...\', 20)')
+      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 5, \'<mark>\', \'</mark>\', \'...\', 20)')
     })
 
     it('should use title column index for snippet when specified', async () => {
