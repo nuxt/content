@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 
-const { status, search } = useSearchCollection(['nuxt', 'vue'])
+const { status, search } = useSearchCollection('ui', {
+  ignoredTags: ['style'],
+})
 
 const query = ref('')
 const results = ref<Awaited<ReturnType<typeof search>>>([])
@@ -19,9 +21,10 @@ async function onSearch() {
 
   try {
     results.value = await search(query.value, {
-      limit: 20,
+      limit: 30,
       snippet: { column: 'content', around: 40 },
     })
+    console.log(results.value)
   }
   catch (e) {
     console.error('Search error:', e)
@@ -87,45 +90,48 @@ watch(query, debouncedSearch)
       <UCard
         v-for="result in results"
         :key="result.id"
+        :ui="{ body: 'sm:p-4' }"
       >
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
+        <div>
+          <div class="flex items-center gap-1 text-sm">
+            <div
+              v-if="result.titles.length"
+              class="text-dimmed"
+            >
+              {{ result.titles.join(' > ') }}
+              >
+            </div>
+
             <NuxtLink
-              :to="result.id"
+              :to="`https://ui.nuxt.com${result.id}`"
               class="font-semibold text-primary hover:underline"
             >
               {{ result.title }}
             </NuxtLink>
-            <UBadge
-              variant="subtle"
-              size="xs"
-            >
-              h{{ result.level }}
-            </UBadge>
-          </div>
 
-          <div
-            v-if="result.titles.length"
-            class="text-sm text-muted"
-          >
-            {{ result.titles.join(' > ') }}
+            <UBadge
+              :label="`h${result.level}`"
+              variant="subtle"
+              size="sm"
+              class="ms-1"
+            />
+
+            <div class="text-sm text-dimmed ms-auto">
+              rank: {{ result.rank.toFixed(3) }}
+            </div>
           </div>
 
           <p
             v-if="result.snippet"
-            class="text-sm text-dimmed"
+            class="text-sm text-muted [&_mark]:underline [&_mark]:text-highlighted [&_mark]:bg-transparent mt-1"
             v-html="result.snippet"
           />
           <p
-            v-else
-            class="text-sm text-dimmed"
+            v-else-if="result.content"
+            class="text-sm text-muted mt-1"
           >
             {{ result.content?.slice(0, 150) }}
           </p>
-
-          <div class="text-xs text-muted">
-            rank: {{ result.rank.toFixed(3) }}
-          </div>
         </div>
       </UCard>
     </div>

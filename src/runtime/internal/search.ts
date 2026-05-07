@@ -41,6 +41,30 @@ export type SearchCollectionOptions = {
    * @default 1
    */
   minMatchCharLength?: number
+  /** Control how matches in different columns and heading levels affect ranking. */
+  weights?: {
+    /**
+     * Boost factor for matches in the title column.
+     * @default 10
+     */
+    title?: number
+    /**
+     * Boost factor for matches in the content column.
+     * @default 5
+     */
+    content?: number
+    /**
+     * Boost factor for matches in the titles (breadcrumb) column.
+     * @default 1
+     */
+    titles?: number
+    /**
+     * Whether to boost higher-level sections (h1 > h2 > h3...).
+     * Set to `false` to disable level-based boosting.
+     * @default true
+     */
+    heading?: boolean
+  }
   /** Return a text snippet with highlighted matches. */
   snippet?: {
     /**
@@ -197,16 +221,18 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
   }
 
   if (!ftsTableCreated) {
-    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, titles, content, level UNINDEXED)`)
+    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles, content, level UNINDEXED)`)
     ftsTableCreated = true
   }
 
   const sections = await generateSearchSections(queryBuilder, opts)
 
   for (const section of sections) {
+    const titleNormalized = section.title.replace(/([a-z])([A-Z])/g, '$1 $2')
+
     await db.exec(
-      `INSERT INTO ${FTS_TABLE} (collection, id, title, titles, content, level) VALUES (?, ?, ?, ?, ?, ?)`,
-      [collection, section.id, section.title, JSON.stringify(section.titles), section.content, section.level],
+      `INSERT INTO ${FTS_TABLE} (collection, id, title, title_normalized, titles, content, level) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [collection, section.id, section.title, titleNormalized, JSON.stringify(section.titles), section.content, section.level],
     )
   }
 
@@ -219,7 +245,12 @@ export async function queryFTS(
   query: string,
   opts?: SearchCollectionOptions,
 ): Promise<SearchResult[]> {
-  const { limit = 50, snippet, fields, minMatchCharLength = 1 } = opts || {}
+  const { limit = 50, snippet, fields, minMatchCharLength = 1, weights } = opts || {}
+
+  const titleWeight = weights?.title ?? 10
+  const contentWeight = weights?.content ?? 5
+  const titlesWeight = weights?.titles ?? 1
+  const headingBoost = weights?.heading !== false
 
   const tag = (snippet?.tag ?? 'mark').replace(/[^a-z0-9]/gi, '')
   const pre = `<${tag}>`
@@ -228,9 +259,11 @@ export async function queryFTS(
   const placeholders = collections.map(() => '?').join(', ')
   const collectionFilter = `collection IN (${placeholders})`
 
-  let selectClause = `collection, id, title, titles, content, level, rank`
+  const bm25Expr = `bm25(${FTS_TABLE}, 0, 0, ${titleWeight}, ${titleWeight}, ${titlesWeight}, ${contentWeight}, 0)`
+  const rankExpr = headingBoost ? `(${bm25Expr} / level)` : bm25Expr
+  let selectClause = `collection, id, title, titles, content, level, ${rankExpr} as rank`
   if (snippet) {
-    const col = snippet.column === 'title' ? 2 : 4
+    const col = snippet.column === 'title' ? 2 : 5
     const around = Number(snippet.around) || 30
     selectClause += `, snippet(${FTS_TABLE}, ${col}, '${pre}', '${post}', '...', ${around}) as snippet`
   }
