@@ -268,7 +268,9 @@ describe('searchCollection FTS5', () => {
     })
 
     it('should return empty array on FTS5 syntax error', async () => {
-      mockDb.all = vi.fn(async () => { throw new Error('fts5: syntax error') })
+      mockDb.all = vi.fn(async () => {
+        throw new Error('fts5: syntax error')
+      })
 
       const results = await queryFTS(mockDb, ['docs'], 'test')
 
