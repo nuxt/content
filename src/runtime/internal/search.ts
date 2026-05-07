@@ -25,7 +25,7 @@ export type SearchResult = {
   level: number
   content: string
   rank: number
-  snippet?: string
+  snippets?: { title?: string, content?: string }
 }
 
 export type SearchCollectionOptions = {
@@ -35,12 +35,12 @@ export type SearchCollectionOptions = {
    */
   limit?: number
   /** Restrict search to specific columns. Searches all columns when omitted. */
-  fields?: ('title' | 'content' | 'titles')[]
+  fields?: ('title' | 'content')[]
   /**
    * Ignore search terms shorter than this value.
    * @default 1
    */
-  minMatchCharLength?: number
+  minTermLength?: number
   /** Control how matches in different columns and heading levels affect ranking. */
   weights?: {
     /**
@@ -54,24 +54,19 @@ export type SearchCollectionOptions = {
      */
     content?: number
     /**
-     * Boost factor for matches in the titles (breadcrumb) column.
-     * @default 1
-     */
-    titles?: number
-    /**
      * Whether to boost higher-level sections (h1 > h2 > h3...).
      * Set to `false` to disable level-based boosting.
      * @default true
      */
     heading?: boolean
   }
-  /** Return a text snippet with highlighted matches. */
+  /** Return text snippets with highlighted matches for the specified columns. */
   snippet?: {
     /**
-     * Which column to extract the snippet from.
-     * @default 'content'
+     * Which columns to extract snippets from.
+     * @default ['content']
      */
-    column?: 'title' | 'content'
+    columns?: ('title' | 'content')[]
     /**
      * Number of tokens around the match to include.
      * @default 30
@@ -221,7 +216,7 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
   }
 
   if (!ftsTableCreated) {
-    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles, content, level UNINDEXED)`)
+    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles UNINDEXED, content, level UNINDEXED)`)
     ftsTableCreated = true
   }
 
@@ -245,11 +240,10 @@ export async function queryFTS(
   query: string,
   opts?: SearchCollectionOptions,
 ): Promise<SearchResult[]> {
-  const { limit = 50, snippet, fields, minMatchCharLength = 1, weights } = opts || {}
+  const { limit = 50, snippet, fields, minTermLength = 1, weights } = opts || {}
 
   const titleWeight = weights?.title ?? 10
   const contentWeight = weights?.content ?? 5
-  const titlesWeight = weights?.titles ?? 1
   const headingBoost = weights?.heading !== false
 
   const tag = (snippet?.tag ?? 'mark').replace(/[^a-z0-9]/gi, '')
@@ -259,16 +253,17 @@ export async function queryFTS(
   const placeholders = collections.map(() => '?').join(', ')
   const collectionFilter = `collection IN (${placeholders})`
 
-  const bm25Expr = `bm25(${FTS_TABLE}, 0, 0, ${titleWeight}, ${titleWeight}, ${titlesWeight}, ${contentWeight}, 0)`
+  const bm25Expr = `bm25(${FTS_TABLE}, 0, 0, ${titleWeight}, ${titleWeight}, 0, ${contentWeight}, 0)`
   const rankExpr = headingBoost ? `(${bm25Expr} / level)` : bm25Expr
   let selectClause = `collection, id, title, titles, content, level, ${rankExpr} as rank`
-  if (snippet) {
-    const col = snippet.column === 'title' ? 2 : 5
-    const around = Number(snippet.around) || 30
-    selectClause += `, snippet(${FTS_TABLE}, ${col}, '${pre}', '${post}', '...', ${around}) as snippet`
+  const snippetColumns = snippet?.columns ?? (snippet ? ['content'] : [])
+  const around = Number(snippet?.around) || 30
+  for (const col of snippetColumns) {
+    const colIdx = col === 'title' ? 2 : 5
+    selectClause += `, snippet(${FTS_TABLE}, ${colIdx}, '${pre}', '${post}', '...', ${around}) as snippet_${col}`
   }
 
-  const terms = query.split(/\s+/).filter(t => t.length >= minMatchCharLength)
+  const terms = query.split(/\s+/).filter(t => t.length >= minTermLength)
   if (!terms.length) return []
 
   const ftsQuery = terms.map((term) => {
@@ -298,6 +293,10 @@ export async function queryFTS(
     level: row.level as number,
     content: row.content as string,
     rank: row.rank as number,
-    ...(snippet && { snippet: row.snippet as string }),
+    ...(snippetColumns.length && {
+      snippets: Object.fromEntries(
+        snippetColumns.map(col => [col, row[`snippet_${col}`] as string]),
+      ),
+    }),
   }))
 }

@@ -143,20 +143,29 @@ describe('searchCollection FTS5', () => {
       expect(allCalls[0]!.params![allCalls[0]!.params!.length - 1]).toBe(10)
     })
 
-    it('should include snippet when requested', async () => {
+    it('should include content snippet when requested', async () => {
       await queryFTS(mockDb, ['docs'], 'query', {
-        snippet: { column: 'content', around: 20 },
+        snippet: { columns: ['content'], around: 20 },
       })
 
-      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 5, \'<mark>\', \'</mark>\', \'...\', 20)')
+      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 5, \'<mark>\', \'</mark>\', \'...\', 20) as snippet_content')
     })
 
-    it('should use title column index for snippet when specified', async () => {
+    it('should include title snippet when specified', async () => {
       await queryFTS(mockDb, ['docs'], 'query', {
-        snippet: { column: 'title', around: 15 },
+        snippet: { columns: ['title'], around: 15 },
       })
 
-      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 2, \'<mark>\', \'</mark>\', \'...\', 15)')
+      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 2, \'<mark>\', \'</mark>\', \'...\', 15) as snippet_title')
+    })
+
+    it('should include multiple snippets', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', {
+        snippet: { columns: ['title', 'content'], around: 20 },
+      })
+
+      expect(allCalls[0]!.sql).toContain('snippet_title')
+      expect(allCalls[0]!.sql).toContain('snippet_content')
     })
 
     it('should parse results correctly', async () => {
@@ -185,7 +194,7 @@ describe('searchCollection FTS5', () => {
       }])
     })
 
-    it('should include snippet in results when requested', async () => {
+    it('should include snippets in results when requested', async () => {
       mockDb.all = vi.fn(async () => [
         {
           collection: 'docs',
@@ -195,25 +204,29 @@ describe('searchCollection FTS5', () => {
           content: 'Install the package with npm',
           level: 2,
           rank: -1.2,
-          snippet: '...Install the <mark>package</mark> with npm...',
+          snippet_content: '...Install the <mark>package</mark> with npm...',
+          snippet_title: 'Setup',
         },
       ])
 
       const results = await queryFTS(mockDb, ['docs'], 'package', {
-        snippet: { column: 'content', around: 20 },
+        snippet: { columns: ['title', 'content'], around: 20 },
       })
 
-      expect(results[0]!.snippet).toBe('...Install the <mark>package</mark> with npm...')
+      expect(results[0]!.snippets).toEqual({
+        title: 'Setup',
+        content: '...Install the <mark>package</mark> with npm...',
+      })
     })
 
     it('should filter terms by minMatchCharLength', async () => {
-      await queryFTS(mockDb, ['docs'], 'a vue b', { minMatchCharLength: 2 })
+      await queryFTS(mockDb, ['docs'], 'a vue b', { minTermLength: 2 })
 
       expect(allCalls[0]!.params![0]).toBe('"vue"*')
     })
 
     it('should return empty when all terms are below minMatchCharLength', async () => {
-      const results = await queryFTS(mockDb, ['docs'], 'a b c', { minMatchCharLength: 3 })
+      const results = await queryFTS(mockDb, ['docs'], 'a b c', { minTermLength: 3 })
 
       expect(results).toEqual([])
       expect(allCalls.length).toBe(0)
@@ -233,11 +246,83 @@ describe('searchCollection FTS5', () => {
 
     it('should use custom highlight tag', async () => {
       await queryFTS(mockDb, ['docs'], 'query', {
-        snippet: { column: 'content', around: 20, tag: 'b' },
+        snippet: { columns: ['content'], around: 20, tag: 'b' },
       })
 
       expect(allCalls[0]!.sql).toContain('\'<b>\'')
       expect(allCalls[0]!.sql).toContain('\'</b>\'')
+    })
+
+    it('should sanitize highlight tag', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', {
+        snippet: { columns: ['content'], tag: 'script>alert(1)</script' },
+      })
+
+      expect(allCalls[0]!.sql).toContain('\'<scriptalert1script>\'')
+    })
+
+    it('should escape double quotes in query terms', async () => {
+      await queryFTS(mockDb, ['docs'], 'say "hello"')
+
+      expect(allCalls[0]!.params![0]).toBe('"say"* """hello"""*')
+    })
+
+    it('should return empty array on FTS5 syntax error', async () => {
+      mockDb.all = vi.fn(async () => { throw new Error('fts5: syntax error') })
+
+      const results = await queryFTS(mockDb, ['docs'], 'test')
+
+      expect(results).toEqual([])
+    })
+
+    it('should include level boost in rank by default', async () => {
+      await queryFTS(mockDb, ['docs'], 'query')
+
+      expect(allCalls[0]!.sql).toContain('/ level)')
+    })
+
+    it('should disable level boost when heading is false', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', { weights: { heading: false } })
+
+      expect(allCalls[0]!.sql).not.toContain('/ level)')
+    })
+
+    it('should use custom weights', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', { weights: { title: 20, content: 1 } })
+
+      expect(allCalls[0]!.sql).toContain('bm25(_fts_search, 0, 0, 20, 20, 0, 1, 0)')
+    })
+  })
+
+  describe('buildFTSIndex title normalization', () => {
+    it('should split camelCase titles into title_normalized column', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/docs/button',
+        title: 'ColorModeButton',
+        description: 'A button component',
+        body: { type: 'root', children: [] },
+      }])
+
+      await buildFTSIndex(mockDb, 'docs', mockQueryBuilder)
+
+      const insertParams = execCalls[1]!.params!
+      expect(insertParams[2]).toBe('ColorModeButton')
+      expect(insertParams[3]).toBe('Color Mode Button')
+    })
+
+    it('should keep title_normalized same as title when no camelCase', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/docs/intro',
+        title: 'Introduction',
+        description: '',
+        body: { type: 'root', children: [] },
+      }])
+
+      await buildFTSIndex(mockDb, 'docs', mockQueryBuilder)
+
+      const insertParams = execCalls[1]!.params!
+      expect(insertParams[2]).toBe('Introduction')
+      expect(insertParams[3]).toBe('Introduction')
     })
   })
 })

@@ -22,7 +22,7 @@ async function onSearch() {
   try {
     results.value = await search(query.value, {
       limit: 30,
-      snippet: { column: 'content', around: 40 },
+      snippet: { columns: ['title', 'content'], around: 40 },
     })
     console.log(results.value)
   }
@@ -122,9 +122,9 @@ watch(query, debouncedSearch)
           </div>
 
           <p
-            v-if="result.snippet"
+            v-if="result.snippets?.content"
             class="text-sm text-muted [&_mark]:underline [&_mark]:text-highlighted [&_mark]:bg-transparent mt-1"
-            v-html="result.snippet"
+            v-html="result.snippets.content"
           />
           <p
             v-else-if="result.content"
