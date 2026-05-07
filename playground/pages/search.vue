@@ -105,8 +105,9 @@ watch(query, debouncedSearch)
             <NuxtLink
               :to="`https://ui.nuxt.com${result.id}`"
               class="font-semibold text-highlighted [&_mark]:text-primary [&_mark]:bg-transparent"
-              v-html="result.snippets?.title || result.title"
-            />
+            >
+              <span v-html="result.snippets?.title || result.title" />
+            </NuxtLink>
 
             <UBadge
               :label="`h${result.level}`"
