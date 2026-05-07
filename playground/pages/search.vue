@@ -37,6 +37,7 @@ const debouncedSearch = useDebounceFn(onSearch, 200)
 watch(query, debouncedSearch)
 </script>
 
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="py-8 space-y-6">
     <div>
@@ -110,7 +111,6 @@ watch(query, debouncedSearch)
             {{ result.titles.join(' > ') }}
           </div>
 
-          <!-- eslint-disable-next-line vue/no-v-html -->
           <p
             v-if="result.snippet"
             class="text-sm text-dimmed"
