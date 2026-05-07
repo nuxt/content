@@ -2,14 +2,14 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
+import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, SearchSection } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex, insertSections } from './internal/search'
 import { fetchQuery } from './internal/api'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
 
-export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
+export type { SearchCollectionOptions, SearchResult, SearchSection, GenerateSearchSectionsOptions } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -91,11 +91,22 @@ export function useSearchCollection<T extends keyof PageCollections>(
     if (!db) {
       await init()
     }
-    const collections = resolveCollections()
+    const collections = searchOpts?.collections ?? indexedFor
     return queryFTS(db!, collections, query, searchOpts)
   }
 
-  return { status, search, init }
+  async function addToIndex(name: string, sections: SearchSection[]) {
+    if (!db) {
+      db = await import('./internal/database.client')
+        .then(m => m.loadDatabaseAdapter(resolveCollections()[0]!))
+    }
+    await insertSections(db, name, sections)
+    if (!indexedFor.includes(name)) {
+      indexedFor = [...indexedFor, name]
+    }
+  }
+
+  return { status, search, init, addToIndex }
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {

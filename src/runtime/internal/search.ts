@@ -17,6 +17,14 @@ type Section = {
   content: string
 }
 
+export type SearchSection = {
+  id: string
+  title: string
+  titles?: string[]
+  content: string
+  level?: number
+}
+
 export type SearchResult = {
   collection: string
   id: string
@@ -34,6 +42,8 @@ export type SearchCollectionOptions = {
    * @default 50
    */
   limit?: number
+  /** Filter results to specific collections. Searches all indexed collections when omitted. */
+  collections?: string[]
   /** Restrict search to specific columns. Searches all columns when omitted. */
   fields?: ('title' | 'content')[]
   /**
@@ -234,6 +244,24 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
     await db.exec(
       `INSERT INTO ${FTS_TABLE} (collection, id, title, title_normalized, titles, content, level) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [collection, section.id, section.title, titleNormalized, JSON.stringify(section.titles), section.content, section.level],
+    )
+  }
+
+  indexedCollections.add(collection)
+}
+
+export async function insertSections(db: DatabaseAdapter, collection: string, sections: SearchSection[]) {
+  if (!ftsTableCreated) {
+    await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles UNINDEXED, content, level UNINDEXED)`)
+    ftsTableCreated = true
+  }
+
+  for (const section of sections) {
+    const titleNormalized = section.title.replace(/([a-z])([A-Z])/g, '$1 $2')
+
+    await db.exec(
+      `INSERT INTO ${FTS_TABLE} (collection, id, title, title_normalized, titles, content, level) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [collection, section.id, section.title, titleNormalized, JSON.stringify(section.titles ?? []), section.content, section.level ?? 1],
     )
   }
 
