@@ -49,39 +49,77 @@ watch(query, debouncedSearch)
     </div>
 
     <div class="flex items-center gap-2">
-      <UInput v-model="query" placeholder="Search content..." icon="i-lucide-search" size="lg" autofocus />
+      <UInput
+        v-model="query"
+        placeholder="Search content..."
+        icon="i-lucide-search"
+        size="lg"
+        autofocus
+      />
 
-      <div v-if="status === 'loading'" class="text-sm text-dimmed">
+      <div
+        v-if="status === 'loading'"
+        class="text-sm text-dimmed"
+      >
         Building search index...
       </div>
 
-      <div v-else-if="searchTime > 0" class="text-sm text-dimmed">
+      <div
+        v-else-if="searchTime > 0"
+        class="text-sm text-dimmed"
+      >
         {{ results.length }} results in {{ searchTime }}ms
       </div>
     </div>
 
-    <div v-if="loading" class="text-dimmed">
+    <div
+      v-if="loading"
+      class="text-dimmed"
+    >
       Searching...
     </div>
 
-    <div v-else-if="results.length" class="space-y-3">
-      <UCard v-for="result in results" :key="result.id">
+    <div
+      v-else-if="results.length"
+      class="space-y-3"
+    >
+      <UCard
+        v-for="result in results"
+        :key="result.id"
+      >
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <NuxtLink :to="result.id" class="font-semibold text-primary hover:underline">
+            <NuxtLink
+              :to="result.id"
+              class="font-semibold text-primary hover:underline"
+            >
               {{ result.title }}
             </NuxtLink>
-            <UBadge variant="subtle" size="xs">
+            <UBadge
+              variant="subtle"
+              size="xs"
+            >
               h{{ result.level }}
             </UBadge>
           </div>
 
-          <div v-if="result.titles.length" class="text-sm text-muted">
+          <div
+            v-if="result.titles.length"
+            class="text-sm text-muted"
+          >
             {{ result.titles.join(' > ') }}
           </div>
 
-          <p v-if="result.snippet" class="text-sm text-dimmed" v-html="result.snippet" />
-          <p v-else class="text-sm text-dimmed">
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <p
+            v-if="result.snippet"
+            class="text-sm text-dimmed"
+            v-html="result.snippet"
+          />
+          <p
+            v-else
+            class="text-sm text-dimmed"
+          >
             {{ result.content?.slice(0, 150) }}
           </p>
 
@@ -92,7 +130,10 @@ watch(query, debouncedSearch)
       </UCard>
     </div>
 
-    <div v-else-if="query && !loading" class="text-dimmed">
+    <div
+      v-else-if="query && !loading"
+      class="text-dimmed"
+    >
       No results found.
     </div>
   </div>
