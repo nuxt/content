@@ -3,10 +3,11 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { fetchQuery } from './internal/api'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
-import { ref, tryUseNuxtApp } from '#imports'
+import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
+import type { MaybeRefOrGetter } from 'vue'
 
 export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
 
@@ -35,26 +36,43 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(c
 }
 
 export function useSearchCollection<T extends keyof PageCollections>(
-  collection: T | T[],
+  collection: MaybeRefOrGetter<T | T[]>,
   opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
 ) {
   const { immediate = true, ...indexOpts } = opts || {}
-  const collections = (Array.isArray(collection) ? collection : [collection]).map(String)
   const status = ref<'idle' | 'loading' | 'ready' | 'error'>(immediate ? 'loading' : 'idle')
   let db: DatabaseAdapter | undefined
   let initPromise: Promise<DatabaseAdapter> | undefined
+  let indexedFor: string[] = []
 
-  function init() {
-    if (initPromise) return initPromise
+  function resolveCollections() {
+    const val = toValue(collection)
+    return (Array.isArray(val) ? val : [val]).map(String)
+  }
+
+  async function init() {
+    const collections = resolveCollections()
+    const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
+    const newCollections = collections.filter(c => !indexedFor.includes(c))
+
+    if (!newCollections.length && !hasRemovedCollections && initPromise) return initPromise
+
     status.value = 'loading'
     initPromise = import('./internal/database.client')
       .then(m => m.loadDatabaseAdapter(collections[0]!))
       .then(async (_db) => {
         db = _db
-        await Promise.all(collections.map((col) => {
+
+        if (hasRemovedCollections) {
+          await resetFTSIndex(_db)
+        }
+
+        const toIndex = hasRemovedCollections ? collections : newCollections
+        await Promise.all(toIndex.map((col) => {
           const qb = queryCollection(col as T)
           return buildFTSIndex(_db, col, qb, indexOpts)
         }))
+        indexedFor = [...collections]
         status.value = 'ready'
         return _db
       })
@@ -65,14 +83,15 @@ export function useSearchCollection<T extends keyof PageCollections>(
     return initPromise
   }
 
-  if (immediate && import.meta.client) {
-    init()
+  if (import.meta.client) {
+    watch(() => toValue(collection), () => init(), { immediate })
   }
 
   async function search(query: string, searchOpts?: SearchCollectionOptions): Promise<SearchResult[]> {
     if (!db) {
       await init()
     }
+    const collections = resolveCollections()
     return queryFTS(db!, collections, query, searchOpts)
   }
 

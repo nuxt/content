@@ -205,6 +205,12 @@ export function _resetFTSState() {
   ftsTableCreated = false
 }
 
+export async function resetFTSIndex(db: DatabaseAdapter) {
+  await db.exec(`DROP TABLE IF EXISTS ${FTS_TABLE}`)
+  indexedCollections.clear()
+  ftsTableCreated = false
+}
+
 export async function buildFTSIndex<T extends PageCollectionItemBase>(
   db: DatabaseAdapter,
   collection: string,
