@@ -151,21 +151,29 @@ describe('searchCollection FTS5', () => {
       expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 5, \'<mark>\', \'</mark>\', \'...\', 20) as snippet_content')
     })
 
-    it('should include title snippet when specified', async () => {
-      await queryFTS(mockDb, ['docs'], 'query', {
-        snippet: { columns: ['title'], around: 15 },
+    it('should highlight title with JS regex when title snippet requested', async () => {
+      mockDb.all = vi.fn(async () => [
+        { collection: 'docs', id: '/test', title: 'ColorModeButton', titles: '[]', content: '', level: 1, rank: -5 },
+      ])
+
+      const results = await queryFTS(mockDb, ['docs'], 'button', {
+        snippet: { columns: ['title'] },
       })
 
-      expect(allCalls[0]!.sql).toContain('snippet(_fts_search, 2, \'<mark>\', \'</mark>\', \'...\', 15) as snippet_title')
+      expect(results[0]!.snippets?.title).toBe('ColorMode<mark>Button</mark>')
     })
 
-    it('should include multiple snippets', async () => {
-      await queryFTS(mockDb, ['docs'], 'query', {
-        snippet: { columns: ['title', 'content'], around: 20 },
+    it('should include both title and content snippets', async () => {
+      mockDb.all = vi.fn(async () => [
+        { collection: 'docs', id: '/test', title: 'Avatar', titles: '[]', content: 'An avatar component', level: 1, rank: -5, snippet_content: 'An <mark>avatar</mark> component' },
+      ])
+
+      const results = await queryFTS(mockDb, ['docs'], 'avatar', {
+        snippet: { columns: ['title', 'content'] },
       })
 
-      expect(allCalls[0]!.sql).toContain('snippet_title')
-      expect(allCalls[0]!.sql).toContain('snippet_content')
+      expect(results[0]!.snippets?.title).toBe('<mark>Avatar</mark>')
+      expect(results[0]!.snippets?.content).toBe('An <mark>avatar</mark> component')
     })
 
     it('should parse results correctly', async () => {
@@ -205,7 +213,6 @@ describe('searchCollection FTS5', () => {
           level: 2,
           rank: -1.2,
           snippet_content: '...Install the <mark>package</mark> with npm...',
-          snippet_title: 'Setup',
         },
       ])
 

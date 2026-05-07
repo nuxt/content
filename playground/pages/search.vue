@@ -104,10 +104,9 @@ watch(query, debouncedSearch)
 
             <NuxtLink
               :to="`https://ui.nuxt.com${result.id}`"
-              class="font-semibold text-primary hover:underline"
-            >
-              {{ result.title }}
-            </NuxtLink>
+              class="font-semibold text-highlighted [&_mark]:text-primary [&_mark]:bg-transparent"
+              v-html="result.snippets?.title || result.title"
+            />
 
             <UBadge
               :label="`h${result.level}`"
@@ -123,7 +122,7 @@ watch(query, debouncedSearch)
 
           <p
             v-if="result.snippets?.content"
-            class="text-sm text-muted [&_mark]:underline [&_mark]:text-highlighted [&_mark]:bg-transparent mt-1"
+            class="text-sm text-muted [&_mark]:text-primary [&_mark]:bg-transparent mt-1"
             v-html="result.snippets.content"
           />
           <p

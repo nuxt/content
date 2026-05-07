@@ -258,9 +258,9 @@ export async function queryFTS(
   let selectClause = `collection, id, title, titles, content, level, ${rankExpr} as rank`
   const snippetColumns = snippet?.columns ?? (snippet ? ['content'] : [])
   const around = Number(snippet?.around) || 30
-  for (const col of snippetColumns) {
-    const colIdx = col === 'title' ? 2 : 5
-    selectClause += `, snippet(${FTS_TABLE}, ${colIdx}, '${pre}', '${post}', '...', ${around}) as snippet_${col}`
+  const wantContentSnippet = snippetColumns.includes('content')
+  if (wantContentSnippet) {
+    selectClause += `, snippet(${FTS_TABLE}, 5, '${pre}', '${post}', '...', ${around}) as snippet_content`
   }
 
   const terms = query.split(/\s+/).filter(t => t.length >= minTermLength)
@@ -285,6 +285,11 @@ export async function queryFTS(
     return []
   }
 
+  const wantTitleSnippet = snippetColumns.includes('title')
+  const titleRegex = wantTitleSnippet
+    ? new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
+    : null
+
   return rows.map(row => ({
     collection: row.collection as string,
     id: row.id as string,
@@ -294,9 +299,10 @@ export async function queryFTS(
     content: row.content as string,
     rank: row.rank as number,
     ...(snippetColumns.length && {
-      snippets: Object.fromEntries(
-        snippetColumns.map(col => [col, row[`snippet_${col}`] as string]),
-      ),
+      snippets: {
+        ...(wantTitleSnippet && { title: (row.title as string).replace(titleRegex!, `${pre}$1${post}`) }),
+        ...(wantContentSnippet && { content: row.snippet_content as string }),
+      },
     }),
   }))
 }
