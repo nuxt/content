@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { buildFTSIndex, queryFTS, insertSections, _resetFTSState } from '../../src/runtime/internal/search'
+import { buildFTSIndex, queryFTS, insertSections, resetFTSIndex, _resetFTSState } from '../../src/runtime/internal/search'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '../../src/types'
 
 describe('searchCollection FTS5', () => {
@@ -384,6 +384,42 @@ describe('searchCollection FTS5', () => {
 
       expect(allCalls[0]!.sql).toContain('collection IN (?, ?)')
       expect(allCalls[0]!.params).toEqual(['"query"*', 'docs', 'modules', 50])
+    })
+  })
+
+  describe('resetFTSIndex', () => {
+    it('should drop FTS table and clear state', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test',
+        description: '',
+        body: { type: 'root', children: [] },
+      }])
+
+      await buildFTSIndex(mockDb, 'docs', mockQueryBuilder)
+      const callsBeforeReset = execCalls.length
+
+      await resetFTSIndex(mockDb)
+
+      expect(execCalls[callsBeforeReset]!.sql).toContain('DROP TABLE IF EXISTS _fts_search')
+    })
+
+    it('should allow rebuilding index after reset', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test',
+        description: '',
+        body: { type: 'root', children: [] },
+      }])
+
+      await buildFTSIndex(mockDb, 'docs', mockQueryBuilder)
+      await resetFTSIndex(mockDb)
+
+      execCalls.length = 0
+      await buildFTSIndex(mockDb, 'docs', mockQueryBuilder)
+
+      expect(execCalls[0]!.sql).toContain('CREATE VIRTUAL TABLE')
+      expect(execCalls[1]!.sql).toContain('INSERT')
     })
   })
 })
