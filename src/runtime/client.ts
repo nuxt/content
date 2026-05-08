@@ -100,7 +100,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
       db = await import('./internal/database.client')
         .then(m => m.loadDatabaseAdapter(resolveCollections()[0]!))
     }
-    await insertSections(db, name, sections)
+    await insertSections(db!, name, sections)
     if (!indexedFor.includes(name)) {
       indexedFor = [...indexedFor, name]
     }
