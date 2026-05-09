@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { buildFTSIndex, queryFTS, insertSections, resetFTSIndex, _resetFTSState } from '../../src/runtime/internal/search'
+import { buildFTSIndex, queryFTS, resetFTSIndex, _resetFTSState } from '../../src/runtime/internal/search'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '../../src/types'
 
 describe('searchCollection FTS5', () => {
@@ -332,58 +332,6 @@ describe('searchCollection FTS5', () => {
       const insertParams = execCalls[1]!.params!
       expect(insertParams[2]).toBe('Introduction')
       expect(insertParams[3]).toBe('Introduction')
-    })
-  })
-
-  describe('insertSections', () => {
-    it('should create FTS table and insert custom sections', async () => {
-      await insertSections(mockDb, 'modules', [
-        { id: '/modules/pinia', title: 'Pinia', content: 'State management for Vue' },
-        { id: '/modules/image', title: 'Nuxt Image', content: 'Optimized images' },
-      ])
-
-      expect(execCalls[0]!.sql).toContain('CREATE VIRTUAL TABLE')
-
-      expect(execCalls[1]!.params).toEqual([
-        'modules', '/modules/pinia', 'Pinia', 'Pinia', '[]', 'State management for Vue', 1,
-      ])
-      expect(execCalls[2]!.params).toEqual([
-        'modules', '/modules/image', 'Nuxt Image', 'Nuxt Image', '[]', 'Optimized images', 1,
-      ])
-    })
-
-    it('should use provided titles and level', async () => {
-      await insertSections(mockDb, 'custom', [
-        { id: '/custom/page#section', title: 'Section', titles: ['Page'], content: 'Some content', level: 2 },
-      ])
-
-      expect(execCalls[1]!.params).toEqual([
-        'custom', '/custom/page#section', 'Section', 'Section', '["Page"]', 'Some content', 2,
-      ])
-    })
-
-    it('should normalize camelCase titles', async () => {
-      await insertSections(mockDb, 'custom', [
-        { id: '/test', title: 'MyComponent', content: 'A component' },
-      ])
-
-      expect(execCalls[1]!.params![3]).toBe('My Component')
-    })
-  })
-
-  describe('queryFTS collections filter', () => {
-    it('should filter by provided collections', async () => {
-      await queryFTS(mockDb, ['modules'], 'query')
-
-      expect(allCalls[0]!.sql).toContain('collection IN (?)')
-      expect(allCalls[0]!.params).toEqual(['"query"*', 'modules', 50])
-    })
-
-    it('should support filtering multiple collections', async () => {
-      await queryFTS(mockDb, ['docs', 'modules'], 'query')
-
-      expect(allCalls[0]!.sql).toContain('collection IN (?, ?)')
-      expect(allCalls[0]!.params).toEqual(['"query"*', 'docs', 'modules', 50])
     })
   })
 

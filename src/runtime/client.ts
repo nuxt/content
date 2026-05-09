@@ -2,14 +2,14 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, SearchSection } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex, insertSections } from './internal/search'
+import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { fetchQuery } from './internal/api'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
 
-export type { SearchCollectionOptions, SearchResult, SearchSection, GenerateSearchSectionsOptions } from './internal/search'
+export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -44,7 +44,6 @@ export function useSearchCollection<T extends keyof PageCollections>(
   let db: DatabaseAdapter | undefined
   let initPromise: Promise<DatabaseAdapter> | undefined
   let indexedFor: string[] = []
-  const customSections = new Map<string, SearchSection[]>()
 
   function resolveCollections() {
     const val = toValue(collection)
@@ -53,7 +52,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
   async function init() {
     const collections = resolveCollections()
-    const hasRemovedCollections = indexedFor.some(c => !collections.includes(c) && !customSections.has(c))
+    const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
     const newCollections = collections.filter(c => !indexedFor.includes(c))
 
     if (!newCollections.length && !hasRemovedCollections && initPromise) return initPromise
@@ -74,13 +73,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
           return buildFTSIndex(_db, col, qb, indexOpts)
         }))
 
-        if (hasRemovedCollections) {
-          for (const [name, sections] of customSections) {
-            await insertSections(_db, name, sections)
-          }
-        }
-
-        indexedFor = [...collections, ...customSections.keys()]
+        indexedFor = [...collections]
         status.value = 'ready'
         return _db
       })
@@ -99,33 +92,10 @@ export function useSearchCollection<T extends keyof PageCollections>(
     if (!db) {
       await init()
     }
-    const collections = searchOpts?.collections ?? indexedFor
-    return queryFTS(db!, collections, query, searchOpts)
+    return queryFTS(db!, indexedFor, query, searchOpts)
   }
 
-  async function add(name: string, sections: SearchSection[]) {
-    if (!db) {
-      db = await import('./internal/database.client')
-        .then(m => m.loadDatabaseAdapter(resolveCollections()[0]!))
-    }
-    customSections.set(name, sections)
-    await insertSections(db!, name, sections)
-    if (!indexedFor.includes(name)) {
-      indexedFor = [...indexedFor, name]
-    }
-  }
-
-  async function reset() {
-    if (db) {
-      await resetFTSIndex(db)
-    }
-    customSections.clear()
-    indexedFor = []
-    initPromise = undefined
-    status.value = 'idle'
-  }
-
-  return { status, search, init, add, reset }
+  return { status, search, init }
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {
