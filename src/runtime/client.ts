@@ -52,7 +52,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
   async function init() {
     const collections = resolveCollections()
-    if (!collections.length) return initPromise ?? Promise.resolve(db!)
+    if (!collections.length) return initPromise ?? (db ? Promise.resolve(db) : Promise.reject(new Error('No collections to search')))
 
     const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
     const newCollections = collections.filter(c => !indexedFor.includes(c))
