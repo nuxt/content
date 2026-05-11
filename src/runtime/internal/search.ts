@@ -287,7 +287,10 @@ export async function queryFTS(
   try {
     rows = await db.all<Record<string, unknown>>(sql, params)
   }
-  catch {
+  catch (err) {
+    if (import.meta.dev) {
+      console.warn('[nuxt-content] FTS query failed:', err)
+    }
     return []
   }
 

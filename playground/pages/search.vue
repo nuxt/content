@@ -24,7 +24,6 @@ async function onSearch() {
       limit: 30,
       snippet: { columns: ['title', 'content'], around: 40 },
     })
-    console.log(results.value)
   }
   catch (e) {
     console.error('Search error:', e)
