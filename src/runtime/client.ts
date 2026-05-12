@@ -2,10 +2,14 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
+import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { fetchQuery } from './internal/api'
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
-import { tryUseNuxtApp } from '#imports'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
+import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
+import type { MaybeRefOrGetter } from 'vue'
+
+export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -29,6 +33,71 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
 
 export function queryCollectionSearchSections<T extends keyof PageCollections>(collection: T, opts?: GenerateSearchSectionsOptions) {
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
+}
+
+export function useSearchCollection<T extends keyof PageCollections>(
+  collection: MaybeRefOrGetter<T | T[]>,
+  opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
+) {
+  const { immediate = true, ...indexOpts } = opts || {}
+  const status = ref<'idle' | 'loading' | 'ready' | 'error'>(immediate ? 'loading' : 'idle')
+  let db: DatabaseAdapter | undefined
+  let initPromise: Promise<DatabaseAdapter> | undefined
+  let indexedFor: string[] = []
+
+  function resolveCollections() {
+    const val = toValue(collection)
+    return (Array.isArray(val) ? val : [val]).map(String)
+  }
+
+  async function init() {
+    const collections = resolveCollections()
+    if (!collections.length) return initPromise ?? (db ? Promise.resolve(db) : Promise.reject(new Error('No collections to search')))
+
+    const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
+    const newCollections = collections.filter(c => !indexedFor.includes(c))
+
+    if (!newCollections.length && !hasRemovedCollections && initPromise) return initPromise
+
+    status.value = 'loading'
+    initPromise = import('./internal/database.client')
+      .then(m => m.loadDatabaseAdapter(collections[0]!))
+      .then(async (_db) => {
+        db = _db
+
+        if (hasRemovedCollections) {
+          await resetFTSIndex(_db)
+        }
+
+        const toIndex = hasRemovedCollections ? collections : newCollections
+        await Promise.all(toIndex.map((col) => {
+          const qb = queryCollection(col as T)
+          return buildFTSIndex(_db, col, qb, indexOpts)
+        }))
+
+        indexedFor = [...collections]
+        status.value = 'ready'
+        return _db
+      })
+      .catch((err) => {
+        status.value = 'error'
+        throw err
+      })
+    return initPromise
+  }
+
+  if (import.meta.client) {
+    watch(() => toValue(collection), () => init(), { immediate })
+  }
+
+  async function search(query: string, searchOpts?: SearchCollectionOptions): Promise<SearchResult[]> {
+    if (!db) {
+      await init()
+    }
+    return queryFTS(db!, indexedFor, query, searchOpts)
+  }
+
+  return { status, search, init }
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {

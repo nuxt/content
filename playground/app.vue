@@ -40,6 +40,11 @@ const items = ref([
     icon: 'i-lucide-folder-open',
     to: '/data/foo',
   },
+  {
+    label: 'Search',
+    icon: 'i-lucide-search',
+    to: '/search',
+  },
 ])
 </script>
 

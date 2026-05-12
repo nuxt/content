@@ -14,6 +14,7 @@
     "@vueuse/nuxt": "^14.2.1",
     "better-sqlite3": "^12.8.0",
     "docus": "^5.8.1",
+    "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.1",
     "minisearch": "^7.2.0",
     "nuxt": "^4.4.2",
