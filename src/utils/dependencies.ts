@@ -1,11 +1,16 @@
 import { addDependency } from 'nypm'
+import { resolvePackageJSON } from 'pkg-types'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 import { tryUseNuxt } from '@nuxt/kit'
 
 export async function isPackageInstalled(packageName: string) {
+  // Resolve relative to @nuxt/content's own location so the check survives
+  // pnpm's `enableGlobalVirtualStore`, where dependencies declared by
+  // @nuxt/content (e.g. zod) aren't reachable from the user's project root
+  // and a plain dynamic import would fail.
   try {
-    await import(packageName)
+    await resolvePackageJSON(packageName, { from: import.meta.url })
     return true
   }
   catch {
