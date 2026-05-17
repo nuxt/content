@@ -4,7 +4,7 @@ import { z } from 'zod'
 const SINGLETON_KEY = Symbol.for('@nuxt/content:validators-context')
 
 function resetValidatorsContext() {
-  delete (globalThis as Record<symbol, unknown>)[SINGLETON_KEY]
+  Reflect.deleteProperty(globalThis as Record<symbol, unknown>, SINGLETON_KEY)
 }
 
 describe('validator registry', () => {
