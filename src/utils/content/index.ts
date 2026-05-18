@@ -208,7 +208,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       seo.description = seo.description || result.description
     }
 
-    const pathMetaFields = await pathMetaTransformer.transform!(parsedContent, {})
+    const pathMetaFields = await pathMetaTransformer.transform!(parsedContent, beforeParseCtx.parserOptions?.pathMeta as Record<string, unknown>)
     const metaFields = ['path', 'title', 'stem', 'extension']
     for (const key of metaFields) {
       if (collectionKeys.includes(key) && result[key] === undefined) {
