@@ -5,16 +5,18 @@ packages:
   - examples/*
   - test/fixtures/*
 
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@tailwindcss/oxide'
-  - better-sqlite3
-  - esbuild
-  - sharp
-  - sqlite3
-  - unrs-resolver
-  - vue-demi
-  - workerd
+shamefullyHoist: true
 
-patchedDependencies:
-  '@nuxt/vite-builder': patches/@nuxt__vite-builder.patch
+overrides:
+  '@nuxt/content': workspace:*
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@tailwindcss/oxide': true
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+  sqlite3: true
+  unrs-resolver: true
+  vue-demi: true
+  workerd: true
