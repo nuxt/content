@@ -128,6 +128,17 @@ const collections = {
       prefix: '/vue',
     },
   }),
+  ui: defineCollection({
+    type: 'page',
+    source: {
+      repository: {
+        url: 'https://github.com/nuxt/ui',
+        branch: 'v4',
+      },
+      include: 'docs/content/**/*.md',
+      prefix: '',
+    },
+  }),
 }
 
 export default defineContentConfig({ collections })

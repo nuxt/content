@@ -2,13 +2,16 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder, collectionQueryGroup } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
+import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
+import { buildFTSIndex, generateSearchSections, queryFTS, resetFTSIndex } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
 import { fetchQuery } from './internal/api'
-import type { Collections, PageCollections, CollectionQueryBuilder, ContentLocaleEntry, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem } from '@nuxt/content'
+import type { Collections, ContentLocaleEntry, ContentNavigationItem, CollectionQueryBuilder, DatabaseAdapter, PageCollections, QueryGroupFunction, SQLOperator, SurroundOptions } from '@nuxt/content'
 import type { AsyncData, NuxtError } from '#app'
-import type { Ref } from 'vue'
-import { tryUseNuxtApp, useAsyncData, computed } from '#imports'
+import type { MaybeRefOrGetter, Ref } from 'vue'
+import { computed, ref, toValue, tryUseNuxtApp, useAsyncData, watch } from '#imports'
+
+export type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -72,7 +75,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
   const ops: Array<(qb: CollectionQueryBuilder<Item>) => void> = []
   let explicitLocale = false
 
-  // Track key-relevant params directly — avoids creating a full query builder in buildKey
+  // Track key-relevant params directly, which avoids creating a full query builder in buildKey
   const keyParts = {
     conditions: [] as string[],
     orderBy: [] as string[],
@@ -166,7 +169,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
     return qb
   }
 
-  /** Build cache key from tracked params — no query builder instantiation needed. */
+  /** Build cache key from tracked params without instantiating a query builder. */
   function buildKey(method: string): string {
     const parts = [String(collection)]
     if (keyParts.conditions.length) parts.push(...keyParts.conditions)
@@ -181,6 +184,71 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
   }
 
   return builder
+}
+
+export function useSearchCollection<T extends keyof PageCollections>(
+  collection: MaybeRefOrGetter<T | T[]>,
+  opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
+) {
+  const { immediate = true, ...indexOpts } = opts || {}
+  const status = ref<'idle' | 'loading' | 'ready' | 'error'>(immediate ? 'loading' : 'idle')
+  let db: DatabaseAdapter | undefined
+  let initPromise: Promise<DatabaseAdapter> | undefined
+  let indexedFor: string[] = []
+
+  function resolveCollections() {
+    const val = toValue(collection)
+    return (Array.isArray(val) ? val : [val]).map(String)
+  }
+
+  async function init() {
+    const collections = resolveCollections()
+    if (!collections.length) return initPromise ?? (db ? Promise.resolve(db) : Promise.reject(new Error('No collections to search')))
+
+    const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
+    const newCollections = collections.filter(c => !indexedFor.includes(c))
+
+    if (!newCollections.length && !hasRemovedCollections && initPromise) return initPromise
+
+    status.value = 'loading'
+    initPromise = import('./internal/database.client')
+      .then(m => m.loadDatabaseAdapter(collections[0]!))
+      .then(async (_db) => {
+        db = _db
+
+        if (hasRemovedCollections) {
+          await resetFTSIndex(_db)
+        }
+
+        const toIndex = hasRemovedCollections ? collections : newCollections
+        await Promise.all(toIndex.map((col) => {
+          const qb = queryCollection(col as T)
+          return buildFTSIndex(_db, col, qb, indexOpts)
+        }))
+
+        indexedFor = [...collections]
+        status.value = 'ready'
+        return _db
+      })
+      .catch((err) => {
+        status.value = 'error'
+        throw err
+      })
+    return initPromise
+  }
+
+  if (import.meta.client) {
+    watch(() => toValue(collection), () => init(), { immediate })
+  }
+
+  async function search(query: string, searchOpts?: SearchCollectionOptions): Promise<SearchResult[]> {
+    if (!db) {
+      await init()
+    }
+    return queryFTS(db!, indexedFor, query, searchOpts)
+  }
+
+  return { status, search, init }
 }
 
 async function executeContentQuery<T extends keyof Collections, Result = Collections[T]>(event: H3Event | undefined, collection: T, sql: string) {

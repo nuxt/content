@@ -1,5 +1,7 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
-const SQL_COUNT_REGEX = /COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\)/i
+// Combines the upstream security tightening (anchored regex, required `as count` alias)
+// with the feature additions (quoted column names, optional `ORDER BY` for count queries).
+const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\) as count$/i
 const SQL_SELECT_REGEX = /^SELECT (.*?) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
