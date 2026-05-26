@@ -115,6 +115,12 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
     // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
     let path = resolve(pathOrError as string)
+
+    // Skip temporary files created by editors and tools during non-atomic writes
+    const basename = path.split('/').pop() || ''
+    if (/\.tmp(\.\d+)*$|~$|^\.#|^\~/.test(basename)) {
+      return
+    }
     const match = sourceMap.find(({ source, cwd }) => {
       if (cwd && path.startsWith(cwd)) {
         return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
