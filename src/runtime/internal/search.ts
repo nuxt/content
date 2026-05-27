@@ -31,7 +31,7 @@ export type SearchResult = {
 export type SearchCollectionOptions = {
   /**
    * Maximum number of results to return.
-   * @default 50
+   * @default 20
    */
   limit?: number
   /** Restrict search to specific columns. Searches all columns when omitted. */
@@ -45,7 +45,7 @@ export type SearchCollectionOptions = {
   weights?: {
     /**
      * Boost factor for matches in the title column.
-     * @default 10
+     * @default 20
      */
     title?: number
     /**
@@ -54,11 +54,15 @@ export type SearchCollectionOptions = {
      */
     content?: number
     /**
-     * Whether to boost higher-level sections (h1 > h2 > h3...).
-     * Set to `false` to disable level-based boosting.
-     * @default true
+     * Exponent controlling heading-level boost.
+     * Higher-level sections (h1 > h2 > h3...) are boosted by dividing the
+     * BM25 score by `pow(level, heading)`.
+     * - `0.5` (default): sqrt curve — gentler falloff
+     * - `1`: linear penalty (h4 gets 1/4 the score of h1)
+     * - `0`: no level-based penalty
+     * @default 0.5
      */
-    heading?: boolean
+    heading?: number
   }
   /** Return text snippets with highlighted matches for the specified columns. */
   snippet?: {
@@ -246,11 +250,11 @@ export async function queryFTS(
   query: string,
   opts?: SearchCollectionOptions,
 ): Promise<SearchResult[]> {
-  const { limit = 50, snippet, fields, minTermLength = 1, weights } = opts || {}
+  const { limit = 20, snippet, fields, minTermLength = 1, weights } = opts || {}
 
-  const titleWeight = weights?.title ?? 10
+  const titleWeight = weights?.title ?? 20
   const contentWeight = weights?.content ?? 5
-  const headingBoost = weights?.heading !== false
+  const headingExponent = weights?.heading ?? 0.5
 
   const tag = (snippet?.tag ?? 'mark').replace(/[^a-z0-9]/gi, '')
   const pre = `<${tag}>`
@@ -260,7 +264,9 @@ export async function queryFTS(
   const collectionFilter = `collection IN (${placeholders})`
 
   const bm25Expr = `bm25(${FTS_TABLE}, 0, 0, ${titleWeight}, ${titleWeight}, 0, ${contentWeight}, 0)`
-  const rankExpr = headingBoost ? `(${bm25Expr} / level)` : bm25Expr
+  const rankExpr = headingExponent > 0
+    ? `(${bm25Expr} / pow(level, ${headingExponent}))`
+    : bm25Expr
   let selectClause = `collection, id, title, titles, content, level, ${rankExpr} as rank`
   const snippetColumns = snippet?.columns ?? (snippet ? ['content'] : [])
   const around = Number(snippet?.around) || 30
