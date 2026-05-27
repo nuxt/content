@@ -20,12 +20,12 @@ const nuxtMock = {
   hook: (_event: string, _cb: () => void) => {},
 } as never
 
-describe('multi-collection HMR — file matched by multiple collections', async () => {
-  await initiateValidatorsContext()
-
+describe('multi-collection HMR — file matched by multiple collections', () => {
   let db: LocalDevelopmentDatabase
 
   beforeAll(async () => {
+    await initiateValidatorsContext()
+
     await fs.mkdir(join(contentDir, 'blog'), { recursive: true })
     await fs.writeFile(join(contentDir, 'index.md'), '---\ntitle: Home\n---\n# Home\n')
     await fs.writeFile(join(contentDir, 'blog', 'hello.md'), '---\ntitle: Hello\n---\n# Hello\n')
