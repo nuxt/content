@@ -1,0 +1,7 @@
+{
+  "name": "nuxt-content-test-multi-collection-hmr",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev"
+  }
+}
