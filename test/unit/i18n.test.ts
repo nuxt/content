@@ -236,9 +236,19 @@ describe('i18n', () => {
       expect(result).toMatchObject({ locale: 'en', path: '/blog/fr/post', stem: 'blog/fr/post' })
     })
 
-    it('leaves stem unchanged when it does not start with locale prefix', () => {
+    it('detects the locale from the stem, not a custom path prefix', () => {
+      // A custom front-matter `path` can put a locale segment on the path while
+      // the file lives in a non-locale directory. Detection keys off the stem, so
+      // the locale stays the default and the custom path is left untouched.
       const result = detectLocaleFromPath('/fr/docs/guide', 'docs/guide', i18nConfig)
-      expect(result).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+      expect(result).toMatchObject({ locale: 'en', path: '/fr/docs/guide', stem: 'docs/guide' })
+    })
+
+    it('strips the stem locale segment without touching a non-matching custom path', () => {
+      // File at `fr/bar` with a custom `path: /custom`. The locale comes from the
+      // stem (`fr`), the stem is stripped, and the custom path is preserved.
+      const result = detectLocaleFromPath('/custom', 'fr/bar', i18nConfig)
+      expect(result).toMatchObject({ locale: 'fr', path: '/custom', stem: 'bar' })
     })
 
     it('handles nested locale paths', () => {
@@ -478,6 +488,74 @@ describe('i18n', () => {
         expect(items[1]).toMatchObject({ title: 'Config du site' })
         expect(items[2]).toMatchObject({ title: 'Seitenkonfiguration' })
       })
+
+      it('merges arrays whose items are themselves arrays by index', () => {
+        // Regression: an array of arrays used to collapse its first inner array to
+        // an empty object when passed through `defu`.
+        const content: ParsedContentFile = {
+          id: 'data:matrix.yml',
+          rows: [['a', 'b'], ['c', 'd']],
+          stem: 'matrix',
+          extension: 'yml',
+          meta: {
+            i18n: { fr: { rows: [['x', 'y']] } },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.locale === 'fr')
+
+        // First inner array is overridden wholesale (scalar), second preserved.
+        expect(frItem?.rows).toEqual([['x', 'y'], ['c', 'd']])
+      })
+    })
+
+    describe('override safety', () => {
+      it('ignores identity-field overrides so row identity is preserved', () => {
+        const content: ParsedContentFile = {
+          id: 'data:team.yml',
+          name: 'Jane',
+          stem: 'data/team',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: { name: 'Jeanne', stem: 'data/equipe', id: 'evil', locale: 'de', extension: 'json' },
+            },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.id === 'data:team.yml#fr')
+
+        expect(frItem).toBeDefined()
+        expect(frItem?.name).toBe('Jeanne')
+        // Identity fields keep the source row's values.
+        expect(frItem?.stem).toBe('data/team')
+        expect(frItem?.locale).toBe('fr')
+        expect(frItem?.extension).toBe('yml')
+      })
+
+      it('skips locale keys that are not in the collection locales', () => {
+        const content: ParsedContentFile = {
+          id: 'data:team.yml',
+          name: 'Jane',
+          stem: 'data/team',
+          extension: 'yml',
+          meta: {
+            i18n: {
+              fr: { name: 'Jeanne' },
+              es: { name: 'Juana' },
+            },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const locales = items.map(i => i.locale)
+
+        expect(locales).toContain('fr')
+        expect(locales).not.toContain('es')
+        expect(items).toHaveLength(2)
+      })
     })
   })
 
@@ -549,6 +627,33 @@ describe('i18n', () => {
       const items2 = expandI18nData(content2, i18nConfig)
 
       expect(items1[1].meta._i18nSourceHash).not.toBe(items2[1].meta._i18nSourceHash)
+    })
+
+    it('source hash captures only translated nested leaves, not sibling fields', () => {
+      // `de` translates only `info.country`. Changing the untranslated sibling
+      // `info.age` must NOT change the hash, because the hash is scoped to the
+      // translated leaf.
+      const base = {
+        id: 'team:jane.yml',
+        name: 'Jane',
+        stem: 'jane',
+        extension: 'yml',
+      }
+      const content1: ParsedContentFile = {
+        ...base,
+        info: { age: 25, country: 'Switzerland' },
+        meta: { i18n: { de: { info: { country: 'Schweiz' } } } },
+      }
+      const content2: ParsedContentFile = {
+        ...base,
+        info: { age: 30, country: 'Switzerland' },
+        meta: { i18n: { de: { info: { country: 'Schweiz' } } } },
+      }
+
+      const de1 = expandI18nData(content1, i18nConfig).find(i => i.locale === 'de')
+      const de2 = expandI18nData(content2, i18nConfig).find(i => i.locale === 'de')
+
+      expect(de1?.meta._i18nSourceHash).toBe(de2?.meta._i18nSourceHash)
     })
 
     it('source hash is per-locale: a field translated only in another locale does not affect this locale\'s hash', () => {

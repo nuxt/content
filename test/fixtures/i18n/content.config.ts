@@ -29,5 +29,15 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
+    // `i18n: true` shorthand without @nuxtjs/i18n installed: the integration is
+    // disabled with a warning and no `locale` column is added.
+    notes: defineCollection({
+      type: 'data',
+      source: 'notes/*.yml',
+      schema: z.object({
+        text: z.string(),
+      }),
+      i18n: true,
+    }),
   },
 })

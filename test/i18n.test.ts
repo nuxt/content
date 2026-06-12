@@ -62,6 +62,16 @@ describe('i18n', async () => {
       expect(columnNames).toContain('name')
       expect(columnNames).toContain('role')
     })
+
+    test('notes table (i18n: true without @nuxtjs/i18n) has no locale column', async () => {
+      // The shorthand resolves to disabled when the module is absent, so no
+      // `locale` column is added.
+      const tableInfo = await db.database?.prepare(`PRAGMA table_info(${getTableName('notes')});`).all() as { name: string }[]
+      const columnNames = tableInfo.map(c => c.name)
+
+      expect(columnNames).toContain('text')
+      expect(columnNames).not.toContain('locale')
+    })
   })
 
   describe('path-based i18n (blog collection)', () => {
@@ -234,6 +244,34 @@ describe('i18n', async () => {
         expect(entry.path).toBeUndefined()
         expect(entry.title).toBeUndefined()
       }
+    })
+  })
+
+  describe('server-side auto-locale detection', () => {
+    test('auto-detects the default locale from the request context (single query)', async () => {
+      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto?locale=en')
+
+      expect(posts.length).toBeGreaterThanOrEqual(2)
+      for (const post of posts) {
+        expect(post.locale).toBe('en')
+      }
+    })
+
+    test('auto-detects a non-default locale and falls back for missing translations', async () => {
+      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto?locale=fr')
+
+      const titles = posts.map(p => p.title)
+      // French translation is preferred where available.
+      expect(titles).toContain('Bonjour le Monde')
+      // The English-only post is filled in from the default locale.
+      expect(titles).toContain('English Only Post')
+    })
+
+    test('returns rows from every locale when no locale is detected', async () => {
+      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto')
+      const locales = new Set(posts.map(p => p.locale))
+      expect(locales.has('en')).toBe(true)
+      expect(locales.has('fr')).toBe(true)
     })
   })
 })

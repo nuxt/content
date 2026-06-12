@@ -5,12 +5,28 @@ import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 vi.mock('#content/manifest', () => ({
   tables: {
     articles: '_articles',
+    navigation: '_navigation',
+    plain: '_plain',
   },
   default: {
     articles: {
       type: 'data',
       fields: {},
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+      stemPrefix: '',
+    },
+    // i18n collection whose source lives under a `navigation` directory, so
+    // `.stem()` resolves the prefix.
+    navigation: {
+      type: 'data',
+      fields: {},
+      i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+      stemPrefix: 'navigation',
+    },
+    // Collection without i18n, used to assert auto-locale is a no-op.
+    plain: {
+      type: 'data',
+      fields: {},
       stemPrefix: '',
     },
   },
@@ -614,28 +630,139 @@ describe('collectionQueryBuilder', () => {
       expect(count).toBe(5)
     })
 
-    it('skips auto-locale and (in dev) warns when detected locale is a BCP-47 tag not in collection.locales', async () => {
-      // `@nuxtjs/i18n` may return `en-US`. A collection declaring only `en`
-      // should silently skip auto-locale rather than producing rows from every
-      // locale. In dev mode, a `console.warn` surfaces the mismatch.
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      try {
-        await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
-        // Either path: no WHERE("locale" = ...) appears in the query.
-        const sql = mockFetch.mock.lastCall![1] as string
-        expect(sql).not.toContain('"locale" =')
+    it('skips auto-locale when detected locale is a BCP-47 tag not in collection.locales', async () => {
+      // `@nuxtjs/i18n` may return `en-US`. A collection declaring only `en` skips
+      // auto-locale rather than producing rows from every locale. The dev-only
+      // warning is gated by `import.meta.dev` (false in this test environment), so
+      // only the no-filter behaviour is asserted here.
+      await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
+      const sql = mockFetch.mock.lastCall![1] as string
+      expect(sql).not.toContain('"locale" =')
+    })
 
-        // In dev, the warning must include both the offending tag and the skip hint.
-        if (import.meta.dev) {
-          expect(warn).toHaveBeenCalled()
-          const msg = warn.mock.calls[0]?.[0] as string
-          expect(msg).toContain('en-US')
-          expect(msg).toContain('Auto-locale filter skipped')
-        }
-      }
-      finally {
-        warn.mockRestore()
-      }
+    it('does not auto-apply a locale on a collection without i18n config', async () => {
+      // The `plain` collection has no `i18n` in the manifest, so a detected locale
+      // must not add any filter even though the locale looks valid.
+      await collectionQueryBuilder('plain' as never, mockFetch, 'fr').all()
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'plain',
+        'SELECT * FROM _plain ORDER BY stem ASC',
+      )
+    })
+
+    it('suppresses auto-locale when a locale filter is nested inside a group', async () => {
+      // A locale filter reachable only through a nested `andWhere` group must still
+      // disable auto-locale, otherwise the two combine into a contradictory
+      // `locale = 'fr' AND locale = 'en'` clause.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
+      await qb
+        .andWhere(g => g.andWhere(g2 => g2.where('locale', '=', 'en')))
+        .all()
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      const sql = mockFetch.mock.lastCall![1] as string
+      expect(sql).not.toContain('"locale" = \'fr\'')
+      expect(sql).toContain('"locale" = \'en\'')
+    })
+
+    it('keeps auto-locale active when a value merely contains the text "locale"', async () => {
+      // A string value that contains the token `"locale"` must not be mistaken for
+      // a locale-column filter, so auto-locale still applies.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
+      await qb.where('title', '=', 'say "locale"').all()
+
+      const sql = mockFetch.mock.lastCall![1] as string
+      expect(sql).toContain('"locale" = \'en\'')
+    })
+  })
+
+  describe('.stem() source-prefix resolution', () => {
+    it('prepends the collection stem prefix when absent', async () => {
+      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navbar').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'navigation',
+        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navbar\') ORDER BY stem ASC',
+      )
+    })
+
+    it('does not double the prefix when the stem already includes it', async () => {
+      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation/navbar').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'navigation',
+        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navbar\') ORDER BY stem ASC',
+      )
+    })
+
+    it('treats the prefix as present only on a segment boundary', async () => {
+      // `navigation2` must not be mistaken for the `navigation` prefix.
+      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation2/foo').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'navigation',
+        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navigation2/foo\') ORDER BY stem ASC',
+      )
+    })
+
+    it('matches the bare prefix exactly without doubling it', async () => {
+      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'navigation',
+        'SELECT * FROM _navigation WHERE ("stem" = \'navigation\') ORDER BY stem ASC',
+      )
+    })
+  })
+
+  describe('locale fallback ordering and counting', () => {
+    it('interleaves by stem when navigation injects the default order', async () => {
+      // The navigation/surround helpers inject `order('stem', 'ASC')`. The merge
+      // must still interleave the two result sets by stem rather than concatenate.
+      mockFetch
+        .mockResolvedValueOnce([{ stem: '1.intro', locale: 'fr' }, { stem: '3.advanced', locale: 'fr' }])
+        .mockResolvedValueOnce([
+          { stem: '1.intro', locale: 'en' },
+          { stem: '2.guide', locale: 'en' },
+          { stem: '3.advanced', locale: 'en' },
+        ])
+
+      const results = await collectionQueryBuilder(mockCollection, mockFetch)
+        .order('stem', 'ASC')
+        .locale('fr', { fallback: 'en' })
+        .all()
+
+      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['1.intro', '2.guide', '3.advanced'])
+      // The translated page wins over its fallback at each shared stem.
+      expect(results[0]).toMatchObject({ stem: '1.intro', locale: 'fr' })
+      expect(results[1]).toMatchObject({ stem: '2.guide', locale: 'en' })
+    })
+
+    it('re-sorts the merged result rather than trusting sub-query order', async () => {
+      // Sub-queries may arrive in a non-binary order (for example a linguistic
+      // collation on PostgreSQL). The merge re-sorts by stem so the page is
+      // deterministic regardless of the backend's collation.
+      mockFetch
+        .mockResolvedValueOnce([{ stem: 'b', locale: 'fr' }, { stem: 'a', locale: 'fr' }])
+        .mockResolvedValueOnce([{ stem: 'c', locale: 'en' }])
+
+      const results = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .all()
+
+      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['a', 'b', 'c'])
+    })
+
+    it('counts distinct object column values by structural equality', async () => {
+      // SQL `COUNT(DISTINCT ...)` compares serialized values. The fallback path
+      // mirrors that, so two structurally-equal JSON values count once.
+      mockFetch
+        .mockResolvedValueOnce([{ tags: { a: 1 }, stem: 'x' }])
+        .mockResolvedValueOnce([{ tags: { a: 1 }, stem: 'y' }, { tags: { a: 2 }, stem: 'z' }])
+
+      const count = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .count('tags' as never, true)
+
+      // { a: 1 } (x and y share the stem-distinct rows) and { a: 2 }: 2 distinct values.
+      expect(count).toBe(2)
     })
   })
 
