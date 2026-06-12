@@ -216,5 +216,23 @@ describe('i18n', async () => {
       expect(locales.length).toBe(1)
       expect(locales[0].locale).toBe('en')
     })
+
+    test('returns entries without path/title on data collections', async () => {
+      // The `team` collection has no `path` or `title` columns. `generateCollectionLocales`
+      // filters the SELECT list against the manifest fields, so the helper must succeed
+      // and return `path: undefined` / `title: undefined` rather than blowing up on a
+      // SQL "no such column" error.
+      const locales = await $fetch<{ locale: string, stem: string, path?: string, title?: string }[]>(
+        '/api/content/locales?collection=team&stem=data/team',
+      )
+
+      expect(locales.length).toBeGreaterThanOrEqual(2)
+      for (const entry of locales) {
+        expect(entry.locale).toBeDefined()
+        expect(entry.stem).toBe('data/team')
+        expect(entry.path).toBeUndefined()
+        expect(entry.title).toBeUndefined()
+      }
+    })
   })
 })

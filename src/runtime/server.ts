@@ -4,6 +4,7 @@ import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
+import { detectServerLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import type { Collections, CollectionQueryBuilder, ContentLocaleEntry, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
@@ -15,13 +16,9 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  // Auto-detect locale from @nuxtjs/i18n server context (requires @nuxtjs/i18n >= 10).
-  // `detectLocale` is the per-request resolved locale; `vueI18nOptions.locale` is
-  // the configured default — used only as a last resort if detection didn't run
-  // (e.g. when `experimental.nitroContextDetection` is disabled).
-  const i18nCtx = event.context?.nuxtI18n as { detectLocale?: string, vueI18nOptions?: { locale?: string } } | undefined
-  const detectedLocale = i18nCtx?.detectLocale || i18nCtx?.vueI18nOptions?.locale
-  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectedLocale)
+  // Auto-detect from `@nuxtjs/i18n` server context — falls back to configured default
+  // when per-request detection didn't run. See `internal/i18n-detection.ts` for the contract.
+  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectServerLocale(event))
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {

@@ -1,6 +1,7 @@
 import { createDefu } from 'defu'
 import { hash } from 'ohash'
 import type { CollectionI18nConfig } from '../types/collection'
+import { I18N_SOURCE_HASH_FIELD } from '../types/locales'
 import type { ParsedContentFile } from '../types'
 
 /**
@@ -123,7 +124,7 @@ export function expandI18nData(
       ...merged,
       id: `${parsedContent.id}#${locale}`,
       locale,
-      meta: { ...cleanMeta, _i18nSourceHash: i18nSourceHash },
+      meta: { ...cleanMeta, [I18N_SOURCE_HASH_FIELD]: i18nSourceHash },
     }
 
     items.push(localeItem)
