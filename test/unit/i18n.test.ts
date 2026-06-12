@@ -421,6 +421,38 @@ describe('i18n', () => {
         expect(deItem?.tags).toEqual(['JavaScript', 'Vue', 'Nuxt'])
       })
 
+      it('replaces scalar arrays wholesale when override is shorter than default', () => {
+        // A shorter scalar override must NOT pad-fill from the default tail —
+        // when authors intentionally provide a shorter list, they want exactly that.
+        const content: ParsedContentFile = {
+          id: 'data:tags.yml',
+          tags: ['javascript', 'vue', 'nuxt', 'content'],
+          stem: 'tags',
+          extension: 'yml',
+          meta: {
+            i18n: { fr: { tags: ['javascript', 'vue'] } },
+          },
+        }
+
+        const items = expandI18nData(content, i18nConfig)
+        const frItem = items.find(i => i.locale === 'fr')
+        expect(frItem?.tags).toEqual(['javascript', 'vue'])
+      })
+
+      it('replaces with empty scalar override (clears the list)', () => {
+        const content: ParsedContentFile = {
+          id: 'data:tags.yml',
+          tags: ['a', 'b', 'c'],
+          stem: 'tags',
+          extension: 'yml',
+          meta: {
+            i18n: { fr: { tags: [] } },
+          },
+        }
+        const items = expandI18nData(content, i18nConfig)
+        expect(items.find(i => i.locale === 'fr')?.tags).toEqual([])
+      })
+
       it('preserves non-translated top-level fields across all locales', () => {
         const content: ParsedContentFile = {
           id: 'data:config.yml',

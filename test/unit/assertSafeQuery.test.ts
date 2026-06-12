@@ -67,6 +67,12 @@ describe('decompressSQLDump', () => {
     // Locale-filtered query (typical auto-locale output)
     'SELECT * FROM _content_test WHERE ("locale" = \'fr\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("locale" = \'fr\') AND ("stem" = \'navbar\') ORDER BY stem ASC': true,
+    // Columns with digits (e.g. heading levels, year suffixes) must be allowed
+    'SELECT * FROM _content_test ORDER BY h1 ASC': true,
+    'SELECT * FROM _content_test ORDER BY "h2" DESC': true,
+    'SELECT * FROM _content_test ORDER BY field_2024 ASC, h1 DESC': true,
+    // Columns must still start with a letter or underscore, not a digit
+    'SELECT * FROM _content_test ORDER BY 1field ASC': false,
   }
 
   Object.entries(securityQueries).forEach(([query, isValid]) => {

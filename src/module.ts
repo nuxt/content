@@ -380,11 +380,14 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            // i18n: expand inline translations to per-locale rows
+            // i18n: expand inline translations to per-locale rows.
+            // Use `item.id` (already suffixed for non-default locales by
+            // `expandI18nData`) as the dump tuple key so HMR can locate the
+            // same row later — the bare key is the SQL row's actual `id`.
             if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
               const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type)
               for (const item of expandedItems) {
-                const itemKey = item.locale ? `${keyInCollection}#${item.locale}` : keyInCollection
+                const itemKey = item.id as string
                 const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
                 list.push([itemKey, itemQueries, itemHash])
               }

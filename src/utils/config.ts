@@ -118,11 +118,25 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
 
     if (resolvedConfig) {
       collection.i18n = resolvedConfig
-      // Merge locale schema + index now that we have the real config
-      // (defineCollection deferred this because i18n was `true`)
+      // `mergeStandardSchema` preserves user-declared fields via spread order
+      // (user's properties win on collision), so a pre-existing `locale` field
+      // on the schema keeps its type. Surface a warning so authors are aware
+      // their declaration is the one being used and ensure it types as string.
+      if (hasUserLocaleField(collection.extendedSchema)) {
+        logger.warn(
+          `Collection "${name}" already declares a \`locale\` field in its schema; the i18n integration is reusing it. `
+          + 'Make sure your schema types it as `string` to match the auto-detected locale codes.',
+        )
+      }
       collection.extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
       collection.fields = getCollectionFieldsTypes(collection.extendedSchema)
-      collection.indexes = [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
+      // Avoid duplicate `(locale, stem)` indexes if the user already declared one.
+      const hasLocaleStemIndex = (collection.indexes || []).some(
+        idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
+      )
+      if (!hasLocaleStemIndex) {
+        collection.indexes = [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
+      }
     }
     else {
       logger.warn(
@@ -132,4 +146,13 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
       collection.i18n = undefined
     }
   }
+}
+
+/**
+ * Detect whether the user's collection schema already declares a `locale` field.
+ * When true, the i18n integration reuses that declaration rather than overwriting it.
+ */
+function hasUserLocaleField(extendedSchema: DefinedCollection['extendedSchema']): boolean {
+  const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, unknown> | undefined
+  return Boolean(props && 'locale' in props)
 }

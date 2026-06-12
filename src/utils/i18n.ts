@@ -6,16 +6,35 @@ import type { ParsedContentFile } from '../types'
 /**
  * Custom defu that merges arrays by index (item-by-item) instead of concatenating.
  * Applied recursively to all nested arrays within merged objects.
- * Used for inline i18n expansion: locale overrides merge with default locale items
- * so untranslated fields (routes, IDs, icons, URLs) are preserved from the default.
  *
- * In createDefu's merger: obj[key] = defaults (second arg), value = overrides (first arg).
- * Override items take priority; default items fill gaps for missing fields.
+ * Used for inline i18n expansion: object-of-fields arrays (e.g. nav items, cards)
+ * deep-merge so untranslated fields (routes, IDs, icons, URLs) are preserved from
+ * the default. Scalar arrays (`tags: ['a','b','c']`) are replaced wholesale —
+ * pad-filling them with the default's tail is virtually never what authors want
+ * when they intentionally provide a shorter locale-specific list.
+ *
+ * Heuristic: if every element of the override array is a non-object, the array is
+ * treated as scalar and replaced. Otherwise it deep-merges by index, with the
+ * default's trailing items preserved for missing override slots.
+ *
+ * In createDefu's merger: `obj[key]` is the defaults (second arg), `value` is the
+ * overrides (first arg). Override items take priority; default items fill gaps.
  */
 export const defuByIndex = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
     const defaultArr = obj[key]
     const overrideArr = value
+
+    // Scalar override arrays replace wholesale (no pad-fill from default).
+    // An empty override array also short-circuits here — author explicitly cleared.
+    const isScalarOverride = (overrideArr as unknown[]).every(
+      (item: unknown) => typeof item !== 'object' || item === null,
+    )
+    if (isScalarOverride) {
+      ;(obj as Record<string, unknown>)[key as string] = [...overrideArr]
+      return true
+    }
+
     const maxLen = Math.max(overrideArr.length, defaultArr.length)
     const result = []
     for (let i = 0; i < maxLen; i++) {

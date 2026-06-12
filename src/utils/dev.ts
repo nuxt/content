@@ -173,13 +173,15 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
         const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
         for (const item of expandedItems) {
-          const itemKey = item.locale ? `${keyInCollection}#${item.locale}` : keyInCollection
+          // Use item.id directly as the dump/DB key. `expandI18nData` already returns
+          // the default-locale item with the bare id (matching the SQL row's `id`
+          // column) and non-default items with a `#<locale>` suffix. Reconstructing
+          // the key from `item.locale` would incorrectly suffix the default row and
+          // desync the DELETE/INSERT pair in `broadcast`.
+          const itemKey = item.id as string
           const { queries } = generateCollectionInsert(collection, item)
           await broadcast(collection, itemKey, queries)
         }
-
-        // Clean up the bare (un-suffixed) row in case i18n was just added to this file
-        await broadcast(collection, keyInCollection)
 
         // Remove locale rows that are no longer in the i18n section
         for (const locale of collection.i18n.locales) {

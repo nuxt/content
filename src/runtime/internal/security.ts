@@ -72,7 +72,10 @@ export function assertSafeQuery(sql: string, collection: string) {
   // ORDER BY (optional — COUNT queries omit it)
   if (orderBy && order) {
     const _order = (orderBy + ' ' + order).split(', ')
-    if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
+    // Column names must start with a letter/underscore but may contain digits
+    // afterwards (e.g. `h1`, `field_2024`, `version2`). Earlier upstream regex
+    // forbade digits entirely, which rejected legitimate user schema fields.
+    if (!_order.every(column => column.match(/^("[a-zA-Z_]\w*"|[a-zA-Z_]\w*) (ASC|DESC)$/))) {
       throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
     }
   }
