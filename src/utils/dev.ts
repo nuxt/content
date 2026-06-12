@@ -3,13 +3,14 @@ import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
+import { expandI18nData } from './i18n'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { ConsolaInstance } from 'consola'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
-import type { ModuleOptions, ResolvedCollection } from '../types'
+import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
 import { generateCollectionInsert } from './collection'
@@ -164,11 +165,49 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
             collectionType: collection.type,
           }).then(result => JSON.stringify(result))
 
-          db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+          db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
         }
 
-        const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-        await broadcast(collection, keyInCollection, insertQuery)
+        const parsed: ParsedContentFile = JSON.parse(parsedContent)
+
+        // Expand inline i18n translations into one DB row per locale.
+        if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
+          const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
+          // Capture the source locale before `expandI18nData` mutates `parsed.locale`.
+          const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
+
+          const expandedItems = expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
+          for (const item of expandedItems) {
+            // Use `item.id` directly as the dump and DB key. `expandI18nData`
+            // already returns the default-locale item with the bare id (matching
+            // the SQL row's `id` column) and non-default items with a `#<locale>`
+            // suffix. Reconstructing the key from `item.locale` would incorrectly
+            // suffix the default row and desync the DELETE / INSERT pair in
+            // `broadcast`.
+            const itemKey = item.id as string
+            const { queries } = generateCollectionInsert(collection, item)
+            await broadcast(collection, itemKey, queries)
+          }
+
+          // Remove locale rows that are no longer present in the `i18n` section.
+          for (const locale of collection.i18n.locales) {
+            if (locale === sourceLocale || locale in i18nData) continue
+            await broadcast(collection, `${keyInCollection}#${locale}`)
+          }
+        }
+        else {
+          // Clean up stale locale variants if `i18n` was previously present but
+          // has now been removed from the file. The default-locale row is stored
+          // under the bare key, so it is skipped here.
+          if (collection.i18n) {
+            for (const locale of collection.i18n.locales) {
+              if (locale === collection.i18n.defaultLocale) continue
+              await broadcast(collection, `${keyInCollection}#${locale}`)
+            }
+          }
+          const { queries: insertQuery } = generateCollectionInsert(collection, parsed)
+          await broadcast(collection, keyInCollection, insertQuery)
+        }
       }
     }
   }
@@ -199,7 +238,15 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
         await db.deleteDevelopmentCache(keyInCollection)
 
+        // Remove the main row and all non-default locale variant rows. The
+        // default-locale row is the main row stored under the bare key.
         await broadcast(collection, keyInCollection)
+        if (collection.i18n) {
+          for (const locale of collection.i18n.locales) {
+            if (locale === collection.i18n.defaultLocale) continue
+            await broadcast(collection, `${keyInCollection}#${locale}`)
+          }
+        }
       }
     }
   }
@@ -213,9 +260,31 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    // Match an entry that references this row. Three exact shapes can occur:
+    //   1. `INSERT INTO ... VALUES ('key', ...)` contains `'key',`
+    //   2. `INSERT INTO ... VALUES ('key')` ends with `'key')`
+    //   3. `UPDATE ... WHERE id = 'key' AND ...` contains `id = 'key'`
+    // The UPDATE shape comes from `generateCollectionInsert` splitting oversized
+    // rows into an INSERT followed by chained UPDATE fragments. Without case 3
+    // those fragments would be left behind in the dump as dead no-ops, slowly
+    // bloating it on every HMR cycle.
+    const escapedKey = key.replace(/'/g, '\'\'')
+    const keyMatch = (item: string) =>
+      item.includes(`'${escapedKey}',`)
+      || item.endsWith(`'${escapedKey}')`)
+      || item.includes(`id = '${escapedKey}'`)
+    const keyIndex = collectionDump.findIndex(keyMatch)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
-    const itemsToRemove = keyIndex === -1 ? 0 : 1
+
+    // Count every consecutive dump entry belonging to this key. Large content
+    // splits into an INSERT plus UPDATE fragments that each reference the same
+    // key literal.
+    let itemsToRemove = 0
+    if (keyIndex !== -1) {
+      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]!); i++) {
+        itemsToRemove++
+      }
+    }
 
     if (insertQuery) {
       collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)

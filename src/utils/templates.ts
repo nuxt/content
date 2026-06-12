@@ -6,7 +6,7 @@ import type { JSONSchema } from 'json-schema-to-typescript-lite'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
-import type { Manifest } from '../types/manifest'
+import type { Manifest, ManifestCollectionMeta, ManifestCollectionsMeta } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
 
@@ -49,8 +49,17 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       'declare module \'@nuxt/content\' {',
       ...(await Promise.all(
         publicCollections.map(async (c) => {
-          const type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
+          let type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
             .then(code => code.replace('export interface CLASS', `interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)}`))
+          if (c.i18n) {
+            // i18n collections carry a resolved `locale` on every row. It is added
+            // here, per collection, so non-i18n collections never advertise a
+            // phantom `locale` property.
+            type = type.replace(
+              /(interface \w+CollectionItem extends \w+ ?\{)/,
+              '$1\n  locale: string',
+            )
+          }
           return indentLines(` ${type}`)
         }),
       )),
@@ -176,12 +185,23 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      acc[collection.name] = {
+      // The stem prefix is used by `.stem()` to auto-resolve a leading source
+      // directory. It is only emitted when every source of a collection shares
+      // the same normalized prefix. Otherwise the heuristic would silently
+      // prepend the wrong directory for some files.
+      const normalize = (p: string | undefined) => (p || '').replace(/^\/|\/$/g, '')
+      const sources = collection.source || []
+      const stemPrefixes = new Set(sources.map(s => normalize(s.prefix)))
+      const stemPrefix = stemPrefixes.size === 1 ? [...stemPrefixes][0]! : ''
+      const entry: ManifestCollectionMeta = {
         type: collection.type,
         fields: collection.fields,
+        ...(collection.i18n ? { i18n: collection.i18n } : {}),
+        ...(stemPrefix ? { stemPrefix } : {}),
       }
+      acc[collection.name] = entry
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as ManifestCollectionsMeta)
 
     return [
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,

@@ -1,15 +1,44 @@
 import { hash } from 'ohash'
-import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
+import type { Collection, CollectionIndex, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, localeStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 import { formatDate, formatDateTime } from './content/transformers/utils'
 
 export function getTableName(name: string) {
   return `_content_${name}`
+}
+
+/**
+ * Detect a user-declared `(locale, stem)` composite index so the i18n auto-index
+ * doesn't pile a duplicate on top of it. Exported so the `i18n: true` resolver
+ * in `config.ts` applies the same guard.
+ */
+export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
+  return (indexes || []).some(
+    idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
+  )
+}
+
+/**
+ * Force the `locale` schema property to `string`. The i18n integration relies on
+ * the locale being a text column, so a user declaration of another type (which
+ * would otherwise win the schema merge and serialize locale codes as `NaN`) is
+ * overridden with a warning. Exported so both the explicit-config and the
+ * `i18n: true` resolution paths apply the same guard.
+ */
+export function normalizeLocaleField(extendedSchema: Draft07, collectionName?: string): void {
+  const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
+  if (props?.locale && props.locale.type !== 'string') {
+    logger.warn(
+      `Collection${collectionName ? ` "${collectionName}"` : ''} declares a non-string \`locale\` field. `
+      + 'The i18n integration requires `locale` to be a string and is overriding it.',
+    )
+    props.locale = { type: 'string' }
+  }
 }
 
 export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
@@ -27,7 +56,38 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
+  // Add the `locale` field only when i18n is fully configured. The `true`
+  // shorthand is resolved later in `loadContentConfig` via `resolveI18nConfig`.
+  const hasI18nConfig = collection.i18n && collection.i18n !== true
+  // Resolve the effective i18n config (may patch `defaultLocale` into `locales`
+  // without mutating the caller's config object).
+  let resolvedI18n: typeof collection.i18n = collection.i18n
+  if (hasI18nConfig) {
+    extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
+    normalizeLocaleField(extendedSchema)
+    // Surface defaultLocale-not-in-locales early. Auto-locale detection and
+    // path-based detection both fail silently if this invariant is violated.
+    const i18n = collection.i18n as { locales: string[], defaultLocale: string }
+    if (!i18n.locales.includes(i18n.defaultLocale)) {
+      logger.warn(
+        `Collection \`i18n\` config has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
+        + `\`locales: [${i18n.locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically, `
+        + 'declare it explicitly in `locales` to silence this warning.',
+      )
+      resolvedI18n = { ...i18n, locales: [i18n.defaultLocale, ...i18n.locales] }
+    }
+  }
+
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
+
+  // Auto-add a composite index on (locale, stem) for i18n collections. Skipped
+  // when the user already declared an equivalent index, which avoids a
+  // duplicate `CREATE INDEX` that would otherwise survive when the user
+  // supplies a custom `name`.
+  const indexes = collection.indexes ? [...collection.indexes] : []
+  if (hasI18nConfig && !hasLocaleStemIndex(indexes)) {
+    indexes.push({ columns: ['locale', 'stem'] })
+  }
 
   return {
     type: collection.type,
@@ -35,7 +95,8 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     schema: standardSchema,
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
-    indexes: collection.indexes,
+    indexes,
+    i18n: resolvedI18n,
   }
 }
 
@@ -67,6 +128,8 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
+    // Ensure i18n: true is never passed through (should be resolved in config.ts)
+    i18n: collection.i18n === true ? undefined : collection.i18n,
   }
 }
 

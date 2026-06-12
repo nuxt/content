@@ -20,6 +20,7 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
+import { expandI18nData } from './utils/i18n'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
@@ -131,16 +132,23 @@ export default defineNuxtModule<ModuleOptions>({
     // Helpers are designed to be enviroment agnostic
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/client') },
+      { name: 'useQueryCollection', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/client') },
       { name: 'useSearchCollection', from: resolver.resolve('./runtime/client') },
     ])
+    // Auto-import from the canonical `./runtime/server` module rather than the
+    // deprecated `./runtime/nitro` re-export. Otherwise the `@deprecated` JSDoc
+    // on the re-exports propagates into users' IDEs whenever they hover an
+    // auto-imported `queryCollection` in a server handler.
     addServerImports([
-      { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/server') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
@@ -376,8 +384,22 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-            list.push([key, queries, hash])
+            // i18n expansion writes one row per locale to the dump.
+            // Use `item.id` (already suffixed for non-default locales by
+            // `expandI18nData`) as the dump tuple key so HMR can locate the
+            // same row later. The bare key matches the SQL row's actual `id`.
+            if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
+              const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
+              for (const item of expandedItems) {
+                const itemKey = item.id as string
+                const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
+                list.push([itemKey, itemQueries, itemHash])
+              }
+            }
+            else {
+              const { queries, hash } = generateCollectionInsert(collection, parsedContent)
+              list.push([keyInCollection, queries, hash])
+            }
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)

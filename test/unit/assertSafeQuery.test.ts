@@ -2,10 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { assertSafeQuery } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
-// Mock tables from manifest
+// Mock tables and collection metadata from manifest
 vi.mock('#content/manifest', () => ({
   tables: {
     test: '_content_test',
+  },
+  default: {
+    test: { type: 'data', fields: {} },
   },
 }))
 const mockFetch = vi.fn().mockResolvedValue(Promise.resolve([{}]))
@@ -46,6 +49,60 @@ describe('decompressSQLDump', () => {
     'SELECT "id" FROM _content_test WHERE (x=$\'$ OR x IN (SELECT BLAH) OR x=$\'$) ORDER BY id ASC': false,
     'SELECT COUNT(*) as c,(SELECT group_concat(name,\'|\') FROM sqlite_master WHERE type=\'table\') AS leak FROM _content_content ORDER BY stem ASC': false,
   }
+
+  const securityQueries = {
+    // Newline injection
+    'SELECT * FROM _content_test ORDER BY id ASC\nDROP TABLE _content_test': false,
+    'SELECT * FROM _content_test ORDER BY id ASC\rDROP TABLE _content_test': false,
+    // Escaped quotes in WHERE values should pass (not be treated as comments)
+    'SELECT * FROM _content_test WHERE ("title" = \'L\'\'été\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("title" = \'it\'\'s\') ORDER BY stem ASC': true,
+    // Triple-quote edge case. Must NOT bypass keyword detection.
+    'SELECT * FROM _content_test WHERE ("x" = \'a\'\'\') UNION SELECT 1 ORDER BY stem ASC': false,
+    // COUNT with quoted field
+    'SELECT COUNT("title") as count FROM _content_test': true,
+    'SELECT COUNT(DISTINCT "author") as count FROM _content_test': true,
+    // COUNT without ORDER BY
+    'SELECT COUNT(*) as count FROM _content_test': true,
+    // Locale-filtered query (typical auto-locale output)
+    'SELECT * FROM _content_test WHERE ("locale" = \'fr\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("locale" = \'fr\') AND ("stem" = \'navbar\') ORDER BY stem ASC': true,
+    // Columns with digits (e.g. heading levels, year suffixes) must be allowed
+    'SELECT * FROM _content_test ORDER BY h1 ASC': true,
+    'SELECT * FROM _content_test ORDER BY "h2" DESC': true,
+    'SELECT * FROM _content_test ORDER BY field_2024 ASC, h1 DESC': true,
+    // Columns must still start with a letter or underscore, not a digit
+    'SELECT * FROM _content_test ORDER BY 1field ASC': false,
+    // Single-character column names are legitimate schema fields
+    'SELECT COUNT("x") as count FROM _content_test': true,
+    'SELECT COUNT(DISTINCT "y") as count FROM _content_test': true,
+    'SELECT "a", "b" FROM _content_test ORDER BY stem ASC': true,
+    // A non-COUNT SELECT may legitimately omit ORDER BY
+    'SELECT * FROM _content_test': true,
+    'SELECT * FROM _content_test WHERE ("locale" = \'fr\')': true,
+    // A WHERE value that contains ORDER BY / LIMIT text must not escape validation
+    'SELECT * FROM _content_test WHERE ("title" = \'x ORDER BY y ASC LIMIT 5\') ORDER BY stem ASC': true,
+    // Expensive or filesystem functions in WHERE are rejected (DoS / exfiltration)
+    'SELECT * FROM _content_test WHERE (randomblob(1000000000) NOTNULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (zeroblob(1000000000) NOTNULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (pg_sleep(10) IS NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (load_extension(\'x\') IS NULL) ORDER BY stem ASC': false,
+    // A column literally named like a value containing a function is still fine
+    'SELECT * FROM _content_test WHERE ("title" = \'randomblob(1)\') ORDER BY stem ASC': true,
+    // Unterminated block comment must be rejected
+    'SELECT * FROM _content_test WHERE ("x" = 1) /* unterminated ORDER BY stem ASC': false,
+  }
+
+  Object.entries(securityQueries).forEach(([query, isValid]) => {
+    it(`security: ${query.slice(0, 60)}...`, () => {
+      if (isValid) {
+        expect(() => assertSafeQuery(query, 'test')).not.toThrow()
+      }
+      else {
+        expect(() => assertSafeQuery(query, 'test')).toThrow()
+      }
+    })
+  })
 
   Object.entries(queries).forEach(([query, isValid]) => {
     it(`${query}`, () => {

@@ -1,15 +1,24 @@
 import type { H3Event } from 'h3'
-import { collectionQueryBuilder } from './internal/query'
+import { buildGroup, collectionQueryBuilder, collectionQueryGroup, getGroupConditions, referencesLocaleColumn } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
+import { buildFTSIndex, generateSearchSections, queryFTS, resetFTSIndex } from './internal/search'
+import { generateCollectionLocales } from './internal/locales'
+import { buildUseQueryCollectionKey, detectClientLocale, detectServerLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
-import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
-import type { MaybeRefOrGetter } from 'vue'
+import { withoutTrailingSlash } from 'ufo'
+import type { Collections, ContentLocaleEntry, ContentNavigationItem, CollectionQueryBuilder, DatabaseAdapter, ManifestCollectionsMeta, PageCollections, QueryGroupFunction, SQLOperator, SurroundOptions } from '@nuxt/content'
+import manifestMeta from '#content/manifest'
+import type { AsyncData, AsyncDataOptions, NuxtError } from '#app'
+import type { MaybeRefOrGetter, Ref } from 'vue'
+import { computed, ref, toValue, tryUseNuxtApp, useAsyncData, watch } from '#imports'
+// `useAsyncData`'s key is a getter. Nuxt watches the resolved string and refetches
+// when it changes (reactive keys, available since Nuxt 3.17). The module
+// `compatibility` field requires `>=4.1.0 || ^3.19.0`, so a locale-aware key
+// change automatically triggers a refetch without an explicit `watch:` option.
 
-export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
+export type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -19,8 +28,12 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  const event = tryUseNuxtApp()?.ssrContext?.event
-  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
+  const nuxtApp = tryUseNuxtApp()
+  const event = nuxtApp?.ssrContext?.event
+  // Prefer the client-side locale (a live ref during SPA navigation) and fall back
+  // to the SSR event context for the initial server render.
+  const detectedLocale = detectClientLocale(nuxtApp) || detectServerLocale(event)
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectedLocale)
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
@@ -33,6 +46,200 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
 
 export function queryCollectionSearchSections<T extends keyof PageCollections>(collection: T, opts?: GenerateSearchSectionsOptions) {
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
+}
+
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
+  // Auto-locale is skipped here. This helper needs every locale variant, not just
+  // the current one, so it builds the query without passing a detected locale.
+  const event = tryUseNuxtApp()?.ssrContext?.event
+  const qb = collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
+  return generateCollectionLocales(qb, String(collection), stem)
+}
+
+/**
+ * `useAsyncData` wrapper for `queryCollection`. Provides a chainable API that
+ * wraps execution in `useAsyncData` with an auto-generated cache key. The locale
+ * is auto-detected from `@nuxtjs/i18n` and content automatically refetches when
+ * the locale changes.
+ *
+ * Must be called in a Vue component setup context, like `useAsyncData` and
+ * `useFetch`.
+ *
+ * Each terminal method (`all`, `first`, `count`) accepts an optional
+ * `AsyncDataOptions` argument that is forwarded to `useAsyncData`. Use it for
+ * `lazy`, `server`, `default`, `immediate`, `watch`, `transform`, `pick`, and
+ * other forwarded options.
+ *
+ * @example
+ * const { data } = await useQueryCollection('technologies').all()
+ * const { data } = await useQueryCollection('navigation').stem('navbar').first()
+ * const { data } = await useQueryCollection('docs').all({ lazy: true, default: () => [] })
+ */
+export function useQueryCollection<R = never, T extends keyof Collections = keyof Collections>(collection: T) {
+  const nuxtApp = tryUseNuxtApp()
+  if (!nuxtApp) {
+    // `useAsyncData` would throw later with the same root cause. Surfacing the
+    // failure here gives users a clearer hint about *where* the call is
+    // misplaced rather than a generic "[nuxt] instance unavailable" trace from
+    // inside `useAsyncData`.
+    throw new Error(
+      '[@nuxt/content] `useQueryCollection` must be called inside a Vue component setup (or other Nuxt-aware) context, '
+      + 'like `useAsyncData` and `useFetch`. It cannot run in event handlers, watchers, lifecycle hooks, '
+      + 'or outside the Nuxt app.',
+    )
+  }
+  // Only collections that declare `i18n` participate in locale-aware caching.
+  // For a non-i18n collection the produced SQL is identical across locales, so
+  // letting the locale into the cache key would refetch and store duplicate
+  // entries on every locale switch for no benefit.
+  const collectionI18n = (manifestMeta as ManifestCollectionsMeta)[String(collection)]?.i18n
+
+  const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> } | undefined)?.locale
+  // The locale value flows into the cache key. Because `useAsyncData`'s key is
+  // a getter, Nuxt reruns the handler when the locale ref changes.
+  //
+  // The SSR event context is a fallback for the case where `@nuxtjs/i18n` is not
+  // installed (no `$i18n`). When it is installed, `$i18n.locale` already reflects
+  // the per-request locale during SSR, so the ref wins.
+  const ssrLocale = detectServerLocale(nuxtApp?.ssrContext?.event)
+  const localeValue = computed(() => i18nLocaleRef?.value || ssrLocale || '')
+
+  type Item = Collections[T]
+  // Use the consumer's type override when provided, otherwise the collection type.
+  type Result = [R] extends [never] ? Item : R
+
+  // Recorded query-chain operations replayed on each execution.
+  const ops: Array<(qb: CollectionQueryBuilder<Item>) => void> = []
+  let explicitLocale = false
+
+  // Track key-relevant params directly to avoid building a full query builder
+  // inside `buildKey()`.
+  const keyParts = {
+    conditions: [] as string[],
+    orderBy: [] as string[],
+    offset: 0,
+    limit: 0,
+    selectedFields: [] as string[],
+    localeFallback: undefined as { locale: string, fallback: string } | undefined,
+  }
+
+  const builder = {
+    where(field: string, operator: SQLOperator, value?: unknown) {
+      // A manual filter on `locale` must also suppress auto-locale here. Otherwise
+      // the cache key would include a redundant `l:<detected>` fragment alongside
+      // the explicit condition. The underlying query builder already enforces this
+      // through `referencesLocaleColumn` (in `query.ts`), and this branch mirrors
+      // the same logic for key stability.
+      if (field === 'locale') explicitLocale = true
+      keyParts.conditions.push(`${field}|${operator}|${String(value)}`)
+      ops.push(qb => qb.where(field, operator, value))
+      return builder
+    },
+    andWhere(groupFactory: QueryGroupFunction<Item>) {
+      // Pre-build the group once to derive a stable cache-key fragment. The same
+      // factory runs again inside `buildQuery()` when the actual query is
+      // executed. Running it twice is safe because group factories are expected
+      // to be pure.
+      const group = groupFactory(collectionQueryGroup(collection))
+      const groupConditions = getGroupConditions(group)
+      if (referencesLocaleColumn(groupConditions)) explicitLocale = true
+      keyParts.conditions.push(`and${buildGroup(group, 'AND')}`)
+      ops.push(qb => qb.andWhere(groupFactory))
+      return builder
+    },
+    orWhere(groupFactory: QueryGroupFunction<Item>) {
+      const group = groupFactory(collectionQueryGroup(collection))
+      const groupConditions = getGroupConditions(group)
+      if (referencesLocaleColumn(groupConditions)) explicitLocale = true
+      keyParts.conditions.push(`or${buildGroup(group, 'OR')}`)
+      ops.push(qb => qb.orWhere(groupFactory))
+      return builder
+    },
+    order(field: keyof Item, direction: 'ASC' | 'DESC') {
+      keyParts.orderBy.push(`${String(field)}:${direction}`)
+      ops.push(qb => qb.order(field, direction))
+      return builder
+    },
+    select<K extends keyof Item>(...fields: K[]) {
+      keyParts.selectedFields.push(...fields.map(String))
+      ops.push(qb => qb.select(...fields))
+      return builder
+    },
+    skip(skip: number) {
+      keyParts.offset = skip
+      ops.push(qb => qb.skip(skip))
+      return builder
+    },
+    limit(limit: number) {
+      keyParts.limit = limit
+      ops.push(qb => qb.limit(limit))
+      return builder
+    },
+    path(path: string) {
+      // Normalize the key fragment the same way `.path()` normalizes the SQL
+      // value, so `.path('/foo/')` and `.path('/foo')` share a cache entry
+      // (both produce the same WHERE clause).
+      keyParts.conditions.push(`path=${withoutTrailingSlash(path)}`)
+      ops.push(qb => qb.path(path))
+      return builder
+    },
+    stem(stem: string) {
+      keyParts.conditions.push(`stem=${stem}`)
+      ops.push(qb => qb.stem(stem))
+      return builder
+    },
+    locale(locale: string, opts?: { fallback?: string }) {
+      explicitLocale = true
+      if (opts?.fallback) {
+        keyParts.localeFallback = { locale, fallback: opts.fallback }
+      }
+      else {
+        keyParts.conditions.push(`locale=${locale}`)
+      }
+      ops.push(qb => qb.locale(locale, opts))
+      return builder
+    },
+    all(options?: AsyncDataOptions<Result[]>): AsyncData<Result[] | undefined, NuxtError | undefined> {
+      return useAsyncData(() => buildKey('all'), () => buildQuery().all() as Promise<Result[]>, options) as AsyncData<Result[] | undefined, NuxtError | undefined>
+    },
+    first(options?: AsyncDataOptions<Result | null>): AsyncData<Result | null | undefined, NuxtError | undefined> {
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first() as Promise<Result | null>, options) as AsyncData<Result | null | undefined, NuxtError | undefined>
+    },
+    count(field?: keyof Item | '*', distinct?: boolean, options?: AsyncDataOptions<number>): AsyncData<number | undefined, NuxtError | undefined> {
+      const countKey = `count:${String(field ?? '*')}:${distinct ? 'd' : ''}`
+      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct), options) as AsyncData<number | undefined, NuxtError | undefined>
+    },
+  }
+
+  /** Rebuild a fresh query builder with all chained ops replayed. */
+  function buildQuery(): CollectionQueryBuilder<Item> {
+    const qb = queryCollection(collection)
+    for (const op of ops) op(qb)
+    return qb
+  }
+
+  /** Build cache key from tracked params without instantiating a query builder. */
+  function buildKey(method: string): string {
+    // Mirror the auto-locale gate in `query.ts`: a locale only affects the result
+    // (and so the cache key) when the collection is i18n-enabled and the detected
+    // locale is one it declares.
+    const locale = localeValue.value
+    const localeIsActive = !!collectionI18n && collectionI18n.locales.includes(locale)
+    return buildUseQueryCollectionKey({
+      collection: String(collection),
+      conditions: keyParts.conditions,
+      orderBy: keyParts.orderBy,
+      offset: keyParts.offset,
+      limit: keyParts.limit,
+      selectedFields: keyParts.selectedFields,
+      localeFallback: keyParts.localeFallback,
+      currentLocale: localeIsActive ? locale : undefined,
+      explicitLocale,
+      method,
+    })
+  }
+
+  return builder
 }
 
 export function useSearchCollection<T extends keyof PageCollections>(

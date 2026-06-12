@@ -84,6 +84,23 @@ export const metaStandardSchema: Draft07 = {
   },
 }
 
+export const localeStandardSchema: Draft07 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $ref: '#/definitions/__SCHEMA__',
+  definitions: {
+    __SCHEMA__: {
+      type: 'object',
+      properties: {
+        locale: {
+          type: 'string',
+        },
+      },
+      required: [],
+      additionalProperties: false,
+    },
+  },
+}
+
 export const pageStandardSchema: Draft07 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $ref: '#/definitions/__SCHEMA__',
