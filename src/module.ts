@@ -140,9 +140,9 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'useSearchCollection', from: resolver.resolve('./runtime/client') },
     ])
     // Auto-import from the canonical `./runtime/server` module rather than the
-    // deprecated `./runtime/nitro` re-export — otherwise the `@deprecated`
-    // JSDoc on the re-exports propagates into users' IDEs whenever they hover
-    // an auto-imported `queryCollection` in a server handler.
+    // deprecated `./runtime/nitro` re-export. Otherwise the `@deprecated` JSDoc
+    // on the re-exports propagates into users' IDEs whenever they hover an
+    // auto-imported `queryCollection` in a server handler.
     addServerImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/server') },
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/server') },
@@ -384,10 +384,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            // i18n: expand inline translations to per-locale rows.
+            // i18n expansion writes one row per locale to the dump.
             // Use `item.id` (already suffixed for non-default locales by
             // `expandI18nData`) as the dump tuple key so HMR can locate the
-            // same row later — the bare key is the SQL row's actual `id`.
+            // same row later. The bare key matches the SQL row's actual `id`.
             if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
               const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type)
               for (const item of expandedItems) {

@@ -217,7 +217,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       }
     }
 
-    // i18n: detect locale from path prefix when collection has i18n configured
+    // Detect the locale from the path prefix when the collection has i18n
+    // configured. Strips the prefix from `path` and `stem` so each row is
+    // addressable by a single locale-agnostic key.
     if (collection.i18n && collectionKeys.includes('locale')) {
       const currentPath = String(result.path || pathMetaFields.path || '')
       const currentStem = String(result.stem || pathMetaFields.stem || '')

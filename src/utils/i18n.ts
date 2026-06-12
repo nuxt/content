@@ -5,29 +5,32 @@ import { I18N_SOURCE_HASH_FIELD } from '../types/locales'
 import type { ParsedContentFile } from '../types'
 
 /**
- * Custom defu that merges arrays by index (item-by-item) instead of concatenating.
- * Applied recursively to all nested arrays within merged objects.
+ * Custom `defu` merger that combines arrays by index (item-by-item) instead of
+ * concatenating. Applied recursively to all nested arrays within merged objects.
  *
- * Used for inline i18n expansion: object-of-fields arrays (e.g. nav items, cards)
+ * Used for inline i18n expansion. Arrays of objects (such as nav items or cards)
  * deep-merge so untranslated fields (routes, IDs, icons, URLs) are preserved from
- * the default. Scalar arrays (`tags: ['a','b','c']`) are replaced wholesale —
- * pad-filling them with the default's tail is virtually never what authors want
- * when they intentionally provide a shorter locale-specific list.
+ * the default. Scalar arrays (for example `tags: ['a', 'b', 'c']`) are replaced
+ * wholesale, since pad-filling them with the default's tail is virtually never
+ * what authors want when they intentionally provide a shorter locale-specific
+ * list.
  *
- * Heuristic: if every element of the override array is a non-object, the array is
- * treated as scalar and replaced. Otherwise it deep-merges by index, with the
- * default's trailing items preserved for missing override slots.
+ * Heuristic, if every element of the override array is a non-object, the array
+ * is treated as scalar and replaced. Otherwise it deep-merges by index, with
+ * the default's trailing items preserved for missing override slots.
  *
- * In createDefu's merger: `obj[key]` is the defaults (second arg), `value` is the
- * overrides (first arg). Override items take priority; default items fill gaps.
+ * Inside `createDefu`'s merger, `obj[key]` is the defaults (second arg) and
+ * `value` is the overrides (first arg). Override items take priority and
+ * default items fill any gaps.
  */
 export const defuByIndex = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
     const defaultArr = obj[key]
     const overrideArr = value
 
-    // Scalar override arrays replace wholesale (no pad-fill from default).
-    // An empty override array also short-circuits here — author explicitly cleared.
+    // Scalar override arrays replace wholesale (no pad-fill from the default).
+    // An empty override array also short-circuits here, since the author has
+    // explicitly cleared it.
     const isScalarOverride = (overrideArr as unknown[]).every(
       (item: unknown) => typeof item !== 'object' || item === null,
     )
@@ -58,22 +61,26 @@ export const defuByIndex = createDefu((obj, key, value) => {
 
 /**
  * Expand inline i18n data from a parsed content file into per-locale items.
- * The default locale keeps the original content; non-default locales get a deep-merged
- * copy where only overridden fields differ. Non-default items include `_i18nSourceHash`
- * for tracking whether the source content has changed since translation.
+ * The default locale keeps the original content, while non-default locales get
+ * a deep-merged copy in which only overridden fields differ. Non-default items
+ * include `_i18nSourceHash` for tracking whether the source content has changed
+ * since translation.
  *
- * For page collections (`collectionType: 'page'`), the body AST is replaced wholesale
- * rather than deep-merged, since body is a parsed markdown tree that cannot be meaningfully merged.
+ * For page collections (`collectionType: 'page'`), the body AST is replaced
+ * wholesale rather than deep-merged, since `body` is a parsed markdown tree
+ * that cannot be meaningfully merged.
  *
- * `meta` semantics: the default locale keeps its full `meta` (minus the `i18n` key).
- * Non-default locale items get a fresh `meta` of `{ ...cleanMeta, _i18nSourceHash }` —
- * any `meta` provided inside a locale override is intentionally dropped, because
- * locale-specific tracking state (`_i18nSourceHash`) lives on `meta` and must not be
- * overridden by user content. Use a top-level field if you need a locale-varying value.
+ * `meta` semantics, the default locale keeps its full `meta` (minus the `i18n`
+ * key). Non-default locale items receive a fresh `meta` of the form
+ * `{ ...cleanMeta, _i18nSourceHash }`. Any `meta` provided inside a locale
+ * override is intentionally dropped, because locale-specific tracking state
+ * (`_i18nSourceHash`) lives on `meta` and must not be overridden by user
+ * content. Use a top-level field when a locale-varying value is needed.
  *
- * Note: this function mutates `parsedContent.meta` (removes the `i18n` key) and
- * sets `parsedContent.locale` if not already set. This is acceptable because the
- * source content is always consumed (inserted into DB) immediately after expansion.
+ * This function mutates `parsedContent.meta` (removing the `i18n` key) and sets
+ * `parsedContent.locale` if not already set. This is acceptable because the
+ * source content is always consumed (inserted into the database) immediately
+ * after expansion.
  */
 export function expandI18nData(
   parsedContent: ParsedContentFile,
@@ -101,20 +108,21 @@ export function expandI18nData(
   for (const [locale, overrides] of Object.entries(i18nData)) {
     if (locale === parsedContent.locale) continue
 
-    // Source hash is per-locale: based only on the default values of fields THIS
-    // locale actually translates. A field translated only in `de` must not enter
-    // the `fr` hash — otherwise a default change to that field would flip `fr`'s
-    // hash and signal a false "stale translation".
+    // The source hash is per-locale. It is computed only from the default values
+    // of fields that *this* locale actually translates. A field translated only
+    // in `de` must not enter the `fr` hash. Otherwise a default change to that
+    // field would flip `fr`'s hash and signal a false "stale translation".
     const sourceFields: Record<string, unknown> = {}
     for (const field of Object.keys(overrides)) {
       sourceFields[field] = parsedContent[field]
     }
     const i18nSourceHash = hash(sourceFields)
 
-    // Deep merge preserves untranslated fields (routes, IDs, icons).
-    // For page collections, body AST must not be deep-merged — replace it wholesale.
-    // Use `'body' in overrides` so explicit null/empty bodies still replace (rather
-    // than falling back to deep-merging the default AST in).
+    // Deep merge preserves untranslated fields (routes, IDs, icons). For page
+    // collections, the body AST must not be deep-merged and is instead replaced
+    // wholesale. The `'body' in overrides` check ensures explicit null or empty
+    // bodies still replace, rather than falling back to deep-merging the default
+    // AST.
     const merged = defuByIndex(overrides, parsedContent) as ParsedContentFile
     if (collectionType === 'page' && 'body' in overrides) {
       merged.body = overrides.body as ParsedContentFile['body']

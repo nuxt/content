@@ -12,7 +12,8 @@ describe('detectServerLocale', () => {
   })
 
   it('returns undefined when event.context.nuxtI18n is absent', () => {
-    // Empty context — @nuxtjs/i18n not installed or middleware didn't run.
+    // Empty context. Either `@nuxtjs/i18n` is not installed, or its middleware
+    // did not run for this request.
     const event = { context: {} } as never
     expect(detectServerLocale(event)).toBeUndefined()
   })
@@ -23,7 +24,8 @@ describe('detectServerLocale', () => {
   })
 
   it('falls back to `vueI18nOptions.locale` when detection did not run', () => {
-    // Mirrors the case where prerender / a route outside i18n middleware lacks detectLocale.
+    // Mirrors the case where a prerender or a route outside the i18n middleware
+    // lacks `detectLocale`.
     const event = { context: { nuxtI18n: { vueI18nOptions: { locale: 'en' } } } } as never
     expect(detectServerLocale(event)).toBe('en')
   })
@@ -67,8 +69,9 @@ describe('buildUseQueryCollectionKey', () => {
   })
 
   it('OMITS auto-detected locale when explicitLocale is true', () => {
-    // Regression: a manual `.where('locale', ...)` or `.locale()` call must suppress the
-    // auto-locale fragment so the wrapper key matches the actual SQL behavior.
+    // Regression. A manual `.where('locale', ...)` or `.locale()` call must
+    // suppress the auto-locale fragment so the wrapper key matches the actual
+    // SQL behaviour.
     const key = buildUseQueryCollectionKey({ ...baseParts, currentLocale: 'fr', explicitLocale: true })
     expect(key).not.toContain('l:fr')
   })
@@ -93,7 +96,8 @@ describe('buildUseQueryCollectionKey', () => {
       selectedFields: ['title', 'date'],
       currentLocale: 'fr',
     })
-    // Expected order: collection → conditions → locale → orderBy → offset → limit → selectedFields → method
+    // Expected fragment order: `collection`, `conditions`, `locale`, `orderBy`,
+    // `offset`, `limit`, `selectedFields`, `method`.
     const parsed = JSON.parse(key.slice('content:'.length)) as string[]
     expect(parsed).toEqual([
       'docs',
@@ -108,7 +112,8 @@ describe('buildUseQueryCollectionKey', () => {
   })
 
   it('returns identical keys for inputs that produce identical SQL', () => {
-    // Demonstrates the contract: equal inputs (incl. equivalent normalization upstream) → equal keys
+    // Demonstrates the contract. Equal inputs (including equivalent
+    // normalization upstream) produce equal keys.
     const a = buildUseQueryCollectionKey({ ...baseParts, conditions: ['path=/foo'] })
     const b = buildUseQueryCollectionKey({ ...baseParts, conditions: ['path=/foo'] })
     expect(a).toBe(b)

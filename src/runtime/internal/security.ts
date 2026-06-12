@@ -1,6 +1,7 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
-// Combines the upstream security tightening (anchored regex, required `as count` alias)
-// with the feature additions (quoted column names, optional `ORDER BY` for count queries).
+// Combines the upstream security tightening (anchored regex, required `as count`
+// alias) with the feature additions (quoted column names, optional `ORDER BY` for
+// count queries).
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\) as count$/i
 const SQL_SELECT_REGEX = /^SELECT (.*?) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
@@ -69,12 +70,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     }
   }
 
-  // ORDER BY (optional — COUNT queries omit it)
+  // ORDER BY is optional, since COUNT queries omit it.
   if (orderBy && order) {
     const _order = (orderBy + ' ' + order).split(', ')
-    // Column names must start with a letter/underscore but may contain digits
-    // afterwards (e.g. `h1`, `field_2024`, `version2`). Earlier upstream regex
-    // forbade digits entirely, which rejected legitimate user schema fields.
+    // Column names must start with a letter or underscore but may contain digits
+    // afterwards (for example `h1`, `field_2024`, `version2`). An earlier upstream
+    // regex forbade digits entirely, which rejected legitimate user schema fields.
     if (!_order.every(column => column.match(/^("[a-zA-Z_]\w*"|[a-zA-Z_]\w*) (ASC|DESC)$/))) {
       throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
     }
@@ -94,7 +95,7 @@ export function assertSafeQuery(sql: string, collection: string) {
 }
 
 function cleanupQuery(query: string, options: { removeString: boolean } = { removeString: false }) {
-  // Track whether we're inside a string literal
+  // Track whether the scanner is currently inside a string literal.
   let inString = false
   let stringFence = ''
   let result = ''
@@ -105,27 +106,30 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
     if (inString) {
       if (char === stringFence) {
         if (nextChar === stringFence) {
-          // Doubled quote escape (e.g., '' inside a string) — skip both, stay in string
+          // Doubled-quote escape (for example `''` inside a string). Skip both
+          // characters and stay inside the string.
           if (!options?.removeString) {
-            result += char + char // preserve both quotes
+            // Preserve both quotes when not stripping the string content.
+            result += char + char
           }
           i++
           continue
         }
         else {
-          // String closing quote
+          // Closing quote of the string literal.
           inString = false
           stringFence = ''
         }
       }
-      // Inside string: keep character when not removing strings
+      // Inside a string, keep each character when not removing strings.
       if (!options?.removeString) {
         result += char
       }
       continue
     }
 
-    // Not in string — opening quote starts string tracking regardless of removeString mode
+    // Outside a string, an opening quote starts string tracking regardless of
+    // `removeString` mode.
     if (char === '\'' || char === '"') {
       inString = true
       stringFence = char
@@ -136,7 +140,7 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
     }
 
     if (char === '-' && nextChar === '-') {
-      // everything after this is a comment
+      // Line comment, everything after this is a comment.
       return result
     }
 

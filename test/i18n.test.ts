@@ -26,7 +26,8 @@ describe('i18n', async () => {
   await setup({
     rootDir: resolver.resolve('./fixtures/i18n'),
     dev: true,
-    port: 0, // Let OS assign a free port to avoid EADDRINUSE on CI
+    // Let the OS assign a free port to avoid `EADDRINUSE` on CI.
+    port: 0,
   })
 
   describe('database', () => {
@@ -218,10 +219,10 @@ describe('i18n', async () => {
     })
 
     test('returns entries without path/title on data collections', async () => {
-      // The `team` collection has no `path` or `title` columns. `generateCollectionLocales`
-      // filters the SELECT list against the manifest fields, so the helper must succeed
-      // and return `path: undefined` / `title: undefined` rather than blowing up on a
-      // SQL "no such column" error.
+      // The `team` collection has no `path` or `title` columns.
+      // `generateCollectionLocales` filters the SELECT list against the manifest
+      // fields, so the helper must succeed and return `path: undefined` and
+      // `title: undefined` rather than failing with a SQL "no such column" error.
       const locales = await $fetch<{ locale: string, stem: string, path?: string, title?: string }[]>(
         '/api/content/locales?collection=team&stem=data/team',
       )

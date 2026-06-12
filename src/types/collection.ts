@@ -115,7 +115,7 @@ export interface DefinedCollection {
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   indexes?: CollectionIndex[]
   /**
-   * `true` is the shorthand resolved from `@nuxtjs/i18n` in config loading.
+   * The `true` shorthand is resolved from `@nuxtjs/i18n` during config loading.
    * After resolution, this is always `CollectionI18nConfig | undefined`.
    */
   i18n?: true | CollectionI18nConfig
@@ -125,12 +125,13 @@ export interface ResolvedCollection extends Omit<DefinedCollection, 'i18n'> {
   name: string
   tableName: string
   /**
-   * Whether the collection is private or not.
-   * Private collections will not be available in the runtime.
+   * Whether the collection is private. Private collections are not exposed at
+   * runtime.
    */
   private: boolean
   /**
-   * Fully resolved i18n config (never `true` — that's resolved before this point).
+   * Fully resolved i18n config. Never `true`, since the shorthand is resolved
+   * before this point.
    */
   i18n?: CollectionI18nConfig
 }

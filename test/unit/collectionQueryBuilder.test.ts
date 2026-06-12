@@ -254,7 +254,8 @@ describe('collectionQueryBuilder', () => {
 
   describe('.stem() input normalization', () => {
     it('strips leading slashes from user input', async () => {
-      // Stored stems never carry a leading slash; tolerate the slash from callers.
+      // Stored stems never carry a leading slash, so the slash from callers is
+      // tolerated and stripped.
       await collectionQueryBuilder(mockCollection, mockFetch).stem('/navbar').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
@@ -263,7 +264,7 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('strips trailing slashes from user input', async () => {
-      // A trailing slash would never match the stored stem — collapse it silently.
+      // A trailing slash would never match the stored stem, so collapse it silently.
       await collectionQueryBuilder(mockCollection, mockFetch).stem('navbar/').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
@@ -281,7 +282,8 @@ describe('collectionQueryBuilder', () => {
   })
 
   it('locale fallback merges results in stem order', async () => {
-    // fr has stem c, en has stems a, b, c — fallback should interleave a, b
+    // `fr` has stem `c`, while `en` has stems `a`, `b`, `c`. The fallback should
+    // interleave `a` and `b` ahead of `c`.
     mockFetch
       .mockResolvedValueOnce([{ stem: 'c', locale: 'fr' }])
       .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }, { stem: 'c', locale: 'en' }])
@@ -300,8 +302,9 @@ describe('collectionQueryBuilder', () => {
   })
 
   it('count() ignores LIMIT carried over from .limit()', async () => {
-    // Regression: COUNT returns exactly one row; appending `LIMIT N` is at best
-    // misleading and combined with OFFSET it returns `[]` → `m[0].count` would throw.
+    // Regression. COUNT returns exactly one row, so appending `LIMIT N` is at
+    // best misleading. Combined with `OFFSET` it returns `[]`, and `m[0].count`
+    // would then throw.
     mockFetch.mockResolvedValueOnce([{ count: 42 }])
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     const result = await query.limit(5).count()
@@ -343,7 +346,8 @@ describe('collectionQueryBuilder', () => {
         .mockResolvedValueOnce([{ stem: 'a', locale: 'fr' }])
         .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }])
 
-      // Pass 'fr' as detectedLocale (3rd arg) — simulates what client.ts/server.ts do
+      // Pass `'fr'` as `detectedLocale` (3rd arg) to simulate what `client.ts`
+      // and `server.ts` do.
       const results = await collectionQueryBuilder(mockCollection, mockFetch, 'fr').all()
 
       // Should auto-apply locale with fallback to defaultLocale ('en')
@@ -372,7 +376,7 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not auto-apply locale when no detectedLocale is provided', async () => {
-      // No detectedLocale (undefined) — no auto-locale
+      // No `detectedLocale` means no auto-locale is applied.
       const query = collectionQueryBuilder(mockCollection, mockFetch)
       await query.all()
 
@@ -384,7 +388,8 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('uses single query (no fallback) when detectedLocale equals defaultLocale', async () => {
-      // Default locale 'en' — should use a single WHERE, not two-query fallback
+      // When the default locale `'en'` is detected, a single `WHERE` is used
+      // rather than the two-query fallback path.
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'en')
       await query.all()
 
@@ -396,7 +401,8 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('rejects unknown detectedLocale values', async () => {
-      // 'xx' is not in i18nConfig.locales — should be ignored (no locale filter)
+      // `'xx'` is not in `i18nConfig.locales`, so it is ignored (no locale filter
+      // is added).
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'xx')
       await query.all()
 
@@ -466,26 +472,29 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not leak auto-locale into persistent conditions across calls', async () => {
-      // Regression: auto-applied locale used to be pushed to params.conditions on first
-      // execution, so a second .all() on the same builder would re-apply it (and any
-      // intervening .locale() call would produce a contradictory `loc=X AND loc=Y`).
+      // Regression. The auto-applied locale used to be pushed to
+      // `params.conditions` on first execution, so a second `.all()` on the
+      // same builder would reapply it. Any intervening `.locale()` call would
+      // then produce a contradictory `loc=X AND loc=Y`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
 
       mockFetch.mockResolvedValueOnce([])
-      await qb.all() // auto-locale = en (default), single-query path
+      // Auto-locale resolves to `en` (the default), so the single-query path runs.
+      await qb.all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
         'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
       )
 
       mockFetch.mockResolvedValueOnce([])
-      await qb.all() // second call must not stack a duplicate locale condition
+      // The second call must not stack a duplicate locale condition.
+      await qb.all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
         'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
       )
 
-      // An explicit .locale() now should fully override the auto-locale on the next call
+      // An explicit `.locale()` must fully override the auto-locale on the next call.
       mockFetch.mockResolvedValueOnce([])
       await qb.locale('de').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
@@ -495,9 +504,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .where("locale", ...) is used directly', async () => {
-      // Regression: previously `.where('locale', ...)` did not flip
-      // localeExplicitlySet, so auto-detection would still append its own locale
-      // filter and produce a contradictory `locale = 'fr' AND locale = 'en'`.
+      // Regression. Previously `.where('locale', ...)` did not flip
+      // `localeExplicitlySet`, so auto-detection would still append its own
+      // locale filter and produce a contradictory `locale = 'fr' AND locale = 'en'`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb.where('locale', '=', 'en').all()
 
@@ -509,8 +518,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .andWhere() contains a locale filter', async () => {
-      // A manual locale filter nested inside an andWhere group should also disable
-      // auto-locale — we detect any condition starting with `"locale"`.
+      // A manual locale filter nested inside an `andWhere` group should also
+      // disable auto-locale. The detector matches any condition starting with
+      // the quoted column name `"locale"`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb
         .andWhere(g => g.where('title', 'LIKE', '%foo%').where('locale', '=', 'en'))
@@ -524,8 +534,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('restores selectedFields after a failed locale-fallback fetch', async () => {
-      // Regression: state mutation on the locale-fallback path used to leak when the
-      // underlying fetch threw — the next query would then SELECT an extra "stem" column.
+      // Regression. State mutation on the locale-fallback path used to leak
+      // when the underlying fetch threw, so the next query would then SELECT an
+      // extra `stem` column.
       const qb = collectionQueryBuilder(mockCollection, mockFetch)
         .select('title' as never, 'locale' as never)
         .locale('fr', { fallback: 'en' })
@@ -533,8 +544,9 @@ describe('collectionQueryBuilder', () => {
       mockFetch.mockRejectedValueOnce(new Error('boom'))
       await expect(qb.all()).rejects.toThrow('boom')
 
-      // Now run an unrelated query on a *new* builder using the same select set —
-      // verifies the test isolation; the bug was about builder-internal mutation.
+      // Run an unrelated query on a *new* builder using the same select set.
+      // This verifies test isolation, since the bug was about builder-internal
+      // mutation.
       mockFetch.mockClear()
       mockFetch.mockResolvedValueOnce([{ title: 'x', locale: 'en' }])
       await collectionQueryBuilder(mockCollection, mockFetch)
@@ -548,16 +560,18 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('is safe under concurrent .all()/.count() on the same builder (no shared-state race)', async () => {
-      // Regression: count() and fetchWithLocaleFallback used to mutate `params.selectedFields`
-      // / offset / limit in a save/mutate/restore-in-finally pattern. Under `Promise.all`,
-      // a second terminal could read the mutated state mid-flight. Now both terminals
-      // pass overrides into buildQuery and never touch `params`.
+      // Regression. `.count()` and `fetchWithLocaleFallback` used to mutate
+      // `params.selectedFields`, `params.offset`, and `params.limit` in a
+      // save-mutate-restore-in-finally pattern. Under `Promise.all`, a second
+      // terminal could observe the mutated state mid-flight. Both terminals
+      // now pass overrides into `buildQuery` and never touch `params`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch)
         .select('title' as never, 'locale' as never)
         .locale('fr', { fallback: 'en' })
 
-      // 4 calls expected: 2 from .all() (fr+en) and 2 from .count() (fr+en).
-      // The count() injects `title` into selectedFields; .all() must NOT see it.
+      // Four fetches are expected, two from `.all()` (fr + en) and two from
+      // `.count()` (fr + en). `.count()` injects `title` into `selectedFields`,
+      // and `.all()` must NOT observe that injection.
       mockFetch
         .mockResolvedValueOnce([{ title: 'a-fr', locale: 'fr', stem: 'a' }])
         .mockResolvedValueOnce([{ title: 'b-en', locale: 'en', stem: 'b' }])
@@ -601,9 +615,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('skips auto-locale and (in dev) warns when detected locale is a BCP-47 tag not in collection.locales', async () => {
-      // `@nuxtjs/i18n` may return `en-US`; a collection declaring only `en` should
-      // silently skip auto-locale rather than producing rows from every locale.
-      // In dev mode, a console.warn surfaces the mismatch.
+      // `@nuxtjs/i18n` may return `en-US`. A collection declaring only `en`
+      // should silently skip auto-locale rather than producing rows from every
+      // locale. In dev mode, a `console.warn` surfaces the mismatch.
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
       try {
         await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()

@@ -422,8 +422,9 @@ describe('i18n', () => {
       })
 
       it('replaces scalar arrays wholesale when override is shorter than default', () => {
-        // A shorter scalar override must NOT pad-fill from the default tail —
-        // when authors intentionally provide a shorter list, they want exactly that.
+        // A shorter scalar override must NOT pad-fill from the default tail.
+        // When authors intentionally provide a shorter list, they want exactly
+        // that.
         const content: ParsedContentFile = {
           id: 'data:tags.yml',
           tags: ['javascript', 'vue', 'nuxt', 'content'],
@@ -551,9 +552,10 @@ describe('i18n', () => {
     })
 
     it('source hash is per-locale: a field translated only in another locale does not affect this locale\'s hash', () => {
-      // `fr` translates only `title`. `de` translates only `description`.
-      // Changing `description` between content1 and content2 must NOT change `fr`'s
-      // hash (since fr doesn't translate description) but MUST change `de`'s.
+      // `fr` translates only `title`, while `de` translates only `description`.
+      // Changing `description` between `content1` and `content2` must NOT
+      // change `fr`'s hash (because `fr` does not translate `description`) but
+      // MUST change `de`'s hash.
       const content1: ParsedContentFile = {
         id: 'blog:post.yml',
         title: 'My Post',
@@ -593,8 +595,8 @@ describe('i18n', () => {
 
   describe('page collection body replacement', () => {
     it('replaces wholesale when override sets body to null', () => {
-      // Edge case: an override that explicitly clears the body. Without an
-      // `'in' overrides` check this would deep-merge the default AST back in.
+      // Edge case. An override that explicitly clears the body. Without an
+      // `'in' overrides` check, this would deep-merge the default AST back in.
       const defaultBody = { type: 'root', children: [{ type: 'text', value: 'Hi' }] }
       const content: ParsedContentFile = {
         id: 'pages:index.md',

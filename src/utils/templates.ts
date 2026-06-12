@@ -176,9 +176,10 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      // Stem prefix is used by `.stem()` to auto-resolve a leading source directory.
-      // We only emit it when ALL sources of a collection share the same normalized prefix —
-      // otherwise the heuristic would silently prepend the wrong directory for some files.
+      // The stem prefix is used by `.stem()` to auto-resolve a leading source
+      // directory. It is only emitted when every source of a collection shares
+      // the same normalized prefix. Otherwise the heuristic would silently
+      // prepend the wrong directory for some files.
       const normalize = (p: string | undefined) => (p || '').replace(/^\/|\/$/g, '')
       const sources = collection.source || []
       const stemPrefixes = new Set(sources.map(s => normalize(s.prefix)))

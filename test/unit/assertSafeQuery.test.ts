@@ -57,7 +57,7 @@ describe('decompressSQLDump', () => {
     // Escaped quotes in WHERE values should pass (not be treated as comments)
     'SELECT * FROM _content_test WHERE ("title" = \'L\'\'été\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("title" = \'it\'\'s\') ORDER BY stem ASC': true,
-    // Triple-quote edge case — should NOT bypass keyword detection
+    // Triple-quote edge case. Must NOT bypass keyword detection.
     'SELECT * FROM _content_test WHERE ("x" = \'a\'\'\') UNION SELECT 1 ORDER BY stem ASC': false,
     // COUNT with quoted field
     'SELECT COUNT("title") as count FROM _content_test': true,

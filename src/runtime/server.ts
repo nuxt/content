@@ -16,8 +16,9 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  // Auto-detect from `@nuxtjs/i18n` server context — falls back to configured default
-  // when per-request detection didn't run. See `internal/i18n-detection.ts` for the contract.
+  // Auto-detect from the `@nuxtjs/i18n` server context, falling back to the
+  // configured default when per-request detection did not run. See
+  // `internal/i18n-detection.ts` for the contract.
   return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql), detectServerLocale(event))
 }
 
@@ -34,7 +35,8 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(e
 }
 
 export function queryCollectionLocales<T extends keyof Collections>(event: H3Event, collection: T, stem: string): Promise<ContentLocaleEntry[]> {
-  // Skip auto-locale: this helper needs ALL locale variants, not just the current one
+  // Auto-locale is skipped here. This helper needs every locale variant, not just
+  // the current one, so it builds the query without passing a detected locale.
   const qb = collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
   return generateCollectionLocales(qb, String(collection), stem)
 }

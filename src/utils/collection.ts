@@ -38,8 +38,8 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
-  // Add locale field when i18n is fully configured (not `true` shorthand —
-  // that gets resolved later in loadContentConfig via resolveI18nConfig)
+  // Add the `locale` field only when i18n is fully configured. The `true`
+  // shorthand is resolved later in `loadContentConfig` via `resolveI18nConfig`.
   const hasI18nConfig = collection.i18n && collection.i18n !== true
   // Resolve the effective i18n config (may patch `defaultLocale` into `locales`
   // without mutating the caller's config object).
@@ -52,7 +52,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     if (!i18n.locales.includes(i18n.defaultLocale)) {
       logger.warn(
         `Collection \`i18n\` config has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
-        + `\`locales: [${i18n.locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically — `
+        + `\`locales: [${i18n.locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically, `
         + 'declare it explicitly in `locales` to silence this warning.',
       )
       resolvedI18n = { ...i18n, locales: [i18n.defaultLocale, ...i18n.locales] }
@@ -61,9 +61,10 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
 
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
-  // Auto-add composite index on (locale, stem) for i18n collections.
-  // Skip when the user already declared an equivalent index — avoids a duplicate
-  // CREATE INDEX (which would survive when the user supplies a custom `name`).
+  // Auto-add a composite index on (locale, stem) for i18n collections. Skipped
+  // when the user already declared an equivalent index, which avoids a
+  // duplicate `CREATE INDEX` that would otherwise survive when the user
+  // supplies a custom `name`.
   const indexes = collection.indexes ? [...collection.indexes] : []
   if (hasI18nConfig && !hasLocaleStemIndex(indexes)) {
     indexes.push({ columns: ['locale', 'stem'] })

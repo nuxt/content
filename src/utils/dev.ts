@@ -165,32 +165,34 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
       const parsed: ParsedContentFile = JSON.parse(parsedContent)
 
-      // i18n: expand inline translations to per-locale DB rows
+      // Expand inline i18n translations into one DB row per locale.
       if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
         const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
-        // Capture source locale before expandI18nData mutates parsed.locale
+        // Capture the source locale before `expandI18nData` mutates `parsed.locale`.
         const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
 
         const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
         for (const item of expandedItems) {
-          // Use item.id directly as the dump/DB key. `expandI18nData` already returns
-          // the default-locale item with the bare id (matching the SQL row's `id`
-          // column) and non-default items with a `#<locale>` suffix. Reconstructing
-          // the key from `item.locale` would incorrectly suffix the default row and
-          // desync the DELETE/INSERT pair in `broadcast`.
+          // Use `item.id` directly as the dump and DB key. `expandI18nData`
+          // already returns the default-locale item with the bare id (matching
+          // the SQL row's `id` column) and non-default items with a `#<locale>`
+          // suffix. Reconstructing the key from `item.locale` would incorrectly
+          // suffix the default row and desync the DELETE / INSERT pair in
+          // `broadcast`.
           const itemKey = item.id as string
           const { queries } = generateCollectionInsert(collection, item)
           await broadcast(collection, itemKey, queries)
         }
 
-        // Remove locale rows that are no longer in the i18n section
+        // Remove locale rows that are no longer present in the `i18n` section.
         for (const locale of collection.i18n.locales) {
           if (locale === sourceLocale || locale in i18nData) continue
           await broadcast(collection, `${keyInCollection}#${locale}`)
         }
       }
       else {
-        // Clean up stale locale variants if i18n was previously present but removed
+        // Clean up stale locale variants if `i18n` was previously present but
+        // has now been removed from the file.
         if (collection.i18n) {
           for (const locale of collection.i18n.locales) {
             await broadcast(collection, `${keyInCollection}#${locale}`)
@@ -248,12 +250,13 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
     const collectionDump = manifest.dump[collection.name]!
     // Match an entry that references this row. Three exact shapes can occur:
-    //   1. INSERT INTO ... VALUES ('key', ...)          → contains "'key',"
-    //   2. INSERT INTO ... VALUES ('key')               → ends with "'key')"
-    //   3. UPDATE ... WHERE id = 'key' AND ...          → contains "id = 'key'"
-    // The UPDATE shape comes from generateCollectionInsert splitting oversized rows
-    // into INSERT + chained UPDATE fragments. Without case 3 those fragments would
-    // be left behind in the dump as dead no-ops, slowly bloating it on every HMR.
+    //   1. `INSERT INTO ... VALUES ('key', ...)` contains `'key',`
+    //   2. `INSERT INTO ... VALUES ('key')` ends with `'key')`
+    //   3. `UPDATE ... WHERE id = 'key' AND ...` contains `id = 'key'`
+    // The UPDATE shape comes from `generateCollectionInsert` splitting oversized
+    // rows into an INSERT followed by chained UPDATE fragments. Without case 3
+    // those fragments would be left behind in the dump as dead no-ops, slowly
+    // bloating it on every HMR cycle.
     const escapedKey = key.replace(/'/g, '\'\'')
     const keyMatch = (item: string) =>
       item.includes(`'${escapedKey}',`)
@@ -262,8 +265,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const keyIndex = collectionDump.findIndex(keyMatch)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
 
-    // Count all consecutive dump entries belonging to this key (large content splits
-    // into INSERT + UPDATE fragments that each reference the same key literal)
+    // Count every consecutive dump entry belonging to this key. Large content
+    // splits into an INSERT plus UPDATE fragments that each reference the same
+    // key literal.
     let itemsToRemove = 0
     if (keyIndex !== -1) {
       for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]!); i++) {
