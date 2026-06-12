@@ -145,6 +145,19 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('stem', '=', fullStem)
     },
     locale(locale: string, opts?: { fallback?: string }) {
+      // Dev-only guard: calling `.locale()` on a collection without `i18n` would
+      // emit `WHERE "locale" = ?` against a table that has no `locale` column,
+      // which surfaces as a confusing "no such column" SQL error far from the
+      // user's call site. Warn at the source so the misuse is obvious. Manifest
+      // metadata is the source of truth here: `i18nConfig` is undefined exactly
+      // when the collection wasn't declared with `i18n`.
+      if (import.meta.dev && !i18nConfig) {
+        console.warn(
+          `[@nuxt/content] queryCollection("${String(collection)}").locale(${JSON.stringify(locale)}): `
+          + `collection "${String(collection)}" has no \`i18n\` configured. The query will fail at the database. `
+          + 'Add `i18n: true` (or an explicit `i18n: { locales, defaultLocale }`) to the collection definition.',
+        )
+      }
       params.localeExplicitlySet = true
       if (opts?.fallback) {
         params.localeFallback = { locale, fallback: opts.fallback }
@@ -218,9 +231,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
           params.limit = savedLimit
         }
       }
+      // `noLimitOffset` is essential here: a COUNT query returns exactly one row,
+      // so any `LIMIT/OFFSET` carried over from `.skip()`/`.limit()` either caps a
+      // single-row result (harmless but misleading) or — when offset > 0 — slices
+      // past it and yields `[]`, making `m[0].count` throw a TypeError.
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
         autoLocale,
+        noLimitOffset: true,
       })).then(m => (m[0] as { count: number }).count)
     },
   }
@@ -279,13 +297,15 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result.
       // Auto-locale's `condition` is intentionally NOT applied to sub-queries: we are overriding the locale
       // here, so passing the original autoLocale would double-filter.
-      const localeCondition = `("locale" = ${singleQuote(locale)})`
-      const localeQuery = buildQuery({ extraCondition: localeCondition, noLimitOffset: true })
-      const localeResults = await fetch(collection, localeQuery).then(res => res || [])
-
-      const fallbackCondition = `("locale" = ${singleQuote(fallback)})`
-      const fallbackQuery = buildQuery({ extraCondition: fallbackCondition, noLimitOffset: true })
-      const fallbackResults = await fetch(collection, fallbackQuery).then(res => res || [])
+      // Both queries are independent, so issue them in parallel — halves perceived latency on the
+      // non-default-locale path. `Promise.all` short-circuits on any rejection, which is the
+      // desired behavior (the merge can't proceed without both result sets).
+      const localeQuery = buildQuery({ extraCondition: `("locale" = ${singleQuote(locale)})`, noLimitOffset: true })
+      const fallbackQuery = buildQuery({ extraCondition: `("locale" = ${singleQuote(fallback)})`, noLimitOffset: true })
+      const [localeResults, fallbackResults] = await Promise.all([
+        fetch(collection, localeQuery).then(res => res || []),
+        fetch(collection, fallbackQuery).then(res => res || []),
+      ])
 
       // Merge: prefer locale results, fill gaps from fallback
       const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem

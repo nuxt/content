@@ -3,7 +3,7 @@ import { relative } from 'pathe'
 import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { CollectionI18nConfig, DefinedCollection, ModuleOptions } from '../types'
-import { defineCollection, resolveCollections } from './collection'
+import { defineCollection, hasLocaleStemIndex, resolveCollections } from './collection'
 import { localeStandardSchema, mergeStandardSchema } from './schema'
 import { getCollectionFieldsTypes } from '../runtime/internal/schema'
 import { logger } from './dev'
@@ -130,11 +130,9 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
       }
       collection.extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
       collection.fields = getCollectionFieldsTypes(collection.extendedSchema)
-      // Avoid duplicate `(locale, stem)` indexes if the user already declared one.
-      const hasLocaleStemIndex = (collection.indexes || []).some(
-        idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
-      )
-      if (!hasLocaleStemIndex) {
+      // Shared with `defineCollection`'s explicit-config path so both routes
+      // dedupe against a user-declared `(locale, stem)` composite index.
+      if (!hasLocaleStemIndex(collection.indexes)) {
         collection.indexes = [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
       }
     }

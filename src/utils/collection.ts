@@ -1,5 +1,5 @@
 import { hash } from 'ohash'
-import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
+import type { Collection, CollectionIndex, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
@@ -10,6 +10,17 @@ import { formatDate, formatDateTime } from './content/transformers/utils'
 
 export function getTableName(name: string) {
   return `_content_${name}`
+}
+
+/**
+ * Detect a user-declared `(locale, stem)` composite index so the i18n auto-index
+ * doesn't pile a duplicate on top of it. Exported so the `i18n: true` resolver
+ * in `config.ts` applies the same guard.
+ */
+export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
+  return (indexes || []).some(
+    idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
+  )
 }
 
 export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
@@ -36,9 +47,11 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
 
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
-  // Auto-add composite index on (locale, stem) for i18n collections
+  // Auto-add composite index on (locale, stem) for i18n collections.
+  // Skip when the user already declared an equivalent index — avoids a duplicate
+  // CREATE INDEX (which would survive when the user supplies a custom `name`).
   const indexes = collection.indexes ? [...collection.indexes] : []
-  if (hasI18nConfig) {
+  if (hasI18nConfig && !hasLocaleStemIndex(indexes)) {
     indexes.push({ columns: ['locale', 'stem'] })
   }
 

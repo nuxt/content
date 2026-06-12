@@ -271,13 +271,41 @@ describe('collectionQueryBuilder', () => {
     expect(results[1]).toEqual({ stem: 'b', locale: 'en' })
   })
 
-  it('count query omits ORDER BY', async () => {
+  it('count() ignores LIMIT carried over from .limit()', async () => {
+    // Regression: COUNT returns exactly one row; appending `LIMIT N` is at best
+    // misleading and combined with OFFSET it returns `[]` → `m[0].count` would throw.
+    mockFetch.mockResolvedValueOnce([{ count: 42 }])
     const query = collectionQueryBuilder(mockCollection, mockFetch)
-    await query.count()
+    const result = await query.limit(5).count()
 
+    expect(result).toBe(42)
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
       'SELECT COUNT(*) as count FROM _articles',
+    )
+  })
+
+  it('count() ignores OFFSET carried over from .skip()/.limit()', async () => {
+    mockFetch.mockResolvedValueOnce([{ count: 7 }])
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    const result = await query.skip(10).limit(5).count()
+
+    expect(result).toBe(7)
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT COUNT(*) as count FROM _articles',
+    )
+  })
+
+  it('count(field, true) ignores LIMIT/OFFSET in single-query path', async () => {
+    mockFetch.mockResolvedValueOnce([{ count: 3 }])
+    const query = collectionQueryBuilder(mockCollection, mockFetch)
+    const result = await query.skip(2).limit(10).count('author', true)
+
+    expect(result).toBe(3)
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT COUNT(DISTINCT "author") as count FROM _articles',
     )
   })
 

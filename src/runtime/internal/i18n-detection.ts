@@ -10,7 +10,19 @@ import type { H3Event } from 'h3'
  * https://github.com/nuxt-modules/i18n/blob/main/src/runtime/server/context.ts
  */
 interface NuxtI18nServerContext {
-  /** Per-request resolved locale. Set by `@nuxtjs/i18n >= 10` after route-locale-detect runs. */
+  /**
+   * Per-request resolved locale. Written by `@nuxtjs/i18n >= 10`'s Nitro plugin
+   * (`src/runtime/server/plugin.ts`) inside the `render:before` hook — but only
+   * when a server-side localized redirect actually fires (gated by
+   * `experimental.nitroContextDetection`, default `true`). For a request that
+   * already lands on the correct localized URL (e.g. `/fr/about` for a French
+   * user), this stays `undefined` and the fallback to `vueI18nOptions.locale`
+   * (the configured default) is what `detectServerLocale` ultimately returns.
+   *
+   * Practical upshot: inside a server event handler reached via a non-redirected
+   * localized URL, prefer an explicit `.locale(<code>)` rather than relying on
+   * auto-detection — otherwise queries default to the configured default locale.
+   */
   detectLocale?: string
   /** Configured vue-i18n options. `vueI18nOptions.locale` is the configured default locale. */
   vueI18nOptions?: { locale?: string }
@@ -19,9 +31,14 @@ interface NuxtI18nServerContext {
 /**
  * Resolve the active locale on the server from `@nuxtjs/i18n`'s event context.
  *
- * Priority: `detectLocale` (per-request resolved) → `vueI18nOptions.locale` (configured default).
- * Returns `undefined` when `@nuxtjs/i18n` isn't installed or its context hasn't been initialized
- * (e.g. routes outside the i18n middleware, or prerender without detection).
+ * Priority: `detectLocale` (set only during server-side localized redirects)
+ * → `vueI18nOptions.locale` (the configured default). Returns `undefined` when
+ * `@nuxtjs/i18n` isn't installed or its context hasn't been initialized.
+ *
+ * Note: because `detectLocale` is unset for the common case of a normal
+ * non-redirected request, this often returns the configured default locale
+ * rather than the user's per-request locale. In event handlers where the active
+ * locale matters, call `.locale()` explicitly.
  */
 export function detectServerLocale(event: H3Event | undefined): string | undefined {
   const ctx = event?.context?.nuxtI18n as NuxtI18nServerContext | undefined

@@ -139,12 +139,16 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/client') },
       { name: 'useSearchCollection', from: resolver.resolve('./runtime/client') },
     ])
+    // Auto-import from the canonical `./runtime/server` module rather than the
+    // deprecated `./runtime/nitro` re-export — otherwise the `@deprecated`
+    // JSDoc on the re-exports propagates into users' IDEs whenever they hover
+    // an auto-imported `queryCollection` in a server handler.
     addServerImports([
-      { name: 'queryCollection', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
-      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollection', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/server') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/server') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
