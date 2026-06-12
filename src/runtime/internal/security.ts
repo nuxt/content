@@ -1,8 +1,18 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
+// Resource-heavy or filesystem/code functions that the query builder never emits.
+// Reaching the database through the public query endpoint, these enable a CPU or
+// memory denial of service (for example `randomblob(1e9)`) or worse, so they are
+// rejected in the WHERE clause where the only function-call surface exists.
+const SQL_UNSAFE_FUNCTIONS = /\b(randomblob|zeroblob|load_extension|readfile|writefile|fts3_tokenizer|pg_sleep|pg_read_file|pg_read_binary_file|dblink|lo_import|lo_export)\s*\(/i
+// Upper bound on the accepted query length. The builder never produces anything
+// near this, and the cap prevents a multi-kilobyte payload from driving the lazy
+// quantifiers in `SQL_SELECT_REGEX` into pathological backtracking.
+const MAX_QUERY_LENGTH = 50_000
 // Combines the upstream security tightening (anchored regex, required `as count`
 // alias) with the feature additions (quoted column names, optional `ORDER BY` for
-// count queries).
-const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?("[a-z_]\w+"|[a-z_]\w+|\*)\) as count$/i
+// count queries). Column identifiers allow a single character (`\w*`) since a
+// schema field can legitimately be one character long.
+const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?("[a-z_]\w*"|[a-z_]\w*|\*)\) as count$/i
 const SQL_SELECT_REGEX = /^SELECT (.*?) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,\s]+) (ASC|DESC))?( LIMIT \d+)?( OFFSET \d+)?$/
 
 /**
@@ -17,6 +27,10 @@ const SQL_SELECT_REGEX = /^SELECT (.*?) FROM (\w+)( WHERE .*?)?( ORDER BY (["\w,
 export function assertSafeQuery(sql: string, collection: string) {
   if (!sql) {
     throw new Error('Invalid query: Query cannot be empty')
+  }
+
+  if (sql.length > MAX_QUERY_LENGTH) {
+    throw new Error('Invalid query: Query exceeds the maximum allowed length')
   }
 
   // Reject newlines to prevent multi-statement injection
@@ -44,12 +58,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (
       columns[0] !== '*'
       && !columns[0]?.match(SQL_COUNT_REGEX)
-      && !columns[0]?.match(/^"[a-z_]\w+"$/i)
+      && !columns[0]?.match(/^"[a-z_]\w*"$/i)
     ) {
       throw new Error(`Invalid query: Column '${columns[0]}' has invalid format. Expected *, COUNT(), or a quoted column name`)
     }
   }
-  else if (!columns.every(column => column.match(/^"[a-z_]\w+"$/i))) {
+  else if (!columns.every(column => column.match(/^"[a-z_]\w*"$/i))) {
     throw new Error('Invalid query: Multiple columns must be properly quoted and alphanumeric')
   }
 
@@ -67,6 +81,9 @@ export function assertSafeQuery(sql: string, collection: string) {
     const noString = cleanupQuery(where, { removeString: true })
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
+    }
+    if (noString.match(SQL_UNSAFE_FUNCTIONS)) {
+      throw new Error('Invalid query: WHERE clause contains unsafe SQL functions')
     }
   }
 
