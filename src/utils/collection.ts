@@ -23,6 +23,24 @@ export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): bool
   )
 }
 
+/**
+ * Force the `locale` schema property to `string`. The i18n integration relies on
+ * the locale being a text column, so a user declaration of another type (which
+ * would otherwise win the schema merge and serialize locale codes as `NaN`) is
+ * overridden with a warning. Exported so both the explicit-config and the
+ * `i18n: true` resolution paths apply the same guard.
+ */
+export function normalizeLocaleField(extendedSchema: Draft07, collectionName?: string): void {
+  const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
+  if (props?.locale && props.locale.type !== 'string') {
+    logger.warn(
+      `Collection${collectionName ? ` "${collectionName}"` : ''} declares a non-string \`locale\` field. `
+      + 'The i18n integration requires `locale` to be a string and is overriding it.',
+    )
+    props.locale = { type: 'string' }
+  }
+}
+
 export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
   let standardSchema: Draft07 = emptyStandardSchema
 
@@ -46,6 +64,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
   let resolvedI18n: typeof collection.i18n = collection.i18n
   if (hasI18nConfig) {
     extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
+    normalizeLocaleField(extendedSchema)
     // Surface defaultLocale-not-in-locales early. Auto-locale detection and
     // path-based detection both fail silently if this invariant is violated.
     const i18n = collection.i18n as { locales: string[], defaultLocale: string }

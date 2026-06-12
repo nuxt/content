@@ -3,7 +3,7 @@ import { relative } from 'pathe'
 import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { CollectionI18nConfig, DefinedCollection, ModuleOptions } from '../types'
-import { defineCollection, hasLocaleStemIndex, resolveCollections } from './collection'
+import { defineCollection, hasLocaleStemIndex, normalizeLocaleField, resolveCollections } from './collection'
 import { localeStandardSchema, mergeStandardSchema } from './schema'
 import { getCollectionFieldsTypes } from '../runtime/internal/schema'
 import { logger } from './dev'
@@ -85,10 +85,38 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
   return { collections }
 }
 
+interface RawI18nModuleOptions {
+  locales?: Array<string | { code: string }>
+  defaultLocale?: string
+}
+
+/**
+ * Read `@nuxtjs/i18n` locale options. Prefers the resolved options on
+ * `nuxt.options.i18n`, then falls back to inline options passed in the `modules`
+ * array, which are present before `@nuxtjs/i18n` normalizes them. Locales
+ * contributed only through layers or the module's own hooks may not be visible at
+ * this point, in which case an explicit `i18n: { locales, defaultLocale }` config
+ * is required.
+ */
+function readI18nModuleOptions(nuxt: Nuxt): RawI18nModuleOptions | undefined {
+  const fromOptions = (nuxt.options as unknown as { i18n?: RawI18nModuleOptions }).i18n
+  if (fromOptions?.locales?.length) {
+    return fromOptions
+  }
+  const moduleEntry = (nuxt.options.modules || []).find(
+    (m): m is [string, RawI18nModuleOptions] => Array.isArray(m) && m[0] === '@nuxtjs/i18n',
+  )
+  if (moduleEntry?.[1]?.locales?.length) {
+    return moduleEntry[1]
+  }
+  return fromOptions
+}
+
 /**
  * Resolve `i18n: true` shorthand on collections by reading locale config
- * from the `@nuxtjs/i18n` module. If nuxt-i18n is not installed and a
- * collection uses `i18n: true`, a warning is logged and i18n is disabled.
+ * from the `@nuxtjs/i18n` module. If the module is not installed (or its locale
+ * config cannot be read) and a collection uses `i18n: true`, a warning is logged
+ * and i18n is disabled for that collection.
  */
 function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollection>) {
   // Check which collections need resolution
@@ -96,16 +124,18 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
   if (!needsResolution) return
 
   let resolvedConfig: CollectionI18nConfig | undefined
+  let reason = '@nuxtjs/i18n module is not installed'
 
   if (hasNuxtModule('@nuxtjs/i18n', nuxt)) {
-    const i18nOptions = (nuxt.options as unknown as {
-      i18n?: {
-        locales?: Array<string | { code: string }>
-        defaultLocale?: string
-      }
-    }).i18n
+    const i18nOptions = readI18nModuleOptions(nuxt)
 
-    if (i18nOptions?.locales?.length && i18nOptions.defaultLocale) {
+    if (!i18nOptions?.locales?.length) {
+      reason = '@nuxtjs/i18n is installed but no `locales` could be read at this point'
+    }
+    else if (!i18nOptions.defaultLocale) {
+      reason = '@nuxtjs/i18n is installed but has no `defaultLocale` configured'
+    }
+    else {
       const localeCodes = i18nOptions.locales.map(l => typeof l === 'string' ? l : l.code)
       // `@nuxtjs/i18n` permits `defaultLocale` outside `locales` (it falls
       // through at runtime), but for content filtering it is a footgun. Files
@@ -125,17 +155,10 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
 
     if (resolvedConfig) {
       collection.i18n = resolvedConfig
-      // `mergeStandardSchema` preserves user-declared fields via spread order
-      // (user's properties win on collision), so a pre-existing `locale` field
-      // on the schema keeps its type. Surface a warning so authors are aware
-      // their declaration is the one being used and ensure it types as string.
-      if (hasUserLocaleField(collection.extendedSchema)) {
-        logger.warn(
-          `Collection "${name}" already declares a \`locale\` field in its schema; the i18n integration is reusing it. `
-          + 'Make sure your schema types it as `string` to match the auto-detected locale codes.',
-        )
-      }
       collection.extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
+      // A user-declared `locale` field wins the schema merge; force it to string
+      // so it cannot produce invalid SQL.
+      normalizeLocaleField(collection.extendedSchema, name)
       collection.fields = getCollectionFieldsTypes(collection.extendedSchema)
       // Shared with `defineCollection`'s explicit-config path so both routes
       // dedupe against a user-declared `(locale, stem)` composite index.
@@ -145,19 +168,10 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
     }
     else {
       logger.warn(
-        `Collection "${name}" has \`i18n: true\` but @nuxtjs/i18n module is not installed or has no locales configured. `
-        + 'Provide an explicit `i18n: { locales, defaultLocale }` config or install @nuxtjs/i18n.',
+        `Collection "${name}" has \`i18n: true\` but ${reason}. `
+        + 'Provide an explicit `i18n: { locales, defaultLocale }` config or configure @nuxtjs/i18n.',
       )
       collection.i18n = undefined
     }
   }
-}
-
-/**
- * Detect whether the user's collection schema already declares a `locale` field.
- * When true, the i18n integration reuses that declaration rather than overwriting it.
- */
-function hasUserLocaleField(extendedSchema: DefinedCollection['extendedSchema']): boolean {
-  const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, unknown> | undefined
-  return Boolean(props && 'locale' in props)
 }
