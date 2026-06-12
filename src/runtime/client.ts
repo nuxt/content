@@ -84,7 +84,13 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
   const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> } | undefined)?.locale
   // The locale value flows into the cache key. Because `useAsyncData`'s key is
   // a getter, Nuxt re-runs the handler when the locale ref changes.
-  const localeValue = computed(() => i18nLocaleRef?.value || '')
+  //
+  // During SSR `$i18n.locale` may not be populated (the client plugin hasn't run);
+  // fall back to the SSR event context so the server-rendered key matches the
+  // initial client key on hydration — otherwise the first client render would
+  // see a different key, miss the cached payload, and immediately refetch.
+  const ssrLocale = detectServerLocale(nuxtApp?.ssrContext?.event)
+  const localeValue = computed(() => i18nLocaleRef?.value || ssrLocale || '')
 
   type Item = Collections[T]
   // Use the consumer's type override if provided, otherwise the collection type

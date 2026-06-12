@@ -252,6 +252,34 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
+  describe('.stem() input normalization', () => {
+    it('strips leading slashes from user input', async () => {
+      // Stored stems never carry a leading slash; tolerate the slash from callers.
+      await collectionQueryBuilder(mockCollection, mockFetch).stem('/navbar').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("stem" = \'navbar\') ORDER BY stem ASC',
+      )
+    })
+
+    it('strips trailing slashes from user input', async () => {
+      // A trailing slash would never match the stored stem — collapse it silently.
+      await collectionQueryBuilder(mockCollection, mockFetch).stem('navbar/').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("stem" = \'navbar\') ORDER BY stem ASC',
+      )
+    })
+
+    it('strips both leading and trailing slashes', async () => {
+      await collectionQueryBuilder(mockCollection, mockFetch).stem('/foo/bar/').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("stem" = \'foo/bar\') ORDER BY stem ASC',
+      )
+    })
+  })
+
   it('locale fallback merges results in stem order', async () => {
     // fr has stem c, en has stems a, b, c — fallback should interleave a, b
     mockFetch
@@ -517,6 +545,83 @@ describe('collectionQueryBuilder', () => {
         'articles',
         'SELECT "title", "locale" FROM _articles ORDER BY stem ASC',
       )
+    })
+
+    it('is safe under concurrent .all()/.count() on the same builder (no shared-state race)', async () => {
+      // Regression: count() and fetchWithLocaleFallback used to mutate `params.selectedFields`
+      // / offset / limit in a save/mutate/restore-in-finally pattern. Under `Promise.all`,
+      // a second terminal could read the mutated state mid-flight. Now both terminals
+      // pass overrides into buildQuery and never touch `params`.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch)
+        .select('title' as never, 'locale' as never)
+        .locale('fr', { fallback: 'en' })
+
+      // 4 calls expected: 2 from .all() (fr+en) and 2 from .count() (fr+en).
+      // The count() injects `title` into selectedFields; .all() must NOT see it.
+      mockFetch
+        .mockResolvedValueOnce([{ title: 'a-fr', locale: 'fr', stem: 'a' }])
+        .mockResolvedValueOnce([{ title: 'b-en', locale: 'en', stem: 'b' }])
+        .mockResolvedValueOnce([{ title: 'a-fr', locale: 'fr', stem: 'a' }])
+        .mockResolvedValueOnce([{ title: 'b-en', locale: 'en', stem: 'b' }])
+
+      const [items, count] = await Promise.all([qb.all(), qb.count('title' as never)])
+
+      expect(items).toHaveLength(2)
+      expect(count).toBe(2)
+
+      // Every issued query must have selected exactly the user's fields (+ injected stem),
+      // not the count's extra 'title' bleeding into .all()'s SELECT list.
+      const queries = mockFetch.mock.calls.map(c => c[1] as string)
+      for (const q of queries) {
+        // Should not have `title` duplicated in the SELECT list
+        expect(q.match(/"title"/g)?.length ?? 0).toBeLessThanOrEqual(1)
+      }
+    })
+
+    it('count() with selected fields and locale fallback bypasses pagination', async () => {
+      // skip(10).limit(5).count() should return the full count, not just the visible page.
+      mockFetch
+        .mockResolvedValueOnce([
+          { title: 'a-fr', stem: 'a' },
+          { title: 'b-fr', stem: 'b' },
+          { title: 'c-fr', stem: 'c' },
+        ])
+        .mockResolvedValueOnce([
+          { title: 'd-en', stem: 'd' },
+          { title: 'e-en', stem: 'e' },
+        ])
+
+      const count = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .skip(10) // would slice everything away if not bypassed
+        .limit(2)
+        .count()
+
+      expect(count).toBe(5)
+    })
+
+    it('skips auto-locale and (in dev) warns when detected locale is a BCP-47 tag not in collection.locales', async () => {
+      // `@nuxtjs/i18n` may return `en-US`; a collection declaring only `en` should
+      // silently skip auto-locale rather than producing rows from every locale.
+      // In dev mode, a console.warn surfaces the mismatch.
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      try {
+        await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
+        // Either path: no WHERE("locale" = ...) appears in the query.
+        const sql = mockFetch.mock.lastCall![1] as string
+        expect(sql).not.toContain('"locale" =')
+
+        // In dev, the warning must include both the offending tag and the skip hint.
+        if (import.meta.dev) {
+          expect(warn).toHaveBeenCalled()
+          const msg = warn.mock.calls[0]?.[0] as string
+          expect(msg).toContain('en-US')
+          expect(msg).toContain('Auto-locale filter skipped')
+        }
+      }
+      finally {
+        warn.mockRestore()
+      }
     })
   })
 

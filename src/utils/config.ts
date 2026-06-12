@@ -106,8 +106,15 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
     }).i18n
 
     if (i18nOptions?.locales?.length && i18nOptions.defaultLocale) {
+      const localeCodes = i18nOptions.locales.map(l => typeof l === 'string' ? l : l.code)
+      // `@nuxtjs/i18n` permits `defaultLocale` outside `locales` (it falls through
+      // at runtime), but for content filtering it's a footgun — files under
+      // `content/<defaultLocale>/` would never path-detect. Force the invariant
+      // here so it can't silently desync.
       resolvedConfig = {
-        locales: i18nOptions.locales.map(l => typeof l === 'string' ? l : l.code),
+        locales: localeCodes.includes(i18nOptions.defaultLocale)
+          ? localeCodes
+          : [i18nOptions.defaultLocale, ...localeCodes],
         defaultLocale: i18nOptions.defaultLocale,
       }
     }

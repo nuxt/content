@@ -41,8 +41,22 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
   // Add locale field when i18n is fully configured (not `true` shorthand —
   // that gets resolved later in loadContentConfig via resolveI18nConfig)
   const hasI18nConfig = collection.i18n && collection.i18n !== true
+  // Resolve the effective i18n config (may patch `defaultLocale` into `locales`
+  // without mutating the caller's config object).
+  let resolvedI18n: typeof collection.i18n = collection.i18n
   if (hasI18nConfig) {
     extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
+    // Surface defaultLocale-not-in-locales early. Auto-locale detection and
+    // path-based detection both fail silently if this invariant is violated.
+    const i18n = collection.i18n as { locales: string[], defaultLocale: string }
+    if (!i18n.locales.includes(i18n.defaultLocale)) {
+      logger.warn(
+        `Collection \`i18n\` config has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
+        + `\`locales: [${i18n.locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically — `
+        + 'declare it explicitly in `locales` to silence this warning.',
+      )
+      resolvedI18n = { ...i18n, locales: [i18n.defaultLocale, ...i18n.locales] }
+    }
   }
 
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
@@ -62,7 +76,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
     indexes,
-    i18n: collection.i18n,
+    i18n: resolvedI18n,
   }
 }
 

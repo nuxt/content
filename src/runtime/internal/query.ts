@@ -137,11 +137,15 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('path', '=', withoutTrailingSlash(path))
     },
     stem(stem: string) {
+      // Normalize input so leading/trailing slashes from callers don't survive into
+      // the WHERE clause. The stored `stem` column never has them, and `stemPrefix`
+      // from the manifest is already normalized (see `templates.ts`).
+      const normalized = stem.replace(/^\/+|\/+$/g, '')
       // Resolve full stem by prepending the collection's source prefix if not already present.
       // Check segment boundary to avoid false matches (e.g. prefix "navigation" matching "navigation2/foo").
-      const fullStem = stemPrefix && !(stem === stemPrefix || stem.startsWith(stemPrefix + '/'))
-        ? `${stemPrefix}/${stem}`
-        : stem
+      const fullStem = stemPrefix && !(normalized === stemPrefix || normalized.startsWith(stemPrefix + '/'))
+        ? `${stemPrefix}/${normalized}`
+        : normalized
       return query.where('stem', '=', fullStem)
     },
     locale(locale: string, opts?: { fallback?: string }) {
@@ -206,30 +210,28 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       const autoLocale = resolveAutoLocale()
       if (params.localeFallback || autoLocale.fallback) {
-        // Ensure the counted field is fetched and bypass pagination for accurate counts.
-        // Save/restore in finally so an error in fetch doesn't leak state to later calls.
+        // Compute the effective field list via overrides — never mutate `params`,
+        // otherwise concurrent `Promise.all([qb.all(), qb.count()])` would race.
         const countField = field !== '*' ? String(field) : undefined
-        const savedFields = params.selectedFields
-        const savedOffset = params.offset
-        const savedLimit = params.limit
-        if (countField && savedFields.length > 0 && !savedFields.includes(field as keyof Collections[T])) {
-          params.selectedFields = [...savedFields, field as keyof Collections[T]]
-        }
-        params.offset = 0
-        params.limit = 0
-        try {
-          const res = await fetchWithLocaleFallback({ preserveField: countField, autoLocale })
-          if (field === '*') return res.length
-          const values = res
-            .map(r => (r as unknown as Record<string, unknown>)[String(field)])
-            .filter(v => v !== null && v !== undefined)
-          return distinct ? new Set(values).size : values.length
-        }
-        finally {
-          params.selectedFields = savedFields
-          params.offset = savedOffset
-          params.limit = savedLimit
-        }
+        const fieldsOverride = countField
+          && params.selectedFields.length > 0
+          && !params.selectedFields.includes(field as keyof Collections[T])
+          ? [...params.selectedFields, field as keyof Collections[T]]
+          : undefined
+
+        // `bypassPagination` makes the fallback path count the full match set rather
+        // than the visible page — `LIMIT 5 .count()` should still return the total.
+        const res = await fetchWithLocaleFallback({
+          preserveField: countField,
+          autoLocale,
+          fieldsOverride,
+          bypassPagination: true,
+        })
+        if (field === '*') return res.length
+        const values = res
+          .map(r => (r as unknown as Record<string, unknown>)[String(field)])
+          .filter(v => v !== null && v !== undefined)
+        return distinct ? new Set(values).size : values.length
       }
       // `noLimitOffset` is essential here: a COUNT query returns exactly one row,
       // so any `LIMIT/OFFSET` carried over from `.skip()`/`.limit()` either caps a
@@ -258,7 +260,24 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    */
   function resolveAutoLocale(): { condition?: string, fallback?: { locale: string, fallback: string } } {
     if (params.localeExplicitlySet || !i18nConfig || !detectedLocale) return {}
-    if (!i18nConfig.locales.includes(detectedLocale)) return {}
+    if (!i18nConfig.locales.includes(detectedLocale)) {
+      // BCP-47 tag mismatch (e.g. `@nuxtjs/i18n` returns `en-US` for a collection
+      // declaring only `en`) — silently skipping auto-locale would yield rows
+      // from EVERY locale, which is rarely what the user expects. Surface this
+      // at the call site rather than letting the consumer wonder why their
+      // French page renders English content.
+      if (import.meta.dev) {
+        console.warn(
+          `[@nuxt/content] queryCollection("${String(collection)}"): detected locale `
+          + `"${detectedLocale}" is not in this collection's locales `
+          + `[${i18nConfig.locales.map(l => `"${l}"`).join(', ')}]. Auto-locale filter skipped — `
+          + 'returning rows from every locale. If you use BCP-47 tags like "en-US", '
+          + 'either declare them in the collection\'s `i18n.locales` or strip the region '
+          + 'subtag before passing it to @nuxtjs/i18n.',
+        )
+      }
+      return {}
+    }
     if (detectedLocale === i18nConfig.defaultLocale) {
       return { condition: `("locale" = ${singleQuote(detectedLocale)})` }
     }
@@ -268,62 +287,78 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   /**
    * Two-query locale fallback: fetches locale-specific rows and default-locale rows,
    * then merges by stem (locale items take priority, fallback fills gaps).
-   * Internally injects 'stem' into selectedFields for merge-key deduplication,
-   * stripping it from results when the caller didn't explicitly select it.
-   * Accepts an optional limit override and a preserveField to keep for count operations.
+   * Internally injects 'stem' into the SELECT list for merge-key deduplication, then
+   * strips it from results when the caller didn't explicitly select it.
    *
-   * Note: when called from auto-locale path, params.localeFallback may be undefined
-   * and the fallback target comes from autoLocale.fallback instead.
+   * All effective state is passed by argument and the function NEVER mutates
+   * `params` — that makes the builder safe to reuse across concurrent calls
+   * (e.g. `Promise.all([qb.all(), qb.count()])`). Previous mutate/restore-in-finally
+   * leaked partial state across the race window between concurrent terminals.
+   *
+   * Note: when called from the auto-locale path, params.localeFallback may be
+   * undefined and the fallback pair comes from autoLocale.fallback instead.
    */
   async function fetchWithLocaleFallback(opts: {
     limit?: number
     preserveField?: string
     autoLocale?: { condition?: string, fallback?: { locale: string, fallback: string } }
+    /** Override `params.selectedFields` for this call (e.g. count() adding the counted field). */
+    fieldsOverride?: Array<keyof Collections[T]>
+    /** Ignore `params.offset`/`params.limit` (used by `.count()` so paging doesn't truncate the count). */
+    bypassPagination?: boolean
   } = {}): Promise<Collections[T][]> {
     // Callers gate on `params.localeFallback || opts.autoLocale?.fallback` being
     // truthy, so one of them is always defined here — `||` collapses both branches.
     const fb = (params.localeFallback || opts.autoLocale?.fallback) as { locale: string, fallback: string }
     const { locale, fallback } = fb
 
-    // Ensure `stem` is always fetched — needed for merge-key deduplication.
-    // Track whether we injected it so we can strip it from results later.
-    const savedFields = params.selectedFields
-    const stemInjected = savedFields.length > 0 && !savedFields.includes('stem' as keyof Collections[T])
-    if (stemInjected) {
-      params.selectedFields = [...savedFields, 'stem' as keyof Collections[T]]
-    }
+    // Ensure `stem` is in the SELECT list — needed for merge-key deduplication.
+    // Tracked via a local so we can strip it from results when the caller didn't ask for it.
+    const baseFields = opts.fieldsOverride ?? params.selectedFields
+    const stemInjected = baseFields.length > 0 && !baseFields.includes('stem' as keyof Collections[T])
+    const fieldsForQuery = stemInjected
+      ? [...baseFields, 'stem' as keyof Collections[T]]
+      : baseFields
 
-    try {
-      // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result.
-      // Auto-locale's `condition` is intentionally NOT applied to sub-queries: we are overriding the locale
-      // here, so passing the original autoLocale would double-filter.
-      // Both queries are independent, so issue them in parallel — halves perceived latency on the
-      // non-default-locale path. `Promise.all` short-circuits on any rejection, which is the
-      // desired behavior (the merge can't proceed without both result sets).
-      const localeQuery = buildQuery({ extraCondition: `("locale" = ${singleQuote(locale)})`, noLimitOffset: true })
-      const fallbackQuery = buildQuery({ extraCondition: `("locale" = ${singleQuote(fallback)})`, noLimitOffset: true })
-      const [localeResults, fallbackResults] = await Promise.all([
-        fetch(collection, localeQuery).then(res => res || []),
-        fetch(collection, fallbackQuery).then(res => res || []),
-      ])
+    // Sub-queries fetch ALL matching rows (no limit/offset) — we apply those JS-side on the merged result.
+    // Auto-locale's `condition` is intentionally NOT applied to sub-queries: we are overriding the locale
+    // here, so passing the original autoLocale would double-filter.
+    // Both queries are independent, so issue them in parallel — halves perceived latency on the
+    // non-default-locale path. `Promise.all` short-circuits on any rejection, which is the
+    // desired behavior (the merge can't proceed without both result sets).
+    const localeQuery = buildQuery({
+      extraCondition: `("locale" = ${singleQuote(locale)})`,
+      noLimitOffset: true,
+      selectedFields: fieldsForQuery,
+    })
+    const fallbackQuery = buildQuery({
+      extraCondition: `("locale" = ${singleQuote(fallback)})`,
+      noLimitOffset: true,
+      selectedFields: fieldsForQuery,
+    })
+    const [localeResults, fallbackResults] = await Promise.all([
+      fetch(collection, localeQuery).then(res => res || []),
+      fetch(collection, fallbackQuery).then(res => res || []),
+    ])
 
-      // Merge: prefer locale results, fill gaps from fallback
-      const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
-      const localeStemSet = new Set(localeResults.map(getStem))
-      const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
+    // Merge: prefer locale results, fill gaps from fallback
+    const getStem = (r: Collections[T]) => (r as unknown as { stem: string }).stem
+    const localeStemSet = new Set(localeResults.map(getStem))
+    const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
 
-      // When using the default ORDER BY (stem ASC), we can do a proper sorted merge.
-      // LIMITATION: when a custom ORDER BY is specified, we cannot interleave the
-      // two result sets correctly because that would require parsing the SQL ORDER BY
-      // clause and re-implementing the comparison in JS. Instead we concatenate
-      // locale items first, then fallback items — each group retains its DB order
-      // but the overall sequence may not match a single-query ORDER BY.
-      const merged = params.orderBy.length === 0
-        ? mergeSortedArrays(localeResults, fallbackOnly, getStem)
-        : [...localeResults, ...fallbackOnly]
+    // When using the default ORDER BY (stem ASC), we can do a proper sorted merge.
+    // LIMITATION: when a custom ORDER BY is specified, we cannot interleave the
+    // two result sets correctly because that would require parsing the SQL ORDER BY
+    // clause and re-implementing the comparison in JS. Instead we concatenate
+    // locale items first, then fallback items — each group retains its DB order
+    // but the overall sequence may not match a single-query ORDER BY.
+    const merged = params.orderBy.length === 0
+      ? mergeSortedArrays(localeResults, fallbackOnly, getStem)
+      : [...localeResults, ...fallbackOnly]
 
-      // Apply offset then limit on the merged result
-      let result = merged
+    // Apply offset then limit on the merged result
+    let result = merged
+    if (!opts.bypassPagination) {
       if (params.offset > 0) {
         result = result.slice(params.offset)
       }
@@ -331,22 +366,18 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       if (limit > 0) {
         result = result.slice(0, limit)
       }
-
-      // Strip internally-injected 'stem' if the caller didn't select it
-      // (unless it's needed by a count() call targeting that field)
-      if (stemInjected && opts.preserveField !== 'stem') {
-        return result.map((item) => {
-          const { stem: _, ...rest } = item as unknown as Record<string, unknown>
-          return rest as Collections[T]
-        })
-      }
-
-      return result as Collections[T][]
     }
-    finally {
-      // Restore original selectedFields even on fetch errors so later calls aren't poisoned
-      params.selectedFields = savedFields
+
+    // Strip internally-injected 'stem' if the caller didn't select it
+    // (unless it's needed by a count() call targeting that field)
+    if (stemInjected && opts.preserveField !== 'stem') {
+      return result.map((item) => {
+        const { stem: _, ...rest } = item as unknown as Record<string, unknown>
+        return rest as Collections[T]
+      })
     }
+
+    return result as Collections[T][]
   }
 
   function buildQuery(opts: {
@@ -355,6 +386,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     extraCondition?: string
     noLimitOffset?: boolean
     autoLocale?: { condition?: string, fallback?: { locale: string, fallback: string } }
+    /** Override the SELECT field list without mutating `params.selectedFields`. */
+    selectedFields?: ReadonlyArray<keyof Collections[T]>
   } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
@@ -362,7 +395,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${countField}) as count`
     }
     else {
-      const fields = Array.from(new Set(params.selectedFields))
+      const fields = Array.from(new Set(opts.selectedFields ?? params.selectedFields))
       query += fields.length > 0 ? fields.map(f => `"${String(f)}"`).join(', ') : '*'
     }
     query += ` FROM ${tables[String(collection)]}`
