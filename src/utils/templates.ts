@@ -49,8 +49,17 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       'declare module \'@nuxt/content\' {',
       ...(await Promise.all(
         publicCollections.map(async (c) => {
-          const type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
+          let type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
             .then(code => code.replace('export interface CLASS', `interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)}`))
+          if (c.i18n) {
+            // i18n collections carry a resolved `locale` on every row. It is added
+            // here, per collection, so non-i18n collections never advertise a
+            // phantom `locale` property.
+            type = type.replace(
+              /(interface \w+CollectionItem extends \w+ ?\{)/,
+              '$1\n  locale: string',
+            )
+          }
           return indentLines(` ${type}`)
         }),
       )),

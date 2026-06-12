@@ -152,11 +152,6 @@ export interface CollectionItemBase {
   stem: string
   extension: string
   meta: Record<string, unknown>
-  /**
-   * Locale code for this content item.
-   * Only present when the collection has i18n enabled.
-   */
-  locale?: string
 }
 
 export interface PageCollectionItemBase extends CollectionItemBase {
