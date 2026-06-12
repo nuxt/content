@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import { collectionQueryBuilder, collectionQueryGroup } from './internal/query'
+import { buildGroup, collectionQueryBuilder, collectionQueryGroup } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
@@ -10,6 +10,9 @@ import type { Collections, ContentLocaleEntry, ContentNavigationItem, Collection
 import type { AsyncData, NuxtError } from '#app'
 import type { MaybeRefOrGetter, Ref } from 'vue'
 import { computed, ref, toValue, tryUseNuxtApp, useAsyncData, watch } from '#imports'
+// `useAsyncData`'s key is a getter returning a string; Nuxt treats getter keys
+// as reactive (since Nuxt 3.17), so changes to the resolved key — e.g. when the
+// locale ref changes — automatically refetch. No `watch:` plumbing required.
 
 export type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
 
@@ -23,10 +26,14 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
   const nuxtApp = tryUseNuxtApp()
   const event = nuxtApp?.ssrContext?.event
-  // Auto-detect locale from @nuxtjs/i18n (client: $i18n.locale, SSR: event.context.nuxtI18n)
-  const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } })?.locale?.value
-    || (event?.context?.nuxtI18n as { vueI18nOptions?: { locale?: string } })?.vueI18nOptions?.locale
-    || (event?.context?.nuxtI18n as { locale?: string })?.locale
+  // Auto-detect locale: on the client we read $i18n.locale; on the server we read
+  // `event.context.nuxtI18n.detectLocale` (the per-request resolved locale set by
+  // @nuxtjs/i18n >= 10). `vueI18nOptions.locale` is the configured default and is
+  // only used if detection didn't run.
+  const i18nCtx = event?.context?.nuxtI18n as { detectLocale?: string, vueI18nOptions?: { locale?: string } } | undefined
+  const detectedLocale = (nuxtApp?.$i18n as { locale?: { value?: string } } | undefined)?.locale?.value
+    || i18nCtx?.detectLocale
+    || i18nCtx?.vueI18nOptions?.locale
   return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectedLocale)
 }
 
@@ -46,7 +53,7 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
   // Skip auto-locale: this helper needs ALL locale variants, not just the current one
   const event = tryUseNuxtApp()?.ssrContext?.event
   const qb = collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
-  return generateCollectionLocales(qb, stem)
+  return generateCollectionLocales(qb, String(collection), stem)
 }
 
 /**
@@ -73,8 +80,9 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       + 'or outside the Nuxt app.',
     )
   }
-  const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> })?.locale
-  // Reactive locale for cache key and watch
+  const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> } | undefined)?.locale
+  // The locale value flows into the cache key. Because `useAsyncData`'s key is
+  // a getter, Nuxt re-runs the handler when the locale ref changes.
   const localeValue = computed(() => i18nLocaleRef?.value || '')
 
   type Item = Collections[T]
@@ -102,16 +110,18 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return builder
     },
     andWhere(groupFactory: QueryGroupFunction<Item>) {
+      // Pre-build the group once just to derive a stable cache-key fragment.
+      // The same factory runs again inside `buildQuery()` when the actual query
+      // is executed — running it twice is fine because group factories are
+      // expected to be pure.
       const group = groupFactory(collectionQueryGroup(collection))
-      const cond = (group as unknown as { _conditions: string[] })._conditions.join(' AND ')
-      keyParts.conditions.push(`and(${cond})`)
+      keyParts.conditions.push(`and${buildGroup(group, 'AND')}`)
       ops.push(qb => qb.andWhere(groupFactory))
       return builder
     },
     orWhere(groupFactory: QueryGroupFunction<Item>) {
       const group = groupFactory(collectionQueryGroup(collection))
-      const cond = (group as unknown as { _conditions: string[] })._conditions.join(' OR ')
-      keyParts.conditions.push(`or(${cond})`)
+      keyParts.conditions.push(`or${buildGroup(group, 'OR')}`)
       ops.push(qb => qb.orWhere(groupFactory))
       return builder
     },
@@ -157,19 +167,15 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       return builder
     },
     all(): AsyncData<Result[] | undefined, NuxtError | undefined> {
-      return useAsyncData(() => buildKey('all'), () => buildQuery().all(), { watch: watchSources() }) as AsyncData<Result[] | undefined, NuxtError | undefined>
+      return useAsyncData(() => buildKey('all'), () => buildQuery().all()) as AsyncData<Result[] | undefined, NuxtError | undefined>
     },
     first(): AsyncData<Result | null | undefined, NuxtError | undefined> {
-      return useAsyncData(() => buildKey('first'), () => buildQuery().first(), { watch: watchSources() }) as AsyncData<Result | null | undefined, NuxtError | undefined>
+      return useAsyncData(() => buildKey('first'), () => buildQuery().first()) as AsyncData<Result | null | undefined, NuxtError | undefined>
     },
     count(field?: keyof Item | '*', distinct?: boolean): AsyncData<number | undefined, NuxtError | undefined> {
       const countKey = `count:${String(field ?? '*')}:${distinct ? 'd' : ''}`
-      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct), { watch: watchSources() }) as AsyncData<number | undefined, NuxtError | undefined>
+      return useAsyncData(() => buildKey(countKey), () => buildQuery().count(field, distinct)) as AsyncData<number | undefined, NuxtError | undefined>
     },
-  }
-
-  function watchSources() {
-    return !explicitLocale && i18nLocaleRef ? [i18nLocaleRef] : undefined
   }
 
   /** Rebuild a fresh query builder with all chained ops replayed. */

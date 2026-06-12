@@ -2,10 +2,29 @@ import { withoutTrailingSlash } from 'ufo'
 import type { Collections, CollectionI18nConfig, CollectionQueryBuilder, CollectionQueryGroup, ManifestCollectionsMeta, QueryGroupFunction, SQLOperator } from '@nuxt/content'
 import manifestMeta, { tables } from '#content/manifest'
 
-const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR') => {
-  const conditions = (group as unknown as { _conditions: Array<string> })._conditions
+/**
+ * Read the raw conditions accumulated on a group built by `collectionQueryGroup`.
+ * Exposed so other modules can serialize a group (e.g. for cache keys) without
+ * reaching into the internal `_conditions` field via a cast.
+ */
+export const getGroupConditions = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>): string[] => {
+  return (group as unknown as { _conditions: Array<string> })._conditions
+}
+
+export const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR'): string => {
+  const conditions = getGroupConditions(group)
   return conditions.length > 0 ? `(${conditions.join(` ${type} `)})` : ''
 }
+
+/**
+ * Match any condition that filters on the `locale` column, regardless of operator
+ * or value. Used to detect manual locale filters so auto-locale steps aside.
+ *
+ * Conditions are emitted by `collectionQueryGroup.where()` as strings that start
+ * with `"locale"` (the quoted column name).
+ */
+const referencesLocaleColumn = (conditions: string[]): boolean =>
+  conditions.some(c => c.startsWith('"locale"'))
 
 export const collectionQueryGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
   const conditions = [] as Array<string>
@@ -98,11 +117,19 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     __params: params,
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQueryGroup(collection))
+      // A manual filter on `locale` (in any nested condition) suppresses
+      // auto-locale so the two don't combine into a contradictory WHERE clause.
+      if (referencesLocaleColumn(getGroupConditions(group))) {
+        params.localeExplicitlySet = true
+      }
       params.conditions.push(buildGroup(group, 'AND'))
       return query
     },
     orWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQueryGroup(collection))
+      if (referencesLocaleColumn(getGroupConditions(group))) {
+        params.localeExplicitlySet = true
+      }
       params.conditions.push(buildGroup(group, 'OR'))
       return query
     },
@@ -235,7 +262,9 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     preserveField?: string
     autoLocale?: { condition?: string, fallback?: { locale: string, fallback: string } }
   } = {}): Promise<Collections[T][]> {
-    const fb = params.localeFallback || opts.autoLocale?.fallback!
+    // Callers gate on `params.localeFallback || opts.autoLocale?.fallback` being
+    // truthy, so one of them is always defined here — `||` collapses both branches.
+    const fb = (params.localeFallback || opts.autoLocale?.fallback) as { locale: string, fallback: string }
     const { locale, fallback } = fb
 
     // Ensure `stem` is always fetched — needed for merge-key deduplication.

@@ -392,6 +392,8 @@ importers:
 
   test/fixtures/csv: {}
 
+  test/fixtures/i18n: {}
+
 packages:
 
   '@ai-sdk/gateway@3.0.104':

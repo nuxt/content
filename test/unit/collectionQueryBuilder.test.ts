@@ -438,6 +438,35 @@ describe('collectionQueryBuilder', () => {
       )
     })
 
+    it('suppresses auto-locale when .where("locale", ...) is used directly', async () => {
+      // Regression: previously `.where('locale', ...)` did not flip
+      // localeExplicitlySet, so auto-detection would still append its own locale
+      // filter and produce a contradictory `locale = 'fr' AND locale = 'en'`.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
+      await qb.where('locale', '=', 'en').all()
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+      )
+    })
+
+    it('suppresses auto-locale when .andWhere() contains a locale filter', async () => {
+      // A manual locale filter nested inside an andWhere group should also disable
+      // auto-locale — we detect any condition starting with `"locale"`.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
+      await qb
+        .andWhere(g => g.where('title', 'LIKE', '%foo%').where('locale', '=', 'en'))
+        .all()
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      const sql = mockFetch.mock.lastCall![1] as string
+      // No `locale = 'fr'` from auto-detection
+      expect(sql).not.toContain('"locale" = \'fr\'')
+      expect(sql).toContain('"locale" = \'en\'')
+    })
+
     it('restores selectedFields after a failed locale-fallback fetch', async () => {
       // Regression: state mutation on the locale-fallback path used to leak when the
       // underlying fetch threw — the next query would then SELECT an extra "stem" column.

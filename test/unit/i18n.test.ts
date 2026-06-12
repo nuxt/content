@@ -517,5 +517,66 @@ describe('i18n', () => {
 
       expect(items1[1].meta._i18nSourceHash).not.toBe(items2[1].meta._i18nSourceHash)
     })
+
+    it('source hash is per-locale: a field translated only in another locale does not affect this locale\'s hash', () => {
+      // `fr` translates only `title`. `de` translates only `description`.
+      // Changing `description` between content1 and content2 must NOT change `fr`'s
+      // hash (since fr doesn't translate description) but MUST change `de`'s.
+      const content1: ParsedContentFile = {
+        id: 'blog:post.yml',
+        title: 'My Post',
+        description: 'Original description',
+        stem: 'post',
+        extension: 'yml',
+        meta: {
+          i18n: {
+            fr: { title: 'Mon Article' },
+            de: { description: 'Beschreibung' },
+          },
+        },
+      }
+      const content2: ParsedContentFile = {
+        ...content1,
+        description: 'Updated description',
+        meta: {
+          i18n: {
+            fr: { title: 'Mon Article' },
+            de: { description: 'Beschreibung' },
+          },
+        },
+      }
+
+      const items1 = expandI18nData(content1, i18nConfig)
+      const items2 = expandI18nData(content2, i18nConfig)
+
+      const fr1 = items1.find(i => i.locale === 'fr')!
+      const fr2 = items2.find(i => i.locale === 'fr')!
+      const de1 = items1.find(i => i.locale === 'de')!
+      const de2 = items2.find(i => i.locale === 'de')!
+
+      expect(fr1.meta._i18nSourceHash).toBe(fr2.meta._i18nSourceHash)
+      expect(de1.meta._i18nSourceHash).not.toBe(de2.meta._i18nSourceHash)
+    })
+  })
+
+  describe('page collection body replacement', () => {
+    it('replaces wholesale when override sets body to null', () => {
+      // Edge case: an override that explicitly clears the body. Without an
+      // `'in' overrides` check this would deep-merge the default AST back in.
+      const defaultBody = { type: 'root', children: [{ type: 'text', value: 'Hi' }] }
+      const content: ParsedContentFile = {
+        id: 'pages:index.md',
+        title: 'Home',
+        body: defaultBody,
+        stem: 'index',
+        extension: 'md',
+        meta: { i18n: { fr: { title: 'Accueil', body: null } } },
+      }
+
+      const items = expandI18nData(content, i18nConfig, 'page')
+      const frItem = items.find(i => i.locale === 'fr')
+
+      expect(frItem?.body).toBeNull()
+    })
   })
 })

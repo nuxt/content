@@ -76,24 +76,28 @@ export function expandI18nData(
     parsedContent.locale = i18nConfig.defaultLocale
   }
 
-  // Compute source hash from default locale's translatable fields
-  const translatedFields = new Set(Object.values(i18nData).flatMap(Object.keys))
-  const sourceFields: Record<string, unknown> = {}
-  for (const field of translatedFields) {
-    sourceFields[field] = parsedContent[field]
-  }
-  const i18nSourceHash = hash(sourceFields)
-
   const items: ParsedContentFile[] = [parsedContent]
 
   for (const [locale, overrides] of Object.entries(i18nData)) {
     if (locale === parsedContent.locale) continue
 
+    // Source hash is per-locale: based only on the default values of fields THIS
+    // locale actually translates. A field translated only in `de` must not enter
+    // the `fr` hash — otherwise a default change to that field would flip `fr`'s
+    // hash and signal a false "stale translation".
+    const sourceFields: Record<string, unknown> = {}
+    for (const field of Object.keys(overrides)) {
+      sourceFields[field] = parsedContent[field]
+    }
+    const i18nSourceHash = hash(sourceFields)
+
     // Deep merge preserves untranslated fields (routes, IDs, icons).
     // For page collections, body AST must not be deep-merged — replace it wholesale.
+    // Use `'body' in overrides` so explicit null/empty bodies still replace (rather
+    // than falling back to deep-merging the default AST in).
     const merged = defuByIndex(overrides, parsedContent) as ParsedContentFile
-    if (collectionType === 'page' && overrides.body) {
-      merged.body = overrides.body
+    if (collectionType === 'page' && 'body' in overrides) {
+      merged.body = overrides.body as ParsedContentFile['body']
     }
 
     const localeItem: ParsedContentFile = {
