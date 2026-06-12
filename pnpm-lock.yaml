@@ -394,6 +394,8 @@ importers:
 
   test/fixtures/i18n: {}
 
+  test/fixtures/multi-collection-hmr: {}
+
 packages:
 
   '@ai-sdk/gateway@3.0.104':
