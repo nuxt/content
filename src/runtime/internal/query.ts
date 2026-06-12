@@ -17,14 +17,22 @@ export const buildGroup = <T extends keyof Collections>(group: CollectionQueryGr
 }
 
 /**
- * Match any condition that filters on the `locale` column, regardless of operator
- * or value. Used to detect manual locale filters so auto-locale steps aside.
+ * Match any condition that filters on the `locale` column, regardless of operator,
+ * value, or nesting depth. Used to detect manual locale filters so auto-locale
+ * steps aside.
  *
- * Conditions are emitted by `collectionQueryGroup.where()` as strings that start
- * with the quoted column name `"locale"`.
+ * The quoted column token `"locale"` is detected anywhere in a condition (so a
+ * filter nested inside an `andWhere`/`orWhere` group still counts), after string
+ * literals are stripped so a value that happens to contain the text `"locale"`
+ * does not produce a false match. Column references are always double-quoted while
+ * values are single-quoted, so the two never collide.
  */
-const referencesLocaleColumn = (conditions: string[]): boolean =>
-  conditions.some(c => c.startsWith('"locale"'))
+export const referencesLocaleColumn = (conditions: string[]): boolean =>
+  conditions.some(c => stripSingleQuoted(c).includes('"locale"'))
+
+/** Remove single-quoted string literals, honouring doubled-quote (`''`) escapes. */
+const stripSingleQuoted = (condition: string): string =>
+  condition.replace(/'(?:[^']|'')*'/g, '')
 
 export const collectionQueryGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
   const conditions = [] as Array<string>
@@ -230,7 +238,12 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
         const values = res
           .map(r => (r as unknown as Record<string, unknown>)[String(field)])
           .filter(v => v !== null && v !== undefined)
-        return distinct ? new Set(values).size : values.length
+        if (!distinct) return values.length
+        // Mirror SQL `COUNT(DISTINCT ...)`, which compares serialized values. Key
+        // the set on a stable serialization so structurally-equal JSON/object
+        // column values collapse rather than counting as distinct references.
+        const keys = values.map(v => (typeof v === 'object' ? JSON.stringify(v) : v))
+        return new Set(keys).size
       }
       // `noLimitOffset` is essential here. A COUNT query returns exactly one row,
       // so any `LIMIT`/`OFFSET` carried over from `.skip()`/`.limit()` either caps
@@ -351,15 +364,26 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     const localeStemSet = new Set(localeResults.map(getStem))
     const fallbackOnly = fallbackResults.filter(item => !localeStemSet.has(getStem(item)))
 
-    // Under the default `ORDER BY stem ASC` the two result sets can be interleaved
-    // with a proper sorted merge. A custom `.order()` cannot be honoured here
-    // without parsing the SQL ORDER BY clause and reimplementing the comparison in
-    // JS, so this path falls back to concatenating locale items first, then
-    // fallback items. Each group retains its database order, but the overall
-    // sequence may not match a single-query ORDER BY.
-    const merged = params.orderBy.length === 0
-      ? mergeSortedArrays(localeResults, fallbackOnly, getStem)
-      : [...localeResults, ...fallbackOnly]
+    // Under the default `ORDER BY stem ASC` the two result sets are re-interleaved
+    // by stem so the merged page matches a single-query ordering. The navigation
+    // and surround helpers inject `order('stem', 'ASC')` (serialized as
+    // `"stem" ASC`) when no explicit order is set, so that case takes the sorted
+    // path too. Sorting happens in JS rather than relying on the database returning
+    // rows in binary order, which keeps the result deterministic on backends whose
+    // default collation is not binary (for example PostgreSQL with a linguistic
+    // locale). A custom `.order()` cannot be reproduced here without parsing the
+    // SQL ORDER BY clause, so that path concatenates locale items first, then
+    // fallback items, each group retaining its database order.
+    const isDefaultStemOrder = params.orderBy.length === 0
+      || (params.orderBy.length === 1 && params.orderBy[0] === '"stem" ASC')
+    const combined = [...localeResults, ...fallbackOnly]
+    const merged = isDefaultStemOrder
+      ? combined.sort((a, b) => {
+          const sa = getStem(a)
+          const sb = getStem(b)
+          return sa < sb ? -1 : sa > sb ? 1 : 0
+        })
+      : combined
 
     // Apply offset then limit on the merged result.
     let result = merged
@@ -446,46 +470,6 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   return query
-}
-
-/**
- * Merge two arrays that are both sorted by `stem` ASC (the default ORDER BY).
- * Interleaves items using **binary comparison** of their `stem` values to match
- * SQLite's default BINARY collation (and PostgreSQL's "C" ordering of ASCII codepoints).
- *
- * `localeCompare` is deliberately avoided. It uses Unicode collation, which orders
- * `'a' < 'A'` (case-insensitive linguistic order), whereas the database sorts
- * `'A' (65) < 'a' (97)` (codepoint order). Using `localeCompare` would interleave
- * the two result sets in a different order than the database returned.
- *
- * Both inputs must be sorted by `stem` ASC. This function does not handle
- * arbitrary ORDER BY clauses, use concatenation for custom sorts.
- */
-function mergeSortedArrays<T>(a: T[], b: T[], getStem: (r: T) => string): T[] {
-  const result: T[] = []
-  let ai = 0
-  let bi = 0
-  while (ai < a.length && bi < b.length) {
-    // Plain `<=` matches SQL BINARY codepoint order. Equal stems cannot both occur
-    // here (the caller filters duplicates), but `<=` keeps `a` stable on ties.
-    if (getStem(a[ai]!) <= getStem(b[bi]!)) {
-      result.push(a[ai]!)
-      ai++
-    }
-    else {
-      result.push(b[bi]!)
-      bi++
-    }
-  }
-  while (ai < a.length) {
-    result.push(a[ai]!)
-    ai++
-  }
-  while (bi < b.length) {
-    result.push(b[bi]!)
-    bi++
-  }
-  return result
 }
 
 function singleQuote(value: unknown) {
