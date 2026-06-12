@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import { buildGroup, collectionQueryBuilder, collectionQueryGroup, getGroupConditions } from './internal/query'
+import { buildGroup, collectionQueryBuilder, collectionQueryGroup, getGroupConditions, referencesLocaleColumn } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
@@ -8,7 +8,8 @@ import { generateCollectionLocales } from './internal/locales'
 import { buildUseQueryCollectionKey, detectClientLocale, detectServerLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import { withoutTrailingSlash } from 'ufo'
-import type { Collections, ContentLocaleEntry, ContentNavigationItem, CollectionQueryBuilder, DatabaseAdapter, PageCollections, QueryGroupFunction, SQLOperator, SurroundOptions } from '@nuxt/content'
+import type { Collections, ContentLocaleEntry, ContentNavigationItem, CollectionQueryBuilder, DatabaseAdapter, ManifestCollectionsMeta, PageCollections, QueryGroupFunction, SQLOperator, SurroundOptions } from '@nuxt/content'
+import manifestMeta from '#content/manifest'
 import type { AsyncData, AsyncDataOptions, NuxtError } from '#app'
 import type { MaybeRefOrGetter, Ref } from 'vue'
 import { computed, ref, toValue, tryUseNuxtApp, useAsyncData, watch } from '#imports'
@@ -87,15 +88,19 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       + 'or outside the Nuxt app.',
     )
   }
+  // Only collections that declare `i18n` participate in locale-aware caching.
+  // For a non-i18n collection the produced SQL is identical across locales, so
+  // letting the locale into the cache key would refetch and store duplicate
+  // entries on every locale switch for no benefit.
+  const collectionI18n = (manifestMeta as ManifestCollectionsMeta)[String(collection)]?.i18n
+
   const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> } | undefined)?.locale
   // The locale value flows into the cache key. Because `useAsyncData`'s key is
   // a getter, Nuxt reruns the handler when the locale ref changes.
   //
-  // During SSR, `$i18n.locale` may not be populated (the client plugin has not
-  // run yet), so the value falls back to the SSR event context. This keeps the
-  // server-rendered key aligned with the initial client key on hydration.
-  // Without this fallback the first client render would see a different key,
-  // miss the cached payload, and immediately refetch.
+  // The SSR event context is a fallback for the case where `@nuxtjs/i18n` is not
+  // installed (no `$i18n`). When it is installed, `$i18n.locale` already reflects
+  // the per-request locale during SSR, so the ref wins.
   const ssrLocale = detectServerLocale(nuxtApp?.ssrContext?.event)
   const localeValue = computed(() => i18nLocaleRef?.value || ssrLocale || '')
 
@@ -137,7 +142,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       // to be pure.
       const group = groupFactory(collectionQueryGroup(collection))
       const groupConditions = getGroupConditions(group)
-      if (groupConditions.some(c => c.startsWith('"locale"'))) explicitLocale = true
+      if (referencesLocaleColumn(groupConditions)) explicitLocale = true
       keyParts.conditions.push(`and${buildGroup(group, 'AND')}`)
       ops.push(qb => qb.andWhere(groupFactory))
       return builder
@@ -145,7 +150,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
     orWhere(groupFactory: QueryGroupFunction<Item>) {
       const group = groupFactory(collectionQueryGroup(collection))
       const groupConditions = getGroupConditions(group)
-      if (groupConditions.some(c => c.startsWith('"locale"'))) explicitLocale = true
+      if (referencesLocaleColumn(groupConditions)) explicitLocale = true
       keyParts.conditions.push(`or${buildGroup(group, 'OR')}`)
       ops.push(qb => qb.orWhere(groupFactory))
       return builder
@@ -215,6 +220,11 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
 
   /** Build cache key from tracked params without instantiating a query builder. */
   function buildKey(method: string): string {
+    // Mirror the auto-locale gate in `query.ts`: a locale only affects the result
+    // (and so the cache key) when the collection is i18n-enabled and the detected
+    // locale is one it declares.
+    const locale = localeValue.value
+    const localeIsActive = !!collectionI18n && collectionI18n.locales.includes(locale)
     return buildUseQueryCollectionKey({
       collection: String(collection),
       conditions: keyParts.conditions,
@@ -223,7 +233,7 @@ export function useQueryCollection<R = never, T extends keyof Collections = keyo
       limit: keyParts.limit,
       selectedFields: keyParts.selectedFields,
       localeFallback: keyParts.localeFallback,
-      currentLocale: localeValue.value,
+      currentLocale: localeIsActive ? locale : undefined,
       explicitLocale,
       method,
     })
