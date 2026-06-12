@@ -171,7 +171,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         // Capture the source locale before `expandI18nData` mutates `parsed.locale`.
         const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
 
-        const expandedItems = expandI18nData(parsed, collection.i18n, collection.type)
+        const expandedItems = expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
         for (const item of expandedItems) {
           // Use `item.id` directly as the dump and DB key. `expandI18nData`
           // already returns the default-locale item with the bare id (matching
@@ -192,9 +192,11 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       }
       else {
         // Clean up stale locale variants if `i18n` was previously present but
-        // has now been removed from the file.
+        // has now been removed from the file. The default-locale row is stored
+        // under the bare key, so it is skipped here.
         if (collection.i18n) {
           for (const locale of collection.i18n.locales) {
+            if (locale === collection.i18n.defaultLocale) continue
             await broadcast(collection, `${keyInCollection}#${locale}`)
           }
         }
@@ -230,10 +232,12 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
       await db.deleteDevelopmentCache(keyInCollection)
 
-      // Remove main row and all locale variant rows
+      // Remove the main row and all non-default locale variant rows. The
+      // default-locale row is the main row stored under the bare key.
       await broadcast(collection, keyInCollection)
       if (collection.i18n) {
         for (const locale of collection.i18n.locales) {
+          if (locale === collection.i18n.defaultLocale) continue
           await broadcast(collection, `${keyInCollection}#${locale}`)
         }
       }

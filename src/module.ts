@@ -389,7 +389,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             // `expandI18nData`) as the dump tuple key so HMR can locate the
             // same row later. The bare key matches the SQL row's actual `id`.
             if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
-              const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type)
+              const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
               for (const item of expandedItems) {
                 const itemKey = item.id as string
                 const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
