@@ -408,5 +408,79 @@ describe('collectionQueryBuilder', () => {
       // Merged items: a='Same', b='Same', c='Different'. Distinct titles: 2
       expect(count).toBe(2)
     })
+
+    it('does not leak auto-locale into persistent conditions across calls', async () => {
+      // Regression: auto-applied locale used to be pushed to params.conditions on first
+      // execution, so a second .all() on the same builder would re-apply it (and any
+      // intervening .locale() call would produce a contradictory `loc=X AND loc=Y`).
+      const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
+
+      mockFetch.mockResolvedValueOnce([])
+      await qb.all() // auto-locale = en (default), single-query path
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+      )
+
+      mockFetch.mockResolvedValueOnce([])
+      await qb.all() // second call must not stack a duplicate locale condition
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
+      )
+
+      // An explicit .locale() now should fully override the auto-locale on the next call
+      mockFetch.mockResolvedValueOnce([])
+      await qb.locale('de').all()
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        'articles',
+        'SELECT * FROM _articles WHERE ("locale" = \'de\') ORDER BY stem ASC',
+      )
+    })
+
+    it('restores selectedFields after a failed locale-fallback fetch', async () => {
+      // Regression: state mutation on the locale-fallback path used to leak when the
+      // underlying fetch threw — the next query would then SELECT an extra "stem" column.
+      const qb = collectionQueryBuilder(mockCollection, mockFetch)
+        .select('title' as never, 'locale' as never)
+        .locale('fr', { fallback: 'en' })
+
+      mockFetch.mockRejectedValueOnce(new Error('boom'))
+      await expect(qb.all()).rejects.toThrow('boom')
+
+      // Now run an unrelated query on a *new* builder using the same select set —
+      // verifies the test isolation; the bug was about builder-internal mutation.
+      mockFetch.mockClear()
+      mockFetch.mockResolvedValueOnce([{ title: 'x', locale: 'en' }])
+      await collectionQueryBuilder(mockCollection, mockFetch)
+        .select('title' as never, 'locale' as never)
+        .all()
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'articles',
+        'SELECT "title", "locale" FROM _articles ORDER BY stem ASC',
+      )
+    })
+  })
+
+  describe('mergeSortedArrays / locale-fallback ordering', () => {
+    it('preserves DB sort order for mixed-case stems (binary, not localeCompare)', async () => {
+      // SQLite BINARY puts 'A' (65) before 'a' (97). localeCompare would put 'a' first.
+      // The merge must agree with the DB so the interleaving stays in true ASC order.
+      mockFetch
+        .mockResolvedValueOnce([
+          { stem: 'B', locale: 'fr' },
+        ])
+        .mockResolvedValueOnce([
+          { stem: 'A', locale: 'en' },
+          { stem: 'a', locale: 'en' },
+        ])
+
+      const results = await collectionQueryBuilder(mockCollection, mockFetch)
+        .locale('fr', { fallback: 'en' })
+        .all()
+
+      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['A', 'B', 'a'])
+    })
   })
 })

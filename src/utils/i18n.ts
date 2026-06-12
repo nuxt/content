@@ -45,6 +45,12 @@ export const defuByIndex = createDefu((obj, key, value) => {
  * For page collections (`collectionType: 'page'`), the body AST is replaced wholesale
  * rather than deep-merged, since body is a parsed markdown tree that cannot be meaningfully merged.
  *
+ * `meta` semantics: the default locale keeps its full `meta` (minus the `i18n` key).
+ * Non-default locale items get a fresh `meta` of `{ ...cleanMeta, _i18nSourceHash }` —
+ * any `meta` provided inside a locale override is intentionally dropped, because
+ * locale-specific tracking state (`_i18nSourceHash`) lives on `meta` and must not be
+ * overridden by user content. Use a top-level field if you need a locale-varying value.
+ *
  * Note: this function mutates `parsedContent.meta` (removes the `i18n` key) and
  * sets `parsedContent.locale` if not already set. This is acceptable because the
  * source content is always consumed (inserted into DB) immediately after expansion.

@@ -63,6 +63,16 @@ export function queryCollectionLocales<T extends keyof Collections>(collection: 
  */
 export function useQueryCollection<R = never, T extends keyof Collections = keyof Collections>(collection: T) {
   const nuxtApp = tryUseNuxtApp()
+  if (!nuxtApp) {
+    // useAsyncData would throw the same way; surface the cause earlier so users
+    // get a clear hint about *where* the call is misplaced rather than a generic
+    // "[nuxt] instance unavailable" trace from inside useAsyncData.
+    throw new Error(
+      '[@nuxt/content] `useQueryCollection` must be called inside a Vue component setup (or other Nuxt-aware) context, '
+      + 'like `useAsyncData` and `useFetch`. It cannot run in event handlers, watchers, lifecycle hooks, '
+      + 'or outside the Nuxt app.',
+    )
+  }
   const i18nLocaleRef = (nuxtApp?.$i18n as { locale?: Ref<string> })?.locale
   // Reactive locale for cache key and watch
   const localeValue = computed(() => i18nLocaleRef?.value || '')

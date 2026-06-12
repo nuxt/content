@@ -6,7 +6,7 @@ import type { JSONSchema } from 'json-schema-to-typescript-lite'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
-import type { Manifest } from '../types/manifest'
+import type { Manifest, ManifestCollectionMeta, ManifestCollectionsMeta } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
 
@@ -176,17 +176,22 @@ export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
   getContents: ({ options }: { options: { manifest: Manifest } }) => {
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      // Stem prefix = source prefix only (collection name is stripped by describeId in path-meta.ts)
-      const sourcePrefix = collection.source?.[0]?.prefix || ''
-      const stemPrefix = sourcePrefix.replace(/^\/|\/$/g, '')
-      acc[collection.name] = {
+      // Stem prefix is used by `.stem()` to auto-resolve a leading source directory.
+      // We only emit it when ALL sources of a collection share the same normalized prefix —
+      // otherwise the heuristic would silently prepend the wrong directory for some files.
+      const normalize = (p: string | undefined) => (p || '').replace(/^\/|\/$/g, '')
+      const sources = collection.source || []
+      const stemPrefixes = new Set(sources.map(s => normalize(s.prefix)))
+      const stemPrefix = stemPrefixes.size === 1 ? [...stemPrefixes][0]! : ''
+      const entry: ManifestCollectionMeta = {
         type: collection.type,
         fields: collection.fields,
         ...(collection.i18n ? { i18n: collection.i18n } : {}),
         ...(stemPrefix ? { stemPrefix } : {}),
       }
+      acc[collection.name] = entry
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as ManifestCollectionsMeta)
 
     return [
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,

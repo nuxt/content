@@ -245,10 +245,18 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    // Use exact key match: look for the id as a complete SQL string literal ('key',) to avoid
-    // substring matches (e.g., 'team.yml' matching 'team.yml#fr')
+    // Match an entry that references this row. Three exact shapes can occur:
+    //   1. INSERT INTO ... VALUES ('key', ...)          → contains "'key',"
+    //   2. INSERT INTO ... VALUES ('key')               → ends with "'key')"
+    //   3. UPDATE ... WHERE id = 'key' AND ...          → contains "id = 'key'"
+    // The UPDATE shape comes from generateCollectionInsert splitting oversized rows
+    // into INSERT + chained UPDATE fragments. Without case 3 those fragments would
+    // be left behind in the dump as dead no-ops, slowly bloating it on every HMR.
     const escapedKey = key.replace(/'/g, '\'\'')
-    const keyMatch = (item: string) => item.includes(`'${escapedKey}',`) || item.endsWith(`'${escapedKey}')`)
+    const keyMatch = (item: string) =>
+      item.includes(`'${escapedKey}',`)
+      || item.endsWith(`'${escapedKey}')`)
+      || item.includes(`id = '${escapedKey}'`)
     const keyIndex = collectionDump.findIndex(keyMatch)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
 
