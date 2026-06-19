@@ -209,6 +209,11 @@ export interface ModuleOptions {
     /**
      * Use given SQLite connector instead of `better-sqlite3` if available
      *
+     * - `better-sqlite3`: Default for Node.js environments
+     * - `native`: Use Node.js built-in `node:sqlite` (requires Node.js >= 22.5.0)
+     * - `sqlite3`: Use `sqlite3` package (works in StackBlitz/WebContainers)
+     * - `bun`: Use Bun's built-in `bun:sqlite` (for Bun runtime targets, e.g. Vercel with bun1.x)
+     *
      * @default undefined
      */
     sqliteConnector?: SQLiteConnector
@@ -232,4 +237,4 @@ export interface PublicRuntimeConfig {
   }
 }
 
-export type SQLiteConnector = 'native' | 'sqlite3' | 'better-sqlite3'
+export type SQLiteConnector = 'native' | 'sqlite3' | 'better-sqlite3' | 'bun'
