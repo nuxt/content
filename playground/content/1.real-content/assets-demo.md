@@ -39,15 +39,28 @@ Links to an asset open in a new tab:
 
 Video, with a co-located poster image:
 
-<video src="media/sample.mp4" poster="media/turkey-casserole.jpg" controls width="480"></video>
+<video
+  src="media/sample.mp4"
+  poster="media/turkey-casserole.jpg"
+  controls
+  width="480"
+></video>
 
 Iframe to a local HTML file:
 
-<iframe src="media/sample.html" width="100%" height="200"></iframe>
+<iframe
+  src="media/sample.html"
+  width="100%"
+  height="200"
+></iframe>
 
 Embed a PDF:
 
-<embed src="files/sample.pdf" width="100%" height="300">
+<embed
+  src="files/sample.pdf"
+  width="100%"
+  height="300"
+>
 
 ## Frontmatter
 
