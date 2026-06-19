@@ -8,7 +8,7 @@ defineProps<{ items?: string[] }>()
   <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
     <img
       v-for="(src, index) in items"
-      :key="src"
+      :key="`${src}-${index}`"
       :src="src"
       :alt="`Gallery image ${index + 1}`"
       style="max-width: 160px; height: auto; border-radius: 6px;"
