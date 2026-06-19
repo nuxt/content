@@ -5,19 +5,19 @@
     "build": "nuxt build"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.3",
+    "@libsql/client": "^0.17.4",
     "@nuxt/content": "link:..",
     "@nuxthub/core": "^0.10.7",
     "@nuxtjs/plausible": "^3.0.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vueuse/nuxt": "^14.3.0",
-    "better-sqlite3": "^12.10.0",
-    "docus": "^5.11.0",
+    "better-sqlite3": "^12.11.1",
+    "docus": "^5.12.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "minisearch": "^7.2.0",
-    "nuxt": "^4.4.5",
+    "nuxt": "^4.4.8",
     "nuxt-studio": "^1.7.0"
   }
 }
