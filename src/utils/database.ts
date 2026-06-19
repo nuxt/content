@@ -98,7 +98,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   if (!_localDatabase[databaseLocation]) {
     _localDatabase[databaseLocation] = db
 
-    let dropCacheTable = false
+    let dropCacheTable
     try {
       dropCacheTable = await db.prepare('SELECT * FROM _development_cache WHERE id = ?')
         .get('__DATABASE_VERSION__').then(row => (row as unknown as { value: string })?.value !== databaseVersion)
