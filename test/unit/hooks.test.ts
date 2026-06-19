@@ -5,6 +5,7 @@ import { resolveCollection } from '../../src/utils/collection'
 import { parseContent } from '../utils/content'
 import type { FileAfterParseHook, FileBeforeParseHook } from '../../src/types'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
+import type { Manifest } from '../../src/types/manifest'
 
 describe('Hooks', async () => {
   await initiateValidatorsContext()
@@ -56,5 +57,41 @@ foo: 'bar'
     expect(parsed.id).toEqual('content/index.md')
     expect(parsed.foo).toEqual('bar')
     expect(parsed.bar).toEqual('foo')
+  })
+
+  it('content:manifest mutations are reflected in manifest', async () => {
+    const extraCollection = resolveCollection('injected', defineCollection({
+      type: 'data',
+      source: 'extra/**',
+      schema: z.object({
+        body: z.any(),
+      }),
+    }))!
+
+    const manifest: Manifest = {
+      checksumStructure: {},
+      checksum: {},
+      dump: {},
+      components: [],
+      collections: [collection],
+    }
+
+    // Simulate the module calling the hook
+    const nuxtMock = {
+      callHook(hook: string, ctx: Manifest) {
+        if (hook === 'content:manifest') {
+          ctx.collections.push(extraCollection)
+        }
+      },
+    }
+
+    nuxtMock.callHook('content:manifest', manifest)
+
+    // must be visible on original manifest object
+    expect(manifest.collections).toHaveLength(2)
+    // new collection is visible
+    expect(manifest.collections.find(c => c.name === 'injected')).toBeDefined()
+    // original collection still exists
+    expect(manifest.collections.find(c => c.name === 'hookTest')).toBeDefined()
   })
 })

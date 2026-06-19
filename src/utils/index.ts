@@ -1,5 +1,5 @@
 export { metaStandardSchema, pageStandardSchema, property } from './schema'
-export { defineCollection, defineCollectionSource } from './collection'
+export { resolveCollection, defineCollection, defineCollectionSource } from './collection'
 export { defineContentConfig } from './config'
 export { defineTransformer } from './content/transformers/utils'
 
