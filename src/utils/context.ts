@@ -14,7 +14,7 @@ type NuxtContentContext = {
   get: (key: ContextKey) => SchemaHandler
 }
 
-const ctx = getContext<NuxtContentContext>('@nuxt/content')
+const ctx = getContext<NuxtContentContext>('@nuxt/content:validators-context')
 
 /**
  * Initialize the context if it hasn't been set yet.
