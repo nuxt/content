@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui": "^4.8.2",
+    "@nuxt/ui": "^4.9.0",
     "nuxt": "^4.4.8",
     "nuxt-llms": "^0.2.0",
     "remark-code-import": "^1.2.0",
