@@ -33,6 +33,7 @@ import { findPreset } from './presets'
 import type { Manifest } from './types/manifest'
 import { setupPreview, setupPreviewWithAPI, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
+import { createAfterParseHandler, DEFAULT_ASSET_EXTENSIONS, discoverAndCopyAssets, matchImageSizeHints, setAssetExtensions, type AssetIndex, type UnresolvedIndex } from './utils/assets'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
 import type { ParsedContentFile } from './types'
 import { initiateValidatorsContext } from './utils/dependencies'
@@ -63,6 +64,13 @@ const moduleDefaults: Partial<ModuleOptions> = {
     csv: {
       delimiter: ',',
       json: true,
+    },
+    assets: {
+      enabled: true,
+      imageSize: 'style',
+      blankLinks: true,
+      prefix: '',
+      debug: false,
     },
   },
   experimental: {
@@ -120,6 +128,29 @@ export default defineNuxtModule<ModuleOptions>({
 
     const { collections } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
+
+    // Resolve asset options once; `null` disables the feature.
+    const assetsConfig = options.build?.assets
+    const assets = assetsConfig === false || assetsConfig?.enabled === false
+      ? null
+      : {
+          imageSizes: matchImageSizeHints(assetsConfig?.imageSize),
+          extensions: assetsConfig?.extensions || DEFAULT_ASSET_EXTENSIONS,
+          blankLinks: assetsConfig?.blankLinks !== false,
+          prefix: assetsConfig?.prefix || '',
+          debug: !!assetsConfig?.debug,
+          publicDir: join(nuxt.options.buildDir, 'content', 'assets', 'public'),
+        }
+    const assetIndex: AssetIndex = new Map()
+    const unresolvedAssets: UnresolvedIndex = new Map()
+    if (assets) {
+      setAssetExtensions(assets.extensions)
+      nuxt.hook('content:file:afterParse', createAfterParseHandler(assetIndex, {
+        imageSizes: assets.imageSizes,
+        blankLinks: assets.blankLinks,
+        unresolved: unresolvedAssets,
+      }))
+    }
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -192,6 +223,12 @@ export default defineNuxtModule<ModuleOptions>({
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
 
+      // Serve copied assets; pushed last so the user's `public/` wins a collision.
+      if (assets) {
+        config.publicAssets ||= []
+        config.publicAssets.push({ dir: assets.publicDir, maxAge: 60 * 60 * 24 * 365 })
+      }
+
       const sqliteConnector = options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined)
       const resolveOptions = { resolver, sqliteConnector }
       config.alias ||= {}
@@ -216,6 +253,7 @@ export default defineNuxtModule<ModuleOptions>({
           nuxt,
           moduleOptions: options,
           manifest,
+          assets: assets ? { ...assets, index: assetIndex, unresolved: unresolvedAssets } : null,
         }))
       }
     })
@@ -254,7 +292,29 @@ export default defineNuxtModule<ModuleOptions>({
     // Generate collections and sql dump to update templates local database
     // `modules:done` is triggered for all environments
     nuxt.hook('modules:done', async () => {
-      const fest = await processCollectionItems(nuxt, manifest.collections, options)
+      // Discover and copy co-located assets before parsing, so the index is ready
+      // when the `content:file:afterParse` hook rewrites references.
+      let assetsHash = ''
+      if (assets) {
+        const { index } = await discoverAndCopyAssets(nuxt, manifest.collections, {
+          publicDir: assets.publicDir,
+          extensions: assets.extensions,
+          imageSizes: assets.imageSizes,
+          prefix: assets.prefix,
+          debug: assets.debug,
+        })
+        index.forEach((value, key) => assetIndex.set(key, value))
+        // Fold the asset state into the parse cache key so an asset change
+        // (size, addition, removal) re-parses dependent content.
+        assetsHash = hash({
+          config: { imageSizes: assets.imageSizes, blankLinks: assets.blankLinks, prefix: assets.prefix },
+          index: [...assetIndex.entries()]
+            .map(([key, entry]) => [key, entry.publicSrc, entry.width, entry.height])
+            .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
+        })
+      }
+
+      const fest = await processCollectionItems(nuxt, manifest.collections, options, assetsHash)
 
       // Update manifest
       manifest.checksumStructure = fest.checksumStructure
@@ -282,7 +342,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
 })
 
-async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions) {
+async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollection[], options: ModuleOptions, assetsHash = '') {
   const collectionDump: Record<string, string[]> = {}
   const collectionChecksum: Record<string, string> = {}
   const collectionChecksumStructure: Record<string, string> = {}
@@ -296,6 +356,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const configHash = hash({
     mdcHighlight: (nuxt.options as unknown as { mdc: MDCModuleOptions }).mdc?.highlight,
     contentBuild: options.build?.markdown,
+    assets: assetsHash,
   })
 
   const infoCollection = collections.find(c => c.name === 'info')!

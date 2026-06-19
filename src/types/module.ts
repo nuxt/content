@@ -194,6 +194,52 @@ export interface ModuleOptions {
       json?: boolean
       delimiter?: string
     }
+    /**
+     * Relative asset resolution.
+     *
+     * Nuxt Content resolves relative paths to images, video and documents
+     * co-located with your content, in markdown, MDC components and frontmatter.
+     * Matching files are copied next to the built site and the references are
+     * rewritten to absolute URLs.
+     *
+     * On by default. Set `enabled` to `false` to opt out.
+     */
+    assets?: false | {
+      /**
+       * Whether to resolve relative asset paths.
+       * @default true
+       */
+      enabled?: boolean
+      /**
+       * Inject image dimensions to avoid layout shift.
+       * - `'style'`: adds `style="aspect-ratio:W/H"` to `<img>` (default)
+       * - `'attrs'`: adds `width` / `height` attributes to `<img>`
+       * - `'src'` / `'url'`: adds a `?width=W&height=H` query (frontmatter values)
+       * - `''` or `[]`: inject nothing
+       * @default 'style'
+       */
+      imageSize?: '' | string | Array<'style' | 'attrs' | 'src' | 'url'>
+      /**
+       * File extensions treated as assets, hence excluded from content collections.
+       * @default <built-in list of image, media, document, archive and font extensions>
+       */
+      extensions?: string[]
+      /**
+       * Open links that point to an asset in a new tab.
+       * @default true
+       */
+      blankLinks?: boolean
+      /**
+       * URL prefix prepended to served asset paths (namespacing / collision avoidance).
+       * @default ''
+       */
+      prefix?: string
+      /**
+       * Output debug messages while discovering and copying assets.
+       * @default false
+       */
+      debug?: boolean
+    }
   }
 
   experimental?: {

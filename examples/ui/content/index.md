@@ -1,8 +1,13 @@
 # Welcome to Nuxt Content starter
 
+![Nuxt Content](cover.svg)
+
 ## Manage your contents
 
 Create new pages or modify the existing ones in `content/` directory.
+
+The image above sits next to this file (`content/cover.svg`) and is referenced
+with a relative path — Nuxt Content resolves it automatically.
 
 ## Query & Render pages
 

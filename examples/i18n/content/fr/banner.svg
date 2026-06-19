@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="Français">
+  <rect width="800" height="220" rx="16" fill="#f4f6fb"/>
+  <g transform="translate(310,40)">
+    <clipPath id="frClip"><rect width="180" height="120" rx="8"/></clipPath>
+    <g clip-path="url(#frClip)">
+      <rect x="0" y="0" width="60" height="120" fill="#0055a4"/>
+      <rect x="60" y="0" width="60" height="120" fill="#ffffff"/>
+      <rect x="120" y="0" width="60" height="120" fill="#ef4135"/>
+    </g>
+    <rect width="180" height="120" rx="8" fill="none" stroke="#d9dee8"/>
+  </g>
+  <text x="400" y="192" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#3a4252">Français</text>
+</svg>

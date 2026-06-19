@@ -1,5 +1,7 @@
 # Welcome to Nuxt Content starter
 
+![Internationalized content](banner.svg)
+
 ## Manage your contents
 
 Create new pages or modify the existing ones in `content/` directory.

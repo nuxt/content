@@ -6,6 +6,7 @@ import { glob } from 'tinyglobby'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
 import { downloadGitRepository } from './git'
 import { logger } from './dev'
+import { isAssetExtension } from './assets/paths'
 import gitUrlParse from 'git-url-parse'
 
 export function getExcludedSourcePaths(source: CollectionSource) {
@@ -39,7 +40,8 @@ export function defineLocalSource(source: CollectionSource | ResolvedCollectionS
     getKeys: async () => {
       const _keys = await glob(source.include, { cwd: resolvedSource.cwd, ignore: getExcludedSourcePaths(source), dot: true, expandDirectories: false })
         .catch((): [] => [])
-      return _keys.map(key => key.substring(fixed.length))
+      // Keep co-located assets out of content collections (no-op when off).
+      return _keys.map(key => key.substring(fixed.length)).filter(key => !isAssetExtension(key))
     },
     getItem: async (key) => {
       const fullPath = join(resolvedSource.cwd, fixed, key)

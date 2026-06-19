@@ -41,6 +41,8 @@ const content = defineCollection({
       icon: z.string(),
       to: z.string(),
     })),
+    featured: z.string().optional(),
+    gallery: z.array(z.string()).optional(),
   }),
 })
 

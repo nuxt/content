@@ -8,6 +8,7 @@ export default defineContentConfig({
       source: 'blog/**',
       schema: z.object({
         date: z.string(),
+        image: z.string(),
       }),
     }),
   },

@@ -1,5 +1,7 @@
 # Bienvenue sur le starter Nuxt Content
 
+![Contenu internationalisé](banner.svg)
+
 ## Gérez vos contenus
 
 Créez de nouvelles pages ou modifiez les existantes dans le répertoire `content/`.
