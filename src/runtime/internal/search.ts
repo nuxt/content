@@ -4,16 +4,13 @@ import type { MinimarkTree } from 'minimark'
 import { pick } from './utils'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
-type Section = {
-  // Path to the section
+export type Section = {
+  /** Path to the section, including anchor for sub-headings (e.g. `/guide#installation`) */
   id: string
-  // Title of the section
   title: string
-  // Parents sections titles
+  /** Titles of all ancestor headings, from the page title down to the parent of this section */
   titles: string[]
-  // Level of the section
   level: number
-  // Content of the section
   content: string
 }
 
@@ -31,7 +28,7 @@ export type SearchResult = {
 export type SearchCollectionOptions = {
   /**
    * Maximum number of results to return.
-   * @default 50
+   * @default 20
    */
   limit?: number
   /** Restrict search to specific columns. Searches all columns when omitted. */
@@ -45,7 +42,7 @@ export type SearchCollectionOptions = {
   weights?: {
     /**
      * Boost factor for matches in the title column.
-     * @default 10
+     * @default 20
      */
     title?: number
     /**
@@ -54,11 +51,15 @@ export type SearchCollectionOptions = {
      */
     content?: number
     /**
-     * Whether to boost higher-level sections (h1 > h2 > h3...).
-     * Set to `false` to disable level-based boosting.
-     * @default true
+     * Exponent controlling heading-level boost.
+     * Higher-level sections (h1 > h2 > h3...) are boosted by dividing the
+     * BM25 score by `pow(level, heading)`.
+     * - `0.5` (default): sqrt curve — gentler falloff
+     * - `1`: linear penalty (h4 gets 1/4 the score of h1)
+     * - `0`: no level-based penalty
+     * @default 0.5
      */
-    heading?: boolean
+    heading?: number
   }
   /** Return text snippets with highlighted matches for the specified columns. */
   snippet?: {
@@ -97,7 +98,18 @@ export type GenerateSearchSectionsOptions = {
   maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions) {
+export async function generateSearchSections<T extends PageCollectionItemBase, const K extends keyof T>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: K[] },
+): Promise<Array<Section & Pick<T, K>>>
+export async function generateSearchSections<T extends PageCollectionItemBase>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+): Promise<Section[]>
+export async function generateSearchSections<T extends PageCollectionItemBase>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+): Promise<Section[]> {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
   const minLevel = headingLevel(minHeading)
   const maxLevel = headingLevel(maxHeading)
@@ -110,7 +122,10 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(q
   return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
 }
 
-function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number }) {
+function splitPageIntoSections(
+  page: SectionablePage,
+  { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number },
+): Section[] {
   const body = (!page.body || page.body?.type === 'root') ? page.body : toHast(page.body as unknown as MinimarkTree) as MDCRoot
   const path = (page.path ?? '')
   const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
@@ -246,11 +261,11 @@ export async function queryFTS(
   query: string,
   opts?: SearchCollectionOptions,
 ): Promise<SearchResult[]> {
-  const { limit = 50, snippet, fields, minTermLength = 1, weights } = opts || {}
+  const { limit = 20, snippet, fields, minTermLength = 1, weights } = opts || {}
 
-  const titleWeight = weights?.title ?? 10
+  const titleWeight = weights?.title ?? 20
   const contentWeight = weights?.content ?? 5
-  const headingBoost = weights?.heading !== false
+  const headingExponent = weights?.heading ?? 0.5
 
   const tag = (snippet?.tag ?? 'mark').replace(/[^a-z0-9]/gi, '')
   const pre = `<${tag}>`
@@ -260,7 +275,9 @@ export async function queryFTS(
   const collectionFilter = `collection IN (${placeholders})`
 
   const bm25Expr = `bm25(${FTS_TABLE}, 0, 0, ${titleWeight}, ${titleWeight}, 0, ${contentWeight}, 0)`
-  const rankExpr = headingBoost ? `(${bm25Expr} / level)` : bm25Expr
+  const rankExpr = headingExponent > 0
+    ? `(${bm25Expr} / pow(level, ${headingExponent}))`
+    : bm25Expr
   let selectClause = `collection, id, title, titles, content, level, ${rankExpr} as rank`
   const snippetColumns = snippet?.columns ?? (snippet ? ['content'] : [])
   const around = Number(snippet?.around) || 30

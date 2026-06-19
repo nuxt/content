@@ -126,14 +126,14 @@ describe('searchCollection FTS5', () => {
       expect(allCalls[0]!.sql).toContain('_fts_search MATCH ?')
       expect(allCalls[0]!.sql).toContain('collection IN (?)')
       expect(allCalls[0]!.sql).toContain('ORDER BY rank')
-      expect(allCalls[0]!.params).toEqual(['"vue"* "composable"*', 'docs', 50])
+      expect(allCalls[0]!.params).toEqual(['"vue"* "composable"*', 'docs', 20])
     })
 
     it('should support multiple collections', async () => {
       await queryFTS(mockDb, ['docs', 'blog'], 'search term')
 
       expect(allCalls[0]!.sql).toContain('collection IN (?, ?)')
-      expect(allCalls[0]!.params).toEqual(['"search"* "term"*', 'docs', 'blog', 50])
+      expect(allCalls[0]!.params).toEqual(['"search"* "term"*', 'docs', 'blog', 20])
     })
 
     it('should respect limit option', async () => {
@@ -284,16 +284,28 @@ describe('searchCollection FTS5', () => {
       expect(results).toEqual([])
     })
 
-    it('should include level boost in rank by default', async () => {
+    it('should use sqrt heading boost by default', async () => {
       await queryFTS(mockDb, ['docs'], 'query')
 
-      expect(allCalls[0]!.sql).toContain('/ level)')
+      expect(allCalls[0]!.sql).toContain('/ pow(level, 0.5))')
     })
 
-    it('should disable level boost when heading is false', async () => {
-      await queryFTS(mockDb, ['docs'], 'query', { weights: { heading: false } })
+    it('should disable level boost when heading is 0', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', { weights: { heading: 0 } })
 
-      expect(allCalls[0]!.sql).not.toContain('/ level)')
+      expect(allCalls[0]!.sql).not.toContain('pow(level')
+    })
+
+    it('should use linear heading boost when heading is 1', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', { weights: { heading: 1 } })
+
+      expect(allCalls[0]!.sql).toContain('/ pow(level, 1))')
+    })
+
+    it('should use custom heading exponent', async () => {
+      await queryFTS(mockDb, ['docs'], 'query', { weights: { heading: 0.3 } })
+
+      expect(allCalls[0]!.sql).toContain('/ pow(level, 0.3))')
     })
 
     it('should use custom weights', async () => {

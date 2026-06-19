@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.14.0](https://github.com/nuxt/content/compare/v3.13.0...v3.14.0) (2026-05-18)
+
+### Features
+
+* **search:** add `useSearchCollection` composable with FTS5 full-text search ([#3787](https://github.com/nuxt/content/issues/3787)) ([2a1a585](https://github.com/nuxt/content/commit/2a1a585ac4e83a261ef8bb134bc71bf9451f075e))
+* **types:** add custom properties on ContentConfig ([#3761](https://github.com/nuxt/content/issues/3761)) ([ea196c5](https://github.com/nuxt/content/commit/ea196c54a7026238a2c1b86a1c5dc662dff4aee5))
+* **types:** add NOT IN to SQLOperator type ([#3785](https://github.com/nuxt/content/issues/3785)) ([ab88eb3](https://github.com/nuxt/content/commit/ab88eb3c909cdf97c012ac1ac9d656b40bea4c4b))
+
+### Bug Fixes
+
+* **docs:** update Nuxt version from 3 to 4 in template features ([#3780](https://github.com/nuxt/content/issues/3780)) ([1f24029](https://github.com/nuxt/content/commit/1f24029bb1248fdd1a65085a7e13689f456034cd))
+* **path-meta:** slugify function did not pass to transformer ([#3794](https://github.com/nuxt/content/issues/3794)) ([778d7db](https://github.com/nuxt/content/commit/778d7dbb9456a6ad7fcc04f3eb2ae987efc4acd8))
+* **preview:** skip collections without source in preview template ([#3771](https://github.com/nuxt/content/issues/3771)) ([8aabefd](https://github.com/nuxt/content/commit/8aabefd2eb36e0051423481639fa8de2f243ad9b))
+
 ## [3.13.0](https://github.com/nuxt/content/compare/v3.12.0...v3.13.0) (2026-04-13)
 
 ### Bug Fixes

@@ -2,14 +2,14 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult } from './internal/search'
+import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
 import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { fetchQuery } from './internal/api'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
 
-export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions } from './internal/search'
+export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions, Section } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -31,7 +31,18 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
   return chainablePromise(collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections<T extends keyof PageCollections>(collection: T, opts?: GenerateSearchSectionsOptions) {
+export function queryCollectionSearchSections<T extends keyof PageCollections, const K extends keyof PageCollections[T]>(
+  collection: T,
+  opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: K[] },
+): ChainablePromise<T, Array<Section & Pick<PageCollections[T], K>>>
+export function queryCollectionSearchSections<T extends keyof PageCollections>(
+  collection: T,
+  opts?: GenerateSearchSectionsOptions,
+): ChainablePromise<T, Section[]>
+export function queryCollectionSearchSections<T extends keyof PageCollections>(
+  collection: T,
+  opts?: GenerateSearchSectionsOptions,
+) {
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
