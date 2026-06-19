@@ -2,9 +2,9 @@
 let assetExtensions: string[] = []
 
 export function setAssetExtensions(extensions: string[]): void {
-  assetExtensions = extensions
+  assetExtensions = [...extensions]
 }
 
 export function getAssetExtensions(): string[] {
-  return assetExtensions
+  return [...assetExtensions]
 }

@@ -52,10 +52,8 @@ export default defineNuxtPlugin(() => {
 
         if (width && height) {
           element.addEventListener('load', function onLoad() {
-            if (element.width && element.height) {
-              element.setAttribute('width', String(width))
-              element.setAttribute('height', String(height))
-            }
+            if (element.hasAttribute('width')) element.setAttribute('width', String(width))
+            if (element.hasAttribute('height')) element.setAttribute('height', String(height))
             if (element.style.aspectRatio) {
               element.style.aspectRatio = `${width} / ${height}`
             }

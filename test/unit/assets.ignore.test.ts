@@ -18,6 +18,7 @@ describe('assets exclusion from content collection keys', () => {
   })
 
   afterAll(async () => {
+    setAssetExtensions(DEFAULT_ASSET_EXTENSIONS)
     await rm(dir, { recursive: true, force: true })
   })
 
@@ -35,6 +36,5 @@ describe('assets exclusion from content collection keys', () => {
     await source.prepare!({ rootDir: dir })
     const keys = await source.getKeys!()
     expect(keys.sort()).toEqual(['clip.mp4', 'data.json', 'photo.jpg', 'post.md'])
-    setAssetExtensions(DEFAULT_ASSET_EXTENSIONS)
   })
 })
