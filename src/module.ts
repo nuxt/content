@@ -1,4 +1,4 @@
-import { stat } from 'node:fs/promises'
+import { mkdir, stat } from 'node:fs/promises'
 import {
   defineNuxtModule,
   createResolver,
@@ -150,6 +150,12 @@ export default defineNuxtModule<ModuleOptions>({
         blankLinks: assets.blankLinks,
         unresolved: unresolvedAssets,
       }))
+
+      if (hasNuxtModule('@nuxt/image', nuxt)) {
+        await mkdir(assets.publicDir, { recursive: true })
+        const image = ((nuxt.options as unknown as { image?: { dirs?: string[] } }).image ??= {})
+        image.dirs = [...(image.dirs || []), assets.publicDir]
+      }
     }
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
@@ -226,7 +232,9 @@ export default defineNuxtModule<ModuleOptions>({
       // Serve copied assets; pushed last so the user's `public/` wins a collision.
       if (assets) {
         config.publicAssets ||= []
-        config.publicAssets.push({ dir: assets.publicDir, maxAge: 60 * 60 * 24 * 365 })
+        if (!config.publicAssets.some(asset => asset?.dir === assets.publicDir)) {
+          config.publicAssets.push({ dir: assets.publicDir })
+        }
       }
 
       const sqliteConnector = options.experimental?.sqliteConnector || (options.experimental?.nativeSqlite ? 'native' : undefined)
