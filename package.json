@@ -137,7 +137,7 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260617.1",
+    "@cloudflare/workers-types": "^4.20260620.1",
     "@nuxt/content": "link:.",
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/eslint-config": "^1.16.0",
@@ -158,7 +158,7 @@
     "@vue/test-utils": "^2.4.11",
     "csvtojson": "^2.0.14",
     "eslint": "^10.5.0",
-    "happy-dom": "^20.10.5",
+    "happy-dom": "^20.10.6",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^4.4.8",
@@ -172,7 +172,7 @@
     "vitest": "^4.1.9",
     "vue-component-meta": "^3.3.5",
     "vue-tsc": "^3.3.5",
-    "wrangler": "^4.101.0"
+    "wrangler": "^4.103.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
@@ -180,7 +180,7 @@
   "engines": {
     "node": ">= 20.19.0"
   },
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "pnpm@11.8.0",
   "unbuild": {
     "entries": [
       "./src/module",
