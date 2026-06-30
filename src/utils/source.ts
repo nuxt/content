@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, mkdtemp } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
@@ -74,7 +74,8 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
       const repository = source?.repository && gitUrlParse(source.repository.url)
       if (repository) {
         const { source: gitSource, owner, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
+        // resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
+        resolvedSource.cwd = await mkdtemp(join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-`))
 
         let ref: object | undefined
 
