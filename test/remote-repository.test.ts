@@ -12,7 +12,7 @@ async function cleanup() {
   await fs.rm(resolver.resolve('./fixtures/remote-repository/content'), { recursive: true, force: true })
 }
 
-describe.skip('remote-repository', async () => {
+describe('remote-repository', async () => {
   await cleanup()
   afterAll(async () => {
     await cleanup()

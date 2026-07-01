@@ -1,6 +1,7 @@
 import { definePreset } from '../utils/preset'
 import { logger } from '../utils/dev'
 import nodePreset from './node'
+import { mkdtemp } from 'node:fs/promises'
 
 export default definePreset({
   name: 'vercel',
@@ -13,6 +14,11 @@ export default definePreset({
       options.experimental ||= {}
       options.experimental.sqliteConnector ||= 'bun'
     }
+
+    // Change remoteSourceRootDir to a temporary directory
+    // this will prevent conflicts with the Vercel build cache
+    // @ts-expect-error - `_remoteSourceRootDir` is a private property to store the temporary directory
+    options._remoteSourceRootDir = options._remoteSourceRootDir || await mkdtemp('nuxt-content')
   },
   async setupNitro(nitroConfig) {
     const database = nitroConfig.runtimeConfig?.content?.database
