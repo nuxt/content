@@ -2,7 +2,10 @@
 title: Mount Damavand
 description: Mount Damavand is the highest peak in the Middle East and a prominent feature of the Alborz mountain range.
 date: 2024-10-10
+image: damavand.jpg
 ---
+
+![Mount Damavand](damavand.jpg)
 
 Mount Damavand, located in northern Iran, is the highest peak in the Middle East and a prominent feature of the Alborz mountain range. Standing at an elevation of 5,671 meters (18,606 feet), it is a dormant stratovolcano with a distinctive conical shape, often snow-capped for most of the year. Damavand holds a special place in Persian mythology and culture, symbolizing strength and resistance. Its volcanic origin is evidenced by fumaroles near the summit, which occasionally emit sulfur gases, contributing to the mountain's rugged and otherworldly landscape.
 

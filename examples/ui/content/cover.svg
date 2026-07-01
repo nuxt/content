@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" viewBox="0 0 480 260" role="img" aria-label="Nuxt UI + Content">
+  <defs>
+    <linearGradient id="bgui" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2ff"/>
+      <stop offset="1" stop-color="#e4e9fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="260" rx="16" fill="url(#bgui)"/>
+  <rect x="150" y="58" width="180" height="144" rx="12" fill="#ffffff" stroke="#c7d0f5"/>
+  <circle cx="178" cy="86" r="10" fill="#6366f1"/>
+  <rect x="198" y="80" width="96" height="10" rx="5" fill="#c3cbf2"/>
+  <rect x="172" y="112" width="136" height="8" rx="4" fill="#dde2fb"/>
+  <rect x="172" y="130" width="110" height="8" rx="4" fill="#dde2fb"/>
+  <rect x="172" y="162" width="84" height="22" rx="11" fill="#6366f1"/>
+</svg>

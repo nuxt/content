@@ -1,0 +1,7 @@
+{
+  "name": "nuxt-content-test-assets",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev"
+  }
+}

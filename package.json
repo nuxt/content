@@ -74,6 +74,7 @@
     "git-url-parse": "^16.1.0",
     "h3": "^1.15.11",
     "hookable": "^5.5.3",
+    "image-size": "^2.0.2",
     "isomorphic-git": "^1.38.4",
     "jiti": "^2.7.0",
     "json-schema-to-typescript-lite": "^15.0.0",

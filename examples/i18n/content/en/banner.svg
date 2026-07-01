@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="English">
+  <rect width="800" height="220" rx="16" fill="#f4f6fb"/>
+  <g transform="translate(310,40)">
+    <clipPath id="enClip"><rect width="180" height="120" rx="8"/></clipPath>
+    <g clip-path="url(#enClip)">
+      <rect width="180" height="120" fill="#012169"/>
+      <path d="M0,0 L180,120 M180,0 L0,120" stroke="#ffffff" stroke-width="26"/>
+      <path d="M0,0 L180,120 M180,0 L0,120" stroke="#c8102e" stroke-width="10"/>
+      <rect x="74" y="0" width="32" height="120" fill="#ffffff"/>
+      <rect x="0" y="44" width="180" height="32" fill="#ffffff"/>
+      <rect x="81" y="0" width="18" height="120" fill="#c8102e"/>
+      <rect x="0" y="51" width="180" height="18" fill="#c8102e"/>
+    </g>
+    <rect width="180" height="120" rx="8" fill="none" stroke="#d9dee8"/>
+  </g>
+  <text x="400" y="192" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#3a4252">English</text>
+</svg>
