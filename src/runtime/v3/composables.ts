@@ -15,38 +15,16 @@ import type {
   QueryField,
   SourceQueryBuilder,
 } from '@comark/cms/database/utils/query'
+import type { SqlQueryMethods } from '@comark/cms/plugins/sql-query'
 import { cms } from '#imports'
-import sqlQuery, { type SqlQueryMethods } from '@comark/cms/plugins/sql-query'
-import sqlQueryClient from '@comark/cms/plugins/sql-query.client'
-import sqliteWasm from '@comark/cms/database/sqlite-wasm'
 
+type QueryableCMS = ComarkCMS & SqlQueryMethods
 type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
-
-function useQueryableCMS(): ComarkCMS & SqlQueryMethods {
-  if ('query' in cms && typeof (cms as SqlQueryMethods).query === 'function') {
-    return cms as ComarkCMS & SqlQueryMethods
-  }
-
-  const _cms = cms as ComarkCMS
-
-  if (_cms.manifest) {
-    const database = sqliteWasm()
-    const plugin = sqlQuery({ database })
-    plugin.setup?.(_cms as any)
-    console.log(_cms)
-    return _cms as ComarkCMS & SqlQueryMethods
-  }
-  else {
-    const plugin = sqlQueryClient()
-    plugin.setup?.(_cms as any)
-    return _cms as ComarkCMS & SqlQueryMethods
-  }
-}
 
 export function queryCollection<K extends keyof ComarkRegistry>(source: K): QueryBuilderFor<K>
 export function queryCollection(source: string): SourceQueryBuilder<QueryRow, CMSListFile>
 export function queryCollection(source: keyof ComarkRegistry | string) {
-  return useQueryableCMS().query(source as keyof ComarkRegistry)
+  return (cms as QueryableCMS).query(source as keyof ComarkRegistry)
 }
 
 export function queryCollectionNavigation<K extends keyof ComarkRegistry>(

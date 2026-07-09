@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { PropType } from 'vue'
+import { ComarkRenderer, type ComarkTree } from '@comark/vue'
+import type { ComarkRendererProps } from '@comark/vue/components/ComarkRenderer'
+
+const debug = import.meta.dev || import.meta.preview
+
+const props = defineProps({
+  /**
+   * Content to render
+   *
+   * @deprecated Use `tree` instead.
+   */
+  value: {
+    type: Object as PropType<ComarkRendererProps['tree']>,
+    default: undefined,
+  },
+  /**
+   * Content to render
+   */
+  tree: {
+    type: Object as PropType<ComarkRendererProps['tree']>,
+    default: undefined,
+  },
+  /**
+   * Custom component mappings for element tags
+   */
+  components: {
+    type: Object as PropType<ComarkRendererProps['components']>,
+    default: undefined,
+  },
+})
+
+const comarkTree = computed(() => {
+  if (props.tree) return props.tree
+  if (props.value) return props.value
+  return undefined
+})
+const isEmpty = computed(() => !comarkTree.value)
+</script>
+
+<template>
+  <slot
+    v-if="isEmpty"
+    name="empty"
+    :data-content-id="debug ? (comarkTree as ComarkTree)?.meta?.key : undefined"
+  >
+    <!-- nobody -->
+  </slot>
+  <ComarkRenderer
+    v-else
+    :tree="comarkTree!"
+    :components="props.components"
+    :data-content-id="debug ? (comarkTree as ComarkTree)?.meta?.key : undefined"
+  />
+</template>

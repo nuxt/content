@@ -9,6 +9,7 @@ import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from '@comark/cms/plugins/media'
 import { importCMS } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
+import { v3ServerPlugins } from './runtime/v3/cms-plugins.server'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -44,6 +45,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
+      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
+    })
+
+    nuxt.options.vite.define = defu(nuxt.options.vite.define, {
+      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
     const cms = await setupCMS(cmsPath, nuxt, options)
@@ -52,7 +58,7 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({ route: '/__nuxt_content/**', handler: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) })
 
     addImports({ name: 'cms', from: resolve(`./runtime/client-cms/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`) })
-    addComponent({ name: 'ContentRenderer', export: 'ComarkRenderer', filePath: import.meta.resolve('@comark/vue/components/ComarkRenderer') })
+    addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer.vue') })
 
     if (options.v3Composables) {
       addImports([
@@ -80,10 +86,15 @@ export default defineNuxtModule<ModuleOptions>({
 })
 
 async function setupTypes(cms: ComarkCMS | undefined, nuxt: Nuxt) {
+  const importMetaTypes = addTypeTemplate({ filename: 'comark-cms/import-meta.d.ts', getContents: importMetaTypesTemplate })
+
   const nitroTypeIncludes = [
-    // add type for `import.meta.rootDir`
-    addTypeTemplate({ filename: 'comark-cms/import-meta.d.ts', getContents: importMetaTypesTemplate }).dst,
+    importMetaTypes.dst,
   ]
+
+  nuxt.options.typescript = defu(nuxt.options.typescript, {
+    tsConfig: { include: [importMetaTypes.dst] },
+  })
 
   // Generate types
   if (cms) {
@@ -102,7 +113,15 @@ async function setupCMS(cmsPath: string, nuxt: Nuxt, options: ModuleOptions): Pr
   const { resolve } = createResolver(import.meta.url)
 
   const cms = await importCMS(nuxt.options.rootDir, cmsPath)
-    .then(m => createCMS({ ...m.cms.options, basePath: '/__NCDEV__/__nuxt_content', cache: undefined }))
+    .then(m => createCMS({
+      ...m.cms.options,
+      basePath: '/__NCDEV__/__nuxt_content',
+      cache: undefined,
+      plugins: [
+        ...(m.cms.options?.plugins ?? []),
+        ...v3ServerPlugins(options.v3Composables ?? true),
+      ],
+    }))
   const sourceNames = cms?.options.source ? ['default'] : Object.keys(cms?.options.sources || [])
 
   addPrerenderRoutes([
