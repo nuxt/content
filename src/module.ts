@@ -66,6 +66,7 @@ export default defineNuxtModule<ModuleOptions>({
         { name: 'queryCollectionNavigation', from: resolve('./runtime/v3/composables') },
         { name: 'queryCollectionItemSurroundings', from: resolve('./runtime/v3/composables') },
         { name: 'queryCollectionSearchSections', from: resolve('./runtime/v3/composables') },
+        { name: 'useSearchCollection', from: resolve('./runtime/v3/composables') },
       ])
       addServerImports([
         { name: 'queryCollection', from: resolve('./runtime/v3/composables.server') },

@@ -1,3 +1,5 @@
+import { ref, toValue, watch } from 'vue'
+import type { MaybeRefOrGetter } from 'vue'
 import { generateNavigationTree } from '@comark/cms/utils'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
@@ -10,6 +12,8 @@ import type {
   CMSListFile,
   CMSFile,
   QueryRow,
+  SearchOptions,
+  SearchResult,
 } from '@comark/cms'
 import type {
   SQLOperator,
@@ -21,6 +25,9 @@ import type { SqlQueryMethods } from '@comark/cms/plugins/sql-query'
 import { cms } from '#imports'
 
 type QueryableCMS = ComarkCMS & SqlQueryMethods
+type SearchableCMS = QueryableCMS & {
+  search: (sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>
+}
 type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
 
 export function queryCollection<K extends keyof ComarkRegistry>(source: K): QueryBuilderFor<K>
@@ -69,6 +76,65 @@ export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
     const documents = files.filter((doc): doc is CMSFile => Boolean(doc))
     return generateSearchSections(documents, opts)
   })
+}
+
+export function useSearchCollection<T extends keyof ComarkRegistry>(
+  collection: MaybeRefOrGetter<T | T[]>,
+  opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
+) {
+  // Only `immediate` is consumed here: with the comark FTS engine, indexing
+  // (ignoredTags/minHeading/… ) happens inside the plugin at index time, so the
+  // remaining `GenerateSearchSectionsOptions` are kept for v3 API parity only.
+  const { immediate = true } = opts || {}
+  const status = ref<'idle' | 'loading' | 'ready' | 'error'>(immediate ? 'loading' : 'idle')
+
+  let initPromise: Promise<void> | undefined
+  let indexedFor: string[] = []
+
+  function resolveCollections() {
+    const value = toValue(collection)
+    return (Array.isArray(value) ? value : [value]).map(String)
+  }
+
+  async function init() {
+    const collections = resolveCollections()
+    if (!collections.length) {
+      return initPromise
+    }
+
+    const alreadyIndexed = collections.length === indexedFor.length
+      && collections.every(c => indexedFor.includes(c))
+    if (alreadyIndexed && initPromise) {
+      return initPromise
+    }
+
+    status.value = 'loading'
+    // An empty query warms the index without returning hits: comark indexes each
+    // requested source before it bails on the empty search term.
+    initPromise = (cms as SearchableCMS).search(collections, '')
+      .then(() => {
+        indexedFor = collections
+        status.value = 'ready'
+      })
+      .catch((err) => {
+        status.value = 'error'
+        throw err
+      })
+    return initPromise
+  }
+
+  if (import.meta.client) {
+    watch(() => toValue(collection), () => init(), { immediate })
+  }
+
+  async function search(query: string, searchOpts?: SearchOptions): Promise<SearchResult[]> {
+    if (status.value !== 'ready') {
+      await init()
+    }
+    return (cms as SearchableCMS).search(resolveCollections(), query, searchOpts)
+  }
+
+  return { status, search, init }
 }
 
 interface ChainablePromise<K extends keyof ComarkRegistry, R> extends Promise<R> {
