@@ -22,7 +22,8 @@
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     },
-    "./cms": "./dist/runtime/server/cms.js"
+    "./cms": "./dist/runtime/server/cms.js",
+    "./utils": "./dist/runtime/utils/index.js"
   },
   "main": "./dist/module.mjs",
   "typesVersions": {
