@@ -25,18 +25,18 @@ import { NuxtLink } from '#components'
 const route = useRoute()
 
 const { data: page } = await useAsyncData(() => route.path, () => {
-  return cms.get(route.path)
+  return queryCollection('content').path(route.path).first()
 })
 
 const { data: navigation } = await useAsyncData(() => 'nav-' + route.path, () => {
-  return queryCollectionNavigation('default')
+  return queryCollectionNavigation('content')
 })
 const { data: surround } = await useAsyncData(() => 'surround-' + route.path, () => {
-  return queryCollectionItemSurroundings('default', route.path)
+  return queryCollectionItemSurroundings('content', route.path)
 })
 
 const { data: searchSections } = await useAsyncData(() => 'search-' + route.path, () => {
-  return queryCollectionSearchSections('default')
+  return queryCollectionSearchSections('content')
 })
 onMounted(() => {
   window.cms = cms

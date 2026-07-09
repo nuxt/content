@@ -4,7 +4,9 @@ import { createNuxtContentCMS } from '../cms'
 
 export const cms = createNuxtContentCMS({
   mode: 'hybrid',
-  source: fs('content', { cwd: import.meta.rootDir }),
+  sources: {
+    content: fs('content', { cwd: import.meta.rootDir }),
+  },
   plugins: [
     media(),
   ],
