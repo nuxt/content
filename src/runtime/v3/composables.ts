@@ -1,5 +1,6 @@
 import { generateNavigationTree } from '@comark/cms/utils'
 import { generateItemSurround, type SurroundOptions } from './surround'
+import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
 import type {
   ComarkCMS,
   ComarkRegistry,
@@ -7,6 +8,7 @@ import type {
   SourceData,
   NavigationItem,
   CMSListFile,
+  CMSFile,
   QueryRow,
 } from '@comark/cms'
 import type {
@@ -46,6 +48,26 @@ export function queryCollectionItemSurroundings<K extends keyof ComarkRegistry>(
     const list = await qb.all()
     const navigation = await generateNavigationTree(list)
     return generateItemSurround(navigation, path, opts)
+  })
+}
+
+export function queryCollectionSearchSections<K extends keyof ComarkRegistry, const F extends keyof SourceData<K>>(
+  collection: K,
+  opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: F[] },
+): ChainablePromise<K, Array<Section & Pick<SourceData<K>, F>>>
+export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+  collection: K,
+  opts?: GenerateSearchSectionsOptions,
+): ChainablePromise<K, Section[]>
+export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+  collection: K,
+  opts?: GenerateSearchSectionsOptions,
+) {
+  return chainablePromise(collection, async (qb) => {
+    const list = await qb.all()
+    const files = await Promise.all(list.map(item => (cms as QueryableCMS).get(item.path)))
+    const documents = files.filter((doc): doc is CMSFile => Boolean(doc))
+    return generateSearchSections(documents, opts)
   })
 }
 

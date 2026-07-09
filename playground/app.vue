@@ -14,7 +14,8 @@
       </div>
     </div>
 
-    <pre style="flex: 2">{{ surround }}</pre>
+    <pre style="flex: 2">{{ surround }}
+    {{ searchSections }}</pre>
   </div>
 </template>
 
@@ -32,6 +33,10 @@ const { data: navigation } = await useAsyncData(() => 'nav-' + route.path, () =>
 })
 const { data: surround } = await useAsyncData(() => 'surround-' + route.path, () => {
   return queryCollectionItemSurroundings('default', route.path)
+})
+
+const { data: searchSections } = await useAsyncData(() => 'search-' + route.path, () => {
+  return queryCollectionSearchSections('default')
 })
 onMounted(() => {
   window.cms = cms
