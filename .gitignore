@@ -23,7 +23,6 @@ dist
 .vercel_build_output
 .build-*
 .netlify
-.amplify-hosting
 
 # Env
 .env
@@ -41,7 +40,6 @@ coverage
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-.history
 
 # Intellij idea
 *.iml
@@ -56,8 +54,3 @@ coverage
 Network Trash Folder
 Temporary Items
 .apdisk
-
-.wrangler
-
-playground/.data
-docs/.data

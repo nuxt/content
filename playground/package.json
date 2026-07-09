@@ -1,19 +1,15 @@
 {
-  "name": "playground",
   "private": true,
+  "name": "@nuxt/content-playground",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
-    "generate": "nuxt generate",
-    "dev:prepare": "nuxt prepare"
+    "generate": "nuxt generate"
   },
-  "devDependencies": {
+  "dependencies": {
     "@nuxt/content": "latest",
-    "@nuxt/ui": "^4.9.0",
-    "nuxt": "^4.4.8",
-    "nuxt-llms": "^0.2.0",
-    "remark-code-import": "^1.2.0",
-    "shiki-transformer-color-highlight": "^1.1.0"
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
+    "nuxt": "^4.4.8"
   }
 }

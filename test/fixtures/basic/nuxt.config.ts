@@ -1,9 +1,7 @@
-import { defineNuxtConfig } from 'nuxt/config'
+import MyModule from '../../../src/module'
 
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/content',
+    MyModule,
   ],
-  devtools: { enabled: true },
-  compatibilityDate: '2025-09-03',
 })

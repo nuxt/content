@@ -1,26 +1,13 @@
 packages:
   - ./
   - playground
-  - docs
-  - examples/*
-  - test/fixtures/*
-
-shamefullyHoist: true
 
 overrides:
-  '@nuxt/content': workspace:*
+  "@nuxt/content": workspace:*
 
 allowBuilds:
-  '@parcel/watcher': true
-  '@tailwindcss/oxide': true
+  "@parcel/watcher": false
   better-sqlite3: true
-  esbuild: true
-  sharp: true
-  sqlite3: true
-  unrs-resolver: true
-  vue-demi: true
-  workerd: true
-
-minimumReleaseAgeExclude:
-  - '@nuxtjs/mdc@0.22.1'
-  - remark-mdc@3.11.1
+  esbuild: false
+  unrs-resolver: false
+  vue-demi: false

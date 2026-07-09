@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/content",
-  "version": "3.15.0",
+  "version": "4.0.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
   "keywords": [
@@ -19,194 +19,52 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/module.d.mts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/module.cjs"
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
     },
-    "./preview": {
-      "types": "./dist/preview.d.mts",
-      "import": "./dist/preview.mjs",
-      "require": "./dist/preview.cjs"
-    },
-    "./utils": {
-      "types": "./dist/runtime/utils/index.d.ts",
-      "import": "./dist/runtime/utils/index.js"
-    },
-    "./runtime": "./dist/runtime/index.js",
-    "./server": "./dist/runtime/server.js",
-    "./nitro": "./dist/runtime/nitro.js"
+    "./cms": "./dist/runtime/server/cms.js"
   },
-  "main": "./dist/module.cjs",
-  "types": "./dist/module.d.mts",
+  "main": "./dist/module.mjs",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/types.d.mts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "typecheck": "nuxt typecheck",
-    "example": "run () { nuxt dev examples/$*; }; run",
-    "docs": "nuxt dev docs",
-    "docs:build": "nuxt-module-build build && nuxt build docs",
-    "dev": "nuxt dev playground",
+    "dev": "npm run dev:prepare && nuxt dev playground",
     "dev:build": "nuxt build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground && nuxt prepare docs",
-    "release": "npm run lint && npm run test && npm run prepack && release-it",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:bun": "bun test ./test/bun.test.ts",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit",
-    "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
+    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@8064186",
+    "@comark/vue": "^0.5.0",
     "@nuxt/kit": "^4.4.8",
-    "@nuxtjs/mdc": "^0.22.1",
-    "@shikijs/langs": "^4.3.0",
-    "@sqlite.org/sqlite-wasm": "3.50.4-build1",
-    "@standard-schema/spec": "^1.1.0",
-    "@webcontainer/env": "^1.1.1",
-    "c12": "^3.3.4",
-    "chokidar": "^5.0.0",
-    "consola": "^3.4.2",
-    "db0": "^0.3.4",
     "defu": "^6.1.7",
-    "destr": "^2.0.5",
-    "git-url-parse": "^16.1.0",
-    "h3": "^1.15.11",
-    "hookable": "^5.5.3",
-    "isomorphic-git": "^1.38.5",
-    "jiti": "^2.7.0",
-    "json-schema-to-typescript-lite": "^15.0.0",
-    "mdast-util-to-hast": "^13.2.1",
-    "mdast-util-to-string": "^4.0.0",
-    "micromark": "^4.0.2",
-    "micromark-util-character": "^2.1.1",
-    "micromark-util-chunked": "^2.0.1",
-    "micromark-util-resolve-all": "^2.0.1",
-    "micromark-util-sanitize-uri": "^2.0.1",
-    "micromatch": "^4.0.8",
-    "minimark": "^0.2.0",
-    "minimatch": "^10.2.5",
-    "nuxt-component-meta": "0.17.2",
-    "nypm": "^0.6.8",
-    "ohash": "^2.0.11",
-    "pathe": "^2.0.3",
-    "pkg-types": "^2.3.1",
-    "remark-mdc": "^3.11.0",
-    "scule": "^1.3.0",
-    "shiki": "^4.3.0",
-    "slugify": "^1.6.9",
-    "socket.io-client": "^4.8.3",
-    "std-env": "^4.1.0",
-    "tinyglobby": "^0.2.17",
-    "ufo": "^1.6.4",
-    "unctx": "^2.5.0",
-    "unified": "^11.0.5",
-    "unist-util-stringify-position": "^4.0.0",
-    "unist-util-visit": "^5.1.0",
-    "unplugin": "^3.3.0",
-    "zod": "^3.25.76",
-    "zod-to-json-schema": "^3.25.2"
-  },
-  "peerDependencies": {
-    "@electric-sql/pglite": "*",
-    "@libsql/client": "*",
-    "@valibot/to-json-schema": "^1.5.0",
-    "better-sqlite3": "^12.5.0",
-    "sqlite3": "*",
-    "valibot": "^1.2.0"
-  },
-  "peerDependenciesMeta": {
-    "@electric-sql/pglite": {
-      "optional": true
-    },
-    "@libsql/client": {
-      "optional": true
-    },
-    "sqlite3": {
-      "optional": true
-    },
-    "better-sqlite3": {
-      "optional": true
-    },
-    "valibot": {
-      "optional": true
-    },
-    "@valibot/to-json-schema": {
-      "optional": true
-    }
+    "jiti": "^2.7.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260630.1",
-    "@nuxt/content": "link:.",
     "@nuxt/devtools": "^3.2.4",
-    "@nuxt/eslint-config": "^1.16.0",
-    "@nuxt/kit": "^4.4.8",
+    "@nuxt/eslint-config": "^1.15.2",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.4.8",
     "@nuxt/test-utils": "^4.0.3",
-    "@release-it/conventional-changelog": "^11.0.1",
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/bun": "^1.3.14",
-    "@types/hast": "^3.0.4",
-    "@types/mdast": "^4.0.4",
-    "@types/micromatch": "^4.0.10",
-    "@types/node": "^26.0.1",
-    "@types/pg": "^8.20.0",
-    "@types/ws": "^8.18.1",
-    "@valibot/to-json-schema": "^1.7.1",
-    "@vue/test-utils": "^2.4.11",
-    "csvtojson": "^2.0.14",
-    "eslint": "^10.6.0",
-    "happy-dom": "^20.10.6",
-    "mdclint": "^0.1.2",
-    "micromark-util-types": "^2.0.2",
+    "@types/node": "latest",
+    "changelogen": "^0.6.2",
+    "eslint": "^10.4.1",
     "nuxt": "^4.4.8",
-    "nuxt-llms": "^0.2.0",
-    "release-it": "^20.2.1",
-    "remark-emoji": "^5.0.2",
-    "typescript": "5.9.3",
-    "untyped": "^2.0.0",
-    "valibot": "^1.4.2",
-    "vite": "^8.1.1",
-    "vitest": "^4.1.9",
-    "vue-component-meta": "^3.3.5",
-    "vue-tsc": "^3.3.5",
-    "wrangler": "^4.105.0"
-  },
-  "resolutions": {
-    "@nuxt/content": "workspace:*"
-  },
-  "engines": {
-    "node": ">= 20.19.0"
-  },
-  "packageManager": "pnpm@11.9.0",
-  "unbuild": {
-    "entries": [
-      "./src/module",
-      "./src/preview",
-      {
-        "input": "src/features/",
-        "outDir": "dist/features",
-        "addRelativeDeclarationExtensions": true,
-        "ext": "js",
-        "esbuild": {
-          "jsxImportSource": "vue",
-          "jsx": "automatic",
-          "jsxFactory": "h"
-        }
-      }
-    ],
-    "externals": [
-      "untyped",
-      "bun:sqlite",
-      "bun:test"
-    ],
-    "rollup": {
-      "output": {
-        "exports": "named"
-      },
-      "emitCJS": true
-    }
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.8",
+    "vue-tsc": "^3.3.3"
   }
 }
