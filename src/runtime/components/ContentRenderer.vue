@@ -30,6 +30,14 @@ const props = defineProps({
     type: Object as PropType<ComarkRendererProps['components']>,
     default: undefined,
   },
+  /**
+   * Additional data made available to the rendered tree (e.g. for binding
+   * frontmatter/props).
+   */
+  data: {
+    type: Object as PropType<ComarkRendererProps['data']>,
+    default: undefined,
+  },
 })
 
 const comarkTree = computed(() => {
@@ -52,6 +60,7 @@ const isEmpty = computed(() => !comarkTree.value)
     v-else
     :tree="comarkTree!"
     :components="props.components"
+    :data="props.data"
     :data-content-id="debug ? (comarkTree as ComarkTree)?.meta?.key : undefined"
   />
 </template>
