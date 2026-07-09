@@ -47,7 +47,7 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
-    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@8064186",
+    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@32cd72b",
     "@comark/vue": "^0.5.0",
     "@nuxt/kit": "^4.4.8",
     "defu": "^6.1.7",

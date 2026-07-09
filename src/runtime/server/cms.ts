@@ -1,10 +1,16 @@
 import { createCMS, type CacheArtifact, type CMSOptions } from '@comark/cms'
+import { v3ServerPlugins } from '../v3/cms-plugins.server'
 
 interface NuxtContentCMSOptions extends CMSOptions {
   mode: 'server-only' | 'hybrid'
 }
 
 export function createNuxtContentCMS(options: NuxtContentCMSOptions) {
+  const plugins = [
+    ...(options.plugins ?? []),
+    ...v3ServerPlugins(),
+  ]
+
   if (options.mode === 'server-only') {
     return createCMS({
       basePath: '/__nuxt_content',
@@ -19,6 +25,7 @@ export function createNuxtContentCMS(options: NuxtContentCMSOptions) {
         },
       },
       ...options,
+      plugins,
     })
   }
 
@@ -34,5 +41,6 @@ export function createNuxtContentCMS(options: NuxtContentCMSOptions) {
       },
     },
     ...options,
+    plugins,
   })
 }

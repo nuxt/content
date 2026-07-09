@@ -1,24 +1,24 @@
 import { createCMS, type CMSClient } from '@comark/cms'
 import { createCMSClient } from '@comark/cms/client'
 
-export const cms = hybridCMSFactory()
-
-function hybridCMSFactory(): CMSClient {
-  let cms: CMSClient
+async function hybridCMSFactory(): Promise<CMSClient> {
   if (import.meta.server) {
-    cms = createCMSClient({
+    const { v3ClientPlugins } = await import('../v3/cms-plugins.client')
+    return createCMSClient({
       basePath: '/__nuxt_content',
       fetch: globalThis.$fetch,
+      plugins: v3ClientPlugins(),
     })
   }
-  else {
-    cms = createCMS({
-      cache: {
-        loadManifest: () => $fetch('/__nuxt_content/manifest.json'),
-        loadSnapshot: source => $fetch(`/__nuxt_content/snapshot/${source}.json`),
-      },
-    }) as CMSClient
-  }
 
-  return cms!
+  const { v3WasmPlugins } = await import('../v3/cms-plugins.wasm')
+  return createCMS({
+    cache: {
+      loadManifest: () => $fetch('/__nuxt_content/manifest.json'),
+      loadSnapshot: source => $fetch(`/__nuxt_content/snapshot/${source}.json`),
+    },
+    plugins: v3WasmPlugins(),
+  }) as CMSClient
 }
+
+export const cms = await hybridCMSFactory()
