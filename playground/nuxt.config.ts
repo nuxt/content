@@ -1,44 +1,6 @@
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/ui',
-    '@nuxt/content',
-    'nuxt-llms',
-  ],
-  content: {
-    experimental: {
-      nativeSqlite: true,
-    },
-    // Uncomment to use PGlite instead of SQLite
-    // database: {
-    //   type: 'pglite',
-    //   dataDir: '.data/content/pglite' // or omit for in-memory database
-    // },
-    build: {
-      markdown: {
-        remarkPlugins: {
-          'remark-code-import': {},
-        },
-        highlight: {
-          theme: {
-            dark: 'aurora-x', // Theme containing italic
-            default: 'github-light',
-          },
-        },
-      },
-    },
-  },
-  mdc: {
-    highlight: {
-      theme: {
-        light: 'material-theme-lighter',
-        default: 'material-theme',
-        dark: 'material-theme-palenight',
-      },
-    },
-  },
-  compatibilityDate: '2025-10-15',
-  llms: {
-    domain: 'http://localhost:3000',
-    title: 'Content Playground',
-  },
+  modules: ['@nuxt/content'],
+  devtools: { enabled: true },
+  content: {},
+  compatibilityDate: 'latest',
 })

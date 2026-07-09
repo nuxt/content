@@ -23,7 +23,6 @@ dist
 .vercel_build_output
 .build-*
 .netlify
-.amplify-hosting
 
 # Env
 .env
@@ -41,7 +40,6 @@ coverage
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-.history
 
 # Intellij idea
 *.iml
@@ -61,5 +59,4 @@ Temporary Items
 .vercel
 
 playground/.data
-docs/.data
 .local

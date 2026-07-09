@@ -1,8 +1,0 @@
-{
-  "name": "nuxt-content-test-csv",
-  "private": true,
-  "scripts": {
-    "dev": "nuxi dev"
-  }
-}
-

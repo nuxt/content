@@ -3,15 +3,6 @@
   "exclude": [
     "dist",
     "node_modules",
-    "docs",
     "playground",
-    "examples"
-  ],
-  "include": [
-    "src",
-    "src/types/shim.d.ts"
-  ],
-  "compilerOptions": {
-    "types": ["@types/bun"]
-  },
+  ]
 }
