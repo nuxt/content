@@ -1,6 +1,7 @@
 import { ref, toValue, watch } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 import { generateNavigationTree } from '@comark/cms/utils'
+import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
 import type {
@@ -29,11 +30,13 @@ type SearchableCMS = QueryableCMS & {
   search: (sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>
 }
 type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
+type FullQueryBuilderFor<K extends keyof ComarkRegistry> = FullFileQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
 
-export function queryCollection<K extends keyof ComarkRegistry>(source: K): QueryBuilderFor<K>
-export function queryCollection(source: string): SourceQueryBuilder<QueryRow, CMSListFile>
+export function queryCollection<K extends keyof ComarkRegistry>(source: K): FullQueryBuilderFor<K>
+export function queryCollection(source: string): FullFileQueryBuilder<QueryRow, CMSListFile>
 export function queryCollection(source: keyof ComarkRegistry | string) {
-  return (cms as QueryableCMS).query(source as keyof ComarkRegistry)
+  const cmsInstance = cms as QueryableCMS
+  return withFullFiles(cmsInstance, cmsInstance.query(source as keyof ComarkRegistry))
 }
 
 export function queryCollectionNavigation<K extends keyof ComarkRegistry>(
@@ -148,7 +151,9 @@ function chainablePromise<K extends keyof ComarkRegistry, Result>(
   collection: K,
   fn: (qb: QueryBuilderFor<K>) => Promise<Result>,
 ) {
-  const queryBuilder = queryCollection(collection)
+  // Navigation/surroundings/search only need the lightweight rows, so they use
+  // the raw query builder rather than the body-hydrating `queryCollection`.
+  const queryBuilder = (cms as QueryableCMS).query(collection) as QueryBuilderFor<K>
 
   const chainable: ChainablePromise<K, Result> = {
     where(field, operator, value) {

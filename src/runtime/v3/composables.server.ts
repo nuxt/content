@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import { generateNavigationTree } from '@comark/cms/utils'
+import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
 import type {
@@ -23,6 +24,7 @@ import { cms } from '#imports'
 
 type QueryableCMS = ComarkCMS & SqlQueryMethods
 type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
+type FullQueryBuilderFor<K extends keyof ComarkRegistry> = FullFileQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
 
 /**
  * The server `cms` is a module-level singleton, so the `event` argument is not
@@ -30,10 +32,11 @@ type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<Regist
  * Nuxt Content v3 server API (`queryCollection(event, collection)`), keeping
  * user code that threads the request event source-compatible.
  */
-export function queryCollection<K extends keyof ComarkRegistry>(event: H3Event, source: K): QueryBuilderFor<K>
-export function queryCollection(event: H3Event, source: string): SourceQueryBuilder<QueryRow, CMSListFile>
+export function queryCollection<K extends keyof ComarkRegistry>(event: H3Event, source: K): FullQueryBuilderFor<K>
+export function queryCollection(event: H3Event, source: string): FullFileQueryBuilder<QueryRow, CMSListFile>
 export function queryCollection(_event: H3Event, source: keyof ComarkRegistry | string) {
-  return (cms as QueryableCMS).query(source as keyof ComarkRegistry)
+  const cmsInstance = cms as QueryableCMS
+  return withFullFiles(cmsInstance, cmsInstance.query(source as keyof ComarkRegistry))
 }
 
 export function queryCollectionNavigation<K extends keyof ComarkRegistry>(
@@ -91,11 +94,13 @@ interface ChainablePromise<K extends keyof ComarkRegistry, R> extends Promise<R>
 }
 
 function chainablePromise<K extends keyof ComarkRegistry, Result>(
-  event: H3Event,
+  _event: H3Event,
   collection: K,
   fn: (qb: QueryBuilderFor<K>) => Promise<Result>,
 ) {
-  const queryBuilder = queryCollection(event, collection)
+  // Navigation/surroundings/search only need the lightweight rows, so they use
+  // the raw query builder rather than the body-hydrating `queryCollection`.
+  const queryBuilder = (cms as QueryableCMS).query(collection) as QueryBuilderFor<K>
 
   const chainable: ChainablePromise<K, Result> = {
     where(field, operator, value) {

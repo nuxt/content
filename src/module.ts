@@ -37,9 +37,10 @@ export default defineNuxtModule<ModuleOptions>({
 
     const cmsPath = existsSync(resolve(nuxt.options.serverDir, 'cms.ts'))
       ? resolve(nuxt.options.serverDir, 'cms')
-      : resolve('./runtime/server/internal/cms.default')
+      : resolve('./runtime/server/internal/fallback-cms')
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+      include: ['@nuxt/content > @comark/cms > slugify'],
       exclude: ['@sqlite.org/sqlite-wasm'],
     })
 
