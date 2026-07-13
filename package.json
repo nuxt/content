@@ -22,8 +22,10 @@
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     },
+    "./v3": "./dist/runtime/v3/index.js",
     "./cms": "./dist/runtime/server/cms.js",
-    "./utils": "./dist/runtime/utils/index.js"
+    "./utils": "./dist/runtime/utils/index.js",
+    "./server": "./dist/runtime/v3/composables.server.js"
   },
   "main": "./dist/module.mjs",
   "typesVersions": {
@@ -48,7 +50,7 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
-    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623",
+    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff",
     "@comark/vue": "^0.5.0",
     "@nuxt/kit": "^4.4.8",
     "defu": "^6.1.7",

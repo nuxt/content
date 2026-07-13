@@ -12,8 +12,8 @@ importers:
   .:
     dependencies:
       '@comark/cms':
-        specifier: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623
-        version: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1)(shiki@4.3.1)
+        specifier: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff
+        version: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1)(shiki@4.3.1)
       '@comark/vue':
         specifier: ^0.5.0
         version: 0.5.0(shiki@4.3.1)(vue@3.5.39(typescript@6.0.3))
@@ -258,8 +258,8 @@ packages:
   '@colordx/core@5.5.0':
     resolution: {integrity: sha512-3PxTH8itZzltK0U9jTwVVnjLXvnDYuq3m+QXsHkENxWiPRh4WaoLcs1SQjqgZ55kS+QyirpH5BVwzP2gMVG6EQ==}
 
-  '@comark/cms@https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623':
-    resolution: {integrity: sha512-+UlIDsnwiMlSzW+nJfS6Ho7w9nSIa/Z4Gc19cro5eoqriChr9Me2sIeRP+Bomo3Ci2p3uSfV2rqqui2+J8UeyQ==, tarball: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623}
+  '@comark/cms@https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff':
+    resolution: {integrity: sha512-BEvevnuLgm8ocLj3XuWWIGmKhmXysccv2VMAozFbFEWaXjjY+QSfVNoFM2y6a0L3NSRdY4TLZ441Fnxbc6sAOg==, tarball: https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff}
     version: 0.1.0
     hasBin: true
 
@@ -6259,7 +6259,7 @@ snapshots:
 
   '@colordx/core@5.5.0': {}
 
-  '@comark/cms@https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@7003623(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1)(shiki@4.3.1)':
+  '@comark/cms@https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@0d21aff(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1)(shiki@4.3.1)':
     dependencies:
       citty: 0.2.2
       comark: 0.4.0(shiki@4.3.1)
