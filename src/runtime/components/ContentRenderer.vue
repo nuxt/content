@@ -13,7 +13,7 @@ const props = defineProps({
    * @deprecated Use `tree` instead.
    */
   value: {
-    type: Object as PropType<ComarkRendererProps['tree']>,
+    type: Object as PropType<{ body: ComarkRendererProps['tree']['nodes'] }>,
     default: undefined,
   },
   /**
@@ -42,7 +42,17 @@ const props = defineProps({
 
 const comarkTree = computed(() => {
   if (props.tree) return props.tree
-  if (props.value) return props.value
+  if (props.value) {
+    const { body, id, path, ...rest } = (props.value || {}) as any
+    return {
+      path,
+      nodes: body,
+      frontmatter: rest,
+      meta: {
+        id,
+      },
+    }
+  }
   return undefined
 })
 const isEmpty = computed(() => !comarkTree.value)

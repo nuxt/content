@@ -23,6 +23,7 @@ export default defineContentConfig({
       schema: z.object({
         date: z.string().date(),
         links: z.array(Link),
+        image: z.string().editor({ input: 'media' }).optional(),
       }),
     }),
     // Object source with a prefix and an exclude.
@@ -44,14 +45,16 @@ export default defineContentConfig({
         prefix: '/remote',
       },
     }),
-    // Multiple sources on a single collection.
+    // Multiple sources on a single collection, sharing a prefix.
     landing: defineCollection({
       type: 'page',
       source: [
-        { include: 'index.md' },
-        { include: 'blog.yml' },
+        { include: 'index.md', prefix: '/landing' },
+        { include: 'blog.yml', prefix: '/landing' },
       ],
-      schema: z.object({}),
+      schema: z.object({
+        title: z.string(),
+      }),
     }),
     // Nested glob with a filename extension in the tail.
     agencies: defineCollection({
@@ -68,6 +71,11 @@ export default defineContentConfig({
         cwd: './content/docs',
         include: '*',
       },
+    }),
+    // Data collection without a schema — no defaults are injected.
+    raw: defineCollection({
+      type: 'data',
+      source: 'index.yml',
     }),
     // Collection without a source is skipped.
     empty: defineCollection({
