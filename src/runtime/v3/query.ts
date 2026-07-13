@@ -7,12 +7,26 @@ import type {
 } from '@comark/cms/database/utils/query'
 
 /**
- * The full document shape a hydrated query returns: the lightweight query row
- * ({@link CMSListFile}) upgraded with the parsed `nodes` (body/tree). This
- * mirrors Nuxt Content v3, where `queryCollection().first()` resolved to the
- * whole document — frontmatter *and* body — ready to hand to `<ContentRenderer>`.
+ * The full document shape a hydrated query returns, mirroring the Nuxt Content
+ * v3 collection item: the frontmatter (`Data`) is flattened onto the top level
+ * alongside the identity/meta fields and the parsed `nodes` (body/tree), ready
+ * to hand to `<ContentRenderer>`.
+ *
+ * - `id` — the file key (v3 renamed the CMS `meta.key` to `id`).
+ * - `path`/`stem`/`extension` — surfaced from `path`/`meta` for convenience.
+ * - frontmatter (`Data`) is spread flat so `doc.title` works like v3.
+ * - `nodes`/`meta` — the parsed body and file metadata.
  */
-export type FullFile<Item> = Item extends CMSListFile<infer Data> ? CMSFile<Data> : Item & Pick<CMSFile, 'nodes'>
+export type FullFile<Item> = Item extends CMSListFile<infer Data>
+  ? Data & {
+    id: string
+    path: string
+    stem: string
+    extension: string
+    body: CMSFile<Data>['nodes']
+    meta: CMSFile<Data>['meta']
+  }
+  : Item & Pick<CMSFile, 'nodes'>
 
 /**
  * A {@link SourceQueryBuilder} whose terminal reads resolve to full documents.
@@ -39,12 +53,22 @@ export interface FullFileQueryBuilder<Row, Item> {
  * can no longer be resolved (e.g. removed between the query and the read) we
  * fall back to the row itself with an empty body so callers still get an object.
  */
-async function hydrate<Item extends { path: string }>(
+async function hydrate<Item extends CMSListFile>(
   cms: Pick<ComarkCMS, 'get'>,
   item: Item,
 ): Promise<FullFile<Item>> {
-  const full = await cms.get(item.path)
-  return (full ?? { ...item, nodes: [] }) as FullFile<Item>
+  const source = (await cms.get(item.path)) ?? { ...item, nodes: [] as CMSFile['nodes'] }
+
+  return {
+    // Spread the frontmatter first so the identity/meta fields below always win.
+    ...source.data,
+    id: source.meta.key,
+    path: source.path,
+    stem: source.meta.stem,
+    extension: source.meta.extension,
+    body: source.nodes,
+    meta: source.meta,
+  } as FullFile<Item>
 }
 
 /**
@@ -53,10 +77,15 @@ async function hydrate<Item extends { path: string }>(
  * SQL layer produces. Chainable methods are proxied so filtering/ordering keeps
  * working; the wrapper is re-applied on every chain step.
  */
-export function withFullFiles<Row, Item extends { path: string }>(
+// `Record<string, any>` mirrors `CMSListFile`'s own data constraint — generated
+// collection data interfaces have no index signature and don't satisfy
+// `Record<string, unknown>`, which would break inference of the source's data type.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function withFullFiles<Row, Data extends Record<string, any>>(
   cms: Pick<ComarkCMS, 'get'>,
-  builder: SourceQueryBuilder<Row, Item>,
-): FullFileQueryBuilder<Row, Item> {
+  builder: SourceQueryBuilder<Row, CMSListFile<Data>>,
+): FullFileQueryBuilder<Row, CMSListFile<Data>> {
+  type Item = CMSListFile<Data>
   const wrap = (qb: SourceQueryBuilder<Row, Item>): FullFileQueryBuilder<Row, Item> => ({
     path: path => wrap(qb.path(path)),
     order: (field, direction) => wrap(qb.order(field, direction)),
