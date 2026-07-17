@@ -1,5 +1,4 @@
 import type { NavigationItem } from '@comark/cms'
-import { generateNavigationTree } from '@comark/cms/utils'
 
 export interface SurroundOptions {
   before?: number
