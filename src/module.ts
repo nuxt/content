@@ -10,6 +10,7 @@ import type { MediaMethods } from '@comark/cms/plugins/media'
 import { importCMS } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/cms-plugins.server'
+import { fileURLToPath } from 'node:url'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -59,9 +60,11 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({ route: '/__nuxt_content/**', handler: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) })
 
     addImports({ name: 'cms', from: resolve(`./runtime/client-cms/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`) })
-    addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer.vue') })
+    addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
+    addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
 
     if (options.v3Composables) {
+      addComponent({ name: 'MDC', filePath: resolve('./runtime/components/MDC') })
       addImports([
         { name: 'queryCollection', from: resolve('./runtime/v3/composables') },
         { name: 'queryCollectionNavigation', from: resolve('./runtime/v3/composables') },

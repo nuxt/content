@@ -23,6 +23,7 @@ export function createNuxtContentCMS(options: NuxtContentCMSOptions) {
           // @ts-expect-error - missing import
           return useStorage('assets:cms').get<CacheArtifact>(`${source}.json`) // server-only
         },
+        ...options?.cache,
       },
       ...options,
       plugins,
@@ -39,6 +40,7 @@ export function createNuxtContentCMS(options: NuxtContentCMSOptions) {
       loadSnapshot(source) {
         return $fetch<CacheArtifact>(`/__nuxt_content/snapshot/${source}.json`) // hybrid
       },
+      ...options?.cache,
     },
     ...options,
     plugins,
