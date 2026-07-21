@@ -50,9 +50,9 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
-    "@comark/cms": "https://pkg.pr.new/comarkdown/comark-cms/@comark/cms@5261851",
-    "@comark/vue": "^0.5.0",
-    "@nuxt/kit": "^4.4.8",
+    "@comark/cms": "^0.1.0-beta.0",
+    "@comark/vue": "^0.5.1",
+    "@nuxt/kit": "^4.5.0",
     "defu": "^6.1.7",
     "jiti": "^2.7.0"
   },
@@ -60,12 +60,12 @@
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/eslint-config": "^1.16.0",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.4.8",
+    "@nuxt/schema": "^4.5.0",
     "@nuxt/test-utils": "^4.0.3",
     "@types/node": "latest",
     "changelogen": "^0.6.2",
     "eslint": "^10.7.0",
-    "nuxt": "^4.4.8",
+    "nuxt": "^4.5.0",
     "typescript": "~6.0.3",
     "vitest": "^4.1.10",
     "vue-tsc": "^3.3.7"

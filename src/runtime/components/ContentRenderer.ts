@@ -1,4 +1,5 @@
 import { computed, defineComponent, h } from 'vue'
+import { NuxtLink } from '#components'
 import type { PropType, SlotsType } from 'vue'
 import { ComarkRenderer, type ComarkTree } from '@comark/vue'
 import type { ComarkRendererProps } from '@comark/vue/components/ComarkRenderer'
@@ -72,7 +73,10 @@ export default defineComponent({
 
       return h(ComarkRenderer, {
         'tree': comarkTree.value!,
-        'components': props.components,
+        'components': {
+          a: NuxtLink,
+          ...props.components,
+        },
         'data': props.data,
         'data-content-id': dataContentId,
       })

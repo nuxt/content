@@ -4,10 +4,7 @@
     <div style="flex: 2">
       <ContentRenderer
         v-if="page"
-        :tree="page"
-        :components="{
-          a: NuxtLink,
-        }"
+        :value="page"
       />
       <div v-else>
         Not Found
@@ -20,8 +17,6 @@
 </template>
 
 <script setup>
-import { NuxtLink } from '#components'
-
 const route = useRoute()
 
 const { data: page } = await useAsyncData(() => route.path, () => {

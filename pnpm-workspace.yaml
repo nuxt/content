@@ -11,3 +11,6 @@ allowBuilds:
   esbuild: false
   unrs-resolver: false
   vue-demi: false
+
+minimumReleaseAgeExclude:
+  - '@comark/cms@0.1.0-beta.0'

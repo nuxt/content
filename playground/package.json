@@ -10,6 +10,6 @@
   "dependencies": {
     "@nuxt/content": "latest",
     "@sqlite.org/sqlite-wasm": "3.53.0-build1",
-    "nuxt": "^4.4.8"
+    "nuxt": "^4.5.0"
   }
 }
