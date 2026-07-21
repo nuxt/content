@@ -20,3 +20,7 @@ allowBuilds:
   unrs-resolver: true
   vue-demi: true
   workerd: true
+
+minimumReleaseAgeExclude:
+  - '@nuxtjs/mdc@0.22.1'
+  - remark-mdc@3.11.1

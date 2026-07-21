@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.15.0](https://github.com/nuxt/content/compare/v3.14.0...v3.15.0) (2026-07-02)
+
+### Features
+
+* add explicit `bun` sqlite connector for Bun runtime deployments ([#3741](https://github.com/nuxt/content/issues/3741)) ([92ac2ab](https://github.com/nuxt/content/commit/92ac2ab2551d7680a8e9793183235ba7a55960d3))
+* **search:** add type inference for extraFields ([#3714](https://github.com/nuxt/content/issues/3714)) ([078491b](https://github.com/nuxt/content/commit/078491b80aa3b619d1a7406ecddb367683146142))
+
+### Bug Fixes
+
+* **content:** support validator detection with pnpm enableGlobalVirtualStore ([#3791](https://github.com/nuxt/content/issues/3791)) ([6b2720b](https://github.com/nuxt/content/commit/6b2720b6caa40986948fa0d28c316b94979e1020))
+* **hmr:** update all matching collections when a file changes ([#3802](https://github.com/nuxt/content/issues/3802)) ([06f8edb](https://github.com/nuxt/content/commit/06f8edbad03f67e13e3dccfe4ad0ab418343009a))
+* **search:** softer heading-level boost curve and tuned defaults ([#3801](https://github.com/nuxt/content/issues/3801)) ([00d25a5](https://github.com/nuxt/content/commit/00d25a5f203d5dd2371db7a1acc09396a9590964))
+* **vercel:** use tmp directory to clone contents ([#3810](https://github.com/nuxt/content/issues/3810)) ([793d59a](https://github.com/nuxt/content/commit/793d59aba93224e39afb6e41a5dfdfd9284b5484))
+
 ## [3.14.0](https://github.com/nuxt/content/compare/v3.13.0...v3.14.0) (2026-05-18)
 
 ### Features

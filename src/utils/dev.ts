@@ -167,8 +167,8 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
         }
 
-        const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-        await broadcast(collection, keyInCollection, insertQuery)
+        const insert = generateCollectionInsert(collection, JSON.parse(parsedContent))
+        await broadcast(collection, keyInCollection, insert)
       }
     }
   }
@@ -204,12 +204,12 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
   }
 
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+  async function broadcast(collection: ResolvedCollection, key: string, insert?: ReturnType<typeof generateCollectionInsert>) {
     const db = await getDb()
     const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
     await db.exec(removeQuery)
-    if (insertQuery) {
-      await Promise.all(insertQuery.map(query => db.exec(query)))
+    if (insert) {
+      await Promise.all(insert.queries.map(query => db.exec(query)))
     }
 
     const collectionDump = manifest.dump[collection.name]!
@@ -217,8 +217,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
-    if (insertQuery) {
-      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
+    if (insert) {
+      const dumpQueries = insert.queries.map(query => `${query} -- ${insert.hash}`)
+      collectionDump.splice(indexToUpdate, itemsToRemove, ...dumpQueries)
     }
     else {
       collectionDump.splice(indexToUpdate, itemsToRemove)
@@ -235,7 +236,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     contentHooks.callHook('hmr:content:update', {
       key,
       collection: collection.name,
-      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
+      queries: insert ? [removeQuery, ...insert.queries] : [removeQuery],
     })
   }
 

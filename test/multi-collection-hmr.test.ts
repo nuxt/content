@@ -96,5 +96,7 @@ describe('multi-collection HMR — file matched by multiple collections', () => 
 
     expect(updatedCollections, 'both collections should have been notified').toContain('content')
     expect(updatedCollections, 'both collections should have been notified').toContain('blog')
+    expect(manifest.dump.content[0]).toMatch(/; -- [\w-]+$/)
+    expect(manifest.dump.blog[0]).toMatch(/; -- [\w-]+$/)
   })
 })
