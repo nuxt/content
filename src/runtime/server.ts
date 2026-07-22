@@ -2,11 +2,13 @@ import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
-import { type GenerateSearchSectionsOptions, generateSearchSections } from './internal/search'
+import { type GenerateSearchSectionsOptions, type Section, generateSearchSections } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
 import { detectServerLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import type { Collections, CollectionQueryBuilder, ContentLocaleEntry, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
+
+export type { GenerateSearchSectionsOptions, Section } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -30,7 +32,21 @@ export function queryCollectionItemSurroundings<T extends keyof PageCollections>
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
-export function queryCollectionSearchSections<T extends keyof PageCollections>(event: H3Event, collection: T, opts?: GenerateSearchSectionsOptions) {
+export function queryCollectionSearchSections<T extends keyof PageCollections, const K extends keyof PageCollections[T]>(
+  event: H3Event,
+  collection: T,
+  opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: K[] },
+): ChainablePromise<T, Array<Section & Pick<PageCollections[T], K>>>
+export function queryCollectionSearchSections<T extends keyof PageCollections>(
+  event: H3Event,
+  collection: T,
+  opts?: GenerateSearchSectionsOptions,
+): ChainablePromise<T, Section[]>
+export function queryCollectionSearchSections<T extends keyof PageCollections>(
+  event: H3Event,
+  collection: T,
+  opts?: GenerateSearchSectionsOptions,
+) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 

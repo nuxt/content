@@ -1,15 +1,15 @@
-name: 'Close stale issues'
+name: "Close stale issues"
 
 on:
   schedule:
-    - cron: '30 * * * *'
+    - cron: "30 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write # only for delete-branch option
   issues: write
   pull-requests: write
-  
+
 jobs:
   stale:
     runs-on: ubuntu-latest
@@ -17,9 +17,9 @@ jobs:
       - uses: actions/stale@v10
         with:
           exempt-issue-labels: pending
-          stale-issue-message: 'This issue is stale because it has been open 60 days with no activity. Remove stale label or comment or this will be closed in 30 days.'
-          close-issue-message: 'This issue was closed because it has been stalled for 30 days with no activity.'
-          days-before-stale: 60
-          days-before-close: 30
+          stale-issue-message: "This issue is stale because it has been open 60 days with no activity. Remove stale label or comment or this will be closed in 30 days."
+          close-issue-message: "This issue was closed because it has been stalled for 30 days with no activity."
+          days-before-stale: 360
+          days-before-close: 60
           operations-per-run: 200
           days-before-pr-stale: -1

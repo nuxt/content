@@ -185,8 +185,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
             // suffix the default row and desync the DELETE / INSERT pair in
             // `broadcast`.
             const itemKey = item.id as string
-            const { queries } = generateCollectionInsert(collection, item)
-            await broadcast(collection, itemKey, queries)
+            await broadcast(collection, itemKey, generateCollectionInsert(collection, item))
           }
 
           // Remove locale rows that are no longer present in the `i18n` section.
@@ -205,8 +204,8 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
               await broadcast(collection, `${keyInCollection}#${locale}`)
             }
           }
-          const { queries: insertQuery } = generateCollectionInsert(collection, parsed)
-          await broadcast(collection, keyInCollection, insertQuery)
+          const insert = generateCollectionInsert(collection, parsed)
+          await broadcast(collection, keyInCollection, insert)
         }
       }
     }
@@ -251,12 +250,12 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
   }
 
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+  async function broadcast(collection: ResolvedCollection, key: string, insert?: ReturnType<typeof generateCollectionInsert>) {
     const db = await getDb()
     const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
     await db.exec(removeQuery)
-    if (insertQuery) {
-      await Promise.all(insertQuery.map(query => db.exec(query)))
+    if (insert) {
+      await Promise.all(insert.queries.map(query => db.exec(query)))
     }
 
     const collectionDump = manifest.dump[collection.name]!
@@ -286,8 +285,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       }
     }
 
-    if (insertQuery) {
-      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
+    if (insert) {
+      const dumpQueries = insert.queries.map(query => `${query} -- ${insert.hash}`)
+      collectionDump.splice(indexToUpdate, itemsToRemove, ...dumpQueries)
     }
     else {
       collectionDump.splice(indexToUpdate, itemsToRemove)
@@ -304,7 +304,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     contentHooks.callHook('hmr:content:update', {
       key,
       collection: collection.name,
-      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
+      queries: insert ? [removeQuery, ...insert.queries] : [removeQuery],
     })
   }
 

@@ -4,16 +4,13 @@ import type { MinimarkTree } from 'minimark'
 import { pick } from './utils'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
-type Section = {
-  // Path to the section
+export type Section = {
+  /** Path to the section, including anchor for sub-headings (e.g. `/guide#installation`) */
   id: string
-  // Title of the section
   title: string
-  // Parents sections titles
+  /** Titles of all ancestor headings, from the page title down to the parent of this section */
   titles: string[]
-  // Level of the section
   level: number
-  // Content of the section
   content: string
 }
 
@@ -101,7 +98,18 @@ export type GenerateSearchSectionsOptions = {
   maxHeading?: `h${1 | 2 | 3 | 4 | 5 | 6}`
 }
 
-export async function generateSearchSections<T extends PageCollectionItemBase>(queryBuilder: CollectionQueryBuilder<T>, opts?: GenerateSearchSectionsOptions) {
+export async function generateSearchSections<T extends PageCollectionItemBase, const K extends keyof T>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: K[] },
+): Promise<Array<Section & Pick<T, K>>>
+export async function generateSearchSections<T extends PageCollectionItemBase>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+): Promise<Section[]>
+export async function generateSearchSections<T extends PageCollectionItemBase>(
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+): Promise<Section[]> {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}
   const minLevel = headingLevel(minHeading)
   const maxLevel = headingLevel(maxHeading)
@@ -114,7 +122,10 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(q
   return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
 }
 
-function splitPageIntoSections(page: SectionablePage, { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number }) {
+function splitPageIntoSections(
+  page: SectionablePage,
+  { ignoredTags, extraFields, minLevel, maxLevel }: { ignoredTags: string[], extraFields: Array<string>, minLevel: number, maxLevel: number },
+): Section[] {
   const body = (!page.body || page.body?.type === 'root') ? page.body : toHast(page.body as unknown as MinimarkTree) as MDCRoot
   const path = (page.path ?? '')
   const extraFieldsData = pick(extraFields)(page as unknown as Record<string, unknown>)
