@@ -1,0 +1,10 @@
+name: Jane Doe
+role: Developer
+country: Switzerland
+i18n:
+  fr:
+    role: Développeuse
+    country: Suisse
+  de:
+    role: Entwicklerin
+    country: Schweiz
