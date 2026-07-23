@@ -117,7 +117,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const absolutePath = resolve(pathOrError as string)
     const matches = sourceMap.filter(({ source, cwd }) => {
       if (cwd && absolutePath.startsWith(cwd)) {
-        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false
@@ -181,7 +181,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const absolutePath = resolve(pathOrError as string)
     const matches = sourceMap.filter(({ source, cwd }) => {
       if (cwd && absolutePath.startsWith(cwd)) {
-        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false
