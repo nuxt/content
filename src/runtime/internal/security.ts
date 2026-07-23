@@ -1,6 +1,10 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
+// Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
+// Everything else that looks like `name(` is treated as a disallowed function call.
+const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
+const SQL_FUNCTION_CALL = /\b[A-Za-z_]\w*\s*\(/
 
 /**
  * Assert that the query is safe
@@ -59,6 +63,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     const noString = cleanupQuery(where, { removeString: true })
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
+    }
+    // Block SQLite function calls (randomblob, zeroblob, hex, length, …).
+    // The query builder never emits functions in WHERE; only grouping and IN (...).
+    const withoutGroupingParens = noString.replace(SQL_WHERE_PAREN_KEYWORDS, '')
+    if (SQL_FUNCTION_CALL.test(withoutGroupingParens)) {
+      throw new Error('Invalid query: WHERE clause contains unsafe SQL expressions')
     }
   }
 

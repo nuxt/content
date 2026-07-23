@@ -45,6 +45,20 @@ describe('decompressSQLDump', () => {
     'SELECT "id", "id" FROM _content_docs WHERE (1=\' \\\') UNION SELECT tbl_name,tbl_name FROM sqlite_master-- \') ORDER BY id ASC': false,
     'SELECT "id" FROM _content_test WHERE (x=$\'$ OR x IN (SELECT BLAH) OR x=$\'$) ORDER BY id ASC': false,
     'SELECT COUNT(*) as c,(SELECT group_concat(name,\'|\') FROM sqlite_master WHERE type=\'table\') AS leak FROM _content_content ORDER BY stem ASC': false,
+    // SQLite function calls in WHERE must be rejected (DoS via randomblob/zeroblob/hex/length)
+    'SELECT * FROM _content_test WHERE (length(hex(randomblob(100000000))) > 0) ORDER BY stem ASC LIMIT 1': false,
+    'SELECT * FROM _content_test WHERE (zeroblob(500000000) IS NOT NULL) ORDER BY stem ASC LIMIT 1': false,
+    'SELECT * FROM _content_test WHERE (hex(\'a\') = \'61\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (abs(1) > 0) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = \'1\' AND length("id") > 0) ORDER BY stem ASC': false,
+    // Legitimate IN / nested grouping parentheses remain allowed
+    'SELECT * FROM _content_test WHERE ("id" IN (\'a\', \'b\')) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" NOT IN (\'a\', \'b\')) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE (("id" = \'1\') AND ("stem" = \'abc\')) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("path" LIKE \'%foo%\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" BETWEEN \'1\' AND \'2\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" IS NULL) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" IS NOT NULL) ORDER BY stem ASC': true,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {
