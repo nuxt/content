@@ -4,7 +4,8 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]
 // Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
 // Anything else that looks like a call (name(, "name"(, [name](, `name`() is disallowed.
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
-const SQL_FUNCTION_CALL = /\b[A-Z_]\w*[\]"'(`]*\s*\(/i
+// Bare identifiers use a word boundary; quoted/bracketed forms match the whole identifier unit.
+const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|(?:["`[][A-Z_]\w*["`\]]))\s*\(/i
 
 /**
  * Assert that the query is safe
@@ -101,7 +102,6 @@ function cleanupQuery(query: string, options: { removeString?: boolean, removeSi
   let result = ''
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
-    const prevChar = query[i - 1]
     const nextChar = query[i + 1]
 
     // Keep double-quoted identifiers when only stripping value literals
@@ -117,20 +117,22 @@ function cleanupQuery(query: string, options: { removeString?: boolean, removeSi
       }
 
       if (inString) {
-        if (char !== stringFence || nextChar === stringFence || prevChar === stringFence) {
-          // skip character, it's part of a string
-          continue
+        if (char === stringFence) {
+          // SQLite escaped quote pair ('' or "") stays inside the literal
+          if (nextChar === stringFence) {
+            i += 1
+            continue
+          }
+          inString = false
+          stringFence = ''
         }
+        // Skip characters inside the literal
+        continue
+      }
 
-        inString = false
-        stringFence = ''
-        continue
-      }
-      else {
-        inString = true
-        stringFence = char
-        continue
-      }
+      inString = true
+      stringFence = char
+      continue
     }
 
     if (!inString) {

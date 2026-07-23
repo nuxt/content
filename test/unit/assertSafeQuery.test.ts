@@ -55,8 +55,17 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("abs"(1) > 0) ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ([abs](1) > 0) ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE (`abs`(1) > 0) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("randomblob"(100000000) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ([randomblob](100000000) IS NOT NULL) ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" IN (abs(1))) ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" IN ("abs"(1))) ORDER BY stem ASC': false,
+    // Escaped quotes must not hide trailing function calls from the scanner
+    'SELECT * FROM _content_test WHERE ("id" = \'\'\'\' || randomblob(1)) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = \'\' || randomblob(1) || \'\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("x" = \'foo\'\'\' AND randomblob(1) IS NOT NULL AND "y" = \'\'\'bar\') ORDER BY stem ASC': false,
+    // Legitimate values with escaped quotes remain allowed
+    'SELECT * FROM _content_test WHERE ("id" = \'it\'\'s\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'\'\'\'\'\') ORDER BY stem ASC': true,
     // Legitimate IN / nested grouping parentheses remain allowed
     'SELECT * FROM _content_test WHERE ("id" IN (\'a\', \'b\')) ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("id" NOT IN (\'a\', \'b\')) ORDER BY stem ASC': true,
