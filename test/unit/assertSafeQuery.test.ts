@@ -63,6 +63,13 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("id" = \'\'\'\' || randomblob(1)) ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" = \'\' || randomblob(1) || \'\') ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("x" = \'foo\'\'\' AND randomblob(1) IS NOT NULL AND "y" = \'\'\'bar\') ORDER BY stem ASC': false,
+    // Apostrophes / -- inside identifier fences must not mask trailing calls
+    'SELECT * FROM _content_test WHERE ("it\'s" = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("a--b" = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (`it\'s` = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (`a--b` = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ([it\'s] = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ([a--b] = \'x\' OR randomblob(1) IS NOT NULL) ORDER BY stem ASC': false,
     // Legitimate values with escaped quotes remain allowed
     'SELECT * FROM _content_test WHERE ("id" = \'it\'\'s\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("id" = \'\'\'\'\'\') ORDER BY stem ASC': true,

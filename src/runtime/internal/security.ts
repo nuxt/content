@@ -96,62 +96,85 @@ export function assertSafeQuery(sql: string, collection: string) {
 }
 
 function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean } = {}) {
-  // Track whether we're inside a string literal
-  let inString = false
-  let stringFence = ''
+  // Track every SQL quote fence so comments/apostrophes inside identifiers
+  // ("…", `…`, […]) cannot terminate or re-open the scanner early.
+  let fence: '\'' | '"' | '`' | '[' | null = null
   let result = ''
+  const stripAll = Boolean(options.removeString)
+  const stripSingle = Boolean(options.removeSingleQuoted) && !stripAll
+
+  const strippingFence = (active: NonNullable<typeof fence>) => {
+    if (stripAll) {
+      return true
+    }
+    // removeSingleQuoted only drops value literals; identifiers stay visible
+    return stripSingle && active === '\''
+  }
+
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
     const nextChar = query[i + 1]
 
-    // Keep double-quoted identifiers when only stripping value literals
-    if (char === '"' && options.removeSingleQuoted && !options.removeString && !inString) {
-      result += char
-      continue
-    }
-
-    if (char === '\'' || char === '"') {
-      if (!options.removeString && !options.removeSingleQuoted) {
-        result += char
-        continue
-      }
-
-      if (inString) {
-        if (char === stringFence) {
-          // SQLite escaped quote pair ('' or "") stays inside the literal
-          if (nextChar === stringFence) {
-            i += 1
-            continue
+    if (fence) {
+      if (fence === '[') {
+        if (char === ']') {
+          if (!strippingFence(fence)) {
+            result += char
           }
-          inString = false
-          stringFence = ''
+          fence = null
         }
-        // Skip characters inside the literal
+        else if (!strippingFence(fence)) {
+          result += char
+        }
         continue
       }
 
-      inString = true
-      stringFence = char
+      if (char === fence) {
+        // SQLite escaped quote pair ('' / "" / ``) stays inside the fence
+        if (nextChar === fence) {
+          if (!strippingFence(fence)) {
+            result += char + nextChar
+          }
+          i += 1
+          continue
+        }
+        if (!strippingFence(fence)) {
+          result += char
+        }
+        fence = null
+        continue
+      }
+
+      if (!strippingFence(fence)) {
+        result += char
+      }
       continue
     }
 
-    if (!inString) {
-      if (char === '-' && nextChar === '-') {
-        // everything after this is a comment
-        return result
+    if (char === '\'' || char === '"' || char === '`' || char === '[') {
+      fence = char
+      if (!strippingFence(fence)) {
+        result += char
       }
-
-      if (char === '/' && nextChar === '*') {
-        i += 2
-        while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
-          i += 1
-        }
-        i += 2
-        continue
-      }
-
-      result += char
+      continue
     }
+
+    // Comments are only meaningful outside quoted regions
+    if (char === '-' && nextChar === '-') {
+      // everything after this is a comment
+      return result
+    }
+
+    if (char === '/' && nextChar === '*') {
+      i += 2
+      while (i < query.length && !(query[i] === '*' && query[i + 1] === '/')) {
+        i += 1
+      }
+      i += 2
+      continue
+    }
+
+    result += char
   }
   return result
 }
