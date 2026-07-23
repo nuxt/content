@@ -2,9 +2,9 @@ const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
 // Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
-// Everything else that looks like `name(` is treated as a disallowed function call.
+// Anything else that looks like a call (name(, "name"(, [name](, `name`() is disallowed.
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
-const SQL_FUNCTION_CALL = /\b[A-Z_]\w*\s*\(/i
+const SQL_FUNCTION_CALL = /\b[A-Z_]\w*([\]"'(`]*)\s*\(/i
 
 /**
  * Assert that the query is safe
@@ -64,9 +64,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
     }
-    // Block SQLite function calls (randomblob, zeroblob, hex, length, …).
+    // Block SQLite function calls (randomblob, zeroblob, hex, length, …),
+    // including quoted/bracketed forms SQLite accepts as identifiers: "abs"(, [abs](, `abs`(.
+    // Only single-quoted value literals are stripped so identifier quotes stay visible to the matcher.
     // The query builder never emits functions in WHERE; only grouping and IN (...).
-    const withoutGroupingParens = noString.replace(SQL_WHERE_PAREN_KEYWORDS, '')
+    const noSingleQuoted = cleanupQuery(where, { removeSingleQuoted: true })
+    const withoutGroupingParens = noSingleQuoted.replace(SQL_WHERE_PAREN_KEYWORDS, ' ')
     if (SQL_FUNCTION_CALL.test(withoutGroupingParens)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL expressions')
     }
@@ -91,7 +94,7 @@ export function assertSafeQuery(sql: string, collection: string) {
   return true
 }
 
-function cleanupQuery(query: string, options: { removeString: boolean } = { removeString: false }) {
+function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean } = {}) {
   // Track whether we're inside a string literal
   let inString = false
   let stringFence = ''
@@ -101,8 +104,14 @@ function cleanupQuery(query: string, options: { removeString: boolean } = { remo
     const prevChar = query[i - 1]
     const nextChar = query[i + 1]
 
+    // Keep double-quoted identifiers when only stripping value literals
+    if (char === '"' && options.removeSingleQuoted && !options.removeString && !inString) {
+      result += char
+      continue
+    }
+
     if (char === '\'' || char === '"') {
-      if (!options?.removeString) {
+      if (!options.removeString && !options.removeSingleQuoted) {
         result += char
         continue
       }
