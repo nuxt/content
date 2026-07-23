@@ -5,7 +5,7 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]
 // Anything else that looks like a call (name(, "name"(, [name](, `name`() is disallowed.
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
 // Bare identifiers use a word boundary; quoted/bracketed forms match the whole identifier unit.
-const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|(?:["`[][A-Z_]\w*["`\]]))\s*\(/i
+const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|["`[][A-Z_]\w*["`\]])\s*\(/i
 
 /**
  * Assert that the query is safe
