@@ -4,7 +4,7 @@ const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]
 // Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
 // Everything else that looks like `name(` is treated as a disallowed function call.
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
-const SQL_FUNCTION_CALL = /\b[A-Za-z_]\w*\s*\(/
+const SQL_FUNCTION_CALL = /\b[A-Z_]\w*\s*\(/i
 
 /**
  * Assert that the query is safe
