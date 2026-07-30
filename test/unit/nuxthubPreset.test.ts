@@ -75,6 +75,13 @@ describe('hubDatabaseToContentDatabase', () => {
     expect(hubDatabaseToContentDatabase({ driver: 'sqlite' })).toBeUndefined()
     expect(hubDatabaseToContentDatabase({ driver: 'sqlite', connection: {} })).toBeUndefined()
   })
+
+  test('returns undefined for non-string connection values', () => {
+    expect(hubDatabaseToContentDatabase({ driver: 'postgres-js', connection: { url: 123 as unknown as string } })).toBeUndefined()
+    expect(hubDatabaseToContentDatabase({ driver: 'sqlite', connection: { filename: true, url: 123 as unknown as string } })).toBeUndefined()
+    expect(hubDatabaseToContentDatabase({ driver: 'sqlite', connection: { filename: true, url: 'file:.data/hub/db/sqlite.db' } }))
+      .toEqual({ type: 'sqlite', filename: '.data/hub/db/sqlite.db' })
+  })
 })
 
 describe('nuxthub preset setup', () => {

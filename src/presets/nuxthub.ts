@@ -17,10 +17,13 @@ export function hubDatabaseToContentDatabase(hubDb: { driver: string, connection
     return { type: 'd1', bindingName: 'DB' }
   }
   if (['node-postgres', 'postgres-js', 'neon-http', 'postgres', 'postgresql'].includes(hubDb.driver)) {
-    return hubDb.connection?.url ? { type: 'postgresql', url: hubDb.connection.url } : undefined
+    return typeof hubDb.connection?.url === 'string' && hubDb.connection.url ? { type: 'postgresql', url: hubDb.connection.url } : undefined
   }
   if (['sqlite', 'better-sqlite3'].includes(hubDb.driver)) {
-    const filename = (hubDb.connection?.filename as string) || (hubDb.connection?.url || '').replace(/^file:/, '')
+    if (typeof hubDb.connection?.filename === 'string' && hubDb.connection.filename) {
+      return { type: 'sqlite', filename: hubDb.connection.filename }
+    }
+    const filename = typeof hubDb.connection?.url === 'string' ? hubDb.connection.url.replace(/^file:/, '') : ''
     return filename ? { type: 'sqlite', filename } : undefined
   }
   if (['libsql', 'pglite'].includes(hubDb.driver)) {
