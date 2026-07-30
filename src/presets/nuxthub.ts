@@ -91,8 +91,16 @@ export default definePreset({
       }
     }
 
+    const database = nitroConfig.runtimeConfig?.content?.database
+    // Only a remote database migrated during build is the database the runtime will use,
+    // a local file database is discarded with the build machine
+    const isRemoteDatabase = database?.type === 'd1'
+      || database?.type === 'postgresql'
+      || database?.type === 'postgres'
+      || (database?.type === 'libsql' && !!database.url && !database.url.startsWith('file:'))
+
     // apply migrations during build if enabled
-    if (!nuxt.options.dev && hubConfig.db?.applyMigrationsDuringBuild) {
+    if (!nuxt.options.dev && hubConfig.db?.applyMigrationsDuringBuild && isRemoteDatabase) {
       // Write SQL dump to database queries when not in dev mode
       await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries'), { recursive: true })
       let i = 1
@@ -122,10 +130,11 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content.integrityCheck = false
     }
     // Handle local database (cannot be populated during build)
-    const database = nitroConfig.runtimeConfig?.content?.database
-    if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
-      logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
-      database.url = 'file:/tmp/sqlite.db'
+    if (!nuxt.options.dev && database?.type === 'libsql' && database.url?.startsWith('file:')) {
+      if (!database.url.startsWith('file:/tmp/')) {
+        logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
+        database.url = 'file:/tmp/sqlite.db'
+      }
       // Enable integrity check in production as local database cannot be re-used after build
       nitroConfig.runtimeConfig!.content ||= {}
       nitroConfig.runtimeConfig!.content.integrityCheck = true
