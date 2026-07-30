@@ -5,9 +5,28 @@ import { provider } from 'std-env'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
 import type { Nuxt } from 'nuxt/schema'
-import type { LibSQLDatabaseConfig, PGliteDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
+import type { D1DatabaseConfig, LibSQLDatabaseConfig, PGliteDatabaseConfig, PostgreSQLDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
 import cloudflarePreset from './cloudflare'
 import nodePreset from './node'
+
+type ContentDatabaseConfig = D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+
+// Map the resolved NuxtHub database config (`runtimeConfig.hub.db`) to a Nuxt Content database config
+export function hubDatabaseToContentDatabase(hubDb: { driver: string, connection?: { url?: string, [key: string]: unknown } }): ContentDatabaseConfig | undefined {
+  if (hubDb.driver === 'd1') {
+    return { type: 'd1', bindingName: 'DB' }
+  }
+  if (['node-postgres', 'postgres-js', 'neon-http'].includes(hubDb.driver)) {
+    return { type: 'postgresql', url: hubDb.connection?.url as string }
+  }
+  if (hubDb.driver === 'better-sqlite3') {
+    return { type: 'sqlite', filename: (hubDb.connection?.url || '').replace(/^file:/, '') }
+  }
+  if (['sqlite', 'postgresql', 'postgres', 'libsql', 'pglite'].includes(hubDb.driver)) {
+    return { type: hubDb.driver, ...hubDb.connection } as unknown as ContentDatabaseConfig
+  }
+  return undefined
+}
 
 export default definePreset({
   name: 'nuxthub',
@@ -21,15 +40,14 @@ export default definePreset({
       if (nuxtOptions.hub?.database === true) {
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
-      else if (typeof nuxtOptions.hub?.db === 'string' && typeof hubDb === 'object') {
-        if (hubDb.driver === 'd1') {
-          options.database ||= { type: 'd1', bindingName: 'DB' }
-        }
-        else if (hubDb.driver === 'node-postgres') {
-          options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
+      // NuxtHub >= 0.10, `hub.db` can be a string or an object
+      else if (nuxtOptions.hub?.db && typeof hubDb === 'object' && !options.database) {
+        const database = hubDatabaseToContentDatabase(hubDb)
+        if (database) {
+          options.database = database
         }
         else {
-          options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+          logger.warn(`NuxtHub database driver \`${hubDb.driver}\` is not supported by Nuxt Content, using the default database instead.`)
         }
       }
     }
@@ -62,16 +80,10 @@ export default definePreset({
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
     }
-    else if (typeof nuxt.options.hub?.db === 'string' && typeof hubConfig.db === 'object') {
-      const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
-      if (hubDb.driver === 'd1') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
-      }
-      else if (hubDb.driver === 'node-postgres') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', ...hubDb.connection }
-      }
-      else {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: hubDb.driver, ...hubDb.connection }
+    else if (nuxt.options.hub?.db && typeof hubConfig.db === 'object') {
+      const database = hubDatabaseToContentDatabase(hubConfig.db as unknown as { driver: string, connection?: { url?: string } })
+      if (database) {
+        nitroConfig.runtimeConfig!.content!.database ||= database
       }
     }
 
