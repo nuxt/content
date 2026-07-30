@@ -17,10 +17,11 @@ export function hubDatabaseToContentDatabase(hubDb: { driver: string, connection
     return { type: 'd1', bindingName: 'DB' }
   }
   if (['node-postgres', 'postgres-js', 'neon-http', 'postgres', 'postgresql'].includes(hubDb.driver)) {
-    return { type: 'postgresql', url: hubDb.connection?.url as string }
+    return hubDb.connection?.url ? { type: 'postgresql', url: hubDb.connection.url } : undefined
   }
   if (['sqlite', 'better-sqlite3'].includes(hubDb.driver)) {
-    return { type: 'sqlite', filename: (hubDb.connection?.filename as string) || (hubDb.connection?.url || '').replace(/^file:/, '') }
+    const filename = (hubDb.connection?.filename as string) || (hubDb.connection?.url || '').replace(/^file:/, '')
+    return filename ? { type: 'sqlite', filename } : undefined
   }
   if (['libsql', 'pglite'].includes(hubDb.driver)) {
     return { type: hubDb.driver, ...hubDb.connection } as unknown as ContentDatabaseConfig
@@ -47,7 +48,7 @@ export default definePreset({
           options.database = database
         }
         else {
-          logger.warn(`NuxtHub database driver \`${hubDb.driver}\` is not supported by Nuxt Content, using the default database instead.`)
+          logger.warn(`Nuxt Content cannot use the NuxtHub \`${hubDb.driver}\` database configuration, using the default database instead.`)
         }
       }
     }

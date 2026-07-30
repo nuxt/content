@@ -68,6 +68,13 @@ describe('hubDatabaseToContentDatabase', () => {
   test('returns undefined for unsupported drivers', () => {
     expect(hubDatabaseToContentDatabase({ driver: 'mysql2', connection: { uri: 'mysql://localhost' } })).toBeUndefined()
   })
+
+  test('returns undefined when required connection values are missing', () => {
+    expect(hubDatabaseToContentDatabase({ driver: 'postgres-js' })).toBeUndefined()
+    expect(hubDatabaseToContentDatabase({ driver: 'postgres-js', connection: { url: '' } })).toBeUndefined()
+    expect(hubDatabaseToContentDatabase({ driver: 'sqlite' })).toBeUndefined()
+    expect(hubDatabaseToContentDatabase({ driver: 'sqlite', connection: {} })).toBeUndefined()
+  })
 })
 
 describe('nuxthub preset setup', () => {
