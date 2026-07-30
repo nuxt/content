@@ -135,4 +135,16 @@ describe('nuxthub preset setupNitro', () => {
     expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'file:/tmp/sqlite.db' })
     expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(true)
   })
+
+  test('maps the string form of hub.db to the same database', async () => {
+    const nuxt = createNuxt(
+      { db: 'sqlite' },
+      { db: { driver: 'libsql', connection: { url: 'file:.data/hub/db/sqlite.db' }, applyMigrationsDuringBuild: false } },
+    )
+    const nitroConfig = { runtimeConfig: { content: {} }, rootDir: '/' } as unknown as NitroConfig
+    await nuxthubPreset.setupNitro(nitroConfig, { ...opts, moduleOptions: {} as ModuleOptions, nuxt })
+
+    expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'file:/tmp/sqlite.db' })
+    expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(true)
+  })
 })
