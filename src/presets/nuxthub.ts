@@ -16,13 +16,13 @@ export function hubDatabaseToContentDatabase(hubDb: { driver: string, connection
   if (hubDb.driver === 'd1') {
     return { type: 'd1', bindingName: 'DB' }
   }
-  if (['node-postgres', 'postgres-js', 'neon-http'].includes(hubDb.driver)) {
+  if (['node-postgres', 'postgres-js', 'neon-http', 'postgres', 'postgresql'].includes(hubDb.driver)) {
     return { type: 'postgresql', url: hubDb.connection?.url as string }
   }
-  if (hubDb.driver === 'better-sqlite3') {
-    return { type: 'sqlite', filename: (hubDb.connection?.url || '').replace(/^file:/, '') }
+  if (['sqlite', 'better-sqlite3'].includes(hubDb.driver)) {
+    return { type: 'sqlite', filename: (hubDb.connection?.filename as string) || (hubDb.connection?.url || '').replace(/^file:/, '') }
   }
-  if (['sqlite', 'postgresql', 'postgres', 'libsql', 'pglite'].includes(hubDb.driver)) {
+  if (['libsql', 'pglite'].includes(hubDb.driver)) {
     return { type: hubDb.driver, ...hubDb.connection } as unknown as ContentDatabaseConfig
   }
   return undefined

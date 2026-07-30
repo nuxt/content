@@ -37,15 +37,22 @@ describe('hubDatabaseToContentDatabase', () => {
   })
 
   test('maps postgres drivers to postgresql database', () => {
-    for (const driver of ['node-postgres', 'postgres-js', 'neon-http']) {
+    for (const driver of ['node-postgres', 'postgres-js', 'neon-http', 'postgres', 'postgresql']) {
       expect(hubDatabaseToContentDatabase({ driver, connection: { url: 'postgres://localhost' } }))
         .toEqual({ type: 'postgresql', url: 'postgres://localhost' })
     }
   })
 
-  test('maps better-sqlite3 driver to sqlite database', () => {
-    expect(hubDatabaseToContentDatabase({ driver: 'better-sqlite3', connection: { url: 'file:.data/hub/db/sqlite.db' } }))
-      .toEqual({ type: 'sqlite', filename: '.data/hub/db/sqlite.db' })
+  test('maps sqlite drivers to sqlite database', () => {
+    for (const driver of ['sqlite', 'better-sqlite3']) {
+      expect(hubDatabaseToContentDatabase({ driver, connection: { url: 'file:.data/hub/db/sqlite.db' } }))
+        .toEqual({ type: 'sqlite', filename: '.data/hub/db/sqlite.db' })
+    }
+  })
+
+  test('keeps an explicit sqlite filename', () => {
+    expect(hubDatabaseToContentDatabase({ driver: 'sqlite', connection: { filename: './contents.sqlite' } }))
+      .toEqual({ type: 'sqlite', filename: './contents.sqlite' })
   })
 
   test('maps libsql driver with its connection', () => {
