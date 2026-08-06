@@ -78,7 +78,9 @@ export async function initiateValidatorsContext() {
     nuxtContentContext().set('valibot', await import('./schema/valibot'))
   }
   if (await isPackageInstalled('zod')) {
-    nuxtContentContext().set('zod3', await import('./schema/zod3'))
+    if (await isPackageInstalled('zod-to-json-schema')) {
+      nuxtContentContext().set('zod3', await import('./schema/zod3'))
+    }
     nuxtContentContext().set('zod4', await import('./schema/zod4'))
   }
 }
