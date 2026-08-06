@@ -78,6 +78,8 @@ export async function initiateValidatorsContext() {
     nuxtContentContext().set('valibot', await import('./schema/valibot'))
   }
   if (await isPackageInstalled('zod')) {
+    // The zod3 converter statically imports `zod-to-json-schema`, so only
+    // register it when that package is actually reachable.
     if (await isPackageInstalled('zod-to-json-schema')) {
       nuxtContentContext().set('zod3', await import('./schema/zod3'))
     }
