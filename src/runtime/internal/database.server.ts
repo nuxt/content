@@ -6,11 +6,19 @@ import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
-import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
 
 let db: Connector
-export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
+let _adapterPromise: Promise<(opts: unknown) => Connector> | undefined
+
+function getAdapter(): Promise<(opts: unknown) => Connector> {
+  if (!_adapterPromise) {
+    _adapterPromise = import('#content/adapter').then(m => m.default || m)
+  }
+  return _adapterPromise
+}
+
+export default async function loadDatabaseAdapter(config: RuntimeConfig['content']) {
   const { database, localDatabase } = config
 
   if (!db) {
@@ -18,6 +26,7 @@ export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
       db = localAdapter(refineDatabaseConfig(localDatabase))
     }
     else {
+      const adapter = await getAdapter()
       db = adapter(refineDatabaseConfig(database))
     }
   }
@@ -63,7 +72,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
-  const db = loadDatabaseAdapter(config)
+  const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
