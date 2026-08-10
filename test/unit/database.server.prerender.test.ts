@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import type { RuntimeConfig } from '@nuxt/content'
 
 /**
  * Regression test for https://github.com/nuxt/content/issues/3829
@@ -17,6 +18,12 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
  * resolution.
  */
 describe('database.server - lazy adapter loading (issue #3829)', () => {
+  const config: RuntimeConfig['content'] = {
+    database: { type: 'sqlite', filename: ':memory:' },
+    localDatabase: { type: 'sqlite', filename: ':memory:' },
+    databaseVersion: 'test',
+  } as RuntimeConfig['content']
+
   afterEach(() => {
     vi.resetModules()
     vi.restoreAllMocks()
@@ -45,7 +52,7 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
   test('loadDatabaseAdapter is async and returns a DatabaseAdapter', async () => {
     vi.doMock('#content/adapter', () => ({
       default: (_opts: unknown) => ({
-        prepare: (sql: string) => ({
+        prepare: (_sql: string) => ({
           all: (..._params: unknown[]) => Promise.resolve([{ id: '1', title: 'Hello' }]),
           get: (..._params: unknown[]) => Promise.resolve({ id: '1', title: 'Hello' }),
           run: (..._params: unknown[]) => Promise.resolve(undefined),
@@ -54,7 +61,7 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
     }))
     vi.doMock('#content/local-adapter', () => ({
       default: (_opts: unknown) => ({
-        prepare: (sql: string) => ({
+        prepare: (_sql: string) => ({
           all: (..._params: unknown[]) => Promise.resolve([]),
           get: (..._params: unknown[]) => Promise.resolve(null),
           run: (..._params: unknown[]) => Promise.resolve(undefined),
@@ -65,14 +72,7 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
     const mod = await import('../../src/runtime/internal/database.server')
     const loadDatabaseAdapter = mod.default
 
-    // Verify the function is async (returns a Promise)
-    const config = {
-      database: { type: 'sqlite' as const, filename: ':memory:' },
-      localDatabase: { type: 'sqlite' as const, filename: ':memory:' },
-      databaseVersion: 'test',
-    }
-
-    const result = loadDatabaseAdapter(config as any)
+    const result = loadDatabaseAdapter(config)
     expect(result).toBeInstanceOf(Promise)
 
     const db = await result
@@ -84,7 +84,7 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
 
   test('loadDatabaseAdapter production path uses dynamic adapter import', async () => {
     const adapterFn = vi.fn((_opts: unknown) => ({
-      prepare: (sql: string) => ({
+      prepare: (_sql: string) => ({
         all: (..._params: unknown[]) => Promise.resolve([{ id: '1' }]),
         get: (..._params: unknown[]) => Promise.resolve({ id: '1' }),
         run: (..._params: unknown[]) => Promise.resolve(undefined),
@@ -99,18 +99,12 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
     const mod = await import('../../src/runtime/internal/database.server')
     const loadDatabaseAdapter = mod.default
 
-    const config = {
-      database: { type: 'sqlite' as const, filename: ':memory:' },
-      localDatabase: { type: 'sqlite' as const, filename: ':memory:' },
-      databaseVersion: 'test',
-    }
-
     // In the test environment (non-dev, non-prerender), the production path is taken
-    const db = await loadDatabaseAdapter(config as any)
+    const db = await loadDatabaseAdapter(config)
     expect(adapterFn).toHaveBeenCalledOnce()
 
     // Subsequent calls should reuse the cached connection
-    const db2 = await loadDatabaseAdapter(config as any)
+    await loadDatabaseAdapter(config)
     expect(adapterFn).toHaveBeenCalledOnce() // still only once
 
     const result = await db.all('SELECT * FROM test')
