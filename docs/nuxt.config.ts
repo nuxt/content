@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    ...(readFileSync(resolve(__dirname, '_redirects'), 'utf-8'))
+    ...(readFileSync(resolve(import.meta.dirname, '_redirects'), 'utf-8'))
       .split('\n')
       .filter(line => line.trim().length && !line.trim().startsWith('#'))
       .reduce((acc, line) => {
