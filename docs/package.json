@@ -1,5 +1,6 @@
 {
   "name": "docus-starter",
+  "type": "module",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build"
