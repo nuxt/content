@@ -1,3 +1,7 @@
+import { existsSync } from 'node:fs'
+import { mkdtemp, readFile, readdir } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'pathe'
 import { describe, expect, test, vi } from 'vitest'
 import type { Nuxt } from '@nuxt/schema'
 import type { Resolver } from '@nuxt/kit'
@@ -146,5 +150,45 @@ describe('nuxthub preset setupNitro', () => {
 
     expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'file:/tmp/sqlite.db' })
     expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(true)
+  })
+})
+
+describe('nuxthub preset setupNitro dump handoff', () => {
+  const dumpManifest = { collections: [], dump: { posts: ['INSERT INTO posts VALUES (1);'] } } as unknown as Manifest
+
+  async function runSetupNitro(runtimeDb: Record<string, unknown>) {
+    const nuxt = createNuxt(
+      { db: { dialect: 'sqlite' } },
+      { db: runtimeDb, dir: '.data/hub' },
+    )
+    const rootDir = await mkdtemp(join(tmpdir(), 'nuxthub-preset-'))
+    const nitroConfig = { runtimeConfig: { content: {} }, rootDir } as unknown as NitroConfig
+    await nuxthubPreset.setupNitro(nitroConfig, { ...opts, manifest: dumpManifest, moduleOptions: {} as ModuleOptions, nuxt })
+    return { nitroConfig, queriesDir: join(rootDir, '.data/hub/db/queries') }
+  }
+
+  test('skips the handoff for a local file database and keeps the integrity check', async () => {
+    const { nitroConfig, queriesDir } = await runSetupNitro({ driver: 'libsql', connection: { url: 'file:.data/hub/db/sqlite.db' }, applyMigrationsDuringBuild: true })
+
+    expect(existsSync(queriesDir)).toBe(false)
+    expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'file:/tmp/sqlite.db' })
+    expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(true)
+  })
+
+  test('keeps the integrity check when the local database is already in /tmp', async () => {
+    const { nitroConfig, queriesDir } = await runSetupNitro({ driver: 'libsql', connection: { url: 'file:/tmp/sqlite.db' }, applyMigrationsDuringBuild: true })
+
+    expect(existsSync(queriesDir)).toBe(false)
+    expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'file:/tmp/sqlite.db' })
+    expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(true)
+  })
+
+  test('hands off the dump for a remote database and disables the integrity check', async () => {
+    const { nitroConfig, queriesDir } = await runSetupNitro({ driver: 'libsql', connection: { url: 'libsql://content.turso.io' }, applyMigrationsDuringBuild: true })
+
+    expect(await readdir(queriesDir)).toEqual(['content-database-001.sql'])
+    expect(await readFile(join(queriesDir, 'content-database-001.sql'), 'utf8')).toContain('INSERT INTO posts VALUES (1);')
+    expect(nitroConfig.runtimeConfig!.content!.database).toEqual({ type: 'libsql', url: 'libsql://content.turso.io' })
+    expect(nitroConfig.runtimeConfig!.content!.integrityCheck).toBe(false)
   })
 })
