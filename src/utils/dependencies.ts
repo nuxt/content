@@ -1,5 +1,6 @@
 import { addDependency } from 'nypm'
 import { resolvePackageJSON } from 'pkg-types'
+import { hasTTY, isCI } from 'std-env'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 import { tryUseNuxt } from '@nuxt/kit'
@@ -22,11 +23,13 @@ export async function ensurePackageInstalled(pkg: string) {
   if (!await isPackageInstalled(pkg)) {
     logger.error(`Nuxt Content requires \`${pkg}\` module to operate.`)
 
-    const confirm = await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
-      type: 'confirm',
-      name: 'confirm',
-      initial: true,
-    })
+    const confirm = hasTTY && !isCI
+      ? await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
+          type: 'confirm',
+          name: 'confirm',
+          initial: true,
+        })
+      : false
 
     if (!confirm) {
       logger.error(`Nuxt Content requires \`${pkg}\` module to operate. Please install \`${pkg}\` package manually and try again. \`npm install ${pkg}\``)
