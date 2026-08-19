@@ -206,6 +206,12 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
   filename: moduleTemplates.preview,
   getContents: ({ options }: { options: { collections: ResolvedCollection[] } }) => {
     const collectionsMeta = options.collections.reduce((acc, collection) => {
+      // Only include non remote collections and collections with at least one local source (remove `info` collection)
+      const localSources = collection.source?.filter(source => !source.repository) ?? []
+      if (localSources.length === 0) {
+        return acc
+      }
+
       const schemaWithCollectionName = {
         ...collection.extendedSchema,
         definitions: {
@@ -216,8 +222,7 @@ export const previewTemplate = (collections: ResolvedCollection[], gitInfo: GitI
         name: collection.name,
         pascalName: pascalCase(collection.name),
         tableName: collection.tableName,
-        // Remove source from collection meta if it's a remote collection
-        source: collection.source?.filter(source => source.repository ? undefined : collection.source) || [],
+        source: localSources,
         type: collection.type,
         fields: collection.fields,
         schema: schemaWithCollectionName,

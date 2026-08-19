@@ -38,3 +38,4 @@ template/pnpm-lock.yaml
 #VSC
 .history
 .wrangler
+.vercel

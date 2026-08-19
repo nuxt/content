@@ -13,6 +13,12 @@ export function getExcludedSourcePaths(source: CollectionSource) {
     ...(source!.exclude || []),
     // Ignore OS files
     '**/.DS_Store',
+    // Ignore temporary files created by editors and tools during non-atomic writes
+    '**/*.tmp',
+    '**/*.tmp.*',
+    '**/*~',
+    '**/.#*',
+    '**/~*',
   ]
 }
 

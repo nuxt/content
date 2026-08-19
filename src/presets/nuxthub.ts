@@ -1,5 +1,6 @@
-import { mkdir, writeFile } from 'node:fs/promises'
-import { resolve } from 'pathe'
+import { tmpdir } from 'node:os'
+import { mkdir, writeFile, mkdtemp } from 'node:fs/promises'
+import { resolve, join } from 'pathe'
 import { provider } from 'std-env'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
@@ -42,6 +43,13 @@ export default definePreset({
     }
     else {
       await nodePreset.setup?.(options, nuxt, config)
+    }
+
+    if (preset.includes('vercel')) {
+      // Change remoteSourceRootDir to a temporary directory
+      // this will prevent conflicts with the Vercel build cache
+      // @ts-expect-error - `_remoteSourceRootDir` is a private property to store the temporary directory
+      options._remoteSourceRootDir = options._remoteSourceRootDir || await mkdtemp(join(tmpdir(), 'nuxt-content'))
     }
   },
   async setupNitro(nitroConfig, options) {

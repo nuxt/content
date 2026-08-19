@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
-import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/better-sqlite3'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
@@ -210,7 +209,7 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
   }
 
   if (config.type === 'sqlite') {
-    const _config = { ...config } as SqliteConnectorOptions
+    const _config = { ...config } as { path?: string, name?: string }
     if (config.filename === ':memory:') {
       return { name: ':memory:' }
     }

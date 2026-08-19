@@ -87,6 +87,12 @@ describe('utils', () => {
     expect(breadcrumb).toEqual([])
   })
 
+  it('findPageBreadcrumb ignores trailing slash', async () => {
+    const breadcrumb = removeChildren(findPageBreadcrumb(navigation, '/guide/getting-started/'))
+
+    expect(breadcrumb).toEqual(removeChildren(findPageBreadcrumb(navigation, '/guide/getting-started')))
+  })
+
   it('findPageBreadcrumb index with indexAsChild option', async () => {
     const breadcrumb = removeChildren(findPageBreadcrumb(navigation, '/guide', { indexAsChild: true }))
 
@@ -174,6 +180,23 @@ describe('utils', () => {
     ])
   })
 
+  it('findPageChildren ignores trailing slash', async () => {
+    const pages = removeChildren(findPageChildren(navigation, '/guide/'))
+
+    expect(pages).toEqual([
+      {
+        title: 'Getting Started',
+        path: '/guide/getting-started',
+        stem: 'guide/getting-started',
+      },
+      {
+        title: 'Introduction',
+        path: '/guide/introduction',
+        stem: 'guide/introduction',
+      },
+    ])
+  })
+
   it('findPageChildren with indexAsChild option', async () => {
     const pages = removeChildren(findPageChildren(navigation, '/guide', { indexAsChild: true }))
 
@@ -208,6 +231,18 @@ describe('utils', () => {
     ])
   })
 
+  it('findPageSiblings ignores trailing slash', async () => {
+    const pages = removeChildren(findPageSiblings(navigation, '/guide/getting-started/'))
+
+    expect(pages).toEqual([
+      {
+        title: 'Introduction',
+        path: '/guide/introduction',
+        stem: 'guide/introduction',
+      },
+    ])
+  })
+
   it('findPageSiblings with indexAsChild option', async () => {
     const pages = removeChildren(findPageSiblings(navigation, '/guide/getting-started', { indexAsChild: true }))
 
@@ -227,6 +262,12 @@ describe('utils', () => {
 
   it('findPageHeadline', async () => {
     const headline = findPageHeadline(navigation2, '/guide/getting-started')
+
+    expect(headline).toEqual('Guide Dir')
+  })
+
+  it('findPageHeadline ignores trailing slash', async () => {
+    const headline = findPageHeadline(navigation2, '/guide/getting-started/')
 
     expect(headline).toEqual('Guide Dir')
   })

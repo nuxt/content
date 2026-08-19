@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { kebabCase, pascalCase } from 'scule'
 import { resolveComponent, toRaw, defineAsyncComponent, computed } from 'vue'
+import type { Component } from 'vue'
 import type { MDCComment, MDCElement, MDCRoot, MDCText } from '@nuxtjs/mdc'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import MDCRenderer from '@nuxtjs/mdc/runtime/components/MDCRenderer.vue'
@@ -112,18 +113,29 @@ const componentsMap = computed(() => {
   return body.value ? resolveContentComponents(body.value, { tags: tags.value }) : {}
 })
 
+const asyncLocalComponents = new Map<string, Component>()
+const asyncWrappedComponents = new WeakMap<Renderable, Component>()
+
 function resolveVueComponent(component: string | Renderable) {
   let _component: unknown = component
   if (typeof component === 'string') {
     if (htmlTags.has(component)) {
       return component
     }
-    if (globalComponents.includes(pascalCase(component))) {
+    const pascalName = pascalCase(component)
+    if (globalComponents.includes(pascalName)) {
       _component = resolveComponent(component, false)
     }
-    else if (localComponents.includes(pascalCase(component))) {
-      const loader = localComponentLoaders[pascalCase(component) as keyof typeof localComponentLoaders]
-      _component = loader ? defineAsyncComponent(loader) : undefined
+    else if (localComponents.includes(pascalName)) {
+      let asyncComponent = asyncLocalComponents.get(pascalName)
+      if (!asyncComponent) {
+        const loader = localComponentLoaders[pascalName as keyof typeof localComponentLoaders]
+        asyncComponent = loader ? defineAsyncComponent(loader) : undefined
+        if (asyncComponent) {
+          asyncLocalComponents.set(pascalName, asyncComponent)
+        }
+      }
+      _component = asyncComponent
     }
     if (typeof _component === 'string') {
       return _component
@@ -140,7 +152,12 @@ function resolveVueComponent(component: string | Renderable) {
   }
 
   if ('setup' in componentObject) {
-    return defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
+    let asyncComponent = asyncWrappedComponents.get(componentObject)
+    if (!asyncComponent) {
+      asyncComponent = defineAsyncComponent(() => Promise.resolve(componentObject as Renderable))
+      asyncWrappedComponents.set(componentObject, asyncComponent)
+    }
+    return asyncComponent
   }
 
   return componentObject
