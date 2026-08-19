@@ -234,6 +234,14 @@ describe('generateItemSurround', () => {
     expect(result[1]).toMatchObject({ path: '/section' })
   })
 
+  it('ignores trailing slash in path', async () => {
+    const result = await generateItemSurround(mockQueryBuilder, '/item-2/')
+
+    expect(result).toHaveLength(2)
+    expect(result[0]).toMatchObject({ path: '/item-1' })
+    expect(result[1]).toMatchObject({ path: '/section' })
+  })
+
   it('handles start of list', async () => {
     const result = await generateItemSurround(mockQueryBuilder, '/item-1')
 
