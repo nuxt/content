@@ -80,13 +80,15 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
       const repository = source?.repository && gitUrlParse(source.repository.url)
       if (repository) {
         const { source: gitSource, owner, name } = repository
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${repository.ref || 'main'}`)
 
         let ref: object | undefined
 
         if (source.repository.branch && source.repository.tag) {
           throw new Error('Cannot specify both branch and tag for git repository. Please specify one of `branch` or `tag`.')
         }
+
+        const resolvedRef = source.repository.branch || source.repository.tag || repository.ref || 'main'
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${resolvedRef}`)
 
         if (source.repository.branch) ref = { branch: source.repository.branch }
         if (source.repository.tag) ref = { tag: source.repository.tag }
