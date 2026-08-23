@@ -21,6 +21,13 @@ describe('defineGitSource', () => {
       .toBe('/root/.data/content/github.com-nuxt-cli-dev')
   })
 
+  it('sanitises slashes in the ref', async () => {
+    expect(await resolveCwd({ url: 'https://github.com/nuxt/cli', branch: 'release/v4.0.0' }))
+      .toBe('/root/.data/content/github.com-nuxt-cli-release-v4.0.0')
+    expect(await resolveCwd({ url: 'https://github.com/nuxt/cli', branch: '../../escape' }))
+      .toBe('/root/.data/content/github.com-nuxt-cli-..-..-escape')
+  })
+
   it('defaults to main when no ref is given', async () => {
     expect(await resolveCwd('https://github.com/nuxt/cli'))
       .toBe('/root/.data/content/github.com-nuxt-cli-main')

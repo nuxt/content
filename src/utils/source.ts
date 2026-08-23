@@ -88,7 +88,9 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
         }
 
         const resolvedRef = source.repository.branch || source.repository.tag || repository.ref || 'main'
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${resolvedRef}`)
+        // refs may contain `/` (`release/v1`) which would nest or escape the cache directory
+        const refKey = resolvedRef.replace(/[^\w.-]+/g, '-')
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${refKey}`)
 
         if (source.repository.branch) ref = { branch: source.repository.branch }
         if (source.repository.tag) ref = { tag: source.repository.tag }
