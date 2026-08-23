@@ -3,6 +3,7 @@ import { createReadStream } from 'node:fs'
 import { join, normalize } from 'pathe'
 import { withLeadingSlash, withoutTrailingSlash } from 'ufo'
 import { glob } from 'tinyglobby'
+import { hash } from 'ohash'
 import type { CollectionSource, ResolvedCollectionSource } from '../types/collection'
 import { downloadGitRepository } from './git'
 import { logger } from './dev'
@@ -88,9 +89,13 @@ export function defineGitSource(source: CollectionSource): ResolvedCollectionSou
         }
 
         const resolvedRef = source.repository.branch || source.repository.tag || repository.ref || 'main'
-        // refs may contain `/` (`release/v1`) which would nest or escape the cache directory
-        const refKey = resolvedRef.replace(/[^\w.-]+/g, '-')
-        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${refKey}`)
+        // refs may contain `/` (`release/v1`), which would nest or escape the cache directory;
+        // a hash suffix keeps escaped refs distinct from each other
+        const refKey = /^[\w.-]+$/.test(resolvedRef)
+          ? resolvedRef
+          : `${resolvedRef.replace(/[^\w.-]+/g, '-')}-${hash(resolvedRef).slice(0, 8)}`
+        const refPrefix = source.repository.tag ? 'tag-' : ''
+        resolvedSource.cwd = join(rootDir, '.data', 'content', `${gitSource}-${owner}-${name}-${refPrefix}${refKey}`)
 
         if (source.repository.branch) ref = { branch: source.repository.branch }
         if (source.repository.tag) ref = { tag: source.repository.tag }
