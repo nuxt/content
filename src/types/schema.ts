@@ -47,12 +47,19 @@ export interface ContentConfig {
 }
 
 export interface EditorOptions {
-  input?: 'media' | 'icon' | 'textarea' // Override the default input for the field
+  input?: 'media' | 'icon' | 'textarea' | 'relation' // Override the default input for the field
   hidden?: boolean // Do not display the field in the editor
   iconLibraries?: string[] // List of icon libraries to use for the icon input
+  relation?: RelationOptions // Collection referenced by the field, for the relation input
   label?: string // Override auto-generated label with a custom one
   description?: string // When defined, set a description for the field
   tooltip?: string // When defined, set a tooltip info-bubble next to the label
+}
+
+export interface RelationOptions {
+  collection: string // Name of the referenced collection, as declared in the content config
+  valueField?: 'slug' | 'path' | 'stem' | (string & {}) // Field of the referenced document written to the file, defaults to `slug` (its file name)
+  labelField?: string // Field of the referenced document displayed in the editor, defaults to `name` then `title`
 }
 
 export interface ContentStandardSchemaV1<Input = unknown, Output = Input> extends StandardSchemaV1<Input, Output> {
