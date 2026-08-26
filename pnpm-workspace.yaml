@@ -26,3 +26,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@nuxtjs/mdc@0.22.1"
   - remark-mdc@3.11.1
+  - miniflare@5.20260825.0-alpha
+  - wrangler@4.126.0
