@@ -10,6 +10,7 @@ import localAdapter from '#content/local-adapter'
 
 let db: Connector
 let _adapterPromise: Promise<(opts: unknown) => Connector> | undefined
+let _databasePromise: Promise<Connector> | undefined
 
 function getAdapter(): Promise<(opts: unknown) => Connector> {
   if (!_adapterPromise) {
@@ -18,18 +19,34 @@ function getAdapter(): Promise<(opts: unknown) => Connector> {
   return _adapterPromise
 }
 
-export default async function loadDatabaseAdapter(config: RuntimeConfig['content']) {
-  const { database, localDatabase } = config
-
-  if (!db) {
-    if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-      db = localAdapter(refineDatabaseConfig(localDatabase))
-    }
-    else {
-      const adapter = await getAdapter()
-      db = adapter(refineDatabaseConfig(database))
-    }
+async function getDatabase(config: RuntimeConfig['content']): Promise<Connector> {
+  if (db) {
+    return db
   }
+
+  if (!_databasePromise) {
+    _databasePromise = (async () => {
+      const { database, localDatabase } = config
+
+      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+        return localAdapter(refineDatabaseConfig(localDatabase))
+      }
+
+      const adapter = await getAdapter()
+      return adapter(refineDatabaseConfig(database))
+    })().catch((error) => {
+      // Allow a later request to retry initialization after a transient failure.
+      _databasePromise = undefined
+      throw error
+    })
+  }
+
+  db = await _databasePromise
+  return db
+}
+
+export default async function loadDatabaseAdapter(config: RuntimeConfig['content']) {
+  await getDatabase(config)
 
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {

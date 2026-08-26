@@ -110,4 +110,53 @@ describe('database.server - lazy adapter loading (issue #3829)', () => {
     const result = await db.all('SELECT * FROM test')
     expect(result).toHaveLength(1)
   })
+
+  test('concurrent first calls share a single adapter initialization', async () => {
+    let releaseAdapter!: () => void
+    const adapterGate = new Promise<void>((resolve) => {
+      releaseAdapter = resolve
+    })
+
+    const adapterFn = vi.fn((_opts: unknown) => ({
+      prepare: (_sql: string) => ({
+        all: (..._params: unknown[]) => Promise.resolve([{ id: '1' }]),
+        get: (..._params: unknown[]) => Promise.resolve({ id: '1' }),
+        run: (..._params: unknown[]) => Promise.resolve(undefined),
+      }),
+    }))
+
+    // Keep the dynamic import pending so both callers enter initialization
+    // before either can finish creating the connector.
+    vi.doMock('#content/adapter', async () => {
+      await adapterGate
+      return { default: adapterFn }
+    })
+    vi.doMock('#content/local-adapter', () => ({
+      default: vi.fn(() => ({ prepare: vi.fn() })),
+    }))
+
+    const loadDatabaseAdapter = (await import('../../src/runtime/internal/database.server')).default
+
+    const firstPromise = loadDatabaseAdapter(config)
+    const secondPromise = loadDatabaseAdapter(config)
+
+    // Allow both calls to reach the shared initialization await
+    await Promise.resolve()
+    expect(adapterFn).not.toHaveBeenCalled()
+
+    releaseAdapter()
+
+    const [first, second] = await Promise.all([firstPromise, secondPromise])
+
+    expect(adapterFn).toHaveBeenCalledOnce()
+    expect(first).toBeDefined()
+    expect(second).toBeDefined()
+
+    const [a, b] = await Promise.all([
+      first.all('SELECT * FROM test'),
+      second.all('SELECT * FROM test'),
+    ])
+    expect(a).toHaveLength(1)
+    expect(b).toHaveLength(1)
+  })
 })
