@@ -77,6 +77,10 @@ describe('formatDateTime', () => {
     expect(formatDateTime('2022-06-15T14:30:45.000Z')).toBe('2022-06-15 14:30:45')
   })
 
+  it('handles Date object input', () => {
+    expect(formatDateTime(new Date('2022-06-15T14:30:45.000Z'))).toBe('2022-06-15 14:30:45')
+  })
+
   it('returns canonical datetime strings unchanged', () => {
     expect(formatDateTime('2022-06-15 14:30:45')).toBe('2022-06-15 14:30:45')
   })
