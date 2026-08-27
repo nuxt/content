@@ -16,21 +16,38 @@ describe('formatDate', () => {
   })
 
   it('handles end-of-year dates consistently in UTC', () => {
-    // 2022-12-31T23:00:00Z is still Dec 31 in UTC even if it's Jan 1 locally
+    // Still Dec 31 in UTC even when local TZ has crossed into Jan 1
     expect(formatDate('2022-12-31T23:00:00.000Z')).toBe('2022-12-31')
   })
 
   it('handles dates near midnight boundary in UTC', () => {
-    // This is Jan 1 00:30 UTC — should be 2023-01-01, not 2022-12-31
     expect(formatDate('2023-01-01T00:30:00.000Z')).toBe('2023-01-01')
+  })
+
+  it('treats date-only strings as UTC calendar dates', () => {
+    expect(formatDate('2023-01-01')).toBe('2023-01-01')
+    expect(formatDate('2024-12-31')).toBe('2024-12-31')
+  })
+
+  it('treats offset-less ISO datetimes as UTC', () => {
+    // ES would parse this as local time; we force UTC
+    expect(formatDate('2023-01-01T00:00:00')).toBe('2023-01-01')
+    expect(formatDate('2022-12-31T23:30:00')).toBe('2022-12-31')
   })
 
   it('parses space-separated datetime as UTC', () => {
     expect(formatDate('2022-06-15 14:30:00')).toBe('2022-06-15')
   })
 
-  it('handles Date object input', () => {
+  it('respects explicit non-UTC offsets', () => {
+    // 2023-01-01 00:30 in UTC+5:30 → 2022-12-31 19:00 UTC
+    expect(formatDate('2023-01-01T00:30:00+05:30')).toBe('2022-12-31')
+  })
+
+  it('handles Date object input via UTC components', () => {
     expect(formatDate(new Date('2022-06-15T14:30:00.000Z'))).toBe('2022-06-15')
+    // Near midnight UTC boundary
+    expect(formatDate(new Date('2022-12-31T23:00:00.000Z'))).toBe('2022-12-31')
   })
 
   it('throws on invalid date', () => {
@@ -40,7 +57,15 @@ describe('formatDate', () => {
 
   it('produces same output as the build-time copy', async () => {
     const buildTime = await import('../../src/utils/content/transformers/utils')
-    const inputs = ['2022-06-15T12:00:00.000Z', '2023-01-01T00:00:00.000Z', '2024-12-31T23:59:59.000Z']
+    const inputs = [
+      '2022-06-15T12:00:00.000Z',
+      '2023-01-01T00:00:00.000Z',
+      '2024-12-31T23:59:59.000Z',
+      '2023-01-01',
+      '2023-01-01T00:00:00',
+      '2022-06-15 14:30:00',
+      '2023-01-01T00:30:00+05:30',
+    ]
     for (const input of inputs) {
       expect(formatDate(input)).toBe(buildTime.formatDate(input))
     }
@@ -61,16 +86,30 @@ describe('formatDateTime', () => {
   })
 
   it('uses UTC time components regardless of system timezone', () => {
-    // Midnight UTC should always produce 00:00:00
     expect(formatDateTime('2022-06-15T00:00:00.000Z')).toBe('2022-06-15 00:00:00')
-    // 23:59:59 UTC should always produce that time, not shift to next day
     expect(formatDateTime('2022-12-31T23:59:59.000Z')).toBe('2022-12-31 23:59:59')
+  })
+
+  it('treats offset-less ISO datetimes as UTC', () => {
+    expect(formatDateTime('2022-06-15T14:30:45')).toBe('2022-06-15 14:30:45')
+    expect(formatDateTime('2022-12-31T23:00:00')).toBe('2022-12-31 23:00:00')
+  })
+
+  it('parses space-separated datetime as UTC', () => {
+    expect(formatDateTime('2022-06-15 14:30:45')).toBe('2022-06-15 14:30:45')
+  })
+
+  it('respects explicit non-UTC offsets', () => {
+    expect(formatDateTime('2022-06-15T14:30:45+02:00')).toBe('2022-06-15 12:30:45')
+  })
+
+  it('handles Date object input', () => {
+    expect(formatDateTime(new Date('2022-06-15T14:30:45.000Z'))).toBe('2022-06-15 14:30:45')
   })
 
   it('the date portion matches formatDate output', () => {
     const input = '2022-06-15T14:30:45.000Z'
-    const result = formatDateTime(input)
-    expect(result.split(' ')[0]).toBe(formatDate(input))
+    expect(formatDateTime(input).split(' ')[0]).toBe(formatDate(input))
   })
 
   it('throws on invalid datetime', () => {
@@ -80,7 +119,13 @@ describe('formatDateTime', () => {
 
   it('produces same output as the build-time copy', async () => {
     const buildTime = await import('../../src/utils/content/transformers/utils')
-    const inputs = ['2022-06-15T14:30:45.000Z', '2023-01-01T00:00:00.000Z']
+    const inputs = [
+      '2022-06-15T14:30:45.000Z',
+      '2023-01-01T00:00:00.000Z',
+      '2022-06-15T14:30:45',
+      '2022-06-15 14:30:45',
+      '2022-06-15T14:30:45+02:00',
+    ]
     for (const input of inputs) {
       expect(formatDateTime(input)).toBe(buildTime.formatDateTime(input))
     }
