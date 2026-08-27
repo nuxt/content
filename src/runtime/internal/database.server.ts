@@ -1,27 +1,52 @@
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
-import type { ConnectorOptions as SqliteConnectorOptions } from 'db0/connectors/better-sqlite3'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
-import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
 
 let db: Connector
-export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
-  const { database, localDatabase } = config
+let _adapterPromise: Promise<(opts: unknown) => Connector> | undefined
+let _databasePromise: Promise<Connector> | undefined
 
-  if (!db) {
-    if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-      db = localAdapter(refineDatabaseConfig(localDatabase))
-    }
-    else {
-      db = adapter(refineDatabaseConfig(database))
-    }
+function getAdapter(): Promise<(opts: unknown) => Connector> {
+  if (!_adapterPromise) {
+    _adapterPromise = import('#content/adapter').then(m => m.default || m)
   }
+  return _adapterPromise
+}
+
+async function getDatabase(config: RuntimeConfig['content']): Promise<Connector> {
+  if (db) {
+    return db
+  }
+
+  if (!_databasePromise) {
+    _databasePromise = (async () => {
+      const { database, localDatabase } = config
+
+      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+        return localAdapter(refineDatabaseConfig(localDatabase))
+      }
+
+      const adapter = await getAdapter()
+      return adapter(refineDatabaseConfig(database))
+    })().catch((error) => {
+      // Allow a later request to retry initialization after a transient failure.
+      _databasePromise = undefined
+      throw error
+    })
+  }
+
+  db = await _databasePromise
+  return db
+}
+
+export default async function loadDatabaseAdapter(config: RuntimeConfig['content']) {
+  await getDatabase(config)
 
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {
@@ -64,7 +89,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
-  const db = loadDatabaseAdapter(config)
+  const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
@@ -210,7 +235,7 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
   }
 
   if (config.type === 'sqlite') {
-    const _config = { ...config } as SqliteConnectorOptions
+    const _config = { ...config } as { path?: string, name?: string }
     if (config.filename === ':memory:') {
       return { name: ':memory:' }
     }

@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, expectTypeOf } from 'vitest'
 import { generateSearchSections } from '../../src/runtime/internal/search'
+import type { Section } from '../../src/runtime/internal/search'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '../../src/types'
 
 describe('generateSearchSections', () => {
@@ -272,14 +273,28 @@ describe('generateSearchSections', () => {
       },
     ])
   })
+
+  it('should narrow return type to Section & Pick<T, K> when extraFields is provided', async () => {
+    type DocItem = PageCollectionItemBase & { author: string }
+    const mockQB = createMockQueryBuilder<DocItem>([{
+      path: '/test',
+      title: 'Test Page',
+      description: '',
+      author: 'Jane Doe',
+      body: null,
+    }])
+
+    const result = await generateSearchSections(mockQB, { extraFields: ['author'] as const })
+    expectTypeOf(result).toEqualTypeOf<Array<Section & Pick<DocItem, 'author'>>>()
+  })
 })
 
-function createMockQueryBuilder(result: unknown[]) {
+function createMockQueryBuilder<T extends PageCollectionItemBase>(result: unknown[]) {
   const mockQueryBuilder = {
     where: () => mockQueryBuilder,
     select: () => mockQueryBuilder,
     all: async () => result,
-  } as unknown as CollectionQueryBuilder<PageCollectionItemBase>
+  } as unknown as CollectionQueryBuilder<T>
 
   return mockQueryBuilder
 }

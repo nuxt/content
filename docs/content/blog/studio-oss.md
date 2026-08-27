@@ -68,7 +68,7 @@ This stable release includes everything you need to edit content in production:
 
 ### TipTap Visual Editor
 
-The modern Notion-like editing experience for Markdown content is back with a improved version, powered by [TipTap](https://tiptap.dev/) integrated through the [Nuxt UI Editor](https://ui.nuxt.com/pro/components/editor) component:
+The modern Notion-like editing experience for Markdown content is back with an improved version, powered by [TipTap](https://tiptap.dev/) integrated through the [Nuxt UI Editor](https://ui.nuxt.com/components/editor) component:
 
 - Rich text editing with headings, formatting, links, and more
 - MDC component support for inserting Vue components

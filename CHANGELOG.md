@@ -1,5 +1,46 @@
 # Changelog
 
+## [3.15.2](https://github.com/nuxt/content/compare/v3.15.1...v3.15.2) (2026-07-23)
+
+### Bug Fixes
+
+* **dev:** ignore temporary files in content source paths ([#3784](https://github.com/nuxt/content/issues/3784)) ([a019e70](https://github.com/nuxt/content/commit/a019e702688cf468c6cc1d1592ca19313ff76276))
+* **security:** reject SQL function calls in query WHERE clauses ([#3819](https://github.com/nuxt/content/issues/3819)) ([847d523](https://github.com/nuxt/content/commit/847d523a48e76d861175b325abf0de40dc5864ed))
+
+## [3.15.1](https://github.com/nuxt/content/compare/v3.15.0...v3.15.1) (2026-07-21)
+
+### Bug Fixes
+
+* **dev:** preserve SQL hashes in HMR dumps ([#3816](https://github.com/nuxt/content/issues/3816)) ([b6796e9](https://github.com/nuxt/content/commit/b6796e98581ae4234922672c833f452165a4cf66))
+
+## [3.15.0](https://github.com/nuxt/content/compare/v3.14.0...v3.15.0) (2026-07-02)
+
+### Features
+
+* add explicit `bun` sqlite connector for Bun runtime deployments ([#3741](https://github.com/nuxt/content/issues/3741)) ([92ac2ab](https://github.com/nuxt/content/commit/92ac2ab2551d7680a8e9793183235ba7a55960d3))
+* **search:** add type inference for extraFields ([#3714](https://github.com/nuxt/content/issues/3714)) ([078491b](https://github.com/nuxt/content/commit/078491b80aa3b619d1a7406ecddb367683146142))
+
+### Bug Fixes
+
+* **content:** support validator detection with pnpm enableGlobalVirtualStore ([#3791](https://github.com/nuxt/content/issues/3791)) ([6b2720b](https://github.com/nuxt/content/commit/6b2720b6caa40986948fa0d28c316b94979e1020))
+* **hmr:** update all matching collections when a file changes ([#3802](https://github.com/nuxt/content/issues/3802)) ([06f8edb](https://github.com/nuxt/content/commit/06f8edbad03f67e13e3dccfe4ad0ab418343009a))
+* **search:** softer heading-level boost curve and tuned defaults ([#3801](https://github.com/nuxt/content/issues/3801)) ([00d25a5](https://github.com/nuxt/content/commit/00d25a5f203d5dd2371db7a1acc09396a9590964))
+* **vercel:** use tmp directory to clone contents ([#3810](https://github.com/nuxt/content/issues/3810)) ([793d59a](https://github.com/nuxt/content/commit/793d59aba93224e39afb6e41a5dfdfd9284b5484))
+
+## [3.14.0](https://github.com/nuxt/content/compare/v3.13.0...v3.14.0) (2026-05-18)
+
+### Features
+
+* **search:** add `useSearchCollection` composable with FTS5 full-text search ([#3787](https://github.com/nuxt/content/issues/3787)) ([2a1a585](https://github.com/nuxt/content/commit/2a1a585ac4e83a261ef8bb134bc71bf9451f075e))
+* **types:** add custom properties on ContentConfig ([#3761](https://github.com/nuxt/content/issues/3761)) ([ea196c5](https://github.com/nuxt/content/commit/ea196c54a7026238a2c1b86a1c5dc662dff4aee5))
+* **types:** add NOT IN to SQLOperator type ([#3785](https://github.com/nuxt/content/issues/3785)) ([ab88eb3](https://github.com/nuxt/content/commit/ab88eb3c909cdf97c012ac1ac9d656b40bea4c4b))
+
+### Bug Fixes
+
+* **docs:** update Nuxt version from 3 to 4 in template features ([#3780](https://github.com/nuxt/content/issues/3780)) ([1f24029](https://github.com/nuxt/content/commit/1f24029bb1248fdd1a65085a7e13689f456034cd))
+* **path-meta:** slugify function did not pass to transformer ([#3794](https://github.com/nuxt/content/issues/3794)) ([778d7db](https://github.com/nuxt/content/commit/778d7dbb9456a6ad7fcc04f3eb2ae987efc4acd8))
+* **preview:** skip collections without source in preview template ([#3771](https://github.com/nuxt/content/issues/3771)) ([8aabefd](https://github.com/nuxt/content/commit/8aabefd2eb36e0051423481639fa8de2f243ad9b))
+
 ## [3.13.0](https://github.com/nuxt/content/compare/v3.12.0...v3.13.0) (2026-04-13)
 
 ### Bug Fixes

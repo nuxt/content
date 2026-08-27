@@ -90,8 +90,8 @@ The built files will be in the `.output` directory, ready for deployment to any 
   :::template-features
   ---
   features:
-    - label: Nuxt 3
-      content: Powered by Nuxt 3 for optimal performances and SEO.
+    - label: Nuxt 4
+      content: Powered by Nuxt 4 for optimal performances and SEO.
     - label: Markdown
       content: Write your pages with MDC thanks to Nuxt Content.
     - label: Nuxt UI

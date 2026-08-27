@@ -15,5 +15,5 @@ export default eventHandler(async (event) => {
     await checkAndImportDatabaseIntegrity(event, collection, conf)
   }
 
-  return loadDatabaseAdapter(conf).all(sql)
+  return (await loadDatabaseAdapter(conf)).all(sql)
 })

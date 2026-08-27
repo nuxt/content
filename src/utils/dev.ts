@@ -114,56 +114,62 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       return
     }
     // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
-    let path = resolve(pathOrError as string)
-    const match = sourceMap.find(({ source, cwd }) => {
-      if (cwd && path.startsWith(cwd)) {
-        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+    const absolutePath = resolve(pathOrError as string)
+    const matches = sourceMap.filter(({ source, cwd }) => {
+      if (cwd && absolutePath.startsWith(cwd)) {
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false
     })
-    if (match) {
+    if (matches.length) {
       const db = await getDb()
-      const { collection, source, cwd } = match
-      // Remove the cwd prefix
-      path = path.substring(cwd.length)
-      logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
-      const { fixed } = parseSourceBase(source)
 
-      const filePath = path.substring(fixed.length)
-      const keyInCollection = join(collection.name, source?.prefix || '', filePath)
-      const fullPath = join(cwd, path)
+      let content: string | undefined
+      for (const match of matches) {
+        const { collection, source, cwd } = match
+        const path = absolutePath.substring(cwd.length)
+        logger.info(`File \`${path}\` changed on \`${collection.name}\` collection`)
+        const { fixed } = parseSourceBase(source)
 
-      let content = await readFile(fullPath, 'utf8')
-      if (content === '') {
-        // If users edit the file very quickly, in some race-condition, the file content might be read as empty.
-        // To deal with this scenario, we wait for 50ms if the file is empty and try again.
-        content = await new Promise<string>(resolve => setTimeout(resolve, 50))
-          .then(() => readFile(fullPath, 'utf8'))
-      }
-      const checksum = getContentChecksum(content)
-      const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
+        const filePath = path.substring(fixed.length)
+        const keyInCollection = join(collection.name, source?.prefix || '', filePath)
+        const fullPath = join(cwd, path)
 
-      let parsedContent = localCache?.value || ''
-
-      // If the local cache is not present or the checksum does not match, we need to parse the content
-      if (!localCache || localCache?.checksum !== checksum) {
-        if (!collectionParsers[collection.name]) {
-          collectionParsers[collection.name] = await createParser(collection, nuxt)
+        if (content === undefined) {
+          content = await readFile(fullPath, 'utf8')
+          if (content === '') {
+            // If users edit the file very quickly, in some race-condition, the file content might be read as empty.
+            // To deal with this scenario, we wait for 50ms if the file is empty and try again.
+            content = await new Promise<string>(resolve => setTimeout(resolve, 50))
+              .then(() => readFile(fullPath, 'utf8'))
+          }
         }
-        const parser = collectionParsers[collection.name]!
-        parsedContent = await parser({
-          id: keyInCollection,
-          body: content,
-          path: fullPath,
-          collectionType: collection.type,
-        }).then(result => JSON.stringify(result))
 
-        db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+        const checksum = getContentChecksum(content!)
+        const localCache = await db.fetchDevelopmentCacheForKey(keyInCollection)
+
+        let parsedContent = localCache?.value || ''
+
+        // If the local cache is not present or the checksum does not match, we need to parse the content
+        if (!localCache || localCache?.checksum !== checksum) {
+          if (!collectionParsers[collection.name]) {
+            collectionParsers[collection.name] = await createParser(collection, nuxt)
+          }
+          const parser = collectionParsers[collection.name]!
+          parsedContent = await parser({
+            id: keyInCollection,
+            body: content!,
+            path: fullPath,
+            collectionType: collection.type,
+          }).then(result => JSON.stringify(result))
+
+          db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+        }
+
+        const insert = generateCollectionInsert(collection, JSON.parse(parsedContent))
+        await broadcast(collection, keyInCollection, insert)
       }
-
-      const { queries: insertQuery } = generateCollectionInsert(collection, JSON.parse(parsedContent))
-      await broadcast(collection, keyInCollection, insertQuery)
     }
   }
 
@@ -172,37 +178,38 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       return
     }
     // resolve path using `pathe.resolve` to use `/` instead of `\` on windows, otherwise `micromatch` will not match
-    let path = resolve(pathOrError as string)
-    const match = sourceMap.find(({ source, cwd }) => {
-      if (cwd && path.startsWith(cwd)) {
-        return micromatch.isMatch(path.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+    const absolutePath = resolve(pathOrError as string)
+    const matches = sourceMap.filter(({ source, cwd }) => {
+      if (cwd && absolutePath.startsWith(cwd)) {
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false
     })
-    if (match) {
+    if (matches.length) {
       const db = await getDb()
-      const { collection, source, cwd } = match
-      // Remove the cwd prefix
-      path = path.substring(cwd.length)
-      logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
-      const { fixed } = parseSourceBase(source)
+      for (const match of matches) {
+        const { collection, source, cwd } = match
+        const path = absolutePath.substring(cwd.length)
+        logger.info(`File \`${path}\` removed from \`${collection.name}\` collection`)
+        const { fixed } = parseSourceBase(source)
 
-      const filePath = path.substring(fixed.length)
-      const keyInCollection = join(collection.name, source?.prefix || '', filePath)
+        const filePath = path.substring(fixed.length)
+        const keyInCollection = join(collection.name, source?.prefix || '', filePath)
 
-      await db.deleteDevelopmentCache(keyInCollection)
+        await db.deleteDevelopmentCache(keyInCollection)
 
-      await broadcast(collection, keyInCollection)
+        await broadcast(collection, keyInCollection)
+      }
     }
   }
 
-  async function broadcast(collection: ResolvedCollection, key: string, insertQuery?: string[]) {
+  async function broadcast(collection: ResolvedCollection, key: string, insert?: ReturnType<typeof generateCollectionInsert>) {
     const db = await getDb()
     const removeQuery = `DELETE FROM ${collection.tableName} WHERE id = '${key.replace(/'/g, '\'\'')}';`
     await db.exec(removeQuery)
-    if (insertQuery) {
-      await Promise.all(insertQuery.map(query => db.exec(query)))
+    if (insert) {
+      await Promise.all(insert.queries.map(query => db.exec(query)))
     }
 
     const collectionDump = manifest.dump[collection.name]!
@@ -210,8 +217,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
-    if (insertQuery) {
-      collectionDump.splice(indexToUpdate, itemsToRemove, ...insertQuery)
+    if (insert) {
+      const dumpQueries = insert.queries.map(query => `${query} -- ${insert.hash}`)
+      collectionDump.splice(indexToUpdate, itemsToRemove, ...dumpQueries)
     }
     else {
       collectionDump.splice(indexToUpdate, itemsToRemove)
@@ -228,7 +236,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     contentHooks.callHook('hmr:content:update', {
       key,
       collection: collection.name,
-      queries: insertQuery ? [removeQuery, ...insertQuery] : [removeQuery],
+      queries: insert ? [removeQuery, ...insert.queries] : [removeQuery],
     })
   }
 

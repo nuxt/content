@@ -1,22 +1,24 @@
 {
-  "name": "docus-starter",
+  "name": "content-docs",
+  "type": "module",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.2",
+    "@libsql/client": "^0.17.4",
     "@nuxt/content": "link:..",
-    "@nuxthub/core": "^0.10.7",
+    "@nuxthub/core": "^0.10.8",
     "@nuxtjs/plausible": "^3.0.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "@vueuse/nuxt": "^14.2.1",
-    "better-sqlite3": "^12.8.0",
-    "docus": "^5.8.1",
-    "drizzle-orm": "^0.45.1",
+    "@vueuse/nuxt": "^14.4.0",
+    "better-sqlite3": "^12.11.1",
+    "docus": "^5.12.3",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2",
     "minisearch": "^7.2.0",
-    "nuxt": "^4.4.2",
-    "nuxt-studio": "^1.5.1"
+    "nuxt": "^4.5.2",
+    "nuxt-studio": "^1.7.0"
   }
 }

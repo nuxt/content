@@ -180,4 +180,28 @@ describe('collectionQueryBuilder', () => {
       'SELECT * FROM _articles WHERE ("path" = \'/blog/my-article\') ORDER BY stem ASC',
     )
   })
+
+  it('ignores trailing slash in path', async () => {
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
+    await query
+      .path('/foo/bar/')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("path" = \'/foo/bar\') ORDER BY stem ASC',
+    )
+  })
+
+  it('keeps root path', async () => {
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
+    await query
+      .path('/')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("path" = \'/\') ORDER BY stem ASC',
+    )
+  })
 })

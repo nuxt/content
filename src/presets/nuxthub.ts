@@ -1,12 +1,36 @@
-import { mkdir, writeFile } from 'node:fs/promises'
-import { resolve } from 'pathe'
+import { tmpdir } from 'node:os'
+import { mkdir, writeFile, mkdtemp } from 'node:fs/promises'
+import { resolve, join } from 'pathe'
 import { provider } from 'std-env'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
 import type { Nuxt } from 'nuxt/schema'
-import type { LibSQLDatabaseConfig, PGliteDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
+import type { D1DatabaseConfig, LibSQLDatabaseConfig, PGliteDatabaseConfig, PostgreSQLDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
 import cloudflarePreset from './cloudflare'
 import nodePreset from './node'
+
+type ContentDatabaseConfig = D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+
+// Map the resolved NuxtHub database config (`runtimeConfig.hub.db`) to a Nuxt Content database config
+export function hubDatabaseToContentDatabase(hubDb: { driver: string, connection?: { url?: string, [key: string]: unknown } }): ContentDatabaseConfig | undefined {
+  if (hubDb.driver === 'd1') {
+    return { type: 'd1', bindingName: 'DB' }
+  }
+  if (['node-postgres', 'postgres-js', 'neon-http', 'postgres', 'postgresql'].includes(hubDb.driver)) {
+    return typeof hubDb.connection?.url === 'string' && hubDb.connection.url ? { type: 'postgresql', url: hubDb.connection.url } : undefined
+  }
+  if (['sqlite', 'better-sqlite3'].includes(hubDb.driver)) {
+    if (typeof hubDb.connection?.filename === 'string' && hubDb.connection.filename) {
+      return { type: 'sqlite', filename: hubDb.connection.filename }
+    }
+    const filename = typeof hubDb.connection?.url === 'string' ? hubDb.connection.url.replace(/^file:/, '') : ''
+    return filename ? { type: 'sqlite', filename } : undefined
+  }
+  if (['libsql', 'pglite'].includes(hubDb.driver)) {
+    return { type: hubDb.driver, ...hubDb.connection } as unknown as ContentDatabaseConfig
+  }
+  return undefined
+}
 
 export default definePreset({
   name: 'nuxthub',
@@ -20,15 +44,14 @@ export default definePreset({
       if (nuxtOptions.hub?.database === true) {
         options.database ||= { type: 'd1', bindingName: 'DB' }
       }
-      else if (typeof nuxtOptions.hub?.db === 'string' && typeof hubDb === 'object') {
-        if (hubDb.driver === 'd1') {
-          options.database ||= { type: 'd1', bindingName: 'DB' }
-        }
-        else if (hubDb.driver === 'node-postgres') {
-          options.database ||= { type: 'postgresql', url: hubDb.connection.url as string }
+      // NuxtHub >= 0.10, `hub.db` can be a string or an object
+      else if (nuxtOptions.hub?.db && typeof hubDb === 'object' && !options.database) {
+        const database = hubDatabaseToContentDatabase(hubDb)
+        if (database) {
+          options.database = database
         }
         else {
-          options.database ||= { type: hubDb.driver as 'sqlite' | 'postgresql' | 'postgres' | 'libsql' | 'pglite', ...hubDb.connection } as unknown as SqliteDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
+          logger.warn(`Nuxt Content cannot use the NuxtHub \`${hubDb.driver}\` database configuration, using the default database instead.`)
         }
       }
     }
@@ -43,6 +66,13 @@ export default definePreset({
     else {
       await nodePreset.setup?.(options, nuxt, config)
     }
+
+    if (preset.includes('vercel')) {
+      // Change remoteSourceRootDir to a temporary directory
+      // this will prevent conflicts with the Vercel build cache
+      // @ts-expect-error - `_remoteSourceRootDir` is a private property to store the temporary directory
+      options._remoteSourceRootDir = options._remoteSourceRootDir || await mkdtemp(join(tmpdir(), 'nuxt-content'))
+    }
   },
   async setupNitro(nitroConfig, options) {
     const { nuxt } = options as unknown as { nuxt: Nuxt & { options: { hub: { db?: boolean | object, database?: boolean } } } }
@@ -54,21 +84,23 @@ export default definePreset({
         nitroConfig.runtimeConfig!.content!.database = { type: 'd1', bindingName: 'DB' }
       }
     }
-    else if (typeof nuxt.options.hub?.db === 'string' && typeof hubConfig.db === 'object') {
-      const hubDb = hubConfig.db as unknown as { driver: string, connection: object }
-      if (hubDb.driver === 'd1') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'd1', bindingName: 'DB' }
-      }
-      else if (hubDb.driver === 'node-postgres') {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: 'postgresql', ...hubDb.connection }
-      }
-      else {
-        nitroConfig.runtimeConfig!.content!.database ||= { type: hubDb.driver, ...hubDb.connection }
+    else if (nuxt.options.hub?.db && typeof hubConfig.db === 'object') {
+      const database = hubDatabaseToContentDatabase(hubConfig.db as unknown as { driver: string, connection?: { url?: string } })
+      if (database) {
+        nitroConfig.runtimeConfig!.content!.database ||= database
       }
     }
 
+    const database = nitroConfig.runtimeConfig?.content?.database
+    // Only a remote database migrated during build is the database the runtime will use,
+    // a local file database is discarded with the build machine
+    const isRemoteDatabase = database?.type === 'd1'
+      || database?.type === 'postgresql'
+      || database?.type === 'postgres'
+      || (database?.type === 'libsql' && !!database.url && !database.url.startsWith('file:'))
+
     // apply migrations during build if enabled
-    if (!nuxt.options.dev && hubConfig.db?.applyMigrationsDuringBuild) {
+    if (!nuxt.options.dev && hubConfig.db?.applyMigrationsDuringBuild && isRemoteDatabase) {
       // Write SQL dump to database queries when not in dev mode
       await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries'), { recursive: true })
       let i = 1
@@ -98,10 +130,11 @@ export default definePreset({
       nitroConfig.runtimeConfig!.content.integrityCheck = false
     }
     // Handle local database (cannot be populated during build)
-    const database = nitroConfig.runtimeConfig?.content?.database
-    if (!nuxt.options.dev && database?.type === 'libsql' && database?.url?.startsWith('file:') && !database?.url?.startsWith('file:/tmp/')) {
-      logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
-      database.url = 'file:/tmp/sqlite.db'
+    if (!nuxt.options.dev && database?.type === 'libsql' && database.url?.startsWith('file:')) {
+      if (!database.url.startsWith('file:/tmp/')) {
+        logger.warn('Deploying local libsql database with Nuxthub is possible only in `/tmp` directory. Using `/tmp/sqlite.db` instead.')
+        database.url = 'file:/tmp/sqlite.db'
+      }
       // Enable integrity check in production as local database cannot be re-used after build
       nitroConfig.runtimeConfig!.content ||= {}
       nitroConfig.runtimeConfig!.content.integrityCheck = true

@@ -1,7 +1,6 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
-    '@nuxthub/core',
     '@nuxt/content',
     'nuxt-llms',
   ],
@@ -38,11 +37,6 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2025-10-15',
-  hub: {
-    db: 'sqlite',
-    // Or use PGlite with NuxtHub:
-    // db: 'postgresql',
-  },
   llms: {
     domain: 'http://localhost:3000',
     title: 'Content Playground',

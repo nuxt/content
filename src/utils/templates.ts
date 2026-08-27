@@ -1,5 +1,6 @@
+import { readFile } from 'node:fs/promises'
 import { gzip } from 'node:zlib'
-import type { NuxtTemplate } from '@nuxt/schema'
+import type { Nuxt, NuxtTemplate } from '@nuxt/schema'
 import { isAbsolute, join, relative } from 'pathe'
 import { compile as jsonSchemaToTypescript } from 'json-schema-to-typescript-lite'
 import type { JSONSchema } from 'json-schema-to-typescript-lite'
@@ -17,6 +18,20 @@ const compress = (text: string): Promise<string> => {
     }
     return resolve(buff?.toString('base64'))
   }))
+}
+
+/**
+ * Read what the last build wrote for this template.
+ *
+ * `nuxt prepare` and `nuxt typecheck` build with `_prepare: true`, and in that
+ * mode collections are not indexed: the manifest carries no dump and no
+ * checksums. Writing the templates from it would tell the app that there is no
+ * content at all. A dev server that shares the same build dir picks the files
+ * up, fails the integrity check and drops its collection tables, so its content
+ * is gone until it is restarted. Keeping the previous file avoids that.
+ */
+async function contentsOfPreviousBuild(nuxt: Nuxt, filename: string) {
+  return await readFile(join(nuxt.options.buildDir, filename), 'utf8').catch(() => undefined)
 }
 
 function indentLines(str: string, indent: number = 2) {
@@ -73,7 +88,14 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
 
 export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.fullCompressedDump,
-  getContents: async ({ options }: { options: { manifest: Manifest } }) => {
+  getContents: async ({ nuxt, options }: { nuxt: Nuxt, options: { manifest: Manifest } }) => {
+    if (nuxt.options._prepare) {
+      const previous = await contentsOfPreviousBuild(nuxt, moduleTemplates.fullCompressedDump)
+      if (previous !== undefined) {
+        return previous
+      }
+    }
+
     const result = [] as string[]
     for (const [key, dump] of Object.entries(options.manifest.dump)) {
       // Ignore provate collections
@@ -94,7 +116,14 @@ export const fullDatabaseCompressedDumpTemplate = (manifest: Manifest) => ({
 
 export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.fullRawDump,
-  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+  getContents: async ({ nuxt, options }: { nuxt: Nuxt, options: { manifest: Manifest } }) => {
+    if (nuxt.options._prepare) {
+      const previous = await contentsOfPreviousBuild(nuxt, moduleTemplates.fullRawDump)
+      if (previous !== undefined) {
+        return previous
+      }
+    }
+
     return Object.entries(options.manifest.dump).map(([_key, value]) => {
       return value.join('\n')
     }).join('\n')
@@ -107,7 +136,14 @@ export const fullDatabaseRawDumpTemplate = (manifest: Manifest) => ({
 
 export const collectionDumpTemplate = (collection: string, manifest: Manifest) => ({
   filename: `content/raw/dump.${collection}.sql`,
-  getContents: async ({ options }: { options: { manifest: Manifest } }) => {
+  getContents: async ({ nuxt, options }: { nuxt: Nuxt, options: { manifest: Manifest } }) => {
+    if (nuxt.options._prepare) {
+      const previous = await contentsOfPreviousBuild(nuxt, `content/raw/dump.${collection}.sql`)
+      if (previous !== undefined) {
+        return previous
+      }
+    }
+
     return compress(JSON.stringify((options.manifest.dump[collection] || [])))
   },
   write: true,
@@ -120,7 +156,14 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
   return {
     filename: moduleTemplates.components,
     write: true,
-    getContents: ({ app, nuxt, options }) => {
+    getContents: async ({ app, nuxt, options }) => {
+      if (nuxt.options._prepare) {
+        const previous = await contentsOfPreviousBuild(nuxt, moduleTemplates.components)
+        if (previous !== undefined) {
+          return previous
+        }
+      }
+
       const componentsMap = app.components
         .filter((c) => {
           // Ignore island components
@@ -174,7 +217,14 @@ export const componentsManifestTemplate = (manifest: Manifest) => {
 
 export const manifestTemplate = (manifest: Manifest) => ({
   filename: moduleTemplates.manifest,
-  getContents: ({ options }: { options: { manifest: Manifest } }) => {
+  getContents: async ({ nuxt, options }: { nuxt: Nuxt, options: { manifest: Manifest } }) => {
+    if (nuxt.options._prepare) {
+      const previous = await contentsOfPreviousBuild(nuxt, moduleTemplates.manifest)
+      if (previous !== undefined) {
+        return previous
+      }
+    }
+
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
       acc[collection.name] = {
         type: collection.type,
