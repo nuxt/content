@@ -29,4 +29,5 @@ minimumReleaseAgeExclude:
   - miniflare@5.20260825.0-alpha || 5.20260826.0-alpha
   - wrangler@4.126.0 || 4.127.0
   - '@types/node@26.4.0'
-  - happy-dom@20.11.9
+  - happy-dom@20.11.9 || 20.11.10
+  - '@cloudflare/workers-types@5.20260827.1'
