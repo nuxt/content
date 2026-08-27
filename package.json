@@ -151,14 +151,14 @@
     "@types/hast": "^3.0.5",
     "@types/mdast": "^4.0.4",
     "@types/micromatch": "^4.0.10",
-    "@types/node": "^26.3.0",
+    "@types/node": "^26.4.0",
     "@types/pg": "^8.23.1",
     "@types/ws": "^8.18.1",
     "@valibot/to-json-schema": "^1.7.1",
     "@vue/test-utils": "^2.4.11",
     "csvtojson": "^2.0.14",
     "eslint": "^10.9.1",
-    "happy-dom": "^20.11.6",
+    "happy-dom": "^20.11.9",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.2",
     "nuxt": "^4.5.2",
@@ -172,7 +172,7 @@
     "vitest": "^4.1.11",
     "vue-component-meta": "^3.3.11",
     "vue-tsc": "^3.3.11",
-    "wrangler": "^4.126.0"
+    "wrangler": "^4.127.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
