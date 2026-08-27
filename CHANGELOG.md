@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.16.0](https://github.com/nuxt/content/compare/v3.15.2...v3.16.0) (2026-08-27)
+
+### Bug Fixes
+
+* avoid install prompt in non-interactive environments ([#3833](https://github.com/nuxt/content/issues/3833)) ([2d0e84b](https://github.com/nuxt/content/commit/2d0e84baf9ebfcce1818c6ee85ea41b734c556f9))
+* **ContentRenderer:** keep async component identity stable across re-resolves ([#3835](https://github.com/nuxt/content/issues/3835)) ([dcf86e6](https://github.com/nuxt/content/commit/dcf86e662bbbbcda333b0025774503670477bd9a))
+* improve generated git cache key ([#3839](https://github.com/nuxt/content/issues/3839)) ([d1e353e](https://github.com/nuxt/content/commit/d1e353ebcde5a00e073c14f9b403373898cf273e))
+* **module:** keep content templates when building with _prepare ([#3837](https://github.com/nuxt/content/issues/3837)) ([e390c3b](https://github.com/nuxt/content/commit/e390c3bb28190596a4999310b0e9f13da68e750c))
+* **nuxthub:** handle object form of `hub.db` ([#3822](https://github.com/nuxt/content/issues/3822)) ([8841abc](https://github.com/nuxt/content/commit/8841abc1c2e6f326560d54d25e439777f9f03464))
+* **query:** tolerate trailing slashes in path-based lookups ([#3838](https://github.com/nuxt/content/issues/3838)) ([220d392](https://github.com/nuxt/content/commit/220d39279ef72dffe9a12f0e73949710b646be3a))
+* **runtime:** use dynamic import for `#content/adapter` to prevent prerender failure ([#3830](https://github.com/nuxt/content/issues/3830)) ([400390a](https://github.com/nuxt/content/commit/400390a22ab347ab9f168f9174ff7381cd9f2d3a))
+* use UTC getters in formatDate/formatDateTime to prevent timezone drift ([#3782](https://github.com/nuxt/content/issues/3782)) ([9f1f89a](https://github.com/nuxt/content/commit/9f1f89a8ecac369601ed814ed23f15cb8da4805d))
+
 ## [3.15.2](https://github.com/nuxt/content/compare/v3.15.1...v3.15.2) (2026-07-23)
 
 ### Bug Fixes
