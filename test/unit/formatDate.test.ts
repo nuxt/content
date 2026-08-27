@@ -2,27 +2,55 @@ import { describe, expect, it } from 'vitest'
 import { formatDate, formatDateTime } from '../../src/runtime/internal/preview/utils'
 
 describe('formatDate', () => {
-  it('formats a date string as YYYY-MM-DD', () => {
-    // formatDate uses local time (getFullYear/getMonth/getDate), so we
-    // construct expected values the same way to stay timezone-agnostic.
-    const input = '2022-06-15T12:00:00.000Z'
-    const d = new Date(input)
-    const expected = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-    expect(formatDate(input)).toBe(expected)
+  it('formats an ISO date string as YYYY-MM-DD using UTC', () => {
+    expect(formatDate('2022-06-15T12:00:00.000Z')).toBe('2022-06-15')
+  })
+
+  it('returns canonical date strings unchanged', () => {
+    expect(formatDate('2022-06-15')).toBe('2022-06-15')
+    expect(formatDate('2024-01-01')).toBe('2024-01-01')
   })
 
   it('pads single-digit month and day', () => {
-    const input = '2022-01-05T12:00:00.000Z'
-    const result = formatDate(input)
-    // Format is always YYYY-MM-DD with zero-padded segments
-    expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/)
-    expect(result).toContain('-05')
+    expect(formatDate('2022-01-05T00:00:00.000Z')).toBe('2022-01-05')
   })
 
-  it('handles end-of-year dates', () => {
-    const input = '2022-12-31T12:00:00.000Z'
-    const result = formatDate(input)
-    expect(result).toMatch(/^\d{4}-12-31$/)
+  it('handles end-of-year dates consistently in UTC', () => {
+    // Still Dec 31 in UTC even when local TZ has crossed into Jan 1
+    expect(formatDate('2022-12-31T23:00:00.000Z')).toBe('2022-12-31')
+  })
+
+  it('handles dates near midnight boundary in UTC', () => {
+    expect(formatDate('2023-01-01T00:30:00.000Z')).toBe('2023-01-01')
+  })
+
+  it('treats date-only strings as UTC calendar dates', () => {
+    expect(formatDate('2023-01-01')).toBe('2023-01-01')
+    expect(formatDate('2024-12-31')).toBe('2024-12-31')
+  })
+
+  it('treats offset-less ISO datetimes as UTC', () => {
+    // ES would parse these as local time; we force UTC
+    expect(formatDate('2023-01-01T00:00:00')).toBe('2023-01-01')
+    expect(formatDate('2022-12-31T23:30:00')).toBe('2022-12-31')
+    // HH:mm form (no seconds)
+    expect(formatDate('2023-01-01T00:00')).toBe('2023-01-01')
+    expect(formatDate('2022-12-31T23:30')).toBe('2022-12-31')
+  })
+
+  it('parses space-separated datetime as UTC', () => {
+    expect(formatDate('2022-06-15 14:30:00')).toBe('2022-06-15')
+  })
+
+  it('respects explicit non-UTC offsets', () => {
+    // 2023-01-01 00:30 in UTC+5:30 → 2022-12-31 19:00 UTC
+    expect(formatDate('2023-01-01T00:30:00+05:30')).toBe('2022-12-31')
+  })
+
+  it('handles Date object input via UTC components', () => {
+    expect(formatDate(new Date('2022-06-15T14:30:00.000Z'))).toBe('2022-06-15')
+    // Near midnight UTC boundary
+    expect(formatDate(new Date('2022-12-31T23:00:00.000Z'))).toBe('2022-12-31')
   })
 
   it('throws on invalid date', () => {
@@ -30,10 +58,27 @@ describe('formatDate', () => {
     expect(() => formatDate('not-a-date')).toThrow('Invalid date value')
   })
 
+  it('throws on impossible structured dates instead of normalizing them', () => {
+    // Date would roll Feb 31 → Mar 2/3; we reject
+    expect(() => formatDate('2024-02-31')).toThrow(TypeError)
+    expect(() => formatDate('2024-02-31T12:00:00')).toThrow(TypeError)
+    expect(() => formatDate('2024-02-31T12:00:00Z')).toThrow(TypeError)
+    expect(() => formatDate('2024-13-01')).toThrow(TypeError)
+    expect(() => formatDate('2024-04-31')).toThrow(TypeError)
+  })
+
   it('produces same output as the build-time copy', async () => {
-    // Guard against the two copies drifting apart.
     const buildTime = await import('../../src/utils/content/transformers/utils')
-    const inputs = ['2022-06-15T12:00:00.000Z', '2023-01-01T00:00:00.000Z', '2024-12-31T23:59:59.000Z']
+    const inputs = [
+      '2022-06-15T12:00:00.000Z',
+      '2023-01-01T00:00:00.000Z',
+      '2024-12-31T23:59:59.000Z',
+      '2023-01-01',
+      '2023-01-01T00:00:00',
+      '2023-01-01T00:00',
+      '2022-06-15 14:30:00',
+      '2023-01-01T00:30:00+05:30',
+    ]
     for (const input of inputs) {
       expect(formatDate(input)).toBe(buildTime.formatDate(input))
     }
@@ -41,17 +86,50 @@ describe('formatDate', () => {
 })
 
 describe('formatDateTime', () => {
-  it('formats a datetime string as YYYY-MM-DD HH:mm:ss', () => {
-    const input = '2022-06-15T14:30:45.000Z'
-    const result = formatDateTime(input)
-    expect(result).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)
-    // The date portion must match formatDate
-    expect(result.split(' ')[0]).toBe(formatDate(input))
+  it('formats an ISO datetime string as YYYY-MM-DD HH:mm:ss using UTC', () => {
+    expect(formatDateTime('2022-06-15T14:30:45.000Z')).toBe('2022-06-15 14:30:45')
+  })
+
+  it('handles Date object input', () => {
+    expect(formatDateTime(new Date('2022-06-15T14:30:45.000Z'))).toBe('2022-06-15 14:30:45')
+  })
+
+  it('returns canonical datetime strings unchanged', () => {
+    expect(formatDateTime('2022-06-15 14:30:45')).toBe('2022-06-15 14:30:45')
   })
 
   it('pads single-digit hours, minutes, and seconds', () => {
-    const result = formatDateTime('2022-01-01T01:02:03.000Z')
-    expect(result).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)
+    expect(formatDateTime('2022-01-01T01:02:03.000Z')).toBe('2022-01-01 01:02:03')
+  })
+
+  it('uses UTC time components regardless of system timezone', () => {
+    expect(formatDateTime('2022-06-15T00:00:00.000Z')).toBe('2022-06-15 00:00:00')
+    expect(formatDateTime('2022-12-31T23:59:59.000Z')).toBe('2022-12-31 23:59:59')
+  })
+
+  it('treats offset-less ISO datetimes as UTC', () => {
+    expect(formatDateTime('2022-06-15T14:30:45')).toBe('2022-06-15 14:30:45')
+    expect(formatDateTime('2022-12-31T23:00:00')).toBe('2022-12-31 23:00:00')
+    // HH:mm form (no seconds)
+    expect(formatDateTime('2022-06-15T14:30')).toBe('2022-06-15 14:30:00')
+    expect(formatDateTime('2022-12-31T23:00')).toBe('2022-12-31 23:00:00')
+  })
+
+  it('parses space-separated datetime as UTC', () => {
+    expect(formatDateTime('2022-06-15 14:30:45')).toBe('2022-06-15 14:30:45')
+  })
+
+  it('respects explicit non-UTC offsets', () => {
+    expect(formatDateTime('2022-06-15T14:30:45+02:00')).toBe('2022-06-15 12:30:45')
+  })
+
+  it('handles Date object input', () => {
+    expect(formatDateTime(new Date('2022-06-15T14:30:45.000Z'))).toBe('2022-06-15 14:30:45')
+  })
+
+  it('the date portion matches formatDate output', () => {
+    const input = '2022-06-15T14:30:45.000Z'
+    expect(formatDateTime(input).split(' ')[0]).toBe(formatDate(input))
   })
 
   it('throws on invalid datetime', () => {
@@ -59,9 +137,24 @@ describe('formatDateTime', () => {
     expect(() => formatDateTime('garbage')).toThrow('Invalid datetime value')
   })
 
+  it('throws on impossible structured datetimes instead of normalizing them', () => {
+    expect(() => formatDateTime('2024-02-31 12:00:00')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-02-31T12:00:00')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-02-31T12:00:00Z')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-01-01T25:00:00')).toThrow(TypeError)
+  })
+
   it('produces same output as the build-time copy', async () => {
     const buildTime = await import('../../src/utils/content/transformers/utils')
-    const inputs = ['2022-06-15T14:30:45.000Z', '2023-01-01T00:00:00.000Z']
+    const inputs = [
+      '2022-06-15T14:30:45.000Z',
+      '2023-01-01T00:00:00.000Z',
+      '2022-06-15T14:30:45',
+      '2022-06-15T14:30',
+      '2022-06-15 14:30:45',
+      '2022-06-15 14:30',
+      '2022-06-15T14:30:45+02:00',
+    ]
     for (const input of inputs) {
       expect(formatDateTime(input)).toBe(buildTime.formatDateTime(input))
     }
