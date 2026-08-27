@@ -30,9 +30,12 @@ describe('formatDate', () => {
   })
 
   it('treats offset-less ISO datetimes as UTC', () => {
-    // ES would parse this as local time; we force UTC
+    // ES would parse these as local time; we force UTC
     expect(formatDate('2023-01-01T00:00:00')).toBe('2023-01-01')
     expect(formatDate('2022-12-31T23:30:00')).toBe('2022-12-31')
+    // HH:mm form (no seconds)
+    expect(formatDate('2023-01-01T00:00')).toBe('2023-01-01')
+    expect(formatDate('2022-12-31T23:30')).toBe('2022-12-31')
   })
 
   it('parses space-separated datetime as UTC', () => {
@@ -55,6 +58,15 @@ describe('formatDate', () => {
     expect(() => formatDate('not-a-date')).toThrow('Invalid date value')
   })
 
+  it('throws on impossible structured dates instead of normalizing them', () => {
+    // Date would roll Feb 31 → Mar 2/3; we reject
+    expect(() => formatDate('2024-02-31')).toThrow(TypeError)
+    expect(() => formatDate('2024-02-31T12:00:00')).toThrow(TypeError)
+    expect(() => formatDate('2024-02-31T12:00:00Z')).toThrow(TypeError)
+    expect(() => formatDate('2024-13-01')).toThrow(TypeError)
+    expect(() => formatDate('2024-04-31')).toThrow(TypeError)
+  })
+
   it('produces same output as the build-time copy', async () => {
     const buildTime = await import('../../src/utils/content/transformers/utils')
     const inputs = [
@@ -63,6 +75,7 @@ describe('formatDate', () => {
       '2024-12-31T23:59:59.000Z',
       '2023-01-01',
       '2023-01-01T00:00:00',
+      '2023-01-01T00:00',
       '2022-06-15 14:30:00',
       '2023-01-01T00:30:00+05:30',
     ]
@@ -97,6 +110,9 @@ describe('formatDateTime', () => {
   it('treats offset-less ISO datetimes as UTC', () => {
     expect(formatDateTime('2022-06-15T14:30:45')).toBe('2022-06-15 14:30:45')
     expect(formatDateTime('2022-12-31T23:00:00')).toBe('2022-12-31 23:00:00')
+    // HH:mm form (no seconds)
+    expect(formatDateTime('2022-06-15T14:30')).toBe('2022-06-15 14:30:00')
+    expect(formatDateTime('2022-12-31T23:00')).toBe('2022-12-31 23:00:00')
   })
 
   it('parses space-separated datetime as UTC', () => {
@@ -121,13 +137,22 @@ describe('formatDateTime', () => {
     expect(() => formatDateTime('garbage')).toThrow('Invalid datetime value')
   })
 
+  it('throws on impossible structured datetimes instead of normalizing them', () => {
+    expect(() => formatDateTime('2024-02-31 12:00:00')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-02-31T12:00:00')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-02-31T12:00:00Z')).toThrow(TypeError)
+    expect(() => formatDateTime('2024-01-01T25:00:00')).toThrow(TypeError)
+  })
+
   it('produces same output as the build-time copy', async () => {
     const buildTime = await import('../../src/utils/content/transformers/utils')
     const inputs = [
       '2022-06-15T14:30:45.000Z',
       '2023-01-01T00:00:00.000Z',
       '2022-06-15T14:30:45',
+      '2022-06-15T14:30',
       '2022-06-15 14:30:45',
+      '2022-06-15 14:30',
       '2022-06-15T14:30:45+02:00',
     ]
     for (const input of inputs) {

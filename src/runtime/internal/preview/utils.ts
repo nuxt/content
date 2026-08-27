@@ -86,12 +86,7 @@ export const formatDate = (date: string | Date): string => {
   if (Number.isNaN(d.getTime())) {
     throw new TypeError(`Invalid date value: "${date}"`)
   }
-
-  const year = d.getUTCFullYear()
-  const month = d.getUTCMonth() + 1
-  const day = d.getUTCDate()
-
-  return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+  return d.toISOString().slice(0, 10)
 }
 
 /**
@@ -107,24 +102,15 @@ export const formatDateTime = (datetime: string | Date): string => {
   if (Number.isNaN(d.getTime())) {
     throw new TypeError(`Invalid datetime value: "${datetime}"`)
   }
-
-  const year = d.getUTCFullYear()
-  const month = d.getUTCMonth() + 1
-  const day = d.getUTCDate()
-  const hours = d.getUTCHours()
-  const minutes = d.getUTCMinutes()
-  const seconds = d.getUTCSeconds()
-
-  return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  return d.toISOString().slice(0, 19).replace('T', ' ')
 }
 
+/** Match structured date/datetime inputs we can validate as civil UTC components. */
+const STRUCTURED = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/i
+
 /**
- * Parse a date/datetime value as UTC.
- *
- * - Date objects are used as-is
- * - Space-separated datetimes (`YYYY-MM-DD HH:mm:ss[.sss]`) become ISO + Z
- * - Offset-less ISO datetimes (`YYYY-MM-DDTHH:mm:ss[.sss]`) get a Z suffix
- * - Date-only (`YYYY-MM-DD`) and values that already include Z/offset pass through
+ * Parse as UTC. Offset-less values are treated as UTC.
+ * Impossible civil dates (e.g. `2024-02-31`) are rejected via Date.UTC round-trip.
  */
 function toUtcDate(value: string | Date): Date {
   if (value instanceof Date) {
@@ -132,26 +118,36 @@ function toUtcDate(value: string | Date): Date {
   }
 
   const input = String(value).trim()
-
-  // Already has an explicit offset or Z — Date parses correctly as absolute time
-  if (/(?:z|[+-]\d{2}:?\d{2})$/i.test(input)) {
+  const match = STRUCTURED.exec(input)
+  if (!match) {
     return new Date(input)
   }
 
-  // Space-separated SQL-style datetime → ISO + Z
-  const spaceSeparated = input.replace(
-    /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?$/,
-    '$1T$2$3Z',
-  )
-  if (spaceSeparated !== input) {
-    return new Date(spaceSeparated)
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const hour = Number(match[4] || 0)
+  const minute = Number(match[5] || 0)
+  const second = Number(match[6] || 0)
+  const offset = match[7]
+
+  // Round-trip through Date.UTC so Feb 31 / hour 25 stay invalid
+  const utc = new Date(Date.UTC(year, month - 1, day, hour, minute, second))
+  if (
+    utc.getUTCFullYear() !== year
+    || utc.getUTCMonth() + 1 !== month
+    || utc.getUTCDate() !== day
+    || utc.getUTCHours() !== hour
+    || utc.getUTCMinutes() !== minute
+    || utc.getUTCSeconds() !== second
+  ) {
+    return new Date(Number.NaN)
   }
 
-  // Offset-less ISO datetime (`2023-01-01T00:00:00`) → treat as UTC
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(input)) {
-    return new Date(`${input}Z`)
+  // Explicit offset → absolute instant (civil parts already validated)
+  if (offset && offset.toUpperCase() !== 'Z') {
+    return new Date(input.includes('T') ? input : input.replace(' ', 'T'))
   }
 
-  // Date-only and everything else — Date-only is already UTC midnight per ES
-  return new Date(input)
+  return utc
 }
