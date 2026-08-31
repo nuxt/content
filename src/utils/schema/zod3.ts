@@ -1,7 +1,7 @@
 import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
-import { z as zod } from 'zod'
+import type { ZodSchema } from 'zod'
 import { createDefu } from 'defu'
-import type { Draft07, EditorOptions } from '../../types'
+import type { Draft07 } from '../../types'
 
 const defu = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
@@ -10,26 +10,8 @@ const defu = createDefu((obj, key, value) => {
   }
 })
 
-declare module 'zod' {
-  interface ZodTypeDef {
-    editor?: EditorOptions
-  }
-
-  interface ZodType {
-    editor(options: EditorOptions): this
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(zod.ZodType as any).prototype.editor = function (options: EditorOptions) {
-  this._def.editor = { ...this._def.editor, ...options }
-  return this
-}
-
-export const z = zod
-
 export function toJSONSchema(_schema: unknown, name: string): Draft07 {
-  const schema = _schema as zod.ZodSchema
+  const schema = _schema as ZodSchema
   const jsonSchema = zodToJsonSchema(schema, { name, $refStrategy: 'none', dateStrategy: 'format:date' }) as Draft07
   const jsonSchemaWithEditorMeta = zodToJsonSchema(
     schema,
