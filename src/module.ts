@@ -48,6 +48,7 @@ const moduleDefaults: Partial<ModuleOptions> = {
   },
   preview: {},
   watch: { enabled: true },
+  llms: true,
   renderer: {
     alias: {},
     anchorLinks: {
@@ -220,9 +221,13 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    if (hasNuxtModule('nuxt-llms')) {
-      installModule(resolver.resolve('./features/llms'))
-    }
+    // Installed at `modules:done` so a module listed after this one can set `content.llms = false`
+    nuxt.hook('modules:done', async () => {
+      const llms = (nuxt.options as unknown as { content?: ModuleOptions }).content?.llms ?? options.llms
+      if (llms !== false && hasNuxtModule('nuxt-llms')) {
+        await installModule(resolver.resolve('./features/llms'))
+      }
+    })
 
     await configureMDCModule(options, nuxt)
 
