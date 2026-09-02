@@ -92,6 +92,7 @@ async function loadCollectionDatabase<T>(collection: T) {
   const checksumId = `checksum_${collection}`
   const dumpId = `collection_${collection}`
   let checksumState = 'matched'
+
   try {
     const dbChecksum = db.exec({ sql: `SELECT * FROM ${tables.info} where id = '${checksumId}'`, rowMode: 'object', returnValue: 'resultRows' })
       .shift()
@@ -125,7 +126,19 @@ async function loadCollectionDatabase<T>(collection: T) {
       }
     }
 
-    const dump = await decompressSQLDump(compressedDump!)
+    let dump
+    try {
+      dump = await decompressSQLDump(compressedDump!)
+    }
+    catch (error) {
+      console.error('Error decompress SQLDump', error)
+      // reset the local cache
+      if (!import.meta.dev) {
+        window.localStorage.removeItem(`content_${checksumId}`)
+        window.localStorage.removeItem(`content_${dumpId}`)
+      }
+      throw error
+    }
 
     await db.exec({ sql: `DROP TABLE IF EXISTS ${tables[String(collection)]}` })
     if (checksumState === 'mismatch') {
