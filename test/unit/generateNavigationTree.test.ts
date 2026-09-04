@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { generateNavigationTree } from '../../src/runtime/internal/navigation'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '@nuxt/content'
 
@@ -45,6 +45,26 @@ describe('generateNavigationTree', () => {
         stem: 'index',
       },
     ])
+  })
+
+  it('does not search siblings when appending ordinary root pages', async () => {
+    const items = Array.from({ length: 100 }, (_, i) => ({
+      title: `Page ${i}`,
+      path: `/page-${i}`,
+      stem: `page-${i}`,
+    })) as PageCollectionItemBase[]
+    const find = vi.spyOn(Array.prototype, 'find')
+
+    try {
+      const tree = await generateNavigationTree(mockQueryBuilder(items))
+      const siblingSearches = find.mock.calls.length
+
+      expect(tree).toEqual(items)
+      expect(siblingSearches).toBe(0)
+    }
+    finally {
+      find.mockRestore()
+    }
   })
 
   it('should generate a basic navigation tree with order', async () => {

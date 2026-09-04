@@ -95,7 +95,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
       // First-level item, push it straight to nav
       if (parts.length === 1) {
         // Check for duplicate link
-        const existed = nav.find(item => item.path === navItem.path && item.page === false)
+        const existed = isIndex && nav.find(item => item.path === navItem.path && item.page === false)
         if (isIndex && existed) {
           Object.assign(existed, {
             page: undefined,
