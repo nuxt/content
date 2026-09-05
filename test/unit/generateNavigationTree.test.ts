@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { generateNavigationTree } from '../../src/runtime/internal/navigation'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '@nuxt/content'
 
@@ -16,6 +16,83 @@ describe('generateNavigationTree', () => {
     select: () => mockQueryBuilder(items),
     all: async () => items,
   } as unknown as CollectionQueryBuilder<PageCollectionItemBase>)
+
+  const queryInOrder = (items: Partial<PageCollectionItemBase>[]) => ({
+    __params: { orderBy: ['caller order'] },
+    orWhere() { return this },
+    select() { return this },
+    all: async () => items,
+  } as unknown as CollectionQueryBuilder<PageCollectionItemBase>)
+
+  it.each([false, true])('skips leaf sibling searches with an explicit index: %s', async (withIndex) => {
+    const pages = Array.from({ length: 100 }, (_, i) => ({
+      title: `Page ${i}`,
+      path: `/guide/page-${100 - i}`,
+      stem: `guide/page-${100 - i}`,
+    }))
+    const items = withIndex ? [{ title: 'Guide', path: '/guide', stem: 'guide/index' }, ...pages] : pages
+    const find = vi.spyOn(Array.prototype, 'find')
+    try {
+      const tree = await generateNavigationTree(queryInOrder(items))
+      const searches = find.mock.calls.length
+      expect(searches).toBe(pages.length + Number(withIndex))
+      expect(tree[0]?.children?.map(item => item.path)).toEqual(items.map(item => item.path))
+    }
+    finally {
+      find.mockRestore()
+    }
+  })
+
+  it.each([false, true])('merges a placeholder appended after a leaf, from metadata: %s', async (fromMetadata) => {
+    const tree = await generateNavigationTree(queryInOrder([
+      { title: 'First', path: '/guide/first', stem: 'guide/first' },
+      fromMetadata
+        ? { title: 'Placeholder', path: '/guide/topic', stem: 'guide/topic', navigation: { page: false } }
+        : { title: 'Child', path: '/guide/topic/child', stem: 'guide/topic/child' },
+      { title: 'Topic', path: '/guide/topic', stem: 'guide/topic' },
+    ]))
+
+    expect(tree[0]?.children?.map(item => item.path)).toEqual(['/guide/first', '/guide/topic'])
+    expect(tree[0]?.children?.[1]).toMatchObject({ title: 'Topic', page: undefined })
+    expect(tree[0]?.children?.[1]?.children?.map(item => item.path)).toEqual(fromMetadata ? undefined : ['/guide/topic/child'])
+  })
+
+  it.each([false, true])('merges supplied duplicate placeholders in order, from directory config: %s', async (fromConfig) => {
+    const children = ['First', 'Second'].map(title => ({
+      title,
+      path: '/guide/topic',
+      page: false,
+      children: [{ title, path: `/guide/topic/${title.toLowerCase()}` }],
+    }))
+    const roots = fromConfig
+      ? [
+          { title: 'Config', path: '/guide/.navigation', stem: 'guide/.navigation', meta: { children } },
+          { title: 'Guide', path: '/guide', stem: 'guide/index' },
+        ]
+      : [{ title: 'Guide', path: '/guide', stem: 'guide', navigation: { children } }]
+    const tree = await generateNavigationTree(queryInOrder([
+      ...roots,
+      { title: 'Replacement 1', path: '/guide/topic', stem: 'guide/topic' },
+      { title: 'Replacement 2', path: '/guide/topic', stem: 'guide/topic' },
+    ]))
+
+    expect(tree[0]?.children?.map(item => item.title)).toEqual(['Replacement 1', 'Replacement 2'])
+    expect(tree[0]?.children?.map(item => item.page)).toEqual([undefined, undefined])
+    expect(tree[0]?.children?.map(item => item.children?.[0]?.path)).toEqual(['/guide/topic/first', '/guide/topic/second'])
+  })
+
+  it.each([false, true])('preserves index merging and later siblings, child first: %s', async (childFirst) => {
+    const index = { title: 'Topic', path: '/guide/topic', stem: 'guide/topic/index' }
+    const child = { title: 'First', path: '/guide/topic/first', stem: 'guide/topic/first' }
+    const tree = await generateNavigationTree(queryInOrder([
+      ...(childFirst ? [child, index] : [index, child]),
+      { title: 'Second', path: '/guide/topic/second', stem: 'guide/topic/second' },
+    ]))
+
+    expect(tree[0]?.children?.[0]?.children?.map(item => item.path)).toEqual([
+      '/guide/topic', '/guide/topic/first', '/guide/topic/second',
+    ])
+  })
 
   it('should generate a basic navigation tree', async () => {
     const items = [
@@ -45,6 +122,26 @@ describe('generateNavigationTree', () => {
         stem: 'index',
       },
     ])
+  })
+
+  it('does not search siblings when appending ordinary root pages', async () => {
+    const items = Array.from({ length: 100 }, (_, i) => ({
+      title: `Page ${i}`,
+      path: `/page-${i}`,
+      stem: `page-${i}`,
+    })) as PageCollectionItemBase[]
+    const find = vi.spyOn(Array.prototype, 'find')
+
+    try {
+      const tree = await generateNavigationTree(mockQueryBuilder(items))
+      const siblingSearches = find.mock.calls.length
+
+      expect(tree).toEqual(items)
+      expect(siblingSearches).toBe(0)
+    }
+    finally {
+      find.mockRestore()
+    }
   })
 
   it('should generate a basic navigation tree with order', async () => {
