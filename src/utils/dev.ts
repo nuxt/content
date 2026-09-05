@@ -164,7 +164,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
             collectionType: collection.type,
           }).then(result => JSON.stringify(result))
 
-          db.insertDevelopmentCache(keyInCollection, checksum, parsedContent)
+          await db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
         }
 
         const insert = generateCollectionInsert(collection, JSON.parse(parsedContent))

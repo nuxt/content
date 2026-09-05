@@ -127,7 +127,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 
   const insertDevelopmentCache = async (id: string, value: string, checksum: string) => {
-    deleteDevelopmentCache(id)
+    await deleteDevelopmentCache(id)
     const insert = generateCollectionInsert(cacheCollection, { id, value, checksum })
     for (const query of insert.queries) {
       await db.exec(query)
@@ -135,7 +135,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
   }
 
   const deleteDevelopmentCache = async (id: string) => {
-    db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
+    await db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
   }
 
   const dropContentTables = async () => {
