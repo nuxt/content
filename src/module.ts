@@ -379,7 +379,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 collectionType: collection.type,
               })
               if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
+                await db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
               }
             }
 
