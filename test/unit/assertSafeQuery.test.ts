@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { assertSafeQuery } from '../../src/runtime/internal/security'
+import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
 // Mock tables from manifest
@@ -144,5 +144,21 @@ describe('decompressSQLDump', () => {
       .andWhere(group => group.where('id', '=', 3).orWhere(g => g.where('stem', '=', 'ghi')))
       .order('stem', 'DESC').order('id', 'ASC').first()
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
+  })
+
+  it('rejects oversized queries before parsing', () => {
+    const sql = `SELECT * FROM _content_test ORDER BY id DESC${' '.repeat(MAX_SQL_QUERY_LENGTH)}`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/maximum allowed length/)
+  })
+
+  it('rejects ReDoS-shaped payloads in linear time', () => {
+    // Former catastrophic-backtracking shape against SQL_SELECT_REGEX:
+    // repeated " FROM x WHERE  ORDER BY " forces nested quantifiers to explore
+    // an exponential (practically cubic+) search space. Must stay fast now.
+    const sql = `SELECT ${' FROM x WHERE  ORDER BY '.repeat(4000)}!`
+    expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
+    const started = Date.now()
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
+    expect(Date.now() - started).toBeLessThan(500)
   })
 })

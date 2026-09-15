@@ -1,11 +1,132 @@
 const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
-const SQL_SELECT_REGEX = /^SELECT (.*) FROM (\w+)( WHERE .*)? ORDER BY (["\w,\s]+) (ASC|DESC)( LIMIT \d+)?( OFFSET \d+)?$/
 // Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
 // Anything else that looks like a call (name(, "name"(, [name](, `name`() is disallowed.
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
 // Bare identifiers use a word boundary; quoted/bracketed forms match the whole identifier unit.
 const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|["`[][A-Z_]\w*["`\]])\s*\(/i
+
+/**
+ * Hard ceiling on SQL statement length accepted from the client.
+ * Legitimate query-builder output is far smaller; this bounds work done by
+ * validation and by the database before any expensive matching.
+ */
+export const MAX_SQL_QUERY_LENGTH = 100_000
+
+function isWordChar(code: number): boolean {
+  // Same class as JS `\w`: [A-Za-z0-9_]
+  return (code >= 48 && code <= 57)
+    || (code >= 65 && code <= 90)
+    || (code >= 97 && code <= 122)
+    || code === 95
+}
+
+interface ParsedSelectQuery {
+  select: string
+  from: string
+  where: string | undefined
+  orderBy: string
+  order: string
+  limit: string | undefined
+  offset: string | undefined
+}
+
+/**
+ * Linear (O(n)) structural parse of the query-builder SELECT shape.
+ *
+ * Previously this used a single catastrophic backtracking regex
+ * (`^SELECT (.*) FROM … ( WHERE .*)? ORDER BY …`) which an unauthenticated
+ * client could stall for tens of seconds with a few dozen KiB of junk
+ * (ReDoS). Walk the fixed suffixes / separators instead so rejection is
+ * proportional to input length.
+ *
+ * Expected shape (produced by `collectionQueryBuilder`):
+ *   SELECT <cols> FROM <table>[ WHERE <clause>] ORDER BY <cols> (ASC|DESC)[ LIMIT n][ OFFSET n]
+ */
+function parseSelectQuery(sql: string): ParsedSelectQuery | null {
+  // No leading/trailing whitespace — matches the query builder's exact output.
+  if (!sql.startsWith('SELECT ')) {
+    return null
+  }
+
+  let rest = sql
+  let offset: string | undefined
+  let limit: string | undefined
+  let order: string | undefined
+
+  // Peel optional trailing OFFSET / LIMIT (literal suffixes, digits only).
+  {
+    const m = / OFFSET \d+$/.exec(rest)
+    if (m) {
+      offset = m[0]
+      rest = rest.slice(0, -offset.length)
+    }
+  }
+  {
+    const m = / LIMIT \d+$/.exec(rest)
+    if (m) {
+      limit = m[0]
+      rest = rest.slice(0, -limit.length)
+    }
+  }
+
+  if (rest.endsWith(' ASC')) {
+    order = 'ASC'
+    rest = rest.slice(0, -4)
+  }
+  else if (rest.endsWith(' DESC')) {
+    order = 'DESC'
+    rest = rest.slice(0, -5)
+  }
+  else {
+    return null
+  }
+
+  // Last " ORDER BY " separates the order-by column list from the rest.
+  // Using lastIndexOf keeps this correct if a value literal ever contained
+  // the substring (the subsequent per-clause checks still reject that).
+  const orderByMarker = ' ORDER BY '
+  const orderByIdx = rest.lastIndexOf(orderByMarker)
+  if (orderByIdx === -1) {
+    return null
+  }
+  const orderBy = rest.slice(orderByIdx + orderByMarker.length)
+  if (!orderBy.length) {
+    return null
+  }
+  rest = rest.slice(0, orderByIdx)
+
+  // rest is now "SELECT <cols> FROM <table>[ WHERE <clause>]"
+  const afterSelect = rest.slice('SELECT '.length)
+  const fromMarker = ' FROM '
+  const fromIdx = afterSelect.indexOf(fromMarker)
+  if (fromIdx === -1) {
+    return null
+  }
+  const select = afterSelect.slice(0, fromIdx)
+  const afterFrom = afterSelect.slice(fromIdx + fromMarker.length)
+
+  // Table name is a single word token (matches the old (\w+) group).
+  let tableEnd = 0
+  while (tableEnd < afterFrom.length && isWordChar(afterFrom.charCodeAt(tableEnd))) {
+    tableEnd += 1
+  }
+  if (tableEnd === 0) {
+    return null
+  }
+  const from = afterFrom.slice(0, tableEnd)
+  const afterTable = afterFrom.slice(tableEnd)
+
+  let where: string | undefined
+  if (afterTable.length) {
+    if (!afterTable.startsWith(' WHERE ')) {
+      return null
+    }
+    where = afterTable
+  }
+
+  return { select, from, where, orderBy, order, limit, offset }
+}
 
 /**
  * Assert that the query is safe
@@ -21,6 +142,11 @@ export function assertSafeQuery(sql: string, collection: string) {
     throw new Error('Invalid query: Query cannot be empty')
   }
 
+  // Bound work before any scanning (defense-in-depth against oversized bodies).
+  if (sql.length > MAX_SQL_QUERY_LENGTH) {
+    throw new Error('Invalid query: Query exceeds maximum allowed length')
+  }
+
   const cleanedupQuery = cleanupQuery(sql)
 
   // Query is invalid if the cleaned up query is not the same as the original query (it contains comments)
@@ -28,12 +154,12 @@ export function assertSafeQuery(sql: string, collection: string) {
     throw new Error('Invalid query: SQL comments are not allowed')
   }
 
-  const match = sql.match(SQL_SELECT_REGEX)
-  if (!match) {
+  const parsed = parseSelectQuery(sql)
+  if (!parsed) {
     throw new Error('Invalid query: Query must be a valid SELECT statement with proper syntax')
   }
 
-  const [_, select, from, where, orderBy, order, limit, offset] = match
+  const { select, from, where, orderBy, order, limit, offset } = parsed
 
   // COLUMNS
   const columns = select?.trim().split(', ') || []
