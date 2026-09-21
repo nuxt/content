@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.16.1](https://github.com/nuxt/content/compare/v3.16.0...v3.16.1) (2026-09-21)
+
+### Features
+
+* add `content.llms` option to disable the `nuxt-llms` integration ([#3843](https://github.com/nuxt/content/issues/3843)) ([656a5ce](https://github.com/nuxt/content/commit/656a5ce1a8cb6af0b37dd577bf4e1522e03e3c11))
+
+### Bug Fixes
+
+* **security:** avoid ReDoS in assertSafeQuery ([#3851](https://github.com/nuxt/content/issues/3851)) ([f8be485](https://github.com/nuxt/content/commit/f8be485f87fc749b1517e8610a3ba7c7f5a55ece))
+
 ## [3.16.0](https://github.com/nuxt/content/compare/v3.15.2...v3.16.0) (2026-08-27)
 
 ### Bug Fixes
