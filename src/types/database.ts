@@ -17,8 +17,9 @@ export type DatabaseAdapterFactory<Options> = (otps?: Options) => DatabaseAdapte
 export interface LocalDevelopmentDatabase {
   fetchDevelopmentCache(): Promise<Record<string, CacheEntry>>
   fetchDevelopmentCacheForKey(key: string): Promise<CacheEntry | undefined>
-  insertDevelopmentCache(id: string, checksum: string, parsedContent: string): void
-  deleteDevelopmentCache(id: string): void
+  insertDevelopmentCache(id: string, value: string, checksum: string): Promise<void>
+  insertDevelopmentCacheBatch(entries: CacheEntry[]): Promise<void>
+  deleteDevelopmentCache(id: string): Promise<void>
   dropContentTables(): void
   exec(sql: string): void
   close(): void
