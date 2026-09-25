@@ -287,7 +287,167 @@ describe('generateSearchSections', () => {
     const result = await generateSearchSections(mockQB, { extraFields: ['author'] as const })
     expectTypeOf(result).toEqualTypeOf<Array<Section & Pick<DocItem, 'author'>>>()
   })
+
+  describe('word boundaries', () => {
+    it('should separate table cells and rows', async () => {
+      const content = await extractSectionContent([
+        el('table', [
+          el('thead', [el('tr', [el('th', ['Setting Name']), el('th', ['Description'])])]),
+          el('tbody', [
+            el('tr', [el('td', ['api_key']), el('td', ['Your API authentication key'])]),
+            el('tr', [el('td', ['timeout_ms']), el('td', ['Request timeout'])]),
+          ]),
+        ]),
+      ])
+
+      expect(content).toBe('Setting Name Description api_key Your API authentication key timeout_ms Request timeout')
+    })
+
+    it('should separate table cells in minimark bodies', async () => {
+      const sections = await generateSearchSections(createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test Page',
+        description: '',
+        body: {
+          type: 'minimark',
+          value: [
+            ['h2', { id: 'table' }, 'Table'],
+            ['table', {}, ['tbody', {}, ['tr', {}, ['td', {}, 'first'], ['td', {}, 'second']]]],
+          ],
+        },
+      }]))
+
+      expect(sections[1]!.content).toBe('first second')
+    })
+
+    it('should separate list items, including nested and loose lists', async () => {
+      const content = await extractSectionContent([
+        el('ul', [el('li', ['alpha']), el('li', ['beta'])]),
+        el('ol', [
+          el('li', ['parent\n', el('ul', [el('li', ['child']), el('li', ['kid'])])]),
+          el('li', [el('p', ['first para']), el('p', ['second para'])]),
+        ]),
+      ])
+
+      expect(content).toBe('alpha beta parent\nchild kid first para second para')
+    })
+
+    it('should separate paragraphs inside blockquotes', async () => {
+      const content = await extractSectionContent([
+        el('blockquote', [el('p', ['line one']), el('p', ['line two'])]),
+      ])
+
+      expect(content).toBe('line one line two')
+    })
+
+    it('should separate block content of nested MDC components and slots', async () => {
+      const content = await extractSectionContent([
+        el('card-group', [
+          el('card', [el('p', ['First'])]),
+          el('card', [el('p', ['Second'])]),
+        ]),
+        el('callout', [
+          el('template', [el('p', ['TitleText'])], { 'v-slot:title': '' }),
+          el('p', ['BodyText']),
+        ]),
+      ])
+
+      expect(content).toBe('First Second TitleText BodyText')
+    })
+
+    it('should separate text around <br> and <hr>', async () => {
+      const content = await extractSectionContent([
+        el('p', ['word', el('br', []), 'other']),
+        el('p', ['line one', el('br', []), '\nline two']),
+        el('div', ['above', el('hr', []), 'below']),
+      ])
+
+      expect(content).toBe('word other line one\nline two above below')
+    })
+
+    it('should not repeat whitespace across nested block boundaries', async () => {
+      const content = await extractSectionContent([
+        el('div', [
+          el('table', [el('tbody', [
+            el('tr', [el('td', [el('p', ['a'])]), el('td', [el('ul', [el('li', ['b'])])])]),
+            el('tr', [el('td', ['c ']), el('td', ['d'])]),
+          ])]),
+          el('blockquote', [el('p', ['e'])]),
+        ]),
+      ])
+
+      expect(content).toBe('a b c d e')
+    })
+
+    it('should keep a single boundary around ignored blocks', async () => {
+      const sections = await generateSearchSections(createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test Page',
+        description: '',
+        body: {
+          type: 'root',
+          children: [
+            el('h2', ['Section'], { id: 'section' }),
+            el('div', [el('p', ['before']), el('pre', ['ignored']), el('p', ['after'])]),
+          ],
+        },
+      }]), { ignoredTags: ['pre'] })
+
+      expect(sections[1]!.content).toBe('before after')
+    })
+
+    it('should preserve inline text exactly', async () => {
+      const content = await extractSectionContent([
+        el('p', [
+          'foo', el('strong', ['bar']), 'baz un', el('em', ['bold']), 'ed ',
+          el('strong', ['Note']), ': see ', el('a', ['docs'], { href: '/d' }), ', then ', el('code', ['run()']), '! ',
+          'x', el('code', ['y']), 'z ', el('badge', ['beta']), el('span', ['one']), el('span', ['two']),
+        ]),
+        el('p', ['日本', el('strong', ['語']), 'です']),
+        el('table', [el('tbody', [el('tr', [el('td', [el('strong', ['bold']), 'cell'])])])]),
+      ])
+
+      expect(content).toBe('foobarbaz unbolded Note: see docs, then run()! xyz betaonetwo 日本語です boldcell')
+    })
+
+    it('should preserve inline text in headings', async () => {
+      const sections = await generateSearchSections(createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test Page',
+        description: '',
+        body: {
+          type: 'root',
+          children: [el('h2', ['Use ', el('code', ['useFetch']), '() for ', el('em', ['data']), 'fetching'], { id: 'use-fetch' })],
+        },
+      }]))
+
+      expect(sections[1]!.title).toBe('Use useFetch() for datafetching')
+    })
+  })
 })
+
+async function extractSectionContent(children: unknown[]) {
+  const sections = await generateSearchSections(createMockQueryBuilder([{
+    path: '/test',
+    title: 'Test Page',
+    description: '',
+    body: {
+      type: 'root',
+      children: [el('h2', ['Section'], { id: 'section' }), ...children],
+    },
+  }]))
+
+  return sections[1]!.content
+}
+
+function el(tag: string, children: unknown[], props: Record<string, unknown> = {}): unknown {
+  return {
+    type: 'element',
+    tag,
+    props,
+    children: children.map(child => typeof child === 'string' ? { type: 'text', value: child } : child),
+  }
+}
 
 function createMockQueryBuilder<T extends PageCollectionItemBase>(result: unknown[]) {
   const mockQueryBuilder = {
