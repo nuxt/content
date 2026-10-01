@@ -119,7 +119,7 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
 
   const fetchDevelopmentCache = async () => {
     const result = await db.prepare('SELECT * FROM _development_cache').all() as CacheEntry[]
-    return result.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {} as Record<string, CacheEntry>)
+    return Object.fromEntries(result.map(cur => [cur.id, cur]))
   }
 
   const fetchDevelopmentCacheForKey = async (id: string) => {

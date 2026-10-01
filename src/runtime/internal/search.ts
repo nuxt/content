@@ -190,23 +190,50 @@ function splitPageIntoSections(
   return sections
 }
 
+// The MDC parser drops the newline-only text nodes between block siblings, so word boundaries must be restored from structure.
+// Known inline tags stay glued to surrounding text; everything else (including raw HTML blocks and custom components) is a boundary.
+const INLINE_TAGS = new Set([
+  'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'data', 'del', 'dfn', 'em', 'i',
+  'img', 'ins', 'kbd', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
+  'time', 'u', 'var', 'wbr',
+])
+
 function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
   let text = ''
+  let boundary = false
 
-  // Get text from markdown AST
-  if (node.type === 'text') {
-    text += (node.value || '')
+  const visit = (node: MDCNode) => {
+    // Get text from markdown AST
+    if (node.type === 'text') {
+      const value = node.value || ''
+      if (!value) {
+        return
+      }
+      if (boundary && text && !/\s$/.test(text) && !/^\s/.test(value)) {
+        text += ' '
+      }
+      text += value
+      boundary = false
+      return
+    }
+
+    const tag = (node as MDCElement).tag ?? ''
+    const isBlock = !INLINE_TAGS.has(tag)
+
+    // Do not explore children, but keep the boundary of an ignored block
+    if (ignoredTags.includes(tag)) {
+      boundary ||= isBlock
+      return
+    }
+
+    boundary ||= isBlock
+    for (const child of (node as MDCElement).children || []) {
+      visit(child)
+    }
+    boundary ||= isBlock
   }
 
-  // Do not explore children
-  if (ignoredTags.includes((node as MDCElement).tag ?? '')) {
-    return ''
-  }
-
-  // Explore children
-  if ((node as MDCElement).children?.length) {
-    text += (node as MDCElement).children.map((child: MDCNode) => extractTextFromAst(child, ignoredTags)).filter(Boolean).join('')
-  }
+  visit(node)
 
   return text
 }

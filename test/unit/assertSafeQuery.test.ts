@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { assertSafeQuery } from '../../src/runtime/internal/security'
+import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
 // Mock tables from manifest
@@ -35,7 +35,8 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test ORDER BY id DESC LIMIT 10 OFFSET 10': true,
     // Where clause should follow query builder syntax
     'SELECT * FROM _content_test WHERE id = 1 ORDER BY id DESC LIMIT 10 OFFSET 10': false,
-    'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
+    'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': false,
+    'SELECT * FROM _content_test WHERE ("id" = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
     'SELECT * FROM _content_test WHERE (id = \'");\'); select * from ((SELECT * FROM sqlite_master where 1 <> "") as t) ORDER BY type DESC': false,
     'SELECT "body" FROM _content_test ORDER BY body ASC': true,
     // Advanced
@@ -81,6 +82,45 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("x" BETWEEN \'1\' AND \'2\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("x" IS NULL) ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("x" IS NOT NULL) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" NOT BETWEEN \'1\' AND \'2\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" NOT LIKE \'%a\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" >= \'1\' OR "x" <= \'2\' OR "x" <> \'3\' OR "x" > \'4\' OR "x" < \'5\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" IN ()) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'a -- b /* c */\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'x\') AND (("a" = \'1\') OR ("b" IS NULL)) ORDER BY stem ASC': true,
+    // `IN table_name` is an implicit subquery in SQLite (incl. eponymous pragma_* tables)
+    'SELECT * FROM _content_test WHERE (\'ok\' IN pragma_integrity_check) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ((\'ok\' IN pragma_integrity_check) AND (\'ok\' IN pragma_integrity_check)) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN pragma_integrity_check) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN "pragma_integrity_check") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN [pragma_quick_check]) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" NOT IN app_flags) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN _content_other) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN (pragma_integrity_check)) ORDER BY stem ASC': false,
+    // Infix operators the builder never emits
+    'SELECT * FROM _content_test WHERE (\'aaaaaaaaaaX\' REGEXP \'(a?){500}a{500}$\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" REGEXP \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" GLOB \'*\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" MATCH \'a\') ORDER BY stem ASC': false,
+
+    'SELECT * FROM _content_test WHERE ("id" LIKE \'a\' ESCAPE \'\\\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN (\'a\') AND \'x\' IN "app_flags") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" COLLATE NOCASE = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (EXISTS (\'a\')) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "body" || "body") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "body" ->> \'$.a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "stem" + 1) ORDER BY stem ASC': false,
+    // PostgreSQL array subscripts: `[...]` is executable code there, not an identifier quote
+    'SELECT * FROM _content_test WHERE ((\'{a,b}\'::text[])[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("meta"[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] IS NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("meta"[(SELECT 1 FROM app_users LIMIT 1)] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (("meta")[(SELECT 1)] IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = \'a\'[(SELECT 1)]) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ([id] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (`id` = \'a\') ORDER BY stem ASC': false,
+    // Brackets / backticks inside value literals and quoted fields remain allowed
+    'SELECT * FROM _content_test WHERE ("id" = \'[a] `b`\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("we[ir]d" = \'a\') ORDER BY stem ASC': true,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {
@@ -144,5 +184,27 @@ describe('decompressSQLDump', () => {
       .andWhere(group => group.where('id', '=', 3).orWhere(g => g.where('stem', '=', 'ghi')))
       .order('stem', 'DESC').order('id', 'ASC').first()
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
+  })
+
+  it('rejects oversized queries before parsing', () => {
+    const sql = `SELECT * FROM _content_test ORDER BY id DESC${' '.repeat(MAX_SQL_QUERY_LENGTH)}`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/maximum allowed length/)
+  })
+
+  it('rejects balanced pragma_integrity_check trees (DoS)', () => {
+    const build = (n: number): string => n === 1 ? '(\'ok\' IN pragma_integrity_check)' : `(${build(n / 2)} AND ${build(n / 2)})`
+    const sql = `SELECT * FROM _content_test WHERE ${build(256)} ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
+  })
+
+  it('rejects ReDoS-shaped payloads in linear time', () => {
+    // Former catastrophic-backtracking shape against SQL_SELECT_REGEX:
+    // repeated " FROM x WHERE  ORDER BY " forces nested quantifiers to explore
+    // an exponential (practically cubic+) search space. Must stay fast now.
+    const sql = `SELECT ${' FROM x WHERE  ORDER BY '.repeat(4000)}!`
+    expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
+    const started = Date.now()
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
+    expect(Date.now() - started).toBeLessThan(500)
   })
 })

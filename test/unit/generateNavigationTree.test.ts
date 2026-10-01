@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { generateNavigationTree } from '../../src/runtime/internal/navigation'
 import type { CollectionQueryBuilder, PageCollectionItemBase } from '@nuxt/content'
 
@@ -16,6 +16,100 @@ describe('generateNavigationTree', () => {
     select: () => mockQueryBuilder(items),
     all: async () => items,
   } as unknown as CollectionQueryBuilder<PageCollectionItemBase>)
+
+  const queryInOrder = (items: Partial<PageCollectionItemBase>[]) => ({
+    __params: { orderBy: ['caller order'] },
+    orWhere() { return this },
+    select() { return this },
+    all: async () => items,
+  } as unknown as CollectionQueryBuilder<PageCollectionItemBase>)
+
+  // Counts the placeholder scan (`item.page === false`) only. The parent
+  // lookup also uses `find`, and this change does not touch it.
+  async function withPlaceholderScans(run: () => Promise<void>) {
+    let scans = 0
+    const originalFind = Array.prototype.find
+    const find = vi.spyOn(Array.prototype, 'find').mockImplementation(function (this: unknown[], predicate, thisArg) {
+      if (Function.prototype.toString.call(predicate).includes('page === false')) {
+        scans++
+      }
+      return originalFind.call(this, predicate, thisArg)
+    })
+    try {
+      await run()
+      return scans
+    }
+    finally {
+      find.mockRestore()
+    }
+  }
+
+  it.each([false, true])('skips leaf sibling searches with an explicit index: %s', async (withIndex) => {
+    const pages = Array.from({ length: 100 }, (_, i) => ({
+      title: `Page ${i}`,
+      path: `/guide/page-${100 - i}`,
+      stem: `guide/page-${100 - i}`,
+    }))
+    const items = withIndex ? [{ title: 'Guide', path: '/guide', stem: 'guide/index' }, ...pages] : pages
+    let tree: Awaited<ReturnType<typeof generateNavigationTree>>
+    const scans = await withPlaceholderScans(async () => {
+      tree = await generateNavigationTree(queryInOrder(items))
+    })
+    // The index page still looks for a placeholder at the root. The leaves do not scan.
+    expect(scans).toBe(withIndex ? 1 : 0)
+    expect(tree![0]?.children?.map(item => item.path)).toEqual(items.map(item => item.path))
+  })
+
+  it.each([false, true])('merges a placeholder appended after a leaf, from metadata: %s', async (fromMetadata) => {
+    const tree = await generateNavigationTree(queryInOrder([
+      { title: 'First', path: '/guide/first', stem: 'guide/first' },
+      fromMetadata
+        ? { title: 'Placeholder', path: '/guide/topic', stem: 'guide/topic', navigation: { page: false } }
+        : { title: 'Child', path: '/guide/topic/child', stem: 'guide/topic/child' },
+      { title: 'Topic', path: '/guide/topic', stem: 'guide/topic' },
+    ]))
+
+    expect(tree[0]?.children?.map(item => item.path)).toEqual(['/guide/first', '/guide/topic'])
+    expect(tree[0]?.children?.[1]).toMatchObject({ title: 'Topic', page: undefined })
+    expect(tree[0]?.children?.[1]?.children?.map(item => item.path)).toEqual(fromMetadata ? undefined : ['/guide/topic/child'])
+  })
+
+  it.each([false, true])('merges supplied duplicate placeholders in order, from directory config: %s', async (fromConfig) => {
+    const children = ['First', 'Second'].map(title => ({
+      title,
+      path: '/guide/topic',
+      page: false,
+      children: [{ title, path: `/guide/topic/${title.toLowerCase()}` }],
+    }))
+    const roots = fromConfig
+      ? [
+          { title: 'Config', path: '/guide/.navigation', stem: 'guide/.navigation', meta: { children } },
+          { title: 'Guide', path: '/guide', stem: 'guide/index' },
+        ]
+      : [{ title: 'Guide', path: '/guide', stem: 'guide', navigation: { children } }]
+    const tree = await generateNavigationTree(queryInOrder([
+      ...roots,
+      { title: 'Replacement 1', path: '/guide/topic', stem: 'guide/topic' },
+      { title: 'Replacement 2', path: '/guide/topic', stem: 'guide/topic' },
+    ]))
+
+    expect(tree[0]?.children?.map(item => item.title)).toEqual(['Replacement 1', 'Replacement 2'])
+    expect(tree[0]?.children?.map(item => item.page)).toEqual([undefined, undefined])
+    expect(tree[0]?.children?.map(item => item.children?.[0]?.path)).toEqual(['/guide/topic/first', '/guide/topic/second'])
+  })
+
+  it.each([false, true])('preserves index merging and later siblings, child first: %s', async (childFirst) => {
+    const index = { title: 'Topic', path: '/guide/topic', stem: 'guide/topic/index' }
+    const child = { title: 'First', path: '/guide/topic/first', stem: 'guide/topic/first' }
+    const tree = await generateNavigationTree(queryInOrder([
+      ...(childFirst ? [child, index] : [index, child]),
+      { title: 'Second', path: '/guide/topic/second', stem: 'guide/topic/second' },
+    ]))
+
+    expect(tree[0]?.children?.[0]?.children?.map(item => item.path)).toEqual([
+      '/guide/topic', '/guide/topic/first', '/guide/topic/second',
+    ])
+  })
 
   it('should generate a basic navigation tree', async () => {
     const items = [
@@ -45,6 +139,55 @@ describe('generateNavigationTree', () => {
         stem: 'index',
       },
     ])
+  })
+
+  it.each([false, true])('does not search siblings when appending ordinary root pages, with index: %s', async (withIndex) => {
+    const pages = Array.from({ length: 100 }, (_, i) => ({
+      title: `Page ${i}`,
+      path: `/page-${i}`,
+      stem: `page-${i}`,
+    })) as PageCollectionItemBase[]
+    const items = withIndex
+      ? [{ title: 'Home', path: '/', stem: 'index' } as PageCollectionItemBase, ...pages]
+      : pages
+
+    let tree: Awaited<ReturnType<typeof generateNavigationTree>>
+    const scans = await withPlaceholderScans(async () => {
+      tree = await generateNavigationTree(mockQueryBuilder(items))
+    })
+
+    // Ordinary pages skip the lookup. The index page still searches the root.
+    expect(scans).toBe(withIndex ? 1 : 0)
+    expect(tree!.map(item => item.path).sort()).toEqual(items.map(item => item.path).sort())
+  })
+
+  it('merges a placeholder declared ahead of its page', async () => {
+    const tree = await generateNavigationTree(queryInOrder([
+      { title: 'Guide', path: '/guide', stem: 'guide', navigation: { children: [
+        { title: 'Topic', path: '/guide/topic', page: false },
+      ] } },
+      { title: 'First', path: '/guide/first', stem: 'guide/first' },
+      { title: 'Topic', path: '/guide/topic', stem: 'guide/topic' },
+    ] as Partial<PageCollectionItemBase>[]))
+
+    expect(tree[0]?.children?.map(item => item.title)).toEqual(['Topic', 'First'])
+    expect(tree[0]?.children?.[0]?.page).toBeUndefined()
+  })
+
+  it('keeps a placeholder nested inside a merged children array', async () => {
+    const tree = await generateNavigationTree(queryInOrder([
+      { title: 'Child', path: '/guide/topic/child', stem: 'guide/topic/child' },
+      {
+        title: 'Topic', path: '/guide/topic', stem: 'guide/topic', navigation: { children: [
+          { title: 'Declared', path: '/guide/topic/declared', page: false },
+        ] },
+      },
+      { title: 'Declared', path: '/guide/topic/declared', stem: 'guide/topic/declared' },
+    ] as Partial<PageCollectionItemBase>[]))
+
+    const topic = tree[0]?.children?.find(item => item.path === '/guide/topic')
+    expect(topic?.children?.map(item => item.title)).toEqual(['Declared', 'Child'])
+    expect(topic?.children?.find(item => item.title === 'Declared')?.page).toBeUndefined()
   })
 
   it('should generate a basic navigation tree with order', async () => {
