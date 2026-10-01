@@ -110,6 +110,17 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("id" = "body" || "body") ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" = "body" ->> \'$.a\') ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" = "stem" + 1) ORDER BY stem ASC': false,
+    // PostgreSQL array subscripts: `[...]` is executable code there, not an identifier quote
+    'SELECT * FROM _content_test WHERE ((\'{a,b}\'::text[])[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("meta"[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] IS NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("meta"[(SELECT 1 FROM app_users LIMIT 1)] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (("meta")[(SELECT 1)] IS NOT NULL) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = \'a\'[(SELECT 1)]) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ([id] = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (`id` = \'a\') ORDER BY stem ASC': false,
+    // Brackets / backticks inside value literals and quoted fields remain allowed
+    'SELECT * FROM _content_test WHERE ("id" = \'[a] `b`\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("we[ir]d" = \'a\') ORDER BY stem ASC': true,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {

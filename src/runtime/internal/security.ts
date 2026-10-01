@@ -196,7 +196,10 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query: WHERE clause must be properly enclosed in parentheses')
     }
-    const noString = cleanupQuery(where, { removeString: true })
+    // Only strip the quote styles the builder emits ('value', "field"). `[` and backtick are
+    // identifier quotes in SQLite but not in PostgreSQL, where `[...]` is an executable array
+    // subscript; keeping them visible rejects them via SQL_WHERE_UNSAFE_CHARS on every adapter.
+    const noString = cleanupQuery(where, { removeString: true, standardQuotesOnly: true })
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
     }
@@ -241,7 +244,7 @@ export function assertSafeQuery(sql: string, collection: string) {
   return true
 }
 
-function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean } = {}) {
+function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean, standardQuotesOnly?: boolean } = {}) {
   // Track every SQL quote fence so comments/apostrophes inside identifiers
   // ("…", `…`, […]) cannot terminate or re-open the scanner early.
   let fence: '\'' | '"' | '`' | '[' | null = null
@@ -297,7 +300,7 @@ function cleanupQuery(query: string, options: { removeString?: boolean, removeSi
       continue
     }
 
-    if (char === '\'' || char === '"' || char === '`' || char === '[') {
+    if (char === '\'' || char === '"' || (!options.standardQuotesOnly && (char === '`' || char === '['))) {
       fence = char
       if (!strippingFence(fence)) {
         result += char
