@@ -404,9 +404,11 @@ describe('generateSearchSections', () => {
         el('div', [el('article', ['first']), el('article', ['second'])]),
         el('figure', [el('figcaption', ['caption']), 'diagram']),
         el('p', ['see ', el('badge', ['beta']), ' now']),
+        // Markdown images are img elements whose alt lives in props, not children
+        el('p', ['text', el('img', [], { alt: 'diagram', src: '/d.png' }), '!']),
       ])
 
-      expect(content).toBe('first second caption diagram see beta now')
+      expect(content).toBe('first second caption diagram see beta now text!')
     })
 
     it('should preserve inline text exactly', async () => {

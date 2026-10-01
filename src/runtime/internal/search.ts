@@ -194,7 +194,7 @@ function splitPageIntoSections(
 // Known inline tags stay glued to surrounding text; everything else (including raw HTML blocks and custom components) is a boundary.
 const INLINE_TAGS = new Set([
   'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'data', 'del', 'dfn', 'em', 'i',
-  'ins', 'kbd', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
+  'img', 'ins', 'kbd', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
   'time', 'u', 'var', 'wbr',
 ])
 
