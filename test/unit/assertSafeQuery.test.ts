@@ -35,7 +35,8 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test ORDER BY id DESC LIMIT 10 OFFSET 10': true,
     // Where clause should follow query builder syntax
     'SELECT * FROM _content_test WHERE id = 1 ORDER BY id DESC LIMIT 10 OFFSET 10': false,
-    'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
+    'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': false,
+    'SELECT * FROM _content_test WHERE ("id" = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
     'SELECT * FROM _content_test WHERE (id = \'");\'); select * from ((SELECT * FROM sqlite_master where 1 <> "") as t) ORDER BY type DESC': false,
     'SELECT "body" FROM _content_test ORDER BY body ASC': true,
     // Advanced
@@ -81,6 +82,34 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("x" BETWEEN \'1\' AND \'2\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("x" IS NULL) ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("x" IS NOT NULL) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" NOT BETWEEN \'1\' AND \'2\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" NOT LIKE \'%a\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("x" >= \'1\' OR "x" <= \'2\' OR "x" <> \'3\' OR "x" > \'4\' OR "x" < \'5\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" IN ()) ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'a -- b /* c */\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'x\') AND (("a" = \'1\') OR ("b" IS NULL)) ORDER BY stem ASC': true,
+    // `IN table_name` is an implicit subquery in SQLite (incl. eponymous pragma_* tables)
+    'SELECT * FROM _content_test WHERE (\'ok\' IN pragma_integrity_check) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ((\'ok\' IN pragma_integrity_check) AND (\'ok\' IN pragma_integrity_check)) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN pragma_integrity_check) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN "pragma_integrity_check") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN [pragma_quick_check]) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" NOT IN app_flags) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN _content_other) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN (pragma_integrity_check)) ORDER BY stem ASC': false,
+    // Infix operators the builder never emits
+    'SELECT * FROM _content_test WHERE (\'aaaaaaaaaaX\' REGEXP \'(a?){500}a{500}$\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" REGEXP \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" GLOB \'*\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" MATCH \'a\') ORDER BY stem ASC': false,
+
+    'SELECT * FROM _content_test WHERE ("id" LIKE \'a\' ESCAPE \'\\\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" IN (\'a\') AND \'x\' IN "app_flags") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" COLLATE NOCASE = \'a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE (EXISTS (\'a\')) ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "body" || "body") ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "body" ->> \'$.a\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = "stem" + 1) ORDER BY stem ASC': false,
   }
 
   Object.entries(queries).forEach(([query, isValid]) => {
@@ -149,6 +178,12 @@ describe('decompressSQLDump', () => {
   it('rejects oversized queries before parsing', () => {
     const sql = `SELECT * FROM _content_test ORDER BY id DESC${' '.repeat(MAX_SQL_QUERY_LENGTH)}`
     expect(() => assertSafeQuery(sql, 'test')).toThrow(/maximum allowed length/)
+  })
+
+  it('rejects balanced pragma_integrity_check trees (DoS)', () => {
+    const build = (n: number): string => n === 1 ? '(\'ok\' IN pragma_integrity_check)' : `(${build(n / 2)} AND ${build(n / 2)})`
+    const sql = `SELECT * FROM _content_test WHERE ${build(256)} ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
   it('rejects ReDoS-shaped payloads in linear time', () => {
