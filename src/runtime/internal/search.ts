@@ -190,12 +190,12 @@ function splitPageIntoSections(
   return sections
 }
 
-// The MDC parser drops the newline-only text nodes between block siblings, so word boundaries must be restored from structure
-const BLOCK_TAGS = new Set([
-  'p', 'pre', 'blockquote', 'div', 'section', 'hr', 'br',
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'ul', 'ol', 'li', 'dl', 'dt', 'dd',
-  'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+// The MDC parser drops the newline-only text nodes between block siblings, so word boundaries must be restored from structure.
+// Known inline tags stay glued to surrounding text; everything else (including raw HTML blocks and custom components) is a boundary.
+const INLINE_TAGS = new Set([
+  'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'data', 'del', 'dfn', 'em', 'i',
+  'ins', 'kbd', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
+  'time', 'u', 'var', 'wbr',
 ])
 
 function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
@@ -218,13 +218,14 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
     }
 
     const tag = (node as MDCElement).tag ?? ''
+    const isBlock = !INLINE_TAGS.has(tag)
 
-    // Do not explore children
+    // Do not explore children, but keep the boundary of an ignored block
     if (ignoredTags.includes(tag)) {
+      boundary ||= isBlock
       return
     }
 
-    const isBlock = BLOCK_TAGS.has(tag)
     boundary ||= isBlock
     for (const child of (node as MDCElement).children || []) {
       visit(child)

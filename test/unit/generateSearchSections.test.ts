@@ -389,11 +389,24 @@ describe('generateSearchSections', () => {
           children: [
             el('h2', ['Section'], { id: 'section' }),
             el('div', [el('p', ['before']), el('pre', ['ignored']), el('p', ['after'])]),
+            // Direct text: the ignored block itself has to set the boundary
+            el('div', ['before', el('pre', ['ignored']), 'after']),
+            el('div', ['lead', el('style', ['ignored']), 'tail']),
           ],
         },
-      }]), { ignoredTags: ['pre'] })
+      }]), { ignoredTags: ['pre', 'style'] })
 
-      expect(sections[1]!.content).toBe('before after')
+      expect(sections[1]!.content).toBe('before after before after lead tail')
+    })
+
+    it('should separate unknown and raw HTML blocks without splitting inline text', async () => {
+      const content = await extractSectionContent([
+        el('div', [el('article', ['first']), el('article', ['second'])]),
+        el('figure', [el('figcaption', ['caption']), 'diagram']),
+        el('p', ['see ', el('badge', ['beta']), ' now']),
+      ])
+
+      expect(content).toBe('first second caption diagram see beta now')
     })
 
     it('should preserve inline text exactly', async () => {
@@ -401,13 +414,13 @@ describe('generateSearchSections', () => {
         el('p', [
           'foo', el('strong', ['bar']), 'baz un', el('em', ['bold']), 'ed ',
           el('strong', ['Note']), ': see ', el('a', ['docs'], { href: '/d' }), ', then ', el('code', ['run()']), '! ',
-          'x', el('code', ['y']), 'z ', el('badge', ['beta']), el('span', ['one']), el('span', ['two']),
+          'x', el('code', ['y']), 'z ', el('span', ['one']), el('span', ['two']),
         ]),
         el('p', ['日本', el('strong', ['語']), 'です']),
         el('table', [el('tbody', [el('tr', [el('td', [el('strong', ['bold']), 'cell'])])])]),
       ])
 
-      expect(content).toBe('foobarbaz unbolded Note: see docs, then run()! xyz betaonetwo 日本語です boldcell')
+      expect(content).toBe('foobarbaz unbolded Note: see docs, then run()! xyz onetwo 日本語です boldcell')
     })
 
     it('should preserve inline text in headings', async () => {
