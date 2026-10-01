@@ -5,6 +5,15 @@ const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
 // Bare identifiers use a word boundary; quoted/bracketed forms match the whole identifier unit.
 const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|["`[][A-Z_]\w*["`\]])\s*\(/i
+// Outside quotes the query builder only emits these keywords in WHERE (fields are always quoted).
+// Blocks bare table/pragma names and operators such as REGEXP, GLOB, MATCH.
+const SQL_WHERE_BARE_WORD = /\b[A-Z_]\w*/gi
+const SQL_WHERE_ALLOWED_WORDS = new Set(['WHERE', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN', 'IS', 'NULL'])
+// Outside quotes the builder only emits comparison operators, grouping and list commas.
+// Blocks ||, ->, ->>, arithmetic, bitwise operators, etc.
+const SQL_WHERE_UNSAFE_CHARS = /[^\w\s(),=<>]/
+// `x IN table_name` is an implicit subquery in SQLite; IN must be followed by a list.
+const SQL_IN_WITHOUT_LIST = /\bIN(?!\s*\()/i
 
 /**
  * Hard ceiling on SQL statement length accepted from the client.
@@ -187,9 +196,23 @@ export function assertSafeQuery(sql: string, collection: string) {
     if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
       throw new Error('Invalid query: WHERE clause must be properly enclosed in parentheses')
     }
-    const noString = cleanupQuery(where, { removeString: true })
+    // Only strip the quote styles the builder emits ('value', "field"). `[` and backtick are
+    // identifier quotes in SQLite but not in PostgreSQL, where `[...]` is an executable array
+    // subscript; keeping them visible rejects them via SQL_WHERE_UNSAFE_CHARS on every adapter.
+    const noString = cleanupQuery(where, { removeString: true, standardQuotesOnly: true })
     if (noString.match(SQL_COMMANDS)) {
       throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
+    }
+    if (SQL_WHERE_UNSAFE_CHARS.test(noString)) {
+      throw new Error('Invalid query: WHERE clause contains unsupported operators')
+    }
+    if (SQL_IN_WITHOUT_LIST.test(noString)) {
+      throw new Error('Invalid query: IN must be followed by a list of values')
+    }
+    for (const [word] of noString.matchAll(SQL_WHERE_BARE_WORD)) {
+      if (!SQL_WHERE_ALLOWED_WORDS.has(word.toUpperCase())) {
+        throw new Error(`Invalid query: WHERE clause contains unsupported keyword '${word}'`)
+      }
     }
     // Block SQLite function calls (randomblob, zeroblob, hex, length, …),
     // including quoted/bracketed forms SQLite accepts as identifiers: "abs"(, [abs](, `abs`(.
@@ -221,7 +244,7 @@ export function assertSafeQuery(sql: string, collection: string) {
   return true
 }
 
-function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean } = {}) {
+function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean, standardQuotesOnly?: boolean } = {}) {
   // Track every SQL quote fence so comments/apostrophes inside identifiers
   // ("…", `…`, […]) cannot terminate or re-open the scanner early.
   let fence: '\'' | '"' | '`' | '[' | null = null
@@ -277,7 +300,7 @@ function cleanupQuery(query: string, options: { removeString?: boolean, removeSi
       continue
     }
 
-    if (char === '\'' || char === '"' || char === '`' || char === '[') {
+    if (char === '\'' || char === '"' || (!options.standardQuotesOnly && (char === '`' || char === '['))) {
       fence = char
       if (!strippingFence(fence)) {
         result += char
