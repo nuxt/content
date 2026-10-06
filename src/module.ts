@@ -74,16 +74,18 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
     addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
 
-    // Lets the HMR plugin lazily load the same client `content` the auto-import resolves to.
-    addTemplate({
-      filename: 'content/client.mjs',
-      getContents: () => `export { content } from ${JSON.stringify(clientContentPath)}\n`,
-    })
+    // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.
     addTypeTemplate({
       filename: 'content/client.d.ts',
       getContents: () => `export declare const content: unknown\n`,
     })
+    // HMR rides on the content watcher, so `watch: false` disables both.
     if (nuxt.options.dev && options.watch) {
+      // Lets the HMR plugin lazily load the same client `content` the auto-import resolves to.
+      addTemplate({
+        filename: 'content/client.mjs',
+        getContents: () => `export { content } from ${JSON.stringify(clientContentPath)}\n`,
+      })
       addPlugin({ src: resolve('./runtime/plugins/hmr.client'), mode: 'client' })
     }
 
