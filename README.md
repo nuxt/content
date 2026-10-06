@@ -1,3 +1,9 @@
+> [!NOTE]
+> This is POC version of Nuxt Content v4 bases on Comark Content.   
+> The soul purpose of Content v4 is to leverage Comark Content and have as minimum breaking changes as possible.  
+> V4 will be a transitional version where users can benefic new features and performance while having same interface as v3.
+
+
 [![nuxt-content-social-card](./.github/social-card.png)](https://content.nuxt.com)
 
 # Nuxt Content
