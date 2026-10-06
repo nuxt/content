@@ -1,5 +1,5 @@
 {
-  "name": "@nuxt/content",
+  "name": "@nuxt/content4",
   "version": "4.0.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
@@ -24,6 +24,7 @@
     },
     "./v3": "./dist/runtime/v3/index.js",
     "./cms": "./dist/runtime/server/cms.js",
+    "./content": "./dist/runtime/server/cms.js",
     "./utils": "./dist/runtime/utils/index.js",
     "./server": "./dist/runtime/v3/composables.server.js"
   },
@@ -47,12 +48,14 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "typecheck": "npm run dev:prepare && nuxt prepare examples/v3-multi-source && vue-tsc --noEmit && vue-tsc --noEmit -p playground && vue-tsc --noEmit -p examples/v3-multi-source"
   },
   "dependencies": {
-    "@comark/cms": "^0.1.0-beta.0",
-    "@comark/vue": "^0.5.1",
+    "comark-content": "^0.4.1",
+    "@comark/vue": "^0.7.0",
     "@nuxt/kit": "^4.5.0",
+    "comark": "^0.7.0",
     "defu": "^6.1.7",
     "jiti": "^2.7.0"
   },

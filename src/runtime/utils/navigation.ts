@@ -1,4 +1,4 @@
-import type { NavigationItem } from '@comark/cms'
+import type { NavigationItem } from 'comark-content'
 
 type FindPageBreadcrumbOptions = { current?: boolean, indexAsChild?: boolean }
 

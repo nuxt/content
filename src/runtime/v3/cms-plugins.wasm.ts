@@ -1,10 +1,10 @@
-import sqlQuery from '@comark/cms/plugins/sql-query'
-import sqliteFullTextSearch from '@comark/cms/plugins/sqlite-full-text-search'
-import sqliteWasm from '@comark/cms/database/sqlite-wasm'
-import type { CMSPlugin } from '@comark/cms'
+import sqlQuery from 'comark-content/plugins/sql-query'
+import sqliteFullTextSearch from 'comark-content/plugins/sqlite-full-text-search'
+import sqliteWasm from 'comark-content/database/sqlite-wasm'
+import type { ContentPlugin } from 'comark-content'
 import { v3Enabled } from './cms-plugins.shared'
 
-export function v3WasmPlugins(enabled?: boolean): CMSPlugin<any>[] {
+export function v3WasmPlugins(enabled?: boolean): ContentPlugin<any>[] {
   if (!v3Enabled(enabled)) return []
   const database = sqliteWasm()
   return [

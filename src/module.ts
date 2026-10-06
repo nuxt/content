@@ -1,16 +1,19 @@
-import { createCMS, generateSourceTypes, readArtifact } from '@comark/cms'
+import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
 import defu from 'defu'
-import type { CacheArtifact, ComarkCMS, Manifest } from '@comark/cms'
+import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub } from 'comark-content'
 import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPrerenderRoutes, addDevServerHandler, addTypeTemplate } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { toWebRequest, serveStatic } from 'h3'
 import type { Nuxt } from 'nuxt/schema'
-import type { MediaMethods } from '@comark/cms/plugins/media'
+import type { MediaMethods } from 'comark-content/plugins/media'
 import { importCMS } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/cms-plugins.server'
 import { fileURLToPath } from 'node:url'
+
+type ContentSurface = AnyComarkContent | ContentHub
+type ContentWithMedia = ContentSurface & Partial<MediaMethods>
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -38,10 +41,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     const cmsPath = existsSync(resolve(nuxt.options.serverDir, 'cms.ts'))
       ? resolve(nuxt.options.serverDir, 'cms')
-      : resolve('./runtime/server/internal/fallback-cms')
+      : existsSync(resolve(nuxt.options.rootDir, 'content.config.ts'))
+        ? resolve('./runtime/server/internal/content-config-cms')
+        : resolve('./runtime/server/internal/fallback-cms')
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
-      include: ['@nuxt/content > @comark/cms > slugify'],
+      include: ['@nuxt/content > comark-content > slugify'],
       exclude: ['@sqlite.org/sqlite-wasm'],
     })
 
@@ -93,11 +98,11 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Register middleware for dev and prerender to serve medias
      */
-    if (cms?.media) setupMedia(cms, nuxt)
+    if (cms && 'media' in cms && cms.media) setupMedia(cms as ContentWithMedia & MediaMethods, nuxt)
   },
 })
 
-async function setupTypes(cms: ComarkCMS | undefined, nuxt: Nuxt) {
+async function setupTypes(cms: ContentSurface | undefined, nuxt: Nuxt) {
   const importMetaTypes = addTypeTemplate({ filename: 'comark-cms/import-meta.d.ts', getContents: importMetaTypesTemplate })
 
   const nitroTypeIncludes = [
@@ -112,7 +117,18 @@ async function setupTypes(cms: ComarkCMS | undefined, nuxt: Nuxt) {
   if (cms) {
     // TODO: Double check and possibly disable on build to prevent duplicate source loading
     nitroTypeIncludes.push(
-      addTypeTemplate({ filename: 'comark-cms/types.d.ts', getContents: () => generateSourceTypes(cms) }).dst,
+      addTypeTemplate({
+        filename: 'comark-cms/types.d.ts',
+        getContents: async () => {
+          try {
+            return await generateSourceTypes(cms)
+          }
+          catch (error) {
+            console.warn('[nuxt/content] generateSourceTypes failed:', error)
+            return '// generateSourceTypes failed\nexport {}\n'
+          }
+        },
+      }).dst,
     )
   }
 
@@ -121,23 +137,71 @@ async function setupTypes(cms: ComarkCMS | undefined, nuxt: Nuxt) {
   })
 }
 
-async function setupCMS(cmsPath: string, nuxt: Nuxt, options: ModuleOptions): Promise<ComarkCMS & MediaMethods | undefined> {
+function isHub(surface: ContentSurface): surface is ContentHub {
+  return Array.isArray((surface as ContentHub).names)
+}
+
+function resolveInstanceNames(surface: ContentSurface): string[] {
+  if (isHub(surface)) {
+    return [...surface.names]
+  }
+  return [surface.name]
+}
+
+async function cloneSurface(
+  surface: ContentSurface,
+  overrides: { basePath?: string, plugins?: NonNullable<AnyComarkContent['options']['plugins']> },
+): Promise<ContentSurface> {
+  // Shared extra plugins (one SQLite) across every instance on a hub.
+  const extraPlugins = overrides.plugins ?? []
+
+  if (isHub(surface)) {
+    const instances = surface.names.map((name) => {
+      const instance = surface.from(name)
+      return comarkContent(instance.name, {
+        ...instance.options,
+        // Fresh in-memory cache for the module/dev surface.
+        cache: undefined,
+        basePath: overrides.basePath ?? instance.options.basePath,
+        plugins: [
+          ...(instance.options.plugins ?? []),
+          ...extraPlugins,
+        ],
+      })
+    })
+    return contentHub(instances, { basePath: overrides.basePath ?? surface.basePath })
+  }
+
+  return comarkContent(surface.name, {
+    ...surface.options,
+    cache: undefined,
+    basePath: overrides.basePath ?? surface.options.basePath,
+    plugins: [
+      ...(surface.options.plugins ?? []),
+      ...extraPlugins,
+    ],
+  })
+}
+
+async function setupCMS(cmsPath: string, nuxt: Nuxt, options: ModuleOptions): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
-  const cms = await importCMS(nuxt.options.rootDir, cmsPath)
-    .then(m => createCMS({
-      ...m.cms.options,
-      basePath: '/__NCDEV__/__nuxt_content',
-      cache: undefined,
-      plugins: [
-        ...(m.cms.options?.plugins ?? []),
-        ...v3ServerPlugins(options.v3Composables ?? true),
-      ],
-    }))
-  const sourceNames = cms?.options.source ? ['default'] : Object.keys(cms?.options.sources || [])
+  const imported = await importCMS(nuxt.options.rootDir, cmsPath)
+  // Dev server gets its own surface so plugins / basePath can differ without
+  // mutating the user-exported instance that Nitro will import later.
+  // Skip re-injecting v3 plugins when the export already went through
+  // createNuxtContent() (it installs them once with a shared database).
+  const alreadyHasV3 = Boolean(imported.cms && 'query' in imported.cms)
+  const cms = await cloneSurface(imported.cms, {
+    basePath: '/__NCDEV__/__nuxt_content',
+    plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.v3Composables ?? true),
+  })
+
+  const sourceNames = resolveInstanceNames(cms)
 
   addPrerenderRoutes([
     '/__nuxt_content/manifest.json',
+    ...sourceNames.map(source => `/__nuxt_content/manifest/${source}.json`),
     ...sourceNames.map(source => `/__nuxt_content/snapshot/${source}.json`),
   ])
 
@@ -164,8 +228,18 @@ async function setupCMS(cmsPath: string, nuxt: Nuxt, options: ModuleOptions): Pr
         if (route.route === '/__nuxt_content/manifest.json') {
           await writeFile(resolve(dir, 'manifest.json'), route.contents!)
         }
+        if (route.route.startsWith('/__nuxt_content/manifest/')) {
+          // Per-instance manifest, stored next to its snapshot for the withSnapshot loaders.
+          const name = route.route.split('/').pop()!.replace(/\.json$/, '')
+          await mkdir(resolve(dir, name), { recursive: true })
+          await writeFile(resolve(dir, name, 'manifest.json'), route.contents!)
+        }
         if (route.route.startsWith('/__nuxt_content/snapshot/')) {
-          await writeFile(resolve(dir, route.route.split('/').pop()!), route.contents!)
+          const file = route.route.split('/').pop()! // e.g. content.json
+          const name = file.replace(/\.json$/, '')
+          await mkdir(resolve(dir, name), { recursive: true })
+          await writeFile(resolve(dir, name, 'snapshot.json'), route.contents!)
+          await writeFile(resolve(dir, file), route.contents!)
         }
       })
     })
@@ -182,10 +256,10 @@ async function setupCMS(cmsPath: string, nuxt: Nuxt, options: ModuleOptions): Pr
     }
   }
 
-  return cms as ComarkCMS & MediaMethods
+  return cms
 }
 
-function setupMedia(cms: ComarkCMS & MediaMethods, nuxt: Nuxt) {
+function setupMedia(cms: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
   const { resolve } = createResolver(import.meta.url)
   /**
    * Register middleware to serve CMS media files

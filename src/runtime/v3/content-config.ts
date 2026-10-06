@@ -1,31 +1,28 @@
 import { dirname, isAbsolute, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createJiti } from 'jiti'
-import fsSource from '@comark/cms/sources/fs'
-import githubSource from '@comark/cms/sources/github'
-import mergeSources from '@comark/cms/sources/merge'
-import type { Source, JsonSchema } from '@comark/cms'
+import fsSource from 'comark-content/sources/fs'
+import githubSource from 'comark-content/sources/github'
+import type { Source, JsonSchema } from 'comark-content'
 
 /**
  * Read a Nuxt Content v3 `content.config.ts` and translate its collections into
- * Comark CMS sources.
+ * Comark Content sources.
  *
  * v3 configs declare collections with `defineContentConfig`/`defineCollection`
  * and describe where documents live through each collection's `source` (a glob
  * string, a `{ include, exclude, prefix, cwd, repository }` object, or an array
  * of those). This maps every descriptor onto a Comark `Source` built from the
  * `fs`/`github` source factories; a collection that declares several descriptors
- * is combined into one via the `merge` source, so the result is keyed by
- * collection name and can be handed straight to `createCMS({ sources })`.
+ * is combined into one via {@link mergeSources}, so the result is keyed by
+ * collection name and can be handed straight to `contentHub()` (one instance
+ * per collection) or used as the `sources` map of `createNuxtContent()`.
  *
  * Each source carries the descriptor's `prefix` and a `schema` derived from the
  * collection's `z` schema (as Comark's minimal JSON Schema). `page` collections
  * also gain v3's default meta fields (`title`, `description`, `seo`,
- * `navigation`). Because that conversion is approximate, sources are created with
- * `schemaValidation: false` — the schema still drives generated types and query
- * columns, but does not filter documents at load. A collection with several
- * descriptors is combined with the `merge` source, which takes the collection
- * schema and the first descriptor's prefix.
+ * `navigation`). The schema drives generated types and query columns; runtime
+ * document validation is left to the optional `schema-validation` plugin.
  *
  * A relative `configPath` is resolved against `options.cwd`, which may be a
  * directory path or a `file://` URL (e.g. `import.meta.url`); the project root
@@ -62,12 +59,66 @@ export function readContentConfigSources(
       continue
     }
     const children = descriptors.map(descriptor => toSource(descriptor, rootDir))
-    const merged = mergeSources(children, { errorOnConflict: true, ...(schema ? { schema, schemaValidation: false } : {}) })
+    const merged = mergeSources(children, schema)
     // `merge` carries no prefix of its own; adopt the first descriptor's.
     const prefix = descriptors.map(descriptor => descriptor.prefix).find(Boolean)
     sources[name] = prefix ? { ...merged, prefix } : merged
   }
   return sources
+}
+
+/**
+ * Combine several sources behind one surface (replaces the removed
+ * `comark-content/sources/merge` factory).
+ *
+ * Keys from each child are returned as-is. On conflict the first child wins for
+ * `getItem` / `getItemRaw` (mirrors hub path-collision behaviour).
+ */
+function mergeSources(children: Source[], schema?: JsonSchema): Source {
+  async function locate(key: string): Promise<{ child: Source, childKey: string } | undefined> {
+    for (const child of children) {
+      const keys = await child.keys()
+      if (keys.includes(key)) {
+        return { child, childKey: key }
+      }
+    }
+    return undefined
+  }
+
+  return {
+    ...(schema ? { schema } : {}),
+    async keys() {
+      const seen = new Set<string>()
+      const all: string[] = []
+      for (const child of children) {
+        for (const key of await child.keys()) {
+          if (seen.has(key)) continue
+          seen.add(key)
+          all.push(key)
+        }
+      }
+      return all
+    },
+    async getItem(key: string) {
+      const hit = await locate(key)
+      if (!hit) return null as unknown as string
+      return hit.child.getItem(hit.childKey)
+    },
+    async getItemRaw(key: string) {
+      const hit = await locate(key)
+      if (!hit) return null
+      return hit.child.getItemRaw?.(hit.childKey)
+    },
+    watch: children.some(c => c.watch)
+      ? (cb) => {
+          const stops = children.map((child) => {
+            if (!child.watch) return () => {}
+            return child.watch((event, key) => cb(event, key))
+          })
+          return () => { for (const stop of stops) stop() }
+        }
+      : undefined,
+  }
 }
 
 /** Shape of a v3 collection `source` descriptor, once normalized to an object. */
@@ -119,16 +170,16 @@ function resolveConfigPath(configPath: string, cwd?: string | URL): string {
 function toSource(descriptor: SourceDescriptor, rootDir: string, schema?: JsonSchema): Source {
   const base = splitGlob(descriptor.include)
   const rebasedExclude = rebaseExclude(descriptor.exclude, base)
-  // Our zod → JSON Schema conversion is approximate, so keep it for types/query
-  // columns but leave document validation off (see `readContentConfigSources`).
-  const schemaOptions = schema ? { schema, schemaValidation: false } : {}
+  // Our zod → JSON Schema conversion is approximate; the schema drives types and
+  // query columns. Runtime validation is opt-in via the schema-validation plugin.
+  const schemaOptions = schema ? { schema } : {}
 
   if (descriptor.repository) {
     const { repo, branch, dir } = parseRepository(descriptor.repository)
     return githubSource({
       repo,
       ...(branch ? { branch } : {}),
-      dir: [dir, base].filter(Boolean).join('/'),
+      path: [dir, base].filter(Boolean).join('/'),
       prefix: descriptor.prefix,
       exclude: rebasedExclude,
       ...schemaOptions,

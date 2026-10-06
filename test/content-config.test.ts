@@ -52,8 +52,8 @@ describe('readContentConfigSources', () => {
       properties: { title: { type: 'string' } },
       required: ['title'],
     })
-    // Approximate conversion → schema drives types/columns but never filters.
-    expect(sources.index.schemaValidation).toBe(false)
+    // Approximate conversion → schema drives types/columns; runtime validation is opt-in.
+    expect(sources.index.schema).toBeDefined()
   })
 
   it('injects v3 default page fields and merges the user schema over them', async () => {

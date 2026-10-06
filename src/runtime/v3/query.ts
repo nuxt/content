@@ -1,10 +1,10 @@
-import type { ComarkCMS, CMSFile, CMSListFile } from '@comark/cms'
+import type { ComarkContent, ContentFile, ContentListFile } from 'comark-content'
 import type {
   SQLOperator,
   QueryGroupFunction,
   QueryField,
   SourceQueryBuilder,
-} from '@comark/cms/database/utils/query'
+} from 'comark-content/database/utils/query'
 
 /**
  * The full document shape a hydrated query returns, mirroring the Nuxt Content
@@ -17,16 +17,16 @@ import type {
  * - frontmatter (`Data`) is spread flat so `doc.title` works like v3.
  * - `nodes`/`meta` — the parsed body and file metadata.
  */
-export type FullFile<Item> = Item extends CMSListFile<infer Data>
+export type FullFile<Item> = Item extends ContentListFile<infer Data>
   ? Data & {
     id: string
     path: string
     stem: string
     extension: string
-    body: CMSFile<Data>['nodes']
-    meta: CMSFile<Data>['meta']
+    body: ContentFile<Data>['nodes']
+    meta: ContentFile<Data>['meta']
   }
-  : Item & Pick<CMSFile, 'nodes'>
+  : Item & Pick<ContentFile, 'nodes'>
 
 /**
  * A {@link SourceQueryBuilder} whose terminal reads resolve to full documents.
@@ -53,11 +53,11 @@ export interface FullFileQueryBuilder<Row, Item> {
  * can no longer be resolved (e.g. removed between the query and the read) we
  * fall back to the row itself with an empty body so callers still get an object.
  */
-async function hydrate<Item extends CMSListFile>(
-  cms: Pick<ComarkCMS, 'get'>,
+async function hydrate<Item extends ContentListFile>(
+  cms: Pick<ComarkContent, 'get'>,
   item: Item,
 ): Promise<FullFile<Item>> {
-  const source = (await cms.get(item.path)) ?? { ...item, nodes: [] as CMSFile['nodes'] }
+  const source = (await cms.get(item.path)) ?? { ...item, nodes: [] as ContentFile['nodes'] }
 
   return {
     // Spread the frontmatter first so the identity/meta fields below always win.
@@ -77,15 +77,15 @@ async function hydrate<Item extends CMSListFile>(
  * SQL layer produces. Chainable methods are proxied so filtering/ordering keeps
  * working; the wrapper is re-applied on every chain step.
  */
-// `Record<string, any>` mirrors `CMSListFile`'s own data constraint — generated
+// `Record<string, any>` mirrors `ContentListFile`'s own data constraint — generated
 // collection data interfaces have no index signature and don't satisfy
 // `Record<string, unknown>`, which would break inference of the source's data type.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function withFullFiles<Row, Data extends Record<string, any>>(
-  cms: Pick<ComarkCMS, 'get'>,
-  builder: SourceQueryBuilder<Row, CMSListFile<Data>>,
-): FullFileQueryBuilder<Row, CMSListFile<Data>> {
-  type Item = CMSListFile<Data>
+  cms: Pick<ComarkContent, 'get'>,
+  builder: SourceQueryBuilder<Row, ContentListFile<Data>>,
+): FullFileQueryBuilder<Row, ContentListFile<Data>> {
+  type Item = ContentListFile<Data>
   const wrap = (qb: SourceQueryBuilder<Row, Item>): FullFileQueryBuilder<Row, Item> => ({
     path: path => wrap(qb.path(path)),
     order: (field, direction) => wrap(qb.order(field, direction)),

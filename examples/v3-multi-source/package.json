@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "@nuxt/content-example-v3-multi-source",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "latest",
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
+    "nuxt": "^4.5.0"
+  }
+}

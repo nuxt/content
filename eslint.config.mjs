@@ -12,6 +12,7 @@ export default createConfigForNuxt({
   dirs: {
     src: [
       './playground',
+      './examples/v3-multi-source',
     ],
   },
 })

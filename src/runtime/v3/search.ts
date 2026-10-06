@@ -1,5 +1,5 @@
-import { splitIntoSections } from '@comark/cms/plugins/sqlite-full-text-search'
-import type { CMSFile } from '@comark/cms'
+import { splitIntoSections } from 'comark-content/plugins/sqlite-full-text-search'
+import type { ContentFile } from 'comark-content'
 
 /**
  * A single searchable section extracted from a document — the page itself plus
@@ -38,11 +38,11 @@ function pick(obj: Record<string, unknown>, keys: string[]) {
 
 /**
  * Split each document's parsed body into flat, searchable sections.
- * `documents` must be full {@link CMSFile}s (with `nodes`); fetch them with
+ * `documents` must be full {@link ContentFile}s (with `nodes`); fetch them with
  * `cms.get()` — the lightweight items returned by `query().all()` have no body.
  */
 export function generateSearchSections(
-  documents: CMSFile[],
+  documents: ContentFile[],
   opts?: GenerateSearchSectionsOptions,
 ): Array<Section & Record<string, unknown>> {
   const { ignoredTags = [], extraFields = [], minHeading = 'h1', maxHeading = 'h6' } = opts || {}

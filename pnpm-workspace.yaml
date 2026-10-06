@@ -1,6 +1,7 @@
 packages:
   - ./
   - playground
+  - examples/*
 
 overrides:
   "@nuxt/content": workspace:*
@@ -13,4 +14,4 @@ allowBuilds:
   vue-demi: false
 
 minimumReleaseAgeExclude:
-  - '@comark/cms@0.1.0-beta.0'
+  - "@comark/cms@0.1.0-beta.0"

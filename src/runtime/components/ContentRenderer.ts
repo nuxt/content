@@ -1,7 +1,8 @@
 import { computed, defineComponent, h } from 'vue'
 import { NuxtLink } from '#components'
 import type { PropType, SlotsType } from 'vue'
-import { ComarkRenderer, type ComarkTree } from '@comark/vue'
+import { MarkdownDocument } from '@comark/vue'
+import type { MarkdownDocument as ComarkMarkdownDocument } from 'comark'
 import type { ComarkRendererProps } from '@comark/vue/components/ComarkRenderer'
 
 const debug = import.meta.dev || import.meta.preview
@@ -64,15 +65,15 @@ export default defineComponent({
 
     return () => {
       const dataContentId = debug
-        ? (comarkTree.value as ComarkTree)?.meta?.key
+        ? (comarkTree.value as ComarkMarkdownDocument)?.meta?.key
         : undefined
 
       if (isEmpty.value) {
         return slots.empty?.({ 'data-content-id': dataContentId }) ?? null
       }
 
-      return h(ComarkRenderer, {
-        'tree': comarkTree.value!,
+      return h(MarkdownDocument, {
+        'value': comarkTree.value!,
         'components': {
           a: NuxtLink,
           ...props.components,

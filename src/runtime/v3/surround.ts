@@ -1,4 +1,4 @@
-import type { NavigationItem } from '@comark/cms'
+import type { NavigationItem } from 'comark-content'
 
 export interface SurroundOptions {
   before?: number

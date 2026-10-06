@@ -1,30 +1,46 @@
 import type { H3Event } from 'h3'
-import { generateNavigationTree } from '@comark/cms/utils'
+import { generateNavigation } from 'comark-content/utils'
 import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
 import type {
-  ComarkCMS,
-  ComarkRegistry,
+  ComarkContent,
+  ContentRegistry,
   RegistryRow,
   SourceData,
   NavigationItem,
-  CMSListFile,
-  CMSFile,
+  ContentListFile,
+  ContentFile,
   QueryRow,
-} from '@comark/cms'
+  ContentHub,
+} from 'comark-content'
 import type {
   SQLOperator,
   QueryGroupFunction,
   QueryField,
   SourceQueryBuilder,
-} from '@comark/cms/database/utils/query'
-import type { SqlQueryMethods } from '@comark/cms/plugins/sql-query'
+} from 'comark-content/database/utils/query'
+import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
 import { cms } from '#imports'
 
-type QueryableCMS = ComarkCMS & SqlQueryMethods
-type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
-type FullQueryBuilderFor<K extends keyof ComarkRegistry> = FullFileQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
+type QueryableContent = (ComarkContent | ContentHub) & {
+  query: SqlQueryMethods['query']
+  get: ComarkContent['get']
+}
+type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
+type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
+
+function asQueryable(): QueryableContent {
+  return cms as QueryableContent
+}
+
+function resolveQuery(source: string) {
+  const instance = asQueryable()
+  if ('from' in instance && typeof (instance as ContentHub).from === 'function') {
+    return (instance as ContentHub & { query: SqlQueryMethods['query'] }).query(source)
+  }
+  return instance.query(source)
+}
 
 /**
  * The server `cms` is a module-level singleton, so the `event` argument is not
@@ -32,25 +48,25 @@ type FullQueryBuilderFor<K extends keyof ComarkRegistry> = FullFileQueryBuilder<
  * Nuxt Content v3 server API (`queryCollection(event, collection)`), keeping
  * user code that threads the request event source-compatible.
  */
-export function queryCollection<K extends keyof ComarkRegistry>(event: H3Event, source: K): FullQueryBuilderFor<K>
-export function queryCollection(event: H3Event, source: string): FullFileQueryBuilder<QueryRow, CMSListFile>
-export function queryCollection(_event: H3Event, source: keyof ComarkRegistry | string) {
-  const cmsInstance = cms as QueryableCMS
-  return withFullFiles(cmsInstance, cmsInstance.query(source as keyof ComarkRegistry))
+export function queryCollection<K extends keyof ContentRegistry>(event: H3Event, source: K): FullQueryBuilderFor<K>
+export function queryCollection(event: H3Event, source: string): FullFileQueryBuilder<QueryRow, ContentListFile>
+export function queryCollection(_event: H3Event, source: keyof ContentRegistry | string) {
+  const instance = asQueryable()
+  return withFullFiles(instance, resolveQuery(source as string) as SourceQueryBuilder<QueryRow, ContentListFile>)
 }
 
-export function queryCollectionNavigation<K extends keyof ComarkRegistry>(
+export function queryCollectionNavigation<K extends keyof ContentRegistry>(
   event: H3Event,
   collection: K,
   fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
   return chainablePromise(event, collection, async (qb) => {
     const list = await qb.all()
-    return generateNavigationTree(list)
+    return generateNavigation(list)
   })
 }
 
-export function queryCollectionItemSurroundings<K extends keyof ComarkRegistry>(
+export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>(
   event: H3Event,
   collection: K,
   path: string,
@@ -58,49 +74,49 @@ export function queryCollectionItemSurroundings<K extends keyof ComarkRegistry>(
 ): ChainablePromise<K, (NavigationItem | null)[]> {
   return chainablePromise(event, collection, async (qb) => {
     const list = await qb.all()
-    const navigation = await generateNavigationTree(list)
+    const navigation = await generateNavigation(list)
     return generateItemSurround(navigation, path, opts)
   })
 }
 
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry, const F extends keyof SourceData<K>>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry, const F extends keyof SourceData<K>>(
   event: H3Event,
   collection: K,
   opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: F[] },
 ): ChainablePromise<K, Array<Section & Pick<SourceData<K>, F>>>
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
   event: H3Event,
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ): ChainablePromise<K, Section[]>
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
   event: H3Event,
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ) {
   return chainablePromise(event, collection, async (qb) => {
     const list = await qb.all()
-    const files = await Promise.all(list.map(item => (cms as QueryableCMS).get(item.path)))
-    const documents = files.filter((doc): doc is CMSFile => Boolean(doc))
+    const files = await Promise.all(list.map(item => asQueryable().get(item.path)))
+    const documents = files.filter((doc): doc is ContentFile => Boolean(doc))
     return generateSearchSections(documents, opts)
   })
 }
 
-interface ChainablePromise<K extends keyof ComarkRegistry, R> extends Promise<R> {
+interface ChainablePromise<K extends keyof ContentRegistry, R> extends Promise<R> {
   where(field: QueryField<RegistryRow<K>>, operator: SQLOperator, value?: unknown): ChainablePromise<K, R>
   andWhere(groupFactory: QueryGroupFunction<RegistryRow<K>>): ChainablePromise<K, R>
   orWhere(groupFactory: QueryGroupFunction<RegistryRow<K>>): ChainablePromise<K, R>
   order(field: QueryField<RegistryRow<K>>, direction: 'ASC' | 'DESC'): ChainablePromise<K, R>
 }
 
-function chainablePromise<K extends keyof ComarkRegistry, Result>(
+function chainablePromise<K extends keyof ContentRegistry, Result>(
   _event: H3Event,
   collection: K,
   fn: (qb: QueryBuilderFor<K>) => Promise<Result>,
 ) {
   // Navigation/surroundings/search only need the lightweight rows, so they use
   // the raw query builder rather than the body-hydrating `queryCollection`.
-  const queryBuilder = (cms as QueryableCMS).query(collection) as QueryBuilderFor<K>
+  const queryBuilder = resolveQuery(collection as string) as QueryBuilderFor<K>
 
   const chainable: ChainablePromise<K, Result> = {
     where(field, operator, value) {

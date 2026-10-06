@@ -1,87 +1,110 @@
 import { ref, toValue, watch } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
-import { generateNavigationTree } from '@comark/cms/utils'
+import { generateNavigation } from 'comark-content/utils'
 import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
 import type {
-  ComarkCMS,
-  ComarkRegistry,
+  ComarkContent,
+  ContentRegistry,
   RegistryRow,
   SourceData,
   NavigationItem,
-  CMSListFile,
-  CMSFile,
+  ContentListFile,
+  ContentFile,
   QueryRow,
   SearchOptions,
   SearchResult,
-} from '@comark/cms'
+  ContentHub,
+} from 'comark-content'
 import type {
   SQLOperator,
   QueryGroupFunction,
   QueryField,
   SourceQueryBuilder,
-} from '@comark/cms/database/utils/query'
-import type { SqlQueryMethods } from '@comark/cms/plugins/sql-query'
+} from 'comark-content/database/utils/query'
+import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
 import { cms } from '#imports'
 
-type QueryableCMS = ComarkCMS & SqlQueryMethods
-type SearchableCMS = QueryableCMS & {
-  search: (sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>
+type QueryableContent = (ComarkContent | ContentHub) & {
+  query: SqlQueryMethods['query']
+  get: ComarkContent['get']
 }
-type QueryBuilderFor<K extends keyof ComarkRegistry> = SourceQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
-type FullQueryBuilderFor<K extends keyof ComarkRegistry> = FullFileQueryBuilder<RegistryRow<K>, CMSListFile<SourceData<K>>>
+type SearchableContent = QueryableContent & {
+  // Instance API: search(query, opts). Hub API: search(query, opts & { instances }).
+  // Internal FTS surface also supports searchAcross(sources, query, opts).
+  search: ((query: string, opts?: SearchOptions) => Promise<SearchResult[]>)
+    & ((sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>)
+  __fts__?: {
+    searchAcross: (sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>
+  }
+}
+type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
+type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 
-export function queryCollection<K extends keyof ComarkRegistry>(source: K): FullQueryBuilderFor<K>
-export function queryCollection(source: string): FullFileQueryBuilder<QueryRow, CMSListFile>
-export function queryCollection(source: keyof ComarkRegistry | string) {
-  const cmsInstance = cms as QueryableCMS
-  return withFullFiles(cmsInstance, cmsInstance.query(source as keyof ComarkRegistry))
+function asQueryable(): QueryableContent {
+  return cms as QueryableContent
 }
 
-export function queryCollectionNavigation<K extends keyof ComarkRegistry>(
+function resolveQuery(source: string) {
+  const instance = asQueryable()
+  // Hub: query(name). Single instance: query() scoped to itself — pass the name for typing.
+  if ('from' in instance && typeof (instance as ContentHub).from === 'function') {
+    return (instance as ContentHub & { query: SqlQueryMethods['query'] }).query(source)
+  }
+  return instance.query(source)
+}
+
+export function queryCollection<K extends keyof ContentRegistry>(source: K): FullQueryBuilderFor<K>
+export function queryCollection(source: string): FullFileQueryBuilder<QueryRow, ContentListFile>
+export function queryCollection(source: keyof ContentRegistry | string) {
+  const instance = asQueryable()
+  return withFullFiles(instance, resolveQuery(source as string) as SourceQueryBuilder<QueryRow, ContentListFile>)
+}
+
+export function queryCollectionNavigation<K extends keyof ContentRegistry>(
   collection: K,
   fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
   return chainablePromise(collection, async (qb) => {
     const list = await qb.all()
-    return generateNavigationTree(list)
+    return generateNavigation(list)
   })
 }
 
-export function queryCollectionItemSurroundings<K extends keyof ComarkRegistry>(
+export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>(
   collection: K,
   path: string,
   opts?: SurroundOptions,
 ): ChainablePromise<K, (NavigationItem | null)[]> {
   return chainablePromise(collection, async (qb) => {
     const list = await qb.all()
-    const navigation = await generateNavigationTree(list)
+    const navigation = await generateNavigation(list)
     return generateItemSurround(navigation, path, opts)
   })
 }
 
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry, const F extends keyof SourceData<K>>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry, const F extends keyof SourceData<K>>(
   collection: K,
   opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: F[] },
 ): ChainablePromise<K, Array<Section & Pick<SourceData<K>, F>>>
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ): ChainablePromise<K, Section[]>
-export function queryCollectionSearchSections<K extends keyof ComarkRegistry>(
+export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ) {
   return chainablePromise(collection, async (qb) => {
     const list = await qb.all()
-    const files = await Promise.all(list.map(item => (cms as QueryableCMS).get(item.path)))
-    const documents = files.filter((doc): doc is CMSFile => Boolean(doc))
+    const files = await Promise.all(list.map(item => asQueryable().get(item.path)))
+    const documents = files.filter((doc): doc is ContentFile => Boolean(doc))
     return generateSearchSections(documents, opts)
   })
 }
 
-export function useSearchCollection<T extends keyof ComarkRegistry>(
+export function useSearchCollection<T extends keyof ContentRegistry>(
   collection: MaybeRefOrGetter<T | T[]>,
   opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
 ) {
@@ -99,6 +122,19 @@ export function useSearchCollection<T extends keyof ComarkRegistry>(
     return (Array.isArray(value) ? value : [value]).map(String)
   }
 
+  async function searchAcross(collections: string[], query: string, searchOpts?: SearchOptions) {
+    const searchable = cms as SearchableContent
+    if (searchable.__fts__?.searchAcross) {
+      return searchable.__fts__.searchAcross(collections, query, searchOpts)
+    }
+    // Hub search takes (query, { instances }).
+    if ('from' in searchable && typeof (searchable as ContentHub).from === 'function') {
+      return (searchable as ContentHub).search(query, { ...searchOpts, instances: collections })
+    }
+    // Single-instance search takes (query, opts) only.
+    return searchable.search(query, searchOpts)
+  }
+
   async function init() {
     const collections = resolveCollections()
     if (!collections.length) {
@@ -112,9 +148,8 @@ export function useSearchCollection<T extends keyof ComarkRegistry>(
     }
 
     status.value = 'loading'
-    // An empty query warms the index without returning hits: comark indexes each
-    // requested source before it bails on the empty search term.
-    initPromise = (cms as SearchableCMS).search(collections, '')
+    // An empty query warms the index without returning hits.
+    initPromise = searchAcross(collections, '')
       .then(() => {
         indexedFor = collections
         status.value = 'ready'
@@ -134,26 +169,26 @@ export function useSearchCollection<T extends keyof ComarkRegistry>(
     if (status.value !== 'ready') {
       await init()
     }
-    return (cms as SearchableCMS).search(resolveCollections(), query, searchOpts)
+    return searchAcross(resolveCollections(), query, searchOpts)
   }
 
   return { status, search, init }
 }
 
-interface ChainablePromise<K extends keyof ComarkRegistry, R> extends Promise<R> {
+interface ChainablePromise<K extends keyof ContentRegistry, R> extends Promise<R> {
   where(field: QueryField<RegistryRow<K>>, operator: SQLOperator, value?: unknown): ChainablePromise<K, R>
   andWhere(groupFactory: QueryGroupFunction<RegistryRow<K>>): ChainablePromise<K, R>
   orWhere(groupFactory: QueryGroupFunction<RegistryRow<K>>): ChainablePromise<K, R>
   order(field: QueryField<RegistryRow<K>>, direction: 'ASC' | 'DESC'): ChainablePromise<K, R>
 }
 
-function chainablePromise<K extends keyof ComarkRegistry, Result>(
+function chainablePromise<K extends keyof ContentRegistry, Result>(
   collection: K,
   fn: (qb: QueryBuilderFor<K>) => Promise<Result>,
 ) {
   // Navigation/surroundings/search only need the lightweight rows, so they use
   // the raw query builder rather than the body-hydrating `queryCollection`.
-  const queryBuilder = (cms as QueryableCMS).query(collection) as QueryBuilderFor<K>
+  const queryBuilder = resolveQuery(collection as string) as QueryBuilderFor<K>
 
   const chainable: ChainablePromise<K, Result> = {
     where(field, operator, value) {
