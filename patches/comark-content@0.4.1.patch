@@ -1,0 +1,99 @@
+diff --git a/dist/plugins/sql-query.js b/dist/plugins/sql-query.js
+index e73ab5e52fb555078c90c03fb67ac683b9a04064..e084d056b3aa737f31cbafc5621e71da067c32f2 100644
+--- a/dist/plugins/sql-query.js
++++ b/dist/plugins/sql-query.js
+@@ -90,6 +90,14 @@ export default defineContentPlugin((options) => {
+         name: 'sql-query',
+         setup(content) {
+             const indexes = new Map();
++            /**
++             * The latest index build in flight, per source. A build drops and
++             * recreates the source's table, so queries wait for it instead of
++             * reading a table that is missing or half-written.
++             */
++            const pendingBuilds = new Map();
++            /** Lazy builds started by a query, shared by concurrent queries. */
++            const lazyBuilds = new Map();
+             let restorePromise;
+             function enqueueWrite(fn) {
+                 return enqueueDatabaseWrite(base, fn);
+@@ -168,7 +176,29 @@ export default defineContentPlugin((options) => {
+                 }
+                 return restorePromise;
+             }
+-            async function buildIndexFromItems(source, items) {
++            function trackBuild(source, build) {
++                pendingBuilds.set(source, build);
++                const settle = () => {
++                    // A later build queued behind this one supersedes it.
++                    if (pendingBuilds.get(source) === build)
++                        pendingBuilds.delete(source);
++                };
++                build.then(settle, settle);
++                return build;
++            }
++            /** Wait until no index build is in flight for `source`, including ones queued meanwhile. */
++            async function settleBuilds(source) {
++                let pending = pendingBuilds.get(source);
++                while (pending) {
++                    await pending.catch(() => { });
++                    const next = pendingBuilds.get(source);
++                    pending = next === pending ? undefined : next;
++                }
++            }
++            function buildIndexFromItems(source, items) {
++                return trackBuild(source, writeIndexTable(source, items));
++            }
++            function writeIndexTable(source, items) {
+                 return enqueueWrite(async () => {
+                     const dataSchema = content.__manifest__.schemas?.[source];
+                     const jsonSchema = dataSchema ? rowSchemaFromDataSchema(dataSchema) : {};
+@@ -211,13 +241,26 @@ export default defineContentPlugin((options) => {
+                     return { name: tableName, jsonSchema };
+                 });
+             }
+-            async function buildIndexForSource(source) {
++            /**
++             * Build the index for a source no query has found one for. Concurrent
++             * callers share one build. `snapshot()` may initialise the instance, and
++             * the resulting `file:bulk:load` already builds the index — don't redo it.
++             */
++            function buildIndexForSource(source) {
+                 if (source !== content.name)
+-                    return null;
+-                const { items } = await content.snapshot();
+-                if (!items.length)
+-                    return null;
+-                return buildIndexFromItems(source, items);
++                    return Promise.resolve(null);
++                let build = lazyBuilds.get(source);
++                if (!build) {
++                    build = (async () => {
++                        const { items } = await content.snapshot();
++                        await settleBuilds(source);
++                        if (indexes.has(source) || !items.length)
++                            return null;
++                        return buildIndexFromItems(source, items);
++                    })().finally(() => lazyBuilds.delete(source));
++                    lazyBuilds.set(source, build);
++                }
++                return build;
+             }
+             // Stay in sync with content write events.
+             content.hooks.hook('file:upsert', (source, _key, file) => indexUpsert(source, file));
+@@ -253,6 +296,7 @@ export default defineContentPlugin((options) => {
+             });
+             async function executeQuery(params) {
+                 return content.perf.run('query', async () => {
++                    await settleBuilds(params.source);
+                     if (!indexes.has(params.source)) {
+                         await withSpan(content.perf, 'query:restore-indexes', () => ensureIndexesRestored());
+                     }
+@@ -260,6 +304,7 @@ export default defineContentPlugin((options) => {
+                         await withSpan(content.perf, 'query:build-index', () => buildIndexForSource(params.source), {
+                             attributes: { source: params.source },
+                         });
++                        await settleBuilds(params.source);
+                     }
+                     if (!indexes.has(params.source)) {
+                         throw new Error(`Search index for source '${params.source}' has not been generated. Call prepareQueryIndex() first.`);

@@ -2,10 +2,7 @@ import { defineNuxtPlugin, refreshNuxtData } from '#app'
 import type { AnyComarkContent, ContentHub } from 'comark-content'
 import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from '../utils/hmr'
 
-type LiveInstance = AnyComarkContent & {
-  resetSearchIndex?: () => Promise<void>
-  query?: () => { count: () => Promise<number> }
-}
+type LiveInstance = AnyComarkContent & { resetSearchIndex?: () => Promise<void> }
 
 /**
  * Development only: apply content changes pushed by the module's watcher.
@@ -24,9 +21,7 @@ export default defineNuxtPlugin(() => {
   const enqueue = (task: (instances: LiveInstance[]) => Promise<void>) => {
     queue = queue
       .then(async () => {
-        const instances = await loadInstances()
-        await task(instances)
-        await warmQueryIndexes(instances)
+        await task(await loadInstances())
         await refreshNuxtData()
       })
       .catch(error => console.error('[nuxt/content] failed to apply content update', error))
@@ -76,18 +71,6 @@ function findLoaded(instances: LiveInstance[], source: string): LiveInstance | u
 
 function isHub(value: unknown): value is ContentHub {
   return !!value && typeof value === 'object' && typeof (value as ContentHub).from === 'function'
-}
-
-/**
- * Build each instance's SQL query index one at a time before refreshing.
- * `refreshNuxtData()` re-runs every `useAsyncData` in parallel, and the
- * `sql-query` plugin fails concurrent first builds of the same index (one drops
- * the table while another reads it), which surfaces as missing pages.
- */
-async function warmQueryIndexes(instances: LiveInstance[]) {
-  for (const instance of instances) {
-    await instance.query?.().count()
-  }
 }
 
 /** Full-text search has no per-file update, so drop the index; it is rebuilt on the next search. */

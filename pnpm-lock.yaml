@@ -8,6 +8,9 @@ overrides:
   '@nuxt/content': workspace:*
   postcss-merge-rules@9>cssnano-utils: ^8.2.0
 
+patchedDependencies:
+  comark-content@0.4.1: b404a5c8af719cc3193d25f34c669ed506f21d010b4fd7ce11f1e402a80cc83c
+
 importers:
 
   .:
@@ -23,7 +26,7 @@ importers:
         version: 0.7.0(shiki@4.3.1)
       comark-content:
         specifier: ^0.4.1
-        version: 0.4.1(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.3.1)
+        version: 0.4.1(patch_hash=b404a5c8af719cc3193d25f34c669ed506f21d010b4fd7ce11f1e402a80cc83c)(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.3.1)
       defu:
         specifier: ^6.1.7
         version: 6.1.7
@@ -10126,7 +10129,7 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  comark-content@0.4.1(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.3.1):
+  comark-content@0.4.1(patch_hash=b404a5c8af719cc3193d25f34c669ed506f21d010b4fd7ce11f1e402a80cc83c)(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(ioredis@5.11.1(supports-color@10.2.2))(shiki@4.3.1):
     dependencies:
       citty: 0.2.2
       comark: 0.7.0(shiki@4.3.1)
