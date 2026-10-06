@@ -80,7 +80,6 @@ async function hydrate<Item extends ContentListFile>(
 // `Record<string, any>` mirrors `ContentListFile`'s own data constraint — generated
 // collection data interfaces have no index signature and don't satisfy
 // `Record<string, unknown>`, which would break inference of the source's data type.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function withFullFiles<Row, Data extends Record<string, any>>(
   content: Pick<ComarkContent, 'get'>,
   builder: SourceQueryBuilder<Row, ContentListFile<Data>>,

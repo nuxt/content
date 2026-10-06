@@ -5,7 +5,6 @@ import { v3ServerPlugins } from '../v3/content-plugins.server'
 export type ContentInstance = AnyComarkContent
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
 // default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ContentSurface = ContentInstance | ContentHub<any>
 
 interface NuxtContentOptions extends Omit<ContentOptions, 'source' | 'plugins'> {

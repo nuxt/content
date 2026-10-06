@@ -15,7 +15,6 @@ import { fileURLToPath } from 'node:url'
 
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
 // default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ContentSurface = AnyComarkContent | ContentHub<any>
 type ContentWithMedia = ContentSurface & Partial<MediaMethods>
 
@@ -157,7 +156,6 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isHub(surface: ContentSurface): surface is ContentHub<any> {
   return Array.isArray((surface as ContentHub).names)
 }

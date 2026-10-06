@@ -7,7 +7,7 @@ export interface SurroundOptions {
 }
 
 export async function generateItemSurround(navigation: NavigationItem[], path: string, opts?: SurroundOptions) {
-  const { before = 1, after = 1, fields = [] } = opts || {}
+  const { before = 1, after = 1 /* , fields = [] */ } = opts || {}
 
   const flatData = flattedData(navigation)
   const index = flatData.findIndex(item => item.path === path)

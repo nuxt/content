@@ -17,5 +17,9 @@ export default createConfigForNuxt({
   },
 })
   .append(
-    // your custom flat config here...
+    {
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
   )

@@ -64,7 +64,7 @@ export function queryCollection(_event: ServerEvent, source: keyof ContentRegist
 export function queryCollectionNavigation<K extends keyof ContentRegistry>(
   event: ServerEvent,
   collection: K,
-  fields?: Array<keyof SourceData<K>>,
+  _fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
   return chainablePromise(event, collection, async (qb) => {
     const list = await qb.all()
