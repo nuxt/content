@@ -1,7 +1,7 @@
 import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
 import defu from 'defu'
 import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub } from 'comark-content'
-import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPrerenderRoutes, addDevServerHandler, addTypeTemplate } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { toWebRequest, serveStatic } from 'h3'
@@ -10,6 +10,7 @@ import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
+import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from './runtime/utils/hmr'
 import { fileURLToPath } from 'node:url'
 
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
@@ -69,9 +70,23 @@ export default defineNuxtModule<ModuleOptions>({
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
 
-    addImports({ name: 'content', from: resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`) })
+    const clientContentPath = resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
+    addImports({ name: 'content', from: clientContentPath })
     addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
     addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
+
+    // Lets the HMR plugin lazily load the same client `content` the auto-import resolves to.
+    addTemplate({
+      filename: 'content/client.mjs',
+      getContents: () => `export { content } from ${JSON.stringify(clientContentPath)}\n`,
+    })
+    addTypeTemplate({
+      filename: 'content/client.d.ts',
+      getContents: () => `export declare const content: unknown\n`,
+    })
+    if (nuxt.options.dev && options.watch) {
+      addPlugin({ src: resolve('./runtime/plugins/hmr.client'), mode: 'client' })
+    }
 
     if (options.v3Composables) {
       addComponent({ name: 'MDC', filePath: resolve('./runtime/components/MDC') })
@@ -145,6 +160,36 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isHub(surface: ContentSurface): surface is ContentHub<any> {
   return Array.isArray((surface as ContentHub).names)
+}
+
+function resolveInstances(surface: ContentSurface): AnyComarkContent[] {
+  if (isHub(surface)) {
+    return surface.names.map(name => surface.from(name))
+  }
+  return [surface]
+}
+
+/**
+ * Push watched content changes to the browser over Vite's HMR channel. The
+ * client plugin (`runtime/plugins/hmr.client`) patches the in-browser instance
+ * and refreshes `useAsyncData`.
+ */
+function setupHmr(content: ContentSurface, nuxt: Nuxt) {
+  let send: ((event: string, data: unknown) => void) | undefined
+  nuxt.hook('vite:serverCreated', (server, { isClient }) => {
+    if (isClient) {
+      send = (event, data) => server.ws.send({ type: 'custom', event, data })
+    }
+  })
+
+  for (const instance of resolveInstances(content)) {
+    instance.hooks.hook('watch:file:update', (source, key, file) => {
+      send?.(HMR_UPDATE_EVENT, { source, key: `${source}/${key}`, file } satisfies ContentHmrUpdate)
+    })
+    instance.hooks.hook('watch:file:remove', (source, key) => {
+      send?.(HMR_REMOVE_EVENT, { source, key: `${source}/${key}` } satisfies ContentHmrRemove)
+    })
+  }
 }
 
 function resolveInstanceNames(surface: ContentSurface): string[] {
@@ -257,6 +302,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
       addDevServerHandler({ route: '/__NCDEV__/', handler: { nitro2: ev => content.handler(toWebRequest(ev)) } })
 
       if (options.watch) {
+        setupHmr(content, nuxt)
         const unwatch = await content.watch()
         nuxt.hook('close', unwatch)
       }
