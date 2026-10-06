@@ -29,6 +29,8 @@ export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@nuxt/content',
     configKey: 'content',
+    // Server handlers are written against `nuxt/server`.
+    compatibility: { nuxt: '>=4.6.0' },
   },
   // Default configuration options of the Nuxt module
   defaults: {
@@ -65,7 +67,7 @@ export default defineNuxtModule<ModuleOptions>({
     const content = await setupContent(contentPath, nuxt, options)
 
     addServerImports({ name: 'content', from: contentPath })
-    addServerHandler({ route: '/__nuxt_content/**', handler: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) })
+    addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
 
     addImports({ name: 'content', from: resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`) })
     addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
@@ -126,8 +128,8 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
           try {
             return await generateSourceTypes(content)
           }
-          catch (error) {
-            console.warn('[nuxt/content] generateSourceTypes failed:', error)
+          catch {
+            // console.warn('[nuxt/content] generateSourceTypes failed:', error)
             return '// generateSourceTypes failed\nexport {}\n'
           }
         },
@@ -251,7 +253,8 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
 
   if (nuxt.options.dev) {
     if (content) {
-      addDevServerHandler({ route: '/__NCDEV__/', handler: ev => content.handler(toWebRequest(ev)) })
+      // Dev handlers are mounted on the dev server as-is (no `nuxt/server` adapter), so they use h3 v1 directly.
+      addDevServerHandler({ route: '/__NCDEV__/', handler: { nitro2: ev => content.handler(toWebRequest(ev)) } })
 
       if (options.watch) {
         const unwatch = await content.watch()
@@ -271,22 +274,24 @@ function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
   if (nuxt.options.dev) {
     addDevServerHandler({
       route: '/',
-      handler: (event) => {
-        const info = content.stat(event.path.replace('/media', ''))
-        if (info?.meta.kind === 'media') {
-          return serveStatic(event, {
-            getContents: async () => content.media.get(info.meta.key),
-            getMeta: () => ({
-              type: info.meta.type,
-            }),
-          })
-        }
+      handler: {
+        nitro2: (event) => {
+          const info = content.stat(event.path.replace('/media', ''))
+          if (info?.meta.kind === 'media') {
+            return serveStatic(event, {
+              getContents: async () => content.media.get(info.meta.key),
+              getMeta: () => ({
+                type: info.meta.type,
+              }),
+            })
+          }
+        },
       },
     })
   }
   else {
     addServerHandler({
-      handler: resolve('./runtime/server/internal/assets-middleware'),
+      handler: { nuxt: resolve('./runtime/server/internal/assets-middleware') },
       middleware: true,
       env: ['dev', 'prerender', 'nitro-prerender'],
     })

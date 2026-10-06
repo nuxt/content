@@ -53,7 +53,7 @@
   "dependencies": {
     "comark-content": "^0.4.1",
     "@comark/vue": "^0.7.0",
-    "@nuxt/kit": "^4.5.0",
+    "@nuxt/kit": "^4.6.0",
     "comark": "^0.7.0",
     "defu": "^6.1.7",
     "jiti": "^2.7.0"
@@ -62,12 +62,12 @@
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/eslint-config": "^1.16.0",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.5.0",
+    "@nuxt/schema": "^4.6.0",
     "@nuxt/test-utils": "^4.0.3",
     "@types/node": "latest",
     "changelogen": "^0.6.2",
     "eslint": "^10.7.0",
-    "nuxt": "^4.5.0",
+    "nuxt": "^4.6.0",
     "typescript": "~6.0.3",
     "vitest": "^4.1.10",
     "vue-tsc": "^3.3.7"

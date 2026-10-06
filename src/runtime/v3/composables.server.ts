@@ -1,4 +1,4 @@
-import type { H3Event } from 'h3'
+import type { NuxtRequestEvent, RequestEvent } from 'nuxt/server'
 import { generateNavigation } from 'comark-content/utils'
 import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
@@ -22,6 +22,12 @@ import type {
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
 import { content } from '#imports'
+
+/**
+ * The event is unused, so accept both the portable `nuxt/server` event and the
+ * runtime's own (an h3 `H3Event` from auto-imported `defineEventHandler`).
+ */
+type ServerEvent = RequestEvent | NuxtRequestEvent
 
 type QueryableContent = (ComarkContent | ContentHub) & {
   query: SqlQueryMethods['query']
@@ -48,15 +54,15 @@ function resolveQuery(source: string) {
  * Nuxt Content v3 server API (`queryCollection(event, collection)`), keeping
  * user code that threads the request event source-compatible.
  */
-export function queryCollection<K extends keyof ContentRegistry>(event: H3Event, source: K): FullQueryBuilderFor<K>
-export function queryCollection(event: H3Event, source: string): FullFileQueryBuilder<QueryRow, ContentListFile>
-export function queryCollection(_event: H3Event, source: keyof ContentRegistry | string) {
+export function queryCollection<K extends keyof ContentRegistry>(event: ServerEvent, source: K): FullQueryBuilderFor<K>
+export function queryCollection(event: ServerEvent, source: string): FullFileQueryBuilder<QueryRow, ContentListFile>
+export function queryCollection(_event: ServerEvent, source: keyof ContentRegistry | string) {
   const instance = asQueryable()
   return withFullFiles(instance, resolveQuery(source as string) as SourceQueryBuilder<QueryRow, ContentListFile>)
 }
 
 export function queryCollectionNavigation<K extends keyof ContentRegistry>(
-  event: H3Event,
+  event: ServerEvent,
   collection: K,
   fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
@@ -67,7 +73,7 @@ export function queryCollectionNavigation<K extends keyof ContentRegistry>(
 }
 
 export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>(
-  event: H3Event,
+  event: ServerEvent,
   collection: K,
   path: string,
   opts?: SurroundOptions,
@@ -80,17 +86,17 @@ export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>
 }
 
 export function queryCollectionSearchSections<K extends keyof ContentRegistry, const F extends keyof SourceData<K>>(
-  event: H3Event,
+  event: ServerEvent,
   collection: K,
   opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: F[] },
 ): ChainablePromise<K, Array<Section & Pick<SourceData<K>, F>>>
 export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
-  event: H3Event,
+  event: ServerEvent,
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ): ChainablePromise<K, Section[]>
 export function queryCollectionSearchSections<K extends keyof ContentRegistry>(
-  event: H3Event,
+  event: ServerEvent,
   collection: K,
   opts?: GenerateSearchSectionsOptions,
 ) {
@@ -110,7 +116,7 @@ interface ChainablePromise<K extends keyof ContentRegistry, R> extends Promise<R
 }
 
 function chainablePromise<K extends keyof ContentRegistry, Result>(
-  _event: H3Event,
+  _event: ServerEvent,
   collection: K,
   fn: (qb: QueryBuilderFor<K>) => Promise<Result>,
 ) {

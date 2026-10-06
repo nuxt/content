@@ -5,6 +5,8 @@ packages:
 
 overrides:
   "@nuxt/content": workspace:*
+  # postcss-merge-rules@9.1 uses `sameContainer`, added in cssnano-utils@8.2.0, but declares ^8.1.0
+  "postcss-merge-rules@9>cssnano-utils": ^8.2.0
 
 allowBuilds:
   "@parcel/watcher": false
@@ -12,3 +14,13 @@ allowBuilds:
   esbuild: false
   unrs-resolver: false
   vue-demi: false
+
+minimumReleaseAgeExclude:
+  - "@nuxt/cli@4.0.0"
+  - "@nuxt/kit@4.6.0"
+  - "@nuxt/nitro-server@4.6.0"
+  - "@nuxt/schema@4.6.0"
+  - "@nuxt/vite-builder@4.6.0"
+  - "@nuxt/vite-server@4.6.0"
+  - nuxt@4.6.0
+  - cssnano-utils@8.2.0
