@@ -1,13 +1,16 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
+import type { Source } from 'comark-content'
 import { readContentConfigSources } from '../src/runtime/v3/content-config'
 
 const configPath = fileURLToPath(new URL('./fixtures/content-config/content.config.ts', import.meta.url))
 
 function loadSources() {
   // `cwd`/`rootDir` are derived from the (absolute) config path.
-  return readContentConfigSources(configPath)
+  return readContentConfigSources(configPath) as Record<FixtureCollection, Source> & Record<string, Source | undefined>
 }
+
+type FixtureCollection = 'agencies' | 'blog' | 'custom' | 'docs' | 'index' | 'landing' | 'raw' | 'remote'
 
 describe('readContentConfigSources', () => {
   it('creates one source per collection, skipping collections without a source', async () => {
@@ -135,17 +138,17 @@ describe('readContentConfigSources', () => {
 
   it('derives the root directory from the config file location', async () => {
     const sources = readContentConfigSources(configPath)
-    expect(await sources.index.keys()).toEqual(['index.yml'])
+    expect(await sources.index!.keys()).toEqual(['index.yml'])
   })
 
   it('resolves a relative config path against a `file://` cwd', async () => {
     const sources = readContentConfigSources('fixtures/content-config/content.config.ts', { cwd: import.meta.url })
-    expect(await sources.index.keys()).toEqual(['index.yml'])
+    expect(await sources.index!.keys()).toEqual(['index.yml'])
   })
 
   it('resolves a relative config path against a directory cwd', async () => {
     const cwd = fileURLToPath(new URL('./fixtures/content-config', import.meta.url))
     const sources = readContentConfigSources('content.config.ts', { cwd })
-    expect(await sources.index.keys()).toEqual(['index.yml'])
+    expect(await sources.index!.keys()).toEqual(['index.yml'])
   })
 })

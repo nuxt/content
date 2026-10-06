@@ -2,10 +2,12 @@ import { computed, defineComponent, h } from 'vue'
 import { NuxtLink } from '#components'
 import type { PropType, SlotsType } from 'vue'
 import { MarkdownDocument } from '@comark/vue'
+import type { MarkdownDocumentProps } from '@comark/vue'
 import type { MarkdownDocument as ComarkMarkdownDocument } from 'comark'
-import type { ComarkRendererProps } from '@comark/vue/components/ComarkRenderer'
 
-const debug = import.meta.dev || import.meta.preview
+type MarkdownDocumentValue = NonNullable<MarkdownDocumentProps['value']>
+
+const debug = import.meta.dev || (import.meta as { preview?: boolean }).preview
 
 export default defineComponent({
   name: 'ComarkContent',
@@ -16,21 +18,21 @@ export default defineComponent({
      * @deprecated Use `tree` instead.
      */
     value: {
-      type: Object as PropType<{ body: ComarkRendererProps['tree']['nodes'] }>,
+      type: Object as PropType<{ body: MarkdownDocumentValue['nodes'] }>,
       default: undefined,
     },
     /**
      * Content to render
      */
     tree: {
-      type: Object as PropType<ComarkRendererProps['tree']>,
+      type: Object as PropType<MarkdownDocumentValue>,
       default: undefined,
     },
     /**
      * Custom component mappings for element tags
      */
     components: {
-      type: Object as PropType<ComarkRendererProps['components']>,
+      type: Object as PropType<MarkdownDocumentProps['components']>,
       default: undefined,
     },
     /**
@@ -38,7 +40,7 @@ export default defineComponent({
      * frontmatter/props).
      */
     data: {
-      type: Object as PropType<ComarkRendererProps['data']>,
+      type: Object as PropType<MarkdownDocumentProps['data']>,
       default: undefined,
     },
   },

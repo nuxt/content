@@ -1,8 +1,8 @@
 import { defineComponent, h } from 'vue'
-import { Comark } from '@comark/vue'
+import { Markdown } from '@comark/vue'
 
 /**
- * @deprecated This Component is part of Content v3 Compatibility and will be removed in Next version. Consider using `<Comark>` component.
+ * @deprecated This Component is part of Content v3 Compatibility and will be removed in Next version. Consider using `<Markdown>` component.
  */
 export default defineComponent({
   name: 'ContentRendererMarkdown',
@@ -21,8 +21,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    return () => h(Comark, {
-      markdown: props.value || props.markdown,
+    return () => h(Markdown, {
+      value: props.value || props.markdown,
       unwrap: props.unwrap,
     })
   },

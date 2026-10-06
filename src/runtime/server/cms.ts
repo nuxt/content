@@ -1,9 +1,12 @@
-import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, type ContentSource, type AnyComarkContent } from 'comark-content'
+import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, type ContentSource, type AnyComarkContent, type ContentHub } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import { v3ServerPlugins } from '../v3/cms-plugins.server'
 
 export type ContentInstance = AnyComarkContent
-export type ContentSurface = ContentInstance | ReturnType<typeof contentHub>
+// `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
+// default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ContentSurface = ContentInstance | ContentHub<any>
 
 interface NuxtContentOptions extends Omit<ContentOptions, 'source' | 'plugins'> {
   mode: 'server-only' | 'hybrid'
@@ -25,10 +28,12 @@ function snapshotLoaders(mode: 'server-only' | 'hybrid', name: string) {
   if (mode === 'server-only') {
     return {
       loadSnapshot: () =>
-        // @ts-expect-error - nitro auto-import
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
         useStorage('assets:cms').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>,
       loadManifest: () =>
-        // @ts-expect-error - nitro auto-import
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
         useStorage('assets:cms').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>,
     }
   }

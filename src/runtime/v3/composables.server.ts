@@ -31,7 +31,7 @@ type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<Regis
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 
 function asQueryable(): QueryableContent {
-  return cms as QueryableContent
+  return cms as unknown as QueryableContent
 }
 
 function resolveQuery(source: string) {

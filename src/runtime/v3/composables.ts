@@ -43,7 +43,7 @@ type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<Regis
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 
 function asQueryable(): QueryableContent {
-  return cms as QueryableContent
+  return cms as unknown as QueryableContent
 }
 
 function resolveQuery(source: string) {
@@ -123,7 +123,7 @@ export function useSearchCollection<T extends keyof ContentRegistry>(
   }
 
   async function searchAcross(collections: string[], query: string, searchOpts?: SearchOptions) {
-    const searchable = cms as SearchableContent
+    const searchable = cms as unknown as SearchableContent
     if (searchable.__fts__?.searchAcross) {
       return searchable.__fts__.searchAcross(collections, query, searchOpts)
     }

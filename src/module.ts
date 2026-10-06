@@ -12,7 +12,10 @@ import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/cms-plugins.server'
 import { fileURLToPath } from 'node:url'
 
-type ContentSurface = AnyComarkContent | ContentHub
+// `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
+// default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ContentSurface = AnyComarkContent | ContentHub<any>
 type ContentWithMedia = ContentSurface & Partial<MediaMethods>
 
 // Module options TypeScript interface definition
@@ -137,7 +140,8 @@ async function setupTypes(cms: ContentSurface | undefined, nuxt: Nuxt) {
   })
 }
 
-function isHub(surface: ContentSurface): surface is ContentHub {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isHub(surface: ContentSurface): surface is ContentHub<any> {
   return Array.isArray((surface as ContentHub).names)
 }
 

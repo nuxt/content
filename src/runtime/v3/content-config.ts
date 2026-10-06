@@ -110,13 +110,14 @@ function mergeSources(children: Source[], schema?: JsonSchema): Source {
       return hit.child.getItemRaw?.(hit.childKey)
     },
     watch: children.some(c => c.watch)
-      ? (cb) => {
-          const stops = children.map((child) => {
-            if (!child.watch) return () => {}
-            return child.watch((event, key) => cb(event, key))
-          })
-          return () => { for (const stop of stops) stop() }
-        }
+      ? async (cb) => {
+        // Child `watch()` may resolve its unwatch function asynchronously.
+        const stops = await Promise.all(children.map((child) => {
+          if (!child.watch) return () => {}
+          return child.watch((event, key) => cb(event, key))
+        }))
+        return () => stops.forEach(stop => stop())
+      }
       : undefined,
   }
 }
