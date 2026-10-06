@@ -34,6 +34,6 @@ const { data: searchSections } = await useAsyncData(() => 'search-' + route.path
   return queryCollectionSearchSections('content')
 })
 onMounted(() => {
-  window.cms = cms
+  window.content = content
 })
 </script>

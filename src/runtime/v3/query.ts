@@ -12,7 +12,7 @@ import type {
  * alongside the identity/meta fields and the parsed `nodes` (body/tree), ready
  * to hand to `<ContentRenderer>`.
  *
- * - `id` — the file key (v3 renamed the CMS `meta.key` to `id`).
+ * - `id` — the file key (v3 renamed the Comark `meta.key` to `id`).
  * - `path`/`stem`/`extension` — surfaced from `path`/`meta` for convenience.
  * - frontmatter (`Data`) is spread flat so `doc.title` works like v3.
  * - `nodes`/`meta` — the parsed body and file metadata.
@@ -49,15 +49,15 @@ export interface FullFileQueryBuilder<Row, Item> {
 /**
  * Fetch the full document for a query row. Query rows only carry the columns
  * stored in the search index (`path` + `meta.*` + frontmatter `data.*`), never
- * the parsed body — so we re-read the whole file via `cms.get()`. When the file
+ * the parsed body — so we re-read the whole file via `content.get()`. When the file
  * can no longer be resolved (e.g. removed between the query and the read) we
  * fall back to the row itself with an empty body so callers still get an object.
  */
 async function hydrate<Item extends ContentListFile>(
-  cms: Pick<ComarkContent, 'get'>,
+  content: Pick<ComarkContent, 'get'>,
   item: Item,
 ): Promise<FullFile<Item>> {
-  const source = (await cms.get(item.path)) ?? { ...item, nodes: [] as ContentFile['nodes'] }
+  const source = (await content.get(item.path)) ?? { ...item, nodes: [] as ContentFile['nodes'] }
 
   return {
     // Spread the frontmatter first so the identity/meta fields below always win.
@@ -82,7 +82,7 @@ async function hydrate<Item extends ContentListFile>(
 // `Record<string, unknown>`, which would break inference of the source's data type.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function withFullFiles<Row, Data extends Record<string, any>>(
-  cms: Pick<ComarkContent, 'get'>,
+  content: Pick<ComarkContent, 'get'>,
   builder: SourceQueryBuilder<Row, ContentListFile<Data>>,
 ): FullFileQueryBuilder<Row, ContentListFile<Data>> {
   type Item = ContentListFile<Data>
@@ -97,11 +97,11 @@ export function withFullFiles<Row, Data extends Record<string, any>>(
     count: (field, distinct) => qb.count(field, distinct),
     async all() {
       const list = await qb.all()
-      return Promise.all(list.map(item => hydrate(cms, item)))
+      return Promise.all(list.map(item => hydrate(content, item)))
     },
     async first() {
       const item = await qb.first()
-      return item ? hydrate(cms, item) : null
+      return item ? hydrate(content, item) : null
     },
   })
 

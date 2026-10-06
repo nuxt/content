@@ -1,6 +1,6 @@
 # Migrating to comark-content
 
-Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several CMS-era names were renamed upstream — update your app accordingly.
+Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several names from the earlier `@comark/cms` package were renamed upstream — update your app accordingly.
 
 ## Renames
 
@@ -19,16 +19,20 @@ Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several
 | `cache: { loadManifest, loadSnapshot }` | `withSnapshot(source, snapshotLoader, manifestLoader?)` |
 | `generateNavigationTree` | `generateNavigation` |
 | `comark-content/plugins/sql-query.client` | `comark-content/plugins/sql-query/client` |
+| `server/cms.ts` | `server/content.ts` |
+| `export const cms` | `export const content` |
+| auto-imported `cms` | auto-imported `content` |
+| `@nuxt/content/cms` | `@nuxt/content/content` |
 
 ## Server config
 
 ```ts
-// server/cms.ts (or server/utils/content.ts)
-import { createNuxtContent } from '@nuxt/content/cms'
+// server/content.ts
+import { createNuxtContent } from '@nuxt/content/content'
 import fs from 'comark-content/sources/fs'
 import media from 'comark-content/plugins/media'
 
-export const cms = createNuxtContent({
+export const content = createNuxtContent({
   mode: 'hybrid',
   // single source
   name: 'content',
@@ -37,7 +41,7 @@ export const cms = createNuxtContent({
 })
 
 // or several named sources → contentHub under the hood
-export const cms = createNuxtContent({
+export const content = createNuxtContent({
   mode: 'hybrid',
   sources: {
     docs: fs('content/docs', { cwd: import.meta.rootDir, prefix: '/docs' }),
@@ -68,12 +72,12 @@ import { comarkContent, contentHub } from 'comark-content'
 
 const docs = comarkContent('docs', { source: fs('./docs', { prefix: '/docs' }) })
 const blog = comarkContent('blog', { source: fs('./blog', { prefix: '/blog' }) })
-export const cms = contentHub([docs, blog])
+export const content = contentHub([docs, blog])
 ```
 
 ## Queries with simple path filtering
 
 ```diff
 - const doc = queryCollection(version.value.collection).path(path.value).first()
-+ const doc = cms.get(path.value)
++ const doc = content.get(path.value)
 ```

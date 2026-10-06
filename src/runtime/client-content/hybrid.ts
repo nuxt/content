@@ -7,7 +7,7 @@ import { readArtifact } from 'comark-content'
 
 async function hybridContentFactory(): Promise<ContentClient> {
   if (import.meta.server) {
-    const { v3ClientPlugins } = await import('../v3/cms-plugins.client')
+    const { v3ClientPlugins } = await import('../v3/content-plugins.client')
     return createContentClient({
       basePath: '/__nuxt_content',
       fetch: globalThis.$fetch,
@@ -17,7 +17,7 @@ async function hybridContentFactory(): Promise<ContentClient> {
 
   // Browser hybrid mode: hydrate from the prerendered snapshot + WASM sqlite plugins.
   // One shared plugin set (one WASM database) so multi-instance FTS ranks correctly.
-  const { v3WasmPlugins } = await import('../v3/cms-plugins.wasm')
+  const { v3WasmPlugins } = await import('../v3/content-plugins.wasm')
   const sharedPlugins = v3WasmPlugins()
 
   const artifact = await $fetch<CacheArtifact | Manifest>('/__nuxt_content/manifest.json')
@@ -53,4 +53,4 @@ function isCacheArtifact(value: unknown): value is CacheArtifact {
   return !!value && typeof value === 'object' && 'checksum' in value && 'data' in value
 }
 
-export const cms = await hybridContentFactory()
+export const content = await hybridContentFactory()

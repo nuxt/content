@@ -1,6 +1,6 @@
 import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, type ContentSource, type AnyComarkContent, type ContentHub } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
-import { v3ServerPlugins } from '../v3/cms-plugins.server'
+import { v3ServerPlugins } from '../v3/content-plugins.server'
 
 export type ContentInstance = AnyComarkContent
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
@@ -30,11 +30,11 @@ function snapshotLoaders(mode: 'server-only' | 'hybrid', name: string) {
       loadSnapshot: () =>
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-        useStorage('assets:cms').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>,
+        useStorage('assets:content').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>,
       loadManifest: () =>
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-        useStorage('assets:cms').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>,
+        useStorage('assets:content').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>,
     }
   }
 
@@ -119,6 +119,3 @@ export function createNuxtContent(options: NuxtContentOptions): ContentSurface {
 
   return createInstance(options.name ?? 'default', options.source, options, sharedPlugins)
 }
-
-/** @deprecated Use {@link createNuxtContent} */
-export const createNuxtContentCMS = createNuxtContent

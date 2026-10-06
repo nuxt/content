@@ -16,17 +16,17 @@ function createContentJiti(rootDir: string) {
 
 export type ImportedContent = {
   /** Exported surface — a single instance or a hub. */
-  cms: AnyComarkContent | ContentHub
+  content: AnyComarkContent | ContentHub
 }
 
-export async function importCMS(rootDir: string, filename: string): Promise<ImportedContent> {
+export async function importContent(rootDir: string, filename: string): Promise<ImportedContent> {
   const jiti = createContentJiti(rootDir)
   const mod = await jiti.import(filename) as Record<string, unknown>
 
   // Prefer a dedicated export, then common aliases.
-  const cms = (mod.cms ?? mod.content ?? mod.default ?? mod.hub) as ImportedContent['cms'] | undefined
-  if (!cms || typeof cms !== 'object') {
-    throw new Error(`No content export found in ${filename}. Export \`cms\` (or \`content\`) from your server content file.`)
+  const content = (mod.content ?? mod.default ?? mod.hub) as ImportedContent['content'] | undefined
+  if (!content || typeof content !== 'object') {
+    throw new Error(`No content export found in ${filename}. Export \`content\` from your server content file.`)
   }
-  return { cms }
+  return { content }
 }

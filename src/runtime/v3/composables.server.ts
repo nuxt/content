@@ -21,7 +21,7 @@ import type {
   SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
-import { cms } from '#imports'
+import { content } from '#imports'
 
 type QueryableContent = (ComarkContent | ContentHub) & {
   query: SqlQueryMethods['query']
@@ -31,7 +31,7 @@ type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<Regis
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 
 function asQueryable(): QueryableContent {
-  return cms as unknown as QueryableContent
+  return content as unknown as QueryableContent
 }
 
 function resolveQuery(source: string) {
@@ -43,7 +43,7 @@ function resolveQuery(source: string) {
 }
 
 /**
- * The server `cms` is a module-level singleton, so the `event` argument is not
+ * The server `content` is a module-level singleton, so the `event` argument is not
  * required to run a query. It is kept as the first parameter to match the
  * Nuxt Content v3 server API (`queryCollection(event, collection)`), keeping
  * user code that threads the request event source-compatible.

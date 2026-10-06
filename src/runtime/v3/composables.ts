@@ -24,7 +24,7 @@ import type {
   SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
-import { cms } from '#imports'
+import { content } from '#imports'
 
 type QueryableContent = (ComarkContent | ContentHub) & {
   query: SqlQueryMethods['query']
@@ -43,7 +43,7 @@ type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<Regis
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 
 function asQueryable(): QueryableContent {
-  return cms as unknown as QueryableContent
+  return content as unknown as QueryableContent
 }
 
 function resolveQuery(source: string) {
@@ -123,7 +123,7 @@ export function useSearchCollection<T extends keyof ContentRegistry>(
   }
 
   async function searchAcross(collections: string[], query: string, searchOpts?: SearchOptions) {
-    const searchable = cms as unknown as SearchableContent
+    const searchable = content as unknown as SearchableContent
     if (searchable.__fts__?.searchAcross) {
       return searchable.__fts__.searchAcross(collections, query, searchOpts)
     }

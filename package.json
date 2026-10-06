@@ -7,7 +7,7 @@
     "nuxt",
     "content",
     "nuxt-module",
-    "cms",
+
     "markdown",
     "mdc"
   ],
@@ -23,8 +23,7 @@
       "import": "./dist/module.mjs"
     },
     "./v3": "./dist/runtime/v3/index.js",
-    "./cms": "./dist/runtime/server/cms.js",
-    "./content": "./dist/runtime/server/cms.js",
+    "./content": "./dist/runtime/server/content.js",
     "./utils": "./dist/runtime/utils/index.js",
     "./server": "./dist/runtime/v3/composables.server.js"
   },

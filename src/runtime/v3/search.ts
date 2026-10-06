@@ -39,7 +39,7 @@ function pick(obj: Record<string, unknown>, keys: string[]) {
 /**
  * Split each document's parsed body into flat, searchable sections.
  * `documents` must be full {@link ContentFile}s (with `nodes`); fetch them with
- * `cms.get()` — the lightweight items returned by `query().all()` have no body.
+ * `content.get()` — the lightweight items returned by `query().all()` have no body.
  */
 export function generateSearchSections(
   documents: ContentFile[],
