@@ -9,6 +9,10 @@ async function fetchContent<T>(
 ): Promise<T> {
   const headers = event ? getRequestHeaders(event) : {}
   headers['accept-encoding'] = undefined // prevent unsupported enconding issue (https://github.com/nuxt/content/pull/3701)
+  // The internal request has its own body, so never inherit the incoming request's body framing headers
+  for (const name of ['content-length', 'transfer-encoding', 'content-encoding', 'expect']) {
+    headers[name] = undefined
+  }
 
   const url = `/__nuxt_content/${collection}/${path}`
   const fetchOptions = {
