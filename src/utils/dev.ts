@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
-import type { ConsolaInstance } from 'consola'
+import type { NuxtLogger } from '@nuxt/kit'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
@@ -18,7 +18,7 @@ import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
 import { createHooks } from 'hookable'
 
-export const logger: ConsolaInstance = useLogger('@nuxt/content')
+export const logger: NuxtLogger = useLogger('@nuxt/content')
 
 export const contentHooks = createHooks<{
   'hmr:content:update': (data: { key: string, collection: string, queries: string[] }) => void

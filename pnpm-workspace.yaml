@@ -26,11 +26,11 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@nuxtjs/mdc@0.22.1"
   - remark-mdc@3.11.1
-  - miniflare@5.20260825.0-alpha || 5.20260826.0-alpha || 5.20260921.0-alpha
-  - wrangler@4.126.0 || 4.127.0 || 4.136.0
+  - miniflare@5.20260825.0-alpha || 5.20260826.0-alpha || 5.20260921.0-alpha || 5.20261006.0-alpha
+  - wrangler@4.126.0 || 4.127.0 || 4.136.0 || 4.148.0
   - '@types/node@26.4.0'
   - happy-dom@20.11.9 || 20.11.10
-  - '@cloudflare/workers-types@5.20260827.1 || 5.20260921.1'
+  - '@cloudflare/workers-types@5.20260827.1 || 5.20260921.1 || 5.20261007.1'
   - '@cloudflare/workerd-darwin-64@1.20260921.1'
   - '@cloudflare/workerd-darwin-arm64@1.20260921.1'
   - '@cloudflare/workerd-linux-64@1.20260921.1'
