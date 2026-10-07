@@ -1,10 +1,10 @@
-import type { H3Event } from 'h3'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
 import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { fetchQuery } from './internal/api'
+import type { H3Event } from 'h3'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
@@ -19,7 +19,7 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  const event = tryUseNuxtApp()?.ssrContext?.event
+  const event = tryUseNuxtApp()?.ssrContext?.event as H3Event | undefined
   return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
 }
 
