@@ -6,6 +6,12 @@ import type { MarkdownDocumentProps } from '@comark/vue'
 import type { MarkdownDocument as ComarkMarkdownDocument } from 'comark'
 
 type MarkdownDocumentValue = NonNullable<MarkdownDocumentProps['value']>
+/** A Nuxt Content v3 document, as returned by `queryCollection()`: frontmatter flattened next to `body`. */
+type ContentDocumentValue = { body: MarkdownDocumentValue['nodes'] } & Record<string, any>
+
+function isMarkdownDocument(value: MarkdownDocumentValue | ContentDocumentValue): value is MarkdownDocumentValue {
+  return 'nodes' in value
+}
 
 const debug = import.meta.dev || (import.meta as { preview?: boolean }).preview
 
@@ -13,19 +19,11 @@ export default defineComponent({
   name: 'ComarkContent',
   props: {
     /**
-     * Content to render
-     *
-     * @deprecated Use `tree` instead.
+     * Content to render: a Comark document (`{ nodes, frontmatter, meta }`) or a
+     * document returned by `queryCollection()` (`{ body, ...frontmatter }`).
      */
     value: {
-      type: Object as PropType<{ body: MarkdownDocumentValue['nodes'] }>,
-      default: undefined,
-    },
-    /**
-     * Content to render
-     */
-    tree: {
-      type: Object as PropType<MarkdownDocumentValue>,
+      type: Object as PropType<MarkdownDocumentValue | ContentDocumentValue>,
       default: undefined,
     },
     /**
@@ -49,19 +47,17 @@ export default defineComponent({
   }>,
   setup(props, { slots }) {
     const comarkTree = computed(() => {
-      if (props.tree) return props.tree
-      if (props.value) {
-        const { body, id, path, ...rest } = (props.value || {}) as any
-        return {
-          path,
-          nodes: body,
-          frontmatter: rest,
-          meta: {
-            id,
-          },
-        }
+      if (!props.value) return undefined
+      if (isMarkdownDocument(props.value)) return props.value
+      const { body, id, path, ...rest } = props.value
+      return {
+        path,
+        nodes: body,
+        frontmatter: rest,
+        meta: {
+          id,
+        },
       }
-      return undefined
     })
     const isEmpty = computed(() => !comarkTree.value)
 

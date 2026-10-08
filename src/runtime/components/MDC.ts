@@ -7,10 +7,6 @@ import { Markdown } from '@comark/vue'
 export default defineComponent({
   name: 'ContentRendererMarkdown',
   props: {
-    markdown: {
-      type: String,
-      default: () => '',
-    },
     value: {
       type: String,
       default: () => '',
@@ -22,7 +18,7 @@ export default defineComponent({
   },
   setup(props) {
     return () => h(Markdown, {
-      value: props.value || props.markdown,
+      value: props.value,
       unwrap: props.unwrap,
     })
   },
