@@ -12,6 +12,7 @@ import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from './runtime/utils/hmr'
 import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
 
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
 // default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
@@ -44,9 +45,10 @@ export default defineNuxtModule<ModuleOptions>({
       options.mode = 'hybrid'
     }
 
+    const contentConfigPaths = resolveLayerContentConfigs(nuxt)
     const contentPath = existsSync(resolve(nuxt.options.serverDir, 'content.ts'))
       ? resolve(nuxt.options.serverDir, 'content')
-      : existsSync(resolve(nuxt.options.rootDir, 'content.config.ts'))
+      : contentConfigPaths.length
         ? resolve('./runtime/server/internal/content-config')
         : resolve('./runtime/server/internal/fallback-content')
 
@@ -58,13 +60,14 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
+      'import.meta.content.configPaths': JSON.stringify(contentConfigPaths),
     })
 
     nuxt.options.vite.define = defu(nuxt.options.vite.define, {
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
-    const content = await setupContent(contentPath, nuxt, options)
+    const content = await setupContent(contentPath, nuxt, options, contentConfigPaths)
 
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
@@ -122,6 +125,18 @@ export default defineNuxtModule<ModuleOptions>({
     if (content && 'media' in content && content.media) setupMedia(content as ContentWithMedia & MediaMethods, nuxt)
   },
 })
+
+/**
+ * Collect the v3 `content.config.ts` of every layer, ordered from lowest to
+ * highest priority (the project itself comes last) so later configs override
+ * collections of the same name — matching v3's layer behaviour.
+ */
+function resolveLayerContentConfigs(nuxt: Nuxt): string[] {
+  return [...nuxt.options._layers]
+    .reverse()
+    .map(layer => join(layer.config.rootDir, 'content.config.ts'))
+    .filter((path, index, paths) => existsSync(path) && paths.indexOf(path) === index)
+}
 
 async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
@@ -234,10 +249,10 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, configPaths: string[]): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
-  const imported = await importContent(nuxt.options.rootDir, contentPath)
+  const imported = await importContent(nuxt.options.rootDir, contentPath, { configPaths })
   // Dev server gets its own surface so plugins / basePath can differ without
   // mutating the user-exported instance that Nitro will import later.
   // Skip re-injecting v3 plugins when the export already went through
