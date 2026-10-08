@@ -24,6 +24,7 @@ describe('readContentConfigSources', () => {
       'landing',
       'raw',
       'remote',
+      'single',
     ])
     expect(sources.empty).toBeUndefined()
   })
@@ -40,6 +41,14 @@ describe('readContentConfigSources', () => {
     expect(sources.docs.prefix).toBe('/docs')
     expect(sources.remote.prefix).toBe('/remote')
     expect(sources.blog.prefix).toBeUndefined()
+  })
+
+  it('keeps the directory of a single-file source as its prefix, like v3', async () => {
+    const sources = readContentConfigSources(configPath)
+    // `docs/a.md` resolves to `/docs/a` in v3, not `/a`.
+    expect(sources.single!.prefix).toBe('/docs')
+    // A root-level file has no directory to keep.
+    expect(sources.index!.prefix).toBeUndefined()
   })
 
   it('adopts the first descriptor prefix for a merged source', async () => {

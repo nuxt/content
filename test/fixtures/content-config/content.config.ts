@@ -72,6 +72,11 @@ export default defineContentConfig({
         include: '*',
       },
     }),
+    // Single-file source inside a directory.
+    single: defineCollection({
+      type: 'page',
+      source: 'docs/a.md',
+    }),
     // Data collection without a schema — no defaults are injected.
     raw: defineCollection({
       type: 'data',

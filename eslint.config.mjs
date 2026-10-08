@@ -13,6 +13,8 @@ export default createConfigForNuxt({
     src: [
       './playground',
       './examples/v3-multi-source',
+      './examples/v3-layers',
+      './examples/v3-layers/layer/app',
     ],
   },
 })

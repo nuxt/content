@@ -1,9 +1,10 @@
 import type { AnyComarkContent, ContentHub } from 'comark-content'
 import { createJiti } from 'jiti'
+import type { ResolvedContentCollections } from '../runtime/v3/content-config'
 
 export type ImportContentOptions = {
-  /** Absolute paths of the layers' v3 `content.config.ts`, lowest priority first. */
-  configPaths?: string[]
+  /** Collections resolved from the layers' v3 `content.config.ts` files. */
+  collections?: ResolvedContentCollections
 }
 
 function createContentJiti(rootDir: string, options: ImportContentOptions) {
@@ -15,7 +16,7 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
     transform: (opts) => {
       const source = opts.source
         .replace(/import\.meta\.rootDir/g, JSON.stringify(rootDir))
-        .replace(/import\.meta\.content\.configPaths/g, JSON.stringify(options.configPaths ?? []))
+        .replace(/import\.meta\.content\.collections/g, JSON.stringify(options.collections ?? {}))
       return { code: babelJiti.transform({ ...opts, source }) }
     },
   })

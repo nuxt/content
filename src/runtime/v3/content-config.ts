@@ -37,11 +37,36 @@ export function readContentConfigSources(
   configPath: string,
   options: { cwd?: string | URL } = {},
 ): Record<string, Source> {
+  return createContentConfigSources(resolveContentConfigCollections(configPath, options))
+}
+
+/**
+ * A v3 collection reduced to plain, JSON-serializable data: its converted schema
+ * and source descriptors with every local `cwd` already resolved to an absolute
+ * path. Produced at build time (where the config can use `useNuxt()` and other
+ * build-only APIs) and turned into sources at runtime.
+ */
+export interface ResolvedContentCollection {
+  schema?: JsonSchema
+  sources: ResolvedSourceDescriptor[]
+}
+
+export type ResolvedContentCollections = Record<string, ResolvedContentCollection>
+
+/**
+ * Evaluate a v3 `content.config.ts` and resolve its collections into
+ * serializable descriptors (see {@link ResolvedContentCollection}). Collections
+ * without a source are skipped.
+ */
+export function resolveContentConfigCollections(
+  configPath: string,
+  options: { cwd?: string | URL } = {},
+): ResolvedContentCollections {
   const absConfigPath = resolveConfigPath(configPath, options.cwd)
   const rootDir = dirname(absConfigPath)
   const config = importContentConfig(rootDir, absConfigPath)
 
-  const sources: Record<string, Source> = {}
+  const collections: ResolvedContentCollections = {}
   for (const [name, collection] of Object.entries(config.collections ?? {})) {
     const descriptors = normalizeSource(collection.source)
     if (!descriptors.length) {
@@ -51,14 +76,25 @@ export function readContentConfigSources(
     // `page` collections gain v3's default meta fields (title/description/…);
     // `data` collections keep only their own schema.
     const schema = collection.type === 'page' ? withPageDefaults(userSchema) : userSchema
+    collections[name] = {
+      ...(schema ? { schema } : {}),
+      sources: descriptors.map(descriptor => resolveDescriptor(descriptor, rootDir)),
+    }
+  }
+  return collections
+}
 
+/** Build one Comark source per resolved collection, keyed by collection name. */
+export function createContentConfigSources(collections: ResolvedContentCollections): Record<string, Source> {
+  const sources: Record<string, Source> = {}
+  for (const [name, { schema, sources: descriptors }] of Object.entries(collections)) {
     // A collection maps to a single named source; multiple v3 descriptors are
     // merged into one so they stay queryable under the collection name.
     if (descriptors.length === 1) {
-      sources[name] = toSource(descriptors[0]!, rootDir, schema)
+      sources[name] = toSource(descriptors[0]!, schema)
       continue
     }
-    const children = descriptors.map(descriptor => toSource(descriptor, rootDir))
+    const children = descriptors.map(descriptor => toSource(descriptor))
     const merged = mergeSources(children, schema)
     // `merge` carries no prefix of its own; adopt the first descriptor's.
     const prefix = descriptors.map(descriptor => descriptor.prefix).find(Boolean)
@@ -131,6 +167,11 @@ interface SourceDescriptor {
   repository?: string
 }
 
+/** A descriptor whose local `cwd` is absolute (unset for `repository` sources). */
+interface ResolvedSourceDescriptor extends SourceDescriptor {
+  cwd?: string
+}
+
 interface ContentCollection {
   type?: 'page' | 'data'
   source?: string | SourceDescriptor | Array<string | SourceDescriptor>
@@ -168,7 +209,35 @@ function resolveConfigPath(configPath: string, cwd?: string | URL): string {
   return resolve(cwd ?? process.cwd(), configPath)
 }
 
-function toSource(descriptor: SourceDescriptor, rootDir: string, schema?: JsonSchema): Source {
+/**
+ * Resolve a local descriptor's `cwd` against the config's root directory,
+ * falling back to the v3 default content directory (`<rootDir>/content`).
+ */
+function resolveDescriptor(descriptor: SourceDescriptor, rootDir: string): ResolvedSourceDescriptor {
+  if (descriptor.repository) {
+    return descriptor
+  }
+  const cwd = descriptor.cwd
+    ? (isAbsolute(descriptor.cwd) ? descriptor.cwd : resolve(rootDir, descriptor.cwd))
+    : join(rootDir, 'content')
+  const prefix = descriptor.prefix ?? singleFilePrefix(descriptor.include)
+  return { ...descriptor, cwd, ...(prefix ? { prefix } : {}) }
+}
+
+/**
+ * v3 derives a single-file source's path from its full include path
+ * (`en/index.md` → `/en`), while Comark's single-file `fs` source only sees the
+ * file itself (`/`). Keep the directory as the prefix so paths match v3.
+ */
+function singleFilePrefix(include: string): string | undefined {
+  if (GLOB_CHARS.test(include)) {
+    return undefined
+  }
+  const dir = dirname(include)
+  return dir === '.' ? undefined : `/${dir}`
+}
+
+function toSource(descriptor: ResolvedSourceDescriptor, schema?: JsonSchema): Source {
   const base = splitGlob(descriptor.include)
   const rebasedExclude = rebaseExclude(descriptor.exclude, base)
   // Our zod → JSON Schema conversion is approximate; the schema drives types and
@@ -187,13 +256,7 @@ function toSource(descriptor: SourceDescriptor, rootDir: string, schema?: JsonSc
     })
   }
 
-  // Local source: resolve against the collection's `cwd`, falling back to the
-  // v3 default content directory (`<rootDir>/content`).
-  const cwd = descriptor.cwd
-    ? (isAbsolute(descriptor.cwd) ? descriptor.cwd : resolve(rootDir, descriptor.cwd))
-    : join(rootDir, 'content')
-
-  return fsSource(resolve(cwd, base), {
+  return fsSource(resolve(descriptor.cwd!, base), {
     prefix: descriptor.prefix,
     exclude: rebasedExclude,
     ...schemaOptions,
@@ -255,6 +318,8 @@ function importContentConfig(rootDir: string, configPath: string): ContentConfig
   const inner = createJiti(import.meta.url)
   const jiti = createJiti(import.meta.url, {
     tryNative: false,
+    // Share the running Nuxt's kit instance so configs can call `useNuxt()`.
+    nativeModules: ['@nuxt/kit'],
     moduleCache: false,
     fsCache: false,
     transform: (opts) => {

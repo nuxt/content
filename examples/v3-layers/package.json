@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "name": "@nuxt/content-example-v3-layers",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "latest",
+    "@nuxt/kit": "^4.6.0",
+    "@nuxtjs/i18n": "^10.6.0",
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
+    "nuxt": "^4.6.0",
+    "ufo": "^1.6.1"
+  }
+}

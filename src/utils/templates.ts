@@ -6,8 +6,8 @@ readonly rootDir: string
 readonly content: {
 /** When true, v3 query/search composables are enabled and sql-query + FTS plugins are injected into the Content instance. */
 readonly v3Compatibility: boolean
-/** Absolute paths of the v3 \`content.config.ts\` files found across layers, lowest priority first. */
-readonly configPaths: string[]
+/** Collections resolved at build time from the v3 \`content.config.ts\` of every layer. */
+readonly collections: import('@nuxt/content/v3').ResolvedContentCollections
 }
 }
 }

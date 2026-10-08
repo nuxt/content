@@ -10,6 +10,7 @@ import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
+import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
 import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from './runtime/utils/hmr'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
@@ -45,8 +46,14 @@ export default defineNuxtModule<ModuleOptions>({
       options.mode = 'hybrid'
     }
 
-    const contentConfigPaths = resolveLayerContentConfigs(nuxt)
-    const contentPath = existsSync(resolve(nuxt.options.serverDir, 'content.ts'))
+    const hasServerContent = existsSync(resolve(nuxt.options.serverDir, 'content.ts'))
+    const contentConfigPaths = hasServerContent ? [] : resolveLayerContentConfigs(nuxt)
+    // Evaluated here (not at runtime) so configs may use build-time APIs such as `useNuxt()`.
+    const contentCollections: ResolvedContentCollections = Object.assign(
+      {},
+      ...contentConfigPaths.map(path => resolveContentConfigCollections(path)),
+    )
+    const contentPath = hasServerContent
       ? resolve(nuxt.options.serverDir, 'content')
       : contentConfigPaths.length
         ? resolve('./runtime/server/internal/content-config')
@@ -60,14 +67,21 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
-      'import.meta.content.configPaths': JSON.stringify(contentConfigPaths),
+      'import.meta.content.collections': JSON.stringify(contentCollections),
+    })
+
+    // The client content runtime uses top-level await. When its chunk is emitted
+    // outside `node_modules` (e.g. pages provided by a layer), Nitro's esbuild pass
+    // would otherwise reject it under its default `es2019` target.
+    nuxt.options.nitro.esbuild = defu(nuxt.options.nitro.esbuild, {
+      options: { target: 'es2022' },
     })
 
     nuxt.options.vite.define = defu(nuxt.options.vite.define, {
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
-    const content = await setupContent(contentPath, nuxt, options, contentConfigPaths)
+    const content = await setupContent(contentPath, nuxt, options, contentCollections)
 
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
@@ -249,10 +263,10 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, configPaths: string[]): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
-  const imported = await importContent(nuxt.options.rootDir, contentPath, { configPaths })
+  const imported = await importContent(nuxt.options.rootDir, contentPath, { collections })
   // Dev server gets its own surface so plugins / basePath can differ without
   // mutating the user-exported instance that Nitro will import later.
   // Skip re-injecting v3 plugins when the export already went through
