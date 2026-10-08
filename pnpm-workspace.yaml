@@ -4,7 +4,9 @@ packages:
   - examples/*
 
 overrides:
-  "@nuxt/content": workspace:*
+  # This package is published as `@nuxt/content4`; examples and the playground
+  # depend on the name `@nuxt/content`. A path link resolves there without renaming it.
+  "@nuxt/content": "link:."
   # postcss-merge-rules@9.1 uses `sameContainer`, added in cssnano-utils@8.2.0, but declares ^8.1.0
   "postcss-merge-rules@9>cssnano-utils": ^8.2.0
 

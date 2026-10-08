@@ -40,7 +40,8 @@ describe('readContentConfigSources', () => {
     const sources = loadSources()
     expect(sources.docs.prefix).toBe('/docs')
     expect(sources.remote.prefix).toBe('/remote')
-    expect(sources.blog.prefix).toBeUndefined()
+    // A string glob keeps its directory in the path, like v3 (`blog/a.md` → `/blog/a`).
+    expect(sources.blog.prefix).toBe('/blog')
   })
 
   it('keeps the directory of a single-file source as its prefix, like v3', async () => {

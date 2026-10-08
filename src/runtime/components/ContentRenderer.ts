@@ -1,9 +1,14 @@
-import { computed, defineComponent, h } from 'vue'
+import { computed, defineAsyncComponent, defineComponent, h } from 'vue'
 import { NuxtLink } from '#components'
-import type { PropType, SlotsType } from 'vue'
+import type { Component, PropType, SlotsType } from 'vue'
 import { MarkdownDocument } from '@comark/vue'
+import { pascalCase } from '@comark/vue/utils'
 import type { MarkdownDocumentProps } from '@comark/vue'
 import type { MarkdownDocument as ComarkMarkdownDocument } from 'comark'
+
+// The module writes one re-export per scanned component here. Virtual imports
+// have to be static for the bundler to rewrite them; the file only exists in a Nuxt build.
+import * as mdcComponents from '#build/content/components.mjs'
 
 type MarkdownDocumentValue = NonNullable<MarkdownDocumentProps['value']>
 /** A Nuxt Content v3 document, as returned by `queryCollection()`: frontmatter flattened next to `body`. */
@@ -14,6 +19,17 @@ function isMarkdownDocument(value: MarkdownDocumentValue | ContentDocumentValue)
 }
 
 const debug = import.meta.dev || (import.meta as { preview?: boolean }).preview
+
+function resolveApplicationComponent(name: string): Component | undefined {
+  const pascal = pascalCase(name)
+  const components = mdcComponents as Record<string, Component>
+  for (const candidate of new Set([pascal, `Prose${pascal}`])) {
+    const component = components[candidate]
+    if (component) {
+      return defineAsyncComponent(() => Promise.resolve(component))
+    }
+  }
+}
 
 export default defineComponent({
   name: 'ComarkContent',
@@ -76,6 +92,7 @@ export default defineComponent({
           a: NuxtLink,
           ...props.components,
         },
+        'componentsManifest': resolveApplicationComponent,
         'data': props.data,
         'data-content-id': dataContentId,
       })

@@ -220,8 +220,22 @@ function resolveDescriptor(descriptor: SourceDescriptor, rootDir: string): Resol
   const cwd = descriptor.cwd
     ? (isAbsolute(descriptor.cwd) ? descriptor.cwd : resolve(rootDir, descriptor.cwd))
     : join(rootDir, 'content')
-  const prefix = descriptor.prefix ?? singleFilePrefix(descriptor.include)
-  return { ...descriptor, cwd, ...(prefix ? { prefix } : {}) }
+  // An explicit prefix always wins, even an empty one: v3's `prefix: ''` strips
+  // the source directory, so `en/index.md` is served at `/` rather than `/en`.
+  const prefix = descriptor.prefix ?? singleFilePrefix(descriptor.include) ?? directoryPrefix(descriptor.include)
+  return { ...descriptor, cwd, ...(prefix !== undefined ? { prefix } : {}) }
+}
+
+/**
+ * v3 keeps the source directory in the document path: `source: 'blog/**'` serves
+ * `content/blog/a.md` at `/blog/a`, not `/a`. Comark only sees the directory it
+ * is pointed at, so the static part of the include becomes the prefix.
+ */
+function directoryPrefix(include: string): string | undefined {
+  const base = splitGlob(include)
+  // A single file (`docs/a.md`) is handled by `singleFilePrefix`; a bare glob has no directory.
+  if (!base || base.includes('.')) return undefined
+  return `/${base}`
 }
 
 /**
@@ -428,6 +442,32 @@ function isZNode(value: unknown): value is ZNode {
   return !!value && typeof value === 'object' && '__zkind' in value
 }
 
+function isZodObject(value: unknown): value is ZodObject {
+  const type = (value as { _def?: { type?: string } } | null)?._def?.type
+  return type === 'object' && !!value && typeof (value as ZodObject).shape === 'object'
+}
+
+/** Minimal conversion of a real zod object — enough to name the index columns. */
+function zodObjectSchema(schema: ZodObject): JsonSchema {
+  const properties: Record<string, JsonSchema> = {}
+  const required: string[] = []
+  for (const [key, field] of Object.entries(schema.shape)) {
+    properties[key] = zodFieldSchema(field)
+    if (!field.isOptional?.()) required.push(key)
+  }
+  return { type: 'object', properties, ...(required.length ? { required } : {}) }
+}
+
+function zodFieldSchema(field: ZodField): JsonSchema {
+  const type = (field as { _def?: { type?: string } })._def?.type
+  if (type === 'object' && field.shape) return zodObjectSchema(field as ZodObject)
+  if (type === 'array') return { type: 'array', items: field.element ? zodFieldSchema(field.element) : {} }
+  if (type === 'number') return { type: 'number' }
+  if (type === 'boolean') return { type: 'boolean' }
+  if (type === 'string' || type === 'enum' || type === 'literal') return { type: 'string' }
+  return {}
+}
+
 /**
  * Fields v3 injects into every `page` collection's schema. Rendered in Comark's
  * minimal JSON Schema (no `default`/`anyOf`/`additionalProperties`); `path` is
@@ -457,9 +497,27 @@ function withPageDefaults(schema: JsonSchema | undefined): JsonSchema {
   }
 }
 
-/** Convert a recorded `z` schema into Comark's minimal JSON Schema. */
+/**
+ * Convert a collection schema into Comark's minimal JSON Schema.
+ *
+ * v3 configs either import `z` from `@nuxt/content` (the recording shim) or from
+ * the `zod` package itself. Both have to produce columns, otherwise a query for
+ * a declared field (`order('date')`) hits a table that never got the column.
+ */
 function toComarkSchema(schema: unknown): JsonSchema | undefined {
-  return isZNode(schema) ? resolveSchema(schema) : undefined
+  if (isZNode(schema)) return resolveSchema(schema)
+  if (isZodObject(schema)) return zodObjectSchema(schema)
+  return undefined
+}
+
+interface ZodObject {
+  shape: Record<string, ZodField>
+}
+
+interface ZodField {
+  shape?: Record<string, ZodField>
+  element?: ZodField
+  isOptional?: () => boolean
 }
 
 function resolveSchema(node: ZNode): JsonSchema {
