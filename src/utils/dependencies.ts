@@ -36,9 +36,19 @@ export async function ensurePackageInstalled(pkg: string) {
       process.exit(1)
     }
 
-    await addDependency(pkg, {
-      cwd: tryUseNuxt()?.options.rootDir,
-    })
+    try {
+      await addDependency(pkg, {
+        cwd: tryUseNuxt()?.options.rootDir,
+      })
+    }
+    catch (error) {
+      // Some package managers exit non-zero after the package was added,
+      // e.g. pnpm >= 10 with ERR_PNPM_IGNORED_BUILDS when build scripts are not approved.
+      if (!await isPackageInstalled(pkg)) {
+        throw error
+      }
+      logger.warn(`\`${pkg}\` was installed, but the package manager reported an error. If you use pnpm, you may need to run \`pnpm approve-builds\`.`)
+    }
   }
 }
 
