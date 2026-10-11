@@ -9,8 +9,8 @@ shamefullyHoist: true
 
 overrides:
   "@nuxt/content": workspace:*
-  "@unhead/vue": ^3.1.8
-  unhead: ^3.1.8
+  "@unhead/vue": ^3.4.2
+  unhead: ^3.4.2
 
 allowBuilds:
   "@parcel/watcher": true
