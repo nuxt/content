@@ -65,27 +65,58 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
 
 const checkDatabaseIntegrity = new Map<string, boolean>()
 const integrityCheckPromise = new Map<string, Promise<void> | null>()
+/**
+ * On Cloudflare Workers, a check whose request was cancelled mid-I/O never settles.
+ * Requests that have waited this long drop it and start a fresh one (issue #3159).
+ */
+const INTEGRITY_CHECK_TIMEOUT = 10_000
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
-  if (checkDatabaseIntegrity.get(collection) !== false) {
-    checkDatabaseIntegrity.set(collection, false)
-    if (!integrityCheckPromise.has(collection)) {
-      const _integrityCheck = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config)
-        .then((isValid) => {
-          checkDatabaseIntegrity.set(collection, !isValid)
-        })
-        .catch((error) => {
-          console.error('Database integrity check failed', error)
-          checkDatabaseIntegrity.set(collection, true)
-          integrityCheckPromise.delete(collection)
-        })
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (checkDatabaseIntegrity.get(collection) !== false) {
+      checkDatabaseIntegrity.set(collection, false)
+      if (!integrityCheckPromise.has(collection)) {
+        // An abandoned check can still settle late; it must not overwrite the state of its replacement.
+        const isCurrent = () => integrityCheckPromise.get(collection) === _integrityCheck
+        const _integrityCheck: Promise<void> = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config)
+          .then((isValid) => {
+            if (isCurrent()) {
+              checkDatabaseIntegrity.set(collection, !isValid)
+            }
+          })
+          .catch((error) => {
+            console.error('Database integrity check failed', error)
+            if (isCurrent()) {
+              checkDatabaseIntegrity.set(collection, true)
+              integrityCheckPromise.delete(collection)
+            }
+          })
 
-      integrityCheckPromise.set(collection, _integrityCheck)
+        integrityCheckPromise.set(collection, _integrityCheck)
+        // Keep the check alive when the request that started it is cancelled
+        const waitUntil = (event as { waitUntil?: (promise: Promise<unknown>) => void } | undefined)?.waitUntil || event?.context?.waitUntil
+        waitUntil?.(_integrityCheck)
+      }
+    }
+
+    const pending = integrityCheckPromise.get(collection)
+    if (!pending || await settlesWithin(pending, INTEGRITY_CHECK_TIMEOUT)) {
+      return
+    }
+
+    if (integrityCheckPromise.get(collection) === pending) {
+      console.warn(`Database integrity check for ${collection} did not settle in ${INTEGRITY_CHECK_TIMEOUT}ms, restarting it`)
+      integrityCheckPromise.delete(collection)
+      checkDatabaseIntegrity.delete(collection)
     }
   }
+}
 
-  if (integrityCheckPromise.has(collection)) {
-    await integrityCheckPromise.get(collection)!
-  }
+function settlesWithin(promise: Promise<unknown>, ms: number): Promise<boolean> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timeout = new Promise<boolean>((resolve) => {
+    timer = setTimeout(resolve, ms, false)
+  })
+  return Promise.race([promise.then(() => true), timeout]).finally(() => clearTimeout(timer))
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
