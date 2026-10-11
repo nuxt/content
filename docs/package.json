@@ -16,7 +16,7 @@
     "better-sqlite3": "^12.11.1",
     "docus": "^5.14.0",
     "drizzle-kit": "^0.31.11",
-    "drizzle-orm": "^0.45.3",
+    "drizzle-orm": "^0.45.4",
     "minisearch": "^7.2.0",
     "nuxt": "^4.6.0",
     "nuxt-studio": "^1.7.0"
