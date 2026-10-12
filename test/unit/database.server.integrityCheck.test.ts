@@ -61,25 +61,26 @@ describe('database.server - integrity check after a cancelled request (issue #31
   test('a later request still settles after the request that started the check was cancelled', async () => {
     const { checkAndImportDatabaseIntegrity } = await import('../../src/runtime/internal/database.server')
 
-    void checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config)
+    checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config).catch(() => {})
     const laterRequest = settled(checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config))
 
     // Longer than any request could reasonably wait (Cloudflare's own edge timeout is 100s).
     await vi.advanceTimersByTimeAsync(120_000)
 
     expect(laterRequest.done).toBe(true)
+    expect(laterRequest.error).toBeUndefined()
   })
 
-  test('a later request gives up instead of hanging when every check is stranded', async () => {
+  test('a later request fails instead of hanging when every check is stranded', async () => {
     strandedReads = Infinity
     const { checkAndImportDatabaseIntegrity } = await import('../../src/runtime/internal/database.server')
 
-    void checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config)
+    checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config).catch(() => {})
     const laterRequest = settled(checkAndImportDatabaseIntegrity(requestEvent(), 'articles', config))
 
     await vi.advanceTimersByTimeAsync(120_000)
 
-    expect(laterRequest.done).toBe(true)
+    expect(laterRequest.error).toMatchObject({ statusCode: 503 })
     expect(reads).toBeLessThanOrEqual(3)
   })
 
@@ -87,7 +88,7 @@ describe('database.server - integrity check after a cancelled request (issue #31
     const { checkAndImportDatabaseIntegrity } = await import('../../src/runtime/internal/database.server')
     const event = requestEvent()
 
-    void checkAndImportDatabaseIntegrity(event, 'articles', config)
+    checkAndImportDatabaseIntegrity(event, 'articles', config).catch(() => {})
 
     expect(event.waitUntil).toHaveBeenCalledOnce()
   })
@@ -99,9 +100,13 @@ function requestEvent() {
 }
 
 function settled(promise: Promise<unknown>) {
-  const state = { done: false }
-  promise.finally(() => {
-    state.done = true
-  })
+  const state: { done: boolean, error?: unknown } = { done: false }
+  promise
+    .catch((error) => {
+      state.error = error
+    })
+    .finally(() => {
+      state.done = true
+    })
   return state
 }

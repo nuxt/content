@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
@@ -109,6 +110,8 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
       checkDatabaseIntegrity.delete(collection)
     }
   }
+
+  throw createError({ statusCode: 503, statusMessage: `Database integrity check for ${collection} timed out` })
 }
 
 function settlesWithin(promise: Promise<unknown>, ms: number): Promise<boolean> {
