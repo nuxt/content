@@ -477,6 +477,11 @@ const PAGE_DEFAULT_PROPERTIES: Record<string, JsonSchema> = {
   title: { type: 'string' },
   description: { type: 'string' },
   seo: { type: 'object' },
+  // Keep this a union, not a pure object. Comark only hoists nested fields into
+  // `data.parent.child` columns when a property is a single `object` type; a union
+  // stays one JSON column. That is what v3 did (`navigation` was a JSON field), and
+  // it is the only way both `navigation: false` and `navigation.title` survive the
+  // index — a pure object would flatten the title and drop the boolean.
   navigation: {
     type: ['boolean', 'object'],
     properties: {
