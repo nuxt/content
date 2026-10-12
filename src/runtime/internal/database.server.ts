@@ -224,6 +224,10 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
   progress()
+  if (!dump.length) {
+    // never replace a collection with nothing: the import would delete every record
+    throw new Error(`Database dump of "${collection}" is empty`)
+  }
   const lines = dump.map(splitDumpLine)
 
   await ensureInfoTable(db, lines[0])
@@ -302,7 +306,7 @@ async function importCollection(db: DatabaseAdapter, collection: string, lines: 
     hashesInDb = new Set(hashesInDbRecords.map(r => r.__hash__))
 
     // delete the records which are not in the dump anymore
-    const hashesToDelete = Array.from(hashesInDb.difference(dumpHashes))
+    const hashesToDelete = [...hashesInDb].filter(hash => !dumpHashes.has(hash))
     for (let i = 0; i < hashesToDelete.length; i += MAX_BOUND_PARAMETERS) {
       const chunk = hashesToDelete.slice(i, i + MAX_BOUND_PARAMETERS)
       await lease.renew()
@@ -316,7 +320,10 @@ async function importCollection(db: DatabaseAdapter, collection: string, lines: 
   }
 
   for (const [index, { statement, hash }] of lines.entries()) {
-    const isLast = index === lines.length - 1
+    // the dump ends by flagging the collection as ready: done below, only by the owner of the lease
+    if (index === lines.length - 1 && hash === 'meta' && /\bSET ready = true\b/i.test(statement)) {
+      continue
+    }
 
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
@@ -335,27 +342,28 @@ async function importCollection(db: DatabaseAdapter, collection: string, lines: 
       }
     }
 
-    if (isLast) {
-      // the last line flags the collection as ready: only once it holds exactly the records of the dump
-      await verifyRecords(db, collection, dumpHashes)
-    }
-
-    // Structure changes and the final flag must come from the owner of the lease,
+    // Structure changes must come from the owner of the lease,
     // other lines only need the lease to be extended regularly
-    await lease.renew(hash !== 'structure' && !isLast)
+    await lease.renew(hash !== 'structure')
 
     // a structure line may hold several statements (DROP, CREATE, indexes) which not every database runs at once
     for (const sql of hash === 'structure' ? splitStatements(statement) : [statement]) {
       await execStatement(db, sql)
     }
   }
+
+  // flag the collection as ready, only once it holds exactly the records of the dump
+  await verifyRecords(db, collection, dumpHashes)
+  await lease.renew()
+  await lease.flagReady(`checksum_${collection}`)
 }
 
 async function verifyRecords(db: DatabaseAdapter, collection: string, dumpHashes: Set<string>) {
   const records = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`)
   const hashes = new Set(records.map(r => r.__hash__))
-  const missing = dumpHashes.difference(hashes).size
-  const unexpected = hashes.difference(dumpHashes).size
+  // (no `Set.prototype.difference`, it is not available on Node.js 20)
+  const missing = [...dumpHashes].filter(hash => !hashes.has(hash)).length
+  const unexpected = [...hashes].filter(hash => !dumpHashes.has(hash)).length
   if (missing || unexpected || records.length !== hashes.size) {
     throw new Error(`Import of "${collection}" is incomplete: ${missing} missing and ${unexpected} unexpected records`)
   }
@@ -421,6 +429,11 @@ interface Lease {
    * With `lazy`, only does so when it was not done for `LEASE_RENEW_INTERVAL`.
    */
   renew: (lazy?: boolean) => Promise<void>
+  /**
+   * Sets `ready` on a row of the info table, in the same statement that checks the lease is still held:
+   * an owner that lost its lease right before cannot flag the import that replaced it
+   */
+  flagReady: (id: string) => Promise<void>
   release: () => Promise<void>
 }
 
@@ -450,6 +463,13 @@ function createLease(db: DatabaseAdapter, collection: string, token: string): Le
         throw new Error(`Lost the import lease of "${collection}" to another request`)
       }
       renewedAt = Date.now()
+    },
+    async flagReady(rowId: string) {
+      await execStatement(db, `UPDATE ${tables.info} SET ready = true WHERE id = ? AND EXISTS (SELECT 1 FROM ${tables.info} WHERE id = ? AND version = ?)`, [rowId, id, token])
+      const row = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [rowId])
+      if (!row?.ready) {
+        throw new Error(`Lost the import lease of "${collection}" to another request`)
+      }
     },
     async release() {
       await db.exec(`DELETE FROM ${tables.info} WHERE id = ? AND version = ?`, [id, token]).catch(() => {})

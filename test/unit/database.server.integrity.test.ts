@@ -34,6 +34,8 @@ interface Release {
   version: string
   /** record ids, the hash of a record is `h<id>` */
   records: number[]
+  /** a dump that does not follow the release, e.g. an empty one */
+  dump?: string[]
 }
 
 const V1: Release = { version: 'v1--abc', records: Array.from({ length: ITEMS }, (_, i) => i) }
@@ -138,6 +140,18 @@ function countInserts() {
 
 type IntegrityModule = typeof import('../../src/runtime/internal/database.server')
 
+// Node.js 20 (supported by `engines`) has none of the Set methods added in ES2025
+const ES2025_SET_METHODS = ['difference', 'intersection', 'union', 'symmetricDifference', 'isSubsetOf', 'isSupersetOf', 'isDisjointFrom'] as const
+const setMethods = new Map(ES2025_SET_METHODS.map(name => [name, Object.getOwnPropertyDescriptor(Set.prototype, name)]))
+beforeAll(() => {
+  for (const name of ES2025_SET_METHODS) Reflect.deleteProperty(Set.prototype, name)
+})
+afterAll(() => {
+  for (const [name, descriptor] of setMethods) {
+    if (descriptor) Object.defineProperty(Set.prototype, name, descriptor)
+  }
+})
+
 describe.each(engines)('database.server - lazy import ($name)', (engine) => {
   let db: Connector
 
@@ -153,7 +167,7 @@ describe.each(engines)('database.server - lazy import ($name)', (engine) => {
       default: { info: { fields: {} }, test: { fields: { id: 'string', title: 'string' } } },
     }))
     vi.doMock('../../src/runtime/internal/api', () => ({ fetchDatabase: async () => 'dump' }))
-    vi.doMock('../../src/runtime/internal/dump', () => ({ decompressSQLDump: async () => buildDump(release) }))
+    vi.doMock('../../src/runtime/internal/dump', () => ({ decompressSQLDump: async () => release.dump || buildDump(release) }))
     const mod: IntegrityModule = await import('../../src/runtime/internal/database.server')
     return (event: object = {}) => mod.checkAndImportDatabaseIntegrity(event as never, 'test', { ...config, databaseVersion })
   }
@@ -455,6 +469,52 @@ describe.each(engines)('database.server - lazy import ($name)', (engine) => {
   })
 
   describe('failures', () => {
+    test('an empty dump never replaces the collection', async () => {
+      await loadIsolate().then(check => outcomeWithin(check(), 5000))
+      await expectImported()
+
+      const check = await loadIsolate(undefined, { version: 'v1--empty', records: [], dump: [] })
+      expect(await outcomeWithin(check(), 5000)).toBe(503)
+      // the previous release is untouched
+      await expectImported()
+    })
+
+    test('an owner that lost its lease right before flagging the collection cannot flag the import that replaced it', async () => {
+      // isolate A has imported every record, and is paused right before it flags the collection as ready
+      const pauseA = deferred()
+      let frozen = false
+      const checkA = await loadIsolate((sql) => {
+        if (frozen) return never()
+        if (sql.startsWith('UPDATE _content_info SET ready = true')) {
+          frozen = true
+          return pauseA.promise.then(() => (frozen = false, undefined))
+        }
+      })
+      void checkA().catch(() => {})
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(frozen).toBe(true)
+
+      // isolate B takes the lease over once it has expired, and is half-way through its own import
+      const pauseB = deferred()
+      let inserts = 0
+      const checkB = await loadIsolate((sql) => {
+        if (sql.startsWith('INSERT INTO _content_test') && ++inserts === 4) return pauseB.promise
+      })
+      const doneB = checkB()
+      await vi.advanceTimersByTimeAsync(40_000)
+      expect(inserts).toBe(4)
+
+      // A's flag lands now: it must not flag B's half-done import as ready
+      pauseA.release()
+      await vi.advanceTimersByTimeAsync(1000)
+      expect((await readState()).ready).toBe(false)
+      expect((await readState()).items).toBe(3)
+
+      pauseB.release()
+      expect(await outcomeWithin(doneB, 10_000)).toBe('resolved')
+      await expectImported()
+    })
+
     test('a transient statement error is retried', async () => {
       let failures = 0
       const check = await loadIsolate((sql) => {
