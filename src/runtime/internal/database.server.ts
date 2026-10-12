@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import type { Connector } from 'db0'
@@ -65,22 +66,27 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
 
 /**
  * Remote databases (e.g. Cloudflare D1) are filled lazily, by the first requests after a deployment.
- * Any of those requests can be cancelled at any point, so the import is built to survive it:
+ * Any of those requests can be cancelled or killed at any point, so the import is built to survive it:
  *
  * - `_content_info` row `checksum_<collection>` holds the imported version, `ready` is set once the import completed.
  * - `_content_info` row `lease_<collection>` exists while a request imports the collection: `version` holds the
  *   owner token and `structureVersion` the expiry time. Inserting it is the atomic claim (primary key) on every
  *   database, the owner extends it while it makes progress and anyone may remove it once it has expired.
- *   An owner that lost its lease stops before it can flag the collection as ready.
+ *   The owner confirms it still holds the lease before every destructive statement and before flagging
+ *   the collection as ready, so an owner that lost its lease cannot damage the import that replaced it.
+ * - The collection is flagged as ready only when every statement succeeded and the table holds exactly the
+ *   records of the dump. Anything else fails the check, and the next request (after `RETRY_DELAY`) tries again.
  * - Within an isolate, requests share a single check. The check reports progress each time a database call
  *   completes, and a caller that sees no progress for `STALL_TIMEOUT` (its owner was cancelled) starts a new one.
+ * - Requests are never served from a collection that is not ready: they wait for the import, or fail with a 503.
  */
 type WaitUntil = (promise: Promise<unknown>) => void
 
 interface IntegrityCheck {
-  promise: Promise<void>
+  promise: Promise<boolean>
   lastProgress: number
   token: string
+  failedAt?: number
 }
 
 interface InfoRow {
@@ -107,42 +113,67 @@ const LEASE_RENEW_INTERVAL = 10_000
  */
 const REQUEST_TIMEOUT = 90
 
+/**
+ * After a failed check, requests fail fast for this long before a new check is started
+ */
+const RETRY_DELAY = 10_000
+
+/**
+ * Attempts for each statement of the import, to ride out transient database errors
+ */
+const STATEMENT_ATTEMPTS = 3
+
+/**
+ * D1 accepts at most 100 bound parameters per statement
+ */
+const MAX_BOUND_PARAMETERS = 100
+
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
-  while (true) {
+  // a check whose owner was cancelled is replaced, a few times at most
+  for (let attempt = 0; attempt < 3; attempt++) {
     let check = integrityChecks.get(collection)
+    if (check?.failedAt && Date.now() - check.failedAt > RETRY_DELAY) {
+      integrityChecks.delete(collection)
+      check = undefined
+    }
     if (!check) {
       check = startIntegrityCheck(event, collection, config)
       integrityChecks.set(collection, check)
     }
 
     if (await settlesBeforeStalling(check)) {
-      return
+      if (await check.promise) {
+        return
+      }
+      break
     }
 
     // The request that owns this check is gone: forget it, a new check takes over.
-    // A zombie check which settles later can no longer alter the shared state.
+    // A zombie check which settles later can no longer alter the shared state, and its lease expires.
     if (integrityChecks.get(collection) === check) {
       integrityChecks.delete(collection)
     }
     console.warn(`Database integrity check of "${collection}" stalled, starting a new one`)
-    // Hand its lease over right away instead of waiting for it to expire, its owner would stop at the next renewal
-    await loadDatabaseAdapter(config)
-      .then(db => createLease(db, collection, check!.token).release())
-      .catch(() => {})
   }
+
+  throw createError({ statusCode: 503, statusMessage: `Content of "${collection}" is not available yet, try again later` })
 }
 
 function startIntegrityCheck(event: H3Event, collection: string, config: RuntimeConfig['content']): IntegrityCheck {
-  const check: IntegrityCheck = { promise: Promise.resolve(), lastProgress: Date.now(), token: createToken() }
+  const check: IntegrityCheck = { promise: Promise.resolve(false), lastProgress: Date.now(), token: createToken() }
 
   check.promise = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config, check)
-    .then(() => {})
+    .then((isValid) => {
+      if (!isValid) {
+        throw new Error(`Collection "${collection}" is not ready after its import`)
+      }
+      return true
+    })
     .catch((error) => {
       console.error('Database integrity check failed', error)
-      // allow the next request to try again
-      if (integrityChecks.get(collection) === check) {
-        integrityChecks.delete(collection)
-      }
+      // fail fast for a while, then let a new request try again
+      check.failedAt = Date.now()
+      return false
     })
 
   // Keep the import running when the client disconnects (Cloudflare `ctx.waitUntil`, through Nitro)
@@ -186,32 +217,16 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
   const readChecksum = () => db.first<InfoRow>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
   const isReady = (row: InfoRow | null | undefined) => !!row?.ready && row.version === integrityVersion
 
-  let dump: Promise<string[]> | undefined
-  const getDump = () => {
-    dump ||= loadDatabaseDump(event, collection).then(decompressSQLDump).finally(progress)
-    return dump
-  }
-
-  let before = await readChecksum()
-
-  if (before?.version && !String(before.version)?.startsWith(`${config.databaseVersion}--`)) {
-    // database version is not supported, drop the info table
-    await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
-    before = null
-  }
-
-  if (isReady(before)) {
+  if (isReady(await readChecksum())) {
     // table is already initialized and ready, use it
     return true
   }
 
-  if (!before) {
-    // the info table may not exist yet: it holds the leases, so create it first (first line of the dump)
-    const infoTable = splitDumpLine((await getDump())[0] || '')
-    if (infoTable.hash === 'structure' && infoTable.statement.includes(` ${tables.info} `)) {
-      await db.exec(infoTable.statement).catch(() => {})
-    }
-  }
+  const dump = await loadDatabaseDump(event, collection).then(decompressSQLDump)
+  progress()
+  const lines = dump.map(splitDumpLine)
+
+  await ensureInfoTable(db, lines[0])
 
   // Only one request imports a collection at a time, the others wait for it to finish.
   // A lease left by a request that was cancelled expires and is taken over.
@@ -229,56 +244,80 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
 
   try {
     // the collection may have been imported while this request was waiting for the lease
-    before = await readChecksum()
+    const before = await readChecksum()
     if (isReady(before)) {
       return true
     }
 
-    await importCollection(db, collection, before, structureIntegrityVersion, await getDump(), lease)
+    // A row that is not ready comes from an import that never finished, and a row of another database version
+    // may come with another table layout: in both cases, the table cannot be trusted and is rebuilt.
+    const unchangedStructure = !!before?.ready
+      && String(before.version).startsWith(`${config.databaseVersion}--`)
+      && before.structureVersion === structureIntegrityVersion
+
+    await importCollection(db, collection, lines, unchangedStructure, lease)
   }
   finally {
     await lease.release()
   }
 
-  const after = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
-  return after?.version === integrityVersion
+  return isReady(await readChecksum())
 }
 
-async function importCollection(db: DatabaseAdapter, collection: string, before: InfoRow | null | undefined, structureIntegrityVersion: string, dump: string[], lease: Lease) {
-  // A row that is not ready comes from an import that never finished: the table is not guaranteed
-  // to exist or to have the expected structure, so never reuse it.
-  const unchangedStructure = !!before?.ready && before.structureVersion === structureIntegrityVersion
-
-  if (before) {
-    // Delete old version -- checksum exists but does not match with bundled checksum (or its import never finished)
-    await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
-
-    if (!unchangedStructure) {
-      // we need to drop the table and recreate it
-      await db.exec(`DROP TABLE IF EXISTS ${tables[collection]}`)
-    }
+/**
+ * Creates the info table, which holds the leases, from the first line of the dump.
+ * A table left by an older version of the module with other columns is replaced.
+ */
+async function ensureInfoTable(db: DatabaseAdapter, definition: DumpLine | undefined) {
+  if (definition?.hash !== 'structure' || !definition.statement.includes(` ${tables.info} `)) {
+    return
   }
+  await db.exec(definition.statement).catch(() => {})
 
-  const lines = dump.map(splitDumpLine)
+  const columns = [...definition.statement.matchAll(/"(\w+)"/g)].map(match => `"${match[1]}"`)
+  const probe = () => db.first(`SELECT id, ${columns.join(', ')} FROM ${tables.info} LIMIT 1`).then(() => true, () => false)
+  // probe twice, so that a transient error does not reset the info table of every collection
+  if (await probe() || await probe()) {
+    return
+  }
+  console.warn(`Database table ${tables.info} has an outdated structure, recreating it`)
+  await db.exec(`DROP TABLE IF EXISTS ${tables.info}`)
+  await db.exec(definition.statement)
+}
+
+async function importCollection(db: DatabaseAdapter, collection: string, lines: DumpLine[], unchangedStructure: boolean, lease: Lease) {
+  const table = tables[collection]
+
+  // Delete old version -- checksum exists but does not match with bundled checksum (or its import never finished)
+  await lease.renew()
+  await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+
+  // records of the dump, by hash (a large record spans several lines that share its hash)
+  const dumpHashes = new Set(lines.map(line => line.hash).filter(hash => hash !== 'structure' && hash !== 'meta'))
   let hashesInDb = new Set<string>()
 
   if (unchangedStructure) {
-    // get the list of hash to insert
-    const hashListFromTheDump = new Set(lines.map(line => line.hash))
-
     // get the list of hash in the database
-    const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`).catch(() => [] as { __hash__: string }[])
+    const hashesInDbRecords = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${table}`)
     hashesInDb = new Set(hashesInDbRecords.map(r => r.__hash__))
 
-    // get the list of hash to delete
-    const hashesToDelete = hashesInDb.difference(hashListFromTheDump)
-    if (hashesToDelete.size) {
-      await db.exec(`DELETE FROM ${tables[collection]} WHERE __hash__ IN (${Array(hashesToDelete.size).fill('?').join(',')})`, Array.from(hashesToDelete))
+    // delete the records which are not in the dump anymore
+    const hashesToDelete = Array.from(hashesInDb.difference(dumpHashes))
+    for (let i = 0; i < hashesToDelete.length; i += MAX_BOUND_PARAMETERS) {
+      const chunk = hashesToDelete.slice(i, i + MAX_BOUND_PARAMETERS)
+      await lease.renew()
+      await execStatement(db, `DELETE FROM ${table} WHERE __hash__ IN (${chunk.map(() => '?').join(',')})`, chunk)
     }
   }
+  else {
+    // we need to drop the table and recreate it
+    await lease.renew()
+    await db.exec(`DROP TABLE IF EXISTS ${table}`)
+  }
 
-  let renewedAt = Date.now()
   for (const [index, { statement, hash }] of lines.entries()) {
+    const isLast = index === lines.length - 1
+
     // If the structure has not changed,
     // skip any insert/update line whose hash is already in the database.
     // If not, since we dropped the table, no record is skipped, insert them all again.
@@ -296,17 +335,49 @@ async function importCollection(db: DatabaseAdapter, collection: string, before:
       }
     }
 
-    // Keep the lease alive, and make sure it is still ours before flagging the collection as ready (last line)
-    if (index === lines.length - 1 || Date.now() - renewedAt > LEASE_RENEW_INTERVAL) {
-      await lease.renew()
-      renewedAt = Date.now()
+    if (isLast) {
+      // the last line flags the collection as ready: only once it holds exactly the records of the dump
+      await verifyRecords(db, collection, dumpHashes)
     }
 
-    await db.exec(statement).catch((err: Error) => {
-      const message = err.message || 'Unknown error'
-      console.error(`Failed to execute SQL ${statement}: ${message}`)
-    })
+    // Structure changes and the final flag must come from the owner of the lease,
+    // other lines only need the lease to be extended regularly
+    await lease.renew(hash !== 'structure' && !isLast)
+
+    // a structure line may hold several statements (DROP, CREATE, indexes) which not every database runs at once
+    for (const sql of hash === 'structure' ? splitStatements(statement) : [statement]) {
+      await execStatement(db, sql)
+    }
   }
+}
+
+async function verifyRecords(db: DatabaseAdapter, collection: string, dumpHashes: Set<string>) {
+  const records = await db.all<{ __hash__: string }>(`SELECT __hash__ FROM ${tables[collection]}`)
+  const hashes = new Set(records.map(r => r.__hash__))
+  const missing = dumpHashes.difference(hashes).size
+  const unexpected = hashes.difference(dumpHashes).size
+  if (missing || unexpected || records.length !== hashes.size) {
+    throw new Error(`Import of "${collection}" is incomplete: ${missing} missing and ${unexpected} unexpected records`)
+  }
+}
+
+async function execStatement(db: DatabaseAdapter, sql: string, params?: Parameters<DatabaseAdapter['exec']>[1]) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await db.exec(sql, params)
+    }
+    catch (error) {
+      if (attempt >= STATEMENT_ATTEMPTS) {
+        throw new Error(`Failed to execute SQL ${sql.slice(0, 200)}: ${(error as Error)?.message || 'Unknown error'}`, { cause: error })
+      }
+      await new Promise(resolve => setTimeout(resolve, 200 * attempt))
+    }
+  }
+}
+
+interface DumpLine {
+  statement: string
+  hash: string
 }
 
 /**
@@ -314,14 +385,42 @@ async function importCollection(db: DatabaseAdapter, collection: string, before:
  * so we need to split the SQL and remove the comment
  * @see https://github.com/cloudflare/workers-sdk/issues/3892
  */
-function splitDumpLine(sql: string) {
+function splitDumpLine(sql: string): DumpLine {
   const hash = sql.split(' -- ').pop()!
   return { statement: sql.substring(0, sql.length - hash.length - 4), hash }
 }
 
+/**
+ * Splits SQL on the semicolons that end statements, ignoring those in quoted strings and identifiers
+ */
+function splitStatements(sql: string): string[] {
+  const statements: string[] = []
+  let quote: string | undefined
+  let start = 0
+  for (let i = 0; i < sql.length; i++) {
+    const char = sql[i]
+    if (quote) {
+      if (char === quote) quote = undefined
+    }
+    else if (char === '\'' || char === '"' || char === '`') {
+      quote = char
+    }
+    else if (char === ';') {
+      statements.push(sql.slice(start, i + 1))
+      start = i + 1
+    }
+  }
+  statements.push(sql.slice(start))
+  return statements.map(statement => statement.trim()).filter(statement => statement && statement !== ';')
+}
+
 interface Lease {
   acquire: () => Promise<boolean>
-  renew: () => Promise<void>
+  /**
+   * Makes sure the lease is still held, and extends it.
+   * With `lazy`, only does so when it was not done for `LEASE_RENEW_INTERVAL`.
+   */
+  renew: (lazy?: boolean) => Promise<void>
   release: () => Promise<void>
 }
 
@@ -329,19 +428,28 @@ function createLease(db: DatabaseAdapter, collection: string, token: string): Le
   const id = `lease_${collection}`
   // fixed width, so that timestamps compare as strings on every database
   const expiry = (offset: number) => String(Date.now() + offset).padStart(16, '0')
+  let renewedAt = 0
 
   return {
     async acquire() {
       await db.exec(`DELETE FROM ${tables.info} WHERE id = ? AND "structureVersion" < ?`, [id, expiry(0)]).catch(() => {})
-      return db.exec(`INSERT INTO ${tables.info} (id, ready, "structureVersion", version) VALUES (?, false, ?, ?)`, [id, expiry(LEASE_TTL), token])
+      const acquired = await db.exec(`INSERT INTO ${tables.info} (id, ready, "structureVersion", version) VALUES (?, false, ?, ?)`, [id, expiry(LEASE_TTL), token])
         .then(() => true, () => false)
+      if (acquired) {
+        renewedAt = Date.now()
+      }
+      return acquired
     },
-    async renew() {
+    async renew(lazy = false) {
+      if (lazy && Date.now() - renewedAt < LEASE_RENEW_INTERVAL) {
+        return
+      }
       await db.exec(`UPDATE ${tables.info} SET "structureVersion" = ? WHERE id = ? AND version = ?`, [expiry(LEASE_TTL), id, token])
       const row = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [id])
       if (row?.version !== token) {
         throw new Error(`Lost the import lease of "${collection}" to another request`)
       }
+      renewedAt = Date.now()
     },
     async release() {
       await db.exec(`DELETE FROM ${tables.info} WHERE id = ? AND version = ?`, [id, token]).catch(() => {})
