@@ -523,4 +523,33 @@ describe('generateNavigationTree', () => {
       },
     ])
   })
+
+  it('keeps a `.navigation` title of "Navigation"', async () => {
+    const items = [
+      { title: 'Navigation', path: '/guide/.navigation', stem: 'guide/.navigation' },
+      { title: 'Guide', path: '/guide', stem: 'guide/index' },
+      { title: 'Page', path: '/guide/page', stem: 'guide/page' },
+      { title: 'navigation', path: '/other/.navigation', stem: 'other/.navigation' },
+      { title: 'Page', path: '/other/page', stem: 'other/page' },
+    ] as PageCollectionItemBase[]
+
+    const tree = await generateNavigationTree(queryInOrder(items))
+    expect(tree.map(item => item.title)).toEqual(['Navigation', 'navigation'])
+  })
+
+  it('falls back to the index page or directory name when `.navigation` has no title', async () => {
+    const items = [
+      { title: '', path: '/guide/.navigation', stem: 'guide/.navigation', navigation: { icon: 'i-guide' } },
+      { title: 'Guide index', path: '/guide', stem: 'guide/index' },
+      { title: 'Page', path: '/guide/page', stem: 'guide/page' },
+      { title: '', path: '/other/.navigation', stem: 'other/.navigation', navigation: { icon: 'i-other' } },
+      { title: 'Page', path: '/other/page', stem: 'other/page' },
+    ] as PageCollectionItemBase[]
+
+    const tree = await generateNavigationTree(queryInOrder(items))
+    expect(tree).toMatchObject([
+      { title: 'Guide index', path: '/guide', icon: 'i-guide' },
+      { title: 'Other', path: '/other', icon: 'i-other' },
+    ])
+  })
 })

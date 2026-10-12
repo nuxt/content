@@ -22,7 +22,10 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
   const { contents, configs } = collecitonItems.reduce((acc, c) => {
     if (String(c.stem).split('/').pop() === '.navigation') {
-      c.title = c.title?.toLowerCase() === 'navigation' ? '' : c.title
+      // Without a title, fall back to the index page title or the directory name
+      if (!c.title) {
+        delete (c as Partial<PageCollectionItemBase>).title
+      }
       const key = c.path!.split('/').slice(0, -1).join('/') || '/'
       acc.configs[key] = {
         ...c,
