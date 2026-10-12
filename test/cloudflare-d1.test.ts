@@ -256,7 +256,10 @@ describe.sequential('cloudflare d1 (workerd)', () => {
     await freshDatabase()
 
     expect((await worker.get('/api/kick')).body).toBe('started')
-    await sleep(200)
+    // the import goes on after the response (`waitUntil`), it is not cancelled with the request
+    const itemsAtResponse = readD1().items
+    expect(itemsAtResponse).toBeLessThan(V1.titles.length)
+    expect(await waitFor(() => readD1().items > itemsAtResponse)).toBe(true)
 
     // same isolate: must neither hang nor see a partial collection
     const { ms } = await worker.docs()
