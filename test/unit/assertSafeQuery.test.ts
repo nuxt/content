@@ -36,7 +36,8 @@ describe('decompressSQLDump', () => {
     // Where clause should follow query builder syntax
     'SELECT * FROM _content_test WHERE id = 1 ORDER BY id DESC LIMIT 10 OFFSET 10': false,
     'SELECT * FROM _content_test WHERE (id = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': false,
-    'SELECT * FROM _content_test WHERE ("id" = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': true,
+    // Builder always quotes values (`'1'`), never a bare number
+    'SELECT * FROM _content_test WHERE ("id" = 1) ORDER BY id DESC LIMIT 10 OFFSET 10': false,
     'SELECT * FROM _content_test WHERE (id = \'");\'); select * from ((SELECT * FROM sqlite_master where 1 <> "") as t) ORDER BY type DESC': false,
     'SELECT "body" FROM _content_test ORDER BY body ASC': true,
     // Advanced
@@ -110,6 +111,14 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test WHERE ("id" = "body" || "body") ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" = "body" ->> \'$.a\') ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("id" = "stem" + 1) ORDER BY stem ASC': false,
+    // Query builder never emits escape strings, unicode strings, or dollar quotes
+    'SELECT * FROM _content_test WHERE ("id" = E\'x\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = e\'x\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = U&\'x\') ORDER BY stem ASC': false,
+    'SELECT * FROM _content_test WHERE ("id" = $tag$x$tag$) ORDER BY stem ASC': false,
+    // Values the builder quotes with singleQuote(), including backslashes, stay valid
+    'SELECT * FROM _content_test WHERE ("id" = \'C:\\\\\') ORDER BY stem ASC': true,
+    'SELECT * FROM _content_test WHERE ("id" = \'E\'\'foo\') ORDER BY stem ASC': true,
     // PostgreSQL array subscripts: `[...]` is executable code there, not an identifier quote
     'SELECT * FROM _content_test WHERE ((\'{a,b}\'::text[])[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] = \'a\') ORDER BY stem ASC': false,
     'SELECT * FROM _content_test WHERE ("meta"[(SELECT CASE WHEN 1=1 THEN 1 ELSE 2 END)] IS NULL) ORDER BY stem ASC': false,

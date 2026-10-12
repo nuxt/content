@@ -1,19 +1,4 @@
-const SQL_COMMANDS = /SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|\$/i
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
-// Parentheses in WHERE are only valid after these keywords (grouping / IN lists).
-// Anything else that looks like a call (name(, "name"(, [name](, `name`() is disallowed.
-const SQL_WHERE_PAREN_KEYWORDS = /\b(?:WHERE|AND|OR|IN)\s*\(/gi
-// Bare identifiers use a word boundary; quoted/bracketed forms match the whole identifier unit.
-const SQL_FUNCTION_CALL = /(?:\b[A-Z_]\w*|["`[][A-Z_]\w*["`\]])\s*\(/i
-// Outside quotes the query builder only emits these keywords in WHERE (fields are always quoted).
-// Blocks bare table/pragma names and operators such as REGEXP, GLOB, MATCH.
-const SQL_WHERE_BARE_WORD = /\b[A-Z_]\w*/gi
-const SQL_WHERE_ALLOWED_WORDS = new Set(['WHERE', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN', 'IS', 'NULL'])
-// Outside quotes the builder only emits comparison operators, grouping and list commas.
-// Blocks ||, ->, ->>, arithmetic, bitwise operators, etc.
-const SQL_WHERE_UNSAFE_CHARS = /[^\w\s(),=<>]/
-// `x IN table_name` is an implicit subquery in SQLite; IN must be followed by a list.
-const SQL_IN_WITHOUT_LIST = /\bIN(?!\s*\()/i
 
 /**
  * Hard ceiling on SQL statement length accepted from the client.
@@ -191,38 +176,11 @@ export function assertSafeQuery(sql: string, collection: string) {
     throw new Error(`Invalid query: Collection '${collection}' does not exist`)
   }
 
-  // WHERE
-  if (where) {
-    if (!where.startsWith(' WHERE (') || !where.endsWith(')')) {
-      throw new Error('Invalid query: WHERE clause must be properly enclosed in parentheses')
-    }
-    // Only strip the quote styles the builder emits ('value', "field"). `[` and backtick are
-    // identifier quotes in SQLite but not in PostgreSQL, where `[...]` is an executable array
-    // subscript; keeping them visible rejects them via SQL_WHERE_UNSAFE_CHARS on every adapter.
-    const noString = cleanupQuery(where, { removeString: true, standardQuotesOnly: true })
-    if (noString.match(SQL_COMMANDS)) {
-      throw new Error('Invalid query: WHERE clause contains unsafe SQL commands')
-    }
-    if (SQL_WHERE_UNSAFE_CHARS.test(noString)) {
-      throw new Error('Invalid query: WHERE clause contains unsupported operators')
-    }
-    if (SQL_IN_WITHOUT_LIST.test(noString)) {
-      throw new Error('Invalid query: IN must be followed by a list of values')
-    }
-    for (const [word] of noString.matchAll(SQL_WHERE_BARE_WORD)) {
-      if (!SQL_WHERE_ALLOWED_WORDS.has(word.toUpperCase())) {
-        throw new Error(`Invalid query: WHERE clause contains unsupported keyword '${word}'`)
-      }
-    }
-    // Block SQLite function calls (randomblob, zeroblob, hex, length, …),
-    // including quoted/bracketed forms SQLite accepts as identifiers: "abs"(, [abs](, `abs`(.
-    // Only single-quoted value literals are stripped so identifier quotes stay visible to the matcher.
-    // The query builder never emits functions in WHERE; only grouping and IN (...).
-    const noSingleQuoted = cleanupQuery(where, { removeSingleQuoted: true })
-    const withoutGroupingParens = noSingleQuoted.replace(SQL_WHERE_PAREN_KEYWORDS, ' ')
-    if (SQL_FUNCTION_CALL.test(withoutGroupingParens)) {
-      throw new Error('Invalid query: WHERE clause contains unsafe SQL expressions')
-    }
+  // WHERE must be exactly what collectionQueryBuilder emits: quoted fields,
+  // standard '…' literals ('' is the only escape), and the builder's operators.
+  // Escape strings, dollar quotes, and other dialects never appear in that output.
+  if (where && !isBuilderWhere(where)) {
+    throw new Error('Invalid query: WHERE clause must match the query builder syntax')
   }
 
   // ORDER BY
@@ -242,6 +200,177 @@ export function assertSafeQuery(sql: string, collection: string) {
   }
 
   return true
+}
+
+/**
+ * WHERE clause produced by `collectionQueryBuilder` / `singleQuote`.
+ *
+ *   WHERE <group> (AND <group>)*
+ *   group  = ( <item> (AND|OR <item>)* )   // one joiner per group
+ *   item   = group | "field" <op> <value>
+ *   value  = '…' with '' as the only escape, or an IN list / BETWEEN pair
+ *
+ * Anything else — E'…', U&'…', $tag$…$tag$, function calls, bare words — is rejected.
+ */
+function isBuilderWhere(where: string): boolean {
+  if (!where.startsWith(' WHERE ')) {
+    return false
+  }
+  const end = parseWhereBody(where, ' WHERE '.length)
+  return end === where.length
+}
+
+function parseWhereBody(sql: string, i: number): number {
+  let next = parseGroup(sql, i)
+  if (next < 0) {
+    return -1
+  }
+  while (sql.startsWith(' AND ', next)) {
+    next = parseGroup(sql, next + ' AND '.length)
+    if (next < 0) {
+      return -1
+    }
+  }
+  return next
+}
+
+function parseGroup(sql: string, i: number): number {
+  if (sql[i] !== '(') {
+    return -1
+  }
+  const end = parseExpr(sql, i + 1)
+  if (end < 0 || sql[end] !== ')') {
+    return -1
+  }
+  return end + 1
+}
+
+function parseExpr(sql: string, i: number): number {
+  let next = parseItem(sql, i)
+  if (next < 0) {
+    return -1
+  }
+  let joiner = ''
+  while (sql.startsWith(' AND ', next) || sql.startsWith(' OR ', next)) {
+    const found = sql.startsWith(' AND ', next) ? ' AND ' : ' OR '
+    if (joiner && joiner !== found) {
+      return -1
+    }
+    joiner = found
+    next = parseItem(sql, next + found.length)
+    if (next < 0) {
+      return -1
+    }
+  }
+  return next
+}
+
+function parseItem(sql: string, i: number): number {
+  if (sql[i] === '(') {
+    return parseGroup(sql, i)
+  }
+  return parseLeaf(sql, i)
+}
+
+const WHERE_OPS: Array<{ op: string, kind: 'none' | 'list' | 'between' | 'value' }> = [
+  { op: 'IS NOT NULL', kind: 'none' },
+  { op: 'IS NULL', kind: 'none' },
+  { op: 'NOT BETWEEN', kind: 'between' },
+  { op: 'BETWEEN', kind: 'between' },
+  { op: 'NOT LIKE', kind: 'value' },
+  { op: 'NOT IN', kind: 'list' },
+  { op: 'LIKE', kind: 'value' },
+  { op: 'IN', kind: 'list' },
+  { op: '<>', kind: 'value' },
+  { op: '>=', kind: 'value' },
+  { op: '<=', kind: 'value' },
+  { op: '>', kind: 'value' },
+  { op: '<', kind: 'value' },
+  { op: '=', kind: 'value' },
+]
+
+function parseLeaf(sql: string, i: number): number {
+  const identEnd = parseQuotedIdent(sql, i)
+  if (identEnd < 0 || sql[identEnd] !== ' ') {
+    return -1
+  }
+  const matched = WHERE_OPS.find(candidate => sql.startsWith(candidate.op, identEnd + 1))
+  if (!matched) {
+    return -1
+  }
+  let j = identEnd + 1 + matched.op.length
+  if (matched.kind === 'none') {
+    return j
+  }
+  if (sql[j] !== ' ') {
+    return -1
+  }
+  j += 1
+  if (matched.kind === 'list') {
+    return parseValueList(sql, j)
+  }
+  if (matched.kind === 'between') {
+    const left = parseBuilderString(sql, j)
+    if (left < 0 || !sql.startsWith(' AND ', left)) {
+      return -1
+    }
+    return parseBuilderString(sql, left + ' AND '.length)
+  }
+  return parseBuilderString(sql, j)
+}
+
+function parseQuotedIdent(sql: string, i: number): number {
+  if (sql[i] !== '"') {
+    return -1
+  }
+  let j = i + 1
+  if (j >= sql.length || sql[j] === '"') {
+    return -1
+  }
+  while (j < sql.length && sql[j] !== '"') {
+    j += 1
+  }
+  return sql[j] === '"' ? j + 1 : -1
+}
+
+function parseBuilderString(sql: string, i: number): number {
+  if (sql[i] !== '\'') {
+    return -1
+  }
+  let j = i + 1
+  while (j < sql.length) {
+    if (sql[j] === '\'') {
+      if (sql[j + 1] === '\'') {
+        j += 2
+        continue
+      }
+      return j + 1
+    }
+    j += 1
+  }
+  return -1
+}
+
+function parseValueList(sql: string, i: number): number {
+  if (sql[i] !== '(') {
+    return -1
+  }
+  let j = i + 1
+  if (sql[j] === ')') {
+    return j + 1
+  }
+  while (j < sql.length) {
+    const end = parseBuilderString(sql, j)
+    if (end < 0) {
+      return -1
+    }
+    if (sql.startsWith(', ', end)) {
+      j = end + 2
+      continue
+    }
+    return sql[end] === ')' ? end + 1 : -1
+  }
+  return -1
 }
 
 function cleanupQuery(query: string, options: { removeString?: boolean, removeSingleQuoted?: boolean, standardQuotesOnly?: boolean } = {}) {
