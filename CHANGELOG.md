@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.16.2](https://github.com/nuxt/content/compare/v3.16.1...v3.16.2) (2026-10-12)
+
+### Bug Fixes
+
+* **api:** don't forward body headers to internal content requests ([#3868](https://github.com/nuxt/content/issues/3868)) ([ffa5ac3](https://github.com/nuxt/content/commit/ffa5ac391c0c1b91cce597155bfa85a84ed3c4b5))
+* **cache:** await development cache replacement ([#3846](https://github.com/nuxt/content/issues/3846)) ([75eff79](https://github.com/nuxt/content/commit/75eff79a94b25a1e3f4f161efcbfc5d6b4ff3f5e))
+* continue when package manager exits non-zero after installing ([#3871](https://github.com/nuxt/content/issues/3871)) ([ebfdc2c](https://github.com/nuxt/content/commit/ebfdc2c94e00cd731e8d281e1d6ee5bf39694e67)), closes [#3849](https://github.com/nuxt/content/issues/3849)
+* **search:** preserve word boundaries between block elements ([#3861](https://github.com/nuxt/content/issues/3861)) ([05a3074](https://github.com/nuxt/content/commit/05a3074efdca61c018134c8d13c0df25718bcfad))
+* **security:** accept only query-builder WHERE clauses ([#3877](https://github.com/nuxt/content/issues/3877)) ([9fae87e](https://github.com/nuxt/content/commit/9fae87e7fefffeb2183942e6f9dfc90c50a8204f))
+* **security:** standard quotes and block IN operator validate ([#3862](https://github.com/nuxt/content/issues/3862)) ([006d138](https://github.com/nuxt/content/commit/006d1382c6f8c7a719e8caaedce09eadc942ea77))
+
+### Performance Improvements
+
+* **cache:** avoid repeated cache index copies ([#3847](https://github.com/nuxt/content/issues/3847)) ([464fb16](https://github.com/nuxt/content/commit/464fb16755af15c63c2742fe5c4a16355d57e6ac))
+* **navigation:** skip unused leaf sibling searches ([#3845](https://github.com/nuxt/content/issues/3845)) ([6fc1e26](https://github.com/nuxt/content/commit/6fc1e26231e53995494b583b06e8caf0ba684c99))
+
 ## [3.16.1](https://github.com/nuxt/content/compare/v3.16.0...v3.16.1) (2026-09-21)
 
 ### Features
