@@ -6,6 +6,7 @@ import type { PathMetaOptions } from '../../../types/path-meta'
 import { defineTransformer } from './utils'
 
 const SEMVER_REGEX = /^\d+(?:\.\d+)*(?:\.x)?$/
+const NAVIGATION_FILE_BASENAME = '.navigation'
 
 const defaultOptions: PathMetaOptions = {
   slugifyOptions: {
@@ -25,7 +26,7 @@ export default defineTransformer({
     return {
       path: filePath,
       ...content,
-      title: content.title || generateTitle(refineUrlPart(basename)),
+      title: content.title || generateTitleFromBasename(basename),
       stem,
       extension,
     }
@@ -47,6 +48,17 @@ export const generatePath = (path: string, { forceLeadingSlash = true, slugifyOp
  * generate title from file path
  */
 export const generateTitle = (path: string) => path.split(/[\s-]/g).map(pascalCase).join(' ')
+
+/**
+ * Generate fallback title from file basename.
+ * `.navigation` files never get a generated title, so only explicit titles are used in navigation.
+ */
+export const generateTitleFromBasename = (basename: string) => {
+  if (basename === NAVIGATION_FILE_BASENAME) {
+    return ''
+  }
+  return generateTitle(refineUrlPart(basename))
+}
 
 /**
  * Clean up special keywords from path part

@@ -312,6 +312,82 @@ describe('generateNavigationTree', () => {
     ])
   })
 
+  it('should keep explicit `Navigation` title from .navigation file', async () => {
+    const items = [
+      {
+        title: 'Navigation',
+        path: '/guide/.navigation',
+        stem: 'guide/.navigation',
+      },
+      {
+        title: 'Page',
+        path: '/guide/page',
+        stem: 'guide/page',
+      },
+    ] as PageCollectionItemBase[]
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+
+    expect(tree).toEqual([
+      {
+        title: 'Navigation',
+        path: '/guide',
+        stem: 'guide',
+        page: false,
+        children: [
+          {
+            title: 'Page',
+            path: '/guide/page',
+            stem: 'guide/page',
+          },
+        ],
+      },
+    ])
+  })
+
+  it('should fall back to index or generated title when .navigation file has no title', async () => {
+    const items = [
+      {
+        title: '',
+        path: '/guide/.navigation',
+        stem: 'guide/.navigation',
+        navigation: { icon: 'i-guide' },
+      },
+      {
+        title: 'Guide Index',
+        path: '/guide',
+        stem: 'guide/index',
+      },
+      {
+        title: '',
+        path: '/other/.navigation',
+        stem: 'other/.navigation',
+        navigation: { icon: 'i-other' },
+      },
+      {
+        title: 'Page',
+        path: '/other/page',
+        stem: 'other/page',
+      },
+    ] as PageCollectionItemBase[]
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+
+    expect(tree).toMatchObject([
+      {
+        title: 'Guide Index',
+        icon: 'i-guide',
+        path: '/guide',
+      },
+      {
+        title: 'Other',
+        icon: 'i-other',
+        path: '/other',
+        page: false,
+      },
+    ])
+  })
+
   it('should exclude items with navigation: false', async () => {
     const items = [
       {

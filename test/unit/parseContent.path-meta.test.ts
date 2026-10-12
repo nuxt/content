@@ -4,6 +4,7 @@ import { parseContent } from '../utils/content'
 import { defineCollection } from '../../src/utils'
 import { resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
+import { generateTitleFromBasename } from '../../src/utils/content/transformers/path-meta'
 
 const testCases = {
   'content:3.index.md': {
@@ -26,6 +27,20 @@ const testCases = {
     path: '/blog',
     extension: 'md',
     stem: '1.blog/3.index.draft',
+  },
+  'content:guide:.navigation.md': {
+    __description: 'Navigation file does not get a generated title',
+    title: '',
+    path: '/guide/.navigation',
+    extension: 'md',
+    stem: 'guide/.navigation',
+  },
+  'content:guide:.navigation.yml': {
+    __description: 'YAML navigation file does not get a generated title',
+    title: '',
+    path: '/guide/.navigation',
+    extension: 'yml',
+    stem: 'guide/.navigation',
   },
   'content:1.blog:_4.the-post.md': {
     __description: 'Blog post file with position [Partial]',
@@ -133,5 +148,17 @@ describe('Transformer (path-meta)', async () => {
         `Title is not equal, expected: ${expected.title}, actual: "${transformed.title}"`,
       )
     })
+  })
+})
+
+describe('generateTitleFromBasename', () => {
+  test('does not generate a title for .navigation files', () => {
+    expect(generateTitleFromBasename('.navigation')).toBe('')
+  })
+
+  test('generates titles for regular basenames', () => {
+    expect(generateTitleFromBasename('the-post')).toBe('The Post')
+    expect(generateTitleFromBasename('2.getting-started')).toBe('Getting Started')
+    expect(generateTitleFromBasename('index')).toBe('')
   })
 })
