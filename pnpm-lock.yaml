@@ -392,6 +392,8 @@ importers:
 
   test/fixtures/basic: {}
 
+  test/fixtures/cloudflare-d1: {}
+
   test/fixtures/csv: {}
 
   test/fixtures/multi-collection-hmr: {}
