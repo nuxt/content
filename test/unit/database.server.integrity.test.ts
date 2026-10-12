@@ -485,6 +485,38 @@ describe.each(engines)('database.server - lazy import ($name)', (engine) => {
       await expectImported()
     })
 
+    test('a statement that fails after its owner lost the lease is not retried', async () => {
+      // isolate A's `DROP TABLE` of the dump hangs past the lease lifetime, then fails
+      const pauseA = deferred()
+      let drops = 0
+      let frozen = false
+      const checkA = await loadIsolate((sql) => {
+        if (frozen) return never()
+        // the first DROP is the rebuild of the table, the second one comes from the structure line of the dump
+        if (sql.startsWith('DROP TABLE IF EXISTS _content_test') && ++drops === 2) {
+          frozen = true
+          return pauseA.promise.then(() => {
+            frozen = false
+            throw new Error('D1_ERROR: Network connection lost')
+          })
+        }
+      })
+      void checkA().catch(() => {})
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(frozen).toBe(true)
+
+      // isolate B takes the lease over once it has expired, and completes the import
+      const checkB = await loadIsolate()
+      expect(await outcomeWithin(checkB(), 40_000)).toBe('resolved')
+      await expectImported()
+
+      // A's statement fails now: retrying it would drop the table B has just completed
+      pauseA.release()
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(drops).toBe(2)
+      await expectImported()
+    })
+
     test('an owner that lost its lease right before flagging the collection cannot flag the import that replaced it', async () => {
       // isolate A has imported every record, and is paused right before it flags the collection as ready
       const pauseA = deferred()

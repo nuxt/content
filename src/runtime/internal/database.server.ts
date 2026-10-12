@@ -350,7 +350,7 @@ async function importCollection(db: DatabaseAdapter, collection: string, lines: 
     for (let i = 0; i < hashesToDelete.length; i += MAX_BOUND_PARAMETERS) {
       const chunk = hashesToDelete.slice(i, i + MAX_BOUND_PARAMETERS)
       await lease.renew()
-      await execStatement(db, `DELETE FROM ${table} WHERE __hash__ IN (${chunk.map(() => '?').join(',')})`, chunk)
+      await execStatement(db, `DELETE FROM ${table} WHERE __hash__ IN (${chunk.map(() => '?').join(',')})`, chunk, lease)
     }
   }
   else {
@@ -388,7 +388,7 @@ async function importCollection(db: DatabaseAdapter, collection: string, lines: 
 
     // a structure line may hold several statements (DROP, CREATE, indexes) which not every database runs at once
     for (const sql of hash === 'structure' ? splitStatements(statement) : [statement]) {
-      await execStatement(db, sql)
+      await execStatement(db, sql, undefined, lease)
     }
   }
 
@@ -421,9 +421,11 @@ async function verifyRecords(db: DatabaseAdapter, collection: string, dumpHashes
  * @param db - Database adapter
  * @param sql - SQL statement
  * @param params - Bound parameters
- * @throws The last error, once every attempt failed
+ * @param lease - Import lease, confirmed before each retry: a statement that failed after a long wait
+ * must not be retried once another request has taken the import over
+ * @throws The last error, once every attempt failed, or when the lease was lost
  */
-async function execStatement(db: DatabaseAdapter, sql: string, params?: Parameters<DatabaseAdapter['exec']>[1]) {
+async function execStatement(db: DatabaseAdapter, sql: string, params?: Parameters<DatabaseAdapter['exec']>[1], lease?: Lease) {
   for (let attempt = 1; ; attempt++) {
     try {
       return await db.exec(sql, params)
@@ -433,6 +435,7 @@ async function execStatement(db: DatabaseAdapter, sql: string, params?: Paramete
         throw new Error(`Failed to execute SQL ${sql.slice(0, 200)}: ${(error as Error)?.message || 'Unknown error'}`, { cause: error })
       }
       await new Promise(resolve => setTimeout(resolve, 200 * attempt))
+      await lease?.renew()
     }
   }
 }
