@@ -94,8 +94,10 @@ function intercept(connector: Connector, interceptor: Interceptor = () => {}, mu
   } as Connector
 }
 
+/** A promise that never settles: a call whose request was cancelled */
 const never = () => new Promise<void>(() => {})
 
+/** A promise settled from the outside, to pause and resume a call */
 function deferred() {
   let release!: () => void
   const promise = new Promise<void>(resolve => (release = resolve))
@@ -130,6 +132,7 @@ function killAfterInserts(count: number): Interceptor {
   }
 }
 
+/** Records the record inserts of the import */
 function countInserts() {
   const inserts: string[] = []
   const interceptor: Interceptor = (sql) => {
@@ -172,8 +175,10 @@ describe.each(engines)('database.server - lazy import ($name)', (engine) => {
     return (event: object = {}) => mod.checkAndImportDatabaseIntegrity(event as never, 'test', { ...config, databaseVersion })
   }
 
+  /** Runs a statement on the shared database, outside of any isolate */
   const run = (sql: string) => db.prepare(sql).run()
 
+  /** Reads the info row and the records of the collection */
   async function readState() {
     const row = await db.prepare('SELECT * FROM _content_info WHERE id = ?').get('checksum_test') as { ready: number | boolean, version: string } | undefined
     const ids = await db.prepare('SELECT id FROM _content_test ORDER BY id').all()
@@ -189,6 +194,7 @@ describe.each(engines)('database.server - lazy import ($name)', (engine) => {
     expect(ids).toEqual([...release.records].sort((a, b) => a - b))
   }
 
+  /** Lease expiry `offset` ms from now, in the format of the lease row */
   const leaseExpiry = (offset: number) => String(Date.now() + offset).padStart(16, '0')
 
   beforeAll(async () => {

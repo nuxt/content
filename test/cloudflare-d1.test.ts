@@ -63,6 +63,7 @@ function deploy(release: Release) {
   cpSync(`${rootDir}/.output-${release.name}`, `${rootDir}/.output`, { recursive: true })
 }
 
+/** Finds a free TCP port for `wrangler dev` */
 function freePort() {
   return new Promise<number>((resolve, reject) => {
     const server = createServer()
@@ -75,6 +76,7 @@ function freePort() {
   })
 }
 
+/** Waits `ms` milliseconds */
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 /** A `wrangler dev` process: a fresh workerd isolate on top of the persisted D1 database */
@@ -83,6 +85,7 @@ class Worker {
   logs = ''
   url = ''
 
+  /** Starts `wrangler dev` on a free port, and waits until it answers */
   async start() {
     const port = await freePort()
     this.url = `http://127.0.0.1:${port}`
@@ -117,6 +120,7 @@ class Worker {
     this.process = undefined
   }
 
+  /** Requests a path of the worker */
   async get(path: string, timeout = 120_000) {
     const start = Date.now()
     const response = await fetch(`${this.url}${path}`, { signal: AbortSignal.timeout(timeout) })
@@ -163,6 +167,7 @@ function readD1() {
   }
 }
 
+/** Polls `condition` every 10ms, resolves whether it became true within `timeout` ms */
 async function waitFor(condition: () => boolean, timeout = 5000) {
   for (const start = Date.now(); Date.now() - start < timeout; await sleep(10)) {
     if (condition()) return true
@@ -185,6 +190,7 @@ describe.sequential('cloudflare d1 (workerd)', () => {
     }
   })
 
+  /** Restarts the worker with an empty D1 database, serving `release` */
   async function freshDatabase(release: Release = V1) {
     await worker.kill()
     rmSync(persistDir, { recursive: true, force: true })
@@ -192,12 +198,14 @@ describe.sequential('cloudflare d1 (workerd)', () => {
     await worker.start()
   }
 
+  /** Asserts that the worker serves exactly the documents of `release` */
   async function expectServed(release: Release) {
     const { status, body } = await worker.docs()
     expect(status).toBe(200)
     expect(JSON.parse(body)).toEqual(fingerprint(release.titles))
   }
 
+  /** Asserts that D1 flags the collection as ready, with no lease left behind */
   function expectReady() {
     // ready, and no lease left behind
     expect(readD1().info).toEqual([expect.objectContaining({ id: 'checksum_docs', ready: 1 })])
