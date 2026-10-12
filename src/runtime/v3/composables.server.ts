@@ -1,5 +1,6 @@
 import type { NuxtRequestEvent, RequestEvent } from 'nuxt/server'
 import { generateNavigation } from 'comark-content/utils'
+import { applyExtraFields, navigationItems } from './navigation'
 import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
@@ -32,6 +33,7 @@ type ServerEvent = RequestEvent | NuxtRequestEvent
 type QueryableContent = (ComarkContent | ContentHub) & {
   query: SqlQueryMethods['query']
   get: ComarkContent['get']
+  list?: (sources?: string | string[]) => Promise<ContentListFile[]>
 }
 type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
@@ -64,11 +66,11 @@ export function queryCollection(_event: ServerEvent, source: keyof ContentRegist
 export function queryCollectionNavigation<K extends keyof ContentRegistry>(
   event: ServerEvent,
   collection: K,
-  _fields?: Array<keyof SourceData<K>>,
+  fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
   return chainablePromise(event, collection, async (qb) => {
-    const list = await qb.all()
-    return generateNavigation(list)
+    const list = await navigationItems(asQueryable(), collection as string, await qb.all())
+    return applyExtraFields(await generateNavigation(list), list, fields as string[] | undefined)
   })
 }
 
@@ -79,7 +81,7 @@ export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>
   opts?: SurroundOptions,
 ): ChainablePromise<K, (NavigationItem | null)[]> {
   return chainablePromise(event, collection, async (qb) => {
-    const list = await qb.all()
+    const list = await navigationItems(asQueryable(), collection as string, await qb.all())
     const navigation = await generateNavigation(list)
     return generateItemSurround(navigation, path, opts)
   })

@@ -91,6 +91,31 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
     addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
 
+    // Markdown component tags (`::counter`) resolve against this map. Nuxt only
+    // registers components lazily, so a runtime `resolveComponent` can't see them.
+    addTemplate({
+      filename: 'content/components.mjs',
+      getContents: () => {
+        // A component can be registered twice (client and server). Keep the first.
+        const seen = new Set<string>()
+        const components = (nuxt.apps.default?.components ?? []).filter((component) => {
+          // `@comark/vue` has no default export (`Comark` is registered as one anyway),
+          // and other named exports aren't `.vue` files either.
+          if (!component.filePath.endsWith('.vue')) return false
+          if (seen.has(component.pascalName)) return false
+          seen.add(component.pascalName)
+          return true
+        })
+        const lines = components.map((component) => {
+          const imported = component.export === 'default'
+            ? `default as ${component.pascalName}`
+            : `${component.export} as ${component.pascalName}`
+          return `export { ${imported} } from ${JSON.stringify(component.filePath)}`
+        })
+        return lines.join('\n') + '\n'
+      },
+    })
+
     // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.
     addTypeTemplate({
       filename: 'content/client.d.ts',

@@ -9,7 +9,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@nuxt/content": "latest",
+    "@nuxt/content": "workspace:*",
     "@nuxt/kit": "^4.6.0",
     "@nuxtjs/i18n": "^10.6.0",
     "@sqlite.org/sqlite-wasm": "3.53.0-build1",

@@ -24,4 +24,13 @@ export default createConfigForNuxt({
         '@typescript-eslint/no-explicit-any': 'off',
       },
     },
+    {
+      // Upstream v3 starters, fetched as-is so the compatibility tests run the real configs.
+      ignores: [
+        './examples/basic/**',
+        './examples/blog/**',
+        './examples/i18n/**',
+        './examples/ui/**',
+      ],
+    },
   )

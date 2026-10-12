@@ -35,6 +35,8 @@ export type FullFile<Item> = Item extends ContentListFile<infer Data>
  */
 export interface FullFileQueryBuilder<Row, Item> {
   path(path: string): FullFileQueryBuilder<Row, Item>
+  /** Return only the given columns. v3 callers pass flat names (`'title'`); dotted names pass through. */
+  select(...fields: QueryField<Row>[]): FullFileQueryBuilder<Row, Item>
   order(field: QueryField<Row>, direction: 'ASC' | 'DESC'): FullFileQueryBuilder<Row, Item>
   skip(skip: number): FullFileQueryBuilder<Row, Item>
   limit(limit: number): FullFileQueryBuilder<Row, Item>
@@ -53,11 +55,28 @@ export interface FullFileQueryBuilder<Row, Item> {
  * can no longer be resolved (e.g. removed between the query and the read) we
  * fall back to the row itself with an empty body so callers still get an object.
  */
+/**
+ * v3 names that aren't frontmatter. `id` is the file key, which the index stores
+ * as `meta.key`; the rest are top-level or `meta.*` columns.
+ */
+const COLUMN_ALIASES: Record<string, string> = {
+  id: 'meta.key',
+  stem: 'meta.stem',
+  extension: 'meta.extension',
+}
+
+function toQueryColumn(field: string): string {
+  if (field.includes('.')) return field
+  return COLUMN_ALIASES[field] ?? (field === 'path' ? field : `data.${field}`)
+}
+
 async function hydrate<Item extends ContentListFile>(
   content: Pick<ComarkContent, 'get'>,
   item: Item,
 ): Promise<FullFile<Item>> {
-  const source = (await content.get(item.path)) ?? { ...item, nodes: [] as ContentFile['nodes'] }
+  // Prefer the file key (`content_fr/index.md`): several collections can share a
+  // path, and a hub resolves a bare path to whichever collection registered it first.
+  const source = (await content.get(item.meta?.key ?? item.path)) ?? { ...item, nodes: [] as ContentFile['nodes'] }
 
   return {
     // Spread the frontmatter first so the identity/meta fields below always win.
@@ -87,10 +106,15 @@ export function withFullFiles<Row, Data extends Record<string, any>>(
   type Item = ContentListFile<Data>
   const wrap = (qb: SourceQueryBuilder<Row, Item>): FullFileQueryBuilder<Row, Item> => ({
     path: path => wrap(qb.path(path)),
-    order: (field, direction) => wrap(qb.order(field, direction)),
+    // v3 addresses frontmatter fields directly (`select('title')`); the SQL layer
+    // stores them under `data.*`. Identity columns (`path`, `id`, …) stay as they are,
+    // and dotted names pass through untouched.
+    // `select` narrows the row type to `Partial<Item>`; hydration re-reads the whole file.
+    select: (...fields) => wrap(qb.select(...fields.map(toQueryColumn)) as SourceQueryBuilder<Row, Item>),
+    order: (field, direction) => wrap(qb.order(toQueryColumn(field), direction)),
     skip: skip => wrap(qb.skip(skip)),
     limit: limit => wrap(qb.limit(limit)),
-    where: (field, operator, value) => wrap(qb.where(field, operator, value)),
+    where: (field, operator, value) => wrap(qb.where(toQueryColumn(field), operator, value)),
     andWhere: groupFactory => wrap(qb.andWhere(groupFactory)),
     orWhere: groupFactory => wrap(qb.orWhere(groupFactory)),
     count: (field, distinct) => qb.count(field, distinct),

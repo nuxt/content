@@ -35,6 +35,14 @@ jobs:
       - run: pnpm lint
       - run: pnpm prepack
       - run: pnpm typecheck
-      - run: pnpm test
+      # Each example test boots a full Nuxt app. On the GitHub runner Node 24
+      # caps the V8 heap near 2GB (it reads the cgroup memory limit), so the
+      # heavier ones (ui, i18n) die with "Ineffective mark-compacts near heap
+      # limit" once the heap crosses ~2GB. Give the test step a larger heap,
+      # and build one app at a time: workers inherit NODE_OPTIONS, so letting
+      # several of these builds run in parallel would oversubscribe the runner.
+      - run: pnpm exec vitest run --maxWorkers 1 --no-file-parallelism
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
       - name: Publish
         run: pnpx pkg-pr-new publish --compact --no-template --pnpm

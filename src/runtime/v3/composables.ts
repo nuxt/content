@@ -1,6 +1,7 @@
 import { ref, toValue, watch } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 import { generateNavigation } from 'comark-content/utils'
+import { applyExtraFields, navigationItems } from './navigation'
 import { withFullFiles, type FullFileQueryBuilder } from './query'
 import { generateItemSurround, type SurroundOptions } from './surround'
 import { generateSearchSections, type GenerateSearchSectionsOptions, type Section } from './search'
@@ -29,6 +30,7 @@ import { content } from '#imports'
 type QueryableContent = (ComarkContent | ContentHub) & {
   query: SqlQueryMethods['query']
   get: ComarkContent['get']
+  list?: (sources?: string | string[]) => Promise<ContentListFile[]>
 }
 type SearchableContent = QueryableContent & {
   // Instance API: search(query, opts). Hub API: search(query, opts & { instances }).
@@ -64,11 +66,11 @@ export function queryCollection(source: keyof ContentRegistry | string) {
 
 export function queryCollectionNavigation<K extends keyof ContentRegistry>(
   collection: K,
-  _fields?: Array<keyof SourceData<K>>,
+  fields?: Array<keyof SourceData<K>>,
 ): ChainablePromise<K, NavigationItem[]> {
   return chainablePromise(collection, async (qb) => {
-    const list = await qb.all()
-    return generateNavigation(list)
+    const list = await navigationItems(asQueryable(), collection as string, await qb.all())
+    return applyExtraFields(await generateNavigation(list), list, fields as string[] | undefined)
   })
 }
 
@@ -78,7 +80,7 @@ export function queryCollectionItemSurroundings<K extends keyof ContentRegistry>
   opts?: SurroundOptions,
 ): ChainablePromise<K, (NavigationItem | null)[]> {
   return chainablePromise(collection, async (qb) => {
-    const list = await qb.all()
+    const list = await navigationItems(asQueryable(), collection as string, await qb.all())
     const navigation = await generateNavigation(list)
     return generateItemSurround(navigation, path, opts)
   })
