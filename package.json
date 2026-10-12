@@ -163,7 +163,7 @@
     "micromark-util-types": "^2.0.3",
     "nuxt": "^4.6.1",
     "nuxt-llms": "^0.2.0",
-    "release-it": "^20.2.1",
+    "release-it": "^21.1.1",
     "remark-emoji": "^5.0.2",
     "typescript": "6.0.3",
     "untyped": "^2.0.0",
