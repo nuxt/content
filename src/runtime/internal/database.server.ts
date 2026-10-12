@@ -63,33 +63,97 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
   }
 }
 
-const checkDatabaseIntegrity = new Map<string, boolean>()
-const integrityCheckPromise = new Map<string, Promise<void> | null>()
+/**
+ * An integrity check is shared by every request of an isolate, so a request that is
+ * cancelled while it runs would leave everybody else awaiting a promise that never settles.
+ * The check reports progress (`lastProgress`) each time a database call completes, and
+ * a caller that sees no progress for `STALL_TIMEOUT` stops waiting and starts a new check.
+ */
+interface IntegrityCheck {
+  promise: Promise<void>
+  lastProgress: number
+}
+const integrityChecks = new Map<string, IntegrityCheck>()
+// collections whose check stalled in this isolate: the `ready = 0` row they left is not worth waiting for
+const abandonedChecks = new Set<string>()
+
+/**
+ * A check that made no progress for this long is considered dead
+ */
+const STALL_TIMEOUT = 30_000
+
 export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
-  if (checkDatabaseIntegrity.get(collection) !== false) {
-    checkDatabaseIntegrity.set(collection, false)
-    if (!integrityCheckPromise.has(collection)) {
-      const _integrityCheck = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config)
-        .then((isValid) => {
-          checkDatabaseIntegrity.set(collection, !isValid)
-        })
-        .catch((error) => {
-          console.error('Database integrity check failed', error)
-          checkDatabaseIntegrity.set(collection, true)
-          integrityCheckPromise.delete(collection)
-        })
-
-      integrityCheckPromise.set(collection, _integrityCheck)
+  while (true) {
+    let check = integrityChecks.get(collection)
+    if (!check) {
+      check = startIntegrityCheck(event, collection, config)
+      integrityChecks.set(collection, check)
     }
-  }
 
-  if (integrityCheckPromise.has(collection)) {
-    await integrityCheckPromise.get(collection)!
+    if (await settlesBeforeStalling(check)) {
+      return
+    }
+
+    // The request that owns this check is gone: forget it, a new check takes over.
+    // A zombie check which settles later can no longer alter the shared state.
+    if (integrityChecks.get(collection) === check) {
+      integrityChecks.delete(collection)
+    }
+    abandonedChecks.add(collection)
+    console.warn(`Database integrity check of "${collection}" stalled, starting a new one`)
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
-  const db = await loadDatabaseAdapter(config)
+function startIntegrityCheck(event: H3Event, collection: string, config: RuntimeConfig['content']): IntegrityCheck {
+  const check: IntegrityCheck = { promise: Promise.resolve(), lastProgress: Date.now() }
+  const progress = () => {
+    check.lastProgress = Date.now()
+  }
+
+  check.promise = _checkAndImportDatabaseIntegrity(event, collection, checksums[collection]!, checksumsStructure[collection]!, config, progress)
+    .then((isValid) => {
+      if (isValid) {
+        abandonedChecks.delete(collection)
+      }
+    })
+    .catch((error) => {
+      console.error('Database integrity check failed', error)
+      // allow the next request to try again
+      if (integrityChecks.get(collection) === check) {
+        integrityChecks.delete(collection)
+      }
+    })
+
+  return check
+}
+
+/**
+ * Resolves `true` when the check settled, `false` when it has stalled.
+ * The timer belongs to the caller, so it is not affected by the cancellation of the request that started the check.
+ */
+function settlesBeforeStalling(check: IntegrityCheck): Promise<boolean> {
+  return new Promise((resolve) => {
+    const timer = setInterval(() => {
+      if (Date.now() - check.lastProgress > STALL_TIMEOUT) {
+        clearInterval(timer)
+        resolve(false)
+      }
+    }, 1000)
+    check.promise.then(() => {
+      clearInterval(timer)
+      resolve(true)
+    })
+  })
+}
+
+async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content'], progress: () => void) {
+  const adapter = await loadDatabaseAdapter(config)
+  // every completed database call proves that the request which runs the check is still alive
+  const db: DatabaseAdapter = {
+    all: (sql, params) => adapter.all(sql, params).finally(progress) as never,
+    first: (sql, params) => adapter.first(sql, params).finally(progress) as never,
+    exec: (sql, params) => adapter.exec(sql, params).finally(progress),
+  }
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
@@ -99,7 +163,9 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
     before.version = ''
   }
 
-  const unchangedStructure = before?.structureVersion === structureIntegrityVersion
+  // A row that is not ready comes from an import that never finished: the table is not guaranteed
+  // to exist or to have the expected structure, so never reuse it.
+  const unchangedStructure = !!before?.ready && before.structureVersion === structureIntegrityVersion
 
   if (before?.version) {
     if (before.version === integrityVersion) {
@@ -113,12 +179,16 @@ async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: stri
       // then respond that the database is ready
       // NOTE: only wait if the version is the same so if the previous init
       // was interrupted or has failed, it will not block the new init
-      await waitUntilDatabaseIsReady(db, collection)
+      if (await waitUntilDatabaseIsReady(db, collection)) {
+        return true
+      }
 
-      return true
+      // The other initialization never finished (its request was probably cancelled),
+      // fall through and take it over: drop its row and import again.
+      console.warn(`Database initialization of "${collection}" did not finish, importing it again`)
     }
 
-    // Delete old version -- checksum exists but does not match with bundled checksum
+    // Delete old version -- checksum exists but does not match with bundled checksum (or its import never finished)
     await db.exec(`DELETE FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
 
     if (!unchangedStructure) {
@@ -191,34 +261,26 @@ const REQUEST_TIMEOUT = 90
  * Wait until another request has finished the database initialization
  * @param db - Database adapter
  * @param collection - Collection name
+ * @returns `true` once the collection is ready, `false` when the initialization will not finish by itself
  */
-async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string) {
-  let iterationCount = 0
-  let interval: NodeJS.Timer
-  await new Promise((resolve, reject) => {
-    interval = setInterval(async () => {
-      const row = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
-        .catch(() => ({ ready: true }))
+async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string): Promise<boolean> {
+  const deadline = Date.now() + REQUEST_TIMEOUT * 1000
+  while (!abandonedChecks.has(collection) && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
-      if (row?.ready) {
-        clearInterval(interval)
-        resolve(0)
-      }
+    const row = await db.first<{ ready: boolean }>(`SELECT ready FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`])
+      .catch(() => ({ ready: true }))
 
-      // after timeout is reached, give up and stop the query
-      // it has to be that initialization has failed
-      if (iterationCount++ > REQUEST_TIMEOUT) {
-        clearInterval(interval)
-        reject(new Error('Waiting for another database initialization timed out'))
-      }
-    }, 1000)
-  }).catch((e) => {
-    throw e
-  }).finally(() => {
-    if (interval) {
-      clearInterval(interval)
+    if (row?.ready) {
+      return true
     }
-  })
+
+    // the row has been removed, there is nothing to wait for
+    if (!row) {
+      return false
+    }
+  }
+  return false
 }
 
 async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
