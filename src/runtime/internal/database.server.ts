@@ -241,9 +241,11 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     }
 
     if ('filename' in config) {
+      // URL pathnames stay percent-encoded, so decode them to get a filesystem path.
+      // Otherwise a space in a parent directory creates a literal `%20` directory.
       const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
         ? config?.filename
-        : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+        : decodeURIComponent(new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname)
 
       _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
     }
