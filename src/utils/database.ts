@@ -138,6 +138,35 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     await db.prepare(`DELETE FROM _development_cache WHERE id = ?`).run(id)
   }
 
+  const supportsTransactions = database.type !== 'd1'
+  const insertDevelopmentCacheBatch = async (entries: CacheEntry[]) => {
+    if (!entries.length) {
+      return
+    }
+    if (supportsTransactions) {
+      await db.exec('BEGIN TRANSACTION')
+    }
+    try {
+      for (const { id, value, checksum } of entries) {
+        await insertDevelopmentCache(id, value, checksum)
+      }
+      if (supportsTransactions) {
+        await db.exec('COMMIT')
+      }
+    }
+    catch (error) {
+      if (supportsTransactions) {
+        try {
+          await db.exec('ROLLBACK')
+        }
+        catch {
+          // Preserve the original write or commit error.
+        }
+      }
+      throw error
+    }
+  }
+
   const dropContentTables = async () => {
     const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
       .all('table', '_content_%') as { name: string }[]
@@ -157,9 +186,10 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     fetchDevelopmentCache,
     fetchDevelopmentCacheForKey,
     insertDevelopmentCache,
+    insertDevelopmentCacheBatch,
     deleteDevelopmentCache,
     dropContentTables,
-    supportsTransactions: database.type !== 'd1', // D1 uses batch() instead
+    supportsTransactions, // D1 uses batch() instead
   }
 }
 
