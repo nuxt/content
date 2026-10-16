@@ -57,6 +57,21 @@ describe.skipIf(process.platform === 'win32')('database.server - sqlite filename
     expect(await resolvePath('./100% Caf%c3%a9%20%2520.sqlite')).toBe(`${serverDir}/100% Café %20.sqlite`)
   })
 
+  test.each([
+    'literal%FF.sqlite',
+    'literal%C3.sqlite',
+    'literal%80.sqlite',
+    'literal%C0%AF.sqlite',
+    'literal%ED%A0%80.sqlite',
+    'literal%F4%90%80%80.sqlite',
+  ])('preserves invalid UTF-8 escapes in %s', async (filename) => {
+    expect(await resolvePath(`./${filename}`)).toBe(`${serverDir}/${filename}`)
+  })
+
+  test('decodes valid escapes around invalid UTF-8 without decoding twice', async () => {
+    expect(await resolvePath('./%FF%20Caf%C3%A9%80%2520%E2%82%AC%F0%9F%98%80.sqlite')).toBe(`${serverDir}/%FF Café%80%20€😀.sqlite`)
+  })
+
   test('keeps absolute filenames unchanged', async () => {
     expect(await resolvePath('/tmp/absolute path/contents.sqlite')).toBe('/tmp/absolute path/contents.sqlite')
   })

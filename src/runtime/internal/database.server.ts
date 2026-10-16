@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
+import { decode } from 'ufo'
 import type { Connector } from 'db0'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
@@ -229,6 +230,12 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
     })
 }
 
+/** Decode each UTF-8 code point independently, preserving malformed escapes. */
+function decodePathname(pathname: string) {
+  // Match one to four bytes; `decode` preserves overlong and invalid code points.
+  return pathname.replace(/%(?:[0-7][\da-f]|[cd][\da-f]%[89ab][\da-f]|e[\da-f](?:%[89ab][\da-f]){2}|f[0-4](?:%[89ab][\da-f]){3})/gi, decode)
+}
+
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
   if (config.type === 'd1') {
     return { ...config, bindingName: config.bindingName || config.binding }
@@ -243,10 +250,9 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     if ('filename' in config) {
       // URL pathnames stay percent-encoded, so decode them to get a filesystem path.
       // Otherwise a space in a parent directory creates a literal `%20` directory.
-      // Escape bare percent signs while preserving already-encoded characters.
       const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
         ? config?.filename
-        : decodeURIComponent(new URL(config.filename.replace(/%(?![\da-f]{2})/gi, '%25'), (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname)
+        : decodePathname(new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname)
 
       _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
     }
