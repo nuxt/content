@@ -44,6 +44,19 @@ describe.skipIf(process.platform === 'win32')('database.server - sqlite filename
     expect(await resolvePath('./literal%2520name.sqlite')).toBe(`${serverDir}/literal%20name.sqlite`)
   })
 
+  test.each([
+    './100% ready.sqlite',
+    './contents.sqlite%',
+    './contents%2.sqlite',
+    './contents%GG.sqlite',
+  ])('preserves literal percent signs in %s', async (filename) => {
+    expect(await resolvePath(filename)).toBe(`${serverDir}/${filename.slice(2)}`)
+  })
+
+  test('decodes encoded characters alongside literal percent signs once', async () => {
+    expect(await resolvePath('./100% Caf%c3%a9%20%2520.sqlite')).toBe(`${serverDir}/100% Café %20.sqlite`)
+  })
+
   test('keeps absolute filenames unchanged', async () => {
     expect(await resolvePath('/tmp/absolute path/contents.sqlite')).toBe('/tmp/absolute path/contents.sqlite')
   })
