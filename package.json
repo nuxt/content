@@ -146,7 +146,7 @@
     "@nuxt/schema": "^4.6.1",
     "@nuxt/test-utils": "^4.3.3",
     "@release-it/conventional-changelog": "^12.0.2",
-    "@types/better-sqlite3": "^7.6.13",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/bun": "^1.4.2",
     "@types/hast": "^3.0.5",
     "@types/mdast": "^4.0.4",
