@@ -10,7 +10,8 @@ export async function generateItemSurround<T extends PageCollectionItemBase>(que
   const flatData = flattedData(navigation)
   const normalizedPath = withoutTrailingSlash(path)
   const index = flatData.findIndex(item => item.path === normalizedPath)
-  const beforeItems = index === -1 ? [] : flatData.slice(index - before, index)
+  // Clamp the start, a negative index would slice from the end of the list
+  const beforeItems = index === -1 ? [] : flatData.slice(Math.max(index - before, 0), index)
   const afterItems = index === -1 ? [] : flatData.slice(index + 1, index + after + 1)
 
   return [
