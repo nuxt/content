@@ -112,5 +112,13 @@ describe('basic', async () => {
       expect(doc.arrayField).toContain('item2')
       expect(doc.numberField).toBe(1)
     })
+
+    test('retrieve document from a `nuxt/server` handler', async () => {
+      const doc = await $fetch('/api/content/get?path=/')
+      const { content, navigation } = await $fetch<{ content: unknown, navigation: unknown[] }>('/api/content/nuxt-server?path=/')
+
+      expect(content).toEqual(doc)
+      expect(navigation.length).toBeGreaterThan(0)
+    })
   })
 })

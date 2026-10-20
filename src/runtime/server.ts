@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import type { ContentEvent } from './internal/event'
 import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
@@ -7,6 +8,7 @@ import { fetchQuery } from './internal/api'
 import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
 export type { GenerateSearchSectionsOptions, Section } from './internal/search'
+export type { ContentEvent, RequestEvent } from './internal/event'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -15,37 +17,37 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
 }
 
-export const queryCollection = <T extends keyof Collections>(event: H3Event, collection: T): CollectionQueryBuilder<Collections[T]> => {
-  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event, collection, sql))
+export const queryCollection = <T extends keyof Collections>(event: ContentEvent, collection: T): CollectionQueryBuilder<Collections[T]> => {
+  return collectionQueryBuilder<T>(collection, (collection, sql) => fetchQuery(event as H3Event, collection, sql))
 }
 
-export function queryCollectionNavigation<T extends keyof PageCollections>(event: H3Event, collection: T, fields?: Array<keyof PageCollections[T]>) {
+export function queryCollectionNavigation<T extends keyof PageCollections>(event: ContentEvent, collection: T, fields?: Array<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateNavigationTree(qb, fields))
 }
 
-export function queryCollectionItemSurroundings<T extends keyof PageCollections>(event: H3Event, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
+export function queryCollectionItemSurroundings<T extends keyof PageCollections>(event: ContentEvent, collection: T, path: string, opts?: SurroundOptions<keyof PageCollections[T]>) {
   return chainablePromise(event, collection, qb => generateItemSurround(qb, path, opts))
 }
 
 export function queryCollectionSearchSections<T extends keyof PageCollections, const K extends keyof PageCollections[T]>(
-  event: H3Event,
+  event: ContentEvent,
   collection: T,
   opts: Omit<GenerateSearchSectionsOptions, 'extraFields'> & { extraFields: K[] },
 ): ChainablePromise<T, Array<Section & Pick<PageCollections[T], K>>>
 export function queryCollectionSearchSections<T extends keyof PageCollections>(
-  event: H3Event,
+  event: ContentEvent,
   collection: T,
   opts?: GenerateSearchSectionsOptions,
 ): ChainablePromise<T, Section[]>
 export function queryCollectionSearchSections<T extends keyof PageCollections>(
-  event: H3Event,
+  event: ContentEvent,
   collection: T,
   opts?: GenerateSearchSectionsOptions,
 ) {
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 
-function chainablePromise<T extends keyof PageCollections, Result>(event: H3Event, collection: T, fn: (qb: CollectionQueryBuilder<PageCollections[T]>) => Promise<Result>) {
+function chainablePromise<T extends keyof PageCollections, Result>(event: ContentEvent, collection: T, fn: (qb: CollectionQueryBuilder<PageCollections[T]>) => Promise<Result>) {
   const queryBuilder = queryCollection(event, collection)
 
   const chainable: ChainablePromise<T, Result> = {
