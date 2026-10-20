@@ -2,7 +2,7 @@ import { eventHandler, getRouterParam, readBody, getHeader, createError } from '
 import loadDatabaseAdapter, { checkAndImportDatabaseIntegrity } from '../internal/database.server'
 import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../internal/security'
 import type { RuntimeConfig } from '@nuxt/content'
-import { useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from 'nitropack/runtime'
 
 /**
  * Body envelope is `{"sql":"…"}`. Cap on UTF-16 code units in `sql` is
