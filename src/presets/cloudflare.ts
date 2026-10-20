@@ -10,7 +10,10 @@ export default definePreset({
     manifest.collections.map((collection) => {
       addServerHandler({
         route: `/__nuxt_content/${collection.name}/sql_dump.txt`,
-        handler: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+        handler: {
+          nuxt: resolver.resolve('./runtime/presets/cloudflare/database-handler'),
+          nitro2: resolver.resolve('./runtime/presets/cloudflare/database-handler.legacy'),
+        },
       })
     })
   },
