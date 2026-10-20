@@ -190,7 +190,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    // Nuxt 5 runs the `nuxt/server` files, Nuxt 3 and 4 the `.legacy` ones written for Nitro 2
+    // Kit picks the `nuxt/server` files on a Nitro 3 host, and the `.legacy` ones written for Nitro 2 otherwise
     const queryHandler = resolveServerVariant({
       nuxt: resolver.resolve('./runtime/api/query.post'),
       nitro2: resolver.resolve('./runtime/api/query.post.legacy'),
