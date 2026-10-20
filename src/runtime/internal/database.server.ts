@@ -239,9 +239,10 @@ function decodePathname(pathname: string) {
 
 /** The URL of the server entry, which a relative database filename resolves against. */
 function getServerEntryURL(): string {
-  // Nitro 2 defines `_importMeta_`, Nitro 3 sets `__nitro_main__`
+  // Nitro 3 sets `__nitro_main__` when the server starts. Nitro 2 defines `_importMeta_` instead,
+  // which Nuxt 5's Nitro 2 compatibility layer also defines but with the URL of the build machine.
   const { _importMeta_, __nitro_main__ } = globalThis as unknown as { _importMeta_?: { url: string }, __nitro_main__?: string }
-  return _importMeta_?.url || __nitro_main__!
+  return __nitro_main__ || _importMeta_!.url
 }
 
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
