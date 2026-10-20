@@ -1,3 +1,5 @@
+import { useRuntimeConfig } from 'nuxt/server'
+import { withoutBase } from 'ufo'
 import { registerContentLLMSHooks } from './content-llms'
 import type { ContentLLMSHooks } from './content-llms'
 
@@ -11,7 +13,8 @@ export default (nitroApp: NitroApp) => {
 
   if (['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
     nitroApp.hooks.hook('response', (response: Response, event: { req: Request }) => {
-      if (new URL(event.req.url).pathname === '/' && prerenderPaths.size) {
+      const path = withoutBase(new URL(event.req.url).pathname, useRuntimeConfig().app.baseURL)
+      if (path === '/' && prerenderPaths.size) {
         response.headers.append('x-nitro-prerender', Array.from(prerenderPaths).join(', '))
       }
     })
