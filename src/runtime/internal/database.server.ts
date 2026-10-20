@@ -1,13 +1,14 @@
-import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
 import { decode } from 'ufo'
 import type { Connector } from 'db0'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
+import type { ContentRequestEvent } from './api'
 import { refineContentFields } from './collection'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
 import localAdapter from '#content/local-adapter'
+import { serverFetchContent } from '#content/server-fetch'
 
 let db: Connector
 let _adapterPromise: Promise<(opts: unknown) => Connector> | undefined
@@ -66,7 +67,7 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
 
 const checkDatabaseIntegrity = new Map<string, boolean>()
 const integrityCheckPromise = new Map<string, Promise<void> | null>()
-export async function checkAndImportDatabaseIntegrity(event: H3Event, collection: string, config: RuntimeConfig['content']): Promise<void> {
+export async function checkAndImportDatabaseIntegrity(event: ContentRequestEvent, collection: string, config: RuntimeConfig['content']): Promise<void> {
   if (checkDatabaseIntegrity.get(collection) !== false) {
     checkDatabaseIntegrity.set(collection, false)
     if (!integrityCheckPromise.has(collection)) {
@@ -89,7 +90,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
+async function _checkAndImportDatabaseIntegrity(event: ContentRequestEvent, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
@@ -222,8 +223,8 @@ async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string)
   })
 }
 
-async function loadDatabaseDump(event: H3Event, collection: string): Promise<string> {
-  return await fetchDatabase(event, collection)
+async function loadDatabaseDump(event: ContentRequestEvent, collection: string): Promise<string> {
+  return await fetchDatabase(event, collection, serverFetchContent)
     .catch((e) => {
       console.error('Failed to fetch compressed dump', e)
       return ''
@@ -234,6 +235,13 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
 function decodePathname(pathname: string) {
   // Match one to four bytes; `decode` preserves overlong and invalid code points.
   return pathname.replace(/%(?:[0-7][\da-f]|[cd][\da-f]%[89ab][\da-f]|e[\da-f](?:%[89ab][\da-f]){2}|f[0-4](?:%[89ab][\da-f]){3})/gi, decode)
+}
+
+/** The URL of the server entry, which a relative database filename resolves against. */
+function getServerEntryURL(): string {
+  // Nitro 2 defines `_importMeta_`, Nitro 3 sets `__nitro_main__`
+  const { _importMeta_, __nitro_main__ } = globalThis as unknown as { _importMeta_?: { url: string }, __nitro_main__?: string }
+  return _importMeta_?.url || __nitro_main__!
 }
 
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
@@ -252,7 +260,7 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
       // Otherwise a space in a parent directory creates a literal `%20` directory.
       const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
         ? config?.filename
-        : decodePathname(new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname)
+        : decodePathname(new URL(config.filename, getServerEntryURL()).pathname)
 
       _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
     }

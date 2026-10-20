@@ -2,20 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { H3Event } from 'h3'
 import { fetchDatabase, fetchQuery } from '../../src/runtime/internal/api'
 
-vi.mock('h3', async importOriginal => ({
-  ...(await importOriginal<typeof import('h3')>()),
-  getRequestHeaders: () => ({
-    'content-length': '700000',
-    'transfer-encoding': 'chunked',
-    'content-encoding': 'gzip',
-    'expect': '100-continue',
-    'cookie': 'a=b',
-    'authorization': 'Bearer token',
-  }),
-}))
+const requestHeaders = {
+  'content-length': '700000',
+  'transfer-encoding': 'chunked',
+  'content-encoding': 'gzip',
+  'expect': '100-continue',
+  'cookie': 'a=b',
+  'authorization': 'Bearer token',
+}
 
 const $fetch = vi.fn().mockResolvedValue([])
-const event = { $fetch } as unknown as H3Event
+const event = { $fetch, headers: new Headers(requestHeaders) } as unknown as H3Event
 
 describe('fetchContent', () => {
   beforeEach(() => {
@@ -41,6 +38,16 @@ describe('fetchContent', () => {
     expect(options.body).toEqual({ sql: 'SELECT 1' })
     expectForwardedHeaders(options.headers)
     expect(options.headers['content-type']).toBe('application/json')
+  })
+
+  it('reads the headers of a web standard request event', async () => {
+    const fetch = vi.fn().mockResolvedValue([])
+    await fetchQuery({ req: { headers: new Headers(requestHeaders) } as Request }, 'test', 'SELECT 1', fetch)
+
+    expect(fetch).toHaveBeenCalledTimes(1)
+    const [, url, options] = fetch.mock.calls[0]!
+    expect(url).toBe('/__nuxt_content/test/query')
+    expectForwardedHeaders(options.headers)
   })
 
   it('does not forward body headers of the incoming request to the dump endpoint', async () => {
