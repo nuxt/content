@@ -17,21 +17,27 @@ export interface ContentFetchOptions {
 export type ContentFetch = <T>(event: ContentRequestEvent | undefined, url: string, options: ContentFetchOptions) => Promise<T>
 
 /**
- * Fetch through `event.$fetch` when Nitro 2 provides it, through the global `$fetch` otherwise.
+ * The headers of a web standard request event. `event.req` is a web `Request` on Nuxt 5
+ * and the node `IncomingMessage` on Nitro 2.
+ */
+function getWebRequestHeaders(event: ContentRequestEvent): Headers | undefined {
+  const headers = (event as { req?: { headers?: unknown } }).req?.headers as Headers | undefined
+  return typeof headers?.entries === 'function' ? headers : undefined
+}
+
+/**
+ * Fetch through `event.$fetch` on Nitro 2, through `$fetch` otherwise. On Nuxt 5, `event.$fetch`
+ * only exists when the Nitro 2 compatibility layer is installed, and it ignores the app base URL.
  */
 export const eventFetch: ContentFetch = <T>(event: ContentRequestEvent | undefined, url: string, options: ContentFetchOptions) => {
   const fetchOptions = options as NonNullable<Parameters<typeof $fetch>[1]>
-  const $eventFetch = (event as H3Event | undefined)?.$fetch
+  const $eventFetch = event && !getWebRequestHeaders(event) ? (event as H3Event).$fetch : undefined
   return ($eventFetch ? $eventFetch(url, fetchOptions) : $fetch(url, fetchOptions)) as Promise<T>
 }
 
 function getRequestHeaders(event: ContentRequestEvent): Record<string, string | undefined> {
-  // `event.req` is a web `Request` on Nuxt 5 and the node `IncomingMessage` on Nitro 2
-  const headers = (event as { req?: { headers?: unknown } }).req?.headers as Headers | undefined
-  if (typeof headers?.entries === 'function') {
-    return Object.fromEntries(headers.entries())
-  }
-  return Object.fromEntries((event as H3Event).headers.entries())
+  const headers = getWebRequestHeaders(event) || (event as H3Event).headers
+  return Object.fromEntries(headers.entries())
 }
 
 async function fetchContent<T>(
