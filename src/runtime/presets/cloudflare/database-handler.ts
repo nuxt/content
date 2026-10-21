@@ -1,4 +1,4 @@
-import { defineEventHandler, getRouterParam, serverFetch, useRuntimeConfig } from 'nuxt/server'
+import { createError, defineEventHandler, getRouterParam, serverFetch, useRuntimeConfig } from 'nuxt/server'
 import { joinURL, withoutBase } from 'ufo'
 
 interface AssetsBinding {
@@ -26,5 +26,8 @@ export default defineEventHandler(async (event) => {
 
   // Nitro 3 has no `build` storage mount, the dump is served from the public assets while prerendering
   const response = await serverFetch(event, dumpPath, { forwardHeaders: false })
-  return response.ok ? await response.text() : ''
+  if (!response.ok) {
+    throw createError({ status: response.status, statusText: response.statusText })
+  }
+  return await response.text()
 })
