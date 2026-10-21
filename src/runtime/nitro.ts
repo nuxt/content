@@ -1,6 +1,6 @@
 import * as server from './server'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
-import type { ContentRequestEvent } from './internal/api'
+import type { ContentEvent } from './internal/event'
 
 /**
  * `@nuxt/content/nitro` import is deprecated and will be removed in the next major version.
@@ -10,7 +10,7 @@ import type { ContentRequestEvent } from './internal/api'
 /**
  * @deprecated Import from `@nuxt/content/server` instead
  */
-export const queryCollection = <T extends keyof Collections>(event: ContentRequestEvent, collection: T): CollectionQueryBuilder<Collections[T]> => {
+export const queryCollection = <T extends keyof Collections>(event: ContentEvent, collection: T): CollectionQueryBuilder<Collections[T]> => {
   return server.queryCollection(event, collection)
 }
 

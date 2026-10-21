@@ -3,7 +3,7 @@ import { stringify } from 'minimark/stringify'
 import { queryCollection } from '../../../../runtime/server'
 import type { Collections, PageCollectionItemBase, ResolvedCollection } from '@nuxt/content'
 import type { MinimarkNode } from '../../../../types/tree'
-import type { ContentRequestEvent } from '../../../../runtime/internal/api'
+import type { ContentEvent } from '../../../../runtime/internal/event'
 import collections from '#content/manifest'
 
 export interface ContentRawMarkdownConfig {
@@ -13,7 +13,7 @@ export interface ContentRawMarkdownConfig {
 /**
  * The raw markdown of the page a `/raw/<path>.md` slug points to, or `undefined` when there is none.
  */
-export async function getRawMarkdown(event: ContentRequestEvent, slug: string | undefined, llmsConfig: ContentRawMarkdownConfig | undefined) {
+export async function getRawMarkdown(event: ContentEvent, slug: string | undefined, llmsConfig: ContentRawMarkdownConfig | undefined) {
   if (!slug?.endsWith('.md') || llmsConfig?.contentRawMarkdown === false) {
     return
   }

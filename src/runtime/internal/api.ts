@@ -1,10 +1,6 @@
 import type { H3Event } from 'h3'
 import { checksums } from '#content/manifest'
-
-/**
- * An h3 v1 event on Nitro 2, or a web standard request event on Nuxt 5.
- */
-export type ContentRequestEvent = H3Event | { req: Request }
+import type { ContentEvent } from './event'
 
 export interface ContentFetchOptions {
   method?: 'POST'
@@ -14,13 +10,13 @@ export interface ContentFetchOptions {
   responseType?: 'text'
 }
 
-export type ContentFetch = <T>(event: ContentRequestEvent | undefined, url: string, options: ContentFetchOptions) => Promise<T>
+export type ContentFetch = <T>(event: ContentEvent | undefined, url: string, options: ContentFetchOptions) => Promise<T>
 
 /**
  * The headers of a web standard request event. `event.req` is a web `Request` on Nuxt 5
  * and the node `IncomingMessage` on Nitro 2.
  */
-function getWebRequestHeaders(event: ContentRequestEvent): Headers | undefined {
+function getWebRequestHeaders(event: ContentEvent): Headers | undefined {
   const headers = (event as { req?: { headers?: unknown } }).req?.headers as Headers | undefined
   return typeof headers?.entries === 'function' ? headers : undefined
 }
@@ -29,19 +25,19 @@ function getWebRequestHeaders(event: ContentRequestEvent): Headers | undefined {
  * Fetch through `event.$fetch` on Nitro 2, through `$fetch` otherwise. On Nuxt 5, `event.$fetch`
  * only exists when the Nitro 2 compatibility layer is installed, and it ignores the app base URL.
  */
-export const eventFetch: ContentFetch = <T>(event: ContentRequestEvent | undefined, url: string, options: ContentFetchOptions) => {
+export const eventFetch: ContentFetch = <T>(event: ContentEvent | undefined, url: string, options: ContentFetchOptions) => {
   const fetchOptions = options as NonNullable<Parameters<typeof $fetch>[1]>
   const $eventFetch = event && !getWebRequestHeaders(event) ? (event as H3Event).$fetch : undefined
   return ($eventFetch ? $eventFetch(url, fetchOptions) : $fetch(url, fetchOptions)) as Promise<T>
 }
 
-function getRequestHeaders(event: ContentRequestEvent): Record<string, string | undefined> {
+function getRequestHeaders(event: ContentEvent): Record<string, string | undefined> {
   const headers = getWebRequestHeaders(event) || (event as H3Event).headers
   return Object.fromEntries(headers.entries())
 }
 
 async function fetchContent<T>(
-  event: ContentRequestEvent | undefined,
+  event: ContentEvent | undefined,
   collection: string,
   path: string,
   options: Omit<ContentFetchOptions, 'query'>,
@@ -65,7 +61,7 @@ async function fetchContent<T>(
   })
 }
 
-export async function fetchDatabase(event: ContentRequestEvent | undefined, collection: string, fetch: ContentFetch = eventFetch): Promise<string> {
+export async function fetchDatabase(event: ContentEvent | undefined, collection: string, fetch: ContentFetch = eventFetch): Promise<string> {
   return fetchContent(event, collection, 'sql_dump.txt', {
     responseType: 'text',
     headers: {
@@ -74,7 +70,7 @@ export async function fetchDatabase(event: ContentRequestEvent | undefined, coll
   }, fetch)
 }
 
-export async function fetchQuery<Item>(event: ContentRequestEvent | undefined, collection: string, sql: string, fetch: ContentFetch = eventFetch): Promise<Item[]> {
+export async function fetchQuery<Item>(event: ContentEvent | undefined, collection: string, sql: string, fetch: ContentFetch = eventFetch): Promise<Item[]> {
   return fetchContent(event, collection, 'query', {
     headers: {
       'content-type': 'application/json',

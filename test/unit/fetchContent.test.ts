@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { H3Event } from 'h3'
 import { fetchDatabase, fetchQuery } from '../../src/runtime/internal/api'
+import type { RequestEvent } from '../../src/runtime/internal/event'
 
 const requestHeaders = {
   'content-length': '700000',
@@ -42,7 +43,7 @@ describe('fetchContent', () => {
 
   it('reads the headers of a web standard request event', async () => {
     const fetch = vi.fn().mockResolvedValue([])
-    await fetchQuery({ req: { headers: new Headers(requestHeaders) } as Request }, 'test', 'SELECT 1', fetch)
+    await fetchQuery({ req: { headers: new Headers(requestHeaders) } } as unknown as RequestEvent, 'test', 'SELECT 1', fetch)
 
     expect(fetch).toHaveBeenCalledTimes(1)
     const [, url, options] = fetch.mock.calls[0]!

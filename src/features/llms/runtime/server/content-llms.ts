@@ -2,7 +2,7 @@ import { withBase } from 'ufo'
 import { queryCollection } from '../../../../runtime/server'
 import type { ModuleOptions } from 'nuxt-llms'
 import type { Collections, PageCollectionItemBase } from '@nuxt/content'
-import type { ContentRequestEvent } from '../../../../runtime/internal/api'
+import type { ContentEvent } from '../../../../runtime/internal/event'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
 
@@ -17,7 +17,7 @@ export interface ContentLLMSHooks {
  */
 export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
   const prerenderPaths = new Set<string>()
-  hooks.hook('llms:generate', async (event: ContentRequestEvent, options: ModuleOptions) => {
+  hooks.hook('llms:generate', async (event: ContentEvent, options: ModuleOptions) => {
     prepareContentSections(options.sections)
 
     const sectionsToRemove = [] as string[]
@@ -59,7 +59,7 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
     })
   })
 
-  hooks.hook('llms:generate:full', async (event: ContentRequestEvent, options: ModuleOptions, contents: string[]) => {
+  hooks.hook('llms:generate:full', async (event: ContentEvent, options: ModuleOptions, contents: string[]) => {
     prepareContentSections(options.sections)
 
     const generateDocument = await createDocumentGenerator()

@@ -2,9 +2,10 @@ import { createError, serverFetch } from 'nuxt/server'
 import type { RequestEvent } from 'nuxt/server'
 import { withQuery } from 'ufo'
 import { destr } from 'destr'
-import type { ContentFetch, ContentFetchOptions, ContentRequestEvent } from './api'
+import type { ContentFetch, ContentFetchOptions } from './api'
+import type { ContentEvent } from './event'
 
-export const serverFetchContent: ContentFetch = async <T>(event: ContentRequestEvent | undefined, url: string, options: ContentFetchOptions) => {
+export const serverFetchContent: ContentFetch = async <T>(event: ContentEvent | undefined, url: string, options: ContentFetchOptions) => {
   const headers = new Headers()
   for (const [name, value] of Object.entries(options.headers)) {
     if (value !== undefined) {

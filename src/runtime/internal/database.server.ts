@@ -3,7 +3,7 @@ import { decode } from 'ufo'
 import type { Connector } from 'db0'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
-import type { ContentRequestEvent } from './api'
+import type { ContentEvent } from './event'
 import { refineContentFields } from './collection'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
@@ -67,7 +67,7 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
 
 const checkDatabaseIntegrity = new Map<string, boolean>()
 const integrityCheckPromise = new Map<string, Promise<void> | null>()
-export async function checkAndImportDatabaseIntegrity(event: ContentRequestEvent, collection: string, config: RuntimeConfig['content']): Promise<void> {
+export async function checkAndImportDatabaseIntegrity(event: ContentEvent, collection: string, config: RuntimeConfig['content']): Promise<void> {
   if (checkDatabaseIntegrity.get(collection) !== false) {
     checkDatabaseIntegrity.set(collection, false)
     if (!integrityCheckPromise.has(collection)) {
@@ -90,7 +90,7 @@ export async function checkAndImportDatabaseIntegrity(event: ContentRequestEvent
   }
 }
 
-async function _checkAndImportDatabaseIntegrity(event: ContentRequestEvent, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
+async function _checkAndImportDatabaseIntegrity(event: ContentEvent, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
   const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
@@ -223,7 +223,7 @@ async function waitUntilDatabaseIsReady(db: DatabaseAdapter, collection: string)
   })
 }
 
-async function loadDatabaseDump(event: ContentRequestEvent, collection: string): Promise<string> {
+async function loadDatabaseDump(event: ContentEvent, collection: string): Promise<string> {
   return await fetchDatabase(event, collection, serverFetchContent)
     .catch((e) => {
       console.error('Failed to fetch compressed dump', e)
