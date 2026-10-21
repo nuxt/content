@@ -139,7 +139,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261007.1",
     "@nuxt/content": "link:.",
-    "@nuxt/devtools": "^3.4.2",
+    "@nuxt/devtools": "^3.4.4",
     "@nuxt/eslint-config": "^1.17.0",
     "@nuxt/kit": "^4.6.1",
     "@nuxt/module-builder": "^1.0.3",
@@ -172,7 +172,7 @@
     "vitest": "^4.1.11",
     "vue-component-meta": "^3.3.12",
     "vue-tsc": "^3.3.12",
-    "wrangler": "^4.148.0"
+    "wrangler": "^4.151.3"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
