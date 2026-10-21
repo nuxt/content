@@ -21,7 +21,11 @@ export default defineEventHandler(async (event) => {
   if (ASSETS) {
     const url = new URL(event.req.url)
     url.pathname = joinURL(baseURL, dumpPath)
-    return await ASSETS.fetch(url).then(r => r.text())
+    const response = await ASSETS.fetch(url)
+    if (!response.ok) {
+      throw createError({ status: response.status, statusText: response.statusText })
+    }
+    return await response.text()
   }
 
   // Nitro 3 has no `build` storage mount, the dump is served from the public assets while prerendering
