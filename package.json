@@ -52,25 +52,25 @@
     "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "comark-content": "^0.4.1",
-    "@comark/vue": "^0.7.0",
-    "@nuxt/kit": "^4.6.0",
-    "comark": "^0.7.0",
+    "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
+    "@comark/vue": "^0.8.1",
+    "@nuxt/kit": "^4.6.2",
+    "comark": "^0.8.1",
     "defu": "^6.1.7",
     "jiti": "^2.7.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^3.2.4",
-    "@nuxt/eslint-config": "^1.16.0",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.6.0",
-    "@nuxt/test-utils": "^4.0.3",
+    "@nuxt/devtools": "^3.4.4",
+    "@nuxt/eslint-config": "^1.17.0",
+    "@nuxt/module-builder": "^1.0.3",
+    "@nuxt/schema": "^4.6.2",
+    "@nuxt/test-utils": "^4.3.4",
     "@types/node": "latest",
     "changelogen": "^0.6.2",
-    "eslint": "^10.7.0",
-    "nuxt": "^4.6.0",
+    "eslint": "^10.13.0",
+    "nuxt": "^4.6.2",
     "typescript": "~6.0.3",
-    "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.7"
+    "vitest": "^5.0.5",
+    "vue-tsc": "^3.3.13"
   }
 }

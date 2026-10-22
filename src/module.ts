@@ -98,10 +98,15 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => {
         // A component can be registered twice (client and server). Keep the first.
         const seen = new Set<string>()
+        const layerSrcDirs = nuxt.options._layers.map(layer => layer.config.srcDir.replace(/\/?$/, '/'))
         const components = (nuxt.apps.default?.components ?? []).filter((component) => {
           // `@comark/vue` has no default export (`Comark` is registered as one anyway),
           // and other named exports aren't `.vue` files either.
           if (!component.filePath.endsWith('.vue')) return false
+          // Re-exporting every module-provided component would bundle all of them (and
+          // their optional peer deps, e.g. `@nuxt/ui`'s Chart). Keep the app's own and global ones.
+          const isProjectComponent = layerSrcDirs.some(dir => component.filePath.startsWith(dir) && !component.filePath.includes('/node_modules/'))
+          if (!component.global && !isProjectComponent) return false
           if (seen.has(component.pascalName)) return false
           seen.add(component.pascalName)
           return true
