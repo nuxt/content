@@ -1,3 +1,10 @@
+export function highlightTypesTemplate() {
+  return `declare module '#content/highlight' {
+  export const highlight: import('comark').ComarkPlugin | undefined
+}
+`
+}
+
 export function importMetaTypesTemplate() {
   return `declare global {
 interface ImportMeta {
@@ -8,6 +15,8 @@ readonly content: {
 readonly v3Compatibility: boolean
 /** Collections resolved at build time from the v3 \`content.config.ts\` of every layer. */
 readonly collections: import('@nuxt/content/v3').ResolvedContentCollections
+/** Resolved \`content.build.markdown.highlight\` options, \`false\` when highlighting is disabled. */
+readonly highlight: false | { themes: { light?: string, dark?: string }, langs: string[] }
 }
 }
 }

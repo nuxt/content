@@ -1,6 +1,7 @@
 import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, type ContentSource, type AnyComarkContent, type ContentHub } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
+import { highlight } from '#content/highlight'
 
 export type ContentInstance = AnyComarkContent
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
@@ -84,6 +85,7 @@ function createInstance(
 
   return comarkContent(name, {
     ...rest,
+    markdown: withHighlight(rest.markdown),
     basePath: '/__nuxt_content',
     source: wrapSource(source, mode, name),
     plugins: [
@@ -91,6 +93,16 @@ function createInstance(
       ...(sharedPlugins ?? []),
     ],
   })
+}
+
+/**
+ * Append the Shiki plugin configured through `content.build.markdown.highlight`,
+ * unless the user already registered one.
+ */
+function withHighlight(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
+  const plugin = highlight
+  if (!plugin || markdown?.plugins?.some(({ name }) => name === plugin.name)) return markdown
+  return { ...markdown, plugins: [...(markdown?.plugins ?? []), plugin] }
 }
 
 /**

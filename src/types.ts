@@ -1,5 +1,8 @@
 import type { ContentListFile, ContentRegistry, NavigationItem, SourceData } from 'comark-content'
 import type { FullFile } from './runtime/v3/query'
+import type { HighlightOptions } from './utils/highlight'
+
+export type { HighlightOptions }
 
 // #region v3 types
 
@@ -30,6 +33,18 @@ export interface ModuleOptions {
   mode?: 'server-only' | 'hybrid'
   watch?: boolean
   v3Composables?: boolean
+  /**
+   * Nuxt Content v3 build options, kept for backward compatibility.
+   */
+  build?: {
+    markdown?: {
+      /**
+       * Highlight code blocks with Shiki. Requires `shiki` to be installed in your project.
+       * @see https://content.nuxt.com/docs/getting-started/configuration#highlight
+       */
+      highlight?: HighlightOptions | boolean
+    }
+  }
 }
 
 // #endregion

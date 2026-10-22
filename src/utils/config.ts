@@ -1,10 +1,15 @@
 import type { AnyComarkContent, ContentHub } from 'comark-content'
 import { createJiti } from 'jiti'
 import type { ResolvedContentCollections } from '../runtime/v3/content-config'
+import type { ResolvedHighlightOptions } from './highlight'
 
 export type ImportContentOptions = {
   /** Collections resolved from the layers' v3 `content.config.ts` files. */
   collections?: ResolvedContentCollections
+  /** Resolved `content.build.markdown.highlight`, `false` when disabled. */
+  highlight?: ResolvedHighlightOptions | false
+  /** Module-process implementation of the `#content/highlight` virtual module. */
+  highlightPath?: string
 }
 
 function createContentJiti(rootDir: string, options: ImportContentOptions) {
@@ -13,10 +18,12 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
     tryNative: false,
     moduleCache: false,
     fsCache: false,
+    alias: options.highlightPath ? { '#content/highlight': options.highlightPath } : undefined,
     transform: (opts) => {
       const source = opts.source
         .replace(/import\.meta\.rootDir/g, JSON.stringify(rootDir))
         .replace(/import\.meta\.content\.collections/g, JSON.stringify(options.collections ?? {}))
+        .replace(/import\.meta\.content\.highlight/g, JSON.stringify(options.highlight ?? false))
       return { code: babelJiti.transform({ ...opts, source }) }
     },
   })

@@ -1,14 +1,15 @@
 import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
 import defu from 'defu'
 import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, TypegenFieldContext } from 'comark-content'
-import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, useLogger } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { toWebRequest, serveStatic } from 'h3'
 import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
-import { importMetaTypesTemplate } from './utils/templates'
+import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
+import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
@@ -57,6 +58,9 @@ export default defineNuxtModule<ModuleOptions>({
         ? resolve('./runtime/server/internal/content-config')
         : resolve('./runtime/server/internal/fallback-content')
 
+    const highlight = await resolveHighlightOptions(options.build?.markdown?.highlight, nuxt)
+    setupHighlight(highlight, nuxt)
+
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       include: ['@nuxt/content > comark-content > slugify'],
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -66,6 +70,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
       'import.meta.content.collections': JSON.stringify(contentCollections),
+      'import.meta.content.highlight': JSON.stringify(highlight),
     })
 
     // The client content runtime uses top-level await. When its chunk is emitted
@@ -79,7 +84,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
-    const content = await setupContent(contentPath, nuxt, options, contentCollections)
+    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight)
 
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
@@ -180,15 +185,31 @@ function resolveLayerContentConfigs(nuxt: Nuxt): string[] {
     .filter((path, index, paths) => existsSync(path) && paths.indexOf(path) === index)
 }
 
+function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt) {
+  const { resolve } = createResolver(import.meta.url)
+
+  addServerTemplate({
+    filename: '#content/highlight',
+    getContents: () => highlightTemplate(highlight, resolve('./runtime/server/internal/highlight')),
+  })
+
+  if (highlight && highlight.themes.dark) {
+    const styles = addTemplate({ filename: 'content/highlight.css', getContents: highlightStylesTemplate, write: true })
+    nuxt.options.css.push(styles.dst)
+  }
+}
+
 async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
+  const highlightTypes = addTypeTemplate({ filename: 'content/highlight.d.ts', getContents: highlightTypesTemplate })
 
   const nitroTypeIncludes = [
     importMetaTypes.dst,
+    highlightTypes.dst,
   ]
 
   nuxt.options.typescript = defu(nuxt.options.typescript, {
-    tsConfig: { include: [importMetaTypes.dst] },
+    tsConfig: { include: [importMetaTypes.dst, highlightTypes.dst] },
   })
   // The generated types augment `comark-content`, a transitive dependency the
   // project can't resolve on its own (pnpm) — the augmentation would be dropped.
@@ -336,10 +357,14 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
-  const imported = await importContent(nuxt.options.rootDir, contentPath, { collections })
+  const imported = await importContent(nuxt.options.rootDir, contentPath, {
+    collections,
+    highlight,
+    highlightPath: resolve('./runtime/server/internal/highlight.node'),
+  })
   // Dev server gets its own surface so plugins / basePath can differ without
   // mutating the user-exported instance that Nitro will import later.
   // Skip re-injecting v3 plugins when the export already went through

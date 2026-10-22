@@ -7,7 +7,6 @@
     "nuxt",
     "content",
     "nuxt-module",
-
     "markdown",
     "mdc"
   ],
@@ -52,6 +51,7 @@
     "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
+
     "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
     "@comark/vue": "^0.8.1",
     "@nuxt/kit": "^4.6.2",
@@ -69,8 +69,17 @@
     "changelogen": "^0.6.2",
     "eslint": "^10.13.0",
     "nuxt": "^4.6.2",
+    "shiki": "^4.3.1",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5",
     "vue-tsc": "^3.3.13"
+  },
+  "peerDependencies": {
+    "shiki": "^4.3.1"
+  },
+  "peerDependenciesMeta": {
+    "shiki": {
+      "optional": true
+    }
   }
 }

@@ -50,6 +50,34 @@ export const content = createNuxtContent({
 })
 ```
 
+## Code highlighting
+
+The v3 `content.build.markdown.highlight` option keeps working, but `shiki` is no longer bundled. Install it in your project to enable highlighting:
+
+```bash
+npx nypm add shiki
+```
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          theme: { default: 'github-light', dark: 'github-dark' },
+          langs: ['python'], // added on top of the v3 defaults
+        },
+      },
+    },
+  },
+})
+```
+
+- If `shiki` is missing, the module logs a warning (and offers to install it in interactive dev) and code blocks render unhighlighted.
+- Supported theme keys are `default` (or `light`) and `dark`. Dark colors apply under `html.dark`, as in v3.
+- The plugin is injected into every instance created with `createNuxtContent()`. If you register your own `shiki` plugin under `markdown.plugins`, yours is used instead.
+
 ## Direct comark-content usage
 
 ```diff
