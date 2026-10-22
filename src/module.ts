@@ -1,7 +1,7 @@
 import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
 import defu from 'defu'
-import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub } from 'comark-content'
-import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate } from '@nuxt/kit'
+import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, TypegenFieldContext } from 'comark-content'
+import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { toWebRequest, serveStatic } from 'h3'
@@ -9,6 +9,7 @@ import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
 import { importMetaTypesTemplate } from './utils/templates'
+import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
 import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from './runtime/utils/hmr'
@@ -20,12 +21,9 @@ import { join } from 'node:path'
 type ContentSurface = AnyComarkContent | ContentHub<any>
 type ContentWithMedia = ContentSurface & Partial<MediaMethods>
 
-// Module options TypeScript interface definition
-export interface ModuleOptions {
-  mode?: 'server-only' | 'hybrid'
-  watch?: boolean
-  v3Composables?: boolean
-}
+export type * from './types'
+
+const logger = useLogger('@nuxt/content')
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -156,7 +154,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Add types templates
      */
-    setupTypes(content, nuxt)
+    setupTypes(content, nuxt, contentCollections)
 
     /**
      * The following operation are for runtime and don't need to execute them in prepare mode
@@ -182,7 +180,7 @@ function resolveLayerContentConfigs(nuxt: Nuxt): string[] {
     .filter((path, index, paths) => existsSync(path) && paths.indexOf(path) === index)
 }
 
-async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
+async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
 
   const nitroTypeIncludes = [
@@ -192,6 +190,10 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
   nuxt.options.typescript = defu(nuxt.options.typescript, {
     tsConfig: { include: [importMetaTypes.dst] },
   })
+  // The generated types augment `comark-content`, a transitive dependency the
+  // project can't resolve on its own (pnpm) — the augmentation would be dropped.
+  nuxt.options.typescript.hoist ||= []
+  nuxt.options.typescript.hoist.push('comark-content')
 
   // Generate types
   if (content) {
@@ -199,15 +201,7 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
     nitroTypeIncludes.push(
       addTypeTemplate({
         filename: 'content/types.d.ts',
-        getContents: async () => {
-          try {
-            return await generateSourceTypes(content)
-          }
-          catch {
-            // console.warn('[nuxt/content] generateSourceTypes failed:', error)
-            return '// generateSourceTypes failed\nexport {}\n'
-          }
-        },
+        getContents: () => generateContentTypes(content, collections),
       }).dst,
     )
   }
@@ -215,6 +209,55 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt) {
   nuxt.options.nitro.typescript = defu(nuxt.options.nitro.typescript, {
     tsConfig: { include: nitroTypeIncludes },
   })
+}
+
+/**
+ * v3 typed the page `seo` field as `{ title?, description? } & Record<string, any>`
+ * so extra keys (`seo.ogImage`, `seo.meta`, …) type-check. Comark's JSON Schema
+ * can't express open objects, so widen the rendered type instead.
+ */
+function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['hooks'] {
+  return {
+    ...hooks,
+    callHook: async (name: string, ...args: unknown[]) => {
+      await (hooks.callHook as (name: string, ...args: unknown[]) => Promise<unknown>)(name, ...args)
+      const ctx = args[0] as TypegenFieldContext
+      if (name === 'typegen:field' && ctx.path.length === 1 && (ctx.path[0] === 'seo' || ctx.path[0] === 'data.seo')) {
+        ctx.type = `(${ctx.type}) & Record<string, any>`
+      }
+    },
+  } as AnyComarkContent['hooks']
+}
+
+/**
+ * Generate the `ContentRegistry` augmentation. Each instance is initialized on its
+ * own so one unreadable source (e.g. a layer whose `content/` directory only
+ * exists in the consuming project) doesn't drop the types of every collection:
+ * it falls back to the schema declared in `content.config.ts`.
+ */
+async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections): Promise<string> {
+  const instances = await Promise.all(resolveInstances(content).map(async (instance) => {
+    let manifest: Manifest
+    try {
+      await instance.init({ ignoreCache: true })
+      manifest = await instance.manifest()
+    }
+    catch (error) {
+      logger.warn(`Could not read content of \`${instance.name}\` to generate types, using its declared schema instead:`, (error as Error).message)
+      const schema = collections[instance.name]?.schema ?? { type: 'object', properties: {} }
+      manifest = { sources: [instance.name], items: {}, time: 0, schemas: { [instance.name]: schema } }
+    }
+    // Already initialized above; `generateSourceTypes` would otherwise re-init.
+    return { name: instance.name, hooks: withV3FieldTypes(instance.hooks), init: async () => {}, manifest: async () => manifest } as unknown as AnyComarkContent
+  }))
+
+  try {
+    return await generateSourceTypes(instances)
+  }
+  catch (error) {
+    logger.warn('Could not generate content types:', (error as Error).message)
+    return '// generateSourceTypes failed\nexport {}\n'
+  }
 }
 
 function isHub(surface: ContentSurface): surface is ContentHub<any> {

@@ -476,7 +476,15 @@ function zodFieldSchema(field: ZodField): JsonSchema {
 const PAGE_DEFAULT_PROPERTIES: Record<string, JsonSchema> = {
   title: { type: 'string' },
   description: { type: 'string' },
-  seo: { type: 'object' },
+  // A union (like `navigation` below) keeps `seo` a single JSON column while still
+  // typing `seo.title`/`seo.description` as v3 did.
+  seo: {
+    type: ['object', 'null'],
+    properties: {
+      title: { type: 'string' },
+      description: { type: 'string' },
+    },
+  },
   // Keep this a union, not a pure object. Comark only hoists nested fields into
   // `data.parent.child` columns when a property is a single `object` type; a union
   // stays one JSON column. That is what v3 did (`navigation` was a JSON field), and

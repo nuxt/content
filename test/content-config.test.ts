@@ -76,7 +76,7 @@ describe('readContentConfigSources', () => {
     expect(schema.properties).toMatchObject({
       title: { type: 'string' },
       description: { type: 'string' },
-      seo: { type: 'object' },
+      seo: { type: ['object', 'null'] },
       navigation: { type: ['boolean', 'object'] },
       // ...plus the user's own fields.
       date: { type: 'string' },
@@ -92,7 +92,7 @@ describe('readContentConfigSources', () => {
     const sources = loadSources()
     expect(sources.docs.schema).toMatchObject({
       type: 'object',
-      properties: { title: { type: 'string' }, description: { type: 'string' }, seo: { type: 'object' } },
+      properties: { title: { type: 'string' }, description: { type: 'string' }, seo: { type: ['object', 'null'] } },
       required: ['title', 'description'],
     })
   })
