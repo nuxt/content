@@ -41,6 +41,10 @@ declare module '#content/local-adapter' {
   export { adapter as default }
 }
 
+declare module '#content/server-fetch' {
+  export const serverFetchContent: import('../runtime/internal/api').ContentFetch
+}
+
 declare module '#content/collections' {
   export const collections: Record<string, unknown>
 }
