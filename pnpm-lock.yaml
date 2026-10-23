@@ -140,8 +140,8 @@ importers:
         specifier: ^10.6.0
         version: 10.6.0(@nuxt/schema@4.6.2)(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.1)(better-sqlite3@12.11.1)))(dotenv@17.4.2)(esbuild@0.28.1)(eslint@10.13.0(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.0)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(rolldown@1.2.14)(rollup@4.62.2)(supports-color@10.2.2)(typescript@6.0.3)(vite@8.3.2(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.23.0)(yaml@2.9.0))(vue@3.5.44(typescript@6.0.3))
       '@sqlite.org/sqlite-wasm':
-        specifier: 3.53.0-build1
-        version: 3.53.0-build1
+        specifier: 3.54.1-build1
+        version: 3.54.1-build1
       nuxt:
         specifier: ^4.6.2
         version: 4.6.2(aff50367bb492e620ffaa2a516fdfe73)
@@ -155,8 +155,8 @@ importers:
         specifier: link:../..
         version: link:../..
       '@sqlite.org/sqlite-wasm':
-        specifier: 3.53.0-build1
-        version: 3.53.0-build1
+        specifier: 3.54.1-build1
+        version: 3.54.1-build1
       nuxt:
         specifier: ^4.6.2
         version: 4.6.2(c1a5db0477a587e0fb99b54ace63cc51)
@@ -167,8 +167,8 @@ importers:
         specifier: link:..
         version: link:..
       '@sqlite.org/sqlite-wasm':
-        specifier: 3.53.0-build1
-        version: 3.53.0-build1
+        specifier: 3.54.1-build1
+        version: 3.54.1-build1
       nuxt:
         specifier: ^4.6.2
         version: 4.6.2(c1a5db0477a587e0fb99b54ace63cc51)
@@ -2579,8 +2579,8 @@ packages:
   '@speed-highlight/core@1.2.17':
     resolution: {integrity: sha512-Z92FwKpCtfaW1V0jTU/fh3QzYEZN8wDwrzRIBoADCJfn4mJCNcJN/XegifX7BDrQ8/h9Xh/JnbyMchL0FqXrkg==}
 
-  '@sqlite.org/sqlite-wasm@3.53.0-build1':
-    resolution: {integrity: sha512-PfWPWN2n+/37doa8oh2/oUXk4OOsRYZsxc1W1sDXIGb/Pu5Yrb+f2eyYpgQMGITVX7HVgxhs9P18Rc6I97ym/g==}
+  '@sqlite.org/sqlite-wasm@3.54.1-build1':
+    resolution: {integrity: sha512-foW427VBLJ3G87bsnvQTZCc9zYe0Fq1wH0pz1I6BlKLKXcArIAyTkHtq0iT2llmhcMQt9T/p6l5PpQQh+6O8uQ==}
     engines: {node: '>=22'}
 
   '@standard-schema/spec@1.1.0':
@@ -11870,7 +11870,7 @@ snapshots:
 
   '@speed-highlight/core@1.2.17': {}
 
-  '@sqlite.org/sqlite-wasm@3.53.0-build1': {}
+  '@sqlite.org/sqlite-wasm@3.54.1-build1': {}
 
   '@standard-schema/spec@1.1.0': {}
 
