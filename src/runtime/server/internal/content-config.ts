@@ -1,3 +1,5 @@
+import json from 'comark-content/plugins/json'
+import yaml from 'comark-content/plugins/yaml'
 import { createContentConfigSources } from '../../v3/content-config'
 import { createNuxtContent } from '../content'
 
@@ -10,4 +12,6 @@ import { createNuxtContent } from '../content'
 export const content = createNuxtContent({
   mode: 'hybrid',
   sources: createContentConfigSources(import.meta.content.collections),
+  // v3 parses YAML and JSON files too (`.navigation.yml`, `data` collections).
+  plugins: [yaml(), json()],
 })
