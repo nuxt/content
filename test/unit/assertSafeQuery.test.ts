@@ -29,6 +29,10 @@ describe('decompressSQLDump', () => {
     'SELECT * FROM _content_test ORDER BY id ASC, stem DESC': true,
     'SELECT * FROM _content_test ORDER BY id ASC, publishedAt DESC': true,
     'SELECT "PublishedAt" FROM _content_test ORDER BY id ASC, PublishedAt DESC': true,
+    // Digits are valid in quoted column names (schema fields such as `h1` or `publishedAt2`)
+    'SELECT * FROM _content_test ORDER BY "field1" DESC': true,
+    'SELECT * FROM _content_test ORDER BY id ASC, publishedAt2 DESC': true,
+    'SELECT * FROM _content_test ORDER BY "a b" DESC': false,
     'SELECT * FROM _content_test ORDER BY id DESC -- comment is not allowed': false,
     'SELECT * FROM _content_test ORDER BY id DESC; SELECT * FROM _content_test ORDER BY id DESC': false,
     'SELECT * FROM _content_test ORDER BY id DESC LIMIT 10': true,
@@ -160,6 +164,9 @@ describe('decompressSQLDump', () => {
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
 
     await collectionQueryBuilder(mockCollection, mockFetch).order('stem', 'DESC').first()
+    expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
+
+    await collectionQueryBuilder(mockCollection, mockFetch).order('field1' as never, 'DESC').first()
     expect(() => assertSafeQuery(mockFetch.mock.lastCall![1], mockCollection)).not.toThrow()
 
     await collectionQueryBuilder(mockCollection, mockFetch).order('stem', 'DESC').order('id', 'ASC').first()

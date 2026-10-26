@@ -185,7 +185,7 @@ export function assertSafeQuery(sql: string, collection: string) {
 
   // ORDER BY
   const _order = (orderBy + ' ' + order).split(', ')
-  if (!_order.every(column => column.match(/^("[a-zA-Z_]+"|[a-zA-Z_]+) (ASC|DESC)$/))) {
+  if (!_order.every(column => column.match(/^("[a-zA-Z_]\w*"|[a-zA-Z_]\w*) (ASC|DESC)$/))) {
     throw new Error('Invalid query: ORDER BY clause must contain valid column names followed by ASC or DESC')
   }
 
