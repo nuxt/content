@@ -10,6 +10,7 @@ import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
+import { componentsTemplate } from './utils/components'
 import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
@@ -105,30 +106,11 @@ export default defineNuxtModule<ModuleOptions>({
     // registers components lazily, so a runtime `resolveComponent` can't see them.
     addTemplate({
       filename: 'content/components.mjs',
-      getContents: () => {
-        // A component can be registered twice (client and server). Keep the first.
-        const seen = new Set<string>()
-        const layerSrcDirs = nuxt.options._layers.map(layer => layer.config.srcDir.replace(/\/?$/, '/'))
-        const components = (nuxt.apps.default?.components ?? []).filter((component) => {
-          // `@comark/vue` has no default export (`Comark` is registered as one anyway),
-          // and other named exports aren't `.vue` files either.
-          if (!component.filePath.endsWith('.vue')) return false
-          // Re-exporting every module-provided component would bundle all of them (and
-          // their optional peer deps, e.g. `@nuxt/ui`'s Chart). Keep the app's own and global ones.
-          const isProjectComponent = layerSrcDirs.some(dir => component.filePath.startsWith(dir) && !component.filePath.includes('/node_modules/'))
-          if (!component.global && !isProjectComponent) return false
-          if (seen.has(component.pascalName)) return false
-          seen.add(component.pascalName)
-          return true
-        })
-        const lines = components.map((component) => {
-          const imported = component.export === 'default'
-            ? `default as ${component.pascalName}`
-            : `${component.export} as ${component.pascalName}`
-          return `export { ${imported} } from ${JSON.stringify(component.filePath)}`
-        })
-        return lines.join('\n') + '\n'
-      },
+      getContents: () => componentsTemplate(
+        nuxt.apps.default?.components ?? [],
+        nuxt.options._layers.map(layer => layer.config.srcDir),
+      ),
+      write: true,
     })
 
     // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.

@@ -17,6 +17,7 @@ export default createConfigForNuxt({
       './examples/v3-layers/layer/app',
       './examples/hybrid-v3-compatibility/app',
       './examples/hybrid-v4-pure/app',
+      './test/fixtures/components',
     ],
   },
 })
@@ -24,6 +25,13 @@ export default createConfigForNuxt({
     {
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      // Playground components are short demo names used as markdown tags (`::bundled`).
+      files: ['playground/**/*.vue'],
+      rules: {
+        'vue/multi-word-component-names': 'off',
       },
     },
     {

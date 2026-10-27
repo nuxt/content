@@ -7,3 +7,4 @@
 - [About](/about)
 - Blog
   - [Hello World](/blog/hallo)
+- [Components](/components)
