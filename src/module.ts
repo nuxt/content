@@ -66,6 +66,13 @@ export default defineNuxtModule<ModuleOptions>({
       exclude: ['@sqlite.org/sqlite-wasm'],
     })
 
+    // `server/content.ts` imports `createNuxtContent` from `@nuxt/content/content`. Point it at
+    // this module's runtime directly: the package export targets `dist/runtime/*.js`, which a
+    // stubbed build (`nuxt-module-build build --stub`) doesn't emit.
+    nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
+      '@nuxt/content/content': resolve('./runtime/server/content'),
+    })
+
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
@@ -364,6 +371,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
     collections,
     highlight,
     highlightPath: resolve('./runtime/server/internal/highlight.node'),
+    contentEntryPath: resolve('./runtime/server/content'),
   })
   // Dev server gets its own surface so plugins / basePath can differ without
   // mutating the user-exported instance that Nitro will import later.

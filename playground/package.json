@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@nuxt/content": "workspace:*",
-    "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "nuxt": "^4.6.2"
   }
 }

@@ -17,8 +17,11 @@ async function hybridContentFactory(): Promise<ContentClient> {
 
   // Browser hybrid mode: hydrate from the prerendered snapshot + WASM sqlite plugins.
   // One shared plugin set (one WASM database) so multi-instance FTS ranks correctly.
-  const { v3WasmPlugins } = await import('../v3/content-plugins.wasm')
-  const sharedPlugins = v3WasmPlugins()
+  // `import.meta.content.v3Compatibility` is a build-time define: when it's false the
+  // dynamic import is dead code and the sql-query + sqlite-wasm chunk isn't emitted.
+  const sharedPlugins = import.meta.content.v3Compatibility
+    ? (await import('../v3/content-plugins.wasm')).v3WasmPlugins()
+    : []
 
   const artifact = await $fetch<CacheArtifact | Manifest>('/__nuxt_content/manifest.json')
   const manifest = isCacheArtifact(artifact)

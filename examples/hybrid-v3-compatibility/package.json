@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "@nuxt/content-example-hybrid-v3-compatibility",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "workspace:*",
+    "nuxt": "^4.6.2"
+  }
+}

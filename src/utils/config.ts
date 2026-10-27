@@ -10,6 +10,8 @@ export type ImportContentOptions = {
   highlight?: ResolvedHighlightOptions | false
   /** Module-process implementation of the `#content/highlight` virtual module. */
   highlightPath?: string
+  /** This module's `@nuxt/content/content` entry, so it resolves without going through `dist` (stubbed builds). */
+  contentEntryPath?: string
 }
 
 function createContentJiti(rootDir: string, options: ImportContentOptions) {
@@ -18,7 +20,10 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
     tryNative: false,
     moduleCache: false,
     fsCache: false,
-    alias: options.highlightPath ? { '#content/highlight': options.highlightPath } : undefined,
+    alias: {
+      ...(options.highlightPath ? { '#content/highlight': options.highlightPath } : {}),
+      ...(options.contentEntryPath ? { '@nuxt/content/content': options.contentEntryPath } : {}),
+    },
     transform: (opts) => {
       const source = opts.source
         .replace(/import\.meta\.rootDir/g, JSON.stringify(rootDir))

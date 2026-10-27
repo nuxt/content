@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import type { Page } from 'playwright-core'
 
 const moduleEntry = fileURLToPath(new URL('../../src/module.ts', import.meta.url))
 
@@ -20,4 +21,24 @@ export function example(name: string) {
       alias: { '@nuxt/content': moduleEntry },
     },
   }
+}
+
+// Static artifacts prerendered for hybrid mode. Anything else under
+// `/__nuxt_content` is the server API answering a query.
+const SNAPSHOT_ARTIFACT = /^\/__nuxt_content\/(?:manifest\.json|(?:manifest|snapshot)\/[^/]+\.json)$/
+
+/**
+ * Collect the requests a page sends to the content server API (snapshot and
+ * manifest downloads excluded) and to route payloads. In hybrid mode a client
+ * navigation must answer its queries in the browser, so this stays empty.
+ */
+export function trackServerContentRequests(page: Page) {
+  const requests: string[] = []
+  page.on('request', (request) => {
+    const { pathname } = new URL(request.url())
+    if ((pathname.startsWith('/__nuxt_content/') && !SNAPSHOT_ARTIFACT.test(pathname)) || pathname.endsWith('/_payload.json')) {
+      requests.push(pathname)
+    }
+  })
+  return requests
 }

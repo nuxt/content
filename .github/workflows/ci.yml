@@ -35,6 +35,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm prepack
       - run: pnpm typecheck
+      # The hybrid example tests navigate in a real browser (`@nuxt/test-utils` + playwright-core).
+      - run: pnpm exec playwright-core install --with-deps --only-shell chromium
       # Each example test boots a full Nuxt app. On the GitHub runner Node 24
       # caps the V8 heap near 2GB (it reads the cgroup memory limit), so the
       # heavier ones (ui, i18n) die with "Ineffective mark-compacts near heap

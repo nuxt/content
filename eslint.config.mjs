@@ -15,6 +15,8 @@ export default createConfigForNuxt({
       './examples/v3-multi-source',
       './examples/v3-layers',
       './examples/v3-layers/layer/app',
+      './examples/hybrid-v3-compatibility/app',
+      './examples/hybrid-v4-pure/app',
     ],
   },
 })

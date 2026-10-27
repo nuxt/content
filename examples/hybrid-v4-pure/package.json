@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "@nuxt/content-example-hybrid-v4-pure",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "workspace:*",
+    "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
+    "nuxt": "^4.6.2"
+  }
+}

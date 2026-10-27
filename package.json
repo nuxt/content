@@ -54,6 +54,7 @@
 
     "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
     "@comark/vue": "^0.8.1",
+    "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "@nuxt/kit": "^4.6.2",
     "comark": "^0.8.1",
     "defu": "^6.1.7",
@@ -69,6 +70,7 @@
     "changelogen": "^0.6.2",
     "eslint": "^10.13.0",
     "nuxt": "^4.6.2",
+    "playwright-core": "^1.64.1",
     "shiki": "^4.3.1",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5",
