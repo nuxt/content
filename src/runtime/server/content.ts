@@ -1,5 +1,8 @@
 import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, type ContentSource, type AnyComarkContent, type ContentHub } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
+import type { ComarkPlugin } from 'comark'
+import toc from 'comark/plugins/toc'
+import headings from 'comark/plugins/headings'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
 import { highlight } from '#content/highlight'
 
@@ -85,7 +88,7 @@ function createInstance(
 
   return comarkContent(name, {
     ...rest,
-    markdown: withHighlight(rest.markdown),
+    markdown: withDefaultPlugins(rest.markdown),
     basePath: '/__nuxt_content',
     source: wrapSource(source, mode, name),
     plugins: [
@@ -96,13 +99,16 @@ function createInstance(
 }
 
 /**
- * Append the Shiki plugin configured through `content.build.markdown.highlight`,
- * unless the user already registered one.
+ * Append the default Comark plugins (`toc`, `headings`) and the Shiki plugin
+ * configured through `content.build.markdown.highlight`. A plugin the user
+ * already registered under the same name is kept instead.
  */
-function withHighlight(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
-  const plugin = highlight
-  if (!plugin || markdown?.plugins?.some(({ name }) => name === plugin.name)) return markdown
-  return { ...markdown, plugins: [...(markdown?.plugins ?? []), plugin] }
+function withDefaultPlugins(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
+  const userPlugins = markdown?.plugins ?? []
+  const defaults = [toc(), headings(), highlight].filter((plugin): plugin is ComarkPlugin =>
+    !!plugin && !userPlugins.some(({ name }) => name === plugin.name),
+  )
+  return { ...markdown, plugins: [...userPlugins, ...defaults] }
 }
 
 /**

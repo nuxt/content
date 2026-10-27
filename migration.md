@@ -78,6 +78,30 @@ export default defineNuxtConfig({
 - Supported theme keys are `default` (or `light`) and `dark`. Dark colors apply under `html.dark`, as in v3.
 - The plugin is injected into every instance created with `createNuxtContent()`. If you register your own `shiki` plugin under `markdown.plugins`, yours is used instead.
 
+## Table of contents and headings
+
+Every instance created with `createNuxtContent()` registers the Comark `toc` and `headings` plugins by default:
+
+- `toc` writes the table of contents to `meta.toc`. It collects `h2` and `h3` headings, like v3 did.
+- `headings` writes the text of a leading `h1` to `meta.title` and the paragraph that follows it to `meta.description`. The nodes stay in the rendered body.
+
+To change their options, register your own plugin with the same name under `markdown.plugins`:
+
+```ts
+// server/content.ts
+import { createNuxtContent } from '@nuxt/content/content'
+import fs from 'comark-content/sources/fs'
+import toc from 'comark/plugins/toc'
+
+export const content = createNuxtContent({
+  mode: 'hybrid',
+  source: fs('content', { cwd: import.meta.rootDir }),
+  markdown: {
+    plugins: [toc({ depth: 3 })],
+  },
+})
+```
+
 ## Direct comark-content usage
 
 ```diff
