@@ -14,15 +14,15 @@ const BUNDLED_BUILTIN_COMPONENTS: Record<string, string> = { A: 'NuxtLink' }
  * - `localComponents`: `<layer srcDir>/components/content/**`, keyed by their path relative
  *   to that directory (`content/foo/bar.vue` is `FooBar`, used as `::foo-bar`). Imported
  *   statically, except `*.lazy.(vue|ts)` files, which become `async () => import()` loaders
- *   and are code-split. Other project components are added as lazy loaders under their Nuxt
+ *   and are code-split. `Prose*` components, including global and module-provided ones
+ *   (e.g. Nuxt UI's), are imported statically under their Nuxt name and left out of
+ *   `globalComponents`. Other project components are added as lazy loaders under their Nuxt
  *   name, and built-ins such as `NuxtLink` are keyed by the tag they render.
  *
  * @param components Components registered in the Nuxt app.
  * @param srcDirs Source directories of the Nuxt layers, highest priority first.
  */
 export function componentsTemplate(components: NuxtComponent[], srcDirs: string[]) {
-  const globalNames = [...new Set(components.filter(c => c.global).map(c => c.pascalName))]
-
   const contentDirs = srcDirs.map(dir => join(dir, 'components/content/'))
   const imports: string[] = []
   const entries: string[] = []
@@ -62,6 +62,15 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
     }
   }
 
+  // `Prose*` components (from the project or a module such as Nuxt UI) render the markdown
+  // elements of every document, so they're bundled with the renderer under their Nuxt name.
+  for (const component of components) {
+    if (component.island || !component.pascalName.startsWith('Prose') || !COMPONENT_FILE_RE.test(component.filePath)) continue
+    if (seen.has(component.pascalName)) continue
+    seen.add(component.pascalName)
+    addImport(component.pascalName, component)
+  }
+
   // Other project components (e.g. `components/Counter.vue`) stay usable in documents, as in
   // v3: always lazy, so they're only loaded by pages that use them. Module-provided ones are
   // left out, as bundling all of them would pull in their optional peer deps.
@@ -85,6 +94,10 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
     seen.add(name)
     addImport(name, component)
   }
+
+  // `ContentRenderer` checks global names first; leave out the ones bundled above so their
+  // bundled import is used.
+  const globalNames = [...new Set(components.filter(c => c.global && !(c.pascalName.startsWith('Prose') && seen.has(c.pascalName))).map(c => c.pascalName))]
 
   return [
     ...imports,

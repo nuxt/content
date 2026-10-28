@@ -18,6 +18,7 @@ export default createConfigForNuxt({
       './examples/hybrid-v3-compatibility/app',
       './examples/hybrid-v4-pure/app',
       './test/fixtures/components',
+      './test/fixtures/ui',
     ],
   },
 })
