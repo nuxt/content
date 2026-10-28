@@ -15,7 +15,8 @@ import type {
  * - `id` — the file key (v3 renamed the Comark `meta.key` to `id`).
  * - `path`/`stem`/`extension` — surfaced from `path`/`meta` for convenience.
  * - frontmatter (`Data`) is spread flat so `doc.title` works like v3.
- * - `nodes`/`meta` — the parsed body and file metadata.
+ * - `nodes`/`meta` — the parsed body and file metadata; `meta` also mirrors the
+ *   frontmatter, since v3 stored fields outside the schema there.
  */
 export type FullFile<Item> = Item extends ContentListFile<infer Data>
   ? Data & {
@@ -24,7 +25,7 @@ export type FullFile<Item> = Item extends ContentListFile<infer Data>
     stem: string
     extension: string
     body: ContentFile<Data>['nodes']
-    meta: ContentFile<Data>['meta']
+    meta: ContentFile<Data>['meta'] & Record<string, any>
   }
   : Item & Pick<ContentFile, 'nodes'>
 
@@ -86,7 +87,10 @@ async function hydrate<Item extends ContentListFile>(
     stem: source.meta.stem,
     extension: source.meta.extension,
     body: source.nodes,
-    meta: source.meta,
+    // v3 kept frontmatter outside the schema under `meta` (`meta.sitemap`,
+    // `meta.modifiedAt`), so mirror the frontmatter there too. The file meta wins
+    // on conflict: `meta.key` identifies the document (e.g. for `<ContentRenderer>`).
+    meta: { ...source.data, ...source.meta },
   } as FullFile<Item>
 }
 
