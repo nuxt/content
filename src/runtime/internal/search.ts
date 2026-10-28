@@ -1,7 +1,7 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
-import { pick } from './utils'
+import { createYielder, pick } from './utils'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
 export type Section = {
@@ -119,7 +119,13 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(
     .select('path', 'body', 'description', 'title', ...(extraFields as Array<keyof T> || []))
     .all()
 
-  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
+  const yieldToMain = createYielder()
+  const sections: Section[] = []
+  for (const doc of documents) {
+    await yieldToMain()
+    sections.push(...splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
+  }
+  return sections
 }
 
 function splitPageIntoSections(
@@ -270,7 +276,9 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
 
   const sections = await generateSearchSections(queryBuilder, opts)
 
+  const yieldToMain = createYielder()
   for (const section of sections) {
+    await yieldToMain()
     const titleNormalized = section.title.replace(/([a-z])([A-Z])/g, '$1 $2')
 
     await db.exec(
