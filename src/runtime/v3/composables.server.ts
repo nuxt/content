@@ -15,11 +15,12 @@ import type {
   QueryRow,
   ContentHub,
 } from 'comark-content'
-import type {
-  SQLOperator,
-  QueryGroupFunction,
-  QueryField,
-  SourceQueryBuilder,
+import {
+  sourceQueryBuilder,
+  type SQLOperator,
+  type QueryGroupFunction,
+  type QueryField,
+  type SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
 import { content } from '#imports'
@@ -42,11 +43,19 @@ function asQueryable(): QueryableContent {
   return content as unknown as QueryableContent
 }
 
+/**
+ * A query against an unknown collection resolves to nothing (`all()` → `[]`,
+ * `first()` → `null`, `count()` → `0`) like v3, instead of throwing: the hub's
+ * `from()` throws synchronously, which escapes callers' `.catch()` / `Promise.all`.
+ */
 function resolveQuery(source: string) {
   const instance = asQueryable()
   if ('from' in instance && typeof (instance as ContentHub).from === 'function') {
-    return (instance as ContentHub & { query: SqlQueryMethods['query'] }).query(source)
+    const hub = instance as ContentHub & { query: SqlQueryMethods['query'] }
+    if (!hub.names.includes(source)) return sourceQueryBuilder(source, async () => [])
+    return hub.query(source)
   }
+  if ((instance as ComarkContent).name !== source) return sourceQueryBuilder(source, async () => [])
   return instance.query(source)
 }
 
