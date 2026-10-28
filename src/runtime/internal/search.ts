@@ -1,7 +1,7 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
-import { pick } from './utils'
+import { createYielder, pick } from './utils'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
 export type Section = {
@@ -119,7 +119,15 @@ export async function generateSearchSections<T extends PageCollectionItemBase>(
     .select('path', 'body', 'description', 'title', ...(extraFields as Array<keyof T> || []))
     .all()
 
-  return documents.flatMap(doc => splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel }))
+  const yieldToMain = createYielder()
+  const sections: Section[] = []
+  for (const doc of documents) {
+    await yieldToMain()
+    for (const section of splitPageIntoSections(doc, { ignoredTags, extraFields: extraFields as string[], minLevel, maxLevel })) {
+      sections.push(section)
+    }
+  }
+  return sections
 }
 
 function splitPageIntoSections(
@@ -240,16 +248,20 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
 
 const FTS_TABLE = '_fts_search'
 const indexedCollections = new Set<string>()
+// builds in flight, so concurrent callers wait on the same one instead of inserting twice
+const indexingCollections = new Map<string, Promise<void>>()
 let ftsTableCreated = false
 
 export function _resetFTSState() {
   indexedCollections.clear()
+  indexingCollections.clear()
   ftsTableCreated = false
 }
 
 export async function resetFTSIndex(db: DatabaseAdapter) {
   await db.exec(`DROP TABLE IF EXISTS ${FTS_TABLE}`)
   indexedCollections.clear()
+  indexingCollections.clear()
   ftsTableCreated = false
 }
 
@@ -263,6 +275,27 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
     return
   }
 
+  const inFlight = indexingCollections.get(collection)
+  if (inFlight) {
+    return inFlight
+  }
+
+  const indexing: Promise<void> = indexCollection(db, collection, queryBuilder, opts).finally(() => {
+    // a reset in between may have started a newer build for the same collection
+    if (indexingCollections.get(collection) === indexing) {
+      indexingCollections.delete(collection)
+    }
+  })
+  indexingCollections.set(collection, indexing)
+  return indexing
+}
+
+async function indexCollection<T extends PageCollectionItemBase>(
+  db: DatabaseAdapter,
+  collection: string,
+  queryBuilder: CollectionQueryBuilder<T>,
+  opts?: GenerateSearchSectionsOptions,
+) {
   if (!ftsTableCreated) {
     await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles UNINDEXED, content, level UNINDEXED)`)
     ftsTableCreated = true
@@ -270,7 +303,9 @@ export async function buildFTSIndex<T extends PageCollectionItemBase>(
 
   const sections = await generateSearchSections(queryBuilder, opts)
 
+  const yieldToMain = createYielder()
   for (const section of sections) {
+    await yieldToMain()
     const titleNormalized = section.title.replace(/([a-z])([A-Z])/g, '$1 $2')
 
     await db.exec(
