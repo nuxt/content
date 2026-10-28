@@ -96,6 +96,22 @@ describe('searchCollection FTS5', () => {
       expect(execCalls.length).toBe(callsAfterFirst)
     })
 
+    it('should share an in-flight build between concurrent callers', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test',
+        description: '',
+        body: { type: 'root', children: [] },
+      }])
+
+      await Promise.all([
+        buildFTSIndex(mockDb, 'concurrent', mockQueryBuilder),
+        buildFTSIndex(mockDb, 'concurrent', mockQueryBuilder),
+      ])
+
+      expect(execCalls.filter(call => call.sql.startsWith('INSERT')).length).toBe(1)
+    })
+
     it('should allow indexing multiple collections into the same table', async () => {
       const docsQb = createMockQueryBuilder([{
         path: '/docs/page',
