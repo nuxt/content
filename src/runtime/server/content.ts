@@ -27,54 +27,37 @@ interface NuxtContentOptions extends Omit<ContentOptions, 'source' | 'plugins'> 
   name?: string
 }
 
-function snapshotLoaders(mode: 'server-only' | 'hybrid', name: string) {
-  if (mode === 'server-only') {
-    return {
-      loadSnapshot: () =>
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-        useStorage('assets:content').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>,
-      loadManifest: () =>
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-        useStorage('assets:content').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>,
-    }
-  }
-
-  // Hybrid mode hydrates from public prerendered artifacts. Never $fetch those
-  // routes while they are themselves being generated (deadlocks Nitro prerender):
-  // fall back to the origin source instead so the handler can produce them.
+function snapshotLoaders(name: string) {
+  // Prerendered artifacts are copied to server assets in both modes: the server
+  // never requests them, since on serverless platforms public files only live on
+  // the CDN and the request would reach the handler waiting for them.
+  // While prerendering they don't exist yet: fall back to the origin source so
+  // the handler can produce them.
   return {
     loadSnapshot: async () => {
       if (import.meta.prerender) return null
-      try {
-        return await $fetch<CacheArtifact>(`/__nuxt_content/snapshot/${name}.json`)
-      }
-      catch {
-        return null
-      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
+      return useStorage('assets:content').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>
     },
     loadManifest: async () => {
       if (import.meta.prerender) return null
-      try {
-        // Per-instance manifest: the merged hub manifest lists other instances'
-        // items too, which hides this instance's documents once applied.
-        return await $fetch<CacheArtifact>(`/__nuxt_content/manifest/${name}.json`)
-      }
-      catch {
-        return null
-      }
+      // Per-instance manifest: the merged hub manifest lists other instances'
+      // items too, which hides this instance's documents once applied.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
+      return useStorage('assets:content').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>
     },
   }
 }
 
-function wrapSource(source: ContentSource, mode: 'server-only' | 'hybrid', name: string): ContentSource {
+function wrapSource(source: ContentSource, name: string): ContentSource {
   // Already a parsed/snapshot source — leave it alone.
   if (source && typeof source === 'object' && 'parsed' in source && (source as { parsed?: boolean }).parsed) {
     return source
   }
 
-  const { loadSnapshot, loadManifest } = snapshotLoaders(mode, name)
+  const { loadSnapshot, loadManifest } = snapshotLoaders(name)
   return withSnapshot(source as Parameters<typeof withSnapshot>[0], loadSnapshot, loadManifest)
 }
 
@@ -84,13 +67,13 @@ function createInstance(
   options: NuxtContentOptions,
   sharedPlugins: ContentOptions['plugins'],
 ) {
-  const { mode, sources: _sources, source: _source, name: _name, plugins: _plugins, ...rest } = options
+  const { mode: _mode, sources: _sources, source: _source, name: _name, plugins: _plugins, ...rest } = options
 
   return comarkContent(name, {
     ...rest,
     markdown: withDefaultPlugins(rest.markdown),
     basePath: '/__nuxt_content',
-    source: wrapSource(source, mode, name),
+    source: wrapSource(source, name),
     plugins: [
       ...(options.plugins ?? []),
       ...(sharedPlugins ?? []),

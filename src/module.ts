@@ -378,9 +378,10 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
   ])
 
   /**
-   * In server-only mode we don't keep snapshot in public assets
+   * Keep the prerendered snapshots in server assets so the server never has to
+   * request them: on serverless platforms public files only live on the CDN.
    */
-  if (options.mode === 'server-only') {
+  if (!nuxt.options.dev) {
     nuxt.hook('nitro:init', async (nitro) => {
       const dir = resolve(nuxt.options.buildDir, 'content/prerender')
       nitro.options.serverAssets.push({ baseName: 'content', dir })
@@ -392,9 +393,11 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
           return
         }
         /**
-         * Skip the generation
+         * In server-only mode we don't keep snapshot in public assets
          */
-        route.skip = true
+        if (options.mode === 'server-only') {
+          route.skip = true
+        }
 
         await mkdir(dir, { recursive: true })
         if (route.route === '/__nuxt_content/manifest.json') {

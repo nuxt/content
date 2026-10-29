@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "name": "serverless",
+  "type": "module"
+}
