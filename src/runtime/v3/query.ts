@@ -71,6 +71,21 @@ function toQueryColumn(field: string): string {
   return COLUMN_ALIASES[field] ?? (field === 'path' ? field : `data.${field}`)
 }
 
+/**
+ * v3 defaulted a Markdown page's `title`/`description` to its leading `h1` and the
+ * paragraph after it (the `headings` plugin's `meta.title`/`meta.description`), and
+ * `seo.title`/`seo.description` to those. Frontmatter wins, field by field.
+ */
+function pageDefaults({ data, meta }: Pick<ContentFile, 'data' | 'meta'>) {
+  const title = data.title ?? meta.title ?? ''
+  const description = data.description ?? meta.description ?? ''
+  return {
+    title,
+    description,
+    seo: { ...data.seo, title: data.seo?.title || title, description: data.seo?.description || description },
+  }
+}
+
 async function hydrate<Item extends ContentListFile>(
   content: Pick<ComarkContent, 'get'>,
   item: Item,
@@ -82,6 +97,7 @@ async function hydrate<Item extends ContentListFile>(
   return {
     // Spread the frontmatter first so the identity/meta fields below always win.
     ...source.data,
+    ...(source.meta.type === 'text/markdown' && pageDefaults(source)),
     id: source.meta.key,
     path: source.path,
     stem: source.meta.stem,
