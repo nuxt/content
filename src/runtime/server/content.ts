@@ -4,6 +4,7 @@ import type { ComarkPlugin } from 'comark'
 import toc from 'comark/plugins/toc'
 import headings from 'comark/plugins/headings'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
+import externalLinks from './internal/external-links'
 import { highlight } from '#content/highlight'
 
 export type ContentInstance = AnyComarkContent
@@ -83,13 +84,13 @@ function createInstance(
 
 /**
  * Append the default Comark plugins (`toc`, configured through
- * `content.build.markdown.toc`, and `headings`) and the Shiki plugin configured
+ * `content.build.markdown.toc`, `headings` and `external-links`) and the Shiki plugin configured
  * through `content.build.markdown.highlight`. A plugin the user already
  * registered under the same name is kept instead.
  */
 function withDefaultPlugins(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
   const userPlugins = markdown?.plugins ?? []
-  const defaults = [toc(import.meta.content.toc), headings(), highlight].filter((plugin): plugin is ComarkPlugin =>
+  const defaults = [toc(import.meta.content.toc), headings(), externalLinks(), highlight].filter((plugin): plugin is ComarkPlugin =>
     !!plugin && !userPlugins.some(({ name }) => name === plugin.name),
   )
   return { ...markdown, plugins: [...userPlugins, ...defaults] }

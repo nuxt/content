@@ -29,10 +29,10 @@ describe('content components', async () => {
       expect(link).not.toContain('rel=')
     })
 
-    it('adds `rel="noopener noreferrer"` to external links', async () => {
+    it('adds `rel="nofollow"` to external links, as in v3', async () => {
       const link = findLink(await $fetch<string>('/'), 'External link')
       expect(link).toContain('href="https://nuxt.com"')
-      expect(link).toContain('rel="noopener noreferrer"')
+      expect(link).toContain('rel="nofollow"')
     })
   })
 

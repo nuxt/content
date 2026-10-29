@@ -17,7 +17,7 @@ describe('nuxt ui', async () => {
   it('renders links with `ProseA`', async () => {
     const html = await $fetch<string>('/')
     expect(html).toMatch(/<a href="\/about" class="[^"]*text-primary[^"]*">/)
-    expect(html).toMatch(/<a href="https:\/\/nuxt\.com" rel="noopener noreferrer" class="[^"]*text-primary[^"]*">/)
+    expect(html).toMatch(/<a href="https:\/\/nuxt\.com" rel="nofollow" class="[^"]*text-primary[^"]*">/)
   })
 
   it('renders callout components', async () => {
