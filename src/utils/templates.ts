@@ -17,6 +17,8 @@ readonly v3Compatibility: boolean
 readonly collections: import('@nuxt/content/v3').ResolvedContentCollections
 /** Resolved \`content.build.markdown.highlight\` options, \`false\` when highlighting is disabled. */
 readonly highlight: false | { themes: { light?: string, dark?: string }, langs: string[] }
+/** Resolved \`content.build.markdown.toc\` options. */
+readonly toc: { depth: number, searchDepth: number }
 }
 }
 }

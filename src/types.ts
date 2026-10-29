@@ -1,8 +1,9 @@
 import type { ContentListFile, ContentRegistry, NavigationItem, SourceData } from 'comark-content'
 import type { FullFile } from './runtime/v3/query'
 import type { HighlightOptions } from './utils/highlight'
+import type { TocOptions } from './utils/toc'
 
-export type { HighlightOptions }
+export type { HighlightOptions, TocOptions }
 
 // #region v3 types
 
@@ -43,6 +44,11 @@ export interface ModuleOptions {
        * @see https://content.nuxt.com/docs/getting-started/configuration#highlight
        */
       highlight?: HighlightOptions | boolean
+      /**
+       * Table of contents generated for each document, exposed as `body.toc`.
+       * @see https://content.nuxt.com/docs/getting-started/configuration#toc
+       */
+      toc?: TocOptions
     }
   }
 }

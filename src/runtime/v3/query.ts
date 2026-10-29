@@ -5,6 +5,13 @@ import type {
   QueryField,
   SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
+import type { Toc } from 'comark/plugins/toc'
+
+export interface MinimarkBody<Nodes = ContentFile['nodes']> {
+  type: 'minimark'
+  value: Nodes
+  toc?: Toc
+}
 
 /**
  * The full document shape a hydrated query returns, mirroring the Nuxt Content
@@ -15,8 +22,9 @@ import type {
  * - `id` — the file key (v3 renamed the Comark `meta.key` to `id`).
  * - `path`/`stem`/`extension` — surfaced from `path`/`meta` for convenience.
  * - frontmatter (`Data`) is spread flat so `doc.title` works like v3.
- * - `nodes`/`meta` — the parsed body and file metadata; `meta` also mirrors the
- *   frontmatter, since v3 stored fields outside the schema there.
+ * - `body` — the parsed nodes, in v3's `{ type: 'minimark', value, toc }` shape.
+ * - `meta` — the file metadata; it also mirrors the frontmatter, since v3 stored
+ *   fields outside the schema there.
  */
 export type FullFile<Item> = Item extends ContentListFile<infer Data>
   ? Data & {
@@ -24,7 +32,7 @@ export type FullFile<Item> = Item extends ContentListFile<infer Data>
     path: string
     stem: string
     extension: string
-    body: ContentFile<Data>['nodes']
+    body: MinimarkBody<ContentFile<Data>['nodes']>
     meta: ContentFile<Data>['meta'] & Record<string, any>
   }
   : Item & Pick<ContentFile, 'nodes'>
@@ -102,7 +110,7 @@ async function hydrate<Item extends ContentListFile>(
     path: source.path,
     stem: source.meta.stem,
     extension: source.meta.extension,
-    body: source.nodes,
+    body: { type: 'minimark', value: source.nodes, toc: (source.meta as { toc?: Toc }).toc },
     // v3 kept frontmatter outside the schema under `meta` (`meta.sitemap`,
     // `meta.modifiedAt`), so mirror the frontmatter there too. The file meta wins
     // on conflict: `meta.key` identifies the document (e.g. for `<ContentRenderer>`).

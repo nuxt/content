@@ -2,6 +2,7 @@ import type { AnyComarkContent, ContentHub } from 'comark-content'
 import { createJiti } from 'jiti'
 import type { ResolvedContentCollections } from '../runtime/v3/content-config'
 import type { ResolvedHighlightOptions } from './highlight'
+import type { ResolvedTocOptions } from './toc'
 
 export type ImportContentOptions = {
   /** Collections resolved from the layers' v3 `content.config.ts` files. */
@@ -10,6 +11,8 @@ export type ImportContentOptions = {
   highlight?: ResolvedHighlightOptions | false
   /** Module-process implementation of the `#content/highlight` virtual module. */
   highlightPath?: string
+  /** Resolved `content.build.markdown.toc`. */
+  toc?: ResolvedTocOptions
   /** This module's `@nuxt/content/content` entry, so it resolves without going through `dist` (stubbed builds). */
   contentEntryPath?: string
 }
@@ -29,6 +32,7 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
         .replace(/import\.meta\.rootDir/g, JSON.stringify(rootDir))
         .replace(/import\.meta\.content\.collections/g, JSON.stringify(options.collections ?? {}))
         .replace(/import\.meta\.content\.highlight/g, JSON.stringify(options.highlight ?? false))
+        .replace(/import\.meta\.content\.toc/g, JSON.stringify(options.toc ?? {}))
       return { code: babelJiti.transform({ ...opts, source }) }
     },
   })

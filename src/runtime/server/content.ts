@@ -99,13 +99,14 @@ function createInstance(
 }
 
 /**
- * Append the default Comark plugins (`toc`, `headings`) and the Shiki plugin
- * configured through `content.build.markdown.highlight`. A plugin the user
- * already registered under the same name is kept instead.
+ * Append the default Comark plugins (`toc`, configured through
+ * `content.build.markdown.toc`, and `headings`) and the Shiki plugin configured
+ * through `content.build.markdown.highlight`. A plugin the user already
+ * registered under the same name is kept instead.
  */
 function withDefaultPlugins(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
   const userPlugins = markdown?.plugins ?? []
-  const defaults = [toc(), headings(), highlight].filter((plugin): plugin is ComarkPlugin =>
+  const defaults = [toc(import.meta.content.toc), headings(), highlight].filter((plugin): plugin is ComarkPlugin =>
     !!plugin && !userPlugins.some(({ name }) => name === plugin.name),
   )
   return { ...markdown, plugins: [...userPlugins, ...defaults] }

@@ -10,6 +10,7 @@ import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
+import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
 import { componentsTemplate } from './utils/components'
 import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
@@ -61,6 +62,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const highlight = await resolveHighlightOptions(options.build?.markdown?.highlight, nuxt)
     setupHighlight(highlight, nuxt)
+    const toc = resolveTocOptions(options.build?.markdown?.toc)
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       include: ['@nuxt/content > comark-content > slugify'],
@@ -79,6 +81,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
       'import.meta.content.collections': JSON.stringify(contentCollections),
       'import.meta.content.highlight': JSON.stringify(highlight),
+      'import.meta.content.toc': JSON.stringify(toc),
     })
 
     // The client content runtime uses top-level await. When its chunk is emitted
@@ -92,7 +95,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
-    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight)
+    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc)
 
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
@@ -346,13 +349,14 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
   const imported = await importContent(nuxt.options.rootDir, contentPath, {
     collections,
     highlight,
     highlightPath: resolve('./runtime/server/internal/highlight.node'),
+    toc,
     contentEntryPath: resolve('./runtime/server/content'),
   })
   // Dev server gets its own surface so plugins / basePath can differ without

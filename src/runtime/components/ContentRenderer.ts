@@ -11,8 +11,8 @@ import type { MarkdownDocument as ComarkMarkdownDocument } from 'comark'
 import { globalComponents, localComponents } from '#build/content/components.mjs'
 
 type MarkdownDocumentValue = NonNullable<MarkdownDocumentProps['value']>
-/** A Nuxt Content v3 document, as returned by `queryCollection()`: frontmatter flattened next to `body`. */
-type ContentDocumentValue = { body: MarkdownDocumentValue['nodes'] } & Record<string, any>
+/** Handling both v3 and v4 content documents. */
+type ContentDocumentValue = { body: { value: MarkdownDocumentValue['nodes'] } | MarkdownDocumentValue['nodes'] } & Record<string, any>
 
 function isMarkdownDocument(value: MarkdownDocumentValue | ContentDocumentValue): value is MarkdownDocumentValue {
   return 'nodes' in value
@@ -120,7 +120,8 @@ export default defineComponent({
       const { body, id, path, ...rest } = props.value
       return {
         path,
-        nodes: body,
+        // Handling compatibility with v3 documents.
+        nodes: Array.isArray(body) ? body : body.value,
         frontmatter: rest,
         meta: {
           id,
