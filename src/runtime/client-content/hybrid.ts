@@ -4,13 +4,16 @@ import { createContentClient } from 'comark-content/client'
 import snapshot from 'comark-content/sources/snapshot'
 import type { CacheArtifact, Manifest } from 'comark-content'
 import { readArtifact } from 'comark-content'
+// Imported explicitly: Nuxt doesn't auto-import into `node_modules`, and a bare `$fetch`
+// global isn't defined yet when this module's top-level `await` runs.
+import { $fetch } from '#imports'
 
 async function hybridContentFactory(): Promise<ContentClient> {
   if (import.meta.server) {
     const { v3ClientPlugins } = await import('../v3/content-plugins.client')
     return createContentClient({
       basePath: '/__nuxt_content',
-      fetch: globalThis.$fetch,
+      fetch: $fetch,
       plugins: v3ClientPlugins(),
     })
   }
