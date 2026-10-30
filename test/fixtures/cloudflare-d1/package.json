@@ -1,0 +1,7 @@
+{
+  "name": "nuxt-content-test-cloudflare-d1",
+  "private": true,
+  "scripts": {
+    "build": "nuxi build"
+  }
+}
