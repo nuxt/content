@@ -1,5 +1,5 @@
 import defu from 'defu'
-import { createResolver, defineNuxtModule, addTypeTemplate, addServerPlugin, addServerHandler } from '@nuxt/kit'
+import { createResolver, defineNuxtModule, addTypeTemplate, addNitroPlugin, addServerHandler } from '@nuxt/kit'
 
 export default defineNuxtModule({
   meta: {
@@ -9,7 +9,10 @@ export default defineNuxtModule({
   setup(_opts, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    addServerPlugin(resolve('runtime/server/content-llms.plugin'))
+    addNitroPlugin({
+      nitro3: resolve('runtime/server/content-llms.plugin'),
+      nitro2: resolve('runtime/server/content-llms.plugin.legacy'),
+    })
 
     // This module is installed at `modules:done`, every module has had a chance to set `llms.contentRawMarkdown` by now
     const llmsOption = (nuxt.options as unknown as { llms?: { contentRawMarkdown?: false | { excludeCollections?: string[] } } }).llms
@@ -20,7 +23,13 @@ export default defineNuxtModule({
         })
 
     if (contentRawMarkdown !== false) {
-      addServerHandler({ route: '/raw/**:slug.md', handler: resolve('runtime/server/routes/raw/[...slug].md.get') })
+      addServerHandler({
+        route: '/raw/**:slug.md',
+        handler: {
+          nuxt: resolve('runtime/server/routes/raw/[...slug].md.get'),
+          nitro2: resolve('runtime/server/routes/raw/[...slug].md.get.legacy'),
+        },
+      })
     }
 
     // @ts-expect-error -- TODO: fix types
