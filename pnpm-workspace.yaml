@@ -9,10 +9,10 @@ shamefullyHoist: true
 
 overrides:
   "@nuxt/content": workspace:*
-  "@unhead/vue": ^3.1.8
-  unhead: ^3.1.8
+  "@unhead/vue": ^3.4.3
+  unhead: ^3.4.3
   "undici@>=7.0.0 <7.29.1": ^7.29.1
-  "esbuild@>=0.27.3 <0.28.1": ^0.28.1
+  "esbuild@>=0.27.3 <0.28.1": ^0.28.2
   "sharp@<0.35.5": ^0.35.5
 
 allowBuilds:
