@@ -74,7 +74,6 @@
     "git-url-parse": "^16.1.0",
     "h3": "^1.15.11",
     "hookable": "^5.5.3",
-    "isomorphic-git": "^1.43.1",
     "jiti": "^2.7.0",
     "json-schema-to-typescript-lite": "^15.0.0",
     "mdast-util-to-hast": "^13.2.1",
@@ -113,6 +112,7 @@
     "@libsql/client": "*",
     "@valibot/to-json-schema": "^1.5.0",
     "better-sqlite3": "^12.5.0 || ^13.0.0",
+    "isomorphic-git": "^1.43.1",
     "sqlite3": "*",
     "valibot": "^1.2.0"
   },
@@ -127,6 +127,9 @@
       "optional": true
     },
     "better-sqlite3": {
+      "optional": true
+    },
+    "isomorphic-git": {
       "optional": true
     },
     "valibot": {
@@ -159,6 +162,7 @@
     "csvtojson": "^2.0.14",
     "eslint": "^10.12.0",
     "happy-dom": "^21.0.3",
+    "isomorphic-git": "^1.43.1",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.3",
     "nuxt": "^4.6.3",
