@@ -20,27 +20,6 @@ export interface GitInfo {
 export async function downloadGitRepository(url: string, cwd: string, auth?: GitBasicAuth | GitTokenAuth | string, ref?: GitRefType) {
   const cacheFile = join(cwd, '.content.cache.json')
   const cache = await readFile(cacheFile, 'utf8').then(d => JSON.parse(d)).catch((): null => null)
-  const hash = await getGitRemoteHash(url, ref)
-
-  if (cache) {
-    // Directory exists, skip download
-    if (hash === cache.hash) {
-      await writeFile(cacheFile, JSON.stringify({
-        ...cache,
-        updatedAt: new Date().toISOString(),
-      }, null, 2))
-      return
-    }
-  }
-
-  await mkdir(cwd, { recursive: true })
-
-  let formattedRef: string | undefined
-  if (ref) {
-    if (ref.branch) formattedRef = `refs/heads/${ref.branch}`
-    if (ref.tag) formattedRef = `refs/tags/${ref.tag}`
-  }
-
   const authUrl = new URL(url)
   if (typeof (auth) === 'string') {
     authUrl.password = auth
@@ -55,6 +34,27 @@ export async function downloadGitRepository(url: string, cwd: string, auth?: Git
     if ('password' in auth) {
       authUrl.password = auth.password!
     }
+  }
+
+  const hash = await getGitRemoteHash(authUrl.toString(), ref)
+
+  if (cache) {
+    // Directory exists, skip download
+    if (hash && hash === cache.hash) {
+      await writeFile(cacheFile, JSON.stringify({
+        ...cache,
+        updatedAt: new Date().toISOString(),
+      }, null, 2))
+      return
+    }
+  }
+
+  await mkdir(cwd, { recursive: true })
+
+  let formattedRef: string | undefined
+  if (ref) {
+    if (ref.branch) formattedRef = `refs/heads/${ref.branch}`
+    if (ref.tag) formattedRef = `refs/tags/${ref.tag}`
   }
 
   await git.clone({ fs, http: gitHttp, dir: cwd, url: authUrl.toString(), depth: 1, singleBranch: true, ref: formattedRef })
