@@ -3,10 +3,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import { readGitConfig } from 'pkg-types'
 import gitUrlParse from 'git-url-parse'
-import git from 'isomorphic-git'
-import gitHttp from 'isomorphic-git/http/node'
 
 import type { GitBasicAuth, GitRefType, GitTokenAuth } from '../types'
+import { ensurePackageInstalled } from './dependencies'
 
 export interface GitInfo {
   // Repository name
@@ -15,6 +14,16 @@ export interface GitInfo {
   owner: string
   // Repository URL
   url: string
+}
+
+// Only collections with a `repository` source need isomorphic-git, so it is an optional peer
+async function loadGit() {
+  await ensurePackageInstalled('isomorphic-git')
+  const [{ default: git }, { default: http }] = await Promise.all([
+    import('isomorphic-git'),
+    import('isomorphic-git/http/node'),
+  ])
+  return { git, http }
 }
 
 export async function downloadGitRepository(url: string, cwd: string, auth?: GitBasicAuth | GitTokenAuth | string, ref?: GitRefType) {
@@ -57,7 +66,8 @@ export async function downloadGitRepository(url: string, cwd: string, auth?: Git
     }
   }
 
-  await git.clone({ fs, http: gitHttp, dir: cwd, url: authUrl.toString(), depth: 1, singleBranch: true, ref: formattedRef })
+  const { git, http } = await loadGit()
+  await git.clone({ fs, http, dir: cwd, url: authUrl.toString(), depth: 1, singleBranch: true, ref: formattedRef })
 
   await writeFile(cacheFile, JSON.stringify({
     url: url,
@@ -96,8 +106,9 @@ function resolveRemoteRef(refs: RemoteRefs | undefined, ref: string): string | u
 }
 
 export async function getGitRemoteHash(url: string, ref?: GitRefType): Promise<string | undefined> {
+  const { git, http } = await loadGit()
   try {
-    const remote = await git.getRemoteInfo({ http: gitHttp, url })
+    const remote = await git.getRemoteInfo({ http, url })
     if (ref) {
       if (ref.branch) {
         return resolveRemoteRef(remote.refs.heads as RemoteRefs, ref.branch)
