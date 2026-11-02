@@ -86,7 +86,7 @@
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
-    "minimatch": "^10.2.6",
+    "minimatch": "^11.0.0",
     "nuxt-component-meta": "0.18.0",
     "nypm": "^0.6.10",
     "ohash": "^2.0.12",
