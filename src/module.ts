@@ -1,6 +1,6 @@
 import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
 import defu from 'defu'
-import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, TypegenFieldContext } from 'comark-content'
+import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
 import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
@@ -11,7 +11,7 @@ import { importContent } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
-import { componentsTemplate } from './utils/components'
+import { collectContentComponents, componentsTemplate } from './utils/components'
 import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
@@ -64,6 +64,11 @@ export default defineNuxtModule<ModuleOptions>({
     setupHighlight(highlight, nuxt)
     const toc = resolveTocOptions(options.build?.markdown?.toc)
 
+    // Bundle `@comark/vue` with the app so it shares the app's Vue on the server. Left external
+    // (e.g. with pnpm, where it isn't nested in this module's directory), it loads its own Vue:
+    // `getCurrentInstance()` is `null` in its renderer, and app components aren't visible to it.
+    nuxt.options.build.transpile.push('@comark/vue')
+
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       include: ['@nuxt/content > comark-content > slugify'],
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -96,6 +101,8 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc)
+    // A build reads every document once, shared by the types and components templates.
+    const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
@@ -107,11 +114,15 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Markdown component tags (`::counter`) resolve against this map. Nuxt only
     // registers components lazily, so a runtime `resolveComponent` can't see them.
+    // Documents change live in dev (and `prepare` doesn't build), so only builds
+    // limit it to the components the documents use.
+    let usedComponents: Promise<Set<string> | undefined> | undefined
     addTemplate({
       filename: 'content/components.mjs',
-      getContents: () => componentsTemplate(
+      getContents: async () => componentsTemplate(
         nuxt.apps.default?.components ?? [],
         nuxt.options._layers.map(layer => layer.config.srcDir),
+        readContent && await (usedComponents ||= collectUsedComponents(readContent)),
       ),
       write: true,
     })
@@ -151,7 +162,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Add types templates
      */
-    setupTypes(content, nuxt, contentCollections)
+    setupTypes(content, nuxt, contentCollections, readContent)
 
     /**
      * The following operation are for runtime and don't need to execute them in prepare mode
@@ -191,7 +202,7 @@ function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt)
   }
 }
 
-async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections) {
+async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
   const highlightTypes = addTypeTemplate({ filename: 'content/highlight.d.ts', getContents: highlightTypesTemplate })
 
@@ -210,11 +221,10 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, colle
 
   // Generate types
   if (content) {
-    // TODO: Double check and possibly disable on build to prevent duplicate source loading
     nitroTypeIncludes.push(
       addTypeTemplate({
         filename: 'content/types.d.ts',
-        getContents: () => generateContentTypes(content, collections),
+        getContents: () => generateContentTypes(content, collections, readContent),
       }).dst,
     )
   }
@@ -248,12 +258,18 @@ function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['h
  * exists in the consuming project) doesn't drop the types of every collection:
  * it falls back to the schema declared in `content.config.ts`.
  */
-async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections): Promise<string> {
+async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent?: ContentReader): Promise<string> {
+  const reads = await readContent?.()
   const instances = await Promise.all(resolveInstances(content).map(async (instance) => {
     let manifest: Manifest
     try {
-      await instance.init({ ignoreCache: true })
-      manifest = await instance.manifest()
+      if (reads) {
+        manifest = (await reads.get(instance.name)!).manifest
+      }
+      else {
+        await instance.init({ ignoreCache: true })
+        manifest = await instance.manifest()
+      }
     }
     catch (error) {
       logger.warn(`Could not read content of \`${instance.name}\` to generate types, using its declared schema instead:`, (error as Error).message)
@@ -270,6 +286,51 @@ async function generateContentTypes(content: ContentSurface, collections: Resolv
   catch (error) {
     logger.warn('Could not generate content types:', (error as Error).message)
     return '// generateSourceTypes failed\nexport {}\n'
+  }
+}
+
+interface InstanceContent {
+  manifest: Manifest
+  items: ParsedSnapshot['items']
+}
+
+/** Every instance's content, keyed by instance name. Each entry rejects on its own when its source can't be read. */
+type ContentReader = () => Promise<Map<string, Promise<InstanceContent>>>
+
+/**
+ * Read every instance fully from its source of truth, once. Types and components both
+ * need the content on build: separately, a forced `init()` for the types and a full
+ * one for the snapshot would walk and parse every source twice.
+ */
+function createContentReader(content: ContentSurface): ContentReader {
+  let reads: Map<string, Promise<InstanceContent>> | undefined
+  return async () => {
+    reads ||= new Map(resolveInstances(content).map((instance) => {
+      const read = (async () => {
+        // Full and forced: the manifest and the snapshot are then served from memory.
+        await instance.init({ partial: false, ignoreCache: true })
+        return { manifest: await instance.manifest(), items: (await instance.snapshot()).items }
+      })()
+      // Handled by each consumer; don't report an unhandled rejection before one awaits it.
+      read.catch(() => {})
+      return [instance.name, read]
+    }))
+    return reads
+  }
+}
+
+/**
+ * Names of the components used by the documents of every instance. `undefined` when
+ * a source can't be read: every project component is kept then, so documents still render.
+ */
+async function collectUsedComponents(readContent: ContentReader): Promise<Set<string> | undefined> {
+  try {
+    const reads = await Promise.all((await readContent()).values())
+    return collectContentComponents(reads.flatMap(read => read.items))
+  }
+  catch (error) {
+    logger.warn('Could not read content to find the components it uses, keeping every project component:', (error as Error).message)
+    return undefined
   }
 }
 

@@ -14,6 +14,16 @@ describe('nuxt ui', async () => {
     expect(html).toMatch(/<blockquote class="[^"]*border-accented[^"]*">/)
   })
 
+  it('prefers a `components/content` component over Nuxt UI\'s global `Prose*` one', async () => {
+    const html = await $fetch<string>('/')
+    expect(html).toMatch(/<h3 [^>]*class="project-heading"[^>]*>/)
+  })
+
+  it('prefers the `components` prop over a `components/content` component', async () => {
+    const html = await $fetch<string>('/components-prop')
+    expect(html).toMatch(/<h3 class="prop-heading">/)
+  })
+
   it('renders links with `ProseA`', async () => {
     const html = await $fetch<string>('/')
     expect(html).toMatch(/<a href="\/about" class="[^"]*text-primary[^"]*">/)

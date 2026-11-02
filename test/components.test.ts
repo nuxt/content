@@ -47,4 +47,10 @@ describe('content components', async () => {
   it('renders a global component', async () => {
     expect(await $fetch<string>('/')).toContain('<div class="instanced-component">')
   })
+
+  // `components/TestUnused.vue` imports a missing file: the build only succeeds when
+  // components no document uses are left out.
+  it('renders a project component used by a document', async () => {
+    expect(await $fetch<string>('/')).toContain('<div class="project-component">')
+  })
 })

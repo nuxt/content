@@ -1,114 +1,164 @@
 import { join } from 'node:path'
+import { pascalCase } from 'comark/utils'
 import type { Component as NuxtComponent } from 'nuxt/schema'
 
 const COMPONENT_FILE_RE = /\.(?:vue|ts)$/
 const LAZY_COMPONENT_FILE_RE = /\.lazy\.(?:vue|ts)$/
+const PROSE_RE = /^Prose(?=[A-Z])/
 /** Tag name in documents -> Nuxt component name. */
 const BUNDLED_BUILTIN_COMPONENTS: Record<string, string> = { A: 'NuxtLink' }
 
 /**
+ * Where a candidate comes from, highest priority first. For a tag `foo`, documents can resolve
+ * to `ProseFoo` or `Foo`: `components/content` wins, then `ProseFoo` over `Foo`, then global
+ * over project over module components.
+ */
+enum Rank {
+  ContentProse,
+  Content,
+  GlobalProse,
+  ProjectProse,
+  ModuleProse,
+  Global,
+  Project,
+  Builtin,
+}
+
+interface Candidate {
+  /** Name the entry is keyed by (`ProseFoo` or `Foo`). */
+  name: string
+  rank: Rank
+  component: NuxtComponent
+  lazy: boolean
+}
+
+/**
  * `#build/content/components.mjs`: the components markdown tags (`::counter`) resolve against.
+ * A tag `foo` can resolve to a component named `ProseFoo` or `Foo`. The ranking is done here
+ * (see {@link Rank}): `components` only has the winner for each tag, keyed by the tag in
+ * PascalCase (`Foo`), so the renderer looks it up once and never bundles a component that
+ * can't be picked. Its value is:
  *
- * - `globalComponents`: names of global components. They're already registered on the
- *   Vue app, so `ContentRenderer` resolves them from there.
- * - `localComponents`: `<layer srcDir>/components/content/**`, keyed by their path relative
- *   to that directory (`content/foo/bar.vue` is `FooBar`, used as `::foo-bar`). Imported
- *   statically, except `*.lazy.(vue|ts)` files, which become `async () => import()` loaders
- *   and are code-split. `Prose*` components, including global and module-provided ones
- *   (e.g. Nuxt UI's), are imported statically under their Nuxt name and left out of
- *   `globalComponents`. Other project components are added as lazy loaders under their Nuxt
- *   name, and built-ins such as `NuxtLink` are keyed by the tag they render.
+ * - for a global component, its name: it's already registered on the Vue app, so
+ *   `ContentRenderer` resolves it from there.
+ * - for `<layer srcDir>/components/content/**`, named by their path relative to that directory
+ *   (`content/foo/bar.vue` is `FooBar`, used as `::foo-bar`), a static import, except
+ *   `*.lazy.(vue|ts)` files, which become `async () => import()` loaders and are code-split.
+ * - for `Prose*` components from the project or a module, a static import: they render the
+ *   markdown elements of every document.
+ * - for other project components (e.g. `components/Counter.vue`), a lazy loader, so they're
+ *   only loaded by pages that use them, as in v3. Other module components are left out, as
+ *   bundling all of them would pull in their optional peer deps.
+ * - for built-ins such as `NuxtLink` (rendering `a`), a static import.
  *
  * @param components Components registered in the Nuxt app.
  * @param srcDirs Source directories of the Nuxt layers, highest priority first.
+ * @param usedComponents Component names used by the documents (see {@link collectContentComponents}).
+ *   When set, project and module components are only added if a document uses them, so the
+ *   build doesn't compile every component of the app. Left unset in dev, where documents change live.
  */
-export function componentsTemplate(components: NuxtComponent[], srcDirs: string[]) {
+export function componentsTemplate(components: NuxtComponent[], srcDirs: string[], usedComponents?: Set<string>) {
   const contentDirs = srcDirs.map(dir => join(dir, 'components/content/'))
-  const imports: string[] = []
-  const entries: string[] = []
-  // A component can be registered twice (client and server) or by several layers. Keep the first.
-  const seen = new Set<string>()
-
-  const addImport = (name: string, component: NuxtComponent) => {
-    const id = `__component${imports.length}`
-    const path = JSON.stringify(component.filePath)
-    imports.push(component.export === 'default'
-      ? `import ${id} from ${path}`
-      : `import { ${component.export} as ${id} } from ${path}`)
-    entries.push(`  ${JSON.stringify(name)}: ${id},`)
-  }
-
-  const addLoader = (name: string, component: NuxtComponent) => {
-    const pick = component.export === 'default' ? '' : `.then(m => m[${JSON.stringify(component.export)}])`
-    entries.push(`  ${JSON.stringify(name)}: async () => import(${JSON.stringify(component.filePath)})${pick},`)
+  // Winner per tag, keyed by the name without the `Prose` prefix. Candidates of the same rank
+  // keep the first one: a component can be registered twice (client and server) or by several layers.
+  const winners = new Map<string, Candidate>()
+  const consider = (candidate: Candidate) => {
+    const key = candidate.name.replace(PROSE_RE, '')
+    const current = winners.get(key)
+    if (!current || candidate.rank < current.rank) winners.set(key, candidate)
   }
 
   for (const component of components) {
-    if (!COMPONENT_FILE_RE.test(component.filePath)) continue
+    if (component.island || !COMPONENT_FILE_RE.test(component.filePath)) continue
+    const isProse = PROSE_RE.test(component.pascalName)
+
     const contentDir = contentDirs.find(dir => component.filePath.startsWith(dir))
-    if (!contentDir) continue
-
-    const relativePath = component.filePath.slice(contentDir.length)
-    const isLazy = LAZY_COMPONENT_FILE_RE.test(relativePath)
-    const name = toComponentName(relativePath.replace(isLazy ? LAZY_COMPONENT_FILE_RE : COMPONENT_FILE_RE, ''))
-    if (!name || seen.has(name)) continue
-    seen.add(name)
-
-    if (isLazy) {
-      addLoader(name, component)
+    if (contentDir) {
+      const relativePath = component.filePath.slice(contentDir.length)
+      const lazy = LAZY_COMPONENT_FILE_RE.test(relativePath)
+      const name = toComponentName(relativePath.replace(lazy ? LAZY_COMPONENT_FILE_RE : COMPONENT_FILE_RE, ''))
+      if (name) consider({ name, rank: PROSE_RE.test(name) ? Rank.ContentProse : Rank.Content, component, lazy })
+      continue
     }
-    else {
-      addImport(name, component)
+
+    if (component.global) {
+      consider({ name: component.pascalName, rank: isProse ? Rank.GlobalProse : Rank.Global, component, lazy: false })
+      continue
+    }
+
+    // Project and module components are compiled once added: in a build, only add the used ones.
+    if (usedComponents && !usedComponents.has(component.pascalName)) continue
+    const isProject = !component.filePath.includes('/node_modules/')
+      && srcDirs.some(dir => component.filePath.startsWith(withTrailingSlash(dir)))
+    if (isProject) {
+      consider({ name: component.pascalName, rank: isProse ? Rank.ProjectProse : Rank.Project, component, lazy: !isProse })
+    }
+    else if (isProse) {
+      consider({ name: component.pascalName, rank: Rank.ModuleProse, component, lazy: false })
     }
   }
 
-  // `Prose*` components (from the project or a module such as Nuxt UI) render the markdown
-  // elements of every document, so they're bundled with the renderer under their Nuxt name.
-  for (const component of components) {
-    if (component.island || !component.pascalName.startsWith('Prose') || !COMPONENT_FILE_RE.test(component.filePath)) continue
-    if (seen.has(component.pascalName)) continue
-    seen.add(component.pascalName)
-    addImport(component.pascalName, component)
-  }
-
-  // Other project components (e.g. `components/Counter.vue`) stay usable in documents, as in
-  // v3: always lazy, so they're only loaded by pages that use them. Module-provided ones are
-  // left out, as bundling all of them would pull in their optional peer deps.
-  for (const component of components) {
-    if (component.global || component.island || !COMPONENT_FILE_RE.test(component.filePath)) continue
-    if (component.filePath.includes('/node_modules/')) continue
-    if (!srcDirs.some(dir => component.filePath.startsWith(withTrailingSlash(dir)))) continue
-    if (contentDirs.some(dir => component.filePath.startsWith(dir))) continue
-    if (seen.has(component.pascalName)) continue
-    seen.add(component.pascalName)
-    addLoader(component.pascalName, component)
-  }
-
-  // Built-ins documents always need, bundled with the renderer and keyed by the tag they
-  // render (`NuxtLink` as `A`, so markdown links use it). Nuxt registers them outside
-  // `components/content`, so they're added explicitly; a local component with the same
-  // name (e.g. `components/content/a.vue`) takes precedence.
+  // Nuxt registers built-ins outside `components/content`, so they're added explicitly.
   for (const [name, nuxtName] of Object.entries(BUNDLED_BUILTIN_COMPONENTS)) {
     const component = components.find(c => c.pascalName === nuxtName)
-    if (!component || seen.has(name)) continue
-    seen.add(name)
-    addImport(name, component)
+    if (component) consider({ name, rank: Rank.Builtin, component, lazy: false })
   }
 
-  // `ContentRenderer` checks global names first; leave out the ones bundled above so their
-  // bundled import is used.
-  const globalNames = [...new Set(components.filter(c => c.global && !(c.pascalName.startsWith('Prose') && seen.has(c.pascalName))).map(c => c.pascalName))]
+  const imports: string[] = []
+  const entries: string[] = []
+  for (const [key, { name, rank, component, lazy }] of winners) {
+    let value: string
+    if (rank === Rank.GlobalProse || rank === Rank.Global) {
+      // Registered on the Vue app by Nuxt: resolved from there by name.
+      value = JSON.stringify(name)
+    }
+    else if (lazy) {
+      const pick = component.export === 'default' ? '' : `.then(m => m[${JSON.stringify(component.export)}])`
+      value = `async () => import(${JSON.stringify(component.filePath)})${pick}`
+    }
+    else {
+      value = `__component${imports.length}`
+      const path = JSON.stringify(component.filePath)
+      imports.push(component.export === 'default'
+        ? `import ${value} from ${path}`
+        : `import { ${component.export} as ${value} } from ${path}`)
+    }
+    entries.push(`  ${JSON.stringify(key)}: ${value},`)
+  }
 
   return [
     ...imports,
     '',
-    `export const globalComponents = ${JSON.stringify(globalNames)}`,
-    '',
-    'export const localComponents = {',
+    'export const components = {',
     ...entries,
     '}',
     '',
   ].join('\n')
+}
+
+/**
+ * Names of the components the documents' trees can resolve to: each element tag in
+ * PascalCase and with the `Prose` prefix, the two names `ContentRenderer` looks up.
+ *
+ * @param documents Parsed documents (`nodes` of every file of the snapshot).
+ */
+export function collectContentComponents(documents: Iterable<{ nodes?: unknown }>): Set<string> {
+  const names = new Set<string>()
+  const visit = (node: unknown) => {
+    // Elements are `[tag, props, ...children]`; text nodes are strings.
+    if (!Array.isArray(node)) return
+    const [tag, , ...children] = node
+    if (typeof tag === 'string' && tag) {
+      const name = pascalCase(tag)
+      names.add(name)
+      names.add(`Prose${name}`)
+    }
+    children.forEach(visit)
+  }
+  for (const document of documents) {
+    if (Array.isArray(document.nodes)) document.nodes.forEach(visit)
+  }
+  return names
 }
 
 function withTrailingSlash(dir: string) {
