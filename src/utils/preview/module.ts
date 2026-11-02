@@ -69,7 +69,10 @@ export async function setupPreviewWithAPI(options: ModuleOptions, nuxt: Nuxt, re
   addServerHandler({
     method: 'get',
     route: '/__preview.json',
-    handler: resolve('./runtime/api/preview'),
+    handler: {
+      nuxt: resolve('./runtime/api/preview'),
+      nitro2: resolve('./runtime/api/preview.legacy'),
+    },
   })
   addPrerenderRoutes('/__preview.json')
 
