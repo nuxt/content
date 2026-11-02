@@ -105,7 +105,7 @@
     "unist-util-stringify-position": "^4.0.0",
     "unist-util-visit": "^5.1.0",
     "unplugin": "^3.4.0",
-    "zod": "^3.25.76",
+    "zod": "^4.0.0",
     "zod-to-json-schema": "^3.25.2"
   },
   "peerDependencies": {
