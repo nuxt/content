@@ -13,7 +13,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vueuse/nuxt": "^15.0.0",
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.3",
     "docus": "^5.14.0",
     "drizzle-kit": "^0.31.11",
     "drizzle-orm": "^0.45.3",
