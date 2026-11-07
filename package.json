@@ -52,12 +52,13 @@
   },
   "dependencies": {
 
-    "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
-    "@comark/vue": "^0.8.1",
+    "comark-content": "^0.5.1",
+    "@comark/vue": "^0.9.0",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "@nuxt/kit": "^4.6.3",
-    "comark": "^0.8.1",
+    "comark": "^0.9.0",
     "defu": "^6.1.7",
+    "forges": "^0.3.2",
     "jiti": "^2.7.0"
   },
   "devDependencies": {

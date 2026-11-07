@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@nuxt/content": "workspace:*",
-    "comark-content": "https://pkg.pr.new/comark-content@6708f9b",
+    "comark-content": "^0.5.1",
     "nuxt": "^4.6.3"
   }
 }

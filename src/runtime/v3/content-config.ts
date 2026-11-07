@@ -2,7 +2,8 @@ import { dirname, isAbsolute, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createJiti } from 'jiti'
 import fsSource from 'comark-content/sources/fs'
-import githubSource from 'comark-content/sources/github'
+import forgeSource from 'comark-content/sources/forge'
+import { github } from 'forges/github'
 import type { Source, JsonSchema } from 'comark-content'
 
 /**
@@ -260,9 +261,10 @@ function toSource(descriptor: ResolvedSourceDescriptor, schema?: JsonSchema): So
 
   if (descriptor.repository) {
     const { repo, branch, dir } = parseRepository(descriptor.repository)
-    return githubSource({
+    return forgeSource({
+      provider: github(),
       repo,
-      ...(branch ? { branch } : {}),
+      ...(branch ? { ref: branch } : {}),
       path: [dir, base].filter(Boolean).join('/'),
       prefix: descriptor.prefix,
       exclude: rebasedExclude,
