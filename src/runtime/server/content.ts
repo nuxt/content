@@ -34,20 +34,24 @@ function snapshotLoaders(name: string) {
   // the CDN and the request would reach the handler waiting for them.
   // While prerendering they don't exist yet: fall back to the origin source so
   // the handler can produce them.
+  // `useStorage` is imported explicitly, since Nitro doesn't auto-import in an installed module,
+  // and dynamically, since this file is also loaded in the module process, without `#imports`.
+  const storage = async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - `#imports` is typed only under the Nitro tsconfig
+    const { useStorage } = await import('#imports')
+    return useStorage('assets:content')
+  }
   return {
     loadSnapshot: async () => {
       if (import.meta.prerender) return null
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-      return useStorage('assets:content').getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>
+      return (await storage()).getItem(`${name}/snapshot.json`) as Promise<CacheArtifact | null>
     },
     loadManifest: async () => {
       if (import.meta.prerender) return null
       // Per-instance manifest: the merged hub manifest lists other instances'
       // items too, which hides this instance's documents once applied.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - nitro auto-import (typed only under the Nitro tsconfig)
-      return useStorage('assets:content').getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>
+      return (await storage()).getItem(`${name}/manifest.json`) as Promise<CacheArtifact | null>
     },
   }
 }
