@@ -19,6 +19,8 @@ readonly collections: import('@nuxt/content/v3').ResolvedContentCollections
 readonly highlight: false | { themes: { light?: string, dark?: string }, langs: string[] }
 /** Resolved \`content.build.markdown.toc\` options. */
 readonly toc: { depth: number, searchDepth: number }
+/** Heading tags that link to themselves, resolved from \`content.renderer.anchorLinks\`. */
+readonly anchorLinks: string[]
 }
 }
 }

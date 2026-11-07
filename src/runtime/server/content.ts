@@ -2,7 +2,8 @@ import { comarkContent, contentHub, type CacheArtifact, type ContentOptions, typ
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import type { ComarkPlugin } from 'comark'
 import toc from 'comark/plugins/toc'
-import headings from 'comark/plugins/headings'
+import titleDescription from 'comark/plugins/title-description'
+import headingLinks from 'comark/plugins/heading-links'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
 import externalLinks from './internal/external-links'
 import { highlight } from '#content/highlight'
@@ -88,15 +89,23 @@ function createInstance(
 
 /**
  * Append the default Comark plugins (`toc`, configured through
- * `content.build.markdown.toc`, `headings` and `external-links`) and the Shiki plugin configured
+ * `content.build.markdown.toc`, `title-description`, `heading-links`, configured through
+ * `content.renderer.anchorLinks`, and `external-links`) and the Shiki plugin configured
  * through `content.build.markdown.highlight`. A plugin the user already
  * registered under the same name is kept instead.
  */
 function withDefaultPlugins(markdown: ContentOptions['markdown']): ContentOptions['markdown'] {
   const userPlugins = markdown?.plugins ?? []
-  const defaults = [toc(import.meta.content.toc), headings(), externalLinks(), highlight].filter((plugin): plugin is ComarkPlugin =>
-    !!plugin && !userPlugins.some(({ name }) => name === plugin.name),
-  )
+  // `headings` is the deprecated name of `title-description`.
+  const userNames = new Set(userPlugins.map(({ name }) => name === 'headings' ? 'title-description' : name))
+  const anchorLinks = import.meta.content.anchorLinks
+  const defaults = [
+    toc(import.meta.content.toc),
+    titleDescription(),
+    anchorLinks.length ? headingLinks({ tags: anchorLinks }) : undefined,
+    externalLinks(),
+    highlight,
+  ].filter((plugin): plugin is ComarkPlugin => !!plugin && !userNames.has(plugin.name))
   return { ...markdown, plugins: [...userPlugins, ...defaults] }
 }
 

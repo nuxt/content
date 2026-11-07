@@ -80,10 +80,11 @@ export default defineNuxtConfig({
 
 ## Table of contents and headings
 
-Every instance created with `createNuxtContent()` registers the Comark `toc` and `headings` plugins by default:
+Every instance created with `createNuxtContent()` registers the Comark `toc`, `title-description` and `heading-links` plugins by default:
 
 - `toc` writes the table of contents to `meta.toc`. It collects `h2` and `h3` headings, like v3 did.
-- `headings` writes the text of a leading `h1` to `meta.title` and the paragraph that follows it to `meta.description`. The nodes stay in the rendered body.
+- `title-description` (formerly `headings`) writes the text of a leading `h1` to `meta.title` and the paragraph that follows it to `meta.description`. The nodes stay in the rendered body.
+- `heading-links` links `h2` to `h4` headings to themselves, as v3's `content.renderer.anchorLinks` did: `<h2 id="setup"><a href="#setup">Setup</a></h2>`. `content.renderer.anchorLinks` keeps working.
 
 To change their options, register your own plugin with the same name under `markdown.plugins`:
 
@@ -98,6 +99,19 @@ export const content = createNuxtContent({
   source: fs('content', { cwd: import.meta.rootDir }),
   markdown: {
     plugins: [toc({ depth: 3 })],
+  },
+})
+```
+
+With Nuxt UI, `heading-links` isn't registered: Nuxt UI's `Prose*` heading components add the links themselves, as in v3, and both would nest a link inside another. `content.renderer.anchorLinks` still picks the levels, through `runtimeConfig.public.mdc.headings.anchorLinks`, which Nuxt UI reads. If your own `ProseH2` (or `H2`) component adds a link, set `content.renderer.anchorLinks` to `false`:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  content: {
+    renderer: {
+      anchorLinks: false, // or { h2: true, h3: false } to pick levels
+    },
   },
 })
 ```

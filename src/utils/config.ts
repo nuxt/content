@@ -13,6 +13,8 @@ export type ImportContentOptions = {
   highlightPath?: string
   /** Resolved `content.build.markdown.toc`. */
   toc?: ResolvedTocOptions
+  /** Heading tags resolved from `content.renderer.anchorLinks`. */
+  anchorLinks?: string[]
   /** This module's `@nuxt/content/content` entry, so it resolves without going through `dist` (stubbed builds). */
   contentEntryPath?: string
 }
@@ -33,6 +35,7 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
         .replace(/import\.meta\.content\.collections/g, JSON.stringify(options.collections ?? {}))
         .replace(/import\.meta\.content\.highlight/g, JSON.stringify(options.highlight ?? false))
         .replace(/import\.meta\.content\.toc/g, JSON.stringify(options.toc ?? {}))
+        .replace(/import\.meta\.content\.anchorLinks/g, JSON.stringify(options.anchorLinks ?? []))
       return { code: babelJiti.transform({ ...opts, source }) }
     },
   })

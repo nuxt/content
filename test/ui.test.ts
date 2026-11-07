@@ -14,6 +14,11 @@ describe('nuxt ui', async () => {
     expect(html).toMatch(/<blockquote class="[^"]*border-accented[^"]*">/)
   })
 
+  it('lets Nuxt UI\'s `Prose*` headings add the heading links, without nesting them', async () => {
+    const html = await $fetch<string>('/')
+    expect(html.match(/href="#prose-heading"/g)).toHaveLength(1)
+  })
+
   it('prefers a `components/content` component over Nuxt UI\'s global `Prose*` one', async () => {
     const html = await $fetch<string>('/')
     expect(html).toMatch(/<h3 [^>]*class="project-heading"[^>]*>/)

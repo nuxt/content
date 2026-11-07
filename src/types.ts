@@ -1,6 +1,7 @@
 import type { ContentListFile, ContentRegistry, NavigationItem, SourceData } from 'comark-content'
 import type { FullFile } from './runtime/v3/query'
 import type { HighlightOptions } from './utils/highlight'
+import type { AnchorLinksOptions } from './utils/anchor-links'
 import type { TocOptions } from './utils/toc'
 
 export type { HighlightOptions, TocOptions }
@@ -50,6 +51,18 @@ export interface ModuleOptions {
        */
       toc?: TocOptions
     }
+  }
+  /**
+   * Nuxt Content v3 renderer options, kept for backward compatibility.
+   */
+  renderer?: {
+    /**
+     * Heading levels that link to themselves (`<h2 id="setup"><a href="#setup">`).
+     * With Nuxt UI, its `Prose*` heading components add the links, as in v3.
+     * @default { h2: true, h3: true, h4: true }
+     * @see https://content.nuxt.com/docs/getting-started/configuration#anchorlinks
+     */
+    anchorLinks?: AnchorLinksOptions
   }
 }
 

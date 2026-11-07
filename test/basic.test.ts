@@ -26,4 +26,12 @@ describe('ssr', async () => {
       },
     ])
   })
+
+  it('links h2 to h4 headings to themselves by default, like v3', async () => {
+    const doc = await $fetch<{ nodes: any[] }>('/__nuxt_content/get/')
+    const heading = (tag: string) => doc.nodes.find(node => node[0] === tag)
+    expect(heading('h1').slice(2)).toEqual(['Hello'])
+    expect(heading('h2')[2]).toMatchObject(['a', { href: '#getting-started' }, 'Getting started'])
+    expect(heading('h3')[2]).toMatchObject(['a', { href: '#install' }, 'Install'])
+  })
 })

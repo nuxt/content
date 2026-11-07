@@ -11,6 +11,7 @@ import { importContent } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
+import { setupAnchorLinks } from './utils/anchor-links'
 import { collectContentComponents, componentsTemplate } from './utils/components'
 import type { ModuleOptions } from './types'
 import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
@@ -63,6 +64,7 @@ export default defineNuxtModule<ModuleOptions>({
     const highlight = await resolveHighlightOptions(options.build?.markdown?.highlight, nuxt)
     setupHighlight(highlight, nuxt)
     const toc = resolveTocOptions(options.build?.markdown?.toc)
+    const anchorLinks = setupAnchorLinks(options.renderer?.anchorLinks, nuxt)
 
     // Bundle `@comark/vue` with the app so it shares the app's Vue on the server. Left external
     // (e.g. with pnpm, where it isn't nested in this module's directory), it loads its own Vue:
@@ -87,6 +89,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.collections': JSON.stringify(contentCollections),
       'import.meta.content.highlight': JSON.stringify(highlight),
       'import.meta.content.toc': JSON.stringify(toc),
+      'import.meta.content.anchorLinks': JSON.stringify(anchorLinks),
     })
 
     // The client content runtime uses top-level await. When its chunk is emitted
@@ -100,7 +103,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
     })
 
-    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc)
+    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
     // A build reads every document once, shared by the types and components templates.
     const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
@@ -410,7 +413,7 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions, anchorLinks: string[]): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
   const imported = await importContent(nuxt.options.rootDir, contentPath, {
@@ -418,6 +421,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
     highlight,
     highlightPath: resolve('./runtime/server/internal/highlight.node'),
     toc,
+    anchorLinks,
     contentEntryPath: resolve('./runtime/server/content'),
   })
   // Dev server gets its own surface so plugins / basePath can differ without

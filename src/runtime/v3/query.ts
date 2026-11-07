@@ -81,7 +81,7 @@ function toQueryColumn(field: string): string {
 
 /**
  * v3 defaulted a Markdown page's `title`/`description` to its leading `h1` and the
- * paragraph after it (the `headings` plugin's `meta.title`/`meta.description`), and
+ * paragraph after it (the `title-description` plugin's `meta.title`/`meta.description`), and
  * `seo.title`/`seo.description` to those. Frontmatter wins, field by field.
  */
 function pageDefaults({ data, meta }: Pick<ContentFile, 'data' | 'meta'>) {
