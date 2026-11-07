@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Prepares a fresh orb for @nuxt/content4: the pnpm toolchain the lockfile needs,
+# the workspace dependencies, the stubbed module build the playground and
+# typecheck resolve, and the Chromium build the browser tests drive.
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+step() { printf '\n=== %s ===\n' "$1"; }
+
+# The orb image ships pnpm 12.0.0, which cannot read this repository's lockfile:
+# `ERR_PNPM_OUTDATED_LOCKFILE` for the `@nuxt/content: link:.` override and
+# `ERR_PNPM_UNUSED_PATCH` for the patched comark-content build. `packageManager`
+# is the version CI and local checkouts use; install that one globally so every
+# directory in the workspace gets it, not just the repository root.
+pnpm_version="$(node -p 'require("./package.json").packageManager?.split("@")[1]?.split("+")[0] ?? ""')"
+# Ask from outside the repository: inside it, pnpm 12 reads `packageManager` and
+# reports the pinned version even when the globally installed pnpm is older.
+current_pnpm="$(cd /tmp && pnpm --version 2>/dev/null || true)"
+if [ -n "$pnpm_version" ] && [ "$current_pnpm" != "$pnpm_version" ]; then
+  step "Installing pnpm $pnpm_version"
+  sudo npm i -g "pnpm@$pnpm_version"
+fi
+
+step "pnpm install --frozen-lockfile"
+pnpm install --frozen-lockfile
+
+# `nuxt-module-build build --stub` writes the `dist` entry the playground and the
+# examples resolve `@nuxt/content` to, and `nuxt prepare` writes the generated
+# `.nuxt` type configs that `pnpm typecheck` and the editor read.
+step "pnpm dev:prepare"
+pnpm dev:prepare
+
+# `test/examples/hybrid-*.test.ts` drives a real browser through playwright-core.
+# `--only-shell` matches CI and installs just the headless shell the tests launch.
+if ! ls "$HOME"/.cache/ms-playwright/chromium_headless_shell-* >/dev/null 2>&1; then
+  step "Installing the Chromium headless shell for playwright-core"
+  pnpm exec playwright-core install --only-shell chromium
+fi
+
+# Facts an agent cannot get from the checkout: the orb image's own pnpm is too old
+# for this lockfile, and the browser tests need the Chromium build installed above.
+guidance="$HOME/.config/amp/AGENTS.md"
+marker="# @nuxt/content4 orb notes"
+if ! grep -Fqx "$marker" "$guidance" 2>/dev/null; then
+  step "Adding orb notes to $guidance"
+  mkdir -p "$(dirname "$guidance")"
+  cat >> "$guidance" <<EOF
+
+$marker
+- pnpm is pinned to $pnpm_version by \`packageManager\` in package.json, and pnpm-lock.yaml's first document records it. The image's own pnpm 12.0.0 rejects this lockfile.
+- Run \`pnpm dev:prepare\` after changing the module's build setup; it writes the \`dist\` stub the playground resolves.
+- The example tests boot a full Nuxt app each, so run them with \`pnpm exec vitest run --maxWorkers 1 --no-file-parallelism\`.
+- \`amp orb services ensure\` starts the playground on a portal; see .amp/services.yaml.
+EOF
+fi
+
+step "Orb setup complete"

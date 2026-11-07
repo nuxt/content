@@ -1,0 +1,7 @@
+services:
+  playground:
+    command: pnpm exec nuxt dev playground --host 0.0.0.0 --port "$PORT"
+    health: /
+    portal:
+      title: Playground
+      description: The @nuxt/content playground app.

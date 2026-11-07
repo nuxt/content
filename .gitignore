@@ -60,3 +60,7 @@ Temporary Items
 
 playground/.data
 .local
+
+# Amp
+.amp/portals/
+.amp/in/
