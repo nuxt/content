@@ -26,14 +26,20 @@ Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several
 
 ## `<ContentRenderer>` is now `<ContentDocument>`
 
-Render a document with `<ContentDocument>`. It takes the same props (`value`, `components`, `data`) and the same `empty` slot as v3's `<ContentRenderer>`, and accepts both a document returned by `queryCollection()` and one returned by `content.get()`:
+Render a document with `<ContentDocument>`. It's Comark's `<MarkdownDocument>` with your content components built in, so it takes the same props (`value`, `components`, `data`, `transformNode`, ...). It accepts a document returned by `content.get()` or by `queryCollection()`:
 
 ```diff
 - <ContentRenderer v-if="page" :value="page" />
 + <ContentDocument v-if="page" :value="page" />
 ```
 
-`<ContentRenderer>` still works as a deprecated alias, as part of the v3 compatibility layer: it's registered while `content.v3Composables` is enabled (the default), its generated type is marked `@deprecated`, and in development it logs a warning once. With `v3Composables: false`, only `<ContentDocument>` is registered.
+Compared to v3's `<ContentRenderer>`:
+
+- There's no `empty` slot: render the fallback with `v-if`/`v-else`.
+- `components` values are components: names (`{ p: 'MyParagraph' }`) aren't resolved, import the component instead.
+- `value` is a Comark document (`{ nodes, frontmatter, meta }`). `queryCollection()` documents also carry `nodes` and `frontmatter`, but a hand-built v3 document with only `body` doesn't render.
+
+`<ContentRenderer>` still works as a deprecated alias, as part of the v3 compatibility layer, and keeps the `empty` slot, component names and `body`-only documents. It's registered while `content.v3Compatibility` is enabled (the default), its generated type is marked `@deprecated`, and in development it logs a warning once. With `v3Compatibility: false`, only `<ContentDocument>` is registered.
 
 ## Server config
 

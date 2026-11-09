@@ -3,6 +3,6 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/content'],
   content: {
-    v3Composables: true,
+    v3Compatibility: true,
   },
 })

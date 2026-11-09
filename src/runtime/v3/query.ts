@@ -25,6 +25,8 @@ export interface MinimarkBody<Nodes = ContentFile['nodes']> {
  * - `body` — the parsed nodes, in v3's `{ type: 'minimark', value, toc }` shape.
  * - `meta` — the file metadata; it also mirrors the frontmatter, since v3 stored
  *   fields outside the schema there.
+ * - `nodes`/`frontmatter` — the Comark document fields, so the document can be passed
+ *   to `<ContentDocument>` as is. `nodes` is the same array as `body.value`.
  */
 export type FullFile<Item> = Item extends ContentListFile<infer Data>
   ? Data & {
@@ -34,6 +36,8 @@ export type FullFile<Item> = Item extends ContentListFile<infer Data>
     extension: string
     body: MinimarkBody<ContentFile<Data>['nodes']>
     meta: ContentFile<Data>['meta'] & Record<string, any>
+    nodes: ContentFile<Data>['nodes']
+    frontmatter: Data
   }
   : Item & Pick<ContentFile, 'nodes'>
 
@@ -115,6 +119,8 @@ async function hydrate<Item extends ContentListFile>(
     // `meta.modifiedAt`), so mirror the frontmatter there too. The file meta wins
     // on conflict: `meta.key` identifies the document (e.g. for `<ContentDocument>`).
     meta: { ...source.data, ...source.meta },
+    nodes: source.nodes,
+    frontmatter: source.data,
   } as FullFile<Item>
 }
 

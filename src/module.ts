@@ -39,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {
     watch: true,
-    v3Composables: true,
+    v3Compatibility: true,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -85,7 +85,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
-      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
+      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Compatibility ?? true),
       'import.meta.content.collections': JSON.stringify(contentCollections),
       'import.meta.content.highlight': JSON.stringify(highlight),
       'import.meta.content.toc': JSON.stringify(toc),
@@ -100,7 +100,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     nuxt.options.vite.define = defu(nuxt.options.vite.define, {
-      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Composables ?? true),
+      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Compatibility ?? true),
     })
 
     const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
@@ -120,7 +120,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Documents change live in dev (and `prepare` doesn't build), so only builds
     // limit it to the components the documents use.
     let usedComponents: Promise<Set<string> | undefined> | undefined
-    addTemplate({
+    const componentsTemplateFile = addTemplate({
       filename: 'content/components.mjs',
       getContents: async () => componentsTemplate(
         nuxt.apps.default?.components ?? [],
@@ -129,6 +129,13 @@ export default defineNuxtModule<ModuleOptions>({
       ),
       write: true,
     })
+    // Picked up by TypeScript over the `.mjs`, so its types aren't inferred from the generated imports.
+    addTemplate({
+      filename: 'content/components.d.mts',
+      getContents: () => `import type { Component } from 'vue'\n\nexport declare const components: Record<string, Component>\n`,
+      write: true,
+    })
+    nuxt.options.alias['#content-components'] = componentsTemplateFile.dst
 
     // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.
     addTypeTemplate({
@@ -145,11 +152,11 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin({ src: resolve('./runtime/plugins/hmr.client'), mode: 'client' })
     }
 
-    if (options.v3Composables) {
-      addComponent({ name: 'MDC', filePath: resolve('./runtime/components/MDC') })
+    if (options.v3Compatibility) {
+      addComponent({ name: 'MDC', filePath: resolve('./runtime/v3/components/MDC') })
       addComponent({
         name: 'ContentRenderer',
-        filePath: resolve('./runtime/components/ContentRenderer'),
+        filePath: resolve('./runtime/v3/components/ContentRenderer'),
         // Rendered as the JSDoc of the generated component types, so editors flag `<ContentRenderer>`.
         meta: { description: '@deprecated Use `<ContentDocument>` instead.' },
       })
@@ -437,7 +444,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
   const alreadyHasV3 = Boolean(imported.content && 'query' in imported.content)
   const content = await cloneSurface(imported.content, {
     basePath: '/__NCDEV__/__nuxt_content',
-    plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.v3Composables ?? true),
+    plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.v3Compatibility ?? true),
   })
 
   const sourceNames = resolveInstanceNames(content)

@@ -29,3 +29,4 @@ minimumReleaseAgeExclude:
   - "@comark/vue@0.9.0"
   - comark@0.9.0
   - comark-content@0.5.1
+  - "@nuxt/test-utils@4.4.0"

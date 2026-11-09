@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   content: {
     // Expose the Content v3 API (`queryCollection`, `queryCollectionNavigation`, …)
-    v3Composables: true,
+    v3Compatibility: true,
   },
   compatibilityDate: 'latest',
 })

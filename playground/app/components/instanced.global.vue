@@ -2,9 +2,9 @@
   <div style="border: 1px solid #dc2626; background: #fef2f2; color: #7f1d1d; padding: 8px; margin-bottom: 1rem">
     <strong>Global component</strong> (<code>instanced.global.vue</code>): ❌ not a good practice
     <p>
-      The <code>.global</code> suffix registers it on the Vue app, and only its name is listed in
-      <code>globalComponents</code>. ContentDocument resolves it with
-      <code>resolveComponent()</code> from the app context, so it can be used from any document.
+      The <code>.global</code> suffix registers it on the Vue app, so it isn't listed in the
+      generated components: ContentDocument resolves it from the app's registered components,
+      so it can be used from any document.
     </p>
     <p>
       Nuxt registers global components as async (lazily imported) components, so whether this one

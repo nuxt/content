@@ -39,7 +39,7 @@ export interface ModuleOptions {
    * `<ContentRenderer>` and `<MDC>` components. Set to `false` for a pure v4 app.
    * @default true
    */
-  v3Composables?: boolean
+  v3Compatibility?: boolean
   /**
    * Nuxt Content v3 build options, kept for backward compatibility.
    */

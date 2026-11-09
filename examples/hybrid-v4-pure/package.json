@@ -11,6 +11,6 @@
   "dependencies": {
     "@nuxt/content": "workspace:*",
     "comark-content": "^0.5.1",
-    "nuxt": "^4.6.3"
+    "nuxt": "^4.6.4"
   }
 }

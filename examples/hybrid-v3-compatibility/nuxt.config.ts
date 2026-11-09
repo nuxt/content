@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     // instead of calling the server.
     mode: 'hybrid',
     // Expose the Content v3 API (`queryCollection`, `queryCollectionNavigation`, …)
-    v3Composables: true,
+    v3Compatibility: true,
   },
   compatibilityDate: 'latest',
 })

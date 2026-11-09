@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { pascalCase } from 'comark/utils'
+import { kebabCase, pascalCase } from 'comark/utils'
 import type { Component as NuxtComponent } from 'nuxt/schema'
 
 const COMPONENT_FILE_RE = /\.(?:vue|ts)$/
@@ -33,23 +33,32 @@ interface Candidate {
 }
 
 /**
- * `#build/content/components.mjs`: the components markdown tags (`::counter`) resolve against.
+ * `#build/content/components.mjs` (aliased as `#content-components`): the components markdown tags (`::counter`) resolve against.
  * A tag `foo` can resolve to a component named `ProseFoo` or `Foo`. The ranking is done here
- * (see {@link Rank}): `components` only has the winner for each tag, keyed by the tag in
- * PascalCase (`Foo`), so the renderer looks it up once and never bundles a component that
- * can't be picked. Its value is:
+ * (see {@link Rank}): `components` only has the winner for each tag, so the renderer never
+ * bundles a component that can't be picked.
  *
- * - for a global component, its name: it's already registered on the Vue app, so
- *   `ContentDocument` resolves it from there.
+ * Entries are keyed by the tag as written in documents (`foo`, `foo-bar`), the last key
+ * `MarkdownDocument` looks up after `ProseFoo` and `Foo`. So a `components` prop entry
+ * replaces it (`{ foo: … }`, merged over it) or outranks it (`{ Foo: … }`, `{ ProseFoo: … }`).
+ *
+ * A global component that wins is left out: it's registered on the Vue app, which
+ * `MarkdownDocument` falls back to (`ProseFoo`, then `Foo`, the same order as {@link Rank}).
+ * Other entries are:
+ *
  * - for `<layer srcDir>/components/content/**`, named by their path relative to that directory
  *   (`content/foo/bar.vue` is `FooBar`, used as `::foo-bar`), a static import, except
- *   `*.lazy.(vue|ts)` files, which become `async () => import()` loaders and are code-split.
+ *   `*.lazy.(vue|ts)` files, which become async components and are code-split.
  * - for `Prose*` components from the project or a module, a static import: they render the
  *   markdown elements of every document.
- * - for other project components (e.g. `components/Counter.vue`), a lazy loader, so they're
+ * - for other project components (e.g. `components/Counter.vue`), an async component, so they're
  *   only loaded by pages that use them, as in v3. Other module components are left out, as
  *   bundling all of them would pull in their optional peer deps.
  * - for built-ins such as `NuxtLink` (rendering `a`), a static import.
+ *
+ * Entries are ready to pass to `defineMarkdownDocumentComponent`: lazy ones are wrapped in
+ * `defineAsyncComponent`, and static ones with a `setup` too, so an async `setup` resolves the
+ * same way as a lazy component.
  *
  * @param components Components registered in the Nuxt app.
  * @param srcDirs Source directories of the Nuxt layers, highest priority first.
@@ -106,28 +115,31 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
 
   const imports: string[] = []
   const entries: string[] = []
-  for (const [key, { name, rank, component, lazy }] of winners) {
+  for (const [key, { rank, component, lazy }] of winners) {
+    // Registered on the Vue app by Nuxt: `MarkdownDocument` resolves it from there.
+    if (rank === Rank.GlobalProse || rank === Rank.Global) continue
     let value: string
-    if (rank === Rank.GlobalProse || rank === Rank.Global) {
-      // Registered on the Vue app by Nuxt: resolved from there by name.
-      value = JSON.stringify(name)
-    }
-    else if (lazy) {
+    if (lazy) {
       const pick = component.export === 'default' ? '' : `.then(m => m[${JSON.stringify(component.export)}])`
-      value = `async () => import(${JSON.stringify(component.filePath)})${pick}`
+      value = `defineAsyncComponent(() => import(${JSON.stringify(component.filePath)})${pick})`
     }
     else {
-      value = `__component${imports.length}`
+      const name = `__component${imports.length}`
       const path = JSON.stringify(component.filePath)
       imports.push(component.export === 'default'
-        ? `import ${value} from ${path}`
-        : `import { ${component.export} as ${value} } from ${path}`)
+        ? `import ${name} from ${path}`
+        : `import { ${component.export} as ${name} } from ${path}`)
+      value = `__wrap(${name})`
     }
-    entries.push(`  ${JSON.stringify(key)}: ${value},`)
+    entries.push(`  ${JSON.stringify(kebabCase(key))}: ${value},`)
   }
 
   return [
+    `import { defineAsyncComponent } from 'vue'`,
     ...imports,
+    '',
+    '// Components with a `setup` resolve like lazy ones, so an async `setup` renders the same way.',
+    `const __wrap = c => typeof c !== 'object' || '__asyncLoader' in c || !('setup' in c) ? c : defineAsyncComponent(() => Promise.resolve(c))`,
     '',
     'export const components = {',
     ...entries,
@@ -138,7 +150,7 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
 
 /**
  * Names of the components the documents' trees can resolve to: each element tag in
- * PascalCase and with the `Prose` prefix, the two names `ContentDocument` looks up.
+ * PascalCase and with the `Prose` prefix, the component names a tag can resolve to.
  *
  * @param documents Parsed documents (`nodes` of every file of the snapshot).
  */
