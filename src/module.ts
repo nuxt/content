@@ -4,7 +4,6 @@ import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, ParsedSnaps
 import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { toWebRequest, serveStatic } from 'h3'
 import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent } from './utils/config'
@@ -500,8 +499,8 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
 
   if (nuxt.options.dev) {
     if (content) {
-      // Dev handlers are mounted on the dev server as-is (no `nuxt/server` adapter), so they use h3 v1 directly.
-      addDevServerHandler({ route: '/__NCDEV__/', handler: { nitro2: ev => content.handler(toWebRequest(ev)) } })
+      // The portable `nuxt` variant receives a web-standard event, so this works on h3 v1 and v2 alike.
+      addDevServerHandler({ route: '/__NCDEV__/', handler: { nuxt: event => content.handler(event.req) } })
 
       if (options.watch) {
         setupHmr(content, nuxt)
@@ -523,16 +522,19 @@ function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
     addDevServerHandler({
       route: '/',
       handler: {
-        nitro2: (event) => {
-          const info = content.stat(event.path.replace('/media', ''))
-          if (info?.meta.kind === 'media') {
-            return serveStatic(event, {
-              getContents: async () => content.media.get(info.meta.key),
-              getMeta: () => ({
-                type: info.meta.type,
-              }),
-            })
-          }
+        nuxt: async (event) => {
+          const method = event.req.method
+          if (method !== 'GET' && method !== 'HEAD') return
+
+          const info = content.stat(event.url.pathname.replace('/media', ''))
+          if (info?.meta.kind !== 'media') return
+
+          const body = await content.media.get(info.meta.key)
+          if (body == null) return
+
+          return new Response(method === 'HEAD' ? null : body as BodyInit, {
+            headers: info.meta.type ? { 'content-type': info.meta.type } : undefined,
+          })
         },
       },
     })
