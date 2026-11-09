@@ -3,7 +3,7 @@
     <strong>Global component</strong> (<code>instanced.global.vue</code>): ❌ not a good practice
     <p>
       The <code>.global</code> suffix registers it on the Vue app, and only its name is listed in
-      <code>globalComponents</code>. ContentRenderer resolves it with
+      <code>globalComponents</code>. ContentDocument resolves it with
       <code>resolveComponent()</code> from the app context, so it can be used from any document.
     </p>
     <p>

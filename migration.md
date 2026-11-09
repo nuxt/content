@@ -24,6 +24,17 @@ Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several
 | auto-imported `cms` | auto-imported `content` |
 | `@nuxt/content/cms` | `@nuxt/content/content` |
 
+## `<ContentRenderer>` is now `<ContentDocument>`
+
+Render a document with `<ContentDocument>`. It takes the same props (`value`, `components`, `data`) and the same `empty` slot as v3's `<ContentRenderer>`, and accepts both a document returned by `queryCollection()` and one returned by `content.get()`:
+
+```diff
+- <ContentRenderer v-if="page" :value="page" />
++ <ContentDocument v-if="page" :value="page" />
+```
+
+`<ContentRenderer>` still works as a deprecated alias, as part of the v3 compatibility layer: it's registered while `content.v3Composables` is enabled (the default), its generated type is marked `@deprecated`, and in development it logs a warning once. With `v3Composables: false`, only `<ContentDocument>` is registered.
+
 ## Server config
 
 ```ts

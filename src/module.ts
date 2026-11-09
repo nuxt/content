@@ -112,7 +112,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const clientContentPath = resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
     addImports({ name: 'content', from: clientContentPath })
-    addComponent({ name: 'ContentRenderer', filePath: resolve('./runtime/components/ContentRenderer') })
+    addComponent({ name: 'ContentDocument', filePath: resolve('./runtime/components/ContentDocument') })
     addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
 
     // Markdown component tags (`::counter`) resolve against this map. Nuxt only
@@ -147,6 +147,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.v3Composables) {
       addComponent({ name: 'MDC', filePath: resolve('./runtime/components/MDC') })
+      addComponent({
+        name: 'ContentRenderer',
+        filePath: resolve('./runtime/components/ContentRenderer'),
+        // Rendered as the JSDoc of the generated component types, so editors flag `<ContentRenderer>`.
+        meta: { description: '@deprecated Use `<ContentDocument>` instead.' },
+      })
       addImports([
         { name: 'queryCollection', from: resolve('./runtime/v3/composables') },
         { name: 'queryCollectionNavigation', from: resolve('./runtime/v3/composables') },

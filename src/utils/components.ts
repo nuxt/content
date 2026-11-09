@@ -40,7 +40,7 @@ interface Candidate {
  * can't be picked. Its value is:
  *
  * - for a global component, its name: it's already registered on the Vue app, so
- *   `ContentRenderer` resolves it from there.
+ *   `ContentDocument` resolves it from there.
  * - for `<layer srcDir>/components/content/**`, named by their path relative to that directory
  *   (`content/foo/bar.vue` is `FooBar`, used as `::foo-bar`), a static import, except
  *   `*.lazy.(vue|ts)` files, which become `async () => import()` loaders and are code-split.
@@ -138,7 +138,7 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
 
 /**
  * Names of the components the documents' trees can resolve to: each element tag in
- * PascalCase and with the `Prose` prefix, the two names `ContentRenderer` looks up.
+ * PascalCase and with the `Prose` prefix, the two names `ContentDocument` looks up.
  *
  * @param documents Parsed documents (`nodes` of every file of the snapshot).
  */

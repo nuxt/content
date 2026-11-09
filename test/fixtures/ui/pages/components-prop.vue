@@ -6,7 +6,7 @@ const CustomHeading = (_: unknown, { slots }: { slots: { default?: () => unknown
 </script>
 
 <template>
-  <ContentRenderer
+  <ContentDocument
     v-if="page"
     :value="page"
     :components="{ h3: CustomHeading }"

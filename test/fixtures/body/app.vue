@@ -3,7 +3,7 @@ const { data: page } = await useAsyncData('page', () => queryCollection('docs').
 </script>
 
 <template>
-  <ContentRenderer
+  <ContentDocument
     v-if="page"
     :value="page"
   />

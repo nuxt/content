@@ -29,7 +29,7 @@ describe('body', async () => {
     })
   })
 
-  it('renders the body with `ContentRenderer`', async () => {
+  it('renders the body with `ContentDocument`', async () => {
     const html = await $fetch<string>('/')
     expect(html).toContain('Use the module.')
   })

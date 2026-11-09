@@ -4,7 +4,7 @@ const { data: page } = await useAsyncData(() => route.path, () => queryCollectio
 </script>
 
 <template>
-  <ContentRenderer
+  <ContentDocument
     v-if="page"
     :value="page"
   />

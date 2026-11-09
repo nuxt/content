@@ -3,7 +3,7 @@
     <strong>Bundled component</strong> (<code>components/content/bundled.vue</code>): ✅ best practice
     <p>
       A local content component without <code>.lazy</code>, so it's imported statically into
-      <code>localComponents</code>. It ships in the same chunk as ContentRenderer
+      <code>localComponents</code>. It ships in the same chunk as ContentDocument
       and is available on the first render with no extra request.
     </p>
     <p>

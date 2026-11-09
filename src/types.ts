@@ -34,6 +34,11 @@ export type PageCollections = Collections
 export interface ModuleOptions {
   mode?: 'server-only' | 'hybrid'
   watch?: boolean
+  /**
+   * Content v3 compatibility layer: the `queryCollection*` composables and the deprecated
+   * `<ContentRenderer>` and `<MDC>` components. Set to `false` for a pure v4 app.
+   * @default true
+   */
   v3Composables?: boolean
   /**
    * Nuxt Content v3 build options, kept for backward compatibility.

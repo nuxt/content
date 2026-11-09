@@ -2,7 +2,7 @@
   <div style="display: flex">
     <pre style="flex: 1">{{ navigation }}</pre>
     <div style="flex: 2">
-      <ContentRenderer
+      <ContentDocument
         v-if="page"
         :value="page"
       />

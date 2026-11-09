@@ -17,7 +17,7 @@ export interface MinimarkBody<Nodes = ContentFile['nodes']> {
  * The full document shape a hydrated query returns, mirroring the Nuxt Content
  * v3 collection item: the frontmatter (`Data`) is flattened onto the top level
  * alongside the identity/meta fields and the parsed `nodes` (body/tree), ready
- * to hand to `<ContentRenderer>`.
+ * to hand to `<ContentDocument>`.
  *
  * - `id` — the file key (v3 renamed the Comark `meta.key` to `id`).
  * - `path`/`stem`/`extension` — surfaced from `path`/`meta` for convenience.
@@ -113,7 +113,7 @@ async function hydrate<Item extends ContentListFile>(
     body: { type: 'minimark', value: source.nodes, toc: (source.meta as { toc?: Toc }).toc },
     // v3 kept frontmatter outside the schema under `meta` (`meta.sitemap`,
     // `meta.modifiedAt`), so mirror the frontmatter there too. The file meta wins
-    // on conflict: `meta.key` identifies the document (e.g. for `<ContentRenderer>`).
+    // on conflict: `meta.key` identifies the document (e.g. for `<ContentDocument>`).
     meta: { ...source.data, ...source.meta },
   } as FullFile<Item>
 }

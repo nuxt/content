@@ -6,8 +6,9 @@ const moduleEntry = fileURLToPath(new URL('../../src/module.ts', import.meta.url
 /**
  * The official examples ship the old Content v3 surface: a `content.config.ts`
  * of `defineContentConfig`/`defineCollection` collections, plus `queryCollection`
- * and `<ContentRenderer>`. Booting each one against this module is the regression
- * check that those configs still resolve and render.
+ * and `<ContentRenderer>` (now a deprecated alias of `<ContentDocument>`).
+ * Booting each one against this module is the regression check that those
+ * configs still resolve and render.
  *
  * They declare `modules: ['@nuxt/content']`, while this package is published as
  * `@nuxt/content4`, so the alias points that name at the module under test.
