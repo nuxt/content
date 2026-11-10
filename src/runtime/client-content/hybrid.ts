@@ -9,12 +9,13 @@ import { readArtifact } from 'comark-content'
 import { $fetch } from '#imports'
 
 async function hybridContentFactory(): Promise<ContentClient> {
+  const v3Compatibility = import.meta.content.v3Compatibility
   if (import.meta.server) {
-    const { v3ClientPlugins } = await import('../v3/content-plugins.client')
+    const plugins = v3Compatibility ? (await import('../v3/content-plugins.client')).v3ClientPlugins() : []
     return createContentClient({
       basePath: '/__nuxt_content',
       fetch: $fetch,
-      plugins: v3ClientPlugins(),
+      plugins,
     })
   }
 
@@ -22,9 +23,7 @@ async function hybridContentFactory(): Promise<ContentClient> {
   // One shared plugin set (one WASM database) so multi-instance FTS ranks correctly.
   // `import.meta.content.v3Compatibility` is a build-time define: when it's false the
   // dynamic import is dead code and the sql-query + sqlite-wasm chunk isn't emitted.
-  const sharedPlugins = import.meta.content.v3Compatibility
-    ? (await import('../v3/content-plugins.wasm')).v3WasmPlugins()
-    : []
+  const sharedPlugins = v3Compatibility ? (await import('../v3/content-plugins.wasm')).v3WasmPlugins() : []
 
   const artifact = await $fetch<CacheArtifact | Manifest>('/__nuxt_content/manifest.json')
   const manifest = isCacheArtifact(artifact)

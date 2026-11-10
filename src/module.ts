@@ -112,7 +112,12 @@ export default defineNuxtModule<ModuleOptions>({
     const clientContentPath = resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
     addImports({ name: 'content', from: clientContentPath })
     addComponent({ name: 'ContentDocument', filePath: resolve('./runtime/components/ContentDocument') })
-    addComponent({ name: 'Comark', filePath: fileURLToPath(import.meta.resolve('@comark/vue')) })
+    // `@comark/vue` only has a named export; `addComponent` would otherwise import `default`.
+    addComponent({
+      name: 'Markdown',
+      export: 'Markdown',
+      filePath: fileURLToPath(import.meta.resolve('@comark/vue')),
+    })
 
     // Markdown component tags (`::counter`) resolve against this map. Nuxt only
     // registers components lazily, so a runtime `resolveComponent` can't see them.
