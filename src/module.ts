@@ -38,7 +38,7 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {
     watch: true,
-    v3Compatibility: true,
+    compatibilityVersion: 3,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -83,7 +83,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
-      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Compatibility ?? true),
+      'import.meta.content.compatibilityVersion': JSON.stringify(options.compatibilityVersion),
       'import.meta.content.collections': JSON.stringify(contentCollections),
       'import.meta.content.highlight': JSON.stringify(highlight),
       'import.meta.content.toc': JSON.stringify(toc),
@@ -98,7 +98,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     nuxt.options.vite.define = defu(nuxt.options.vite.define, {
-      'import.meta.content.v3Compatibility': JSON.stringify(options.v3Compatibility ?? true),
+      'import.meta.content.compatibilityVersion': JSON.stringify(options.compatibilityVersion),
     })
 
     const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
@@ -155,7 +155,7 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin({ src: resolve('./runtime/plugins/hmr.client'), mode: 'client' })
     }
 
-    if (options.v3Compatibility) {
+    if (options.compatibilityVersion === 3) {
       addComponent({ name: 'MDC', filePath: resolve('./runtime/v3/components/MDC') })
       addComponent({
         name: 'ContentRenderer',
@@ -447,7 +447,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
   const alreadyHasV3 = Boolean(imported.content && 'query' in imported.content)
   const content = await cloneSurface(imported.content, {
     basePath: '/__NCDEV__/__nuxt_content',
-    plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.v3Compatibility ?? true),
+    plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.compatibilityVersion === 3),
   })
 
   const sourceNames = resolveInstanceNames(content)

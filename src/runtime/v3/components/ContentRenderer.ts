@@ -15,7 +15,7 @@ function isMarkdownDocument(value: MarkdownDocumentValue | ContentDocumentValue)
 let warned = false
 
 /**
- * @deprecated Part of the Content v3 compatibility layer (`content.v3Compatibility`), use `<ContentDocument>` instead.
+ * @deprecated Part of the Content v3 compatibility layer (`content.compatibilityVersion: 3`), use `<ContentDocument>` instead.
  */
 export default defineComponent({
   name: 'ContentRenderer',

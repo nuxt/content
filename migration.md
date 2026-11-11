@@ -39,7 +39,7 @@ Compared to v3's `<ContentRenderer>`:
 - `components` values are components: names (`{ p: 'MyParagraph' }`) aren't resolved, import the component instead.
 - `value` is a Comark document (`{ nodes, frontmatter, meta }`). `queryCollection()` documents also carry `nodes` and `frontmatter`, but a hand-built v3 document with only `body` doesn't render.
 
-`<ContentRenderer>` still works as a deprecated alias, as part of the v3 compatibility layer, and keeps the `empty` slot, component names and `body`-only documents. It's registered while `content.v3Compatibility` is enabled (the default), its generated type is marked `@deprecated`, and in development it logs a warning once. With `v3Compatibility: false`, only `<ContentDocument>` is registered.
+`<ContentRenderer>` still works as a deprecated alias, as part of the v3 compatibility layer, and keeps the `empty` slot, component names and `body`-only documents. It's registered while `content.compatibilityVersion` is `3` (the default), its generated type is marked `@deprecated`, and in development it logs a warning once. With `compatibilityVersion: 4`, only `<ContentDocument>` is registered.
 
 ## Server config
 

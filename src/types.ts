@@ -35,11 +35,11 @@ export interface ModuleOptions {
   mode?: 'server-only' | 'hybrid'
   watch?: boolean
   /**
-   * Content v3 compatibility layer: the `queryCollection*` composables and the deprecated
-   * `<ContentRenderer>` and `<MDC>` components. Set to `false` for a pure v4 app.
-   * @default true
+   * Legacy Content v3 compatibility layer, to be removed later: the `queryCollection*` composables
+   * and the deprecated `<ContentRenderer>` and `<MDC>` components. Set to `4` for a pure v4 app.
+   * @default 3
    */
-  v3Compatibility?: boolean
+  compatibilityVersion?: 3 | 4
   /**
    * Nuxt Content v3 build options, kept for backward compatibility.
    */

@@ -10,8 +10,8 @@ declare global {
     /** Nuxt project root directory. Use this to resolve paths relative to the project root in your content configuration. */
     readonly rootDir: string
     readonly content: {
-      /** When true, v3 query/search composables are enabled and sql-query + FTS plugins are injected into the Content instance. */
-      readonly v3Compatibility: boolean
+      /** Resolved `content.compatibilityVersion`. With `3`, v3 query/search composables are enabled and sql-query + FTS plugins are injected into the Content instance. */
+      readonly compatibilityVersion: 3 | 4
       /** Resolved `content.build.markdown.highlight` options, `false` when highlighting is disabled. */
       readonly highlight: false | { themes: { light?: string, dark?: string }, langs: string[] }
     }
