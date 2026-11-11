@@ -26,7 +26,7 @@ minimumReleaseAgeExclude:
   - "@nuxt/vite-server@4.6.0"
   - nuxt@4.6.0
   - cssnano-utils@8.2.0
-  - "@comark/vue@0.9.0"
-  - comark@0.9.0
-  - comark-content@0.5.1
+  - "@comark/vue@0.9.1"
+  - comark@0.9.1
+  - comark-content@0.6.0
   - "@nuxt/test-utils@4.4.0"

@@ -235,8 +235,9 @@ function resolveDescriptor(descriptor: SourceDescriptor, rootDir: string): Resol
 function directoryPrefix(include: string): string | undefined {
   const base = splitGlob(include)
   // A single file (`docs/a.md`) is handled by `singleFilePrefix`; a bare glob has no directory.
-  if (!base || base.includes('.')) return undefined
-  return `/${base}`
+  // Only the last part of a glob-less include can be a file: `1.docs/**` is a directory.
+  if (!base || (base === include && base.includes('.'))) return undefined
+  return toPathPrefix(base)
 }
 
 /**
@@ -249,7 +250,12 @@ function singleFilePrefix(include: string): string | undefined {
     return undefined
   }
   const dir = dirname(include)
-  return dir === '.' ? undefined : `/${dir}`
+  return dir === '.' ? undefined : toPathPrefix(dir)
+}
+
+/** v3 drops the numbering of directories in paths (`1.docs` → `/docs`), but keeps versions (`1.x`). */
+function toPathPrefix(dir: string): string {
+  return '/' + dir.split('/').map(part => /^\d+(?:\.\d+)*(?:\.x)?$/.test(part) ? part : part.replace(/^\d+\./, '')).join('/')
 }
 
 function toSource(descriptor: ResolvedSourceDescriptor, schema?: JsonSchema): Source {

@@ -171,8 +171,8 @@ importers:
   .:
     dependencies:
       '@comark/vue':
-        specifier: ^0.9.0
-        version: 0.9.0(shiki@4.6.0)(vue@3.5.45(typescript@6.0.3))
+        specifier: ^0.9.1
+        version: 0.9.1(@nuxt/kit@4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.141.0)(rolldown@1.2.16)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.68.0)(vite@8.3.6)))(@nuxt/schema@4.6.4)(shiki@4.6.0)(vue@3.5.45(typescript@6.0.3))
       '@nuxt/kit':
         specifier: ^4.6.4
         version: 4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.141.0)(rolldown@1.2.16)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.68.0)(vite@8.3.6))
@@ -180,11 +180,11 @@ importers:
         specifier: 3.54.1-build1
         version: 3.54.1-build1
       comark:
-        specifier: ^0.9.0
-        version: 0.9.0(shiki@4.6.0)
+        specifier: ^0.9.1
+        version: 0.9.1(shiki@4.6.0)
       comark-content:
-        specifier: ^0.5.1
-        version: 0.5.1(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
+        specifier: ^0.6.0
+        version: 0.6.0(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
       defu:
         specifier: ^6.1.7
         version: 6.1.7
@@ -277,8 +277,8 @@ importers:
         specifier: link:../..
         version: link:../..
       comark-content:
-        specifier: ^0.5.1
-        version: 0.5.1(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
+        specifier: ^0.6.0
+        version: 0.6.0(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
       nuxt:
         specifier: ^4.6.4
         version: 4.6.4(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.13(supports-color@10.2.2)))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.13(supports-color@10.2.2)))(@oxc-project/types@0.156.0)(@types/node@26.6.6)(@vitejs/devtools@0.8.2)(@vue/compiler-sfc@3.5.45)(acorn@8.19.0)(bare-buffer@3.7.1)(confbox@0.3.2)(db0@0.3.4)(dotenv@17.4.2)(esbuild@0.28.2)(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(mlly@1.8.2)(optionator@0.9.4)(oxc-parser@0.141.0)(rolldown@1.2.16)(rollup-plugin-visualizer@7.1.3(rolldown@1.2.16)(rollup@4.68.0))(rollup@4.68.0)(srvx@1.0.8)(supports-color@10.2.2)(terser@5.51.2)(typescript@6.0.3)(vite@8.3.6)(vue-tsc@3.3.14(typescript@6.0.3))(yaml@2.9.1)
@@ -545,14 +545,20 @@ packages:
   '@colordx/core@7.3.0':
     resolution: {integrity: sha512-LVzTTPhX7wpy7TkGjouA9zbbCBIw92RGm7ZQqSKFE0oYE3sMx2FGXz90eVpgw7k/+wrrY+qJ86nHXifZWMS5jA==}
 
-  '@comark/vue@0.9.0':
-    resolution: {integrity: sha512-B/PS8AwaXdwW9gMsnqqmClLdYI8/AY0cdpuznHdSsR+ixZH4JActz0c08uVHzSIfhqR03rB1HGLest2dzM2lVg==}
+  '@comark/vue@0.9.1':
+    resolution: {integrity: sha512-/axFOPIkvxm1iEOa9eIgLzJzp5rAz9nM7Bx6vGt5D5LhQrgQ0VqTyPTWOm9NvJlY45alScSC/rLCskVtfNNC5Q==}
     peerDependencies:
+      '@nuxt/kit': ^4.6.3
+      '@nuxt/schema': ^4.6.3
       beautiful-mermaid: ^1.1.3
       katex: ^0.19.1
-      shiki: ^4.5.0
+      shiki: ^4.6.0
       vue: ^3.5.43
     peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@nuxt/schema':
+        optional: true
       beautiful-mermaid:
         optional: true
       katex:
@@ -3805,8 +3811,8 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.5.1:
-    resolution: {integrity: sha512-82XwzlkAwzfhOzTBlK7gtFi6am/N6rAjfe2wDtSzeR1zuOxxnjwKy4kFn7cnZ3J8uWZ4uGRO8vtnu+bSHXlbtg==}
+  comark-content@0.6.0:
+    resolution: {integrity: sha512-3W5TwelX17/20uuYYA1moHkUCUBS97d5Z+qrFyv4UwRPKtjapmN9kth49NuhItVp0RH6sV3Do+QhP5k4R6XtVg==}
     hasBin: true
     peerDependencies:
       forges: ^0.3.0
@@ -3817,13 +3823,13 @@ packages:
       unstorage:
         optional: true
 
-  comark@0.9.0:
-    resolution: {integrity: sha512-dTFxOwlImNFzKZDjdGh33RNVK+sgvKN9TeO/1trqzxeR2vQeUagFUsdNtc4xGhnd7Gltzfn4qNZEc3UH/zqMJg==}
+  comark@0.9.1:
+    resolution: {integrity: sha512-ChyYrULVddXU50WFHaG5yGEZhnVpXLh7LoHMUuZ8esCtruxhX8ghOpo79As/LBQ64INk7uTzF0QvXDO3qKSRog==}
     peerDependencies:
       beautiful-mermaid: ^1.1.3
       katex: ^0.19.1
       rangi: ^2.2.0
-      shiki: ^4.5.0
+      shiki: ^4.6.0
     peerDependenciesMeta:
       beautiful-mermaid:
         optional: true
@@ -5082,8 +5088,8 @@ packages:
     resolution: {integrity: sha512-ayF7iT+44LXdxJLTrTd3TLQpFDDvPCBxXxbv+pMUSuHA5Q8zyAfwkRP6aHHwNVFBUFWtxAHqwNJxF8vMZLAbVg==}
     engines: {node: '>=18'}
 
-  markdown-exit@2.1.0:
-    resolution: {integrity: sha512-ffGj82OodjwgZ2tZtXBLXvJsMbvgtp2r+RDQgpAuWSk2Zi2zgNfQPyzVQFHAUV6Z/B/uQwqFHHEKNmeogIMsbw==}
+  markdown-exit@2.1.3:
+    resolution: {integrity: sha512-kHd0ffgNzRsjyd8ovxZX1iQsv1tkpRU9F7EGDcrMDxB6IwF5w0IMphqhIfDCSlgTh+NYSFyANaGQHsgHZU7mDw==}
 
   marked@17.0.6:
     resolution: {integrity: sha512-gB0gkNafnonOw0obSTEGZTT86IuhILt2Wfx0mWH/1Au83kybTayroZ/V6nS25mN7u8ASy+5fMhgB3XPNrOZdmA==}
@@ -6040,10 +6046,6 @@ packages:
   slash@5.1.0:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
-
-  slugify@1.6.9:
-    resolution: {integrity: sha512-vZ7rfeehZui7wQs438JXBckYLkIIdfHOXsaVEUMyS5fHo1483l1bMdo0EDSWYclY0yZKFOipDy4KHuKs6ssvdg==}
-    engines: {node: '>=8.0.0'}
 
   smob@1.6.2:
     resolution: {integrity: sha512-RQsvleCbF8cVHEv+xuDGaA4pOizFqJ0GgjtMSRo6oP8pnN7WsigHgVGey6aILRBKv4W2YOMHLqbKdnB6hpB9fw==}
@@ -7277,11 +7279,13 @@ snapshots:
 
   '@colordx/core@7.3.0': {}
 
-  '@comark/vue@0.9.0(shiki@4.6.0)(vue@3.5.45(typescript@6.0.3))':
+  '@comark/vue@0.9.1(@nuxt/kit@4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.141.0)(rolldown@1.2.16)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.68.0)(vite@8.3.6)))(@nuxt/schema@4.6.4)(shiki@4.6.0)(vue@3.5.45(typescript@6.0.3))':
     dependencies:
-      comark: 0.9.0(shiki@4.6.0)
+      comark: 0.9.1(shiki@4.6.0)
       vue: 3.5.45(typescript@6.0.3)
     optionalDependencies:
+      '@nuxt/kit': 4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.141.0)(rolldown@1.2.16)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.16)(rollup@4.68.0)(vite@8.3.6))
+      '@nuxt/schema': 4.6.4
       shiki: 4.6.0
     transitivePeerDependencies:
       - rangi
@@ -11613,13 +11617,12 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.5.1(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))):
+  comark-content@0.6.0(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))):
     dependencies:
-      comark: 0.9.0(shiki@4.6.0)
+      comark: 0.9.1(shiki@4.6.0)
       hookable: 6.1.2
       pathe: 2.0.3
       picomatch: 4.0.7
-      slugify: 1.6.9
       ufo: 1.6.4
     optionalDependencies:
       forges: 0.3.2
@@ -11630,13 +11633,13 @@ snapshots:
       - rangi
       - shiki
 
-  comark@0.9.0(shiki@4.6.0):
+  comark@0.9.1(shiki@4.6.0):
     dependencies:
       character-entities: 2.0.2
       character-entities-legacy: 3.0.0
       js-yaml: 5.5.0
       linkify-it: 6.1.0
-      markdown-exit: 2.1.0
+      markdown-exit: 2.1.3
     optionalDependencies:
       shiki: 4.6.0
 
@@ -12998,7 +13001,7 @@ snapshots:
       type-fest: 4.41.0
       web-worker: 1.5.0
 
-  markdown-exit@2.1.0:
+  markdown-exit@2.1.3:
     dependencies:
       character-entities: 2.0.2
       linkify-it: 6.1.0
@@ -14694,8 +14697,6 @@ snapshots:
   sisteransi@1.0.5: {}
 
   slash@5.1.0: {}
-
-  slugify@1.6.9: {}
 
   smob@1.6.2: {}
 

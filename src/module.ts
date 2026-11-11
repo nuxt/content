@@ -71,7 +71,6 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.build.transpile.push('@comark/vue')
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
-      include: ['@nuxt/content > comark-content > slugify'],
       exclude: ['@sqlite.org/sqlite-wasm'],
     })
 

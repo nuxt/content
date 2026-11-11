@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
-import type { Source } from 'comark-content'
+import { comarkContent, type Source } from 'comark-content'
 import { readContentConfigSources } from '../src/runtime/v3/content-config'
 
 const configPath = fileURLToPath(new URL('./fixtures/content-config/content.config.ts', import.meta.url))
@@ -10,7 +10,7 @@ function loadSources() {
   return readContentConfigSources(configPath) as Record<FixtureCollection, Source> & Record<string, Source | undefined>
 }
 
-type FixtureCollection = 'agencies' | 'blog' | 'custom' | 'docs' | 'index' | 'landing' | 'raw' | 'remote'
+type FixtureCollection = 'agencies' | 'blog' | 'custom' | 'docs' | 'guide' | 'index' | 'landing' | 'raw' | 'remote'
 
 describe('readContentConfigSources', () => {
   it('creates one source per collection, skipping collections without a source', async () => {
@@ -20,6 +20,7 @@ describe('readContentConfigSources', () => {
       'blog',
       'custom',
       'docs',
+      'guide',
       'index',
       'landing',
       'raw',
@@ -42,6 +43,17 @@ describe('readContentConfigSources', () => {
     expect(sources.remote.prefix).toBe('/remote')
     // A string glob keeps its directory in the path, like v3 (`blog/a.md` → `/blog/a`).
     expect(sources.blog.prefix).toBe('/blog')
+  })
+
+  it('drops the numbering of a glob directory from paths and navigation, like v3', async () => {
+    const content = comarkContent('guide', { source: loadSources().guide })
+    expect((await content.list()).map(file => file.path)).toEqual(['/guide/intro'])
+    const navigation = await content.navigation()
+    expect(navigation).toMatchObject([
+      { title: 'Guide', path: '/guide', children: [{ title: 'Introduction', path: '/guide/intro', stem: '1.intro' }] },
+    ])
+    // The folder comes from the prefix, not from a directory of the source.
+    expect(navigation[0]).not.toHaveProperty('stem')
   })
 
   it('keeps the directory of a single-file source as its prefix, like v3', async () => {

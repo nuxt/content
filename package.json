@@ -51,11 +51,11 @@
     "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "comark-content": "^0.5.1",
-    "@comark/vue": "^0.9.0",
+    "comark-content": "^0.6.0",
+    "@comark/vue": "^0.9.1",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "@nuxt/kit": "^4.6.4",
-    "comark": "^0.9.0",
+    "comark": "^0.9.1",
     "defu": "^6.1.7",
     "forges": "^0.3.2",
     "jiti": "^2.7.0"

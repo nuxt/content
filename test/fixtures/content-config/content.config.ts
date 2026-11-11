@@ -56,6 +56,11 @@ export default defineContentConfig({
         title: z.string(),
       }),
     }),
+    // Numbered directory: v3 serves `1.guide/1.intro.md` at `/guide/intro`.
+    guide: defineCollection({
+      type: 'page',
+      source: '1.guide/**',
+    }),
     // Nested glob with a filename extension in the tail.
     agencies: defineCollection({
       type: 'page',
