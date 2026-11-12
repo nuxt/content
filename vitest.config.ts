@@ -11,6 +11,8 @@ export default defineVitestConfig({
     environment: 'nuxt',
     alias: {
       '#content/manifest': resolve('./test/mock/content-manifest.ts'),
+      '#content/adapter': resolve('./test/mock/content-adapter.ts'),
+      '#content/local-adapter': resolve('./test/mock/content-local-adapter.ts'),
     },
     include: ['test/**/*.test.ts'],
     exclude: [

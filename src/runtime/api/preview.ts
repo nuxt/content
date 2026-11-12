@@ -1,7 +1,7 @@
 import type { ComponentMeta } from 'vue-component-meta'
 import { eventHandler } from 'h3'
 import type { RuntimeConfig } from '@nuxt/content'
-import { useRuntimeConfig, useAppConfig } from '#imports'
+import { useRuntimeConfig, useAppConfig } from 'nitropack/runtime'
 // @ts-expect-error import does exist
 import components from '#nuxt-component-meta/nitro'
 import { collections, gitInfo, appConfigSchema } from '#content/preview'

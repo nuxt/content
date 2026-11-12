@@ -35,7 +35,7 @@ import type { Manifest } from './types/manifest'
 import { setupPreview, setupPreviewWithAPI, shouldEnablePreview } from './utils/preview/module'
 import { parseSourceBase } from './utils/source'
 import { databaseVersion, getLocalDatabase, refineDatabaseConfig, resolveDatabaseAdapter } from './utils/database'
-import type { ParsedContentFile } from './types'
+import type { CacheEntry, ParsedContentFile } from './types'
 import { initiateValidatorsContext } from './utils/dependencies'
 
 // Export public utils
@@ -49,6 +49,7 @@ const moduleDefaults: Partial<ModuleOptions> = {
   },
   preview: {},
   watch: { enabled: true },
+  llms: true,
   renderer: {
     alias: {},
     anchorLinks: {
@@ -228,9 +229,13 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    if (hasNuxtModule('nuxt-llms')) {
-      installModule(resolver.resolve('./features/llms'))
-    }
+    // Installed at `modules:done` so a module listed after this one can set `content.llms = false`
+    nuxt.hook('modules:done', async () => {
+      const llms = (nuxt.options as unknown as { content?: ModuleOptions }).content?.llms ?? options.llms
+      if (llms !== false && hasNuxtModule('nuxt-llms')) {
+        await installModule(resolver.resolve('./features/llms'))
+      }
+    })
 
     await configureMDCModule(options, nuxt)
 
@@ -359,6 +364,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
        */
       const list: Array<[string, Array<string>, string]> = []
       for await (const chunk of chunks(_keys, 25)) {
+        const cacheEntries: CacheEntry[] = []
         await Promise.all(chunk.map(async (key) => {
           const keyInCollection = join(collection.name, source?.prefix || '', key)
           const fullPath = join(cwd, fixed, key)
@@ -382,7 +388,8 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
                 collectionType: collection.type,
               })
               if (parsedContent) {
-                db.insertDevelopmentCache(keyInCollection, JSON.stringify(parsedContent), checksum)
+                const value = JSON.stringify(parsedContent)
+                cacheEntries.push({ id: keyInCollection, value, checksum })
               }
             }
 
@@ -412,6 +419,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)
           }
         }))
+        await db.insertDevelopmentCacheBatch(cacheEntries)
       }
 
       // Sort by file name to ensure consistent order

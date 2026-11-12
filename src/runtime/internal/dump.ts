@@ -11,7 +11,11 @@ export async function decompressSQLDump(base64Str: string, compressionType: Comp
   }
   else if (typeof atob !== 'undefined') {
     // Browser environment
-    binaryData = Uint8Array.from(atob(base64Str), c => c.charCodeAt(0))
+    const binary = atob(base64Str)
+    binaryData = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      binaryData[i] = binary.charCodeAt(i)
+    }
   }
   else {
     throw new TypeError('No base64 decoding method available')

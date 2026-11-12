@@ -1,4 +1,4 @@
-import type { H3Event } from 'h3'
+import type { ContentEvent } from './event'
 
 /**
  * Minimal type view of the per-request context that `@nuxtjs/i18n` (v10+)
@@ -42,7 +42,7 @@ interface NuxtI18nServerContext {
  * user's per-request locale. In event handlers where the active locale matters,
  * call `.locale()` explicitly.
  */
-export function detectServerLocale(event: H3Event | undefined): string | undefined {
+export function detectServerLocale(event: ContentEvent | undefined): string | undefined {
   const ctx = event?.context?.nuxtI18n as NuxtI18nServerContext | undefined
   return ctx?.detectLocale || ctx?.vueI18nOptions?.locale
 }

@@ -1,26 +1,53 @@
 import type { H3Event } from 'h3'
 import { isAbsolute } from 'pathe'
+import { decode } from 'ufo'
 import type { Connector } from 'db0'
 import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import { refineContentFields } from './collection'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
-import adapter from '#content/adapter'
 import localAdapter from '#content/local-adapter'
 
 let db: Connector
-export default function loadDatabaseAdapter(config: RuntimeConfig['content']) {
-  const { database, localDatabase } = config
+let _adapterPromise: Promise<(opts: unknown) => Connector> | undefined
+let _databasePromise: Promise<Connector> | undefined
 
-  if (!db) {
-    if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
-      db = localAdapter(refineDatabaseConfig(localDatabase))
-    }
-    else {
-      db = adapter(refineDatabaseConfig(database))
-    }
+function getAdapter(): Promise<(opts: unknown) => Connector> {
+  if (!_adapterPromise) {
+    _adapterPromise = import('#content/adapter').then(m => m.default || m)
   }
+  return _adapterPromise
+}
+
+async function getDatabase(config: RuntimeConfig['content']): Promise<Connector> {
+  if (db) {
+    return db
+  }
+
+  if (!_databasePromise) {
+    _databasePromise = (async () => {
+      const { database, localDatabase } = config
+
+      if (import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+        return localAdapter(refineDatabaseConfig(localDatabase))
+      }
+
+      const adapter = await getAdapter()
+      return adapter(refineDatabaseConfig(database))
+    })().catch((error) => {
+      // Allow a later request to retry initialization after a transient failure.
+      _databasePromise = undefined
+      throw error
+    })
+  }
+
+  db = await _databasePromise
+  return db
+}
+
+export default async function loadDatabaseAdapter(config: RuntimeConfig['content']) {
+  await getDatabase(config)
 
   return <DatabaseAdapter>{
     all: async (sql, params = []) => {
@@ -63,7 +90,7 @@ export async function checkAndImportDatabaseIntegrity(event: H3Event, collection
 }
 
 async function _checkAndImportDatabaseIntegrity(event: H3Event, collection: string, integrityVersion: string, structureIntegrityVersion: string, config: RuntimeConfig['content']) {
-  const db = loadDatabaseAdapter(config)
+  const db = await loadDatabaseAdapter(config)
 
   const before = await db.first<{ version: string, structureVersion: string, ready: boolean }>(`SELECT * FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch((): null => null)
 
@@ -203,6 +230,12 @@ async function loadDatabaseDump(event: H3Event, collection: string): Promise<str
     })
 }
 
+/** Decode each UTF-8 code point independently, preserving malformed escapes. */
+function decodePathname(pathname: string) {
+  // Match one to four bytes; `decode` preserves overlong and invalid code points.
+  return pathname.replace(/%(?:[0-7][\da-f]|[cd][\da-f]%[89ab][\da-f]|e[\da-f](?:%[89ab][\da-f]){2}|f[0-4](?:%[89ab][\da-f]){3})/gi, decode)
+}
+
 function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
   if (config.type === 'd1') {
     return { ...config, bindingName: config.bindingName || config.binding }
@@ -215,9 +248,11 @@ function refineDatabaseConfig(config: RuntimeConfig['content']['database']) {
     }
 
     if ('filename' in config) {
+      // URL pathnames stay percent-encoded, so decode them to get a filesystem path.
+      // Otherwise a space in a parent directory creates a literal `%20` directory.
       const filename = isAbsolute(config?.filename || '') || config?.filename === ':memory:'
         ? config?.filename
-        : new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname
+        : decodePathname(new URL(config.filename, (globalThis as unknown as { _importMeta_: { url: string } })._importMeta_.url).pathname)
 
       _config.path = process.platform === 'win32' && filename.startsWith('/') ? filename.slice(1) : filename
     }

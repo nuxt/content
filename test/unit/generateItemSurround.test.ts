@@ -234,6 +234,14 @@ describe('generateItemSurround', () => {
     expect(result[1]).toMatchObject({ path: '/section' })
   })
 
+  it('ignores trailing slash in path', async () => {
+    const result = await generateItemSurround(mockQueryBuilder, '/item-2/')
+
+    expect(result).toHaveLength(2)
+    expect(result[0]).toMatchObject({ path: '/item-1' })
+    expect(result[1]).toMatchObject({ path: '/section' })
+  })
+
   it('handles start of list', async () => {
     const result = await generateItemSurround(mockQueryBuilder, '/item-1')
 
@@ -261,6 +269,15 @@ describe('generateItemSurround', () => {
     expect(result[1]).toMatchObject({ path: '/section' })
     expect(result[2]).toMatchObject({ path: '/section/item-4' })
     expect(result[3]).toMatchObject({ path: '/item-5' })
+  })
+
+  it('pads before items when the item is near the start of the list', async () => {
+    const result = await generateItemSurround(mockQueryBuilder, '/item-2', { before: 2 })
+
+    expect(result).toHaveLength(3)
+    expect(result[0]).toBeNull()
+    expect(result[1]).toMatchObject({ path: '/item-1' })
+    expect(result[2]).toMatchObject({ path: '/section' })
   })
 
   it('handles nested navigation correctly', async () => {

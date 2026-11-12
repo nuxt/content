@@ -1,3 +1,4 @@
+import { withoutTrailingSlash } from 'ufo'
 import type { ContentNavigationItem } from '../../types'
 
 type FindPageBreadcrumbOptions = { current?: boolean, indexAsChild?: boolean }
@@ -6,6 +7,8 @@ export function findPageBreadcrumb(navigation?: ContentNavigationItem[], path?: 
   if (!navigation?.length || !path) {
     return []
   }
+
+  path = withoutTrailingSlash(path)
 
   return navigation.reduce((breadcrumb: ContentNavigationItem[], link: ContentNavigationItem) => {
     if (path && (path + '/').startsWith(link.path + '/')) {
@@ -27,6 +30,8 @@ export function findPageChildren(navigation?: ContentNavigationItem[], path?: st
     return []
   }
 
+  path = withoutTrailingSlash(path)
+
   return navigation.reduce((children: ContentNavigationItem[], link: ContentNavigationItem) => {
     if (link.children) {
       if (path === link.path) {
@@ -46,6 +51,8 @@ export function findPageSiblings(navigation?: ContentNavigationItem[], path?: st
     return []
   }
 
+  path = withoutTrailingSlash(path)
+
   const parentPath = path.substring(0, path.lastIndexOf('/'))
 
   return findPageChildren(navigation, parentPath, options).filter(c => c.path !== path)
@@ -55,6 +62,8 @@ export function findPageHeadline(navigation?: ContentNavigationItem[], path?: st
   if (!navigation?.length || !path) {
     return
   }
+
+  path = withoutTrailingSlash(path)
 
   for (const link of navigation) {
     if (options?.indexAsChild) {

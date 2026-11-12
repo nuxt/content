@@ -6,7 +6,7 @@ import { join, resolve } from 'pathe'
 import { expandI18nData } from './i18n'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
-import type { ConsolaInstance } from 'consola'
+import type { NuxtLogger } from '@nuxt/kit'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
@@ -19,7 +19,7 @@ import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
 import { createHooks } from 'hookable'
 
-export const logger: ConsolaInstance = useLogger('@nuxt/content')
+export const logger: NuxtLogger = useLogger('@nuxt/content')
 
 export const contentHooks = createHooks<{
   'hmr:content:update': (data: { key: string, collection: string, queries: string[] }) => void
@@ -118,7 +118,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const absolutePath = resolve(pathOrError as string)
     const matches = sourceMap.filter(({ source, cwd }) => {
       if (cwd && absolutePath.startsWith(cwd)) {
-        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false
@@ -165,7 +165,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
             collectionType: collection.type,
           }).then(result => JSON.stringify(result))
 
-          db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
+          await db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
         }
 
         const parsed: ParsedContentFile = JSON.parse(parsedContent)
@@ -219,7 +219,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     const absolutePath = resolve(pathOrError as string)
     const matches = sourceMap.filter(({ source, cwd }) => {
       if (cwd && absolutePath.startsWith(cwd)) {
-        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: source!.exclude || [], dot: true })
+        return micromatch.isMatch(absolutePath.substring(cwd.length), source!.include, { ignore: getExcludedSourcePaths(source), dot: true })
       }
 
       return false

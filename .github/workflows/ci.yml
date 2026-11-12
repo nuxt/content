@@ -10,14 +10,20 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
     env:
       COREPACK_DEFAULT_TO_LATEST: 0
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
         with:
           package-manager-cache: false
           node-version: '24'

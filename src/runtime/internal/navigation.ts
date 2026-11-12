@@ -22,7 +22,10 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
   const { contents, configs } = collecitonItems.reduce((acc, c) => {
     if (String(c.stem).split('/').pop() === '.navigation') {
-      c.title = c.title?.toLowerCase() === 'navigation' ? '' : c.title
+      // Without a title, fall back to the index page title or the directory name
+      if (!c.title) {
+        delete (c as Partial<PageCollectionItemBase>).title
+      }
       const key = c.path!.split('/').slice(0, -1).join('/') || '/'
       acc.configs[key] = {
         ...c,
@@ -45,6 +48,24 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
     ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
     ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
   })
+
+  const checkedChildren = new WeakMap<ContentNavigationItem[], number | false>()
+
+  // Existing child arrays only grow by appending; merges create new arrays.
+  function findPlaceholder(nodes: ContentNavigationItem[], path: string) {
+    let checked = checkedChildren.get(nodes) ?? 0
+    if (checked !== false) {
+      while (checked < nodes.length && nodes[checked]!.page !== false) {
+        checked++
+      }
+      if (checked === nodes.length) {
+        checkedChildren.set(nodes, checked)
+        return
+      }
+      checkedChildren.set(nodes, false)
+    }
+    return nodes.find(item => item.path === path && item.page === false)
+  }
 
   // Create navigation object
   const nav = contents
@@ -95,7 +116,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
       // First-level item, push it straight to nav
       if (parts.length === 1) {
         // Check for duplicate link
-        const existed = nav.find(item => item.path === navItem.path && item.page === false)
+        const existed = isIndex && nav.find(item => item.path === navItem.path && item.page === false)
         if (isIndex && existed) {
           Object.assign(existed, {
             page: undefined,
@@ -146,7 +167,7 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
       }, nav)
 
       // Check for duplicate link
-      const existed = siblings.find(item => item.path === navItem.path && item.page === false)
+      const existed = findPlaceholder(siblings, navItem.path)
       if (existed) {
         Object.assign(existed, {
           ...navItem,

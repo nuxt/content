@@ -79,6 +79,13 @@ const testCases = {
     extension: 'md',
     stem: 'فرهنگ/فارسی/فرهنگ',
   },
+  'content:1.guide:.navigation.md': {
+    __description: 'Directory navigation file does not get a title from its file name',
+    title: '',
+    path: '/guide/.navigation',
+    extension: 'md',
+    stem: '1.guide/.navigation',
+  },
 }
 
 describe('Transformer (path-meta)', async () => {

@@ -2,6 +2,7 @@ import type { Database } from '@sqlite.org/sqlite-wasm'
 import { decompressSQLDump } from './dump'
 import { refineContentFields } from './collection'
 import { fetchDatabase } from './api'
+import { createYielder } from './utils'
 import type { DatabaseAdapter, DatabaseBindParams } from '@nuxt/content'
 import { checksums, tables } from '#content/manifest'
 
@@ -132,7 +133,9 @@ async function loadCollectionDatabase<T>(collection: T) {
       await db.exec({ sql: `DELETE FROM ${tables.info} WHERE id = '${checksumId}'` })
     }
 
+    const yieldToMain = createYielder()
     for (const command of dump) {
+      await yieldToMain()
       try {
         await db.exec(command)
       }

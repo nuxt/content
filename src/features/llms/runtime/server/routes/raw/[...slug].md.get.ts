@@ -4,7 +4,7 @@ import { queryCollection } from '@nuxt/content/server'
 import type { Collections, PageCollectionItemBase, ResolvedCollection } from '@nuxt/content'
 import type { MinimarkNode } from '../../../../../../types/tree'
 import { getRouterParams, eventHandler, createError, setHeader } from 'h3'
-import { useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from 'nitropack/runtime'
 import collections from '#content/manifest'
 
 export default eventHandler(async (event) => {

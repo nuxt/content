@@ -4,8 +4,9 @@ import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
 import { createDocumentGenerator, prepareContentSections } from './utils'
 import type { PageCollectionItemBase } from '@nuxt/content'
-// @ts-expect-error - typecheck does not detect defineNitroPlugin in imports
-import { defineNitroPlugin, queryCollection } from '#imports'
+import { defineNitroPlugin } from 'nitropack/runtime'
+// @ts-expect-error - typecheck does not detect queryCollection in imports
+import { queryCollection } from '#imports'
 import type { ModuleOptions } from 'nuxt-llms'
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {

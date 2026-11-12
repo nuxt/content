@@ -25,7 +25,9 @@ export default defineTransformer({
     return {
       path: filePath,
       ...content,
-      title: content.title || generateTitle(refineUrlPart(basename)),
+      // `.navigation` files describe their directory, so they never get a title generated
+      // from the file name. Any title they have was set in the file itself.
+      title: content.title || (basename === '.navigation' ? '' : generateTitle(refineUrlPart(basename))),
       stem,
       extension,
     }

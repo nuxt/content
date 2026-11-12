@@ -1,5 +1,51 @@
 # Changelog
 
+## [3.16.2](https://github.com/nuxt/content/compare/v3.16.1...v3.16.2) (2026-10-12)
+
+### Bug Fixes
+
+* **api:** don't forward body headers to internal content requests ([#3868](https://github.com/nuxt/content/issues/3868)) ([ffa5ac3](https://github.com/nuxt/content/commit/ffa5ac391c0c1b91cce597155bfa85a84ed3c4b5))
+* **cache:** await development cache replacement ([#3846](https://github.com/nuxt/content/issues/3846)) ([75eff79](https://github.com/nuxt/content/commit/75eff79a94b25a1e3f4f161efcbfc5d6b4ff3f5e))
+* continue when package manager exits non-zero after installing ([#3871](https://github.com/nuxt/content/issues/3871)) ([ebfdc2c](https://github.com/nuxt/content/commit/ebfdc2c94e00cd731e8d281e1d6ee5bf39694e67)), closes [#3849](https://github.com/nuxt/content/issues/3849)
+* **search:** preserve word boundaries between block elements ([#3861](https://github.com/nuxt/content/issues/3861)) ([05a3074](https://github.com/nuxt/content/commit/05a3074efdca61c018134c8d13c0df25718bcfad))
+* **security:** accept only query-builder WHERE clauses ([#3877](https://github.com/nuxt/content/issues/3877)) ([9fae87e](https://github.com/nuxt/content/commit/9fae87e7fefffeb2183942e6f9dfc90c50a8204f))
+* **security:** standard quotes and block IN operator validate ([#3862](https://github.com/nuxt/content/issues/3862)) ([006d138](https://github.com/nuxt/content/commit/006d1382c6f8c7a719e8caaedce09eadc942ea77))
+
+### Performance Improvements
+
+* **cache:** avoid repeated cache index copies ([#3847](https://github.com/nuxt/content/issues/3847)) ([464fb16](https://github.com/nuxt/content/commit/464fb16755af15c63c2742fe5c4a16355d57e6ac))
+* **navigation:** skip unused leaf sibling searches ([#3845](https://github.com/nuxt/content/issues/3845)) ([6fc1e26](https://github.com/nuxt/content/commit/6fc1e26231e53995494b583b06e8caf0ba684c99))
+
+## [3.16.1](https://github.com/nuxt/content/compare/v3.16.0...v3.16.1) (2026-09-21)
+
+### Features
+
+* add `content.llms` option to disable the `nuxt-llms` integration ([#3843](https://github.com/nuxt/content/issues/3843)) ([656a5ce](https://github.com/nuxt/content/commit/656a5ce1a8cb6af0b37dd577bf4e1522e03e3c11))
+
+### Bug Fixes
+
+* **security:** avoid ReDoS in assertSafeQuery ([#3851](https://github.com/nuxt/content/issues/3851)) ([f8be485](https://github.com/nuxt/content/commit/f8be485f87fc749b1517e8610a3ba7c7f5a55ece))
+
+## [3.16.0](https://github.com/nuxt/content/compare/v3.15.2...v3.16.0) (2026-08-27)
+
+### Bug Fixes
+
+* avoid install prompt in non-interactive environments ([#3833](https://github.com/nuxt/content/issues/3833)) ([2d0e84b](https://github.com/nuxt/content/commit/2d0e84baf9ebfcce1818c6ee85ea41b734c556f9))
+* **ContentRenderer:** keep async component identity stable across re-resolves ([#3835](https://github.com/nuxt/content/issues/3835)) ([dcf86e6](https://github.com/nuxt/content/commit/dcf86e662bbbbcda333b0025774503670477bd9a))
+* improve generated git cache key ([#3839](https://github.com/nuxt/content/issues/3839)) ([d1e353e](https://github.com/nuxt/content/commit/d1e353ebcde5a00e073c14f9b403373898cf273e))
+* **module:** keep content templates when building with _prepare ([#3837](https://github.com/nuxt/content/issues/3837)) ([e390c3b](https://github.com/nuxt/content/commit/e390c3bb28190596a4999310b0e9f13da68e750c))
+* **nuxthub:** handle object form of `hub.db` ([#3822](https://github.com/nuxt/content/issues/3822)) ([8841abc](https://github.com/nuxt/content/commit/8841abc1c2e6f326560d54d25e439777f9f03464))
+* **query:** tolerate trailing slashes in path-based lookups ([#3838](https://github.com/nuxt/content/issues/3838)) ([220d392](https://github.com/nuxt/content/commit/220d39279ef72dffe9a12f0e73949710b646be3a))
+* **runtime:** use dynamic import for `#content/adapter` to prevent prerender failure ([#3830](https://github.com/nuxt/content/issues/3830)) ([400390a](https://github.com/nuxt/content/commit/400390a22ab347ab9f168f9174ff7381cd9f2d3a))
+* use UTC getters in formatDate/formatDateTime to prevent timezone drift ([#3782](https://github.com/nuxt/content/issues/3782)) ([9f1f89a](https://github.com/nuxt/content/commit/9f1f89a8ecac369601ed814ed23f15cb8da4805d))
+
+## [3.15.2](https://github.com/nuxt/content/compare/v3.15.1...v3.15.2) (2026-07-23)
+
+### Bug Fixes
+
+* **dev:** ignore temporary files in content source paths ([#3784](https://github.com/nuxt/content/issues/3784)) ([a019e70](https://github.com/nuxt/content/commit/a019e702688cf468c6cc1d1592ca19313ff76276))
+* **security:** reject SQL function calls in query WHERE clauses ([#3819](https://github.com/nuxt/content/issues/3819)) ([847d523](https://github.com/nuxt/content/commit/847d523a48e76d861175b325abf0de40dc5864ed))
+
 ## [3.15.1](https://github.com/nuxt/content/compare/v3.15.0...v3.15.1) (2026-07-21)
 
 ### Bug Fixes

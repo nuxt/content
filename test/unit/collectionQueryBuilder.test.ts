@@ -154,23 +154,23 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
-  it('builds count query without ORDER BY', async () => {
+  it('builds count query', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count()
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(*) as count FROM _articles',
+      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
     )
   })
 
-  it('builds distinct count query without ORDER BY', async () => {
+  it('builds distinct count query', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     await query.count('author', true)
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(DISTINCT "author") as count FROM _articles',
+      'SELECT COUNT(DISTINCT author) as count FROM _articles ORDER BY stem ASC',
     )
   })
 
@@ -202,6 +202,30 @@ describe('collectionQueryBuilder', () => {
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
       'SELECT * FROM _articles WHERE ("path" = \'/blog/my-article\') ORDER BY stem ASC',
+    )
+  })
+
+  it('ignores trailing slash in path', async () => {
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
+    await query
+      .path('/foo/bar/')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("path" = \'/foo/bar\') ORDER BY stem ASC',
+    )
+  })
+
+  it('keeps root path', async () => {
+    const query = collectionQueryBuilder('articles' as never, mockFetch)
+    await query
+      .path('/')
+      .all()
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'articles',
+      'SELECT * FROM _articles WHERE ("path" = \'/\') ORDER BY stem ASC',
     )
   })
 
@@ -328,7 +352,7 @@ describe('collectionQueryBuilder', () => {
     expect(result).toBe(42)
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(*) as count FROM _articles',
+      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
     )
   })
 
@@ -340,7 +364,7 @@ describe('collectionQueryBuilder', () => {
     expect(result).toBe(7)
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(*) as count FROM _articles',
+      'SELECT COUNT(*) as count FROM _articles ORDER BY stem ASC',
     )
   })
 
@@ -352,7 +376,7 @@ describe('collectionQueryBuilder', () => {
     expect(result).toBe(3)
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT COUNT(DISTINCT "author") as count FROM _articles',
+      'SELECT COUNT(DISTINCT author) as count FROM _articles ORDER BY stem ASC',
     )
   })
 

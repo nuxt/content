@@ -78,6 +78,12 @@ export interface ModuleOptions {
    * @default { enabled: true }
    */
   watch?: { enabled?: boolean }
+  /**
+   * Integration with `nuxt-llms`: injects page collections into `llms.txt` and exposes the raw markdown endpoint when `nuxt-llms` is installed.
+   * Set to `false` to disable it, for example when another module owns the raw markdown route.
+   * @default true
+   */
+  llms?: boolean
 
   renderer: {
     /**

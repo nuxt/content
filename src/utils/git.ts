@@ -84,25 +84,33 @@ export async function getLocalGitInfo(rootDir: string): Promise<GitInfo | undefi
   }
 }
 
+type RemoteRefs = { [key: string]: string | RemoteRefs }
+
+// `getRemoteInfo` nests refs by `/`, so `release/v1` is `{ release: { v1: sha } }`
+function resolveRemoteRef(refs: RemoteRefs | undefined, ref: string): string | undefined {
+  const resolved = ref.split('/').reduce<string | RemoteRefs | undefined>(
+    (node, segment) => (typeof node === 'object' ? node[segment] : undefined),
+    refs,
+  )
+  return typeof resolved === 'string' ? resolved : undefined
+}
+
 export async function getGitRemoteHash(url: string, ref?: GitRefType): Promise<string | undefined> {
   try {
     const remote = await git.getRemoteInfo({ http: gitHttp, url })
     if (ref) {
       if (ref.branch) {
-        const headRef = remote.refs.heads![ref.branch]
-        return headRef
+        return resolveRemoteRef(remote.refs.heads as RemoteRefs, ref.branch)
       }
 
       if (ref.tag) {
-        const tagsRef = remote.refs.tags![ref.tag]
-        return tagsRef
+        return resolveRemoteRef(remote.refs.tags as RemoteRefs, ref.tag)
       }
     }
     else {
       // default to the HEAD ref provided by the server
       const head = remote.HEAD!.replace('refs/heads/', '')
-      const headRef = remote.refs.heads![head]
-      return headRef
+      return resolveRemoteRef(remote.refs.heads as RemoteRefs, head)
     }
   }
   catch {

@@ -1,24 +1,24 @@
-import type { H3Event } from 'h3'
 import { buildGroup, collectionQueryBuilder, collectionQueryGroup, getGroupConditions, referencesLocaleColumn } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
-import { buildFTSIndex, generateSearchSections, queryFTS, resetFTSIndex } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
 import { buildUseQueryCollectionKey, detectClientLocale, detectServerLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import { withoutTrailingSlash } from 'ufo'
-import type { Collections, ContentLocaleEntry, ContentNavigationItem, CollectionQueryBuilder, DatabaseAdapter, ManifestCollectionsMeta, PageCollections, QueryGroupFunction, SQLOperator, SurroundOptions } from '@nuxt/content'
+import type { H3Event } from 'h3'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter, ContentLocaleEntry, ManifestCollectionsMeta } from '@nuxt/content'
 import manifestMeta from '#content/manifest'
 import type { AsyncData, AsyncDataOptions, NuxtError } from '#app'
+import { ref, toValue, watch, tryUseNuxtApp, computed, useAsyncData } from '#imports'
 import type { MaybeRefOrGetter, Ref } from 'vue'
-import { computed, ref, toValue, tryUseNuxtApp, useAsyncData, watch } from '#imports'
 // `useAsyncData`'s key is a getter. Nuxt watches the resolved string and refetches
 // when it changes (reactive keys, available since Nuxt 3.17). The module
 // `compatibility` field requires `>=4.1.0 || ^3.19.0`, so a locale-aware key
 // change automatically triggers a refetch without an explicit `watch:` option.
 
-export type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
+export type { SearchCollectionOptions, SearchResult, GenerateSearchSectionsOptions, Section } from './internal/search'
 
 interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R> {
   where(field: keyof PageCollections[T] | string, operator: SQLOperator, value?: unknown): ChainablePromise<T, R>
@@ -29,7 +29,7 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
   const nuxtApp = tryUseNuxtApp()
-  const event = nuxtApp?.ssrContext?.event
+  const event = nuxtApp?.ssrContext?.event as H3Event | undefined
   // Prefer the client-side locale (a live ref during SPA navigation) and fall back
   // to the SSR event context for the initial server render.
   const detectedLocale = detectClientLocale(nuxtApp) || detectServerLocale(event)
@@ -62,7 +62,7 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(
 export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
   // Auto-locale is skipped here. This helper needs every locale variant, not just
   // the current one, so it builds the query without passing a detected locale.
-  const event = tryUseNuxtApp()?.ssrContext?.event
+  const event = tryUseNuxtApp()?.ssrContext?.event as H3Event | undefined
   const qb = collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
   return generateCollectionLocales(qb, String(collection), stem)
 }

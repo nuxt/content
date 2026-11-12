@@ -420,8 +420,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
-      const countField = opts.count.field === '*' ? '*' : `"${opts.count.field.replace(/"/g, '')}"`
-      query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${countField}) as count`
+      query += `COUNT(${opts.count.distinct ? 'DISTINCT ' : ''}${opts.count.field}) as count`
     }
     else {
       const fields = Array.from(new Set(opts.selectedFields ?? params.selectedFields))
@@ -445,15 +444,11 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       query += ` WHERE ${conditions.join(' AND ')}`
     }
 
-    // Skip ORDER BY on COUNT queries since PostgreSQL rejects ORDER BY on an
-    // aggregate without a GROUP BY clause.
-    if (!opts?.count) {
-      if (params.orderBy.length > 0) {
-        query += ` ORDER BY ${params.orderBy.join(', ')}`
-      }
-      else {
-        query += ` ORDER BY stem ASC`
-      }
+    if (params.orderBy.length > 0) {
+      query += ` ORDER BY ${params.orderBy.join(', ')}`
+    }
+    else {
+      query += ` ORDER BY stem ASC`
     }
 
     const limit = opts?.limit || params.limit

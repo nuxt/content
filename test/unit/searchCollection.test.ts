@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import Database from 'better-sqlite3'
+import { parseMarkdown } from '@nuxtjs/mdc/runtime'
+import { fromHast } from 'minimark/hast'
 import { buildFTSIndex, queryFTS, resetFTSIndex, _resetFTSState } from '../../src/runtime/internal/search'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '../../src/types'
 
@@ -91,6 +94,22 @@ describe('searchCollection FTS5', () => {
       await buildFTSIndex(mockDb, 'blog', mockQueryBuilder)
 
       expect(execCalls.length).toBe(callsAfterFirst)
+    })
+
+    it('should share an in-flight build between concurrent callers', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([{
+        path: '/test',
+        title: 'Test',
+        description: '',
+        body: { type: 'root', children: [] },
+      }])
+
+      await Promise.all([
+        buildFTSIndex(mockDb, 'concurrent', mockQueryBuilder),
+        buildFTSIndex(mockDb, 'concurrent', mockQueryBuilder),
+      ])
+
+      expect(execCalls.filter(call => call.sql.startsWith('INSERT')).length).toBe(1)
     })
 
     it('should allow indexing multiple collections into the same table', async () => {
@@ -381,6 +400,49 @@ describe('searchCollection FTS5', () => {
       expect(execCalls[0]!.sql).toContain('CREATE VIRTUAL TABLE')
       expect(execCalls[1]!.sql).toContain('INSERT')
     })
+  })
+})
+
+describe('searchCollection FTS5 with SQLite', () => {
+  beforeEach(() => {
+    _resetFTSState()
+  })
+
+  it('should find the first word of a markdown table cell', async () => {
+    const markdown = [
+      '# Guide Page',
+      '',
+      '## Configuration Table',
+      '',
+      '| Setting Name | Description |',
+      '|---|---|',
+      '| api_key | Your API authentication key |',
+      '| timeout_ms | Request timeout in milliseconds |',
+    ].join('\n')
+    const parsed = await parseMarkdown(markdown)
+    const sqlite = new Database(':memory:')
+    const db: DatabaseAdapter = {
+      exec: async (sql, params = []) => sqlite.prepare(sql).run(...params),
+      all: async <T>(sql: string, params: unknown[] = []) => sqlite.prepare(sql).all(...params) as T[],
+      first: async <T>(sql: string, params: unknown[] = []) => sqlite.prepare(sql).get(...params) as T,
+    }
+
+    await buildFTSIndex(db, 'docs', createMockQueryBuilder([{
+      path: '/guide',
+      title: 'Guide Page',
+      description: '',
+      body: fromHast(parsed.body),
+    }]))
+
+    for (const term of ['Description', 'api_key', 'Your', 'timeout_ms', 'Request']) {
+      const results = await queryFTS(db, ['docs'], term)
+      expect(results.map(r => r.id), term).toEqual(['/guide#configuration-table'])
+    }
+
+    const [section] = await queryFTS(db, ['docs'], 'Your')
+    expect(section!.content).toBe('Setting Name Description api_key Your API authentication key timeout_ms Request timeout in milliseconds')
+
+    sqlite.close()
   })
 })
 

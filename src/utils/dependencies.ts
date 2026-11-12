@@ -1,5 +1,6 @@
 import { addDependency } from 'nypm'
 import { resolvePackageJSON } from 'pkg-types'
+import { hasTTY, isCI } from 'std-env'
 import { logger } from './dev'
 import nuxtContentContext from './context'
 import { tryUseNuxt } from '@nuxt/kit'
@@ -22,20 +23,32 @@ export async function ensurePackageInstalled(pkg: string) {
   if (!await isPackageInstalled(pkg)) {
     logger.error(`Nuxt Content requires \`${pkg}\` module to operate.`)
 
-    const confirm = await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
-      type: 'confirm',
-      name: 'confirm',
-      initial: true,
-    })
+    const confirm = hasTTY && !isCI
+      ? await logger.prompt(`Do you want to install \`${pkg}\` package?`, {
+          type: 'confirm',
+          name: 'confirm',
+          initial: true,
+        })
+      : false
 
     if (!confirm) {
       logger.error(`Nuxt Content requires \`${pkg}\` module to operate. Please install \`${pkg}\` package manually and try again. \`npm install ${pkg}\``)
       process.exit(1)
     }
 
-    await addDependency(pkg, {
-      cwd: tryUseNuxt()?.options.rootDir,
-    })
+    try {
+      await addDependency(pkg, {
+        cwd: tryUseNuxt()?.options.rootDir,
+      })
+    }
+    catch (error) {
+      // Some package managers exit non-zero after the package was added,
+      // e.g. pnpm >= 10 with ERR_PNPM_IGNORED_BUILDS when build scripts are not approved.
+      if (!await isPackageInstalled(pkg)) {
+        throw error
+      }
+      logger.warn(`\`${pkg}\` was installed, but the package manager reported an error. If you use pnpm, you may need to run \`pnpm approve-builds\`.`)
+    }
   }
 }
 
