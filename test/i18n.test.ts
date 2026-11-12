@@ -247,6 +247,35 @@ describe('i18n', async () => {
     })
   })
 
+  describe('inline translations in Markdown and JSON', () => {
+    test('translate front matter, derived seo and custom fields, but not the Markdown body', async () => {
+      const [en, fr] = await Promise.all(['en', 'fr'].map(locale =>
+        $fetch<Array<Record<string, unknown>>>(`/api/content/items?collection=pages&locale=${locale}`),
+      ))
+
+      expect(fr).toHaveLength(1)
+      expect(fr![0]).toMatchObject({
+        locale: 'fr',
+        path: '/pages/about',
+        title: 'À propos',
+        description: 'Qui sommes-nous',
+        seo: { title: 'À propos', description: 'Qui sommes-nous' },
+        meta: { tagline: 'Fait avec soin' },
+      })
+      expect(en![0]).toMatchObject({ title: 'About us', meta: { tagline: 'Built with care' } })
+      expect(fr![0]!.body).toEqual(en![0]!.body)
+    })
+
+    test('merge arrays of objects by index in JSON files', async () => {
+      const [fr] = await $fetch<Array<Record<string, unknown>>>('/api/content/items?collection=settings&locale=fr')
+
+      expect(fr).toMatchObject({
+        name: 'Acme',
+        links: [{ label: 'Accueil', to: '/' }, { label: 'Le blog', to: '/blog' }],
+      })
+    })
+  })
+
   describe('server queries', () => {
     test('do not filter by locale implicitly, even when an @nuxtjs/i18n context exists', async () => {
       const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-unfiltered')

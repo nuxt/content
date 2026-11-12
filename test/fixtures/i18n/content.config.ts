@@ -29,6 +29,28 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
+    // Inline i18n in Markdown front matter
+    pages: defineCollection({
+      type: 'page',
+      source: 'pages/**',
+      i18n: {
+        locales: ['en', 'fr'],
+        defaultLocale: 'en',
+      },
+    }),
+    // Inline i18n in JSON with an array of objects
+    settings: defineCollection({
+      type: 'data',
+      source: 'settings/*.json',
+      schema: z.object({
+        name: z.string(),
+        links: z.array(z.object({ label: z.string(), to: z.string() })),
+      }),
+      i18n: {
+        locales: ['en', 'fr'],
+        defaultLocale: 'en',
+      },
+    }),
     // `i18n: true` shorthand without @nuxtjs/i18n installed: the integration is
     // disabled with a warning and no `locale` column is added.
     notes: defineCollection({
