@@ -450,7 +450,7 @@ describe('i18n', () => {
         expect(items[0]).toMatchObject({ locale: 'en', title: 'Config' })
       })
 
-      it('does not mutate original content or override objects', () => {
+      it('does not mutate source arrays or override blocks', () => {
         const original = {
           id: 'data:test.yml',
           items: [{ label: 'Original', route: '/' }],
@@ -462,12 +462,17 @@ describe('i18n', () => {
         } as ParsedContentFile
 
         const originalItemsRef = original.items
+        const originalMetaRef = original.meta
         const frOverrideRef = (original.meta.i18n as Record<string, unknown>).fr
 
         expandI18nData(original, i18nConfig)
 
         expect(originalItemsRef[0].label).toBe('Original')
         expect((frOverrideRef as Record<string, unknown[]>).items[0]).toEqual({ label: 'French' })
+        // The documented changes to the parsed file: a new `meta` without `i18n`, and the locale.
+        expect(original.locale).toBe('en')
+        expect(original.meta).not.toHaveProperty('i18n')
+        expect(originalMetaRef).toHaveProperty('i18n.fr')
       })
 
       it('handles override with extra array items beyond default length', () => {
@@ -808,6 +813,25 @@ describe('i18n', () => {
 
       expect(items[0]?.seo).toEqual({ title: 'Shoe', description: 'A shoe' })
       expect(items[1]?.seo).toEqual({ title: 'Chaussure', description: 'Une chaussure' })
+    })
+
+    it('merges arrays of objects outside the schema by index in meta', () => {
+      const content = (to: string): ParsedContentFile => ({
+        id: 'docs:a.md',
+        stem: 'a',
+        title: 'Hello',
+        meta: {
+          links: [{ label: 'Home', to }, { label: 'Blog', to: '/blog' }],
+          i18n: { fr: { links: [{ label: 'Accueil' }, { label: 'Le blog' }] } },
+        },
+      })
+
+      const [, fr] = expandI18nData(content('/'), i18nConfig, 'page', ['title'])
+      expect(fr?.links).toBeUndefined()
+      expect(fr?.meta.links).toEqual([{ label: 'Accueil', to: '/' }, { label: 'Le blog', to: '/blog' }])
+
+      const hashFor = (to: string) => expandI18nData(content(to), i18nConfig, 'page', ['title'])[1]?.meta._i18nSourceHash
+      expect(hashFor('/home')).toBe(hashFor('/'))
     })
 
     it('applies translations of fields outside the schema to meta', () => {
