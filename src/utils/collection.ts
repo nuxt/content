@@ -24,20 +24,48 @@ function hasStemLocaleIndex(indexes: CollectionIndex[] | undefined): boolean {
   )
 }
 
+interface LocaleSchema {
+  type?: string | string[]
+  const?: unknown
+  enum?: unknown[]
+  anyOf?: LocaleSchema[]
+  oneOf?: LocaleSchema[]
+}
+
+/**
+ * A text column for a user `locale` declaration, keeping the values of a union of string
+ * literals. `undefined` when the declaration is not a string.
+ */
+function toLocaleColumn(schema: LocaleSchema): LocaleSchema | undefined {
+  const members = (schema.anyOf ?? schema.oneOf ?? [schema]).filter(member => member.type !== 'null')
+  if (!members.length) {
+    return undefined
+  }
+  const values = members.flatMap(member => member.enum ?? ('const' in member ? [member.const] : [undefined]))
+  if (values.every(value => typeof value === 'string')) {
+    return { type: 'string', enum: values }
+  }
+  return members.every(member => [member.type].flat().includes('string')) ? { type: 'string' } : undefined
+}
+
 /**
  * Add the `locale` column and index of an i18n collection, and put `defaultLocale`
  * into `locales`.
  */
 function resolveI18nCollection(collection: ResolvedCollection, i18n: CollectionI18nConfig): ResolvedCollection {
   const extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
-  // A user declaration of another type wins the merge and would store locale codes as `NaN`.
-  const props = extendedSchema.definitions.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
+  // A user declaration wins the merge. Other types would store locale codes as `NaN`, and
+  // unions as JSON.
+  const props = extendedSchema.definitions.__SCHEMA__?.properties as Record<string, LocaleSchema> | undefined
   if (props?.locale && props.locale.type !== 'string') {
-    logger.warn(
-      `Collection "${collection.name}" declares a non-string \`locale\` field. `
-      + 'The i18n integration requires `locale` to be a string and is overriding it.',
-    )
-    props.locale = { type: 'string' }
+    const column = toLocaleColumn(props.locale)
+    if (!column) {
+      logger.warn(
+        `Collection "${collection.name}" declares a non-string \`locale\` field. `
+        + 'The i18n integration requires `locale` to be a string and is overriding it.',
+      )
+    }
+    props.locale = column ?? { type: 'string' }
   }
 
   let locales = i18n.locales

@@ -2,6 +2,7 @@ import { join } from 'pathe'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import { z } from 'zod'
+import { z as z4 } from 'zod/v4'
 import { defineCollection, generateCollectionItemInserts, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
 import { contentTypesTemplate } from '../../src/utils/templates'
@@ -349,6 +350,25 @@ describe('i18n', () => {
       expect(declaration('Posts')).toMatch(/locale: \("en" \| "fr"\)/)
       expect(declaration('Team')).toMatch(/locale: string/)
       expect(declaration('Notes')).not.toMatch(/locale/)
+    })
+
+    it('keeps unions of string literals and accepts nullable strings as the locale field', async () => {
+      await initiateValidatorsContext()
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+      const collections = [
+        resolveCollection('union', defineCollection({ type: 'data', source: 'union/*.yml', schema: z4.object({ locale: z4.union([z4.literal('en'), z4.literal('fr')]) }), i18n: i18nConfig }))!,
+        resolveCollection('nullable', defineCollection({ type: 'data', source: 'nullable/*.yml', schema: z4.object({ locale: z4.string().nullable() }), i18n: i18nConfig }))!,
+        resolveCollection('numeric', defineCollection({ type: 'data', source: 'numeric/*.yml', schema: z.object({ locale: z.number() }), i18n: i18nConfig }))!,
+      ]
+
+      const types = await contentTypesTemplate(collections).getContents({ options: { collections } } as never)
+      const declaration = (name: string) => types.slice(types.indexOf(`interface ${name}CollectionItem`)).split('\n  }')[0]!
+
+      expect(declaration('Union')).toMatch(/locale: \("en" \| "fr"\)/)
+      expect(declaration('Nullable')).toMatch(/locale: string/)
+      expect(collections.map(collection => collection.fields.locale)).toEqual(['string', 'string', 'string'])
+      expect(warn.mock.calls.map(([message]) => message)).toEqual([expect.stringContaining('Collection "numeric" declares a non-string `locale` field')])
+      warn.mockRestore()
     })
   })
 
