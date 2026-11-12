@@ -289,19 +289,20 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   async function fetchWithLocaleFallback(localeFallback: LocaleFallback, limit: number): Promise<Collections[T][]> {
     // Read the builder state before the first query, like a single query does.
     const selected = [...params.selectedFields]
-    const offset = params.offset > 0 ? params.offset : 0
+    // Same tests as `buildQuery`, numeric strings included.
+    const offset = params.offset > 0 ? Number(params.offset) : 0
     const pick = (row: Row) => (selected.length
       ? Object.fromEntries(selected.map(field => [field, row[String(field)]]))
       : row) as Collections[T]
 
-    if (limit <= 0) {
+    if (!(limit > 0)) {
       const rows = await resolveLocaleRows(localeFallback, selected.length ? selected : '*')
       return rows.map(pick)
     }
 
     const keys = await resolveLocaleRows(localeFallback, [])
     // Same rule as `buildQuery`: the offset only applies together with a limit.
-    const ids = keys.slice(offset, offset + limit).map(row => row.id)
+    const ids = keys.slice(offset, offset + Number(limit)).map(row => row.id)
     const rows = await fetchInChunks(ids, chunk => buildQuery({
       selectedFields: selected.length ? [...selected, 'id' as keyof Collections[T]] : [],
       conditions: [`("id" IN (${chunk.map(singleQuote).join(', ')}))`],

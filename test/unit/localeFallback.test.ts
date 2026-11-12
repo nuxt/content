@@ -94,6 +94,13 @@ describe('locale fallback', () => {
     expect(titles(await query().skip(2).all())).toHaveLength(6)
   })
 
+  it('treats a limit that is not a positive number as no limit, like a single query', async () => {
+    const all = ['A fr', 'B', 'C fr', 'D']
+    expect(titles(await query().locale('fr', { fallback: 'en' }).limit(Number.NaN).all())).toEqual(all)
+    expect(titles(await collectionQueryBuilder('docs' as never, fetch, 'fr').limit(Number.NaN).all())).toEqual(all)
+    expect(titles(await query().locale('fr', { fallback: 'en' }).skip('1' as never).limit('2' as never).all())).toEqual(['B', 'C fr'])
+  })
+
   it('ignores a negative skip like a single query', async () => {
     const page = (skip: number) => query().locale('fr', { fallback: 'en' }).skip(skip).limit(2).all()
     expect(titles(await page(-1))).toEqual(titles(await page(0)))
