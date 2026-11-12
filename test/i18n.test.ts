@@ -247,31 +247,24 @@ describe('i18n', async () => {
     })
   })
 
-  describe('server-side auto-locale detection', () => {
-    test('auto-detects the default locale from the request context (single query)', async () => {
-      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto?locale=en')
-
-      expect(posts.length).toBeGreaterThanOrEqual(2)
-      for (const post of posts) {
-        expect(post.locale).toBe('en')
-      }
-    })
-
-    test('auto-detects a non-default locale and falls back for missing translations', async () => {
-      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto?locale=fr')
-
-      const titles = posts.map(p => p.title)
-      // French translation is preferred where available.
-      expect(titles).toContain('Bonjour le Monde')
-      // The English-only post is filled in from the default locale.
-      expect(titles).toContain('English Only Post')
-    })
-
-    test('returns rows from every locale when no locale is detected', async () => {
-      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-auto')
+  describe('server queries', () => {
+    test('do not filter by locale implicitly, even when an @nuxtjs/i18n context exists', async () => {
+      const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog-unfiltered')
       const locales = new Set(posts.map(p => p.locale))
-      expect(locales.has('en')).toBe(true)
-      expect(locales.has('fr')).toBe(true)
+      expect(locales).toEqual(new Set(['en', 'fr']))
+    })
+
+    test('navigation accepts an explicit locale with fallback', async () => {
+      const navigation = await $fetch<Array<{ children?: Array<{ title: string, path: string }> }>>(
+        '/api/content/navigation?locale=fr&fallback=en',
+      )
+      const pages = navigation.flatMap(item => item.children ?? [])
+
+      expect(pages).toEqual(expect.arrayContaining([
+        expect.objectContaining({ title: 'Bonjour le Monde', path: '/blog/hello' }),
+        expect.objectContaining({ title: 'English Only Post', path: '/blog/only-english' }),
+      ]))
+      expect(pages.map(page => page.path)).toHaveLength(new Set(pages.map(page => page.path)).size)
     })
   })
 })

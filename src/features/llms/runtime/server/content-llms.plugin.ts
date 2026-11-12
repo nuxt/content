@@ -2,7 +2,7 @@ import { appendHeader } from 'h3'
 import { withBase } from 'ufo'
 import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
-import { createDocumentGenerator, prepareContentSections } from './utils'
+import { createDocumentGenerator, getDefaultLocale, prepareContentSections } from './utils'
 import type { PageCollectionItemBase } from '@nuxt/content'
 import { defineNitroPlugin } from 'nitropack/runtime'
 // @ts-expect-error - typecheck does not detect queryCollection in imports
@@ -24,6 +24,11 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       const query = queryCollection(event, section.contentCollection)
         .select('path', 'title', 'seo', 'description')
         .where('path', 'NOT LIKE', '%/.navigation')
+
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale) {
+        query.locale(locale)
+      }
 
       const filters = section.contentFilters || []
       for (const filter of filters) {
@@ -66,6 +71,11 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 
       const query = queryCollection(event, section.contentCollection)
         .where('path', 'NOT LIKE', '%/.navigation')
+
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale) {
+        query.locale(locale)
+      }
 
       const filters = section.contentFilters || []
       for (const filter of filters) {

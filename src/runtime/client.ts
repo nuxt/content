@@ -4,7 +4,7 @@ import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
 import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
-import { detectClientLocale, detectServerLocale } from './internal/i18n-detection'
+import { detectClientLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import type { H3Event } from 'h3'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter, ContentLocaleEntry } from '@nuxt/content'
@@ -18,15 +18,13 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
   andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   orWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
+  locale(locale: string, opts?: { fallback?: string }): ChainablePromise<T, R>
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
   const nuxtApp = tryUseNuxtApp()
   const event = nuxtApp?.ssrContext?.event as H3Event | undefined
-  // Prefer the client-side locale (a live ref during SPA navigation) and fall back
-  // to the SSR event context for the initial server render.
-  const detectedLocale = detectClientLocale(nuxtApp) || detectServerLocale(event)
-  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectedLocale)
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectClientLocale(nuxtApp))
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
@@ -160,6 +158,10 @@ function chainablePromise<T extends keyof PageCollections, Result>(collection: T
     },
     order(field, direction) {
       queryBuilder.order(String(field), direction)
+      return chainable
+    },
+    locale(locale, opts) {
+      queryBuilder.locale(locale, opts)
       return chainable
     },
     then(onfulfilled, onrejected) {

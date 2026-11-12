@@ -6,6 +6,7 @@ import type { MinimarkNode } from '../../../../../../types/tree'
 import { getRouterParams, eventHandler, createError, setHeader } from 'h3'
 import { useRuntimeConfig } from 'nitropack/runtime'
 import collections from '#content/manifest'
+import { getDefaultLocale } from '../../utils'
 
 export default eventHandler(async (event) => {
   const config = useRuntimeConfig(event)
@@ -27,7 +28,12 @@ export default eventHandler(async (event) => {
 
   let page: PageCollectionItemBase | null = null
   for (const collection of _collections) {
-    page = await queryCollection(event, collection as keyof Collections).path(path).first() as PageCollectionItemBase | null
+    const query = queryCollection(event, collection as keyof Collections).path(path)
+    const locale = getDefaultLocale(collection)
+    if (locale) {
+      query.locale(locale)
+    }
+    page = await query.first() as PageCollectionItemBase | null
     if (page) {
       break
     }
