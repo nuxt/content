@@ -90,17 +90,18 @@ interface RawI18nModuleOptions {
 }
 
 /**
- * Read `@nuxtjs/i18n` locale options the way `@nuxt/kit` passes them to the module:
- * inline options from the `modules` array win over the `i18n` key. Locales that
- * other modules add later (through `moduleDependencies` or the
- * `i18n:registerModule` hook) are not visible here, so collections then need an
- * explicit `i18n: { locales, defaultLocale }` config.
+ * Read `@nuxtjs/i18n` locale options like the module resolves them: inline options
+ * from the `modules` array win over the `i18n` key, the first entry wins for
+ * `defaultLocale` like in the options `@nuxt/kit` passes to the module, and the
+ * locales of every layer add up. Locales that other modules add later (through
+ * `moduleDependencies` or the `i18n:registerModule` hook) are not visible here, so
+ * collections then need an explicit `i18n: { locales, defaultLocale }` config.
  */
 function readI18nModuleOptions(nuxt: Nuxt): RawI18nModuleOptions {
-  const moduleEntry = (nuxt.options.modules || []).find(
-    (m): m is [string, RawI18nModuleOptions] => Array.isArray(m) && m[0] === '@nuxtjs/i18n',
-  )
-  return defu(moduleEntry?.[1], (nuxt.options as unknown as { i18n?: RawI18nModuleOptions }).i18n)
+  const inlineOptions = (nuxt.options.modules || [])
+    .filter((m): m is [string, RawI18nModuleOptions] => Array.isArray(m) && m[0] === '@nuxtjs/i18n')
+    .map(m => m[1])
+  return defu({}, ...inlineOptions, (nuxt.options as unknown as { i18n?: RawI18nModuleOptions }).i18n)
 }
 
 /**

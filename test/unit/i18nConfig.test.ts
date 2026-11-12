@@ -95,6 +95,14 @@ describe('i18n collection config', () => {
     expect(await notesI18n({ modules: ['@nuxtjs/i18n'], i18n: { locales: ['en', { code: 'en', file: 'en.json' }, { code: 'fr' }], defaultLocale: 'en' } })).toEqual({ locales: ['en', 'fr'], defaultLocale: 'en' })
   })
 
+  it('adds up the inline @nuxtjs/i18n locales of every layer', async () => {
+    const { collections } = await loadContentConfig(nuxtWithI18n({
+      modules: [['@nuxtjs/i18n', { locales: ['en', 'fr'], defaultLocale: 'en' }], ['@nuxtjs/i18n', { locales: ['de'], defaultLocale: 'de' }]],
+    }))
+
+    expect(collections.find(collection => collection.name === 'notes')!.i18n).toEqual({ locales: ['en', 'fr', 'de'], defaultLocale: 'en' })
+  })
+
   it('disables `i18n: true` without @nuxtjs/i18n', async () => {
     const { collections } = await loadContentConfig(nuxtWithI18n({ modules: [] }))
     const notes = collections.find(collection => collection.name === 'notes')!
