@@ -255,6 +255,27 @@ function translateDerivedSeo(item: ParsedContentFile, source: ParsedContentFile,
 }
 
 /**
+ * Track the `(locale, stem)` pairs of a collection's rows and warn when two rows
+ * share one, for example an inline translation and a file in a locale directory.
+ * Fallback queries and `queryCollectionLocales` would return both.
+ */
+export function createLocaleVariantTracker(collection: string) {
+  const seen = new Map<string, string>()
+  return (item: ParsedContentFile) => {
+    const key = JSON.stringify([item.locale, item.stem])
+    const existing = seen.get(key)
+    if (existing === undefined) {
+      seen.set(key, item.id)
+      return
+    }
+    logger.warn(
+      `"${existing}" and "${item.id}" in collection "${collection}" are both the "${item.locale}" version of `
+      + `"${item.stem}". Keep only one of them.`,
+    )
+  }
+}
+
+/**
  * Find the locale directory among the first `maxIndex + 1` segments of a stem or
  * source prefix. Directory names match locale codes case-insensitively, since
  * generated paths are lowercased.

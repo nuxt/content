@@ -20,7 +20,7 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
-import { expandI18nData } from './utils/i18n'
+import { createLocaleVariantTracker, expandI18nData } from './utils/i18n'
 import { version } from '../package.json'
 import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
@@ -334,6 +334,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
 
     const parse = await createParser(collection, nuxt)
+    const trackLocaleVariant = collection.i18n ? createLocaleVariantTracker(collection.name) : undefined
 
     const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
@@ -393,21 +394,13 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            // i18n expansion writes one row per locale to the dump.
-            // Use `item.id` (already suffixed for non-default locales by
-            // `expandI18nData`) as the dump tuple key so HMR can locate the
-            // same row later. The bare key matches the SQL row's actual `id`.
-            if (collection.i18n && (parsedContent?.meta as Record<string, unknown>)?.i18n) {
-              const expandedItems = expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
-              for (const item of expandedItems) {
-                const itemKey = item.id as string
-                const { queries: itemQueries, hash: itemHash } = generateCollectionInsert(collection, item)
-                list.push([itemKey, itemQueries, itemHash])
-              }
-            }
-            else {
-              const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-              list.push([keyInCollection, queries, hash])
+            const items = collection.i18n
+              ? expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
+              : [parsedContent]
+            for (const item of items) {
+              trackLocaleVariant?.(item)
+              const { queries, hash } = generateCollectionInsert(collection, item)
+              list.push([item.id, queries, hash])
             }
           }
           catch (e: unknown) {

@@ -1,5 +1,5 @@
 import { afterEach, describe, it, expect, vi } from 'vitest'
-import { defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
+import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import { z } from 'zod'
 import { defineCollection, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
@@ -790,6 +790,24 @@ describe('i18n', () => {
       }, i18nConfig, 'data', ['links'])
 
       expect(fr?.links).toEqual([{ label: 'Home', to: '/' }, { label: 'Le blog', to: '/blog' }])
+    })
+  })
+
+  describe('duplicate locale variants', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('warns when two rows are the same locale version of a stem', () => {
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+      const track = createLocaleVariantTracker('docs')
+
+      track({ id: 'docs/en/guide.md#fr', locale: 'fr', stem: 'guide' })
+      track({ id: 'docs/en/guide.md', locale: 'en', stem: 'guide' })
+      expect(warn).not.toHaveBeenCalled()
+
+      track({ id: 'docs/fr/guide.md', locale: 'fr', stem: 'guide' })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('"docs/en/guide.md#fr" and "docs/fr/guide.md"'))
     })
   })
 
