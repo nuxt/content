@@ -1,12 +1,13 @@
 import type { CollectionQueryBuilder, ContentLocaleEntry } from '@nuxt/content'
 import manifestMeta from '#content/manifest'
 
-const LOCALE_ENTRY_FIELDS = ['locale', 'stem', 'path', 'title'] as const
+/** Columns of `ContentLocaleEntry` that only some collections have. */
+const OPTIONAL_ENTRY_FIELDS = ['path', 'title']
 
 /**
  * Query all locale variants of a content stem in an i18n collection, for language
  * switchers and hreflang tags. Reads only the columns of `ContentLocaleEntry` that
- * the collection has (`path` and `title` exist on page collections only).
+ * the collection has.
  */
 export async function generateCollectionLocales<T = Record<string, unknown>>(
   queryBuilder: CollectionQueryBuilder<T>,
@@ -23,22 +24,17 @@ export async function generateCollectionLocales<T = Record<string, unknown>>(
     }
     return []
   }
-  const selectFields = LOCALE_ENTRY_FIELDS.filter(f => f in meta.fields) as Array<keyof T>
+  const selectFields = ['locale', 'stem', ...OPTIONAL_ENTRY_FIELDS.filter(field => field in meta.fields)] as Array<keyof T>
 
-  // Filtering on both columns lets the database use the `(stem, locale)` index.
+  // Filtering on both columns lets the database use the `(stem, locale)` index. The
+  // filter on `locale` also turns off the active locale, so every variant is listed.
   const items = await queryBuilder
     .select(...selectFields)
     .where('locale', 'IN', meta.i18n.locales)
     .stem(stem)
     .all()
 
-  return items.map((item) => {
-    const row = item as Record<string, unknown>
-    return {
-      locale: row.locale as string,
-      stem: row.stem as string,
-      path: row.path as string | undefined,
-      title: row.title as string | undefined,
-    }
-  })
+  return items.map(item => Object.fromEntries(
+    selectFields.map(field => [field, (item as Record<string, unknown>)[field as string]]),
+  ) as unknown as ContentLocaleEntry)
 }

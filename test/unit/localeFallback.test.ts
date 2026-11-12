@@ -10,9 +10,10 @@ import { initiateValidatorsContext } from '../../src/utils/dependencies'
 import type { ResolvedCollection } from '../../src/types'
 
 vi.mock('#content/manifest', () => ({
-  tables: { docs: '_content_docs' },
+  tables: { docs: '_content_docs', authors: '_content_authors' },
   default: {
-    docs: { type: 'page', fields: { featured: 'boolean' }, i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' } },
+    docs: { type: 'page', fields: { featured: 'boolean', locale: 'string', path: 'string', stem: 'string', title: 'string' }, i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' } },
+    authors: { type: 'data', fields: { locale: 'string', name: 'string', stem: 'string' }, i18n: { locales: ['en', 'fr'], defaultLocale: 'en' } },
   },
 }))
 
@@ -313,5 +314,16 @@ describe('locale variants', () => {
 
     const plan = db.prepare(`EXPLAIN QUERY PLAN ${queries.at(-1)}`).all() as Array<{ detail: string }>
     expect(plan.map(step => step.detail).join('\n')).toMatch(/SEARCH _content_docs USING INDEX/)
+  })
+
+  it('lists every locale version when the builder carries an active locale', async () => {
+    const variants = await generateCollectionLocales(collectionQueryBuilder('docs' as never, fetch, 'fr'), 'docs', 'a')
+    expect(variants.map(variant => variant.locale).sort()).toEqual(['en', 'fr'])
+  })
+
+  it('leaves out the columns a collection does not have', async () => {
+    const entries = await generateCollectionLocales(collectionQueryBuilder('authors' as never, async () => [{ locale: 'en', stem: 'authors/jane' }] as never[]), 'authors', 'authors/jane')
+    expect(entries).toEqual([{ locale: 'en', stem: 'authors/jane' }])
+    expect(Object.keys(entries[0]!)).toEqual(['locale', 'stem'])
   })
 })

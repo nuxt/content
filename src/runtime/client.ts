@@ -52,11 +52,7 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(
 }
 
 export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
-  // Auto-locale is skipped here. This helper needs every locale variant, not just
-  // the current one, so it builds the query without passing a detected locale.
-  const event = tryUseNuxtApp()?.ssrContext?.event as H3Event | undefined
-  const qb = collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
-  return generateCollectionLocales(qb, String(collection), stem)
+  return generateCollectionLocales(queryCollection(collection), String(collection), stem)
 }
 
 export function useSearchCollection<T extends keyof PageCollections>(
