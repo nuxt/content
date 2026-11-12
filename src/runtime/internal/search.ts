@@ -251,11 +251,13 @@ const indexedCollections = new Set<string>()
 // builds in flight, so concurrent callers wait on the same one instead of inserting twice
 const indexingCollections = new Map<string, Promise<void>>()
 let ftsTableCreated = false
+let indexedLocale: string | undefined
 
 export function _resetFTSState() {
   indexedCollections.clear()
   indexingCollections.clear()
   ftsTableCreated = false
+  indexedLocale = undefined
 }
 
 export async function resetFTSIndex(db: DatabaseAdapter) {
@@ -263,6 +265,20 @@ export async function resetFTSIndex(db: DatabaseAdapter) {
   indexedCollections.clear()
   indexingCollections.clear()
   ftsTableCreated = false
+}
+
+/**
+ * Keep the index in a single locale, the one i18n collections are queried in.
+ * Indexing content of another locale drops what was indexed before.
+ */
+export async function setFTSLocale(db: DatabaseAdapter, locale: string | undefined) {
+  if (locale === indexedLocale) {
+    return
+  }
+  if (ftsTableCreated || indexedCollections.size || indexingCollections.size) {
+    await resetFTSIndex(db)
+  }
+  indexedLocale = locale
 }
 
 export async function buildFTSIndex<T extends PageCollectionItemBase>(
