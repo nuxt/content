@@ -8,9 +8,10 @@ import type { ParsedContentFile } from '../types'
 
 /**
  * Override keys that are never applied. Identity fields keep the `(locale, stem)`
- * pairing intact, `meta` carries the source hash, and `i18n` cannot nest.
+ * pairing intact, `meta` carries the source hash, `i18n` cannot nest, and
+ * prototype keys could make other fields appear in the overrides.
  */
-const IGNORED_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension', 'meta', 'i18n']
+const IGNORED_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension', 'meta', 'i18n', '__proto__', 'constructor', 'prototype']
 
 /**
  * Fields a content parser produces from the file itself, such as the sanitized
@@ -18,7 +19,9 @@ const IGNORED_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension', 'met
  * override them. Elsewhere an override would bypass parsing and sanitization.
  */
 const PARSED_FIELDS = ['body', 'excerpt']
-const RAW_DATA_EXTENSION = /^\.(?:ya?ml|json5?|csv)$/i
+// Matched against `extname(id)`, which is how a parser is chosen. Rows of a CSV
+// file get a `#<row>` suffix.
+const RAW_DATA_EXTENSION = /^\.(?:ya?ml|json5?|csv(?:#\d+)?)$/i
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -188,8 +191,8 @@ function expandLocale(
     if (IGNORED_OVERRIDE_KEYS.includes(field)) {
       continue
     }
-    // Decided from the file id, which the content cannot change, like parser selection.
-    if (PARSED_FIELDS.includes(field) && !RAW_DATA_EXTENSION.test(extname(source.id.split('#')[0]!))) {
+    // The id comes from the file name and cannot be changed by the content.
+    if (PARSED_FIELDS.includes(field) && !RAW_DATA_EXTENSION.test(extname(source.id))) {
       logger.warn(
         `Inline i18n in "${source.id}" translates \`${field}\` for locale "${locale}", which is ignored because `
         + 'this format parses it from the file. Use a separate file per locale to translate it.',
@@ -216,7 +219,7 @@ function expandLocale(
 
   const item = defuByIndex(columns, source) as ParsedContentFile
   if (collectionType === 'page') {
-    if ('body' in columns) {
+    if (Object.hasOwn(columns, 'body')) {
       item.body = columns.body as ParsedContentFile['body']
     }
     translateDerivedSeo(item, source, columns)
@@ -242,7 +245,7 @@ function translateDerivedSeo(item: ParsedContentFile, source: ParsedContentFile,
   const seoOverride = isPlainObject(columns.seo) ? columns.seo : {}
   const seo: Record<string, unknown> = {}
   for (const field of ['title', 'description']) {
-    if (field in columns && !(field in seoOverride) && source.seo[field] === source[field]) {
+    if (Object.hasOwn(columns, field) && !Object.hasOwn(seoOverride, field) && source.seo[field] === source[field]) {
       seo[field] = item[field]
     }
   }

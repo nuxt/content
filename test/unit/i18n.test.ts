@@ -654,6 +654,32 @@ describe('i18n', () => {
       expect(fr?.body).toEqual(body)
     })
 
+    it('treats an id like the parser does, using its last extension', () => {
+      warnings()
+      const body = { type: 'minimark', value: [['p', {}, 'Hello']] }
+      const [, fr] = expandI18nData({
+        id: 'docs:notes.yml#.md',
+        stem: 'notes',
+        body,
+        meta: { i18n: { fr: { body: { type: 'minimark', value: [['a', { href: 'javascript:alert(1)' }, 'x']] } } } },
+      }, i18nConfig, 'page', ['body'])
+
+      expect(fr?.body).toEqual(body)
+    })
+
+    it('ignores prototype keys in overrides', () => {
+      const body = { type: 'minimark', value: [['p', {}, 'Hello']] }
+      const block = JSON.parse('{ "title": "Bonjour", "__proto__": { "body": { "type": "minimark", "value": [] }, "excerpt": {} } }')
+      const content = (): ParsedContentFile => ({ id: 'docs:index.md', stem: 'index', title: 'Hello', body, meta: { i18n: { fr: block } } })
+
+      for (const schemaKeys of [undefined, ['title', 'body']]) {
+        const [, fr] = expandI18nData(content(), i18nConfig, 'page', schemaKeys)
+        expect(fr).toMatchObject({ title: 'Bonjour', body })
+        expect(Object.hasOwn(fr!.meta, 'excerpt')).toBe(false)
+      }
+      expect(({} as Record<string, unknown>).body).toBeUndefined()
+    })
+
     it('derives seo from translated title and description unless seo is set explicitly', () => {
       const derived = expandI18nData({
         id: 'docs:a.md',
