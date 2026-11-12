@@ -152,8 +152,15 @@ export function expandI18nData(
       continue
     }
     if (locale === parsedContent.locale) {
-      const values = { ...meta, ...parsedContent }
-      if (hash(pickSourceByOverride(values, block)) !== hash(block)) {
+      // The block is ignored either way, so a comparison failure only shows the warning.
+      let matchesSource = false
+      try {
+        matchesSource = hash(pickSourceByOverride({ ...meta, ...parsedContent }, block)) === hash(block)
+      }
+      catch {
+        // Too deep to hash
+      }
+      if (!matchesSource) {
         logger.warn(
           `Inline i18n in "${parsedContent.id}" has a block for its own locale "${locale}", which is ignored. `
           + 'Top-level values apply to this locale.',

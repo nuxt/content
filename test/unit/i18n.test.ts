@@ -713,6 +713,25 @@ describe('i18n', () => {
       expect(explicit[1]?.seo).toEqual({ title: 'Getting started | ACME', description: 'Description FR' })
     })
 
+    it('keeps the source item when its own-locale block is too deep to compare', () => {
+      const warn = warnings()
+      let tree: unknown = 'leaf'
+      for (let i = 0; i < 20_000; i++) {
+        tree = [{ child: tree }]
+      }
+
+      const items = expandI18nData({
+        id: 'data:deep.json',
+        stem: 'deep',
+        name: 'Deep',
+        tree,
+        meta: { i18n: { en: { tree }, de: { name: 'Tief' } } },
+      }, i18nConfig, 'data', ['name', 'tree'])
+
+      expect(items.map(item => item.locale)).toEqual(['en', 'de'])
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('own locale "en"'))
+    })
+
     it('applies translations of fields outside the schema to meta', () => {
       const content = (tagline: string, image: string): ParsedContentFile => ({
         id: 'docs:a.md',
