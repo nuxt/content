@@ -727,6 +727,29 @@ describe('i18n', () => {
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('Inline i18n in "team/team/x.yml" for locale "fr" is ignored'))
       expect(() => generateCollectionItemInserts(team, parsed('nope'))).toThrow()
     })
+
+    it('drops a translation with a value that is not a number in a number field', async () => {
+      await initiateValidatorsContext()
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+      const team = resolveCollection('team', defineCollection({
+        type: 'data',
+        source: 'team/*.yml',
+        schema: z.object({ name: z.string(), order: z.number() }),
+        i18n: i18nConfig,
+      }))!
+      const inserts = generateCollectionItemInserts(team, {
+        id: 'team/team/x.yml',
+        stem: 'team/x',
+        extension: 'yml',
+        name: 'X',
+        order: 1,
+        meta: { i18n: { fr: { order: 'deux' }, de: { name: 'Y', order: '3' } } },
+      } as ParsedContentFile)
+
+      expect(inserts.map(({ item }) => item.id)).toEqual(['team/team/x.yml', 'team/team/x.yml#de'])
+      expect(inserts.flatMap(({ queries }) => queries).join('\n')).not.toMatch(/\bNaN\b/)
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Inline i18n in "team/team/x.yml" for locale "fr" is ignored'))
+    })
   })
 
   describe('override handling', () => {

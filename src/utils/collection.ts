@@ -235,6 +235,12 @@ export function generateCollectionItemInserts(collection: ResolvedCollection, pa
   const inserts = []
   for (const item of items) {
     try {
+      // `generateCollectionInsert` writes such a value as `NaN`, which fails the whole dump
+      const invalidNumber = item !== items[0] && Object.keys(collection.fields).find(field =>
+        collection.fields[field] === 'number' && item[field] !== undefined && String(item[field]) !== 'null' && !Number.isFinite(Number(item[field])))
+      if (invalidNumber) {
+        throw new TypeError(`\`${invalidNumber}\` must be a number`)
+      }
       inserts.push({ item, ...generateCollectionInsert(collection, item) })
     }
     catch (error) {
