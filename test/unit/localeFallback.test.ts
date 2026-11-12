@@ -154,6 +154,12 @@ describe('locale fallback', () => {
     expect(await counts(() => query().where('locale', '=', 'en'))).toEqual([1, 1])
   })
 
+  it('counts a field next to the keys without listing ids', async () => {
+    expect(await query().locale('fr', { fallback: 'en' }).count('featured' as never)).toBe(2)
+    expect(queries).toHaveLength(2)
+    expect(queries.some(sql => sql.includes('"id" IN ('))).toBe(false)
+  })
+
   it('returns consistent results for concurrent terminal methods on one builder', async () => {
     const builder = query().locale('fr', { fallback: 'en' }).select('title' as never)
     const [rows, count] = await Promise.all([builder.all(), builder.count()])

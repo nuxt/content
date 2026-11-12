@@ -226,19 +226,24 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
             noLimitOffset: true,
           })).then(m => (m[0] as { count: number }).count)
         }
-        const { rows } = await resolveLocaleRows(fallback, [])
         if (field === '*') {
-          return rows.length
+          return (await resolveLocaleRows(fallback, [])).rows.length
         }
-        // Like SQL `COUNT`, skip NULL values. Reads turn them into `false` or `undefined`.
-        const values = await fetchInChunks(rows.map(row => row.id), chunk => buildQuery({
-          selectedFields: [field],
-          conditions: [`("id" IN (${chunk.map(singleQuote).join(', ')}))`, `("${String(field)}" IS NOT NULL)`],
-          noLimitOffset: true,
-        }))
+        // Like SQL `COUNT`, skip NULL values, which reads turn into `false` or `undefined`.
+        // The values of both locales are read next to the keys and kept for served rows.
+        const [{ rows }, values] = await Promise.all([
+          resolveLocaleRows(fallback, []),
+          fetch(collection, buildQuery({
+            selectedFields: ['id', field] as Array<keyof Collections[T]>,
+            conditions: [...params.conditions, localeInCondition(fallback), `("${String(field)}" IS NOT NULL)`],
+            noLimitOffset: true,
+          })) as unknown as Promise<Row[]>,
+        ])
+        const served = new Set(rows.map(row => row.id))
+        const counted = values.filter(row => served.has(row.id))
         return distinct
-          ? new Set(values.map(row => JSON.stringify(row[String(field)]))).size
-          : values.length
+          ? new Set(counted.map(row => JSON.stringify(row[String(field)]))).size
+          : counted.length
       }
       // A COUNT query returns a single row, so LIMIT and OFFSET must not apply to it.
       return fetch(collection, buildQuery({
