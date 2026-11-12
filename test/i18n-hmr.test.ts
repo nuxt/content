@@ -172,11 +172,17 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     await fs.writeFile(join(contentDir, 'data', 'dated.yml'), ['name: Dated', 'role: Tester', 'joined: 2024-01-01', 'i18n:', '  fr:', '    joined: 1er janvier 2024', '  de:', '    role: Testerin', ''].join('\n'))
     await new Promise(resolve => setTimeout(resolve, 2000))
 
+    // Deleting a file also removes the rows and dump entries of its translations
+    await fs.rm(teamFile)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
     stopListening()
 
     const ids = (await db.database?.prepare(`SELECT id FROM ${collection.tableName} ORDER BY id`).all() as Array<{ id: string }>).map(row => row.id)
     expect(ids).toContain('team/data/broken.yml')
     expect(ids).not.toContain('team/data/french.yml#en')
     expect(ids.filter(id => id.startsWith('team/data/dated.yml'))).toEqual(['team/data/dated.yml', 'team/data/dated.yml#de'])
+    expect(ids.filter(id => id.startsWith('team/data/team.yml'))).toEqual([])
+    expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/team.yml'))).toHaveLength(0)
   }, 40_000)
 })
