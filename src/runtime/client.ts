@@ -2,12 +2,13 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex, setFTSLocale } from './internal/search'
+import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
 import { detectClientLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import type { H3Event } from 'h3'
 import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter, ContentLocaleEntry } from '@nuxt/content'
+import manifestMeta from '#content/manifest'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
 
@@ -75,13 +76,17 @@ export function useSearchCollection<T extends keyof PageCollections>(
     return (Array.isArray(val) ? val : [val]).map(String)
   }
 
+  // Collections with i18n are indexed in the active locale.
+  const localeOf = (name: string) => (manifestMeta[name]?.i18n ? detectClientLocale(nuxtApp) : undefined)
+  const activeLocale = () => resolveCollections().map(localeOf).find(Boolean)
+
   async function init() {
     const collections = resolveCollections()
     if (!collections.length) return initPromise ?? (db ? Promise.resolve(db) : Promise.reject(new Error('No collections to search')))
 
     const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
     const newCollections = collections.filter(c => !indexedFor.includes(c))
-    const locale = detectClientLocale(nuxtApp)
+    const locale = activeLocale()
 
     if (!newCollections.length && !hasRemovedCollections && locale === indexedLocale && initPromise) return initPromise
 
@@ -95,12 +100,11 @@ export function useSearchCollection<T extends keyof PageCollections>(
         if (hasRemovedCollections) {
           await resetFTSIndex(_db)
         }
-        await setFTSLocale(_db, locale)
 
-        // Collections that are already indexed in this locale are skipped.
+        // Collections that are already indexed in their locale are skipped.
         await Promise.all(collections.map((col) => {
           const qb = queryCollection(col as T)
-          return buildFTSIndex(_db, col, qb, indexOpts)
+          return buildFTSIndex(_db, col, qb, indexOpts, localeOf(col))
         }))
 
         indexedFor = [...collections]
@@ -116,11 +120,11 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
   if (import.meta.client) {
     watch(() => toValue(collection), () => init(), { immediate })
-    watch(() => detectClientLocale(nuxtApp), () => initPromise && init())
+    watch(activeLocale, () => initPromise && init())
   }
 
   async function search(query: string, searchOpts?: SearchCollectionOptions): Promise<SearchResult[]> {
-    if (!db || detectClientLocale(nuxtApp) !== indexedLocale) {
+    if (!db || activeLocale() !== indexedLocale) {
       await init()
     }
     return queryFTS(db!, indexedFor, query, searchOpts)
