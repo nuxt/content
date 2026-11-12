@@ -104,6 +104,12 @@ export function createContentConfigSources(collections: ResolvedContentCollectio
   return sources
 }
 
+/** A source whose files can carry different prefixes, like a merged collection. */
+export interface PrefixedSource extends Source {
+  /** The prefix of the source that serves `key`. */
+  prefixOf?: (key: string) => Promise<string | undefined>
+}
+
 /**
  * Combine several sources behind one surface (replaces the removed
  * `comark-content/sources/merge` factory).
@@ -111,7 +117,7 @@ export function createContentConfigSources(collections: ResolvedContentCollectio
  * Keys from each child are returned as-is. On conflict the first child wins for
  * `getItem` / `getItemRaw` (mirrors hub path-collision behaviour).
  */
-function mergeSources(children: Source[], schema?: JsonSchema): Source {
+function mergeSources(children: Source[], schema?: JsonSchema): PrefixedSource {
   async function locate(key: string): Promise<{ child: Source, childKey: string } | undefined> {
     for (const child of children) {
       const keys = await child.keys()
@@ -145,6 +151,9 @@ function mergeSources(children: Source[], schema?: JsonSchema): Source {
       const hit = await locate(key)
       if (!hit) return null
       return hit.child.getItemRaw?.(hit.childKey)
+    },
+    async prefixOf(key: string) {
+      return (await locate(key))?.child.prefix
     },
     watch: children.some(c => c.watch)
       ? async (cb) => {
