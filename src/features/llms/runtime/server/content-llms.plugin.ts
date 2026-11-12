@@ -47,7 +47,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         return {
           title: doc.title || doc?.seo?.title || '',
           description: doc.description || doc?.seo?.description || '',
-          href: getDocumentLink(localizePath(doc.path, doc.locale === locale ? undefined : doc.locale), section.contentCollection!, options),
+          href: getDocumentLink(doc.path, section.contentCollection!, options, doc.locale),
         }
       }))
     }
@@ -101,13 +101,13 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
     })
   }
 
-  function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
+  function getDocumentLink(link: string, collection: string, options: ModuleOptions, locale?: string) {
     const contentRawMarkdown = (options as unknown as { contentRawMarkdown: false | { rewriteLLMSTxt: boolean, excludeCollections: string[] } })?.contentRawMarkdown
     if (contentRawMarkdown === false || contentRawMarkdown?.rewriteLLMSTxt === false || contentRawMarkdown?.excludeCollections?.includes(collection)) {
-      return withBase(link, options.domain)
+      return withBase(localizePath(link, collection, locale), options.domain)
     }
 
-    link = `/raw${link}.md`
+    link = `/raw${localizePath(link, collection, locale, true)}.md`
 
     if (link.endsWith('/.md')) {
       link = link.slice(0, -3) + 'index.md'

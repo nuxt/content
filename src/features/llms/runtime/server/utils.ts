@@ -28,12 +28,18 @@ export function getDefaultLocale(collection: string): string | undefined {
 }
 
 /**
- * Translations in an i18n collection share the path of the default locale. Their
- * links get the locale as first segment, like a localized route, which the raw
- * Markdown route resolves.
+ * Link path of a document. Translations in an i18n collection share the path of the
+ * default locale, so their links start with the locale like a localized route, which
+ * the raw Markdown route resolves. The raw route reads a leading locale code as a
+ * translation, so `raw` links of default-locale paths that start with one keep their locale too.
  */
-export function localizePath(path: string, locale?: string): string {
-  return locale ? `/${locale}${path === '/' ? '' : path}` : path
+export function localizePath(path: string, collection: string, locale?: string, raw = false): string {
+  const i18n = manifest[collection]?.i18n
+  if (!i18n || !locale) {
+    return path
+  }
+  const prefixed = locale !== i18n.defaultLocale || (raw && i18n.locales.includes(path.split('/')[1] || ''))
+  return prefixed ? `/${locale}${path === '/' ? '' : path}` : path
 }
 
 export async function createDocumentGenerator() {

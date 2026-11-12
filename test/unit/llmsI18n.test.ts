@@ -64,7 +64,7 @@ describe('llms with i18n collections', () => {
     for (const statement of generateCollectionTableDefinition(docs).split('\n')) {
       state.db.exec(statement)
     }
-    for (const row of [page('en', 'docs/foo', 'Foo', 'English text'), page('fr', 'docs/foo', 'Foo FR', 'Texte français'), page('fr', 'docs/bar', 'Bar FR', 'Seulement en français'), page('en', 'index', 'Home', 'Welcome'), page('fr', 'index', 'Accueil', 'Bienvenue')]) {
+    for (const row of [page('en', 'docs/foo', 'Foo', 'English text'), page('fr', 'docs/foo', 'Foo FR', 'Texte français'), page('fr', 'docs/bar', 'Bar FR', 'Seulement en français'), page('en', 'index', 'Home', 'Welcome'), page('fr', 'index', 'Accueil', 'Bienvenue'), page('en', 'fr/guide', 'France guide', 'About France'), page('fr', 'guide', 'Guide', 'Guide en français')]) {
       for (const statement of generateCollectionInsert(docs, row as never).queries) {
         state.db.exec(statement)
       }
@@ -72,9 +72,16 @@ describe('llms with i18n collections', () => {
   })
 
   it('prefixes the link path of a translation with its locale', () => {
-    expect(localizePath('/docs/foo', 'fr')).toBe('/fr/docs/foo')
-    expect(localizePath('/', 'fr')).toBe('/fr')
-    expect(localizePath('/docs/foo')).toBe('/docs/foo')
+    expect(localizePath('/docs/foo', 'docs', 'fr')).toBe('/fr/docs/foo')
+    expect(localizePath('/', 'docs', 'fr')).toBe('/fr')
+    expect(localizePath('/docs/foo', 'docs', 'en')).toBe('/docs/foo')
+    expect(localizePath('/docs/foo', 'other', 'fr')).toBe('/docs/foo')
+  })
+
+  it('keeps the locale in raw links of default-locale paths that start with a locale code', () => {
+    expect(localizePath('/fr/guide', 'docs', 'en', true)).toBe('/en/fr/guide')
+    expect(localizePath('/fr/guide', 'docs', 'en')).toBe('/fr/guide')
+    expect(localizePath('/docs/foo', 'docs', 'en', true)).toBe('/docs/foo')
   })
 
   it('serves raw Markdown in the locale of the first path segment', async () => {
@@ -84,5 +91,7 @@ describe('llms with i18n collections', () => {
     expect(await raw('index.md')).toContain('Welcome')
     expect(await raw('fr.md')).toContain('Bienvenue')
     await expect(raw('de/docs/foo.md')).rejects.toMatchObject({ statusCode: 404 })
+    expect(await raw('fr/guide.md')).toContain('Guide en français')
+    expect(await raw('en/fr/guide.md')).toContain('About France')
   })
 })
