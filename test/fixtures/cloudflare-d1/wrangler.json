@@ -1,0 +1,8 @@
+{
+  "name": "nuxt-content-test-cloudflare-d1",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2025-09-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": ".output/public", "binding": "ASSETS" },
+  "d1_databases": [{ "binding": "DB", "database_name": "content", "database_id": "00000000-0000-0000-0000-000000000000" }]
+}
