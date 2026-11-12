@@ -1,0 +1,130 @@
+import Database from 'better-sqlite3'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { z } from 'zod'
+import { collectionQueryBuilder } from '../../src/runtime/internal/query'
+import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
+import { defineCollection, generateCollectionInsert, generateCollectionTableDefinition, resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
+import type { ResolvedCollection } from '../../src/types'
+
+vi.mock('#content/manifest', () => ({
+  tables: { docs: '_content_docs' },
+  default: {
+    docs: { type: 'page', fields: {}, i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' } },
+  },
+}))
+
+let collection: ResolvedCollection
+let db: Database.Database
+let queries: string[]
+
+function insert(locale: string, stem: string, data: { title: string, date: string, status?: string }) {
+  const item = { id: `docs/${locale}/${stem}.md`, stem, locale, path: `/${stem}`, extension: 'md', meta: {}, status: 'published', ...data }
+  for (const query of generateCollectionInsert(collection, item).queries) {
+    db.exec(query)
+  }
+}
+
+async function fetch(name: string, sql: string) {
+  assertSafeQuery(sql, name)
+  queries.push(sql)
+  return db.prepare(sql).all() as never[]
+}
+
+const query = () => collectionQueryBuilder('docs' as never, fetch)
+const titles = (rows: unknown[]) => rows.map(row => (row as { title: string }).title)
+
+beforeAll(async () => {
+  await initiateValidatorsContext()
+  collection = resolveCollection('docs', defineCollection({
+    type: 'page',
+    source: '*/docs/**',
+    schema: z.object({ date: z.string(), status: z.string() }),
+    i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+  }))!
+})
+
+beforeEach(() => {
+  db = new Database(':memory:')
+  for (const statement of generateCollectionTableDefinition(collection).split('\n')) {
+    db.exec(statement)
+  }
+  queries = []
+
+  insert('en', 'a', { title: 'A', date: '2024-01-03' })
+  insert('en', 'b', { title: 'B', date: '2024-01-01' })
+  insert('en', 'c', { title: 'C', date: '2024-01-02' })
+  insert('en', 'd', { title: 'D', date: '2024-01-04' })
+  insert('fr', 'a', { title: 'A fr', date: '2024-01-03' })
+  insert('fr', 'c', { title: 'C fr', date: '2024-01-02', status: 'hidden' })
+})
+
+describe('locale fallback', () => {
+  it('serves each stem from the requested locale and fills the rest from the fallback', async () => {
+    const rows = await query().locale('fr', { fallback: 'en' }).all()
+    expect(titles(rows)).toEqual(['A fr', 'B', 'C fr', 'D'])
+  })
+
+  it('applies the detected non-default locale with fallback to the default locale', async () => {
+    const rows = await collectionQueryBuilder('docs' as never, fetch, 'fr').all()
+    expect(titles(rows)).toEqual(['A fr', 'B', 'C fr', 'D'])
+  })
+
+  it('keeps the database order of a custom order across both locales', async () => {
+    const rows = await query().locale('fr', { fallback: 'en' }).order('date' as never, 'DESC').limit(2).all()
+    expect(titles(rows)).toEqual(['D', 'A fr'])
+  })
+
+  it('returns the first item of the ordered result', async () => {
+    const row = await query().locale('fr', { fallback: 'en' }).order('date' as never, 'ASC').first()
+    expect(row).toMatchObject({ title: 'B', locale: 'en' })
+  })
+
+  it('does not replace a translation that exists but fails the filters', async () => {
+    const rows = await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').all()
+    expect(titles(rows)).toEqual(['A fr', 'B', 'D'])
+  })
+
+  it('applies skip together with limit, and ignores skip without limit like a single query', async () => {
+    expect(titles(await query().locale('fr', { fallback: 'en' }).skip(1).limit(2).all())).toEqual(['B', 'C fr'])
+    expect(titles(await query().locale('fr', { fallback: 'en' }).skip(2).all())).toEqual(['A fr', 'B', 'C fr', 'D'])
+    expect(titles(await query().skip(2).all())).toHaveLength(6)
+  })
+
+  it('returns only the selected fields', async () => {
+    const rows = await query().locale('fr', { fallback: 'en' }).select('title' as never).limit(2).all()
+    expect(rows).toEqual([{ title: 'A fr' }, { title: 'B' }])
+  })
+
+  it('reads full rows only for the requested page', async () => {
+    await query().locale('fr', { fallback: 'en' }).first()
+    const selectAll = queries.filter(sql => sql.startsWith('SELECT * '))
+    expect(selectAll).toEqual(['SELECT * FROM _content_docs WHERE ("id" IN (\'docs/fr/a.md\')) ORDER BY stem ASC'])
+  })
+
+  it('counts the resolved rows, ignoring select and pagination', async () => {
+    const builder = () => query().locale('fr', { fallback: 'en' }).select('title' as never).skip(10).limit(1)
+    expect(await builder().count()).toBe(4)
+    expect(await builder().count('status' as never, true)).toBe(2)
+    expect(await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').count()).toBe(3)
+  })
+
+  it('returns consistent results for concurrent terminal methods on one builder', async () => {
+    const builder = query().locale('fr', { fallback: 'en' }).select('title' as never)
+    const [rows, count] = await Promise.all([builder.all(), builder.count()])
+    expect(rows).toEqual([{ title: 'A fr' }, { title: 'B' }, { title: 'C fr' }, { title: 'D' }])
+    expect(count).toBe(4)
+  })
+
+  it('splits long stem and id lists into queries the server accepts', async () => {
+    for (let i = 0; i < 250; i++) {
+      insert('en', `extra-${String(i).padStart(3, '0')}-${'x'.repeat(200)}`, { title: `Extra ${i}`, date: '2023-01-01' })
+    }
+
+    const rows = await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').limit(240).all()
+
+    expect(rows).toHaveLength(240)
+    expect(titles(rows).slice(0, 2)).toEqual(['A fr', 'B'])
+    expect(Math.max(...queries.map(sql => sql.length))).toBeLessThan(MAX_SQL_QUERY_LENGTH / 2)
+  })
+})

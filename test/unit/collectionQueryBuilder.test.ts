@@ -241,33 +241,6 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
-  it('builds query with locale and fallback (two queries, sorted by stem)', async () => {
-    mockFetch
-      .mockResolvedValueOnce([{ stem: 'post-c', locale: 'fr' }])
-      .mockResolvedValueOnce([{ stem: 'post-a', locale: 'en' }, { stem: 'post-c', locale: 'en' }])
-
-    const query = collectionQueryBuilder(mockCollection, mockFetch)
-    const results = await query
-      .locale('fr', { fallback: 'en' })
-      .all()
-
-    // Should have called fetch twice: once for locale, once for fallback
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("locale" = \'fr\') ORDER BY stem ASC',
-    )
-    expect(mockFetch).toHaveBeenCalledWith(
-      'articles',
-      'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
-    )
-
-    // Merged results: fr preferred over en duplicate, sorted by stem
-    expect(results).toHaveLength(2)
-    expect(results[0]).toEqual({ stem: 'post-a', locale: 'en' }) // fallback, sorted first
-    expect(results[1]).toEqual({ stem: 'post-c', locale: 'fr' }) // locale preferred over en
-  })
-
   it('builds query with locale and path', async () => {
     const query = collectionQueryBuilder('articles' as never, mockFetch)
     await query
@@ -321,26 +294,6 @@ describe('collectionQueryBuilder', () => {
     })
   })
 
-  it('locale fallback merges results in stem order', async () => {
-    // `fr` has stem `c`, while `en` has stems `a`, `b`, `c`. The fallback should
-    // interleave `a` and `b` ahead of `c`.
-    mockFetch
-      .mockResolvedValueOnce([{ stem: 'c', locale: 'fr' }])
-      .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }, { stem: 'c', locale: 'en' }])
-
-    const results = await collectionQueryBuilder(mockCollection, mockFetch)
-      .locale('fr', { fallback: 'en' })
-      .all()
-
-    expect(results).toHaveLength(3)
-    expect(results.map((r: { stem: string }) => r.stem)).toEqual(['a', 'b', 'c'])
-    // stem 'c' should come from fr (locale preferred)
-    expect(results[2]).toEqual({ stem: 'c', locale: 'fr' })
-    // stems 'a' and 'b' come from en (fallback)
-    expect(results[0]).toEqual({ stem: 'a', locale: 'en' })
-    expect(results[1]).toEqual({ stem: 'b', locale: 'en' })
-  })
-
   it('count() ignores LIMIT carried over from .limit()', async () => {
     // Regression. COUNT returns exactly one row, so appending `LIMIT N` is at
     // best misleading. Combined with `OFFSET` it returns `[]`, and `m[0].count`
@@ -381,26 +334,14 @@ describe('collectionQueryBuilder', () => {
   })
 
   describe('auto-locale detection', () => {
-    it('auto-applies detected locale with fallback when collection has i18n', async () => {
-      mockFetch
-        .mockResolvedValueOnce([{ stem: 'a', locale: 'fr' }])
-        .mockResolvedValueOnce([{ stem: 'a', locale: 'en' }, { stem: 'b', locale: 'en' }])
+    it('reads the detected non-default locale and the default locale in one query', async () => {
+      // `client.ts` passes the `@nuxtjs/i18n` locale as the third argument.
+      await collectionQueryBuilder(mockCollection, mockFetch, 'fr').all()
 
-      // Pass `'fr'` as `detectedLocale` (3rd arg) to simulate what `client.ts`
-      // and `server.ts` do.
-      const results = await collectionQueryBuilder(mockCollection, mockFetch, 'fr').all()
-
-      // Should auto-apply locale with fallback to defaultLocale ('en')
-      expect(mockFetch).toHaveBeenCalledTimes(2)
       expect(mockFetch).toHaveBeenCalledWith(
         'articles',
-        'SELECT * FROM _articles WHERE ("locale" = \'fr\') ORDER BY stem ASC',
+        'SELECT * FROM _articles WHERE ("locale" IN (\'fr\', \'en\')) ORDER BY stem ASC',
       )
-      expect(mockFetch).toHaveBeenCalledWith(
-        'articles',
-        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
-      )
-      expect(results).toHaveLength(2)
     })
 
     it('does not auto-apply locale when .locale() is called explicitly', async () => {
@@ -428,8 +369,7 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('uses single query (no fallback) when detectedLocale equals defaultLocale', async () => {
-      // When the default locale `'en'` is detected, a single `WHERE` is used
-      // rather than the two-query fallback path.
+      // The default locale needs no fallback, so a plain filter is enough.
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'en')
       await query.all()
 
@@ -451,64 +391,6 @@ describe('collectionQueryBuilder', () => {
         'articles',
         'SELECT * FROM _articles ORDER BY stem ASC',
       )
-    })
-
-    it('injects and strips stem when using select() with locale fallback', async () => {
-      mockFetch
-        .mockResolvedValueOnce([{ title: 'Bonjour', locale: 'fr', stem: 'hello' }])
-        .mockResolvedValueOnce([
-          { title: 'Hello', locale: 'en', stem: 'hello' },
-          { title: 'World', locale: 'en', stem: 'world' },
-        ])
-
-      const results = await collectionQueryBuilder(mockCollection, mockFetch)
-        .select('title' as never, 'locale' as never)
-        .locale('fr', { fallback: 'en' })
-        .all()
-
-      // stem should be stripped from results since it was not explicitly selected
-      expect(results[0]).not.toHaveProperty('stem')
-      // Merge should work correctly: fr 'hello' replaces en 'hello', en 'world' is fallback
-      expect(results).toHaveLength(2)
-      expect(results[0]).toMatchObject({ title: 'Bonjour', locale: 'fr' })
-      expect(results[1]).toMatchObject({ title: 'World', locale: 'en' })
-    })
-
-    it('counts correctly with locale fallback', async () => {
-      mockFetch
-        .mockResolvedValueOnce([
-          { title: 'Bonjour', stem: 'hello' },
-        ])
-        .mockResolvedValueOnce([
-          { title: 'Hello', stem: 'hello' },
-          { title: 'World', stem: 'world' },
-        ])
-
-      const count = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .count()
-
-      // fr has 'hello', en has 'hello' + 'world'. Merged: 2 unique stems
-      expect(count).toBe(2)
-    })
-
-    it('counts distinct with locale fallback', async () => {
-      mockFetch
-        .mockResolvedValueOnce([
-          { title: 'Same', stem: 'a' },
-          { title: 'Same', stem: 'b' },
-        ])
-        .mockResolvedValueOnce([
-          { title: 'Same', stem: 'a' },
-          { title: 'Different', stem: 'c' },
-        ])
-
-      const count = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .count('title' as never, true)
-
-      // Merged items: a='Same', b='Same', c='Different'. Distinct titles: 2
-      expect(count).toBe(2)
     })
 
     it('does not leak auto-locale into persistent conditions across calls', async () => {
@@ -571,87 +453,6 @@ describe('collectionQueryBuilder', () => {
       // No `locale = 'fr'` from auto-detection
       expect(sql).not.toContain('"locale" = \'fr\'')
       expect(sql).toContain('"locale" = \'en\'')
-    })
-
-    it('restores selectedFields after a failed locale-fallback fetch', async () => {
-      // Regression. State mutation on the locale-fallback path used to leak
-      // when the underlying fetch threw, so the next query would then SELECT an
-      // extra `stem` column.
-      const qb = collectionQueryBuilder(mockCollection, mockFetch)
-        .select('title' as never, 'locale' as never)
-        .locale('fr', { fallback: 'en' })
-
-      mockFetch.mockRejectedValueOnce(new Error('boom'))
-      await expect(qb.all()).rejects.toThrow('boom')
-
-      // Run an unrelated query on a *new* builder using the same select set.
-      // This verifies test isolation, since the bug was about builder-internal
-      // mutation.
-      mockFetch.mockClear()
-      mockFetch.mockResolvedValueOnce([{ title: 'x', locale: 'en' }])
-      await collectionQueryBuilder(mockCollection, mockFetch)
-        .select('title' as never, 'locale' as never)
-        .all()
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        'articles',
-        'SELECT "title", "locale" FROM _articles ORDER BY stem ASC',
-      )
-    })
-
-    it('is safe under concurrent .all()/.count() on the same builder (no shared-state race)', async () => {
-      // Regression. `.count()` and `fetchWithLocaleFallback` used to mutate
-      // `params.selectedFields`, `params.offset`, and `params.limit` in a
-      // save-mutate-restore-in-finally pattern. Under `Promise.all`, a second
-      // terminal could observe the mutated state mid-flight. Both terminals
-      // now pass overrides into `buildQuery` and never touch `params`.
-      const qb = collectionQueryBuilder(mockCollection, mockFetch)
-        .select('title' as never, 'locale' as never)
-        .locale('fr', { fallback: 'en' })
-
-      // Four fetches are expected, two from `.all()` (fr + en) and two from
-      // `.count()` (fr + en). `.count()` injects `title` into `selectedFields`,
-      // and `.all()` must NOT observe that injection.
-      mockFetch
-        .mockResolvedValueOnce([{ title: 'a-fr', locale: 'fr', stem: 'a' }])
-        .mockResolvedValueOnce([{ title: 'b-en', locale: 'en', stem: 'b' }])
-        .mockResolvedValueOnce([{ title: 'a-fr', locale: 'fr', stem: 'a' }])
-        .mockResolvedValueOnce([{ title: 'b-en', locale: 'en', stem: 'b' }])
-
-      const [items, count] = await Promise.all([qb.all(), qb.count('title' as never)])
-
-      expect(items).toHaveLength(2)
-      expect(count).toBe(2)
-
-      // Every issued query must have selected exactly the user's fields (+ injected stem),
-      // not the count's extra 'title' bleeding into .all()'s SELECT list.
-      const queries = mockFetch.mock.calls.map(c => c[1] as string)
-      for (const q of queries) {
-        // Should not have `title` duplicated in the SELECT list
-        expect(q.match(/"title"/g)?.length ?? 0).toBeLessThanOrEqual(1)
-      }
-    })
-
-    it('count() with selected fields and locale fallback bypasses pagination', async () => {
-      // skip(10).limit(5).count() should return the full count, not just the visible page.
-      mockFetch
-        .mockResolvedValueOnce([
-          { title: 'a-fr', stem: 'a' },
-          { title: 'b-fr', stem: 'b' },
-          { title: 'c-fr', stem: 'c' },
-        ])
-        .mockResolvedValueOnce([
-          { title: 'd-en', stem: 'd' },
-          { title: 'e-en', stem: 'e' },
-        ])
-
-      const count = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .skip(10) // would slice everything away if not bypassed
-        .limit(2)
-        .count()
-
-      expect(count).toBe(5)
     })
 
     it('skips auto-locale when detected locale is a BCP-47 tag not in collection.locales', async () => {
@@ -733,81 +534,6 @@ describe('collectionQueryBuilder', () => {
         'navigation',
         'SELECT * FROM _navigation WHERE ("stem" = \'navigation\') ORDER BY stem ASC',
       )
-    })
-  })
-
-  describe('locale fallback ordering and counting', () => {
-    it('interleaves by stem when navigation injects the default order', async () => {
-      // The navigation/surround helpers inject `order('stem', 'ASC')`. The merge
-      // must still interleave the two result sets by stem rather than concatenate.
-      mockFetch
-        .mockResolvedValueOnce([{ stem: '1.intro', locale: 'fr' }, { stem: '3.advanced', locale: 'fr' }])
-        .mockResolvedValueOnce([
-          { stem: '1.intro', locale: 'en' },
-          { stem: '2.guide', locale: 'en' },
-          { stem: '3.advanced', locale: 'en' },
-        ])
-
-      const results = await collectionQueryBuilder(mockCollection, mockFetch)
-        .order('stem', 'ASC')
-        .locale('fr', { fallback: 'en' })
-        .all()
-
-      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['1.intro', '2.guide', '3.advanced'])
-      // The translated page wins over its fallback at each shared stem.
-      expect(results[0]).toMatchObject({ stem: '1.intro', locale: 'fr' })
-      expect(results[1]).toMatchObject({ stem: '2.guide', locale: 'en' })
-    })
-
-    it('re-sorts the merged result rather than trusting sub-query order', async () => {
-      // Sub-queries may arrive in a non-binary order (for example a linguistic
-      // collation on PostgreSQL). The merge re-sorts by stem so the page is
-      // deterministic regardless of the backend's collation.
-      mockFetch
-        .mockResolvedValueOnce([{ stem: 'b', locale: 'fr' }, { stem: 'a', locale: 'fr' }])
-        .mockResolvedValueOnce([{ stem: 'c', locale: 'en' }])
-
-      const results = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .all()
-
-      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['a', 'b', 'c'])
-    })
-
-    it('counts distinct object column values by structural equality', async () => {
-      // SQL `COUNT(DISTINCT ...)` compares serialized values. The fallback path
-      // mirrors that, so two structurally-equal JSON values count once.
-      mockFetch
-        .mockResolvedValueOnce([{ tags: { a: 1 }, stem: 'x' }])
-        .mockResolvedValueOnce([{ tags: { a: 1 }, stem: 'y' }, { tags: { a: 2 }, stem: 'z' }])
-
-      const count = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .count('tags' as never, true)
-
-      // { a: 1 } (x and y share the stem-distinct rows) and { a: 2 }: 2 distinct values.
-      expect(count).toBe(2)
-    })
-  })
-
-  describe('mergeSortedArrays / locale-fallback ordering', () => {
-    it('preserves DB sort order for mixed-case stems (binary, not localeCompare)', async () => {
-      // SQLite BINARY puts 'A' (65) before 'a' (97). localeCompare would put 'a' first.
-      // The merge must agree with the DB so the interleaving stays in true ASC order.
-      mockFetch
-        .mockResolvedValueOnce([
-          { stem: 'B', locale: 'fr' },
-        ])
-        .mockResolvedValueOnce([
-          { stem: 'A', locale: 'en' },
-          { stem: 'a', locale: 'en' },
-        ])
-
-      const results = await collectionQueryBuilder(mockCollection, mockFetch)
-        .locale('fr', { fallback: 'en' })
-        .all()
-
-      expect(results.map((r: { stem: string }) => r.stem)).toEqual(['A', 'B', 'a'])
     })
   })
 })
