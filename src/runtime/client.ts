@@ -2,7 +2,7 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
+import { generateSearchSections, buildFTSIndex, getFTSGeneration, queryFTS, resetFTSIndex } from './internal/search'
 import { generateCollectionLocales } from './internal/locales'
 import { detectClientLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
@@ -99,11 +99,13 @@ export function useSearchCollection<T extends keyof PageCollections>(
           await resetFTSIndex(_db)
         }
 
-        // Collections that are already indexed in their locale are skipped.
-        await Promise.all(collections.map((col) => {
-          const qb = queryCollection(col as T)
-          return buildFTSIndex(_db, col, qb, indexOpts, localeOf(col))
-        }))
+        // Collections that are already indexed in their locale are skipped. A reset by
+        // another instance drops the builds in flight, so index again after one.
+        let generation: number
+        do {
+          generation = getFTSGeneration()
+          await Promise.all(collections.map(col => buildFTSIndex(_db, col, queryCollection(col as T), indexOpts, localeOf(col))))
+        } while (generation !== getFTSGeneration())
 
         indexedFor = [...collections]
         status.value = 'ready'

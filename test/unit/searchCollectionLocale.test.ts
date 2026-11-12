@@ -7,14 +7,18 @@ import { useNuxtApp } from '#imports'
 const state = vi.hoisted(() => ({
   db: undefined as unknown as Database.Database,
   inserts: [] as string[],
+  // Holds the first content query on `_content_docs` until released.
+  gate: undefined as Promise<void> | undefined,
+  gateHit: false,
 }))
 
 vi.mock('#content/manifest', () => ({
-  tables: { docs: '_content_docs', blog: '_content_blog' },
+  tables: { docs: '_content_docs', blog: '_content_blog', notes: '_content_notes' },
   checksums: {},
   default: {
     docs: { type: 'page', fields: {}, i18n: { locales: ['en', 'fr'], defaultLocale: 'en' } },
     blog: { type: 'page', fields: {} },
+    notes: { type: 'page', fields: {} },
   },
 }))
 
@@ -25,7 +29,13 @@ const parse = vi.hoisted(() => (row: unknown) => {
 
 // Content queries and the search index share one database, like the browser WASM database.
 vi.mock('../../src/runtime/internal/api', () => ({
-  fetchQuery: async (_event: unknown, _collection: string, sql: string) => state.db.prepare(sql).all().map(parse),
+  fetchQuery: async (_event: unknown, _collection: string, sql: string) => {
+    if (state.gate && !state.gateHit && sql.includes('_content_docs')) {
+      state.gateHit = true
+      await state.gate
+    }
+    return state.db.prepare(sql).all().map(parse)
+  },
 }))
 
 vi.mock('../../src/runtime/internal/database.client', () => {
@@ -56,9 +66,12 @@ beforeEach(() => {
   ;(useNuxtApp() as unknown as { $i18n: unknown }).$i18n = { locale }
 
   state.inserts = []
+  state.gate = undefined
+  state.gateHit = false
   state.db = new Database(':memory:')
   state.db.exec('CREATE TABLE _content_docs (id TEXT, stem TEXT, locale TEXT, path TEXT, title TEXT, body TEXT, description TEXT, extension TEXT, navigation TEXT, meta TEXT, seo TEXT)')
   state.db.exec('CREATE TABLE _content_blog (id TEXT, stem TEXT, path TEXT, title TEXT, body TEXT, description TEXT, extension TEXT, navigation TEXT, meta TEXT, seo TEXT)')
+  state.db.exec('CREATE TABLE _content_notes (id TEXT, stem TEXT, path TEXT, title TEXT, body TEXT, description TEXT, extension TEXT, navigation TEXT, meta TEXT, seo TEXT)')
   const insert = state.db.prepare('INSERT INTO _content_docs VALUES (?, ?, ?, ?, ?, ?, \'\', \'md\', \'true\', \'{}\', \'{}\')')
   insert.run('docs/en/guide.md', 'guide', 'en', '/guide', 'Hello guide', body('english words'))
   insert.run('docs/fr/guide.md', 'guide', 'fr', '/guide', 'Bonjour guide', body('mots francais'))
@@ -111,5 +124,30 @@ describe('useSearchCollection with i18n collections', () => {
 
     const titles = state.db.prepare('SELECT title FROM _fts_search WHERE collection = \'docs\'').all()
     expect(titles).toEqual([{ title: 'Bonjour guide' }])
+  })
+
+  it('keeps an instance searchable when another instance resets the index during its build', async () => {
+    const { useSearchCollection } = await import('../../src/runtime/client')
+    // A plain getter, so no watcher runs.
+    let names = ['blog', 'notes']
+    const other = useSearchCollection((() => names) as never, { immediate: false })
+    await other.init()
+
+    let release!: () => void
+    state.gate = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    const search = useSearchCollection('docs' as never, { immediate: false })
+    const pending = search.init()
+    await vi.waitFor(() => expect(state.gateHit).toBe(true))
+
+    // Removing a collection resets the shared index while the docs build waits.
+    names = ['blog']
+    await other.init()
+    release()
+    await pending
+
+    expect(search.status.value).toBe('ready')
+    expect((await search.search('guide')).map(result => result.title)).toEqual(['Hello guide'])
   })
 })

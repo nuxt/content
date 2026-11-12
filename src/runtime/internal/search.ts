@@ -258,6 +258,10 @@ interface IndexBuild {
   promise?: Promise<void>
 }
 
+/** Counts resets, so callers can tell that the builds they awaited were dropped. */
+let ftsGeneration = 0
+export const getFTSGeneration = () => ftsGeneration
+
 export function _resetFTSState() {
   indexedCollections.clear()
   indexingCollections.clear()
@@ -266,6 +270,7 @@ export function _resetFTSState() {
 
 export async function resetFTSIndex(db: DatabaseAdapter) {
   // Builds in flight stop writing once they are no longer registered.
+  ftsGeneration++
   indexedCollections.clear()
   indexingCollections.clear()
   ftsTableCreated = false
