@@ -103,7 +103,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       field: '' as keyof Collections[T] | '*',
       distinct: false,
     },
-    localeFallback: undefined as LocaleFallback | undefined,
+    // Set by `.locale()`, the last call wins.
+    locale: undefined as { locale: string, fallback?: string } | undefined,
     // Set by `.locale()` and by manual filters on `locale`, both disable auto-locale.
     localeExplicitlySet: false,
   }
@@ -154,12 +155,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
         )
       }
       params.localeExplicitlySet = true
-      if (opts?.fallback) {
-        params.localeFallback = { locale, fallback: opts.fallback }
-      }
-      else {
-        query.where('locale', '=', locale)
-      }
+      params.locale = opts?.fallback ? { locale, fallback: opts.fallback } : { locale }
       return query
     },
     skip(skip: number) {
@@ -230,8 +226,9 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    * condition for a single query, or the locale pair for a fallback lookup.
    */
   function resolveLocale(): { condition?: string, fallback?: LocaleFallback } {
-    if (params.localeFallback) {
-      return { fallback: params.localeFallback }
+    if (params.locale) {
+      const { locale, fallback } = params.locale
+      return fallback ? { fallback: { locale, fallback } } : { condition: `("locale" = ${singleQuote(locale)})` }
     }
     if (params.localeExplicitlySet || !i18nConfig || !detectedLocale) {
       return {}

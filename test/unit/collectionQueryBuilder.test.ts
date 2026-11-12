@@ -239,8 +239,19 @@ describe('collectionQueryBuilder', () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT * FROM _articles WHERE ("locale" = \'de\') AND ("path" = \'/blog/post\') ORDER BY stem ASC',
+      'SELECT * FROM _articles WHERE ("path" = \'/blog/post\') AND ("locale" = \'de\') ORDER BY stem ASC',
     )
+  })
+
+  it('lets the last .locale() call win', async () => {
+    const sql = async (build: (q: ReturnType<typeof collectionQueryBuilder>) => ReturnType<typeof collectionQueryBuilder>) => {
+      mockFetch.mockClear()
+      await build(collectionQueryBuilder('articles' as never, mockFetch)).all()
+      return mockFetch.mock.calls[0]![1]
+    }
+    expect(await sql(q => q.locale('fr').locale('de'))).toBe('SELECT * FROM _articles WHERE ("locale" = \'de\') ORDER BY stem ASC')
+    expect(await sql(q => q.locale('fr', { fallback: 'en' }).locale('de'))).toBe('SELECT * FROM _articles WHERE ("locale" = \'de\') ORDER BY stem ASC')
+    expect(await sql(q => q.locale('fr').locale('de', { fallback: 'en' }))).toBe('SELECT * FROM _articles WHERE ("locale" IN (\'de\', \'en\')) ORDER BY stem ASC')
   })
 
   it('.stem() matches the stored stem exactly', async () => {
