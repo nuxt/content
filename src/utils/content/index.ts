@@ -1,4 +1,5 @@
 import { dirname } from 'node:path'
+import { join } from 'pathe'
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
 import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -220,8 +221,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
     // Store i18n rows under a locale-agnostic path and stem, with the locale in its own column.
     if (collection.i18n && collectionKeys.includes('locale')) {
       const sourceStem = String(pathMetaFields.stem ?? result.stem ?? '')
+      // Normalized like content ids, which join the prefix with `pathe`.
       const sourcePrefix = (collection.source || [])
-        .map(source => (source.prefix || '').replace(/^\/+|\/+$/g, ''))
+        .map(source => join('/', source.prefix || '').split('/').filter(Boolean).join('/'))
         .filter(prefix => prefix && (sourceStem === prefix || sourceStem.startsWith(`${prefix}/`)))
         .sort((a, b) => b.length - a.length)[0]
       const detected = detectLocaleFromPath(String(result.path ?? pathMetaFields.path ?? ''), sourceStem, collection.i18n, sourcePrefix)

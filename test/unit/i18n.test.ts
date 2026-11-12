@@ -1,3 +1,4 @@
+import { join } from 'pathe'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import { z } from 'zod'
@@ -299,6 +300,22 @@ describe('i18n', () => {
       const parsed = await parseContent('docs/docs/fr/guide.md', '# Guide', collection)
 
       expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+    })
+
+    it('normalizes the source prefix like the content id when parsing', async () => {
+      await initiateValidatorsContext()
+      for (const prefix of ['/docs//guide', '/docs/./guide']) {
+        const collection = resolveCollection('docs', defineCollection({
+          type: 'page',
+          source: { include: 'guide/**', prefix },
+          schema: z.object({}),
+          i18n: i18nConfig,
+        }))!
+
+        const parsed = await parseContent(join('docs', prefix, 'fr/intro.md'), '# Intro', collection)
+
+        expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide/intro', stem: 'docs/guide/intro' })
+      }
     })
   })
 
