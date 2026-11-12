@@ -87,6 +87,20 @@ type LocaleFallback = { locale: string, fallback: string }
 /** Columns a fallback lookup reads to decide which locale serves each stem. */
 const LOCALE_KEY_FIELDS = ['id', 'stem', 'locale']
 
+/** Key rows in the first window of a paged fallback lookup. Smaller results fit in one window. */
+const KEY_WINDOW_SIZE = 256
+
+/** One slice of a paged fallback lookup. */
+interface KeyWindow {
+  offset: number
+  limit: number
+  /** Builder state captured when the terminal method was called. */
+  conditions: string[]
+  orderBy: string[]
+  /** Stems known to have a row in the requested locale, shared by the windows of one lookup. */
+  translated: Set<unknown>
+}
+
 /** `<collection>:<locale>` pairs already reported as outside the collection locales. */
 const unknownLocaleWarnings = new Set<string>()
 
@@ -212,7 +226,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
             noLimitOffset: true,
           })).then(m => (m[0] as { count: number }).count)
         }
-        const rows = await resolveLocaleRows(fallback, [])
+        const { rows } = await resolveLocaleRows(fallback, [])
         if (field === '*') {
           return rows.length
         }
@@ -273,19 +287,28 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    * its stem instead of letting the fallback row through.
    *
    * `fields` lists the columns to read, `'*'` reads all of them. `id`, `stem` and
-   * `locale` are always read because the resolution needs them.
+   * `locale` are always read because the resolution needs them. With `window`, only
+   * that slice of the result is read, and `complete` tells whether it was the last one.
    */
-  async function resolveLocaleRows(localeFallback: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*'): Promise<Row[]> {
+  async function resolveLocaleRows(localeFallback: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*', window?: KeyWindow): Promise<{ rows: Row[], complete: boolean }> {
     const { locale } = localeFallback
-    const filtered = params.conditions.length > 0
+    const conditions = window?.conditions ?? params.conditions
     const rows = await fetch(collection, buildQuery({
       selectedFields: fields === '*' ? [] : [...fields, ...LOCALE_KEY_FIELDS] as Array<keyof Collections[T]>,
-      extraCondition: localeInCondition(localeFallback),
-      noLimitOffset: true,
+      conditions: [...conditions, localeInCondition(localeFallback)],
+      ...(window ? { window } : { noLimitOffset: true }),
     })) as unknown as Row[] | undefined ?? []
+    const complete = !window || rows.length < window.limit
 
-    const translated = new Set(rows.filter(row => row.locale === locale).map(row => row.stem))
-    if (filtered) {
+    const translated = window?.translated ?? new Set()
+    for (const row of rows) {
+      if (row.locale === locale) {
+        translated.add(row.stem)
+      }
+    }
+    // Once all rows are read, an unfiltered result holds every translation. Otherwise
+    // a translation outside the result can still hide a fallback row.
+    if (conditions.length > 0 || !complete) {
       const candidates = [...new Set(rows.filter(row => row.locale !== locale && !translated.has(row.stem)).map(row => row.stem))]
       const existing = await fetchInChunks(candidates, chunk => buildQuery({
         selectedFields: ['stem'] as Array<keyof Collections[T]>,
@@ -297,13 +320,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       }
     }
 
-    return rows.filter(row => row.locale === locale || !translated.has(row.stem))
+    return { rows: rows.filter(row => row.locale === locale || !translated.has(row.stem)), complete }
   }
 
   /**
    * Fallback lookup for `all()` and `first()`. With a limit, the page is resolved
-   * from key columns first and only its rows are read in full, so `first()` and
-   * `limit()` do not read every row of both locales.
+   * from growing windows of key rows, and only its rows are read in full, so
+   * `first()` and `limit()` do not read every row of both locales.
    */
   async function fetchWithLocaleFallback(localeFallback: LocaleFallback, limit: number): Promise<Collections[T][]> {
     // Read the builder state before the first query, like a single query does.
@@ -315,13 +338,23 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       : row) as Collections[T]
 
     if (!(limit > 0)) {
-      const rows = await resolveLocaleRows(localeFallback, selected.length ? selected : '*')
+      const { rows } = await resolveLocaleRows(localeFallback, selected.length ? selected : '*')
       return rows.map(pick)
     }
 
-    const keys = await resolveLocaleRows(localeFallback, [])
     // Same rule as `buildQuery`: the offset only applies together with a limit.
-    const ids = keys.slice(offset, offset + Number(limit)).map(row => row.id)
+    const end = offset + Number(limit)
+    const keys: Row[] = []
+    const state = { conditions: [...params.conditions], orderBy: [...params.orderBy], translated: new Set() }
+    // A stem has at most two key rows, so the first window usually holds the page.
+    for (let start = 0, size = Math.max(2 * end, KEY_WINDOW_SIZE); keys.length < end; start += size, size *= 4) {
+      const window = await resolveLocaleRows(localeFallback, [], { ...state, offset: start, limit: size })
+      keys.push(...window.rows)
+      if (window.complete) {
+        break
+      }
+    }
+    const ids = keys.slice(offset, end).map(row => row.id)
     const rows = await fetchInChunks(ids, chunk => buildQuery({
       selectedFields: selected.length ? [...selected, 'id' as keyof Collections[T]] : [],
       conditions: [`("id" IN (${chunk.map(singleQuote).join(', ')}))`],
@@ -358,6 +391,8 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     extraCondition?: string
     noLimitOffset?: boolean
     selectedFields?: ReadonlyArray<keyof Collections[T]>
+    /** Reads one slice in the given order, instead of the builder's order, limit and offset. */
+    window?: Pick<KeyWindow, 'offset' | 'limit' | 'orderBy'>
   } = {}) {
     let query = 'SELECT '
     if (opts?.count) {
@@ -377,11 +412,18 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       query += ` WHERE ${conditions.join(' AND ')}`
     }
 
-    if (params.orderBy.length > 0) {
-      query += ` ORDER BY ${params.orderBy.join(', ')}`
+    const orderBy = opts.window?.orderBy ?? params.orderBy
+    if (orderBy.length > 0) {
+      query += ` ORDER BY ${orderBy.join(', ')}`
     }
     else {
       query += ` ORDER BY stem ASC`
+    }
+
+    if (opts.window) {
+      // Ties break by `id`, so consecutive windows neither repeat nor skip rows.
+      const { offset, limit } = opts.window
+      return `${query}, "id" ASC LIMIT ${limit}${offset > 0 ? ` OFFSET ${offset}` : ''}`
     }
 
     const limit = opts?.limit || params.limit

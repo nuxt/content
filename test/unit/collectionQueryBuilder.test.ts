@@ -356,6 +356,15 @@ describe('collectionQueryBuilder', () => {
       )
     })
 
+    it('reads the key rows of a paged fallback lookup in windows ordered by id within ties', async () => {
+      await collectionQueryBuilder(mockCollection, mockFetch, 'fr').order('date' as never, 'DESC').skip(10).limit(5).first()
+
+      expect(mockFetch.mock.calls[0]).toEqual([
+        'articles',
+        'SELECT "id", "stem", "locale" FROM _articles WHERE ("locale" IN (\'fr\', \'en\')) ORDER BY "date" DESC, "id" ASC LIMIT 256',
+      ])
+    })
+
     it('does not auto-apply locale when .locale() is called explicitly', async () => {
       // Pass 'fr' as detectedLocale, but call .locale('de') explicitly
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'fr')

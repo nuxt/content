@@ -197,6 +197,72 @@ describe('locale fallback', () => {
   })
 })
 
+describe('paged locale fallback', () => {
+  const insertMany = (rows: Array<[string, string, { title: string, date: string, status?: string }]>) => {
+    db.transaction(() => rows.forEach(([locale, stem, data]) => insert(locale, stem, data)))()
+  }
+  const pagesMatch = async (build: () => ReturnType<typeof query>, pages: Array<[number, number]>) => {
+    const all = titles(await build().all())
+    for (const [skip, limit] of pages) {
+      expect(titles(await build().skip(skip).limit(limit).all()), `skip(${skip}).limit(${limit})`).toEqual(all.slice(skip, skip + limit))
+    }
+  }
+
+  it('reads key rows for the requested page only', async () => {
+    insertMany(Array.from({ length: 2000 }, (_, i) => ['en', `z-${String(i).padStart(4, '0')}`, { title: `Z ${i}`, date: '2023-01-01' }]))
+    let rowsRead = 0
+    const counting = async (name: string, sql: string) => {
+      const rows = await fetch(name, sql)
+      rowsRead += rows.length
+      return rows
+    }
+    const fr = () => collectionQueryBuilder('docs' as never, counting).locale('fr', { fallback: 'en' })
+
+    expect(await fr().first()).toMatchObject({ title: 'A fr' })
+    expect(rowsRead).toBeLessThan(600)
+
+    rowsRead = 0
+    expect(titles(await fr().where('status', '=', 'published').order('date' as never, 'DESC').limit(3).all())).toEqual(['D', 'A fr', 'B'])
+    expect(rowsRead).toBeLessThan(600)
+  })
+
+  it('resolves pages across window boundaries like the full result', async () => {
+    // An odd number of rows before the pairs lets windows end between the two rows of a stem.
+    insertMany([
+      ['en', 'aa', { title: 'AA', date: '2024-01-05' }],
+      ...Array.from({ length: 300 }, (_, i) => ['en', 'fr'].map(locale => [locale, `s-${String(i).padStart(3, '0')}`, { title: `S ${i} ${locale}`, date: '2023-06-01', status: i % 5 ? 'published' : 'hidden' }] as [string, string, { title: string, date: string, status: string }])).flat(),
+    ])
+    const pages: Array<[number, number]> = [[0, 1], [0, 7], [124, 7], [126, 3], [127, 1], [200, 64], [250, 70], [300, 10]]
+    await pagesMatch(() => query().locale('fr', { fallback: 'en' }), pages)
+    await pagesMatch(() => query().locale('fr', { fallback: 'en' }).where('status', '=', 'published'), pages)
+  })
+
+  it('resolves pages like the full result when translations sort far from their fallback rows', async () => {
+    insertMany(Array.from({ length: 400 }, (_, i) => {
+      const stem = `z-${String(i).padStart(3, '0')}`
+      const rows: Array<[string, string, { title: string, date: string }]> = [['en', stem, { title: `Z ${i}`, date: `2023-01-01T00:${String(Math.floor((999 - i) / 60)).padStart(2, '0')}:${String((999 - i) % 60).padStart(2, '0')}` }]]
+      if (i % 3 === 0) {
+        rows.push(['fr', stem, { title: `Z ${i} fr`, date: `2000-01-01T00:00:${String(i % 60).padStart(2, '0')}` }])
+      }
+      return rows
+    }).flat())
+    await pagesMatch(() => query().locale('fr', { fallback: 'en' }).order('date' as never, 'DESC'), [[0, 1], [0, 5], [10, 20], [120, 10], [200, 60], [250, 40], [500, 50]])
+  })
+
+  it('hides a fallback row in a later window when its translation came in an earlier window', async () => {
+    // Order: translations of `b-*`, then the hidden fallback rows of `a-*` that fill the
+    // first window, then the fallback rows of `b-*` in the last window.
+    const second = (i: number) => String(i % 60).padStart(2, '0')
+    insertMany([
+      ...Array.from({ length: 20 }, (_, i) => ['fr', `b-${String(i).padStart(2, '0')}`, { title: `B ${i} fr`, date: `2026-01-01T00:00:${second(i)}` }] as [string, string, { title: string, date: string }]),
+      ...Array.from({ length: 300 }, (_, i) => ['en', `a-${String(i).padStart(3, '0')}`, { title: `A ${i}`, date: `2025-01-01T00:${String(Math.floor(i / 60)).padStart(2, '0')}:${second(i)}` }] as [string, string, { title: string, date: string }]),
+      ...Array.from({ length: 300 }, (_, i) => ['fr', `a-${String(i).padStart(3, '0')}`, { title: `A ${i} fr`, date: `2000-01-01T00:${String(Math.floor(i / 60)).padStart(2, '0')}:${second(i)}` }] as [string, string, { title: string, date: string }]),
+      ...Array.from({ length: 20 }, (_, i) => ['en', `b-${String(i).padStart(2, '0')}`, { title: `B ${i}`, date: `2001-01-01T00:00:${second(i)}` }] as [string, string, { title: string, date: string }]),
+    ])
+    await pagesMatch(() => query().locale('fr', { fallback: 'en' }).order('date' as never, 'DESC'), [[0, 30], [10, 40], [0, 60]])
+  })
+})
+
 describe('indexes', () => {
   const plan = (sql: string) => (db.prepare(`EXPLAIN QUERY PLAN ${sql}`).all() as Array<{ detail: string }>).map(step => step.detail).join('\n')
 
