@@ -296,12 +296,34 @@ export function createLocaleVariantTracker(collection: string) {
  */
 function findLocaleSegment(segments: string[], locales: string[], maxIndex: number): { index: number, locale: string } | undefined {
   for (let index = 0; index <= Math.min(maxIndex, segments.length - 1); index++) {
-    const segment = segments[index]!.toLowerCase()
-    const locale = locales.find(locale => locale.toLowerCase() === segment)
+    const locale = findLocale(segments[index]!, locales)
     if (locale) {
       return { index, locale }
     }
   }
+}
+
+function findLocale(code: string, locales: string[]): string | undefined {
+  return locales.find(locale => locale.toLowerCase() === code.toLowerCase())
+}
+
+/**
+ * Resolve the top-level `locale` field of a file to a collection locale, case-insensitively
+ * like locale directories. Returns `undefined` when the field is not set, or when it is not
+ * a collection locale, which logs a warning.
+ */
+export function resolveLocaleField(value: unknown, i18nConfig: CollectionI18nConfig, id: string): string | undefined {
+  if (value === undefined || value === null) {
+    return undefined
+  }
+  const locale = findLocale(String(value), i18nConfig.locales)
+  if (!locale) {
+    logger.warn(
+      `"${id}" sets \`locale\` to ${JSON.stringify(value)}, which is not one of the collection locales `
+      + `[${i18nConfig.locales.map(l => `"${l}"`).join(', ')}]. The field is ignored.`,
+    )
+  }
+  return locale
 }
 
 /**

@@ -317,6 +317,27 @@ describe('i18n', () => {
       expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
     })
 
+    it('matches a locale field to the collection locales and ignores other values', async () => {
+      await initiateValidatorsContext()
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+      const collection = resolveCollection('docs', defineCollection({
+        type: 'page',
+        source: 'docs/**',
+        schema: z.object({}),
+        i18n: i18nConfig,
+      }))!
+      const localeOf = async (field: string) => (await parseContent('docs/docs/fr/guide.md', `---\nlocale: ${field}\n---\n# Guide`, collection)).locale
+
+      expect(await localeOf('DE')).toBe('de')
+      expect(await localeOf('fr-FR')).toBe('fr')
+      expect(await localeOf('""')).toBe('fr')
+      expect(warn.mock.calls.map(([message]) => message)).toEqual([
+        expect.stringContaining('"fr-FR"'),
+        expect.stringContaining('""'),
+      ])
+      warn.mockRestore()
+    })
+
     it('normalizes the source prefix like the content id when parsing', async () => {
       await initiateValidatorsContext()
       for (const prefix of ['/docs//guide', '/docs/./guide']) {

@@ -7,7 +7,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
-import { detectLocaleFromPath } from '../i18n'
+import { detectLocaleFromPath, resolveLocaleField } from '../i18n'
 import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
@@ -228,7 +228,7 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
         .sort((a, b) => b.length - a.length)[0]
       const detected = detectLocaleFromPath(String(result.path ?? pathMetaFields.path ?? ''), sourceStem, collection.i18n, sourcePrefix)
 
-      result.locale = result.locale ?? detected.locale
+      result.locale = resolveLocaleField(result.locale, collection.i18n, String(result.id)) ?? detected.locale
       if (collectionKeys.includes('path')) {
         result.path = detected.path
       }
