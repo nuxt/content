@@ -1,7 +1,12 @@
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
+import { z } from 'zod'
+import { defineCollection, resolveCollection } from '../../src/utils/collection'
+import { initiateValidatorsContext } from '../../src/utils/dependencies'
+import { manifestTemplate } from '../../src/utils/templates'
+import { parseContent } from '../utils/content'
 import type { CollectionI18nConfig } from '../../src/types/collection'
-import type { ParsedContentFile } from '../../src/types'
+import type { ParsedContentFile, ResolvedCollection } from '../../src/types'
 import { logger } from '../../src/utils/dev'
 
 const i18nConfig: CollectionI18nConfig = {
@@ -255,6 +260,55 @@ describe('i18n', () => {
     it('handles nested locale paths', () => {
       const result = detectLocaleFromPath('/en/docs/guide/intro', 'en/docs/guide/intro', i18nConfig)
       expect(result).toMatchObject({ locale: 'en', path: '/docs/guide/intro', stem: 'docs/guide/intro' })
+    })
+
+    it('matches locale directories case-insensitively and strips the lowercased path segment', () => {
+      const config = { locales: ['en', 'pt-BR'], defaultLocale: 'en' }
+      expect(detectLocaleFromPath('/pt-br/guide/intro', 'pt-BR/guide/intro', config))
+        .toEqual({ locale: 'pt-BR', path: '/guide/intro', stem: 'guide/intro' })
+      expect(detectLocaleFromPath('/pt-br', 'pt-br/index', config))
+        .toEqual({ locale: 'pt-BR', path: '/', stem: 'index' })
+    })
+
+    it('detects the locale directory right after the source prefix', () => {
+      expect(detectLocaleFromPath('/docs/fr/guide', 'docs/fr/guide', i18nConfig, 'docs'))
+        .toEqual({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+      expect(detectLocaleFromPath('/navigation/navbar', 'fr/navigation/navbar', i18nConfig, 'fr/navigation'))
+        .toEqual({ locale: 'fr', path: '/navigation/navbar', stem: 'navigation/navbar' })
+    })
+
+    it('ignores locale-like directories deeper than the first one after the source prefix', () => {
+      expect(detectLocaleFromPath('/docs/guides/de/setup', 'docs/guides/de/setup', i18nConfig, 'docs'))
+        .toEqual({ locale: 'en', path: '/docs/guides/de/setup', stem: 'docs/guides/de/setup' })
+    })
+
+    it('detects locale directories under a fixed source directory when parsing', async () => {
+      await initiateValidatorsContext()
+      const collection = resolveCollection('docs', defineCollection({
+        type: 'page',
+        source: 'docs/**',
+        schema: z.object({}),
+        i18n: i18nConfig,
+      }))!
+
+      const parsed = await parseContent('docs/docs/fr/guide.md', '# Guide', collection)
+
+      expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+    })
+  })
+
+  describe('manifest stem prefix', () => {
+    const stemPrefixOf = async (prefixes: string[], i18n?: CollectionI18nConfig) => {
+      const collection = { name: 'navigation', tableName: '_content_navigation', type: 'data', fields: {}, source: prefixes.map(prefix => ({ prefix })), i18n } as unknown as ResolvedCollection
+      const manifest = { checksum: {}, checksumStructure: {}, dump: {}, components: [], collections: [collection] }
+      const contents = await manifestTemplate(manifest).getContents({ nuxt: { options: {} } as never, options: { manifest } })
+      return JSON.parse(contents.slice(contents.indexOf('export default ') + 'export default '.length)).navigation.stemPrefix
+    }
+
+    it('leaves the locale directory out like stored stems do', async () => {
+      expect(await stemPrefixOf(['/fr/navigation'], i18nConfig)).toBe('navigation')
+      expect(await stemPrefixOf(['/en/navigation', '/fr/navigation'], i18nConfig)).toBe('navigation')
+      expect(await stemPrefixOf(['/en/navigation'])).toBe('en/navigation')
     })
   })
 

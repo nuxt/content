@@ -252,41 +252,49 @@ function translateDerivedSeo(item: ParsedContentFile, source: ParsedContentFile,
 }
 
 /**
- * Detect the locale from the content stem and strip the locale prefix from both
- * path and stem. The locale is read from the stem's first segment rather than the
- * path's, because the stem is derived from the file id and is never influenced by
- * a custom `path` front-matter value. Returns the default locale when no prefix
- * matches.
+ * Find the locale directory among the first `maxIndex + 1` segments of a stem or
+ * source prefix. Directory names match locale codes case-insensitively, since
+ * generated paths are lowercased.
+ */
+export function findLocaleSegment(segments: string[], locales: string[], maxIndex: number): { index: number, locale: string } | undefined {
+  for (let index = 0; index <= Math.min(maxIndex, segments.length - 1); index++) {
+    const segment = segments[index]!.toLowerCase()
+    const locale = locales.find(locale => locale.toLowerCase() === segment)
+    if (locale) {
+      return { index, locale }
+    }
+  }
+}
+
+/**
+ * Detect the locale from the locale directory in a content stem and remove that
+ * directory from `stem` and `path`. The directory can be any segment of the
+ * source prefix or the first one after it. The stem is used because a custom
+ * front-matter `path` never changes it. Returns the default locale when the stem
+ * has no locale directory.
  */
 export function detectLocaleFromPath(
   path: string,
   stem: string,
   i18nConfig: CollectionI18nConfig,
+  sourcePrefix: string = '',
 ): { locale: string, path: string, stem: string } {
   const stemParts = stem.split('/').filter(Boolean)
-  const firstPart = stemParts[0]
-
-  if (firstPart && i18nConfig.locales.includes(firstPart)) {
-    const newStem = stemParts.slice(1).join('/')
-
-    // Strip the locale segment from `path` only when it is actually present. A
-    // custom front-matter `path` that does not start with the locale segment is
-    // left untouched.
-    const pathParts = path.split('/').filter(Boolean)
-    const strippedPath = pathParts[0] === firstPart
-      ? '/' + pathParts.slice(1).join('/')
-      : path
-
-    return {
-      locale: firstPart,
-      path: strippedPath === '/' || strippedPath === '' ? '/' : strippedPath,
-      stem: newStem,
-    }
+  const match = findLocaleSegment(stemParts, i18nConfig.locales, sourcePrefix.split('/').filter(Boolean).length)
+  if (!match) {
+    return { locale: i18nConfig.defaultLocale, path, stem }
   }
 
+  const { index, locale } = match
+  const pathParts = path.split('/').filter(Boolean)
+  // A custom front-matter path without the locale directory is left untouched.
+  const strippedPath = pathParts[index]?.toLowerCase() === stemParts[index]!.toLowerCase()
+    ? '/' + pathParts.filter((_, i) => i !== index).join('/')
+    : path
+
   return {
-    locale: i18nConfig.defaultLocale,
-    path,
-    stem,
+    locale,
+    path: strippedPath,
+    stem: stemParts.filter((_, i) => i !== index).join('/'),
   }
 }

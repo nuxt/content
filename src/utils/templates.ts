@@ -10,6 +10,7 @@ import type { CollectionInfo, ResolvedCollection } from '../types/collection'
 import type { Manifest, ManifestCollectionMeta, ManifestCollectionsMeta } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
+import { findLocaleSegment } from './i18n'
 
 const compress = (text: string): Promise<string> => {
   return new Promise((resolve, reject) => gzip(text, (err, buff) => {
@@ -235,13 +236,14 @@ export const manifestTemplate = (manifest: Manifest) => ({
     }
 
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      // The stem prefix is used by `.stem()` to auto-resolve a leading source
-      // directory. It is only emitted when every source of a collection shares
-      // the same normalized prefix. Otherwise the heuristic would silently
-      // prepend the wrong directory for some files.
-      const normalize = (p: string | undefined) => (p || '').replace(/^\/|\/$/g, '')
-      const sources = collection.source || []
-      const stemPrefixes = new Set(sources.map(s => normalize(s.prefix)))
+      // `.stem()` prepends this prefix to resolve a stem relative to the source
+      // directory. It is only set when every source shares the same prefix, and
+      // the locale directory is left out like it is in stored stems.
+      const stemPrefixes = new Set((collection.source || []).map((source) => {
+        const segments = (source.prefix || '').split('/').filter(Boolean)
+        const match = collection.i18n && findLocaleSegment(segments, collection.i18n.locales, segments.length - 1)
+        return segments.filter((_, index) => index !== match?.index).join('/')
+      }))
       const stemPrefix = stemPrefixes.size === 1 ? [...stemPrefixes][0]! : ''
       const entry: ManifestCollectionMeta = {
         type: collection.type,
