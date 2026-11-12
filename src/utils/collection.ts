@@ -12,11 +12,7 @@ export function getTableName(name: string) {
   return `_content_${name}`
 }
 
-/**
- * Detect a user-declared `(locale, stem)` composite index so the i18n auto-index
- * doesn't pile a duplicate on top of it. Exported so the `i18n: true` resolver
- * in `config.ts` applies the same guard.
- */
+/** Whether the user already declared the `(locale, stem)` index that i18n collections get. */
 export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
   return (indexes || []).some(
     idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
@@ -24,11 +20,8 @@ export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): bool
 }
 
 /**
- * Force the `locale` schema property to `string`. The i18n integration relies on
- * the locale being a text column, so a user declaration of another type (which
- * would otherwise win the schema merge and serialize locale codes as `NaN`) is
- * overridden with a warning. Exported so both the explicit-config and the
- * `i18n: true` resolution paths apply the same guard.
+ * Force the `locale` schema property to a string. A user declaration of another
+ * type would win the schema merge and store locale codes as `NaN`.
  */
 export function normalizeLocaleField(extendedSchema: Draft07, collectionName?: string): void {
   const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
@@ -56,17 +49,12 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
-  // Add the `locale` field only when i18n is fully configured. The `true`
-  // shorthand is resolved later in `loadContentConfig` via `resolveI18nConfig`.
+  // `loadContentConfig` resolves the `true` shorthand later.
   const hasI18nConfig = collection.i18n && collection.i18n !== true
-  // Resolve the effective i18n config (may patch `defaultLocale` into `locales`
-  // without mutating the caller's config object).
   let resolvedI18n: typeof collection.i18n = collection.i18n
   if (hasI18nConfig) {
     extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
     normalizeLocaleField(extendedSchema)
-    // Surface defaultLocale-not-in-locales early. Auto-locale detection and
-    // path-based detection both fail silently if this invariant is violated.
     const i18n = collection.i18n as { locales: string[], defaultLocale: string }
     if (!i18n.locales.includes(i18n.defaultLocale)) {
       logger.warn(
@@ -80,23 +68,16 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
 
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
-  // Auto-add a composite index on (locale, stem) for i18n collections. Skipped
-  // when the user already declared an equivalent index, which avoids a
-  // duplicate `CREATE INDEX` that would otherwise survive when the user
-  // supplies a custom `name`.
-  const indexes = collection.indexes ? [...collection.indexes] : []
-  if (hasI18nConfig && !hasLocaleStemIndex(indexes)) {
-    indexes.push({ columns: ['locale', 'stem'] })
-  }
-
   return {
     type: collection.type,
     source: resolveSource(collection.source),
     schema: standardSchema,
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
-    indexes,
-    i18n: resolvedI18n,
+    indexes: hasI18nConfig && !hasLocaleStemIndex(collection.indexes)
+      ? [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
+      : collection.indexes,
+    ...(resolvedI18n ? { i18n: resolvedI18n } : {}),
   }
 }
 
@@ -122,14 +103,14 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     return undefined
   }
 
+  const { i18n, ...definition } = collection
   return {
-    ...collection,
+    ...definition,
     name,
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
-    // Ensure i18n: true is never passed through (should be resolved in config.ts)
-    i18n: collection.i18n === true ? undefined : collection.i18n,
+    ...(i18n && i18n !== true ? { i18n } : {}),
   }
 }
 
