@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useNuxtApp } from '#imports'
 
@@ -176,5 +176,24 @@ describe('useSearchCollection with i18n collections', () => {
 
     expect(search.status.value).toBe('ready')
     expect((await search.search('guide')).map(result => result.title)).toEqual(['Hello guide'])
+  })
+
+  it('waits for the index of the new locale when searching during its build', async () => {
+    const { useSearchCollection } = await import('../../src/runtime/client')
+    const search = useSearchCollection('docs' as never, { immediate: false })
+    expect((await search.search('guide')).map(result => result.title)).toEqual(['Hello guide'])
+
+    let release!: () => void
+    state.gate = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    locale.value = 'fr'
+    await nextTick()
+    await vi.waitFor(() => expect(state.gateHit).toBe(true))
+
+    const results = search.search('guide')
+    release()
+
+    expect((await results).map(result => result.title)).toEqual(['Bonjour guide'])
   })
 })

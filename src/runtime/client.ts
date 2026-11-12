@@ -134,6 +134,10 @@ export function useSearchCollection<T extends keyof PageCollections>(
     if (!db || activeLocale() !== indexedLocale) {
       await init()
     }
+    else if (status.value === 'loading') {
+      // A rebuild clears the sections of its collections before it indexes them again
+      await initPromise
+    }
     return queryFTS(db!, indexedFor, query, searchOpts)
   }
 
