@@ -51,7 +51,9 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
-export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]> {
+export function queryCollectionLocales<T extends keyof PageCollections>(collection: T, stem: string): Promise<Array<Required<ContentLocaleEntry>>>
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]>
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string) {
   return generateCollectionLocales(queryCollection(collection), String(collection), stem)
 }
 

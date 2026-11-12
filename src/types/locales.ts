@@ -5,8 +5,8 @@
 export interface ContentLocaleEntry {
   locale: string
   stem: string
-  /** Only present for `page` collections. */
+  /** Set in page collections, and in other collections whose schema has a `path` field. */
   path?: string
-  /** Only present for `page` collections. */
+  /** Set in page collections, and in other collections whose schema has a `title` field. */
   title?: string
 }
