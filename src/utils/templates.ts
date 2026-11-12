@@ -7,6 +7,7 @@ import type { JSONSchema } from 'json-schema-to-typescript-lite'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
+import type { Draft07 } from '../types/schema'
 import type { Manifest, ManifestCollectionMeta, ManifestCollectionsMeta } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
@@ -52,6 +53,29 @@ export const moduleTemplates = {
   fullRawDump: 'content/sql_dump.txt',
 }
 
+/**
+ * Add the `locale` column of an i18n collection to its user schema for type
+ * generation. The property comes from the extended schema, where a user
+ * declaration such as an enum is kept and other types are forced to string.
+ */
+function withLocaleProperty(collection: ResolvedCollection): Draft07 {
+  const definition = collection.schema.definitions.__SCHEMA__!
+  return {
+    ...collection.schema,
+    definitions: {
+      ...collection.schema.definitions,
+      __SCHEMA__: {
+        ...definition,
+        properties: {
+          ...definition.properties,
+          locale: collection.extendedSchema.definitions.__SCHEMA__?.properties.locale ?? { type: 'string' },
+        },
+        required: [...new Set([...(definition.required || []), 'locale'])],
+      },
+    },
+  }
+}
+
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
   filename: moduleTemplates.types as `${string}.d.ts`,
   getContents: async ({ options }) => {
@@ -65,17 +89,8 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       'declare module \'@nuxt/content\' {',
       ...(await Promise.all(
         publicCollections.map(async (c) => {
-          let type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
+          const type = await jsonSchemaToTypescript((c.i18n ? withLocaleProperty(c) : c.schema) as JSONSchema, 'CLASS')
             .then(code => code.replace('export interface CLASS', `interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)}`))
-          if (c.i18n) {
-            // i18n collections carry a resolved `locale` on every row. It is added
-            // here, per collection, so non-i18n collections never advertise a
-            // phantom `locale` property.
-            type = type.replace(
-              /(interface \w+CollectionItem extends \w+ ?\{)/,
-              '$1\n  locale: string',
-            )
-          }
           return indentLines(` ${type}`)
         }),
       )),

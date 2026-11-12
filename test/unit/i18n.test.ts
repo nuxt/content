@@ -3,7 +3,7 @@ import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFr
 import { z } from 'zod'
 import { defineCollection, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
-import { manifestTemplate } from '../../src/utils/templates'
+import { contentTypesTemplate, manifestTemplate } from '../../src/utils/templates'
 import { parseContent } from '../utils/content'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile, ResolvedCollection } from '../../src/types'
@@ -309,6 +309,25 @@ describe('i18n', () => {
       expect(await stemPrefixOf(['/fr/navigation'], i18nConfig)).toBe('navigation')
       expect(await stemPrefixOf(['/en/navigation', '/fr/navigation'], i18nConfig)).toBe('navigation')
       expect(await stemPrefixOf(['/en/navigation'])).toBe('en/navigation')
+    })
+  })
+
+  describe('generated types', () => {
+    it('types the locale column once, keeping a user declaration', async () => {
+      await initiateValidatorsContext()
+      const collections = [
+        resolveCollection('posts', defineCollection({ type: 'page', source: '*/posts/**', schema: z.object({ locale: z.enum(['en', 'fr']) }), i18n: i18nConfig }))!,
+        resolveCollection('team', defineCollection({ type: 'data', source: 'team/*.yml', schema: z.object({ name: z.string() }), i18n: i18nConfig }))!,
+        resolveCollection('notes', defineCollection({ type: 'data', source: 'notes/*.yml', schema: z.object({ name: z.string() }) }))!,
+      ]
+
+      const types = await contentTypesTemplate(collections).getContents({ options: { collections } } as never)
+      const declaration = (name: string) => types.slice(types.indexOf(`interface ${name}CollectionItem`)).split('\n  }')[0]!
+
+      expect(declaration('Posts').match(/locale/g)).toHaveLength(1)
+      expect(declaration('Posts')).toMatch(/locale: \("en" \| "fr"\)/)
+      expect(declaration('Team')).toMatch(/locale: string/)
+      expect(declaration('Notes')).not.toMatch(/locale/)
     })
   })
 
