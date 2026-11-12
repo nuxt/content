@@ -163,16 +163,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('stem', '=', stem.slice(start, end))
     },
     locale(locale: string, opts?: { fallback?: string }) {
-      // Dev-only guard. Calling `.locale()` on a collection without `i18n` would emit
-      // `WHERE "locale" = ?` against a table that has no `locale` column, surfacing
-      // as a confusing "no such column" SQL error far from the user's call site.
-      // The manifest is the source of truth, so `i18nConfig` is undefined exactly
-      // when the collection was not declared with `i18n`.
+      // Dev-only guard. Without i18n the table has no `locale` column, so the query fails
+      // with a "no such column" SQL error far from the call site. The manifest has no
+      // i18n config when the option is missing or `i18n: true` could not be resolved.
       if (import.meta.dev && !i18nConfig) {
         console.warn(
           `[@nuxt/content] queryCollection("${String(collection)}").locale(${JSON.stringify(locale)}): `
-          + `collection "${String(collection)}" has no \`i18n\` configured. The query will fail at the database. `
-          + 'Add `i18n: true` (or an explicit `i18n: { locales, defaultLocale }`) to the collection definition.',
+          + `collection "${String(collection)}" has no i18n locales, so the query will fail at the database. `
+          + 'Set `i18n: { locales, defaultLocale }` on the collection, or `i18n: true` with `@nuxtjs/i18n` configured.',
         )
       }
       params.localeExplicitlySet = true

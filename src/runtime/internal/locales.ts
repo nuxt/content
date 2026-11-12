@@ -18,8 +18,8 @@ export async function generateCollectionLocales<T = Record<string, unknown>>(
   if (!meta?.i18n) {
     if (import.meta.dev) {
       console.warn(
-        `[@nuxt/content] queryCollectionLocales: collection "${collection}" has no \`i18n\` configured. `
-        + 'Add `i18n: true` (or an explicit `i18n: { locales, defaultLocale }`) to the collection definition.',
+        `[@nuxt/content] queryCollectionLocales: collection "${collection}" has no i18n locales. `
+        + 'Set `i18n: { locales, defaultLocale }` on the collection, or `i18n: true` with `@nuxtjs/i18n` configured.',
       )
     }
     return []
