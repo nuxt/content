@@ -25,14 +25,14 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         .select('path', 'title', 'seo', 'description')
         .where('path', 'NOT LIKE', '%/.navigation')
 
-      const locale = getDefaultLocale(section.contentCollection)
-      if (locale) {
-        query.locale(locale)
-      }
-
       const filters = section.contentFilters || []
       for (const filter of filters) {
         query.where(filter.field, filter.operator, filter.value)
+      }
+
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
       }
 
       const docs = await query.all() as PageCollectionItemBase[]
@@ -72,14 +72,14 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       const query = queryCollection(event, section.contentCollection)
         .where('path', 'NOT LIKE', '%/.navigation')
 
-      const locale = getDefaultLocale(section.contentCollection)
-      if (locale) {
-        query.locale(locale)
-      }
-
       const filters = section.contentFilters || []
       for (const filter of filters) {
         query.where(filter.field, filter.operator, filter.value)
+      }
+
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
       }
 
       const docs = await query.all()

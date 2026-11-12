@@ -15,4 +15,8 @@ describe('detectClientLocale', () => {
     const locale = ref('de')
     expect(detectClientLocale({ $i18n: { locale } })).toBe('de')
   })
+
+  it('reads $i18n.locale as a string in vue-i18n legacy mode', () => {
+    expect(detectClientLocale({ $i18n: { locale: 'fr' } })).toBe('fr')
+  })
 })
