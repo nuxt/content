@@ -140,7 +140,7 @@ export function expandI18nData(
 
   const items: ParsedContentFile[] = [parsedContent]
   for (const [locale, block] of Object.entries(i18nData)) {
-    // An empty block is a placeholder for a translation that does not exist yet.
+    // A block without translatable fields is a placeholder for a translation that does not exist yet
     if (block === null || block === undefined) {
       continue
     }
@@ -174,7 +174,10 @@ export function expandI18nData(
     }
 
     try {
-      items.push(expandLocale(parsedContent, meta, locale, block, collectionType, schemaKeys))
+      const item = expandLocale(parsedContent, meta, locale, block, collectionType, schemaKeys)
+      if (item) {
+        items.push(item)
+      }
     }
     catch (error) {
       logger.warn(
@@ -194,7 +197,7 @@ function expandLocale(
   block: Record<string, unknown>,
   collectionType: 'page' | 'data' | undefined,
   schemaKeys: string[] | undefined,
-): ParsedContentFile {
+): ParsedContentFile | undefined {
   const columns: Record<string, unknown> = {}
   const metaOverrides: Record<string, unknown> = {}
   for (const [field, value] of Object.entries(block)) {
@@ -215,6 +218,9 @@ function expandLocale(
     else {
       metaOverrides[field] = value
     }
+  }
+  if (!Object.keys(columns).length && !Object.keys(metaOverrides).length) {
+    return undefined
   }
 
   // The hash only covers the source values of the leaves this locale translates,

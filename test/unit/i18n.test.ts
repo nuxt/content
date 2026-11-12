@@ -742,10 +742,10 @@ describe('i18n', () => {
         stem: 'index',
         extension: 'yml',
         body,
-        meta: { i18n: { fr: { body: { type: 'minimark', value: [['iframe', { srcdoc: 'x' }]] } } } },
-      }, i18nConfig, 'page', ['body'])
+        meta: { i18n: { fr: { title: 'Bonjour', body: { type: 'minimark', value: [['iframe', { srcdoc: 'x' }]] } } } },
+      }, i18nConfig, 'page', ['title', 'body'])
 
-      expect(fr?.body).toEqual(body)
+      expect(fr).toMatchObject({ title: 'Bonjour', body })
     })
 
     it('treats an id like the parser does, using its last extension', () => {
@@ -755,10 +755,10 @@ describe('i18n', () => {
         id: 'docs:notes.yml#.md',
         stem: 'notes',
         body,
-        meta: { i18n: { fr: { body: { type: 'minimark', value: [['a', { href: 'javascript:alert(1)' }, 'x']] } } } },
-      }, i18nConfig, 'page', ['body'])
+        meta: { i18n: { fr: { title: 'Bonjour', body: { type: 'minimark', value: [['a', { href: 'javascript:alert(1)' }, 'x']] } } } },
+      }, i18nConfig, 'page', ['title', 'body'])
 
-      expect(fr?.body).toEqual(body)
+      expect(fr).toMatchObject({ title: 'Bonjour', body })
     })
 
     it('ignores prototype keys in overrides', () => {
@@ -907,6 +907,27 @@ describe('i18n', () => {
       }, i18nConfig, 'data', ['name'])
       expect(blocks.map(item => item.locale)).toEqual(['en'])
       expect(warn).toHaveBeenCalledTimes(2)
+    })
+
+    it('treats a block without translatable fields as a placeholder', () => {
+      warnings()
+
+      const data = expandI18nData({
+        id: 'data:c.json',
+        stem: 'c',
+        name: 'C',
+        meta: { i18n: { fr: {}, de: { id: 'other', stem: 'other' } } },
+      }, i18nConfig, 'data', ['name'])
+      const page = expandI18nData({
+        id: 'docs:guide.md',
+        stem: 'guide',
+        title: 'Guide',
+        body: { type: 'minimark', value: [] },
+        meta: { i18n: { fr: { body: 'Bonjour' } } },
+      }, i18nConfig, 'page', ['title', 'body'])
+
+      expect(data.map(item => item.locale)).toEqual(['en'])
+      expect(page.map(item => item.locale)).toEqual(['en'])
     })
 
     it('keeps the source item and other locales when one locale cannot be expanded', () => {
