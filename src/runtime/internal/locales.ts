@@ -25,7 +25,7 @@ export async function generateCollectionLocales<T = Record<string, unknown>>(
   }
   const selectFields = LOCALE_ENTRY_FIELDS.filter(f => f in meta.fields) as Array<keyof T>
 
-  // Filtering on both columns lets the database use the `(locale, stem)` index.
+  // Filtering on both columns lets the database use the `(stem, locale)` index.
   const items = await queryBuilder
     .select(...selectFields)
     .where('locale', 'IN', meta.i18n.locales)

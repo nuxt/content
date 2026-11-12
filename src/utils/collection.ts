@@ -12,10 +12,14 @@ export function getTableName(name: string) {
   return `_content_${name}`
 }
 
-/** Whether the user already declared the `(locale, stem)` index that i18n collections get. */
-function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
+/**
+ * Whether the user already declared the `(stem, locale)` index that i18n collections get.
+ * It leads with `stem` so the planner still picks user indexes in default-locale
+ * queries, which order by `stem`.
+ */
+function hasStemLocaleIndex(indexes: CollectionIndex[] | undefined): boolean {
   return (indexes || []).some(
-    idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
+    idx => idx.columns.length === 2 && idx.columns[0] === 'stem' && idx.columns[1] === 'locale',
   )
 }
 
@@ -49,9 +53,9 @@ function resolveI18nCollection(collection: ResolvedCollection, i18n: CollectionI
     ...collection,
     extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
-    indexes: hasLocaleStemIndex(collection.indexes)
+    indexes: hasStemLocaleIndex(collection.indexes)
       ? collection.indexes
-      : [...(collection.indexes || []), { columns: ['locale', 'stem'] }],
+      : [...(collection.indexes || []), { columns: ['stem', 'locale'] }],
     i18n: { ...i18n, locales },
   }
 }

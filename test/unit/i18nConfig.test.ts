@@ -18,7 +18,7 @@ describe('i18n collection config', () => {
     await initiateValidatorsContext()
   })
 
-  it('adds a locale column and a (locale, stem) index', () => {
+  it('adds a locale column and a (stem, locale) index', () => {
     const collection = resolveCollection('team', defineCollection({
       type: 'data',
       source: 'team/*.yml',
@@ -28,20 +28,20 @@ describe('i18n collection config', () => {
     }))!
 
     expect(collection.fields.locale).toBe('string')
-    expect(collection.indexes).toEqual([{ columns: ['name'] }, { columns: ['locale', 'stem'] }])
+    expect(collection.indexes).toEqual([{ columns: ['name'] }, { columns: ['stem', 'locale'] }])
     expect(collection.i18n).toEqual({ locales: ['en', 'fr'], defaultLocale: 'en' })
   })
 
-  it('keeps a user-declared (locale, stem) index instead of adding another one', () => {
+  it('keeps a user-declared (stem, locale) index instead of adding another one', () => {
     const collection = resolveCollection('team', defineCollection({
       type: 'data',
       source: 'team/*.yml',
       schema: z.object({ name: z.string() }),
-      indexes: [{ columns: ['locale', 'stem'], name: 'by_locale' }],
+      indexes: [{ columns: ['stem', 'locale'], name: 'by_stem' }],
       i18n: { locales: ['en'], defaultLocale: 'en' },
     }))!
 
-    expect(collection.indexes).toEqual([{ columns: ['locale', 'stem'], name: 'by_locale' }])
+    expect(collection.indexes).toEqual([{ columns: ['stem', 'locale'], name: 'by_stem' }])
   })
 
   it('leaves the definition unchanged and names the collection in warnings', () => {
@@ -75,7 +75,7 @@ describe('i18n collection config', () => {
 
     expect(notes.i18n).toEqual({ locales: ['fr', 'en'], defaultLocale: 'en' })
     expect(notes.fields.locale).toBe('string')
-    expect(notes.indexes).toContainEqual({ columns: ['locale', 'stem'] })
+    expect(notes.indexes).toContainEqual({ columns: ['stem', 'locale'] })
   })
 
   it('resolves `i18n: true` from inline module options', async () => {

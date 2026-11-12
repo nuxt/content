@@ -167,6 +167,38 @@ describe('locale fallback', () => {
   })
 })
 
+describe('indexes', () => {
+  const plan = (sql: string) => (db.prepare(`EXPLAIN QUERY PLAN ${sql}`).all() as Array<{ detail: string }>).map(step => step.detail).join('\n')
+
+  it('lets default-locale queries use a user index and reads fallback rows in index order', async () => {
+    const indexed = resolveCollection('docs', defineCollection({
+      type: 'page',
+      source: '*/docs/**',
+      schema: z.object({ date: z.string(), status: z.string() }),
+      indexes: [{ columns: ['path'] }],
+      i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
+    }))!
+    db = new Database(':memory:')
+    for (const statement of generateCollectionTableDefinition(indexed).split('\n')) {
+      db.exec(statement)
+    }
+    for (let i = 0; i < 50; i++) {
+      for (const locale of ['en', 'fr']) {
+        const stem = `s-${String(i).padStart(2, '0')}`
+        for (const statement of generateCollectionInsert(indexed, { id: `docs/${locale}/${stem}.md`, stem, locale, path: `/${stem}`, extension: 'md', meta: {}, title: stem, date: '2024-01-01', status: 'published' }).queries) {
+          db.exec(statement)
+        }
+      }
+    }
+
+    expect(await collectionQueryBuilder('docs' as never, fetch, 'en').path('/s-30').first()).toMatchObject({ locale: 'en', stem: 's-30' })
+    expect(plan(queries.at(-1)!)).toContain('USING INDEX idx_docs_path')
+
+    await collectionQueryBuilder('docs' as never, fetch, 'fr').all()
+    expect(plan(queries.at(-1)!)).not.toContain('TEMP B-TREE')
+  })
+})
+
 describe('locale variants', () => {
   it('lists every locale version of a stem with an index lookup', async () => {
     const variants = await generateCollectionLocales(query(), 'docs', 'a')
