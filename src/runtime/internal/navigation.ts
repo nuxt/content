@@ -39,11 +39,15 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
   }, { configs: {}, contents: [] } as { configs: Record<string, PageCollectionItemBase>, contents: PageCollectionItemBase[] })
 
   // Navigation fields picker
-  const pickConfigNavigationFields = (content: PageCollectionItemBase) => ({
-    ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
-    ...content.meta as unknown as Record<string, unknown>,
-    ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
-  })
+  const pickConfigNavigationFields = (content: PageCollectionItemBase) => {
+    // Inline translations track their source in `meta`, which is not a navigation field.
+    const { _i18nSourceHash, ...meta } = (content.meta || {}) as Record<string, unknown>
+    return {
+      ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
+      ...meta,
+      ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
+    }
+  }
   const pickNavigationFields = (content: PageCollectionItemBase) => ({
     ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),
     ...(isObject(content?.navigation) ? (content.navigation as Record<string, unknown>) : {}),
