@@ -52,9 +52,7 @@ function mergeArraysByIndex(overrideArr: unknown[], defaultArr: unknown[]): unkn
       // and cannot take arrays as top-level arguments.
       result.push(mergeArraysByIndex(overrideItem, defaultItem))
     }
-    else if (overrideItem !== undefined && defaultItem !== undefined
-      && typeof overrideItem === 'object' && overrideItem !== null && !Array.isArray(overrideItem)
-      && typeof defaultItem === 'object' && defaultItem !== null && !Array.isArray(defaultItem)) {
+    else if (isPlainObject(overrideItem) && isPlainObject(defaultItem)) {
       result.push(defuByIndex(overrideItem, defaultItem))
     }
     else {
@@ -95,11 +93,10 @@ function pickSourceByOverride(source: unknown, override: unknown): unknown {
   if (Array.isArray(override) && Array.isArray(source) && override.some(item => typeof item === 'object' && item !== null)) {
     return override.map((item, index) => pickSourceByOverride(source[index], item))
   }
-  if (override && typeof override === 'object' && !Array.isArray(override)
-    && source && typeof source === 'object' && !Array.isArray(source)) {
+  if (isPlainObject(override) && isPlainObject(source)) {
     const out: Record<string, unknown> = {}
-    for (const k of Object.keys(override as Record<string, unknown>)) {
-      out[k] = pickSourceByOverride((source as Record<string, unknown>)[k], (override as Record<string, unknown>)[k])
+    for (const k of Object.keys(override)) {
+      out[k] = pickSourceByOverride(source[k], override[k])
     }
     return out
   }
