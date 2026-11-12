@@ -195,7 +195,6 @@ export function charIndexAtByteOffset(str: string, targetBytes: number): number 
   return read
 }
 
-// Convert collection data to SQL insert statement
 /**
  * Generate the inserts of a parsed file, one per locale for inline translations in
  * an i18n collection. A translation that cannot be stored only drops its own row,
@@ -220,6 +219,7 @@ export function generateCollectionItemInserts(collection: ResolvedCollection, pa
   return inserts
 }
 
+// Convert collection data to SQL insert statement
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []
