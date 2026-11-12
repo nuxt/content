@@ -749,6 +749,21 @@ describe('i18n', () => {
       }
     })
 
+    it('derives seo from translated title and description in data collections with a seo field', () => {
+      const items = expandI18nData({
+        id: 'products:shoe.yml',
+        stem: 'shoe',
+        extension: 'yml',
+        title: 'Shoe',
+        description: 'A shoe',
+        seo: { title: 'Shoe', description: 'A shoe' },
+        meta: { i18n: { fr: { title: 'Chaussure', description: 'Une chaussure' } } },
+      }, i18nConfig, 'data', ['title', 'description', 'seo'])
+
+      expect(items[0]?.seo).toEqual({ title: 'Shoe', description: 'A shoe' })
+      expect(items[1]?.seo).toEqual({ title: 'Chaussure', description: 'Une chaussure' })
+    })
+
     it('applies translations of fields outside the schema to meta', () => {
       const content = (tagline: string, image: string): ParsedContentFile => ({
         id: 'docs:a.md',

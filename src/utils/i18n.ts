@@ -231,12 +231,10 @@ function expandLocale(
   }
 
   const item = defuByIndex(columns, source) as ParsedContentFile
-  if (collectionType === 'page') {
-    if (Object.hasOwn(columns, 'body')) {
-      item.body = columns.body as ParsedContentFile['body']
-    }
-    translateDerivedSeo(item, source, columns)
+  if (collectionType === 'page' && Object.hasOwn(columns, 'body')) {
+    item.body = columns.body as ParsedContentFile['body']
   }
+  translateDerivedSeo(item, source, columns)
 
   return {
     ...item,
