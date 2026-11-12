@@ -6,7 +6,8 @@ export interface CollectionQueryBuilder<T> {
   path(path: string): CollectionQueryBuilder<T>
   /**
    * Filter by stem: the file path relative to the content directory, without extension.
-   * In i18n collections, the stem leaves out the locale directory.
+   * A custom source `prefix` replaces the source directory, and in i18n collections
+   * the stem leaves out the locale directory.
    * e.g., `.stem('navigation/navbar')` matches `content/navigation/navbar.yml`
    */
   stem(stem: string): CollectionQueryBuilder<T>
