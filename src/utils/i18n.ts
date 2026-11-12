@@ -1,4 +1,5 @@
 import { createDefu } from 'defu'
+import { extname } from 'pathe'
 import { hash } from 'ohash'
 import type { CollectionI18nConfig } from '../types/collection'
 import { I18N_SOURCE_HASH_FIELD } from '../types/locales'
@@ -6,12 +7,21 @@ import { logger } from './dev'
 import type { ParsedContentFile } from '../types'
 
 /**
- * Identity fields that describe a row rather than its translatable content.
- * They are stripped from inline locale overrides so a translation cannot change
- * a row's identity, which would break the `(locale, stem)` pairing used by the
- * fallback merge and by `queryCollectionLocales`.
+ * Override keys that are never applied. Identity fields keep the `(locale, stem)`
+ * pairing intact, `meta` carries the source hash, and `i18n` cannot nest.
  */
-const IDENTITY_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension']
+const IGNORED_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension', 'meta', 'i18n']
+
+/**
+ * Fields a content parser produces from the file itself, such as the sanitized
+ * Markdown AST. Only raw data formats store them as written, so only those may
+ * override them. Elsewhere an override would bypass parsing and sanitization.
+ */
+const PARSED_FIELDS = ['body', 'excerpt']
+const RAW_DATA_EXTENSION = /^\.(?:ya?ml|json5?|csv)$/i
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 /**
  * Merge two arrays item by item. Override items take priority and default items
@@ -43,7 +53,8 @@ function mergeArraysByIndex(overrideArr: unknown[], defaultArr: unknown[]): unkn
       result.push(defuByIndex(overrideItem, defaultItem))
     }
     else {
-      result.push(overrideItem !== undefined ? overrideItem : defaultItem)
+      // Like defu at object level, a null item keeps the default.
+      result.push(overrideItem ?? defaultItem)
     }
   }
   return result
@@ -87,35 +98,20 @@ function pickSourceByOverride(source: unknown, override: unknown): unknown {
 }
 
 /**
- * Expand inline i18n data from a parsed content file into per-locale items.
- * The default locale keeps the original content, while non-default locales get
- * a deep-merged copy in which only overridden fields differ. Non-default items
- * include `_i18nSourceHash` for tracking whether the source content has changed
- * since translation.
+ * Expand the inline `i18n` section of a parsed file into one item per locale.
  *
- * For page collections (`collectionType: 'page'`), the body AST is replaced
- * wholesale rather than deep-merged, since `body` is a parsed markdown tree
- * that cannot be meaningfully merged.
+ * The source item keeps its own values and locale. Each other locale gets a deep
+ * merge of its overrides onto the source item: arrays merge by index (see
+ * `defuByIndex`), schema fields override columns, and other fields override
+ * `meta`, where the parser stores them. Locale items record a hash of the source
+ * values they translate in `meta._i18nSourceHash`, so tooling can spot outdated
+ * translations.
  *
- * Override handling rules:
- * - Identity fields (id, stem, path, locale, extension) are stripped from
- *   overrides so a translation cannot change a row's identity.
- * - A locale key not listed in the collection's `i18n.locales` is skipped, since
- *   it would never be queryable and dev HMR cleanup could never remove it.
- * - Translations of fields not declared in the collection schema are dropped by
- *   the insert step (non-schema fields live on `meta`), so a dev warning surfaces
- *   the lost translation when `schemaKeys` is provided.
+ * `body` and `excerpt` can only be translated inline in raw data formats (YAML,
+ * JSON, CSV). Markdown and other parsed formats produce sanitized ASTs that an
+ * override would bypass. Page bodies are replaced wholesale.
  *
- * `meta` semantics: the default locale keeps its full `meta` (minus the `i18n`
- * key). Non-default locale items receive a fresh `meta` of the form
- * `{ ...cleanMeta, _i18nSourceHash }`. Any `meta` provided inside a locale
- * override is intentionally dropped, because locale-specific tracking state
- * (`_i18nSourceHash`) lives on `meta` and must not be overridden by user content.
- *
- * This function mutates `parsedContent.meta` (removing the `i18n` key) and sets
- * `parsedContent.locale` if not already set. This is acceptable because the
- * source content is always consumed (inserted into the database) immediately
- * after expansion.
+ * Mutates `parsedContent`: removes `meta.i18n` and sets a missing `locale`.
  */
 export function expandI18nData(
   parsedContent: ParsedContentFile,
@@ -123,27 +119,39 @@ export function expandI18nData(
   collectionType?: 'page' | 'data',
   schemaKeys?: string[],
 ): ParsedContentFile[] {
-  const meta = parsedContent.meta as Record<string, unknown> | undefined
-  const i18nData = meta?.i18n as Record<string, Record<string, unknown>> | undefined
-  if (!i18nData) {
-    if (!parsedContent.locale) {
-      parsedContent.locale = i18nConfig.defaultLocale
-    }
+  parsedContent.locale ||= i18nConfig.defaultLocale
+
+  const { i18n: i18nData, ...meta } = (parsedContent.meta || {}) as Record<string, unknown>
+  if (i18nData === undefined || i18nData === null) {
+    return [parsedContent]
+  }
+  parsedContent.meta = meta
+
+  if (!isPlainObject(i18nData)) {
+    logger.warn(`Inline i18n in "${parsedContent.id}" is ignored, it must be an object keyed by locale.`)
     return [parsedContent]
   }
 
-  const { i18n: _removed, ...cleanMeta } = meta!
-  parsedContent.meta = cleanMeta
-
-  if (!parsedContent.locale) {
-    parsedContent.locale = i18nConfig.defaultLocale
-  }
-
   const items: ParsedContentFile[] = [parsedContent]
-
-  for (const [locale, rawOverrides] of Object.entries(i18nData)) {
-    if (locale === parsedContent.locale) continue
-
+  for (const [locale, block] of Object.entries(i18nData)) {
+    // An empty block is a placeholder for a translation that does not exist yet.
+    if (block === null || block === undefined) {
+      continue
+    }
+    if (!isPlainObject(block)) {
+      logger.warn(`Inline i18n in "${parsedContent.id}" for locale "${locale}" is ignored, it must be an object.`)
+      continue
+    }
+    if (locale === parsedContent.locale) {
+      const values = { ...meta, ...parsedContent }
+      if (hash(pickSourceByOverride(values, block)) !== hash(block)) {
+        logger.warn(
+          `Inline i18n in "${parsedContent.id}" has a block for its own locale "${locale}", which is ignored. `
+          + 'Top-level values apply to this locale.',
+        )
+      }
+      continue
+    }
     if (!i18nConfig.locales.includes(locale)) {
       logger.warn(
         `Inline i18n in "${parsedContent.id}" defines locale "${locale}" which is not in the collection's `
@@ -152,59 +160,95 @@ export function expandI18nData(
       continue
     }
 
-    // Strip identity fields so a translation cannot change the row's identity.
-    const overrides: Record<string, unknown> = {}
-    for (const [field, value] of Object.entries(rawOverrides)) {
-      if (!IDENTITY_OVERRIDE_KEYS.includes(field)) {
-        overrides[field] = value
-      }
+    try {
+      items.push(expandLocale(parsedContent, meta, locale, block, collectionType, schemaKeys))
     }
-
-    // Warn when a translated field is not a schema column. Such fields are routed
-    // to `meta` by the parser and dropped by the insert step, so the translation
-    // would be silently lost.
-    if (schemaKeys) {
-      for (const field of Object.keys(overrides)) {
-        if (field !== 'body' && !schemaKeys.includes(field)) {
-          logger.warn(
-            `Inline i18n in "${parsedContent.id}" translates "${field}" for locale "${locale}", but "${field}" `
-            + 'is not declared in the collection schema. Non-schema fields are not persisted per locale. '
-            + 'Declare the field in the collection schema to translate it.',
-          )
-        }
-      }
+    catch (error) {
+      logger.warn(
+        `Inline i18n in "${parsedContent.id}" for locale "${locale}" is ignored: `
+        + (error instanceof Error ? error.message : String(error)),
+      )
     }
-
-    // The source hash is per-locale. It is computed only from the default values
-    // of the leaf fields that *this* locale actually translates, so a default
-    // change to an untranslated sibling does not flip the hash.
-    const sourceFields: Record<string, unknown> = {}
-    for (const field of Object.keys(overrides)) {
-      sourceFields[field] = pickSourceByOverride(parsedContent[field], overrides[field])
-    }
-    const i18nSourceHash = hash(sourceFields)
-
-    // Deep merge preserves untranslated fields (routes, IDs, icons). For page
-    // collections, the body AST must not be deep-merged and is instead replaced
-    // wholesale. The `'body' in overrides` check ensures explicit null or empty
-    // bodies still replace, rather than falling back to deep-merging the default
-    // AST.
-    const merged = defuByIndex(overrides, parsedContent) as ParsedContentFile
-    if (collectionType === 'page' && 'body' in overrides) {
-      merged.body = overrides.body as ParsedContentFile['body']
-    }
-
-    const localeItem: ParsedContentFile = {
-      ...merged,
-      id: `${parsedContent.id}#${locale}`,
-      locale,
-      meta: { ...cleanMeta, [I18N_SOURCE_HASH_FIELD]: i18nSourceHash },
-    }
-
-    items.push(localeItem)
   }
 
   return items
+}
+
+function expandLocale(
+  source: ParsedContentFile,
+  meta: Record<string, unknown>,
+  locale: string,
+  block: Record<string, unknown>,
+  collectionType: 'page' | 'data' | undefined,
+  schemaKeys: string[] | undefined,
+): ParsedContentFile {
+  const columns: Record<string, unknown> = {}
+  const metaOverrides: Record<string, unknown> = {}
+  for (const [field, value] of Object.entries(block)) {
+    if (IGNORED_OVERRIDE_KEYS.includes(field)) {
+      continue
+    }
+    // Decided from the file id, which the content cannot change, like parser selection.
+    if (PARSED_FIELDS.includes(field) && !RAW_DATA_EXTENSION.test(extname(source.id.split('#')[0]!))) {
+      logger.warn(
+        `Inline i18n in "${source.id}" translates \`${field}\` for locale "${locale}", which is ignored because `
+        + 'this format parses it from the file. Use a separate file per locale to translate it.',
+      )
+      continue
+    }
+    if (!schemaKeys || schemaKeys.includes(field)) {
+      columns[field] = value
+    }
+    else {
+      metaOverrides[field] = value
+    }
+  }
+
+  // The hash only covers the source values of the leaves this locale translates,
+  // so editing an untranslated sibling field does not mark the translation outdated.
+  const sourceValues: Record<string, unknown> = {}
+  for (const [field, value] of Object.entries(columns)) {
+    sourceValues[field] = pickSourceByOverride(source[field], value)
+  }
+  for (const [field, value] of Object.entries(metaOverrides)) {
+    sourceValues[field] = pickSourceByOverride(meta[field], value)
+  }
+
+  const item = defuByIndex(columns, source) as ParsedContentFile
+  if (collectionType === 'page') {
+    if ('body' in columns) {
+      item.body = columns.body as ParsedContentFile['body']
+    }
+    translateDerivedSeo(item, source, columns)
+  }
+
+  return {
+    ...item,
+    id: `${source.id}#${locale}`,
+    locale,
+    meta: { ...defuByIndex(metaOverrides, meta), [I18N_SOURCE_HASH_FIELD]: hash(sourceValues) },
+  }
+}
+
+/**
+ * The parser fills `seo.title` and `seo.description` from `title` and `description`
+ * before expansion. Derive them again from the translated values, unless the source
+ * sets its own `seo` value or the locale translates `seo` itself.
+ */
+function translateDerivedSeo(item: ParsedContentFile, source: ParsedContentFile, columns: Record<string, unknown>) {
+  if (!isPlainObject(source.seo)) {
+    return
+  }
+  const seoOverride = isPlainObject(columns.seo) ? columns.seo : {}
+  const seo: Record<string, unknown> = {}
+  for (const field of ['title', 'description']) {
+    if (field in columns && !(field in seoOverride) && source.seo[field] === source[field]) {
+      seo[field] = item[field]
+    }
+  }
+  if (Object.keys(seo).length > 0) {
+    item.seo = { ...(item.seo as Record<string, unknown>), ...seo }
+  }
 }
 
 /**

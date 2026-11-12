@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import type { CollectionI18nConfig } from '../../src/types/collection'
 import type { ParsedContentFile } from '../../src/types'
+import { logger } from '../../src/utils/dev'
 
 const i18nConfig: CollectionI18nConfig = {
   locales: ['en', 'fr', 'de'],
@@ -172,11 +173,11 @@ describe('i18n', () => {
       const frBody = { type: 'root', children: [{ type: 'text', value: 'Bonjour' }] }
 
       const content: ParsedContentFile = {
-        id: 'pages:index.md',
+        id: 'pages:index.yml',
         title: 'Home',
         body: defaultBody,
         stem: 'index',
-        extension: 'md',
+        extension: 'yml',
         meta: {
           i18n: {
             fr: { title: 'Accueil', body: frBody },
@@ -559,6 +560,159 @@ describe('i18n', () => {
     })
   })
 
+  describe('override handling', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    const warnings = () => vi.spyOn(logger, 'warn').mockImplementation(() => {})
+
+    it('ignores overrides of the parsed Markdown body and excerpt', () => {
+      const warn = warnings()
+      const body = { type: 'minimark', value: [['p', {}, 'Hello']] }
+      const excerpt = { type: 'minimark', value: [['p', {}, 'Intro']] }
+      const unsafe = { type: 'minimark', value: [['div', { onmouseover: 'alert(1)' }, 'x']] }
+      const items = expandI18nData({
+        id: 'docs:index.md',
+        stem: 'index',
+        extension: 'md',
+        title: 'Hello',
+        body,
+        meta: { excerpt, i18n: { fr: { title: 'Bonjour', body: unsafe, excerpt: unsafe } } },
+      }, i18nConfig, 'page', ['title', 'body'])
+
+      expect(items[1]).toMatchObject({ locale: 'fr', title: 'Bonjour', body, meta: { excerpt } })
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('`body`'))
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('`excerpt`'))
+    })
+
+    it('decides from the file id, not an extension set in front matter', () => {
+      warnings()
+      const body = { type: 'minimark', value: [['p', {}, 'Hello']] }
+      const [, fr] = expandI18nData({
+        id: 'docs:index.MD',
+        stem: 'index',
+        extension: 'yml',
+        body,
+        meta: { i18n: { fr: { body: { type: 'minimark', value: [['iframe', { srcdoc: 'x' }]] } } } },
+      }, i18nConfig, 'page', ['body'])
+
+      expect(fr?.body).toEqual(body)
+    })
+
+    it('derives seo from translated title and description unless seo is set explicitly', () => {
+      const derived = expandI18nData({
+        id: 'docs:a.md',
+        stem: 'a',
+        extension: 'md',
+        title: 'Getting started',
+        description: 'How to start',
+        seo: { title: 'Getting started', description: 'How to start' },
+        meta: { i18n: { fr: { title: 'Bien démarrer', description: 'Comment commencer' } } },
+      }, i18nConfig, 'page', ['title', 'description', 'seo'])
+      expect(derived[1]?.seo).toEqual({ title: 'Bien démarrer', description: 'Comment commencer' })
+
+      const explicit = expandI18nData({
+        id: 'docs:b.md',
+        stem: 'b',
+        extension: 'md',
+        title: 'Getting started',
+        description: 'How to start',
+        seo: { title: 'Getting started | ACME', description: 'How to start' },
+        meta: { i18n: { fr: { title: 'Bien démarrer', seo: { description: 'Description FR' } } } },
+      }, i18nConfig, 'page', ['title', 'description', 'seo'])
+      expect(explicit[1]?.seo).toEqual({ title: 'Getting started | ACME', description: 'Description FR' })
+    })
+
+    it('applies translations of fields outside the schema to meta', () => {
+      const content = (tagline: string, image: string): ParsedContentFile => ({
+        id: 'docs:a.md',
+        stem: 'a',
+        title: 'Hello',
+        meta: {
+          tagline,
+          hero: { title: 'Hi', image },
+          i18n: { fr: { title: 'Bonjour', tagline: 'Slogan', hero: { title: 'Salut' }, meta: { _i18nSourceHash: 'forged' } } },
+        },
+      })
+
+      const [en, fr] = expandI18nData(content('English', '/a.png'), i18nConfig, 'page', ['title'])
+      expect(en?.meta).toEqual({ tagline: 'English', hero: { title: 'Hi', image: '/a.png' } })
+      expect(fr).toMatchObject({
+        title: 'Bonjour',
+        meta: { tagline: 'Slogan', hero: { title: 'Salut', image: '/a.png' } },
+      })
+      expect(fr?.meta._i18nSourceHash).not.toBe('forged')
+
+      const hashOf = (tagline: string, image: string) => expandI18nData(content(tagline, image), i18nConfig, 'page', ['title'])[1]?.meta._i18nSourceHash
+      expect(hashOf('English', '/b.png')).toBe(fr?.meta._i18nSourceHash)
+      expect(hashOf('Changed', '/a.png')).not.toBe(fr?.meta._i18nSourceHash)
+    })
+
+    it('keeps the source item when the i18n section is malformed', () => {
+      const warn = warnings()
+
+      const scalar = expandI18nData({ id: 'data:a.yml', stem: 'a', name: 'A', meta: { i18n: 'fr' } }, i18nConfig, 'data', ['name'])
+      expect(scalar).toEqual([expect.objectContaining({ name: 'A', locale: 'en', meta: {} })])
+
+      const blocks = expandI18nData({
+        id: 'data:b.yml',
+        stem: 'b',
+        name: 'B',
+        meta: { i18n: { fr: null, de: 'Hallo' } },
+      }, i18nConfig, 'data', ['name'])
+      expect(blocks.map(item => item.locale)).toEqual(['en'])
+      expect(warn).toHaveBeenCalledTimes(2)
+    })
+
+    it('keeps the source item and other locales when one locale cannot be expanded', () => {
+      const warn = warnings()
+      let deep: unknown = 'leaf'
+      for (let i = 0; i < 20_000; i++) {
+        deep = [{ child: deep }]
+      }
+
+      const items = expandI18nData({
+        id: 'data:deep.json',
+        stem: 'deep',
+        name: 'Deep',
+        tree: deep,
+        meta: { i18n: { fr: { tree: [{ label: 'x' }] }, de: { name: 'Tief' } } },
+      }, i18nConfig, 'data', ['name', 'tree'])
+
+      expect(items.map(item => item.locale)).toEqual(['en', 'de'])
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('"fr"'))
+    })
+
+    it('warns about a block for the source locale only when it differs from the top-level values', () => {
+      const warn = warnings()
+      const content = (en: string): ParsedContentFile => ({
+        id: 'data:a.yml',
+        stem: 'a',
+        description: 'Fallback',
+        meta: { i18n: { en: { description: en }, fr: { description: 'Texte' } } },
+      })
+
+      expandI18nData(content('Fallback'), i18nConfig, 'data', ['description'])
+      expect(warn).not.toHaveBeenCalled()
+
+      const [en] = expandI18nData(content('English'), i18nConfig, 'data', ['description'])
+      expect(en?.description).toBe('Fallback')
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('own locale "en"'))
+    })
+
+    it('keeps the default item for a null entry in an array of objects', () => {
+      const [, fr] = expandI18nData({
+        id: 'data:nav.yml',
+        stem: 'nav',
+        links: [{ label: 'Home', to: '/' }, { label: 'Blog', to: '/blog' }],
+        meta: { i18n: { fr: { links: [null, { label: 'Le blog' }] } } },
+      }, i18nConfig, 'data', ['links'])
+
+      expect(fr?.links).toEqual([{ label: 'Home', to: '/' }, { label: 'Le blog', to: '/blog' }])
+    })
+  })
+
   describe('source hash for change tracking', () => {
     it('adds _i18nSourceHash to non-default locale items', () => {
       const content: ParsedContentFile = {
@@ -704,11 +858,11 @@ describe('i18n', () => {
       // `'in' overrides` check, this would deep-merge the default AST back in.
       const defaultBody = { type: 'root', children: [{ type: 'text', value: 'Hi' }] }
       const content: ParsedContentFile = {
-        id: 'pages:index.md',
+        id: 'pages:index.yml',
         title: 'Home',
         body: defaultBody,
         stem: 'index',
-        extension: 'md',
+        extension: 'yml',
         meta: { i18n: { fr: { title: 'Accueil', body: null } } },
       }
 
