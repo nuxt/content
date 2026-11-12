@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
+import { generateCollectionLocales } from '../../src/runtime/internal/locales'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
 import { defineCollection, generateCollectionInsert, generateCollectionTableDefinition, resolveCollection } from '../../src/utils/collection'
@@ -126,5 +127,20 @@ describe('locale fallback', () => {
     expect(rows).toHaveLength(240)
     expect(titles(rows).slice(0, 2)).toEqual(['A fr', 'B'])
     expect(Math.max(...queries.map(sql => sql.length))).toBeLessThan(MAX_SQL_QUERY_LENGTH / 2)
+  })
+})
+
+describe('locale variants', () => {
+  it('lists every locale version of a stem with an index lookup', async () => {
+    const variants = await generateCollectionLocales(query(), 'docs', 'a')
+
+    expect(variants).toEqual(expect.arrayContaining([
+      expect.objectContaining({ locale: 'en', stem: 'a', title: 'A', path: '/a' }),
+      expect.objectContaining({ locale: 'fr', stem: 'a', title: 'A fr', path: '/a' }),
+    ]))
+    expect(variants).toHaveLength(2)
+
+    const plan = db.prepare(`EXPLAIN QUERY PLAN ${queries.at(-1)}`).all() as Array<{ detail: string }>
+    expect(plan.map(step => step.detail).join('\n')).toMatch(/SEARCH _content_docs USING INDEX/)
   })
 })
