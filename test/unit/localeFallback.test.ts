@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
+import { refineContentFields } from '../../src/runtime/internal/collection'
 import { generateCollectionLocales } from '../../src/runtime/internal/locales'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
@@ -11,7 +12,7 @@ import type { ResolvedCollection } from '../../src/types'
 vi.mock('#content/manifest', () => ({
   tables: { docs: '_content_docs' },
   default: {
-    docs: { type: 'page', fields: {}, i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' } },
+    docs: { type: 'page', fields: { featured: 'boolean' }, i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' } },
   },
 }))
 
@@ -19,7 +20,7 @@ let collection: ResolvedCollection
 let db: Database.Database
 let queries: string[]
 
-function insert(locale: string, stem: string, data: { title: string, date: string, status?: string }) {
+function insert(locale: string, stem: string, data: { title: string, date: string, status?: string, featured?: boolean }) {
   const item = { id: `docs/${locale}/${stem}.md`, stem, locale, path: `/${stem}`, extension: 'md', meta: {}, status: 'published', ...data }
   for (const query of generateCollectionInsert(collection, item).queries) {
     db.exec(query)
@@ -29,7 +30,8 @@ function insert(locale: string, stem: string, data: { title: string, date: strin
 async function fetch(name: string, sql: string) {
   assertSafeQuery(sql, name)
   queries.push(sql)
-  return db.prepare(sql).all() as never[]
+  // Like the database adapters
+  return db.prepare(sql).all().map(row => refineContentFields(sql, row)) as never[]
 }
 
 const query = () => collectionQueryBuilder('docs' as never, fetch)
@@ -40,7 +42,7 @@ beforeAll(async () => {
   collection = resolveCollection('docs', defineCollection({
     type: 'page',
     source: '*/docs/**',
-    schema: z.object({ date: z.string(), status: z.string() }),
+    schema: z.object({ date: z.string(), status: z.string(), featured: z.boolean().optional() }),
     i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
   }))!
 })
@@ -53,11 +55,11 @@ beforeEach(() => {
   queries = []
 
   insert('en', 'a', { title: 'A', date: '2024-01-03' })
-  insert('en', 'b', { title: 'B', date: '2024-01-01' })
+  insert('en', 'b', { title: 'B', date: '2024-01-01', featured: false })
   insert('en', 'c', { title: 'C', date: '2024-01-02' })
   insert('en', 'd', { title: 'D', date: '2024-01-04' })
   insert('fr', 'a', { title: 'A fr', date: '2024-01-03' })
-  insert('fr', 'c', { title: 'C fr', date: '2024-01-02', status: 'hidden' })
+  insert('fr', 'c', { title: 'C fr', date: '2024-01-02', status: 'hidden', featured: true })
 })
 
 describe('locale fallback', () => {
@@ -92,6 +94,19 @@ describe('locale fallback', () => {
     expect(titles(await query().skip(2).all())).toHaveLength(6)
   })
 
+  it('ignores a negative skip like a single query', async () => {
+    const page = (skip: number) => query().locale('fr', { fallback: 'en' }).skip(skip).limit(2).all()
+    expect(titles(await page(-1))).toEqual(titles(await page(0)))
+  })
+
+  it('uses the builder state at the time of the call', async () => {
+    const builder = query().locale('fr', { fallback: 'en' }).limit(2)
+    const pending = builder.all()
+    builder.skip(1).select('date' as never)
+
+    expect(titles(await pending)).toEqual(['A fr', 'B'])
+  })
+
   it('returns only the selected fields', async () => {
     const rows = await query().locale('fr', { fallback: 'en' }).select('title' as never).limit(2).all()
     expect(rows).toEqual([{ title: 'A fr' }, { title: 'B' }])
@@ -108,6 +123,14 @@ describe('locale fallback', () => {
     expect(await builder().count()).toBe(4)
     expect(await builder().count('status' as never, true)).toBe(2)
     expect(await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').count()).toBe(3)
+  })
+
+  it('skips NULL values when counting a field, like SQL', async () => {
+    const counts = async (builder: () => ReturnType<typeof query>) => [await builder().count('featured' as never), await builder().count('featured' as never, true)]
+    const fallback = await counts(() => query().locale('fr', { fallback: 'en' }))
+
+    expect(fallback).toEqual([2, 2])
+    expect(await counts(() => query().where('locale', '=', 'en'))).toEqual([1, 1])
   })
 
   it('returns consistent results for concurrent terminal methods on one builder', async () => {

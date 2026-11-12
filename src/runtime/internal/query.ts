@@ -210,16 +210,18 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       const { condition, fallback } = resolveLocale()
       if (fallback) {
-        const rows = await resolveLocaleRows(fallback, field === '*' ? [] : [field])
+        const rows = await resolveLocaleRows(fallback, [])
         if (field === '*') {
           return rows.length
         }
-        const values = rows
-          .map(row => row[String(field)])
-          .filter(value => value !== null && value !== undefined)
-        // JSON columns come back parsed, while SQL compares their stored text.
+        // Like SQL `COUNT`, skip NULL values. Reads turn them into `false` or `undefined`.
+        const values = await fetchInChunks(rows.map(row => row.id), chunk => buildQuery({
+          selectedFields: [field],
+          conditions: [`("id" IN (${chunk.map(singleQuote).join(', ')}))`, `("${String(field)}" IS NOT NULL)`],
+          noLimitOffset: true,
+        }))
         return distinct
-          ? new Set(values.map(value => (typeof value === 'object' ? JSON.stringify(value) : value))).size
+          ? new Set(values.map(row => JSON.stringify(row[String(field)]))).size
           : values.length
       }
       // A COUNT query returns a single row, so LIMIT and OFFSET must not apply to it.
@@ -268,6 +270,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    * `locale` are always read because the resolution needs them.
    */
   async function resolveLocaleRows({ locale, fallback }: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*'): Promise<Row[]> {
+    const filtered = params.conditions.length > 0
     const rows = await fetch(collection, buildQuery({
       selectedFields: fields === '*' ? [] : [...fields, ...LOCALE_KEY_FIELDS] as Array<keyof Collections[T]>,
       extraCondition: `("locale" IN (${singleQuote(locale)}, ${singleQuote(fallback)}))`,
@@ -275,7 +278,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     })) as unknown as Row[] | undefined ?? []
 
     const translated = new Set(rows.filter(row => row.locale === locale).map(row => row.stem))
-    if (params.conditions.length > 0) {
+    if (filtered) {
       const candidates = [...new Set(rows.filter(row => row.locale !== locale && !translated.has(row.stem)).map(row => row.stem))]
       const existing = await fetchInChunks(candidates, chunk => buildQuery({
         selectedFields: ['stem'] as Array<keyof Collections[T]>,
@@ -296,7 +299,9 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    * `limit()` do not read every row of both locales.
    */
   async function fetchWithLocaleFallback(localeFallback: LocaleFallback, limit: number): Promise<Collections[T][]> {
-    const selected = params.selectedFields
+    // Read the builder state before the first query, like a single query does.
+    const selected = [...params.selectedFields]
+    const offset = params.offset > 0 ? params.offset : 0
     const pick = (row: Row) => (selected.length
       ? Object.fromEntries(selected.map(field => [field, row[String(field)]]))
       : row) as Collections[T]
@@ -308,7 +313,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
 
     const keys = await resolveLocaleRows(localeFallback, [])
     // Same rule as `buildQuery`: the offset only applies together with a limit.
-    const ids = keys.slice(params.offset, params.offset + limit).map(row => row.id)
+    const ids = keys.slice(offset, offset + limit).map(row => row.id)
     const rows = await fetchInChunks(ids, chunk => buildQuery({
       selectedFields: selected.length ? [...selected, 'id' as keyof Collections[T]] : [],
       conditions: [`("id" IN (${chunk.map(singleQuote).join(', ')}))`],
