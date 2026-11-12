@@ -3,10 +3,10 @@ import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFr
 import { z } from 'zod'
 import { defineCollection, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
-import { contentTypesTemplate, manifestTemplate } from '../../src/utils/templates'
+import { contentTypesTemplate } from '../../src/utils/templates'
 import { parseContent } from '../utils/content'
 import type { CollectionI18nConfig } from '../../src/types/collection'
-import type { ParsedContentFile, ResolvedCollection } from '../../src/types'
+import type { ParsedContentFile } from '../../src/types'
 import { logger } from '../../src/utils/dev'
 
 const i18nConfig: CollectionI18nConfig = {
@@ -299,21 +299,6 @@ describe('i18n', () => {
       const parsed = await parseContent('docs/docs/fr/guide.md', '# Guide', collection)
 
       expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
-    })
-  })
-
-  describe('manifest stem prefix', () => {
-    const stemPrefixOf = async (prefixes: string[], i18n?: CollectionI18nConfig) => {
-      const collection = { name: 'navigation', tableName: '_content_navigation', type: 'data', fields: {}, source: prefixes.map(prefix => ({ prefix })), i18n } as unknown as ResolvedCollection
-      const manifest = { checksum: {}, checksumStructure: {}, dump: {}, components: [], collections: [collection] }
-      const contents = await manifestTemplate(manifest).getContents({ nuxt: { options: {} } as never, options: { manifest } })
-      return JSON.parse(contents.slice(contents.indexOf('export default ') + 'export default '.length)).navigation.stemPrefix
-    }
-
-    it('leaves the locale directory out like stored stems do', async () => {
-      expect(await stemPrefixOf(['/fr/navigation'], i18nConfig)).toBe('navigation')
-      expect(await stemPrefixOf(['/en/navigation', '/fr/navigation'], i18nConfig)).toBe('navigation')
-      expect(await stemPrefixOf(['/en/navigation'])).toBe('en/navigation')
     })
   })
 

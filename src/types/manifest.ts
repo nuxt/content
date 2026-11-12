@@ -16,7 +16,6 @@ export interface ManifestCollectionMeta {
   type: CollectionType
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   i18n?: CollectionI18nConfig
-  stemPrefix?: string
 }
 
 export type ManifestCollectionsMeta = Record<string, ManifestCollectionMeta>

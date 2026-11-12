@@ -286,7 +286,7 @@ export function createLocaleVariantTracker(collection: string) {
  * source prefix. Directory names match locale codes case-insensitively, since
  * generated paths are lowercased.
  */
-export function findLocaleSegment(segments: string[], locales: string[], maxIndex: number): { index: number, locale: string } | undefined {
+function findLocaleSegment(segments: string[], locales: string[], maxIndex: number): { index: number, locale: string } | undefined {
   for (let index = 0; index <= Math.min(maxIndex, segments.length - 1); index++) {
     const segment = segments[index]!.toLowerCase()
     const locale = locales.find(locale => locale.toLowerCase() === segment)

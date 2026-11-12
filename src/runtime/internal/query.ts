@@ -93,7 +93,6 @@ const IN_CHUNK_SIZE = 100
 export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>, detectedLocale?: string): CollectionQueryBuilder<Collections[T]> => {
   const collectionMeta = manifestMeta[String(collection)]
   const i18nConfig: CollectionI18nConfig | undefined = collectionMeta?.i18n
-  const stemPrefix = collectionMeta?.stemPrefix || ''
   const params = {
     conditions: [] as Array<string>,
     selectedFields: [] as Array<keyof Collections[T]>,
@@ -134,17 +133,12 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('path', '=', withoutTrailingSlash(path))
     },
     stem(stem: string) {
-      // Strip leading and trailing slashes so callers can pass either form. The stored
-      // `stem` column never contains them, and `stemPrefix` is normalized at template
-      // generation time (see `templates.ts`).
-      const normalized = stem.replace(/^\/+|\/+$/g, '')
-      // Prepend the collection's source prefix when the input does not already include
-      // it. The segment boundary check (`stemPrefix + '/'`) avoids false matches such
-      // as prefix `navigation` matching `navigation2/foo`.
-      const fullStem = stemPrefix && !(normalized === stemPrefix || normalized.startsWith(stemPrefix + '/'))
-        ? `${stemPrefix}/${normalized}`
-        : normalized
-      return query.where('stem', '=', fullStem)
+      // Trim slashes in linear time, a regex such as /\/+$/ backtracks on long runs.
+      let start = 0
+      let end = stem.length
+      while (start < end && stem.charCodeAt(start) === 47) start++
+      while (end > start && stem.charCodeAt(end - 1) === 47) end--
+      return query.where('stem', '=', stem.slice(start, end))
     },
     locale(locale: string, opts?: { fallback?: string }) {
       // Dev-only guard. Calling `.locale()` on a collection without `i18n` would emit

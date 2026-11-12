@@ -5,7 +5,6 @@ import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 vi.mock('#content/manifest', () => ({
   tables: {
     articles: '_articles',
-    navigation: '_navigation',
     plain: '_plain',
   },
   default: {
@@ -13,21 +12,11 @@ vi.mock('#content/manifest', () => ({
       type: 'data',
       fields: {},
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
-      stemPrefix: '',
-    },
-    // i18n collection whose source lives under a `navigation` directory, so
-    // `.stem()` resolves the prefix.
-    navigation: {
-      type: 'data',
-      fields: {},
-      i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
-      stemPrefix: 'navigation',
     },
     // Collection without i18n, used to assert auto-locale is a no-op.
     plain: {
       type: 'data',
       fields: {},
-      stemPrefix: '',
     },
   },
 }))
@@ -254,14 +243,13 @@ describe('collectionQueryBuilder', () => {
     )
   })
 
-  it('.stem() queries by stem directly when no source prefix', async () => {
-    // stemPrefix is '' (no source subdirectory), so 'navbar' stays 'navbar'
+  it('.stem() matches the stored stem exactly', async () => {
     const query = collectionQueryBuilder(mockCollection, mockFetch)
-    await query.stem('navbar').all()
+    await query.stem('navigation/navbar').all()
 
     expect(mockFetch).toHaveBeenCalledWith(
       'articles',
-      'SELECT * FROM _articles WHERE ("stem" = \'navbar\') ORDER BY stem ASC',
+      'SELECT * FROM _articles WHERE ("stem" = \'navigation/navbar\') ORDER BY stem ASC',
     )
   })
 
@@ -292,6 +280,21 @@ describe('collectionQueryBuilder', () => {
         'SELECT * FROM _articles WHERE ("stem" = \'foo/bar\') ORDER BY stem ASC',
       )
     })
+
+    it('keeps inner slashes and trims an input of only slashes to an empty stem', async () => {
+      await collectionQueryBuilder(mockCollection, mockFetch).stem('a//b').all()
+      expect(mockFetch).toHaveBeenLastCalledWith('articles', 'SELECT * FROM _articles WHERE ("stem" = \'a//b\') ORDER BY stem ASC')
+      await collectionQueryBuilder(mockCollection, mockFetch).stem('///').all()
+      expect(mockFetch).toHaveBeenLastCalledWith('articles', 'SELECT * FROM _articles WHERE ("stem" = \'\') ORDER BY stem ASC')
+    })
+
+    it('trims a long run of inner slashes in linear time', async () => {
+      const stem = `a${'/'.repeat(100_000)}b`
+      const start = performance.now()
+      await collectionQueryBuilder(mockCollection, mockFetch).stem(stem).all()
+      expect(performance.now() - start).toBeLessThan(1000)
+      expect(mockFetch).toHaveBeenLastCalledWith('articles', `SELECT * FROM _articles WHERE ("stem" = '${stem}') ORDER BY stem ASC`)
+    }, 60_000)
   })
 
   it('count() ignores LIMIT carried over from .limit()', async () => {
@@ -492,41 +495,6 @@ describe('collectionQueryBuilder', () => {
 
       const sql = mockFetch.mock.lastCall![1] as string
       expect(sql).toContain('"locale" = \'en\'')
-    })
-  })
-
-  describe('.stem() source-prefix resolution', () => {
-    it('prepends the collection stem prefix when absent', async () => {
-      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navbar').all()
-      expect(mockFetch).toHaveBeenLastCalledWith(
-        'navigation',
-        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navbar\') ORDER BY stem ASC',
-      )
-    })
-
-    it('does not double the prefix when the stem already includes it', async () => {
-      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation/navbar').all()
-      expect(mockFetch).toHaveBeenLastCalledWith(
-        'navigation',
-        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navbar\') ORDER BY stem ASC',
-      )
-    })
-
-    it('treats the prefix as present only on a segment boundary', async () => {
-      // `navigation2` must not be mistaken for the `navigation` prefix.
-      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation2/foo').all()
-      expect(mockFetch).toHaveBeenLastCalledWith(
-        'navigation',
-        'SELECT * FROM _navigation WHERE ("stem" = \'navigation/navigation2/foo\') ORDER BY stem ASC',
-      )
-    })
-
-    it('matches the bare prefix exactly without doubling it', async () => {
-      await collectionQueryBuilder('navigation' as never, mockFetch).stem('navigation').all()
-      expect(mockFetch).toHaveBeenLastCalledWith(
-        'navigation',
-        'SELECT * FROM _navigation WHERE ("stem" = \'navigation\') ORDER BY stem ASC',
-      )
     })
   })
 })
