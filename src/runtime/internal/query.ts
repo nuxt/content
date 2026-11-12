@@ -2,37 +2,22 @@ import { withoutTrailingSlash } from 'ufo'
 import type { Collections, CollectionI18nConfig, CollectionQueryBuilder, CollectionQueryGroup, ManifestCollectionsMeta, QueryGroupFunction, SQLOperator } from '@nuxt/content'
 import manifestMeta, { tables } from '#content/manifest'
 
-/**
- * Read the raw conditions accumulated on a group built by `collectionQueryGroup`.
- * Exposed so other modules can serialize a group (for example to build a cache key)
- * without reaching into the internal `_conditions` field via a cast.
- */
-export const getGroupConditions = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>): string[] => {
+const getGroupConditions = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>): string[] => {
   return (group as unknown as { _conditions: Array<string> })._conditions
 }
 
-export const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR'): string => {
+const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>, type: 'AND' | 'OR') => {
   const conditions = getGroupConditions(group)
   return conditions.length > 0 ? `(${conditions.join(` ${type} `)})` : ''
 }
 
 /**
- * Match any condition that filters on the `locale` column, regardless of operator,
- * value, or nesting depth. Used to detect manual locale filters so auto-locale
- * steps aside.
- *
- * The quoted column token `"locale"` is detected anywhere in a condition (so a
- * filter nested inside an `andWhere`/`orWhere` group still counts), after string
- * literals are stripped so a value that happens to contain the text `"locale"`
- * does not produce a false match. Column references are always double-quoted while
- * values are single-quoted, so the two never collide.
+ * Whether any condition filters on the `locale` column, at any nesting depth.
+ * String literals are stripped first so a value containing the text `"locale"`
+ * does not match. Column names are always double-quoted and values single-quoted.
  */
-export const referencesLocaleColumn = (conditions: string[]): boolean =>
-  conditions.some(c => stripSingleQuoted(c).includes('"locale"'))
-
-/** Remove single-quoted string literals, honouring doubled-quote (`''`) escapes. */
-const stripSingleQuoted = (condition: string): string =>
-  condition.replace(/'(?:[^']|'')*'/g, '')
+const referencesLocaleColumn = (conditions: string[]): boolean =>
+  conditions.some(c => c.replace(/'(?:[^']|'')*'/g, '').includes('"locale"'))
 
 export const collectionQueryGroup = <T extends keyof Collections>(collection: T): CollectionQueryGroup<Collections[T]> => {
   const conditions = [] as Array<string>

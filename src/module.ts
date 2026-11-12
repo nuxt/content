@@ -133,7 +133,6 @@ export default defineNuxtModule<ModuleOptions>({
     // Helpers are designed to be enviroment agnostic
     addImports([
       { name: 'queryCollection', from: resolver.resolve('./runtime/client') },
-      { name: 'useQueryCollection', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
