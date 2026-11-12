@@ -27,6 +27,15 @@ export function getDefaultLocale(collection: string): string | undefined {
   return manifest[collection]?.i18n?.defaultLocale
 }
 
+/**
+ * Translations in an i18n collection share the path of the default locale. Their
+ * links get the locale as first segment, like a localized route, which the raw
+ * Markdown route resolves.
+ */
+export function localizePath(path: string, locale?: string): string {
+  return locale ? `/${locale}${path === '/' ? '' : path}` : path
+}
+
 export async function createDocumentGenerator() {
   const { visit } = await import('unist-util-visit')
   const { stringifyMarkdown } = await import('@nuxtjs/mdc/runtime')
