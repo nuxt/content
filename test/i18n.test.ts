@@ -168,7 +168,7 @@ describe('i18n', async () => {
       const members = await $fetch<Record<string, unknown>[]>('/api/content/team?locale=de')
 
       expect(members.length).toBeGreaterThanOrEqual(1)
-      const jane = members.find(m => m.name === 'Jane Doe')
+      const jane = members.find(m => String(m.id).endsWith('team.yml#de'))
       expect(jane).toBeDefined()
       expect(jane?.role).toBe('Entwicklerin')
       expect(jane?.country).toBe('Schweiz')

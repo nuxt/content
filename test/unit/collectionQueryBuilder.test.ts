@@ -450,8 +450,10 @@ describe('collectionQueryBuilder', () => {
 
     it('serves the default locale when the detected locale is a region tag outside the collection locales', async () => {
       await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
-      const sql = mockFetch.mock.lastCall![1] as string
-      expect(sql).toBe('SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC')
+      expect(mockFetch.mock.lastCall![1]).toBe('SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC')
+
+      await collectionQueryBuilder(mockCollection, mockFetch, 'fr-FR').all()
+      expect(mockFetch.mock.lastCall![1]).toBe('SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC')
     })
 
     it('does not auto-apply a locale on a collection without i18n config', async () => {
