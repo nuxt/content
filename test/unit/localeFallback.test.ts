@@ -36,6 +36,7 @@ async function fetch(name: string, sql: string) {
 
 const query = () => collectionQueryBuilder('docs' as never, fetch)
 const titles = (rows: unknown[]) => rows.map(row => (row as { title: string }).title)
+const utf8Length = (sql: string) => new TextEncoder().encode(sql).length
 
 beforeAll(async () => {
   await initiateValidatorsContext()
@@ -170,6 +171,29 @@ describe('locale fallback', () => {
     expect(rows).toHaveLength(240)
     expect(titles(rows).slice(0, 2)).toEqual(['A fr', 'B'])
     expect(Math.max(...queries.map(sql => sql.length))).toBeLessThan(MAX_SQL_QUERY_LENGTH / 2)
+  })
+
+  it('reads many untranslated stems with few queries', async () => {
+    for (let i = 0; i < 1000; i++) {
+      insert('en', `bulk-${String(i).padStart(4, '0')}`, { title: `Bulk ${i}`, date: '2023-01-01' })
+    }
+
+    queries = []
+    expect(await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').all()).toHaveLength(1003)
+    expect(queries).toHaveLength(2)
+
+    queries = []
+    expect(await query().locale('fr', { fallback: 'en' }).count('title' as never)).toBe(1004)
+    expect(queries).toHaveLength(2)
+  })
+
+  it('keeps every statement under 100,000 UTF-8 bytes for multibyte ids', async () => {
+    for (let i = 0; i < 150; i++) {
+      insert('en', `${String(i).padStart(3, '0')}-${'文'.repeat(340)}`, { title: `Long ${i}`, date: '2023-01-01' })
+    }
+
+    expect(await query().locale('fr', { fallback: 'en' }).limit(120).all()).toHaveLength(120)
+    expect(Math.max(...queries.map(sql => utf8Length(sql)))).toBeLessThan(100_000)
   })
 })
 

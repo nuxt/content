@@ -90,8 +90,12 @@ const LOCALE_KEY_FIELDS = ['id', 'stem', 'locale']
 /** `<collection>:<locale>` pairs already reported as outside the collection locales. */
 const unknownLocaleWarnings = new Set<string>()
 
-/** Values per `IN (...)` list, sized for long ids under the server's query length limit. */
-const IN_CHUNK_SIZE = 100
+/**
+ * UTF-8 bytes of values per `IN (...)` list. Statements stay well below the
+ * 100,000 limit of the server endpoint (`MAX_SQL_QUERY_LENGTH`) and Cloudflare D1.
+ */
+const IN_LIST_MAX_BYTES = 40_000
+const utf8 = new TextEncoder()
 
 export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>, detectedLocale?: string): CollectionQueryBuilder<Collections[T]> => {
   const collectionMeta = manifestMeta[String(collection)]
@@ -329,14 +333,18 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       .map(pick)
   }
 
-  /**
-   * Run one query per chunk of values, keeping `IN (...)` lists well below the query
-   * length accepted by the server endpoint.
-   */
+  /** Run one query per chunk of values, keeping each `IN (...)` list under `IN_LIST_MAX_BYTES`. */
   async function fetchInChunks(values: unknown[], build: (chunk: unknown[]) => string): Promise<Row[]> {
     const chunks: unknown[][] = []
-    for (let i = 0; i < values.length; i += IN_CHUNK_SIZE) {
-      chunks.push(values.slice(i, i + IN_CHUNK_SIZE))
+    let bytes = 0
+    for (const value of values) {
+      const size = utf8.encode(singleQuote(value)).length + 2
+      if (!chunks.length || bytes + size > IN_LIST_MAX_BYTES) {
+        chunks.push([])
+        bytes = 0
+      }
+      chunks.at(-1)!.push(value)
+      bytes += size
     }
     const results = await Promise.all(chunks.map(chunk => fetch(collection, build(chunk))))
     return results.flatMap(res => (res || []) as unknown as Row[])
