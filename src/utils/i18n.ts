@@ -113,7 +113,8 @@ export function expandI18nData(
   }
 
   const items: ParsedContentFile[] = [parsedContent]
-  for (const [locale, block] of Object.entries(i18nData)) {
+  for (const [key, block] of Object.entries(i18nData)) {
+    const locale = findLocale(key, i18nConfig.locales) ?? key
     // A block without translatable fields is a placeholder for a translation that does not exist yet
     if (block === null || block === undefined) {
       continue

@@ -939,6 +939,18 @@ describe('i18n', () => {
       expect(warn).toHaveBeenCalledTimes(2)
     })
 
+    it('matches inline locale keys to the collection locales case-insensitively', () => {
+      warnings()
+      const items = expandI18nData({
+        id: 'data:d.yml',
+        stem: 'd',
+        name: 'D',
+        meta: { i18n: { 'pt-br': { name: 'Dê' }, 'EN': { name: 'D' } } },
+      }, { locales: ['en', 'pt-BR'], defaultLocale: 'en' }, 'data', ['name'])
+
+      expect(items.map(item => [item.id, item.locale, item.name])).toEqual([['data:d.yml', 'en', 'D'], ['data:d.yml#pt-BR', 'pt-BR', 'Dê']])
+    })
+
     it('treats a block without translatable fields as a placeholder', () => {
       warnings()
 
