@@ -150,4 +150,31 @@ describe('useSearchCollection with i18n collections', () => {
     expect(search.status.value).toBe('ready')
     expect((await search.search('guide')).map(result => result.title)).toEqual(['Hello guide'])
   })
+
+  it('keeps the latest collections when an instance changes them twice during a build', async () => {
+    const { useSearchCollection } = await import('../../src/runtime/client')
+    const { getFTSGeneration } = await import('../../src/runtime/internal/search')
+    let names = ['docs', 'blog', 'notes']
+    const search = useSearchCollection((() => names) as never, { immediate: false })
+    await search.init()
+
+    let release!: () => void
+    state.gate = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    names = ['docs', 'blog']
+    const first = search.init()
+    await vi.waitFor(() => expect(state.gateHit).toBe(true))
+
+    // The newer call resets the index again while the first one waits on its query.
+    const generation = getFTSGeneration()
+    names = ['docs']
+    const second = search.init()
+    await vi.waitFor(() => expect(getFTSGeneration()).toBe(generation + 1))
+    release()
+    await Promise.all([first, second])
+
+    expect(search.status.value).toBe('ready')
+    expect((await search.search('guide')).map(result => result.title)).toEqual(['Hello guide'])
+  })
 })

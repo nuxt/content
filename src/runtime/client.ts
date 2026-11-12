@@ -68,6 +68,8 @@ export function useSearchCollection<T extends keyof PageCollections>(
   let initPromise: Promise<DatabaseAdapter> | undefined
   let indexedFor: string[] = []
   let indexedLocale: string | undefined
+  // Only the latest `init()` call retries after a reset and updates the state.
+  let initRun = 0
 
   function resolveCollections() {
     const val = toValue(collection)
@@ -90,6 +92,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
     indexedLocale = locale
     status.value = 'loading'
+    const run = ++initRun
     initPromise = import('./internal/database.client')
       .then(m => m.loadDatabaseAdapter(collections[0]!))
       .then(async (_db) => {
@@ -105,14 +108,18 @@ export function useSearchCollection<T extends keyof PageCollections>(
         do {
           generation = getFTSGeneration()
           await Promise.all(collections.map(col => buildFTSIndex(_db, col, queryCollection(col as T), indexOpts, localeOf(col))))
-        } while (generation !== getFTSGeneration())
+        } while (generation !== getFTSGeneration() && run === initRun)
 
-        indexedFor = [...collections]
-        status.value = 'ready'
+        if (run === initRun) {
+          indexedFor = [...collections]
+          status.value = 'ready'
+        }
         return _db
       })
       .catch((err) => {
-        status.value = 'error'
+        if (run === initRun) {
+          status.value = 'error'
+        }
         throw err
       })
     return initPromise
