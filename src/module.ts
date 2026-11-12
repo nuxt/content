@@ -398,9 +398,18 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               ? expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
               : [parsedContent]
             for (const item of items) {
-              trackLocaleVariant?.(item)
-              const { queries, hash } = generateCollectionInsert(collection, item)
-              list.push([item.id, queries, hash])
+              try {
+                const { queries, hash } = generateCollectionInsert(collection, item)
+                trackLocaleVariant?.(item)
+                list.push([collection.i18n ? item.id : key, queries, hash])
+              }
+              catch (error) {
+                // A failing translation only drops its own row.
+                if (item === items[0]) {
+                  throw error
+                }
+                logger.warn(`Inline i18n in "${keyInCollection}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
+              }
             }
           }
           catch (e: unknown) {

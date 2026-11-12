@@ -173,11 +173,25 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
           : [parsed]
         // Locale rows use `<key>#<locale>` ids, the source row keeps the bare key.
+        const inserted: string[] = []
         for (const item of items) {
-          await broadcast(collection, item.id as string, generateCollectionInsert(collection, item))
+          let insert: ReturnType<typeof generateCollectionInsert>
+          try {
+            insert = generateCollectionInsert(collection, item)
+          }
+          catch (error) {
+            // A failing translation only drops its own row.
+            if (item === items[0]) {
+              throw error
+            }
+            logger.warn(`Inline i18n in "${keyInCollection}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
+            continue
+          }
+          await broadcast(collection, item.id as string, insert)
+          inserted.push(item.id as string)
         }
         if (collection.i18n) {
-          await removeLocaleRows(collection, keyInCollection, items.map(item => item.id as string))
+          await removeLocaleRows(collection, keyInCollection, inserted)
         }
       }
     }

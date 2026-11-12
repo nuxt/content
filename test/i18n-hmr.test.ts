@@ -60,7 +60,7 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     const collection = resolveCollection('team', defineCollection({
       type: 'data',
       source: 'data/*.yml',
-      schema: z.object({ name: z.string(), role: z.string() }),
+      schema: z.object({ name: z.string(), role: z.string(), joined: z.date().optional() }),
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
     }))!
     for (const stmt of generateCollectionTableDefinition(collection, { drop: true }).split('\n')) {
@@ -80,7 +80,7 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     const collection = resolveCollection('team', defineCollection({
       type: 'data',
       source: 'data/*.yml',
-      schema: z.object({ name: z.string(), role: z.string() }),
+      schema: z.object({ name: z.string(), role: z.string(), joined: z.date().optional() }),
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
     }))!
 
@@ -168,10 +168,15 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     await fs.writeFile(join(contentDir, 'data', 'broken.yml'), 'name: Broken\nrole: Tester\ni18n: later\n')
     await new Promise(resolve => setTimeout(resolve, 2000))
 
+    // A translation that cannot be stored only drops its own row
+    await fs.writeFile(join(contentDir, 'data', 'dated.yml'), ['name: Dated', 'role: Tester', 'joined: 2024-01-01', 'i18n:', '  fr:', '    joined: 1er janvier 2024', '  de:', '    role: Testerin', ''].join('\n'))
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
     stopListening()
 
     const ids = (await db.database?.prepare(`SELECT id FROM ${collection.tableName} ORDER BY id`).all() as Array<{ id: string }>).map(row => row.id)
     expect(ids).toContain('team/data/broken.yml')
     expect(ids).not.toContain('team/data/french.yml#en')
-  }, 30_000)
+    expect(ids.filter(id => id.startsWith('team/data/dated.yml'))).toEqual(['team/data/dated.yml', 'team/data/dated.yml#de'])
+  }, 40_000)
 })
