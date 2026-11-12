@@ -148,7 +148,7 @@ export function expandI18nData(
       continue
     }
     if (!isPlainObject(block)) {
-      logger.warn(`Inline i18n in "${parsedContent.id}" for locale "${locale}" is ignored, it must be an object.`)
+      logger.warn(`Inline i18n in "${parsedContent.id}" for locale ${JSON.stringify(locale)} is ignored, it must be an object.`)
       continue
     }
     if (locale === parsedContent.locale) {
@@ -162,7 +162,7 @@ export function expandI18nData(
       }
       if (!matchesSource) {
         logger.warn(
-          `Inline i18n in "${parsedContent.id}" has a block for its own locale "${locale}", which is ignored. `
+          `Inline i18n in "${parsedContent.id}" has a block for its own locale ${JSON.stringify(locale)}, which is ignored. `
           + 'Top-level values apply to this locale.',
         )
       }
@@ -170,7 +170,7 @@ export function expandI18nData(
     }
     if (!i18nConfig.locales.includes(locale)) {
       logger.warn(
-        `Inline i18n in "${parsedContent.id}" defines locale "${locale}" which is not in the collection's `
+        `Inline i18n in "${parsedContent.id}" defines locale ${JSON.stringify(locale)} which is not in the collection's `
         + `locales [${i18nConfig.locales.map(l => `"${l}"`).join(', ')}]. This translation is ignored.`,
       )
       continue
@@ -282,7 +282,7 @@ export function createLocaleVariantTracker(collection: string) {
       return
     }
     logger.warn(
-      `"${existing}" and "${item.id}" in collection "${collection}" are both the "${item.locale}" version of `
+      `"${existing}" and "${item.id}" in collection "${collection}" are both the ${JSON.stringify(item.locale)} version of `
       + `"${item.stem}". Keep only one of them.`,
     )
   }

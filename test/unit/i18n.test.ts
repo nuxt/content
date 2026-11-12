@@ -732,6 +732,23 @@ describe('i18n', () => {
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('own locale "en"'))
     })
 
+    it('escapes control characters in the locale names it logs', () => {
+      const warn = warnings()
+      const locale = '\u001B[2K\rfr'
+      expandI18nData({ id: 'team/a.yml', stem: 'a', name: 'A', meta: { i18n: { [locale]: 'x', [`${locale}2`]: { name: 'B' } } } } as never, i18nConfig, 'data', ['name'])
+      expandI18nData({ id: 'team/b.yml', stem: 'b', name: 'A', locale, meta: { i18n: { [locale]: { name: 'B' } } } } as never, i18nConfig, 'data', ['name'])
+      const track = createLocaleVariantTracker('team')
+      track({ id: 'team/c.yml', stem: 'c', locale } as never)
+      track({ id: 'team/c.json', stem: 'c', locale } as never)
+
+      const messages = warn.mock.calls.map(([message]) => String(message))
+      expect(messages).toHaveLength(4)
+      for (const message of messages) {
+        // eslint-disable-next-line no-control-regex
+        expect(message).not.toMatch(/[\u0000-\u001F]/)
+      }
+    })
+
     it('applies translations of fields outside the schema to meta', () => {
       const content = (tagline: string, image: string): ParsedContentFile => ({
         id: 'docs:a.md',
