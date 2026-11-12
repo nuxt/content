@@ -4,8 +4,9 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import { type GenerateSearchSectionsOptions, type Section, generateSearchSections } from './internal/search'
+import { generateCollectionLocales } from './internal/locales'
 import { fetchQuery } from './internal/api'
-import type { Collections, CollectionQueryBuilder, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
+import type { Collections, CollectionQueryBuilder, ContentLocaleEntry, PageCollections, SurroundOptions, SQLOperator, QueryGroupFunction } from '@nuxt/content'
 
 export type { GenerateSearchSectionsOptions, Section } from './internal/search'
 export type { ContentEvent, RequestEvent } from './internal/event'
@@ -15,6 +16,7 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
   andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   orWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
+  locale(locale: string, opts?: { fallback?: string }): ChainablePromise<T, R>
 }
 
 export const queryCollection = <T extends keyof Collections>(event: ContentEvent, collection: T): CollectionQueryBuilder<Collections[T]> => {
@@ -47,6 +49,12 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(
   return chainablePromise(event, collection, qb => generateSearchSections(qb, opts))
 }
 
+export function queryCollectionLocales<T extends keyof PageCollections>(event: ContentEvent, collection: T, stem: string): Promise<Array<Required<ContentLocaleEntry>>>
+export function queryCollectionLocales<T extends keyof Collections>(event: ContentEvent, collection: T, stem: string): Promise<ContentLocaleEntry[]>
+export function queryCollectionLocales<T extends keyof Collections>(event: ContentEvent, collection: T, stem: string) {
+  return generateCollectionLocales(queryCollection(event, collection), String(collection), stem)
+}
+
 function chainablePromise<T extends keyof PageCollections, Result>(event: ContentEvent, collection: T, fn: (qb: CollectionQueryBuilder<PageCollections[T]>) => Promise<Result>) {
   const queryBuilder = queryCollection(event, collection)
 
@@ -65,6 +73,10 @@ function chainablePromise<T extends keyof PageCollections, Result>(event: Conten
     },
     order(field, direction) {
       queryBuilder.order(String(field), direction)
+      return chainable
+    },
+    locale(locale, opts) {
+      queryBuilder.locale(locale, opts)
       return chainable
     },
     then(onfulfilled, onrejected) {

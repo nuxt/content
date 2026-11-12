@@ -9,10 +9,11 @@ import type { NuxtLogger } from '@nuxt/kit'
 import chokidar from 'chokidar'
 import micromatch from 'micromatch'
 import { withTrailingSlash } from 'ufo'
-import type { ModuleOptions, ResolvedCollection } from '../types'
+import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
-import { generateCollectionInsert } from './collection'
+import type { generateCollectionInsert } from './collection'
+import { generateCollectionItemInserts } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
@@ -167,8 +168,15 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
           await db.insertDevelopmentCache(keyInCollection, parsedContent, checksum)
         }
 
-        const insert = generateCollectionInsert(collection, JSON.parse(parsedContent))
-        await broadcast(collection, keyInCollection, insert)
+        const parsed: ParsedContentFile = JSON.parse(parsedContent)
+        const inserted: string[] = []
+        for (const { item, queries, hash } of generateCollectionItemInserts(collection, parsed)) {
+          await broadcast(collection, item.id, { queries, hash })
+          inserted.push(item.id)
+        }
+        if (collection.i18n) {
+          await removeLocaleRows(collection, keyInCollection, inserted)
+        }
       }
     }
   }
@@ -200,6 +208,19 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         await db.deleteDevelopmentCache(keyInCollection)
 
         await broadcast(collection, keyInCollection)
+        if (collection.i18n) {
+          await removeLocaleRows(collection, keyInCollection)
+        }
+      }
+    }
+  }
+
+  /** Only rows in the dump are removed, so saves do not broadcast no-op deletions */
+  async function removeLocaleRows(collection: ResolvedCollection, key: string, keep: string[] = []) {
+    for (const locale of collection.i18n!.locales) {
+      const localeKey = `${key}#${locale}`
+      if (!keep.includes(localeKey) && findDumpIndex(manifest.dump[collection.name]!, localeKey) !== -1) {
+        await broadcast(collection, localeKey)
       }
     }
   }
@@ -213,7 +234,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    const keyIndex = findDumpIndex(collectionDump, key)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
@@ -290,4 +311,8 @@ export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown
   for (let i = 0; i < arr.length; i += size) {
     yield arr.slice(i, i + size)
   }
+}
+
+function findDumpIndex(dump: string[], key: string) {
+  return dump.findIndex(item => item.includes(`'${key}'`))
 }

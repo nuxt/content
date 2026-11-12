@@ -1,4 +1,5 @@
 import { dirname } from 'node:path'
+import { join } from 'pathe'
 import { createShikiHighlighter, rehypeHighlight } from '@nuxtjs/mdc/runtime'
 import { hash } from 'ohash'
 import type { Highlighter, MdcConfig, ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -6,6 +7,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolveAlias } from '@nuxt/kit'
 import type { LanguageRegistration } from 'shiki'
 import { defu } from 'defu'
+import { detectLocaleFromPath, resolveLocaleField } from '../i18n'
 import { createJiti } from 'jiti'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { visit } from 'unist-util-visit'
@@ -214,6 +216,22 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       if (collectionKeys.includes(key) && result[key] === undefined) {
         result[key] = pathMetaFields[key]
       }
+    }
+
+    if (collection.i18n && collectionKeys.includes('locale')) {
+      const sourceStem = String(pathMetaFields.stem ?? result.stem ?? '')
+      // Normalized like content ids, which join the prefix with `pathe`
+      const sourcePrefix = (collection.source || [])
+        .map(source => join('/', source.prefix || '').split('/').filter(Boolean).join('/'))
+        .filter(prefix => prefix && (sourceStem === prefix || sourceStem.startsWith(`${prefix}/`)))
+        .sort((a, b) => b.length - a.length)[0]
+      const detected = detectLocaleFromPath(String(result.path ?? pathMetaFields.path ?? ''), sourceStem, collection.i18n, sourcePrefix)
+
+      result.locale = resolveLocaleField(result.locale, collection.i18n, String(result.id)) ?? detected.locale
+      if (collectionKeys.includes('path')) {
+        result.path = detected.path
+      }
+      result.stem = detected.stem
     }
 
     const afterParseCtx: FileAfterParseHook = { file: hookedFile, content: result as ParsedContentFile, collection }

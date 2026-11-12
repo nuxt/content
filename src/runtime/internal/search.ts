@@ -247,10 +247,20 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
 }
 
 const FTS_TABLE = '_fts_search'
-const indexedCollections = new Set<string>()
+// Indexed locale per collection, `undefined` without i18n
+const indexedCollections = new Map<string, string | undefined>()
 // builds in flight, so concurrent callers wait on the same one instead of inserting twice
-const indexingCollections = new Map<string, Promise<void>>()
+const indexingCollections = new Map<string, IndexBuild>()
 let ftsTableCreated = false
+
+interface IndexBuild {
+  locale: string | undefined
+  promise?: Promise<void>
+}
+
+/** Counts resets, so callers can tell that the builds they awaited were dropped */
+let ftsGeneration = 0
+export const getFTSGeneration = () => ftsGeneration
 
 export function _resetFTSState() {
   indexedCollections.clear()
@@ -259,46 +269,62 @@ export function _resetFTSState() {
 }
 
 export async function resetFTSIndex(db: DatabaseAdapter) {
-  await db.exec(`DROP TABLE IF EXISTS ${FTS_TABLE}`)
+  // Builds in flight stop writing once they are removed from `indexingCollections`
+  ftsGeneration++
   indexedCollections.clear()
   indexingCollections.clear()
   ftsTableCreated = false
+  await db.exec(`DROP TABLE IF EXISTS ${FTS_TABLE}`)
 }
 
+/**
+ * For a collection with i18n, `locale` must be the locale the query builder reads.
+ * Indexing another locale replaces the previous sections.
+ */
 export async function buildFTSIndex<T extends PageCollectionItemBase>(
   db: DatabaseAdapter,
   collection: string,
   queryBuilder: CollectionQueryBuilder<T>,
   opts?: GenerateSearchSectionsOptions,
+  locale?: string,
 ) {
-  if (indexedCollections.has(collection)) {
+  if (indexedCollections.has(collection) && indexedCollections.get(collection) === locale) {
     return
   }
 
   const inFlight = indexingCollections.get(collection)
-  if (inFlight) {
-    return inFlight
+  if (inFlight && inFlight.locale === locale) {
+    return inFlight.promise
   }
 
-  const indexing: Promise<void> = indexCollection(db, collection, queryBuilder, opts).finally(() => {
-    // a reset in between may have started a newer build for the same collection
-    if (indexingCollections.get(collection) === indexing) {
+  const replace = indexedCollections.delete(collection) || inFlight !== undefined
+  const build: IndexBuild = { locale }
+  const isCurrent = () => indexingCollections.get(collection) === build
+  build.promise = indexCollection(db, collection, queryBuilder, opts, { locale, replace, isCurrent }).finally(() => {
+    if (isCurrent()) {
       indexingCollections.delete(collection)
     }
   })
-  indexingCollections.set(collection, indexing)
-  return indexing
+  indexingCollections.set(collection, build)
+  return build.promise
 }
 
 async function indexCollection<T extends PageCollectionItemBase>(
   db: DatabaseAdapter,
   collection: string,
   queryBuilder: CollectionQueryBuilder<T>,
-  opts?: GenerateSearchSectionsOptions,
+  opts: GenerateSearchSectionsOptions | undefined,
+  { locale, replace, isCurrent }: { locale: string | undefined, replace: boolean, isCurrent: () => boolean },
 ) {
   if (!ftsTableCreated) {
     await db.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS ${FTS_TABLE} USING fts5(collection UNINDEXED, id UNINDEXED, title, title_normalized, titles UNINDEXED, content, level UNINDEXED)`)
+    if (!isCurrent()) {
+      return
+    }
     ftsTableCreated = true
+  }
+  if (replace) {
+    await db.exec(`DELETE FROM ${FTS_TABLE} WHERE collection = ?`, [collection])
   }
 
   const sections = await generateSearchSections(queryBuilder, opts)
@@ -306,6 +332,9 @@ async function indexCollection<T extends PageCollectionItemBase>(
   const yieldToMain = createYielder()
   for (const section of sections) {
     await yieldToMain()
+    if (!isCurrent()) {
+      return
+    }
     const titleNormalized = section.title.replace(/([a-z])([A-Z])/g, '$1 $2')
 
     await db.exec(
@@ -314,7 +343,9 @@ async function indexCollection<T extends PageCollectionItemBase>(
     )
   }
 
-  indexedCollections.add(collection)
+  if (isCurrent()) {
+    indexedCollections.set(collection, locale)
+  }
 }
 
 export async function queryFTS(

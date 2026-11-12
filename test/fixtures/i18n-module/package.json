@@ -1,0 +1,10 @@
+{
+  "name": "nuxt-content-test-i18n-module",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev"
+  },
+  "dependencies": {
+    "@nuxtjs/i18n": "^10.6.0"
+  }
+}

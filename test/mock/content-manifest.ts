@@ -6,8 +6,8 @@ export const tables = {
 export const checksums: Record<string, string> = {}
 export const checksumsStructure: Record<string, string> = {}
 
-const manifest: Record<string, { fields: Record<string, string> }> = {
-  test: { fields: { id: 'string', title: 'string' } },
+const manifest: Record<string, { type: 'data' | 'page', fields: Record<string, string> }> = {
+  test: { type: 'data', fields: { id: 'string', title: 'string' } },
 }
 
 export default manifest

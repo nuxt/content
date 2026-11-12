@@ -1,15 +1,82 @@
 import { hash } from 'ohash'
-import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
+import type { Collection, CollectionI18nConfig, CollectionIndex, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
-import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
+import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, localeStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
+import { expandI18nData } from './i18n'
 import nuxtContentContext from './context'
 import { formatDate, formatDateTime } from './content/transformers/utils'
 
 export function getTableName(name: string) {
   return `_content_${name}`
+}
+
+/**
+ * The i18n index leads with `stem` so the planner still picks user indexes in
+ * default-locale queries, which order by `stem`.
+ */
+function hasStemLocaleIndex(indexes: CollectionIndex[] | undefined): boolean {
+  return (indexes || []).some(
+    idx => idx.columns.length === 2 && idx.columns[0] === 'stem' && idx.columns[1] === 'locale',
+  )
+}
+
+interface LocaleSchema {
+  type?: string | string[]
+  const?: unknown
+  enum?: unknown[]
+  anyOf?: LocaleSchema[]
+  oneOf?: LocaleSchema[]
+}
+
+function toLocaleColumn(schema: LocaleSchema): LocaleSchema | undefined {
+  const members = (schema.anyOf ?? schema.oneOf ?? [schema]).filter(member => member.type !== 'null')
+  if (!members.length) {
+    return undefined
+  }
+  const values = members.flatMap(member => member.enum ?? ('const' in member ? [member.const] : [undefined]))
+  if (values.every(value => typeof value === 'string')) {
+    return { type: 'string', enum: values }
+  }
+  return members.every(member => [member.type].flat().includes('string')) ? { type: 'string' } : undefined
+}
+
+function resolveI18nCollection(collection: ResolvedCollection, i18n: CollectionI18nConfig): ResolvedCollection {
+  const extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
+  // A user declaration wins the merge, but a number column would store locale codes as `NaN` and a union as JSON
+  const props = extendedSchema.definitions.__SCHEMA__?.properties as Record<string, LocaleSchema> | undefined
+  if (props?.locale && props.locale.type !== 'string') {
+    const column = toLocaleColumn(props.locale)
+    if (!column) {
+      logger.warn(
+        `Collection "${collection.name}" declares a non-string \`locale\` field. `
+        + 'The i18n integration requires `locale` to be a string and is overriding it.',
+      )
+    }
+    props.locale = column ?? { type: 'string' }
+  }
+
+  let locales = i18n.locales
+  if (!locales.includes(i18n.defaultLocale)) {
+    logger.warn(
+      `Collection "${collection.name}" has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
+      + `\`locales: [${locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically, `
+      + 'declare it explicitly in `locales` to silence this warning.',
+    )
+    locales = [i18n.defaultLocale, ...locales]
+  }
+
+  return {
+    ...collection,
+    extendedSchema,
+    fields: getCollectionFieldsTypes(extendedSchema),
+    indexes: hasStemLocaleIndex(collection.indexes)
+      ? collection.indexes
+      : [...(collection.indexes || []), { columns: ['stem', 'locale'] }],
+    i18n: { ...i18n, locales },
+  }
 }
 
 export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
@@ -36,6 +103,7 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
     indexes: collection.indexes,
+    ...(collection.i18n ? { i18n: collection.i18n } : {}),
   }
 }
 
@@ -61,13 +129,15 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     return undefined
   }
 
-  return {
-    ...collection,
+  const { i18n, ...definition } = collection
+  const resolved: ResolvedCollection = {
+    ...definition,
     name,
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
   }
+  return i18n && i18n !== true ? resolveI18nCollection(resolved, i18n) : resolved
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
@@ -140,6 +210,32 @@ export function charIndexAtByteOffset(str: string, targetBytes: number): number 
   const buf = new Uint8Array(targetBytes)
   const { read } = encoder.encodeInto(str, buf)
   return read
+}
+
+/** Drops a translation that cannot be stored and logs a warning, but throws for the source item */
+export function generateCollectionItemInserts(collection: ResolvedCollection, parsed: ParsedContentFile): Array<{ item: ParsedContentFile, queries: string[], hash: string }> {
+  const items = collection.i18n
+    ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
+    : [parsed]
+  const inserts = []
+  for (const item of items) {
+    try {
+      // `generateCollectionInsert` would write a non-numeric value as `NaN`, which fails the whole dump
+      const invalidNumber = item !== items[0] && Object.keys(collection.fields).find(field =>
+        collection.fields[field] === 'number' && item[field] !== undefined && String(item[field]) !== 'null' && !Number.isFinite(Number(item[field])))
+      if (invalidNumber) {
+        throw new TypeError(`\`${invalidNumber}\` must be a number`)
+      }
+      inserts.push({ item, ...generateCollectionInsert(collection, item) })
+    }
+    catch (error) {
+      if (item === items[0]) {
+        throw error
+      }
+      logger.warn(`Inline i18n in "${parsed.id}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  return inserts
 }
 
 // Convert collection data to SQL insert statement

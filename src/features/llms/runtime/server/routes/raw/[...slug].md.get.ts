@@ -4,6 +4,7 @@ import { queryCollection } from '@nuxt/content/server'
 import type { Collections, PageCollectionItemBase, ResolvedCollection } from '@nuxt/content'
 import type { MinimarkNode } from '../../../../../../types/tree'
 import { getRouterParams, eventHandler, createError, setHeader } from 'h3'
+import type { H3Event } from 'h3'
 import { useRuntimeConfig } from 'nitropack/runtime'
 import collections from '#content/manifest'
 
@@ -27,7 +28,7 @@ export default eventHandler(async (event) => {
 
   let page: PageCollectionItemBase | null = null
   for (const collection of _collections) {
-    page = await queryCollection(event, collection as keyof Collections).path(path).first() as PageCollectionItemBase | null
+    page = await findPage(event, collection as keyof Collections, path)
     if (page) {
       break
     }
@@ -58,3 +59,19 @@ export default eventHandler(async (event) => {
   setHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
   return stringify({ ...page.body, type: 'minimark' }, { format: 'markdown/html' })
 })
+
+/** A leading locale segment selects the locale, as in the `raw` links that `localizePath` builds */
+async function findPage(event: H3Event, collection: keyof Collections, path: string) {
+  const i18n = (collections as Record<string, ResolvedCollection>)[collection]?.i18n
+  if (!i18n) {
+    return await queryCollection(event, collection).path(path).first() as PageCollectionItemBase | null
+  }
+  const [, segment = '', ...rest] = path.split('/')
+  if (i18n.locales.includes(segment)) {
+    const page = await queryCollection(event, collection).path(`/${rest.join('/')}`).locale(segment).first()
+    if (page) {
+      return page as PageCollectionItemBase
+    }
+  }
+  return await queryCollection(event, collection).path(path).locale(i18n.defaultLocale).first() as PageCollectionItemBase | null
+}

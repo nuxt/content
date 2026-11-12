@@ -2,10 +2,13 @@ import { collectionQueryBuilder } from './internal/query'
 import { generateNavigationTree } from './internal/navigation'
 import { generateItemSurround } from './internal/surround'
 import type { GenerateSearchSectionsOptions, SearchCollectionOptions, SearchResult, Section } from './internal/search'
-import { generateSearchSections, buildFTSIndex, queryFTS, resetFTSIndex } from './internal/search'
+import { generateSearchSections, buildFTSIndex, getFTSGeneration, queryFTS, resetFTSIndex } from './internal/search'
+import { generateCollectionLocales } from './internal/locales'
+import { detectClientLocale } from './internal/i18n-detection'
 import { fetchQuery } from './internal/api'
 import type { H3Event } from 'h3'
-import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter } from '@nuxt/content'
+import type { Collections, PageCollections, CollectionQueryBuilder, SurroundOptions, SQLOperator, QueryGroupFunction, ContentNavigationItem, DatabaseAdapter, ContentLocaleEntry } from '@nuxt/content'
+import manifestMeta from '#content/manifest'
 import { ref, toValue, watch, tryUseNuxtApp } from '#imports'
 import type { MaybeRefOrGetter } from 'vue'
 
@@ -16,11 +19,13 @@ interface ChainablePromise<T extends keyof PageCollections, R> extends Promise<R
   andWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   orWhere(groupFactory: QueryGroupFunction<PageCollections[T]>): ChainablePromise<T, R>
   order(field: keyof PageCollections[T], direction: 'ASC' | 'DESC'): ChainablePromise<T, R>
+  locale(locale: string, opts?: { fallback?: string }): ChainablePromise<T, R>
 }
 
 export const queryCollection = <T extends keyof Collections>(collection: T): CollectionQueryBuilder<Collections[T]> => {
-  const event = tryUseNuxtApp()?.ssrContext?.event as H3Event | undefined
-  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql))
+  const nuxtApp = tryUseNuxtApp()
+  const event = nuxtApp?.ssrContext?.event as H3Event | undefined
+  return collectionQueryBuilder<T>(collection, (collection, sql) => executeContentQuery(event, collection, sql), detectClientLocale(nuxtApp))
 }
 
 export function queryCollectionNavigation<T extends keyof PageCollections>(collection: T, fields?: Array<keyof PageCollections[T]>): ChainablePromise<T, ContentNavigationItem[]> {
@@ -46,20 +51,32 @@ export function queryCollectionSearchSections<T extends keyof PageCollections>(
   return chainablePromise(collection, qb => generateSearchSections(qb, opts))
 }
 
+export function queryCollectionLocales<T extends keyof PageCollections>(collection: T, stem: string): Promise<Array<Required<ContentLocaleEntry>>>
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string): Promise<ContentLocaleEntry[]>
+export function queryCollectionLocales<T extends keyof Collections>(collection: T, stem: string) {
+  return generateCollectionLocales(queryCollection(collection), String(collection), stem)
+}
+
 export function useSearchCollection<T extends keyof PageCollections>(
   collection: MaybeRefOrGetter<T | T[]>,
   opts?: GenerateSearchSectionsOptions & { immediate?: boolean },
 ) {
   const { immediate = true, ...indexOpts } = opts || {}
+  const nuxtApp = tryUseNuxtApp()
   const status = ref<'idle' | 'loading' | 'ready' | 'error'>(immediate ? 'loading' : 'idle')
   let db: DatabaseAdapter | undefined
   let initPromise: Promise<DatabaseAdapter> | undefined
   let indexedFor: string[] = []
+  let indexedLocale: string | undefined
+  let initRun = 0
 
   function resolveCollections() {
     const val = toValue(collection)
     return (Array.isArray(val) ? val : [val]).map(String)
   }
+
+  const localeOf = (name: string) => (manifestMeta[name]?.i18n ? detectClientLocale(nuxtApp) : undefined)
+  const activeLocale = () => resolveCollections().map(localeOf).find(Boolean)
 
   async function init() {
     const collections = resolveCollections()
@@ -67,10 +84,13 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
     const hasRemovedCollections = indexedFor.some(c => !collections.includes(c))
     const newCollections = collections.filter(c => !indexedFor.includes(c))
+    const locale = activeLocale()
 
-    if (!newCollections.length && !hasRemovedCollections && initPromise) return initPromise
+    if (!newCollections.length && !hasRemovedCollections && locale === indexedLocale && initPromise) return initPromise
 
+    indexedLocale = locale
     status.value = 'loading'
+    const run = ++initRun
     initPromise = import('./internal/database.client')
       .then(m => m.loadDatabaseAdapter(collections[0]!))
       .then(async (_db) => {
@@ -80,18 +100,23 @@ export function useSearchCollection<T extends keyof PageCollections>(
           await resetFTSIndex(_db)
         }
 
-        const toIndex = hasRemovedCollections ? collections : newCollections
-        await Promise.all(toIndex.map((col) => {
-          const qb = queryCollection(col as T)
-          return buildFTSIndex(_db, col, qb, indexOpts)
-        }))
+        // A reset by another instance drops the builds in flight, so index again after one
+        let generation: number
+        do {
+          generation = getFTSGeneration()
+          await Promise.all(collections.map(col => buildFTSIndex(_db, col, queryCollection(col as T), indexOpts, localeOf(col))))
+        } while (generation !== getFTSGeneration() && run === initRun)
 
-        indexedFor = [...collections]
-        status.value = 'ready'
+        if (run === initRun) {
+          indexedFor = [...collections]
+          status.value = 'ready'
+        }
         return _db
       })
       .catch((err) => {
-        status.value = 'error'
+        if (run === initRun) {
+          status.value = 'error'
+        }
         throw err
       })
     return initPromise
@@ -99,11 +124,16 @@ export function useSearchCollection<T extends keyof PageCollections>(
 
   if (import.meta.client) {
     watch(() => toValue(collection), () => init(), { immediate })
+    watch(activeLocale, () => initPromise && init())
   }
 
   async function search(query: string, searchOpts?: SearchCollectionOptions): Promise<SearchResult[]> {
-    if (!db) {
+    if (!db || activeLocale() !== indexedLocale) {
       await init()
+    }
+    else if (status.value === 'loading') {
+      // A rebuild clears the sections of its collections before it indexes them again
+      await initPromise
     }
     return queryFTS(db!, indexedFor, query, searchOpts)
   }
@@ -146,6 +176,10 @@ function chainablePromise<T extends keyof PageCollections, Result>(collection: T
     },
     order(field, direction) {
       queryBuilder.order(String(field), direction)
+      return chainable
+    },
+    locale(locale, opts) {
+      queryBuilder.locale(locale, opts)
       return chainable
     },
     then(onfulfilled, onrejected) {

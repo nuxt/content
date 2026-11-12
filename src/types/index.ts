@@ -1,5 +1,6 @@
 export type * from './collection'
 export type * from './hooks'
+export type * from './locales'
 export type * from './module'
 export type * from './navigation'
 export type * from './surround'

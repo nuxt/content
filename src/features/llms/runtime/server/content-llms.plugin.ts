@@ -2,7 +2,7 @@ import { appendHeader } from 'h3'
 import { withBase } from 'ufo'
 import type { NitroApp } from 'nitropack/types'
 import type { ContentLLMSCollectionSection } from './utils'
-import { createDocumentGenerator, prepareContentSections } from './utils'
+import { createDocumentGenerator, getDefaultLocale, localizePath, prepareContentSections } from './utils'
 import type { PageCollectionItemBase } from '@nuxt/content'
 import { defineNitroPlugin } from 'nitropack/runtime'
 // @ts-expect-error - typecheck does not detect queryCollection in imports
@@ -21,8 +21,9 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         continue
       }
 
+      const locale = getDefaultLocale(section.contentCollection)
       const query = queryCollection(event, section.contentCollection)
-        .select('path', 'title', 'seo', 'description')
+        .select('path', 'title', 'seo', 'description', ...(locale ? ['locale'] : []))
         .where('path', 'NOT LIKE', '%/.navigation')
 
       const filters = section.contentFilters || []
@@ -30,7 +31,11 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         query.where(filter.field, filter.operator, filter.value)
       }
 
-      const docs = await query.all() as PageCollectionItemBase[]
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
+      }
+
+      const docs = await query.all() as Array<PageCollectionItemBase & { locale?: string }>
 
       if (docs.length === 0 && section.__nuxt_content_auto_generate) {
         sectionsToRemove.push(index)
@@ -42,7 +47,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         return {
           title: doc.title || doc?.seo?.title || '',
           description: doc.description || doc?.seo?.description || '',
-          href: getDocumentLink(doc.path, section.contentCollection!, options),
+          href: getDocumentLink(doc.path, section.contentCollection!, options, doc.locale),
         }
       }))
     }
@@ -72,6 +77,11 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         query.where(filter.field, filter.operator, filter.value)
       }
 
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
+      }
+
       const docs = await query.all()
 
       for (const doc of docs) {
@@ -91,13 +101,13 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
     })
   }
 
-  function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
+  function getDocumentLink(link: string, collection: string, options: ModuleOptions, locale?: string) {
     const contentRawMarkdown = (options as unknown as { contentRawMarkdown: false | { rewriteLLMSTxt: boolean, excludeCollections: string[] } })?.contentRawMarkdown
     if (contentRawMarkdown === false || contentRawMarkdown?.rewriteLLMSTxt === false || contentRawMarkdown?.excludeCollections?.includes(collection)) {
-      return withBase(link, options.domain)
+      return withBase(localizePath(link, collection, locale), options.domain)
     }
 
-    link = `/raw${link}.md`
+    link = `/raw${localizePath(link, collection, locale, true)}.md`
 
     if (link.endsWith('/.md')) {
       link = link.slice(0, -3) + 'index.md'

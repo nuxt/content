@@ -7,7 +7,8 @@ import type { JSONSchema } from 'json-schema-to-typescript-lite'
 import { pascalCase } from 'scule'
 import type { Schema } from 'untyped'
 import type { CollectionInfo, ResolvedCollection } from '../types/collection'
-import type { Manifest } from '../types/manifest'
+import type { Draft07 } from '../types/schema'
+import type { Manifest, ManifestCollectionMeta, ManifestCollectionsMeta } from '../types/manifest'
 import type { GitInfo } from './git'
 import { generateCollectionTableDefinition } from './collection'
 
@@ -51,6 +52,24 @@ export const moduleTemplates = {
   fullRawDump: 'content/sql_dump.txt',
 }
 
+function withLocaleProperty(collection: ResolvedCollection): Draft07 {
+  const definition = collection.schema.definitions.__SCHEMA__!
+  return {
+    ...collection.schema,
+    definitions: {
+      ...collection.schema.definitions,
+      __SCHEMA__: {
+        ...definition,
+        properties: {
+          ...definition.properties,
+          locale: collection.extendedSchema.definitions.__SCHEMA__?.properties.locale ?? { type: 'string' },
+        },
+        required: [...new Set([...(definition.required || []), 'locale'])],
+      },
+    },
+  }
+}
+
 export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
   filename: moduleTemplates.types as `${string}.d.ts`,
   getContents: async ({ options }) => {
@@ -64,7 +83,7 @@ export const contentTypesTemplate = (collections: ResolvedCollection[]) => ({
       'declare module \'@nuxt/content\' {',
       ...(await Promise.all(
         publicCollections.map(async (c) => {
-          const type = await jsonSchemaToTypescript(c.schema as JSONSchema, 'CLASS')
+          const type = await jsonSchemaToTypescript((c.i18n ? withLocaleProperty(c) : c.schema) as JSONSchema, 'CLASS')
             .then(code => code.replace('export interface CLASS', `interface ${pascalCase(c.name)}CollectionItem extends ${parentInterface(c)}`))
           return indentLines(` ${type}`)
         }),
@@ -226,12 +245,14 @@ export const manifestTemplate = (manifest: Manifest) => ({
     }
 
     const collectionsMeta = options.manifest.collections.reduce((acc, collection) => {
-      acc[collection.name] = {
+      const entry: ManifestCollectionMeta = {
         type: collection.type,
         fields: collection.fields,
+        ...(collection.i18n ? { i18n: collection.i18n } : {}),
       }
+      acc[collection.name] = entry
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as ManifestCollectionsMeta)
 
     return [
       `export const checksums = ${JSON.stringify(manifest.checksum, null, 2)}`,

@@ -1,0 +1,7 @@
+{
+  "name": "nuxt-content-test-i18n",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev"
+  }
+}
