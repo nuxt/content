@@ -302,6 +302,20 @@ describe('i18n', () => {
       expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
     })
 
+    it('lets a top-level locale field set the locale of a file instead of its directory', async () => {
+      await initiateValidatorsContext()
+      const collection = resolveCollection('docs', defineCollection({
+        type: 'page',
+        source: 'docs/**',
+        schema: z.object({}),
+        i18n: i18nConfig,
+      }))!
+
+      const parsed = await parseContent('docs/docs/en/guide.md', '---\nlocale: fr\n---\n# Guide', collection)
+
+      expect(parsed).toMatchObject({ locale: 'fr', path: '/docs/guide', stem: 'docs/guide' })
+    })
+
     it('normalizes the source prefix like the content id when parsing', async () => {
       await initiateValidatorsContext()
       for (const prefix of ['/docs//guide', '/docs/./guide']) {
