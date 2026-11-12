@@ -295,9 +295,7 @@ describe('collectionQueryBuilder', () => {
   })
 
   it('count() ignores LIMIT carried over from .limit()', async () => {
-    // Regression. COUNT returns exactly one row, so appending `LIMIT N` is at
-    // best misleading. Combined with `OFFSET` it returns `[]`, and `m[0].count`
-    // would then throw.
+    // COUNT returns a single row, so LIMIT and OFFSET must not apply to it.
     mockFetch.mockResolvedValueOnce([{ count: 42 }])
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     const result = await query.limit(5).count()
@@ -394,10 +392,8 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not leak auto-locale into persistent conditions across calls', async () => {
-      // Regression. The auto-applied locale used to be pushed to
-      // `params.conditions` on first execution, so a second `.all()` on the
-      // same builder would reapply it. Any intervening `.locale()` call would
-      // then produce a contradictory `loc=X AND loc=Y`.
+      // The detected locale applies per call and never stacks with itself or
+      // with an explicit `.locale()`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
 
       mockFetch.mockResolvedValueOnce([])
@@ -426,9 +422,8 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .where("locale", ...) is used directly', async () => {
-      // Regression. Previously `.where('locale', ...)` did not flip
-      // `localeExplicitlySet`, so auto-detection would still append its own
-      // locale filter and produce a contradictory `locale = 'fr' AND locale = 'en'`.
+      // A manual filter on `locale` replaces the detected locale, so the two
+      // filters cannot contradict each other.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb.where('locale', '=', 'en').all()
 
@@ -440,9 +435,8 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .andWhere() contains a locale filter', async () => {
-      // A manual locale filter nested inside an `andWhere` group should also
-      // disable auto-locale. The detector matches any condition starting with
-      // the quoted column name `"locale"`.
+      // A manual locale filter nested inside an `andWhere` group also replaces
+      // the detected locale. Any condition on the quoted `"locale"` column counts.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb
         .andWhere(g => g.where('title', 'LIKE', '%foo%').where('locale', '=', 'en'))
@@ -456,10 +450,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('skips auto-locale when detected locale is a BCP-47 tag not in collection.locales', async () => {
-      // `@nuxtjs/i18n` may return `en-US`. A collection declaring only `en` skips
-      // auto-locale rather than producing rows from every locale. The dev-only
-      // warning is gated by `import.meta.dev` (false in this test environment), so
-      // only the no-filter behaviour is asserted here.
+      // A collection declaring only `en` ignores the `en-US` locale and returns
+      // every locale. The warning only runs in development, so only the missing
+      // filter is asserted here.
       await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
       const sql = mockFetch.mock.lastCall![1] as string
       expect(sql).not.toContain('"locale" =')
