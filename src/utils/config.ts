@@ -3,9 +3,7 @@ import { relative } from 'pathe'
 import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { CollectionI18nConfig, DefinedCollection, ModuleOptions } from '../types'
-import { defineCollection, hasLocaleStemIndex, normalizeLocaleField, resolveCollections } from './collection'
-import { localeStandardSchema, mergeStandardSchema } from './schema'
-import { getCollectionFieldsTypes } from '../runtime/internal/schema'
+import { defineCollection, resolveCollections } from './collection'
 import { logger } from './dev'
 import { resolveStudioCollection } from './studio'
 
@@ -155,16 +153,6 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
 
     if (resolvedConfig) {
       collection.i18n = resolvedConfig
-      collection.extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
-      // A user-declared `locale` field wins the schema merge; force it to string
-      // so it cannot produce invalid SQL.
-      normalizeLocaleField(collection.extendedSchema, name)
-      collection.fields = getCollectionFieldsTypes(collection.extendedSchema)
-      // Shared with `defineCollection`'s explicit-config path so both routes
-      // dedupe against a user-declared `(locale, stem)` composite index.
-      if (!hasLocaleStemIndex(collection.indexes)) {
-        collection.indexes = [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
-      }
     }
     else {
       logger.warn(

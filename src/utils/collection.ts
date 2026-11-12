@@ -1,5 +1,5 @@
 import { hash } from 'ohash'
-import type { Collection, CollectionIndex, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
+import type { Collection, CollectionI18nConfig, CollectionIndex, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
 import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
@@ -13,24 +13,46 @@ export function getTableName(name: string) {
 }
 
 /** Whether the user already declared the `(locale, stem)` index that i18n collections get. */
-export function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
+function hasLocaleStemIndex(indexes: CollectionIndex[] | undefined): boolean {
   return (indexes || []).some(
     idx => idx.columns.length === 2 && idx.columns[0] === 'locale' && idx.columns[1] === 'stem',
   )
 }
 
 /**
- * Force the `locale` schema property to a string. A user declaration of another
- * type would win the schema merge and store locale codes as `NaN`.
+ * Add the `locale` column and index of an i18n collection, and put `defaultLocale`
+ * into `locales`.
  */
-export function normalizeLocaleField(extendedSchema: Draft07, collectionName?: string): void {
-  const props = extendedSchema?.definitions?.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
+function resolveI18nCollection(collection: ResolvedCollection, i18n: CollectionI18nConfig): ResolvedCollection {
+  const extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
+  // A user declaration of another type wins the merge and would store locale codes as `NaN`.
+  const props = extendedSchema.definitions.__SCHEMA__?.properties as Record<string, { type?: string }> | undefined
   if (props?.locale && props.locale.type !== 'string') {
     logger.warn(
-      `Collection${collectionName ? ` "${collectionName}"` : ''} declares a non-string \`locale\` field. `
+      `Collection "${collection.name}" declares a non-string \`locale\` field. `
       + 'The i18n integration requires `locale` to be a string and is overriding it.',
     )
     props.locale = { type: 'string' }
+  }
+
+  let locales = i18n.locales
+  if (!locales.includes(i18n.defaultLocale)) {
+    logger.warn(
+      `Collection "${collection.name}" has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
+      + `\`locales: [${locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically, `
+      + 'declare it explicitly in `locales` to silence this warning.',
+    )
+    locales = [i18n.defaultLocale, ...locales]
+  }
+
+  return {
+    ...collection,
+    extendedSchema,
+    fields: getCollectionFieldsTypes(extendedSchema),
+    indexes: hasLocaleStemIndex(collection.indexes)
+      ? collection.indexes
+      : [...(collection.indexes || []), { columns: ['locale', 'stem'] }],
+    i18n: { ...i18n, locales },
   }
 }
 
@@ -49,23 +71,6 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema = mergeStandardSchema(pageStandardSchema, extendedSchema)
   }
 
-  // `loadContentConfig` resolves the `true` shorthand later.
-  const hasI18nConfig = collection.i18n && collection.i18n !== true
-  let resolvedI18n: typeof collection.i18n = collection.i18n
-  if (hasI18nConfig) {
-    extendedSchema = mergeStandardSchema(localeStandardSchema, extendedSchema)
-    normalizeLocaleField(extendedSchema)
-    const i18n = collection.i18n as { locales: string[], defaultLocale: string }
-    if (!i18n.locales.includes(i18n.defaultLocale)) {
-      logger.warn(
-        `Collection \`i18n\` config has \`defaultLocale: "${i18n.defaultLocale}"\` that is not in `
-        + `\`locales: [${i18n.locales.map(l => `"${l}"`).join(', ')}]\`. Adding it automatically, `
-        + 'declare it explicitly in `locales` to silence this warning.',
-      )
-      resolvedI18n = { ...i18n, locales: [i18n.defaultLocale, ...i18n.locales] }
-    }
-  }
-
   extendedSchema = mergeStandardSchema(metaStandardSchema, extendedSchema)
 
   return {
@@ -74,10 +79,9 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     schema: standardSchema,
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
-    indexes: hasI18nConfig && !hasLocaleStemIndex(collection.indexes)
-      ? [...(collection.indexes || []), { columns: ['locale', 'stem'] }]
-      : collection.indexes,
-    ...(resolvedI18n ? { i18n: resolvedI18n } : {}),
+    indexes: collection.indexes,
+    // `loadContentConfig` resolves `true`, `resolveCollection` adds the locale column and index.
+    ...(collection.i18n ? { i18n: collection.i18n } : {}),
   }
 }
 
@@ -104,14 +108,14 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
   }
 
   const { i18n, ...definition } = collection
-  return {
+  const resolved: ResolvedCollection = {
     ...definition,
     name,
     type: collection.type || 'page',
     tableName: getTableName(name),
     private: name === 'info',
-    ...(i18n && i18n !== true ? { i18n } : {}),
   }
+  return i18n && i18n !== true ? resolveI18nCollection(resolved, i18n) : resolved
 }
 
 export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
