@@ -86,6 +86,15 @@ describe('i18n collection config', () => {
     expect(collections.find(collection => collection.name === 'notes')!.i18n).toEqual({ locales: ['en', 'de'], defaultLocale: 'en' })
   })
 
+  it('merges inline @nuxtjs/i18n options with the `i18n` key like @nuxt/kit', async () => {
+    const notesI18n = async (options: Record<string, unknown>) => (await loadContentConfig(nuxtWithI18n(options))).collections.find(c => c.name === 'notes')!.i18n
+
+    expect(await notesI18n({ modules: [['@nuxtjs/i18n', { locales: ['en', 'fr'] }]], i18n: { defaultLocale: 'en' } })).toEqual({ locales: ['en', 'fr'], defaultLocale: 'en' })
+    expect(await notesI18n({ modules: [['@nuxtjs/i18n', { defaultLocale: 'en' }]], i18n: { locales: ['en', 'fr'] } })).toEqual({ locales: ['en', 'fr'], defaultLocale: 'en' })
+    expect(await notesI18n({ modules: [['@nuxtjs/i18n', { locales: ['de'], defaultLocale: 'de' }]], i18n: { locales: ['en', 'fr'], defaultLocale: 'en' } })).toEqual({ locales: ['de', 'en', 'fr'], defaultLocale: 'de' })
+    expect(await notesI18n({ modules: ['@nuxtjs/i18n'], i18n: { locales: ['en', { code: 'en', file: 'en.json' }, { code: 'fr' }], defaultLocale: 'en' } })).toEqual({ locales: ['en', 'fr'], defaultLocale: 'en' })
+  })
+
   it('disables `i18n: true` without @nuxtjs/i18n', async () => {
     const { collections } = await loadContentConfig(nuxtWithI18n({ modules: [] }))
     const notes = collections.find(collection => collection.name === 'notes')!
