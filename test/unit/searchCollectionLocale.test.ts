@@ -1,5 +1,7 @@
 import Database from 'better-sqlite3'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
 import { useNuxtApp } from '#imports'
 
 const state = vi.hoisted(() => ({
@@ -41,7 +43,8 @@ vi.mock('../../src/runtime/internal/database.client', () => {
   }
 })
 
-const locale = { value: 'en' }
+// A new ref per test, so watchers of earlier tests never fire again.
+let locale: Ref<string>
 const body = (text: string) => JSON.stringify({ type: 'minimark', value: [['p', {}, text]] })
 
 beforeEach(() => {
@@ -49,7 +52,7 @@ beforeEach(() => {
   vi.resetModules()
   // Content queries take the server path, only the search index uses the client adapter.
   vi.stubGlobal('WebAssembly', undefined)
-  locale.value = 'en'
+  locale = ref('en')
   ;(useNuxtApp() as unknown as { $i18n: unknown }).$i18n = { locale }
 
   state.inserts = []
