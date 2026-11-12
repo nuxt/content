@@ -1,4 +1,4 @@
-import type { CollectionQueryBuilder, ContentLocaleEntry, ManifestCollectionsMeta } from '@nuxt/content'
+import type { CollectionQueryBuilder, ContentLocaleEntry } from '@nuxt/content'
 import manifestMeta from '#content/manifest'
 
 const LOCALE_ENTRY_FIELDS = ['locale', 'stem', 'path', 'title'] as const
@@ -13,7 +13,7 @@ export async function generateCollectionLocales<T = Record<string, unknown>>(
   collection: string,
   stem: string,
 ): Promise<ContentLocaleEntry[]> {
-  const meta = (manifestMeta as ManifestCollectionsMeta)[collection]
+  const meta = manifestMeta[collection]
   if (!meta?.i18n) {
     if (import.meta.dev) {
       console.warn(

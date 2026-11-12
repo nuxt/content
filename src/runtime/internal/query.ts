@@ -1,5 +1,5 @@
 import { withoutTrailingSlash } from 'ufo'
-import type { Collections, CollectionI18nConfig, CollectionQueryBuilder, CollectionQueryGroup, ManifestCollectionsMeta, QueryGroupFunction, SQLOperator } from '@nuxt/content'
+import type { Collections, CollectionI18nConfig, CollectionQueryBuilder, CollectionQueryGroup, QueryGroupFunction, SQLOperator } from '@nuxt/content'
 import manifestMeta, { tables } from '#content/manifest'
 
 const getGroupConditions = <T extends keyof Collections>(group: CollectionQueryGroup<Collections[T]>): string[] => {
@@ -91,10 +91,7 @@ const LOCALE_KEY_FIELDS = ['id', 'stem', 'locale']
 const IN_CHUNK_SIZE = 100
 
 export const collectionQueryBuilder = <T extends keyof Collections>(collection: T, fetch: (collection: T, sql: string) => Promise<Collections[T][]>, detectedLocale?: string): CollectionQueryBuilder<Collections[T]> => {
-  // Read collection metadata from the manifest through the shared typed view so the
-  // property shape stays in sync with `templates.ts`.
-  const collectionMeta: ManifestCollectionsMeta[string] | undefined
-    = (manifestMeta as ManifestCollectionsMeta)[String(collection)]
+  const collectionMeta = manifestMeta[String(collection)]
   const i18nConfig: CollectionI18nConfig | undefined = collectionMeta?.i18n
   const stemPrefix = collectionMeta?.stemPrefix || ''
   const params = {

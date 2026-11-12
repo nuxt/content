@@ -4,7 +4,7 @@ import { pascalCase } from 'scule'
 import type { LLMsSection } from 'nuxt-llms'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
-import type { ManifestCollectionsMeta, PageCollectionItemBase, SQLOperator } from '@nuxt/content'
+import type { PageCollectionItemBase, SQLOperator } from '@nuxt/content'
 import manifest from '#content/manifest'
 
 export interface ContentLLMSCollectionSection extends LLMsSection {
@@ -24,7 +24,7 @@ const linkProps = ['href', 'src', 'to']
  * unless one is selected, so LLM documents use the default locale.
  */
 export function getDefaultLocale(collection: string): string | undefined {
-  return (manifest as ManifestCollectionsMeta)[collection]?.i18n?.defaultLocale
+  return manifest[collection]?.i18n?.defaultLocale
 }
 
 export async function createDocumentGenerator() {
