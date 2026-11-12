@@ -247,7 +247,7 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
 }
 
 const FTS_TABLE = '_fts_search'
-// Locale of the indexed content of each collection, `undefined` for collections without i18n
+// Indexed locale per collection, `undefined` without i18n
 const indexedCollections = new Map<string, string | undefined>()
 // builds in flight, so concurrent callers wait on the same one instead of inserting twice
 const indexingCollections = new Map<string, IndexBuild>()
@@ -258,7 +258,7 @@ interface IndexBuild {
   promise?: Promise<void>
 }
 
-/** Counts resets, so callers can tell that the builds they awaited were dropped. */
+/** Counts resets, so callers can tell that the builds they awaited were dropped */
 let ftsGeneration = 0
 export const getFTSGeneration = () => ftsGeneration
 
@@ -269,7 +269,7 @@ export function _resetFTSState() {
 }
 
 export async function resetFTSIndex(db: DatabaseAdapter) {
-  // Builds in flight stop writing once they are no longer registered.
+  // Builds in flight stop writing once they are removed from `indexingCollections`
   ftsGeneration++
   indexedCollections.clear()
   indexingCollections.clear()
@@ -278,9 +278,8 @@ export async function resetFTSIndex(db: DatabaseAdapter) {
 }
 
 /**
- * Index the sections of a collection once. Pass the locale the query builder reads
- * for a collection with i18n: indexing another locale replaces the sections of the
- * previous one.
+ * For a collection with i18n, `locale` must be the locale the query builder reads.
+ * Indexing another locale replaces the previous sections.
  */
 export async function buildFTSIndex<T extends PageCollectionItemBase>(
   db: DatabaseAdapter,

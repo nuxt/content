@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
-// Mock tables and collection metadata from manifest
 vi.mock('#content/manifest', () => ({
   tables: {
     test: '_content_test',
@@ -137,7 +136,7 @@ describe('decompressSQLDump', () => {
     // Brackets / backticks inside value literals and quoted fields remain allowed
     'SELECT * FROM _content_test WHERE ("id" = \'[a] `b`\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("we[ir]d" = \'a\') ORDER BY stem ASC': true,
-    // Locale-filtered queries emitted by i18n collections
+    // Locale filters the query builder emits for i18n collections
     'SELECT * FROM _content_test WHERE ("locale" = \'fr\') ORDER BY stem ASC': true,
     'SELECT * FROM _content_test WHERE ("stem" = \'navbar\') AND ("locale" = \'fr\') ORDER BY stem ASC': true,
   }

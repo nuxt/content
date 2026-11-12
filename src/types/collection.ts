@@ -8,18 +8,9 @@ export interface Collections {}
 
 export type CollectionType = 'page' | 'data'
 
-/**
- * Configuration for i18n support on a collection.
- * When set, a `locale` column is automatically added to the collection schema.
- */
 export interface CollectionI18nConfig {
-  /**
-   * List of supported locale codes (e.g. ['en', 'fr', 'de'])
-   */
   locales: string[]
-  /**
-   * Default locale code used as fallback (e.g. 'en')
-   */
+  /** Fallback for content missing in the active locale */
   defaultLocale: string
 }
 
@@ -85,9 +76,8 @@ export interface PageCollection<T> {
   schema?: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
   /**
-   * Enable i18n support for this collection.
-   * Pass `true` to auto-detect from `@nuxtjs/i18n` module config, or
-   * pass a `CollectionI18nConfig` object to configure manually.
+   * Adds a `locale` column to the collection. `true` reads `locales` and `defaultLocale`
+   * from `@nuxtjs/i18n`, and disables i18n with a warning when they cannot be read.
    */
   i18n?: true | CollectionI18nConfig
 }
@@ -98,9 +88,8 @@ export interface DataCollection<T> {
   schema: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
   /**
-   * Enable i18n support for this collection.
-   * Pass `true` to auto-detect from `@nuxtjs/i18n` module config, or
-   * pass a `CollectionI18nConfig` object to configure manually.
+   * Adds a `locale` column to the collection. `true` reads `locales` and `defaultLocale`
+   * from `@nuxtjs/i18n`, and disables i18n with a warning when they cannot be read.
    */
   i18n?: true | CollectionI18nConfig
 }
@@ -114,10 +103,7 @@ export interface DefinedCollection {
   extendedSchema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   indexes?: CollectionIndex[]
-  /**
-   * The `true` shorthand is resolved from `@nuxtjs/i18n` during config loading.
-   * After resolution, this is always `CollectionI18nConfig | undefined`.
-   */
+  /** `loadContentConfig` replaces `true` with a config read from `@nuxtjs/i18n`, or with `undefined` */
   i18n?: true | CollectionI18nConfig
 }
 
@@ -129,10 +115,6 @@ export interface ResolvedCollection extends Omit<DefinedCollection, 'i18n'> {
    * Private collections will not be available in the runtime.
    */
   private: boolean
-  /**
-   * Fully resolved i18n config. Never `true`, since the shorthand is resolved
-   * before this point.
-   */
   i18n?: CollectionI18nConfig
 }
 

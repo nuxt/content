@@ -60,10 +60,7 @@ export default eventHandler(async (event) => {
   return stringify({ ...page.body, type: 'minimark' }, { format: 'markdown/html' })
 })
 
-/**
- * Find a page by path. In an i18n collection, a leading locale segment selects that
- * locale, like the links in `llms.txt`. Other paths use the default locale.
- */
+/** A leading locale segment selects the locale, as in the `raw` links that `localizePath` builds */
 async function findPage(event: H3Event, collection: keyof Collections, path: string) {
   const i18n = (collections as Record<string, ResolvedCollection>)[collection]?.i18n
   if (!i18n) {

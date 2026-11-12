@@ -8,10 +8,6 @@ export interface Manifest {
   collections: ResolvedCollection[]
 }
 
-/**
- * Shape of a single collection entry in the generated `#content/manifest` default export.
- * Kept here so runtime code can import a typed view rather than casting.
- */
 export interface ManifestCollectionMeta {
   type: CollectionType
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>

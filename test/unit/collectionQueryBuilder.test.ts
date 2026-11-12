@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
-// Mock tables and collection metadata from manifest
 vi.mock('#content/manifest', () => ({
   tables: {
     articles: '_articles',
@@ -13,7 +12,6 @@ vi.mock('#content/manifest', () => ({
       fields: {},
       i18n: { locales: ['en', 'fr', 'de'], defaultLocale: 'en' },
     },
-    // Collection without i18n, used to assert auto-locale is a no-op.
     plain: {
       type: 'data',
       fields: {},
@@ -266,8 +264,6 @@ describe('collectionQueryBuilder', () => {
 
   describe('.stem() input normalization', () => {
     it('strips leading slashes from user input', async () => {
-      // Stored stems never carry a leading slash, so the slash from callers is
-      // tolerated and stripped.
       await collectionQueryBuilder(mockCollection, mockFetch).stem('/navbar').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
@@ -276,7 +272,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('strips trailing slashes from user input', async () => {
-      // A trailing slash would never match the stored stem, so collapse it silently.
       await collectionQueryBuilder(mockCollection, mockFetch).stem('navbar/').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
@@ -309,7 +304,6 @@ describe('collectionQueryBuilder', () => {
   })
 
   it('count() ignores LIMIT carried over from .limit()', async () => {
-    // COUNT returns a single row, so LIMIT and OFFSET must not apply to it.
     mockFetch.mockResolvedValueOnce([{ count: 42 }])
     const query = collectionQueryBuilder(mockCollection, mockFetch)
     const result = await query.limit(5).count()
@@ -347,7 +341,6 @@ describe('collectionQueryBuilder', () => {
 
   describe('auto-locale detection', () => {
     it('reads the detected non-default locale and the default locale in one query', async () => {
-      // `client.ts` passes the `@nuxtjs/i18n` locale as the third argument.
       await collectionQueryBuilder(mockCollection, mockFetch, 'fr').all()
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -366,11 +359,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not auto-apply locale when .locale() is called explicitly', async () => {
-      // Pass 'fr' as detectedLocale, but call .locale('de') explicitly
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await query.locale('de').all()
 
-      // Should use the explicit 'de', not auto-detected 'fr'
       expect(mockFetch).toHaveBeenCalledWith(
         'articles',
         'SELECT * FROM _articles WHERE ("locale" = \'de\') ORDER BY stem ASC',
@@ -378,11 +369,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not auto-apply locale when no detectedLocale is provided', async () => {
-      // No `detectedLocale` means no auto-locale is applied.
       const query = collectionQueryBuilder(mockCollection, mockFetch)
       await query.all()
 
-      // Should query without locale filter
       expect(mockFetch).toHaveBeenCalledWith(
         'articles',
         'SELECT * FROM _articles ORDER BY stem ASC',
@@ -390,7 +379,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('uses single query (no fallback) when detectedLocale equals defaultLocale', async () => {
-      // The default locale needs no fallback, so a plain filter is enough.
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'en')
       await query.all()
 
@@ -402,7 +390,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('serves the default locale for a detected locale outside the collection locales', async () => {
-      // `'xx'` has no translations, like a declared locale without content.
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'xx')
       await query.all()
 
@@ -414,12 +401,9 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('does not leak auto-locale into persistent conditions across calls', async () => {
-      // The detected locale applies per call and never stacks with itself or
-      // with an explicit `.locale()`.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
 
       mockFetch.mockResolvedValueOnce([])
-      // Auto-locale resolves to `en` (the default), so the single-query path runs.
       await qb.all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
@@ -427,14 +411,12 @@ describe('collectionQueryBuilder', () => {
       )
 
       mockFetch.mockResolvedValueOnce([])
-      // The second call must not stack a duplicate locale condition.
       await qb.all()
       expect(mockFetch).toHaveBeenLastCalledWith(
         'articles',
         'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
       )
 
-      // An explicit `.locale()` must fully override the auto-locale on the next call.
       mockFetch.mockResolvedValueOnce([])
       await qb.locale('de').all()
       expect(mockFetch).toHaveBeenLastCalledWith(
@@ -444,8 +426,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .where("locale", ...) is used directly', async () => {
-      // A manual filter on `locale` replaces the detected locale, so the two
-      // filters cannot contradict each other.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb.where('locale', '=', 'en').all()
 
@@ -457,8 +437,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when .andWhere() contains a locale filter', async () => {
-      // A manual locale filter nested inside an `andWhere` group also replaces
-      // the detected locale. Any condition on the quoted `"locale"` column counts.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb
         .andWhere(g => g.where('title', 'LIKE', '%foo%').where('locale', '=', 'en'))
@@ -466,21 +444,17 @@ describe('collectionQueryBuilder', () => {
 
       expect(mockFetch).toHaveBeenCalledTimes(1)
       const sql = mockFetch.mock.lastCall![1] as string
-      // No `locale = 'fr'` from auto-detection
       expect(sql).not.toContain('"locale" = \'fr\'')
       expect(sql).toContain('"locale" = \'en\'')
     })
 
     it('serves the default locale when the detected locale is a region tag outside the collection locales', async () => {
-      // A collection declaring `en` does not match the `en-US` locale.
       await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
       const sql = mockFetch.mock.lastCall![1] as string
       expect(sql).toBe('SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC')
     })
 
     it('does not auto-apply a locale on a collection without i18n config', async () => {
-      // The `plain` collection has no `i18n` in the manifest, so a detected locale
-      // must not add any filter even though the locale looks valid.
       await collectionQueryBuilder('plain' as never, mockFetch, 'fr').all()
       expect(mockFetch).toHaveBeenCalledTimes(1)
       expect(mockFetch).toHaveBeenCalledWith(
@@ -490,9 +464,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('suppresses auto-locale when a locale filter is nested inside a group', async () => {
-      // A locale filter reachable only through a nested `andWhere` group must still
-      // disable auto-locale, otherwise the two combine into a contradictory
-      // `locale = 'fr' AND locale = 'en'` clause.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'fr')
       await qb
         .andWhere(g => g.andWhere(g2 => g2.where('locale', '=', 'en')))
@@ -505,8 +476,6 @@ describe('collectionQueryBuilder', () => {
     })
 
     it('keeps auto-locale active when a value merely contains the text "locale"', async () => {
-      // A string value that contains the token `"locale"` must not be mistaken for
-      // a locale-column filter, so auto-locale still applies.
       const qb = collectionQueryBuilder(mockCollection, mockFetch, 'en')
       await qb.where('title', '=', 'say "locale"').all()
 

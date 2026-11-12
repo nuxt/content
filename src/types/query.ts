@@ -6,18 +6,12 @@ export interface CollectionQueryBuilder<T> {
   path(path: string): CollectionQueryBuilder<T>
   /**
    * Filter by stem: the file path relative to the content directory, without extension.
-   * A custom source `prefix` replaces the source directory, and in i18n collections
-   * the stem leaves out the locale directory.
-   * e.g., `.stem('navigation/navbar')` matches `content/navigation/navbar.yml`
+   * A custom source `prefix` replaces the source directory, and i18n collections leave
+   * out the locale directory. For example, `.stem('navigation/navbar')` matches
+   * `content/navigation/navbar.yml`.
    */
   stem(stem: string): CollectionQueryBuilder<T>
-  /**
-   * Filter results by locale.
-   * @param locale - The locale code to filter by (e.g. 'fr')
-   * @param opts - Options for locale filtering
-   * @param opts.fallback - Fallback locale code. When set, items missing in the
-   *   requested locale will be filled from the fallback locale.
-   */
+  /** With `fallback`, items missing in `locale` are returned in the fallback locale */
   locale(locale: string, opts?: { fallback?: string }): CollectionQueryBuilder<T>
   select<K extends keyof T>(...fields: K[]): CollectionQueryBuilder<Pick<T, K>>
   order(field: keyof T, direction: 'ASC' | 'DESC'): CollectionQueryBuilder<T>

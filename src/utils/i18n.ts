@@ -6,34 +6,30 @@ import { logger } from './dev'
 import type { ParsedContentFile } from '../types'
 
 /**
- * Override keys that are never applied. Identity fields keep the `(locale, stem)`
- * pairing intact, `meta` carries the source hash, `i18n` cannot nest, and
- * prototype keys could make other fields appear in the overrides.
+ * Identity fields keep the `(locale, stem)` pairing intact, `meta` carries the source
+ * hash, `i18n` cannot nest, and prototype keys could make other fields appear in the
+ * overrides.
  */
 const IGNORED_OVERRIDE_KEYS = ['id', 'stem', 'path', 'locale', 'extension', 'meta', 'i18n', '__proto__', 'constructor', 'prototype']
 
 /**
- * Fields a content parser produces from the file itself, such as the sanitized
- * Markdown AST. Only raw data formats store them as written, so only those may
- * override them. Elsewhere an override would bypass parsing and sanitization.
+ * Fields a parser builds from the file, such as the sanitized Markdown AST. Only raw data
+ * formats store them as written. Elsewhere an override would bypass parsing and sanitization.
  */
 const PARSED_FIELDS = ['body', 'excerpt']
 // Matched against `extname(id)`, which is how a parser is chosen. Rows of a CSV
-// file get a `#<row>` suffix.
+// file get a `#<row>` suffix
 const RAW_DATA_EXTENSION = /^\.(?:ya?ml|json5?|csv(?:#\d+)?)$/i
 
-/** `meta` field of locale items that holds the hash of the source values they translate. */
 const SOURCE_HASH_FIELD = '_i18nSourceHash'
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
 /**
- * Merge two arrays item by item. Override items take priority and default items
- * fill any gaps. Arrays of plain values replace the default wholesale (including
- * an empty array, which clears the list), since pad-filling a shorter
- * locale-specific list from the default tail is virtually never intended.
- * Object items deep-merge, and nested arrays merge by index recursively.
+ * An override array of plain values replaces the default wholesale, and an empty one
+ * clears it, since filling a shorter translated list from the default tail is virtually
+ * never intended.
  */
 function mergeArraysByIndex(overrideArr: unknown[], defaultArr: unknown[]): unknown[] {
   const isScalarOverride = overrideArr.every(item => typeof item !== 'object' || item === null)
@@ -47,16 +43,13 @@ function mergeArraysByIndex(overrideArr: unknown[], defaultArr: unknown[]): unkn
     const overrideItem = overrideArr[i]
     const defaultItem = defaultArr[i]
     if (Array.isArray(overrideItem) && Array.isArray(defaultItem)) {
-      // Both items are themselves arrays. Recurse directly instead of delegating
-      // to `defuByIndex`, whose merger only runs for arrays nested inside objects
-      // and cannot take arrays as top-level arguments.
+      // `defuByIndex` cannot take arrays as top-level arguments
       result.push(mergeArraysByIndex(overrideItem, defaultItem))
     }
     else if (isPlainObject(overrideItem) && isPlainObject(defaultItem)) {
       result.push(defuByIndex(overrideItem, defaultItem))
     }
     else {
-      // Like defu at object level, a null item keeps the default.
       result.push(overrideItem ?? defaultItem)
     }
   }
@@ -64,15 +57,11 @@ function mergeArraysByIndex(overrideArr: unknown[], defaultArr: unknown[]): unkn
 }
 
 /**
- * Custom `defu` merger that combines arrays by index (item by item) instead of
- * concatenating. Applied recursively to all nested arrays within merged objects.
+ * `defu` that merges arrays by index instead of concatenating them, so translated arrays
+ * of objects (such as nav items or cards) keep untranslated fields like routes and icons.
  *
- * Used for inline i18n expansion. Arrays of objects (such as nav items or cards)
- * deep-merge so untranslated fields (routes, IDs, icons, URLs) are preserved from
- * the default.
- *
- * Inside `createDefu`'s merger, `obj[key]` is the defaults (second arg) and
- * `value` is the overrides (first arg).
+ * In the `createDefu` merger, `obj[key]` holds the defaults (second argument) and `value`
+ * the overrides (first argument).
  */
 export const defuByIndex = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
@@ -81,15 +70,8 @@ export const defuByIndex = createDefu((obj, key, value) => {
   }
 })
 
-/**
- * Pick the default-locale values that correspond to the leaf paths a locale
- * override actually translates. Walks the override structure and copies only the
- * matching leaves from the source, so a translation of `info.country` captures
- * the default `info.country` rather than the whole `info` object. This keeps the
- * per-locale source hash from flipping when an untranslated sibling field changes.
- */
 function pickSourceByOverride(source: unknown, override: unknown): unknown {
-  // Arrays of objects merge by index, so their items are picked by index too.
+  // Arrays of objects merge by index, so their items are picked by index too
   if (Array.isArray(override) && Array.isArray(source) && override.some(item => typeof item === 'object' && item !== null)) {
     return override.map((item, index) => pickSourceByOverride(source[index], item))
   }
@@ -104,18 +86,10 @@ function pickSourceByOverride(source: unknown, override: unknown): unknown {
 }
 
 /**
- * Expand the inline `i18n` section of a parsed file into one item per locale.
- *
- * The source item keeps its own values and locale. Each other locale gets a deep
- * merge of its overrides onto the source item: arrays merge by index (see
- * `defuByIndex`), schema fields override columns, and other fields override
- * `meta`, where the parser stores them. Locale items record a hash of the source
- * values they translate in `meta._i18nSourceHash`, so tooling can spot outdated
- * translations.
- *
- * `body` and `excerpt` can only be translated inline in raw data formats (YAML,
- * JSON, CSV). Markdown and other parsed formats produce sanitized ASTs that an
- * override would bypass. Page bodies are replaced wholesale.
+ * Expand the inline `i18n` section of a parsed file into the source item followed by
+ * one item per translated locale, each merging its overrides onto the source item.
+ * Locale items store a hash of the source values they translate in
+ * `meta._i18nSourceHash`, so tooling can spot outdated translations.
  *
  * Mutates `parsedContent`: removes `meta.i18n` and sets a missing `locale`.
  */
@@ -149,13 +123,12 @@ export function expandI18nData(
       continue
     }
     if (locale === parsedContent.locale) {
-      // The block is ignored either way, so a comparison failure only shows the warning.
       let matchesSource = false
       try {
         matchesSource = hash(pickSourceByOverride({ ...meta, ...parsedContent }, block)) === hash(block)
       }
       catch {
-        // Too deep to hash
+        // Too deep to compare
       }
       if (!matchesSource) {
         logger.warn(
@@ -204,7 +177,7 @@ function expandLocale(
     if (IGNORED_OVERRIDE_KEYS.includes(field)) {
       continue
     }
-    // The id comes from the file name and cannot be changed by the content.
+    // The id comes from the file name, so the content cannot change it
     if (PARSED_FIELDS.includes(field) && !RAW_DATA_EXTENSION.test(extname(source.id))) {
       logger.warn(
         `Inline i18n in "${source.id}" translates \`${field}\` for locale "${locale}", which is ignored because `
@@ -223,8 +196,7 @@ function expandLocale(
     return undefined
   }
 
-  // The hash only covers the source values of the leaves this locale translates,
-  // so editing an untranslated sibling field does not mark the translation outdated.
+  // Hash only the source values this locale translates, so editing other fields does not mark the translation outdated
   const sourceValues: Record<string, unknown> = {}
   for (const [field, value] of Object.entries(columns)) {
     sourceValues[field] = pickSourceByOverride(source[field], value)
@@ -234,6 +206,7 @@ function expandLocale(
   }
 
   const item = defuByIndex(columns, source) as ParsedContentFile
+  // Merging two page ASTs by index would mix the nodes of both languages
   if (collectionType === 'page' && Object.hasOwn(columns, 'body')) {
     item.body = columns.body as ParsedContentFile['body']
   }
@@ -269,9 +242,9 @@ function translateDerivedSeo(item: ParsedContentFile, source: ParsedContentFile,
 }
 
 /**
- * Track the `(locale, stem)` pairs of a collection's rows and warn when two rows
- * share one, for example an inline translation and a file in a locale directory.
- * Fallback queries and `queryCollectionLocales` would return both.
+ * Warn when two rows share a `(locale, stem)` pair, such as an inline translation and a
+ * file in a locale directory, since fallback queries and `queryCollectionLocales` would
+ * return both.
  */
 export function createLocaleVariantTracker(collection: string) {
   const seen = new Map<string, string>()
@@ -289,11 +262,7 @@ export function createLocaleVariantTracker(collection: string) {
   }
 }
 
-/**
- * Find the locale directory among the first `maxIndex + 1` segments of a stem or
- * source prefix. Directory names match locale codes case-insensitively, since
- * generated paths are lowercased.
- */
+/** Directory names match locale codes case-insensitively, since generated paths are lowercased */
 function findLocaleSegment(segments: string[], locales: string[], maxIndex: number): { index: number, locale: string } | undefined {
   for (let index = 0; index <= Math.min(maxIndex, segments.length - 1); index++) {
     const locale = findLocale(segments[index]!, locales)
@@ -307,11 +276,6 @@ function findLocale(code: string, locales: string[]): string | undefined {
   return locales.find(locale => locale.toLowerCase() === code.toLowerCase())
 }
 
-/**
- * Resolve the top-level `locale` field of a file to a collection locale, case-insensitively
- * like locale directories. Returns `undefined` when the field is not set, or when it is not
- * a collection locale, which logs a warning.
- */
 export function resolveLocaleField(value: unknown, i18nConfig: CollectionI18nConfig, id: string): string | undefined {
   if (value === undefined || value === null) {
     return undefined
@@ -327,11 +291,9 @@ export function resolveLocaleField(value: unknown, i18nConfig: CollectionI18nCon
 }
 
 /**
- * Detect the locale from the locale directory in a content stem and remove that
- * directory from `stem` and `path`. The directory can be any segment of the
- * source prefix or the first one after it. The stem is used because a custom
- * front-matter `path` never changes it. Returns the default locale when the stem
- * has no locale directory.
+ * Detect the locale directory of a stem and remove it from `stem` and `path`. It can be
+ * any segment of the source prefix or the first one after it. The stem is used because a
+ * custom front-matter `path` never changes it.
  */
 export function detectLocaleFromPath(
   path: string,
@@ -340,7 +302,7 @@ export function detectLocaleFromPath(
   sourcePrefix: string = '',
 ): { locale: string, path: string, stem: string } {
   const stemParts = stem.split('/').filter(Boolean)
-  // Only directories name a locale, the last segment is the file name.
+  // Only directories name a locale, the last segment is the file name
   const match = findLocaleSegment(stemParts.slice(0, -1), i18nConfig.locales, sourcePrefix.split('/').filter(Boolean).length)
   if (!match) {
     return { locale: i18nConfig.defaultLocale, path, stem }
@@ -348,7 +310,7 @@ export function detectLocaleFromPath(
 
   const { index, locale } = match
   const pathParts = path.split('/').filter(Boolean)
-  // A custom front-matter path without the locale directory is left untouched.
+  // A custom front-matter path without the locale directory is left untouched
   const strippedPath = pathParts[index]?.toLowerCase() === stemParts[index]!.toLowerCase()
     ? '/' + pathParts.filter((_, i) => i !== index).join('/')
     : path

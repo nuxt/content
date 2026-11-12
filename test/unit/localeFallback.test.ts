@@ -31,7 +31,6 @@ function insert(locale: string, stem: string, data: { title: string, date: strin
 async function fetch(name: string, sql: string) {
   assertSafeQuery(sql, name)
   queries.push(sql)
-  // Like the database adapters
   return db.prepare(sql).all().map(row => refineContentFields(sql, row)) as never[]
 }
 
@@ -234,7 +233,7 @@ describe('paged locale fallback', () => {
   })
 
   it('resolves pages across window boundaries like the full result', async () => {
-    // An odd number of rows before the pairs lets windows end between the two rows of a stem.
+    // An odd number of rows before the pairs lets windows end between the two rows of a stem
     insertMany([
       ['en', 'aa', { title: 'AA', date: '2024-01-05' }],
       ...Array.from({ length: 300 }, (_, i) => ['en', 'fr'].map(locale => [locale, `s-${String(i).padStart(3, '0')}`, { title: `S ${i} ${locale}`, date: '2023-06-01', status: i % 5 ? 'published' : 'hidden' }] as [string, string, { title: string, date: string, status: string }])).flat(),
@@ -258,7 +257,7 @@ describe('paged locale fallback', () => {
 
   it('hides a fallback row in a later window when its translation came in an earlier window', async () => {
     // Order: translations of `b-*`, then the hidden fallback rows of `a-*` that fill the
-    // first window, then the fallback rows of `b-*` in the last window.
+    // first window, then the fallback rows of `b-*` in the last window
     const second = (i: number) => String(i % 60).padStart(2, '0')
     insertMany([
       ...Array.from({ length: 20 }, (_, i) => ['fr', `b-${String(i).padStart(2, '0')}`, { title: `B ${i} fr`, date: `2026-01-01T00:00:${second(i)}` }] as [string, string, { title: string, date: string }]),

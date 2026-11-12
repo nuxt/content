@@ -14,9 +14,8 @@ export function getTableName(name: string) {
 }
 
 /**
- * Whether the user already declared the `(stem, locale)` index that i18n collections get.
- * It leads with `stem` so the planner still picks user indexes in default-locale
- * queries, which order by `stem`.
+ * The i18n index leads with `stem` so the planner still picks user indexes in
+ * default-locale queries, which order by `stem`.
  */
 function hasStemLocaleIndex(indexes: CollectionIndex[] | undefined): boolean {
   return (indexes || []).some(
@@ -32,10 +31,6 @@ interface LocaleSchema {
   oneOf?: LocaleSchema[]
 }
 
-/**
- * A text column for a user `locale` declaration, keeping the values of a union of string
- * literals. `undefined` when the declaration is not a string.
- */
 function toLocaleColumn(schema: LocaleSchema): LocaleSchema | undefined {
   const members = (schema.anyOf ?? schema.oneOf ?? [schema]).filter(member => member.type !== 'null')
   if (!members.length) {
@@ -48,14 +43,9 @@ function toLocaleColumn(schema: LocaleSchema): LocaleSchema | undefined {
   return members.every(member => [member.type].flat().includes('string')) ? { type: 'string' } : undefined
 }
 
-/**
- * Add the `locale` column and index of an i18n collection, and put `defaultLocale`
- * into `locales`.
- */
 function resolveI18nCollection(collection: ResolvedCollection, i18n: CollectionI18nConfig): ResolvedCollection {
   const extendedSchema = mergeStandardSchema(localeStandardSchema, collection.extendedSchema)
-  // A user declaration wins the merge. Other types would store locale codes as `NaN`, and
-  // unions as JSON.
+  // A user declaration wins the merge, but a number column would store locale codes as `NaN` and a union as JSON
   const props = extendedSchema.definitions.__SCHEMA__?.properties as Record<string, LocaleSchema> | undefined
   if (props?.locale && props.locale.type !== 'string') {
     const column = toLocaleColumn(props.locale)
@@ -113,7 +103,6 @@ export function defineCollection<T>(collection: Collection<T>): DefinedCollectio
     extendedSchema: extendedSchema,
     fields: getCollectionFieldsTypes(extendedSchema),
     indexes: collection.indexes,
-    // `loadContentConfig` resolves `true`, `resolveCollection` adds the locale column and index.
     ...(collection.i18n ? { i18n: collection.i18n } : {}),
   }
 }
@@ -223,11 +212,7 @@ export function charIndexAtByteOffset(str: string, targetBytes: number): number 
   return read
 }
 
-/**
- * Generate the inserts of a parsed file, one per locale for inline translations in
- * an i18n collection. A translation that cannot be stored only drops its own row,
- * a source item that cannot be stored throws.
- */
+/** Drops a translation that cannot be stored and logs a warning, but throws for the source item */
 export function generateCollectionItemInserts(collection: ResolvedCollection, parsed: ParsedContentFile): Array<{ item: ParsedContentFile, queries: string[], hash: string }> {
   const items = collection.i18n
     ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
@@ -235,7 +220,7 @@ export function generateCollectionItemInserts(collection: ResolvedCollection, pa
   const inserts = []
   for (const item of items) {
     try {
-      // `generateCollectionInsert` writes such a value as `NaN`, which fails the whole dump
+      // `generateCollectionInsert` would write a non-numeric value as `NaN`, which fails the whole dump
       const invalidNumber = item !== items[0] && Object.keys(collection.fields).find(field =>
         collection.fields[field] === 'number' && item[field] !== undefined && String(item[field]) !== 'null' && !Number.isFinite(Number(item[field])))
       if (invalidNumber) {

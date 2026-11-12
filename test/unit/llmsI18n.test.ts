@@ -19,7 +19,7 @@ vi.mock('#content/manifest', () => ({
   },
 }))
 
-// Server queries apply no locale until `.locale()` is called.
+// Mirrors the server `queryCollection`, which applies no locale until `.locale()` is called
 const serverQuery = vi.hoisted(() => (_event: unknown, collection: string) => collectionQueryBuilder(collection as never, async (_c: string, sql: string) => {
   return state.db.prepare(sql).all().map(row => refineContentFields(sql, row)) as never[]
 }))

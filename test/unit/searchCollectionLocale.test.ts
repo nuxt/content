@@ -7,7 +7,6 @@ import { useNuxtApp } from '#imports'
 const state = vi.hoisted(() => ({
   db: undefined as unknown as Database.Database,
   inserts: [] as string[],
-  // Holds the first content query on `_content_docs` until released.
   gate: undefined as Promise<void> | undefined,
   gateHit: false,
 }))
@@ -27,7 +26,6 @@ const parse = vi.hoisted(() => (row: unknown) => {
   return typeof value.body === 'string' ? { ...value, body: JSON.parse(value.body) } : value
 })
 
-// Content queries and the search index share one database, like the browser WASM database.
 vi.mock('../../src/runtime/internal/api', () => ({
   fetchQuery: async (_event: unknown, _collection: string, sql: string) => {
     if (state.gate && !state.gateHit && sql.includes('_content_docs')) {
@@ -53,14 +51,14 @@ vi.mock('../../src/runtime/internal/database.client', () => {
   }
 })
 
-// A new ref per test, so watchers of earlier tests never fire again.
+// A new ref per test, so watchers of earlier tests never fire again
 let locale: Ref<string>
 const body = (text: string) => JSON.stringify({ type: 'minimark', value: [['p', {}, text]] })
 
 beforeEach(() => {
-  // A fresh module graph resets the shared search index, like a page load.
+  // A fresh module graph resets the shared search index, like a page load
   vi.resetModules()
-  // Content queries take the server path, only the search index uses the client adapter.
+  // Routes content queries to `fetchQuery` while the search index keeps using the client adapter
   vi.stubGlobal('WebAssembly', undefined)
   locale = ref('en')
   ;(useNuxtApp() as unknown as { $i18n: unknown }).$i18n = { locale }
@@ -128,7 +126,7 @@ describe('useSearchCollection with i18n collections', () => {
 
   it('keeps an instance searchable when another instance resets the index during its build', async () => {
     const { useSearchCollection } = await import('../../src/runtime/client')
-    // A plain getter, so no watcher runs.
+    // `names` is not reactive, so reassigning it triggers no watcher
     let names = ['blog', 'notes']
     const other = useSearchCollection((() => names) as never, { immediate: false })
     await other.init()
@@ -141,7 +139,6 @@ describe('useSearchCollection with i18n collections', () => {
     const pending = search.init()
     await vi.waitFor(() => expect(state.gateHit).toBe(true))
 
-    // Removing a collection resets the shared index while the docs build waits.
     names = ['blog']
     await other.init()
     release()
@@ -166,7 +163,6 @@ describe('useSearchCollection with i18n collections', () => {
     const first = search.init()
     await vi.waitFor(() => expect(state.gateHit).toBe(true))
 
-    // The newer call resets the index again while the first one waits on its query.
     const generation = getFTSGeneration()
     names = ['docs']
     const second = search.init()

@@ -40,7 +40,6 @@ export async function generateNavigationTree<T extends PageCollectionItemBase>(q
 
   // Navigation fields picker
   const pickConfigNavigationFields = (content: PageCollectionItemBase) => {
-    // Inline translations track their source in `meta`, which is not a navigation field.
     const { _i18nSourceHash, ...meta } = (content.meta || {}) as Record<string, unknown>
     return {
       ...pick(['title', ...(extraFields as string[])])(content as unknown as Record<string, unknown>),

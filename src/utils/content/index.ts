@@ -218,10 +218,9 @@ export async function createParser(collection: ResolvedCollection, nuxt?: Nuxt) 
       }
     }
 
-    // Store i18n rows under a locale-agnostic path and stem, with the locale in its own column.
     if (collection.i18n && collectionKeys.includes('locale')) {
       const sourceStem = String(pathMetaFields.stem ?? result.stem ?? '')
-      // Normalized like content ids, which join the prefix with `pathe`.
+      // Normalized like content ids, which join the prefix with `pathe`
       const sourcePrefix = (collection.source || [])
         .map(source => join('/', source.prefix || '').split('/').filter(Boolean).join('/'))
         .filter(prefix => prefix && (sourceStem === prefix || sourceStem.startsWith(`${prefix}/`)))

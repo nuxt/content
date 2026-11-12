@@ -68,7 +68,6 @@ export function useSearchCollection<T extends keyof PageCollections>(
   let initPromise: Promise<DatabaseAdapter> | undefined
   let indexedFor: string[] = []
   let indexedLocale: string | undefined
-  // Only the latest `init()` call retries after a reset and updates the state.
   let initRun = 0
 
   function resolveCollections() {
@@ -76,7 +75,6 @@ export function useSearchCollection<T extends keyof PageCollections>(
     return (Array.isArray(val) ? val : [val]).map(String)
   }
 
-  // Collections with i18n are indexed in the active locale.
   const localeOf = (name: string) => (manifestMeta[name]?.i18n ? detectClientLocale(nuxtApp) : undefined)
   const activeLocale = () => resolveCollections().map(localeOf).find(Boolean)
 
@@ -102,8 +100,7 @@ export function useSearchCollection<T extends keyof PageCollections>(
           await resetFTSIndex(_db)
         }
 
-        // Collections that are already indexed in their locale are skipped. A reset by
-        // another instance drops the builds in flight, so index again after one.
+        // A reset by another instance drops the builds in flight, so index again after one
         let generation: number
         do {
           generation = getFTSGeneration()

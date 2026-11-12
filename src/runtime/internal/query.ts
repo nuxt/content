@@ -12,9 +12,8 @@ const buildGroup = <T extends keyof Collections>(group: CollectionQueryGroup<Col
 }
 
 /**
- * Whether any condition filters on the `locale` column, at any nesting depth.
- * String literals are stripped first so a value containing the text `"locale"`
- * does not match. Column names are always double-quoted and values single-quoted.
+ * Strips string literals first so a value containing `"locale"` does not match, which
+ * relies on the builder double-quoting column names and single-quoting values.
  */
 const referencesLocaleColumn = (conditions: string[]): boolean =>
   conditions.some(c => c.replace(/'(?:[^']|'')*'/g, '').includes('"locale"'))
@@ -84,24 +83,19 @@ export const collectionQueryGroup = <T extends keyof Collections>(collection: T)
 type Row = Record<string, unknown>
 type LocaleFallback = { locale: string, fallback: string }
 
-/** Columns a fallback lookup reads to decide which locale serves each stem. */
 const LOCALE_KEY_FIELDS = ['id', 'stem', 'locale']
 
-/** Key rows in the first window of a paged fallback lookup. Smaller results fit in one window. */
 const KEY_WINDOW_SIZE = 256
 
-/** One slice of a paged fallback lookup. */
 interface KeyWindow {
   offset: number
   limit: number
-  /** Builder state captured when the terminal method was called. */
   conditions: string[]
   orderBy: string[]
-  /** Stems known to have a row in the requested locale, shared by the windows of one lookup. */
+  /** Stems known to have a row in the requested locale, shared by the windows of one lookup */
   translated: Set<unknown>
 }
 
-/** `<collection>:<locale>` pairs already reported as outside the collection locales. */
 const unknownLocaleWarnings = new Set<string>()
 
 /**
@@ -124,9 +118,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       field: '' as keyof Collections[T] | '*',
       distinct: false,
     },
-    // Set by `.locale()`, the last call wins.
     locale: undefined as { locale: string, fallback?: string } | undefined,
-    // Set by `.locale()` and by manual filters on `locale`, both disable auto-locale.
     localeExplicitlySet: false,
   }
 
@@ -135,8 +127,6 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     __params: params,
     andWhere(groupFactory: QueryGroupFunction<Collections[T]>) {
       const group = groupFactory(collectionQueryGroup(collection))
-      // A manual filter on `locale` (in any nested condition) suppresses auto-locale
-      // so the two cannot combine into a contradictory WHERE clause.
       if (referencesLocaleColumn(getGroupConditions(group))) {
         params.localeExplicitlySet = true
       }
@@ -155,7 +145,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('path', '=', withoutTrailingSlash(path))
     },
     stem(stem: string) {
-      // Trim slashes in linear time, a regex such as /\/+$/ backtracks on long runs.
+      // A regex such as /\/+$/ backtracks on long runs of slashes, so trim in linear time
       let start = 0
       let end = stem.length
       while (start < end && stem.charCodeAt(start) === 47) start++
@@ -163,9 +153,6 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return query.where('stem', '=', stem.slice(start, end))
     },
     locale(locale: string, opts?: { fallback?: string }) {
-      // Dev-only guard. Without i18n the table has no `locale` column, so the query fails
-      // with a "no such column" SQL error far from the call site. The manifest has no
-      // i18n config when the option is missing or `i18n: true` could not be resolved.
       if (import.meta.dev && !i18nConfig) {
         console.warn(
           `[@nuxt/content] queryCollection("${String(collection)}").locale(${JSON.stringify(locale)}): `
@@ -216,7 +203,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       const { condition, fallback } = resolveLocale()
       if (fallback) {
-        // Without filters, each stem of either locale is served once.
+        // Without filters, each stem of either locale is served once
         if (field === '*' && params.conditions.length === 0) {
           return fetch(collection, buildQuery({
             count: { field: 'stem', distinct: true },
@@ -227,8 +214,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
         if (field === '*') {
           return (await resolveLocaleRows(fallback, [])).rows.length
         }
-        // Like SQL `COUNT`, skip NULL values, which reads turn into `false` or `undefined`.
-        // The values of both locales are read next to the keys and kept for served rows.
+        // Like SQL `COUNT`, skip NULL values in the query, since row reads turn them into `false` or `undefined`
         const [{ rows }, values] = await Promise.all([
           resolveLocaleRows(fallback, []),
           fetch(collection, buildQuery({
@@ -243,7 +229,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
           ? new Set(counted.map(row => JSON.stringify(row[String(field)]))).size
           : counted.length
       }
-      // A COUNT query returns a single row, so LIMIT and OFFSET must not apply to it.
+      // A COUNT query returns a single row, which an offset would skip
       return fetch(collection, buildQuery({
         count: { field: String(field), distinct },
         extraCondition: condition,
@@ -252,11 +238,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     },
   }
 
-  /**
-   * Locale handling for one execution. Derived from `params` without mutating them,
-   * so a builder can run several terminal methods concurrently. Returns either a
-   * condition for a single query, or the locale pair for a fallback lookup.
-   */
+  /** Does not mutate `params`, so a builder can run several terminal methods concurrently */
   function resolveLocale(): { condition?: string, fallback?: LocaleFallback } {
     if (params.locale) {
       const { locale, fallback } = params.locale
@@ -265,7 +247,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     if (params.localeExplicitlySet || !i18nConfig || !detectedLocale) {
       return {}
     }
-    // A locale outside the collection locales has no translations, like a declared locale without content.
+    // No row has a locale outside the collection locales, so only default-locale rows can be served
     if (!i18nConfig.locales.includes(detectedLocale)) {
       const warning = `${String(collection)}:${detectedLocale}`
       if (import.meta.dev && !unknownLocaleWarnings.has(warning)) {
@@ -284,14 +266,9 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   /**
-   * Read the rows of a fallback lookup in database order. Each stem is served by its
-   * row in `locale` when one exists, otherwise by its row in `fallback`. Filters
-   * apply to the served row: a translation that exists but does not match them hides
-   * its stem instead of letting the fallback row through.
-   *
-   * `fields` lists the columns to read, `'*'` reads all of them. `id`, `stem` and
-   * `locale` are always read because the resolution needs them. With `window`, only
-   * that slice of the result is read, and `complete` tells whether it was the last one.
+   * Each stem is served by its row in `locale` when one exists, otherwise by its row in
+   * `fallback`. Filters apply to the served row, so a translation that exists but does not
+   * match them hides its stem instead of letting the fallback row through.
    */
   async function resolveLocaleRows(localeFallback: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*', window?: KeyWindow): Promise<{ rows: Row[], complete: boolean }> {
     const { locale } = localeFallback
@@ -309,8 +286,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
         translated.add(row.stem)
       }
     }
-    // Once all rows are read, an unfiltered result holds every translation. Otherwise
-    // a translation outside the result can still hide a fallback row.
+    // A translation outside a filtered or partial result can still hide a fallback row
     if (conditions.length > 0 || !complete) {
       const candidates = [...new Set(rows.filter(row => row.locale !== locale && !translated.has(row.stem)).map(row => row.stem))]
       const existing = await fetchInChunks(candidates, chunk => buildQuery({
@@ -327,14 +303,13 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   /**
-   * Fallback lookup for `all()` and `first()`. With a limit, the page is resolved
-   * from growing windows of key rows, and only its rows are read in full, so
-   * `first()` and `limit()` do not read every row of both locales.
+   * With a limit, the page is resolved from growing windows of key rows and only its rows
+   * are read in full, so `first()` and `limit()` do not read every row of both locales.
    */
   async function fetchWithLocaleFallback(localeFallback: LocaleFallback, limit: number): Promise<Collections[T][]> {
-    // Read the builder state before the first query, like a single query does.
+    // Read the builder state before the first query, like a single query does
     const selected = [...params.selectedFields]
-    // Same tests as `buildQuery`, numeric strings included.
+    // Like `buildQuery`, accept numeric strings and apply the offset only together with a limit
     const offset = params.offset > 0 ? Number(params.offset) : 0
     const pick = (row: Row) => (selected.length
       ? Object.fromEntries(selected.map(field => [field, row[String(field)]]))
@@ -345,11 +320,10 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       return rows.map(pick)
     }
 
-    // Same rule as `buildQuery`: the offset only applies together with a limit.
     const end = offset + Number(limit)
     const keys: Row[] = []
     const state = { conditions: [...params.conditions], orderBy: [...params.orderBy], translated: new Set() }
-    // A stem has at most two key rows, so the first window usually holds the page.
+    // A stem has at most two key rows, so the first window usually holds the page
     for (let start = 0, size = Math.max(2 * end, KEY_WINDOW_SIZE); keys.length < end; start += size, size *= 4) {
       const window = await resolveLocaleRows(localeFallback, [], { ...state, offset: start, limit: size })
       keys.push(...window.rows)
@@ -369,7 +343,6 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
       .map(pick)
   }
 
-  /** Run one query per chunk of values, keeping each `IN (...)` list under `IN_LIST_MAX_BYTES`. */
   async function fetchInChunks(values: unknown[], build: (chunk: unknown[]) => string): Promise<Row[]> {
     const chunks: unknown[][] = []
     let bytes = 0
@@ -389,12 +362,10 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   function buildQuery(opts: {
     count?: { field: string, distinct: boolean }
     limit?: number
-    /** Replaces the conditions set on the builder. */
     conditions?: string[]
     extraCondition?: string
     noLimitOffset?: boolean
     selectedFields?: ReadonlyArray<keyof Collections[T]>
-    /** Reads one slice in the given order, instead of the builder's order, limit and offset. */
     window?: Pick<KeyWindow, 'offset' | 'limit' | 'orderBy'>
   } = {}) {
     let query = 'SELECT '
@@ -424,7 +395,7 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     }
 
     if (opts.window) {
-      // Ties break by `id`, so consecutive windows neither repeat nor skip rows.
+      // Ties break by `id`, so consecutive windows neither repeat nor skip rows
       const { offset, limit } = opts.window
       return `${query}, "id" ASC LIMIT ${limit}${offset > 0 ? ` OFFSET ${offset}` : ''}`
     }

@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 export default defineContentConfig({
   collections: {
-    // Path-based i18n collection: content organized by locale directories
     blog: defineCollection({
       type: 'page',
       source: '*/blog/**',
@@ -15,7 +14,6 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
-    // Inline i18n collection: translations embedded in the content file
     team: defineCollection({
       type: 'data',
       source: 'data/team.yml',
@@ -29,7 +27,6 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
-    // Inline i18n in Markdown front matter
     pages: defineCollection({
       type: 'page',
       source: 'pages/**',
@@ -38,7 +35,6 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
-    // Inline i18n in JSON with an array of objects
     settings: defineCollection({
       type: 'data',
       source: 'settings/*.json',
@@ -51,8 +47,7 @@ export default defineContentConfig({
         defaultLocale: 'en',
       },
     }),
-    // `i18n: true` shorthand without @nuxtjs/i18n installed: the integration is
-    // disabled with a warning and no `locale` column is added.
+    // Without @nuxtjs/i18n installed, `i18n: true` disables i18n with a warning
     notes: defineCollection({
       type: 'data',
       source: 'notes/*.yml',

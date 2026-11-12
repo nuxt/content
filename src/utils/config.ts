@@ -76,7 +76,6 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
     resolveStudioCollection(nuxt, finalCollectionsConfig)
   }
 
-  // Resolve `i18n: true` shorthand from @nuxtjs/i18n module config
   resolveI18nConfig(nuxt, finalCollectionsConfig)
 
   const collections = resolveCollections(finalCollectionsConfig)
@@ -92,8 +91,8 @@ interface RawI18nModuleOptions {
 /**
  * Read `@nuxtjs/i18n` locale options like the module resolves them: inline options
  * from the `modules` array win over the `i18n` key, the first entry wins for
- * `defaultLocale` like in the options `@nuxt/kit` passes to the module, and the
- * locales of every layer add up. Locales that other modules add later (through
+ * `defaultLocale` like in the options Nuxt passes to the module, and the locales of
+ * every layer add up. Locales that other modules add later (through
  * `moduleDependencies` or the `i18n:registerModule` hook) are not visible here, so
  * collections then need an explicit `i18n: { locales, defaultLocale }` config.
  */
@@ -104,14 +103,7 @@ function readI18nModuleOptions(nuxt: Nuxt): RawI18nModuleOptions {
   return defu({}, ...inlineOptions, (nuxt.options as unknown as { i18n?: RawI18nModuleOptions }).i18n)
 }
 
-/**
- * Resolve `i18n: true` shorthand on collections by reading locale config
- * from the `@nuxtjs/i18n` module. If the module is not installed (or its locale
- * config cannot be read) and a collection uses `i18n: true`, a warning is logged
- * and i18n is disabled for that collection.
- */
 function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollection>) {
-  // Check which collections need resolution
   const needsResolution = Object.values(collections).some(c => c.i18n === true)
   if (!needsResolution) return
 
@@ -128,12 +120,9 @@ function resolveI18nConfig(nuxt: Nuxt, collections: Record<string, DefinedCollec
       reason = '@nuxtjs/i18n is installed but has no `defaultLocale` configured'
     }
     else {
-      // Layers and merged options can list a locale more than once.
+      // Layers and merged options can list a locale more than once
       const localeCodes = [...new Set(i18nOptions.locales.map(l => typeof l === 'string' ? l : l.code))]
-      // `@nuxtjs/i18n` permits `defaultLocale` outside `locales` (it falls
-      // through at runtime), but for content filtering it is a footgun. Files
-      // under `content/<defaultLocale>/` would never be path-detected. The
-      // invariant is forced here so it cannot silently drift.
+      // `@nuxtjs/i18n` allows a `defaultLocale` outside `locales`, but only codes in `locales` name a locale directory
       resolvedConfig = {
         locales: localeCodes.includes(i18nOptions.defaultLocale)
           ? localeCodes

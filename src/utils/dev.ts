@@ -169,7 +169,6 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         }
 
         const parsed: ParsedContentFile = JSON.parse(parsedContent)
-        // Inline translations get `<id>#<locale>` ids.
         const inserted: string[] = []
         for (const { item, queries, hash } of generateCollectionItemInserts(collection, parsed)) {
           await broadcast(collection, item.id, { queries, hash })
@@ -216,10 +215,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
   }
 
-  /**
-   * Remove the `<key>#<locale>` rows of a file that are not in `keep`. Only rows that
-   * exist in the dump are removed, so saves do not broadcast no-op deletions.
-   */
+  /** Only rows in the dump are removed, so saves do not broadcast no-op deletions */
   async function removeLocaleRows(collection: ResolvedCollection, key: string, keep: string[] = []) {
     for (const locale of collection.i18n!.locales) {
       const localeKey = `${key}#${locale}`

@@ -52,11 +52,6 @@ export const moduleTemplates = {
   fullRawDump: 'content/sql_dump.txt',
 }
 
-/**
- * Add the `locale` column of an i18n collection to its user schema for type
- * generation. The property comes from the extended schema, where a user
- * declaration such as an enum is kept and other types are forced to string.
- */
 function withLocaleProperty(collection: ResolvedCollection): Draft07 {
   const definition = collection.schema.definitions.__SCHEMA__!
   return {

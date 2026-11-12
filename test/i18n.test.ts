@@ -26,7 +26,6 @@ describe('i18n', async () => {
   await setup({
     rootDir: resolver.resolve('./fixtures/i18n'),
     dev: true,
-    // Let the OS assign a free port to avoid `EADDRINUSE` on CI.
     port: 0,
   })
 
@@ -64,8 +63,6 @@ describe('i18n', async () => {
     })
 
     test('notes table (i18n: true without @nuxtjs/i18n) has no locale column', async () => {
-      // The shorthand resolves to disabled when the module is absent, so no
-      // `locale` column is added.
       const tableInfo = await db.database?.prepare(`PRAGMA table_info(${getTableName('notes')});`).all() as { name: string }[]
       const columnNames = tableInfo.map(c => c.name)
 
@@ -83,7 +80,6 @@ describe('i18n', async () => {
       expect(titles).toContain('Hello World')
       expect(titles).toContain('English Only Post')
 
-      // All posts should have locale = 'en'
       for (const post of posts) {
         expect(post.locale).toBe('en')
       }
@@ -105,7 +101,6 @@ describe('i18n', async () => {
       const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog?locale=en')
       const helloPost = posts.find(p => p.title === 'Hello World')
 
-      // Path should NOT contain the locale prefix
       expect(helloPost?.path).toBe('/blog/hello')
       expect((helloPost?.path as string)?.startsWith('/en/')).toBe(false)
     })
@@ -117,7 +112,6 @@ describe('i18n', async () => {
       const enHello = enPosts.find(p => p.title === 'Hello World')
       const frHello = frPosts.find(p => p.title === 'Bonjour le Monde')
 
-      // Both should have the same path (locale prefix stripped)
       expect(enHello?.path).toBe('/blog/hello')
       expect(frHello?.path).toBe('/blog/hello')
     })
@@ -126,9 +120,7 @@ describe('i18n', async () => {
       const posts = await $fetch<Record<string, unknown>[]>('/api/content/blog?locale=fr&fallback=en')
 
       const titles = posts.map(p => p.title)
-      // Should include the French translation
       expect(titles).toContain('Bonjour le Monde')
-      // Should also include English-only post as fallback
       expect(titles).toContain('English Only Post')
     })
 
@@ -181,7 +173,6 @@ describe('i18n', async () => {
       expect(jane?.role).toBe('Entwicklerin')
       expect(jane?.country).toBe('Schweiz')
       expect(jane?.locale).toBe('de')
-      // Name should fall back to default since it's not translated
       expect(jane?.name).toBe('Jane Doe')
     })
 
@@ -213,7 +204,6 @@ describe('i18n', async () => {
       const localeCodes = locales.map(l => l.locale).sort()
       expect(localeCodes).toEqual(['en', 'fr'])
 
-      // Both should have the same path
       for (const entry of locales) {
         expect(entry.path).toBe('/blog/hello')
       }
@@ -229,10 +219,6 @@ describe('i18n', async () => {
     })
 
     test('returns entries without path/title on data collections', async () => {
-      // The `team` collection has no `path` or `title` columns.
-      // `generateCollectionLocales` filters the SELECT list against the manifest
-      // fields, so the helper must succeed and return `path: undefined` and
-      // `title: undefined` rather than failing with a SQL "no such column" error.
       const locales = await $fetch<{ locale: string, stem: string, path?: string, title?: string }[]>(
         '/api/content/locales?collection=team&stem=data/team',
       )

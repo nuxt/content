@@ -19,19 +19,14 @@ export interface ContentLLMSCollectionSection extends LLMsSection {
 
 const linkProps = ['href', 'src', 'to']
 
-/**
- * Default locale of an i18n collection. Server queries return every locale
- * unless one is selected, so LLM documents use the default locale.
- */
 export function getDefaultLocale(collection: string): string | undefined {
   return manifest[collection]?.i18n?.defaultLocale
 }
 
 /**
- * Link path of a document. Translations in an i18n collection share the path of the
- * default locale, so their links start with the locale like a localized route, which
- * the raw Markdown route resolves. The raw route reads a leading locale code as a
- * translation, so `raw` links of default-locale paths that start with one keep their locale too.
+ * Translations share the path of the default locale, so their links start with the locale.
+ * The raw Markdown route reads a leading locale code as a translation, so `raw` links also
+ * prefix default-locale paths that start with a locale code.
  */
 export function localizePath(path: string, collection: string, locale?: string, raw = false): string {
   const i18n = manifest[collection]?.i18n

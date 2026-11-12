@@ -195,7 +195,6 @@ describe('i18n', () => {
       const items = expandI18nData(content, i18nConfig, 'page')
       const frItem = items.find(i => i.locale === 'fr')
 
-      // Body should be replaced, not deep-merged
       expect(frItem?.body).toEqual(frBody)
       expect(frItem?.body).not.toEqual(defaultBody)
       expect(frItem?.title).toBe('Accueil')
@@ -218,7 +217,6 @@ describe('i18n', () => {
       const items = expandI18nData(content, i18nConfig, 'data')
       const frItem = items.find(i => i.locale === 'fr')
 
-      // Body should be deep-merged for data collections
       expect(frItem?.body).toMatchObject({ nested: { key: 'valeur', other: 'kept' } })
     })
   })
@@ -250,16 +248,11 @@ describe('i18n', () => {
     })
 
     it('detects the locale from the stem, not a custom path prefix', () => {
-      // A custom front-matter `path` can put a locale segment on the path while
-      // the file lives in a non-locale directory. Detection keys off the stem, so
-      // the locale stays the default and the custom path is left untouched.
       const result = detectLocaleFromPath('/fr/docs/guide', 'docs/guide', i18nConfig)
       expect(result).toMatchObject({ locale: 'en', path: '/fr/docs/guide', stem: 'docs/guide' })
     })
 
     it('strips the stem locale segment without touching a non-matching custom path', () => {
-      // File at `fr/bar` with a custom `path: /custom`. The locale comes from the
-      // stem (`fr`), the stem is stripped, and the custom path is preserved.
       const result = detectLocaleFromPath('/custom', 'fr/bar', i18nConfig)
       expect(result).toMatchObject({ locale: 'fr', path: '/custom', stem: 'bar' })
     })
@@ -524,7 +517,7 @@ describe('i18n', () => {
 
         expect(originalItemsRef[0].label).toBe('Original')
         expect((frOverrideRef as Record<string, unknown[]>).items[0]).toEqual({ label: 'French' })
-        // The documented changes to the parsed file: a new `meta` without `i18n`, and the locale.
+        // Documented mutations: a new `meta` without `i18n` and the default `locale`
         expect(original.locale).toBe('en')
         expect(original.meta).not.toHaveProperty('i18n')
         expect(originalMetaRef).toHaveProperty('i18n.fr')
@@ -573,9 +566,6 @@ describe('i18n', () => {
       })
 
       it('replaces scalar arrays wholesale when override is shorter than default', () => {
-        // A shorter scalar override must NOT pad-fill from the default tail.
-        // When authors intentionally provide a shorter list, they want exactly
-        // that.
         const content: ParsedContentFile = {
           id: 'data:tags.yml',
           tags: ['javascript', 'vue', 'nuxt', 'content'],
@@ -631,8 +621,6 @@ describe('i18n', () => {
       })
 
       it('merges arrays whose items are themselves arrays by index', () => {
-        // Regression: an array of arrays used to collapse its first inner array to
-        // an empty object when passed through `defu`.
         const content: ParsedContentFile = {
           id: 'data:matrix.yml',
           rows: [['a', 'b'], ['c', 'd']],
@@ -646,7 +634,6 @@ describe('i18n', () => {
         const items = expandI18nData(content, i18nConfig)
         const frItem = items.find(i => i.locale === 'fr')
 
-        // First inner array is overridden wholesale (scalar), second preserved.
         expect(frItem?.rows).toEqual([['x', 'y'], ['c', 'd']])
       })
     })
@@ -670,7 +657,6 @@ describe('i18n', () => {
 
         expect(frItem).toBeDefined()
         expect(frItem?.name).toBe('Jeanne')
-        // Identity fields keep the source row's values.
         expect(frItem?.stem).toBe('data/team')
         expect(frItem?.locale).toBe('fr')
         expect(frItem?.extension).toBe('yml')
@@ -1113,9 +1099,6 @@ describe('i18n', () => {
     })
 
     it('source hash captures only translated nested leaves, not sibling fields', () => {
-      // `de` translates only `info.country`. Changing the untranslated sibling
-      // `info.age` must NOT change the hash, because the hash is scoped to the
-      // translated leaf.
       const base = {
         id: 'team:jane.yml',
         name: 'Jane',
@@ -1159,10 +1142,6 @@ describe('i18n', () => {
     })
 
     it('source hash is per-locale: a field translated only in another locale does not affect this locale\'s hash', () => {
-      // `fr` translates only `title`, while `de` translates only `description`.
-      // Changing `description` between `content1` and `content2` must NOT
-      // change `fr`'s hash (because `fr` does not translate `description`) but
-      // MUST change `de`'s hash.
       const content1: ParsedContentFile = {
         id: 'blog:post.yml',
         title: 'My Post',
@@ -1202,8 +1181,7 @@ describe('i18n', () => {
 
   describe('page collection body replacement', () => {
     it('replaces wholesale when override sets body to null', () => {
-      // Edge case. An override that explicitly clears the body. Without an
-      // `'in' overrides` check, this would deep-merge the default AST back in.
+      // defu skips null values, so merging alone would restore the default body
       const defaultBody = { type: 'root', children: [{ type: 'text', value: 'Hi' }] }
       const content: ParsedContentFile = {
         id: 'pages:index.yml',

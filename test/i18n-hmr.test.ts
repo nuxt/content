@@ -56,7 +56,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
 
     db = await getLocalDatabase({ type: 'sqlite', filename: dbPath })
 
-    // Pre-create the collection table so broadcast's DELETE/INSERT can run
     const collection = resolveCollection('team', defineCollection({
       type: 'data',
       source: 'data/*.yml',
@@ -102,7 +101,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
       experimental: {},
     } as never
 
-    // Start watching — this is the function under test
     watchContents(nuxtMock, options, manifest)
 
     const updatedKeys = new Set<string>()
@@ -110,24 +108,19 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
       updatedKeys.add(key)
     })
 
-    // Let chokidar finish arming before writing, writes during initialization
-    // are silently missed with `ignoreInitial: true`
+    // With `ignoreInitial: true`, chokidar misses writes made before it finishes initializing
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     const teamFile = join(contentDir, 'data', 'team.yml')
     await fs.writeFile(teamFile, withTranslations.replace('Jane Doe', 'Jane Smith'))
 
-    // Give the watcher time to detect, parse and broadcast (chokidar + async)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // One broadcast per expanded locale row: the default locale keeps the bare
-    // key, translations get a `#<locale>` suffix
     expect(updatedKeys).toContain('team/data/team.yml')
     expect(updatedKeys).toContain('team/data/team.yml#fr')
     expect(updatedKeys).toContain('team/data/team.yml#de')
 
-    // Every spliced dump entry must keep the ` -- <hash>` suffix so the runtime
-    // hash comparison in database.server.ts keeps working after HMR updates
+    // `database.server.ts` reads the hash of each dump entry from its ` -- <hash>` suffix
     expect(manifest.dump.team).toHaveLength(3)
     for (const entry of manifest.dump.team!) {
       expect(entry).toMatch(/; -- [\w-]+$/)
@@ -135,7 +128,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/team.yml#fr\''))).toHaveLength(1)
     expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/team.yml#de\''))).toHaveLength(1)
 
-    // Dropping a locale from the `i18n` section removes its dump entry and row
     await fs.writeFile(teamFile, withoutGerman)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
@@ -148,13 +140,11 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     const rows = await db.database?.prepare(`SELECT id FROM ${collection.tableName} ORDER BY id`).all() as Array<{ id: string }>
     expect(rows.map(row => row.id)).toEqual(['team/data/team.yml', 'team/data/team.yml#fr'])
 
-    // A file without translations only updates its own row
     updatedKeys.clear()
     await fs.writeFile(join(contentDir, 'data', 'plain.yml'), 'name: Plain\nrole: Tester\n')
     await new Promise(resolve => setTimeout(resolve, 2000))
     expect([...updatedKeys]).toEqual(['team/data/plain.yml'])
 
-    // A source file in another locale also loses its translation into the default locale
     const frenchFile = join(contentDir, 'data', 'french.yml')
     await fs.writeFile(frenchFile, ['name: Marie', 'role: Développeuse', 'locale: fr', 'i18n:', '  en:', '    role: Developer', ''].join('\n'))
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -164,7 +154,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     await new Promise(resolve => setTimeout(resolve, 2000))
     expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/french.yml#en\''))).toHaveLength(0)
 
-    // A malformed `i18n` value keeps the source row
     await fs.writeFile(join(contentDir, 'data', 'broken.yml'), 'name: Broken\nrole: Tester\ni18n: later\n')
     await new Promise(resolve => setTimeout(resolve, 2000))
 
@@ -172,7 +161,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     await fs.writeFile(join(contentDir, 'data', 'dated.yml'), ['name: Dated', 'role: Tester', 'joined: 2024-01-01', 'i18n:', '  fr:', '    joined: 1er janvier 2024', '  de:', '    role: Testerin', ''].join('\n'))
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // Deleting a file also removes the rows and dump entries of its translations
     await fs.rm(teamFile)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
