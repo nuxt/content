@@ -259,31 +259,9 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    // Match an entry that references this row. Three exact shapes can occur:
-    //   1. `INSERT INTO ... VALUES ('key', ...)` contains `'key',`
-    //   2. `INSERT INTO ... VALUES ('key')` ends with `'key')`
-    //   3. `UPDATE ... WHERE id = 'key' AND ...` contains `id = 'key'`
-    // The UPDATE shape comes from `generateCollectionInsert` splitting oversized
-    // rows into an INSERT followed by chained UPDATE fragments. Without case 3
-    // those fragments would be left behind in the dump as dead no-ops, slowly
-    // bloating it on every HMR cycle.
-    const escapedKey = key.replace(/'/g, '\'\'')
-    const keyMatch = (item: string) =>
-      item.includes(`'${escapedKey}',`)
-      || item.endsWith(`'${escapedKey}')`)
-      || item.includes(`id = '${escapedKey}'`)
-    const keyIndex = collectionDump.findIndex(keyMatch)
+    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
-
-    // Count every consecutive dump entry belonging to this key. Large content
-    // splits into an INSERT plus UPDATE fragments that each reference the same
-    // key literal.
-    let itemsToRemove = 0
-    if (keyIndex !== -1) {
-      for (let i = keyIndex; i < collectionDump.length && keyMatch(collectionDump[i]!); i++) {
-        itemsToRemove++
-      }
-    }
+    const itemsToRemove = keyIndex === -1 ? 0 : 1
 
     if (insert) {
       const dumpQueries = insert.queries.map(query => `${query} -- ${insert.hash}`)

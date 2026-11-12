@@ -3,8 +3,8 @@ import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
 import type { ContentEvent } from './internal/event'
 
 /**
- * The `@nuxt/content/nitro` entry is deprecated and will be removed in the next
- * major version. Use `@nuxt/content/server` instead.
+ * `@nuxt/content/nitro` import is deprecated and will be removed in the next major version.
+ * Use `@nuxt/content/server` instead.
  */
 
 /**
@@ -28,8 +28,3 @@ export const queryCollectionItemSurroundings = server.queryCollectionItemSurroun
  * @deprecated Import from `@nuxt/content/server` instead
  */
 export const queryCollectionSearchSections = server.queryCollectionSearchSections
-
-/**
- * @deprecated Import from `@nuxt/content/server` instead
- */
-export const queryCollectionLocales = server.queryCollectionLocales

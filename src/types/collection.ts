@@ -125,8 +125,8 @@ export interface ResolvedCollection extends Omit<DefinedCollection, 'i18n'> {
   name: string
   tableName: string
   /**
-   * Whether the collection is private. Private collections are not exposed at
-   * runtime.
+   * Whether the collection is private or not.
+   * Private collections will not be available in the runtime.
    */
   private: boolean
   /**
