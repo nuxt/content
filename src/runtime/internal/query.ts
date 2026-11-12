@@ -200,6 +200,14 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     async count(field: keyof Collections[T] | '*' = '*', distinct: boolean = false) {
       const { condition, fallback } = resolveLocale()
       if (fallback) {
+        // Without filters, each stem of either locale is served once.
+        if (field === '*' && params.conditions.length === 0) {
+          return fetch(collection, buildQuery({
+            count: { field: 'stem', distinct: true },
+            extraCondition: localeInCondition(fallback),
+            noLimitOffset: true,
+          })).then(m => (m[0] as { count: number }).count)
+        }
         const rows = await resolveLocaleRows(fallback, [])
         if (field === '*') {
           return rows.length
@@ -263,11 +271,12 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
    * `fields` lists the columns to read, `'*'` reads all of them. `id`, `stem` and
    * `locale` are always read because the resolution needs them.
    */
-  async function resolveLocaleRows({ locale, fallback }: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*'): Promise<Row[]> {
+  async function resolveLocaleRows(localeFallback: LocaleFallback, fields: ReadonlyArray<keyof Collections[T]> | '*'): Promise<Row[]> {
+    const { locale } = localeFallback
     const filtered = params.conditions.length > 0
     const rows = await fetch(collection, buildQuery({
       selectedFields: fields === '*' ? [] : [...fields, ...LOCALE_KEY_FIELDS] as Array<keyof Collections[T]>,
-      extraCondition: `("locale" IN (${singleQuote(locale)}, ${singleQuote(fallback)}))`,
+      extraCondition: localeInCondition(localeFallback),
       noLimitOffset: true,
     })) as unknown as Row[] | undefined ?? []
 
@@ -381,6 +390,10 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
   }
 
   return query
+}
+
+function localeInCondition({ locale, fallback }: LocaleFallback) {
+  return `("locale" IN (${singleQuote(locale)}, ${singleQuote(fallback)}))`
 }
 
 function singleQuote(value: unknown) {

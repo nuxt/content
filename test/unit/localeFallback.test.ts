@@ -139,6 +139,12 @@ describe('locale fallback', () => {
     expect(await query().locale('fr', { fallback: 'en' }).where('status', '=', 'published').count()).toBe(3)
   })
 
+  it('counts an unfiltered fallback query with one COUNT', async () => {
+    expect(await query().locale('fr', { fallback: 'en' }).count()).toBe(4)
+    expect(await collectionQueryBuilder('docs' as never, fetch, 'fr').count()).toBe(4)
+    expect(queries).toEqual(Array.from({ length: 2 }, () => 'SELECT COUNT(DISTINCT stem) as count FROM _content_docs WHERE ("locale" IN (\'fr\', \'en\')) ORDER BY stem ASC'))
+  })
+
   it('skips NULL values when counting a field, like SQL', async () => {
     const counts = async (builder: () => ReturnType<typeof query>) => [await builder().count('featured' as never), await builder().count('featured' as never, true)]
     const fallback = await counts(() => query().locale('fr', { fallback: 'en' }))
