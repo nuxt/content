@@ -2,7 +2,6 @@ import { createDefu } from 'defu'
 import { extname } from 'pathe'
 import { hash } from 'ohash'
 import type { CollectionI18nConfig } from '../types/collection'
-import { I18N_SOURCE_HASH_FIELD } from '../types/locales'
 import { logger } from './dev'
 import type { ParsedContentFile } from '../types'
 
@@ -22,6 +21,9 @@ const PARSED_FIELDS = ['body', 'excerpt']
 // Matched against `extname(id)`, which is how a parser is chosen. Rows of a CSV
 // file get a `#<row>` suffix.
 const RAW_DATA_EXTENSION = /^\.(?:ya?ml|json5?|csv(?:#\d+)?)$/i
+
+/** `meta` field of locale items that holds the hash of the source values they translate. */
+const SOURCE_HASH_FIELD = '_i18nSourceHash'
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -229,7 +231,7 @@ function expandLocale(
     ...item,
     id: `${source.id}#${locale}`,
     locale,
-    meta: { ...defuByIndex(metaOverrides, meta), [I18N_SOURCE_HASH_FIELD]: hash(sourceValues) },
+    meta: { ...defuByIndex(metaOverrides, meta), [SOURCE_HASH_FIELD]: hash(sourceValues) },
   }
 }
 
