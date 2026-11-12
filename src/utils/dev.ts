@@ -3,7 +3,6 @@ import type { ViteDevServer } from 'vite'
 import crypto from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'pathe'
-import { expandI18nData } from './i18n'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, updateTemplates, useLogger } from '@nuxt/kit'
 import type { NuxtLogger } from '@nuxt/kit'
@@ -13,7 +12,8 @@ import { withTrailingSlash } from 'ufo'
 import type { ModuleOptions, ParsedContentFile, ResolvedCollection } from '../types'
 import type { Manifest } from '../types/manifest'
 import { getLocalDatabase } from './database'
-import { generateCollectionInsert } from './collection'
+import type { generateCollectionInsert } from './collection'
+import { generateCollectionItemInserts } from './collection'
 import { createParser } from './content'
 import { moduleTemplates } from './templates'
 import { getExcludedSourcePaths, parseSourceBase } from './source'
@@ -169,26 +169,11 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         }
 
         const parsed: ParsedContentFile = JSON.parse(parsedContent)
-        const items = collection.i18n
-          ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
-          : [parsed]
-        // Locale rows use `<key>#<locale>` ids, the source row keeps the bare key.
+        // Inline translations get `<id>#<locale>` ids.
         const inserted: string[] = []
-        for (const item of items) {
-          let insert: ReturnType<typeof generateCollectionInsert>
-          try {
-            insert = generateCollectionInsert(collection, item)
-          }
-          catch (error) {
-            // A failing translation only drops its own row.
-            if (item === items[0]) {
-              throw error
-            }
-            logger.warn(`Inline i18n in "${keyInCollection}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
-            continue
-          }
-          await broadcast(collection, item.id as string, insert)
-          inserted.push(item.id as string)
+        for (const { item, queries, hash } of generateCollectionItemInserts(collection, parsed)) {
+          await broadcast(collection, item.id, { queries, hash })
+          inserted.push(item.id)
         }
         if (collection.i18n) {
           await removeLocaleRows(collection, keyInCollection, inserted)

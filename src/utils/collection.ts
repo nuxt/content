@@ -5,6 +5,7 @@ import type { Draft07, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
 import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, localeStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
+import { expandI18nData } from './i18n'
 import nuxtContentContext from './context'
 import { formatDate, formatDateTime } from './content/transformers/utils'
 
@@ -195,6 +196,30 @@ export function charIndexAtByteOffset(str: string, targetBytes: number): number 
 }
 
 // Convert collection data to SQL insert statement
+/**
+ * Generate the inserts of a parsed file, one per locale for inline translations in
+ * an i18n collection. A translation that cannot be stored only drops its own row,
+ * a source item that cannot be stored throws.
+ */
+export function generateCollectionItemInserts(collection: ResolvedCollection, parsed: ParsedContentFile): Array<{ item: ParsedContentFile, queries: string[], hash: string }> {
+  const items = collection.i18n
+    ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
+    : [parsed]
+  const inserts = []
+  for (const item of items) {
+    try {
+      inserts.push({ item, ...generateCollectionInsert(collection, item) })
+    }
+    catch (error) {
+      if (item === items[0]) {
+        throw error
+      }
+      logger.warn(`Inline i18n in "${parsed.id}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  return inserts
+}
+
 export function generateCollectionInsert(collection: ResolvedCollection, data: ParsedContentFile): { queries: string[], hash: string } {
   const fields: string[] = []
   const values: Array<string | number | boolean> = []

@@ -20,9 +20,9 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
-import { createLocaleVariantTracker, expandI18nData } from './utils/i18n'
+import { createLocaleVariantTracker } from './utils/i18n'
 import { version } from '../package.json'
-import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
+import { generateCollectionInsert, generateCollectionItemInserts, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
@@ -394,22 +394,9 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            const items = collection.i18n
-              ? expandI18nData(parsedContent, collection.i18n, collection.type, Object.keys(collection.fields))
-              : [parsedContent]
-            for (const item of items) {
-              try {
-                const { queries, hash } = generateCollectionInsert(collection, item)
-                trackLocaleVariant?.(item)
-                list.push([collection.i18n ? item.id : key, queries, hash])
-              }
-              catch (error) {
-                // A failing translation only drops its own row.
-                if (item === items[0]) {
-                  throw error
-                }
-                logger.warn(`Inline i18n in "${keyInCollection}" for locale "${item.locale}" is ignored: ${error instanceof Error ? error.message : String(error)}`)
-              }
+            for (const { item, queries, hash } of generateCollectionItemInserts(collection, parsedContent)) {
+              trackLocaleVariant?.(item)
+              list.push([collection.i18n ? item.id : key, queries, hash])
             }
           }
           catch (e: unknown) {

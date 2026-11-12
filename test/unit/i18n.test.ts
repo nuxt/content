@@ -1,7 +1,7 @@
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { createLocaleVariantTracker, defuByIndex, expandI18nData, detectLocaleFromPath } from '../../src/utils/i18n'
 import { z } from 'zod'
-import { defineCollection, resolveCollection } from '../../src/utils/collection'
+import { defineCollection, generateCollectionItemInserts, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
 import { contentTypesTemplate } from '../../src/utils/templates'
 import { parseContent } from '../utils/content'
@@ -620,6 +620,35 @@ describe('i18n', () => {
         expect(locales).not.toContain('es')
         expect(items).toHaveLength(2)
       })
+    })
+  })
+
+  describe('item inserts', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('drops only a translation that cannot be stored', async () => {
+      await initiateValidatorsContext()
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+      const team = resolveCollection('team', defineCollection({
+        type: 'data',
+        source: 'team/*.yml',
+        schema: z.object({ name: z.string(), role: z.string().optional(), joined: z.date().optional() }),
+        i18n: i18nConfig,
+      }))!
+      const parsed = (joined: string) => ({
+        id: 'team/team/x.yml',
+        stem: 'team/x',
+        extension: 'yml',
+        name: 'X',
+        joined,
+        meta: { i18n: { fr: { joined: '1er janvier 2024' }, de: { role: 'Testerin' } } },
+      }) as ParsedContentFile
+
+      expect(generateCollectionItemInserts(team, parsed('2024-01-01')).map(({ item }) => item.id)).toEqual(['team/team/x.yml', 'team/team/x.yml#de'])
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Inline i18n in "team/team/x.yml" for locale "fr" is ignored'))
+      expect(() => generateCollectionItemInserts(team, parsed('nope'))).toThrow()
     })
   })
 
