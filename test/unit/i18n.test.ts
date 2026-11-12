@@ -232,9 +232,14 @@ describe('i18n', () => {
       expect(result).toMatchObject({ locale: 'en', path: '/blog/post', stem: 'blog/post' })
     })
 
-    it('handles root path with locale', () => {
-      const result = detectLocaleFromPath('/de', 'de', i18nConfig)
-      expect(result).toMatchObject({ locale: 'de', path: '/', stem: '' })
+    it('handles the index page of a locale directory', () => {
+      const result = detectLocaleFromPath('/de', 'de/index', i18nConfig)
+      expect(result).toMatchObject({ locale: 'de', path: '/', stem: 'index' })
+    })
+
+    it('does not treat a file named after a locale as a locale directory', () => {
+      expect(detectLocaleFromPath('/de', 'de', i18nConfig)).toEqual({ locale: 'en', path: '/de', stem: 'de' })
+      expect(detectLocaleFromPath('/docs/fr', 'docs/fr', i18nConfig, 'docs')).toEqual({ locale: 'en', path: '/docs/fr', stem: 'docs/fr' })
     })
 
     it('does not treat non-locale segments as locale', () => {
@@ -767,8 +772,10 @@ describe('i18n', () => {
     it('keeps the source item and other locales when one locale cannot be expanded', () => {
       const warn = warnings()
       let deep: unknown = 'leaf'
+      let deepOverride: unknown = 'feuille'
       for (let i = 0; i < 20_000; i++) {
         deep = [{ child: deep }]
+        deepOverride = [{ child: deepOverride }]
       }
 
       const items = expandI18nData({
@@ -776,7 +783,7 @@ describe('i18n', () => {
         stem: 'deep',
         name: 'Deep',
         tree: deep,
-        meta: { i18n: { fr: { tree: [{ label: 'x' }] }, de: { name: 'Tief' } } },
+        meta: { i18n: { fr: { tree: deepOverride }, de: { name: 'Tief' } } },
       }, i18nConfig, 'data', ['name', 'tree'])
 
       expect(items.map(item => item.locale)).toEqual(['en', 'de'])
@@ -925,6 +932,25 @@ describe('i18n', () => {
       const de2 = expandI18nData(content2, i18nConfig).find(i => i.locale === 'de')
 
       expect(de1?.meta._i18nSourceHash).toBe(de2?.meta._i18nSourceHash)
+    })
+
+    it('source hash ignores untranslated fields of translated array items', () => {
+      const hashFor = (to: string) => expandI18nData({
+        id: 'data:nav.yml',
+        stem: 'nav',
+        links: [{ label: 'Home', to }],
+        meta: { i18n: { fr: { links: [{ label: 'Accueil' }] } } },
+      }, i18nConfig, 'data', ['links'])[1]?.meta._i18nSourceHash
+
+      const hashForTags = (tags: string[]) => expandI18nData({
+        id: 'data:tags.yml',
+        stem: 'tags',
+        tags,
+        meta: { i18n: { fr: { tags: ['un'] } } },
+      }, i18nConfig, 'data', ['tags'])[1]?.meta._i18nSourceHash
+
+      expect(hashFor('/home')).toBe(hashFor('/'))
+      expect(hashForTags(['one', 'two'])).not.toBe(hashForTags(['one']))
     })
 
     it('source hash is per-locale: a field translated only in another locale does not affect this locale\'s hash', () => {

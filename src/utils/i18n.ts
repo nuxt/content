@@ -91,6 +91,10 @@ export const defuByIndex = createDefu((obj, key, value) => {
  * per-locale source hash from flipping when an untranslated sibling field changes.
  */
 function pickSourceByOverride(source: unknown, override: unknown): unknown {
+  // Arrays of objects merge by index, so their items are picked by index too.
+  if (Array.isArray(override) && Array.isArray(source) && override.some(item => typeof item === 'object' && item !== null)) {
+    return override.map((item, index) => pickSourceByOverride(source[index], item))
+  }
   if (override && typeof override === 'object' && !Array.isArray(override)
     && source && typeof source === 'object' && !Array.isArray(source)) {
     const out: Record<string, unknown> = {}
@@ -306,7 +310,8 @@ export function detectLocaleFromPath(
   sourcePrefix: string = '',
 ): { locale: string, path: string, stem: string } {
   const stemParts = stem.split('/').filter(Boolean)
-  const match = findLocaleSegment(stemParts, i18nConfig.locales, sourcePrefix.split('/').filter(Boolean).length)
+  // Only directories name a locale, the last segment is the file name.
+  const match = findLocaleSegment(stemParts.slice(0, -1), i18nConfig.locales, sourcePrefix.split('/').filter(Boolean).length)
   if (!match) {
     return { locale: i18nConfig.defaultLocale, path, stem }
   }
