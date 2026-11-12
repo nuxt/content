@@ -169,43 +169,15 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
         }
 
         const parsed: ParsedContentFile = JSON.parse(parsedContent)
-
-        // Expand inline i18n translations into one DB row per locale.
-        if (collection.i18n && (parsed?.meta as Record<string, unknown>)?.i18n) {
-          const i18nData = (parsed.meta as Record<string, unknown>).i18n as Record<string, Record<string, unknown>>
-          // Capture the source locale before `expandI18nData` mutates `parsed.locale`.
-          const sourceLocale = (parsed.locale as string | undefined) || collection.i18n.defaultLocale
-
-          const expandedItems = expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
-          for (const item of expandedItems) {
-            // Use `item.id` directly as the dump and DB key. `expandI18nData`
-            // already returns the default-locale item with the bare id (matching
-            // the SQL row's `id` column) and non-default items with a `#<locale>`
-            // suffix. Reconstructing the key from `item.locale` would incorrectly
-            // suffix the default row and desync the DELETE / INSERT pair in
-            // `broadcast`.
-            const itemKey = item.id as string
-            await broadcast(collection, itemKey, generateCollectionInsert(collection, item))
-          }
-
-          // Remove locale rows that are no longer present in the `i18n` section.
-          for (const locale of collection.i18n.locales) {
-            if (locale === sourceLocale || locale in i18nData) continue
-            await broadcast(collection, `${keyInCollection}#${locale}`)
-          }
+        const items = collection.i18n
+          ? expandI18nData(parsed, collection.i18n, collection.type, Object.keys(collection.fields))
+          : [parsed]
+        // Locale rows use `<key>#<locale>` ids, the source row keeps the bare key.
+        for (const item of items) {
+          await broadcast(collection, item.id as string, generateCollectionInsert(collection, item))
         }
-        else {
-          // Clean up stale locale variants if `i18n` was previously present but
-          // has now been removed from the file. The default-locale row is stored
-          // under the bare key, so it is skipped here.
-          if (collection.i18n) {
-            for (const locale of collection.i18n.locales) {
-              if (locale === collection.i18n.defaultLocale) continue
-              await broadcast(collection, `${keyInCollection}#${locale}`)
-            }
-          }
-          const insert = generateCollectionInsert(collection, parsed)
-          await broadcast(collection, keyInCollection, insert)
+        if (collection.i18n) {
+          await removeLocaleRows(collection, keyInCollection, items.map(item => item.id as string))
         }
       }
     }
@@ -237,15 +209,23 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
 
         await db.deleteDevelopmentCache(keyInCollection)
 
-        // Remove the main row and all non-default locale variant rows. The
-        // default-locale row is the main row stored under the bare key.
         await broadcast(collection, keyInCollection)
         if (collection.i18n) {
-          for (const locale of collection.i18n.locales) {
-            if (locale === collection.i18n.defaultLocale) continue
-            await broadcast(collection, `${keyInCollection}#${locale}`)
-          }
+          await removeLocaleRows(collection, keyInCollection)
         }
+      }
+    }
+  }
+
+  /**
+   * Remove the `<key>#<locale>` rows of a file that are not in `keep`. Only rows that
+   * exist in the dump are removed, so saves do not broadcast no-op deletions.
+   */
+  async function removeLocaleRows(collection: ResolvedCollection, key: string, keep: string[] = []) {
+    for (const locale of collection.i18n!.locales) {
+      const localeKey = `${key}#${locale}`
+      if (!keep.includes(localeKey) && findDumpIndex(manifest.dump[collection.name]!, localeKey) !== -1) {
+        await broadcast(collection, localeKey)
       }
     }
   }
@@ -259,7 +239,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
     }
 
     const collectionDump = manifest.dump[collection.name]!
-    const keyIndex = collectionDump.findIndex(item => item.includes(`'${key}'`))
+    const keyIndex = findDumpIndex(collectionDump, key)
     const indexToUpdate = keyIndex !== -1 ? keyIndex : collectionDump.length
     const itemsToRemove = keyIndex === -1 ? 0 : 1
 
@@ -336,4 +316,8 @@ export function* chunks<T>(arr: T[], size: number): Generator<T[], void, unknown
   for (let i = 0; i < arr.length; i += size) {
     yield arr.slice(i, i + size)
   }
+}
+
+function findDumpIndex(dump: string[], key: string) {
+  return dump.findIndex(item => item.includes(`'${key}'`))
 }

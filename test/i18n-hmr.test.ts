@@ -139,8 +139,6 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
     await fs.writeFile(teamFile, withoutGerman)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    stopListening()
-
     expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/team.yml#de\''))).toHaveLength(0)
     expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/team.yml#fr\''))).toHaveLength(1)
     for (const entry of manifest.dump.team!) {
@@ -149,5 +147,31 @@ describe('i18n HMR — inline translations expand to hash-suffixed dump rows', (
 
     const rows = await db.database?.prepare(`SELECT id FROM ${collection.tableName} ORDER BY id`).all() as Array<{ id: string }>
     expect(rows.map(row => row.id)).toEqual(['team/data/team.yml', 'team/data/team.yml#fr'])
-  }, 15_000)
+
+    // A file without translations only updates its own row
+    updatedKeys.clear()
+    await fs.writeFile(join(contentDir, 'data', 'plain.yml'), 'name: Plain\nrole: Tester\n')
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    expect([...updatedKeys]).toEqual(['team/data/plain.yml'])
+
+    // A source file in another locale also loses its translation into the default locale
+    const frenchFile = join(contentDir, 'data', 'french.yml')
+    await fs.writeFile(frenchFile, ['name: Marie', 'role: Développeuse', 'locale: fr', 'i18n:', '  en:', '    role: Developer', ''].join('\n'))
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/french.yml#en\''))).toHaveLength(1)
+
+    await fs.writeFile(frenchFile, ['name: Marie', 'role: Développeuse', 'locale: fr', ''].join('\n'))
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    expect(manifest.dump.team!.filter(entry => entry.includes('\'team/data/french.yml#en\''))).toHaveLength(0)
+
+    // A malformed `i18n` value keeps the source row
+    await fs.writeFile(join(contentDir, 'data', 'broken.yml'), 'name: Broken\nrole: Tester\ni18n: later\n')
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    stopListening()
+
+    const ids = (await db.database?.prepare(`SELECT id FROM ${collection.tableName} ORDER BY id`).all() as Array<{ id: string }>).map(row => row.id)
+    expect(ids).toContain('team/data/broken.yml')
+    expect(ids).not.toContain('team/data/french.yml#en')
+  }, 30_000)
 })
