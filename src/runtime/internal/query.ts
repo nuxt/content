@@ -87,6 +87,9 @@ type LocaleFallback = { locale: string, fallback: string }
 /** Columns a fallback lookup reads to decide which locale serves each stem. */
 const LOCALE_KEY_FIELDS = ['id', 'stem', 'locale']
 
+/** `<collection>:<locale>` pairs already reported as outside the collection locales. */
+const unknownLocaleWarnings = new Set<string>()
+
 /** Values per `IN (...)` list, sized for long ids under the server's query length limit. */
 const IN_CHUNK_SIZE = 100
 
@@ -233,14 +236,17 @@ export const collectionQueryBuilder = <T extends keyof Collections>(collection: 
     if (params.localeExplicitlySet || !i18nConfig || !detectedLocale) {
       return {}
     }
+    // A locale outside the collection locales has no translations, like a declared locale without content.
     if (!i18nConfig.locales.includes(detectedLocale)) {
-      if (import.meta.dev) {
+      const warning = `${String(collection)}:${detectedLocale}`
+      if (import.meta.dev && !unknownLocaleWarnings.has(warning)) {
+        unknownLocaleWarnings.add(warning)
         console.warn(
-          `[@nuxt/content] queryCollection("${String(collection)}"): the active locale "${detectedLocale}" is not one of `
-          + `the collection locales [${i18nConfig.locales.map(l => `"${l}"`).join(', ')}], so results are not filtered by locale.`,
+          `[@nuxt/content] queryCollection("${String(collection)}"): the active locale ${JSON.stringify(detectedLocale)} is not one of `
+          + `the collection locales [${i18nConfig.locales.map(l => `"${l}"`).join(', ')}], so results use the default locale "${i18nConfig.defaultLocale}".`,
         )
       }
-      return {}
+      return { condition: `("locale" = ${singleQuote(i18nConfig.defaultLocale)})` }
     }
     if (detectedLocale === i18nConfig.defaultLocale) {
       return { condition: `("locale" = ${singleQuote(detectedLocale)})` }

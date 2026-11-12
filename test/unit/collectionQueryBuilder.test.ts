@@ -392,16 +392,15 @@ describe('collectionQueryBuilder', () => {
       )
     })
 
-    it('rejects unknown detectedLocale values', async () => {
-      // `'xx'` is not in `i18nConfig.locales`, so it is ignored (no locale filter
-      // is added).
+    it('serves the default locale for a detected locale outside the collection locales', async () => {
+      // `'xx'` has no translations, like a declared locale without content.
       const query = collectionQueryBuilder(mockCollection, mockFetch, 'xx')
       await query.all()
 
       expect(mockFetch).toHaveBeenCalledTimes(1)
       expect(mockFetch).toHaveBeenCalledWith(
         'articles',
-        'SELECT * FROM _articles ORDER BY stem ASC',
+        'SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC',
       )
     })
 
@@ -463,13 +462,11 @@ describe('collectionQueryBuilder', () => {
       expect(sql).toContain('"locale" = \'en\'')
     })
 
-    it('skips auto-locale when detected locale is a BCP-47 tag not in collection.locales', async () => {
-      // A collection declaring only `en` ignores the `en-US` locale and returns
-      // every locale. The warning only runs in development, so only the missing
-      // filter is asserted here.
+    it('serves the default locale when the detected locale is a region tag outside the collection locales', async () => {
+      // A collection declaring `en` does not match the `en-US` locale.
       await collectionQueryBuilder(mockCollection, mockFetch, 'en-US').all()
       const sql = mockFetch.mock.lastCall![1] as string
-      expect(sql).not.toContain('"locale" =')
+      expect(sql).toBe('SELECT * FROM _articles WHERE ("locale" = \'en\') ORDER BY stem ASC')
     })
 
     it('does not auto-apply a locale on a collection without i18n config', async () => {

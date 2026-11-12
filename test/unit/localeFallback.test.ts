@@ -73,6 +73,13 @@ describe('locale fallback', () => {
     expect(titles(rows)).toEqual(['A fr', 'B', 'C fr', 'D'])
   })
 
+  it('serves the default locale when the active locale is not a collection locale', async () => {
+    const es = () => collectionQueryBuilder('docs' as never, fetch, 'es')
+    expect(titles(await es().all())).toEqual(['A', 'B', 'C', 'D'])
+    expect(await es().path('/a').first()).toMatchObject({ title: 'A', locale: 'en' })
+    expect(await es().count()).toBe(4)
+  })
+
   it('keeps the database order of a custom order across both locales', async () => {
     const rows = await query().locale('fr', { fallback: 'en' }).order('date' as never, 'DESC').limit(2).all()
     expect(titles(rows)).toEqual(['D', 'A fr'])
