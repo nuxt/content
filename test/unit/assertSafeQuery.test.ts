@@ -213,9 +213,8 @@ describe('decompressSQLDump', () => {
     expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
-  // GHSA-39hv-9p8x-2wcr / GHSA-5jcc-hvqw-63r4: SQLite's patternCompare is superlinear on
-  // %- and _-dense LIKE patterns, and the query endpoint runs the statement synchronously,
-  // so one accepted pattern blocks the whole event loop. Both reported shapes must be rejected.
+  // SQLite's patternCompare is superlinear on %- and _-dense LIKE patterns, and the query
+  // endpoint runs the statement synchronously, so one accepted pattern blocks the event loop.
   it('rejects oversized LIKE patterns', () => {
     const wildcard = '%a'.repeat(600) + 'X'
     const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${wildcard}') ORDER BY stem ASC`
