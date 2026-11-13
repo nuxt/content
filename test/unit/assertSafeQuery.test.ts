@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { assertSafeQuery, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
+import { assertSafeQuery, MAX_LIKE_PATTERN_LENGTH, MAX_SQL_QUERY_LENGTH } from '../../src/runtime/internal/security'
 import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 
 // Mock tables from manifest
@@ -211,6 +211,51 @@ describe('decompressSQLDump', () => {
     const build = (n: number): string => n === 1 ? '(\'ok\' IN pragma_integrity_check)' : `(${build(n / 2)} AND ${build(n / 2)})`
     const sql = `SELECT * FROM _content_test WHERE ${build(256)} ORDER BY stem ASC`
     expect(() => assertSafeQuery(sql, 'test')).toThrow()
+  })
+
+  // GHSA-39hv-9p8x-2wcr / GHSA-5jcc-hvqw-63r4: SQLite's patternCompare is superlinear on
+  // %- and _-dense LIKE patterns, and the query endpoint runs the statement synchronously,
+  // so one accepted pattern blocks the whole event loop. Both reported shapes must be rejected.
+  it('rejects oversized LIKE patterns', () => {
+    const wildcard = '%a'.repeat(600) + 'X'
+    const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${wildcard}') ORDER BY stem ASC`
+    expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+  })
+
+  it('rejects many OR-ed oversized LIKE patterns', () => {
+    const each = '%a'.repeat(600) + 'X'
+    const conds = Array.from({ length: 40 }, () => `"body" LIKE '${each}'`).join(' OR ')
+    const sql = `SELECT * FROM _content_test WHERE (${conds}) ORDER BY stem ASC`
+    expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+  })
+
+  it('rejects oversized NOT LIKE patterns', () => {
+    const pattern = ' ' + '_'.repeat(500) + 'QZXJ'
+    const sql = `SELECT * FROM _content_test WHERE ("body" NOT LIKE '${pattern}') ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+  })
+
+  it('counts escaped quotes toward the LIKE pattern length', () => {
+    // `''` is one apostrophe at match time but two characters of work either way;
+    // measure the raw literal so doubling quotes cannot slip under the cap.
+    const pattern = '\'\''.repeat(MAX_LIKE_PATTERN_LENGTH)
+    const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${pattern}') ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+  })
+
+  it('allows LIKE patterns at the length cap', () => {
+    const pattern = `%${'a'.repeat(MAX_LIKE_PATTERN_LENGTH - 1)}`
+    const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${pattern}') ORDER BY stem ASC`
+    expect(pattern.length).toBe(MAX_LIKE_PATTERN_LENGTH)
+    expect(() => assertSafeQuery(sql, 'test')).not.toThrow()
+  })
+
+  it('does not treat " LIKE " inside a value literal as a pattern', () => {
+    const padding = 'a'.repeat(MAX_LIKE_PATTERN_LENGTH + 32)
+    const sql = `SELECT * FROM _content_test WHERE ("id" = 'x LIKE ${padding}') ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).not.toThrow()
   })
 
   it('rejects ReDoS-shaped payloads in linear time', () => {

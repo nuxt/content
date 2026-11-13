@@ -8,6 +8,15 @@ const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 export const MAX_SQL_QUERY_LENGTH = 100_000
 
 /**
+ * LIKE / NOT LIKE patterns are matched by SQLite's `patternCompare`, which
+ * backtracks superlinearly on `%`- and `_`-dense patterns that fail to match.
+ * The query endpoint runs the statement synchronously, so one oversized pattern
+ * blocks the Node.js event loop for every other request. Query-builder values
+ * are short strings (paths, stems, titles); anything longer is not builder output.
+ */
+export const MAX_LIKE_PATTERN_LENGTH = 128
+
+/**
  * Body envelope is `{"sql":"…"}`. Cap on UTF-16 code units in `sql` is
  * MAX_SQL_QUERY_LENGTH; JSON can expand each unit up to ~6 bytes (`\uXXXX`)
  * plus a small fixed wrapper. Use the worst case so legitimate max-length SQL
@@ -195,6 +204,10 @@ export function assertSafeQuery(sql: string, collection: string) {
     throw new Error('Invalid query: WHERE clause must match the query builder syntax')
   }
 
+  if (where && hasOversizedLikePattern(where)) {
+    throw new Error(`Invalid query: LIKE pattern exceeds ${MAX_LIKE_PATTERN_LENGTH} characters`)
+  }
+
   // ORDER BY
   const _order = (orderBy + ' ' + order).split(', ')
   if (!_order.every(column => column.match(/^("[a-zA-Z_]\w*"|[a-zA-Z_]\w*) (ASC|DESC)$/))) {
@@ -361,6 +374,64 @@ function parseBuilderString(sql: string, i: number): number {
     j += 1
   }
   return -1
+}
+
+/**
+ * True when any LIKE / NOT LIKE pattern literal is longer than the cap.
+ *
+ * Measured on the raw literal (counting `''` escapes as two characters) so the
+ * bound tracks the work `patternCompare` actually does: each doubled quote is
+ * one apostrophe SQLite matches against, and `%` / `_` wildcards cost the same
+ * either way.
+ */
+function hasOversizedLikePattern(where: string): boolean {
+  let i = 0
+  while (i < where.length) {
+    const likeAt = where.indexOf(' LIKE ', i)
+    const notLikeAt = where.indexOf(' NOT LIKE ', i)
+    const at = Math.min(
+      likeAt === -1 ? where.length : likeAt,
+      notLikeAt === -1 ? where.length : notLikeAt,
+    )
+    if (at === where.length) {
+      return false
+    }
+
+    const isNot = notLikeAt !== -1 && notLikeAt < (likeAt === -1 ? where.length : likeAt)
+    i = at + (isNot ? ' NOT LIKE '.length : ' LIKE '.length)
+
+    // Only bound patterns `isBuilderWhere` already accepted: a single-quoted
+    // literal. Anything else fails validation for a different reason.
+    if (where[i] !== '\'') {
+      continue
+    }
+    const literal = readSingleQuotedLiteral(where, i)
+    if (literal && literal.content.length > MAX_LIKE_PATTERN_LENGTH) {
+      return true
+    }
+  }
+  return false
+}
+
+function readSingleQuotedLiteral(sql: string, i: number): { content: string, end: number } | null {
+  if (sql[i] !== '\'') {
+    return null
+  }
+  let content = ''
+  let j = i + 1
+  while (j < sql.length) {
+    if (sql[j] === '\'') {
+      if (sql[j + 1] === '\'') {
+        content += '\'\''
+        j += 2
+        continue
+      }
+      return { content, end: j + 1 }
+    }
+    content += sql[j]
+    j += 1
+  }
+  return null
 }
 
 function parseValueList(sql: string, i: number): number {
