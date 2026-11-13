@@ -1,4 +1,4 @@
-import { zodToJsonSchema, ignoreOverride } from 'zod-to-json-schema'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 import { z as zod } from 'zod'
 import { createDefu } from 'defu'
 import type { Draft07, EditorOptions } from '../../types'
@@ -37,22 +37,21 @@ export function toJSONSchema(_schema: unknown, name: string): Draft07 {
       name,
       $refStrategy: 'none',
       dateStrategy: 'format:date',
-      override: (_def) => {
+      // Use `postProcess` rather than `override` so that the node is fully converted
+      // (including nested properties / array items) before editor metadata is attached.
+      postProcess: (jsonSchema, _def) => {
         const def = _def as unknown as Record<string, unknown>
+        if (!jsonSchema) {
+          return jsonSchema
+        }
         if (def.editor) {
-          return {
-            $content: {
-              editor: def.editor,
-            },
-          } as never
+          return { ...jsonSchema, $content: { editor: def.editor } } as never
         }
         if (def.$content) {
-          return {
-            $content: def.$content,
-          } as never
+          return { ...jsonSchema, $content: def.$content } as never
         }
 
-        return ignoreOverride
+        return jsonSchema
       },
     }) as Draft07
 
