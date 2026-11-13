@@ -8,6 +8,15 @@ const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 export const MAX_SQL_QUERY_LENGTH = 100_000
 
 /**
+ * LIKE / NOT LIKE patterns are matched by SQLite's `patternCompare`, which
+ * backtracks superlinearly on `%`- and `_`-dense patterns that fail to match.
+ * The query endpoint runs the statement synchronously, so one oversized pattern
+ * blocks the Node.js event loop for every other request. Query-builder values
+ * are short strings (paths, stems, titles); anything longer is not builder output.
+ */
+export const MAX_LIKE_PATTERN_LENGTH = 128
+
+/**
  * Body envelope is `{"sql":"…"}`. Cap on UTF-16 code units in `sql` is
  * MAX_SQL_QUERY_LENGTH; JSON can expand each unit up to ~6 bytes (`\uXXXX`)
  * plus a small fixed wrapper. Use the worst case so legitimate max-length SQL
@@ -328,7 +337,14 @@ function parseLeaf(sql: string, i: number): number {
     }
     return parseBuilderString(sql, left + ' AND '.length)
   }
-  return parseBuilderString(sql, j)
+  const valueEnd = parseBuilderString(sql, j)
+  // LIKE / NOT LIKE patterns are matched by SQLite's patternCompare, which
+  // backtracks superlinearly on %- and _-dense patterns. Bound the raw literal
+  // here, where the operator is known to sit outside any quoted value.
+  if (valueEnd > 0 && (matched.op === 'LIKE' || matched.op === 'NOT LIKE') && valueEnd - j - 2 > MAX_LIKE_PATTERN_LENGTH) {
+    return -1
+  }
+  return valueEnd
 }
 
 function parseQuotedIdent(sql: string, i: number): number {
