@@ -29,14 +29,17 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@nuxtjs/mdc@0.22.1"
   - remark-mdc@3.11.1
-  - miniflare@5.20260825.0-alpha || 5.20260826.0-alpha || 5.20260921.0-alpha || 5.20261006.0-alpha || 5.20261019.1-beta
-  - wrangler@4.126.0 || 4.127.0 || 4.136.0 || 4.148.0 || 4.151.3
+  - miniflare@5.20260825.0-alpha || 5.20260826.0-alpha || 5.20260921.0-alpha || 5.20261006.0-alpha || 5.20261019.1-beta || 5.20261110.2-beta
+  - wrangler@4.126.0 || 4.127.0 || 4.136.0 || 4.148.0 || 4.151.3 || 4.161.0
   - '@types/node@26.4.0'
   - happy-dom@20.11.9 || 20.11.10
-  - '@cloudflare/workers-types@5.20260827.1 || 5.20260921.1 || 5.20261007.1'
+  - '@cloudflare/workers-types@5.20260827.1 || 5.20260921.1 || 5.20261007.1 || 5.20261113.1'
   - '@cloudflare/workerd-darwin-64@1.20260921.1'
   - '@cloudflare/workerd-darwin-arm64@1.20260921.1'
   - '@cloudflare/workerd-linux-64@1.20260921.1'
   - '@cloudflare/workerd-linux-arm64@1.20260921.1'
   - '@cloudflare/workerd-windows-64@1.20260921.1'
   - workerd@1.20260921.1
+  - mdast-util-to-hast@13.2.2
+  - nuxt-llms@0.3.2
+  - nuxt-studio@1.8.1
