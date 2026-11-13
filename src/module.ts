@@ -12,6 +12,7 @@ import {
   addComponent,
   installModule,
   addVitePlugin,
+  resolveServerVariant,
 } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions as MDCModuleOptions } from '@nuxtjs/mdc'
@@ -189,6 +190,16 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
+    // Kit picks the `nuxt/server` files on a Nitro 3 host, and the `.legacy` ones written for Nitro 2 otherwise
+    const queryHandler = resolveServerVariant({
+      nuxt: resolver.resolve('./runtime/api/query.post'),
+      nitro2: resolver.resolve('./runtime/api/query.post.legacy'),
+    })
+    const serverFetch = resolveServerVariant({
+      nuxt: resolver.resolve('./runtime/internal/server-fetch'),
+      nitro2: resolver.resolve('./runtime/internal/server-fetch.legacy'),
+    })
+
     nuxt.hook('nitro:config', async (config) => {
       const preset = findPreset(nuxt)
       await preset.setupNitro(config, { manifest, resolver, moduleOptions: options, nuxt })
@@ -201,14 +212,19 @@ export default defineNuxtModule<ModuleOptions>({
       // When targeting Bun but building on Node.js, fall back to a Node.js-compatible connector.
       const localSqliteConnector = (sqliteConnector === 'bun' && !process.versions.bun) ? undefined : sqliteConnector
       config.alias['#content/local-adapter'] = await resolveDatabaseAdapter(options._localDatabase!.type || 'sqlite', { resolver, sqliteConnector: localSqliteConnector })
+      if (serverFetch) {
+        config.alias['#content/server-fetch'] = serverFetch
+      }
 
       config.handlers ||= []
-      manifest.collections.forEach((collection) => {
-        config.handlers!.push({
-          route: `/__nuxt_content/${collection.name}/query`,
-          handler: resolver.resolve('./runtime/api/query.post'),
+      if (queryHandler) {
+        manifest.collections.forEach((collection) => {
+          config.handlers!.push({
+            route: `/__nuxt_content/${collection.name}/query`,
+            handler: queryHandler,
+          })
         })
-      })
+      }
 
       // Handle HMR changes
       if (nuxt.options.dev && options.watch?.enabled !== false) {
