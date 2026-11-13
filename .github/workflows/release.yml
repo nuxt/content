@@ -3,7 +3,7 @@ name: release
 on:
   push:
     # release/v* picks up hand edits to an open release PR
-    branches: [main, 'release/v*']
+    branches: [main, "release/v*"]
   pull_request:
     types: [closed]
     branches: [main]
@@ -11,13 +11,13 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: 'Cut a prerelease instead of a normal release, e.g. `beta`, `rc`, or `0`'
+        description: "Cut a prerelease instead of a normal release, e.g. `beta`, `rc`, or `0`"
         required: false
-        default: ''
+        default: ""
       npm-tag:
-        description: 'npm dist-tag to publish to. Set by uppt/release for maintenance lines; leave blank otherwise'
+        description: "npm dist-tag to publish to. Set by uppt/release for maintenance lines; leave blank otherwise"
         required: false
-        default: ''
+        default: ""
 
 permissions: {}
 
@@ -39,6 +39,10 @@ jobs:
         )
       )
     runs-on: ubuntu-latest
+    # queue runs so an older checkout cannot force-write the release branch after a newer one
+    concurrency:
+      group: release-pr
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
@@ -47,7 +51,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: ${{ inputs.prerelease }}
-          title: 'chore: release v{version}'
+          title: "chore: release v{version}"
 
   # release PR merged: tag it, cut a GitHub release, dispatch the publish run
   release:
@@ -85,7 +89,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24'
+          node-version: "24"
           package-manager-cache: false
       - run: npm i -g --force corepack && corepack enable
         env:
