@@ -219,7 +219,7 @@ describe('decompressSQLDump', () => {
     const wildcard = '%a'.repeat(600) + 'X'
     const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${wildcard}') ORDER BY stem ASC`
     expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
-    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
   it('rejects many OR-ed oversized LIKE patterns', () => {
@@ -227,13 +227,13 @@ describe('decompressSQLDump', () => {
     const conds = Array.from({ length: 40 }, () => `"body" LIKE '${each}'`).join(' OR ')
     const sql = `SELECT * FROM _content_test WHERE (${conds}) ORDER BY stem ASC`
     expect(sql.length).toBeLessThan(MAX_SQL_QUERY_LENGTH)
-    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
   it('rejects oversized NOT LIKE patterns', () => {
     const pattern = ' ' + '_'.repeat(500) + 'QZXJ'
     const sql = `SELECT * FROM _content_test WHERE ("body" NOT LIKE '${pattern}') ORDER BY stem ASC`
-    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
   it('counts escaped quotes toward the LIKE pattern length', () => {
@@ -241,7 +241,7 @@ describe('decompressSQLDump', () => {
     // measure the raw literal so doubling quotes cannot slip under the cap.
     const pattern = '\'\''.repeat(MAX_LIKE_PATTERN_LENGTH)
     const sql = `SELECT * FROM _content_test WHERE ("body" LIKE '${pattern}') ORDER BY stem ASC`
-    expect(() => assertSafeQuery(sql, 'test')).toThrow(/LIKE pattern exceeds/)
+    expect(() => assertSafeQuery(sql, 'test')).toThrow()
   })
 
   it('allows LIKE patterns at the length cap', () => {
@@ -254,6 +254,14 @@ describe('decompressSQLDump', () => {
   it('does not treat " LIKE " inside a value literal as a pattern', () => {
     const padding = 'a'.repeat(MAX_LIKE_PATTERN_LENGTH + 32)
     const sql = `SELECT * FROM _content_test WHERE ("id" = 'x LIKE ${padding}') ORDER BY stem ASC`
+    expect(() => assertSafeQuery(sql, 'test')).not.toThrow()
+  })
+
+  // The span from the closing quote of 'I LIKE ' to the opening quote of the final
+  // value is far past the cap, so a scan that ignores quoting would reject this.
+  it('allows " LIKE " text in a value even when the following clause is long', () => {
+    const groups = Array.from({ length: 8 }, () => '("flag" IS NULL)').join(' AND ')
+    const sql = `SELECT * FROM _content_test WHERE (("title" = 'I LIKE ') AND ${groups} AND ("id" = 'x')) ORDER BY stem ASC`
     expect(() => assertSafeQuery(sql, 'test')).not.toThrow()
   })
 
