@@ -39,10 +39,12 @@ jobs:
         )
       )
     runs-on: ubuntu-latest
-    # queue runs so an older checkout cannot force-write the release branch after a newer one
+    # queue runs so an older checkout cannot force-write the release branch after a newer one.
+    # queue: max keeps pending prerelease dispatches from being dropped by a later push.
     concurrency:
       group: release-pr
       cancel-in-progress: false
+      queue: max
     permissions:
       contents: write
       pull-requests: write
