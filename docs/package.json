@@ -19,6 +19,6 @@
     "drizzle-orm": "^0.45.4",
     "minisearch": "^7.2.0",
     "nuxt": "^4.6.4",
-    "nuxt-studio": "^1.8.1"
+    "nuxt-studio": "^1.8.2"
   }
 }
