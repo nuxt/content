@@ -6,10 +6,10 @@ import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 import { defineCollection, generateCollectionInsert, generateCollectionTableDefinition, resolveCollection } from '../../src/utils/collection'
 import { initiateValidatorsContext } from '../../src/utils/dependencies'
 import { localizePath } from '../../src/features/llms/runtime/server/utils'
+import { getRawMarkdown } from '../../src/features/llms/runtime/server/raw-markdown'
 
 const state = vi.hoisted(() => ({
   db: undefined as unknown as import('better-sqlite3').Database,
-  slug: '',
 }))
 
 vi.mock('#content/manifest', () => ({
@@ -23,15 +23,7 @@ vi.mock('#content/manifest', () => ({
 const serverQuery = vi.hoisted(() => (_event: unknown, collection: string) => collectionQueryBuilder(collection as never, async (_c: string, sql: string) => {
   return state.db.prepare(sql).all().map(row => refineContentFields(sql, row)) as never[]
 }))
-vi.mock('@nuxt/content/server', () => ({ queryCollection: serverQuery }))
-vi.mock('nitropack/runtime', () => ({
-  useRuntimeConfig: () => ({ llms: { contentRawMarkdown: { excludeCollections: [] } } }),
-}))
-vi.mock('h3', async original => ({
-  ...await original<typeof import('h3')>(),
-  getRouterParams: () => ({ 'slug.md': state.slug }),
-  setHeader: () => {},
-}))
+vi.mock('../../src/runtime/server', () => ({ queryCollection: serverQuery }))
 
 const page = (locale: string, stem: string, title: string, text: string) => ({
   id: `docs/${locale}/${stem}.md`,
@@ -47,11 +39,7 @@ const page = (locale: string, stem: string, title: string, text: string) => ({
   body: { type: 'minimark', value: [['h1', {}, title], ['p', {}, text]] },
 })
 
-const raw = async (slug: string) => {
-  state.slug = slug
-  const handler = (await import('../../src/features/llms/runtime/server/routes/raw/[...slug].md.get')).default as unknown as (event: unknown) => Promise<string>
-  return handler({})
-}
+const raw = (slug: string) => getRawMarkdown({} as never, slug, { contentRawMarkdown: { excludeCollections: [] } })
 
 describe('llms with i18n collections', () => {
   beforeAll(async () => {
@@ -90,7 +78,7 @@ describe('llms with i18n collections', () => {
     expect(await raw('docs/foo.md')).toContain('English text')
     expect(await raw('index.md')).toContain('Welcome')
     expect(await raw('fr.md')).toContain('Bienvenue')
-    await expect(raw('de/docs/foo.md')).rejects.toMatchObject({ statusCode: 404 })
+    expect(await raw('de/docs/foo.md')).toBeUndefined()
     expect(await raw('fr/guide.md')).toContain('Guide en français')
     expect(await raw('en/fr/guide.md')).toContain('About France')
   })
