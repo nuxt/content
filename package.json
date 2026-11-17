@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.6.4",
-    "@nuxtjs/mdc": "^0.23.3",
+    "@nuxtjs/mdc": "^0.23.4",
     "@shikijs/langs": "^4.6.0",
     "@sqlite.org/sqlite-wasm": "3.53.0-build1",
     "@standard-schema/spec": "^1.1.0",
@@ -73,7 +73,7 @@
     "git-url-parse": "^16.1.0",
     "h3": "^1.15.11",
     "hookable": "^5.5.3",
-    "isomorphic-git": "^1.44.13",
+    "isomorphic-git": "^1.44.16",
     "jiti": "^2.7.0",
     "json-schema-to-typescript-lite": "^15.0.0",
     "mdast-util-to-hast": "^13.2.2",
@@ -85,7 +85,7 @@
     "micromark-util-sanitize-uri": "^2.0.1",
     "micromatch": "^4.0.8",
     "minimark": "^0.2.0",
-    "minimatch": "^11.0.0",
+    "minimatch": "^11.0.9",
     "nuxt-component-meta": "0.19.0",
     "nypm": "^0.6.12",
     "ohash": "^2.0.12",
@@ -136,9 +136,9 @@
     }
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261113.1",
+    "@cloudflare/workers-types": "^5.20261117.1",
     "@nuxt/content": "link:.",
-    "@nuxt/devtools": "^4.1.0",
+    "@nuxt/devtools": "^4.2.0",
     "@nuxt/eslint-config": "^1.17.0",
     "@nuxt/kit": "^4.6.4",
     "@nuxt/module-builder": "^1.0.4",
@@ -153,9 +153,9 @@
     "@types/pg": "^8.23.1",
     "@types/ws": "^8.18.2",
     "@valibot/to-json-schema": "^1.8.0",
-    "@vue/test-utils": "^2.5.1",
+    "@vue/test-utils": "^2.6.0",
     "csvtojson": "^2.0.14",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "happy-dom": "^21.0.4",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.3",
@@ -169,7 +169,7 @@
     "vitest": "^4.1.11",
     "vue-component-meta": "^3.3.14",
     "vue-tsc": "^3.3.14",
-    "wrangler": "^4.161.0"
+    "wrangler": "^4.164.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"

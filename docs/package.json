@@ -9,7 +9,7 @@
     "@libsql/client": "^0.18.0",
     "@nuxt/content": "link:..",
     "@nuxthub/core": "^0.10.12",
-    "@nuxtjs/plausible": "^4.0.0",
+    "@nuxtjs/plausible": "^4.1.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.1.0",
     "@vueuse/nuxt": "^15.0.0",
@@ -19,6 +19,6 @@
     "drizzle-orm": "^0.45.4",
     "minisearch": "^7.2.0",
     "nuxt": "^4.6.4",
-    "nuxt-studio": "^1.8.1"
+    "nuxt-studio": "^1.8.2"
   }
 }
