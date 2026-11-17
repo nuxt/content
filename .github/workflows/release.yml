@@ -99,6 +99,8 @@ jobs:
       # prepack runs nuxt-module-build, which needs postinstall binaries
       # (esbuild, etc.) that uppt/pack's --ignore-scripts install skips.
       - run: pnpm install --frozen-lockfile
+      # generates .nuxt/tsconfig.json, which the root tsconfig.json extends
+      - run: pnpm nuxt-module-build prepare
       - id: pack
         uses: danielroe/uppt/pack@6c1a9b480b0f02a3f535dedaf1a113f590aa56f2 # v0.6.12
         with:
