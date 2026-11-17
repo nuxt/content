@@ -1,11 +1,9 @@
-import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
+import { uiFixture } from './fixtures/ui-fixture'
 
 describe('nuxt ui', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/ui', import.meta.url)),
-  })
+  await setup(uiFixture())
 
   it('renders headings with Nuxt UI `Prose*` components', async () => {
     const html = await $fetch<string>('/')
@@ -40,5 +38,16 @@ describe('nuxt ui', async () => {
     expect(html).toMatch(/bg-info\/10[^>]*>.*?i-lucide:info.*?A note callout/)
     expect(html).toMatch(/bg-success\/10[^>]*>.*?i-lucide:lightbulb.*?A tip callout/)
     expect(html).toMatch(/bg-warning\/10[^>]*>.*?A custom callout/)
+  })
+
+  // Building every Nuxt UI component would fail: `UChart` imports `@tanstack/charts`, which isn't installed.
+  it('renders a Nuxt UI component used in a document', async () => {
+    const html = await $fetch<string>('/')
+    expect(html).toMatch(/<button [^>]*>.*?A Nuxt UI button.*?<\/button>/s)
+    expect(html).not.toContain('<u-button')
+  })
+
+  it('renders a component of a layer installed in `node_modules`', async () => {
+    expect(await $fetch<string>('/')).toMatch(/<span class="layer-badge">.*?A layer badge.*?<\/span>/s)
   })
 })

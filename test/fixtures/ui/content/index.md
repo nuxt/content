@@ -21,3 +21,11 @@ A tip callout
 ::callout{color="warning"}
 A custom callout
 ::
+
+::u-button
+A Nuxt UI button
+::
+
+::layer-badge
+A layer badge
+::

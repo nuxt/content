@@ -21,6 +21,7 @@ enum Rank {
   ModuleProse,
   Global,
   Project,
+  Module,
   Builtin,
 }
 
@@ -51,9 +52,10 @@ interface Candidate {
  *   `*.lazy.(vue|ts)` files, which become async components and are code-split.
  * - for `Prose*` components from the project or a module, a static import: they render the
  *   markdown elements of every document.
- * - for other project components (e.g. `components/Counter.vue`), an async component, so they're
- *   only loaded by pages that use them, as in v3. Other module components are left out, as
- *   bundling all of them would pull in their optional peer deps.
+ * - for other project and module components (e.g. `components/Counter.vue`, Nuxt UI's `UButton`),
+ *   an async component, so they're only loaded by pages that use them, as in v3. Importing all
+ *   module components statically would pull in their optional peer deps (Nuxt UI's `UChart`).
+ *   Components of layers, including ones installed in `node_modules`, are project components.
  * - for built-ins such as `NuxtLink` (rendering `a`), a static import.
  *
  * Entries are ready to pass to `defineMarkdownDocumentComponent`: lazy ones are wrapped in
@@ -97,14 +99,15 @@ export function componentsTemplate(components: NuxtComponent[], srcDirs: string[
 
     // Project and module components are compiled once added: in a build, only add the used ones.
     if (usedComponents && !usedComponents.has(component.pascalName)) continue
-    const isProject = !component.filePath.includes('/node_modules/')
-      && srcDirs.some(dir => component.filePath.startsWith(withTrailingSlash(dir)))
-    if (isProject) {
-      consider({ name: component.pascalName, rank: isProse ? Rank.ProjectProse : Rank.Project, component, lazy: !isProse })
-    }
-    else if (isProse) {
-      consider({ name: component.pascalName, rank: Rank.ModuleProse, component, lazy: false })
-    }
+    // A layer is project code even when installed from `node_modules`; a `node_modules` inside its srcDir isn't.
+    const isProject = srcDirs.some((dir) => {
+      const prefix = withTrailingSlash(dir)
+      return component.filePath.startsWith(prefix) && !component.filePath.slice(prefix.length).includes('node_modules/')
+    })
+    const rank = isProject
+      ? (isProse ? Rank.ProjectProse : Rank.Project)
+      : (isProse ? Rank.ModuleProse : Rank.Module)
+    consider({ name: component.pascalName, rank, component, lazy: !isProse })
   }
 
   // Nuxt registers built-ins outside `components/content`, so they're added explicitly.

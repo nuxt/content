@@ -24,8 +24,8 @@ const content = (name: string) => component(`Content${name}`, `/app/components/c
  * The entry the template keeps for `foo`: `<tag>=<imported path>`, or `global` when a global
  * component wins, which is left out for `MarkdownDocument` to resolve from the app.
  */
-function winner(candidates: Component[]) {
-  const template = componentsTemplate(candidates, ['/app'])
+function winner(candidates: Component[], srcDirs = ['/app']) {
+  const template = componentsTemplate(candidates, srcDirs)
   const imports = Object.fromEntries([...template.matchAll(/^import (__component\d+) from "([^"]+)"$/gm)].map(m => [m[1], m[2]]))
   const entries = [...template.matchAll(/^ {2}"([\w-]+)": (.+),$/gm)].map(([, key, value]) =>
     `${key}=${value!.match(/import\("([^"]+)"\)/)?.[1] ?? imports[value!.match(/__wrap\((\w+)\)/)![1]!]}`)
@@ -66,8 +66,19 @@ describe('componentsTemplate', () => {
     expect(winner([content('Foo'), content('ProseFoo')])).toBe('foo=/app/components/content/ProseFoo.vue')
   })
 
-  it('leaves out module components that aren\'t `Prose*`', () => {
-    expect(componentsTemplate([fromModule('Foo')], ['/app'])).not.toContain('Foo')
+  it('lazy-loads module components that aren\'t `Prose*`, below project ones', () => {
+    expect(componentsTemplate([fromModule('Foo')], ['/app']))
+      .toContain('  "foo": defineAsyncComponent(() => import("/app/node_modules/ui/Foo.vue")),')
+    expect(winner([fromModule('Foo'), project('Foo')])).toBe('foo=/app/components/Foo.vue')
+  })
+
+  it('ranks components of a layer installed in `node_modules` as project ones', () => {
+    const layer = '/app/node_modules/layer'
+    const candidates = [
+      component('Foo', `${layer}/node_modules/ui/Foo.vue`),
+      component('Foo', `${layer}/components/Foo.vue`),
+    ]
+    expect(winner(candidates, ['/app', layer])).toBe(`foo=${layer}/components/Foo.vue`)
   })
 
   it('keeps `NuxtLink` as `A` unless another component renders links', () => {
