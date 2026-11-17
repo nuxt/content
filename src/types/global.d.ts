@@ -7,7 +7,7 @@ interface ImportMeta {
 }
 
 declare module '#content/manifest' {
-  const manifest: Record<string, unknown>
+  const manifest: import('./manifest').ManifestCollectionsMeta
   const checksums: Record<string, string>
   const checksumsStructure: Record<string, string>
   const tables: Record<string, string>

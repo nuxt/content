@@ -4,7 +4,7 @@ import type { ModuleOptions } from 'nuxt-llms'
 import type { Collections, PageCollectionItemBase } from '@nuxt/content'
 import type { ContentEvent } from '../../../../runtime/internal/event'
 import type { ContentLLMSCollectionSection } from './utils'
-import { createDocumentGenerator, prepareContentSections } from './utils'
+import { createDocumentGenerator, getDefaultLocale, localizePath, prepareContentSections } from './utils'
 
 export interface ContentLLMSHooks {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,8 +27,9 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
         continue
       }
 
+      const locale = getDefaultLocale(section.contentCollection)
       const query = queryCollection(event, section.contentCollection as keyof Collections)
-        .select('path', 'title', 'seo', 'description')
+        .select('path', 'title', 'seo', 'description', ...(locale ? ['locale'] : []))
         .where('path', 'NOT LIKE', '%/.navigation')
 
       const filters = section.contentFilters || []
@@ -36,7 +37,11 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
         query.where(filter.field, filter.operator, filter.value)
       }
 
-      const docs = await query.all() as unknown as PageCollectionItemBase[]
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
+      }
+
+      const docs = await query.all() as unknown as Array<PageCollectionItemBase & { locale?: string }>
 
       if (docs.length === 0 && section.__nuxt_content_auto_generate) {
         sectionsToRemove.push(index)
@@ -48,7 +53,7 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
         return {
           title: doc.title || doc?.seo?.title || '',
           description: doc.description || doc?.seo?.description || '',
-          href: getDocumentLink(doc.path, section.contentCollection!, options),
+          href: getDocumentLink(doc.path, section.contentCollection!, options, doc.locale),
         }
       }))
     }
@@ -78,6 +83,11 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
         query.where(filter.field, filter.operator, filter.value)
       }
 
+      const locale = getDefaultLocale(section.contentCollection)
+      if (locale && !filters.some(filter => filter.field === 'locale')) {
+        query.locale(locale)
+      }
+
       const docs = await query.all() as PageCollectionItemBase[]
 
       for (const doc of docs) {
@@ -88,13 +98,13 @@ export function registerContentLLMSHooks(hooks: ContentLLMSHooks) {
     }
   })
 
-  function getDocumentLink(link: string, collection: string, options: ModuleOptions) {
+  function getDocumentLink(link: string, collection: string, options: ModuleOptions, locale?: string) {
     const contentRawMarkdown = (options as unknown as { contentRawMarkdown: false | { rewriteLLMSTxt: boolean, excludeCollections: string[] } })?.contentRawMarkdown
     if (contentRawMarkdown === false || contentRawMarkdown?.rewriteLLMSTxt === false || contentRawMarkdown?.excludeCollections?.includes(collection)) {
-      return withBase(link, options.domain)
+      return withBase(localizePath(link, collection, locale), options.domain)
     }
 
-    link = `/raw${link}.md`
+    link = `/raw${localizePath(link, collection, locale, true)}.md`
 
     if (link.endsWith('/.md')) {
       link = link.slice(0, -3) + 'index.md'

@@ -21,8 +21,9 @@ import { join } from 'pathe'
 import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
+import { createLocaleVariantTracker } from './utils/i18n'
 import { version } from '../package.json'
-import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
+import { generateCollectionInsert, generateCollectionItemInserts, generateCollectionTableDefinition } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
@@ -136,6 +137,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/client') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/client') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/client') },
       { name: 'useSearchCollection', from: resolver.resolve('./runtime/client') },
     ])
     addServerImports([
@@ -143,6 +145,7 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'queryCollectionSearchSections', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionNavigation', from: resolver.resolve('./runtime/nitro') },
       { name: 'queryCollectionItemSurroundings', from: resolver.resolve('./runtime/nitro') },
+      { name: 'queryCollectionLocales', from: resolver.resolve('./runtime/server') },
     ])
     addComponent({ name: 'ContentRenderer', filePath: resolver.resolve('./runtime/components/ContentRenderer.vue') })
 
@@ -347,6 +350,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
     }
 
     const parse = await createParser(collection, nuxt)
+    const trackLocaleVariant = collection.i18n ? createLocaleVariantTracker(collection.name) : undefined
 
     const structureVersion = collectionChecksumStructure[collection.name] = hash(collectionQueries)
 
@@ -406,8 +410,10 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
               usedComponents.push(...parsedContent.__metadata.components)
             }
 
-            const { queries, hash } = generateCollectionInsert(collection, parsedContent)
-            list.push([key, queries, hash])
+            for (const { item, queries, hash } of generateCollectionItemInserts(collection, parsedContent)) {
+              trackLocaleVariant?.(item)
+              list.push([collection.i18n ? item.id : key, queries, hash])
+            }
           }
           catch (e: unknown) {
             logger.warn(`"${keyInCollection}" is ignored because parsing is failed. Error: ${e instanceof Error ? e.message : 'Unknown error'}`)

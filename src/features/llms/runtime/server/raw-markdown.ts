@@ -30,7 +30,7 @@ export async function getRawMarkdown(event: ContentEvent, slug: string | undefin
 
   let page: PageCollectionItemBase | null = null
   for (const collection of _collections) {
-    page = await queryCollection(event, collection as keyof Collections).path(path).first() as PageCollectionItemBase | null
+    page = await findPage(event, collection as keyof Collections, path)
     if (page) {
       break
     }
@@ -59,4 +59,20 @@ export async function getRawMarkdown(event: ContentEvent, slug: string | undefin
   }
 
   return stringify({ ...page.body, type: 'minimark' }, { format: 'markdown/html' })
+}
+
+/** A leading locale segment selects the locale, as in the `raw` links that `localizePath` builds */
+async function findPage(event: ContentEvent, collection: keyof Collections, path: string) {
+  const i18n = (collections as Record<string, ResolvedCollection>)[collection]?.i18n
+  if (!i18n) {
+    return await queryCollection(event, collection).path(path).first() as PageCollectionItemBase | null
+  }
+  const [, segment = '', ...rest] = path.split('/')
+  if (i18n.locales.includes(segment)) {
+    const page = await queryCollection(event, collection).path(`/${rest.join('/')}`).locale(segment).first()
+    if (page) {
+      return page as PageCollectionItemBase
+    }
+  }
+  return await queryCollection(event, collection).path(path).locale(i18n.defaultLocale).first() as PageCollectionItemBase | null
 }

@@ -8,6 +8,12 @@ export interface Collections {}
 
 export type CollectionType = 'page' | 'data'
 
+export interface CollectionI18nConfig {
+  locales: string[]
+  /** Fallback for content missing in the active locale */
+  defaultLocale: string
+}
+
 /**
  * Defines an index on collection columns for optimizing database queries
  */
@@ -69,6 +75,11 @@ export interface PageCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema?: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Adds a `locale` column to the collection. `true` reads `locales` and `defaultLocale`
+   * from `@nuxtjs/i18n`, and disables i18n with a warning when they cannot be read.
+   */
+  i18n?: true | CollectionI18nConfig
 }
 
 export interface DataCollection<T> {
@@ -76,6 +87,11 @@ export interface DataCollection<T> {
   source?: string | CollectionSource | CollectionSource[] | ResolvedCustomCollectionSource
   schema: ContentStandardSchemaV1<T>
   indexes?: CollectionIndex[]
+  /**
+   * Adds a `locale` column to the collection. `true` reads `locales` and `defaultLocale`
+   * from `@nuxtjs/i18n`, and disables i18n with a warning when they cannot be read.
+   */
+  i18n?: true | CollectionI18nConfig
 }
 
 export type Collection<T> = PageCollection<T> | DataCollection<T>
@@ -87,9 +103,11 @@ export interface DefinedCollection {
   extendedSchema: Draft07
   fields: Record<string, 'string' | 'number' | 'boolean' | 'date' | 'json'>
   indexes?: CollectionIndex[]
+  /** `loadContentConfig` replaces `true` with a config read from `@nuxtjs/i18n`, or with `undefined` */
+  i18n?: true | CollectionI18nConfig
 }
 
-export interface ResolvedCollection extends DefinedCollection {
+export interface ResolvedCollection extends Omit<DefinedCollection, 'i18n'> {
   name: string
   tableName: string
   /**
@@ -97,6 +115,7 @@ export interface ResolvedCollection extends DefinedCollection {
    * Private collections will not be available in the runtime.
    */
   private: boolean
+  i18n?: CollectionI18nConfig
 }
 
 export interface CollectionInfo {

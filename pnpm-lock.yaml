@@ -403,6 +403,14 @@ importers:
 
   test/fixtures/csv: {}
 
+  test/fixtures/i18n: {}
+
+  test/fixtures/i18n-module:
+    dependencies:
+      '@nuxtjs/i18n':
+        specifier: ^10.6.0
+        version: 10.6.0(@nuxt/schema@4.6.4)(@vue/compiler-dom@3.5.44)(db0@0.4.2)(dotenv@17.4.2)(esbuild@0.28.2)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(rolldown@1.2.19)(rollup@4.68.2)(supports-color@10.2.2)(typescript@6.0.3)(vite@8.3.8)(vue@3.5.44(typescript@6.0.3))
+
   test/fixtures/multi-collection-hmr: {}
 
 packages:
