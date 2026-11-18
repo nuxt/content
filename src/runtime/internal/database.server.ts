@@ -5,6 +5,7 @@ import { decompressSQLDump } from './dump'
 import { fetchDatabase } from './api'
 import type { ContentEvent } from './event'
 import { refineContentFields } from './collection'
+import { pruneUnusedPrefixes, readHeartbeat, reclaimPrunedTables, wasPruned, writeHeartbeat } from './prune'
 import type { DatabaseAdapter, RuntimeConfig } from '@nuxt/content'
 import { tables, checksums, checksumsStructure } from '#content/manifest'
 import localAdapter from '#content/local-adapter'
@@ -68,6 +69,23 @@ export default async function loadDatabaseAdapter(config: RuntimeConfig['content
 const checkDatabaseIntegrity = new Map<string, boolean>()
 const integrityCheckPromise = new Map<string, Promise<void> | null>()
 export async function checkAndImportDatabaseIntegrity(event: ContentEvent, collection: string, config: RuntimeConfig['content']): Promise<void> {
+  const maintain = shouldMaintainSharedDatabase(config)
+  if (maintain) {
+    await reclaimTablesIfPruned(config).catch((error) => {
+      console.warn('[@nuxt/content] Failed to check whether the content tables were pruned', error)
+    })
+  }
+
+  await _checkAndImportDatabaseIntegrityCached(event, collection, config)
+
+  if (maintain) {
+    await heartbeatAndPrune(config).catch((error) => {
+      console.warn('[@nuxt/content] Failed to prune unused table prefixes', error)
+    })
+  }
+}
+
+async function _checkAndImportDatabaseIntegrityCached(event: ContentEvent, collection: string, config: RuntimeConfig['content']): Promise<void> {
   if (checkDatabaseIntegrity.get(collection) !== false) {
     checkDatabaseIntegrity.set(collection, false)
     if (!integrityCheckPromise.has(collection)) {
@@ -182,6 +200,70 @@ async function _checkAndImportDatabaseIntegrity(event: ContentEvent, collection:
 
   const after = await db.first<{ version: string }>(`SELECT version FROM ${tables.info} WHERE id = ?`, [`checksum_${collection}`]).catch(() => ({ version: '' }))
   return after?.version === integrityVersion
+}
+
+/**
+ * Time of the next shared database maintenance (heartbeat and pruning) of this process
+ */
+let nextMaintenanceAt = 0
+/**
+ * Whether this process wrote a heartbeat, so its info table is expected to exist
+ */
+let hasHeartbeat = false
+
+function shouldMaintainSharedDatabase(config: RuntimeConfig['content']) {
+  const prune = config.pruneUnusedPrefixes
+  // Development and prerendering use the local database, which is never shared
+  if (!prune || import.meta.dev || ['nitro-prerender', 'nitro-dev'].includes(import.meta.preset as string)) {
+    return false
+  }
+
+  const now = Date.now()
+  if (now < nextMaintenanceAt) {
+    return false
+  }
+  // Refresh the heartbeat well within `maxAge`, so a deployment in use is never pruned
+  nextMaintenanceAt = now + Math.min(60 * 60 * 1000, prune.maxAge * 1000 / 4)
+  return true
+}
+
+/**
+ * When another deployment pruned the tables of this one, forget the integrity checks of this
+ * process so that the collections are imported again.
+ */
+async function reclaimTablesIfPruned(config: RuntimeConfig['content']) {
+  const db = await loadDatabaseAdapter(config)
+  const infoTable = tables.info!
+  if (!wasPruned(await readHeartbeat(db, infoTable), hasHeartbeat)) {
+    return
+  }
+
+  await reclaimPrunedTables(db, infoTable, Date.now())
+  checkDatabaseIntegrity.clear()
+  integrityCheckPromise.clear()
+}
+
+async function heartbeatAndPrune(config: RuntimeConfig['content']) {
+  const prune = config.pruneUnusedPrefixes
+  if (!prune) {
+    return
+  }
+
+  const db = await loadDatabaseAdapter(config)
+  const infoTable = tables.info!
+  const now = Date.now()
+  await writeHeartbeat(db, infoTable, now)
+  hasHeartbeat = true
+
+  const dropped = await pruneUnusedPrefixes(db, {
+    infoTable,
+    maxAge: prune.maxAge * 1000,
+    now,
+    dialect: ['postgres', 'pglite'].includes(config.database.type) ? 'postgres' : 'sqlite',
+  })
+  if (dropped.length) {
+    console.info(`[@nuxt/content] Dropped the tables of unused table prefixes: ${dropped.join(', ')}`)
+  }
 }
 
 /**

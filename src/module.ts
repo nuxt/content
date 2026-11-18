@@ -22,7 +22,7 @@ import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
 import { version } from '../package.json'
-import { generateCollectionInsert, generateCollectionTableDefinition, resolveTablePrefix } from './utils/collection'
+import { generateCollectionInsert, generateCollectionTableDefinition, resolvePruneUnusedPrefixes, resolveTablePrefix } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
@@ -267,6 +267,7 @@ export default defineNuxtModule<ModuleOptions>({
         database: options.database,
         localDatabase: options._localDatabase!,
         integrityCheck: true,
+        pruneUnusedPrefixes: resolvePruneUnusedPrefixes(options.pruneUnusedPrefixes),
       } as never
     })
 

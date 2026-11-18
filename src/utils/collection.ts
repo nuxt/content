@@ -1,7 +1,7 @@
 import { hash } from 'ohash'
 import type { Collection, ResolvedCollection, CollectionSource, DefinedCollection, ResolvedCollectionSource, CustomCollectionSource, ResolvedCustomCollectionSource } from '../types/collection'
 import { getOrderedSchemaKeys, describeProperty, getCollectionFieldsTypes } from '../runtime/internal/schema'
-import type { Draft07, ParsedContentFile } from '../types'
+import type { Draft07, ModuleOptions, ParsedContentFile } from '../types'
 import { defineLocalSource, defineGitSource } from './source'
 import { emptyStandardSchema, mergeStandardSchema, metaStandardSchema, pageStandardSchema, infoStandardSchema, detectSchemaVendor, replaceComponentSchemas } from './schema'
 import { logger } from './dev'
@@ -18,6 +18,19 @@ export function resolveTablePrefix(prefix?: string) {
     throw new Error(`[@nuxt/content] Invalid \`tablePrefix\` "${prefix}": it must start with a letter or an underscore and only contain letters, digits and underscores.`)
   }
   return prefix
+}
+
+const DEFAULT_PRUNE_MAX_AGE = 7 * 24 * 60 * 60
+
+export function resolvePruneUnusedPrefixes(option: ModuleOptions['pruneUnusedPrefixes']): false | { maxAge: number } {
+  if (!option) {
+    return false
+  }
+  const maxAge = option === true ? DEFAULT_PRUNE_MAX_AGE : (option.maxAge ?? DEFAULT_PRUNE_MAX_AGE)
+  if (!Number.isFinite(maxAge) || maxAge < 60 * 60) {
+    throw new Error(`[@nuxt/content] Invalid \`pruneUnusedPrefixes.maxAge\` "${maxAge}": it must be a number of seconds, at least 3600 (one hour).`)
+  }
+  return { maxAge }
 }
 
 export function getTableName(name: string, prefix: string = DEFAULT_TABLE_PREFIX) {
