@@ -1,5 +1,5 @@
 import type { CollectionInfo } from '@nuxt/content'
-import contentManifest from '#content/manifest'
+import contentManifest, { tables } from '#content/manifest'
 
 export function refineContentFields<T>(sql: string, doc: T) {
   const fields = findCollectionFields(sql)
@@ -27,10 +27,15 @@ function findCollectionFields(sql: string): Record<string, 'string' | 'number' |
     return {}
   }
 
-  const info = contentManifest[getCollectionName(table[1]!) as keyof typeof contentManifest] as CollectionInfo
+  const collection = getCollectionName(table[1]!)
+  if (!collection) {
+    return {}
+  }
+
+  const info = contentManifest[collection as keyof typeof contentManifest] as CollectionInfo
   return info?.fields || {}
 }
 
 function getCollectionName(table: string) {
-  return table.replace(/^_content_/, '')
+  return Object.keys(tables).find(name => tables[name] === table)
 }

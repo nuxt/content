@@ -69,6 +69,37 @@ export interface ModuleOptions {
    */
   database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
   /**
+   * Prefix of every table the module creates in the database, collection tables and
+   * the internal `info` table included (`<prefix><collection>`).
+   *
+   * Use a distinct prefix for each deployment that shares one database, such as preview
+   * deployments of several branches bound to the same D1 database, so they don't overwrite
+   * each other's content. Must only contain letters, digits and underscores.
+   *
+   * Table names are resolved at build time: change it in `nuxt.config`, not through a runtime env variable.
+   * @default '_content_'
+   */
+  tablePrefix?: string
+  /**
+   * Drop the tables of other `tablePrefix` sharing the database once they have been unused for `maxAge`.
+   *
+   * Each deployment that enables it records when it was last used, and drops the tables of the
+   * deployments that also enabled it and have been unused for longer than `maxAge`. A pruned
+   * deployment that gets traffic again imports its content again. Deployments that don't enable
+   * it are never pruned.
+   *
+   * Intended for preview deployments sharing one database, so the tables of merged or deleted
+   * branches don't pile up.
+   * @default false
+   */
+  pruneUnusedPrefixes?: boolean | {
+    /**
+     * Prune the prefixes unused for longer than this, in seconds
+     * @default 604800 (7 days)
+     */
+    maxAge?: number
+  }
+  /**
    * Preview mode configuration
    * @default {}
    */
@@ -233,6 +264,7 @@ export interface RuntimeConfig {
     database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     localDatabase: SqliteDatabaseConfig | PGliteDatabaseConfig | LibSQLDatabaseConfig
     integrityCheck: boolean
+    pruneUnusedPrefixes: false | { maxAge: number }
   }
 }
 

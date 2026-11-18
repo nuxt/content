@@ -1,6 +1,7 @@
 import type { MDCNode, MDCRoot, MDCElement } from '@nuxtjs/mdc'
 import { toHast } from 'minimark/hast'
 import type { MinimarkTree } from 'minimark'
+import { tablePrefix } from '#content/manifest'
 import { createYielder, pick } from './utils'
 import type { CollectionQueryBuilder, DatabaseAdapter, PageCollectionItemBase } from '~/src/types'
 
@@ -246,7 +247,8 @@ function extractTextFromAst(node: MDCNode, ignoredTags: string[] = []) {
   return text
 }
 
-const FTS_TABLE = '_fts_search'
+// Deployments sharing one database with distinct `tablePrefix` each get their own index
+const FTS_TABLE = !tablePrefix || tablePrefix === '_content_' ? '_fts_search' : `_fts_search${tablePrefix}`
 const indexedCollections = new Set<string>()
 // builds in flight, so concurrent callers wait on the same one instead of inserting twice
 const indexingCollections = new Map<string, Promise<void>>()
