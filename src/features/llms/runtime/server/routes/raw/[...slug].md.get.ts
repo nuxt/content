@@ -4,7 +4,8 @@ import type { ContentRawMarkdownConfig } from '../../raw-markdown'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const markdown = await getRawMarkdown(event, getRouterParams(event)['slug.md'], config.llms as ContentRawMarkdownConfig)
+  const params = getRouterParams(event)
+  const markdown = await getRawMarkdown(event, params.slug ?? params['slug.md'], config.llms as ContentRawMarkdownConfig)
   if (markdown === undefined) {
     throw createError({ status: 404, statusText: 'Page not found', fatal: true })
   }
