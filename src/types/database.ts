@@ -21,9 +21,9 @@ export interface LocalDevelopmentDatabase {
   insertDevelopmentCacheBatch(entries: CacheEntry[]): Promise<void>
   deleteDevelopmentCache(id: string): Promise<void>
   /**
-   * Drop every table whose name starts with `prefix` (defaults to `_content_`)
+   * Drop the tables of `collections` and of the collections listed in `<prefix>info`, then the info table
    */
-  dropContentTables(prefix?: string): void
+  dropContentTables(prefix: string, collections: string[]): Promise<void>
   exec(sql: string): void
   close(): void
   database?: Connector

@@ -335,7 +335,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const usedComponents: Array<string> = []
 
   // Remove all existing content collections to start with a clean state
-  db.dropContentTables(resolveTablePrefix(options.tablePrefix))
+  await db.dropContentTables(resolveTablePrefix(options.tablePrefix), collections.map(c => c.name))
   // Create database dump
   for await (const collection of collections) {
     if (collection.name === 'info') {

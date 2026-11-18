@@ -13,7 +13,7 @@ import type { DatabaseAdapter } from '@nuxt/content'
  * - Tables are found by exact name, from the `checksum_<collection>` rows of the info table.
  *   Never by prefix: `_preview_feat_` is a prefix of `_preview_feat_x_`, which may be alive.
  * - Pruning is recoverable: a pruned deployment that gets traffic again notices it (see
- *   `wasPruned`) and imports its bundled dump again.
+ *   `refreshHeartbeat`) and imports its bundled dump again.
  */
 
 export const HEARTBEAT_ID = 'heartbeat'
@@ -38,31 +38,26 @@ export async function readHeartbeat(db: DatabaseAdapter, infoTable: string): Pro
     .catch(() => undefined)
 }
 
-export async function writeHeartbeat(db: DatabaseAdapter, infoTable: string, now: number) {
-  await db.exec(
-    `INSERT INTO ${infoTable} ("id", "version", "structureVersion", "ready") VALUES (?, ?, '', true) ON CONFLICT ("id") DO UPDATE SET "version" = excluded."version"`,
-    [HEARTBEAT_ID, String(now)],
-  )
-}
+export type HeartbeatStatus = 'alive' | 'pruned' | 'missing'
 
 /**
- * Whether another deployment pruned, or started pruning, the tables of this deployment.
- * @param heartbeat - heartbeat read from the info table of this deployment
- * @param hadHeartbeat - whether this process already wrote a heartbeat: the info table
- * is then expected to exist
+ * Refresh the heartbeat of an info table, unless another deployment is pruning it: the
+ * `pruned` mark is never overwritten, the owner has to take its tables back first.
+ * @returns `missing` when the info table doesn't exist, `pruned` when another deployment
+ * claimed it, `alive` otherwise
  */
-export function wasPruned(heartbeat: string | null | undefined, hadHeartbeat: boolean) {
-  return heartbeat === PRUNED || (hadHeartbeat && !heartbeat)
-}
-
-/**
- * Take the tables of this deployment back after another deployment pruned them: forget the
- * collection checksums so the next integrity check imports every collection again, and refresh
- * the heartbeat so a prune still running stops before its next `DROP`.
- */
-export async function reclaimPrunedTables(db: DatabaseAdapter, infoTable: string, now: number) {
-  await db.exec(`DELETE FROM ${infoTable} WHERE id <> ?`, [HEARTBEAT_ID]).catch(() => {})
-  await writeHeartbeat(db, infoTable, now).catch(() => {})
+export async function refreshHeartbeat(db: DatabaseAdapter, infoTable: string, now: number): Promise<HeartbeatStatus> {
+  try {
+    await db.exec(
+      `INSERT INTO ${infoTable} ("id", "version", "structureVersion", "ready") VALUES (?, ?, '', true)`
+      + ` ON CONFLICT ("id") DO UPDATE SET "version" = excluded."version" WHERE ${infoTable}."version" <> ?`,
+      [HEARTBEAT_ID, String(now), PRUNED],
+    )
+  }
+  catch {
+    return 'missing'
+  }
+  return await readHeartbeat(db, infoTable) === PRUNED ? 'pruned' : 'alive'
 }
 
 export interface PruneOptions {
@@ -144,7 +139,7 @@ export async function pruneUnusedPrefixes(db: DatabaseAdapter, { infoTable, maxA
   return dropped
 }
 
-async function listTables(db: DatabaseAdapter, dialect: DatabaseDialect): Promise<string[]> {
+export async function listTables(db: DatabaseAdapter, dialect: DatabaseDialect): Promise<string[]> {
   const rows = dialect === 'postgres'
     ? await db.all<{ name: string }>(`SELECT table_name AS name FROM information_schema.tables WHERE table_schema = current_schema() AND table_type = 'BASE TABLE'`)
     : await db.all<{ name: string }>(`SELECT name FROM sqlite_master WHERE type = 'table'`)

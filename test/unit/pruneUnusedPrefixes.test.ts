@@ -1,8 +1,13 @@
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import Database from 'better-sqlite3'
+import betterSqlite3 from 'db0/connectors/better-sqlite3'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { DatabaseAdapter } from '../../src/types'
-import { HEARTBEAT_ID, PRUNED, pruneUnusedPrefixes, readHeartbeat, reclaimPrunedTables, wasPruned, writeHeartbeat } from '../../src/runtime/internal/prune'
+import { HEARTBEAT_ID, PRUNED, pruneUnusedPrefixes, readHeartbeat, refreshHeartbeat } from '../../src/runtime/internal/prune'
 import { resolvePruneUnusedPrefixes } from '../../src/utils/collection'
+import { getLocalDatabase } from '../../src/utils/database'
 
 const DAY = 24 * 60 * 60 * 1000
 const NOW = 100 * DAY
@@ -39,7 +44,7 @@ describe('pruneUnusedPrefixes', () => {
       sqlite.prepare(`INSERT INTO ${prefix}info VALUES (?, 'v', 's', true)`).run(`checksum_${collection}`)
     }
     if (heartbeat !== undefined) {
-      await writeHeartbeat(db, `${prefix}info`, heartbeat)
+      await refreshHeartbeat(db, `${prefix}info`, heartbeat)
     }
   }
 
@@ -47,12 +52,21 @@ describe('pruneUnusedPrefixes', () => {
   const prune = (opts: Partial<Parameters<typeof pruneUnusedPrefixes>[1]> = {}) => pruneUnusedPrefixes(db, { infoTable: '_preview_main_info', maxAge: 7 * DAY, now: NOW, dialect: 'sqlite', ...opts })
 
   it('writes and refreshes the heartbeat', async () => {
+    expect(await refreshHeartbeat(db, '_preview_main_info', 1)).toBe('missing')
     await deploy('_preview_main_', ['docs'])
     expect(await readHeartbeat(db, '_preview_main_info')).toBe(null)
-    await writeHeartbeat(db, '_preview_main_info', 1)
-    await writeHeartbeat(db, '_preview_main_info', 2)
+    expect(await refreshHeartbeat(db, '_preview_main_info', 1)).toBe('alive')
+    expect(await refreshHeartbeat(db, '_preview_main_info', 2)).toBe('alive')
     expect(await readHeartbeat(db, '_preview_main_info')).toBe('2')
     expect(await readHeartbeat(db, '_missing_info')).toBe(undefined)
+  })
+
+  it('never overwrites the mark of a prune', async () => {
+    await deploy('_preview_main_', ['docs'], 1)
+    sqlite.prepare(`UPDATE _preview_main_info SET "version" = ? WHERE id = ?`).run(PRUNED, HEARTBEAT_ID)
+
+    expect(await refreshHeartbeat(db, '_preview_main_info', NOW)).toBe('pruned')
+    expect(await readHeartbeat(db, '_preview_main_info')).toBe(PRUNED)
   })
 
   it('drops exactly the tables of unused prefixes', async () => {
@@ -98,18 +112,15 @@ describe('pruneUnusedPrefixes', () => {
   it('stops when the owner comes back during the prune', async () => {
     await deploy('_preview_main_', ['docs'], NOW)
     await deploy('_preview_feat_', ['docs', 'authors'], NOW - 8 * DAY)
-    // The owner notices right after the first drop
+    // The owner notices right after the first drop, and takes its tables back by dropping its info table
     onDrop = async () => {
       onDrop = undefined
-      expect(wasPruned(await readHeartbeat(db, '_preview_feat_info'), true)).toBe(true)
-      await reclaimPrunedTables(db, '_preview_feat_info', NOW)
+      expect(await refreshHeartbeat(db, '_preview_feat_info', NOW)).toBe('pruned')
+      sqlite.exec('DROP TABLE _preview_feat_info')
     }
 
-    const dropped = await prune()
-    expect(dropped).toHaveLength(1)
-    // The owner kept its info table, with a fresh heartbeat and no checksum, so it imports everything again
-    expect(sqlite.prepare('SELECT id, version FROM _preview_feat_info').all()).toEqual([{ id: HEARTBEAT_ID, version: String(NOW) }])
-    expect(tables().filter(t => t.startsWith('_preview_feat_'))).toHaveLength(2)
+    expect(await prune()).toHaveLength(1)
+    expect(tables().filter(t => t.startsWith('_preview_feat_'))).toHaveLength(1)
   })
 
   it('prunes at most `limit` prefixes per run', async () => {
@@ -121,16 +132,6 @@ describe('pruneUnusedPrefixes', () => {
     expect(await prune({ limit: 2 })).toHaveLength(4)
     expect(await prune({ limit: 2 })).toHaveLength(2)
     expect(tables()).toEqual(['_preview_main_docs', '_preview_main_info'])
-  })
-
-  it('detects that its own tables were pruned', () => {
-    expect(wasPruned(PRUNED, false)).toBe(true)
-    expect(wasPruned(undefined, true)).toBe(true)
-    expect(wasPruned(null, true)).toBe(true)
-    expect(wasPruned(String(NOW), true)).toBe(false)
-    // First run of the process: no heartbeat yet is expected
-    expect(wasPruned(undefined, false)).toBe(false)
-    expect(wasPruned(null, false)).toBe(false)
   })
 })
 
@@ -149,5 +150,41 @@ describe('resolvePruneUnusedPrefixes', () => {
   it('rejects a max age under one hour', () => {
     expect(() => resolvePruneUnusedPrefixes({ maxAge: 60 })).toThrow('pruneUnusedPrefixes.maxAge')
     expect(() => resolvePruneUnusedPrefixes({ maxAge: Number.NaN })).toThrow('pruneUnusedPrefixes.maxAge')
+  })
+})
+
+describe('dropContentTables', () => {
+  let directory: string
+  let local: Awaited<ReturnType<typeof getLocalDatabase>>
+
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), 'content-drop-tables-'))
+    local = await getLocalDatabase({ type: 'sqlite', filename: join(directory, 'contents.sqlite') }, { connector: betterSqlite3({ path: join(directory, 'contents.sqlite') }) })
+  })
+
+  afterEach(async () => {
+    local.close()
+    await rm(directory, { recursive: true, force: true })
+  })
+
+  const localTables = async () => (await local.database!.prepare(`SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`).all() as { name: string }[]).map(r => r.name)
+
+  it('drops exactly the tables of the prefix, including collections removed since the last build', async () => {
+    for (const prefix of ['_preview_feat_', '_preview_feat_x_']) {
+      local.exec(`CREATE TABLE ${prefix}info ("id" TEXT PRIMARY KEY, "version" VARCHAR)`)
+      for (const collection of ['docs', 'old']) {
+        local.exec(`CREATE TABLE ${prefix}${collection} (id TEXT)`)
+        local.exec(`INSERT INTO ${prefix}info VALUES ('checksum_${collection}', 'v')`)
+      }
+    }
+
+    // `old` was removed from the config, `new` was added
+    await local.dropContentTables('_preview_feat_', ['docs', 'new', 'info'])
+    expect(await localTables()).toEqual(['_development_cache', '_preview_feat_x_docs', '_preview_feat_x_info', '_preview_feat_x_old'])
+  })
+
+  it('never drops the development cache', async () => {
+    await local.dropContentTables('_', ['development_cache', 'info'])
+    expect(await localTables()).toEqual(['_development_cache'])
   })
 })
