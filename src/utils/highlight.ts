@@ -111,11 +111,19 @@ ${highlight.langs.map(name => `    ${lang(name)},`).join('\n')}
 }
 
 /**
- * Dual-theme Shiki output carries the dark colors as `--shiki-dark*` CSS
- * variables. Apply them under `html.dark`, as `@nuxtjs/mdc` did for Content v3.
+ * Shiki inlines only the light colors.
+ * Font styles and dark colors are `--shiki-light-*` and `--shiki-dark*` variables, applied here as `@nuxtjs/mdc` did for Content v3.
  */
-export function highlightStylesTemplate() {
-  return `html.dark .shiki span {
+export function highlightStylesTemplate(highlight: ResolvedHighlightOptions) {
+  const light = `.shiki span {
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+`
+  if (!highlight.themes.dark) return light
+
+  return `${light}html.dark .shiki span {
   color: var(--shiki-dark) !important;
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;

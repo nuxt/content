@@ -215,8 +215,8 @@ function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt)
     getContents: () => highlightTemplate(highlight, resolve('./runtime/server/internal/highlight')),
   })
 
-  if (highlight && highlight.themes.dark) {
-    const styles = addTemplate({ filename: 'content/highlight.css', getContents: highlightStylesTemplate, write: true })
+  if (highlight) {
+    const styles = addTemplate({ filename: 'content/highlight.css', getContents: () => highlightStylesTemplate(highlight), write: true })
     nuxt.options.css.push(styles.dst)
   }
 }
