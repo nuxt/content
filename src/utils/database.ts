@@ -6,7 +6,7 @@ import { isAbsolute, join, dirname } from 'pathe'
 import { isWebContainer } from '@webcontainer/env'
 import type { CacheEntry, D1DatabaseConfig, LocalDevelopmentDatabase, ResolvedCollection, SqliteDatabaseConfig } from '../types'
 import type { ModuleOptions, SQLiteConnector } from '../types/module'
-import { generateCollectionInsert, generateCollectionTableDefinition } from './collection'
+import { DEFAULT_TABLE_PREFIX, generateCollectionInsert, generateCollectionTableDefinition } from './collection'
 import { isNodeSqliteAvailable, ensurePackageInstalled } from './dependencies'
 
 /**
@@ -167,11 +167,14 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     }
   }
 
-  const dropContentTables = async () => {
-    const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
-      .all('table', '_content_%') as { name: string }[]
+  const dropContentTables = async (prefix: string = DEFAULT_TABLE_PREFIX) => {
+    // Filter in JS: `_` is a LIKE wildcard, and the prefix may contain several of them
+    const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ?')
+      .all('table') as { name: string }[]
     for (const { name } of tables) {
-      db.exec(`DROP TABLE ${name}`)
+      if (name.startsWith(prefix)) {
+        db.exec(`DROP TABLE ${name}`)
+      }
     }
   }
 

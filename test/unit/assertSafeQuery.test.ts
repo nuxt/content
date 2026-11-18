@@ -6,7 +6,10 @@ import { collectionQueryBuilder } from '../../src/runtime/internal/query'
 vi.mock('#content/manifest', () => ({
   tables: {
     test: '_content_test',
+    // collection built with a custom `tablePrefix`
+    prefixed: '_preview_main_prefixed',
   },
+  tablePrefix: '_content_',
 }))
 const mockFetch = vi.fn().mockResolvedValue(Promise.resolve([{}]))
 const mockCollection = 'test' as never
@@ -274,5 +277,26 @@ describe('decompressSQLDump', () => {
     const started = Date.now()
     expect(() => assertSafeQuery(sql, 'test')).toThrow()
     expect(Date.now() - started).toBeLessThan(500)
+  })
+
+  describe('custom table prefix', () => {
+    it('accepts the table name from the manifest', () => {
+      expect(() => assertSafeQuery('SELECT * FROM _preview_main_prefixed ORDER BY stem ASC', 'prefixed')).not.toThrow()
+    })
+
+    it('rejects the default table name of a prefixed collection', () => {
+      expect(() => assertSafeQuery('SELECT * FROM _content_prefixed ORDER BY stem ASC', 'prefixed'))
+        .toThrow('Invalid query: Collection \'prefixed\' does not exist')
+    })
+
+    it('rejects a table of another collection and names it', () => {
+      expect(() => assertSafeQuery('SELECT * FROM _preview_main_prefixed ORDER BY stem ASC', 'test'))
+        .toThrow('Invalid query: Collection \'prefixed\' does not exist')
+    })
+
+    it('rejects a collection that is not in the manifest', () => {
+      expect(() => assertSafeQuery('SELECT * FROM _content_unknown ORDER BY stem ASC', 'unknown'))
+        .toThrow('Invalid query: Collection \'unknown\' does not exist')
+    })
   })
 })

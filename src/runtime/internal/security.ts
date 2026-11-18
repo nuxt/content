@@ -1,3 +1,5 @@
+import { tables, tablePrefix } from '#content/manifest'
+
 const SQL_COUNT_REGEX = /^COUNT\((DISTINCT )?([a-z_]\w+|\*)\) as count$/i
 
 /**
@@ -143,6 +145,11 @@ function parseSelectQuery(sql: string): ParsedSelectQuery | null {
   return { select, from, where, orderBy, order, limit, offset }
 }
 
+function getCollectionNameFromTable(table: string) {
+  return Object.keys(tables).find(name => tables[name] === table)
+    ?? (table.startsWith(tablePrefix) ? table.slice(tablePrefix.length) : table)
+}
+
 /**
  * Assert that the query is safe
  * A query will consider safe if it matched the output pattern of query builder
@@ -192,9 +199,8 @@ export function assertSafeQuery(sql: string, collection: string) {
   }
 
   // FROM
-  if (from !== `_content_${collection}`) {
-    const collection = String(from || '').replace(/^_content_/, '')
-    throw new Error(`Invalid query: Collection '${collection}' does not exist`)
+  if (!from || from !== tables[collection]) {
+    throw new Error(`Invalid query: Collection '${getCollectionNameFromTable(String(from || ''))}' does not exist`)
   }
 
   // WHERE must be exactly what collectionQueryBuilder emits: quoted fields,

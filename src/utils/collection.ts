@@ -8,8 +8,20 @@ import { logger } from './dev'
 import nuxtContentContext from './context'
 import { formatDate, formatDateTime } from './content/transformers/utils'
 
-export function getTableName(name: string) {
-  return `_content_${name}`
+export const DEFAULT_TABLE_PREFIX = '_content_'
+
+export function resolveTablePrefix(prefix?: string) {
+  if (prefix === undefined || prefix === '') {
+    return DEFAULT_TABLE_PREFIX
+  }
+  if (!/^[a-z_]\w*$/i.test(prefix)) {
+    throw new Error(`[@nuxt/content] Invalid \`tablePrefix\` "${prefix}": it must start with a letter or an underscore and only contain letters, digits and underscores.`)
+  }
+  return prefix
+}
+
+export function getTableName(name: string, prefix: string = DEFAULT_TABLE_PREFIX) {
+  return `${prefix}${name}`
 }
 
 export function defineCollection<T>(collection: Collection<T>): DefinedCollection {
@@ -52,7 +64,14 @@ export function defineCollectionSource(source: CustomCollectionSource): Resolved
   }
 }
 
-export function resolveCollection(name: string, collection: DefinedCollection): ResolvedCollection | undefined {
+export interface ResolveCollectionOptions {
+  /**
+   * Prefix of the collection table name, already validated with `resolveTablePrefix`
+   */
+  tablePrefix?: string
+}
+
+export function resolveCollection(name: string, collection: DefinedCollection, opts: ResolveCollectionOptions = {}): ResolvedCollection | undefined {
   if (/^[a-z_]\w*$/i.test(name) === false) {
     logger.warn([
       `Collection name "${name}" is invalid. Collection names must be valid JavaScript identifiers. This collection will be ignored.`,
@@ -65,12 +84,12 @@ export function resolveCollection(name: string, collection: DefinedCollection): 
     ...collection,
     name,
     type: collection.type || 'page',
-    tableName: getTableName(name),
+    tableName: getTableName(name, opts.tablePrefix),
     private: name === 'info',
   }
 }
 
-export function resolveCollections(collections: Record<string, DefinedCollection>): ResolvedCollection[] {
+export function resolveCollections(collections: Record<string, DefinedCollection>, opts: ResolveCollectionOptions = {}): ResolvedCollection[] {
   collections.info = {
     type: 'data',
     source: undefined,
@@ -80,7 +99,7 @@ export function resolveCollections(collections: Record<string, DefinedCollection
   }
 
   return Object.entries(collections)
-    .map(([name, collection]) => resolveCollection(name, collection))
+    .map(([name, collection]) => resolveCollection(name, collection, opts))
     .filter(Boolean) as ResolvedCollection[]
 }
 

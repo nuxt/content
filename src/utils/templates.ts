@@ -242,6 +242,7 @@ export const manifestTemplate = (manifest: Manifest) => ({
         null,
         2,
       )}`,
+      `export const tablePrefix = ${JSON.stringify(options.manifest.tablePrefix)}`,
       '',
       'export default ' + JSON.stringify(collectionsMeta, null, 2),
     ].join('\n')

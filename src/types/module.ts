@@ -69,6 +69,18 @@ export interface ModuleOptions {
    */
   database: D1DatabaseConfig | SqliteDatabaseConfig | PostgreSQLDatabaseConfig | LibSQLDatabaseConfig | PGliteDatabaseConfig
   /**
+   * Prefix of every table the module creates in the database, collection tables and
+   * the internal `info` table included (`<prefix><collection>`).
+   *
+   * Use a distinct prefix for each deployment that shares one database, such as preview
+   * deployments of several branches bound to the same D1 database, so they don't overwrite
+   * each other's content. Must only contain letters, digits and underscores.
+   *
+   * Table names are resolved at build time: change it in `nuxt.config`, not through a runtime env variable.
+   * @default '_content_'
+   */
+  tablePrefix?: string
+  /**
    * Preview mode configuration
    * @default {}
    */

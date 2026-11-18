@@ -4,6 +4,7 @@ import { resolve, join } from 'pathe'
 import { provider } from 'std-env'
 import { logger } from '../utils/dev'
 import { definePreset } from '../utils/preset'
+import { DEFAULT_TABLE_PREFIX, getTableName } from '../utils/collection'
 import type { Nuxt } from 'nuxt/schema'
 import type { D1DatabaseConfig, LibSQLDatabaseConfig, PGliteDatabaseConfig, PostgreSQLDatabaseConfig, SqliteDatabaseConfig } from '~/dist/module.mjs'
 import cloudflarePreset from './cloudflare'
@@ -105,7 +106,8 @@ export default definePreset({
       await mkdir(resolve(nitroConfig.rootDir!, hubConfig.dir, 'db/queries'), { recursive: true })
       let i = 1
       // Drop info table and prepare for new dump
-      let dump = 'DROP TABLE IF EXISTS _content_info;'
+      const infoTable = options.manifest.collections.find(c => c.name === 'info')?.tableName ?? getTableName('info', options.manifest.tablePrefix || DEFAULT_TABLE_PREFIX)
+      let dump = `DROP TABLE IF EXISTS ${infoTable};`
       const dumpFiles: Array<{ file: string, content: string }> = []
       Object.values(options.manifest.dump).forEach((value) => {
         value.forEach((line) => {
