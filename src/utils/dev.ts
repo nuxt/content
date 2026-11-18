@@ -225,7 +225,7 @@ export function watchContents(nuxt: Nuxt, options: ModuleOptions, manifest: Mani
       collectionDump.splice(indexToUpdate, itemsToRemove)
     }
 
-    updateTemplates({
+    await updateTemplates({
       filter: template => [
         moduleTemplates.manifest,
         moduleTemplates.fullCompressedDump,
