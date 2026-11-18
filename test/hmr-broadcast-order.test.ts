@@ -79,13 +79,18 @@ describe('HMR broadcast', () => {
       updates++
     })
 
-    await fs.writeFile(join(contentDir, 'index.md'), '# Home updated\n')
-    await vi.waitFor(() => expect(templates.calls).toBe(1), { timeout: 10_000 })
-    // A client fetches the dump as soon as it hears the update, so the update must wait for the write.
-    expect(updates, 'update sent while the dump template was still being written').toBe(0)
+    try {
+      await fs.writeFile(join(contentDir, 'index.md'), '# Home updated\n')
+      await vi.waitFor(() => expect(templates.calls).toBe(1), { timeout: 10_000 })
+      // A client fetches the dump as soon as it hears the update, so the update must wait for the write.
+      expect(updates, 'update sent while the dump template was still being written').toBe(0)
 
-    templates.finish()
-    await vi.waitFor(() => expect(updates).toBe(1))
-    stopListening()
+      templates.finish()
+      await vi.waitFor(() => expect(updates).toBe(1))
+    }
+    finally {
+      stopListening()
+      templates.finish()
+    }
   }, 20_000)
 })
