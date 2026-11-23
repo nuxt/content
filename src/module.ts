@@ -1,6 +1,6 @@
-import { comarkContent, contentHub, generateSourceTypes, readArtifact } from 'comark-content'
+import { comarkContent, contentHub, generateSourceTypes, isParsedSource, readArtifact } from 'comark-content'
 import defu from 'defu'
-import type { CacheArtifact, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
+import type { CacheArtifact, ContentSource, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
 import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
@@ -394,6 +394,13 @@ function resolveInstanceNames(surface: ContentSurface): string[] {
   return [surface.name]
 }
 
+// The module surface serves dev and the build's content reads, where no snapshot exists yet.
+// Its `withSnapshot()` loaders need Nitro's `#imports`, so each read here would warn of a failed load.
+function withoutSnapshot(source: ContentSource | undefined): ContentSource | undefined {
+  if (source && isParsedSource(source) && source.__fromArtifact && source.origin) return source.origin
+  return source
+}
+
 async function cloneSurface(
   surface: ContentSurface,
   overrides: { basePath?: string, plugins?: NonNullable<AnyComarkContent['options']['plugins']> },
@@ -406,6 +413,7 @@ async function cloneSurface(
       const instance = surface.from(name)
       return comarkContent(instance.name, {
         ...instance.options,
+        source: withoutSnapshot(instance.options.source),
         // Fresh in-memory cache for the module/dev surface.
         cache: undefined,
         basePath: overrides.basePath ?? instance.options.basePath,
@@ -420,6 +428,7 @@ async function cloneSurface(
 
   return comarkContent(surface.name, {
     ...surface.options,
+    source: withoutSnapshot(surface.options.source),
     cache: undefined,
     basePath: overrides.basePath ?? surface.options.basePath,
     plugins: [
