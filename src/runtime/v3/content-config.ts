@@ -48,6 +48,7 @@ export function readContentConfigSources(
  * build-only APIs) and turned into sources at runtime.
  */
 export interface ResolvedContentCollection {
+  type: 'page' | 'data'
   schema?: JsonSchema
   sources: ResolvedSourceDescriptor[]
 }
@@ -78,6 +79,7 @@ export function resolveContentConfigCollections(
     // `data` collections keep only their own schema.
     const schema = collection.type === 'page' ? withPageDefaults(userSchema) : userSchema
     collections[name] = {
+      type: collection.type === 'data' ? 'data' : 'page',
       ...(schema ? { schema } : {}),
       sources: descriptors.map(descriptor => resolveDescriptor(descriptor, rootDir)),
     }
@@ -86,20 +88,23 @@ export function resolveContentConfigCollections(
 }
 
 /** Build one Comark source per resolved collection, keyed by collection name. */
-export function createContentConfigSources(collections: ResolvedContentCollections): Record<string, Source> {
-  const sources: Record<string, Source> = {}
-  for (const [name, { schema, sources: descriptors }] of Object.entries(collections)) {
+export function createContentConfigSources(collections: ResolvedContentCollections): Record<string, CollectionSource> {
+  const sources: Record<string, CollectionSource> = {}
+  for (const [name, { type, schema, sources: descriptors }] of Object.entries(collections)) {
+    let source: PrefixedSource
     // A collection maps to a single named source; multiple v3 descriptors are
     // merged into one so they stay queryable under the collection name.
     if (descriptors.length === 1) {
-      sources[name] = toSource(descriptors[0]!, schema)
-      continue
+      source = toSource(descriptors[0]!, schema)
     }
-    const children = descriptors.map(descriptor => toSource(descriptor))
-    const merged = mergeSources(children, schema)
-    // `merge` carries no prefix of its own; adopt the first descriptor's.
-    const prefix = descriptors.map(descriptor => descriptor.prefix).find(Boolean)
-    sources[name] = prefix ? { ...merged, prefix } : merged
+    else {
+      const children = descriptors.map(descriptor => toSource(descriptor))
+      const merged = mergeSources(children, schema)
+      // `merge` carries no prefix of its own; adopt the first descriptor's.
+      const prefix = descriptors.map(descriptor => descriptor.prefix).find(Boolean)
+      source = prefix ? { ...merged, prefix } : merged
+    }
+    sources[name] = { ...source, collectionType: type }
   }
   return sources
 }
@@ -108,6 +113,11 @@ export function createContentConfigSources(collections: ResolvedContentCollectio
 export interface PrefixedSource extends Source {
   /** The prefix of the source that serves `key`. */
   prefixOf?: (key: string) => Promise<string | undefined>
+}
+
+/** A collection's source, tagged with the v3 collection `type` that `file-meta` copies to `meta.collectionType`. */
+export interface CollectionSource extends PrefixedSource {
+  collectionType?: 'page' | 'data'
 }
 
 /**

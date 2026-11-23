@@ -1,7 +1,9 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { comarkContent, type Source } from 'comark-content'
+import yaml from 'comark-content/plugins/yaml'
 import { readContentConfigSources } from '../src/runtime/v3/content-config'
+import fileMeta from '../src/runtime/v3/file-meta'
 
 const configPath = fileURLToPath(new URL('./fixtures/content-config/content.config.ts', import.meta.url))
 
@@ -67,6 +69,18 @@ describe('readContentConfigSources', () => {
   it('adopts the first descriptor prefix for a merged source', async () => {
     const sources = loadSources()
     expect(sources.landing.prefix).toBe('/landing')
+  })
+
+  // Every collection is its own instance, so the file meta is what tells a `data` collection apart.
+  it('tags files with their collection type', async () => {
+    const sources = loadSources()
+    const list = async (name: FixtureCollection) => {
+      const content = comarkContent(name, { source: sources[name], plugins: [yaml(), fileMeta()] })
+      return (await content.list()).map(file => file.meta.collectionType)
+    }
+    expect(await list('blog')).toEqual(['page', 'page'])
+    expect(await list('landing')).toEqual(['page', 'page'])
+    expect(await list('index')).toEqual(['data'])
   })
 
   it('converts a data collection zod schema without injecting page defaults', async () => {
