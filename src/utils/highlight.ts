@@ -43,8 +43,10 @@ export async function resolveHighlightOptions(
 ): Promise<ResolvedHighlightOptions | false> {
   if (!highlight) return false
 
+  // Check and import from the same dirs: under pnpm, a layer's `shiki` only resolves from its `modulesDir`.
   const installed = await ensureDependencyInstalled('shiki', {
     rootDir: nuxt.options.rootDir,
+    searchPaths: nuxt.options.modulesDir,
     // Never prompt during `nuxi prepare` (commonly run from `postinstall`).
     prompt: nuxt.options._prepare ? false : undefined,
   })
@@ -69,7 +71,9 @@ export async function resolveHighlightOptions(
   const langs = [...new Set([...V3_DEFAULT_LANGS, ...(options.langs ?? []), ...(options.preload ?? [])])]
 
   // Unknown names would otherwise fail later, as unresolved imports in the Nitro build.
-  const { bundledThemes, bundledLanguages } = await importModule<typeof import('shiki')>('shiki', { url: directoryToURL(nuxt.options.rootDir) })
+  const { bundledThemes, bundledLanguages } = await importModule<typeof import('shiki')>('shiki', {
+    url: [nuxt.options.rootDir, ...nuxt.options.modulesDir].map(dir => directoryToURL(dir)),
+  })
   const knownTheme = (name?: string) => {
     if (!name || name in bundledThemes) return name
     logger.warn(`Unknown highlight theme \`${name}\`. See https://shiki.style/themes for the available themes.`)
