@@ -34,6 +34,20 @@ describe('content components', async () => {
       expect(link).toContain('href="https://nuxt.com"')
       expect(link).toContain('rel="nofollow"')
     })
+
+    it('keeps the `rel` an external link sets', async () => {
+      const html = await $fetch<string>('/')
+      expect(findLink(html, 'Sponsored link')).toContain('rel="sponsored"')
+      expect(findLink(html, 'Nofollow link')).toContain('rel="nofollow"')
+    })
+  })
+
+  // Editors and agent adapters stringify the stored document: it must not include the added `rel`.
+  it('stringifies links back to the markdown the author wrote', async () => {
+    const markdown = await $fetch<string>('/api/markdown', { responseType: 'text' })
+    expect(markdown).toContain('[External link](https://nuxt.com)\n')
+    expect(markdown).toContain('[Sponsored link](https://sponsor.dev){rel="sponsored"}')
+    expect(markdown).toContain('[Nofollow link](https://nofollow.dev){rel="nofollow"}')
   })
 
   it('renders a bundled component from `components/content`', async () => {

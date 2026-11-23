@@ -5,7 +5,7 @@ import toc from 'comark/plugins/toc'
 import titleDescription from 'comark/plugins/title-description'
 import headingLinks from 'comark/plugins/heading-links'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
-import externalLinks from './internal/external-links'
+import externalLinks from 'comark/plugins/external-links'
 import { highlight } from '#content/highlight'
 
 export type ContentInstance = AnyComarkContent

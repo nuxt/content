@@ -9,6 +9,11 @@ overrides:
   "@nuxt/content": "link:."
   # postcss-merge-rules@9.1 uses `sameContainer`, added in cssnano-utils@8.2.0, but declares ^8.1.0
   "postcss-merge-rules@9>cssnano-utils": ^8.2.0
+  # `external-links` plugin from comarkdown/comark#599, until it's released. One copy for every dependent.
+  comark: https://pkg.pr.new/comark@0b5d53f
+
+# The `comark` override above is a URL, which pnpm blocks below the top level. Remove both once comark is released.
+blockExoticSubdeps: false
 
 allowBuilds:
   "@parcel/watcher": false

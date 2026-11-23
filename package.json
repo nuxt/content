@@ -55,7 +55,7 @@
     "@comark/vue": "^0.9.1",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "@nuxt/kit": "^4.6.4",
-    "comark": "^0.9.1",
+    "comark": "https://pkg.pr.new/comark@0b5d53f",
     "defu": "^6.1.7",
     "forges": "^0.3.2",
     "jiti": "^2.7.0"
