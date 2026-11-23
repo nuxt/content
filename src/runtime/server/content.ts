@@ -36,11 +36,10 @@ function snapshotLoaders(name: string) {
   // While prerendering they don't exist yet: fall back to the origin source so
   // the handler can produce them.
   // `useStorage` is imported explicitly, since Nitro doesn't auto-import in an installed module,
-  // and dynamically, since this file is also loaded in the module process, without `#imports`.
+  // and dynamically, since this file is also loaded in the module process, without Nitro's runtime.
+  // Not from `#imports`: imported dynamically, Rollup warns about its unused auto-imports of external modules.
   const storage = async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - `#imports` is typed only under the Nitro tsconfig
-    const { useStorage } = await import('#imports')
+    const { useStorage } = await import('nitropack/runtime')
     return useStorage('assets:content')
   }
   return {
