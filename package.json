@@ -23,6 +23,7 @@
     },
     "./v3": "./dist/runtime/v3/index.js",
     "./content": "./dist/runtime/server/content.js",
+    "./app": "./dist/runtime/client-content/app.js",
     "./utils": "./dist/runtime/utils/index.js",
     "./server": "./dist/runtime/v3/composables.server.js"
   },

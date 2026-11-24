@@ -108,7 +108,21 @@ export default defineNuxtModule<ModuleOptions>({
     addServerImports({ name: 'content', from: contentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
 
-    const clientContentPath = resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
+    // `app/content.ts` configures the browser instance, as `server/content.ts` does the server one.
+    const appContentPath = join(nuxt.options.srcDir, 'content')
+    let hasAppContent = existsSync(`${appContentPath}.ts`)
+    if (hasAppContent && (options.mode !== 'hybrid' || options.compatibilityVersion !== 4)) {
+      logger.warn('`app/content.ts` is only used with `mode: \'hybrid\'` and `compatibilityVersion: 4`, ignoring it.')
+      hasAppContent = false
+    }
+    nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
+    if (hasAppContent) {
+      // `createNuxtContent()` is synchronous, so it can't fetch the manifest to know the instances.
+      nuxt.options.vite.define = defu(nuxt.options.vite.define, {
+        'import.meta.content.sources': JSON.stringify(content ? resolveInstanceNames(content) : []),
+      })
+    }
+    const clientContentPath = hasAppContent ? appContentPath : resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
     addImports({ name: 'content', from: clientContentPath })
     addComponent({ name: 'ContentDocument', filePath: resolve('./runtime/components/ContentDocument') })
     // `@comark/vue` only has a named export; `addComponent` would otherwise import `default`.
