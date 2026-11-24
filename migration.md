@@ -67,6 +67,10 @@ export const content = createNuxtContent({
 })
 ```
 
+### Sources provided by a layer
+
+A layer's `server/content.ts` is used when the project has none: the project's file comes first, then each layer's by priority. Without any `server/content.ts`, the v3 `content.config.ts` files of every layer are merged as before. With `content.compatibilityVersion: 4`, `content.config.ts` files are ignored, with a warning.
+
 ## App config
 
 Plugins passed to `server/content.ts` only run on the server. In hybrid mode, the browser has its own content instance, loaded from the prerendered snapshot. With `compatibilityVersion: 4`, add plugins to it in `app/content.ts`:

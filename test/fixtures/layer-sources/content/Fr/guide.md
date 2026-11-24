@@ -1,0 +1,3 @@
+# Guide
+
+Page en français.

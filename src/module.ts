@@ -6,7 +6,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
-import { importContent } from './utils/config'
+import { importContent, resolveContentEntry } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
@@ -47,16 +47,15 @@ export default defineNuxtModule<ModuleOptions>({
       options.mode = 'hybrid'
     }
 
-    const hasServerContent = existsSync(resolve(nuxt.options.serverDir, 'content.ts'))
-    const contentConfigPaths = hasServerContent ? [] : resolveLayerContentConfigs(nuxt)
+    const entry = resolveContentEntry(nuxt, options.compatibilityVersion!)
     // Evaluated here (not at runtime) so configs may use build-time APIs such as `useNuxt()`.
     const contentCollections: ResolvedContentCollections = Object.assign(
       {},
-      ...contentConfigPaths.map(path => resolveContentConfigCollections(path)),
+      ...(entry.type === 'config' ? entry.paths : []).map(path => resolveContentConfigCollections(path)),
     )
-    const contentPath = hasServerContent
-      ? resolve(nuxt.options.serverDir, 'content')
-      : contentConfigPaths.length
+    const contentPath = entry.type === 'server'
+      ? entry.path
+      : entry.type === 'config'
         ? resolve('./runtime/server/internal/content-config')
         : resolve('./runtime/server/internal/fallback-content')
 
@@ -208,18 +207,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (content && 'media' in content && content.media) setupMedia(content as ContentWithMedia & MediaMethods, nuxt)
   },
 })
-
-/**
- * Collect the v3 `content.config.ts` of every layer, ordered from lowest to
- * highest priority (the project itself comes last) so later configs override
- * collections of the same name — matching v3's layer behaviour.
- */
-function resolveLayerContentConfigs(nuxt: Nuxt): string[] {
-  return [...nuxt.options._layers]
-    .reverse()
-    .map(layer => join(layer.config.rootDir, 'content.config.ts'))
-    .filter((path, index, paths) => existsSync(path) && paths.indexOf(path) === index)
-}
 
 function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt) {
   const { resolve } = createResolver(import.meta.url)
