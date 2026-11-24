@@ -1,5 +1,5 @@
 import defu from 'defu'
-import { createResolver, defineNuxtModule, addTypeTemplate, addNitroPlugin, addServerHandler } from '@nuxt/kit'
+import { createResolver, defineNuxtModule, addTypeTemplate, addNitroPlugin, addServerHandler, getNitroVersion } from '@nuxt/kit'
 
 export default defineNuxtModule({
   meta: {
@@ -24,7 +24,8 @@ export default defineNuxtModule({
 
     if (contentRawMarkdown !== false) {
       addServerHandler({
-        route: '/raw/**:slug.md',
+        // TODO: use `/raw/**:slug` on Nitro 2 too once the minimum `@nuxt/kit` includes nuxt/nuxt#37155
+        route: getNitroVersion(nuxt) === 2 ? '/raw/**:slug.md' : '/raw/**:slug',
         handler: {
           nuxt: resolve('runtime/server/routes/raw/[...slug].md.get'),
           nitro2: resolve('runtime/server/routes/raw/[...slug].md.get.legacy'),

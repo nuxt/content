@@ -260,6 +260,9 @@ importers:
       remark-emoji:
         specifier: ^5.0.2
         version: 5.0.2
+      rou3:
+        specifier: ^1.0.0
+        version: 1.0.0
       typescript:
         specifier: 6.0.3
         version: 6.0.3
