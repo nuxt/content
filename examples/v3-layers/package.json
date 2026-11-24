@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@nuxt/content": "workspace:*",
-    "@nuxt/kit": "^4.6.4",
+    "@nuxt/kit": "^4.7.0",
     "@nuxtjs/i18n": "^10.6.0",
-    "nuxt": "^4.6.4",
+    "nuxt": "^4.7.0",
     "ufo": "^1.6.4"
   }
 }

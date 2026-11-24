@@ -7,6 +7,7 @@ import { readArtifact } from 'comark-content'
 // Imported explicitly: Nuxt doesn't auto-import into `node_modules`, and a bare `$fetch`
 // global isn't defined yet when this module's top-level `await` runs.
 import { $fetch } from '#imports'
+import { v3WasmPlugins } from '#content-wasm-plugins'
 
 async function hybridContentFactory(): Promise<ContentClient> {
   const v3 = import.meta.content.compatibilityVersion === 3
@@ -21,9 +22,8 @@ async function hybridContentFactory(): Promise<ContentClient> {
 
   // Browser hybrid mode: hydrate from the prerendered snapshot + WASM sqlite plugins.
   // One shared plugin set (one WASM database) so multi-instance FTS ranks correctly.
-  // `import.meta.content.compatibilityVersion` is a build-time define: when it isn't `3` the
-  // dynamic import is dead code and the sql-query + sqlite-wasm chunk isn't emitted.
-  const sharedPlugins = v3 ? (await import('../v3/content-plugins.wasm')).v3WasmPlugins() : []
+  // `#content-wasm-plugins` returns no plugins outside v3, so sqlite isn't bundled there.
+  const sharedPlugins = v3WasmPlugins()
 
   const artifact = await $fetch<CacheArtifact | Manifest>('/__nuxt_content/manifest.json')
   const manifest = isCacheArtifact(artifact)

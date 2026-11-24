@@ -69,10 +69,6 @@ export default defineNuxtModule<ModuleOptions>({
     // `getCurrentInstance()` is `null` in its renderer, and app components aren't visible to it.
     nuxt.options.build.transpile.push('@comark/vue')
 
-    nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
-      exclude: ['@sqlite.org/sqlite-wasm'],
-    })
-
     // `server/content.ts` imports `createNuxtContent` from `@nuxt/content/content`. Point it at
     // this module's runtime directly: the package export targets `dist/runtime/*.js`, which a
     // stubbed build (`nuxt-module-build build --stub`) doesn't emit.
@@ -153,6 +149,9 @@ export default defineNuxtModule<ModuleOptions>({
     })
     nuxt.options.alias['#content-components'] = componentsTemplateFile.dst
 
+    // A dynamic import deadlocks the client's top-level `await` on Nuxt 4.7; the stub keeps sqlite out of v4 bundles.
+    nuxt.options.alias['#content-wasm-plugins'] = resolve(`./runtime/v3/content-plugins.${options.compatibilityVersion === 3 ? 'wasm' : 'stub'}`)
+
     // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.
     addTypeTemplate({
       filename: 'content/client.d.ts',
@@ -169,6 +168,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.compatibilityVersion === 3) {
+      // Only the v3 WASM plugins load sqlite-wasm.
+      nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+        exclude: ['@sqlite.org/sqlite-wasm'],
+      })
       addComponent({ name: 'MDC', filePath: resolve('./runtime/v3/components/MDC') })
       addComponent({
         name: 'ContentRenderer',
@@ -194,7 +197,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Add types templates
      */
-    setupTypes(content, nuxt, contentCollections, readContent)
+    setupTypes(content, nuxt, contentCollections, readContent, options.compatibilityVersion === 3)
 
     /**
      * The following operation are for runtime and don't need to execute them in prepare mode
@@ -222,7 +225,7 @@ function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt)
   }
 }
 
-async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined) {
+async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
   const highlightTypes = addTypeTemplate({ filename: 'content/highlight.d.ts', getContents: highlightTypesTemplate })
 
@@ -244,7 +247,7 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, colle
     nitroTypeIncludes.push(
       addTypeTemplate({
         filename: 'content/types.d.ts',
-        getContents: () => generateContentTypes(content, collections, readContent),
+        getContents: () => generateContentTypes(content, collections, readContent, v3),
       }).dst,
     )
   }
@@ -278,7 +281,7 @@ function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['h
  * exists in the consuming project) doesn't drop the types of every collection:
  * it falls back to the schema declared in `content.config.ts`.
  */
-async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent?: ContentReader): Promise<string> {
+async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean): Promise<string> {
   const reads = await readContent?.()
   const instances = await Promise.all(resolveInstances(content).map(async (instance) => {
     let manifest: Manifest
@@ -297,7 +300,7 @@ async function generateContentTypes(content: ContentSurface, collections: Resolv
       manifest = { sources: [instance.name], items: {}, time: 0, schemas: { [instance.name]: schema } }
     }
     // Already initialized above; `generateSourceTypes` would otherwise re-init.
-    return { name: instance.name, hooks: withV3FieldTypes(instance.hooks), init: async () => {}, manifest: async () => manifest } as unknown as AnyComarkContent
+    return { name: instance.name, hooks: v3 ? withV3FieldTypes(instance.hooks) : instance.hooks, init: async () => {}, manifest: async () => manifest } as unknown as AnyComarkContent
   }))
 
   try {

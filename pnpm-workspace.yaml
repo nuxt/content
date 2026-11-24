@@ -24,14 +24,16 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - "@nuxt/cli@4.0.0"
-  - "@nuxt/kit@4.6.0"
-  - "@nuxt/nitro-server@4.6.0"
-  - "@nuxt/schema@4.6.0"
-  - "@nuxt/vite-builder@4.6.0"
-  - "@nuxt/vite-server@4.6.0"
-  - nuxt@4.6.0
+  - "@nuxt/kit@4.6.0 || 4.7.0"
+  - "@nuxt/nitro-server@4.6.0 || 4.7.0"
+  - "@nuxt/schema@4.6.0 || 4.7.0"
+  - "@nuxt/vite-builder@4.6.0 || 4.7.0"
+  - "@nuxt/vite-server@4.6.0 || 4.7.0"
+  - nuxt@4.6.0 || 4.7.0
   - cssnano-utils@8.2.0
   - "@comark/vue@0.9.1"
   - comark@0.9.1
   - comark-content@0.6.0
   - "@nuxt/test-utils@4.4.0"
+  - "@nuxt/nitro-v3-server@4.7.0"
+  - nitropack@2.14.0
