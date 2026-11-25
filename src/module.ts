@@ -19,8 +19,7 @@ import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type Content
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 
-// `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
-// default `ContentHub<readonly AnyComarkContent[]>` (its `query` is invariant in T).
+// `ContentHub<any>`: its `query` is invariant in T, so a hub over a mutable array isn't a `ContentHub<readonly AnyComarkContent[]>`.
 type ContentSurface = AnyComarkContent | ContentHub<any>
 type ContentWithMedia = ContentSurface & Partial<MediaMethods>
 
@@ -35,46 +34,59 @@ export default defineNuxtModule<ModuleOptions>({
     // Server handlers are written against `nuxt/server`.
     compatibility: { nuxt: '>=4.6.0' },
   },
-  // Default configuration options of the Nuxt module
   defaults: {
     watch: true,
     compatibilityVersion: 3,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
+
+    /**
+     * Options
+     */
     options.mode = options.mode || process.env.CONTENT_MODE as ModuleOptions['mode']
     if (!['hybrid', 'server-only'].includes(options.mode!)) {
       options.mode = 'hybrid'
     }
 
+    /**
+     * Entry files
+     */
     const entry = resolveContentEntry(nuxt, options.compatibilityVersion!)
+    const serverContentPath = entry.type === 'server'
+      ? entry.path
+      : entry.type === 'config'
+        ? resolve('./runtime/server/internal/content-config')
+        : resolve('./runtime/server/internal/fallback-content')
+    // `app/content.ts` configures the browser instance, as `server/content.ts` does the server one.
+    let appContentPath: string | undefined = join(nuxt.options.srcDir, 'content')
+    if (!existsSync(`${appContentPath}.ts`)) appContentPath = undefined
+    if (appContentPath && (options.mode !== 'hybrid' || options.compatibilityVersion !== 4)) {
+      logger.warn('`app/content.ts` is only used with `mode: \'hybrid\'` and `compatibilityVersion: 4`, ignoring it.')
+      appContentPath = undefined
+    }
+
+    /**
+     * Build config
+     */
     // Evaluated here (not at runtime) so configs may use build-time APIs such as `useNuxt()`.
     const contentCollections: ResolvedContentCollections = Object.assign(
       {},
       ...(entry.type === 'config' ? entry.paths : []).map(path => resolveContentConfigCollections(path)),
     )
-    const contentPath = entry.type === 'server'
-      ? entry.path
-      : entry.type === 'config'
-        ? resolve('./runtime/server/internal/content-config')
-        : resolve('./runtime/server/internal/fallback-content')
-
     const highlight = await resolveHighlightOptions(options.build?.markdown?.highlight, nuxt)
     setupHighlight(highlight, nuxt)
     const toc = resolveTocOptions(options.build?.markdown?.toc)
     const anchorLinks = setupAnchorLinks(options.renderer?.anchorLinks, nuxt)
 
-    // Bundle `@comark/vue` with the app so it shares the app's Vue on the server. Left external
-    // (e.g. with pnpm, where it isn't nested in this module's directory), it loads its own Vue:
-    // `getCurrentInstance()` is `null` in its renderer, and app components aren't visible to it.
+    // Bundled so it shares the app's Vue on the server: left external (pnpm), it loads its own and can't see app components.
     nuxt.options.build.transpile.push('@comark/vue')
 
-    // `server/content.ts` imports `createNuxtContent` from `@nuxt/content/content`. Point it at
-    // this module's runtime directly: the package export targets `dist/runtime/*.js`, which a
-    // stubbed build (`nuxt-module-build build --stub`) doesn't emit.
+    // Point the entries' imports at the runtime: the package exports target `dist/runtime/*.js`, which a stubbed build doesn't emit.
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
       '@nuxt/content/content': resolve('./runtime/server/content'),
     })
+    nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
 
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
@@ -85,9 +97,7 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.anchorLinks': JSON.stringify(anchorLinks),
     })
 
-    // The client content runtime uses top-level await. When its chunk is emitted
-    // outside `node_modules` (e.g. pages provided by a layer), Nitro's esbuild pass
-    // would otherwise reject it under its default `es2019` target.
+    // The client runtime uses top-level `await`, which Nitro's default `es2019` rejects in chunks outside `node_modules`.
     nuxt.options.nitro.esbuild = defu(nuxt.options.nitro.esbuild, {
       options: { target: 'es2022' },
     })
@@ -96,29 +106,33 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.compatibilityVersion': JSON.stringify(options.compatibilityVersion),
     })
 
-    const content = await setupContent(contentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
+    /**
+     * Server
+     */
+    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
     // A build reads every document once, shared by the types and components templates.
     const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
-    addServerImports({ name: 'content', from: contentPath })
+    addServerImports({ name: 'content', from: serverContentPath })
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
 
-    // `app/content.ts` configures the browser instance, as `server/content.ts` does the server one.
-    const appContentPath = join(nuxt.options.srcDir, 'content')
-    let hasAppContent = existsSync(`${appContentPath}.ts`)
-    if (hasAppContent && (options.mode !== 'hybrid' || options.compatibilityVersion !== 4)) {
-      logger.warn('`app/content.ts` is only used with `mode: \'hybrid\'` and `compatibilityVersion: 4`, ignoring it.')
-      hasAppContent = false
-    }
-    nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
-    if (hasAppContent) {
+    /**
+     * Browser
+     */
+    if (appContentPath) {
       // `createNuxtContent()` is synchronous, so it can't fetch the manifest to know the instances.
       nuxt.options.vite.define = defu(nuxt.options.vite.define, {
         'import.meta.content.sources': JSON.stringify(content ? resolveInstanceNames(content) : []),
       })
     }
-    const clientContentPath = hasAppContent ? appContentPath : resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
+    const clientContentPath = appContentPath ?? resolve(`./runtime/client-content/${options.mode === 'hybrid' ? 'hybrid' : 'server-only'}`)
     addImports({ name: 'content', from: clientContentPath })
+    // A dynamic import deadlocks the client's top-level `await` on Nuxt 4.7; the stub keeps sqlite out of v4 bundles.
+    nuxt.options.alias['#content-wasm-plugins'] = resolve(`./runtime/v3/content-plugins.${options.compatibilityVersion === 3 ? 'wasm' : 'stub'}`)
+
+    /**
+     * Components
+     */
     addComponent({ name: 'ContentDocument', filePath: resolve('./runtime/components/ContentDocument') })
     // `@comark/vue` only has a named export; `addComponent` would otherwise import `default`.
     addComponent({
@@ -127,10 +141,8 @@ export default defineNuxtModule<ModuleOptions>({
       filePath: fileURLToPath(import.meta.resolve('@comark/vue')),
     })
 
-    // Markdown component tags (`::counter`) resolve against this map. Nuxt only
-    // registers components lazily, so a runtime `resolveComponent` can't see them.
-    // Documents change live in dev (and `prepare` doesn't build), so only builds
-    // limit it to the components the documents use.
+    // Markdown tags (`::counter`) resolve against this map: Nuxt registers components lazily, so `resolveComponent` can't see them.
+    // Only builds limit it to the components the documents use, since documents change in dev.
     let usedComponents: Promise<Set<string> | undefined> | undefined
     const componentsTemplateFile = addTemplate({
       filename: 'content/components.mjs',
@@ -149,9 +161,9 @@ export default defineNuxtModule<ModuleOptions>({
     })
     nuxt.options.alias['#content-components'] = componentsTemplateFile.dst
 
-    // A dynamic import deadlocks the client's top-level `await` on Nuxt 4.7; the stub keeps sqlite out of v4 bundles.
-    nuxt.options.alias['#content-wasm-plugins'] = resolve(`./runtime/v3/content-plugins.${options.compatibilityVersion === 3 ? 'wasm' : 'stub'}`)
-
+    /**
+     * Dev HMR
+     */
     // Typed unconditionally so the HMR plugin typechecks; only generated and used when HMR is on.
     addTypeTemplate({
       filename: 'content/client.d.ts',
@@ -167,6 +179,9 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin({ src: resolve('./runtime/plugins/hmr.client'), mode: 'client' })
     }
 
+    /**
+     * v3 compatibility
+     */
     if (options.compatibilityVersion === 3) {
       // Only the v3 WASM plugins load sqlite-wasm.
       nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
@@ -195,18 +210,14 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     /**
-     * Add types templates
+     * Types
      */
     setupTypes(content, nuxt, contentCollections, readContent, options.compatibilityVersion === 3)
 
     /**
-     * The following operation are for runtime and don't need to execute them in prepare mode
+     * Media, skipped in prepare
      */
     if (nuxt.options._prepare) return
-
-    /**
-     * Register middleware for dev and prerender to serve medias
-     */
     if (content && 'media' in content && content.media) setupMedia(content as ContentWithMedia & MediaMethods, nuxt)
   },
 })
@@ -237,12 +248,10 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, colle
   nuxt.options.typescript = defu(nuxt.options.typescript, {
     tsConfig: { include: [importMetaTypes.dst, highlightTypes.dst] },
   })
-  // The generated types augment `comark-content`, a transitive dependency the
-  // project can't resolve on its own (pnpm) — the augmentation would be dropped.
+  // The types augment `comark-content`, which the project can't resolve on its own with pnpm.
   nuxt.options.typescript.hoist ||= []
   nuxt.options.typescript.hoist.push('comark-content')
 
-  // Generate types
   if (content) {
     nitroTypeIncludes.push(
       addTypeTemplate({
@@ -258,9 +267,8 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, colle
 }
 
 /**
- * v3 typed the page `seo` field as `{ title?, description? } & Record<string, any>`
- * so extra keys (`seo.ogImage`, `seo.meta`, …) type-check. Comark's JSON Schema
- * can't express open objects, so widen the rendered type instead.
+ * v3 typed `seo` as `{ title?, description? } & Record<string, any>`, so extra keys like `seo.ogImage` type-check.
+ * Comark's JSON Schema can't express open objects, so the rendered type is widened instead.
  */
 function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['hooks'] {
   return {
@@ -276,10 +284,8 @@ function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['h
 }
 
 /**
- * Generate the `ContentRegistry` augmentation. Each instance is initialized on its
- * own so one unreadable source (e.g. a layer whose `content/` directory only
- * exists in the consuming project) doesn't drop the types of every collection:
- * it falls back to the schema declared in `content.config.ts`.
+ * Generate the `ContentRegistry` augmentation.
+ * An unreadable source, such as a layer's missing `content/`, falls back to its declared schema instead of dropping every type.
  */
 async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean): Promise<string> {
   const reads = await readContent?.()
@@ -321,9 +327,8 @@ interface InstanceContent {
 type ContentReader = () => Promise<Map<string, Promise<InstanceContent>>>
 
 /**
- * Read every instance fully from its source of truth, once. Types and components both
- * need the content on build: separately, a forced `init()` for the types and a full
- * one for the snapshot would walk and parse every source twice.
+ * Read every instance fully from its source, once.
+ * Types and components both need it on build; reading for each would parse every source twice.
  */
 function createContentReader(content: ContentSurface): ContentReader {
   let reads: Map<string, Promise<InstanceContent>> | undefined
@@ -343,8 +348,8 @@ function createContentReader(content: ContentSurface): ContentReader {
 }
 
 /**
- * Names of the components used by the documents of every instance. `undefined` when
- * a source can't be read: every project component is kept then, so documents still render.
+ * Names of the components the documents use.
+ * `undefined` when a source can't be read, so every project component is kept.
  */
 async function collectUsedComponents(readContent: ContentReader): Promise<Set<string> | undefined> {
   try {
@@ -369,9 +374,8 @@ function resolveInstances(surface: ContentSurface): AnyComarkContent[] {
 }
 
 /**
- * Push watched content changes to the browser over Vite's HMR channel. The
- * client plugin (`runtime/plugins/hmr.client`) patches the in-browser instance
- * and refreshes `useAsyncData`.
+ * Push watched content changes to the browser over Vite's HMR channel.
+ * `runtime/plugins/hmr.client` patches the browser instance and refreshes `useAsyncData`.
  */
 function setupHmr(content: ContentSurface, nuxt: Nuxt) {
   let send: ((event: string, data: unknown) => void) | undefined
@@ -398,8 +402,7 @@ function resolveInstanceNames(surface: ContentSurface): string[] {
   return [surface.name]
 }
 
-// The module surface serves dev and the build's content reads, where no snapshot exists yet.
-// Its `withSnapshot()` loaders need Nitro's `#imports`, so each read here would warn of a failed load.
+// The module surface reads before any snapshot exists, and `withSnapshot()` loaders need Nitro's `#imports`.
 function withoutSnapshot(source: ContentSource | undefined): ContentSource | undefined {
   if (source && isParsedSource(source) && source.__fromArtifact && source.origin) return source.origin
   return source
@@ -453,10 +456,8 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
     anchorLinks,
     contentEntryPath: resolve('./runtime/server/content'),
   })
-  // Dev server gets its own surface so plugins / basePath can differ without
-  // mutating the user-exported instance that Nitro will import later.
-  // Skip re-injecting v3 plugins when the export already went through
-  // createNuxtContent() (it installs them once with a shared database).
+  // A separate surface, so the dev plugins and `basePath` don't mutate the instance Nitro imports.
+  // `createNuxtContent()` already installed the v3 plugins with a shared database.
   const alreadyHasV3 = Boolean(imported.content && 'query' in imported.content)
   const content = await cloneSurface(imported.content, {
     basePath: '/__NCDEV__/__nuxt_content',
@@ -471,24 +472,14 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
     ...sourceNames.map(source => `/__nuxt_content/snapshot/${source}.json`),
   ])
 
-  /**
-   * Keep the prerendered snapshots in server assets so the server never has to
-   * request them: on serverless platforms public files only live on the CDN.
-   */
+  // Snapshots go to server assets too: on serverless platforms public files only live on the CDN.
   if (!nuxt.options.dev) {
     nuxt.hook('nitro:init', async (nitro) => {
       const dir = resolve(nuxt.options.buildDir, 'content/prerender')
       nitro.options.serverAssets.push({ baseName: 'content', dir })
       nitro.hooks.hook('prerender:generate', async (route) => {
-        if (!route.route.startsWith('/__nuxt_content')) {
-          /**
-           * If route is not related to the Content module we don't need to do aything
-           */
-          return
-        }
-        /**
-         * In server-only mode we don't keep snapshot in public assets
-         */
+        if (!route.route.startsWith('/__nuxt_content')) return
+        // Server-only mode keeps them private.
         if (options.mode === 'server-only') {
           route.skip = true
         }
@@ -504,7 +495,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
           await writeFile(resolve(dir, name, 'manifest.json'), route.contents!)
         }
         if (route.route.startsWith('/__nuxt_content/snapshot/')) {
-          const file = route.route.split('/').pop()! // e.g. content.json
+          const file = route.route.split('/').pop()!
           const name = file.replace(/\.json$/, '')
           await mkdir(resolve(dir, name), { recursive: true })
           await writeFile(resolve(dir, name, 'snapshot.json'), route.contents!)
@@ -532,9 +523,6 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
 
 function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
   const { resolve } = createResolver(import.meta.url)
-  /**
-   * Register middleware to serve content media files
-   */
   if (nuxt.options.dev) {
     addDevServerHandler({
       route: '/',
@@ -564,9 +552,6 @@ function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
     })
   }
 
-  /**
-   * Add media routes to prerender routes
-   */
   nuxt.hook('nitro:init', async (nitro) => {
     nitro.hooks.hook('prerender:routes', (routes) => {
       nitro.hooks.hook('prerender:generate', async (route) => {
