@@ -74,6 +74,11 @@ export type ContentEntry = {
   type: 'fallback'
 }
 
+/** The first `app/<file>`, from the project then its layers by priority. */
+export function resolveLayerAppFile(nuxt: Nuxt, file: string): string | undefined {
+  return getLayerDirectories(nuxt).map(dirs => join(dirs.app, file)).find(path => existsSync(path))
+}
+
 /**
  * The first `server/content.ts`, from the project then its layers by priority.
  * Without one, the v3 `content.config.ts` of every layer, which `compatibilityVersion: 4` ignores.

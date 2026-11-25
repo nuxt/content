@@ -10,7 +10,7 @@ describe('app/content.ts', async () => {
     expect(html).toContain('The intro page.')
   })
 
-  it('adds its plugins to every instance of the browser hub that `content` reads', async () => {
+  it('adds its plugins to every instance of the browser hub that `content` reads, over a layer\'s file', async () => {
     const page = await createPage('/')
     expect(JSON.parse(await page.locator('#probes').textContent() ?? '')).toEqual({ docs: ['project'], blog: ['project'] })
     await page.close()

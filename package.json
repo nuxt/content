@@ -24,6 +24,7 @@
     "./v3": "./dist/runtime/v3/index.js",
     "./content": "./dist/runtime/server/content.js",
     "./app": "./dist/runtime/client-content/app.js",
+    "./worker": "./dist/runtime/client-content/worker.js",
     "./utils": "./dist/runtime/utils/index.js",
     "./server": "./dist/runtime/v3/composables.server.js"
   },
@@ -56,7 +57,7 @@
     "@nuxt/kit": "^4.7.0",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "comark": "https://pkg.pr.new/comark@0b5d53f",
-    "comark-content": "^0.6.2",
+    "comark-content": "https://pkg.pr.new/comark-content@cf8a861",
     "defu": "^6.1.7",
     "forges": "^0.3.2",
     "jiti": "^2.7.0"

@@ -25,6 +25,7 @@ import type {
   SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
+import type { SqliteFullTextSearchHubMethods } from 'comark-content/plugins/sqlite-full-text-search'
 import { content } from '#imports'
 
 type QueryableContent = (ComarkContent | ContentHub) & {
@@ -131,7 +132,7 @@ export function useSearchCollection<T extends keyof ContentRegistry>(
     }
     // Hub search takes (query, { instances }).
     if ('from' in searchable && typeof (searchable as ContentHub).from === 'function') {
-      return (searchable as ContentHub).search(query, { ...searchOpts, instances: collections })
+      return (searchable as unknown as SqliteFullTextSearchHubMethods).search(query, { ...searchOpts, instances: collections })
     }
     // Single-instance search takes (query, opts) only.
     return searchable.search(query, searchOpts)

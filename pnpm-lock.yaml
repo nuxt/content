@@ -185,6 +185,7 @@ overrides:
   '@nuxt/content': link:.
   postcss-merge-rules@9>cssnano-utils: ^8.2.0
   comark: https://pkg.pr.new/comark@0b5d53f
+  comark-content: https://pkg.pr.new/comark-content@cf8a861
 
 importers:
 
@@ -203,8 +204,8 @@ importers:
         specifier: https://pkg.pr.new/comark@0b5d53f
         version: https://pkg.pr.new/comark@0b5d53f(shiki@4.6.0)
       comark-content:
-        specifier: ^0.6.2
-        version: 0.6.2(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
+        specifier: https://pkg.pr.new/comark-content@cf8a861
+        version: https://pkg.pr.new/comark-content@cf8a861(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
       defu:
         specifier: ^6.1.7
         version: 6.1.7
@@ -297,8 +298,8 @@ importers:
         specifier: link:../..
         version: link:../..
       comark-content:
-        specifier: ^0.6.2
-        version: 0.6.2(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
+        specifier: https://pkg.pr.new/comark-content@cf8a861
+        version: https://pkg.pr.new/comark-content@cf8a861(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2)))
       nuxt:
         specifier: ^4.7.0
         version: 4.7.0(58168c37520f52aa720a3fd946e5719d)
@@ -3703,8 +3704,9 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.6.2:
-    resolution: {integrity: sha512-LqWmTQYHCHwlWolCVad0ErzBWNiJxQdWRC8m5+z/htOB6YrVpuIScCicoMh3Yk9tPnNWQyVQd5JL+sm9acqUFA==}
+  comark-content@https://pkg.pr.new/comark-content@cf8a861:
+    resolution: {integrity: sha512-E+7Vm1t8zKYeRo8pYZJHDbQLa0fFUHHt4MXBLEJ8WdB80uI/3OtoY4HZlJrXxyLicepLY/G4OrB1BVSkhr6Lhg==, tarball: https://pkg.pr.new/comark-content@cf8a861}
+    version: 0.6.3
     hasBin: true
     peerDependencies:
       forges: ^0.3.0
@@ -11045,7 +11047,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.6.2(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))):
+  comark-content@https://pkg.pr.new/comark-content@cf8a861(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)(ioredis@5.11.1(supports-color@10.2.2))):
     dependencies:
       comark: https://pkg.pr.new/comark@0b5d53f(shiki@4.6.0)
       hookable: 6.1.2

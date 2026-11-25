@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess } from 'node:child_process'
-import { cpSync, readFileSync, rmSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { afterAll, beforeAll, describe, it, expect } from 'vitest'
@@ -63,6 +63,11 @@ describe('sources provided by a layer', async () => {
     expect(page('en')).toContain('English landing page.')
     expect(page('en/docs/getting-started')).toContain('English docs page.')
     expect(page('fr/guide')).toContain('Page en français.')
+  })
+
+  // Only `app/content.worker.ts` reads them in the browser.
+  it('keeps the snapshots out of the public files without a content worker', () => {
+    expect(existsSync(join(useTestContext().nuxt!.options.nitro.output!.dir!, 'static/__nuxt_content'))).toBe(false)
   })
 
   it('types the layer\'s source with its declared schema', () => {

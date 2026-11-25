@@ -12,7 +12,7 @@ declare global {
     readonly content: {
       /** Resolved `content.compatibilityVersion`. With `3`, v3 query/search composables are enabled and sql-query + FTS plugins are injected into the Content instance. */
       readonly compatibilityVersion: 3 | 4
-      /** Names of the content instances, defined for `app/content.ts` in the app build. */
+      /** Names of the content instances, defined for `app/content.ts` and `app/content.worker.ts` in the app build. */
       readonly sources: string[]
       /** Resolved `content.build.markdown.highlight` options, `false` when highlighting is disabled. */
       readonly highlight: false | { themes: { light?: string, dark?: string }, langs: string[] }

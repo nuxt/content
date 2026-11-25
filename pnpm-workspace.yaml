@@ -11,8 +11,10 @@ overrides:
   "postcss-merge-rules@9>cssnano-utils": ^8.2.0
   # `external-links` plugin from comarkdown/comark#599, until it's released. One copy for every dependent.
   comark: https://pkg.pr.new/comark@0b5d53f
+  # `comark-content/worker` and `buildSearchIndex()` from comarkdown/comark-content#172, until it's released.
+  comark-content: https://pkg.pr.new/comark-content@cf8a861
 
-# The `comark` override above is a URL, which pnpm blocks below the top level. Remove both once comark is released.
+# The `comark` and `comark-content` overrides above are URLs, which pnpm blocks below the top level. Remove this once both are released.
 blockExoticSubdeps: false
 
 allowBuilds:

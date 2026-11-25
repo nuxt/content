@@ -13,7 +13,7 @@ readonly rootDir: string
 readonly content: {
 /** Resolved \`content.compatibilityVersion\`. With \`3\`, v3 query/search composables are enabled and sql-query + FTS plugins are injected into the Content instance. */
 readonly compatibilityVersion: 3 | 4
-/** Names of the content instances, defined for \`app/content.ts\` in the app build. */
+/** Names of the content instances, defined for \`app/content.ts\` and \`app/content.worker.ts\` in the app build. */
 readonly sources: string[]
 /** Collections resolved at build time from the v3 \`content.config.ts\` of every layer. */
 readonly collections: import('@nuxt/content/v3').ResolvedContentCollections
