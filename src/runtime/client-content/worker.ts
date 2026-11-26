@@ -25,7 +25,7 @@ export function createNuxtContentWorker<T extends NuxtContentWorkerOptions>(opti
  * @internal
  */
 export function startNuxtContentWorker(options: NuxtContentWorkerOptions, names: string[], baseURL: string) {
-  serveContentWorker(() => contentHub(
+  serveContentWorker(contentHub(
     names.map(name => comarkContent(name, {
       source: snapshot(`${baseURL.replace(/\/?$/, '/')}__nuxt_content/snapshot/${name}.json`),
       plugins: options.plugins,

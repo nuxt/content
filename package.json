@@ -57,7 +57,7 @@
     "@nuxt/kit": "^4.7.0",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "comark": "https://pkg.pr.new/comark@0b5d53f",
-    "comark-content": "https://pkg.pr.new/comark-content@cf8a861",
+    "comark-content": "https://pkg.pr.new/comark-content@ec7a084",
     "defu": "^6.1.7",
     "forges": "^0.3.2",
     "jiti": "^2.7.0"
