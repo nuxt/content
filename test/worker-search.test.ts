@@ -65,7 +65,7 @@ describe('search in a web worker, on a static host', async () => {
     // Nobody searched yet: `onNuxtReady()` started the hydration.
     await page.locator('#status', { hasText: 'ready' }).waitFor({ timeout: 30_000 })
 
-    type Worker = { search: (q: string, o?: object) => Promise<SearchResult[]>, get: (key: string) => Promise<{ meta: { title: string } } | null>, instances: { value: string[] } }
+    type Worker = { search: (q: string, o?: object) => Promise<SearchResult[]>, get: (key: string) => Promise<{ meta: { title: string } } | null>, instances: { value: string[] }, statuses: string[] }
     const search = (query: string, opts?: object) => page.evaluate(
       ([query, opts]) => (window as unknown as { __worker: Worker }).__worker.search(query as string, opts as object),
       [query, opts] as const,
@@ -75,6 +75,14 @@ describe('search in a web worker, on a static host', async () => {
 
     // Only the selected instance, as Docus selects the current locale's source.
     expect(await snapshots()).toEqual(['/__nuxt_content/snapshot/docs.json'])
+
+    // Reads on a ready worker leave `status` alone, or `<UContentSearch>` would search again forever.
+    const statuses = () => page.evaluate(() => [...(window as unknown as { __worker: Worker }).__worker.statuses])
+    const before = await statuses()
+    await search('wombat')
+    await search('nothing-matches')
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 50)))
+    expect(await statuses()).toEqual(before)
     const docs = await search('wombat')
     expect(docs.map(result => result.id).sort()).toEqual(['/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
     expect(docs.find(result => result.id === '/docs/en/install#configure-the-worker')).toMatchObject({

@@ -118,8 +118,10 @@ export function useNuxtContentWorker(options: UseNuxtContentWorkerOptions = {}):
 
   function ready() {
     if (import.meta.server) throw new Error('`useNuxtContentWorker()` reads in the browser only.')
-    // Keeps `status` accurate; the worker loads the instances on the first read anyway.
-    warmup().catch(() => {})
+    // Warms up only when it hasn't, or after a failure: `<UContentSearch>` searches again each time `status` turns `ready`.
+    if (status.value === 'idle' || status.value === 'error') warmup().catch(() => {})
+    // A worker dropped after a failure restarts on the next read.
+    else start()
   }
 
   return {

@@ -4,10 +4,14 @@ const { data: page } = await useAsyncData('install', () => content.get('/docs/en
 const instances = ref(['docs'])
 const { status, warmup, search, get } = useNuxtContentWorker({ instances })
 
+// Every value `status` takes: `<UContentSearch>` searches again each time it turns `ready`.
+const statuses: string[] = []
+watch(status, value => statuses.push(value))
+
 // Hydrate the worker once the page is idle, so the first query is answered from a ready index.
 onNuxtReady(warmup)
 onMounted(() => Object.assign(window, {
-  __worker: { search, get, instances },
+  __worker: { search, get, instances, statuses },
   // Never called: Vite bundles it all the same.
   __otherWorker: () => new Worker(new URL('./other.worker.ts', import.meta.url), { type: 'module' }),
 }))
