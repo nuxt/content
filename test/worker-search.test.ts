@@ -141,4 +141,16 @@ describe('search in a web worker, on a static host', async () => {
     await page.close()
   })
 
+  it('starts a new worker after the previous one failed', { timeout: 60_000 }, async () => {
+    const page = await browser.newPage()
+    // The worker script fails to load once, as on a flaky network.
+    await page.route('**/_nuxt/content-worker-*.js', route => route.abort(), { times: 1 })
+    await page.goto(url)
+    await page.locator('#status', { hasText: 'error' }).waitFor({ timeout: 30_000 })
+
+    const ids = await page.evaluate(() => (window as unknown as { __worker: { search: (q: string) => Promise<SearchResult[]> } }).__worker.search('wombat').then(results => results.map(result => result.id).sort()))
+    expect(ids).toEqual(['/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
+    await page.locator('#status', { hasText: 'ready' }).waitFor()
+    await page.close()
+  })
 })

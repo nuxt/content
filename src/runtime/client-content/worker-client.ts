@@ -37,6 +37,7 @@ export interface NuxtContentWorker {
 /** Instances loaded or loading in the worker, shared by every `useNuxtContentWorker()`. */
 const warmed = new Map<string, Promise<void>>()
 let worker: ContentWorker | undefined
+let hmr = false
 
 // The worker answers `handler()` requests, so the client is the one `server-only.ts` uses over HTTP.
 const clientOptions = {
@@ -52,14 +53,23 @@ const client = (name: string) => bound.get(name) ?? bound.set(name, createConten
 /** Created on the first call, so a page that never reads it doesn't download the worker. */
 function start() {
   if (worker) return
-  worker = connectContentWorker(
-    // Vite bundles the generated entry as its own chunk. A `#` alias would be read as a URL hash.
-    new Worker(new URL('@nuxt/content/worker-entry', import.meta.url), { type: 'module', name: 'nuxt-content' }),
-  )
+  // Vite bundles the generated entry as its own chunk. A `#` alias would be read as a URL hash.
+  const instance = new Worker(new URL('@nuxt/content/worker-entry', import.meta.url), { type: 'module', name: 'nuxt-content' })
+  const connection = worker = connectContentWorker(instance)
+  // A failed connection rejects every later call: drop it, so the next call starts a new worker.
+  const reset = () => {
+    if (worker !== connection) return
+    connection.terminate()
+    worker = undefined
+    warmed.clear()
+  }
+  instance.addEventListener('error', reset)
+  instance.addEventListener('messageerror', reset)
 
-  if (import.meta.hot) {
-    import.meta.hot.on(HMR_UPDATE_EVENT, payload => worker!.update(payload))
-    import.meta.hot.on(HMR_REMOVE_EVENT, payload => worker!.remove(payload))
+  if (import.meta.hot && !hmr) {
+    hmr = true
+    import.meta.hot.on(HMR_UPDATE_EVENT, payload => worker?.update(payload))
+    import.meta.hot.on(HMR_REMOVE_EVENT, payload => worker?.remove(payload))
   }
 }
 
