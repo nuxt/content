@@ -1,38 +1,11 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
-import { createServer, type Server } from 'node:http'
-import { extname, join } from 'node:path'
+import type { Server } from 'node:http'
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, describe, it, expect } from 'vitest'
 import { chromium, type Browser } from 'playwright-core'
 import { setup, useTestContext } from '@nuxt/test-utils/e2e'
-
-const TYPES: Record<string, string> = {
-  '.html': 'text/html',
-  '.js': 'text/javascript',
-  '.mjs': 'text/javascript',
-  '.css': 'text/css',
-  '.json': 'application/json',
-  '.wasm': 'application/wasm',
-}
-
-/** A static host: files from `dir`, `index.html` for directories, 404 for anything else. */
-function serveStatic(dir: string) {
-  return createServer(async (req, res) => {
-    const pathname = decodeURIComponent(new URL(req.url!, 'http://localhost').pathname)
-    for (const file of [join(dir, pathname), join(dir, pathname, 'index.html')]) {
-      try {
-        const body = await readFile(file)
-        res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' })
-        return res.end(body)
-      }
-      catch {
-        // Not this candidate.
-      }
-    }
-    res.writeHead(404).end()
-  })
-}
+import { serveStatic } from './fixtures/static-server'
 
 type SearchResult = { id: string, source: string, title: string, content: string }
 
@@ -64,6 +37,7 @@ describe('search in a web worker, on a static host', async () => {
   it('publishes the snapshots the worker hydrates from', () => {
     expect(existsSync(join(publicDir, '__nuxt_content/snapshot/docs.json'))).toBe(true)
     expect(existsSync(join(publicDir, '__nuxt_content/snapshot/blog.json'))).toBe(true)
+    expect(existsSync(join(publicDir, '__nuxt_content/manifest.json'))).toBe(true)
   })
 
   // sqlite-wasm references its own worker API and OPFS helper, which an in-memory database never loads.

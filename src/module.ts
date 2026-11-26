@@ -58,12 +58,15 @@ export default defineNuxtModule<ModuleOptions>({
         : resolve('./runtime/server/internal/fallback-content')
     // `app/content.ts` configures the browser instance, as `server/content.ts` does the server one.
     let appContentPath = resolveLayerAppFile(nuxt, 'content.ts')?.slice(0, -'.ts'.length)
-    if (appContentPath && (options.mode !== 'hybrid' || options.compatibilityVersion !== 4)) {
-      logger.warn('`app/content.ts` is only used with `mode: \'hybrid\'` and `compatibilityVersion: 4`, ignoring it. Use `app/content.worker.ts` for content in the browser in server-only mode.')
-      appContentPath = undefined
+    // `app/content.worker.ts` runs instances in a web worker.
+    let workerPath = resolveLayerAppFile(nuxt, 'content.worker.ts')
+    // Both are new in v4: the v3 compat layer has its own browser search.
+    if (options.compatibilityVersion !== 4 && (appContentPath || workerPath)) {
+      for (const file of [appContentPath && 'app/content.ts', workerPath && 'app/content.worker.ts'].filter(Boolean)) {
+        logger.warn(`\`${file}\` is only used with \`compatibilityVersion: 4\`, ignoring it.`)
+      }
+      appContentPath = workerPath = undefined
     }
-    // `app/content.worker.ts` runs instances in a web worker, hydrated from the public snapshots.
-    const workerPath = resolveLayerAppFile(nuxt, 'content.worker.ts')
 
     /**
      * Build config
@@ -109,7 +112,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Server
      */
-    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks, !!workerPath)
+    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks, !!(appContentPath || workerPath))
     // A build reads every document once, shared by the types and components templates.
     const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
@@ -547,8 +550,9 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
       nitro.options.serverAssets.push({ baseName: 'content', dir })
       nitro.hooks.hook('prerender:generate', async (route) => {
         if (!route.route.startsWith('/__nuxt_content')) return
-        // Server-only mode keeps them private, except the snapshots `app/content.worker.ts` hydrates from.
-        if (options.mode === 'server-only' && !(publicSnapshots && route.route.startsWith('/__nuxt_content/snapshot/'))) {
+        // Server-only mode keeps them private, except the manifest and snapshots `app/content.ts` and `app/content.worker.ts` hydrate from.
+        const browserArtifact = route.route === '/__nuxt_content/manifest.json' || route.route.startsWith('/__nuxt_content/snapshot/')
+        if (options.mode === 'server-only' && !(publicSnapshots && browserArtifact)) {
           route.skip = true
         }
 

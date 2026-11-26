@@ -5,6 +5,7 @@ const { data: page } = await useAsyncData('intro', () => content.get('/docs/intr
 const probes = ref<string>()
 
 onMounted(() => {
+  Object.assign(window, { __content: content })
   const hub = content as unknown as ContentHub<any>
   probes.value = JSON.stringify(Object.fromEntries(hub.names.map((name: string) => [name, (hub.from(name) as AnyComarkContent & { probes?: string[] }).probes])))
 })
