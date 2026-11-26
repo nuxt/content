@@ -6,7 +6,11 @@ const { status, warmup, search, get } = useNuxtContentWorker({ instances })
 
 // Hydrate the worker once the page is idle, so the first query is answered from a ready index.
 onNuxtReady(warmup)
-onMounted(() => Object.assign(window, { __worker: { search, get, instances } }))
+onMounted(() => Object.assign(window, {
+  __worker: { search, get, instances },
+  // Never called: Vite bundles it all the same.
+  __otherWorker: () => new Worker(new URL('./other.worker.ts', import.meta.url), { type: 'module' }),
+}))
 </script>
 
 <template>

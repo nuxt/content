@@ -264,7 +264,7 @@ async function setupWorker(workerPath: string, names: string[], nuxt: Nuxt) {
   nuxt.options.vite.worker = {
     ...nuxt.options.vite.worker,
     // Vite flattens nested and pending plugin lists, so the app's are kept as one entry.
-    plugins: () => [workerPlugins?.(), sqliteWorkerFilesPlugin()],
+    plugins: () => [workerPlugins?.(), sqliteWorkerFilesPlugin(entry.dst)],
   }
 }
 
@@ -273,14 +273,19 @@ async function setupWorker(workerPath: string, names: string[], nuxt: Nuxt) {
  * An in-memory database loads neither, so they throw instead; sqlite-wasm catches the failed OPFS install.
  * TODO: use the plugin from comark-content once it ships there.
  */
-function sqliteWorkerFilesPlugin() {
+function sqliteWorkerFilesPlugin(entry: string) {
   const files = /new URL\("(sqlite3-worker1\.mjs|sqlite3-opfs-async-proxy\.js)", import\.meta\.url\)/
+  // Vite creates the worker plugins for each worker bundle: only the content worker's rewrites, the app's other workers keep both files.
+  let active = false
   return {
     name: 'nuxt-content:sqlite-worker-files',
     enforce: 'pre' as const,
+    buildStart(options: { input: string[] | Record<string, string> }) {
+      active = Object.values(options.input).includes(entry)
+    },
     transform: {
       filter: { id: /[\\/]@sqlite\.org[\\/]sqlite-wasm[\\/]/, code: files },
-      handler: (code: string) => code.replace(new RegExp(files, 'g'), (_, file: string) => `(() => { throw new Error(${JSON.stringify(`\`${file}\` isn't bundled with the Nuxt Content worker.`)}) })()`),
+      handler: (code: string) => active ? code.replace(new RegExp(files, 'g'), (_, file: string) => `(() => { throw new Error(${JSON.stringify(`\`${file}\` isn't bundled with the Nuxt Content worker.`)}) })()`) : undefined,
     },
   }
 }

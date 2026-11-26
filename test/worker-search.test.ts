@@ -67,9 +67,13 @@ describe('search in a web worker, on a static host', async () => {
   })
 
   // sqlite-wasm references its own worker API and OPFS helper, which an in-memory database never loads.
-  it('only emits the sqlite files the worker loads', () => {
-    const files = readdirSync(join(publicDir, '_nuxt'))
-    expect(files.filter(file => file.startsWith('sqlite3'))).toEqual([expect.stringMatching(/^sqlite3\..+\.wasm$/)])
+  it('drops sqlite-wasm\'s unused files from the content worker only', () => {
+    const dir = join(publicDir, '_nuxt')
+    const files = readdirSync(dir)
+    const chunk = (prefix: string) => readFileSync(join(dir, files.find(file => file.startsWith(prefix))!), 'utf8')
+    const emitted = /sqlite3-(?:worker1|opfs-async-proxy)-[\w-]+\.m?js/
+    expect(chunk('content-worker-')).not.toMatch(emitted)
+    expect(chunk('other.worker-')).toMatch(emitted)
   })
 
   it('doesn\'t preload the worker with the page', () => {
@@ -113,6 +117,8 @@ describe('search in a web worker, on a static host', async () => {
     expect(await snapshots()).toEqual(['/__nuxt_content/snapshot/docs.json', '/__nuxt_content/snapshot/blog.json'])
     const all = await search('wombat')
     expect(all.map(result => result.id).sort()).toEqual(['/blog/hello#hello', '/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
+    // A title match outranks a content match, though `blog` comes after `docs`.
+    expect((await search('platypus')).map(result => result.id)).toEqual(['/blog/platypus#platypus', '/docs/en/animals#animals'])
 
     // sqlite and the snapshots only ever load in the worker.
     const mainResources = await page.evaluate(() => performance.getEntriesByType('resource').map(entry => entry.name))
@@ -122,7 +128,8 @@ describe('search in a web worker, on a static host', async () => {
     expect(workerResources.some(path => path.endsWith('.wasm'))).toBe(true)
 
     // Nor in the scripts the page itself runs: only the worker's own script has it.
-    const scripts = mainResources.filter(name => name.endsWith('.js') && name !== worker!.url())
+    // Nuxt preloads the app's other worker like any chunk; it's not the content worker.
+    const scripts = mainResources.filter(name => name.endsWith('.js') && name !== worker!.url() && !name.includes('/other.worker-'))
     expect(scripts.length).toBeGreaterThan(0)
     const withSqlite = []
     for (const script of scripts) {
@@ -133,4 +140,5 @@ describe('search in a web worker, on a static host', async () => {
     expect(errors).toEqual([])
     await page.close()
   })
+
 })
