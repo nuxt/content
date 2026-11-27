@@ -14,10 +14,14 @@ const rootDir = join(tmpdir(), 'nuxt-content-hmr-test-' + Date.now())
 const contentDir = join(rootDir, 'content')
 const dbPath = join(rootDir, 'contents.sqlite')
 
+const closeHooks: Array<() => unknown> = []
+
 const nuxtMock = {
   options: { rootDir, buildDir: join(rootDir, '.nuxt') },
   callHook: () => Promise.resolve(),
-  hook: (_event: string, _cb: () => void) => {},
+  hook: (event: string, cb: () => unknown) => {
+    if (event === 'close') closeHooks.push(cb)
+  },
 } as never
 
 describe('multi-collection HMR — file matched by multiple collections', () => {
@@ -43,6 +47,8 @@ describe('multi-collection HMR — file matched by multiple collections', () => 
   })
 
   afterAll(async () => {
+    // Stop the file watcher first so no in-flight handler writes to the DB after it is closed / removed
+    await Promise.all(closeHooks.map(cb => cb()))
     db?.close()
     await fs.rm(rootDir, { recursive: true, force: true })
   })
@@ -86,13 +92,13 @@ describe('multi-collection HMR — file matched by multiple collections', () => 
     // Modify blog/hello.md — it lives under blog/** AND under ** so both collections match
     const blogPost = join(contentDir, 'blog', 'hello.md')
     const original = await fs.readFile(blogPost, 'utf8')
+    // No need to restore the file afterwards: doing so would trigger another watcher event racing with teardown
     await fs.writeFile(blogPost, original.replace('# Hello', '# Hello Updated'))
 
     // Give the watcher time to detect, parse and broadcast (chokidar + async)
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     stopListening()
-    await fs.writeFile(blogPost, original) // restore
 
     expect(updatedCollections, 'both collections should have been notified').toContain('content')
     expect(updatedCollections, 'both collections should have been notified').toContain('blog')
