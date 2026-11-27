@@ -23,11 +23,11 @@
       "import": "./dist/module.mjs"
     },
     "./v3": "./dist/runtime/v3/index.js",
-    "./content": "./dist/runtime/server/content.js",
+    "./v3/server": "./dist/runtime/v3/composables.server.js",
     "./app": "./dist/runtime/client-content/app.js",
     "./worker": "./dist/runtime/client-content/worker.js",
     "./utils": "./dist/runtime/utils/index.js",
-    "./server": "./dist/runtime/v3/composables.server.js"
+    "./server": "./dist/runtime/server/content.js"
   },
   "main": "./dist/module.mjs",
   "typesVersions": {

@@ -22,7 +22,7 @@ Nuxt Content 4 is built on [comark-content](https://content.comark.dev). Several
 | `server/cms.ts` | `server/content.ts` |
 | `export const cms` | `export const content` |
 | auto-imported `cms` | auto-imported `content` |
-| `@nuxt/content/cms` | `@nuxt/content/content` |
+| `@nuxt/content/cms` | `@nuxt/content/server` |
 
 ## `<ContentRenderer>` is now `<ContentDocument>`
 
@@ -45,7 +45,7 @@ Compared to v3's `<ContentRenderer>`:
 
 ```ts
 // server/content.ts
-import { createNuxtContent } from '@nuxt/content/content'
+import { createNuxtContent } from '@nuxt/content/server'
 import fs from 'comark-content/sources/fs'
 import media from 'comark-content/plugins/media'
 
@@ -66,6 +66,10 @@ export const content = createNuxtContent({
   },
 })
 ```
+
+### v3 server composables
+
+`queryCollection`, `queryCollectionNavigation`, `queryCollectionItemSurroundings` and `queryCollectionSearchSections` are auto-imported while `content.compatibilityVersion` is `3`. To import them by hand, use `@nuxt/content/v3/server`: `@nuxt/content/server` now exports `createNuxtContent()`.
 
 ### Sources provided by a layer
 
@@ -128,7 +132,7 @@ To change their options, register your own plugin with the same name under `mark
 
 ```ts
 // server/content.ts
-import { createNuxtContent } from '@nuxt/content/content'
+import { createNuxtContent } from '@nuxt/content/server'
 import fs from 'comark-content/sources/fs'
 import toc from 'comark/plugins/toc'
 

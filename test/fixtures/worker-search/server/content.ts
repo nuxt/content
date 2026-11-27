@@ -1,4 +1,4 @@
-import { createNuxtContent } from '@nuxt/content/content'
+import { createNuxtContent } from '@nuxt/content/server'
 import fs from 'comark-content/sources/fs'
 
 export const content = createNuxtContent({

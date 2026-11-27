@@ -13,7 +13,7 @@ export interface NuxtAppContentOptions {
 
 /**
  * Create the `content` the app reads, in `app/content.ts`. The browser counterpart of
- * `createNuxtContent()` from `@nuxt/content/content`, for `compatibilityVersion: 4`.
+ * `createNuxtContent()` from `@nuxt/content/server`, for `compatibilityVersion: 4`.
  */
 export function createNuxtContent(options: NuxtAppContentOptions = {}): ContentClient {
   if (import.meta.server) {

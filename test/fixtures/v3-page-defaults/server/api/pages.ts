@@ -1,3 +1,5 @@
+import { queryCollection } from '@nuxt/content/v3/server'
+
 // What v3 pages expose for `useSeoMeta(page.seo)` and listings.
 export default defineEventHandler(async (event) => {
   const pages = await queryCollection(event, 'content').all()
