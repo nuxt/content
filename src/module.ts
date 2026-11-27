@@ -84,7 +84,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Point the entries' imports at the runtime: the package exports target `dist/runtime/*.js`, which a stubbed build doesn't emit.
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
-      '@nuxt/content/content': resolve('./runtime/server/content'),
+      '@nuxt/content/server': resolve('./runtime/server/content'),
+      '@nuxt/content/v3/server': resolve('./runtime/v3/composables.server'),
     })
     nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
 

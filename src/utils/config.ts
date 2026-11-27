@@ -19,7 +19,7 @@ export type ImportContentOptions = {
   toc?: ResolvedTocOptions
   /** Heading tags resolved from `content.renderer.anchorLinks`. */
   anchorLinks?: string[]
-  /** This module's `@nuxt/content/content` entry, so it resolves without going through `dist` (stubbed builds). */
+  /** This module's `@nuxt/content/server` entry, so it resolves without going through `dist` (stubbed builds). */
   contentEntryPath?: string
 }
 
@@ -31,7 +31,7 @@ function createContentJiti(rootDir: string, options: ImportContentOptions) {
     fsCache: false,
     alias: {
       ...(options.highlightPath ? { '#content/highlight': options.highlightPath } : {}),
-      ...(options.contentEntryPath ? { '@nuxt/content/content': options.contentEntryPath } : {}),
+      ...(options.contentEntryPath ? { '@nuxt/content/server': options.contentEntryPath } : {}),
     },
     transform: (opts) => {
       const source = opts.source
