@@ -1,0 +1,161 @@
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import type { Server } from 'node:http'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { afterAll, beforeAll, describe, it, expect } from 'vitest'
+import { chromium, type Browser } from 'playwright-core'
+import { setup, useTestContext } from '@nuxt/test-utils/e2e'
+import { serveStatic } from './fixtures/static-server'
+
+type SearchResult = { id: string, source: string, title: string, content: string }
+
+describe('search in a web worker, on a static host', async () => {
+  await setup({
+    rootDir: fileURLToPath(new URL('./fixtures/worker-search', import.meta.url)),
+    // Served below from `.output/public`, without Nitro.
+    server: false,
+  })
+
+  let publicDir: string
+  let server: Server
+  let url: string
+  let browser: Browser
+
+  beforeAll(async () => {
+    publicDir = join(useTestContext().nuxt!.options.nitro.output!.dir!, 'public')
+    server = serveStatic(publicDir)
+    await new Promise<void>(resolve => server.listen(0, resolve))
+    url = `http://localhost:${(server.address() as { port: number }).port}`
+    browser = await chromium.launch()
+  })
+
+  afterAll(async () => {
+    await browser?.close()
+    server?.close()
+  })
+
+  it('publishes the snapshots the worker hydrates from', () => {
+    expect(existsSync(join(publicDir, '__nuxt_content/snapshot/docs.json'))).toBe(true)
+    expect(existsSync(join(publicDir, '__nuxt_content/snapshot/blog.json'))).toBe(true)
+    expect(existsSync(join(publicDir, '__nuxt_content/manifest.json'))).toBe(true)
+  })
+
+  // sqlite-wasm references its own worker API and OPFS helper, which an in-memory database never loads.
+  it('drops sqlite-wasm\'s unused files from the content worker only', () => {
+    const dir = join(publicDir, '_nuxt')
+    const files = readdirSync(dir)
+    const chunk = (prefix: string) => readFileSync(join(dir, files.find(file => file.startsWith(prefix))!), 'utf8')
+    const emitted = /sqlite3-(?:worker1|opfs-async-proxy)-[\w-]+\.m?js/
+    expect(chunk('content-worker-')).not.toMatch(emitted)
+    expect(chunk('other.worker-')).toMatch(emitted)
+  })
+
+  it('doesn\'t preload the worker with the page', () => {
+    const html = readFileSync(join(publicDir, 'index.html'), 'utf8')
+    expect(html).toContain('/_nuxt/')
+    expect(html).not.toContain('content-worker')
+  })
+
+  it('warms up after the page is ready and searches the prerendered content in the worker', { timeout: 60_000 }, async () => {
+    const page = await browser.newPage()
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    await page.goto(url)
+    await page.getByText('The wombat runs the search in a web worker.').waitFor()
+    // Nobody searched yet: `onNuxtReady()` started the hydration.
+    await page.locator('#status', { hasText: 'ready' }).waitFor({ timeout: 30_000 })
+
+    type Worker = { search: (q: string, o?: object) => Promise<SearchResult[]>, get: (key: string) => Promise<{ meta: { title: string } } | null>, instances: { value: string[] }, statuses: string[] }
+    const search = (query: string, opts?: object) => page.evaluate(
+      ([query, opts]) => (window as unknown as { __worker: Worker }).__worker.search(query as string, opts as object),
+      [query, opts] as const,
+    )
+    const [worker] = page.workers()
+    const snapshots = () => worker!.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).pathname).filter(path => path.startsWith('/__nuxt_content/')))
+
+    // Only the selected instance, as Docus selects the current locale's source.
+    expect(await snapshots()).toEqual(['/__nuxt_content/snapshot/docs.json'])
+
+    // Reads on a ready worker leave `status` alone, or `<UContentSearch>` would search again forever.
+    const statuses = () => page.evaluate(() => [...(window as unknown as { __worker: Worker }).__worker.statuses])
+    const before = await statuses()
+    await search('wombat')
+    await search('nothing-matches')
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 50)))
+    expect(await statuses()).toEqual(before)
+    const docs = await search('wombat')
+    expect(docs.map(result => result.id).sort()).toEqual(['/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
+    expect(docs.find(result => result.id === '/docs/en/install#configure-the-worker')).toMatchObject({
+      source: 'docs',
+      title: 'Configure the worker',
+      content: 'The wombat runs the search in a web worker.',
+    })
+    expect(await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.get('/docs/fr/install').then(doc => doc?.meta.title))).toBe('Installation')
+    expect(await snapshots()).toEqual(['/__nuxt_content/snapshot/docs.json'])
+
+    // Selecting more instances loads them, and one shared database ranks them in a single query.
+    await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.instances.value = ['docs', 'blog'])
+    await page.locator('#status', { hasText: 'ready' }).waitFor()
+    expect(await snapshots()).toEqual(['/__nuxt_content/snapshot/docs.json', '/__nuxt_content/snapshot/blog.json'])
+    const all = await search('wombat')
+    expect(all.map(result => result.id).sort()).toEqual(['/blog/hello#hello', '/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
+    // A title match outranks a content match, though `blog` comes after `docs`.
+    expect((await search('platypus')).map(result => result.id)).toEqual(['/blog/platypus#platypus', '/docs/en/animals#animals'])
+
+    // sqlite and the snapshots only ever load in the worker.
+    const mainResources = await page.evaluate(() => performance.getEntriesByType('resource').map(entry => entry.name))
+    expect(mainResources.filter(name => /\.wasm|__nuxt_content/.test(name))).toEqual([])
+    expect(await page.evaluate(() => 'sqlite3ApiConfig' in globalThis)).toBe(false)
+    const workerResources = await worker!.evaluate(() => performance.getEntriesByType('resource').map(entry => entry.name))
+    expect(workerResources.some(path => path.endsWith('.wasm'))).toBe(true)
+
+    // Nor in the scripts the page itself runs: only the worker's own script has it.
+    // Nuxt preloads the app's other worker like any chunk; it's not the content worker.
+    const scripts = mainResources.filter(name => name.endsWith('.js') && name !== worker!.url() && !name.includes('/other.worker-'))
+    expect(scripts.length).toBeGreaterThan(0)
+    const withSqlite = []
+    for (const script of scripts) {
+      if ((await fetch(script).then(response => response.text())).includes('sqlite3')) withSqlite.push(script)
+    }
+    expect(withSqlite).toEqual([])
+
+    expect(errors).toEqual([])
+    await page.close()
+  })
+
+  it('loads each instance from its `basePath`, in a new worker when it changes', { timeout: 60_000 }, async () => {
+    const page = await browser.newPage()
+    await page.goto(url)
+    await page.locator('#status', { hasText: 'ready' }).waitFor({ timeout: 30_000 })
+
+    type Worker = { search: (q: string) => Promise<SearchResult[]>, instances: { value: string[] }, basePaths: { value: Record<string, string> } }
+    const search = (query: string) => page.evaluate(query => (window as unknown as { __worker: Worker }).__worker.search(query).then(results => results.map(result => result.id).sort()), query)
+    const snapshots = () => Promise.all(page.workers().map(worker => worker.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).pathname).filter(path => path.endsWith('.json')))))
+
+    expect(await snapshots()).toEqual([['/__nuxt_content/snapshot/docs.json']])
+    expect(await search('quokka')).toEqual([])
+
+    await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.basePaths.value = { docs: '/commits/b' })
+    await expect.poll(() => search('quokka'), { timeout: 30_000 }).toEqual(['/docs/en/quokka#quokka'])
+    expect(await search('wombat')).toEqual([])
+    expect(await snapshots()).toEqual([['/commits/b/snapshot/docs.json']])
+
+    await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.instances.value = ['docs', 'blog'])
+    await expect.poll(() => search('platypus'), { timeout: 30_000 }).toEqual(['/blog/platypus#platypus'])
+    expect(await snapshots()).toEqual([['/commits/b/snapshot/docs.json', '/__nuxt_content/snapshot/blog.json']])
+    await page.close()
+  })
+
+  it('starts a new worker after the previous one failed', { timeout: 60_000 }, async () => {
+    const page = await browser.newPage()
+    // The worker script fails to load once, as on a flaky network.
+    await page.route('**/_nuxt/content-worker-*.js', route => route.abort(), { times: 1 })
+    await page.goto(url)
+    await page.locator('#status', { hasText: 'error' }).waitFor({ timeout: 30_000 })
+
+    const ids = await page.evaluate(() => (window as unknown as { __worker: { search: (q: string) => Promise<SearchResult[]> } }).__worker.search('wombat').then(results => results.map(result => result.id).sort()))
+    expect(ids).toEqual(['/docs/en/install#configure-the-worker', '/docs/fr/install#configurer-le-worker'])
+    await page.locator('#status', { hasText: 'ready' }).waitFor()
+    await page.close()
+  })
+})

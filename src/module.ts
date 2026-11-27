@@ -1,12 +1,11 @@
 import { comarkContent, contentHub, generateSourceTypes, isParsedSource, readArtifact } from 'comark-content'
 import defu from 'defu'
 import type { CacheArtifact, ContentSource, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
-import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
-import { existsSync } from 'node:fs'
+import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, resolvePath, useLogger } from '@nuxt/kit'
 import { mkdir, writeFile } from 'node:fs/promises'
 import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
-import { importContent, resolveContentEntry } from './utils/config'
+import { importContent, resolveContentEntry, resolveLayerAppFile } from './utils/config'
 import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
@@ -17,7 +16,6 @@ import { v3ServerPlugins } from './runtime/v3/content-plugins.server'
 import { resolveContentConfigCollections, type ResolvedContentCollections } from './runtime/v3/content-config'
 import { HMR_REMOVE_EVENT, HMR_UPDATE_EVENT, type ContentHmrRemove, type ContentHmrUpdate } from './runtime/utils/hmr'
 import { fileURLToPath } from 'node:url'
-import { join } from 'node:path'
 
 // `ContentHub<any>`: its `query` is invariant in T, so a hub over a mutable array isn't a `ContentHub<readonly AnyComarkContent[]>`.
 type ContentSurface = AnyComarkContent | ContentHub<any>
@@ -50,7 +48,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     /**
-     * Entry files
+     * Entry files, from the app then its layers
      */
     const entry = resolveContentEntry(nuxt, options.compatibilityVersion!)
     const serverContentPath = entry.type === 'server'
@@ -59,11 +57,15 @@ export default defineNuxtModule<ModuleOptions>({
         ? resolve('./runtime/server/internal/content-config')
         : resolve('./runtime/server/internal/fallback-content')
     // `app/content.ts` configures the browser instance, as `server/content.ts` does the server one.
-    let appContentPath: string | undefined = join(nuxt.options.srcDir, 'content')
-    if (!existsSync(`${appContentPath}.ts`)) appContentPath = undefined
-    if (appContentPath && (options.mode !== 'hybrid' || options.compatibilityVersion !== 4)) {
-      logger.warn('`app/content.ts` is only used with `mode: \'hybrid\'` and `compatibilityVersion: 4`, ignoring it.')
-      appContentPath = undefined
+    let appContentPath = resolveLayerAppFile(nuxt, 'content.ts')?.slice(0, -'.ts'.length)
+    // `app/content.worker.ts` runs instances in a web worker.
+    let workerPath = resolveLayerAppFile(nuxt, 'content.worker.ts')
+    // Both are new in v4: the v3 compat layer has its own browser search.
+    if (options.compatibilityVersion !== 4 && (appContentPath || workerPath)) {
+      for (const file of [appContentPath && 'app/content.ts', workerPath && 'app/content.worker.ts'].filter(Boolean)) {
+        logger.warn(`\`${file}\` is only used with \`compatibilityVersion: 4\`, ignoring it.`)
+      }
+      appContentPath = workerPath = undefined
     }
 
     /**
@@ -87,6 +89,7 @@ export default defineNuxtModule<ModuleOptions>({
       '@nuxt/content/content': resolve('./runtime/server/content'),
     })
     nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
+    nuxt.options.alias['@nuxt/content/worker'] = resolve('./runtime/client-content/worker')
 
     nuxt.options.nitro.replace = defu(nuxt.options.nitro.replace, {
       'import.meta.rootDir': JSON.stringify(nuxt.options.rootDir),
@@ -109,7 +112,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Server
      */
-    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks)
+    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks, !!(appContentPath || workerPath))
     // A build reads every document once, shared by the types and components templates.
     const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
@@ -119,7 +122,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Browser
      */
-    if (appContentPath) {
+    if (appContentPath || workerPath) {
       // `createNuxtContent()` is synchronous, so it can't fetch the manifest to know the instances.
       nuxt.options.vite.define = defu(nuxt.options.vite.define, {
         'import.meta.content.sources': JSON.stringify(content ? resolveInstanceNames(content) : []),
@@ -129,6 +132,9 @@ export default defineNuxtModule<ModuleOptions>({
     addImports({ name: 'content', from: clientContentPath })
     // A dynamic import deadlocks the client's top-level `await` on Nuxt 4.7; the stub keeps sqlite out of v4 bundles.
     nuxt.options.alias['#content-wasm-plugins'] = resolve(`./runtime/v3/content-plugins.${options.compatibilityVersion === 3 ? 'wasm' : 'stub'}`)
+    if (workerPath) {
+      await setupWorker(workerPath, content ? resolveInstanceNames(content) : [], nuxt)
+    }
 
     /**
      * Components
@@ -221,6 +227,71 @@ export default defineNuxtModule<ModuleOptions>({
     if (content && 'media' in content && content.media) setupMedia(content as ContentWithMedia & MediaMethods, nuxt)
   },
 })
+
+/**
+ * Bundle `app/content.worker.ts` into a web worker, which Vite builds from a generated entry as its own chunk.
+ * Only the worker imports the file, so its plugins never reach the app's bundle.
+ */
+async function setupWorker(workerPath: string, names: string[], nuxt: Nuxt) {
+  const { resolve } = createResolver(import.meta.url)
+  const runtime = await resolvePath(resolve('./runtime/client-content/worker'))
+  // Written to disk: Vite bundles workers without Nuxt's plugins, which serve the other templates from memory.
+  const entry = addTemplate({
+    // Names the worker's chunk, `content-worker-<hash>.js`.
+    filename: 'content/content-worker.mjs',
+    write: true,
+    getContents: () => [
+      `import definition from ${JSON.stringify(workerPath)}`,
+      `import { startNuxtContentWorker } from ${JSON.stringify(runtime)}`,
+      // The `app.baseURL` of the build: a base set at runtime with `NUXT_APP_BASE_URL` isn't supported.
+      `startNuxtContentWorker(definition, ${JSON.stringify(names)}, ${JSON.stringify(nuxt.options.app.baseURL)})`,
+    ].join('\n') + '\n',
+  })
+  nuxt.options.alias['@nuxt/content/worker-entry'] = entry.dst
+  // Vite lists the worker as an asset of the app's entry, which Nuxt would preload on every page.
+  nuxt.hook('build:manifest', (manifest) => {
+    for (const chunk of Object.values(manifest)) {
+      if (/^(?:.*\/)?content-worker-[\w-]+\.js$/.test(chunk.file)) {
+        chunk.preload = false
+        chunk.prefetch = false
+      }
+    }
+  })
+  addImports({ name: 'useNuxtContentWorker', from: resolve('./runtime/client-content/worker-client') })
+
+  nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
+    // Pre-bundled, it can't find its `sqlite3.wasm` next to it.
+    exclude: ['@sqlite.org/sqlite-wasm'],
+  })
+  const workerPlugins = nuxt.options.vite.worker?.plugins
+  nuxt.options.vite.worker = {
+    ...nuxt.options.vite.worker,
+    // Vite flattens nested and pending plugin lists, so the app's are kept as one entry.
+    plugins: () => [workerPlugins?.(), sqliteWorkerFilesPlugin(entry.dst)],
+  }
+}
+
+/**
+ * sqlite-wasm references its Worker1 API and OPFS helper with `new URL(…, import.meta.url)`, so Vite emits both.
+ * An in-memory database loads neither, so they throw instead; sqlite-wasm catches the failed OPFS install.
+ * TODO: use the plugin from comark-content once it ships there.
+ */
+function sqliteWorkerFilesPlugin(entry: string) {
+  const files = /new URL\("(sqlite3-worker1\.mjs|sqlite3-opfs-async-proxy\.js)", import\.meta\.url\)/
+  // Vite creates the worker plugins for each worker bundle: only the content worker's rewrites, the app's other workers keep both files.
+  let active = false
+  return {
+    name: 'nuxt-content:sqlite-worker-files',
+    enforce: 'pre' as const,
+    buildStart(options: { input: string[] | Record<string, string> }) {
+      active = Object.values(options.input).includes(entry)
+    },
+    transform: {
+      filter: { id: /[\\/]@sqlite\.org[\\/]sqlite-wasm[\\/]/, code: files },
+      handler: (code: string) => active ? code.replace(new RegExp(files, 'g'), (_, file: string) => `(() => { throw new Error(${JSON.stringify(`\`${file}\` isn't bundled with the Nuxt Content worker.`)}) })()`) : undefined,
+    },
+  }
+}
 
 function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt) {
   const { resolve } = createResolver(import.meta.url)
@@ -445,7 +516,7 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions, anchorLinks: string[]): Promise<ContentSurface | undefined> {
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions, anchorLinks: string[], publicSnapshots: boolean): Promise<ContentSurface | undefined> {
   const { resolve } = createResolver(import.meta.url)
 
   const imported = await importContent(nuxt.options.rootDir, contentPath, {
@@ -479,8 +550,9 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
       nitro.options.serverAssets.push({ baseName: 'content', dir })
       nitro.hooks.hook('prerender:generate', async (route) => {
         if (!route.route.startsWith('/__nuxt_content')) return
-        // Server-only mode keeps them private.
-        if (options.mode === 'server-only') {
+        // Server-only mode keeps them private, except the manifest and snapshots `app/content.ts` and `app/content.worker.ts` hydrate from.
+        const browserArtifact = route.route === '/__nuxt_content/manifest.json' || route.route.startsWith('/__nuxt_content/snapshot/')
+        if (options.mode === 'server-only' && !(publicSnapshots && browserArtifact)) {
           route.skip = true
         }
 

@@ -185,6 +185,7 @@ overrides:
   '@nuxt/content': link:.
   postcss-merge-rules@9>cssnano-utils: ^8.2.0
   comark: https://pkg.pr.new/comark@ff4661d
+  comark-content: https://pkg.pr.new/comark-content@ec7a084
 
 importers:
 
@@ -203,8 +204,8 @@ importers:
         specifier: https://pkg.pr.new/comark@ff4661d
         version: https://pkg.pr.new/comark@ff4661d(shiki@4.6.0)
       comark-content:
-        specifier: ^0.6.2
-        version: 0.6.3(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4))
+        specifier: https://pkg.pr.new/comark-content@ec7a084
+        version: https://pkg.pr.new/comark-content@ec7a084(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4))
       defu:
         specifier: ^6.1.7
         version: 6.1.7
@@ -297,8 +298,8 @@ importers:
         specifier: link:../..
         version: link:../..
       comark-content:
-        specifier: ^0.6.3
-        version: 0.6.3(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4))
+        specifier: https://pkg.pr.new/comark-content@ec7a084
+        version: https://pkg.pr.new/comark-content@ec7a084(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4))
       nuxt:
         specifier: ^4.7.0
         version: 4.7.0(62a1abbd985dd3599f0ed9d942c3b910)
@@ -3783,8 +3784,9 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.6.3:
-    resolution: {integrity: sha512-AgQOrcmkymyu4PMaDBc97bvmIiZ7DAcvR0c83bmGrzUrf+yJ9khvpRxG0ZzpNDtmm7ahRlrrh8a+pPMK3f41Ng==}
+  comark-content@https://pkg.pr.new/comark-content@ec7a084:
+    resolution: {integrity: sha512-7rdCw/uPqoPTRe0arZWw/wc18LYS89613vtb544Nb4oojpsWXhD36he1j50dFr4vr59W1snCKZPmNptfRW3yEA==, tarball: https://pkg.pr.new/comark-content@ec7a084}
+    version: 0.6.3
     hasBin: true
     peerDependencies:
       forges: ^0.3.0
@@ -10498,7 +10500,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.6.3(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)):
+  comark-content@https://pkg.pr.new/comark-content@ec7a084(forges@0.3.2)(shiki@4.6.0)(unstorage@1.17.6(db0@0.3.4)):
     dependencies:
       comark: https://pkg.pr.new/comark@ff4661d(shiki@4.6.0)
       hookable: 6.1.2

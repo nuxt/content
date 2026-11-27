@@ -10,8 +10,10 @@ overrides:
   # postcss-merge-rules@9.1 uses `sameContainer`, added in cssnano-utils@8.2.0, but declares ^8.1.0
   "postcss-merge-rules@9>cssnano-utils": ^8.2.0
   comark: "https://pkg.pr.new/comark@ff4661d"
+  # `comark-content/worker` from comarkdown/comark-content#172 and `buildSearchIndex()` from #175, which is stacked on it, until they're released.
+  comark-content: https://pkg.pr.new/comark-content@ec7a084
 
-# The `comark` override above is a URL, which pnpm blocks below the top level. Remove both once comark is released.
+# The `comark` and `comark-content` overrides above are URLs, which pnpm blocks below the top level. Remove this once both are released.
 blockExoticSubdeps: false
 
 allowBuilds:
