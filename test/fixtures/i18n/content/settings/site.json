@@ -1,0 +1,15 @@
+{
+  "name": "Acme",
+  "links": [
+    { "label": "Home", "to": "/" },
+    { "label": "Blog", "to": "/blog" }
+  ],
+  "i18n": {
+    "fr": {
+      "links": [
+        { "label": "Accueil" },
+        { "label": "Le blog" }
+      ]
+    }
+  }
+}

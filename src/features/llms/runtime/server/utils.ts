@@ -19,6 +19,24 @@ export interface ContentLLMSCollectionSection extends LLMsSection {
 
 const linkProps = ['href', 'src', 'to']
 
+export function getDefaultLocale(collection: string): string | undefined {
+  return manifest[collection]?.i18n?.defaultLocale
+}
+
+/**
+ * Translations share the path of the default locale, so their links start with the locale.
+ * The raw Markdown route reads a leading locale code as a translation, so `raw` links also
+ * prefix default-locale paths that start with a locale code.
+ */
+export function localizePath(path: string, collection: string, locale?: string, raw = false): string {
+  const i18n = manifest[collection]?.i18n
+  if (!i18n || !locale) {
+    return path
+  }
+  const prefixed = locale !== i18n.defaultLocale || (raw && i18n.locales.includes(path.split('/')[1] || ''))
+  return prefixed ? `/${locale}${path === '/' ? '' : path}` : path
+}
+
 export async function createDocumentGenerator() {
   const { visit } = await import('unist-util-visit')
   const { stringifyMarkdown } = await import('@nuxtjs/mdc/runtime')

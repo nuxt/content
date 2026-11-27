@@ -4,6 +4,15 @@ export type QueryGroupFunction<T> = (group: CollectionQueryGroup<T>) => Collecti
 
 export interface CollectionQueryBuilder<T> {
   path(path: string): CollectionQueryBuilder<T>
+  /**
+   * Filter by stem: the file path relative to the content directory, without extension.
+   * A custom source `prefix` replaces the source directory, and i18n collections leave
+   * out the locale directory. For example, `.stem('navigation/navbar')` matches
+   * `content/navigation/navbar.yml`.
+   */
+  stem(stem: string): CollectionQueryBuilder<T>
+  /** With `fallback`, items missing in `locale` are returned in the fallback locale */
+  locale(locale: string, opts?: { fallback?: string }): CollectionQueryBuilder<T>
   select<K extends keyof T>(...fields: K[]): CollectionQueryBuilder<Pick<T, K>>
   order(field: keyof T, direction: 'ASC' | 'DESC'): CollectionQueryBuilder<T>
   skip(skip: number): CollectionQueryBuilder<T>

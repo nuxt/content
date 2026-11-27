@@ -312,6 +312,19 @@ describe('generateNavigationTree', () => {
     ])
   })
 
+  it('keeps the source hash of an inline translation out of navigation items', async () => {
+    const items = [
+      { title: 'Guide FR', path: '/guide/.navigation', stem: 'guide/.navigation', meta: { icon: 'book', _i18nSourceHash: 'abc' } },
+      { title: 'Guide', path: '/guide', stem: 'guide/index' },
+      { title: 'Page', path: '/guide/page', stem: 'guide/page' },
+    ] as unknown as PageCollectionItemBase[]
+
+    const tree = await generateNavigationTree(mockQueryBuilder(items))
+
+    expect(tree[0]).toMatchObject({ title: 'Guide FR', icon: 'book' })
+    expect(JSON.stringify(tree)).not.toContain('_i18nSourceHash')
+  })
+
   it('should exclude items with navigation: false', async () => {
     const items = [
       {
